@@ -7,7 +7,7 @@ util_Distance_squareroot,Squareroot of distance,@_DIST**0.5,coef_sqrtdist_univ,c
 util_Distance_squared,Distance_squared,@_DIST**2,coef_sqrddist_univ,coef_sqrddist_hsch,coef_sqrddist_gs,coef_sqrddist_ps
 util_Distance_cubed,Distance_cubed,@_DIST**3,coef_cubeddist_univ,coef_cubeddist_hsch,coef_cubeddist_gs,coef_cubeddist_ps
 util_Distance_worker_univ,Distance for a worker_university specific,"@np.where(df.ptype==1, _DIST, 0)",coef_workerdist_univ,coef_zero,coef_zero,coef_zero
-#util_Distance_largeuniversity_univ,Distance for large university enrollment,"@np.where(df.collegeenroll>5000, _DIST, 0)",coef_univenrol_dist_univ,coef_zero,coef_zero,coef_zero
+util_Distance_largeuniversity_univ,Distance for large university enrollment,"@np.where(df.collegeenroll>5000, _DIST, 0)",coef_univenrol_dist_univ,coef_zero,coef_zero,coef_zero
 util_Distance _lowincome_prek,Distance - low income,"@np.where(df.income<60000, _DIST, 0)",coef_zero,coef_zero,coef_zero,coef_lowincdist_ps
 util_Distance - age03_prek,Distance - age 0 to 3,"@np.where(df.age<3,_DIST,0)",coef_zero,coef_zero,coef_zero,coef_age03dist_ps
 util_LoggedSize,Logged Size variable - University specific,@df['size_term'].apply(np.log1p),coef_lnSize,coef_lnSize,coef_lnSize,coef_lnSize

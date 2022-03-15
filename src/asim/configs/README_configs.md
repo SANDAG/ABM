@@ -205,3 +205,12 @@ Write Trip Matrices
 * Modified to be consistent with new tour and trip modes and time period definitions
   - Do we want separate demand tables for drive transit modes?
 ---
+Tour destination choice
+* time pressure variable commented out in non-mandatory tour destination choice (max_window problematic for now -- to be fixed)
+* escort-related variables commented out in non-mandatory tour destination choice (waiting for school pickup/dropoff model)
+* nonMandatoryAccessibilityAlt related variable in non-mandatory tour destination choice commented out for now
+* @bestTimeToWorkLocation is same as roundtrip_auto_time_to_work? or divided by 2?
+---
+Stop frequency
+* check the tod used in the calibration lines in the uec
+* accessibility line is commeneted out in the uecs

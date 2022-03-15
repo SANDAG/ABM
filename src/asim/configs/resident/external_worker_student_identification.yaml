@@ -1,0 +1,9 @@
+
+SPEC: external_worker_student_identification.csv
+COEFFICIENTS: external_worker_student_identification_coeffs.csv
+
+#LOGIT_TYPE: NL
+LOGIT_TYPE: MNL
+
+# FIXME: Is this needed?
+EXTERNAL_WORKER_STUDENT_ALT: 0

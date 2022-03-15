@@ -61,6 +61,7 @@ CONSTANTS:
   SCHOOL_TOUR: school
   EATOUT_TOUR: eatout
   SOCIAL_TOUR: social
+  DISCR_TOUR: othdiscr
   num_atwork_subtours_map:
     no_subtours: 0
     eat: 1
