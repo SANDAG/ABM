@@ -1,0 +1,4 @@
+Description,Target,Expression
+#,avg_roundtrip_auto_time_to_work,"persons.groupby('household_id').roundtrip_auto_time_to_work.mean()"
+,home_taz,"reindex(land_use.TAZ, df.home_zone_id)"
+#,hhs_in_taz,"df.groupby('home_taz')['household_id'].transform(len)"

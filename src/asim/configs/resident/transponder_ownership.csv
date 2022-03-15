@@ -1,0 +1,3 @@
+Label,Description,Expression,No Pass,Pass
+util_asc,Constant,"@np.where(df.auto_ownership == 0, 1, 0)",0,coef_unavail
+util_asc,Constant,1,0,coef_asc
