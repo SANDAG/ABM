@@ -100,10 +100,22 @@ Free Parking
 * Deleted work county specific ASCs in _free_parking.csv_
   - The preprocessor only had one line in it to calculate the work county, so after commenting it out, it crashed because there were no longer any expressions.  I deleted the call to the preprocessor in _free_parking.yaml_ and removed the work county definitions.  Also removed _free_parking_annotate_persons_preprocessor.csv_ from repo
 ---
+Telecommute frequency
+* commented out occupancy related varibales (df.occup), since I am not sure about the field in the person file. It is likely "occsoc5" that needs to be parsed for the first two digits?
+---
+Mandatory tour frequency
+* `schoolathome` row commented out for now
+* escort related variables commented out for now (waiting for school dropoff/pickup model)   
+---
 Tour and Trip Scheduling
 * Replaced all tour and trip scheduling files with SEMCOG versions
   - Updated the annotate person and houssehold files to calculate varibles used
-
+---
+Tour destination choice
+* time pressure variable commented out in non-mandatory tour destination choice (max_window problematic for now -- to be fixed)
+* escort-related variables commented out in non-mandatory tour destination choice (waiting for school pickup/dropoff model)
+* nonMandatoryAccessibilityAlt related variable in non-mandatory tour destination choice commented out for now
+* @bestTimeToWorkLocation is same as roundtrip_auto_time_to_work? or divided by 2?
 ---
 Tour mode choice
 * added coefficients to template that were missing: `cost_coef`, FIXED (COT_COEF WAS NOT NEEDED, REPLACED WITH COEF_INCOME BASED CALCULATION)
@@ -159,7 +171,10 @@ Tour mode choice
   - Bike is available when the sum of inbound and outbound logsums < -999
   - Bike time is not being used. bike time coefficient is calculated in pre-processor, but is not used anywhere... MANY VARIABLE ARE DEFINED BUT NOT USED IN abm2+, AND THIS IS ONE. 
   - Same in trip mode choice except there's no inbound / outbound distinction
-
+---
+Stop frequency
+* check the tod used in the calibration lines in the uec
+* accessibility line is commeneted out in the uecs
 ---
 Trip purpose
 * `depart_range_start` and `depart_range_end` columns need to be updated to match the new 48 half-hour time periods. Values were changed to the following mapping
@@ -205,12 +220,4 @@ Write Trip Matrices
 * Modified to be consistent with new tour and trip modes and time period definitions
   - Do we want separate demand tables for drive transit modes?
 ---
-Tour destination choice
-* time pressure variable commented out in non-mandatory tour destination choice (max_window problematic for now -- to be fixed)
-* escort-related variables commented out in non-mandatory tour destination choice (waiting for school pickup/dropoff model)
-* nonMandatoryAccessibilityAlt related variable in non-mandatory tour destination choice commented out for now
-* @bestTimeToWorkLocation is same as roundtrip_auto_time_to_work? or divided by 2?
----
-Stop frequency
-* check the tod used in the calibration lines in the uec
-* accessibility line is commeneted out in the uecs
+
