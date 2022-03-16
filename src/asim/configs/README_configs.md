@@ -102,6 +102,7 @@ Free Parking
 ---
 Telecommute frequency
 * commented out occupancy related varibales (df.occup), since I am not sure about the field in the person file. It is likely "occsoc5" that needs to be parsed for the first two digits?
+* currently, only the 2016 calibration constant included, while the ct-ramp UEC has the constants based on scenario year. To be fixed later with EMME integration.
 ---
 Mandatory tour frequency
 * `schoolathome` row commented out for now
