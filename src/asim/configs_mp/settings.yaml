@@ -12,7 +12,7 @@ fail_fast: True
 
 trace_hh_id:
 
-resume_after: 
+resume_after:
 
 models:
   - initialize_landuse
@@ -25,11 +25,17 @@ models:
   # (this step is a NOP if cache already exists and network_los.rebuild_tvpb_cache setting is False)
   - initialize_tvpb
   # ---
-  # - external_worker_student_identification
+  - external_student_identification
+  - external_worker_identification
+  - external_school_location
+  - external_workplace_location
   - school_location
   - workplace_location
+  - work_from_home
   - auto_ownership_simulate
+  - transponder_ownership
   - free_parking
+  - telecommute_frequency
   - cdap_simulate
   - mandatory_tour_frequency
   - mandatory_tour_scheduling

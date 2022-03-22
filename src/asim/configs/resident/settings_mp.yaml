@@ -29,9 +29,11 @@ models:
   - external_workplace_location
   - school_location
   - workplace_location
+  - work_from_home
   - auto_ownership_simulate
   - transponder_ownership
-  # - free_parking
+  - free_parking
+  - telecommute_frequency
   - cdap_simulate
   - mandatory_tour_frequency
   - mandatory_tour_scheduling
