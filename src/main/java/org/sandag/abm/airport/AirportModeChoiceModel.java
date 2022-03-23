@@ -519,6 +519,9 @@ public class AirportModeChoiceModel
             }
             
             party.setAirportAccessMGRA(airportAccessMGRA);
+            if (airportAccessMGRA > 0){
+            	party.setAirportAccessTAZ(mgraManager.getTaz(airportAccessMGRA));
+            }
             
             boolean apHasPublicTransit = false;
             // set access point has public transit boolean
@@ -580,6 +583,10 @@ public class AirportModeChoiceModel
             	
             	if (chosenAirportMgra != dmu.getTerminalMgra())
                 {
+            		int boardTap = (int) 0;
+                	int alightTap = (int) 0;
+                	int set = (int) -1;
+                	
                 	if (direction == 0)
                 	{
                 		logsumHelper.setWtwTripMcDmuAttributes( mcDmuObject, chosenAirportMgra, dmu.getTerminalMgra(), period, party.getDebugChoiceModels());
@@ -588,13 +595,7 @@ public class AirportModeChoiceModel
                 		
                 		if (mcDmuObject.getTransitLogSum(McLogsumsCalculator.WTW) < WORST_UTILITY)
                 		{
-                			// if there is no transit path from the transit network, set taps to 0
-                    		int boardTap = (int) 0;
-                        	int alightTap = (int) 0;
-                        	int set = (int) -1;
-                        	party.setAP2TerminalBoardTap(boardTap);
-                        	party.setAP2TerminalAlightTap(alightTap);
-                        	party.setAP2TerminalSet(set);
+                			;// if there is no transit path from the transit network, set taps to 0
                     	}
                 		else
                 		{
@@ -603,21 +604,13 @@ public class AirportModeChoiceModel
                         	int pathIndex = logsumHelper.chooseTripPath(rn, walkTransitTapPairs_AP2Term, party.getDebugChoiceModels(), logger);
                         	if (pathIndex < 0) 
                         	{
-                        		int boardTap = (int) 0;
-                            	int alightTap = (int) 0;
-                            	int set = (int) -1;
-                            	party.setAP2TerminalBoardTap(boardTap);
-                            	party.setAP2TerminalAlightTap(alightTap);
-                            	party.setAP2TerminalSet(set);
+                        		;
                         	}
                         	else
                         	{
-                        		int boardTap = (int) walkTransitTapPairs_AP2Term[pathIndex][0];
-                            	int alightTap = (int) walkTransitTapPairs_AP2Term[pathIndex][1];
-                            	int set = (int) walkTransitTapPairs_AP2Term[pathIndex][2];
-                            	party.setAP2TerminalBoardTap(boardTap);
-                            	party.setAP2TerminalAlightTap(alightTap);
-                            	party.setAP2TerminalSet(set);
+                        		boardTap = (int) walkTransitTapPairs_AP2Term[pathIndex][0];
+                            	alightTap = (int) walkTransitTapPairs_AP2Term[pathIndex][1];
+                            	set = (int) walkTransitTapPairs_AP2Term[pathIndex][2];
                         	}
                 		}
                 	}
@@ -629,13 +622,7 @@ public class AirportModeChoiceModel
                 		
                 		if (mcDmuObject.getTransitLogSum(McLogsumsCalculator.WTW) < WORST_UTILITY)
                 		{
-                			// if there is no transit path from the transit network, set taps to 0
-                			int boardTap = (int) 0;
-                        	int alightTap = (int) 0;
-                        	int set = (int) -1;
-                        	party.setAP2TerminalBoardTap(boardTap);
-                        	party.setAP2TerminalAlightTap(alightTap);
-                        	party.setAP2TerminalSet(set);
+                			;// if there is no transit path from the transit network, set taps to 0
                 		}
                 		else
                 		{
@@ -645,24 +632,19 @@ public class AirportModeChoiceModel
                         	
                         	if (pathIndex < 0) 
                         	{
-                        		int boardTap = (int) 0;
-                            	int alightTap = (int) 0;
-                            	int set = (int) -1;
-                            	party.setAP2TerminalBoardTap(boardTap);
-                            	party.setAP2TerminalAlightTap(alightTap);
-                            	party.setAP2TerminalSet(set);
+                        		;
                         	}
                         	else
                         	{
-                        		int boardTap = (int) walkTransitTapPairs_AP2Term[pathIndex][0];
-                            	int alightTap = (int) walkTransitTapPairs_AP2Term[pathIndex][1];
-                            	int set = (int) walkTransitTapPairs_AP2Term[pathIndex][2];
-                            	party.setAP2TerminalBoardTap(boardTap);
-                            	party.setAP2TerminalAlightTap(alightTap);
-                            	party.setAP2TerminalSet(set);
+                        		boardTap = (int) walkTransitTapPairs_AP2Term[pathIndex][0];
+                            	alightTap = (int) walkTransitTapPairs_AP2Term[pathIndex][1];
+                            	set = (int) walkTransitTapPairs_AP2Term[pathIndex][2];
                         	}
                 		}
                 	}
+                	party.setAP2TerminalBoardTap(boardTap);
+                	party.setAP2TerminalAlightTap(alightTap);
+                	party.setAP2TerminalSet(set);
                 }
                 
         	}
@@ -777,11 +759,148 @@ public class AirportModeChoiceModel
     	else if((airportCode.equals("SAN")) && accessMode == AirportModelStructure.RIDEHAILING_LOC1){
         	
            	tripMode=AirportModelStructure.REALLOCATE_TNCSINGLE;
+           	
+           	int chosenAirportMgra = dmu.mode_mgra_map.get(accessMode);
+            	
+        	if (chosenAirportMgra != dmu.getTerminalMgra())
+            {
+        		int boardTap = (int) 0;
+            	int alightTap = (int) 0;
+            	int set = (int) -1;
+            	
+            	if (direction == 0)
+            	{
+            		logsumHelper.setWtwTripMcDmuAttributes( mcDmuObject, chosenAirportMgra, dmu.getTerminalMgra(), period, party.getDebugChoiceModels());
+            		
+            		double[][] walkTransitTapPairs_AP2Term = logsumHelper.getBestWtwTripTaps();
+            		
+            		if (mcDmuObject.getTransitLogSum(McLogsumsCalculator.WTW) < WORST_UTILITY)
+            		{
+            			;// if there is no transit path from the transit network, set taps to 0
+                	}
+            		else
+            		{
+            			//pick transit path from N-paths
+                        float rn = new Double(party.getRandom()).floatValue();
+                    	int pathIndex = logsumHelper.chooseTripPath(rn, walkTransitTapPairs_AP2Term, party.getDebugChoiceModels(), logger);
+                    	if (pathIndex < 0) 
+                    	{
+                    		;
+                    	}
+                    	else
+                    	{
+                    		boardTap = (int) walkTransitTapPairs_AP2Term[pathIndex][0];
+                        	alightTap = (int) walkTransitTapPairs_AP2Term[pathIndex][1];
+                        	set = (int) walkTransitTapPairs_AP2Term[pathIndex][2];
+                    	}
+            		}
+            	}
+            	else
+            	{
+            		logsumHelper.setWtwTripMcDmuAttributes( mcDmuObject, dmu.getTerminalMgra(), chosenAirportMgra, period, party.getDebugChoiceModels());
+           
+            		double[][] walkTransitTapPairs_AP2Term = logsumHelper.getBestWtwTripTaps();
+            		
+            		if (mcDmuObject.getTransitLogSum(McLogsumsCalculator.WTW) < WORST_UTILITY)
+            		{
+            			;// if there is no transit path from the transit network, set taps to 0
+            		}
+            		else
+            		{
+            			//pick transit path from N-paths
+                        float rn = new Double(party.getRandom()).floatValue();
+                    	int pathIndex = logsumHelper.chooseTripPath(rn, walkTransitTapPairs_AP2Term, party.getDebugChoiceModels(), logger);
+                    	
+                    	if (pathIndex < 0) 
+                    	{
+                    		;
+                    	}
+                    	else
+                    	{
+                    		boardTap = (int) walkTransitTapPairs_AP2Term[pathIndex][0];
+                        	alightTap = (int) walkTransitTapPairs_AP2Term[pathIndex][1];
+                        	set = (int) walkTransitTapPairs_AP2Term[pathIndex][2];
+                    	}
+            		}
+            	}
+            	party.setAP2TerminalBoardTap(boardTap);
+            	party.setAP2TerminalAlightTap(alightTap);
+            	party.setAP2TerminalSet(set);
+            }
+                
 
     	}
     	else if((airportCode.equals("SAN")) && accessMode == AirportModelStructure.RIDEHAILING_LOC2){
         	
            	tripMode=AirportModelStructure.REALLOCATE_TNCSINGLE;
+           	
+           	int chosenAirportMgra = dmu.mode_mgra_map.get(accessMode);
+        	
+        	if (chosenAirportMgra != dmu.getTerminalMgra())
+            {
+        		int boardTap = (int) 0;
+            	int alightTap = (int) 0;
+            	int set = (int) -1;
+            	
+            	if (direction == 0)
+            	{
+            		logsumHelper.setWtwTripMcDmuAttributes( mcDmuObject, chosenAirportMgra, dmu.getTerminalMgra(), period, party.getDebugChoiceModels());
+            		
+            		double[][] walkTransitTapPairs_AP2Term = logsumHelper.getBestWtwTripTaps();
+            		
+            		if (mcDmuObject.getTransitLogSum(McLogsumsCalculator.WTW) < WORST_UTILITY)
+            		{
+            			;// if there is no transit path from the transit network, set taps to 0
+                	}
+            		else
+            		{
+            			//pick transit path from N-paths
+                        float rn = new Double(party.getRandom()).floatValue();
+                    	int pathIndex = logsumHelper.chooseTripPath(rn, walkTransitTapPairs_AP2Term, party.getDebugChoiceModels(), logger);
+                    	if (pathIndex < 0) 
+                    	{
+                    		;
+                    	}
+                    	else
+                    	{
+                    		boardTap = (int) walkTransitTapPairs_AP2Term[pathIndex][0];
+                        	alightTap = (int) walkTransitTapPairs_AP2Term[pathIndex][1];
+                        	set = (int) walkTransitTapPairs_AP2Term[pathIndex][2];
+                    	}
+            		}
+            	}
+            	else
+            	{
+            		logsumHelper.setWtwTripMcDmuAttributes( mcDmuObject, dmu.getTerminalMgra(), chosenAirportMgra, period, party.getDebugChoiceModels());
+           
+            		double[][] walkTransitTapPairs_AP2Term = logsumHelper.getBestWtwTripTaps();
+            		
+            		if (mcDmuObject.getTransitLogSum(McLogsumsCalculator.WTW) < WORST_UTILITY)
+            		{
+            			;// if there is no transit path from the transit network, set taps to 0
+            		}
+            		else
+            		{
+            			//pick transit path from N-paths
+                        float rn = new Double(party.getRandom()).floatValue();
+                    	int pathIndex = logsumHelper.chooseTripPath(rn, walkTransitTapPairs_AP2Term, party.getDebugChoiceModels(), logger);
+                    	
+                    	if (pathIndex < 0) 
+                    	{
+                    		;
+                    	}
+                    	else
+                    	{
+                    		boardTap = (int) walkTransitTapPairs_AP2Term[pathIndex][0];
+                        	alightTap = (int) walkTransitTapPairs_AP2Term[pathIndex][1];
+                        	set = (int) walkTransitTapPairs_AP2Term[pathIndex][2];
+                    	}
+            		}
+            	}
+            	party.setAP2TerminalBoardTap(boardTap);
+            	party.setAP2TerminalAlightTap(alightTap);
+            	party.setAP2TerminalSet(set);
+            }
 
     	}
         

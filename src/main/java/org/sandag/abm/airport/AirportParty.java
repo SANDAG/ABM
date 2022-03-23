@@ -31,6 +31,7 @@ public class AirportParty
     private float           valueOfTime;
     
     private int				airportAccessMGRA;
+    private int				airportAccessTAZ;
     
     private double[][]		APtoTermBestWtwTapPairs;
 	private int				AP2TerminalTransitMode;
@@ -183,6 +184,14 @@ public class AirportParty
 
 	public void setAirportAccessMGRA(int airportAccessMGRA) {
 		this.airportAccessMGRA = airportAccessMGRA;
+	}
+	
+	public int getAirportAccessTAZ() {
+		return airportAccessTAZ;
+	}
+
+	public void setAirportAccessTAZ(int airportAccessTAZ) {
+		this.airportAccessTAZ = airportAccessTAZ;
 	}
 
     /**

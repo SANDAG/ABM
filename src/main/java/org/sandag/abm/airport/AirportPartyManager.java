@@ -633,7 +633,7 @@ public class AirportPartyManager
                                 + parties[i].getIncome() + "," + parties[i].getNights() + ","
                                 + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
                                 + parties[i].getAirportAccessMGRA() + "," 
-                                + parties[i].getOriginTAZ() + "," + parties[i].getDestinationTAZ() + ","
+                                + parties[i].getOriginTAZ() + "," + parties[i].getAirportAccessTAZ() + ","
                                 + parties[i].getMode() + ","
                                 + (parties[i].getAvAvailable() ? 1 : 0) + ","
                                 + parties[i].getArrivalMode() + "," + parties[i].getBoardTap() + "," + 
@@ -648,7 +648,7 @@ public class AirportPartyManager
                                     + parties[i].getIncome() + "," + parties[i].getNights() + ","
                                     + parties[i].getDepartTime() + "," + parties[i].getAirportAccessMGRA() + ","
                                     + parties[i].getDestinationMGRA() + "," 
-                                    + parties[i].getOriginTAZ() + "," + parties[i].getDestinationTAZ() + ","
+                                    + parties[i].getAirportAccessTAZ() + "," + parties[i].getDestinationTAZ() + ","
                                     + SandagModelStructure.WALK_ALTS[0] + ","
                                     + (parties[i].getAvAvailable() ? 1 : 0) + ","
                                     + accMode_null + "," + parties[i].getBoardTap() + "," + 
@@ -663,7 +663,7 @@ public class AirportPartyManager
                                     + parties[i].getIncome() + "," + parties[i].getNights() + ","
                                     + parties[i].getDepartTime() + "," + parties[i].getAirportAccessMGRA() + ","
                                     + parties[i].getDestinationMGRA() + "," 
-                                    + parties[i].getOriginTAZ() + "," + parties[i].getDestinationTAZ() + ","
+                                    + parties[i].getAirportAccessTAZ() + "," + parties[i].getDestinationTAZ() + ","
                                     + (parties[i].getAPHasPublicTransit() ? SandagModelStructure.WALK_TRANSIT_ALTS[0] : privateTransitMode) + ","
                                     + (parties[i].getAvAvailable() ? 1 : 0) + ","
                                     + accMode_null + "," + parties[i].getAP2TerminalBoardTap() + "," + 
@@ -680,7 +680,7 @@ public class AirportPartyManager
                                 + parties[i].getIncome() + "," + parties[i].getNights() + ","
                                 + parties[i].getDepartTime() + "," + parties[i].getAirportAccessMGRA() + ","
                                 + parties[i].getDestinationMGRA() + "," 
-                                + parties[i].getOriginTAZ() + "," + parties[i].getDestinationTAZ() + ","
+                                + parties[i].getAirportAccessTAZ() + "," + parties[i].getDestinationTAZ() + ","
                                 + parties[i].getMode() + ","
                                 + (parties[i].getAvAvailable() ? 1 : 0) + ","
                                 + parties[i].getArrivalMode() + "," + parties[i].getBoardTap() + "," + 
@@ -694,7 +694,7 @@ public class AirportPartyManager
                                     + parties[i].getIncome() + "," + parties[i].getNights() + ","
                                     + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
                                     + parties[i].getAirportAccessMGRA() + "," 
-                                    + parties[i].getOriginTAZ() + "," + parties[i].getDestinationTAZ() + ","
+                                    + parties[i].getOriginTAZ() + "," + parties[i].getAirportAccessTAZ() + ","
                                     + SandagModelStructure.WALK_ALTS[0] + ","
                                     + (parties[i].getAvAvailable() ? 1 : 0) + ","
                                     + accMode_null + "," + parties[i].getBoardTap() + "," + 
@@ -709,7 +709,7 @@ public class AirportPartyManager
                                     + parties[i].getIncome() + "," + parties[i].getNights() + ","
                                     + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
                                     + parties[i].getAirportAccessMGRA() + "," 
-                                    + parties[i].getOriginTAZ() + "," + parties[i].getDestinationTAZ() + ","
+                                    + parties[i].getOriginTAZ() + "," + parties[i].getAirportAccessTAZ() + ","
                                     + (parties[i].getAPHasPublicTransit() ? SandagModelStructure.WALK_TRANSIT_ALTS[0] : privateTransitMode) + ","
                                     + (parties[i].getAvAvailable() ? 1 : 0) + ","
                                     + accMode_null + "," + parties[i].getAP2TerminalBoardTap() + "," + 
