@@ -1,9 +1,11 @@
 Label,Description,Expression,coefficient
+dist,distance,"_DIST@skims[('SOV_NT_M_DIST','MD')]",1
 local_pmsa,Dest PMSA xwalk,_PMSA@skims[('pmsa_dest')],1
 util_size_variable,Size variable,@(df['size_term']).apply(np.log1p),1
 util_no_attractions,No attractions,@df['size_term']==0,-999
 poe_accessibility,station logsum,@df['colonia_pop_accessibility'],1
 tecate,POE is Tecate,@df['poe_id']==2,coef_tecate
+otay,POE is Otay Mesa,@df['poe_id']==1,coef_otay
 otay_mesa_work,"POE is Otay Mesa, work",@(df['poe_id']==1) & (df.tour_type == 'work'),coef_otay_mesa_work
 otay_mesa_school,"POE is Otay Mesa, school",@(df['poe_id']==1) & (df.tour_type == 'school'),coef_otay_mesa_school
 otay_mesa_shop,"POE is Otay Mesa, shop",@(df['poe_id']==1) & (df.tour_type == 'shop'),coef_otay_mesa_shop
@@ -24,3 +26,6 @@ otay_mesa_pmsa4,"POE is Otay Mesa,pmsa4 is destination",@(df['poe_id']==1) & (_P
 tecate_pmsa2,"POE is Tecate, pmsa2 is destination",@(df['poe_id']==2) & (_PMSA == 2),coef_tecate_pmsa2
 tecate_pmsa4,"POE is Tecate,pmsa4 is destination",@(df['poe_id']==2) & (_PMSA == 4),coef_tecate_pmsa4
 tecate_pmsa8,"POE is Tecate,pmsa8 is destination",@(df['poe_id']==2) & (_PMSA == 8),coef_tecate_pmsa8
+dist_work,distance work,@_DIST * (df.tour_type == 'work'),coef_dist_work
+dist_school,distance school,@_DIST * (df.tour_type == 'school'),coef_dist_school
+dist_shop,distance shop,@_DIST * (df.tour_type == 'shop'),coef_dist_shop
