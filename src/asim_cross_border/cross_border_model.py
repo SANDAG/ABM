@@ -28,10 +28,18 @@ def get_poe_wait_times(settings):
     data_dir = settings['data_dir']
     wait_times = pd.read_csv(
         os.path.join(data_dir, settings['poe_wait_times_input_fname']))
-    num_poes = wait_times.poe.nunique()
+    poes = list(settings['poes'].keys())
+    num_poes = len(poes)
     wait_times.rename(columns={
         'StandardWait': 'std_wait', 'SENTRIWait': 'sentri_wait',
         'PedestrianWait': 'ped_wait', 'ReadyWait': 'ready_wait'}, inplace=True)
+    # add new poes if exist
+    if num_poes > len(wait_times.poe.unique()):
+        for i in [i for i in range(0,num_poes) if i not in wait_times.poe.unique()]:
+            wait_time_dummy = wait_times[wait_times.poe == wait_times.poe.unique()[0]].copy()
+            wait_time_dummy[['std_wait','sentri_wait','ped_wait','ready_wait']] = 0
+            wait_time_dummy['poe'] = i
+            wait_times = wait_times.append(wait_time_dummy, ignore_index = True)
     start_hour_mask = wait_times['StartPeriod'] > 16
     wait_times.loc[start_hour_mask, 'StartHour'] = wait_times.loc[
         start_hour_mask, 'StartHour'] + 12
@@ -48,7 +56,7 @@ def get_poe_wait_times(settings):
     wait_times = wait_times.loc[
     wait_times.index.repeat(wait_times['num_hours'])]
     wait_times['asim_start_period'] = np.tile(
-        np.array(range(1, 49)), num_poes)
+        np.array([i for i in range(43,49)]+[i for i in range(1,43)]), num_poes)
 
     # pivot wide
     wait_times_wide = wait_times.pivot(
@@ -58,7 +66,7 @@ def get_poe_wait_times(settings):
         '_'.join([top, str(bottom)])
         for top, bottom in wait_times_wide.columns]
 
-    return wait_times_wide
+    return wait_times_wide.fillna(0)
 
 
 def create_tours(settings):
@@ -781,13 +789,12 @@ if __name__ == '__main__':
 
         # create/update configs in place
         create_scheduling_probs_and_alts(settings, los_settings)
-        create_skims_and_tap_files(settings, new_mazs)
-        create_stop_freq_specs(settings)
-        update_trip_purpose_probs(settings)
-        create_trip_scheduling_duration_probs(settings, los_settings)
+        # create_skims_and_tap_files(settings, new_mazs)
+        # create_stop_freq_specs(settings)
+        # update_trip_purpose_probs(settings)
+        # create_trip_scheduling_duration_probs(settings, los_settings)
 
     if update_wait_times:
-
         # load settings
         wait_time_settings = settings['wait_time_updating']
         period_settings = los_settings['skim_time_periods']
@@ -870,8 +877,8 @@ if __name__ == '__main__':
             # compute dummies
             vol_df['otay'] = (vol_df['name'] == 'Otay Mesa').astype(int)
             vol_df['tecate'] = (vol_df['name'] == 'Tecate').astype(int)
-            vol_df['EA'] = (vol_df['start'] <= 11).astype(int)
-            vol_df['EV'] = (vol_df['start'] > 37).astype(int)
+            vol_df['EA'] = (vol_df['start'] <= 6).astype(int)
+            vol_df['EV'] = (vol_df['start'] > 32).astype(int)
 
             # data matrix
             x = np.zeros((num_obs, len(coef_df.columns)))
@@ -926,8 +933,8 @@ if __name__ == '__main__':
                 col for col in new_wait_times_wide.columns if
                 ('sentri' in col) or
                 ('ready' in col) or
-                (int(col.split('_')[-1]) < 11) or
-                ((int(col.split('_')[-1]) > 46))]
+                (int(col.split('_')[-1]) < 5) or
+                ((int(col.split('_')[-1]) > 40))]
 
             # otay mesa east has to ped lane
             unavail_om_east_cols = [
@@ -940,20 +947,33 @@ if __name__ == '__main__':
 
             if 2 in new_wait_times_wide.index.values:
                 new_wait_times_wide.loc[2, unavail_tecate_cols] = 999
-            
+                #set tecate sentri/ready lane wait to same as standard weight  #--added by Hannah Carson 2/18/2022
+                new_wait_times_wide.loc[2, [col for col in new_wait_times_wide.columns if 'sentri' in col]] = list(new_wait_times_wide.loc[2][[col for col in new_wait_times_wide.columns if 'std' in col]])
+                new_wait_times_wide.loc[2, [col for col in new_wait_times_wide.columns if 'ready' in col]] = list(new_wait_times_wide.loc[2][[col for col in new_wait_times_wide.columns if 'std' in col]])
             if 3 in new_wait_times_wide.index.values:
                 new_wait_times_wide.loc[3, unavail_om_east_cols] = 999
             
             if 4 in new_wait_times_wide.index.values:
                 new_wait_times_wide.loc[4, unavail_jacumba_cols] = 999
 
+            #if standard wait is shorter than SENTRI/Ready, use standard wait
+            def min_wait(df, lane = 'SENTRI', period = 1):
+                std_wait = df['std_wait_{}'.format(period)]
+                pass_wait = df['{}_wait_{}'.format(lane, period)]
+                if std_wait < pass_wait:
+                    return std_wait
+                else:
+                    return pass_wait
+            for i in range(1,49):
+                for lane in ['sentri','ready']:
+                    new_wait_times_wide['{}_wait_{}'.format(lane, i)] = new_wait_times_wide.apply(min_wait, args = (lane, i), axis = 1)
             all_vol_dfs.append(vol_df)
             all_wait_times.append(new_wait_times_wide)
             mazs = mazs[[
                 col for col in mazs.columns
                 if col not in wait_times_wide.columns]]
             mazs = pd.merge(
-                mazs, wait_times_wide, left_on='poe_id', right_index=True,
+                mazs, new_wait_times_wide, left_on='poe_id', right_index=True,
                 how='left')
             mazs.to_csv(os.path.join(
                 data_dir, settings['mazs_output_fname']), index=False)
