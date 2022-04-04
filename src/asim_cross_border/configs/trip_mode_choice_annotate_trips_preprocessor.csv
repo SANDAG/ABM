@@ -1,7 +1,7 @@
 Description,Target,Expression
 ,is_work_tour,df.tour_type == 'work'
-,work_time_factor,"rng.lognormal_for_df(df.set_index('tour_id'), mu=time_distrib_mean_work, sigma=time_distrib_stddev_work, broadcast=True, scale=True).set_axis(df.index, axis='index')"
-,non_work_time_factor,"rng.lognormal_for_df(df.set_index('tour_id'), mu=time_distrib_mean_nonwork, sigma=time_distrib_stddev_nonwork, broadcast=True, scale=True).set_axis(df.index, axis='index')"
+,work_time_factor,df.work_time_factor
+,non_work_time_factor,df.non_work_time_factor
 ,c_ivt,c_ivt_base * (is_work_tour * work_time_factor + (1 - is_work_tour) * non_work_time_factor)
 ,c_fwt,c_ivt * 1.5
 ,c_xwt,c_ivt * 1.5
@@ -39,7 +39,7 @@ effective parking cost,park_cost_prim_dest,"pd.concat((park_cost_day, park_cost_
 ,park_cost_trip_orig_contrib,((1 - first_trip) * (1 - trip_orig_is_tour_dest)) * (park_cost_trip_orig / 2) + (trip_orig_is_tour_dest * (park_cost_tour_dest_contrib / (tot_trips + 2)))
 ,park_cost_trip_dest_contrib,((1 - last_trip) * (1 - trip_dest_is_tour_dest)) * (park_cost_trip_dest / 2) + (trip_dest_is_tour_dest * (park_cost_tour_dest_contrib / (tot_trips + 2)))
 ,parking_cost,park_cost_tour_dest_contrib + park_cost_trip_orig_contrib + park_cost_trip_dest_contrib
-,vot_da,c_ivt / c_cost * 0.6
+,vot_da,c_ivt / trip_c_cost * 0.6
 ,vot_s2,vot_da * cost_share_s2
 ,vot_s3,vot_da * cost_share_s3
 ,_vot_bin_da,"np.where(vot_da < vot_threshold_low, 1, np.where(vot_da < vot_threshold_med, 2, 3))"

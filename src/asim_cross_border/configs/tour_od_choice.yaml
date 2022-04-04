@@ -6,13 +6,16 @@ COEFFICIENTS: tour_od_choice_coefficients.csv
 preprocessor:
   SPEC: tour_od_choice_annotate_choosers_preprocessor
   DF: tours
+  TABLES:
+    - persons
 
 SIMULATE_CHOOSER_COLUMNS:
   - is_mandatory  # created by preprocessor
   - tour_type
   - household_id
   - start
-
+  - work_time_factor
+  - non_work_time_factor
 
 # model-specific logsum-related settings
 CHOOSER_ORIG_COL_NAME: &o origin

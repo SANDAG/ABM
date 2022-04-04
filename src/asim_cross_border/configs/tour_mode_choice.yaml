@@ -63,6 +63,8 @@ LOGSUM_CHOOSER_COLUMNS:
   - person_id
   - household_id
   - origin
+  - work_time_factor
+  - non_work_time_factor
 
 CHOICE_COL_NAME: tour_mode
 MODE_CHOICE_LOGSUM_COLUMN_NAME: mode_choice_logsum
