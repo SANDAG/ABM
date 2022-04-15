@@ -738,6 +738,8 @@ def assign_hh_p_to_tours(tours, persons):
 
     return tours
 
+def weighted_rmse(series1, series2, weights):
+    return np.sqrt(np.sum((series2-series1)**2*weights)/len(series1))
 
 if __name__ == '__main__':
 
@@ -766,6 +768,10 @@ if __name__ == '__main__':
     with open(os.path.join(config_dir, 'network_los.yaml')) as f:
         los_settings = yaml.load(f, Loader=yaml.FullLoader)
 
+    with open(os.path.join(config_dir, 'tour_scheduling_probabilistic.yaml')) as f:
+        scheduling_settings = yaml.load(f, Loader=yaml.FullLoader)
+        sched_probs = scheduling_settings['PROBS_SPEC']
+
     if run_preprocessor:
         print('RUNNING PREPROCESSOR!')
 
@@ -788,13 +794,15 @@ if __name__ == '__main__':
             data_dir, settings['persons_output_fname']), index=False)
 
         # create/update configs in place
-        create_scheduling_probs_and_alts(settings, los_settings)
-        # create_skims_and_tap_files(settings, new_mazs)
+        # create_scheduling_probs_and_alts(settings, los_settings)
+        create_skims_and_tap_files(settings, new_mazs)
         # create_stop_freq_specs(settings)
         # update_trip_purpose_probs(settings)
         # create_trip_scheduling_duration_probs(settings, los_settings)
 
     if update_wait_times:
+        convergeRMSE = 0.65
+        waitRMSE = 100        
         # load settings
         wait_time_settings = settings['wait_time_updating']
         period_settings = los_settings['skim_time_periods']
@@ -841,8 +849,20 @@ if __name__ == '__main__':
         all_vol_dfs = []
         
         num_iters = wait_time_settings['iters'] + 1
+        sched_weights = pd.read_csv(os.path.join(config_dir, sched_probs))
+        sched_weights = sched_weights.set_index('purpose_id').T.reset_index()
+        sched_weights['start'] = sched_weights['index'].map(lambda n: n.split('_')[0])
+        sched_weights = sched_weights.drop('index',axis = 1).groupby('start').sum()
+        sched_weights = sched_weights.T
+        sched_weights = sched_weights/5
+        sched_weights.loc['total'] = sched_weights.sum()
+        sched_weights = sched_weights.loc['total'][['{}'.format(i) for i in range(1,49)]]
         for i in range(1, num_iters):
-
+            print('RMSE fit: {}'.format(waitRMSE))
+            if waitRMSE <= convergeRMSE:
+                print("wait times have converged")
+                operated_iters = i
+                break
             print('UPDATING POE WAIT TIMES: ITER {0}'.format(i))
             process = subprocess.Popen([
                     'python', '-u', 'simulation.py', '--settings_file',
@@ -964,10 +984,11 @@ if __name__ == '__main__':
                     return std_wait
                 else:
                     return pass_wait
-            for i in range(1,49):
+            for j in range(1,49):
                 for lane in ['sentri','ready']:
-                    new_wait_times_wide['{}_wait_{}'.format(lane, i)] = new_wait_times_wide.apply(min_wait, args = (lane, i), axis = 1)
+                    new_wait_times_wide['{}_wait_{}'.format(lane, j)] = new_wait_times_wide.apply(min_wait, args = (lane, j), axis = 1)
             all_vol_dfs.append(vol_df)
+            
             all_wait_times.append(new_wait_times_wide)
             mazs = mazs[[
                 col for col in mazs.columns
@@ -977,9 +998,17 @@ if __name__ == '__main__':
                 how='left')
             mazs.to_csv(os.path.join(
                 data_dir, settings['mazs_output_fname']), index=False)
-
+            if i > 1:
+                prev_iter = all_vol_dfs[i -2]
+                diff = prev_iter[['poe_id','lane_type','start','vol','wait_time']].merge(vol_df[['poe_id','lane_type','start','vol','wait_time']], how = 'outer', on = ['poe_id','lane_type','start'], suffixes = ['','_iter'])
+                diff['start'] = diff['start'].astype(str)
+                diff = diff.merge(pd.DataFrame(sched_weights).reset_index(), how = 'left', on = 'start')
+                waitRMSE = weighted_rmse(diff['wait_time'],diff['wait_time_iter'],diff['total'])
+                volRMSE = weighted_rmse(diff['vol'],diff['vol_iter'],diff['total'])
+                waitRMSE = min(waitRMSE, volRMSE)
+            print("waitRMSE iter {}".format(i),waitRMSE)
         all_wait_times = pd.concat(all_wait_times)
-        all_wait_times['iter'] = np.array(range(0, num_iters)).repeat(
+        all_wait_times['iter'] = np.array(range(0, operated_iters)).repeat(
             all_wait_times.index.nunique())
         all_wait_times.to_csv('./data/all_wait_times.csv')
 
