@@ -25,6 +25,9 @@ CONSTANTS:
     orig_col_name: origin
     dest_col_name: destination
     wait_time_col_regex: '_wait_[0-9]+$'
+    san_ysidro_toll: 0 #cents
+    otay_mesa_toll: 500 #cents
+    tecate_toll: 0 #cents
 
 use_TVPB_constants: False
 

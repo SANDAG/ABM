@@ -31,3 +31,15 @@ otay_WALK,-0.72142131,F
 tecate_SHARED2,-0.436865221,F
 tecate_SHARED3,-0.194800229,F
 tecate_WALK,0.662788104,F
+otay_toll_work,-0.006,
+otay_toll_school,-0.0165,
+otay_toll_shop,-0.011,
+otay_toll_visit_other,-0.006,
+sany_toll_work,-0.006,
+sany_toll_school,-0.0165,
+sany_toll_shop,-0.011,
+sany_toll_visit_other,-0.006,
+tec_toll_work,-0.006,
+tec_toll_school,-0.0165,
+tec_toll_shop,-0.011,
+tec_toll_visit_other,-0.006,

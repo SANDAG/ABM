@@ -16,3 +16,6 @@ otay_WALK,otay_WALK,otay_WALK,otay_WALK,otay_WALK,
 tecate_SHARED2,tecate_SHARED2,tecate_SHARED2,tecate_SHARED2,tecate_SHARED2,
 tecate_SHARED3,tecate_SHARED3,tecate_SHARED3,tecate_SHARED3,tecate_SHARED3,
 tecate_WALK,tecate_WALK,tecate_WALK,tecate_WALK,tecate_WALK,
+otay_toll,otay_toll_shop,otay_toll_work,otay_toll_visit_other,otay_toll_visit_other,otay_toll_school
+sany_toll,sany_toll_shop,sany_toll_work,sany_toll_visit_other,sany_toll_visit_other,sany_toll_school
+tec_toll,tec_toll_shop,tec_toll_work,tec_toll_visit_other,tec_toll_visit_other,tec_toll_school
