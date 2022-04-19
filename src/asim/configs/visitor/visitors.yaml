@@ -1,0 +1,31 @@
+# misc settings
+data_dir: data
+config_dir: configs
+num_visitors:
+  personal: 11800000
+  business: 2500000
+
+# Visitor model settings: occupancy rates for hotels, households and share of each that are business visitors
+occupancy_rate:
+  hotel: 0.7
+  household: 0.018
+business_percent:
+  hotel: 0.3
+  household: 0.04
+
+# Visitor data tables specified here
+visitor_tables:
+  land_use: land_use.csv
+  mgraData: mgra13_based_input2016.csv # Replaced by land_use.csv?
+  auto_available: visitor_autoAvailable.csv
+  income: visitor_income.csv
+  party_size: visitor_partySize.csv
+  stop_frequency: visitor_stopFrequency.csv
+  stop_purpose: visitor_stopPurpose.csv
+  tour_TOD: visitor_tourTOD.csv
+  segment_frequency:
+    business: visitor_businessFrequency.csv
+    personal: visitor_personalFrequency.csv
+  stop_duration:
+    outbound: visitor_outboundStopDuration.csv
+    inbound: visitor_inboundStopDuration.csv
