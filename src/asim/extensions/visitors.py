@@ -6,23 +6,21 @@ import yaml
 import os
 
 #####################################################################################################
-#   This script prepares visitor distribution data for simulation by performing the following steps:
-#   1. Visitor Tour Enumeration
-#       a. Generate number of visitor parties by segment (Personal or Business) [calculate_n_parties()]
-#       b. Generate tours by tour_type for each segment [simulate_tour_types()]
-#       c. Generate features party size, income, and car availability [simulate_tour_features()]
-#   2.
+#   This script prepares visitor tour enumeration data for Activity Sim by performing the following steps:
+#   1. Generate number of visitor parties by segment (Personal or Business) [calculate_n_parties()]
+#   2. Generate tours by tour_type for each segment [simulate_tour_types()]
+#   3. Generate features party size, income, and car availability [simulate_tour_features()]
 #####################################################################################################
 
 
 # Generic functions
-def load_tables_recursively(file_path, nested_dict):
-    # This function loads all the CSV tables from the yaml file
+def load_tables(file_path, nested_dict):
+    # This function recursively loads all the CSV tables from the yaml file
     # and returns a mirrored nested dict with tables where CSV file paths were stored
     output = copy.deepcopy(nested_dict)
     for k, v in output.items():
         if isinstance(v, dict):
-            output[k] = load_tables_recursively(file_path, v)
+            output[k] = load_tables(file_path, v)
         else:
             output[k] = pd.read_csv(os.path.join(file_path, v))
     return output
@@ -36,21 +34,22 @@ class Visitor:
             self.parameters = yaml.load(f, Loader=yaml.FullLoader)
 
         # Read in the CSV-stored distribution values indicated in the yaml
-        self.tables = load_tables_recursively(
+        self.tables = load_tables(
             file_path=self.parameters['data_dir'],
             nested_dict=self.parameters['visitor_tables']
         )
 
         # Generate tours
-        self.tours = self.simulate_tours()
+        print("Generating visitor tours")
+        self.tours, self.households, self.persons = self.simulate_tours()
 
     def calculate_n_parties(self, n_hh, n_hotel):
         # Estimate number of visitor parties in hotel rooms and households
         hotel_parties = n_hotel * self.parameters['occupancy_rate']['hotel']
         household_parties = n_hh * self.parameters['occupancy_rate']['household']
-
         # Estimate number of parties by segment
         business_percent = self.parameters['business_percent']
+
         n_parties = {
             'business': round(
                 hotel_parties * business_percent['hotel'] + household_parties * business_percent['household']
@@ -66,9 +65,12 @@ class Visitor:
         return n_parties
 
     def simulate_tour_types(self, parties):
+        # Probability distribution tables
+        probs_segment = self.tables['segment_frequency']
+
         segment_parties = []
         for s, n in parties.items():
-            party_tours = self.tables['segment_frequency'][s].sample(n=n, weights='Percent').reset_index(drop=True)
+            party_tours = probs_segment[s].sample(n=n, weights='Percent').reset_index(drop=True)
             party_tours.index += 1  # Ensures that theres no party id of 0 that would get dropped
 
             # Cleanup labels
@@ -95,6 +97,11 @@ class Visitor:
         # Function to simulate tours for k visitor parties' features (party size, auto availability, and income
         # Require tour_type and segment strings, returns a data frame
 
+        # Probability distribution tables
+        probs_size = self.tables['party_size']
+        probs_auto = self.tables['auto_available']
+        probs_income = self.tables['income']
+
         # Generates a list of tour tour_type frequencies per party
         party_tours = self.simulate_tour_types(n_seg_parties)
 
@@ -111,9 +118,9 @@ class Visitor:
             k = len(group)
             tour = {
                 'tour_type': [tour_type] * k, 'segment': [segment] * k,
-                'number_of_participants': self.tables['party_size'].sample(n=k, weights=tour_type).PartySize.values,
-                'auto_available': np.random.binomial(1, self.tables['auto_available'][tour_type], k),
-                'income': self.tables['income'].sample(n=k, weights=segment).Income.values,
+                'number_of_participants': probs_size.sample(n=k, weights=tour_type).PartySize.values,
+                'auto_available': np.random.binomial(1, probs_auto[tour_type], k),
+                'income': probs_income.sample(n=k, weights=segment).Income.values,
                 'tour_category': 'mandatory' if tour_type == 'work' else 'non-mandatory'
             }
             tour_list.append(pd.DataFrame(tour))
@@ -133,32 +140,69 @@ class Visitor:
         return party_tours
 
     def simulate_tours(self):
-        print("Generating visitor tours")
-
+        # Probability distribution tables
         tours = []
         for index, maz in self.tables['land_use'].iterrows():
-            # Calculate number of parties per visitor segment [personal/business] in the MAZ
+            # Calculate number of parties per visitor segment [personal/business] in the origin
             n_seg_parties = self.calculate_n_parties(n_hh=maz['hh'], n_hotel=maz['hotelroomtotal'])
 
             # If not empty
             if n_seg_parties:
                 # Generate tours for each segment (personal or business)
                 maz_tours = self.simulate_tour_features(n_seg_parties)
-                maz_tours['MAZ'] = int(maz['MAZ'])
+                maz_tours['origin'] = int(maz['MAZ'])
                 tours.append(maz_tours)
         tours = pd.concat(tours)
 
-        # Assign person id
-        tours['person_id'] = tours.groupby(['MAZ', 'party']).ngroup()
+        # Assign travel household_id, which we can assume as equivalent to party_id
+        tours['household_id'] = tours.groupby(['origin', 'party']).ngroup()
+        tours.household_id += 1
 
         # Assign tour id
         tours = tours.reset_index(drop=True).drop(columns=['party'])
         tours = tours.reset_index().rename(columns={'index': 'tour_id'})
+        tours.tour_id += 1
 
-        return pd.DataFrame(tours)
+        # Create person and household data, then assign person to each tour from the associated household
+        tours, households, persons = self.assign_person_households(tours)
+        return tours, households, persons
+
+    def assign_person_households(self, tours):
+        # Group by hh party
+        hh_parties = tours.groupby(['household_id'])['number_of_participants']
+
+        # Calculate total number of visitors/households based on N parties and sum of max party sizes for each party
+        total_households = tours.household_id.max()
+
+        # Create households and persons
+        households = pd.DataFrame({'household_id': range(0, total_households)})
+        households.household_id += 1
+
+        # For each hh party, create n-persons into it
+        persons = pd.DataFrame()
+        person_count = 1
+        for hh_id, party in hh_parties:
+            household = pd.DataFrame({'person_id': range(0, party.max()), 'household_id': hh_id})
+            household.person_id += person_count
+            person_count += party.max()
+            persons = pd.concat([persons, household])
+        persons.reset_index(drop=True, inplace=True)
+
+        # Assign person id to the tour based on household_id, just assign the first person in each household
+        tours = tours.merge(persons.groupby('household_id').first().reset_index(), on='household_id')
+
+        # Return all three
+        return tours, households, persons
+
+    def create_joint_tours(self):
+        pass
+
+    def write_to_csv(self):
+        pass
 
 
 if __name__ == '__main__':
+    # Testing
     os.chdir('src/asim')
     self = Visitor()
     # maz = self.tables['land_use'].loc[0,]
