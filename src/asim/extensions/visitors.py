@@ -1,6 +1,5 @@
 # Import Modules
 import copy
-import random
 import pandas as pd
 import numpy as np
 import yaml
@@ -10,9 +9,11 @@ import os
 #   This script prepares visitor distribution data for simulation by performing the following steps:
 #   1. Visitor Tour Enumeration
 #       a. Generate number of visitor parties by segment (Personal or Business) [calculate_n_parties()]
-#       b. Generate the number of tours by segment, party size, income, and car availability [create_tours()]
+#       b. Generate tours by tour_type for each segment [simulate_tour_types()]
+#       c. Generate features party size, income, and car availability [simulate_tour_features()]
 #   2.
 #####################################################################################################
+
 
 # Generic functions
 def load_tables_recursively(file_path, nested_dict):
@@ -39,7 +40,9 @@ class Visitor:
             file_path=self.parameters['data_dir'],
             nested_dict=self.parameters['visitor_tables']
         )
-        # self.simulate_maz_tours()
+
+        # Generate tours
+        self.tours = self.simulate_tours()
 
     def calculate_n_parties(self, n_hh, n_hotel):
         # Estimate number of visitor parties in hotel rooms and households
@@ -58,15 +61,15 @@ class Visitor:
         }
 
         # Removing any zero parties to avoid simulating non-parties.
-        n_parties = {k:v for (k,v) in n_parties.items() if v > 0}
+        n_parties = {k: v for (k, v) in n_parties.items() if v > 0}
 
         return n_parties
 
-    def simulate_tour_purposes(self, parties):
+    def simulate_tour_types(self, parties):
         segment_parties = []
-        for segment, n in parties.items():
-            party_tours = self.tables['segment_frequency'][segment].sample(n=n, weights='Percent').reset_index(drop=True)
-            party_tours.index += 1 # Ensures that theres no party id of 0 that would get dropped
+        for s, n in parties.items():
+            party_tours = self.tables['segment_frequency'][s].sample(n=n, weights='Percent').reset_index(drop=True)
+            party_tours.index += 1  # Ensures that theres no party id of 0 that would get dropped
 
             # Cleanup labels
             party_tours = party_tours.rename(
@@ -76,50 +79,49 @@ class Visitor:
             # Reshape to long and remove 0s
             party_tours = pd.melt(party_tours,
                                   id_vars='party',
-                                  var_name='purpose',
-                                  value_name='count').replace(0,pd.NA).dropna()
+                                  var_name='tour_type',
+                                  value_name='count').replace(0, pd.NA).dropna()
 
             # Add visitor segment group
-            party_tours['segment'] = segment
+            party_tours['segment'] = s
 
             # Add to data list
             segment_parties.append(party_tours)
 
-        #Stack the result
+        # Stack the result
         return pd.concat(segment_parties)
 
-    def simulate_tour_features(self, purpose, segment,k ):
-        # This function simulates tour features in bulk based on k tours purposes, result gets joined to party table
-
-        # Estimate the features for each of the tours, based on purpose, result to data frame
-        # tour purpose, segment, party size [int], auto availability [true/false], and income [int]
-        tour = {
-            'purpose': [purpose] * k, 'segment': [segment] * k,
-            'number_of_participants': self.tables['party_size'].sample(n=k, weights=purpose).PartySize.values,
-            'auto_available': np.random.binomial(1, self.tables['auto_available'][purpose], k),
-            'income': self.tables['income'].sample(n=k, weights=segment).Income.values
-        }
-
-        return pd.DataFrame(tour)
-
-    def simulate_tours(self, n_seg_parties):
+    def simulate_tour_features(self, n_seg_parties):
         # Function to simulate tours for k visitor parties' features (party size, auto availability, and income
-        # Require purpose and segment strings, returns a data frame
+        # Require tour_type and segment strings, returns a data frame
 
-        # Generates a list of tour purpose frequencies per party
-        party_tours = self.simulate_tour_purposes(n_seg_parties)
+        # Generates a list of tour tour_type frequencies per party
+        party_tours = self.simulate_tour_types(n_seg_parties)
 
-        # Expand the tour purposes by N tour counts into a list
+        # Expand the tour tour_types by N tour counts into a list
         party_tours = party_tours.loc[party_tours.index.repeat(party_tours['count'])].drop(columns='count')
 
-        # Group by tour purpose frequency and segment, to bulk simulate k tours by purpose
-        # then expanded feature table for the tour purposes
-        freq_group = party_tours.groupby(['purpose', 'segment'])
-        tour_features = pd.concat([self.simulate_tour_features(p, s, k=len(g)) for (p, s), g in freq_group])
+        # Group by tour tour_type frequency and segment, to bulk simulate k tours by tour_type
+        freq_group = party_tours.groupby(['tour_type', 'segment'])
 
-        # Join tour party to features by segment and purpose. Need to align the indices first
-        party_tours = party_tours.sort_values(by=['purpose', 'segment']).reset_index(drop=True)
-        tour_features = tour_features.sort_values(by=['purpose', 'segment']).reset_index(drop=True)
+        # Estimate the features for each of the tours, based on tour_type, result to data frame
+        # tour tour_type, segment, party size [int], auto availability [true/false], and income [int]
+        tour_list = []
+        for (tour_type, segment), group in freq_group:
+            k = len(group)
+            tour = {
+                'tour_type': [tour_type] * k, 'segment': [segment] * k,
+                'number_of_participants': self.tables['party_size'].sample(n=k, weights=tour_type).PartySize.values,
+                'auto_available': np.random.binomial(1, self.tables['auto_available'][tour_type], k),
+                'income': self.tables['income'].sample(n=k, weights=segment).Income.values,
+                'tour_category': 'mandatory' if tour_type == 'work' else 'non-mandatory'
+            }
+            tour_list.append(pd.DataFrame(tour))
+        tour_features = pd.concat(tour_list)
+
+        # Join tour party to features by segment and tour_type. Need to align the indices first
+        party_tours = party_tours.sort_values(by=['tour_type', 'segment']).reset_index(drop=True)
+        tour_features = tour_features.sort_values(by=['tour_type', 'segment']).reset_index(drop=True)
         party_tours = party_tours[['party']].join(tour_features).sort_values(by=['party']).reset_index(drop=True)
 
         # calc the tour_num out of tour_count
@@ -130,7 +132,7 @@ class Visitor:
 
         return party_tours
 
-    def simulate_maz_tours(self):
+    def simulate_tours(self):
         print("Generating visitor tours")
 
         tours = []
@@ -141,13 +143,13 @@ class Visitor:
             # If not empty
             if n_seg_parties:
                 # Generate tours for each segment (personal or business)
-                maz_tours = self.simulate_tours(n_seg_parties)
+                maz_tours = self.simulate_tour_features(n_seg_parties)
                 maz_tours['MAZ'] = int(maz['MAZ'])
                 tours.append(maz_tours)
         tours = pd.concat(tours)
 
         # Assign person id
-        tours['person_id'] = tours.groupby(['MAZ','party']).ngroup()
+        tours['person_id'] = tours.groupby(['MAZ', 'party']).ngroup()
 
         # Assign tour id
         tours = tours.reset_index(drop=True).drop(columns=['party'])
@@ -159,4 +161,4 @@ class Visitor:
 if __name__ == '__main__':
     os.chdir('src/asim')
     self = Visitor()
-    maz = self.tables['land_use'].loc[5,]
+    # maz = self.tables['land_use'].loc[0,]
