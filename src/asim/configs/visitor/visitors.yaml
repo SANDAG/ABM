@@ -1,9 +1,6 @@
 # misc settings
-data_dir: data
+data_dir: configs/preprocessing_data
 config_dir: configs
-num_visitors:
-  personal: 11800000
-  business: 2500000
 
 # Visitor model settings: occupancy rates for hotels, households and share of each that are business visitors
 occupancy_rate:
@@ -16,7 +13,6 @@ business_percent:
 # Visitor data tables specified here
 visitor_tables:
   land_use: land_use.csv
-  mgraData: mgra13_based_input2016.csv # Replaced by land_use.csv?
   auto_available: visitor_autoAvailable.csv
   income: visitor_income.csv
   party_size: visitor_partySize.csv

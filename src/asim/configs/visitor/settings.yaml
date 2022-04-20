@@ -57,7 +57,7 @@ input_table_list:
 
 # TODO In this case it will be allocating people in the appropriate zones per the distributions (rather than POE)?
   - tablename: land_use
-    filename: mazs_visitor.csv
+    filename: land_use.csv
     index_col: zone_id
     rename_columns:
       MAZ: zone_id
@@ -67,11 +67,13 @@ input_table_list:
     filename: tours_visitor.csv
     index_col: tour_id
     keep_columns:
-      - pass_type
       - tour_type
-      - purpose_id
+      - segment
       - tour_category
       - number_of_participants
+      - auto_available
+      - income
+      - origin
       - tour_num
       - tour_count
       - household_id
@@ -107,7 +109,7 @@ models:
   - initialize_tvpb
   # # ---
   - tour_scheduling_probabilistic
-  - tour_od_choice
+  - tour_od_choice # Replace with destination choice model
   - tour_mode_choice_simulate
   - stop_frequency
   - trip_purpose
@@ -142,7 +144,6 @@ output_tables:
   # FIXME sort is an undocumented feature - sorts table by best index or ref_col according to traceable_table_indexes
   sort: True
   tables:
-    - checkpoints
     - accessibility
     - land_use
     - households
