@@ -493,7 +493,16 @@ def create_land_use_file(
             colonia_pop_field=colonia_pop_field,
             distance_param=distance_param)
     mazs = mazs.rename(columns={'mgra': 'MAZ', 'taz': 'TAZ'})
-
+    maz_dtypes = mazs.dtypes
+    #add external stations if not exist
+    for i in range(1,13):
+        if i not in mazs.TAZ.unique():
+            mazs = mazs.append(pd.Series({'MAZ': int(mazs.MAZ.max())+1, 'TAZ':int(i)}),ignore_index = True)
+    mazs = mazs.fillna(0)
+    # mazs['MAZ'] = mazs['MAZ'].astype(np.int64)
+    mazs = mazs.sort_values('TAZ') # to ensure output matrices go in the correct order
+    for col in mazs.columns:
+        mazs[col] = mazs[col].astype(maz_dtypes[col])
     # merge in wide wait times
     wide_wait_times = get_poe_wait_times(settings)
     mazs = pd.merge(
@@ -741,6 +750,22 @@ def assign_hh_p_to_tours(tours, persons):
 def weighted_rmse(series1, series2, weights):
     return np.sqrt(np.sum((series2-series1)**2*weights)/len(series1))
 
+def order_skim(skim_file,maxzone):
+    skim = omx.open_file(skim_file)
+    lookup = skim.mapping(skim.list_mappings()[0])
+    matarray = []
+    name = []
+    order = [lookup[i] for i in range(1,maxzone)]
+    for mat in skim.list_matrices():
+        matarray.append(np.array(skim[mat]))
+        name.append(mat)
+    skim.close()
+    new_file = omx.open_file(skim_file,'w')    
+    for i in range(len(name)):
+        new_file[name[i]] = matarray[i]
+    new_file.create_mapping('TAZ',np.arange(1,4997))
+    new_file.close()
+
 if __name__ == '__main__':
 
     # runtime args
@@ -767,10 +792,15 @@ if __name__ == '__main__':
         config_dir = settings['config_dir']
     with open(os.path.join(config_dir, 'network_los.yaml')) as f:
         los_settings = yaml.load(f, Loader=yaml.FullLoader)
-
+    #read in tour_scheduling settings to get probabilities for wait time convergence weights
     with open(os.path.join(config_dir, 'tour_scheduling_probabilistic.yaml')) as f:
         scheduling_settings = yaml.load(f, Loader=yaml.FullLoader)
         sched_probs = scheduling_settings['PROBS_SPEC']
+    #read in write matrices for filename if needed to re-order output matrices
+    with open(os.path.join(config_dir, 'write_trip_matrices.yaml')) as f:
+        output_matrix = yaml.load(f, Loader=yaml.FullLoader)
+        omx_file_list = output_matrix['MATRICES']
+        omx_file_list = [omx['file_name'] for omx in omx_file_list]
 
     if run_preprocessor:
         print('RUNNING PREPROCESSOR!')
@@ -795,7 +825,7 @@ if __name__ == '__main__':
 
         # create/update configs in place
         # create_scheduling_probs_and_alts(settings, los_settings)
-        create_skims_and_tap_files(settings, new_mazs)
+        # create_skims_and_tap_files(settings, new_mazs)
         # create_stop_freq_specs(settings)
         # update_trip_purpose_probs(settings)
         # create_trip_scheduling_duration_probs(settings, los_settings)
@@ -1023,3 +1053,7 @@ if __name__ == '__main__':
         _, stderr = process.communicate()
         if process.returncode != 0:
             raise subprocess.SubprocessError(stderr.decode())
+        # post process matrices
+        maxzone = pd.read_csv(os.path.join('./data',settings['mazs_output_fname'])).TAZ.max()
+        for file in omx_file_list:
+            order_skim(os.path.join('./output',file),maxzone)
