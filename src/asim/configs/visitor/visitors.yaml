@@ -1,5 +1,6 @@
 # misc settings
-data_dir: configs/preprocessing_data
+tables_dir: configs/visitor/prob_tables
+data_dir: data
 config_dir: configs
 
 # Visitor model settings: occupancy rates for hotels, households and share of each that are business visitors
@@ -10,9 +11,11 @@ business_percent:
   hotel: 0.3
   household: 0.04
 
+# Any necessary data tables specified here
+land_use: land_use.csv
+
 # Visitor data tables specified here
 visitor_tables:
-  land_use: land_use.csv
   auto_available: visitor_autoAvailable.csv
   income: visitor_income.csv
   party_size: visitor_partySize.csv
