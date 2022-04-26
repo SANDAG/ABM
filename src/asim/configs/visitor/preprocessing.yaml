@@ -1,7 +1,9 @@
 # misc settings
 tables_dir: configs/visitor/prob_tables
 data_dir: data
-config_dir: configs
+config_dir: configs/visitor
+plot_dir: configs/visitor/figs
+plot_figs: True
 
 # Visitor model settings: occupancy rates for hotels, households and share of each that are business visitors
 occupancy_rate:
@@ -11,7 +13,12 @@ business_percent:
   hotel: 0.3
   household: 0.04
 
-# Any necessary data tables specified here
+purpose_ids:
+  work: 0
+  recreate: 1
+  dining: 2
+
+# Any necessary data tables from general input data specified here (not preprocessing specific tables)
 land_use: land_use.csv
 
 # Visitor data tables specified here
@@ -30,19 +37,16 @@ input_data:
     inbound: visitor_inboundStopDuration.csv
 
 # output data
-output_data:
-  mazs_output_fname: mazs_xborder.csv
-  households_output_fname: households_xborder.csv
-  persons_output_fname: persons_xborder.csv
-  tours_output_fname: tours_xborder.csv
-  tap_lines_output_fname: tap_lines.csv
-  taps_output_fname: taps.csv
+output_fname:
+  households: households_visitor.csv
+  persons: persons_visitor.csv
+  tours: tours_visitor.csv
 
   # output configs
-  tour_scheduling_probs_output_fname: tour_scheduling_probs.csv
-  tour_scheduling_alts_output_fname: tour_departure_and_duration_alternatives.csv
-  stop_frequency_alts_output_fname: stop_frequency_alternatives.csv
-  stop_frequency_coeffs_output_formattable_fname: 'stop_frequency_coefficients_{purpose}.csv'
-  stop_frequency_expressions_output_formattable_fname: 'stop_frequency_{purpose}.csv'
-  trip_purpose_probs_output_fname: trip_purpose_probs.csv
-  trip_scheduling_probs_output_fname: trip_scheduling_probs.csv
+  tour_scheduling_probs: tour_scheduling_probs.csv
+  tour_scheduling_alts: tour_departure_and_duration_alternatives.csv
+  stop_frequency_altse: stop_frequency_alternatives.csv
+  stop_frequency_coeffs: 'stop_frequency_coefficients_{purpose}.csv'
+  stop_frequency_expressions: 'stop_frequency_{purpose}.csv'
+  trip_purpose_probs: trip_purpose_probs.csv
+  trip_scheduling_probs: trip_scheduling_probs.csv
