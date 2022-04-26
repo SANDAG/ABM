@@ -45,7 +45,7 @@ output_fname:
   # output configs
   tour_scheduling_probs: tour_scheduling_probs.csv
   tour_scheduling_alts: tour_departure_and_duration_alternatives.csv
-  stop_frequency_altse: stop_frequency_alternatives.csv
+  stop_frequency_alts: stop_frequency_alternatives.csv
   stop_frequency_coeffs: 'stop_frequency_coefficients_{purpose}.csv'
   stop_frequency_expressions: 'stop_frequency_{purpose}.csv'
   trip_purpose_probs: trip_purpose_probs.csv
