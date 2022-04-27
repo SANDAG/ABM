@@ -1,23 +1,28 @@
 # Import Modules
+import glob
+import os
+
 from visitor_tour_scheduling import *
 from visitor_tour_enum import *
 from visitor_tour_frequency import *
 
 #   This script prepares visitor data for:
-#   1. Tour enumeration generates tours with party size, income,
-#   segment (Personal or Business) [calculate_n_parties()], and car availability.
+#   1.  Tour enumeration generates tours with party size, income,
+#       segment (Personal or Business) [calculate_n_parties()], and car availability.
+#   2.  Tour time of day scheduling
 
 # Main injection point for preprocessing
-def preprocess_visitor():
+def preprocess_visitor(settings_path='../../configs/visitor/preprocessing.yaml'):
+
+    # Find config root
+    # root = find_settings_path(settings_path)
+
     # Read the visitor settings YAML
-    with open('../../configs/visitor/preprocessing.yaml') as f:
+    with open(settings_path) as f:
         parameters = yaml.load(f, Loader=yaml.FullLoader)
 
     # Add root
-    # parameters = {k: '../../' + v if '_dir' in k else {k: v} for k, v in parameters.items()}
-    for x in ['data_dir', 'config_dir', 'plot_dir', 'tables_dir']:
-        parameters[x] = '../../' + parameters[x]
-
+    # parameters = {k: ''.join([root, v]) if '_dir' in k else {k: v} for k, v in parameters.items()}
 
     # Read in the CSV-stored distribution values indicated in the yaml
     tables = load_tables(
@@ -63,11 +68,18 @@ def load_tables(file_path, nested_dict):
             output[k] = pd.read_csv(os.path.join(file_path, v))
     return output
 
+def find_settings_path(target):
+    # Finds the target path if it is in a parent directory
+    pardir = ''
+    while not os.path.isfile(os.path.join(pardir, target)):
+        pardir = os.path.join(os.pardir, pardir)
+    return pardir
+
 
 if __name__ == '__main__':
     # Testing
     print(os.listdir())
     # os.chdir('../../')
     # os.chdir('src/asim/extensions/visitor')
-    # data = preprocess_visitor()
+    data = preprocess_visitor()
     # maz = self.tables['land_use'].loc[0,]
