@@ -2,11 +2,6 @@ import os
 import pandas as pd
 import numpy as np
 
-#   This script prepares visitor tour enumeration data for Activity Sim by performing the following steps:
-#   1. Generate number of visitor parties by segment (Personal or Business) [calculate_n_parties()]
-#   2. Generate tours by tour_type for each segment [simulate_tour_types()]
-#   3. Generate features party size, income, and car availability [simulate_tour_features()]
-
 
 def create_tour_enumeration(tables, parameters):
 

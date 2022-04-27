@@ -1,7 +1,4 @@
 # Import Modules
-import glob
-import os
-
 from visitor_tour_scheduling import *
 from visitor_tour_enum import *
 from visitor_stop_frequency import *
@@ -10,6 +7,7 @@ from visitor_stop_frequency import *
 #   1.  Tour enumeration generates tours with party size, income,
 #       segment (Personal or Business) [calculate_n_parties()], and car availability.
 #   2.  Tour time of day scheduling
+
 
 # Main injection point for preprocessing
 def preprocess_visitor(settings_path='../../configs/visitor/preprocessing.yaml'):
@@ -40,16 +38,15 @@ def preprocess_visitor(settings_path='../../configs/visitor/preprocessing.yaml')
     processed_data = create_tour_enumeration(tables, parameters)
 
     # create/update configs in place
-    processed_data['tour_scheduling_probs'] = create_tour_scheduling_probs(tables['tour_TOD'], parameters)
-    # create_scheduling_probs_and_alts(settings, los_settings) # Not sure if this needs to be done?
-
-    # TODO create_stop_freq_specs(tables['stop_frequency'], parameters)
+    processed_data['tour_scheduling_specs'] = create_tour_scheduling_specs(tables['tour_TOD'], parameters)
+    processed_data['stop_frequency_specs'] = create_stop_freq_specs(tables['stop_frequency'], parameters)
     # TODO create_skims_and_tap_files(settings, new_mazs)
-    # TODO create_stop_freq_specs(settings)
     # TODO update_trip_purpose_probs(settings)
     # TODO create_trip_scheduling_duration_probs(settings, los_settings)
 
-    return processed_data
+    return {'parameters': parameters,
+            'tables': tables,
+            'processed': processed_data}
 
 
 def load_tables(file_path, nested_dict):
@@ -63,6 +60,7 @@ def load_tables(file_path, nested_dict):
             output[k] = pd.read_csv(os.path.join(file_path, v))
     return output
 
+
 def find_settings_path(target):
     # Finds the target path if it is in a parent directory
     pardir = ''
@@ -73,8 +71,7 @@ def find_settings_path(target):
 
 if __name__ == '__main__':
     # Testing
-    print(os.listdir())
-    # os.chdir('../../')
-    # os.chdir('src/asim/extensions/visitor')
-    data = preprocess_visitor()
-    # maz = self.tables['land_use'].loc[0,]
+    visitor = preprocess_visitor()
+
+    parameters = visitor['parameters']
+    probs_df = visitor['tables']['stop_frequency']

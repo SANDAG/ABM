@@ -8,7 +8,7 @@ import yaml
 import pandas as pd
 
 
-def create_tour_scheduling_probs(tod_probs, parameters):
+def create_tour_scheduling_specs(tod_probs, parameters):
     # convert CTRAMP 40-period to 48 period asim
 
     # Interpolate missing time periods
@@ -16,13 +16,16 @@ def create_tour_scheduling_probs(tod_probs, parameters):
 
     # Concatenate entry/return periods into i_j formatted columns
     tod_probs_extra['period'] = tod_probs_extra[['EntryPeriod', 'ReturnPeriod']].astype(str).agg('_'.join, axis=1)
+
     # Reshape from long to wide
     tod_probs_extra = tod_probs_extra.pivot(index='Purpose', columns='period', values='Percent').reset_index()
+
     # Relabel cols/rows
     tod_probs_extra = tod_probs_extra.rename(columns={'Purpose': 'purpose_id'})
 
     # Create and save tour_departure_and_duration_alternatives
-    pd.DataFrame(itertools.product(range(1, 49), repeat=2), columns=['start', 'end']).to_csv(
+    tour_scheduling_alts = pd.DataFrame(itertools.product(range(1, 49), repeat=2), columns=['start', 'end'])
+    tour_scheduling_alts.to_csv(
         os.path.join(
             parameters['config_dir'],
             parameters['output_fname']['tour_scheduling_alts'])
@@ -41,7 +44,7 @@ def create_tour_scheduling_probs(tod_probs, parameters):
     with open(os.path.join(parameters['config_dir'], 'tour_scheduling_probabilistic.yaml'), 'w') as file:
         yaml.dump(tod_probs_spec, file)
 
-    return tod_probs_extra
+    return {'tour_scheduling_probs': tod_probs_extra, 'tour_scheduling_alts': tour_scheduling_alts}
 
 
 def tod_aggregate_melt(todi):
@@ -62,10 +65,10 @@ def tod_plots(purpose_id, probsxi, parameters):
     sns.heatmap(data=probsxi.pivot("EntryPeriod", "ReturnPeriod", "Percent"))
     plt.savefig(os.path.join(parameters['plot_dir'], 'tod_heatmap_{}.png'.format(purpose_id)))
     plt.show()
+
     # Aggregate view
     todiagg = tod_aggregate_melt(probsxi)
     sns.set_palette("Paired")
-    # sns.barplot(data=todiagg, x='Time Period', y='Percent', hue='Period Type', dodge=False, alpha=0.3)
     sns.scatterplot(data=todiagg, x='Time Period', y='Percent', hue='Period Type')
     plt.xticks(list(range(0, 49, 4)), labels=list(range(0, 49, 4)))
     plt.savefig(os.path.join(parameters['plot_dir'], 'tod_{}.png'.format(purpose_id)))
@@ -93,7 +96,8 @@ def expand_square(probs_clipped):
 
 def interpolate_tour_probs(tod_probs, parameters):
     tod_probs_extra = []
-    # purpose_id, probs = list(tod_probs.groupby('Purpose'))[0]
+
+    # Interpolate 2d grid values by purpose
     for purpose_id, probs in tod_probs.groupby('Purpose'):
 
         # Remove 1 and 40 for fitting, storing for later

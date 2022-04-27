@@ -2,12 +2,12 @@ import os
 import pandas as pd
 import numpy as np
 
-# TODO NOT FULLY CONVERTED YET
+
 def create_stop_freq_specs(probs_df, parameters):
     print("Creating stop frequency alts and probability lookups.")
 
     # Setup general vars
-    output_names = parameters['output_names']
+    output_names = parameters['output_fname']
     config_dir = parameters['config_dir']
     purpose_id_map = parameters['purpose_ids']
 
@@ -20,27 +20,26 @@ def create_stop_freq_specs(probs_df, parameters):
     probs_df['alt'] = probs_df[['out', 'in']].apply(lambda x: '{}out_{}in'.format(x[0], x[1]), axis=1)
 
     alts_df = probs_df.drop_duplicates(['out', 'in', 'alt'])[['alt', 'out', 'in']]
-    alts_df.to_csv(os.path.join(config_dir, output_names['stop_frequency_alts_output_fname']), index=False)
+    alts_df.to_csv(os.path.join(config_dir, output_names['stop_frequency_alts']), index=False)
 
+    # Store output
+    output = {'stop_frequency_alts': alts_df}
 
     # iterate through purposes and pivot probability lookup tables to
     # create MNL spec files with only ASC's (no covariates).
+
+    # purpose, purpose_id = list(purpose_id_map.items())[0]
     required_cols = ['Label', 'Description', 'Expression']
     for purpose, purpose_id in purpose_id_map.items():
         purpose_probs = probs_df.loc[probs_df['Purpose'] == purpose_id, :].copy()
         purpose_probs['coefficient_name'] = purpose_probs.apply(
-            lambda x: 'coef_asc_dur_{0}_{1}_stops_{2}'.format(
-                x['DurationLo'], x['DurationHi'], x['alt']), axis=1)
+            lambda x: 'coef_asc_dur_{0}_{1}_stops_{2}'.format(x['DurationLo'], x['DurationHi'], x['alt']), axis=1)
 
         coeffs_file = purpose_probs[['value', 'coefficient_name']].copy()
         coeffs_file['Description'] = None
         coeffs_file = coeffs_file[['Description', 'value', 'coefficient_name']]
-        coeffs_file_fname = output_names[
-            'stop_frequency_coeffs_output_formattable_fname'].format(
-            purpose=purpose)
-        coeffs_file.to_csv(
-            os.path.join(config_dir, coeffs_file_fname),
-            index=False)
+        coeffs_file_fname = output_names['stop_frequency_coeffs'].format(purpose=purpose)
+        coeffs_file.to_csv(os.path.join(config_dir, coeffs_file_fname), index=False)
 
         alt_cols = alts_df['alt'].tolist()
         expr_file = purpose_probs.pivot(
@@ -57,7 +56,11 @@ def create_stop_freq_specs(probs_df, parameters):
         expr_file = expr_file.drop(columns=['DurationLo', 'DurationHi'])
         expr_file = expr_file[required_cols + [
             col for col in expr_file.columns if col not in required_cols]]
-        expr_file_fname = output_names['stop_frequency_expressions_output_formattable_fname'].format(purpose=purpose)
-        expr_file.to_csv(os.path.join(config_dir, expr_file_fname.format(purpose)), index=False)
+        expr_file_fname = output_names['stop_frequency_expressions'].format(purpose=purpose)
+        expr_file.to_csv(os.path.join(config_dir, expr_file_fname), index=False)
 
-    return
+        # Store output
+        output[coeffs_file_fname.replace('.csv', '')] = coeffs_file
+        output[expr_file_fname.replace('.csv', '')] = expr_file
+
+    return output
