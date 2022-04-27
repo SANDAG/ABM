@@ -2,44 +2,36 @@ import os
 import pandas as pd
 
 
-# NOTE: This script is relatively unchanged from xborder, needs some review/cleanup
-
-
-def update_trip_purpose_probs(settings):
+def update_trip_purpose_probs(stop_probs, parameters):
     print("Creating trip purpose probability lookup table.")
-    probs_df = pd.read_csv(os.path.join(
-        settings['data_dir'], settings['trip_purpose_probs_input_fname']))
-    purpose_id_map = settings['tours']['purpose_ids']
-    purp_id_to_name = {v: k for k, v in purpose_id_map.items()}
+    purpose_id_map = parameters['purpose_ids']
+    purp_dict = {v: k for k, v in purpose_id_map.items()}
 
-    # drop cargo
-    if probs_df['TourPurp'].max() == 5:
-        probs_df = probs_df.loc[probs_df['TourPurp'] != 2, :]
-        del probs_df['StopPurp2']
-        probs_df.rename(columns={
-            'StopPurp3': 'StopPurp2',
-            'StopPurp4': 'StopPurp3',
-            'StopPurp5': 'StopPurp4'}, inplace=True)
-        probs_df.loc[probs_df['TourPurp'] > 2, 'TourPurp'] = probs_df.loc[
-                                                                 probs_df['TourPurp'] > 2, 'TourPurp'] - 1
+    # Rename columns to the purpose
+    colnames = {'StopNum': 'trip_num', 'Multiple': 'multistop'}
+    for x in stop_probs.columns:
+        if 'StopPurp' in x:
+            colnames[x] = purp_dict[int(x.replace('StopPurp', ''))]
+    stop_probs.rename(columns=colnames, inplace=True)
 
-    probs_df.rename(columns={
-        'StopNum': 'trip_num', 'Multiple': 'multistop',
-        'StopPurp0': purp_id_to_name[0], 'StopPurp1': purp_id_to_name[1],
-        'StopPurp2': purp_id_to_name[2], 'StopPurp3': purp_id_to_name[3],
-        'StopPurp4': purp_id_to_name[4]}, inplace=True)
-    probs_df['outbound'] = ~probs_df['Inbound'].astype(bool)
-    probs_df['primary_purpose'] = probs_df['TourPurp'].map(purp_id_to_name)
-    probs_df = probs_df[
-        ['primary_purpose', 'outbound', 'trip_num', 'multistop'] + [
-            purp for purp in purpose_id_map.keys()]]
-    probs_df.to_csv(os.path.join(
-        settings['config_dir'], settings['trip_purpose_probs_output_fname']),
-        index=False)
+    # Make outbound column, is a reflection of inbound boolean t/f
+    stop_probs['outbound'] = ~stop_probs['Inbound'].astype(bool)
 
-    return
+    # Add primary purpose names
+    stop_probs['primary_purpose'] = stop_probs['TourPurp'].map(purp_dict)
+
+    # Select column subset
+    stop_probs = stop_probs[['primary_purpose', 'outbound', 'trip_num', 'multistop'] + list(purpose_id_map.keys())]
+
+    # Save to CSV
+    file_path = os.path.join(parameters['config_dir'], parameters['output_fname']['trip_purpose_probs'])
+    if parameters['overwrite'] or not os.path.exists(file_path):
+        stop_probs.to_csv(file_path, index=False)
+
+    return stop_probs
 
 
+# NOTE: This script is relatively unchanged from xborder, needs some review/cleanup
 def create_trip_scheduling_duration_probs(settings, los_settings):
     print("Creating trip scheduling probability lookup table.")
     data_dir = settings['data_dir']

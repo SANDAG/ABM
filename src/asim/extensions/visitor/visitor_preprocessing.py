@@ -77,4 +77,4 @@ if __name__ == '__main__':
     visitor = preprocess_visitor()
 
     parameters = visitor['parameters']
-    probs_df = visitor['tables']['stop_frequency']
+    stop_probs = visitor['tables']['stop_purpose']
