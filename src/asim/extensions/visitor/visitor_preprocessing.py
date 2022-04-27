@@ -10,7 +10,7 @@ from visitor_stop_frequency import *
 
 
 # Main injection point for preprocessing
-def preprocess_visitor(settings_path='../../configs/visitor/preprocessing.yaml'):
+def preprocess_visitor(settings_path='../../configs/visitor/preprocessing.yaml', overwrite=True):
 
     # Find config root
     # root = find_settings_path(settings_path)

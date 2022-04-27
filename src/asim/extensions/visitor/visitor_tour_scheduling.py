@@ -26,7 +26,7 @@ import pandas as pd
 # multiply by the sum of the 1 and 40 periods to ensure the entire matrix sums to 1.
 
 
-def create_tour_scheduling_specs(tod_probs, parameters):
+def create_tour_scheduling_specs(tod_probs, parameters, overwrite=True):
     # convert CTRAMP 40-period to 48 period asim
 
     # Interpolate missing time periods
@@ -41,26 +41,28 @@ def create_tour_scheduling_specs(tod_probs, parameters):
     # Relabel cols/rows
     tod_probs_extra = tod_probs_extra.rename(columns={'Purpose': 'purpose_id'})
 
-    # Create and save tour_departure_and_duration_alternatives
+    # Create tour_departure_and_duration_alternatives
     tour_scheduling_alts = pd.DataFrame(itertools.product(range(1, 49), repeat=2), columns=['start', 'end'])
-    tour_scheduling_alts.to_csv(
-        os.path.join(
-            parameters['config_dir'],
-            parameters['output_fname']['tour_scheduling_alts'])
-    )
 
     # Save to CSV
-    tod_probs_extra.to_csv(os.path.join(
-        parameters['config_dir'],
-        parameters['output_fname']['tour_scheduling_probs'])
-    )
+    if overwrite:
+        tour_scheduling_alts.to_csv(
+            os.path.join(
+                parameters['config_dir'],
+                parameters['output_fname']['tour_scheduling_alts'])
+        )
 
-    # Create associated yaml
-    tod_probs_spec = {'PROBS_SPEC': 'tour_scheduling_probs.csv',
-                      'PROBS_JOIN_COLS': ['purpose_id']}
+        tod_probs_extra.to_csv(os.path.join(
+            parameters['config_dir'],
+            parameters['output_fname']['tour_scheduling_probs'])
+        )
 
-    with open(os.path.join(parameters['config_dir'], 'tour_scheduling_probabilistic.yaml'), 'w') as file:
-        yaml.dump(tod_probs_spec, file)
+        # Create associated yaml
+        tod_probs_spec = {'PROBS_SPEC': 'tour_scheduling_probs.csv',
+                          'PROBS_JOIN_COLS': ['purpose_id']}
+
+        with open(os.path.join(parameters['config_dir'], 'tour_scheduling_probabilistic.yaml'), 'w') as file:
+            yaml.dump(tod_probs_spec, file)
 
     return {'tour_scheduling_probs': tod_probs_extra, 'tour_scheduling_alts': tour_scheduling_alts}
 
