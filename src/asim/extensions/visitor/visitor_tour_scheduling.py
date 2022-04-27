@@ -45,7 +45,7 @@ def create_tour_scheduling_specs(tod_probs, parameters, overwrite=True):
     tour_scheduling_alts = pd.DataFrame(itertools.product(range(1, 49), repeat=2), columns=['start', 'end'])
 
     # Save to CSV
-    if overwrite:
+    if parameters['overwrite']:
         tour_scheduling_alts.to_csv(
             os.path.join(
                 parameters['config_dir'],

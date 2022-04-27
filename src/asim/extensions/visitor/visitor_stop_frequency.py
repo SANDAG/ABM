@@ -20,7 +20,8 @@ def create_stop_freq_specs(probs_df, parameters):
     probs_df['alt'] = probs_df[['out', 'in']].apply(lambda x: '{}out_{}in'.format(x[0], x[1]), axis=1)
 
     alts_df = probs_df.drop_duplicates(['out', 'in', 'alt'])[['alt', 'out', 'in']]
-    alts_df.to_csv(os.path.join(config_dir, output_names['stop_frequency_alts']), index=False)
+    if parameters['overwrite']:
+        alts_df.to_csv(os.path.join(config_dir, output_names['stop_frequency_alts']), index=False)
 
     # Store output
     output = {'stop_frequency_alts': alts_df}
@@ -39,9 +40,7 @@ def create_stop_freq_specs(probs_df, parameters):
         coeffs_file['Description'] = None
         coeffs_file = coeffs_file[['Description', 'value', 'coefficient_name']]
         coeffs_file_fname = output_names['stop_frequency_coeffs'].format(purpose=purpose)
-        coeffs_file.to_csv(os.path.join(config_dir, coeffs_file_fname), index=False)
 
-        alt_cols = alts_df['alt'].tolist()
         expr_file = purpose_probs.pivot(
             index=['DurationLo', 'DurationHi'], columns='alt',
             values='coefficient_name').reset_index()
@@ -57,7 +56,11 @@ def create_stop_freq_specs(probs_df, parameters):
         expr_file = expr_file[required_cols + [
             col for col in expr_file.columns if col not in required_cols]]
         expr_file_fname = output_names['stop_frequency_expressions'].format(purpose=purpose)
-        expr_file.to_csv(os.path.join(config_dir, expr_file_fname), index=False)
+
+        # Save to CSV
+        if parameters['overwrite']:
+            coeffs_file.to_csv(os.path.join(config_dir, coeffs_file_fname), index=False)
+            expr_file.to_csv(os.path.join(config_dir, expr_file_fname), index=False)
 
         # Store output
         output[coeffs_file_fname.replace('.csv', '')] = coeffs_file

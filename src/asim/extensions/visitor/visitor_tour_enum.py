@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 
 
-def create_tour_enumeration(tables, parameters, overwrite=True):
+def create_tour_enumeration(tables, parameters):
 
     # This is the main tour generation function.
     # 1. Generate n number of parties per segment
@@ -39,7 +39,7 @@ def create_tour_enumeration(tables, parameters, overwrite=True):
     tours_enum = assign_person_households(tours)
 
     # Save output to corresponding csv
-    if overwrite:
+    if parameters['overwrite']:
         for name, output in tours_enum.items():
             output.to_csv(os.path.join(parameters['config_dir'], parameters['output_fname'][name]))
 

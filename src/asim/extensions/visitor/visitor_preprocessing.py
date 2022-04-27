@@ -10,7 +10,7 @@ from visitor_stop_frequency import *
 
 
 # Main injection point for preprocessing
-def preprocess_visitor(settings_path='../../configs/visitor/preprocessing.yaml', overwrite=True):
+def preprocess_visitor(settings_path='../../configs/visitor/preprocessing.yaml'):
 
     # Find config root
     # root = find_settings_path(settings_path)
@@ -18,6 +18,10 @@ def preprocess_visitor(settings_path='../../configs/visitor/preprocessing.yaml',
     # Read the visitor settings YAML
     with open(settings_path) as f:
         parameters = yaml.load(f, Loader=yaml.FullLoader)
+
+    # Default to not overwrite any files
+    if 'overwrite' not in parameters.keys():
+        parameters['overwrite'] = False
 
     # Add root
     # parameters = {k: ''.join([root, v]) if '_dir' in k else {k: v} for k, v in parameters.items()}
