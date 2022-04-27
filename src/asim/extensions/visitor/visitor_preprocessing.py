@@ -40,9 +40,8 @@ def preprocess_visitor(settings_path='../../configs/visitor/preprocessing.yaml')
     # create/update configs in place
     processed_data['tour_scheduling_specs'] = create_tour_scheduling_specs(tables['tour_TOD'], parameters)
     processed_data['stop_frequency_specs'] = create_stop_freq_specs(tables['stop_frequency'], parameters)
-    # TODO create_skims_and_tap_files(settings, new_mazs)
     # TODO update_trip_purpose_probs(settings)
-    # TODO create_trip_scheduling_duration_probs(settings, los_settings)
+    # TODO create_skims_and_tap_files(settings, new_mazs)
 
     return {'parameters': parameters,
             'tables': tables,

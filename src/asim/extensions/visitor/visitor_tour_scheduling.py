@@ -8,6 +8,24 @@ import yaml
 import pandas as pd
 
 
+# Note on comparison with cross border method:
+# The cross border preprocessing expanded the 40 to 48 half-hour time periods using deterministic expansion factors.
+# Basically filling in the missing periods by dividing aggregated probability into the expanded periods
+# and then readjusting if constraints are violated (can't return before entry).
+
+# Instead of that, I consider the entry/return/Percent as X/Y/Z and used multivariate interpolation
+# to interpolate missing points, considering both entry/return simultaneously using a gaussian radial basis function.
+# I remove the periods 1 and 40, storing the data elsewhere, and interpolate for 40-49, treating 49 as 1.
+# Assuming the next day follows a similar pattern, I expand the 48x48 grid to 96x96,
+# copying the data from each day, leaving missing values as NA. This lets me interpolate instead of extrapolate.
+# Essentially bridging the two days, filling in the missing nighttime hours between, rather than trying to forecast.
+# As final checks:
+# Zero any negative values, setting a floor to 0. (rare cases)
+# Zero and backward trips where return is before entry [EnterPeriod <= ReturnPeriod] (rare cases)
+# Then normalize the periods [1, 45, 46, 47, 48] and [40, 41, 42, 43, 44] to 1 and
+# multiply by the sum of the 1 and 40 periods to ensure the entire matrix sums to 1.
+
+
 def create_tour_scheduling_specs(tod_probs, parameters):
     # convert CTRAMP 40-period to 48 period asim
 
@@ -60,21 +78,6 @@ def tod_aggregate_melt(todi):
 
     return todiagg.reset_index()
 
-
-def tod_plots(purpose_id, probsxi, parameters):
-    sns.heatmap(data=probsxi.pivot("EntryPeriod", "ReturnPeriod", "Percent"))
-    plt.savefig(os.path.join(parameters['plot_dir'], 'tod_heatmap_{}.png'.format(purpose_id)))
-    plt.show()
-
-    # Aggregate view
-    todiagg = tod_aggregate_melt(probsxi)
-    sns.set_palette("Paired")
-    sns.scatterplot(data=todiagg, x='Time Period', y='Percent', hue='Period Type')
-    plt.xticks(list(range(0, 49, 4)), labels=list(range(0, 49, 4)))
-    plt.savefig(os.path.join(parameters['plot_dir'], 'tod_{}.png'.format(purpose_id)))
-    plt.show()
-
-
 def expand_square(probs_clipped):
     # Inform Temporal Loop (i.e., tell the computer that 24hr day repeats and 41-48 starts back at 1)
     extend = {'diag': ['EntryPeriod', 'ReturnPeriod'], 'top': ['EntryPeriod'], 'right': ['ReturnPeriod']}
@@ -94,12 +97,28 @@ def expand_square(probs_clipped):
     return probsx
 
 
+def tod_plots(purpose_id, probsxi, parameters):
+    sns.heatmap(data=probsxi.pivot("EntryPeriod", "ReturnPeriod", "Percent"))
+    if parameters['plot_save']:
+        plt.savefig(os.path.join(parameters['plot_dir'], 'tod_heatmap_{}.png'.format(purpose_id)))
+    if parameters['plot_show']:
+        plt.show()
+
+    # Aggregate view
+    todiagg = tod_aggregate_melt(probsxi)
+    sns.set_palette("Paired")
+    sns.scatterplot(data=todiagg, x='Time Period', y='Percent', hue='Period Type')
+    plt.xticks(list(range(0, 49, 4)), labels=list(range(0, 49, 4)))
+    if parameters['plot_save']:
+        plt.savefig(os.path.join(parameters['plot_dir'], 'tod_{}.png'.format(purpose_id)))
+    if parameters['plot_show']:
+        plt.show()
+
+
 def interpolate_tour_probs(tod_probs, parameters):
-    tod_probs_extra = []
-
     # Interpolate 2d grid values by purpose
+    tod_probs_extra = []
     for purpose_id, probs in tod_probs.groupby('Purpose'):
-
         # Remove 1 and 40 for fitting, storing for later
         probs_clipped = probs[~((probs.EntryPeriod == 1) | (probs.ReturnPeriod == 1)) &
                               ~((probs.EntryPeriod == 40) | (probs.ReturnPeriod == 40))]
@@ -126,6 +145,9 @@ def interpolate_tour_probs(tod_probs, parameters):
         # Set floor to 0 just in case any go below 0
         probsxi.loc[probsxi.Percent < 0, 'Percent'] = 0
 
+        # Ensure that there are no trips that arrive before they depart!
+        probsxi.loc[probsxi.ReturnPeriod < probsxi.EntryPeriod, 'Percent'] = 0
+
         # Re-scale the 1st and 40th half hours for the interpolated 45-48 and 40-44 half hours
         first_sum = probs[(probs.EntryPeriod == 1) | (probs.ReturnPeriod == 1)].Percent.sum()
         last_sum = probs[(probs.EntryPeriod == 40) | (probs.ReturnPeriod == 40)].Percent.sum()
@@ -141,10 +163,10 @@ def interpolate_tour_probs(tod_probs, parameters):
         probsxi.loc[first_filt, 'Percent'] *= first_sum
         probsxi.loc[last_filt, 'Percent'] *= last_sum
 
-        # Re-normalize to unit scale
-        # probsxi['Percent'] = probsxi.Percent / probsxi.Percent.sum()
+        # Re-normalize to unit scale, some floored values might get lost
+        probsxi['Percent'] = probsxi.Percent / probsxi.Percent.sum()
 
-        if parameters['plot_figs']:
+        if parameters['plot_show'] or parameters['plot_save']:
             tod_plots(purpose_id, probsxi, parameters)
 
         probsxi['Purpose'] = purpose_id

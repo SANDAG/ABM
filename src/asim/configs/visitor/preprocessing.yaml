@@ -3,7 +3,8 @@ tables_dir: ../../configs/visitor/prob_tables
 data_dir: ../../data
 config_dir: ../../configs/visitor
 plot_dir: ../../configs/visitor/figs
-plot_figs: True
+plot_show: False
+plot_save: True
 
 # Visitor model settings: occupancy rates for hotels, households and share of each that are business visitors
 occupancy_rate:
