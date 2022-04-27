@@ -21,6 +21,13 @@ def create_tour_scheduling_probs(tod_probs, parameters):
     # Relabel cols/rows
     tod_probs_extra = tod_probs_extra.rename(columns={'Purpose': 'purpose_id'})
 
+    # Create and save tour_departure_and_duration_alternatives
+    pd.DataFrame(itertools.product(range(1, 49), repeat=2), columns=['start', 'end']).to_csv(
+        os.path.join(
+            parameters['config_dir'],
+            parameters['output_fname']['tour_scheduling_alts'])
+    )
+
     # Save to CSV
     tod_probs_extra.to_csv(os.path.join(
         parameters['config_dir'],

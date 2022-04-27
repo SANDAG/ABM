@@ -4,7 +4,7 @@ import os
 
 from visitor_tour_scheduling import *
 from visitor_tour_enum import *
-from visitor_tour_frequency import *
+from visitor_stop_frequency import *
 
 #   This script prepares visitor data for:
 #   1.  Tour enumeration generates tours with party size, income,
@@ -41,18 +41,13 @@ def preprocess_visitor(settings_path='../../configs/visitor/preprocessing.yaml')
 
     # create/update configs in place
     processed_data['tour_scheduling_probs'] = create_tour_scheduling_probs(tables['tour_TOD'], parameters)
-    # create_scheduling_probs_and_alts(settings, los_settings)
+    # create_scheduling_probs_and_alts(settings, los_settings) # Not sure if this needs to be done?
 
-    # create_stop_freq_specs(tables['stop_frequency'], parameters)
-
-
-    # create_skims_and_tap_files(settings, new_mazs)
-    # create_stop_freq_specs(settings)
-    # update_trip_purpose_probs(settings)
-    # create_trip_scheduling_duration_probs(settings, los_settings)
-
-    # Save to csv
-    # tour_scheduling_probs.to_csv()
+    # TODO create_stop_freq_specs(tables['stop_frequency'], parameters)
+    # TODO create_skims_and_tap_files(settings, new_mazs)
+    # TODO create_stop_freq_specs(settings)
+    # TODO update_trip_purpose_probs(settings)
+    # TODO create_trip_scheduling_duration_probs(settings, los_settings)
 
     return processed_data
 
