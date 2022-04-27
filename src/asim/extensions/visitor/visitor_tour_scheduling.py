@@ -4,6 +4,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from scipy.interpolate import Rbf
 import os
+import yaml
 import pandas as pd
 import numpy as np
 
@@ -21,9 +22,19 @@ def create_tour_scheduling_probs(tod_probs, parameters):
     # Relabel cols/rows
     tod_probs_extra = tod_probs_extra.rename(columns={'Purpose': 'purpose_id'})
 
-    tod_probs_extra.to_csv(os.path.join(parameters['config_dir'], parameters['output_fname'][name]))
+    # Save to CSV
+    tod_probs_extra.to_csv(os.path.join(
+        parameters['config_dir'],
+        parameters['output_fname']['tour_scheduling_probs'])
+    )
 
-    # TODO create yaml too
+    # Create associated yaml
+    tod_probs_spec = {'PROBS_SPEC': 'tour_scheduling_probs.csv',
+                      'PROBS_JOIN_COLS': ['purpose_id']}
+
+    with open(os.path.join(parameters['config_dir'], 'tour_scheduling_probabilistic.yaml'), 'w') as file:
+        yaml.dump(tod_probs_spec, file)
+
     return tod_probs_extra
 
 

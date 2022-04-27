@@ -1,6 +1,4 @@
 # Import Modules
-import yaml
-
 from visitor_tour_scheduling import *
 from visitor_tour_enum import *
 from visitor_tour_frequency import *
@@ -12,8 +10,14 @@ from visitor_tour_frequency import *
 # Main injection point for preprocessing
 def preprocess_visitor():
     # Read the visitor settings YAML
-    with open('configs/visitor/preprocessing.yaml') as f:
+    with open('../../configs/visitor/preprocessing.yaml') as f:
         parameters = yaml.load(f, Loader=yaml.FullLoader)
+
+    # Add root
+    # parameters = {k: '../../' + v if '_dir' in k else {k: v} for k, v in parameters.items()}
+    for x in ['data_dir', 'config_dir', 'plot_dir', 'tables_dir']:
+        parameters[x] = '../../' + parameters[x]
+
 
     # Read in the CSV-stored distribution values indicated in the yaml
     tables = load_tables(
@@ -28,23 +32,19 @@ def preprocess_visitor():
 
     # Generate tours
     print("Generating visitor tours")
-
-    # TODO NEED TO WRITE THESE TO CSV WITHIN EACH FUNCTION
-
     processed_data = create_tour_enumeration(tables, parameters)
 
-    # Setup
+    # create/update configs in place
     processed_data['tour_scheduling_probs'] = create_tour_scheduling_probs(tables['tour_TOD'], parameters)
+    # create_scheduling_probs_and_alts(settings, los_settings)
 
     # create_stop_freq_specs(tables['stop_frequency'], parameters)
 
-    # create/update configs in place
-    ##### create_scheduling_probs_and_alts(settings, los_settings)
+
     # create_skims_and_tap_files(settings, new_mazs)
     # create_stop_freq_specs(settings)
     # update_trip_purpose_probs(settings)
     # create_trip_scheduling_duration_probs(settings, los_settings)
-
 
     # Save to csv
     # tour_scheduling_probs.to_csv()
@@ -66,7 +66,8 @@ def load_tables(file_path, nested_dict):
 
 if __name__ == '__main__':
     # Testing
-    os.chdir('src/asim')
-    # os.chdir('../asim')
-    data = preprocess_visitor()
+    print(os.listdir())
+    # os.chdir('../../')
+    # os.chdir('src/asim/extensions/visitor')
+    # data = preprocess_visitor()
     # maz = self.tables['land_use'].loc[0,]
