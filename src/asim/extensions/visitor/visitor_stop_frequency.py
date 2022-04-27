@@ -2,6 +2,8 @@ import os
 import pandas as pd
 import numpy as np
 
+# NOTE: This script is relatively unchanged from xborder, needs some review/cleanup
+
 
 def create_stop_freq_specs(probs_df, parameters):
     print("Creating stop frequency alts and probability lookups.")
