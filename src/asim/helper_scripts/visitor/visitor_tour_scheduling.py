@@ -1,12 +1,13 @@
 import itertools
 import copy
-import seaborn as sns
-import matplotlib.pyplot as plt
-from scipy.interpolate import Rbf
 import os
 import yaml
 import pandas as pd
 
+# For interpolation
+import seaborn as sns
+import matplotlib.pyplot as plt
+from scipy.interpolate import Rbf
 
 # Note on comparison with cross border method:
 # The cross border preprocessing expanded the 40 to 48 half-hour time periods using deterministic expansion factors.

@@ -109,14 +109,14 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
+    # Initialize the class
+    visitor = VisitorModel()
     if args.preprocess:
         print('RUNNING PREPROCESSOR!')
-        visitor = VisitorModel()
         visitor.tour_enum()
 
     if args.create_configs:
         print('CREATING CONFIG FILES!')
-        visitor = VisitorModel()
         visitor.setup_configs()
 
     if args.asim:

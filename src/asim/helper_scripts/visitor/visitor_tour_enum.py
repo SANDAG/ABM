@@ -91,9 +91,9 @@ class Mixin:
             k = len(group)
             tour = {
                 'tour_type': [tour_type] * k, 'segment': [segment] * k,
-                'number_of_participants': probs_size.sample(n=k, weights=tour_type).PartySize.values,
+                'number_of_participants': probs_size.sample(n=k, weights=tour_type, replace=True).PartySize.values,
                 'auto_available': np.random.binomial(1, probs_auto[tour_type], k),
-                'income': probs_income.sample(n=k, weights=segment).Income.values,
+                'income': probs_income.sample(n=k, weights=segment, replace=True).Income.values,
                 'tour_category': 'mandatory' if tour_type == 'work' else 'non-mandatory'
             }
             tour_list.append(pd.DataFrame(tour))

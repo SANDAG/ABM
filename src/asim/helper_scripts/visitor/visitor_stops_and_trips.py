@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import numpy as np
+import yaml
 
 
 class Mixin:
@@ -67,6 +68,18 @@ class Mixin:
         if parameters['overwrite'] or not os.path.exists(file_path):
             duration_probs.to_csv(file_path, index=False)
 
+            # Create associated yaml
+            trip_scheduling = {'PROBS_SPEC': 'trip_scheduling_probs.csv',
+                               'DEPART_ALT_BASE': 0,
+                               'MAX_ITERATIONS': 100,
+                               'FAILFIX': 'choose_most_initial',
+                               'scheduling_mode': 'stop_duration'
+                               }
+
+            # Save YAML
+            with open(os.path.join(parameters['config_dir'], 'trip_scheduling.yaml'), 'w') as file:
+                yaml.dump(trip_scheduling, file)
+
         return duration_probs
 
     # NOTE: This script is relatively unchanged from xborder, probably needs some review/cleanup
@@ -87,13 +100,35 @@ class Mixin:
         if parameters['overwrite'] or not os.path.exists(file_path):
             alts_df.to_csv(file_path, index=False)
 
+        # Create associated YAMLs for trip purpose and stop frequency
+        trips_purpose_spec = {'PROBS_SPEC': 'trip_purpose_probs.csv',
+                              'preprocessor':
+                                  {'SPEC': 'trip_purpose_annotate_trips_preprocessor',
+                                   'DF': 'trips',
+                                   'TABLES': ['persons', 'tours']},
+                              'probs_join_cols': ['primary_purpose', 'outbound', 'trip_num', 'multistop'],
+                              'use_depart_time': False
+                              }
+
+        stop_frequency_spec = {'LOGIT_TYPE': 'MNL',
+                              'preprocessor':
+                                  {'SPEC': 'trip_frequency_annotate_tours_preprocessor',
+                                   'DF': 'tours_merged'},
+                              'SEGMENT_COL': 'primary_purpose',
+                              'SPEC_SEGMENTS': []
+                              }
+
+        # Save YAML
+        with open(os.path.join(parameters['config_dir'], 'stop_frequency.yaml'), 'w') as file:
+            yaml.dump(stop_frequency_spec, file)
+
+
         # Store output
         output = {'stop_frequency_alts': alts_df}
 
         # iterate through purposes and pivot probability lookup tables to
         # create MNL spec files with only ASC's (no covariates).
 
-        # purpose, purpose_id = list(purpose_id_map.items())[0]
         required_cols = ['Label', 'Description', 'Expression']
         for purpose, purpose_id in parameters['purpose_ids'].items():
             purpose_probs = stop_freq_probs.loc[stop_freq_probs['Purpose'] == purpose_id, :].copy()
@@ -104,7 +139,6 @@ class Mixin:
             coeffs_file['Description'] = None
             coeffs_file = coeffs_file[['Description', 'value', 'coefficient_name']]
             coeffs_file_fname = parameters['output_fname']['stop_frequency_coeffs'].format(purpose=purpose)
-            coeffs_file_fname = os.path.join(parameters['config_dir'], coeffs_file_fname)
 
             expr_file = purpose_probs.pivot(
                 index=['DurationLo', 'DurationHi'], columns='alt',
@@ -125,16 +159,28 @@ class Mixin:
             expr_file = expr_file.drop(columns=['DurationLo', 'DurationHi'])
             expr_file = expr_file[required_cols + [col for col in expr_file.columns if col not in required_cols]]
             expr_file_fname = parameters['output_fname']['stop_frequency_expressions'].format(purpose=purpose)
-            expr_file_fname = os.path.join(parameters['config_dir'], expr_file_fname)
+
+            # Update the YAML spec
+            stop_frequency_spec['SPEC_SEGMENTS'].append({'primary_purpose': purpose,
+                                                         'SPEC': expr_file,
+                                                         'COEFFICIENTS': coeffs_file_fname})
 
             # Save to CSV
             if parameters['overwrite'] or not os.path.exists(coeffs_file_fname):
-                coeffs_file.to_csv(coeffs_file_fname, index=False)
+                coeffs_file.to_csv(os.path.join(parameters['config_dir'], coeffs_file_fname), index=False)
             if parameters['overwrite'] or not os.path.exists(expr_file_fname):
-                expr_file.to_csv(expr_file_fname, index=False)
+                expr_file.to_csv(os.path.join(parameters['config_dir'], expr_file_fname), index=False)
 
             # Store output
             output[coeffs_file_fname.replace('.csv', '')] = coeffs_file
             output[expr_file_fname.replace('.csv', '')] = expr_file
+
+        if parameters['overwrite'] or not os.path.exists(os.path.join(parameters['config_dir'], 'trip_purpose.yaml')):
+            # Save YAML
+            with open(os.path.join(parameters['config_dir'], 'stop_frequency.yaml'), 'w') as file:
+                yaml.dump(stop_frequency_spec, file)
+
+            with open(os.path.join(parameters['config_dir'], 'trip_purpose.yaml'), 'w') as file:
+                yaml.dump(trips_purpose_spec, file)
 
         return output
