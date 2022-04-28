@@ -10,8 +10,8 @@ from visitor_trip_purpose import *
 #   2.  Tour time of day scheduling
 
 
-# Main injection point for preprocessing
-def preprocess_visitor(settings_path='../../configs/visitor/preprocessing.yaml'):
+# Main injection point for tour enumeration and preprocessing
+def visitor(settings_path='../../configs/visitor/preprocessing.yaml'):
     # Read the visitor settings YAML
     with open(settings_path) as f:
         parameters = yaml.load(f, Loader=yaml.FullLoader)
@@ -71,7 +71,7 @@ def find_root_level(target):
 
 if __name__ == '__main__':
     # Testing
-    visitor = preprocess_visitor()
+    visitor = visitor()
 
     parameters = visitor['parameters']
     # stop_freq_probs = visitor['tables']['stop_frequency']
