@@ -2,6 +2,7 @@
 from visitor_tour_scheduling import *
 from visitor_tour_enum import *
 from visitor_stop_frequency import *
+from visitor_trip_purpose import *
 
 #   This script prepares visitor data for:
 #   1.  Tour enumeration generates tours with party size, income,
@@ -41,10 +42,13 @@ def preprocess_visitor(settings_path='../../configs/visitor/preprocessing.yaml')
     print("Generating visitor tours")
     processed_data = create_tour_enumeration(tables, parameters)
 
+    outbound, inbound = tables['stop_duration']['inbound'], tables['stop_duration']['outbound']
+
     # create/update configs in place
     processed_data['tour_scheduling_specs'] = create_tour_scheduling_specs(tables['tour_TOD'], parameters)
     processed_data['stop_frequency_specs'] = create_stop_freq_specs(tables['stop_frequency'], parameters)
-    # TODO update_trip_purpose_probs(settings)
+    processed_data['stop_duration_probs'] = create_trip_scheduling_duration_probs(inbound, outbound, parameters)
+    processed_data['stop_purpose_probs'] = update_trip_purpose_probs(tables['stop_purpose'], parameters)
     # TODO create_skims_and_tap_files(settings, new_mazs)
 
     return {'parameters': parameters,
@@ -77,4 +81,6 @@ if __name__ == '__main__':
     visitor = preprocess_visitor()
 
     parameters = visitor['parameters']
-    stop_probs = visitor['tables']['stop_purpose']
+    # stop_freq_probs = visitor['tables']['stop_frequency']
+    # outbound, inbound = visitor['tables']['stop_duration']['inbound'],\
+    #                     visitor['tables']['stop_duration']['outbound']
