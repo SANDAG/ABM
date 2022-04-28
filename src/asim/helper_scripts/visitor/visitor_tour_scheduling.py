@@ -25,157 +25,156 @@ import pandas as pd
 # Then normalize the periods [1, 45, 46, 47, 48] and [40, 41, 42, 43, 44] to 1 and
 # multiply by the sum of the 1 and 40 periods to ensure the entire matrix sums to 1.
 
+class Mixin:
+    def create_tour_scheduling_specs(self, tod_probs, parameters):
+        # convert CTRAMP 40-period to 48 period asim
 
-def create_tour_scheduling_specs(tod_probs, parameters, overwrite=True):
-    # convert CTRAMP 40-period to 48 period asim
+        # Interpolate missing time periods
+        tod_probs_extra = self.interpolate_tour_probs(tod_probs, parameters)
 
-    # Interpolate missing time periods
-    tod_probs_extra = interpolate_tour_probs(tod_probs, parameters)
+        # Concatenate entry/return periods into i_j formatted columns
+        tod_probs_extra['period'] = tod_probs_extra[['EntryPeriod', 'ReturnPeriod']].astype(str).agg('_'.join, axis=1)
 
-    # Concatenate entry/return periods into i_j formatted columns
-    tod_probs_extra['period'] = tod_probs_extra[['EntryPeriod', 'ReturnPeriod']].astype(str).agg('_'.join, axis=1)
+        # Reshape from long to wide
+        tod_probs_extra = tod_probs_extra.pivot(index='Purpose', columns='period', values='Percent').reset_index()
 
-    # Reshape from long to wide
-    tod_probs_extra = tod_probs_extra.pivot(index='Purpose', columns='period', values='Percent').reset_index()
+        # Relabel cols/rows
+        tod_probs_extra = tod_probs_extra.rename(columns={'Purpose': 'purpose_id'})
 
-    # Relabel cols/rows
-    tod_probs_extra = tod_probs_extra.rename(columns={'Purpose': 'purpose_id'})
+        # Create tour_departure_and_duration_alternatives
+        tour_scheduling_alts = pd.DataFrame(itertools.product(range(1, 49), repeat=2), columns=['start', 'end'])
 
-    # Create tour_departure_and_duration_alternatives
-    tour_scheduling_alts = pd.DataFrame(itertools.product(range(1, 49), repeat=2), columns=['start', 'end'])
+        # Save to CSV
+        if parameters['overwrite']:
+            tour_scheduling_alts.to_csv(
+                os.path.join(
+                    parameters['config_dir'],
+                    parameters['output_fname']['tour_scheduling_alts'])
+            )
 
-    # Save to CSV
-    if parameters['overwrite']:
-        tour_scheduling_alts.to_csv(
-            os.path.join(
+            tod_probs_extra.to_csv(os.path.join(
                 parameters['config_dir'],
-                parameters['output_fname']['tour_scheduling_alts'])
-        )
+                parameters['output_fname']['tour_scheduling_probs'])
+            )
 
-        tod_probs_extra.to_csv(os.path.join(
-            parameters['config_dir'],
-            parameters['output_fname']['tour_scheduling_probs'])
-        )
+            # Create associated yaml
+            tod_probs_spec = {'PROBS_SPEC': 'tour_scheduling_probs.csv',
+                              'PROBS_JOIN_COLS': ['purpose_id']}
 
-        # Create associated yaml
-        tod_probs_spec = {'PROBS_SPEC': 'tour_scheduling_probs.csv',
-                          'PROBS_JOIN_COLS': ['purpose_id']}
+            with open(os.path.join(parameters['config_dir'], 'tour_scheduling_probabilistic.yaml'), 'w') as file:
+                yaml.dump(tod_probs_spec, file)
 
-        with open(os.path.join(parameters['config_dir'], 'tour_scheduling_probabilistic.yaml'), 'w') as file:
-            yaml.dump(tod_probs_spec, file)
+        return {'tour_scheduling_probs': tod_probs_extra, 'tour_scheduling_alts': tour_scheduling_alts}
 
-    return {'tour_scheduling_probs': tod_probs_extra, 'tour_scheduling_alts': tour_scheduling_alts}
+    def tod_aggregate_melt(self, todi):
+        todiagg = []
+        for x in ['EntryPeriod', 'ReturnPeriod']:
+            agg = todi.groupby(x)['Percent'].sum().reset_index().rename(columns={x: 'Time Period'})
+            agg['Period Type'] = x
+            todiagg.append(agg)
+        todiagg = pd.concat(todiagg)
+        newperiods = (todiagg['Time Period'] == 1) | ((todiagg['Time Period'] >= 40) & (todiagg['Time Period'] <= 48))
 
+        todiagg.loc[newperiods, 'Period Type'] = todiagg.loc[newperiods, 'Period Type'] + ' (extrapolated)'
 
-def tod_aggregate_melt(todi):
-    todiagg = []
-    for x in ['EntryPeriod', 'ReturnPeriod']:
-        agg = todi.groupby(x)['Percent'].sum().reset_index().rename(columns={x: 'Time Period'})
-        agg['Period Type'] = x
-        todiagg.append(agg)
-    todiagg = pd.concat(todiagg)
-    newperiods = (todiagg['Time Period'] == 1) | ((todiagg['Time Period'] >= 40) & (todiagg['Time Period'] <= 48))
+        return todiagg.reset_index()
 
-    todiagg.loc[newperiods, 'Period Type'] = todiagg.loc[newperiods, 'Period Type'] + ' (extrapolated)'
+    def expand_square(self, probs_clipped):
+        # Inform Temporal Loop (i.e., tell the computer that 24hr day repeats and 41-48 starts back at 1)
+        extend = {'diag': ['EntryPeriod', 'ReturnPeriod'], 'top': ['EntryPeriod'], 'right': ['ReturnPeriod']}
 
-    return todiagg.reset_index()
+        # Expand to full 1-48 matrix size
+        combos = itertools.product(range(2, 50), repeat=2)
+        probs_base = pd.DataFrame(combos, columns=["EntryPeriod", "ReturnPeriod"])
+        probs_base = probs_base.merge(probs_clipped.drop(columns='Purpose'), on=['EntryPeriod', 'ReturnPeriod'],
+                                      how='outer')
 
-def expand_square(probs_clipped):
-    # Inform Temporal Loop (i.e., tell the computer that 24hr day repeats and 41-48 starts back at 1)
-    extend = {'diag': ['EntryPeriod', 'ReturnPeriod'], 'top': ['EntryPeriod'], 'right': ['ReturnPeriod']}
+        probsx = copy.deepcopy(probs_base)
+        for side, cols in extend.items():
+            probsy = copy.deepcopy(probs_base)
+            probsy[cols] += 48
+            probsx = pd.concat([probsx, probsy])
 
-    # Expand to full 1-48 matrix size
-    combos = itertools.product(range(2, 50), repeat=2)
-    probs_base = pd.DataFrame(combos, columns=["EntryPeriod", "ReturnPeriod"])
-    probs_base = probs_base.merge(probs_clipped.drop(columns='Purpose'), on=['EntryPeriod', 'ReturnPeriod'],
-                                  how='outer')
+        return probsx
 
-    probsx = copy.deepcopy(probs_base)
-    for side, cols in extend.items():
-        probsy = copy.deepcopy(probs_base)
-        probsy[cols] += 48
-        probsx = pd.concat([probsx, probsy])
+    def tod_plots(self, purpose_id, probsxi, parameters):
+        sns.heatmap(data=probsxi.pivot("EntryPeriod", "ReturnPeriod", "Percent"))
+        if parameters['plot_save']:
+            plt.savefig(os.path.join(parameters['plot_dir'], 'tod_heatmap_{}.png'.format(purpose_id)))
+        if parameters['plot_show']:
+            plt.show()
 
-    return probsx
+        # Aggregate view
+        todiagg = self.tod_aggregate_melt(probsxi)
+        sns.set_palette("Paired")
+        sns.scatterplot(data=todiagg, x='Time Period', y='Percent', hue='Period Type')
+        plt.xticks(list(range(0, 49, 4)), labels=list(range(0, 49, 4)))
+        if parameters['plot_save']:
+            plt.savefig(os.path.join(parameters['plot_dir'], 'tod_{}.png'.format(purpose_id)))
+        if parameters['plot_show']:
+            plt.show()
 
+    def interpolate_tour_probs(self, tod_probs, parameters):
+        # Interpolate 2d grid values by purpose
+        tod_probs_extra = []
+        for purpose_id, probs in tod_probs.groupby('Purpose'):
+            # Remove 1 and 40 for fitting, storing for later
+            probs_clipped = probs[~((probs.EntryPeriod == 1) | (probs.ReturnPeriod == 1)) &
+                                  ~((probs.EntryPeriod == 40) | (probs.ReturnPeriod == 40))]
 
-def tod_plots(purpose_id, probsxi, parameters):
-    sns.heatmap(data=probsxi.pivot("EntryPeriod", "ReturnPeriod", "Percent"))
-    if parameters['plot_save']:
-        plt.savefig(os.path.join(parameters['plot_dir'], 'tod_heatmap_{}.png'.format(purpose_id)))
-    if parameters['plot_show']:
-        plt.show()
+            # Extract into x,y,z for interpolation
+            x, y, z = [probs_clipped[col].values for col in ['EntryPeriod', 'ReturnPeriod', 'Percent']]
+            # Radial Function Interpolation
+            rbf = Rbf(x, y, z, function='gaussian')
 
-    # Aggregate view
-    todiagg = tod_aggregate_melt(probsxi)
-    sns.set_palette("Paired")
-    sns.scatterplot(data=todiagg, x='Time Period', y='Percent', hue='Period Type')
-    plt.xticks(list(range(0, 49, 4)), labels=list(range(0, 49, 4)))
-    if parameters['plot_save']:
-        plt.savefig(os.path.join(parameters['plot_dir'], 'tod_{}.png'.format(purpose_id)))
-    if parameters['plot_show']:
-        plt.show()
+            # Expand the grid to loop over 48 time periods to 96, interpolate the missing in between
+            probsx = self.expand_square(probs_clipped)
 
+            # Extrapolate the missing points
+            probsxi = copy.deepcopy(probsx)
+            nulls = probsxi.Percent.isnull()
+            probsxi.loc[nulls, 'Percent'] = rbf(probsxi[nulls].EntryPeriod, probsxi[nulls].ReturnPeriod)
+            # Set 49 as 1
+            probsxi.loc[probsxi.EntryPeriod == 49, 'EntryPeriod'] = 1
+            probsxi.loc[probsxi.ReturnPeriod == 49, 'ReturnPeriod'] = 1
 
-def interpolate_tour_probs(tod_probs, parameters):
-    # Interpolate 2d grid values by purpose
-    tod_probs_extra = []
-    for purpose_id, probs in tod_probs.groupby('Purpose'):
-        # Remove 1 and 40 for fitting, storing for later
-        probs_clipped = probs[~((probs.EntryPeriod == 1) | (probs.ReturnPeriod == 1)) &
-                              ~((probs.EntryPeriod == 40) | (probs.ReturnPeriod == 40))]
+            # Extract imputed tables, ditching the extra cycled data
+            probsxi = probsxi[(probsxi.EntryPeriod <= 48) & (probsxi.ReturnPeriod <= 48)]
 
-        # Extract into x,y,z for interpolation
-        x, y, z = [probs_clipped[col].values for col in ['EntryPeriod', 'ReturnPeriod', 'Percent']]
-        # Radial Function Interpolation
-        rbf = Rbf(x, y, z, function='gaussian')
+            # Set floor to 0 just in case any go below 0
+            probsxi.loc[probsxi.Percent < 0, 'Percent'] = 0
 
-        # Expand the grid to loop over 48 time periods to 96, interpolate the missing in between
-        probsx = expand_square(probs_clipped)
+            # Ensure that there are no trips that arrive before they depart!
+            probsxi.loc[probsxi.ReturnPeriod < probsxi.EntryPeriod, 'Percent'] = 0
 
-        # Extrapolate the missing points
-        probsxi = copy.deepcopy(probsx)
-        nulls = probsxi.Percent.isnull()
-        probsxi.loc[nulls, 'Percent'] = rbf(probsxi[nulls].EntryPeriod, probsxi[nulls].ReturnPeriod)
-        # Set 49 as 1
-        probsxi.loc[probsxi.EntryPeriod == 49, 'EntryPeriod'] = 1
-        probsxi.loc[probsxi.ReturnPeriod == 49, 'ReturnPeriod'] = 1
+            # Re-scale the 1st and 40th half hours for the interpolated 45-48 and 40-44 half hours
+            first_sum = probs[(probs.EntryPeriod == 1) | (probs.ReturnPeriod == 1)].Percent.sum()
+            last_sum = probs[(probs.EntryPeriod == 40) | (probs.ReturnPeriod == 40)].Percent.sum()
 
-        # Extract imputed tables, ditching the extra cycled data
-        probsxi = probsxi[(probsxi.EntryPeriod <= 48) & (probsxi.ReturnPeriod <= 48)]
+            first_filt = (probsxi.EntryPeriod.isin([1, 45, 46, 47, 48]) |
+                          probsxi.ReturnPeriod.isin([1, 45, 46, 47, 48]))
+            last_filt = (probsxi.EntryPeriod.isin([40, 41, 42, 43, 44]) |
+                         probsxi.ReturnPeriod.isin([40, 41, 42, 43, 44]))
 
-        # Set floor to 0 just in case any go below 0
-        probsxi.loc[probsxi.Percent < 0, 'Percent'] = 0
+            # Normalize the target time periods to be out of 1
+            probsxi.loc[first_filt, 'Percent'] /= probsxi.loc[first_filt, 'Percent'].sum()
+            probsxi.loc[last_filt, 'Percent'] /= probsxi.loc[last_filt, 'Percent'].sum()
 
-        # Ensure that there are no trips that arrive before they depart!
-        probsxi.loc[probsxi.ReturnPeriod < probsxi.EntryPeriod, 'Percent'] = 0
+            # Scale to the original size that was in the 1 and 40th periods
+            probsxi.loc[first_filt, 'Percent'] *= first_sum
+            probsxi.loc[last_filt, 'Percent'] *= last_sum
 
-        # Re-scale the 1st and 40th half hours for the interpolated 45-48 and 40-44 half hours
-        first_sum = probs[(probs.EntryPeriod == 1) | (probs.ReturnPeriod == 1)].Percent.sum()
-        last_sum = probs[(probs.EntryPeriod == 40) | (probs.ReturnPeriod == 40)].Percent.sum()
+            # Re-normalize to unit scale, some floored values might get lost
+            probsxi['Percent'] = probsxi.Percent / probsxi.Percent.sum()
 
-        first_filt = (probsxi.EntryPeriod.isin([1, 45, 46, 47, 48]) | probsxi.ReturnPeriod.isin([1, 45, 46, 47, 48]))
-        last_filt = (probsxi.EntryPeriod.isin([40, 41, 42, 43, 44]) | probsxi.ReturnPeriod.isin([40, 41, 42, 43, 44]))
+            if parameters['plot_show'] or parameters['plot_save']:
+                self.tod_plots(purpose_id, probsxi, parameters)
 
-        # Normalize the target time periods to be out of 1
-        probsxi.loc[first_filt, 'Percent'] /= probsxi.loc[first_filt, 'Percent'].sum()
-        probsxi.loc[last_filt, 'Percent'] /= probsxi.loc[last_filt, 'Percent'].sum()
+            probsxi['Purpose'] = purpose_id
 
-        # Scale to the original size that was in the 1 and 40th periods
-        probsxi.loc[first_filt, 'Percent'] *= first_sum
-        probsxi.loc[last_filt, 'Percent'] *= last_sum
+            tod_probs_extra.append(probsxi)
 
-        # Re-normalize to unit scale, some floored values might get lost
-        probsxi['Percent'] = probsxi.Percent / probsxi.Percent.sum()
+        # Concatenate the imputed tables
+        tod_probs_extra = pd.concat(tod_probs_extra)
 
-        if parameters['plot_show'] or parameters['plot_save']:
-            tod_plots(purpose_id, probsxi, parameters)
-
-        probsxi['Purpose'] = purpose_id
-
-        tod_probs_extra.append(probsxi)
-
-    # Concatenate the imputed tables
-    tod_probs_extra = pd.concat(tod_probs_extra)
-
-    return tod_probs_extra
+        return tod_probs_extra
