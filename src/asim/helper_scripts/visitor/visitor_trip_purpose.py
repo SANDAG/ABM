@@ -31,7 +31,6 @@ def update_trip_purpose_probs(stop_purp_probs, parameters):
     return stop_probs
 
 
-# NOTE: This script is relatively unchanged from xborder, needs some review/cleanup
 def create_trip_scheduling_duration_probs(inbound, outbound, parameters):
     print("Creating trip scheduling probability lookup table.")
 

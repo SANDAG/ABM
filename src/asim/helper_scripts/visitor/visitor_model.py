@@ -12,10 +12,6 @@ from visitor_trip_purpose import *
 
 # Main injection point for preprocessing
 def preprocess_visitor(settings_path='../../configs/visitor/preprocessing.yaml'):
-
-    # Find config root
-    # root = find_settings_path(settings_path)
-
     # Read the visitor settings YAML
     with open(settings_path) as f:
         parameters = yaml.load(f, Loader=yaml.FullLoader)
@@ -23,9 +19,6 @@ def preprocess_visitor(settings_path='../../configs/visitor/preprocessing.yaml')
     # Default to not overwrite any files
     if 'overwrite' not in parameters.keys():
         parameters['overwrite'] = False
-
-    # Add root
-    # parameters = {k: ''.join([root, v]) if '_dir' in k else {k: v} for k, v in parameters.items()}
 
     # Read in the CSV-stored distribution values indicated in the yaml
     tables = load_tables(
@@ -42,14 +35,14 @@ def preprocess_visitor(settings_path='../../configs/visitor/preprocessing.yaml')
     print("Generating visitor tours")
     processed_data = create_tour_enumeration(tables, parameters)
 
-    outbound, inbound = tables['stop_duration']['inbound'], tables['stop_duration']['outbound']
 
     # create/update configs in place
+    outbound, inbound = tables['stop_duration']['inbound'], tables['stop_duration']['outbound']
+
     processed_data['tour_scheduling_specs'] = create_tour_scheduling_specs(tables['tour_TOD'], parameters)
     processed_data['stop_frequency_specs'] = create_stop_freq_specs(tables['stop_frequency'], parameters)
     processed_data['stop_duration_probs'] = create_trip_scheduling_duration_probs(inbound, outbound, parameters)
     processed_data['stop_purpose_probs'] = update_trip_purpose_probs(tables['stop_purpose'], parameters)
-    # TODO create_skims_and_tap_files(settings, new_mazs)
 
     return {'parameters': parameters,
             'tables': tables,
@@ -68,7 +61,7 @@ def load_tables(file_path, nested_dict):
     return output
 
 
-def find_settings_path(target):
+def find_root_level(target):
     # Finds the target path if it is in a parent directory
     pardir = ''
     while not os.path.isfile(os.path.join(pardir, target)):
@@ -82,5 +75,3 @@ if __name__ == '__main__':
 
     parameters = visitor['parameters']
     # stop_freq_probs = visitor['tables']['stop_frequency']
-    # outbound, inbound = visitor['tables']['stop_duration']['inbound'],\
-    #                     visitor['tables']['stop_duration']['outbound']

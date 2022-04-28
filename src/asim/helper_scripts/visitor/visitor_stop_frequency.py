@@ -10,8 +10,7 @@ def create_stop_freq_specs(stop_freq_probs, parameters):
     # convert probs to utils
     stop_freq_probs['value'] = stop_freq_probs['Percent'].apply(lambda x: np.log(x) if x > 0 else -999)
 
-    # write out alts table
-    # Format alt names
+    # Format alt names and write out alts table
     stop_freq_probs.rename(columns={'Outbound': 'out', 'Inbound': 'in'}, inplace=True)
     stop_freq_probs['alt'] = stop_freq_probs[['out', 'in']].apply(lambda x: '{}out_{}in'.format(x[0], x[1]), axis=1)
 
@@ -53,8 +52,7 @@ def create_stop_freq_specs(stop_freq_probs, parameters):
         expr_file['Expression'] = expr_file['DurationLo'].astype(str) + \
                                   ' < duration_hours <= ' + expr_file['DurationHi'].astype(str)
         expr_file = expr_file.drop(columns=['DurationLo', 'DurationHi'])
-        expr_file = expr_file[required_cols + [
-            col for col in expr_file.columns if col not in required_cols]]
+        expr_file = expr_file[required_cols + [col for col in expr_file.columns if col not in required_cols]]
         expr_file_fname = parameters['output_fname']['stop_frequency_expressions'].format(purpose=purpose)
         expr_file_fname = os.path.join(parameters['config_dir'], expr_file_fname)
 
