@@ -1411,13 +1411,15 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             factors = [(3.0/12.0), 1.0, (6.5/12.0), (3.5/3.0), (8.0/12.0)]
             for f, time, src_time in zip(factors, time_periods, src_time_periods):
                 if link["capacity_link" + src_time] != 999999:
-                    link["@capacity_link" + time] = f * link["capacity_link" + src_time]
+                    link["@capacity_link" + time] = f * link["capacity_link" + src_time]	
                 else:
                     link["@capacity_link" + time] = 999999
                 if link["capacity_inter" + src_time] != 999999:
                     link["@capacity_inter" + time] = f * link["capacity_inter" + src_time]
                 else:
                     link["@capacity_inter" + time] = 999999
+                if link["@capacity_hourly" + src_time] != 0:
+					link["@capacity_hourly" + src_time] = round(link["@capacity_hourly" + src_time])
 
         # Required file
         vehicle_class_factor_file = FILE_NAMES["VEHICLE_CLASS"]
