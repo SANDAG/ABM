@@ -1,4 +1,18 @@
 Description,Target,Expression
-#,avg_roundtrip_auto_time_to_work,"persons.groupby('household_id').roundtrip_auto_time_to_work.mean()"
+#,avg_roundtrip_auto_time_to_work,persons.groupby('household_id').roundtrip_auto_time_to_work.mean()
 ,home_taz,"reindex(land_use.TAZ, df.home_zone_id)"
-#,hhs_in_taz,"df.groupby('home_taz')['household_id'].transform(len)"
+#,hhs_in_taz,df.groupby('home_taz')['household_id'].transform(len)
+#,,
+,multiple_auto_hh_in_zone,"reindex_i(df[df.auto_ownership > 1].groupby('home_zone_id').size(), df.index)"
+,multiple_auto_hh_in_zone_share,multiple_auto_hh_in_zone/df.num_hh_in_zone
+#,,
+2016 scenario,everyone_owns,0
+Non-geocoded records expansion factor,geoExp,1.06
+Overall share of auto-owning households,qNonZero,0.837
+Observed share of transponder ownership,pObs,0.009
+,Correction_for_nongeocoded_records,np.log(geoExp)-np.log((1-geoExp*pObs)/(1-pObs))
+,Correction_for_zeroauto_households,np.log(1/qNonZero)-np.log((1-1/qNonZero*pObs)/(1-pObs))
+#,,
+,ml_dist,"reindex(land_use.ML_DIST, home_taz)"
+,avgtts,"reindex(land_use.AVGTTS, home_taz)"
+,pctDetour,"reindex(land_use.PCTDETOUR, home_taz)"

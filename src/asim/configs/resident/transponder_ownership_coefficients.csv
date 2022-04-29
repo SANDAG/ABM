@@ -1,3 +1,8 @@
 coefficient_name,value,constrain
-coef_asc,-6.4760,F
-coef_unavail,-999,F
+coef_pct_multiple_auto,2.225,F
+coef_Expected_time_savings_up_to_03_min,6.8,F
+coef_Distance_above_two_miles,-0.0874,F
+coef_Percent_detour_10_to_20,10.514,F
+coef_Transit_accessibility,-0.115,F
+coef_Transit_accessibility_is_zero,-0.317,F
+coef_Constant,-6.476,F

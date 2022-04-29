@@ -1,3 +1,11 @@
 Label,Description,Expression,No Pass,Pass
-util_asc,Constant,"@np.where(df.auto_ownership == 0, 1, 0)",0,coef_unavail
-util_asc,Constant,1,0,coef_asc
+util_auto_ownership,auto_ownership zero would result in unavailability,@(df.auto_ownership==0) * (df.everyone_owns==0),0,-999
+util_pct_multiple_auto,pct_multiple_auto,multiple_auto_hh_in_zone_share,0,coef_pct_multiple_auto
+util_Expected_time_savings_up_to_03_min,"Expected time savings, up to 0.3 min","@np.minimum(df.avgtts,0.3)",0,coef_Expected_time_savings_up_to_03_min
+util_Distance_above_two_miles,Distance above two miles,"@np.maximum(df.ml_dist-2,0)",0,coef_Distance_above_two_miles
+util_Percent_detour_10_to_20,"Percent detour, 10% to 20%","@np.minimum(np.maximum(df.pctDetour-0.1,0),0.1)",0,coef_Percent_detour_10_to_20
+#util_Transit_accessibility,Transit accessibility,trAcc,0,coef_Transit_accessibility
+#util_Transit_accessibility_is_zero,Transit accessibility is zero,trAcc == 0,0,coef_Transit_accessibility_is_zero
+util_Constant,Constant,1,0,coef_Constant
+util_Correction_for_nongeocoded_records,Correction_for_nongeocoded_records,,0,1
+util_Correction_for_zeroauto_households,Correction_for_zeroauto_households,,0,1
