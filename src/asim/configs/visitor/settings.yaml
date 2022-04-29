@@ -55,7 +55,6 @@ input_table_list:
     filename: persons_visitor.csv
     index_col: person_id
 
-# TODO In this case it will be allocating people in the appropriate zones per the distributions (rather than POE)?
   - tablename: land_use
     filename: land_use.csv
     index_col: zone_id
@@ -109,7 +108,8 @@ models:
   - initialize_tvpb
   # # ---
   - tour_scheduling_probabilistic
-  - tour_od_choice # Replace with destination choice model
+#  - tour_od_choice # Replace with non-mandatory_tour_destination?
+  - non_mandatory_tour_destination
   - tour_mode_choice_simulate
   - stop_frequency
   - trip_purpose

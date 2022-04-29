@@ -1,0 +1,13 @@
+PROBS_SPEC: trip_purpose_probs.csv
+preprocessor:
+  DF: trips
+  SPEC: trip_purpose_annotate_trips_preprocessor
+  TABLES:
+  - persons
+  - tours
+probs_join_cols:
+- primary_purpose
+- outbound
+- trip_num
+- multistop
+use_depart_time: false

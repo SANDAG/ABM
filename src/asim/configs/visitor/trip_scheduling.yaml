@@ -1,0 +1,5 @@
+DEPART_ALT_BASE: 0
+FAILFIX: choose_most_initial
+MAX_ITERATIONS: 100
+PROBS_SPEC: trip_scheduling_probs.csv
+scheduling_mode: stop_duration
