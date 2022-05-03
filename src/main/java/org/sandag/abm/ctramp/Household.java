@@ -75,6 +75,7 @@ public class Household
     private int                       maxMixedOverlaps;
 
     private ModelStructure            modelStructure;
+	private float sampleRate;
 
     private long seed;
     public Household(ModelStructure modelStructure)
@@ -1773,6 +1774,15 @@ public class Household
     {
         nul, FAMILY_MARRIED, FAMILY_MALE_NO_WIFE, FAMILY_FEMALE_NO_HUSBAND, NON_FAMILY_MALE_ALONE, NON_FAMILY_MALE_NOT_ALONE, NON_FAMILY_FEMALE_ALONE, NON_FAMILY_FEMALE_NOT_ALONE
     }
+	
+	public float getSampleRate() {
+    	return this.sampleRate;
+    }
+
+    public void setSampleRate(float aSampleRate) {
+    	this.sampleRate = aSampleRate;
+    }
+	
 
     /**
      * Iterate through persons in household grab all adults and add them to an ArrayList of adults. Return the list.
