@@ -304,6 +304,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         deleteAllMatrices = props["RunModel.deleteAllMatrices"]
         skipCopyWarmupTripTables = props["RunModel.skipCopyWarmupTripTables"]
         skipCopyBikeLogsum = props["RunModel.skipCopyBikeLogsum"]
+        skipShadowPricing = props["RunModel.skipShadowPricing"]
         skipCopyWalkImpedance = props["RunModel.skipCopyWalkImpedance"]
         skipWalkLogsums = props["RunModel.skipWalkLogsums"]
         skipBikeLogsums = props["RunModel.skipBikeLogsums"]
@@ -532,6 +533,20 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 # doesn't produced csv/omx files for assignment
                 # also needed as CT-RAMP does not overwrite existing files
                 if not skipCoreABM[iteration]:
+                    if not skipShadowPricing:
+                        if iteration == 0:
+                            props['UsualWorkLocationChoice.ShadowPrice.Input.File'] = ""
+                            props['UsualSchoolLocationChoice.ShadowPrice.Input.File'] = ""
+                            props['uwsl.ShadowPricing.Work.MaximumIterations'] = 10
+                            props['uwsl.ShadowPricing.School.MaximumIterations'] = 10
+                            props.save()
+
+                        else:
+                            props['UsualWorkLocationChoice.ShadowPrice.Input.File'] = "output/ShadowPricingOutput_work_9.csv"
+                            props['UsualSchoolLocationChoice.ShadowPrice.Input.File'] = "output/ShadowPricingOutput_school_9.csv"
+                            props['uwsl.ShadowPricing.Work.MaximumIterations'] = 1
+                            props['uwsl.ShadowPricing.School.MaximumIterations'] = 1      
+                            props.save()
                     self.remove_prev_iter_files(core_abm_files, output_dir, iteration)
                     self.run_proc(
                         "runSandagAbm_SDRM.cmd",
