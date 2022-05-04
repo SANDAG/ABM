@@ -82,6 +82,7 @@ import csv
 import datetime
 import pyodbc
 import win32com.client as win32
+import json as _json
 
 _join = os.path.join
 _dir = os.path.dirname
@@ -374,6 +375,66 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         max_assign_iterations = 1000
         mgra_lu_input_file = props["mgra.socec.file"]
 
+        #change emme databank dimensions based on number of select links - SANDAG ABM2+ Enhancements (06-28-2021)
+        num_select_links =  0
+        if select_link:
+            num_select_links = len(_json.loads(select_link))
+        change_dimensions = modeller.tool("inro.emme.data.database.change_database_dimensions")
+        dims = main_emmebank.dimensions
+        num_nodes = dims["regular_nodes"] + dims['centroids']
+        num_links = dims["links"]
+        num_turn_entries = dims["turn_entries"]
+        num_transit_lines = dims['transit_lines']
+        num_transit_segments = dims['transit_segments']
+        num_traffic_classes = 15
+        
+        additional_node_extra_attributes = 4
+        additional_link_extra_attributes = 26
+        additional_line_extra_attributes = 4
+        additional_segment_extra_attributes = 12
+        
+        extra_attribute_values = 18000000 
+        extra_attribute_values += (num_nodes + 1) * additional_node_extra_attributes
+        extra_attribute_values += (num_links + 1) * additional_link_extra_attributes
+        extra_attribute_values += (num_transit_lines + 1)* additional_line_extra_attributes 
+        extra_attribute_values += (num_transit_segments + 1) * additional_segment_extra_attributes
+
+        if num_select_links > 3:
+            extra_attribute_values += (num_select_links - 3) * ((num_links + 1) * (num_traffic_classes + 1) + (num_turn_entries + 1) * (num_traffic_classes)) 
+            
+        if extra_attribute_values > dims["extra_attribute_values"] or dims["full_matrices"] < 9999:
+            dims["extra_attribute_values"] = extra_attribute_values
+            dims["full_matrices"] = 9999 
+            #add logging for when this setp is run, add before and after attribute value
+            change_dimensions(emmebank_dimensions=dims, emmebank=main_emmebank, keep_backup=False)
+        with open(_join(self._path, "logFiles", "select_link_log.txt"),"a+") as f:
+			f.write("Num Select links {}\nExtra Attribute Value {}".format(num_select_links,extra_attribute_values))
+        f.close()
+            
+        if os.path.exists(_join(self._path, "emme_project", "Database_transit", "emmebank")):
+            with _eb.Emmebank(_join(self._path, "emme_project", "Database_transit", "emmebank")) as transit_db:
+                transit_db_dims = transit_db.dimensions
+                num_nodes = transit_db_dims["regular_nodes"] + transit_db_dims['centroids']
+                num_links = transit_db_dims["links"]
+                num_turn_entries = transit_db_dims["turn_entries"]
+                num_transit_lines = transit_db_dims['transit_lines']
+                num_transit_segments = transit_db_dims['transit_segments']
+                num_traffic_classes = 15
+                
+                extra_attribute_values = 18000000 
+                extra_attribute_values += (num_nodes + 1) * additional_node_extra_attributes
+                extra_attribute_values += (num_links + 1) * additional_link_extra_attributes
+                extra_attribute_values += (num_transit_lines + 1)* additional_line_extra_attributes 
+                extra_attribute_values += (num_transit_segments + 1) * additional_segment_extra_attributes
+                
+                if num_select_links > 3:
+                    extra_attribute_values += 18000000 + (num_select_links - 3) * ((num_links + 1) * (num_traffic_classes + 1) + (num_turn_entries + 1) * (num_traffic_classes))
+                    
+                if extra_attribute_values > transit_db_dims["extra_attribute_values"] or transit_db_dims["full_matrices"] < 9999:
+                    transit_db_dims["extra_attribute_values"] = extra_attribute_values
+                    transit_db_dims["full_matrices"] = 9999 
+                    change_dimensions(emmebank_dimensions=transit_db_dims, emmebank=transit_db, keep_backup=False)
+                
         with _m.logbook_trace("Setup and initialization"):
             self.set_global_logbook_level(props)
 
