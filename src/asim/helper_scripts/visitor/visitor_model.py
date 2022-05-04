@@ -1,10 +1,9 @@
 # Import Modules
-import visitor_tour_scheduling
-import visitor_tour_enum
-import visitor_stops_and_trips
+import sys
+from visitor_tour_enum import TourEnumMixin
+from visitor_convert_configs import TripStopFrequencyMixin, TourSchedulingMixin
 import argparse
 import subprocess
-import sys
 import yaml
 import copy
 import os
@@ -26,9 +25,12 @@ def load_tables(file_path, nested_dict):
 
 def find_root_level(target):
     # Finds the target path if it is in a parent directory
+    OS_ROOT = os.path.abspath('.').split(os.path.sep)[0] + os.path.sep
     pardir = ''
-    while not os.path.isfile(os.path.join(pardir, target)):
+    while not os.path.exists(os.path.join(pardir, target)):
         pardir = os.path.join(os.pardir, pardir)
+        if os.path.abspath(pardir) == OS_ROOT:
+            return
     return pardir
 
 
@@ -41,17 +43,31 @@ def find_root_level(target):
 # Main injection point for tour enumeration and preprocessing
 # Utilized python Mixin method to help organize the helper functions into separate files
 # The functions get "mixed in" to this main class
-class VisitorModel(visitor_tour_enum.Mixin,
-                   visitor_stops_and_trips.Mixin,
-                   visitor_tour_scheduling.Mixin):
+class VisitorModel(TourEnumMixin,
+                   TripStopFrequencyMixin,
+                   TourSchedulingMixin):
 
     def __init__(self):
-        self.parameters_path = '../../configs/visitor/preprocessing.yaml'
-        self.processed_data = None
+        # Find asim location
+        self.parameters_path = 'configs/visitor/preprocessing.yaml'
+        self.parameters_path = os.path.join(find_root_level(self.parameters_path), self.parameters_path)
+        self.processed_data = {}
 
         # Read the visitor settings YAML
         with open(self.parameters_path) as f:
             self.parameters = yaml.load(f, Loader=yaml.FullLoader)
+
+        # Purpose category id map
+        self.parameters['purpose_map'] = {v: k for k, v in self.parameters['purpose_ids'].items()}
+
+        # Default to print plots
+        for x in ['plot_show', 'plot_save', 'overwrite']:
+            if x not in self.parameters.keys():
+                self.parameters[x] = True
+
+        # Add root directory
+        for x in ['tables_dir', 'data_dir', 'config_dir', 'plot_dir', 'output_dir']:
+            self.parameters[x] = os.path.join(find_root_level(self.parameters[x]), self.parameters[x])
 
         # Default to not overwrite any files
         if 'overwrite' not in self.parameters.keys():
@@ -98,7 +114,7 @@ if __name__ == '__main__':
     # runtime args
     parser = argparse.ArgumentParser(prog='preprocessor')
     parser.add_argument(
-        '-c', '--create_configs',
+        '-s', '--create_configs',
         action='store_true', help='Run config creation.')
     parser.add_argument(
         '-p', '--preprocess',
@@ -121,8 +137,18 @@ if __name__ == '__main__':
 
     if args.asim:
         print('RUNNING ACTIVITYSIM!')
+
+        # Find asim location
+        asim_root = find_root_level('simulation.py')
+
+        # need to pass the configs, data, and output folders to sub process
+        config_args = ['-c', '../../configs/visitor',
+                       '-c', '../../configs/common',
+                       '-d', visitor.parameters['data_dir'],
+                       '-o', visitor.parameters['output_dir']]
+
         process = subprocess.Popen(
-            ['python', '-u', 'simulation.py'],
+            ['python', '-u', asim_root + 'simulation.py'] + config_args,
             stdout=sys.stdout, stderr=subprocess.PIPE)
         _, stderr = process.communicate()
         if process.returncode != 0:

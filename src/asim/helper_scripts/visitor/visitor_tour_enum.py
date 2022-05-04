@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 
 
-class Mixin:
+class TourEnumMixin:
     def create_tour_enumeration(self, tables, parameters):
         # This is the main tour generation function.
         # 1. Generate n number of parties per segment
@@ -94,7 +94,8 @@ class Mixin:
                 'number_of_participants': probs_size.sample(n=k, weights=tour_type, replace=True).PartySize.values,
                 'auto_available': np.random.binomial(1, probs_auto[tour_type], k),
                 'income': probs_income.sample(n=k, weights=segment, replace=True).Income.values,
-                'tour_category': 'mandatory' if tour_type == 'work' else 'non-mandatory'
+                # 'tour_category': 'mandatory' if tour_type == 'work' else 'non-mandatory'
+                'tour_category': 'non-mandatory'
             }
             tour_list.append(pd.DataFrame(tour))
         tour_features = pd.concat(tour_list)
