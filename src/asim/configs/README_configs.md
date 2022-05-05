@@ -121,6 +121,7 @@ Tour destination choice
 * @bestTimeToWorkLocation is same as roundtrip_auto_time_to_work? or divided by 2?
 ---
 Tour mode choice
+* moved constants from resident/tour_mode_choice.yaml to common/constants.yaml. Conflicting variables found between taxi/TNC/SharedTNC, defaulted to tour_mode_choice naming convention, e.g., TNC_shared_costPerMile instead of costPerMileSharedTNC.
 * changed expression to include the following coefficients and changed the actual coefficient to `coef_one`: `c_wacc`, `c_wegr`, `c_rel_inb`, `c_rel_oub`, `c_fwt`
   - these were causing crash because they were defined in the pre-processor, but were listed as actual coefficients
 * changed nesting structure in tour_mode_choice.yaml to match UEC. Set all nesting coefs to 0.5 in coeffs file (also matches UEC). Should be double checked.
