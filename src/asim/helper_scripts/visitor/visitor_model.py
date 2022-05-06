@@ -1,7 +1,7 @@
 # Import Modules
 import sys
-from visitor_tour_enum import TourEnumMixin
-from visitor_convert_configs import TripStopFrequencyMixin, TourSchedulingMixin
+from src.asim.helper_scripts.visitor.visitor_tour_enum import TourEnumMixin
+from src.asim.helper_scripts.visitor.visitor_convert_configs import TripStopFrequencyMixin, TourSchedulingMixin
 import argparse
 import subprocess
 import yaml
