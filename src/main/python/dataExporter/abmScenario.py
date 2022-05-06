@@ -2714,38 +2714,76 @@ class TripLists(ScenarioData):
         Returns:
             A Pandas DataFrame of the Internal-External trip list """
         # load trip list into Pandas DataFrame
-        trips = pd.read_csv(
-            os.path.join(self.scenario_path, "output", "internalExternalTrips.csv"),
-            usecols=["hhID",
-                     "personID",
-                     "tourID",
-                     "inbound",
-                     "period",
-                     "originMGRA",
-                     "destinationMGRA",
-                     "originTAZ",
-                     "destinationTAZ",
-                     "tripMode",
-                     "av_avail",
-                     "boardingTap",
-                     "alightingTap",
-                     "set",
-                     "valueOfTime"],
-            dtype={"hhID": "int32",
-                   "personID": "int32",
-                   "tourID": "int32",
-                   "inbound": "boolean",
-                   "period": "int8",
-                   "originMGRA": "int16",
-                   "destinationMGRA": "int16",
-                   "originTAZ": "int16",
-                   "destinationTAZ": "int16",
-                   "tripMode": "int8",
-                   "av_avail": "bool",
-                   "boardingTap": "int16",
-                   "alightingTap": "int16",
-                   "set": "int8",
-                   "valueOfTime": "float32"})
+        use_sampleRate = False
+        try:
+            trips = pd.read_csv(
+                os.path.join(self.scenario_path, "output", "internalExternalTrips.csv"),
+                usecols=["hhID",
+                         "personID",
+                         "tourID",
+                         "inbound",
+                         "period",
+                         "originMGRA",
+                         "destinationMGRA",
+                         "originTAZ",
+                         "destinationTAZ",
+                         "tripMode",
+                         "av_avail",
+                         "boardingTap",
+                         "alightingTap",
+                         "set",
+                         "valueOfTime",
+                         "sampleRate"],
+                dtype={"hhID": "int32",
+                       "personID": "int32",
+                       "tourID": "int32",
+                       "inbound": "boolean",
+                       "period": "int8",
+                       "originMGRA": "int16",
+                       "destinationMGRA": "int16",
+                       "originTAZ": "int16",
+                       "destinationTAZ": "int16",
+                       "tripMode": "int8",
+                       "av_avail": "bool",
+                       "boardingTap": "int16",
+                       "alightingTap": "int16",
+                       "set": "int8",
+                       "valueOfTime": "float32",
+                       "sampleRate":"float32"})
+            use_sampleRate = True
+        except:
+            trips = pd.read_csv(
+                os.path.join(self.scenario_path, "output", "internalExternalTrips.csv"),
+                usecols=["hhID",
+                         "personID",
+                         "tourID",
+                         "inbound",
+                         "period",
+                         "originMGRA",
+                         "destinationMGRA",
+                         "originTAZ",
+                         "destinationTAZ",
+                         "tripMode",
+                         "av_avail",
+                         "boardingTap",
+                         "alightingTap",
+                         "set",
+                         "valueOfTime"],
+                dtype={"hhID": "int32",
+                       "personID": "int32",
+                       "tourID": "int32",
+                       "inbound": "boolean",
+                       "period": "int8",
+                       "originMGRA": "int16",
+                       "destinationMGRA": "int16",
+                       "originTAZ": "int16",
+                       "destinationTAZ": "int16",
+                       "tripMode": "int8",
+                       "av_avail": "bool",
+                       "boardingTap": "int16",
+                       "alightingTap": "int16",
+                       "set": "int8",
+                       "valueOfTime": "float32"})
 
         # load output household transponder ownership data
         hh_fn = "householdData_" + str(self.properties["iterations"]) + ".csv"
@@ -2832,11 +2870,18 @@ class TripLists(ScenarioData):
                    1 / self.properties["nonPooledTNCPassengers"],
                    1 / self.properties["pooledTNCPassengers"]]
 
-        trips["weightTrip"] = pd.Series(
-            np.select(conditions, choices, default=1) / self.properties["sampleRate"],
-            dtype="float32")
-        trips["weightPersonTrip"] = 1 / self.properties["sampleRate"]
-        trips["weightPersonTrip"] = trips["weightPersonTrip"].astype("float32")
+        if use_sampleRate:
+            trips["weightTrip"] = pd.Series(
+                np.select(conditions, choices, default=1) / trips['sampleRate'],
+                dtype="float32")
+            trips["weightPersonTrip"] = 1 / trips['sampleRate']
+            trips["weightPersonTrip"] = trips["weightPersonTrip"].astype("float32")
+        else:
+            trips["weightTrip"] = pd.Series(
+                np.select(conditions, choices, default=1) / self.properties["sampleRate"],
+                dtype="float32")
+            trips["weightPersonTrip"] = 1 / self.properties["sampleRate"]
+            trips["weightPersonTrip"] = trips["weightPersonTrip"].astype("float32")
 
         # rename columns to standard/generic ABM naming conventions
         trips.rename(columns={"period": "departTimeAbmHalfHour",
