@@ -218,7 +218,7 @@ SPEC_SEGMENTS:
     _typ: dataframe
     attrs: {}
   primary_purpose: work
-- COEFFICIENTS: stop_frequency_coefficients_recreate.csv
+- COEFFICIENTS: stop_frequency_coefficients_recreation.csv
   SPEC: !!python/object:pandas.core.frame.DataFrame
     _flags:
       allows_duplicate_labels: true
@@ -421,7 +421,7 @@ SPEC_SEGMENTS:
           stop: 3
     _typ: dataframe
     attrs: {}
-  primary_purpose: recreate
+  primary_purpose: recreation
 - COEFFICIENTS: stop_frequency_coefficients_dining.csv
   SPEC: !!python/object:pandas.core.frame.DataFrame
     _flags:

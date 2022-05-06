@@ -1,8 +1,9 @@
 # misc settings
-tables_dir: ../../configs/visitor/prob_tables
-data_dir: ../../data
-config_dir: ../../configs/visitor
-plot_dir: ../../configs/visitor/figs
+tables_dir: configs/visitor/prob_tables
+data_dir: data
+config_dir: configs/visitor
+plot_dir: configs/visitor/figs
+output_dir: output
 plot_show: False
 plot_save: True
 overwrite: True
@@ -17,7 +18,7 @@ business_percent:
 
 purpose_ids:
   work: 0
-  recreate: 1
+  recreation: 1
   dining: 2
 
 # Any necessary data tables from general input data specified here (not preprocessing specific tables)
@@ -31,7 +32,8 @@ input_data:
   stop_frequency: visitor_stopFrequency.csv
   stop_purpose: visitor_stopPurpose.csv
   tour_TOD: visitor_tourTOD.csv
-  segment_frequency:
+  tod_conversion: tod_conversion.csv
+  visitor_travel_type_frequency:
     business: visitor_businessFrequency.csv
     personal: visitor_personalFrequency.csv
   stop_duration:
