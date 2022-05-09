@@ -61,7 +61,6 @@ input_table_list:
     rename_columns:
       MAZ: zone_id
 
-# TODO Need to update this
   - tablename: tours
     filename: tours_visitor.csv
     index_col: tour_id
