@@ -26,6 +26,9 @@ class TourEnumMixin:
                 tours.append(maz_tours)
         tours = pd.concat(tours)
 
+        # Map purpose IDs to column
+        tours['purpose_id'] = tours.tour_type.map(parameters['purpose_ids'])
+
         # Assign travel household_id, which we can assume as equivalent to party_id
         tours['household_id'] = tours.groupby(['origin', 'party']).ngroup()
         tours.household_id += 1
