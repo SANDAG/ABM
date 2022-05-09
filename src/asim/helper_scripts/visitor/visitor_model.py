@@ -1,7 +1,9 @@
 # Import Modules
 import sys
-from src.asim.helper_scripts.visitor.visitor_tour_enum import TourEnumMixin
-from src.asim.helper_scripts.visitor.visitor_convert_configs import TripStopFrequencyMixin, TourSchedulingMixin
+# from src.asim.helper_scripts.visitor.visitor_tour_enum import TourEnumMixin
+# from src.asim.helper_scripts.visitor.visitor_convert_configs import TripStopFrequencyMixin, TourSchedulingMixin
+from visitor_tour_enum import TourEnumMixin
+from visitor_convert_configs import TripStopFrequencyMixin, TourSchedulingMixin
 import argparse
 import subprocess
 import yaml
@@ -114,11 +116,11 @@ if __name__ == '__main__':
     # runtime args
     parser = argparse.ArgumentParser(prog='preprocessor')
     parser.add_argument(
-        '-s', '--create_configs',
-        action='store_true', help='Run config creation.')
+        '-t', '--tour_enum',
+        action='store_true', help='Run tour enumeration.')
     parser.add_argument(
-        '-p', '--preprocess',
-        action='store_true', help='Run preprocessor.')
+        '-s', '--setup_configs',
+        action='store_true', help='Run config creation.')
     parser.add_argument(
         '-a', '--asim',
         action='store_true', help='Run activitysim.')
@@ -127,11 +129,11 @@ if __name__ == '__main__':
 
     # Initialize the class
     visitor = VisitorModel()
-    if args.preprocess:
-        print('RUNNING PREPROCESSOR!')
+    if args.tour_enum:
+        print('RUNNING TOUR ENUMERATION!')
         visitor.tour_enum()
 
-    if args.create_configs:
+    if args.setup_configs:
         print('CREATING CONFIG FILES!')
         visitor.setup_configs()
 

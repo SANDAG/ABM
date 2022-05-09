@@ -41,7 +41,7 @@ class TourEnumMixin:
         # Save output to corresponding csv
         if parameters['overwrite']:
             for name, output in tours_enum.items():
-                output.to_csv(os.path.join(parameters['config_dir'], parameters['output_fname'][name]))
+                output.to_csv(os.path.join(parameters['data_dir'], parameters['output_fname'][name]), index=False)
 
         return tours_enum
 
@@ -143,7 +143,7 @@ class TourEnumMixin:
         # Stack the result
         return pd.concat(visitor_travel_type_parties)
 
-    def assign_person_households(self, tours, count_persons=False):
+    def assign_person_households(self, tours, count_hh_members=False):
         # Group by hh party
         hh_parties = tours.groupby(['household_id'])['number_of_participants']
 
@@ -158,9 +158,10 @@ class TourEnumMixin:
         persons = pd.DataFrame()
         person_count = 1
         for hh_id, party in hh_parties:
-            household = pd.DataFrame({'person_id': range(0, party.max()), 'household_id': hh_id})
+            hh_size = party.max() if count_hh_members else 1
+            household = pd.DataFrame({'person_id': range(0, hh_size), 'household_id': hh_id})
             household.person_id += person_count
-            person_count += party.max() if count_persons else 1
+            person_count += hh_size
             persons = pd.concat([persons, household])
         persons.reset_index(drop=True, inplace=True)
 
