@@ -108,7 +108,7 @@ models:
   - initialize_tvpb
   # # ---
   - tour_scheduling_probabilistic
-#  - non_mandatory_tour_destination
+  - non_mandatory_tour_destination
 #  - tour_mode_choice_simulate
 #  - stop_frequency
 #  - trip_purpose

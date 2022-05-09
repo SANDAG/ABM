@@ -233,12 +233,15 @@ class TourSchedulingMixin:
             tour_scheduling_alts.to_csv(
                 os.path.join(
                     parameters['config_dir'],
-                    parameters['output_fname']['tour_scheduling_alts'])
+                    parameters['output_fname']['tour_scheduling_alts']),
+                index=False
             )
 
-            tod_probs_extra.to_csv(os.path.join(
-                parameters['config_dir'],
-                parameters['output_fname']['tour_scheduling_probs'])
+            tod_probs_extra.to_csv(
+                os.path.join(
+                    parameters['config_dir'],
+                    parameters['output_fname']['tour_scheduling_probs']),
+                index=False
             )
 
             # Create associated yaml
