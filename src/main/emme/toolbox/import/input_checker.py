@@ -297,7 +297,7 @@ class input_checker(_m.Tool()):
 					df = dbf.to_dataframe()
 					self.inputs[table_name] = df
 
-		# add scenario year
+		# add scenario table to input dictionary
 		self.inputs['scenario'] = self.scenario_df
 
 	def checks(self):
@@ -444,8 +444,9 @@ class input_checker(_m.Tool()):
 			input_path = props[row['Property_Token']]
 			self.prop_input_paths[input_table] = input_path
 
-		# obtain scenario year
+		# obtain scenario year and number of zones
 		self.scenario_df['Year'] = [props['scenarioYear']]
+        self.scenario_df['zoneCount'] = [props['zones.count']]
 
 	def write_log(self):
 		# function to write out the input checker log file

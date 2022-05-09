@@ -1,5 +1,6 @@
 Test,Input_Table,Input_ID_Column,Severity,Type,Expression,Test_Vals,Report_Statistic,Test_Description
-scenarioYear,scenario,Year,NA,Calculation,scenario['Year'][0],,,Obtain scenario year
+scenarioYear,scenario,Year,NA,Calculation,scenario['Year'].iloc[0],,,Obtain scenario year
+zoneCount,scenario,zoneCount,NA,Calculation,scenario['zoneCount'].iloc[0],,,Obtain number of zones in scenario. Number of zones may change as a result of zone splitting.
 PERSON_CTRAMP_Fields_Availability,persons,perid,Fatal,Test,test_val in persons.columns,"hhid,perid,household_serial_no,pnum,age,sex,miltary,pemploy,pstudent,ptype,educ,grade,occen5,occsoc5,indcen,weeks,hours,rac1p,hisp,version",,Check if person file contains all the required fields for ABM
 PERSON_military_valueCheck_agg,persons,perid,Warning,Test,"set(persons.miltary)=={0,1}",,,"Check if Person data matches the pre-defined military categories [0 = N/A Less than 17 years old, 1 = Yes, Now on Active Duty]"
 PERSON_military_valueCheck_disagg,persons,perid,Fatal,Test,"persons.miltary.apply(lambda x: True if x in [0,1,2,3,4] else False)",,,"Check if Person data matches the pre-defined military categories [0 = N/A Less than 17 years old, 1 = Yes, Now on Active Duty, 2 = Yes, on Active Duty in Past, but not Now, 3 = No, Training for Reserves/National Guard Only, 4 = No, Never Served in the Military]"
