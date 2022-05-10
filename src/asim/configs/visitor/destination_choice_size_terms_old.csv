@@ -1,0 +1,4 @@
+model_selector,segment,emp_total,emp_retail,emp_amusement,emp_hotel,emp_restaurant_bar,hh,parkactive,beachactive,openspaceparkpreserve,cabrillo,seaworld,legoland,safari,midway,zoo,torrypines
+non_mandatory,work,1.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0,0,0,0,0,0,0
+non_mandatory,recreation,0.0000,0.7500,1.17,1.58,1.13,0.0000,5.07,10,1,7041.34,7147.03,6004.60,15935.00,12968.70,10419.12,14545.83
+non_mandatory,dining,0.0000,0.0000,0.0000,0.1240,1.0000,0.0760,0.0000,0.0000,0.0000,0,0,0,0,0,0,0

@@ -5,8 +5,8 @@ inherit_settings: False
 households_sample_size: 0
 multiprocess: True
 strict: False
-mem_tick: 30
-num_processes: 30
+mem_tick: 1 # 30
+num_processes: 1 #30
 fail_fast: True
 
 ##############
@@ -16,8 +16,8 @@ fail_fast: True
 
 # chooser chunk size in gigabytes
 # target top memory usage during activitysim run (including shared memory, loaded tables, and transient memory usage)
-chunk_size: 400_000_000_000
-#chunk_size: 0
+#chunk_size: 400_000_000_000
+chunk_size: 0
 
 # minimum fraction of total chunk_size to reserve for adaptive chunking
 min_available_chunk_ratio: 0.05
