@@ -147,9 +147,6 @@ class TourEnumMixin:
         return pd.concat(visitor_travel_type_parties)
 
     def assign_person_households(self, tours, count_hh_members=False):
-        # Group by hh party
-        hh_parties = tours.groupby(['household_id'])['number_of_participants']
-
         # Calculate total number of visitors/households based on N parties and sum of max party sizes for each party
         total_households = tours.household_id.max()
 
@@ -157,16 +154,23 @@ class TourEnumMixin:
         households = pd.DataFrame({'household_id': range(0, total_households)})
         households.household_id += 1
 
-        # For each hh party, create n-persons into it
-        persons = pd.DataFrame()
+        # For each hh party, create a household and create n-persons into it
+        # persons = pd.DataFrame()
+        persons = []
+        households = []
         person_count = 1
-        for hh_id, party in hh_parties:
-            hh_size = party.max() if count_hh_members else 1
-            household = pd.DataFrame({'person_id': range(0, hh_size), 'household_id': hh_id})
-            household.person_id += person_count
+        for hh_id, party in tours.groupby(['household_id']):
+            hh_size = party.number_of_participants.max() if count_hh_members else 1
+            household_persons = pd.DataFrame({'person_id': range(0, hh_size),
+                                              'household_id': hh_id,
+                                              'home_zone_id': party.origin.iloc[0]})
+            household_persons.person_id += person_count
             person_count += hh_size
-            persons = pd.concat([persons, household])
-        persons.reset_index(drop=True, inplace=True)
+            persons.append(household_persons)
+            households.append(household_persons.drop(columns='person_id').head(1))
+
+        persons = pd.concat(persons).reset_index(drop=True)
+        households = pd.concat(households).reset_index(drop=True)
 
         # Assign person id to the tour based on household_id, just assign the first person in each household
         tours = tours.merge(persons.groupby('household_id').first().reset_index(), on='household_id')
