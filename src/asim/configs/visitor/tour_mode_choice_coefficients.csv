@@ -6,7 +6,6 @@ coef_nest_AUTO,0.5,T
 coef_nest_NONMOTORIZED,0.5,T
 coef_nest_TRANSIT,0.5,T
 coef_nest_RIDEHAIL,0.5,T
-#,,
 coef_ivt,-0.015,F
 coef_fwt,-0.023,F
 coef_xwt,-0.023,F
@@ -25,11 +24,11 @@ coef_costvhigh,-0.0004,F
 coef_oMix_nmot,0.17243,F
 coef_oIntDen_nmot,0.00571,F
 #,,
-coef_bikeLogsumI,,F
-coef_bikeLogsumO,,F
-coef_LUnorm_bike,,F
-coef_oIntDen_wTran,,F
-coef_dEmpDen_wTran,,F
-coef_oMix_wTran,,F
-coef_dEmpNorm_walk ,,F
-coef_LUnorm_walk,,F
+# coef_bikeLogsumI,,F
+# coef_bikeLogsumO,,F
+# coef_LUnorm_bike,,F
+# coef_oIntDen_wTran,,F
+# coef_dEmpDen_wTran,,F
+# coef_oMix_wTran,,F
+# coef_dEmpNorm_walk ,,F
+# coef_LUnorm_walk,,F
