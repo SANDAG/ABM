@@ -520,8 +520,8 @@ class Properties(object):
             # check for possible interference if user edits the 
             # properties files directly while it is already open in Modeller
             timestamp = os.path.getmtime(path)
-            if timestamp != self._timestamp:
-                raise Exception("%s file conflict - edited externally after loading" % path)
+            # if timestamp != self._timestamp:
+                # raise Exception("%s file conflict - edited externally after loading" % path)
         self["SavedFrom"] = "Emme Modeller properties writer Process ID %s" % os.getpid()
         self["SavedLast"] = time.strftime("%b-%d-%Y %H:%M:%S")
         with open(path, 'w') as f:
