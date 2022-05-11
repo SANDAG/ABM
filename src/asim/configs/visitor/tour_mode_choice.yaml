@@ -50,6 +50,7 @@ LOGSUM_CHOOSER_COLUMNS:
   - is_university
   - person_id
   - household_id
+  - number_of_participants
 
 CHOICE_COL_NAME: tour_mode
 MODE_CHOICE_LOGSUM_COLUMN_NAME: mode_choice_logsum
