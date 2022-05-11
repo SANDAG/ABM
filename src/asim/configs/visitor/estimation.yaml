@@ -3,7 +3,7 @@ enable: False
 
 bundles:
   - tour_scheduling_probabilistic
-  - tour_od_choice
+  - non_mandatory_tour_destination
   - tour_mode_choice
   - stop_frequency
   - trip_purpose

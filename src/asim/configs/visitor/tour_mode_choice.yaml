@@ -39,27 +39,15 @@ preprocessor:
 # to reduce memory needs filter chooser table to these fields
 LOGSUM_CHOOSER_COLUMNS:
   - tour_type
-  - hhsize
+  - income
   - density_index
-  - age
-  - age_16_p
-  - age_16_to_19
+  - auto_available
   - auto_ownership
-  - number_of_participants
   - tour_category
-  - num_workers
-  - value_of_time
-  - free_parking_at_work
-  - income_segment
-  - demographic_segment
-  - c_ivt_for_segment
-  - c_cost_for_segment
-  - pass_type
   - start
   - end
   - duration
   - is_university
-  - primary_purpose
   - person_id
   - household_id
 

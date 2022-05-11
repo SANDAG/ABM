@@ -6,9 +6,11 @@ annotate_tables:
       DF: persons
       TABLES:
         - households
+        - tours
   - tablename: households
     annotate:
       SPEC: annotate_households
       DF: households
       TABLES:
         - persons
+        - tours

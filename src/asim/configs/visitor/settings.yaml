@@ -98,8 +98,8 @@ want_dest_choice_presampling: True
 
 models:
   - initialize_landuse
-  - initialize_households
   - initialize_tours
+  - initialize_households
   # --- STATIC cache prebuild steps
   # single-process step to create attribute_combination list
   - initialize_los
