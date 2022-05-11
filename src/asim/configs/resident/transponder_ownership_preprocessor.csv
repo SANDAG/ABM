@@ -13,6 +13,6 @@ Observed share of transponder ownership,pObs,0.009
 ,Correction_for_nongeocoded_records,np.log(geoExp)-np.log((1-geoExp*pObs)/(1-pObs))
 ,Correction_for_zeroauto_households,np.log(1/qNonZero)-np.log((1-1/qNonZero*pObs)/(1-pObs))
 #,,
-,ml_dist,"reindex(land_use.ML_DIST, home_taz)"
-,avgtts,"reindex(land_use.AVGTTS, home_taz)"
-,pctDetour,"reindex(land_use.PCTDETOUR, home_taz)"
+,ml_dist,"reindex(land_use.ML_DIST, df.home_zone_id)"
+,avgtts,"reindex(land_use.AVGTTS, df.home_zone_id)"
+,pctDetour,"reindex(land_use.PCTDETOUR, df.home_zone_id)"
