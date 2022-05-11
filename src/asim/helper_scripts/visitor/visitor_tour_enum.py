@@ -89,6 +89,13 @@ class TourEnumMixin:
 
         # Estimate the features for each of the tours, based on tour_type, result to data frame
         # tour tour_type, visitor_travel_type, party size [int], auto availability [true/false], and income [int]
+
+        # 0 <$30k
+        # 1 $30-60k
+        # 2 $60-100k
+        # 3 $100-150k
+        # 4 $150k +
+
         tour_list = []
         for (tour_type, visitor_travel_type), group in freq_group:
             k = len(group)
