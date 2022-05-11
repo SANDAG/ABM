@@ -44,7 +44,7 @@ util_WalkTransit - Origin Intersection Density,WalkTransit - Origin Intersection
 #,Taxi,,,,,,,,,,,,,
 util_Taxi - In-vehicle time,Taxi - In-vehicle time,(s2_time_skims_inb + s2_time_skims_out),,,,,,,,,,coef_ivt,,
 util_Taxi - Wait time,Taxi - Wait time,totalWaitTaxi,,,,,,,,,,coef_ivt,,
-util_Taxi - Fare,Taxi - Fare,@(((taxi_baseFare*2 + (df.s2_dist_skims_out + df.s2_dist_skims_inb) * Taxi_costPerMile + (df.s2_time_skims_out + df.s2_time_skims_inb) * Taxi_costPerMinute)*100 + df.s2_cost_skims_out + df.s2_cost_skims_inb) * df.coef_cost),,,,,,,,,,coef_one,,
+util_Taxi - Fare,Taxi - Fare,@(((Taxi_baseFare*2 + (df.s2_dist_skims_out + df.s2_dist_skims_inb) * Taxi_costPerMile + (df.s2_time_skims_out + df.s2_time_skims_inb) * Taxi_costPerMinute)*100 + df.s2_cost_skims_out + df.s2_cost_skims_inb) * df.coef_cost),,,,,,,,,,coef_one,,
 #,TNC Single,,,,,,,,,,,,,
 util_TNC Single - In-vehicle time,TNC Single - In-vehicle time,(s2_time_skims_out + s2_time_skims_inb),,,,,,,,,,,coef_ivt,
 util_TNC Single - Wait time,TNC Single - Wait time,1.5*totalWaitSingleTNC,,,,,,,,,,,coef_ivt,
