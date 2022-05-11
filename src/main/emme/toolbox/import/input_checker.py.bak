@@ -444,9 +444,8 @@ class input_checker(_m.Tool()):
 			input_path = props[row['Property_Token']]
 			self.prop_input_paths[input_table] = input_path
 
-		# obtain scenario year and number of zones
+		# obtain scenario year
 		self.scenario_df['Year'] = [props['scenarioYear']]
-		self.scenario_df['zoneCount'] = [props['zones.count']]
 
 	def write_log(self):
 		# function to write out the input checker log file
