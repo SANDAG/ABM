@@ -16,8 +16,8 @@ fail_fast: True
 
 # chooser chunk size in gigabytes
 # target top memory usage during activitysim run (including shared memory, loaded tables, and transient memory usage)
-#chunk_size: 400_000_000_000
-chunk_size: 0
+chunk_size: 400_000_000_000
+#chunk_size: 0
 
 # minimum fraction of total chunk_size to reserve for adaptive chunking
 min_available_chunk_ratio: 0.05
@@ -109,7 +109,7 @@ models:
   # # ---
   - tour_scheduling_probabilistic
   - non_mandatory_tour_destination
-#  - tour_mode_choice_simulate
+  - tour_mode_choice_simulate
 #  - stop_frequency
 #  - trip_purpose
 #  - trip_scheduling
