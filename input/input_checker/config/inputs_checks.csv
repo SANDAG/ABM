@@ -48,7 +48,7 @@ LINK_POSITIVE_LENGTH,network_links,id,Logical,Test,network_links.length>0,,,All 
 #TRANSITSEGMENT_Unique_Stop_ID_Check,transit_segments,id,Fatal,Test,len(set(transit_segments['@stop_id'])) == len(transit_segments['@stop_id']),,,All transit segment stop IDs must be unique
 mgra_total_employment,mgra_data,mgra,NA,Calculation,mgra_data[[col for col in mgra_data if (col.startswith('emp_')) and not (col.endswith('total'))]].sum(axis=1),,,
 MGRA_TotalEmployment_CalcCheck,mgra_data,mgra,Logical,Test,mgra_data.emp_total==mgra_total_employment,,,Check if employment by industry adds up to total employment
-ZONE_CHECK,centroids,id,Fatal,Test,len(centroids) == 4996,,len(centroids),Check that there are 4996 zones present in network
+ZONE_CHECK,centroids,id,Fatal,Test,len(centroids) == zoneCount,,len(centroids),Check that there are 4996 zones present in network
 zone_connector_table,centroids,id,NA,Calculation,centroids.loc[(centroids['numInLinks']>0) & (centroids['numOutLinks']>0)],,,Obtain table of centroids (i.e. zones) that have more than 1 incoming and outgoing links (i.e. centroid connectors)
 zone_connector_list,zone_connector_table,id,NA,Calculation,set(zone_connector_table.id),,,Obtain list of unique centroid ids that have more than 1 incoming and outgoing links
 NO_ZONE_CONNECTOR_CHECK,centroids,id,Fatal,Test,centroids.id.apply(lambda x: True if x in zone_connector_list else False),,,Check that each zone has a zone connector
