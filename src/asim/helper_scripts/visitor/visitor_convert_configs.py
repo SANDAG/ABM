@@ -29,15 +29,15 @@ class TripStopFrequencyMixin:
         stop_purp_probs['primary_purpose'] = stop_purp_probs['TourPurp'].map(purp_dict)
 
         # Select column subset
-        stop_probs = stop_purp_probs[['primary_purpose', 'outbound', 'trip_num', 'multistop'] +
+        trip_purpose_probs = stop_purp_probs[['primary_purpose', 'outbound', 'trip_num', 'multistop'] +
                                      list(self.parameters['purpose_ids'].keys())]
 
         # Save to CSV
         file_path = os.path.join(parameters['config_dir'], parameters['output_fname']['trip_purpose_probs'])
         if parameters['overwrite'] or not os.path.exists(file_path):
-            stop_probs.to_csv(file_path, index=False)
+            trip_purpose_probs.to_csv(file_path, index=False)
 
-        return stop_probs
+        return trip_purpose_probs
 
     def create_trip_scheduling_duration_probs(self, inbound, outbound, parameters):
         print("Creating trip scheduling probability lookup table.")
@@ -98,12 +98,16 @@ class TripStopFrequencyMixin:
         stop_freq_probs.rename(columns={'Outbound': 'out', 'Inbound': 'in'}, inplace=True)
         stop_freq_probs['alt'] = stop_freq_probs[['out', 'in']].apply(lambda x: '{}out_{}in'.format(x[0], x[1]), axis=1)
 
-        alts_df = stop_freq_probs.drop_duplicates(['out', 'in', 'alt'])[['alt', 'out', 'in']]
+        stop_frequency_alts = stop_freq_probs.drop_duplicates(['out', 'in', 'alt'])[['alt', 'out', 'in']]
 
-        # Save to CSV
-        file_path = os.path.join(parameters['config_dir'], parameters['output_fname']['trip_purpose_probs'])
-        if parameters['overwrite'] or not os.path.exists(file_path):
-            alts_df.to_csv(file_path, index=False)
+        # Annotation tables
+        stop_frequency_annotate = pd.DataFrame({'Description': [None, 'copied from CTRAMP'],
+                                         'Target': ['primary_purpose', 'duration_hours'],
+                                         'Expression': ['df.tour_type', '(df.end - df.start + 1) * 0.5']})
+
+        trip_purpose_annotate = pd.DataFrame({'Description': ['leg has multiple intermediate stops'],
+                                         'Target': ['multistop'],
+                                         'Expression': ['df.trip_count > 2']})
 
         # Create associated YAMLs for trip purpose and stop frequency
         trips_purpose_spec = {'PROBS_SPEC': 'trip_purpose_probs.csv',
@@ -123,13 +127,8 @@ class TripStopFrequencyMixin:
                               'SPEC_SEGMENTS': []
                               }
 
-        # Save YAML
-        with open(os.path.join(parameters['config_dir'], 'stop_frequency.yaml'), 'w') as file:
-            yaml.dump(stop_frequency_spec, file)
-
-
         # Store output
-        output = {'stop_frequency_alts': alts_df}
+        output = {'stop_frequency_alts': stop_frequency_alts}
 
         # iterate through purposes and pivot probability lookup tables to
         # create MNL spec files with only ASC's (no covariates).
@@ -167,10 +166,10 @@ class TripStopFrequencyMixin:
 
             # Update the YAML spec
             stop_frequency_spec['SPEC_SEGMENTS'].append({'primary_purpose': purpose,
-                                                         'SPEC': expr_file,
+                                                         'SPEC': expr_file_fname,
                                                          'COEFFICIENTS': coeffs_file_fname})
 
-            # Save to CSV
+            # Save coefficients table to CSV
             if parameters['overwrite'] or not os.path.exists(coeffs_file_fname):
                 coeffs_file.to_csv(os.path.join(parameters['config_dir'], coeffs_file_fname), index=False)
             if parameters['overwrite'] or not os.path.exists(expr_file_fname):
@@ -187,6 +186,31 @@ class TripStopFrequencyMixin:
 
             with open(os.path.join(parameters['config_dir'], 'trip_purpose.yaml'), 'w') as file:
                 yaml.dump(trips_purpose_spec, file)
+
+        # Save to CSV
+        for config in ['stop_frequency_alts', 'trip_purpose_annotate', 'stop_frequency_annotate']:
+            df = locals()[config]
+            file_path = os.path.join(parameters['config_dir'], parameters['output_fname'][config])
+            if parameters['overwrite'] or not os.path.exists(file_path):
+                df.to_csv(file_path, index=False)
+
+
+        # file_path_probs = os.path.join(parameters['config_dir'], parameters['output_fname']['trip_purpose_probs'])
+        # if parameters['overwrite'] or not os.path.exists(file_path_probs):
+        #     stop_frequency_alts.to_csv(file_path_probs, index=False)
+        #
+        # file_path_freq_annote = os.path.join(parameters['config_dir'], parameters['output_fname']['stop_frequency_annotate'])
+        # if parameters['overwrite'] or not os.path.exists(file_path_freq_annote):
+        #     stop_frequency_annotate.to_csv(file_path_freq_annote, index=False)
+        #
+        # file_path_purp_annote = os.path.join(parameters['config_dir'], parameters['output_fname']['trip_purpose_annotate'])
+        # if parameters['overwrite'] or not os.path.exists(file_path_purp_annote):
+        #     trip_purpose_annotate.to_csv(file_path_purp_annote, index=False)
+
+        # Save config YAML
+        with open(os.path.join(parameters['config_dir'], 'stop_frequency.yaml'), 'w') as file:
+            yaml.dump(stop_frequency_spec, file)
+
 
         return output
 
