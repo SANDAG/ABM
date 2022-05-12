@@ -129,11 +129,11 @@ class TripStopFrequencyMixin:
 
         # Store output
         output = {'stop_frequency_alts': stop_frequency_alts}
+        required_cols = ['Label', 'Description', 'Expression']
 
         # iterate through purposes and pivot probability lookup tables to
         # create MNL spec files with only ASC's (no covariates).
 
-        required_cols = ['Label', 'Description', 'Expression']
         for purpose, purpose_id in parameters['purpose_ids'].items():
             purpose_probs = stop_freq_probs.loc[stop_freq_probs['Purpose'] == purpose_id, :].copy()
             purpose_probs['coefficient_name'] = purpose_probs.apply(
@@ -148,17 +148,12 @@ class TripStopFrequencyMixin:
                 index=['DurationLo', 'DurationHi'], columns='alt',
                 values='coefficient_name').reset_index()
 
-            expr_file['Label'] = 'util_ASC_tour_dur_{}_{}'.format(
-                expr_file['DurationLo'].astype(str),
-                expr_file['DurationHi'].astype(str))
+            expr_labels = {'Label': 'util_ASC_tour_dur_{}_{}',
+                           'Description': 'ASC for tour durations between {} and {}',
+                           'Expression': '{} < duration_hours <= {}'}
 
-            expr_file['Description'] = 'ASC for tour durations between {} and {}'.format(
-                expr_file['DurationLo'].astype(str),
-                expr_file['DurationHi'].astype(str))
-
-            expr_file['Expression'] = '{} < duration_hours <= {}'.format(
-                expr_file['DurationLo'].astype(str),
-                expr_file['DurationHi'].astype(str))
+            for col, label in expr_labels.items():
+                expr_file[col] = expr_file.apply(lambda x: label.format(x['DurationLo'], x['DurationHi']), axis=1)
 
             expr_file = expr_file.drop(columns=['DurationLo', 'DurationHi'])
             expr_file = expr_file[required_cols + [col for col in expr_file.columns if col not in required_cols]]
