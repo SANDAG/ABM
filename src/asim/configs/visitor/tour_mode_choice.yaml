@@ -1,6 +1,9 @@
 LOGIT_TYPE: NL
 
 tvpb_mode_path_types:
+  WALK_TRANSIT:
+    od: WTW
+    do: WTW
 
 NESTS:
   name: root
@@ -16,6 +19,20 @@ NESTS:
         coefficient: coef_nest_NONMOTORIZED
         alternatives:
           - WALK
+          - BIKE
+      - name: TRANSIT
+        coefficient: coef_nest_TRANSIT
+        alternatives:
+          - WALK_TRANSIT
+#          - PNR_TRANSIT
+#          - KNR_TRANSIT
+#          - TNC_TRANSIT
+      - name: RIDEHAIL
+        coefficient: coef_nest_RIDEHAIL
+        alternatives:
+          - TAXI
+          - TNC_SINGLE
+          - TNC_SHARED
 
 SPEC: tour_mode_choice.csv
 COEFFICIENTS: tour_mode_choice_coefficients.csv
@@ -51,8 +68,9 @@ LOGSUM_CHOOSER_COLUMNS:
   - person_id
   - household_id
   - number_of_participants
+  - free_parking_at_work
 
 CHOICE_COL_NAME: tour_mode
 MODE_CHOICE_LOGSUM_COLUMN_NAME: mode_choice_logsum
-COMPUTE_TRIP_MODE_CHOICE_LOGSUMS: True
+COMPUTE_TRIP_MODE_CHOICE_LOGSUMS: False
 

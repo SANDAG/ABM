@@ -2,3 +2,4 @@ Description,Target,Expression
 ,tour_category,tours.tour_category.str.lower()
 ,tour_type,tours.tour_type.str.lower()
 ,parent_tour_id,None
+,free_parking_at_work,False

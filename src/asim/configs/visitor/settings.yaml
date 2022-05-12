@@ -109,7 +109,7 @@ models:
   # # ---
   - tour_scheduling_probabilistic
   - non_mandatory_tour_destination
-#  - tour_mode_choice_simulate
+  - tour_mode_choice_simulate
 #  - stop_frequency
 #  - trip_purpose
 #  - trip_scheduling

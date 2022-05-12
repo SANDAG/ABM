@@ -2,12 +2,12 @@ Description,Target,Expression
 tour duration in hours,duration_hours,df['duration'] / PERIODS_PER_HOUR
 ,_TOURS_HAVE_DEST,'destination' in tours.columns
 park-n-ride transfer cost,coef_xfers_pnr,coef_ivt*15
-cost coefficient by income segment,coef_cost,"np.select([df.income == 0, df.income == 1, df.income == 2, df.income > 2], [coef_cost_low, coef_cost_med, coef_cost_high, coef_cost_vhigh])"
+cost coefficient by income segment,coef_cost,"np.select([df.income == 0, df.income == 1,df. income == 2, df.income > 2], [coef_cost_low, coef_cost_med, coef_cost_high, coef_cost_vhigh])"
 ,tour_mode_is_da,df.tour_mode == 'DRIVEALONE'
 ,tour_mode_is_s2,df.tour_mode == 'SHARED2'
 ,tour_mode_is_s3,df.tour_mode == 'SHARED3'
 ,tour_mode_is_walk,df.tour_mode == 'WALK'
-vot bins,vot_da,c_ivt / c_cost * 0.6
+vot bins,vot_da,coef_ivt / coef_cost * 0.6
 ,vot_s2,vot_da * cost_share_s2
 ,vot_s3,vot_da * cost_share_s3
 ,_vot_bin_da,"np.where(vot_da < vot_threshold_low, 1, np.where(vot_da < vot_threshold_med, 2, 3))"
@@ -59,13 +59,3 @@ wait times,density_measure,"reindex(land_use.PopEmpDenPerMi, df[ORIGIN])"
 ,taxi_wait_time,"rng.lognormal_for_df(df.set_index('tour_id'), mu=taxi_wait_time_mean.values, sigma=taxi_wait_time_sd.values, broadcast=True, scale=True).set_axis(df.index, axis='index')"
 ,tnc_single_wait_time,"rng.lognormal_for_df(df.set_index('tour_id'), mu=tnc_single_wait_time_mean.values, sigma=tnc_single_wait_time_sd.values, broadcast=True, scale=True).set_axis(df.index, axis='index')"
 ,tnc_shared_wait_time,"rng.lognormal_for_df(df.set_index('tour_id'), mu=tnc_shared_wait_time_mean.values, sigma=tnc_shared_wait_time_sd.values, broadcast=True, scale=True).set_axis(df.index, axis='index')"
-,,
-,,
-,,
-,,
-,,
-,,
-,,
-,,
-,,
-,,

@@ -1,23 +1,23 @@
 Label,Description,Expression,DRIVEALONE,SHARED2,SHARED3,WALK,BIKE,WALK_TRANSIT,TAXI,TNC_SINGLE,TNC_SHARED
 util_DA_IVT,Drive alone - In-vehicle time,da_time_skims,coef_ivt,,,,,,,,
-util_DA_op_cost,Drive alone - Operating cost,@coef_cost * (costPerMile * df.da_dist_skims + df.da_cost_skims),coef_one,,,,,,,,
-util_DA_park_cost,Drive alone - Parking cost,@coef_cost * df.parking_cost,coef_one,,,,,,,,
+util_DA_op_cost,Drive alone - Operating cost,@df.coef_cost * (costPerMile * df.da_dist_skims + df.da_cost_skims),coef_one,,,,,,,,
+util_DA_park_cost,Drive alone - Parking cost,@df.coef_cost * df.parking_cost,coef_one,,,,,,,,
 util_S2_IVT,Shared ride 2 HOV - In -vehicle time,s2_time_skims,,coef_ivt,,,,,,,
-util_S2_op_cost,Shared ride 2 HOV - Operating cost,@coef_cost * (costPerMile * df.s2_dist_skims + df.s2_cost_skims),,coef_one,,,,,,,
-util_S2_park_cost,Shared ride 2 HOV - Parking cost,@coef_cost * df.parking_cost / cost_share_s2,,coef_one,,,,,,,
+util_S2_op_cost,Shared ride 2 HOV - Operating cost,@df.coef_cost * (costPerMile * df.s2_dist_skims + df.s2_cost_skims),,coef_one,,,,,,,
+util_S2_park_cost,Shared ride 2 HOV - Parking cost,@df.coef_cost * df.parking_cost / cost_share_s2,,coef_one,,,,,,,
 util_S3_IVT,Shared ride 3+ HOV - In-vehicle time,s3_time_skims,,,coef_ivt,,,,,,
-util_S3_op_cost,Shared ride 3+ HOV - Operating cost,@coef_cost * (costPerMile * df.s3_dist_skims + df.s3_cost_skims),,,coef_one,,,,,,
-util_S3_park_cost,Shared ride 3+ HOV - Parking cost,@coef_cost * df.parking_cost / cost_share_s3,,,coef_one,,,,,,
+util_S3_op_cost,Shared ride 3+ HOV - Operating cost,@df.coef_cost * (costPerMile * df.s3_dist_skims + df.s3_cost_skims),,,coef_one,,,,,,
+util_S3_park_cost,Shared ride 3+ HOV - Parking cost,@df.coef_cost * df.parking_cost / cost_share_s3,,,coef_one,,,,,,
 util_WALK_unavail,Walk - Mode unavailable,(1 - walk_available),,,,-999,,,,,
-util_WALK_time,Walk - Time,@df.walk_available * df.c_walk_time * df.walk_time,,,,coef_one,,,,,
+util_WALK_time,Walk - Time,@df.walk_available * coef_walkTime * df.walk_time,,,,coef_one,,,,,
 util_WALK_TRANSIT_unavail,Walk-transit unavailable,walk_transit_logsum <= -500,,,,,,-999,,,
 util_WALK_TRANSIT,Walk-transit utility,(walk_transit_logsum > -500) * walk_transit_logsum,,,,,,coef_one,,,
 util_TAXI_IVT,Taxi - In-vehicle time,s2_time_skims,,,,,,,coef_ivt,,
 util_TAXI_wait,Taxi - Wait time,taxi_wait_time,,,,,,,coef_ivt,,
-util_TAXI_cost,Taxi - Fare,@coef_cost * ((Taxi_baseFare + (df.s2_dist_skims * Taxi_costPerMile) + (df.s2_time_skims * Taxi_costPerMinute)) * 100 + df.s2_cost_skims),,,,,,,coef_one,,
+util_TAXI_cost,Taxi - Fare,@df.coef_cost * ((Taxi_baseFare + (df.s2_dist_skims * Taxi_costPerMile) + (df.s2_time_skims * Taxi_costPerMinute)) * 100 + df.s2_cost_skims),,,,,,,coef_one,,
 util_TNC_SINGLE_IVT,TNC Single - In-vehicle time,s2_time_skims,,,,,,,,coef_ivt,
 util_TNC_SINGLE_wait,TNC Single - Wait time,1.5 * tnc_single_wait_time,,,,,,,,coef_ivt,
-util_TNC_SINGLE_cost,TNC Single - Cost,@coef_cost * ((TNC_single_base_fare + (df.s2_dist_skims * TNC_single_costPerMile) + (df.s2_time_skims * TNC_single_costPerMinute).clip(lower=TNC_single_costMinimum)) * 100 + df.s2_cost_skims),,,,,,,,coef_one,
+util_TNC_SINGLE_cost,TNC Single - Cost,@df.coef_cost * ((TNC_single_baseFare + (df.s2_dist_skims * TNC_single_costPerMile) + (df.s2_time_skims * TNC_single_costPerMinute).clip(lower=TNC_single_costMinimum)) * 100 + df.s2_cost_skims),,,,,,,,coef_one,
 util_TNC_SHARED_IVT,TNC Shared - In-vehicle time,@df.s2_time_skims * TNC_shared_IVTFactor,,,,,,,,,coef_ivt
 util_TNC_SHARED_wait,TNC Shared - Wait time,1.5 * tnc_shared_wait_time,,,,,,,,,coef_ivt
-util_TNC_SHARED_cost,TNC Shared - Cost,@coef_cost * ((TNC_shared_baseFare + (df.s2_dist_skims * TNC_shared_costPerMile) + (df.s2_time_skims * TNC_shared_costPerMinute).clip(lower=TNC_shared_costMinimum)) * 100 + df.s2_cost_skims),,,,,,,,,coef_one
+util_TNC_SHARED_cost,TNC Shared - Cost,@df.coef_cost * ((TNC_shared_baseFare + (df.s2_dist_skims * TNC_shared_costPerMile) + (df.s2_time_skims * TNC_shared_costPerMinute).clip(lower=TNC_shared_costMinimum)) * 100 + df.s2_cost_skims),,,,,,,,,coef_one

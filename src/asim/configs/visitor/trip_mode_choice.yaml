@@ -124,6 +124,7 @@ TOURS_MERGED_CHOOSER_COLUMNS:
   - tour_mode
   - stop_frequency
   - demographic_segment
+  - income
   - duration
 
 MODE_CHOICE_LOGSUM_COLUMN_NAME: trip_mode_choice_logsum
