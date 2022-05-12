@@ -12,4 +12,4 @@ SPEC_SEGMENTS:
   primary_purpose: dining
 preprocessor:
   DF: tours_merged
-  SPEC: trip_frequency_annotate_tours_preprocessor
+  SPEC: stop_frequency_annotate_tours_preprocessor

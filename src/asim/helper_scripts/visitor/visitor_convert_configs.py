@@ -121,7 +121,7 @@ class TripStopFrequencyMixin:
 
         stop_frequency_spec = {'LOGIT_TYPE': 'MNL',
                               'preprocessor':
-                                  {'SPEC': 'trip_frequency_annotate_tours_preprocessor',
+                                  {'SPEC': 'stop_frequency_annotate_tours_preprocessor',
                                    'DF': 'tours_merged'},
                               'SEGMENT_COL': 'primary_purpose',
                               'SPEC_SEGMENTS': []
