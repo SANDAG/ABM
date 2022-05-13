@@ -422,7 +422,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
             path = os.path.join(self.output_dir, "TripMatrices.csv")
             table = _pandas.read_csv(path)
             for key, value in mapping.iteritems():
-                cvm_array = table[key].values.reshape((4996, 4996))     # reshape method deprecated since v 0.19.0, yma, 2/12/2019
+                cvm_array = table[key].values.reshape((props["zones.count"], props["zones.count"]))     # reshape method deprecated since v 0.19.0, yma, 2/12/2019
                 #factor in cvm demand by the scale factor used in trip generation
                 cvm_array = cvm_array/scale_factor
                 #scale trips to take care of underestimation
@@ -440,7 +440,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                         key_new = "CVM_%s:%sNT" % (period, veh)
                         value_new = mapping[key_new]
                         if value_new["share"] != 0.0:
-                            cvm_array = table[key_new].values.reshape((4996, 4996))
+                            cvm_array = table[key_new].values.reshape((props["zones.count"], props["zones.count"]))
                             cvm_array = cvm_array/scale_factor
                             cvm_array = cvm_array * value_new["scale"]
                             value["array"] = value["array"] + (cvm_array * value_new["share"])
