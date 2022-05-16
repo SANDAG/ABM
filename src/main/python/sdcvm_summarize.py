@@ -28,7 +28,7 @@ cvmZonalProperties = cvmInputPath + "Zonal Properties CVM.csv"
 skimPath = options.path + "/output/"
 cvmPath = options.path + "/output/"
 #read in max zones from property file -- added by hannah.carson@rsginc.com to incorporate zone splits
-with open(cvmInputPath + 'sandag_abm.properties'),'r') as f:
+with open(options.path + "/conf/" + 'sandag_abm.properties' ,'r') as f:
     props = f.readlines()
     for prop in props:
         if prop.startswith('zones.count'):
