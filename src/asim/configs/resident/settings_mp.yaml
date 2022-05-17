@@ -1,9 +1,9 @@
 inherit_settings: settings.yaml
 
 multiprocess: True
-households_sample_size: 200
-num_processes: 16
-
+households_sample_size: 1000
+num_processes: 20
+trace_hh_id:
 chunk_training_mode: disabled
 
 # raise error if any sub-process fails without waiting for others to complete
@@ -38,12 +38,16 @@ models:
   - mandatory_tour_frequency
   - mandatory_tour_scheduling
   - joint_tour_frequency
+  - external_joint_tour_identification
   - joint_tour_composition
   - joint_tour_participation
   - joint_tour_destination
+  - external_joint_tour_destination
   - joint_tour_scheduling
   - non_mandatory_tour_frequency
+  - external_non_mandatory_identification
   - non_mandatory_tour_destination
+  - external_non_mandatory_destination
   - non_mandatory_tour_scheduling
   - tour_mode_choice_simulate
   - atwork_subtour_frequency

@@ -1,0 +1,12 @@
+Description,Target,Expression
+#,, annotate tours table after first external tour identification model has run
+finding external students,_is_external_student,"reindex(persons.is_external_student, df.person_id)"
+finding external workers,_is_external_worker,"reindex(persons.get('is_external_worker', False), df.person_id)"
+#,, want to set external tour indicators for mandatory tours too
+setting external school trips,is_external_tour,"np.where(_is_external_student & (df.tour_category == 'mandatory') & (df.tour_type == 'school'), True, df.is_external_tour)"
+setting internal school trips,is_external_tour,"np.where((~_is_external_student) & (df.tour_category == 'mandatory') & (df.tour_type == 'school'), False, is_external_tour)"
+setting external work trips,is_external_tour,"np.where(_is_external_worker & (df.tour_category == 'mandatory') & (df.tour_type == 'work'), True, is_external_tour)"
+setting internal work trips,is_external_tour,"np.where((~_is_external_worker) & (df.tour_category == 'mandatory') & (df.tour_type == 'work'), False, is_external_tour)"
+#atwork subtours not created yet...,,
+#atwork tours are internal,is_external_tour,"np.where((df.tour_category == 'atwork'), False, is_external_tour)"
+setting corresponding internal tour indicator,is_internal_tour,"np.where(is_external_tour == True, False, True)"

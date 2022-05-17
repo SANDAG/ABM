@@ -4,12 +4,12 @@
 
 # trace household id; comment out or leave empty for no trace
 # households with all tour types
-#trace_hh_id:
+trace_hh_id: 905536
 
 # trace origin, destination in accessibility calculation; comment out or leave empty for no trace
 #trace_od:
 
-#households_sample_size: 20
+households_sample_size: 20
 
 # input tables
 input_table_list:
@@ -95,6 +95,7 @@ output_tables:
     - persons
     - tours
     - trips
+    - joint_tour_participants
 
 distributed_time_factor_work_mean: 1.0
 distributed_time_factor_work_stddev: 0.7
@@ -131,12 +132,16 @@ models:
   - mandatory_tour_frequency
   - mandatory_tour_scheduling
   - joint_tour_frequency
+  - external_joint_tour_identification
   - joint_tour_composition
   - joint_tour_participation
   - joint_tour_destination
+  - external_joint_tour_destination
   - joint_tour_scheduling
   - non_mandatory_tour_frequency
+  - external_non_mandatory_identification
   - non_mandatory_tour_destination
+  - external_non_mandatory_destination
   - non_mandatory_tour_scheduling
   - tour_mode_choice_simulate
   - atwork_subtour_frequency

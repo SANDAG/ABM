@@ -52,7 +52,7 @@ MODEL_SELECTOR: school
 CHOOSER_SEGMENT_COLUMN_NAME: school_segment
 
 # boolean column to filter choosers (True means keep)
-CHOOSER_FILTER_COLUMN_NAME: is_student
+CHOOSER_FILTER_COLUMN_NAME: is_internal_student
 
 
 # FIXME - these are assigned to persons in annotate_persons. we need a better way to manage this

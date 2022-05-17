@@ -1,0 +1,11 @@
+# using the same spec for both non-mandatory and joint tours
+SPEC: external_tour_identification.csv
+COEFFICIENTS: external_tour_identification_coeffs.csv
+
+#LOGIT_TYPE: NL
+LOGIT_TYPE: MNL
+
+# Adds this column to the persons table and is set to True if workplace is external
+EXTERNAL_COL_NAME: is_external_tour
+# set to True if not external but CHOOSER_FILTER_COLUMN_NAME is True
+INTERNAL_COL_NAME: is_internal_tour
