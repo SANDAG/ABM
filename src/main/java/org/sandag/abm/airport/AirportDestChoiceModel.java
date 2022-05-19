@@ -476,6 +476,10 @@ public class AirportDestChoiceModel
             int mgra = -99;
             if (purpose == AirportModelStructure.EMPLOYEE)
             {
+            	int originMgra = party.getOriginMGRA();
+            	party.setOriginTAZ(mgraManager.getTaz(originMgra));
+            	int destinationMgra = party.getDestinationMGRA();
+            	party.setDestinationTAZ(mgraManager.getTaz(destinationMgra));
             	continue;
             }
             if (purpose < AirportModelStructure.INTERNAL_PURPOSES){
