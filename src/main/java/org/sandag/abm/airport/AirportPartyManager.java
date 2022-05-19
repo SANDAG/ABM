@@ -666,8 +666,10 @@ public class AirportPartyManager
                                     + parties[i].getAirportAccessTAZ() + "," + parties[i].getDestinationTAZ() + ","
                                     + (parties[i].getAPHasPublicTransit() ? SandagModelStructure.WALK_TRANSIT_ALTS[0] : privateTransitMode) + ","
                                     + (parties[i].getAvAvailable() ? 1 : 0) + ","
-                                    + accMode_null + "," + parties[i].getAP2TerminalBoardTap() + "," + 
-                                    + parties[i].getAP2TerminalAlightTap() + "," + parties[i].getAP2TerminalSet() + "," + 
+                                    + accMode_null + "," 
+                                    + (parties[i].getAPHasPublicTransit() ? parties[i].getAP2TerminalBoardTap() : 0) + ","
+                                    + (parties[i].getAPHasPublicTransit() ? parties[i].getAP2TerminalAlightTap() : 0) + "," 
+                                    + parties[i].getAP2TerminalSet() + "," + 
                                     String.format("%9.2f", parties[i].getValueOfTime()) + "\n");
                 		}
                 		writer.print(record_Origin2Access);
@@ -712,8 +714,10 @@ public class AirportPartyManager
                                     + parties[i].getOriginTAZ() + "," + parties[i].getAirportAccessTAZ() + ","
                                     + (parties[i].getAPHasPublicTransit() ? SandagModelStructure.WALK_TRANSIT_ALTS[0] : privateTransitMode) + ","
                                     + (parties[i].getAvAvailable() ? 1 : 0) + ","
-                                    + accMode_null + "," + parties[i].getAP2TerminalBoardTap() + "," + 
-                                    + parties[i].getAP2TerminalAlightTap() + "," + parties[i].getAP2TerminalSet() + "," + 
+                                    + accMode_null + "," 
+                                    + (parties[i].getAPHasPublicTransit() ? parties[i].getAP2TerminalBoardTap() : 0) + ","
+                                    + (parties[i].getAPHasPublicTransit() ? parties[i].getAP2TerminalAlightTap() : 0) + "," 
+                                    + parties[i].getAP2TerminalSet() + "," + 
                                     String.format("%9.2f", parties[i].getValueOfTime()) + "\n");
                 		}
                 		writer.print(record_Origin2Access);
