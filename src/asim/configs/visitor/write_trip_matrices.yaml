@@ -24,14 +24,13 @@ MATRICES:
         data_field: SHARED3_EA
       - name: WALK_EA
         data_field: WALK_EA
-      - name: WALK_TRANSIT_WALK_EA
-        data_field: WALK_TRANSIT_WALK_EA
-      - name: TAXI_EA
-        data_field: TAXI_EA
-      - name: TNC_SINGLE_EA
-        data_field: TNC_SINGLE_EA
-      - name: TNC_SHARED_EA
-        data_field: TNC_SHARED_EA
+      - name: BIKE_EA
+        data_field: BIKE_EA
+  - file_name: trips_ea_tap.omx
+    is_tap: True
+    tables:
+      - name: WALK_TRANSIT_EA
+        data_field: WALK_TRANSIT_EA
   - file_name: trips_am.omx
     tables:
       - name: DRIVEALONE_AM
@@ -42,14 +41,13 @@ MATRICES:
         data_field: SHARED3_AM
       - name: WALK_AM
         data_field: WALK_AM
-      - name: WALK_TRANSIT_WALK_AM
-        data_field: WALK_TRANSIT_WALK_EA
-      - name: TAXI_AM
-        data_field: TAXI_AM
-      - name: TNC_SINGLE_AM
-        data_field: TNC_SINGLE_AM
-      - name: TNC_SHARED_AM
-        data_field: TNC_SHARED_AM
+      - name: BIKE_AM
+        data_field: BIKE_AM
+  - file_name: trips_am_tap.omx
+    is_tap: True
+    tables:
+      - name: WALK_TRANSIT_AM
+        data_field: WALK_TRANSIT_AM
   - file_name: trips_md.omx
     tables:
       - name: DRIVEALONE_MD
@@ -60,14 +58,13 @@ MATRICES:
         data_field: SHARED3_MD
       - name: WALK_MD
         data_field: WALK_MD
-      - name: WALK_TRANSIT_WALK_MD
-        data_field: WALK_TRANSIT_WALK_EA
-      - name: TAXI_MD
-        data_field: TAXI_MD
-      - name: TNC_SINGLE_MD
-        data_field: TNC_SINGLE_MD
-      - name: TNC_SHARED_MD
-        data_field: TNC_SHARED_MD
+      - name: BIKE_MD
+        data_field: BIKE_MD
+  - file_name: trips_md_tap.omx
+    is_tap: True
+    tables:
+      - name: WALK_TRANSIT_MD
+        data_field: WALK_TRANSIT_MD
   - file_name: trips_pm.omx
     tables:
       - name: DRIVEALONE_PM
@@ -78,14 +75,13 @@ MATRICES:
         data_field: SHARED3_PM
       - name: WALK_PM
         data_field: WALK_PM
-      - name: WALK_TRANSIT_WALK_PM
-        data_field: WALK_TRANSIT_WALK_EA
-      - name: TAXI_PM
-        data_field: TAXI_PM
-      - name: TNC_SINGLE_PM
-        data_field: TNC_SINGLE_PM
-      - name: TNC_SHARED_PM
-        data_field: TNC_SHARED_PM
+      - name: BIKE_PM
+        data_field: BIKE_PM
+  - file_name: trips_pm_tap.omx
+    is_tap: True
+    tables:
+      - name: WALK_TRANSIT_PM
+        data_field: WALK_TRANSIT_PM
   - file_name: trips_ev.omx
     tables:
       - name: DRIVEALONE_EV
@@ -96,13 +92,31 @@ MATRICES:
         data_field: SHARED3_EV
       - name: WALK_EV
         data_field: WALK_EV
-      - name: WALK_TRANSIT_WALK_EV
-        data_field: WALK_TRANSIT_WALK_EA
-      - name: TAXI_EV
-        data_field: TAXI_EV
-      - name: TNC_SINGLE_EV
-        data_field: TNC_SINGLE_EV
-      - name: TNC_SHARED_EV
-        data_field: TNC_SHARED_EV
+      - name: BIKE_EV
+        data_field: BIKE_EV
+  - file_name: trips_ev_tap.omx
+    is_tap: True
+    tables:
+      - name: WALK_TRANSIT_EV
+        data_field: WALK_TRANSIT_EV
 
 CONSTANTS:
+  time_periods:
+    EA:
+      first_hour: 1
+      last_hour: 6
+    AM:
+      first_hour: 7
+      last_hour: 12
+    MD:
+      first_hour: 13
+      last_hour: 25
+    PM:
+      first_hour: 26
+      last_hour: 32
+    EV:
+      first_hour: 33
+      last_hour: 48
+  # SHARED2 and SHARED3 Occupancies
+  OCC_SHARED2: 2.0
+  OCC_SHARED3: 3.33

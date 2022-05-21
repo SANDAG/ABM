@@ -93,7 +93,7 @@ class VisitorModel(TourEnumMixin,
 
     def setup_configs(self):
         # create/update configs
-        outbound, inbound = self.tables['stop_duration']['inbound'], self.tables['stop_duration']['outbound']
+        inbound, outbound = self.tables['stop_duration']['inbound'], self.tables['stop_duration']['outbound']
         self.processed_data['stop_duration_probs'] = self.create_trip_scheduling_duration_probs(
             inbound, outbound, self.parameters
         )

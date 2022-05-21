@@ -4,6 +4,7 @@ import os
 import yaml
 import pandas as pd
 import numpy as np
+from math import isclose
 
 # For interpolation
 import seaborn as sns
@@ -39,6 +40,26 @@ class TripStopFrequencyMixin:
 
         return trip_purpose_probs
 
+    def rescale_bad_probs(self, df):
+        # Probability columns
+        probs_cols = [x for x in df.columns if x.strip('-').isnumeric()]
+
+        # Col sums
+        s = df[probs_cols].apply(sum, axis=1)
+
+        # Check approx equal
+        is_perfect = all(s.apply(lambda x: isclose(x, 1, abs_tol=1e-16)))
+        if not is_perfect:
+            diff = format(s[s != 1].iloc[0], '.60g')
+            df_name = 'outbound' if all(df.outbound) else 'inbound'
+            print("Probabilities in '{}' don't sum to 1,"
+                  " re-scaling to exactly 1, e.g. 1 != {}".format(df_name, diff))
+
+            # Divide each element by the colsums x' = x * 1/sum(x) to ensure sum of 1
+            df[probs_cols] = df[probs_cols].T.div(s).T
+
+        return df
+
     def create_trip_scheduling_duration_probs(self, inbound, outbound, parameters):
         print("Creating trip scheduling probability lookup table.")
 
@@ -50,11 +71,23 @@ class TripStopFrequencyMixin:
         # Reshape wide tables to long format so they can be stacked into one data frame
         duration_probs = []
         for df in [inbound, outbound]:
-            duration_probs.append(
-                df.melt(
-                    id_vars=['RemainingLow', 'RemainingHigh', 'Stop', 'outbound'],
-                    var_name='duration_offset', value_name='prob')
+            df = self.rescale_bad_probs(df)
+            #
+            # # Add in any missing combinations to ensure matrix consistency
+            # cols = ['RemainingLow', 'RemainingHigh', 'Stop', 'outbound']
+            # full_df = pd.DataFrame(itertools.product(range(1, 49), range(1, 49),
+            #                                          df.Stop.unique(), df.outbound.unique()),
+            #                        columns=cols)
+            # # Add existing probs, fill na as 0
+            # df = full_df.merge(df, on=cols, how='outer').fillna(0)
+
+            # Re-shape to long
+            df = df.melt(
+                id_vars=['RemainingLow', 'RemainingHigh', 'Stop', 'outbound'],
+                var_name='duration_offset', value_name='prob'
             )
+            duration_probs.append(df)
+
         duration_probs = pd.concat(duration_probs, axis=0, ignore_index=True)
 
         # Cleanup column names

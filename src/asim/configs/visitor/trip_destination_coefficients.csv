@@ -1,0 +1,8 @@
+coefficient_name,value,constrain
+coef_UNAVAILABLE,-999,T
+coef_one,1,T
+coef_mode_choice_logsum_work,0.94564,F
+coef_mode_choice_logsum_rec,0.86742,F
+coef_mode_choice_logsum_dining,1,
+coef_util_distance_work,-0.625,F
+coef_util_distance_dining,-0.5,F
