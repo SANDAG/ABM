@@ -2,7 +2,6 @@
 SPEC: external_worker_identification.csv
 COEFFICIENTS: external_worker_identification_coeffs.csv
 
-#LOGIT_TYPE: NL
 LOGIT_TYPE: MNL
 
 # boolean column to filter choosers (True means keep)
