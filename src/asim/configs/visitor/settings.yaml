@@ -94,7 +94,7 @@ use_shadow_pricing: False
 want_dest_choice_sample_tables: False
 want_dest_choice_presampling: True
 
-#resume_after: trip_scheduling
+#resume_after: trip_destination
 
 models:
   - initialize_landuse

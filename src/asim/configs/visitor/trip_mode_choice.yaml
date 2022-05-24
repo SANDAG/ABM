@@ -20,17 +20,18 @@ NESTS:
       - name: NONMOTORIZED
         coefficient: 0.50
         alternatives:
-          - WALK
+            - WALK
+            - BIKE
       - name: TRANSIT
         coefficient:  0.50
         alternatives:
-          - WALK_TRANSIT
+            - WALK_TRANSIT
       - name: RIDEHAIL
         coefficient: 0.50
         alternatives:
-          - TAXI
-          - TNC_SINGLE
-          - TNC_SHARED
+            - TAXI
+            - TNC_SINGLE
+            - TNC_SHARED
 
 CONSTANTS:
   orig_col_name: origin

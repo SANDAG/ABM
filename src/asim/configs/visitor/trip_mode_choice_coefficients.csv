@@ -6,6 +6,7 @@ coef_nest_TRANSIT,0.5,T
 coef_nest_RIDEHAIL,0.5,T
 coef_one,1,T
 coef_zero,0,T
+coef_unavail,-999,T
 coef_ivt,-0.03,F
 coef_fwt,-0.0457,F
 coef_xwt,-0.0457,F
@@ -30,3 +31,8 @@ coef_abm2_calib_tnc_transit,0,F
 coef_abm2_calib_taxi,-1.653630067,F
 coef_abm2_calib_tnc,-1.343352214,F
 coef_abm2_calib_tnc_shared,0,F
+cost_share_s2,2,F
+cost_share_s3,3,F
+max_walk_time,60,F
+max_bike_time,60,F
+coef_bikeTime,-0.0536,F

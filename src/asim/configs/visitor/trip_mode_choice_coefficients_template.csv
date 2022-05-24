@@ -1,5 +1,12 @@
-coefficient_name,shop,dining,recreation
+coefficient_name,work,dining,recreation
 #same for all segments,,,
+coef_nest_root,coef_nest_root,coef_nest_root,coef_nest_root
+coef_nest_AUTO,coef_nest_AUTO,coef_nest_AUTO,coef_nest_AUTO
+coef_nest_NONMOTORIZED,coef_nest_NONMOTORIZED,coef_nest_NONMOTORIZED,coef_nest_NONMOTORIZED
+coef_nest_TRANSIT,coef_nest_TRANSIT,coef_nest_TRANSIT,coef_nest_TRANSIT
+coef_nest_RIDEHAIL,coef_nest_RIDEHAIL,coef_nest_RIDEHAIL,coef_nest_RIDEHAIL
+coef_unavail,coef_unavail,coef_unavail,coef_unavail
+coef_zero,coef_zero,coef_zero,coef_zero
 coef_one,coef_one,coef_one,coef_one
 coef_ivt,coef_ivt,coef_ivt,coef_ivt
 coef_fwt,coef_fwt,coef_fwt,coef_fwt
@@ -9,6 +16,7 @@ coef_wegr,coef_wegr,coef_wegr,coef_wegr
 coef_waux,coef_waux,coef_waux,coef_waux
 coef_xfers,coef_xfers,coef_xfers,coef_xfers
 coef_walkTime,coef_walkTime,coef_walkTime,coef_walkTime
+coef_bikeTime,coef_bikeTime,coef_bikeTime,coef_bikeTime
 coef_cost_low,coef_cost_low,coef_cost_low,coef_cost_low
 coef_cost_med,coef_cost_med,coef_cost_med,coef_cost_med
 coef_cost_high,coef_cost_high,coef_cost_high,coef_cost_high
