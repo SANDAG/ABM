@@ -21,6 +21,7 @@ CREATE TABLE [dimension].[scenario] (
     [user_name] nvarchar(100) NOT NULL,
     [load_status] nvarchar(10) NOT NULL,    
     [load_status_date] smalldatetime NULL,
+	[geography_set_id] int NOT NULL DEFAULT 1
     CONSTRAINT pk_scenario PRIMARY KEY ([scenario_id]))
 ON reference_fg
 WITH (DATA_COMPRESSION = PAGE)
@@ -37,8 +38,17 @@ EXECUTE [db_meta].[add_xp] 'dimension.scenario.path', 'MS_Description', 'full UN
 EXECUTE [db_meta].[add_xp] 'dimension.scenario.user_name', 'MS_Description', 'user who requested scenario be loaded into the database'
 EXECUTE [db_meta].[add_xp] 'dimension.scenario.load_status', 'MS_Description', 'loading process status of scenario'
 EXECUTE [db_meta].[add_xp] 'dimension.scenario.load_status_date', 'MS_Description', 'date and time of load status'
+EXECUTE [db_meta].[add_xp] 'dimension.scenario.geography_set_id', 'MS_Description', 'geography dimension set identifier defaults to 1'
+
 GO
 
+CREATE TABLE [dbo].[scenario_delete](
+	[scenario_id] [smallint] NOT NULL,
+	CONSTRAINT [pk_scenario_delete] PRIMARY KEY CLUSTERED ([scenario_id] ASC)) 
+	ON reference_fg
+GO
+
+EXECUTE [db_meta].[add_xp] 'dbo.scenario_delete', 'MS_Description', 'scenario id to delete from database'
 
 -- create av used dimension
 CREATE TABLE [dimension].[av_used] (
@@ -60,10 +70,30 @@ EXECUTE [db_meta].[add_xp] 'dimension.av_used.av_used_description', 'MS_Descript
 GO
 
 
+-- create geography set dimension
+CREATE TABLE [dimension].[geography_set] (
+    [geography_set_id] int IDENTITY(0,1) NOT NULL, 
+    [geography_set_description] nvarchar(400) NOT NULL,
+    CONSTRAINT pk_geoSet PRIMARY KEY ([geography_set_id]),
+    CONSTRAINT ixuq_geoSet UNIQUE ([geography_set_description]) WITH (DATA_COMPRESSION = PAGE))
+ON reference_fg
+WITH (DATA_COMPRESSION = PAGE)
+INSERT INTO [dimension].[geography_set] VALUES
+    ('Not Applicable'), -- insert NULL record as 0
+    ('default geography for the San Diego Region using mgra_13 and taz_13')
+GO
+
+EXECUTE [db_meta].[add_xp] 'dimension.geography_set', 'MS_Description', 'dimension table for set of SANDAG geography'
+EXECUTE [db_meta].[add_xp] 'dimension.geography_set.geography_set_id', 'MS_Description', 'geography set surrogate key'
+EXECUTE [db_meta].[add_xp] 'dimension.geography_set.geography_set_description', 'MS_Description', 'geography_set description'
+GO
+
+
 -- create geography dimension
 -- use an input file and an update query to fill at a later step
 CREATE TABLE [dimension].[geography] (
     [geography_id] int IDENTITY(0,1) NOT NULL,  -- insert NULL record as 0
+	[geography_set_id] int NOT NULL,
     [mgra_13] nvarchar(20) NOT NULL,
     [mgra_13_shape] geometry NULL,  -- model geographies are given geometries
     [taz_13] nvarchar(20) NOT NULL,
@@ -80,7 +110,8 @@ CREATE TABLE [dimension].[geography] (
     [region_2004_name] nvarchar(50) NOT NULL,
     [external_zone] nvarchar(20) NOT NULL,
     CONSTRAINT pk_geography PRIMARY KEY([geography_id]),
-    CONSTRAINT ixuq_geography UNIQUE([mgra_13], [taz_13]) WITH (DATA_COMPRESSION = PAGE),
+	CONSTRAINT fk_geography_set FOREIGN KEY ([geography_set_id]) REFERENCES [dimension].[geography_set] ([geography_set_id]),
+    CONSTRAINT ixuq_geography UNIQUE([mgra_13], [taz_13], [geography_set_id]) WITH (DATA_COMPRESSION = PAGE),
     INDEX ix_geography_mgra13 NONCLUSTERED ([geography_id], [mgra_13]) WITH (DATA_COMPRESSION = PAGE),
     INDEX ix_geography_taz13 NONCLUSTERED ([geography_id], [taz_13]) WITH (DATA_COMPRESSION = PAGE),
     INDEX ix_geography_luz13 NONCLUSTERED ([geography_id], [luz_13]) WITH (DATA_COMPRESSION = PAGE),
@@ -96,6 +127,7 @@ GO
 
 EXECUTE [db_meta].[add_xp] 'dimension.geography', 'MS_Description', 'geography dimension for ABM model including cross references'
 EXECUTE [db_meta].[add_xp] 'dimension.geography.geography_id', 'MS_Description', 'geography surrogate key'
+EXECUTE [db_meta].[add_xp] 'dimension.geography.geography_set_id', 'MS_Description', 'id for a set of geographies - standard geographies are set id 1'
 EXECUTE [db_meta].[add_xp] 'dimension.geography.mgra_13', 'MS_Description', 'series 13 MGRA geography zones - base geography unit of ABM model'
 EXECUTE [db_meta].[add_xp] 'dimension.geography.mgra_13_shape', 'MS_Description', 'series 13 MGRA geography geometry'
 EXECUTE [db_meta].[add_xp] 'dimension.geography.taz_13', 'MS_Description', 'series 13 TAZ geography zones - base and secondary geography unit of ABM model - MGRA geograhy nests within excluding external TAZs'
@@ -122,6 +154,7 @@ GO
 CREATE VIEW [dimension].[geography_household_location] AS
 SELECT
     [geography_id] AS [geography_household_location_id]
+	,[geography_set_id] AS [geography_household_location_set_id]
     ,[mgra_13] AS [household_location_mgra_13]
     ,[mgra_13_shape] AS [household_location_mgra_13_shape]
     ,[taz_13] AS [household_location_taz_13]
@@ -152,6 +185,7 @@ GO
 CREATE VIEW [dimension].[geography_parking_destination] AS
 SELECT
     [geography_id] AS [geography_parking_destination_id]
+	,[geography_set_id] AS [geography_parking_destination_set_id]
     ,[mgra_13] AS [parking_destination_mgra_13]
     ,[mgra_13_shape] AS [parking_destination_mgra_13_shape]
     ,[taz_13] AS [parking_destination_taz_13]
@@ -182,6 +216,7 @@ GO
 CREATE VIEW [dimension].[geography_school_location] AS
 SELECT
     [geography_id] AS [geography_school_location_id]
+	,[geography_set_id] AS [geography_school_location_set_id]
     ,[mgra_13] AS [school_location_mgra_13]
     ,[mgra_13_shape] AS [school_location_mgra_13_shape]
     ,[taz_13] AS [school_location_taz_13]
@@ -212,6 +247,7 @@ GO
 CREATE VIEW [dimension].[geography_tour_destination] AS
 SELECT
     [geography_id] AS [geography_tour_destination_id]
+	,[geography_set_id] AS [geography_tour_destination_set_id]
     ,[mgra_13] AS [tour_destination_mgra_13]
     ,[mgra_13_shape] AS [tour_destination_mgra_13_shape]
     ,[taz_13] AS [tour_destination_taz_13]
@@ -242,6 +278,7 @@ GO
 CREATE VIEW [dimension].[geography_tour_origin] AS
 SELECT
     [geography_id] AS [geography_tour_origin_id]
+	,[geography_set_id] AS [geography_tour_origin_set_id]
     ,[mgra_13] AS [tour_origin_mgra_13]
     ,[mgra_13_shape] AS [tour_origin_mgra_13_shape]
     ,[taz_13] AS [tour_origin_taz_13]
@@ -272,6 +309,7 @@ GO
 CREATE VIEW [dimension].[geography_trip_destination] AS
 SELECT
     [geography_id] AS [geography_trip_destination_id]
+	,[geography_set_id] AS [geography_trip_destination_set_id]
     ,[mgra_13] AS [trip_destination_mgra_13]
     ,[mgra_13_shape] AS [trip_destination_mgra_13_shape]
     ,[taz_13] AS [trip_destination_taz_13]
@@ -302,6 +340,7 @@ GO
 CREATE VIEW [dimension].[geography_trip_origin] AS
 SELECT
     [geography_id] AS [geography_trip_origin_id]
+	,[geography_set_id] AS [geography_trip_origin_set_id]
     ,[mgra_13] AS [trip_origin_mgra_13]
     ,[mgra_13_shape] AS [trip_origin_mgra_13_shape]
     ,[taz_13] AS [trip_origin_taz_13]
@@ -332,6 +371,7 @@ GO
 CREATE VIEW [dimension].[geography_work_location] AS
 SELECT
     [geography_id] AS [geography_work_location_id]
+	,[geography_set_id] AS [geography_work_location_set_id]
     ,[mgra_13] AS [work_location_mgra_13]
     ,[mgra_13_shape] AS [work_location_mgra_13_shape]
     ,[taz_13] AS [work_location_taz_13]
@@ -434,7 +474,21 @@ INSERT INTO [dimension].[mode] VALUES
     ('Rental car', 'Rental car'),
     ('Shuttle/Van/Courtesy Vehicle', 'Shuttle/Van/Courtesy Vehicle'),
     ('Transit', 'Transit'),
-    ('Highway Network Preload - Bus', 'Transit')
+    ('Highway Network Preload - Bus', 'Transit'),
+	('Drive and park location 1', 'Pickup/Drop-off'),
+	('Drive and park location 2', 'Pickup/Drop-off'),
+	('Drive and park location 3', 'Pickup/Drop-off'),
+	('Drive and park location 4', 'Pickup/Drop-off'),
+	('Drive and park location 5', 'Pickup/Drop-off'),
+	('Park and escort', 'Pickup/Drop-off'),
+	('Ride hailing location 1', 'Pickup/Drop-off'),
+	('Ride hailing location 2', 'Pickup/Drop-off'),
+	('Curbside drop off location 1', 'Pickup/Drop-off'),
+	('Curbside drop off location 2', 'Pickup/Drop-off'),
+	('Curbside drop off location 3', 'Pickup/Drop-off'),
+	('Curbside drop off location 4', 'Pickup/Drop-off'),
+	('Curbside drop off location 5', 'Pickup/Drop-off'),
+	('Employee/Airport access point to terminal', 'Parking Lot')
 GO
 
 EXECUTE [db_meta].[add_xp] 'dimension.mode', 'MS_Description', 'travel mode dimension'
@@ -656,7 +710,8 @@ INSERT INTO [dimension].[purpose] VALUES
     ('Pickup Only', 'TNC Routing'),
     ('Drop-off Only', 'TNC Routing'),
     ('Pickup and Drop-off', 'TNC Routing'),
-    ('Refuel', 'TNC Routing')
+    ('Refuel', 'TNC Routing'),
+	('Employee Parking', 'Work')
 GO
 
 EXECUTE [db_meta].[add_xp] 'dimension.purpose', 'MS_Description', 'purpose dimension'

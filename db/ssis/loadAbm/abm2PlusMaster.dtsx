@@ -18,6 +18,15 @@
   <DTS:Variables>
     <DTS:Variable
       DTS:CreationName=""
+      DTS:DTSID="{38107795-4215-419B-A154-328B1E45985E}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="geosetID">
+      <DTS:VariableValue
+        DTS:DataType="3">1</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
       DTS:DTSID="{C39BDDA3-1887-405C-8657-1617C9E2AC31}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
@@ -63,6 +72,10 @@
             <ParameterName>scenarioID</ParameterName>
             <BindedVariableOrParameterName>User::scenarioID</BindedVariableOrParameterName>
           </ParameterAssignment>
+          <ParameterAssignment>
+            <ParameterName>geosetID</ParameterName>
+            <BindedVariableOrParameterName>User::geosetID</BindedVariableOrParameterName>
+          </ParameterAssignment>
         </ExecutePackageTask>
       </DTS:ObjectData>
     </DTS:Executable>
@@ -91,6 +104,10 @@
           <ParameterAssignment>
             <ParameterName>scenarioID</ParameterName>
             <BindedVariableOrParameterName>User::scenarioID</BindedVariableOrParameterName>
+          </ParameterAssignment>
+          <ParameterAssignment>
+            <ParameterName>geosetID</ParameterName>
+            <BindedVariableOrParameterName>User::geosetID</BindedVariableOrParameterName>
           </ParameterAssignment>
         </ExecutePackageTask>
       </DTS:ObjectData>
@@ -121,6 +138,10 @@
             <ParameterName>scenarioID</ParameterName>
             <BindedVariableOrParameterName>User::scenarioID</BindedVariableOrParameterName>
           </ParameterAssignment>
+          <ParameterAssignment>
+            <ParameterName>geosetID</ParameterName>
+            <BindedVariableOrParameterName>User::geosetID</BindedVariableOrParameterName>
+          </ParameterAssignment>
         </ExecutePackageTask>
       </DTS:ObjectData>
     </DTS:Executable>
@@ -149,6 +170,10 @@
           <ParameterAssignment>
             <ParameterName>scenarioID</ParameterName>
             <BindedVariableOrParameterName>User::scenarioID</BindedVariableOrParameterName>
+          </ParameterAssignment>
+          <ParameterAssignment>
+            <ParameterName>geosetID</ParameterName>
+            <BindedVariableOrParameterName>User::geosetID</BindedVariableOrParameterName>
           </ParameterAssignment>
         </ExecutePackageTask>
       </DTS:ObjectData>
@@ -211,10 +236,16 @@
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
           SQLTask:Connection="{A2745192-1304-4CAD-B395-584AC14AA8AD}"
-          SQLTask:SqlStatementSource="SET NOCOUNT ON&#xA;DECLARE @scenario_id int = ?;&#xA;&#xA;&#xA;-- update scenario table to indicate scenario has been loaded&#xA;UPDATE [dimension].[scenario]&#xA;SET [load_status] = 'complete', [load_status_date] = GETDATE() &#xA;WHERE [scenario_id] = @scenario_id&#xA;&#xA;&#xA;-- remove loaded scenario from request table&#xA;DELETE FROM [data_load].[load_request] WHERE [scenario_id] = @scenario_id&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          SQLTask:SqlStatementSource="SET NOCOUNT ON&#xA;DECLARE @scenario_id int = ?;&#xA;DECLARE @geoset_id int = ?;&#xA;&#xA;-- update scenario table to indicate scenario has been loaded&#xA;UPDATE [dimension].[scenario]&#xA;SET [load_status] = 'complete', [load_status_date] = GETDATE(), [geography_set_id] = @geoset_id&#xA;WHERE [scenario_id] = @scenario_id&#xA;&#xA;&#xA;-- remove loaded scenario from request table&#xA;DELETE FROM [data_load].[load_request] WHERE [scenario_id] = @scenario_id&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
           <SQLTask:ParameterBinding
             SQLTask:ParameterName="0"
             SQLTask:DtsVariableName="User::scenarioID"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="131"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="1"
+            SQLTask:DtsVariableName="User::geosetID"
             SQLTask:ParameterDirection="Input"
             SQLTask:DataType="131"
             SQLTask:ParameterSize="-1" />
@@ -239,7 +270,7 @@
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
           SQLTask:Connection="{A2745192-1304-4CAD-B395-584AC14AA8AD}"
-          SQLTask:SqlStatementSource="SET NOCOUNT ON;&#xA;&#xA;-- set scenario_id for the scenario to be loaded&#xA;DECLARE @scenarioID int = (SELECT ISNULL(MAX([scenario_id]), 0) + 1 FROM [dimension].[scenario])&#xA;&#xA;&#xA;-- grab the first scenario to be loaded and assign it that scenario_id&#xA;UPDATE [data_load].[load_request]&#xA;SET [scenario_id] = @scenarioID, [load_status] = 'loading', [load_status_date] = GETDATE()&#xA;WHERE [load_request_id] IN (&#xA;    SELECT TOP 1&#xA;        [load_request_id]&#xA;    FROM&#xA;        [data_load].[load_request]&#xA;    WHERE&#xA;        [load_status] = 'requested'&#xA;        AND [scenario_id] IS NULL&#xA;    ORDER BY &#xA;        [load_status_date])&#xA;&#xA;&#xA;-- update the scenario table with the scenario to be loaded&#xA;INSERT INTO [dimension].[scenario] (&#xA;    [scenario_id]&#xA;    ,[name]&#xA;    ,[year]&#xA;    ,[iteration]&#xA;    ,[sample_rate]&#xA;    ,[abm_version]&#xA;    ,[path]&#xA;    ,[user_name]&#xA;    ,[load_status]&#xA;    ,[load_status_date])&#xA;SELECT&#xA;    [scenario_id]&#xA;    ,[name]&#xA;    ,[year]&#xA;    ,[iteration]&#xA;    ,[sample_rate]&#xA;    ,[abm_version]&#xA;    ,[path]&#xA;    ,[user_name]&#xA;    ,[load_status]&#xA;    ,[load_status_date]&#xA;FROM&#xA;    [data_load].[load_request]&#xA;WHERE&#xA;    [scenario_id] = @scenarioID&#xA;&#xA;&#xA;-- return result set to the ssis package&#xA;SELECT&#xA;    [scenario_id]&#xA;    ,RTRIM([path]) AS [path]&#xA;FROM&#xA;    [data_load].[load_request]&#xA;WHERE&#xA;    [scenario_id] = @scenarioID&#xA;"
+          SQLTask:SqlStatementSource="SET NOCOUNT ON;&#xA;&#xA;-- set scenario_id for the scenario to be loaded&#xA;DECLARE @scenarioID int = (SELECT ISNULL(MAX([scenario_id]), 0) + 1 FROM [dimension].[scenario])&#xA;&#xA;&#xA;-- grab the first scenario to be loaded and assign it that scenario_id&#xA;UPDATE [data_load].[load_request]&#xA;SET [scenario_id] = @scenarioID, [load_status] = 'loading', [load_status_date] = GETDATE()&#xA;WHERE [load_request_id] IN (&#xA;    SELECT TOP 1&#xA;        [load_request_id]&#xA;    FROM&#xA;        [data_load].[load_request]&#xA;    WHERE&#xA;        [load_status] = 'requested'&#xA;        AND [scenario_id] IS NULL&#xA;    ORDER BY &#xA;        [load_status_date])&#xA;&#xA;&#xA;-- update the scenario table with the scenario to be loaded&#xA;INSERT INTO [dimension].[scenario] (&#xA;    [scenario_id]&#xA;    ,[name]&#xA;    ,[year]&#xA;    ,[iteration]&#xA;    ,[sample_rate]&#xA;    ,[abm_version]&#xA;    ,[path]&#xA;    ,[user_name]&#xA;    ,[load_status]&#xA;    ,[load_status_date])&#xA;SELECT&#xA;    [scenario_id]&#xA;    ,[name]&#xA;    ,[year]&#xA;    ,[iteration]&#xA;    ,[sample_rate]&#xA;    ,[abm_version]&#xA;    ,[path]&#xA;    ,[user_name]&#xA;    ,[load_status]&#xA;    ,[load_status_date]&#xA;FROM&#xA;    [data_load].[load_request]&#xA;WHERE&#xA;    [scenario_id] = @scenarioID&#xA;&#xA;&#xA;-- return result set to the ssis package&#xA;SELECT&#xA;    [scenario_id]&#xA;    ,RTRIM([path]) AS [path]&#xA;   ,CONVERT(int,[geography_set_id]) as geosetID&#xA;FROM&#xA;    [data_load].[load_request]&#xA;WHERE&#xA;    [scenario_id] = @scenarioID"
           SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
           <SQLTask:ResultBinding
             SQLTask:ResultName="0"
@@ -247,6 +278,9 @@
           <SQLTask:ResultBinding
             SQLTask:ResultName="1"
             SQLTask:DtsVariableName="User::scenarioFilePath" />
+          <SQLTask:ResultBinding
+            SQLTask:ResultName="2"
+            SQLTask:DtsVariableName="User::geosetID" />
         </SQLTask:SqlTaskData>
       </DTS:ObjectData>
     </DTS:Executable>
