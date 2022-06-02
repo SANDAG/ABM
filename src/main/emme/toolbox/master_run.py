@@ -605,6 +605,8 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 # also needed as CT-RAMP does not overwrite existing files
                 if not skipCoreABM[iteration]:
                     if not skipShadowPricing:
+                        #reload properties from the run location
+                        props = load_properties(_join(self._path, "conf", "sandag_abm.properties"))
                         if iteration == 0:
                             props['UsualWorkLocationChoice.ShadowPrice.Input.File'] = ""
                             props['UsualSchoolLocationChoice.ShadowPrice.Input.File'] = ""
