@@ -9,6 +9,7 @@ import subprocess
 import yaml
 import copy
 import os
+import errno
 import pandas as pd
 
 
@@ -32,7 +33,8 @@ def find_root_level(target):
     while not os.path.exists(os.path.join(pardir, target)):
         pardir = os.path.join(os.pardir, pardir)
         if os.path.abspath(pardir) == OS_ROOT:
-            return
+            print("Could not find directory specified in settings.yaml!")
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), target)
     return pardir
 
 
