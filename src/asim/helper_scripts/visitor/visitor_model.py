@@ -131,13 +131,13 @@ if __name__ == '__main__':
 
     # Initialize the class
     visitor = VisitorModel()
-    if args.tour_enum:
-        print('RUNNING TOUR ENUMERATION!')
-        visitor.tour_enum()
-
     if args.setup_configs:
         print('CREATING CONFIG FILES!')
         visitor.setup_configs()
+
+    if args.tour_enum:
+        print('RUNNING TOUR ENUMERATION!')
+        visitor.tour_enum()
 
     if args.asim:
         print('RUNNING ACTIVITYSIM!')

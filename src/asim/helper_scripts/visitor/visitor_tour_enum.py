@@ -10,20 +10,28 @@ class TourEnumMixin:
         # 2. Simulate n tours and tour features for each party
         # 3. Assign households and persons to the tours
 
-        # Probability distribution tables
-        tours = []
-        for index, maz in tables['land_use'].iterrows():
-            # Calculate number of parties per visitor visitor_travel_type [personal/business] in the origin
-            n_seg_parties = self.calculate_n_parties(n_hh=maz['hh'],
-                                                     n_hotel=maz['hotelroomtotal'],
-                                                     parameters=parameters)
+        # Vectorize party calculation function. Significantly faster, and lets us remove zero visitor zones
+        def n_parties_vec(maz_tuple):
+            maz = maz_tuple[1]
+            parties = self.calculate_n_parties(n_hh=maz['hh'], n_hotel=maz['hotelroomtotal'], parameters=parameters)
+            parties['origin'] = maz_tuple[0]
+            return parties
 
-            # If not empty
-            if n_seg_parties:
-                # Generate tours for each visitor_travel_type (personal or business)
-                maz_tours = self.simulate_tour_features(n_seg_parties, tables)
-                maz_tours['origin'] = int(maz['MAZ'])
-                tours.append(maz_tours)
+        # Vectorize tour enumeration for parties.
+        def party_tour_enum_vec(n_seg_parties):
+            # Generate tours for each visitor_travel_type (personal or business)
+            n_parties = {k: v for k, v in n_seg_parties.items() if k in ['personal', 'business']}
+            maz_tours = self.simulate_tour_features(n_parties, tables)
+            maz_tours['origin'] = int(n_seg_parties['origin'])
+            return maz_tours
+
+        # Estimate n parties per zone per segment
+        parties_ls = [n_parties_vec(maz) for maz in tables['land_use'][['MAZ', 'hh', 'hotelroomtotal']].iterrows()]
+        # Remove empty zones with no visitors
+        parties_ls = [x for x in parties_ls if len(x) > 1]
+        # Simulator tour features, takes a few minutes
+        tours = [party_tour_enum_vec(n_seg_parties) for n_seg_parties in parties_ls]
+        # tours = [party_tour_enum_vec(n_seg_parties) for n_seg_parties in tqdm(parties_ls)]
         tours = pd.concat(tours)
 
         # Map purpose IDs to column
@@ -129,7 +137,7 @@ class TourEnumMixin:
 
         visitor_travel_type_parties = []
         for s, n in parties.items():
-            party_tours = probs_visitor_travel_type[s].sample(n=n, weights='Percent').reset_index(drop=True)
+            party_tours = probs_visitor_travel_type[s].sample(n=n, weights='Percent', replace=True).reset_index(drop=True)
             party_tours.index += 1  # Ensures that there's no party id of 0 that would get dropped
 
             # Cleanup labels
