@@ -407,11 +407,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             dims["full_matrices"] = 9999 
             #add logging for when this setp is run, add before and after attribute value
             #change_dimensions(emmebank_dimensions=dims, emmebank=main_emmebank, keep_backup=False)
-            #replaced the above line with the below 4 lines - suggested by Antoine, Bentley (2022-05-27)
-            main_emmebank.create_scenario(1)
-            main_emmebank.dispose()            
-            _eb.change_dimensions(_join(self._path, "emme_project", "Database", "emmebank"), dims, False)
-            main_emmebank = _eb.Emmebank(_join(self._path, "emme_project", "Database", "emmebank")) 
+            #replaced the above line with the below lines - suggested by Antoine, Bentley (2022-06-02)
+            if main_emmebank.scenario(1) is None:
+                main_emmebank.create_scenario(1)
+            change_dimensions(dims, main_emmebank, False)
         with open(_join(self._path, "logFiles", "select_link_log.txt"),"a+") as f:
 			f.write("Num Select links {}\nExtra Attribute Value {}".format(num_select_links,extra_attribute_values))
         f.close()
@@ -439,11 +438,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     transit_db_dims["extra_attribute_values"] = extra_attribute_values
                     transit_db_dims["full_matrices"] = 9999 
                     #change_dimensions(emmebank_dimensions=transit_db_dims, emmebank=transit_db, keep_backup=False)
-                    #replaced the above line with the below 4 lines - suggested by Antoine, Bentley (2022-05-27)
-                    transit_db.create_scenario(1)
-                    transit_db.dispose()
-                    _eb.change_dimensions(_join(self._path, "emme_project", "Database_transit", "emmebank"), transit_db_dims, False)
-                    transit_db = _eb.Emmebank(_join(self._path, "emme_project", "Database_transit", "emmebank"))
+                    #replaced the above line with the below lines - suggested by Antoine, Bentley (2022-06-02)
+                    if transit_db.scenario(1) is None:
+                        transit_db.create_scenario(1)
+                    change_dimensions(transit_db_dims, transit_db, False)
                 
         with _m.logbook_trace("Setup and initialization"):
             self.set_global_logbook_level(props)
