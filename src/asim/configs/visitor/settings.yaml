@@ -1,158 +1,58 @@
-inherit_settings: False
+# misc settings
+tables_dir: configs/visitor/prob_tables
+data_dir: C:\abm_runs\rsg\abm3_dev\run_dir\data_full
+config_dir: configs/visitor
+plot_dir: configs/visitor/figs
+output_dir: output
+plot_show: False
+plot_save: True
+overwrite: True
 
-# number of households to simulate
+# Visitor model settings: occupancy rates for hotels, households and share of each that are business visitors
+occupancy_rate:
+  hotel: 0.7
+  household: 0.018
+business_percent:
+  hotel: 0.3
+  household: 0.04
 
-households_sample_size: 0
-multiprocess: True
-strict: False
-mem_tick: 1 # 30
-num_processes: 1 #30
-fail_fast: True
+purpose_ids:
+  work: 0
+  recreation: 1
+  dining: 2
 
-##############
-#
-# chunking
-#
+# Any necessary data tables from general input data specified here (not preprocessing specific tables)
+land_use: land_use.csv
 
-# chooser chunk size in gigabytes
-# target top memory usage during activitysim run (including shared memory, loaded tables, and transient memory usage)
-chunk_size: 400_000_000_000
-#chunk_size: 0
+# Visitor data tables specified here
+input_data:
+  auto_available: visitor_autoAvailable.csv
+  income: visitor_income.csv
+  party_size: visitor_partySize.csv
+  stop_frequency: visitor_stopFrequency.csv
+  stop_purpose: visitor_stopPurpose.csv
+  tour_TOD: visitor_tourTOD.csv
+  tod_conversion: tod_conversion.csv
+  visitor_travel_type_frequency:
+    business: visitor_businessFrequency.csv
+    personal: visitor_personalFrequency.csv
+  stop_duration:
+    outbound: visitor_outboundStopDuration.csv
+    inbound: visitor_inboundStopDuration.csv
 
-# minimum fraction of total chunk_size to reserve for adaptive chunking
-min_available_chunk_ratio: 0.05
+# output data
+output_fname:
+  households: households_visitor.csv
+  persons: persons_visitor.csv
+  tours: tours_visitor.csv
 
-# initial number of chooser rows for first chunk in training mode
-# when there is no pre-existing chunk_cache to set initial value
-# ordinarily bigger is better as long as it is not so big it causes memory issues (e.g. accessibility with lots of zones)
-default_initial_rows_per_chunk: 500
-
-# method to calculate memory overhead when chunking is enabled
-chunk_method: hybrid_uss
-
-# chunk training mode
-# training to determine the chunking settings written to a cache file that is re-used for production runs
-# training
-# production
-# disabled
-chunk_training_mode: disabled
-
-# whether to preserve or delete subprocess chunk and mem logs when they are consolidated at end of multiprocess run
-keep_chunk_logs: True
-keep_mem_logs: True
-
-##############
-
-trace_hh_id: 2126
-
-# input tables
-input_table_list:
-  - tablename: households
-    filename: households_visitor.csv
-    index_col: household_id
-
-  - tablename: persons
-    filename: persons_visitor.csv
-    index_col: person_id
-
-  - tablename: land_use
-    filename: land_use.csv
-    index_col: zone_id
-    rename_columns:
-      MAZ: zone_id
-
-  - tablename: tours
-    filename: tours_visitor.csv
-    index_col: tour_id
-    keep_columns:
-      - tour_type
-      - purpose_id
-      - visitor_travel_type
-      - tour_category
-      - number_of_participants
-      - auto_available
-      - income
-      - origin
-      - tour_num
-      - tour_count
-      - household_id
-      - person_id
-
-
-# set false to disable variability check in simple_simulate and interaction_simulate
-check_for_variability: False
-
-# - shadow pricing global switches
-
-# turn shadow_pricing on and off for all models (e.g. school and work)
-# shadow pricing is deprecated for less than full samples
-# see shadow_pricing.yaml for additional settings
-use_shadow_pricing: False
-
-# turn writing of sample_tables on and off for all models
-# (if True, tables will be written if DEST_CHOICE_SAMPLE_TABLE_NAME is specified in individual model settings)
-want_dest_choice_sample_tables: False
-want_dest_choice_presampling: True
-
-resume_after: tour_scheduling_probabilistic
-
-models:
-  - initialize_landuse
-  - initialize_tours
-  - initialize_households
-  # --- STATIC cache prebuild steps
-  # single-process step to create attribute_combination list
-  - initialize_los
-  # multi-processable step to build STATIC cache
-  # (this step is a NOP if cache already exists and network_los.rebuild_tvpb_cache setting is False)
-  - initialize_tvpb
-  # # ---
-  - tour_scheduling_probabilistic
-  - non_mandatory_tour_destination
-  - tour_mode_choice_simulate
-  - stop_frequency
-  - trip_purpose
-  - trip_scheduling
-  - trip_destination
-  - trip_mode_choice
-  - write_trip_matrices
-  - write_tables
-
-multiprocess_steps:
-  - name: mp_initialize
-    begin: initialize_landuse
-  - name: mp_tvpb
-    begin: initialize_tvpb
-    num_processes: 5
-    slice:
-      tables:
-        - attribute_combinations
-  - name: mp_households
-    begin: tour_scheduling_probabilistic
-    slice:
-      tables:
-        - households
-        - persons
-  - name: mp_summarize
-    begin: write_trip_matrices
-
-output_tables:
-  h5_store: False
-  action: include
-  prefix: final_
-  # FIXME sort is an undocumented feature - sorts table by best index or ref_col according to traceable_table_indexes
-  sort: True
-  tables:
-    - accessibility
-    - land_use
-    - households
-    - persons
-    - tours
-    - trips
-    - attribute_combinations
-
-output_summaries:
-  tours:
-    - tour_mode
-    - od_path_set
-    - do_path_set
+  # output configs
+  tour_scheduling_probs: tour_scheduling_probs.csv
+  tour_scheduling_alts: tour_departure_and_duration_alternatives.csv
+  stop_frequency_annotate: stop_frequency_annotate_tours_preprocessor.csv
+  stop_frequency_alts: stop_frequency_alternatives.csv
+  stop_frequency_coeffs: 'stop_frequency_coefficients_{purpose}.csv'
+  stop_frequency_expressions: 'stop_frequency_{purpose}.csv'
+  trip_purpose_annotate: trip_purpose_annotate_trips_preprocessor.csv
+  trip_purpose_probs: trip_purpose_probs.csv
+  trip_scheduling_probs: trip_scheduling_probs.csv
