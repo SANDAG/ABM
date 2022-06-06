@@ -53,7 +53,7 @@ class VisitorModel(TourEnumMixin,
 
     def __init__(self):
         # Find asim location
-        self.parameters_path = 'configs/visitor/visitor_settings.yaml'
+        self.parameters_path = 'configs/visitor/settings_visitor.yaml'
         self.parameters_path = os.path.join(find_root_level(self.parameters_path), self.parameters_path)
         self.processed_data = {}
 
