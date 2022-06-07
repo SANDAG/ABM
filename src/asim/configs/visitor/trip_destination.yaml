@@ -30,6 +30,14 @@ CONSTANTS:
     max_bike_distance: 8
     max_walk_distance_recreation: 5
     max_bike_distance_recreation: 99
+    cabrillo_maz: 6777
+    seaworld_maz: 3637
+    legoland_maz: 22939
+    safari_maz: 19986
+    midway_maz: 2654
+    zoo_maz: 2754
+    torrypines_maz: 4305
+
 
 preprocessor:
   SPEC: trip_destination_annotate_trips_preprocessor
