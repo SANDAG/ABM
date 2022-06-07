@@ -28,6 +28,8 @@ REDUNDANT_TOURS_MERGED_CHOOSER_COLUMNS:
 CONSTANTS:
     max_walk_distance: 3
     max_bike_distance: 8
+    max_walk_distance_recreation: 5
+    max_bike_distance_recreation: 99
 
 preprocessor:
   SPEC: trip_destination_annotate_trips_preprocessor
