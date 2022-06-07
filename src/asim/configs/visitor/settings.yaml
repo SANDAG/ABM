@@ -43,8 +43,6 @@ keep_mem_logs: True
 
 ##############
 
-trace_hh_id: 2126
-
 # input tables
 input_table_list:
   - tablename: households
@@ -94,7 +92,8 @@ use_shadow_pricing: False
 want_dest_choice_sample_tables: False
 want_dest_choice_presampling: True
 
-resume_after: tour_scheduling_probabilistic
+# trace_hh_id: 2126
+# resume_after: tour_scheduling_probabilistic
 
 models:
   - initialize_landuse

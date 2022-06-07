@@ -1,6 +1,7 @@
 # misc settings
 tables_dir: configs/visitor/prob_tables
-data_dir: C:\abm_runs\rsg\abm3_dev\run_dir\data_full
+# data_dir: C:\abm_runs\rsg\abm3_dev\run_dir\data_full
+data_dir: data_crop
 config_dir: configs/visitor
 plot_dir: configs/visitor/figs
 output_dir: output

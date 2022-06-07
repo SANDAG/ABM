@@ -1,5 +1,5 @@
 Description,Expression,work,recreation,dining
 ,_DIST@skims['DIST'],coef_one,coef_one,coef_one
 Distance,"@_DIST.clip(0,20)",coef_dist_work,coef_dist_recreation,coef_dist_dining
-Size variable,@df['size_term'].apply(np.log1p),coef_one,coef_one,coef_one
+Size variable,"@np.log1p(np.where(df.special_size_term==0, df['size_term'], df.special_size_term))",coef_one,coef_one,coef_one
 No attractions,@df['size_term']==0,-999,-999,-999
