@@ -283,6 +283,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     raise Exception(error_text % name)
 
         scenarioYear = str(props["scenarioYear"])
+        geographyID = str(props["geographyID"])
         startFromIteration = props["RunModel.startFromIteration"]
         precision = props["RunModel.MatrixPrecision"]
         minSpaceOnC = props["RunModel.minSpaceOnC"]
@@ -778,7 +779,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             start_db_time = datetime.datetime.now()  # record the time to search for request id in the load request table, YMA, 1/23/2019
             # start_db_time = start_db_time + datetime.timedelta(minutes=0)
             self.run_proc("DataLoadRequest.bat",
-                          [drive + path_no_drive, end_iteration, scenarioYear, sample_rate[end_iteration - 1]],
+                          [drive + path_no_drive, end_iteration, scenarioYear, sample_rate[end_iteration - 1], geographyID],
                           "Data load request")
 
         # delete trip table files in iteration sub folder if model finishes without errors
