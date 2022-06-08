@@ -421,8 +421,9 @@ class TourSchedulingMixin:
             # Extract imputed tables, ditching the extra cycled data
             probsxi = probsxi[(probsxi.EntryPeriod <= 48) & (probsxi.ReturnPeriod <= 48)]
 
-            # Set floor to 0 just in case any go below 0
-            probsxi.loc[probsxi.Percent < 0, 'Percent'] = 0
+            # Set floor to 0 just in case any go below minprob threshold to avoid super tiny probs
+            # The smallest prob in the current table is 0.0013
+            probsxi.loc[probsxi.Percent < 0.001, 'Percent'] = 0
 
             # Ensure that there are no trips that arrive before they depart!
             probsxi.loc[probsxi.ReturnPeriod < probsxi.EntryPeriod, 'Percent'] = 0
