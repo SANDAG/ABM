@@ -14,7 +14,7 @@ class TourEnumMixin:
         def n_parties_vec(maz_tuple):
             maz = maz_tuple[1]
             parties = self.calculate_n_parties(n_hh=maz['hh'], n_hotel=maz['hotelroomtotal'], parameters=parameters)
-            parties['origin'] = maz_tuple[0]
+            parties['origin'] = maz['MAZ']
             return parties
 
         # Vectorize tour enumeration for parties.
