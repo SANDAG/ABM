@@ -1,0 +1,49 @@
+PERTYPE,TOURPURP,freq
+1: Full-Time Worker,4,115232.4984
+1: Full-Time Worker,5,85520.02418
+1: Full-Time Worker,6,72314.20524
+1: Full-Time Worker,7,73326.66717
+1: Full-Time Worker,8,23507.41901
+1: Full-Time Worker,9,109923.2475
+2: Part-Time Worker,4,43133.59131
+2: Part-Time Worker,5,27974.88489
+2: Part-Time Worker,6,25142.43693
+2: Part-Time Worker,7,15003.23133
+2: Part-Time Worker,8,9127.748698
+2: Part-Time Worker,9,37697.51336
+3: University Student,4,38738.48377
+3: University Student,5,21681.41534
+3: University Student,6,25165.06659
+3: University Student,7,21266.01521
+3: University Student,8,10703.19787
+3: University Student,9,39104.08257
+4: Non-Worker,4,109093.8012
+4: Non-Worker,5,70155.52958
+4: Non-Worker,6,51806.65623
+4: Non-Worker,7,31128.82147
+4: Non-Worker,8,7254.542108
+4: Non-Worker,9,78088.69599
+5: Retiree,4,18098.44091
+5: Retiree,5,64440.87208
+5: Retiree,6,48848.17333
+5: Retiree,7,18301.67269
+5: Retiree,8,2758.997125
+5: Retiree,9,67612.40083
+6: Driving Aged Student,4,6433.84122
+6: Driving Aged Student,5,1502.365384
+6: Driving Aged Student,6,6600.71429
+6: Driving Aged Student,7,5287.953018
+6: Driving Aged Student,8,1756.790681
+6: Driving Aged Student,9,6565.024498
+7: Non-Driving Aged Student,4,55211.69192
+7: Non-Driving Aged Student,5,15150.5865
+7: Non-Driving Aged Student,6,5196.829933
+7: Non-Driving Aged Student,7,8958.63366
+7: Non-Driving Aged Student,8,2714.55075
+7: Non-Driving Aged Student,9,28919.65351
+8: Child To Young for School,4,37952.04477
+8: Child To Young for School,5,15914.52048
+8: Child To Young for School,6,8216.65986
+8: Child To Young for School,7,7281.17435
+8: Child To Young for School,8,1742.57529
+8: Child To Young for School,9,18227.93998

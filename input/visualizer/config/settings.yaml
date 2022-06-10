@@ -1,0 +1,123 @@
+#######################################################################################
+#                                                                                     #
+#                                Data Pipeline Settings                               #
+#                                                                                     #
+#######################################################################################
+
+
+# Specify data to extract and load
+extract:
+    - filepath: "[MODEL_RUN]/output"
+      test_size:
+      data:
+          - "householdData_3.csv"
+          - "personData_3.csv"
+          - "indivTourData_3.csv"
+          - "indivTripData_3.csv"
+          - "jointTripData_3.csv"
+          - "jointTourData_3.csv"
+          - "wsLocResults_3.csv"
+          - "aoResults.csv"
+          - "aoResults_Pre.csv"
+          - "visitorTrips.csv"
+          - "traffic_skims_MD.omx"
+    - filepath: "[MODEL_RUN]/input"
+      test_size:
+      data:
+          - "mgra13_based_input2016.csv"
+    - filepath: "[MODEL_RUN]/visualizer/data"
+      test_size:
+      data:
+          - "geographicXwalk_PMSA.csv"
+          - "occFactors.csv"
+
+# Specify transformation steps
+transform:
+    processor: "[MODEL_RUN]/visualizer/data_pipeliner/config/processor.csv"
+    summarizer: "[MODEL_RUN]/visualizer/data_pipeliner/config/expressions.csv"
+    steps:
+        - name: step_0
+          merge:
+              - table_name: hh
+                include:
+                    - householdData_3
+                    - mgra13_based_input2016
+                merge_cols:
+                    - home_mgra
+                    - mgra
+                merge_type: left
+              - table_name: wsLoc
+                include:
+                    - wsLocResults_3
+                    - geographicXwalk_PMSA 
+                merge_cols:
+                    - HomeMGRA
+                    - mgra
+                merge_type: left
+              - table_name: wsLoc
+                include:
+                    - wsLoc
+                    - geographicXwalk_PMSA
+                merge_cols:
+                    - WorkLocation
+                    - mgra
+                merge_type: left
+              - table_name: wsLoc
+                include:
+                    - wsLoc
+                    - geographicXwalk_PMSA
+                merge_cols:
+                    - SchoolLocation
+                    - mgra
+                merge_type: left
+              
+          process: True
+
+        - name: step_1
+          process: True
+
+        - name: step_2
+          merge:
+              - table_name: hh_itours
+                include:
+                    - householdData_3
+                    - indivTourData_3
+                merge_cols:
+                    - hh_id
+                    - hh_id
+                merge_type: left
+              - table_name: hh_jtours
+                include:
+                    - householdData_3
+                    - jointTourData_3
+                merge_cols:
+                    - hh_id
+                    - hh_id
+                merge_type: left
+
+        - name: step_3
+          process: True
+
+        - name: step_4
+          concat:
+              - table_name: tours
+                include:
+                    - indivTourData_3
+                    - jointTourData_3
+              - table_name: trips
+                include:
+                    - indivTripData_3
+                    - jointTripData_3
+          process: True
+
+        - name: step_5
+          summarize: True
+          process: True
+        
+        - name: step_6
+          process: True
+
+# Specify where to write results
+load:
+    outdir: "[MODEL_RUN]/visualizer/data_pipeliner/output/"
+    empty_fill: 0

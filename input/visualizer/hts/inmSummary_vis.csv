@@ -1,0 +1,37 @@
+PERTYPE,nmtours,freq
+1: Full-Time Worker,0,859066.4731
+2: Part-Time Worker,0,119358.1409
+3: University Student,0,200047.7233
+4: Non-Worker,0,174547.1006
+5: Retiree,0,154431.0462
+6: Driving Aged Student,0,90688.53715
+7: Non-Driving Aged Student,0,308957.1459
+8: Child To Young for School,0,109637.9228
+Total,0,2016734.09
+1: Full-Time Worker,1,261997.7072
+2: Part-Time Worker,1,58003.33435
+3: University Student,1,66751.7998
+4: Non-Worker,1,126263.6297
+5: Retiree,1,122718.4898
+6: Driving Aged Student,1,25313.77503
+7: Non-Driving Aged Student,1,84656.43064
+8: Child To Young for School,1,44686.08211
+Total,1,790391.2485
+1: Full-Time Worker,2,72219.56958
+2: Part-Time Worker,2,24241.63152
+3: University Student,2,28599.78182
+4: Non-Worker,2,52607.13028
+5: Retiree,2,33753.30795
+6: Driving Aged Student,2,1609.310462
+7: Non-Driving Aged Student,2,20561.22266
+8: Child To Young for School,2,13291.41867
+Total,2,246883.3729
+1: Full-Time Worker,3+,25558.92907
+2: Part-Time Worker,3+,15596.60486
+3: University Student,3+,9939.465224
+4: Non-Worker,3+,34887.22001
+5: Retiree,3+,9397.272151
+6: Driving Aged Student,3+,136.5030698
+7: Non-Driving Aged Student,3+,1977.068933
+8: Child To Young for School,3+,6149.153403
+Total,3+,103642.2167

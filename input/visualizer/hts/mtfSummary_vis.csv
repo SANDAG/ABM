@@ -1,0 +1,36 @@
+PERTYPE,imf_choice,freq
+1: Full-Time Worker,1 Work,846054.4142
+1: Full-Time Worker,2+ Work,50518.63182
+1: Full-Time Worker,1 School,14228.0295
+1: Full-Time Worker,2+ School,1011.9394
+1: Full-Time Worker,1 Work & 1 School,6388.027516
+2: Part-Time Worker,1 Work,110079.3489
+2: Part-Time Worker,2+ Work,11150.48795
+2: Part-Time Worker,1 School,0
+2: Part-Time Worker,2+ School,0
+2: Part-Time Worker,1 Work & 1 School,0
+3: University Student,1 Work,38979.82561
+3: University Student,2+ Work,1136.130513
+3: University Student,1 School,137596.1873
+3: University Student,2+ School,13085.76977
+3: University Student,1 Work & 1 School,7123.616831
+6: Driving Aged Student,1 Work,2869.019827
+6: Driving Aged Student,2+ Work,22.40428757
+6: Driving Aged Student,1 School,69466.14854
+6: Driving Aged Student,2+ School,3058.01762
+6: Driving Aged Student,1 Work & 1 School,1391.41896
+7: Non-Driving Aged Student,1 Work,0
+7: Non-Driving Aged Student,2+ Work,0
+7: Non-Driving Aged Student,1 School,262950.6121
+7: Non-Driving Aged Student,2+ School,16312.72721
+7: Non-Driving Aged Student,1 Work & 1 School,0
+8: Child To Young for School,1 Work,0
+8: Child To Young for School,2+ Work,0
+8: Child To Young for School,1 School,45427.07452
+8: Child To Young for School,2+ School,459.1745767
+8: Child To Young for School,1 Work & 1 School,0
+Total,1 Work,997982.6086
+Total,2+ Work,62827.65457
+Total,1 School,529668.052
+Total,2+ School,33927.62858
+Total,1 Work & 1 School,14903.06331
