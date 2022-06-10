@@ -1974,7 +1974,8 @@ class TripLists(ScenarioData):
                         1: "Resident Personal",
                         2: "Visitor Business",
                         3: "Visitor Personal",
-                        4: "External"},
+                        4: "External",
+						5: "Employee Parking"},
             "income": {0: "Less than 25k",
                        1: "25k-50k",
                        2: "50k-75k",
@@ -1982,8 +1983,10 @@ class TripLists(ScenarioData):
                        4: "100k-125k",
                        5: "125k-150k",
                        6: "150k-200k",
-                       7: "200k+"},
-            "tripMode": {1: "Drive Alone",
+                       7: "200k+",
+					   -99 : "employee"},
+            "tripMode": {0: "Not Applicable",
+						 1: "Drive Alone",
                          2: "Shared Ride 2",
                          3: "Shared Ride 3+",
                          4: "Walk",
@@ -1994,18 +1997,26 @@ class TripLists(ScenarioData):
                          9: "TNC to Transit",
                          10: "Taxi",
                          11: "Non-Pooled TNC",
-                         12: "Pooled TNC"},
-            "arrivalMode": {1: "Parking lot terminal",
-                            2: "Parking lot off-site San Diego airport area",
-                            3: "Parking lot off-site private",
-                            4: "Pickup/Drop-off escort",
-                            5: "Pickup/Drop-off curbside",
-                            6: "Rental car",
-                            7: "Taxi",
-                            8: "Non-Pooled TNC",
-                            9: "Pooled TNC",
-                            10: "Shuttle/van/courtesy vehicle",
-                            11: "Transit"},
+                         12: "Pooled TNC",
+						 13: "School Bus"},
+            "arrivalMode": {1: "Drive and park location 1",
+                            2: "Drive and park location 2",
+                            3: "Drive and park location 3",
+                            4: "Drive and park location 4",
+                            5: "Drive and park location 5",
+                            6: "Park and escort",
+                            7: "Rental car",
+                            8: "Shuttle/Van/Courtesy Vehicle",
+                            9: "Shuttle/Van/Courtesy Vehicle",
+                            10: "Ride hailing location 1",
+                            11: "Ride hailing location 2",
+							12: "Transit",
+							13: "Curbside drop off location 1",
+							14: "Curbside drop off location 2",
+							15: "Curbside drop off location 3",
+							16: "Curbside drop off location 4",
+							17: "Curbside drop off location 5",
+							-99: "Employee/Airport access point to terminal"},
             "boardingTAP": {key: value for (key, value) in
                             zip(list(range(1, 99999)),
                                 list(range(1, 99999)))},
@@ -2045,9 +2056,11 @@ class TripLists(ScenarioData):
 
         # add vehicle/trip-based weight and person-based weight
         # adjust by the ABM scenario final iteration sample rate
-        trips["weightTrip"] = 1 / self.properties["sampleRate"]
+        # adjust by leg id (if leg id has 2, then divide by 2)
+        trips['legs'] = np.where(trips['id'].duplicated(keep=False), 0.5, 1)
+        trips["weightTrip"] = trips['legs'] / self.properties["sampleRate"]
         trips["weightTrip"] = trips["weightTrip"].astype("float32")
-        trips["weightPersonTrip"] = pd.Series(trips["size"] / self.properties["sampleRate"], dtype="float32")
+        trips["weightPersonTrip"] = pd.Series(trips['legs'] * trips["size"] / self.properties["sampleRate"], dtype="float32")
 
         # rename columns to standard/generic ABM naming conventions
         trips.rename(columns={"id": "tripID",
@@ -2411,9 +2424,7 @@ class TripLists(ScenarioData):
         trips["avUsed"] = False
         trips["parkingTAZ"] = pd.Series(np.NaN, dtype="float32")
 
-        # add person-based weight and adjust weights
-        # by the ABM scenario final iteration sample rate
-        trips["weightTrip"] = pd.Series(trips["weightTrip"] / self.properties["sampleRate"], dtype="float32")
+        # add person-based weight
         trips["weightPersonTrip"] = trips["weightTrip"]
 
         # rename columns to standard/generic ABM naming conventions
@@ -2531,10 +2542,9 @@ class TripLists(ScenarioData):
                    self.properties["sr3Passengers"]]
 
         trips["weightPersonTrip"] = pd.Series(
-            trips["TRIPS"] * np.select(conditions, choices, default=1) / self.properties["sampleRate"],
-            dtype="float32")
-        trips["weightTrip"] = trips["TRIPS"] / self.properties["sampleRate"]
-        trips["weightTrip"] = trips["weightTrip"].astype("float32")
+            trips["TRIPS"] * np.select(conditions, choices, default=1), dtype="float32")
+                            
+        trips["weightTrip"] = trips["TRIPS"].astype("float32")
 
         # rename columns to standard/generic ABM naming conventions
         trips.rename(columns={"OTAZ": "originTAZ",
@@ -2662,10 +2672,9 @@ class TripLists(ScenarioData):
                    self.properties["sr3Passengers"]]
 
         trips["weightPersonTrip"] = pd.Series(
-            trips["TRIPS"] * np.select(conditions, choices, default=1) / self.properties["sampleRate"],
-            dtype="float32")
-        trips["weightTrip"] = trips["TRIPS"] / self.properties["sampleRate"]
-        trips["weightTrip"] = trips["weightTrip"].astype("float32")
+            trips["TRIPS"] * np.select(conditions, choices, default=1),dtype="float32")
+                            
+        trips["weightTrip"] = trips["TRIPS"].astype("float32")
 
         # rename columns to standard/generic ABM naming conventions
         trips.rename(columns={"OTAZ": "originTAZ",
@@ -2714,38 +2723,76 @@ class TripLists(ScenarioData):
         Returns:
             A Pandas DataFrame of the Internal-External trip list """
         # load trip list into Pandas DataFrame
-        trips = pd.read_csv(
-            os.path.join(self.scenario_path, "output", "internalExternalTrips.csv"),
-            usecols=["hhID",
-                     "personID",
-                     "tourID",
-                     "inbound",
-                     "period",
-                     "originMGRA",
-                     "destinationMGRA",
-                     "originTAZ",
-                     "destinationTAZ",
-                     "tripMode",
-                     "av_avail",
-                     "boardingTap",
-                     "alightingTap",
-                     "set",
-                     "valueOfTime"],
-            dtype={"hhID": "int32",
-                   "personID": "int32",
-                   "tourID": "int32",
-                   "inbound": "boolean",
-                   "period": "int8",
-                   "originMGRA": "int16",
-                   "destinationMGRA": "int16",
-                   "originTAZ": "int16",
-                   "destinationTAZ": "int16",
-                   "tripMode": "int8",
-                   "av_avail": "bool",
-                   "boardingTap": "int16",
-                   "alightingTap": "int16",
-                   "set": "int8",
-                   "valueOfTime": "float32"})
+        use_sampleRate = False
+        try:
+            trips = pd.read_csv(
+                os.path.join(self.scenario_path, "output", "internalExternalTrips.csv"),
+                usecols=["hhID",
+                         "personID",
+                         "tourID",
+                         "inbound",
+                         "period",
+                         "originMGRA",
+                         "destinationMGRA",
+                         "originTAZ",
+                         "destinationTAZ",
+                         "tripMode",
+                         "av_avail",
+                         "boardingTap",
+                         "alightingTap",
+                         "set",
+                         "valueOfTime",
+                         "sampleRate"],
+                dtype={"hhID": "int32",
+                       "personID": "int32",
+                       "tourID": "int32",
+                       "inbound": "boolean",
+                       "period": "int8",
+                       "originMGRA": "int16",
+                       "destinationMGRA": "int16",
+                       "originTAZ": "int16",
+                       "destinationTAZ": "int16",
+                       "tripMode": "int8",
+                       "av_avail": "bool",
+                       "boardingTap": "int16",
+                       "alightingTap": "int16",
+                       "set": "int8",
+                       "valueOfTime": "float32",
+                       "sampleRate":"float32"})
+            use_sampleRate = True
+        except:
+            trips = pd.read_csv(
+                os.path.join(self.scenario_path, "output", "internalExternalTrips.csv"),
+                usecols=["hhID",
+                         "personID",
+                         "tourID",
+                         "inbound",
+                         "period",
+                         "originMGRA",
+                         "destinationMGRA",
+                         "originTAZ",
+                         "destinationTAZ",
+                         "tripMode",
+                         "av_avail",
+                         "boardingTap",
+                         "alightingTap",
+                         "set",
+                         "valueOfTime"],
+                dtype={"hhID": "int32",
+                       "personID": "int32",
+                       "tourID": "int32",
+                       "inbound": "boolean",
+                       "period": "int8",
+                       "originMGRA": "int16",
+                       "destinationMGRA": "int16",
+                       "originTAZ": "int16",
+                       "destinationTAZ": "int16",
+                       "tripMode": "int8",
+                       "av_avail": "bool",
+                       "boardingTap": "int16",
+                       "alightingTap": "int16",
+                       "set": "int8",
+                       "valueOfTime": "float32"})
 
         # load output household transponder ownership data
         hh_fn = "householdData_" + str(self.properties["iterations"]) + ".csv"
@@ -2832,11 +2879,18 @@ class TripLists(ScenarioData):
                    1 / self.properties["nonPooledTNCPassengers"],
                    1 / self.properties["pooledTNCPassengers"]]
 
-        trips["weightTrip"] = pd.Series(
-            np.select(conditions, choices, default=1) / self.properties["sampleRate"],
-            dtype="float32")
-        trips["weightPersonTrip"] = 1 / self.properties["sampleRate"]
-        trips["weightPersonTrip"] = trips["weightPersonTrip"].astype("float32")
+        if use_sampleRate:
+            trips["weightTrip"] = pd.Series(
+                np.select(conditions, choices, default=1) / trips['sampleRate'],
+                dtype="float32")
+            trips["weightPersonTrip"] = 1 / trips['sampleRate']
+            trips["weightPersonTrip"] = trips["weightPersonTrip"].astype("float32")
+        else:
+            trips["weightTrip"] = pd.Series(
+                np.select(conditions, choices, default=1) / self.properties["sampleRate"],
+                dtype="float32")
+            trips["weightPersonTrip"] = 1 / self.properties["sampleRate"]
+            trips["weightPersonTrip"] = trips["weightPersonTrip"].astype("float32")
 
         # rename columns to standard/generic ABM naming conventions
         trips.rename(columns={"period": "departTimeAbmHalfHour",
@@ -2880,53 +2934,104 @@ class TripLists(ScenarioData):
             A Pandas DataFrame of the Individual trip list """
         # load trip list into Pandas DataFrame
         fn = "indivTripData_" + str(self.properties["iterations"]) + ".csv"
-        trips = pd.read_csv(
-            os.path.join(self.scenario_path, "output", fn),
-            usecols=["person_id",
-                     "tour_id",
-                     "stop_id",
-                     "inbound",
-                     "tour_purpose",
-                     "orig_purpose",
-                     "dest_purpose",
-                     "orig_mgra",
-                     "dest_mgra",
-                     "parking_mgra",
-                     "stop_period",
-                     "trip_mode",
-                     "av_avail",
-                     "trip_board_tap",
-                     "trip_alight_tap",
-                     "set",
-                     "valueOfTime",
-                     "transponder_avail",
-                     "micro_walkMode",
-                     "micro_trnAcc",
-                     "micro_trnEgr",
-                     "parkingCost"],
-            dtype={"person_id": "int32",
-                   "tour_id": "int8",
-                   "stop_id": "int8",
-                   "inbound": "bool",
-                   "tour_purpose": "string",
-                   "orig_purpose": "string",
-                   "dest_purpose": "string",
-                   "orig_mgra": "int16",
-                   "dest_mgra": "int16",
-                   "parking_mgra": "int16",
-                   "stop_period": "int8",
-                   "trip_mode": "int8",
-                   "av_avail": "bool",
-                   "trip_board_tap": "int16",
-                   "trip_alight_tap": "int16",
-                   "set": "int8",
-                   "valueOfTime": "float32",
-                   "transponder_avail": "bool",
-                   "micro_walkMode": "int8",
-                   "micro_trnAcc": "int8",
-                   "micro_trnEgr": "int8",
-                   "parkingCost": "float32"})
-
+        use_sampleRate = False
+        try:
+            trips = pd.read_csv(
+                os.path.join(self.scenario_path, "output", fn),
+                usecols=["person_id",
+                         "tour_id",
+                         "stop_id",
+                         "inbound",
+                         "tour_purpose",
+                         "orig_purpose",
+                         "dest_purpose",
+                         "orig_mgra",
+                         "dest_mgra",
+                         "parking_mgra",
+                         "stop_period",
+                         "trip_mode",
+                         "av_avail",
+                         "trip_board_tap",
+                         "trip_alight_tap",
+                         "set",
+                         "valueOfTime",
+                         "transponder_avail",
+                         "micro_walkMode",
+                         "micro_trnAcc",
+                         "micro_trnEgr",
+                         "parkingCost",
+                         "sampleRate"],
+                dtype={"person_id": "int32",
+                       "tour_id": "int8",
+                       "stop_id": "int8",
+                       "inbound": "bool",
+                       "tour_purpose": "string",
+                       "orig_purpose": "string",
+                       "dest_purpose": "string",
+                       "orig_mgra": "int16",
+                       "dest_mgra": "int16",
+                       "parking_mgra": "int16",
+                       "stop_period": "int8",
+                       "trip_mode": "int8",
+                       "av_avail": "bool",
+                       "trip_board_tap": "int16",
+                       "trip_alight_tap": "int16",
+                       "set": "int8",
+                       "valueOfTime": "float32",
+                       "transponder_avail": "bool",
+                       "micro_walkMode": "int8",
+                       "micro_trnAcc": "int8",
+                       "micro_trnEgr": "int8",
+                       "parkingCost": "float32",
+                       "sampleRate": "float32"})
+            use_sampleRate = True
+        except:
+            trips = pd.read_csv(
+                    os.path.join(self.scenario_path, "output", fn),
+                    usecols=["person_id",
+                             "tour_id",
+                             "stop_id",
+                             "inbound",
+                             "tour_purpose",
+                             "orig_purpose",
+                             "dest_purpose",
+                             "orig_mgra",
+                             "dest_mgra",
+                             "parking_mgra",
+                             "stop_period",
+                             "trip_mode",
+                             "av_avail",
+                             "trip_board_tap",
+                             "trip_alight_tap",
+                             "set",
+                             "valueOfTime",
+                             "transponder_avail",
+                             "micro_walkMode",
+                             "micro_trnAcc",
+                             "micro_trnEgr",
+                             "parkingCost"],
+                    dtype={"person_id": "int32",
+                           "tour_id": "int8",
+                           "stop_id": "int8",
+                           "inbound": "bool",
+                           "tour_purpose": "string",
+                           "orig_purpose": "string",
+                           "dest_purpose": "string",
+                           "orig_mgra": "int16",
+                           "dest_mgra": "int16",
+                           "parking_mgra": "int16",
+                           "stop_period": "int8",
+                           "trip_mode": "int8",
+                           "av_avail": "bool",
+                           "trip_board_tap": "int16",
+                           "trip_alight_tap": "int16",
+                           "set": "int8",
+                           "valueOfTime": "float32",
+                           "transponder_avail": "bool",
+                           "micro_walkMode": "int8",
+                           "micro_trnAcc": "int8",
+                           "micro_trnEgr": "int8",
+                           "parkingCost": "float32"})
         # apply exhaustive field mappings where applicable
         mappings = {
             "parking_mgra": {key: value for (key, value) in
@@ -3034,10 +3139,14 @@ class TripLists(ScenarioData):
                    1 / self.properties["taxiPassengers"],
                    1 / self.properties["nonPooledTNCPassengers"],
                    1 / self.properties["pooledTNCPassengers"]]
-
-        trips["weightTrip"] = pd.Series(np.select(conditions, choices, default=1) / self.properties["sampleRate"], dtype="float32")
-        trips["weightPersonTrip"] = 1 / self.properties["sampleRate"]
-        trips["weightPersonTrip"] = trips["weightPersonTrip"].astype("float32")
+        if use_sampleRate:
+            trips["weightTrip"] = pd.Series(np.select(conditions, choices, default=1) / trips["sampleRate"], dtype="float32")
+            trips["weightPersonTrip"] = 1 / trips["sampleRate"]
+            trips["weightPersonTrip"] = trips["weightPersonTrip"].astype("float32")
+        else:
+            trips["weightTrip"] = pd.Series(np.select(conditions, choices, default=1) / self.properties["sampleRate"], dtype="float32")
+            trips["weightPersonTrip"] = 1 / self.properties["sampleRate"]
+            trips["weightPersonTrip"] = trips["weightPersonTrip"].astype("float32")
 
         # rename columns to standard/generic ABM naming conventions
         trips.rename(columns={"person_id": "personID",
@@ -3097,47 +3206,92 @@ class TripLists(ScenarioData):
             A Pandas DataFrame of the Joint trip list """
         # load trip list into Pandas DataFrame
         fn_trips = "jointTripData_" + str(self.properties["iterations"]) + ".csv"
-        trips = pd.read_csv(
-            os.path.join(self.scenario_path, "output", fn_trips),
-            usecols=["hh_id",
-                     "tour_id",
-                     "stop_id",
-                     "inbound",
-                     "orig_purpose",
-                     "dest_purpose",
-                     "orig_mgra",
-                     "dest_mgra",
-                     "parking_mgra",
-                     "stop_period",
-                     "trip_mode",
-                     "av_avail",
-                     "num_participants",
-                     "trip_board_tap",
-                     "trip_alight_tap",
-                     "set",
-                     "valueOfTime",
-                     "transponder_avail",
-                     "parkingCost"],
-            dtype={"hh_id": "int32",
-                   "tour_id": "int8",
-                   "stop_id": "int8",
-                   "inbound": "bool",
-                   "orig_purpose": "string",
-                   "dest_purpose": "string",
-                   "orig_mgra": "int16",
-                   "dest_mgra": "int16",
-                   "parking_mgra": "int16",
-                   "stop_period": "int8",
-                   "trip_mode": "int8",
-                   "av_avail": "bool",
-                   "num_participants": "int8",
-                   "trip_board_tap": "int16",
-                   "trip_alight_tap": "int16",
-                   "set": "int8",
-                   "valueOfTime": "float32",
-                   "transponder_avail": "bool",
-                   "parkingCost": "float32"})
-
+        use_sampleRate = False
+        try:
+            trips = pd.read_csv(
+                os.path.join(self.scenario_path, "output", fn_trips),
+                usecols=["hh_id",
+                         "tour_id",
+                         "stop_id",
+                         "inbound",
+                         "orig_purpose",
+                         "dest_purpose",
+                         "orig_mgra",
+                         "dest_mgra",
+                         "parking_mgra",
+                         "stop_period",
+                         "trip_mode",
+                         "av_avail",
+                         "num_participants",
+                         "trip_board_tap",
+                         "trip_alight_tap",
+                         "set",
+                         "valueOfTime",
+                         "transponder_avail",
+                         "parkingCost",
+                         "sampleRate"],
+                dtype={"hh_id": "int32",
+                       "tour_id": "int8",
+                       "stop_id": "int8",
+                       "inbound": "bool",
+                       "orig_purpose": "string",
+                       "dest_purpose": "string",
+                       "orig_mgra": "int16",
+                       "dest_mgra": "int16",
+                       "parking_mgra": "int16",
+                       "stop_period": "int8",
+                       "trip_mode": "int8",
+                       "av_avail": "bool",
+                       "num_participants": "int8",
+                       "trip_board_tap": "int16",
+                       "trip_alight_tap": "int16",
+                       "set": "int8",
+                       "valueOfTime": "float32",
+                       "transponder_avail": "bool",
+                       "parkingCost": "float32",
+                       "sampleRate": "float32"})
+            use_sampleRate = True
+        except:
+            trips = pd.read_csv(
+                os.path.join(self.scenario_path, "output", fn_trips),
+                usecols=["hh_id",
+                         "tour_id",
+                         "stop_id",
+                         "inbound",
+                         "orig_purpose",
+                         "dest_purpose",
+                         "orig_mgra",
+                         "dest_mgra",
+                         "parking_mgra",
+                         "stop_period",
+                         "trip_mode",
+                         "av_avail",
+                         "num_participants",
+                         "trip_board_tap",
+                         "trip_alight_tap",
+                         "set",
+                         "valueOfTime",
+                         "transponder_avail",
+                         "parkingCost"],
+                dtype={"hh_id": "int32",
+                       "tour_id": "int8",
+                       "stop_id": "int8",
+                       "inbound": "bool",
+                       "orig_purpose": "string",
+                       "dest_purpose": "string",
+                       "orig_mgra": "int16",
+                       "dest_mgra": "int16",
+                       "parking_mgra": "int16",
+                       "stop_period": "int8",
+                       "trip_mode": "int8",
+                       "av_avail": "bool",
+                       "num_participants": "int8",
+                       "trip_board_tap": "int16",
+                       "trip_alight_tap": "int16",
+                       "set": "int8",
+                       "valueOfTime": "float32",
+                       "transponder_avail": "bool",
+                       "parkingCost": "float32"})
         # apply exhaustive field mappings where applicable
         mappings = {
             "parking_mgra": {key: value for (key, value) in
@@ -3284,12 +3438,18 @@ class TripLists(ScenarioData):
         # adjust by the ABM scenario final iteration sample rate
         # each record is per-person on trip
         # data-set has single person record with multiple trip records
-        trips["weightTrip"] = pd.Series(
-            1 / (trips["num_participants"] * self.properties["sampleRate"]),
-            dtype="float32")
-        trips["weightPersonTrip"] = 1 / self.properties["sampleRate"]
-        trips["weightPersonTrip"] = trips["weightPersonTrip"].astype("float32")
-
+        if use_sampleRate:
+            trips["weightTrip"] = pd.Series(
+                1 / (trips["num_participants"] ) / trips["sampleRate"],
+                dtype="float32")
+            trips["weightPersonTrip"] = 1 /  trips["sampleRate"]
+            trips["weightPersonTrip"] = trips["weightPersonTrip"].astype("float32")
+        else:
+            trips["weightTrip"] = pd.Series(
+                1 / (trips["num_participants"] * self.properties["sampleRate"]),
+                dtype="float32")
+            trips["weightPersonTrip"] = 1 / self.properties["sampleRate"]
+            trips["weightPersonTrip"] = trips["weightPersonTrip"].astype("float32")
         return trips[["tripID",
                       "personID",
                       "tourID",
@@ -3383,8 +3543,8 @@ class TripLists(ScenarioData):
 
         # add vehicle/trip-based weight and person-based weight
         # adjust by the ABM scenario final iteration sample rate
-        trips["weightTrip"] = trips["TRIPS"] / self.properties["sampleRate"]
-        trips["weightPersonTrip"] = trips["TRIPS"] / self.properties["sampleRate"]
+        trips["weightTrip"] = trips["TRIPS"]
+        trips["weightPersonTrip"] = trips["TRIPS"]
 
         # rename columns to standard/generic ABM naming conventions
         trips.rename(columns={"OTAZ": "originTAZ",
