@@ -1,7 +1,7 @@
 inherit_settings: settings.yaml
 
 multiprocess: True
-households_sample_size: 1000
+households_sample_size: 10000
 num_processes: 20
 trace_hh_id:
 chunk_training_mode: disabled
@@ -31,6 +31,7 @@ models:
   - workplace_location
   - work_from_home
   - auto_ownership_simulate
+  - vehicle_type_choice
   - transponder_ownership
   - free_parking
   - telecommute_frequency
@@ -49,6 +50,7 @@ models:
   - non_mandatory_tour_destination
   - external_non_mandatory_destination
   - non_mandatory_tour_scheduling
+  - vehicle_allocation
   - tour_mode_choice_simulate
   - atwork_subtour_frequency
   - atwork_subtour_destination
