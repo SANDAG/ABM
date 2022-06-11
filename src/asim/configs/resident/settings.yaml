@@ -96,6 +96,7 @@ output_tables:
     - tours
     - trips
     - joint_tour_participants
+    - vehicles
 
 distributed_time_factor_work_mean: 1.0
 distributed_time_factor_work_stddev: 0.7
@@ -125,6 +126,7 @@ models:
   - workplace_location
   - work_from_home
   - auto_ownership_simulate
+  - vehicle_type_choice
   - transponder_ownership
   - free_parking
   - telecommute_frequency
@@ -143,6 +145,7 @@ models:
   - non_mandatory_tour_destination
   - external_non_mandatory_destination
   - non_mandatory_tour_scheduling
+  - vehicle_allocation
   - tour_mode_choice_simulate
   - atwork_subtour_frequency
   - atwork_subtour_destination
