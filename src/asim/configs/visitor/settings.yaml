@@ -112,7 +112,7 @@ models:
   - stop_frequency
   - trip_purpose  
   - trip_destination
-  - trip_purpose_and_destination
+  # - trip_purpose_and_destination
   - trip_scheduling
   - trip_mode_choice
   - write_trip_matrices
