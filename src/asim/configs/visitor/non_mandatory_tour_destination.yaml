@@ -22,18 +22,13 @@ SEGMENTS:
   - dining
 
 SIMULATE_CHOOSER_COLUMNS:
-  - tour_type
-  - home_zone_id
-  - origin
   - person_id
-  - income
-  - tour_count
-  - tour_num
-  - auto_available
-  - number_of_participants
-  - visitor_travel_type
-  - tour_category
+  - demographic_segment
+  - home_zone_id
+  - tour_type
+  - origin
   - special_size_term
+  
 
 LOGSUM_SETTINGS: tour_mode_choice.yaml
 

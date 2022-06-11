@@ -55,20 +55,8 @@ preprocessor:
 
 # to reduce memory needs filter chooser table to these fields
 LOGSUM_CHOOSER_COLUMNS:
-  - tour_type
-  - income
-  - density_index
-  - auto_available
-  - auto_ownership
-  - tour_category
-  - start
-  - end
-  - duration
-  - is_university
-  - person_id
-  - household_id
-  - number_of_participants
-  - free_parking_at_work
+  - person_id  
+  - demographic_segment
 
 CHOICE_COL_NAME: tour_mode
 MODE_CHOICE_LOGSUM_COLUMN_NAME: mode_choice_logsum

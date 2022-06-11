@@ -23,3 +23,4 @@ util_TNC_SINGLE_cost,TNC Single - Cost,@df.coef_cost * ((TNC_single_baseFare + (
 util_TNC_SHARED_IVT,TNC Shared - In-vehicle time,@df.s2_time_skims * TNC_shared_IVTFactor,,,,,,,,,coef_ivt
 util_TNC_SHARED_wait,TNC Shared - Wait time,1.5 * tnc_shared_wait_time,,,,,,,,,coef_ivt
 util_TNC_SHARED_cost,TNC Shared - Cost,@df.coef_cost * ((TNC_shared_baseFare + (df.s2_dist_skims * TNC_shared_costPerMile) + (df.s2_time_skims * TNC_shared_costPerMinute).clip(lower=TNC_shared_costMinimum)) * 100 + df.s2_cost_skims),,,,,,,,,coef_one
+Calibration,ABM2+ Calibration,,0.1356,0.0000,0.0474,0.4619,0.0000,-0.1328,-1.653630067,-1.343352214,0
