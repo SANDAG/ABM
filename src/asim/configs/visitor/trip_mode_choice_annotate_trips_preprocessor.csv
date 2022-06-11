@@ -22,11 +22,6 @@ vot-indexed skims,da_dist_skims,((odt_skims['SOV_NT_L_DIST'] * (_vot_bin_da == 1
 ,s3_dist_skims,((odt_skims['HOV3_L_DIST'] * (_vot_bin_s3 == 1)) + (odt_skims['HOV3_M_DIST'] * (_vot_bin_s3 == 2)) + (odt_skims['HOV3_H_DIST'] * (_vot_bin_s3 == 3)))
 ,s3_cost_skims,((odt_skims['HOV3_L_TOLLCOST'] * (_vot_bin_s3 == 1)) + (odt_skims['HOV3_M_TOLLCOST'] * (_vot_bin_s3 == 2)) + (odt_skims['HOV3_H_TOLLCOST'] * (_vot_bin_s3 == 3)))
 ,s3_time_skims,((odt_skims['HOV3_L_TIME'] * (_vot_bin_s3 == 1)) + (odt_skims['HOV3_M_TIME'] * (_vot_bin_s3 == 2)) + (odt_skims['HOV3_H_TIME'] * (_vot_bin_s3 == 3)))
-,walk_time,od_skims['walkTime']
-,walk_available,((walk_time < max_walk_time) & (walk_time > 0))
-,walk_transit_logsum,tvpb_logsum_odt['WTW']
-,bike_time,od_skims['bikeTime']
-,bike_available,((bike_time < 60) & (bike_time > 0))
 for tour_od_choice logsums read tour_dest from trips table,tour_dest,"reindex(tours.destination, df.tour_id) if _TOURS_HAVE_DEST else df.tour_destination"
 intermediate outbound stops on tour,out_stops,df['stop_frequency'].str[0].astype(int)
 intermediate inbound stops on tour,in_stops,df['stop_frequency'].str[5].astype(int)
@@ -61,3 +56,20 @@ wait times,density_measure,"reindex(land_use.PopEmpDenPerMi, df[ORIGIN])"
 ,taxi_wait_time,"rng.lognormal_for_df(df.set_index('tour_id'), mu=taxi_wait_time_mean.values, sigma=taxi_wait_time_sd.values, broadcast=True, scale=True).set_axis(df.index, axis='index')"
 ,tnc_single_wait_time,"rng.lognormal_for_df(df.set_index('tour_id'), mu=tnc_single_wait_time_mean.values, sigma=tnc_single_wait_time_sd.values, broadcast=True, scale=True).set_axis(df.index, axis='index')"
 ,tnc_shared_wait_time,"rng.lognormal_for_df(df.set_index('tour_id'), mu=tnc_shared_wait_time_mean.values, sigma=tnc_shared_wait_time_sd.values, broadcast=True, scale=True).set_axis(df.index, axis='index')"
+#,,
+,purpose_id,df.purpose_id
+is work tour,is_work,"np.where(purpose_id==0,1,0)"
+is recreation tour,is_recreation,"np.where(purpose_id==1,1,0)"
+is dining tour,is_dining,"np.where(purpose_id==2,1,0)"
+auto availability,autoAvailable,df.auto_available
+,walk_time,od_skims['walkTime']
+,walk_available,((walk_time < max_walk_time) & (walk_time > 0))
+,walk_transit_logsum,tvpb_logsum_odt['WTW']
+,bike_time,od_skims['bikeTime']
+,bike_available,((bike_time < max_bike_time) & (bike_time > 0))
+,tourDA,"np.where(df.tour_mode=='DA',1,0)"
+,tourS2,"np.where(df.tour_mode=='SHARED2',1,0)"
+,tourS3,"np.where(df.tour_mode=='SHARED3',1,0)"
+,tourWalk,"np.where(df.tour_mode=='WALK',1,0)"
+,tourBike,"np.where(df.tour_mode=='BIKE',1,0)"
+,tourWalkTransit,"np.where(df.tour_mode=='WALK_TRANSIT',1,0)"

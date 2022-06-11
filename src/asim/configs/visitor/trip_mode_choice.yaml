@@ -54,6 +54,7 @@ CONSTANTS:
     2: M
     3: H
   max_walk_time: 60
+  max_bike_time: 60
   taxi_base_fare: 2.20
   taxi_cost_per_mile: 2.30
   taxi_cost_per_minute: 0.10
@@ -127,5 +128,7 @@ TOURS_MERGED_CHOOSER_COLUMNS:
   - demographic_segment
   - income
   - duration
+  - purpose_id
+  - auto_available
 
 MODE_CHOICE_LOGSUM_COLUMN_NAME: trip_mode_choice_logsum

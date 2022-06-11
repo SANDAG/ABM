@@ -8,10 +8,11 @@ util_S2_park_cost,Shared ride 2 HOV - Parking cost,@df.coef_cost * df.parking_co
 util_S3_IVT,Shared ride 3+ HOV - In-vehicle time,s3_time_skims,,,coef_ivt,,,,,,
 util_S3_op_cost,Shared ride 3+ HOV - Operating cost,@df.coef_cost * (costPerMile * df.s3_dist_skims + df.s3_cost_skims),,,coef_one,,,,,,
 util_S3_park_cost,Shared ride 3+ HOV - Parking cost,@df.coef_cost * df.parking_cost / cost_share_s3,,,coef_one,,,,,,
-util_WALK_unavail,Walk - Mode unavailable,(1 - walk_available),,,,coef_unavail,,,,,
+util_WALK_unavail,Walk - Mode unavailable,walk_available==0,,,,coef_unavail,,,,,
 util_WALK_time,Walk - Time,@df.walk_available * coef_walkTime * df.walk_time,,,,coef_one,,,,,
-util_BIKE_unavail,Bike - Mode unavailable,(1 - bike_available),,,,,coef_unavail,,,,
-util_BIKE_time,Bike - Time,@df.bike_available * coef_bikeTime * df.bike_time,,,,,coef_one,,,,
+#util_BIKE_unavail,Bike - Mode unavailable,walk_available==0,,,,,coef_unavail,,,,
+#util_BIKE_time,Bike - Time,@df.bike_available * coef_bikeTime * df.bike_time,,,,,coef_one,,,,
+FIXME?? PROBLEM IN CTRAMP???,Bike - Mode unavailable,1,,,,,coef_unavail,,,,
 util_WALK_TRANSIT_unavail,Walk-transit unavailable,walk_transit_logsum <= -500,,,,,,coef_unavail,,,
 util_WALK_TRANSIT,Walk-transit utility,(walk_transit_logsum > -500) * walk_transit_logsum,,,,,,coef_one,,,
 util_TAXI_IVT,Taxi - In-vehicle time,s2_time_skims,,,,,,,coef_ivt,,
@@ -23,4 +24,16 @@ util_TNC_SINGLE_cost,TNC Single - Cost,@df.coef_cost * ((TNC_single_baseFare + (
 util_TNC_SHARED_IVT,TNC Shared - In-vehicle time,@df.s2_time_skims * TNC_shared_IVTFactor,,,,,,,,,coef_ivt
 util_TNC_SHARED_wait,TNC Shared - Wait time,1.5 * tnc_shared_wait_time,,,,,,,,,coef_ivt
 util_TNC_SHARED_cost,TNC Shared - Cost,@df.coef_cost * ((TNC_shared_baseFare + (df.s2_dist_skims * TNC_shared_costPerMile) + (df.s2_time_skims * TNC_shared_costPerMinute).clip(lower=TNC_shared_costMinimum)) * 100 + df.s2_cost_skims),,,,,,,,,coef_one
-Calibration,ABM2+ Calibration,,0.1356,0.0000,0.0474,0.4619,0.0000,-0.1328,-1.653630067,-1.343352214,0
+ASC - Tour Mode DA,,tourDA,,-999.0000,-999.0000,,-999.0000,-999.0000,,,-999.0000
+ASC - Tour Mode S2,,tourS2,-999.0000,,-999.0000,,-999.0000,-999.0000,,,-999.0000
+ASC - Tour Mode S3,,tourS3,-999.0000,-999.0000,,,-999.0000,-999.0000,,,-999.0000
+ASC - Tour Mode Walk,,tourWalk,-999.0000,-999.0000,-999.0000,,-999.0000,-999.0000,,,-999.0000
+ASC - Tour Mode Bike,,tourBike,-999.0000,-999.0000,-999.0000,-999.0000,,-999.0000,,,-999.0000
+ASC - Tour Mode Walk-Transit,,tourWalkTransit,-999.0000,-999.0000,-999.0000,,-999.0000,,,,-999.0000
+Work Tour,,is_work*autoAvailable,,,,,,,,,
+Recreation Tour,,is_recreation*autoAvailable,,,,,,,,,
+Dining Tour,,is_dining*autoAvailable,,,,,,,,,
+Work Tour,,is_work*(1-autoAvailable),,,,,,,,,
+Recreation Tour,,is_recreation*(1-autoAvailable),,,,,,,,,
+Dining Tour,,is_dining*(1-autoAvailable),,,,,,,,,
+Calibration,ABM2+ Calibration,,0.1356,0,0.0474,0.4619,0,-0.1328,-1.653630067,-1.343352214,0
