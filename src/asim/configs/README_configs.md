@@ -39,7 +39,12 @@ _settings.yaml_
 
 * re-named columns in households and persons
 * Kept all columns from landuse.  Decreasing the number of landuse columns might make a substantial impact on RAM requirements as they are often jointed to the person and hh tables
+---
+_annotate_landuse.yaml_
 
+* Capped the employment density (tot_emp / acre) to 500
+  - had to make this change to avoid infinte probabilities in the walk term in the trip destination logsum
+  - for reference, MAZ 2623 has and employment density of 2734 (which was the one causing the trouble), with the next highest at 856 for maz 2626
 ---
 _network_los.yaml_
 
@@ -121,7 +126,6 @@ Tour destination choice
 * @bestTimeToWorkLocation is same as roundtrip_auto_time_to_work? or divided by 2?
 ---
 Tour mode choice
-* moved constants from resident/tour_mode_choice.yaml to common/constants.yaml. Conflicting variables found between taxi/TNC/SharedTNC, defaulted to tour_mode_choice naming convention, e.g., TNC_shared_costPerMile instead of costPerMileSharedTNC.
 * changed expression to include the following coefficients and changed the actual coefficient to `coef_one`: `c_wacc`, `c_wegr`, `c_rel_inb`, `c_rel_oub`, `c_fwt`
   - these were causing crash because they were defined in the pre-processor, but were listed as actual coefficients
 * changed nesting structure in tour_mode_choice.yaml to match UEC. Set all nesting coefs to 0.5 in coeffs file (also matches UEC). Should be double checked.
@@ -132,7 +136,8 @@ Tour mode choice
 * Copied `cost_share_[s2,s3]`, `vot_threshold_[low,med], maz_walk_time` from xborder model to tour_mode_choice.yaml.  Should these be moved to (common) constants?
 * `df.transponderOwnership` is not recognized in the preprocessor since there is no Transponder model yet implemented.  Setting `ownsTransponder` to 1 for now.
   - same in trip mode choice
-* `walk_time_skims_[out,in]` need to use the walktime skims, but we don't have that. Putting placeholder in for now based on `SOV_TR_L_DIST * 3 / 60`
+* `walk_time_skims_[out,in]` both use the od walkTime skim (assumes walk symmetry).  
+  - Would need to add the do_skim to the skim roster tour_mode_choice.py ActivitySim code.
 * `milestocoast` was not defined, replaced with arbitrary value of 5
   - applied in trip mode choice too
 * All of the bike logsums and availability stuff is not defined. commenting out for now.
@@ -215,15 +220,17 @@ External Model Development
   - Determines whether each worker or student is internal or external
   - Set `CHOOSER_FILTER_COLUMN_NAME: is_internal_student/worker` in school and workplace location yamls to exclude external workers or students from the model
   - Added `is_internal_[student,worker]` to annotate_person file with a default of everyone being internal.  Gets overwritten by external identification models.  This means that we can theoretically choose to turn off the external models and not have to make changes in other configs
-  - Contains placeholder utility functions in the config files that just produces a decent number of internal/external split to test other model implementations with
-     - FIXME: will need to be clever about determining how far a zone is from an external station.  Would it be better to include this as a static variable in the landuse file as a pre-processing step?
 * Implemented external workplace and school location models
   - calls the same `iterate_location_choice` method as internal school and workplace location models and has all the same functionality
-     - FIXME: I think that shadow pricing, if turned on, will run for these models too.  Is that a good feature?  Changing would not allow us to use the same `iterate_location_choice` function call.
+     - FIXME: I think that shadow pricing, if turned on, will run for these models too.  Is that a good feature?  Changing would not allow us to use the same `iterate_location_choice` function call and would require some extra code development.
 * Added `external` options in _shadow_pricing.yaml_ in order to get size terms passed to the calculations
   - Added an `external` segment to _destination_choice_size_terms.csv_ which is currently looking for two landuse columns `external_work`, and `external_nonwork`
     - data was added to landuse using the _input_file_creation.ipynb_ notebook
   - _annotate_persons_after[workplace,school].csv_ files set school and workplace zone id to be the external zones if the worker/student was external.  (internal models overwrite the school or workplace ids, so results need to be performed after)
   - Again using placeholder utility specifications.
-      - We probably still want separate external work and school location configs, right?
   - There is no worker or student segmentation (e.g. by income, school level, etc.)
+* joint and non-mandatory identification models use the same configs.  Added a joint tour term to the spec though.
+* identification models have placeholder utility terms.  there is an ASC that you can play with for testing / calibration before phase 2 estimation work
+* external non_mandatory tour destination model just uses the same config as the internal model.  The size terms are 1 for the external_nonwork landuse column.
+  - regular internal joint tour model just calls the non_mandatory tour destination settings.  Doing the same thing for external joint tours -- just inherit all the settings from the external non_mandatory tour destination model, which in this case, just uses the internal non_mandatory tour destination configs
+* external tour destination choice models are run after the internal destination choice models.  Source code has hard-coded cut on tour_category to select choosers, so they have to be run first.  Subsequent external models overwrite choice. Could _maybe_ get the internal models to operate only in internal tours by playing games with the tour category variable, but it would likely be pretty hacky...

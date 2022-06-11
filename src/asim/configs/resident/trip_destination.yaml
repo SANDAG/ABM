@@ -18,23 +18,26 @@ DEST_CHOICE_SAMPLE_TABLE_NAME: trip_destination_sample
 # model-specific logsum-related settings
 TRIP_ORIGIN: origin
 ALT_DEST_COL_NAME: dest_taz
+PRIMARY_ORIGIN: tour_leg_origin
 PRIMARY_DEST: tour_leg_dest # must be created in preprocessor
 
 # tour_mode is already in trips table, so we don't need it from tours
 # (it is assigned in trip_destination_annotate_trips_preprocessor )
 REDUNDANT_TOURS_MERGED_CHOOSER_COLUMNS:
   - tour_mode
-
+  
 CONSTANTS:
-    max_walk_distance: 3
-    max_bike_distance: 8
-
+  max_walk_distance: 3
+  max_bike_distance: 12
+  
 preprocessor:
   SPEC: trip_destination_annotate_trips_preprocessor
   DF: trips
   TABLES:
     - tours
     - persons
+    - households
+
 
 # drop failed trips and cleanup failed trip leg_mates for consistency
 # (i.e. adjust trip_count, trip_num, first for missing failed trips)
