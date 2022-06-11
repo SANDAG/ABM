@@ -2,5 +2,5 @@ Description,Target,Expression
 #,,annotate persons table after import
 fake demog segments needed by trip mode choice model,demographic_segment,'everyone'
 university status required by tour mode choice,is_university,False
-auto_availability status required by tour mode choice,auto_available,"np.where(tours.groupby('person_id').first().auto_available==1, True, False)"
-income required by tour mode choice,income,tours.groupby('person_id').first().income
+#auto_availability status required by tour mode choice,auto_available,"np.where(tours.groupby('person_id').first().auto_available==1, True, False)"
+#income required by tour mode choice,income,tours.groupby('person_id').first().income

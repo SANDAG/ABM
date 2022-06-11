@@ -23,12 +23,3 @@ coef_cost_high,-0.001,F
 coef_cost_vhigh,-0.0004,F
 coef_oMix_nmot,0.17243,F
 coef_oIntDen_nmot,0.00571,F
-#,,
-# coef_bikeLogsumI,,F
-# coef_bikeLogsumO,,F
-# coef_LUnorm_bike,,F
-# coef_oIntDen_wTran,,F
-# coef_dEmpDen_wTran,,F
-# coef_oMix_wTran,,F
-# coef_dEmpNorm_walk ,,F
-# coef_LUnorm_walk,,F

@@ -1,14 +1,14 @@
 Description,Expression,work,recreation,dining
 ,_od_DIST@od_skims['DIST'],coef_one,coef_one,coef_one
 ,_dp_DIST@dp_skims['DIST'],coef_one,coef_one,coef_one
-Not available if walk tour not within walking distance,@(df.tour_mode=='WALK') & (od_skims['DIST'] > max_walk_distance),coef_UNAVAILABLE,coef_one,coef_UNAVAILABLE
-Not available if walk tour not within walking distance,@(df.tour_mode=='WALK') & (dp_skims['DIST'] > max_walk_distance),coef_UNAVAILABLE,coef_one,coef_UNAVAILABLE
-Not available if bike tour not within biking distance,@(df.tour_mode=='BIKE') & (od_skims['DIST'] > max_bike_distance),coef_UNAVAILABLE,coef_one,coef_UNAVAILABLE
-Not available if bike tour not within biking distance,@(df.tour_mode=='BIKE') & (dp_skims['DIST'] > max_bike_distance),coef_UNAVAILABLE,coef_one,coef_UNAVAILABLE
-Not available if walk tour not within walking distance,@(df.tour_mode=='WALK') & (od_skims['DIST'] > max_walk_distance_recreation),coef_one,coef_UNAVAILABLE,coef_one
-Not available if walk tour not within walking distance,@(df.tour_mode=='WALK') & (dp_skims['DIST'] > max_walk_distance_recreation),coef_one,coef_UNAVAILABLE,coef_one
-Not available if bike tour not within biking distance,@(df.tour_mode=='BIKE') & (od_skims['DIST'] > max_bike_distance_recreation),coef_one,coef_UNAVAILABLE,coef_one
-Not available if bike tour not within biking distance,@(df.tour_mode=='BIKE') & (dp_skims['DIST'] > max_bike_distance_recreation),coef_one,coef_UNAVAILABLE,coef_one
+#Not available if walk tour not within walking distance,@(df.tour_mode=='WALK') & (od_skims['DIST'] > max_walk_distance),coef_UNAVAILABLE,coef_one,coef_UNAVAILABLE
+#Not available if walk tour not within walking distance,@(df.tour_mode=='WALK') & (dp_skims['DIST'] > max_walk_distance),coef_UNAVAILABLE,coef_one,coef_UNAVAILABLE
+#Not available if bike tour not within biking distance,@(df.tour_mode=='BIKE') & (od_skims['DIST'] > max_bike_distance),coef_UNAVAILABLE,coef_one,coef_UNAVAILABLE
+#Not available if bike tour not within biking distance,@(df.tour_mode=='BIKE') & (dp_skims['DIST'] > max_bike_distance),coef_UNAVAILABLE,coef_one,coef_UNAVAILABLE
+#Not available if walk tour not within walking distance,@(df.tour_mode=='WALK') & (od_skims['DIST'] > max_walk_distance_recreation),coef_one,coef_UNAVAILABLE,coef_one
+#Not available if walk tour not within walking distance,@(df.tour_mode=='WALK') & (dp_skims['DIST'] > max_walk_distance_recreation),coef_one,coef_UNAVAILABLE,coef_one
+#Not available if bike tour not within biking distance,@(df.tour_mode=='BIKE') & (od_skims['DIST'] > max_bike_distance_recreation),coef_one,coef_UNAVAILABLE,coef_one
+#Not available if bike tour not within biking distance,@(df.tour_mode=='BIKE') & (dp_skims['DIST'] > max_bike_distance_recreation),coef_one,coef_UNAVAILABLE,coef_one
 #If transit tour is not in walk sub-zone it must be walkable,,,,
 size term,"@np.log1p(size_terms.get(df.dest_taz, df.purpose))",coef_one,coef_one,coef_one
 no attractions,"@size_terms.get(df.dest_taz, df.purpose) == 0",coef_UNAVAILABLE,coef_UNAVAILABLE,coef_UNAVAILABLE

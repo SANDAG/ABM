@@ -5,3 +5,4 @@ Mode choice logsum,mode_choice_logsum,coef_mode_logsum_work,coef_mode_logsum_rec
 Size term variable,"@np.log1p(np.where(df.special_size_term==0, df['size_term'], df.special_size_term))",coef_one,coef_one,coef_one
 Sample of alternatives correction factor,"@np.minimum(np.log(df.pick_count/df.prob), 60)",coef_one,coef_one,coef_one
 No attractions,@df['size_term']==0,-999,-999,-999
+,,,,
