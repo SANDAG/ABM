@@ -2411,9 +2411,7 @@ class TripLists(ScenarioData):
         trips["avUsed"] = False
         trips["parkingTAZ"] = pd.Series(np.NaN, dtype="float32")
 
-        # add person-based weight and adjust weights
-        # by the ABM scenario final iteration sample rate
-        trips["weightTrip"] = pd.Series(trips["weightTrip"] / self.properties["sampleRate"], dtype="float32")
+        # add person-based weight
         trips["weightPersonTrip"] = trips["weightTrip"]
 
         # rename columns to standard/generic ABM naming conventions
@@ -2531,10 +2529,9 @@ class TripLists(ScenarioData):
                    self.properties["sr3Passengers"]]
 
         trips["weightPersonTrip"] = pd.Series(
-            trips["TRIPS"] * np.select(conditions, choices, default=1) / self.properties["sampleRate"],
-            dtype="float32")
-        trips["weightTrip"] = trips["TRIPS"] / self.properties["sampleRate"]
-        trips["weightTrip"] = trips["weightTrip"].astype("float32")
+            trips["TRIPS"] * np.select(conditions, choices, default=1), dtype="float32")
+                            
+        trips["weightTrip"] = trips["TRIPS"].astype("float32")
 
         # rename columns to standard/generic ABM naming conventions
         trips.rename(columns={"OTAZ": "originTAZ",
@@ -2662,10 +2659,9 @@ class TripLists(ScenarioData):
                    self.properties["sr3Passengers"]]
 
         trips["weightPersonTrip"] = pd.Series(
-            trips["TRIPS"] * np.select(conditions, choices, default=1) / self.properties["sampleRate"],
-            dtype="float32")
-        trips["weightTrip"] = trips["TRIPS"] / self.properties["sampleRate"]
-        trips["weightTrip"] = trips["weightTrip"].astype("float32")
+            trips["TRIPS"] * np.select(conditions, choices, default=1),dtype="float32")
+                            
+        trips["weightTrip"] = trips["TRIPS"].astype("float32")
 
         # rename columns to standard/generic ABM naming conventions
         trips.rename(columns={"OTAZ": "originTAZ",
@@ -3534,8 +3530,8 @@ class TripLists(ScenarioData):
 
         # add vehicle/trip-based weight and person-based weight
         # adjust by the ABM scenario final iteration sample rate
-        trips["weightTrip"] = trips["TRIPS"] / self.properties["sampleRate"]
-        trips["weightPersonTrip"] = trips["TRIPS"] / self.properties["sampleRate"]
+        trips["weightTrip"] = trips["TRIPS"]
+        trips["weightPersonTrip"] = trips["TRIPS"]
 
         # rename columns to standard/generic ABM naming conventions
         trips.rename(columns={"OTAZ": "originTAZ",
