@@ -19,6 +19,7 @@ DEST_CHOICE_SAMPLE_TABLE_NAME: trip_destination_sample
 TRIP_ORIGIN: origin
 ALT_DEST_COL_NAME: dest_taz
 PRIMARY_DEST: tour_leg_dest # must be created in preprocessor
+PRIMARY_ORIGIN: tour_leg_origin
 
 # tour_mode is already in trips table, so we don't need it from tours
 # (it is assigned in trip_destination_annotate_trips_preprocessor )

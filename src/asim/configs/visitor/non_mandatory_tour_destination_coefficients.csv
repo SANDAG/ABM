@@ -4,6 +4,9 @@ coef_zero,0,T
 coef_dist_work,-0.625,F
 coef_dist_recreation,1,F
 coef_dist_dining,-0.5,F
+coef_dist_work_samp,-0.625,F
+coef_dist_recreation_samp,-0.12,F
+coef_dist_dining_samp,-0.3,F
 coef_mode_logsum_work,0.94564,F
 coef_mode_logsum_recreation,0.86742,F
 coef_mode_logsum_dining,1,F
