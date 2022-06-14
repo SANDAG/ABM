@@ -7,9 +7,9 @@ toolpath = os.getcwd()[3:-7]
 
 conn = pyodbc.connect("DRIVER={SQL Server};"
                       "SERVER=DDAMWSQL16;"
-                      "DATABASE=abm_14_2_0;" 
+                      "DATABASE=abm_14_3_0;" 
                       "Trusted_Connection=yes;")                       
-sql = ("SELECT * FROM [abm_14_2_0].[dimension].[scenario] where RIGHT(path, len(path)-23) = '%s'" % toolpath)  
+sql = ("SELECT * FROM [abm_14_3_0].[dimension].[scenario] where RIGHT(path, len(path)-23) = '%s'" % toolpath)  
 df_sql = pd.read_sql_query(sql, conn)
 scenid = df_sql['scenario_id'].max()
 list = glob.glob(os.getcwd()[:-6]+'report\\hwyload*')
