@@ -727,19 +727,36 @@ class SyntheticPopulation(ScenarioData):
 
         # load output sampled synthetic household list
         fn = "householdData_" + str(self.properties["iterations"]) + ".csv"
-        output_households = pd.read_csv(
-            os.path.join(self.scenario_path, "output", fn),
-            usecols=["hh_id",
-                     "autos",
-                     "HVs",
-                     "AVs",
-                     "transponder"],
-            dtype={"hh_id": "int32",
-                   "autos": "int8",
-                   "HVs": "int8",
-                   "AVs": "int8",
-                   "transponder": "bool"})
-
+        use_sampleRate = False
+        try:
+            output_households = pd.read_csv(
+                os.path.join(self.scenario_path, "output", fn),
+                usecols=["hh_id",
+                         "autos",
+                         "HVs",
+                         "AVs",
+                         "transponder",
+                         "sampleRate"],
+                dtype={"hh_id": "int32",
+                       "autos": "int8",
+                       "HVs": "int8",
+                       "AVs": "int8",
+                       "transponder": "bool",
+                       "sampleRate": "float32"})
+            use_sampleRate = True
+        except:
+            output_households = pd.read_csv(
+                os.path.join(self.scenario_path, "output", fn),
+                usecols=["hh_id",
+                         "autos",
+                         "HVs",
+                         "AVs",
+                         "transponder"],
+                dtype={"hh_id": "int32",
+                       "autos": "int8",
+                       "HVs": "int8",
+                       "AVs": "int8",
+                       "transponder": "bool"})
         # merge output sampled households with input sampled households
         # keep only households present in the sampled households
         households = output_households.merge(
@@ -767,7 +784,12 @@ class SyntheticPopulation(ScenarioData):
 
         for field in mappings:
             households[field] = households[field].map(mappings[field]).astype("category")
-
+        
+        if use_sampleRate:
+            households["weight"] = 1 / households["sampleRate"]
+            households["weight"] = households["weight"].astype("float32")
+        else:
+            households["weight"] = 1
         # rename columns to standard/generic ABM naming conventions
         households.rename(columns={"hh_id": "hhId",
                                    "HVs": "autosHumanVehicles",
@@ -796,7 +818,8 @@ class SyntheticPopulation(ScenarioData):
                            "hhPersons",
                            "buildingCategory",
                            "unitType",
-                           "poverty"]]
+                           "poverty",
+                           "weight"]]
 
     @property
     @lru_cache(maxsize=1)
@@ -845,19 +868,36 @@ class SyntheticPopulation(ScenarioData):
 
         # load output sampled synthetic person list
         fn_person_data = "personData_" + str(self.properties["iterations"]) + ".csv"
-        output_persons = pd.read_csv(
-            os.path.join(self.scenario_path, "output", fn_person_data),
-            usecols=["person_id",
-                     "activity_pattern",
-                     "fp_choice",
-                     "reimb_pct",
-                     "tele_choice"],
-            dtype={"person_id": "int32",
-                   "activity_pattern": "string",
-                   "fp_choice": "int8",
-                   "reimb_pct": "float32",
-                   "tele_choice": "int8"})
-
+        use_sampleRate = False
+        try:
+            output_persons = pd.read_csv(
+                os.path.join(self.scenario_path, "output", fn_person_data),
+                usecols=["person_id",
+                         "activity_pattern",
+                         "fp_choice",
+                         "reimb_pct",
+                         "tele_choice",
+                         "sampleRate"],
+                dtype={"person_id": "int32",
+                       "activity_pattern": "string",
+                       "fp_choice": "int8",
+                       "reimb_pct": "float32",
+                       "tele_choice": "int8",
+                       "sampleRate":"float32"})
+            use_sampleRate = True
+        except:
+            output_persons = pd.read_csv(
+                os.path.join(self.scenario_path, "output", fn_person_data),
+                usecols=["person_id",
+                         "activity_pattern",
+                         "fp_choice",
+                         "reimb_pct",
+                         "tele_choice"],
+                dtype={"person_id": "int32",
+                       "activity_pattern": "string",
+                       "fp_choice": "int8",
+                       "reimb_pct": "float32",
+                       "tele_choice": "int8"})
         # load work-school location model results
         fn_ws_loc_results = "wsLocResults_" + str(self.properties["iterations"]) + ".csv"
         ws_loc_results = pd.read_csv(
@@ -980,7 +1020,11 @@ class SyntheticPopulation(ScenarioData):
                 persons[field] = persons[field].map(mappings[field]).astype("float32")
             else:
                 persons[field] = persons[field].map(mappings[field]).astype("category")
-
+        if use_sampleRate:
+            persons["weight"] = 1 / persons["sampleRate"]
+            persons["weight"] = persons["weight"].astype("float32")
+        else:
+            persons["weight"] = 1
         # if employer does not reimburse for parking
         # set parking reimbursement percentage to missing
         persons.loc[persons["fp_choice"] != "Employer Reimburses for Parking", "reimb_pct"] = np.nan
@@ -1029,7 +1073,8 @@ class SyntheticPopulation(ScenarioData):
                         "workSegment",
                         "schoolSegment",
                         "workLocation",
-                        "schoolLocation"]]
+                        "schoolLocation",
+                        "weight"]]
 
 
 class TourLists(ScenarioData):
