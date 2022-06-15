@@ -1,0 +1,28 @@
+District,purpose,value
+1: Downtown,Work,0
+2: Central,Work,0
+3: North City,Work,0
+4: South Suburban,Work,0
+5: East Suburban,Work,0
+6: North County West,Work,0
+7: North County East,Work,0
+8: East County,Work,0
+Total,Work,0
+1: Downtown,University,0
+2: Central,University,0
+3: North City,University,0
+4: South Suburban,University,0
+5: East Suburban,University,0
+6: North County West,University,0
+7: North County East,University,0
+8: East County,University,0
+Total,University,0
+1: Downtown,School,0
+2: Central,School,0
+3: North City,School,0
+4: South Suburban,School,0
+5: East Suburban,School,0
+6: North County West,School,0
+7: North County East,School,0
+8: East County,School,0
+Total,School,0
