@@ -1,0 +1,361 @@
+stop_period,stop_skim_period,tour_purpose,freq
+4.75,1: EA,1: Work,44708
+5.25,1: EA,1: Work,40725
+5.75,1: EA,1: Work,71421
+6.25,2: AM,1: Work,119157
+6.75,2: AM,1: Work,152903
+7.25,2: AM,1: Work,212649
+7.75,2: AM,1: Work,195611
+8.25,2: AM,1: Work,142005
+8.75,2: AM,1: Work,119906
+9.25,3: MD,1: Work,86901
+9.75,3: MD,1: Work,69805
+10.25,3: MD,1: Work,52365
+10.75,3: MD,1: Work,50708
+11.25,3: MD,1: Work,54435
+11.75,3: MD,1: Work,80081
+12.25,3: MD,1: Work,86967
+12.75,3: MD,1: Work,83110
+13.25,3: MD,1: Work,74509
+13.75,3: MD,1: Work,69206
+14.25,3: MD,1: Work,95097
+14.75,3: MD,1: Work,118841
+15.25,3: MD,1: Work,131405
+15.75,4: PM,1: Work,136869
+16.25,4: PM,1: Work,174187
+16.75,4: PM,1: Work,190854
+17.25,4: PM,1: Work,193692
+17.75,4: PM,1: Work,152425
+18.25,4: PM,1: Work,123806
+18.75,4: PM,1: Work,99212
+19.25,5: EV,1: Work,67351
+19.75,5: EV,1: Work,53808
+20.25,5: EV,1: Work,53716
+20.75,5: EV,1: Work,38202
+21.25,5: EV,1: Work,29866
+21.75,5: EV,1: Work,18968
+22.25,5: EV,1: Work,12538
+22.75,5: EV,1: Work,14032
+23.25,5: EV,1: Work,7180
+23.75,5: EV,1: Work,11761
+24.25,5: EV,1: Work,17757
+4.75,1: EA,2: University,2516
+5.25,1: EA,2: University,254
+5.75,1: EA,2: University,4933
+6.25,2: AM,2: University,9645
+6.75,2: AM,2: University,13593
+7.25,2: AM,2: University,33912
+7.75,2: AM,2: University,23557
+8.25,2: AM,2: University,31392
+8.75,2: AM,2: University,22912
+9.25,3: MD,2: University,21441
+9.75,3: MD,2: University,19160
+10.25,3: MD,2: University,17192
+10.75,3: MD,2: University,13882
+11.25,3: MD,2: University,15600
+11.75,3: MD,2: University,18607
+12.25,3: MD,2: University,20413
+12.75,3: MD,2: University,22118
+13.25,3: MD,2: University,18279
+13.75,3: MD,2: University,22614
+14.25,3: MD,2: University,24807
+14.75,3: MD,2: University,18743
+15.25,3: MD,2: University,20895
+15.75,4: PM,2: University,23327
+16.25,4: PM,2: University,9486
+16.75,4: PM,2: University,12288
+17.25,4: PM,2: University,18426
+17.75,4: PM,2: University,28456
+18.25,4: PM,2: University,22445
+18.75,4: PM,2: University,13843
+19.25,5: EV,2: University,7338
+19.75,5: EV,2: University,7105
+20.25,5: EV,2: University,10827
+20.75,5: EV,2: University,11595
+21.25,5: EV,2: University,11939
+21.75,5: EV,2: University,7316
+22.25,5: EV,2: University,5722
+22.75,5: EV,2: University,748
+23.25,5: EV,2: University,1925
+23.75,5: EV,2: University,185
+24.25,5: EV,2: University,7236
+4.75,1: EA,3: School,0
+5.25,1: EA,3: School,0
+5.75,1: EA,3: School,1034
+6.25,2: AM,3: School,11224
+6.75,2: AM,3: School,44257
+7.25,2: AM,3: School,119584
+7.75,2: AM,3: School,112112
+8.25,2: AM,3: School,63330
+8.75,2: AM,3: School,35065
+9.25,3: MD,3: School,8535
+9.75,3: MD,3: School,2635
+10.25,3: MD,3: School,2338
+10.75,3: MD,3: School,4100
+11.25,3: MD,3: School,4730
+11.75,3: MD,3: School,6623
+12.25,3: MD,3: School,8763
+12.75,3: MD,3: School,25622
+13.25,3: MD,3: School,21162
+13.75,3: MD,3: School,24662
+14.25,3: MD,3: School,41946
+14.75,3: MD,3: School,89308
+15.25,3: MD,3: School,83042
+15.75,4: PM,3: School,52857
+16.25,4: PM,3: School,40449
+16.75,4: PM,3: School,47772
+17.25,4: PM,3: School,49672
+17.75,4: PM,3: School,33796
+18.25,4: PM,3: School,23863
+18.75,4: PM,3: School,21394
+19.25,5: EV,3: School,21396
+19.75,5: EV,3: School,11210
+20.25,5: EV,3: School,25299
+20.75,5: EV,3: School,10262
+21.25,5: EV,3: School,3823
+21.75,5: EV,3: School,3130
+22.25,5: EV,3: School,185
+22.75,5: EV,3: School,20
+23.25,5: EV,3: School,3
+23.75,5: EV,3: School,0
+24.25,5: EV,3: School,59
+4.75,1: EA,4: Escort,4835
+5.25,1: EA,4: Escort,1538
+5.75,1: EA,4: Escort,909
+6.25,2: AM,4: Escort,7393
+6.75,2: AM,4: Escort,16823
+7.25,2: AM,4: Escort,47508
+7.75,2: AM,4: Escort,88221
+8.25,2: AM,4: Escort,57096
+8.75,2: AM,4: Escort,43609
+9.25,3: MD,4: Escort,23837
+9.75,3: MD,4: Escort,19209
+10.25,3: MD,4: Escort,17794
+10.75,3: MD,4: Escort,15180
+11.25,3: MD,4: Escort,17005
+11.75,3: MD,4: Escort,22234
+12.25,3: MD,4: Escort,21507
+12.75,3: MD,4: Escort,25955
+13.25,3: MD,4: Escort,27929
+13.75,3: MD,4: Escort,36241
+14.25,3: MD,4: Escort,54168
+14.75,3: MD,4: Escort,86643
+15.25,3: MD,4: Escort,76254
+15.75,4: PM,4: Escort,53305
+16.25,4: PM,4: Escort,50916
+16.75,4: PM,4: Escort,51868
+17.25,4: PM,4: Escort,44627
+17.75,4: PM,4: Escort,39425
+18.25,4: PM,4: Escort,42538
+18.75,4: PM,4: Escort,28896
+19.25,5: EV,4: Escort,33075
+19.75,5: EV,4: Escort,20201
+20.25,5: EV,4: Escort,18326
+20.75,5: EV,4: Escort,8624
+21.25,5: EV,4: Escort,8864
+21.75,5: EV,4: Escort,8403
+22.25,5: EV,4: Escort,6143
+22.75,5: EV,4: Escort,528
+23.25,5: EV,4: Escort,1688
+23.75,5: EV,4: Escort,3408
+24.25,5: EV,4: Escort,7384
+4.75,1: EA,5: Individual Maintenance,508
+5.25,1: EA,5: Individual Maintenance,1614
+5.75,1: EA,5: Individual Maintenance,833
+6.25,2: AM,5: Individual Maintenance,2390
+6.75,2: AM,5: Individual Maintenance,6024
+7.25,2: AM,5: Individual Maintenance,8934
+7.75,2: AM,5: Individual Maintenance,17857
+8.25,2: AM,5: Individual Maintenance,23506
+8.75,2: AM,5: Individual Maintenance,38716
+9.25,3: MD,5: Individual Maintenance,65727
+9.75,3: MD,5: Individual Maintenance,71561
+10.25,3: MD,5: Individual Maintenance,73379
+10.75,3: MD,5: Individual Maintenance,76344
+11.25,3: MD,5: Individual Maintenance,80393
+11.75,3: MD,5: Individual Maintenance,84166
+12.25,3: MD,5: Individual Maintenance,78530
+12.75,3: MD,5: Individual Maintenance,85463
+13.25,3: MD,5: Individual Maintenance,88483
+13.75,3: MD,5: Individual Maintenance,91720
+14.25,3: MD,5: Individual Maintenance,88505
+14.75,3: MD,5: Individual Maintenance,100398
+15.25,3: MD,5: Individual Maintenance,81193
+15.75,4: PM,5: Individual Maintenance,70064
+16.25,4: PM,5: Individual Maintenance,64382
+16.75,4: PM,5: Individual Maintenance,57247
+17.25,4: PM,5: Individual Maintenance,47212
+17.75,4: PM,5: Individual Maintenance,56062
+18.25,4: PM,5: Individual Maintenance,46041
+18.75,4: PM,5: Individual Maintenance,29009
+19.25,5: EV,5: Individual Maintenance,39951
+19.75,5: EV,5: Individual Maintenance,28686
+20.25,5: EV,5: Individual Maintenance,28316
+20.75,5: EV,5: Individual Maintenance,15701
+21.25,5: EV,5: Individual Maintenance,14766
+21.75,5: EV,5: Individual Maintenance,12541
+22.25,5: EV,5: Individual Maintenance,3134
+22.75,5: EV,5: Individual Maintenance,1437
+23.25,5: EV,5: Individual Maintenance,931
+23.75,5: EV,5: Individual Maintenance,477
+24.25,5: EV,5: Individual Maintenance,2508
+4.75,1: EA,6: Individual Discretionary,13991
+5.25,1: EA,6: Individual Discretionary,3923
+5.75,1: EA,6: Individual Discretionary,6746
+6.25,2: AM,6: Individual Discretionary,13644
+6.75,2: AM,6: Individual Discretionary,19519
+7.25,2: AM,6: Individual Discretionary,26727
+7.75,2: AM,6: Individual Discretionary,32880
+8.25,2: AM,6: Individual Discretionary,44227
+8.75,2: AM,6: Individual Discretionary,47753
+9.25,3: MD,6: Individual Discretionary,44512
+9.75,3: MD,6: Individual Discretionary,47947
+10.25,3: MD,6: Individual Discretionary,50589
+10.75,3: MD,6: Individual Discretionary,47338
+11.25,3: MD,6: Individual Discretionary,68827
+11.75,3: MD,6: Individual Discretionary,54364
+12.25,3: MD,6: Individual Discretionary,64585
+12.75,3: MD,6: Individual Discretionary,64116
+13.25,3: MD,6: Individual Discretionary,67803
+13.75,3: MD,6: Individual Discretionary,59028
+14.25,3: MD,6: Individual Discretionary,48302
+14.75,3: MD,6: Individual Discretionary,60730
+15.25,3: MD,6: Individual Discretionary,52877
+15.75,4: PM,6: Individual Discretionary,54458
+16.25,4: PM,6: Individual Discretionary,61514
+16.75,4: PM,6: Individual Discretionary,62567
+17.25,4: PM,6: Individual Discretionary,72222
+17.75,4: PM,6: Individual Discretionary,86027
+18.25,4: PM,6: Individual Discretionary,81126
+18.75,4: PM,6: Individual Discretionary,73206
+19.25,5: EV,6: Individual Discretionary,70363
+19.75,5: EV,6: Individual Discretionary,55013
+20.25,5: EV,6: Individual Discretionary,49792
+20.75,5: EV,6: Individual Discretionary,52840
+21.25,5: EV,6: Individual Discretionary,38715
+21.75,5: EV,6: Individual Discretionary,22837
+22.25,5: EV,6: Individual Discretionary,31757
+22.75,5: EV,6: Individual Discretionary,13942
+23.25,5: EV,6: Individual Discretionary,7046
+23.75,5: EV,6: Individual Discretionary,5477
+24.25,5: EV,6: Individual Discretionary,15797
+4.75,1: EA,7: Joint Maintenance,0
+5.25,1: EA,7: Joint Maintenance,122
+5.75,1: EA,7: Joint Maintenance,0
+6.25,2: AM,7: Joint Maintenance,122
+6.75,2: AM,7: Joint Maintenance,119
+7.25,2: AM,7: Joint Maintenance,118
+7.75,2: AM,7: Joint Maintenance,1467
+8.25,2: AM,7: Joint Maintenance,655
+8.75,2: AM,7: Joint Maintenance,2661
+9.25,3: MD,7: Joint Maintenance,6382
+9.75,3: MD,7: Joint Maintenance,3866
+10.25,3: MD,7: Joint Maintenance,12618
+10.75,3: MD,7: Joint Maintenance,10958
+11.25,3: MD,7: Joint Maintenance,8392
+11.75,3: MD,7: Joint Maintenance,9444
+12.25,3: MD,7: Joint Maintenance,11442
+12.75,3: MD,7: Joint Maintenance,8754
+13.25,3: MD,7: Joint Maintenance,4879
+13.75,3: MD,7: Joint Maintenance,4837
+14.25,3: MD,7: Joint Maintenance,5508
+14.75,3: MD,7: Joint Maintenance,5609
+15.25,3: MD,7: Joint Maintenance,3980
+15.75,4: PM,7: Joint Maintenance,5794
+16.25,4: PM,7: Joint Maintenance,8502
+16.75,4: PM,7: Joint Maintenance,7944
+17.25,4: PM,7: Joint Maintenance,7104
+17.75,4: PM,7: Joint Maintenance,7563
+18.25,4: PM,7: Joint Maintenance,4430
+18.75,4: PM,7: Joint Maintenance,4660
+19.25,5: EV,7: Joint Maintenance,6846
+19.75,5: EV,7: Joint Maintenance,4110
+20.25,5: EV,7: Joint Maintenance,4139
+20.75,5: EV,7: Joint Maintenance,1728
+21.25,5: EV,7: Joint Maintenance,454
+21.75,5: EV,7: Joint Maintenance,2202
+22.25,5: EV,7: Joint Maintenance,549
+22.75,5: EV,7: Joint Maintenance,655
+23.25,5: EV,7: Joint Maintenance,26
+23.75,5: EV,7: Joint Maintenance,26
+24.25,5: EV,7: Joint Maintenance,32
+4.75,1: EA,8: Joint Discretionary,373
+5.25,1: EA,8: Joint Discretionary,131
+5.75,1: EA,8: Joint Discretionary,118
+6.25,2: AM,8: Joint Discretionary,1642
+6.75,2: AM,8: Joint Discretionary,1290
+7.25,2: AM,8: Joint Discretionary,1682
+7.75,2: AM,8: Joint Discretionary,571
+8.25,2: AM,8: Joint Discretionary,2318
+8.75,2: AM,8: Joint Discretionary,3055
+9.25,3: MD,8: Joint Discretionary,6175
+9.75,3: MD,8: Joint Discretionary,6264
+10.25,3: MD,8: Joint Discretionary,3466
+10.75,3: MD,8: Joint Discretionary,5992
+11.25,3: MD,8: Joint Discretionary,7821
+11.75,3: MD,8: Joint Discretionary,7183
+12.25,3: MD,8: Joint Discretionary,8739
+12.75,3: MD,8: Joint Discretionary,7654
+13.25,3: MD,8: Joint Discretionary,6742
+13.75,3: MD,8: Joint Discretionary,5195
+14.25,3: MD,8: Joint Discretionary,2659
+14.75,3: MD,8: Joint Discretionary,5117
+15.25,3: MD,8: Joint Discretionary,5271
+15.75,4: PM,8: Joint Discretionary,2767
+16.25,4: PM,8: Joint Discretionary,5642
+16.75,4: PM,8: Joint Discretionary,6588
+17.25,4: PM,8: Joint Discretionary,7015
+17.75,4: PM,8: Joint Discretionary,12643
+18.25,4: PM,8: Joint Discretionary,10731
+18.75,4: PM,8: Joint Discretionary,12831
+19.25,5: EV,8: Joint Discretionary,12140
+19.75,5: EV,8: Joint Discretionary,13291
+20.25,5: EV,8: Joint Discretionary,7057
+20.75,5: EV,8: Joint Discretionary,4642
+21.25,5: EV,8: Joint Discretionary,3273
+21.75,5: EV,8: Joint Discretionary,1543
+22.25,5: EV,8: Joint Discretionary,1825
+22.75,5: EV,8: Joint Discretionary,381
+23.25,5: EV,8: Joint Discretionary,123
+23.75,5: EV,8: Joint Discretionary,15
+24.25,5: EV,8: Joint Discretionary,765
+4.75,1: EA,9: Work-based,180
+5.25,1: EA,9: Work-based,463
+5.75,1: EA,9: Work-based,208
+6.25,2: AM,9: Work-based,447
+6.75,2: AM,9: Work-based,3312
+7.25,2: AM,9: Work-based,2110
+7.75,2: AM,9: Work-based,5098
+8.25,2: AM,9: Work-based,8779
+8.75,2: AM,9: Work-based,12748
+9.25,3: MD,9: Work-based,14207
+9.75,3: MD,9: Work-based,10997
+10.25,3: MD,9: Work-based,20232
+10.75,3: MD,9: Work-based,18947
+11.25,3: MD,9: Work-based,33854
+11.75,3: MD,9: Work-based,42918
+12.25,3: MD,9: Work-based,62468
+12.75,3: MD,9: Work-based,48929
+13.25,3: MD,9: Work-based,42243
+13.75,3: MD,9: Work-based,30395
+14.25,3: MD,9: Work-based,27789
+14.75,3: MD,9: Work-based,22824
+15.25,3: MD,9: Work-based,13786
+15.75,4: PM,9: Work-based,10405
+16.25,4: PM,9: Work-based,5860
+16.75,4: PM,9: Work-based,4078
+17.25,4: PM,9: Work-based,2299
+17.75,4: PM,9: Work-based,2976
+18.25,4: PM,9: Work-based,2071
+18.75,4: PM,9: Work-based,2224
+19.25,5: EV,9: Work-based,1086
+19.75,5: EV,9: Work-based,486
+20.25,5: EV,9: Work-based,761
+20.75,5: EV,9: Work-based,1470
+21.25,5: EV,9: Work-based,1098
+21.75,5: EV,9: Work-based,1005
+22.25,5: EV,9: Work-based,256
+22.75,5: EV,9: Work-based,375
+23.25,5: EV,9: Work-based,298
+23.75,5: EV,9: Work-based,0
+24.25,5: EV,9: Work-based,0

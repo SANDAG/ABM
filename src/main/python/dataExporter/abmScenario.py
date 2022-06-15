@@ -757,6 +757,7 @@ class SyntheticPopulation(ScenarioData):
                        "HVs": "int8",
                        "AVs": "int8",
                        "transponder": "bool"})
+
         # merge output sampled households with input sampled households
         # keep only households present in the sampled households
         households = output_households.merge(
@@ -898,6 +899,7 @@ class SyntheticPopulation(ScenarioData):
                        "fp_choice": "int8",
                        "reimb_pct": "float32",
                        "tele_choice": "int8"})
+
         # load work-school location model results
         fn_ws_loc_results = "wsLocResults_" + str(self.properties["iterations"]) + ".csv"
         ws_loc_results = pd.read_csv(
@@ -2019,7 +2021,8 @@ class TripLists(ScenarioData):
                         1: "Resident Personal",
                         2: "Visitor Business",
                         3: "Visitor Personal",
-                        4: "External"},
+                        4: "External",
+						5: "Employee Parking"},
             "income": {0: "Less than 25k",
                        1: "25k-50k",
                        2: "50k-75k",
@@ -2027,8 +2030,10 @@ class TripLists(ScenarioData):
                        4: "100k-125k",
                        5: "125k-150k",
                        6: "150k-200k",
-                       7: "200k+"},
-            "tripMode": {1: "Drive Alone",
+                       7: "200k+",
+					   -99 : "employee"},
+            "tripMode": {0: "Not Applicable",
+						 1: "Drive Alone",
                          2: "Shared Ride 2",
                          3: "Shared Ride 3+",
                          4: "Walk",
@@ -2039,18 +2044,26 @@ class TripLists(ScenarioData):
                          9: "TNC to Transit",
                          10: "Taxi",
                          11: "Non-Pooled TNC",
-                         12: "Pooled TNC"},
-            "arrivalMode": {1: "Parking lot terminal",
-                            2: "Parking lot off-site San Diego airport area",
-                            3: "Parking lot off-site private",
-                            4: "Pickup/Drop-off escort",
-                            5: "Pickup/Drop-off curbside",
-                            6: "Rental car",
-                            7: "Taxi",
-                            8: "Non-Pooled TNC",
-                            9: "Pooled TNC",
-                            10: "Shuttle/van/courtesy vehicle",
-                            11: "Transit"},
+                         12: "Pooled TNC",
+						 13: "School Bus"},
+            "arrivalMode": {1: "Drive and park location 1",
+                            2: "Drive and park location 2",
+                            3: "Drive and park location 3",
+                            4: "Drive and park location 4",
+                            5: "Drive and park location 5",
+                            6: "Park and escort",
+                            7: "Rental car",
+                            8: "Shuttle/Van/Courtesy Vehicle",
+                            9: "Shuttle/Van/Courtesy Vehicle",
+                            10: "Ride hailing location 1",
+                            11: "Ride hailing location 2",
+							12: "Transit",
+							13: "Curbside drop off location 1",
+							14: "Curbside drop off location 2",
+							15: "Curbside drop off location 3",
+							16: "Curbside drop off location 4",
+							17: "Curbside drop off location 5",
+							-99: "Employee/Airport access point to terminal"},
             "boardingTAP": {key: value for (key, value) in
                             zip(list(range(1, 99999)),
                                 list(range(1, 99999)))},
@@ -2090,9 +2103,11 @@ class TripLists(ScenarioData):
 
         # add vehicle/trip-based weight and person-based weight
         # adjust by the ABM scenario final iteration sample rate
-        trips["weightTrip"] = 1 / self.properties["sampleRate"]
+        # adjust by leg id (if leg id has 2, then divide by 2)
+        trips['legs'] = np.where(trips['id'].duplicated(keep=False), 0.5, 1)
+        trips["weightTrip"] = trips['legs'] / self.properties["sampleRate"]
         trips["weightTrip"] = trips["weightTrip"].astype("float32")
-        trips["weightPersonTrip"] = pd.Series(trips["size"] / self.properties["sampleRate"], dtype="float32")
+        trips["weightPersonTrip"] = pd.Series(trips['legs'] * trips["size"] / self.properties["sampleRate"], dtype="float32")
 
         # rename columns to standard/generic ABM naming conventions
         trips.rename(columns={"id": "tripID",

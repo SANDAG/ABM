@@ -1,0 +1,72 @@
+Description,Out Table,Out Col,In Table,Filter,In Col,Func,Group
+#,,,,,,,
+Auto Ownership,autoOwnership,freq,aoResults,,HHID,count,HHVEH
+Auto Ownership Pre,autoOwnership_Pre,freq,aoResults_Pre,,HHID,count,HHVEH
+AV Auto Ownership,autoOwnership_AV,freq,householdData_3,,hh_id,count,AVs
+#,,,,,,,
+Household locations for workers in District 1,districtFlows,freq,wsLoc,WorkLocation > 0 and WorkLocation != 99999,HHID,count,"HDISTRICT,WDISTRICT"
+Total number of workers by residence district,wfh_summary,Workers,wsLoc,WorkLocation > 0,index,count,HDISTRICT
+Total number workers working from home in each district,wfh_summary,WFH,wsLoc,WorkLocation == 99999,index,count,HDISTRICT
+#,,,,,,,
+Daily Activity Pattern by Person Type,dapSummary_vis,freq,personData_3,,person_id,count,"PERTYPE,activity_pattern"
+Household Size Distribution,hhSizeDist,freq,householdData_3,,hh_id,count,HHSIZE
+Joint Tours by Household Size,hhsizeJoint,freq,householdData_3,HHSIZE >= 2,hh_id,count,"HHSIZE,JOINT"
+Number of Individual Non Mandatory Tours,inmSummary_vis,freq,personData_3,,person_id,count,"PERTYPE,nmtours"
+Joint Tour Composition,jointComp,freq,jointTourData_3,,index,count,tour_composition
+Joint Tour Composition by Party Size,jointCompPartySize,freq,jointTourData_3,,index,count,"tour_composition,NUMBER_HH"
+Joint Tours by Party Size,jointPartySize,freq,jointTourData_3,,index,count,NUMBER_HH
+Joint Tours by Household Size,jointToursHHSize,freq,householdData_3,HHSIZE >= 2,hh_id,count,"jointCat,HHSIZE"
+Individual mandatory tour frequency choice by person type,mtfSummary_vis,freq,personData_3,imf_choice > 0,person_id,count,"PERTYPE,imf_choice"
+Person type distribution,pertypeDistbn,freq,personData_3,,person_id,count,PERTYPE
+Joint tour frequency,jtf,freq,householdData_3,,hh_id,count,"jtf,alt_name"
+#,,,,,,,
+Outbound Work Tour Frequency,stopFreqProfile_vis,Inbound,tours,,index,count,"num_ob_stops,AGGPURP"
+Inbound Work Tour Frequency,stopFreqProfile_vis,Outbound,tours,,index,count,"num_ib_stops,AGGPURP"
+Total Work Tour Frequency,stopFreqProfile_vis,Total,tours,,index,count,"num_tot_stops,AGGPURP"
+#,,,,,,,
+Stops on work tours,stopPurposeByTourPurpose_vis,freq,trips,stops == 1,index,count,"DPURP,AGGPURP"
+#,,,,,,,
+Average non-mandatory tour length,nonMandTripLengths,avgDist,tours,TOURPURP >= 4,tour_distance,mean,AGGPURP
+Average non-mandatory tour length,nonMandTripLengthsTotal,avgDist,tours,TOURPURP >= 4,tour_distance,mean,
+#,,,,,,,
+Stops by stop departure period,stopDeparture_vis,freq,trips,stops == 1,index,count,"stop_period,AGGPURP"
+Trips by stop departure period,tripDeparture_vis,freq,trips,,index,count,"stop_period,AGGPURP"
+Tour mode by vehicle ownership category,tmodeProfile_vis,freq,hh_itours,,index,count,"AUTOSUFF,tour_mode,AGGPURP"
+Trip mode by tour mode,tripmodeProfile_vis,value,trips,,index,count,"trip_mode,tour_mode,AGGPURP"
+Tour Distance Distribution,tourDistProfile_vis,freq,tours,TOURPURP >= 4,index,count,"tourdistbin,AGGPURP"
+#,,,,,,,
+Distance to work distribution,mandTLFD,Work,wsLoc,WorkLocation > 0 and WorkLocation != 99999 and WorkLocationDistance > 0,index,count,"workdistbin,HDISTRICT"
+Distance to university distribution,mandTLFD,University,wsLoc,PersonType == 3 and SchoolLocation > 0 and SchoolLocation != 88888 and SchoolLocationDistance > 0,index,count,"schooldistbin,HDISTRICT"
+Distance to school distribution,mandTLFD,School,wsLoc,PersonType >=6 and SchoolLocation > 0 and SchoolLocation != 88888 and SchoolLocationDistance > 0,index,count,"schooldistbin,HDISTRICT"
+#,,,,,,,
+Average out of direction distance,avgStopOutofDirectionDist_vis,avgDist,trips,stops == 1,out_dir_dist,mean,AGGPURP
+Average out of direction distance,avgStopOutofDirectionDistTotal,avgDist,trips,stops == 1,out_dir_dist,mean,
+Histogram of out of direction distance,stopDC_vis,freq,trips,stops == 1,index,count,"out_dir_distbin,AGGPURP"
+Tour departures by time period,todProfile_vis,freq_dep,tours,,index,count,"start_period,AGGPURP"
+Tour arrivals by time period,todProfile_vis,freq_arr,tours,,index,count,"end_period,AGGPURP"
+Tour duration,tourDuration,freq,tours,,index,count,"tourdur,AGGPURP"
+#,,,,,,,
+Average distance to work,mandTripLengths,Work,wsLoc,WorkLocation > 0 and WorkLocation != 99999,WorkLocationDistance,mean,HDISTRICT
+Average distance to university,mandTripLengths,University,wsLoc,PersonType == 3 and SchoolLocation > 0 and SchoolLocation != 88888,SchoolLocationDistance,mean,HDISTRICT
+Average distance to school,mandTripLengths,School,wsLoc,PersonType >=6 and SchoolLocation > 0 and SchoolLocation != 88888,SchoolLocationDistance,mean,HDISTRICT
+Average distance to work,mandTripLengthsTotal,Work,wsLoc,WorkLocation > 0 and WorkLocation != 99999,WorkLocationDistance,mean,
+Average distance to university,mandTripLengthsTotal,University,wsLoc,PersonType == 3 and SchoolLocation > 0 and SchoolLocation != 88888,SchoolLocationDistance,mean,
+Average distance to school,mandTripLengthsTotal,School,wsLoc,PersonType >=6 and SchoolLocation > 0 and SchoolLocation != 88888,SchoolLocationDistance,mean,
+#,,,,,,,
+Individual tours by person type,resultsByPType,itours,indivTourData_3,person_type > 0 and TOURPURP != 10,index,count,person_type
+Joint tours by person type,resultsByPType,jtours,temp_joint,PERTYPE > 0,index,count,PERTYPE
+Tours by purpose by person type,tours_pertype_purpose,freq,indivTourData_3,TOURPURP >= 4 and TOURPURP <= 9,index,count,"person_type,TOURPURP"
+Active people by person type,resultsByPType,active_persons,personData_3,activity_pattern != 'H',person_id,count,PERTYPE
+Individual tours by person type,resultsByPTypeTotal,itours,indivTourData_3,person_type > 0 and TOURPURP != 10,index,count,
+Joint tours by person type,resultsByPTypeTotal,jtours,temp_joint,,index,count,
+Active people by person type,resultsByPTypeTotal,active_persons,personData_3,activity_pattern != 'H',person_id,count,
+#,,,,,,,
+People by person type,nm_tour_rates,TotalPersons,personData_3,,person_id,count,PERTYPE
+Escort Tours by Person Type,nm_tour_rates,Escorting,indivTourData_3,TOURPURP == 4,index,count,PERTYPE
+Shopping Tours by Person Type,nm_tour_rates,Shopping,indivTourData_3,TOURPURP == 5,index,count,PERTYPE
+Maintenance Tours by Person Type,nm_tour_rates,Maintenance,indivTourData_3,TOURPURP == 6,index,count,PERTYPE
+EatingOut Tours by Person Type,nm_tour_rates,EatingOut,indivTourData_3,TOURPURP == 7,index,count,PERTYPE
+Visiting Tours by Person Type,nm_tour_rates,Visiting,indivTourData_3,TOURPURP == 8,index,count,PERTYPE
+Discretionary Tours by Person Type,nm_tour_rates,Discretionary,indivTourData_3,TOURPURP == 9,index,count,PERTYPE
+Total Non-Mandatory Tours by Person Type,nm_tour_rates,All,indivTourData_3,TOURPURP >= 4 and TOURPURP <= 9,index,count,PERTYPE
+#,,,,,,,
