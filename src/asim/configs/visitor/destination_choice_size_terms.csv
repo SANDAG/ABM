@@ -1,7 +1,7 @@
-model_selector,segment,emp_total,emp_retail,emp_amusement,emp_hotel,emp_restaurant_bar,hh,parkactive,beachactive,openspaceparkpreserve
-non_mandatory,work,1,0,0,0,0,0,0,0,0
-non_mandatory,recreation,0,0.75,1.17,1.58,1.13,0,5.07,10,1
-non_mandatory,dining,0,0,0,0.124,1,0.076,0,0,0
-trip,work,1,0,0,0,0,0,0,0,0
-trip,recreation,0,0.75,1.17,1.58,1.13,0,5.07,10,1
-trip,dining,0,0,0,0.124,1,0.076,0,0,0
+model_selector,segment,emp_total,emp_retail,emp_amusement,emp_hotel,emp_restaurant_bar,hh,parkactive,beachactive,openspaceparkpreserve,cabrillo,seaworld,legoland,safari,midway,zoo,torrypines
+non_mandatory,work,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+non_mandatory,recreation,0,0.75,1.17,1.58,1.13,0,5.07,10,1,7041.344074,7147.026054,6004.604725,15935.00051,12968.6996,10419.119,14545.83
+non_mandatory,dining,0,0,0,0.124,1,0.076,0,0,0,0,0,0,0,0,0,0
+trip,work,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+trip,recreation,0,0.75,1.17,1.58,1.13,0,5.07,10,1,0,0,0,0,0,0,0
+trip,dining,0,0,0,0.124,1,0.076,0,0,0,0,0,0,0,0,0,0

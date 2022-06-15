@@ -4,18 +4,11 @@ household_density,household_density,land_use.hh / land_use.acres.clip(lower=1)
 employment_density,employment_density,(land_use.emp_total / land_use.acres.clip(lower=1)).clip(upper=500)
 density_index,density_index,(household_density *employment_density) / (household_density + employment_density).clip(lower=1)
 ,is_cbd,land_use.pseudomsa == 1
-Cabrillo National monument,cabrillo,land_use.index==cabrillo_maz
-Sea World,seaworld,land_use.index==seaworld_maz
-Legoland,legoland,land_use.index==legoland_maz
-San Diego Safari Park,safari,land_use.index==safari_maz
-Midway,midway,land_use.index==midway_maz
-San Diego Zoo,zoo,land_use.index==zoo_maz
-Torry Pines Park,torrypines,land_use.index==torrypines_maz
-,specialGen,cabrillo+seaworld+legoland+safari+midway+zoo+torrypines
-,special_size_term,"np.where(cabrillo, 7041.34, 0)"
-,special_size_term,"np.where(seaworld, 7147.03, special_size_term)"
-,special_size_term,"np.where(legoland, 6004.6, special_size_term)"
-,special_size_term,"np.where(safari, 15935, special_size_term)"
-,special_size_term,"np.where(midway, 12968.7, special_size_term)"
-,special_size_term,"np.where(zoo, 10419.12, special_size_term)"
-,special_size_term,"np.where(torrypines, 14545.83, special_size_term)"
+Cabrillo National monument,cabrillo,"np.where(land_use.index==cabrillo_maz,1,0)"
+Sea World,seaworld,"np.where(land_use.index==seaworld_maz,1,0)"
+Legoland,legoland,"np.where(land_use.index==legoland_maz,1,0)"
+San Diego Safari Park,safari,"np.where(land_use.index==safari_maz,1,0)"
+Midway,midway,"np.where(land_use.index==midway_maz,1,0)"
+San Diego Zoo,zoo,"np.where(land_use.index==zoo_maz,1,0)"
+Torry Pines Park,torrypines,"np.where(land_use.index==torrypines_maz,1,0)"
+,special_gen,cabrillo+seaworld+legoland+safari+midway+zoo+torrypines

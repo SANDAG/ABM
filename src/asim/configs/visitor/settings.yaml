@@ -93,7 +93,7 @@ want_dest_choice_sample_tables: False
 want_dest_choice_presampling: True
 
 # trace_hh_id: 262
-# resume_after: trip_purpose
+# resume_after: tour_scheduling_probabilistic
 
 models:
   - initialize_landuse
