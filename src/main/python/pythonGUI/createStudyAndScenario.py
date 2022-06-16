@@ -3,7 +3,7 @@ import Tkconstants
 import tkFileDialog
 import os
 from Tkinter import *
-from tkMessageBox import showerror
+#from tkMessageBox import showerror
 from PIL import Image,ImageTk
 import popupMsg
 
@@ -83,7 +83,7 @@ class CreateScenarioGUI(Tkinter.Frame):
 
             #divider line
             divider=u"_"*200
-            self.releaseDir='T:\\ABM\\release_test\\ABM'
+            self.releaseDir='T:\\ABM\\release\\ABM'
             self.defaultScenarioDir="T:\\projects\\sr14"
             self.defaultNetworkDir="T:\\RTP\\2021RP\\2021rp_final\\network_build"
 
@@ -324,9 +324,9 @@ class CreateScenarioGUI(Tkinter.Frame):
             self.popup=Tkinter.Tk()
             if type=="scenario":
                 #Check if invalid year/land use combo and don't create scenario if that is the case
-                if self.year not in self.lu_options[self.lu]["years"]: 
-                    showerror("Error", "Invalid year/land use combination")
-                    return
+                #if self.year not in self.lu_options[self.lu]["years"]: 
+                #    showerror("Error", "Invalid year/land use combination")
+                #    return
                 if os.path.exists(self.scenariopath.get()):
                     if not self.networkpath.get():
                         popupMsg.popupmsg(self,"Network folder is empty!",1,type)
