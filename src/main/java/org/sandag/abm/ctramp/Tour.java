@@ -78,6 +78,8 @@ public class Tour
     private int escortTypeInbound;
     private int driverPnumOutbound;
     private int driverPnumInbound;
+	
+	private float sampleRate;
 
     // this constructor used for mandatory tour creation
     public Tour(Person perObj, int tourId, int primaryIndex)
@@ -87,6 +89,8 @@ public class Tour
         this.tourId = tourId;
         tourCategory = ModelStructure.MANDATORY_CATEGORY;
         tourPrimaryPurposeIndex = primaryIndex;
+		if(hhObj!=null)
+			this.sampleRate = perObj.getSampleRate();
         
         outboundStopDestinationLogsums = new ArrayList<Float>();
         inboundStopDestinationLogsums = new ArrayList<Float>();
@@ -99,6 +103,9 @@ public class Tour
         this.tourPurpose = tourPurpose;
         tourCategory = category;
         tourPrimaryPurposeIndex = primaryIndex;
+		if(hhObj!=null)
+			this.sampleRate = hhObj.getSampleRate();
+		
         outboundStopDestinationLogsums = new ArrayList<Float>();
         inboundStopDestinationLogsums = new ArrayList<Float>();
     }
@@ -114,6 +121,9 @@ public class Tour
         this.tourPurpose = tourPurpose;
         tourCategory = category;
         tourPrimaryPurposeIndex = primaryIndex;
+		if(hhObj!=null)
+			this.sampleRate = hhObj.getSampleRate();
+		
         outboundStopDestinationLogsums = new ArrayList<Float>();
         inboundStopDestinationLogsums = new ArrayList<Float>();
     }
@@ -871,5 +881,16 @@ public class Tour
 		
 		return 1.0;
 	}
+	
+	public float getSampleRate()
+    {
+    	return this.sampleRate;
+    }
+    
+    public void setSampleRate(float aSampleRate) 
+    {
+    	this.sampleRate = aSampleRate;
+    }
+
 
 }

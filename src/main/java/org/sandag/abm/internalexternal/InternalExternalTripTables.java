@@ -362,6 +362,7 @@ public class InternalExternalTripTables
             int originTAZ = (int) tripData.getValueAt(i, "originTaz");
             int destinationTAZ = (int) tripData.getValueAt(i, "destinationTaz");
             boolean inbound = tripData.getBooleanValueAt(i, "inbound");
+            float sampleRate = tripData.getValueAt(i, "sampleRate");
 
             // transit trip - get boarding and alighting tap
             int boardTap = 0;
@@ -382,7 +383,7 @@ public class InternalExternalTripTables
 
             // scale individual person trips by occupancy for tNCVehicle trips
             // (auto modes only)
-            float vehicleTrips = 1 / sampleRate;
+            float vehicleTrips = 1;
 
             if (modelStructure.getTripModeIsS2(tripMode))
             {
@@ -395,8 +396,12 @@ public class InternalExternalTripTables
             }
 
             // calculate person trips for all other modes
-            float personTrips = 1 / sampleRate;
+            float personTrips = 1;
 
+            // apply sample rate
+            vehicleTrips = vehicleTrips * 1 / sampleRate;
+            personTrips = personTrips * 1 / sampleRate;            
+            
             // Store in matrix
             int mode = modeIndex[tripMode];
             int mat = matrixIndex[tripMode];

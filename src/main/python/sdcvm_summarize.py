@@ -27,8 +27,13 @@ cvmInputPath = options.path + "/input/"
 cvmZonalProperties = cvmInputPath + "Zonal Properties CVM.csv"
 skimPath = options.path + "/output/"
 cvmPath = options.path + "/output/"
-
-tazList = range(1, settings.maxTaz+1)
+#read in max zones from property file -- added by hannah.carson@rsginc.com to incorporate zone splits
+with open(options.path + "/conf/" + 'sandag_abm.properties' ,'r') as f:
+    props = f.readlines()
+    for prop in props:
+        if prop.startswith('zones.count'):
+            maxTaz = int(prop.split('=')[1].replace(" ",""))
+tazList = range(1, maxTaz+1)
 tazList, zonals = sdcvm.zonalProperties(fileName=cvmZonalProperties)
 tazDict = {}
 # tazList = tazList[:25]

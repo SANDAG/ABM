@@ -14,7 +14,8 @@ cvmSectors = ["GO", "SV", "IN", "RE", "TH", "WH", "FA"]  # sectors to run; actua
 
 opCostScale = 1.0  # Scale factor for operating cost
 
-maxTaz = 4996  # highest taz number; assumes skims are 1-maxTaz without gaps
+#will get maxTaz from property file in case of zone splits -- added by hannah.carson@rsginc.com
+#maxTaz = 4996  # highest taz number; assumes skims are 1-maxTaz without gaps
 
 
 # Costs defined as [time, distance, money]. Not used right now.

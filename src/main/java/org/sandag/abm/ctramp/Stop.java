@@ -28,6 +28,7 @@ public class Stop
     int     boardTap;
     int     alightTap;
     boolean inbound;
+	float   sampleRate;
     int     set = -1;
 
     private int escorteePnumOrig;
@@ -52,6 +53,8 @@ public class Stop
         this.stopPurposeIndex = stopPurposeIndex;
         this.id = id;
         this.inbound = inbound;
+		if(parentTour!=null)
+			this.sampleRate = parentTour.getSampleRate();
     }
 
     public void setOrig(int orig)
@@ -270,6 +273,14 @@ public class Stop
 
 	public void setParkingCost(float parkingCost) {
 		this.parkingCost = parkingCost;
+	}
+
+	public float getSampleRate() {
+		return sampleRate;
+	}
+
+	public void setSampleRate(float aSampleRate) {
+		this.sampleRate = aSampleRate;
 	}
 
 	public void logStopObject(Logger logger, int totalChars)

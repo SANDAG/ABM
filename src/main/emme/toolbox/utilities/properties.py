@@ -39,7 +39,7 @@ class PropertiesSetter(object):
     skipCopyWalkImpedance = _m.Attribute(bool)
     skipBikeLogsums = _m.Attribute(bool)
     skipCopyBikeLogsum = _m.Attribute(bool)
-
+    skipShadowPricing = _m.Attribute(bool)
     skipHighwayAssignment_1 = _m.Attribute(bool)
     skipHighwayAssignment_2 = _m.Attribute(bool)
     skipHighwayAssignment_3 = _m.Attribute(bool)
@@ -131,7 +131,7 @@ class PropertiesSetter(object):
         self._run_model_names = (
             "useLocalDrive", "skip4Ds", "skipInputChecker",
             "startFromIteration", "skipInitialization", "deleteAllMatrices", "skipCopyWarmupTripTables", 
-            "skipCopyBikeLogsum", "skipCopyWalkImpedance", "skipWalkLogsums", "skipBikeLogsums", "skipBuildNetwork", 
+            "skipCopyBikeLogsum", "skipShadowPricing", "skipCopyWalkImpedance", "skipWalkLogsums", "skipBikeLogsums", "skipBuildNetwork", 
             "skipHighwayAssignment", "skipTransitSkimming", "skipTransponderExport", "skipCoreABM", "skipOtherSimulateModel", "skipMAASModel","skipCTM", 
             "skipEI", "skipExternalExternal", "skipTruck", "skipTripTableCreation", "skipFinalHighwayAssignment", 'skipFinalHighwayAssignmentStochastic', 
             "skipFinalTransitAssignment", "skipVisualizer", "skipDataExport", "skipDataLoadRequest", 
@@ -180,6 +180,7 @@ class PropertiesSetter(object):
             ("skipCopyWalkImpedance",   "Skip copy of walk impedance"),
             ("skipBikeLogsums",         "Skip bike logsums"),
             ("skipCopyBikeLogsum",      "Skip copy of bike logsum"),
+            ("skipShadowPricing",       "Skip shadow pricing"),
         ]
         skip_per_iteration_items = [
             ("skipHighwayAssignment",   "Skip highway assignments and skims"),
@@ -313,6 +314,7 @@ class PropertiesSetter(object):
         self.skipCopyWalkImpedance = props.get("RunModel.skipCopyWalkImpedance", False)
         self.skipBikeLogsums = props.get("RunModel.skipBikeLogsums", False)
         self.skipCopyBikeLogsum = props.get("RunModel.skipCopyBikeLogsum", False)
+        self.skipShadowPricing = props.get("RunModel.skipShadowPricing", False)
 
         self.skipHighwayAssignment = props.get("RunModel.skipHighwayAssignment", [False, False, False])
         self.skipTransitSkimming = props.get("RunModel.skipTransitSkimming", [False, False, False])
@@ -334,6 +336,10 @@ class PropertiesSetter(object):
         self.skipDataLoadRequest = props.get("RunModel.skipDataLoadRequest", False)
         self.skipDeleteIntermediateFiles = props.get("RunModel.skipDeleteIntermediateFiles", False)
 
+        self.UsualWorkLocationChoiceShadowPriceInputFile = props.get("UsualWorkLocationChoice.ShadowPrice.Input.File","")
+        self.UsualSchoolLocationChoiceShadowPriceInputFile = props.get("UsualSchoolLocationChoice.ShadowPrice.Input.File","")
+        self.uwslShadowPricingWorkMaximumIterations = props.get("uwsl.ShadowPricing.Work.MaximumIterations",10)
+        self.uwslShadowPricingSchoolMaximumIterations = props.get("uwsl.ShadowPricing.School.MaximumIterations",10)
     def save_properties(self):
         props = self._properties
         props["RunModel.startFromIteration"] = self.startFromIteration
@@ -350,6 +356,7 @@ class PropertiesSetter(object):
         props["RunModel.skipCopyWalkImpedance"] = self.skipCopyWalkImpedance
         props["RunModel.skipBikeLogsums"] = self.skipBikeLogsums
         props["RunModel.skipCopyBikeLogsum"] = self.skipCopyBikeLogsum
+        props["RunModel.skipShadowPricing"] = self.skipShadowPricing
         
         props["RunModel.skipHighwayAssignment"] = self.skipHighwayAssignment
         props["RunModel.skipTransitSkimming"] = self.skipTransitSkimming
@@ -370,6 +377,11 @@ class PropertiesSetter(object):
         props["RunModel.skipDataExport"] = self.skipDataExport
         props["RunModel.skipDataLoadRequest"] = self.skipDataLoadRequest
         props["RunModel.skipDeleteIntermediateFiles"] = self.skipDeleteIntermediateFiles
+
+        props["UsualWorkLocationChoice.ShadowPrice.Input.File"] = self.UsualWorkLocationChoiceShadowPriceInputFile
+        props["UsualSchoolLocationChoice.ShadowPrice.Input.File"] = self.UsualSchoolLocationChoiceShadowPriceInputFile
+        props["uwsl.ShadowPricing.Work.MaximumIterations"] = self.uwslShadowPricingWorkMaximumIterations
+        props["uwsl.ShadowPricing.School.MaximumIterations"] = self.uwslShadowPricingSchoolMaximumIterations
 
         props.save()
 
@@ -508,8 +520,8 @@ class Properties(object):
             # check for possible interference if user edits the 
             # properties files directly while it is already open in Modeller
             timestamp = os.path.getmtime(path)
-            if timestamp != self._timestamp:
-                raise Exception("%s file conflict - edited externally after loading" % path)
+            # if timestamp != self._timestamp:
+                # raise Exception("%s file conflict - edited externally after loading" % path)
         self["SavedFrom"] = "Emme Modeller properties writer Process ID %s" % os.getpid()
         self["SavedLast"] = time.strftime("%b-%d-%Y %H:%M:%S")
         with open(path, 'w') as f:

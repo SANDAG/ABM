@@ -82,6 +82,7 @@ import csv
 import datetime
 import pyodbc
 import win32com.client as win32
+import json as _json
 
 _join = os.path.join
 _dir = os.path.dirname
@@ -282,6 +283,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     raise Exception(error_text % name)
 
         scenarioYear = str(props["scenarioYear"])
+        geographyID = str(props["geographyID"])
         startFromIteration = props["RunModel.startFromIteration"]
         precision = props["RunModel.MatrixPrecision"]
         minSpaceOnC = props["RunModel.minSpaceOnC"]
@@ -304,6 +306,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         deleteAllMatrices = props["RunModel.deleteAllMatrices"]
         skipCopyWarmupTripTables = props["RunModel.skipCopyWarmupTripTables"]
         skipCopyBikeLogsum = props["RunModel.skipCopyBikeLogsum"]
+        skipShadowPricing = props["RunModel.skipShadowPricing"]
         skipCopyWalkImpedance = props["RunModel.skipCopyWalkImpedance"]
         skipWalkLogsums = props["RunModel.skipWalkLogsums"]
         skipBikeLogsums = props["RunModel.skipBikeLogsums"]
@@ -373,6 +376,74 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         max_assign_iterations = 1000
         mgra_lu_input_file = props["mgra.socec.file"]
 
+        #change emme databank dimensions based on number of select links - SANDAG ABM2+ Enhancements (06-28-2021)
+        num_select_links =  0
+        if select_link:
+            num_select_links = len(_json.loads(select_link))
+        change_dimensions = modeller.tool("inro.emme.data.database.change_database_dimensions")
+        dims = main_emmebank.dimensions
+        num_nodes = dims["regular_nodes"] + dims['centroids']
+        num_links = dims["links"]
+        num_turn_entries = dims["turn_entries"]
+        num_transit_lines = dims['transit_lines']
+        num_transit_segments = dims['transit_segments']
+        num_traffic_classes = 15
+        
+        additional_node_extra_attributes = 4
+        additional_link_extra_attributes = 26
+        additional_line_extra_attributes = 4
+        additional_segment_extra_attributes = 12
+        
+        extra_attribute_values = 18000000 
+        extra_attribute_values += (num_nodes + 1) * additional_node_extra_attributes
+        extra_attribute_values += (num_links + 1) * additional_link_extra_attributes
+        extra_attribute_values += (num_transit_lines + 1)* additional_line_extra_attributes 
+        extra_attribute_values += (num_transit_segments + 1) * additional_segment_extra_attributes
+
+        if num_select_links > 3:
+            extra_attribute_values += (num_select_links - 3) * ((num_links + 1) * (num_traffic_classes + 1) + (num_turn_entries + 1) * (num_traffic_classes)) 
+            
+        if extra_attribute_values > dims["extra_attribute_values"] or dims["full_matrices"] < 9999:
+            dims["extra_attribute_values"] = extra_attribute_values
+            dims["full_matrices"] = 9999 
+            #add logging for when this setp is run, add before and after attribute value
+            #change_dimensions(emmebank_dimensions=dims, emmebank=main_emmebank, keep_backup=False)
+            #replaced the above line with the below lines - suggested by Antoine, Bentley (2022-06-02)
+            if main_emmebank.scenario(1) is None:
+                main_emmebank.create_scenario(1)
+            change_dimensions(dims, main_emmebank, False)
+        with open(_join(self._path, "logFiles", "select_link_log.txt"),"a+") as f:
+			f.write("Num Select links {}\nExtra Attribute Value {}".format(num_select_links,extra_attribute_values))
+        f.close()
+            
+        if os.path.exists(_join(self._path, "emme_project", "Database_transit", "emmebank")):
+            with _eb.Emmebank(_join(self._path, "emme_project", "Database_transit", "emmebank")) as transit_db:
+                transit_db_dims = transit_db.dimensions
+                num_nodes = transit_db_dims["regular_nodes"] + transit_db_dims['centroids']
+                num_links = transit_db_dims["links"]
+                num_turn_entries = transit_db_dims["turn_entries"]
+                num_transit_lines = transit_db_dims['transit_lines']
+                num_transit_segments = transit_db_dims['transit_segments']
+                num_traffic_classes = 15
+                
+                extra_attribute_values = 18000000 
+                extra_attribute_values += (num_nodes + 1) * additional_node_extra_attributes
+                extra_attribute_values += (num_links + 1) * additional_link_extra_attributes
+                extra_attribute_values += (num_transit_lines + 1)* additional_line_extra_attributes 
+                extra_attribute_values += (num_transit_segments + 1) * additional_segment_extra_attributes
+                
+                if num_select_links > 3:
+                    extra_attribute_values += 18000000 + (num_select_links - 3) * ((num_links + 1) * (num_traffic_classes + 1) + (num_turn_entries + 1) * (num_traffic_classes))
+                    
+                if extra_attribute_values > transit_db_dims["extra_attribute_values"] or transit_db_dims["full_matrices"] < 9999:
+                    transit_db_dims["extra_attribute_values"] = extra_attribute_values
+                    transit_db_dims["full_matrices"] = 9999 
+                    #change_dimensions(emmebank_dimensions=transit_db_dims, emmebank=transit_db, keep_backup=False)
+                    #replaced the above line with the below lines - suggested by Antoine, Bentley (2022-06-02)
+                    if transit_db.scenario(1) is None:
+                        transit_db.create_scenario(1)
+                    change_dimensions(transit_db_dims, transit_db, False)
+                
         with _m.logbook_trace("Setup and initialization"):
             self.set_global_logbook_level(props)
 
@@ -532,6 +603,22 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 # doesn't produced csv/omx files for assignment
                 # also needed as CT-RAMP does not overwrite existing files
                 if not skipCoreABM[iteration]:
+                    if not skipShadowPricing:
+                        #reload properties from the run location
+                        props = load_properties(_join(self._path, "conf", "sandag_abm.properties"))
+                        if iteration == 0:
+                            props['UsualWorkLocationChoice.ShadowPrice.Input.File'] = ""
+                            props['UsualSchoolLocationChoice.ShadowPrice.Input.File'] = ""
+                            props['uwsl.ShadowPricing.Work.MaximumIterations'] = 10
+                            props['uwsl.ShadowPricing.School.MaximumIterations'] = 10
+                            props.save()
+
+                        else:
+                            props['UsualWorkLocationChoice.ShadowPrice.Input.File'] = "output/ShadowPricingOutput_work_9.csv"
+                            props['UsualSchoolLocationChoice.ShadowPrice.Input.File'] = "output/ShadowPricingOutput_school_9.csv"
+                            props['uwsl.ShadowPricing.Work.MaximumIterations'] = 1
+                            props['uwsl.ShadowPricing.School.MaximumIterations'] = 1      
+                            props.save()
                     self.remove_prev_iter_files(core_abm_files, output_dir, iteration)
                     self.run_proc(
                         "runSandagAbm_SDRM.cmd",
@@ -692,7 +779,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             start_db_time = datetime.datetime.now()  # record the time to search for request id in the load request table, YMA, 1/23/2019
             # start_db_time = start_db_time + datetime.timedelta(minutes=0)
             self.run_proc("DataLoadRequest.bat",
-                          [drive + path_no_drive, end_iteration, scenarioYear, sample_rate[end_iteration - 1]],
+                          [drive + path_no_drive, end_iteration, scenarioYear, sample_rate[end_iteration - 1], geographyID],
                           "Data load request")
 
         # delete trip table files in iteration sub folder if model finishes without errors

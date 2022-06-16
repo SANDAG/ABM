@@ -138,7 +138,9 @@ public class Person
     private int                  windowBetweenFirstLastMandJointTour;
     private int                  windowAfterLastMandJointTour;
 
-    private ModelStructure       modelStructure;
+    private float                sampleRate;
+	
+	private ModelStructure       modelStructure;
 
     public Person(Household hhObj, int persNum, ModelStructure modelStructure)
     {
@@ -149,6 +151,9 @@ public class Person
         this.indNonManTourArrayList = new ArrayList<Tour>();
         this.atWorkSubtourArrayList = new ArrayList<Tour>();
         this.modelStructure = modelStructure;
+		
+		if(hhObj!=null)
+			this.sampleRate = hhObj.getSampleRate();
 
         initializeWindows();
 
@@ -502,6 +507,8 @@ public class Person
 
             tempTour.setTourDepartPeriod(DEFAULT_NON_MANDATORY_START_PERIOD);
             tempTour.setTourArrivePeriod(DEFAULT_NON_MANDATORY_END_PERIOD);
+			
+			tempTour.setSampleRate(this.sampleRate);
 
             indNonManTourArrayList.add(tempTour);
         }
@@ -531,6 +538,8 @@ public class Person
             tempTour.setTourArrivePeriod(-1);
             // tempTour.setTourDepartPeriod(DEFAULT_MANDATORY_START_PERIOD);
             // tempTour.setTourArrivePeriod(DEFAULT_MANDATORY_END_PERIOD);
+			
+			tempTour.setSampleRate(this.sampleRate);
 
             workTourArrayList.add(tempTour);
         }
@@ -565,6 +574,8 @@ public class Person
 
         tempTour.setTourDepartPeriod(DEFAULT_AT_WORK_SUBTOUR_START_PERIOD);
         tempTour.setTourArrivePeriod(DEFAULT_AT_WORK_SUBTOUR_END_PERIOD);
+		
+		tempTour.setSampleRate(this.sampleRate);
 
         atWorkSubtourArrayList.add(tempTour);
 
@@ -593,6 +604,8 @@ public class Person
             tempTour.setTourArrivePeriod(-1);
             // tempTour.setTourDepartPeriod(DEFAULT_MANDATORY_START_PERIOD);
             // tempTour.setTourArrivePeriod(DEFAULT_MANDATORY_END_PERIOD);
+			
+			tempTour.setSampleRate(sampleRate);
 
             schoolTourArrayList.add(tempTour);
         }
@@ -1683,6 +1696,7 @@ public class Person
         Household.logHelper(logger, "persEmploymentCategory: ", persEmploymentCategory, totalChars);
         Household.logHelper(logger, "persStudentCategory: ", persStudentCategory, totalChars);
         Household.logHelper(logger, "personType: ", personType, totalChars);
+		Household.logHelper(logger, "sampleRate: ",  String.format("%.3f", this.sampleRate), totalChars);
         Household.logHelper(logger, "workLoc: ", workLocation, totalChars);
         Household.logHelper(logger, "schoolLoc: ", schoolLoc, totalChars);
         Household.logHelper(logger, "workLocSegmentIndex: ", workLocSegmentIndex, totalChars);
@@ -1841,6 +1855,7 @@ public class Person
         Household.logHelper(logger, "persEmploymentCategory: ", persEmploymentCategory, totalChars);
         Household.logHelper(logger, "persStudentCategory: ", persStudentCategory, totalChars);
         Household.logHelper(logger, "personType: ", personType, totalChars);
+		Household.logHelper(logger, "sampleRate: ",  String.format("%.3f", this.sampleRate), totalChars);
         Household.logHelper(logger, "workLoc: ", workLocation, totalChars);
         Household.logHelper(logger, "schoolLoc: ", schoolLoc, totalChars);
         Household.logHelper(logger, "workLocSegmentIndex: ", workLocSegmentIndex, totalChars);
@@ -1997,6 +2012,15 @@ public class Person
         nul, FT_worker_age_16plus, PT_worker_nonstudent_age_16plus, University_student, Nonworker_nonstudent_age_16_64, Nonworker_nonstudent_age_65plus, Student_age_16_19_not_FT_wrkr_or_univ_stud, Student_age_6_15_schpred, Preschool_under_age_6
     }
 
+	public float getSampleRate() {
+    	return this.sampleRate;
+    }
+	
+	public void setSampleRate(float aSampleRate) 
+    {
+    	this.sampleRate = aSampleRate;
+    }
+	
     /**
      * Returns true if this person is an active adult, else returns false. Active adult
      * is defined as full-time worker, part-time worker, university student, 

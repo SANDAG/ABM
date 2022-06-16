@@ -23,6 +23,7 @@ public class InternalExternalTour
     private double					nonWorkTimeFactor;
     
     private boolean avAvailable;
+    private float sampleRate;
 
     // private InternalExternalStop[] outboundStops;
     // private InternalExternalStop[] inboundStops;
@@ -244,6 +245,14 @@ public class InternalExternalTour
         this.age = age;
     }
 
+	public float getSampleRate() {
+		return sampleRate;
+	}
+
+	public void setSampleRate(float sampleRate) {
+		this.sampleRate = sampleRate;
+	}
+	
     public int getFemale()
     {
         return female;
