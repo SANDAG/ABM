@@ -38,3 +38,6 @@ src/main/resources/init_emme.cmd.txt
 # Mac
 .DS_Store
 *.args
+src/asim/configs_mp/settings.yaml
+src/asim/simulation.py
+src/asim/simulation.py

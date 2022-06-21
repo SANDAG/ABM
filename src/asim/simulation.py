@@ -4,12 +4,16 @@
 import sys
 import argparse
 import os
+import pandas as pd
+import warnings
 
 from activitysim.cli.run import add_run_args, run
 
 import extensions
 
 if __name__ == '__main__':
+
+    warnings.simplefilter(action='ignore', category=pd.errors.PerformanceWarning)
 
     parser = argparse.ArgumentParser()
     add_run_args(parser)
