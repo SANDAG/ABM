@@ -2,7 +2,7 @@ inherit_settings: True
 
 multiprocess: True
 households_sample_size: 1000
-num_processes: 24
+num_processes: 20
 
 chunk_training_mode: disabled
 
@@ -12,7 +12,7 @@ fail_fast: True
 
 trace_hh_id:
 
-resume_after:
+resume_after: trip_scheduling
 
 models:
   - initialize_landuse
@@ -33,6 +33,7 @@ models:
   - workplace_location
   - work_from_home
   - auto_ownership_simulate
+  - vehicle_type_choice
   - transponder_ownership
   - free_parking
   - telecommute_frequency
@@ -40,13 +41,18 @@ models:
   - mandatory_tour_frequency
   - mandatory_tour_scheduling
   - joint_tour_frequency
+  - external_joint_tour_identification
   - joint_tour_composition
   - joint_tour_participation
   - joint_tour_destination
+  - external_joint_tour_destination
   - joint_tour_scheduling
   - non_mandatory_tour_frequency
+  - external_non_mandatory_identification
   - non_mandatory_tour_destination
+  - external_non_mandatory_destination
   - non_mandatory_tour_scheduling
+  - vehicle_allocation
   - tour_mode_choice_simulate
   - atwork_subtour_frequency
   - atwork_subtour_destination
@@ -59,8 +65,8 @@ models:
   - trip_scheduling
   - trip_mode_choice
   - write_data_dictionary
-  - track_skim_usage
-  - write_trip_matrices
+  #- track_skim_usage
+  #- write_trip_matrices
   - write_tables
 
 multiprocess_steps:
@@ -68,7 +74,7 @@ multiprocess_steps:
     begin: initialize_landuse
   - name: mp_accessibility
     begin: compute_accessibility
-    num_processes: 20
+    num_processes: 10
     slice:
       tables:
         - accessibility
