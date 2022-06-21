@@ -2,7 +2,7 @@ coefficient_name,value,constrain
 coef_one,1,T
 coef_zero,0,T
 coef_dist_work,-0.625,F
-coef_dist_recreation,1,F
+coef_dist_recreation,-0.12,F
 coef_dist_dining,-0.5,F
 coef_dist_work_samp,-0.625,F
 coef_dist_recreation_samp,-0.12,F
