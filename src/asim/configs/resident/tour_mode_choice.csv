@@ -1,8 +1,6 @@
 Label,Description,Expression,DRIVEALONE,SHARED2,SHARED3,WALK,BIKE,WALK_TRANSIT,PNR_TRANSIT,KNR_TRANSIT,TNC_TRANSIT,TAXI,TNC_SINGLE,TNC_SHARED,SCH_BUS
 #,drivealone,,,,,,,,,,,,,,
 util_DRIVEALONE_Unavailable,DRIVEALONE - Unavailable,sov_available == False,-999,,,,,,,,,,,,
-util_DRIVEALONE_Unavailable_for_zero_auto_households,DRIVEALONE - Unavailable for zero auto households,@(df.auto_ownership == 0),-999,,,,,,,,,,,,
-util_DRIVEALONE_Unavailable_for_persons_less_than_16,DRIVEALONE - Unavailable for persons less than 16,@(df.age < 16),-999,,,,,,,,,,,,
 util_Drive alone - In-vehicle time,Drive alone - In-vehicle time,(da_time_skims_inb + da_time_skims_out) * autoIVTFactor * time_factor,coef_ivt,,,,,,,,,,,,
 util_Drive alone - reliability - inb,Drive alone - reliability - inbound,"@(df.da_rel_skims_inb/np.minimum(df.da_dist_skims_inb,0.1)*df.c_rel_inb) * df.time_factor",coef_ivt,,,,,,,,,,,,
 util_Drive alone - reliability - out,Drive alone - reliability - outbound,"@(df.da_rel_skims_out/np.minimum(df.da_dist_skims_out,0.1)*df.c_rel_out) * df.time_factor",coef_ivt,,,,,,,,,,,,

@@ -1,7 +1,7 @@
 inherit_settings: True
 
 multiprocess: True
-households_sample_size: 1000
+households_sample_size: 100000
 num_processes: 20
 
 chunk_training_mode: disabled
@@ -12,7 +12,7 @@ fail_fast: True
 
 trace_hh_id:
 
-resume_after: trip_scheduling
+resume_after: vehicle_allocation
 
 models:
   - initialize_landuse
@@ -54,16 +54,16 @@ models:
   - non_mandatory_tour_scheduling
   - vehicle_allocation
   - tour_mode_choice_simulate
-  - atwork_subtour_frequency
-  - atwork_subtour_destination
-  - atwork_subtour_scheduling
-  - atwork_subtour_mode_choice
-  - stop_frequency
-  - trip_purpose
-  - trip_destination
-  - trip_purpose_and_destination
-  - trip_scheduling
-  - trip_mode_choice
+  # - atwork_subtour_frequency
+  # - atwork_subtour_destination
+  # - atwork_subtour_scheduling
+  # - atwork_subtour_mode_choice
+  # - stop_frequency
+  # - trip_purpose
+  # - trip_destination
+  # - trip_purpose_and_destination
+  # - trip_scheduling
+  # - trip_mode_choice
   - write_data_dictionary
   #- track_skim_usage
   #- write_trip_matrices
