@@ -200,14 +200,14 @@ class CreateScenarioGUI(Tkinter.Frame):
             current_row += 1
             #option.pack(expand = True)
 			
-            Tkinter.Label(body, text=u"Scenario Folder", font=("Helvetica", 8, 'bold')).grid(row=current_row)
+            Tkinter.Label(body, text=u"Scenario Folder", font=("Helvetica", 8, 'bold')).grid(row=13)
             self.scenariopath = Tkinter.Entry(body, width=40)
             self.scenariopath.grid(row=current_row, column=1, sticky=sticky)
             button = Tkinter.Button(body, text=u"...",width=4,command=lambda: self.get_path("scenario"))
             button.grid(row=current_row, column=2)
             current_row += 1
 
-            Tkinter.Label(body, text=u"Network Folder",font=("Helvetica", 8, 'bold')).grid(row=13)
+            Tkinter.Label(body, text=u"Network Folder",font=("Helvetica", 8, 'bold')).grid(row=14)
             self.networkpath = Tkinter.Entry(body, width=40)
             self.networkpath.grid(row=current_row, column=1, sticky=sticky)
             button = Tkinter.Button(body, text=u"...",width=4,command=lambda: self.get_path("network"))
@@ -394,7 +394,7 @@ class CreateScenarioGUI(Tkinter.Frame):
                 f.write('\n'.join(exclude))
                 f.close()
                 commandstr=u"copy_networkfiles_to_study.cmd "+self.studypath.get()+" "+self.studynetworkpath.get()
-                print commandstr
+                print(commandstr)
                 os.chdir(self.releaseDir+"\\"+self.version+'\\')
                 os.system(commandstr)    
                 os.remove(exclude_file)
