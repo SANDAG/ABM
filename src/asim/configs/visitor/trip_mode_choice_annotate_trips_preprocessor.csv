@@ -56,12 +56,10 @@ wait times,density_measure,"reindex(land_use.PopEmpDenPerMi, df[ORIGIN])"
 ,taxi_wait_time,"rng.lognormal_for_df(df.set_index('tour_id'), mu=taxi_wait_time_mean.values, sigma=taxi_wait_time_sd.values, broadcast=True, scale=True).set_axis(df.index, axis='index')"
 ,tnc_single_wait_time,"rng.lognormal_for_df(df.set_index('tour_id'), mu=tnc_single_wait_time_mean.values, sigma=tnc_single_wait_time_sd.values, broadcast=True, scale=True).set_axis(df.index, axis='index')"
 ,tnc_shared_wait_time,"rng.lognormal_for_df(df.set_index('tour_id'), mu=tnc_shared_wait_time_mean.values, sigma=tnc_shared_wait_time_sd.values, broadcast=True, scale=True).set_axis(df.index, axis='index')"
-#,,
 ,purpose_id,df.purpose_id
 is work tour,is_work,"np.where(purpose_id==0,1,0)"
 is recreation tour,is_recreation,"np.where(purpose_id==1,1,0)"
 is dining tour,is_dining,"np.where(purpose_id==2,1,0)"
-auto availability,autoAvailable,df.auto_available
 ,walk_time,od_skims['walkTime']
 ,walk_available,((walk_time < max_walk_time) & (walk_time > 0))
 ,walk_transit_logsum,tvpb_logsum_odt['WTW']
@@ -73,3 +71,12 @@ auto availability,autoAvailable,df.auto_available
 ,tourWalk,"np.where(df.tour_mode=='WALK',1,0)"
 ,tourBike,"np.where(df.tour_mode=='BIKE',1,0)"
 ,tourWalkTransit,"np.where(df.tour_mode=='WALK_TRANSIT',1,0)"
+#Use AV coefficients for tour,useAV,df.useOwnedAV
+#Auto IVT Factor,autoIVTFactor,"np.where(useAV==0,1.0,autoIVTFactorAV)"
+placeholder Auto IVT Factor,autoIVTFactor,1
+#Auto Parking Cost Factor,autoParkingCostFactor,"np.where(useAV==0,1.0,autoParkingCostFactorAV)"
+placeholder for missing autoParkingCostFactorAV,autoParkingCostFactor,1
+#Auto CPM Factor,autoCPMFactor,"np.where(useAV==0,1.0,autoCostPerMileFactorAV)"
+placeholder for missing autoCostPerMileFactorAV,autoCPMFactor,1
+#Auto Terminal Time Factor,autoTermTimeFactor,"np.where(useAV==0,1.0,autoTerminalTimeFactorAV)"
+placeholder for missing autoTerminalTimeFactorAV,autoTermTimeFactor,1

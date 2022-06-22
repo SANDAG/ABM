@@ -130,5 +130,6 @@ TOURS_MERGED_CHOOSER_COLUMNS:
   - duration
   - purpose_id
   - auto_available
+  - number_of_participants
 
 MODE_CHOICE_LOGSUM_COLUMN_NAME: trip_mode_choice_logsum
