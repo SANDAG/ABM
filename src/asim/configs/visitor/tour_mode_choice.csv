@@ -1,6 +1,6 @@
 Label,Description,Expression,DRIVEALONE,SHARED2,SHARED3,WALK,BIKE,WALK_TRANSIT,TAXI,TNC_SINGLE,TNC_SHARED
 #,drivealone,,,,,,,,,,
-util_DRIVEALONE_Unavailable,DRIVEALONE - Unavailable,autoAvailable == False,-999,,,,,,,,
+util_DRIVEALONE_Unavailable,DRIVEALONE - Unavailable,autoAvailable == 0,-999,,,,,,,,
 util_DRIVEALONE_Unavailable_for_zero_auto_households,DRIVEALONE - Unavailable if number of participants not 1,@(df.number_of_participants > 1),-999,,,,,,,,
 util_Drive alone - In-vehicle time,Drive alone - In-vehicle time,(da_time_skims_inb + da_time_skims_out) * autoIVTFactor,coef_ivt,,,,,,,,
 util_Drive alone - cost - inb,Drive alone - cost - inbound,@((costPerMile* df.autoCPMFactor * df.da_dist_skims_inb + df.da_cost_skims_inb) * df.coef_cost),coef_one,,,,,,,,
@@ -9,7 +9,7 @@ util_Drive alone - Parking cost ,Drive alone - Parking cost ,@(df.parkingCost * 
 util_Drive alone - Terminal Time - acc,Drive alone - Terminal Time - access,oTermTime * autoTermTimeFactor,coef_wacc,,,,,,,,
 util_Drive alone - Terminal Time - egr,Drive alone - Terminal Time - egress,dTermTime * autoTermTimeFactor,coef_wegr,,,,,,,,
 #,Shared ride2,,,,,,,,,,
-util_DRIVEALONE_Unavailable,Shared ride 2 HOV - Unavailable,autoAvailable == False,,-999,,,,,,,
+util_DRIVEALONE_Unavailable,Shared ride 2 HOV - Unavailable,autoAvailable == 0,,-999,,,,,,,
 util_DRIVEALONE_Unavailable_for_zero_auto_households,Shared ride 2 HOV - Unavailable if number of participants not 2,@(df.number_of_participants != 2),,-999,,,,,,,
 util_Shared ride 2 HOV - In -vehicle time,Shared ride 2 HOV - In -vehicle time,(s2_time_skims_inb + s2_time_skims_out) * autoIVTFactor,,coef_ivt,,,,,,,
 util_Shared ride 2 HOV -  cost - inb,Shared ride 2 HOV -  cost - inbound,@((costPerMile * df.autoCPMFactor * df.s2_dist_skims_inb + df.s2_cost_skims_inb) * df.coef_cost),,coef_one,,,,,,,
@@ -18,7 +18,7 @@ util_Shared ride 2 HOV - Parking cost ,Shared ride 2 HOV - Parking cost ,@(df.pa
 util_Shared ride 2 HOV - Terminal Time - acc,Shared ride 2 HOV - Terminal Time - access,oTermTime * autoTermTimeFactor,,coef_wacc,,,,,,,
 util_Shared ride 2 HOV - Terminal Time - egr,Shared ride 2 HOV - Terminal Time - egress,dTermTime * autoTermTimeFactor,,coef_wegr,,,,,,,
 #,shared ride 3,,,,,,,,,,
-util_DRIVEALONE_Unavailable,Shared ride 3 HOV - Unavailable,autoAvailable == False,,,-999,,,,,,
+util_DRIVEALONE_Unavailable,Shared ride 3 HOV - Unavailable,autoAvailable == 0,,,-999,,,,,,
 util_DRIVEALONE_Unavailable_for_zero_auto_households,Shared ride 3 HOV - Unavailable if number of participants not 3 or more,@(df.number_of_participants < 3),,,-999,,,,,,
 util_Shared ride 3 HOV - In -vehicle time,Shared ride 3 HOV - In -vehicle time,(s3_time_skims_out+s3_time_skims_inb) * autoIVTFactor,,,coef_ivt,,,,,,
 util_Shared ride 3 HOV -  cost - inb,Shared ride 3 HOV -  cost - inbound,@((costPerMile * df.s3_dist_skims_inb * df.autoCPMFactor + df.s3_cost_skims_inb) * df.coef_cost),,,coef_one,,,,,,
@@ -37,22 +37,22 @@ util_Bike - time coefficient,Bike - time coefficient,(bike_time_skims_inb + bike
 util_Bike - Origin Mix,BIke - Origin Mix,oMGRAMix,,,,,coef_oMix_nmot,,,,
 util_Bike - Origin Intersection Density,Bike - Origin Intersection Density,oMGRATotInt,,,,,coef_oIntDen_nmot,,,,
 #,WalktoTransit,,,,,,,,,,
-util_WalkTransit_Unavailable,WalkTransit_Available,walkTransitAvailable,,,,,,-999,,,
+util_WalkTransit_Unavailable,WalkTransit_Available,walkTransitAvailable==0,,,,,,-999,,,
 util_WalkTransit - LogSum,WalkTransit - LogSum,@tvpb_logsum_odt['WTW'] + tvpb_logsum_dot['WTW'],,,,,,coef_one,,,
 util_WalkTransit - Origin Mix,WalkTransit - Origin Mix,oMGRAMix,,,,,,coef_oMix_nmot,,,
 util_WalkTransit - Origin Intersection Density,WalkTransit - Origin Intersection Density,oMGRATotInt,,,,,,coef_oIntDen_nmot,,,
 #,Taxi,,,,,,,,,,
 util_Taxi - In-vehicle time,Taxi - In-vehicle time,(s2_time_skims_inb + s2_time_skims_out),,,,,,,coef_ivt,,
 util_Taxi - Wait time,Taxi - Wait time,1.5*totalWaitTaxi,,,,,,,coef_ivt,,
-util_Taxi - Fare,Taxi - Fare,@(((Taxi_baseFare*2 + (df.s2_dist_skims_out + df.s2_dist_skims_inb) * Taxi_costPerMile + (df.s2_time_skims_out + df.s2_time_skims_inb) * Taxi_costPerMinute)*100 + df.s2_cost_skims_out + df.s2_cost_skims_inb) * df.coef_cost),,,,,,,coef_one,,
+util_Taxi - Fare,Taxi - Fare,@(((Taxi_baseFare + (df.s2_dist_skims_out + df.s2_dist_skims_inb) * Taxi_costPerMile + (df.s2_time_skims_out + df.s2_time_skims_inb) * Taxi_costPerMinute)*100 + df.s2_cost_skims_out + df.s2_cost_skims_inb) * df.coef_cost),,,,,,,coef_one,,
 #,TNC Single,,,,,,,,,,
 util_TNC Single - In-vehicle time,TNC Single - In-vehicle time,(s2_time_skims_out + s2_time_skims_inb),,,,,,,,coef_ivt,
 util_TNC Single - Wait time,TNC Single - Wait time,1.5*totalWaitSingleTNC,,,,,,,,coef_ivt,
-util_TNC Single - Cost,TNC Single - Cost,"@((np.maximum(TNC_single_baseFare*2 + (df.s2_dist_skims_out + df.s2_dist_skims_inb) * TNC_single_costPerMile + (df.s2_time_skims_out + df.s2_time_skims_inb) * TNC_single_costPerMinute, TNC_single_baseFare*2)*100 + df.s2_cost_skims_out + df.s2_cost_skims_inb) * df.coef_cost)",,,,,,,,coef_one,
+util_TNC Single - Cost,TNC Single - Cost,"@((np.maximum(TNC_single_baseFare + (df.s2_dist_skims_out + df.s2_dist_skims_inb) * TNC_single_costPerMile + (df.s2_time_skims_out + df.s2_time_skims_inb) * TNC_single_costPerMinute, TNC_single_baseFare*2)*100 + df.s2_cost_skims_out + df.s2_cost_skims_inb) * df.coef_cost)",,,,,,,,coef_one,
 #,TNC Shared,,,,,,,,,,
 util_TNC Shared - In-vehicle time,TNC Shared - In-vehicle time,@(df.s2_time_skims_out + df.s2_time_skims_inb) * TNC_shared_IVTFactor,,,,,,,,,coef_ivt
 util_TNC Shared - Wait time,TNC Shared - Wait time,1.5*totalWaitSharedTNC,,,,,,,,,coef_ivt
-util_TNC Shared - Cost,TNC Shared - Cost,"@((np.maximum(TNC_shared_baseFare*2 + (df.s2_dist_skims_out + df.s2_dist_skims_inb) * TNC_shared_costPerMile + (df.s2_time_skims_out + df.s2_time_skims_inb)* TNC_shared_costPerMinute, TNC_shared_baseFare*2)*100 + df.s2_cost_skims_out + df.s2_cost_skims_inb) * df.coef_cost)",,,,,,,,,coef_one
+util_TNC Shared - Cost,TNC Shared - Cost,"@((np.maximum(TNC_shared_baseFare + (df.s2_dist_skims_out + df.s2_dist_skims_inb) * TNC_shared_costPerMile + (df.s2_time_skims_out + df.s2_time_skims_inb)* TNC_shared_costPerMinute, TNC_shared_baseFare*2)*100 + df.s2_cost_skims_out + df.s2_cost_skims_inb) * df.coef_cost)",,,,,,,,,coef_one
 Calibration work tour with auto,Work Tour with auto,is_work*autoAvailable,-0.4839,,0.8409,-0.0425,,-3,-0.191,-0.191,-999
 Calibration recreation tour with auto,Recreation Tour with auto,is_recreation*autoAvailable,1.8714,,0.0491,0.8952,,-1.5518,1.3906,1.3906,-999
 Calibration dining tour with auto,Dining Tour with auto,is_dining*autoAvailable,-0.0646,,6.496,9.7582,,0.7504,-5.8495,-5.8495,-999

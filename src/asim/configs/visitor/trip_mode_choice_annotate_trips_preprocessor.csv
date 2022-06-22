@@ -43,8 +43,8 @@ effective parking cost,park_cost_prim_dest,"pd.concat((park_cost_day, park_cost_
 ,park_cost_trip_orig_contrib,((1 - first_trip) * (1 - trip_orig_is_tour_dest)) * (park_cost_trip_orig / 2) + (trip_orig_is_tour_dest * (park_cost_tour_dest_contrib / (tot_trips + 2)))
 ,park_cost_trip_dest_contrib,((1 - last_trip) * (1 - trip_dest_is_tour_dest)) * (park_cost_trip_dest / 2) + (trip_dest_is_tour_dest * (park_cost_tour_dest_contrib / (tot_trips + 2)))
 ,parking_cost,park_cost_tour_dest_contrib + park_cost_trip_orig_contrib + park_cost_trip_dest_contrib
-Divisor for cost sharing of SR2 trips,cost_share_s2,2
-Divisor for cost sharing of SR3+ trips,cost_share_s3,3
+#Divisor for cost sharing of SR2 trips,cost_share_s2,2
+#Divisor for cost sharing of SR3+ trips,cost_share_s3,3
 wait times,density_measure,"reindex(land_use.PopEmpDenPerMi, df[ORIGIN])"
 ,density_bin,"pd.cut(density_measure, bins=[-np.inf] + wait_time_distribution_by_density_breaks + [np.inf], labels=[1,2,3,4,5]).astype(int)"
 ,taxi_wait_time_mean,"density_bin.map({k: v for k,v in taxi_wait_time_mean_by_density.items()})"
@@ -61,10 +61,14 @@ is work tour,is_work,"np.where(purpose_id==0,1,0)"
 is recreation tour,is_recreation,"np.where(purpose_id==1,1,0)"
 is dining tour,is_dining,"np.where(purpose_id==2,1,0)"
 ,walk_time,od_skims['walkTime']
-,walk_available,((walk_time < max_walk_time) & (walk_time > 0))
+,walk_available,"np.where((walk_time < max_walk_time) & (walk_time > 0), 1, 0)"
 ,walk_transit_logsum,tvpb_logsum_odt['WTW']
+,walk_transit_available,"np.where((walk_transit_logsum >= -500) | (walk_transit_logsum != 0), 1, 0)"
 ,bike_time,od_skims['bikeTime']
-,bike_available,((bike_time < max_bike_time) & (bike_time > 0))
+,bike_available,"np.where((bike_time < max_bike_time) & (bike_time > 0), 1, 0)"
+,da_available,"np.where(df.auto_available & (df.number_of_participants == 1), 1, 0)"
+,s2_available,"np.where(df.auto_available & (df.number_of_participants == 2), 1, 0)"
+,s3_available,"np.where(df.auto_available & (df.number_of_participants >= 3), 1, 0)"
 ,tourDA,"np.where(df.tour_mode=='DA',1,0)"
 ,tourS2,"np.where(df.tour_mode=='SHARED2',1,0)"
 ,tourS3,"np.where(df.tour_mode=='SHARED3',1,0)"
