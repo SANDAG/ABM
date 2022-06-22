@@ -12,7 +12,7 @@ fail_fast: True
 
 trace_hh_id:
 
-resume_after: vehicle_allocation
+resume_after: tour_mode_choice_simulate
 
 models:
   - initialize_landuse
