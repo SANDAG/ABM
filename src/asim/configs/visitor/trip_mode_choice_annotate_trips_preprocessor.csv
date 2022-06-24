@@ -8,8 +8,11 @@ cost coefficient by income segment,coef_cost,"np.select([df.income == 0, df.inco
 ,tour_mode_is_s3,df.tour_mode == 'SHARED3'
 ,tour_mode_is_walk,df.tour_mode == 'WALK'
 vot bins,vot_da,coef_ivt / coef_cost * 0.6
-,vot_s2,vot_da * cost_share_s2
-,vot_s3,vot_da * cost_share_s3
+#,vot_s2,vot_da * cost_share_s2
+#,vot_s3,vot_da * cost_share_s3
+# No shared cost in visitor model,,
+,vot_s2,vot_da
+,vot_s3,vot_da
 ,_vot_bin_da,"np.where(vot_da < vot_threshold_low, 1, np.where(vot_da < vot_threshold_med, 2, 3))"
 ,_vot_bin_s2,"np.where(vot_s2 < vot_threshold_low, 1, np.where(vot_s2 < vot_threshold_med, 2, 3))"
 ,_vot_bin_s3,"np.where(vot_s3 < vot_threshold_low, 1, np.where(vot_s3 < vot_threshold_med, 2, 3))"
