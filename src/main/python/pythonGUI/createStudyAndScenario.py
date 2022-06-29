@@ -52,18 +52,16 @@ class CreateScenarioGUI(Tkinter.Frame):
 
             #Define land use options
             self.lu_options = {"DS41": {"name": "Baseline",
-                                        "years": ["2016", "2020", "2025nb", "2030nb", "2035nb", "2040nb", "2050nb"]},
+                                        "years": ["2020", "2025nb", "2030nb", "2035nb", "2040nb", "2050nb"]},
                                "DS42": {"name": "Sustainable Community Strategy",
-                                        "years": ["2023", "2025", "2026", "2029", "2030", "2032", "2035", "2040", "2050"]},
-							   "DS41 Hybrid": {"name": "Parking Update",
-							              "years": ["2025", "2030", "2035", "2040", "2050"]}}
+                                        "years": ["2016", "2023", "2025", "2026", "2029", "2030", "2032", "2035", "2040", "2050"]}}
 
             self.root = root
             self.emme_version = emme_version
             self.year = year
             self.geo = geo            
             self.lu = lu
-
+ 
             if self.year not in self.lu_options[self.lu]["years"]:
                 if self.year in self.lu_options["DS41"]["years"]:
                     self.lu = "DS41"
