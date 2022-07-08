@@ -14,6 +14,7 @@ SANDAG’s ABM source-control follows a <a href="https://trunkbaseddevelopment.c
   - Release 13.3.3 for ABM1
   - Release 14.1.1 for ABM2
   - Release 14.2.2 for ABM2+
+  - Release 14.3.0 for ABM2+ post 2021RP Service Bureau and project level studies
 - In some cases, short-lived feature branches are allowed. However, once codes on feature branch compiles and passes all tests, they should be merged to trunk and the feature branch should be deleted.
 
 ##
