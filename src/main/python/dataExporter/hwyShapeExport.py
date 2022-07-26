@@ -421,7 +421,7 @@ def export_highway_shape(scenario_path: str) -> geopandas.GeoDataFrame:
                          "geometry"]]
 
     # rename fields to match old process field names
-    hwy_tcad.rename(columns={"ID": "hwycovid",
+    hwy_tcad.rename(columns={"ID": "hwycov_id",
                              "NM": "link_name",
                              "Length": "len_mile",
                              "COJUR": "count_jur",
