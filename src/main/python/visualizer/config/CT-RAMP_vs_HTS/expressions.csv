@@ -70,3 +70,8 @@ Visiting Tours by Person Type,nm_tour_rates,Visiting,indivTourData_3,TOURPURP ==
 Discretionary Tours by Person Type,nm_tour_rates,Discretionary,indivTourData_3,TOURPURP == 9,index,count,PERTYPE
 Total Non-Mandatory Tours by Person Type,nm_tour_rates,All,indivTourData_3,TOURPURP >= 4 and TOURPURP <= 9,index,count,PERTYPE
 #,,,,,,,
+Outbound escort type by child type,esctype_by_childtype,freq_out,indivTourData_3,tour_purpose == 'School' and person_type >= 6,index,count,"escort_type_out,person_type"
+Inbound escort type by child type,esctype_by_childtype,freq_inb,indivTourData_3,tour_purpose == 'School' and person_type >= 6,index,count,"escort_type_in,person_type"
+Outbound escort type by chauffeur type,esctype_by_chauffeurtype,freq_out,indivTourData_3,tour_purpose == 'School' and person_type >= 6 and out_chauffeur_ptype > 0,index,count,"escort_type_out,out_chauffeur_ptype"
+Inbound escort type by chauffeur type,esctype_by_chauffeurtype,freq_inb,indivTourData_3,tour_purpose == 'School' and person_type >= 6 and inb_chauffeur_ptype > 0,index,count,"escort_type_in,inb_chauffeur_ptype"
+Outbound escort type for inbound ride share,worker_school_escorting,freq,active_workers,active_student == 1,index,count,"inb_escort_type,out_escort_type"
