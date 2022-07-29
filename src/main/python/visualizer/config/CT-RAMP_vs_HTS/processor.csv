@@ -180,6 +180,25 @@ Calculate duration for joint tours,step_1,raw,jointTourData_3,,,jointTourData_3[
 Classify vehicle ownership category for individual tours,step_3,raw,hh_itours,,,"hh_itours['AUTOSUFF'] = np.where(hh_itours['HHVEH'] == 0, 0, np.where(hh_itours['HHVEH'] < hh_itours['ADULTS'], 1, 2))"
 Classify vehicle ownership category for joint tours,step_3,raw,hh_jtours,,,"hh_jtours['AUTOSUFF'] = np.where(hh_jtours['HHVEH'] == 0, 0, np.where(hh_jtours['HHVEH'] < hh_jtours['ADULTS'], 1, 2))"
 #,,,,,,
+Get outbound chauffuer type,step_3,raw,,,,indivTourData_3['out_chauffeur_ptype'] = (indivTourData_3['hh_id'].astype(str) + '-' + indivTourData_3['driver_num_out'].astype(str)).map(personData_3.set_index('hhper_id')['PERTYPE'])
+Get inbound chauffuer type,step_3,raw,,,,indivTourData_3['inb_chauffeur_ptype'] = (indivTourData_3['hh_id'].astype(str) + '-' + indivTourData_3['driver_num_in'].astype(str)).map(personData_3.set_index('hhper_id')['PERTYPE'])
+Get tours with active workers,step_3,raw,,,,"active_workers = indivTourData_3[['tour_purpose', 'person_type', 'hh_id', 'person_num']].query('tour_purpose in [""Work"", ""Work-Based""] and person_type in [1, 2]').groupby(['hh_id', 'person_num']).max()['person_type'].reset_index()"
+Get tours with active students,step_3,raw,,,,"active_students = indivTourData_3[['tour_purpose', 'person_type', 'hh_id', 'person_num']].query('tour_purpose == ""School"" and person_type in [6, 7, 8]').groupby(['hh_id', 'person_num']).max()['person_type'].reset_index()"
+Get tours with active students,step_3,raw,,,,active_students['active_student'] = np.ones_like(active_students.index)
+Group active student tours by household,step_3,raw,,,,hh_active_student = active_students.groupby('hh_id').max()['active_student']
+Tag active workers with active students in household,step_3,raw,,,,active_workers['active_student'] = active_workers['hh_id'].map(hh_active_student).fillna(0)
+List of workers who did outbound rideshare for students,step_3,raw,,,,"out_rs_workers = indivTourData_3[['hh_id', 'person_num', 'tour_id2', 'tour_purpose', 'escort_type_out', 'driver_num_out', 'out_chauffeur_ptype']].query('tour_purpose == ""School"" and escort_type_out == 1')[['hh_id', 'driver_num_out']].value_counts().sort_index().reset_index().rename(columns = {0: 'out_rs_escort'})"
+List of workers who did outbound pure escort for students,step_3,raw,,,,"out_pe_workers = indivTourData_3[['hh_id', 'person_num', 'tour_id2', 'tour_purpose', 'escort_type_out', 'driver_num_out', 'out_chauffeur_ptype']].query('tour_purpose == ""School"" and escort_type_out == 2')[['hh_id', 'driver_num_out']].value_counts().sort_index().reset_index().rename(columns = {0: 'out_pe_escort'})"
+List of workers who did inbound rideshare for students,step_3,raw,,,,"inb_rs_workers = indivTourData_3[['hh_id', 'person_num', 'tour_id2', 'tour_purpose', 'escort_type_in', 'driver_num_in', 'inb_chauffeur_ptype']].query('tour_purpose == ""School"" and escort_type_in == 1')[['hh_id', 'driver_num_in']].value_counts().sort_index().reset_index().rename(columns = {0: 'inb_rs_escort'})"
+List of workers who did inbound pure escort for students,step_3,raw,,,,"inb_pe_workers = indivTourData_3[['hh_id', 'person_num', 'tour_id2', 'tour_purpose', 'escort_type_in', 'driver_num_in', 'inb_chauffeur_ptype']].query('tour_purpose == ""School"" and escort_type_in == 2')[['hh_id', 'driver_num_in']].value_counts().sort_index().reset_index().rename(columns = {0: 'inb_pe_escort'})"
+Add escort type to worker type,step_3,raw,,,,"active_workers = active_workers.merge(out_rs_workers, 'left', left_on = ['hh_id', 'person_num'], right_on = ['hh_id', 'driver_num_out'])"
+Add escort type to worker type,step_3,raw,,,,"active_workers = active_workers.merge(out_pe_workers, 'left', left_on = ['hh_id', 'person_num'], right_on = ['hh_id', 'driver_num_out'])"
+Add escort type to worker type,step_3,raw,,,,"active_workers = active_workers.merge(inb_rs_workers, 'left', left_on = ['hh_id', 'person_num'], right_on = ['hh_id', 'driver_num_in'])"
+Add escort type to worker type,step_3,raw,,,,"active_workers = active_workers.merge(inb_pe_workers, 'left', left_on = ['hh_id', 'person_num'], right_on = ['hh_id', 'driver_num_in'])"
+Fill null values with 0,step_3,raw,,,,active_workers = active_workers.fillna(0)
+Identify outbound escort type,step_3,raw,,,,"active_workers['out_escort_type'] = np.where(active_workers['out_pe_escort'] > 0, 2, np.where(active_workers['out_rs_escort'], 1, 3))"
+Identify inbound escort type,step_3,raw,,,,"active_workers['inb_escort_type'] = np.where(active_workers['inb_pe_escort'] > 0, 2, np.where(active_workers['inb_rs_escort'], 1, 3))"
+Reset active_workers index,step_3,raw,,,,active_workers = active_workers.reset_index()
 #,,,,,,
 Add up total population,step_3,raw,,,,total_population = personData_3.shape[0]
 Add up total households,step_3,raw,,,,total_households = householdData_3.shape[0]
@@ -223,6 +242,8 @@ Normalize All Nonmandatory Tour Rates,step_6,column,nm_tour_rates,All,,All/Total
 Delete total persons column,step_6,raw,,,,del nm_tour_rates['TotalPersons']
 Melt nm_tour_rates,step_6,raw,,,,"nm_tour_rates = pd.melt(nm_tour_rates, ['PERTYPE'], var_name = 'tour_purp', value_name = 'tour_rate')"
 #,,,,,,
+Rename escort type column,step_6,rename,esctype_by_childtype,,,"{'level_0': 'esc_type', 'person_type': 'child_type'}"
+Rename escort type column,step_6,rename,esctype_by_chauffeurtype,,,"{'level_0': 'esc_type', 'level_1': 'chauffeur'}"
 Rename person type column,step_6,rename,resultsByPType,,,{'index': 'PERTYPE'}
 Rename person type column,step_6,rename,tours_pertype_purpose,,,{'person_type': 'PERTYPE'}
 #,,,,,,
@@ -233,7 +254,13 @@ Recode person type,step_6,replace,pertypeDistbn,PERTYPE,PERTYPE,"{1: '1: Full-Ti
 Recode person type,step_6,replace,dapSummary_vis,PERTYPE,PERTYPE,"{1: '1: Full-Time Worker', 2: '2: Part-Time Worker', 3: '3: University Student', 4: '4: Non-Worker', 5: '5: Retiree', 6: '6: Driving Aged Student', 7: '7: Non-Driving Aged Student', 8: '8: Child To Young for School'}"
 Recode person type,step_6,replace,mtfSummary_vis,PERTYPE,PERTYPE,"{1: '1: Full-Time Worker', 2: '2: Part-Time Worker', 3: '3: University Student', 4: '4: Non-Worker', 5: '5: Retiree', 6: '6: Driving Aged Student', 7: '7: Non-Driving Aged Student', 8: '8: Child To Young for School'}"
 Recode person type,step_6,replace,nm_tour_rates,PERTYPE,PERTYPE,"{1: '1: Full-Time Worker', 2: '2: Part-Time Worker', 3: '3: University Student', 4: '4: Non-Worker', 5: '5: Retiree', 6: '6: Driving Aged Student', 7: '7: Non-Driving Aged Student', 8: '8: Child To Young for School'}"
+Recode person type,step_6,replace,esctype_by_chauffeurtype,chauffeur,chauffeur,"{1: '1: Full-Time Worker', 2: '2: Part-Time Worker', 3: '3: University Student', 4: '4: Non-Worker', 5: '5: Retiree', 6: '6: Driving Aged Student', 7: '7: Non-Driving Aged Student', 8: '8: Child To Young for School'}"
+Recode person type,step_6,replace,esctype_by_childtype,child_type,child_type,"{1: '1: Full-Time Worker', 2: '2: Part-Time Worker', 3: '3: University Student', 4: '4: Non-Worker', 5: '5: Retiree', 6: '6: Driving Aged Student', 7: '7: Non-Driving Aged Student', 8: '8: Child To Young for School'}"
 #,,,,,,
+Recode person type,step_6,replace,esctype_by_childtype,esc_type,esc_type,"{0: 'No Escort', 1: 'Ride Share', 2: 'Pure Escort', 3: 'No Escort'}"
+Recode person type,step_6,replace,esctype_by_chauffeurtype,esc_type,esc_type,"{0: 'No Escort', 1: 'Ride Share', 2: 'Pure Escort', 3: 'No Escort'}"
+Recode in escort type,step_6,replace,worker_school_escorting,inb_escort_type,inb_escort_type,"{0: 'No Escort', 1: 'Ride Share', 2: 'Pure Escort', 3: 'No Escort'}"
+Recode out escort type,step_6,replace,worker_school_escorting,out_escort_type,out_escort_type,"{0: 'No Escort', 1: 'Ride Share', 2: 'Pure Escort', 3: 'No Escort'}"
 #,,,,,,
 Rename AGGPURP,step_6,rename,stopDC_vis,,,"{'AGGPURP': 'purpose', 'out_dir_distbin': 'distbin'}"
 Rename AGGPURP,step_6,rename,avgStopOutofDirectionDist_vis,,,{'AGGPURP': 'purpose'}
