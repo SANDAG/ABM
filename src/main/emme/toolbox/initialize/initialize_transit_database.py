@@ -82,7 +82,7 @@ class InitializeTransitDatabase(_m.Tool(), gen_utils.Snapshot):
         pb = _m.ToolPageBuilder(self)
         pb.title = "Initialize transit database"
         pb.description = """Create and setup database for transit assignments under 'Database_transit' directory. 
-            Will overwrite an existing database. The TAZs will be removed and TAP nodes converted to zones."""
+            Will overwrite an existing database."""
         pb.branding_text = "- SANDAG"
         if self.tool_run_msg != "":
             pb.tool_run_status(self.tool_run_msg_status)
@@ -120,9 +120,9 @@ class InitializeTransitDatabase(_m.Tool(), gen_utils.Snapshot):
         transit_db_dir = join(project_dir, "Database_transit")
         transit_db_path = join(transit_db_dir, "emmebank")
         network = base_scenario.get_partial_network(["NODE"], include_attributes=True)
-        num_zones = sum([1 for n in network.nodes() if n["@tap_id"] > 0])
+        #num_zones = sum([1 for n in network.nodes() if n["isZone"] > 0])
         dimensions = base_eb.dimensions
-        dimensions["centroids"] = num_zones
+        #dimensions["centroids"] = num_zones
         dimensions["scenarios"] = 10
         if not os.path.exists(transit_db_dir):
             os.mkdir(transit_db_dir)

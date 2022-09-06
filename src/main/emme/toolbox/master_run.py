@@ -197,8 +197,8 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             run_msg = "Model run complete"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg, escape=False)
         except Exception as error:
-            self.tool_run_msg = _m.PageBuilder.format_exception(
-                error, _traceback.format_exc(error))
+            self.tool_run_msg = _m.PageBuilder.format_exception(error, _traceback.format_exc())
+
             raise
 
     @_m.method(return_type=_m.UnicodeType)
@@ -244,6 +244,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         init_matrices = modeller.tool("sandag.initialize.initialize_matrices")
         import_demand = modeller.tool("sandag.import.import_seed_demand")
         build_transit_scen = modeller.tool("sandag.assignment.build_transit_scenario")
+        create_transit_connector = modeller.tool("sandag.assignment.create_transit_connector")
         transit_assign = modeller.tool("sandag.assignment.transit_assignment")
         run_truck = modeller.tool("sandag.model.truck.run_truck_model")
         external_internal = modeller.tool("sandag.model.external_internal")
@@ -251,6 +252,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         import_auto_demand = modeller.tool("sandag.import.import_auto_demand")
         import_transit_demand = modeller.tool("sandag.import.import_transit_demand")
         export_transit_skims = modeller.tool("sandag.export.export_transit_skims")
+        export_for_transponder = modeller.tool("sandag.export.export_for_transponder")
         export_network_data = modeller.tool("sandag.export.export_data_loader_network")
         export_matrix_data = modeller.tool("sandag.export.export_data_loader_matrices")
         export_tap_adjacent_lines = modeller.tool("sandag.export.export_tap_adjacent_lines")
@@ -305,7 +307,9 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         skipBikeLogsums = props["RunModel.skipBikeLogsums"]
         skipBuildNetwork = props["RunModel.skipBuildNetwork"]
         skipHighwayAssignment = props["RunModel.skipHighwayAssignment"]
+        skipTransitConnector = props["RunModel.skipTransitConnector"]
         skipTransitSkimming = props["RunModel.skipTransitSkimming"]
+        skipTransponderExport = props["RunModel.skipTransponderExport"]
         skipCoreABM = props["RunModel.skipCoreABM"]
         skipOtherSimulateModel = props["RunModel.skipOtherSimulateModel"]
         skipMAASModel = props["RunModel.skipMAASModel"]
@@ -325,13 +329,14 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         transitShedTOD = props["transitShed.TOD"]
 
         if useLocalDrive:
-            self.check_free_space(minSpaceOnC)
-            # if initialization copy ALL files from remote
-            # else check file meta data and copy those that have changed
             initialize = (skipInitialization == False and startFromIteration == 1)
             local_directory = file_manager(
                 "DOWNLOAD", main_directory, username, scenario_id, initialize=initialize)
             self._path = local_directory
+            if not os.path.exists(_join(self._path, "output")): # check free space only if it is a new run
+                self.check_free_space(minSpaceOnC)
+            # if initialization copy ALL files from remote
+            # else check file meta data and copy those that have changed
         else:
             self._path = main_directory
 
@@ -376,11 +381,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 if not skipCopyWalkImpedance:
                     self.copy_files(["walkMgraEquivMinutes.csv", "walkMgraTapEquivMinutes.csv"],
                                     input_dir, output_dir)
-                if not skipBikeLogsums:
-                    self.run_proc("runSandagBikeLogsums.cmd", [drive, path_forward_slash],
-                                  "Bike - create AT logsums and impedances")
-                if not skipCopyBikeLogsum:
-                    self.copy_files(["bikeMgraLogsum.csv", "bikeTazLogsum.csv"], input_dir, output_dir)
 
                 if not skip4Ds:
                     run4Ds(path=self._path, int_radius=0.65, ref_path=visualizer_reference_path)
@@ -408,7 +408,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                             pass
 
                     if not skipInputChecker:
-                        input_checker()
+                        input_checker(path=self._path)
 
                     export_tap_adjacent_lines(_join(output_dir, "tapLines.csv"), base_scenario)
                     # parse vehicle availablility file by time-of-day
@@ -462,10 +462,20 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         omx_file = _join(input_dir, "trip_%s.omx" % period)
                         import_demand(omx_file, "AUTO", period, base_scenario)
                         import_demand(omx_file, "TRUCK", period, base_scenario)
+                        
+                if not skipBikeLogsums:
+                    self.run_proc("runSandagBikeLogsums.cmd", [drive, path_forward_slash],
+                                  "Bike - create AT logsums and impedances")
+                if not skipCopyBikeLogsum:
+                    self.copy_files(["bikeMgraLogsum.csv", "bikeTazLogsum.csv"], input_dir, output_dir)
+                    
             else:
                 base_scenario = main_emmebank.scenario(scenario_id)
                 transit_emmebank = _eb.Emmebank(_join(self._path, "emme_project", "Database_transit", "emmebank"))
                 transit_scenario = transit_emmebank.scenario(base_scenario.number)
+
+            # Check that setup files were generated
+            self.run_proc("CheckOutput.bat", [drive + path_no_drive, 'Setup'], "Check for outputs")
 
         # Note: iteration indexes from 0, msa_iteration indexes from 1
         for iteration in range(startFromIteration - 1, end_iteration):
@@ -499,11 +509,19 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                                 scenario_id=src_period_scenario.id,
                                 scenario_title="%s %s transit assign" % (base_scenario.title, period),
                                 data_table_name=scenarioYear, overwrite=True)
+
+                            if iteration==0:
+                                create_transit_connector(transit_assign_scen)
+                                
                             transit_assign(period, transit_assign_scen, data_table_name=scenarioYear,
                                            skims_only=True, num_processors=num_processors)
 
                         omx_file = _join(output_dir, "transit_skims.omx")
                         export_transit_skims(omx_file, periods, transit_scenario)
+
+                if not skipTransponderExport[iteration]:
+                    am_scenario = main_emmebank.scenario(base_scenario.number + 2)
+                    export_for_transponder(output_dir, num_processors, am_scenario)
 
                 # For each step move trip matrices so run will stop if ctramp model
                 # doesn't produced csv/omx files for assignment
@@ -590,13 +608,12 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         if not skipDataExport:
             # export network and matrix results from Emme directly to T if using local drive
-            main_output_directory = _join(main_directory, "output")
-            export_network_data(main_directory, scenario_id, main_emmebank, transit_emmebank, num_processors)
-            export_matrix_data(main_output_directory, base_scenario, transit_scenario)
+            output_directory = _join(self._path, "output")
+            export_network_data(self._path, scenario_id, main_emmebank, transit_emmebank, num_processors)
+            export_matrix_data(output_directory, base_scenario, transit_scenario)
             # export core ABM data
-            # Note: uses relative project stucture, so cannot redirect to T drive
-            ### self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data",
-            ###              capture_output=True)  CL: This line is temporarily commented. When Gregor complete data export procedure, it should be uncommoented 06/02/20
+            # Note: uses relative project structure, so cannot redirect to T drive
+            self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data",capture_output=True)
         #Validation for 2016 scenario
         if scenarioYear == "2016":
             validation(self._path, main_emmebank, base_scenario)
@@ -625,39 +642,40 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                           [drive + path_no_drive, end_iteration, scenarioYear, sample_rate[end_iteration - 1]],
                           "Data load request")
 
+            ### ES: Commented out until this segment is updated to reference new database. 9/10/20 ###
             # add segments below for auto-reporting, YMA, 1/23/2019
             # add this loop to find the sceanro_id in the [dimension].[scenario] table
 
-            database_scenario_id = 0
-            int_hour = 0
-            while int_hour <= 96:
+            #database_scenario_id = 0
+            #int_hour = 0
+            #while int_hour <= 96:
 
-                database_scenario_id = self.sql_select_scenario(scenarioYear, end_iteration,
-                                                                sample_rate[end_iteration - 1], path_no_drive,
-                                                                start_db_time)
-                if database_scenario_id > 0:
-                    break
+            #    database_scenario_id = self.sql_select_scenario(scenarioYear, end_iteration,
+            #                                                    sample_rate[end_iteration - 1], path_no_drive,
+            #                                                    start_db_time)
+            #    if database_scenario_id > 0:
+            #        break
 
-                int_hour = int_hour + 1
-                _time.sleep(900)  # wait for 15 mins
+            #    int_hour = int_hour + 1
+            #    _time.sleep(900)  # wait for 15 mins
 
             # if load failed, then send notification email
-            if database_scenario_id == 0 and int_hour > 96:
-                str_request_check_result = self.sql_check_load_request(scenarioYear, path_no_drive, username,
-                                                                       start_db_time)
-                print(str_request_check_result)
-                sys.exit(0)
+            #if database_scenario_id == 0 and int_hour > 96:
+            #    str_request_check_result = self.sql_check_load_request(scenarioYear, path_no_drive, username,
+            #                                                           start_db_time)
+            #    print(str_request_check_result)
+            #    sys.exit(0)
                 # self.send_notification(str_request_check_result,username) #not working in server
-            else:
-                print(database_scenario_id)
-                self.run_proc("DataSummary.bat",  # get summary from database, added for auto-reporting
-                              [drive, path_no_drive, scenarioYear, database_scenario_id],
-                              "Data Summary")
+            #else:
+            #    print(database_scenario_id)
+            #    self.run_proc("DataSummary.bat",  # get summary from database, added for auto-reporting
+            #                  [drive, path_no_drive, scenarioYear, database_scenario_id],
+            #                  "Data Summary")
 
-                self.run_proc("ExcelUpdate.bat",  # forced to update excel links
-                              [drive, path_no_drive, scenarioYear, database_scenario_id],
-                              "Excel Update",
-                              capture_output=True)
+            #    self.run_proc("ExcelUpdate.bat",  # forced to update excel links
+            #                  [drive, path_no_drive, scenarioYear, database_scenario_id],
+            #                  "Excel Update",
+            #                  capture_output=True)
 
         # delete trip table files in iteration sub folder if model finishes without errors
         if not useLocalDrive and not skipDeleteIntermediateFiles:
@@ -668,6 +686,9 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         # terminate all java processes
         _subprocess.call("taskkill /F /IM java.exe")
+
+        # close all DOS windows
+        _subprocess.call("taskkill /F /IM cmd.exe")
 
     def set_global_logbook_level(self, props):
         self._log_level = props.get("RunModel.LogbookLevel", "ENABLED")
@@ -899,7 +920,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     name = row.pop("FACILITY_NAME")
                     class_name = row.pop("VEHICLE_CLASS")
                     for period in periods:
-                        availabilities[period][name][class_name] = int(row[period + "_AVAIL"])
+                        is_avail = int(row[period + "_AVAIL"])
+                        if is_avail not in [1, 0]:
+                            msg = "Error processing file '%s': value for period %s class %s facility %s is not 1 or 0"
+                            raise Exception(msg % (file_path, period, class_name, name))
+                        availabilities[period][name][class_name] = is_avail
         else:
             availabilities = None
         return availabilities
@@ -937,13 +962,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             for link in network.links():
                 if name in link["#name"]:
                     for class_name, is_avail in class_availabilities.iteritems():
-                        if is_avail == 0:
-                            continue
                         modes = class_mode_map[class_name]
                         if is_avail == 1 and not modes.issubset(link.modes):
                             link.modes |= modes
                             changes["added %s to" % class_name] += 1
-                        elif is_avail == -1 and modes.issubset(link.modes):
+                        elif is_avail == 0 and modes.issubset(link.modes):
                             link.modes -= modes
                             changes["removed %s from" % class_name] += 1
             report.append("<div style='margin-left:20px'><ul>")

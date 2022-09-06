@@ -41,3 +41,4 @@ src/main/resources/init_emme.cmd.txt
 src/asim/configs_mp/settings.yaml
 src/asim/simulation.py
 src/asim/simulation.py
+src/asim/configs_mp/settings.yaml
