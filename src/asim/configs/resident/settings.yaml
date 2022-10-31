@@ -105,7 +105,7 @@ distributed_time_factor_nonwork_stddev: 0.6
 distributed_time_factor_min: 0.1
 distributed_time_factor_max: 10
 
-resume_after:
+resume_after: 
 
 models:
   - initialize_landuse
@@ -115,9 +115,6 @@ models:
   # single-process step to create attribute_combination list
   - initialize_los
   # multi-processable step to build STATIC cache
-  # (this step is a NOP if cache already exists and network_los.rebuild_tvpb_cache setting is False)
-  - initialize_tvpb
-  # ---
   - external_student_identification
   - external_worker_identification
   - external_school_location

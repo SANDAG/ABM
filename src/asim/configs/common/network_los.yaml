@@ -1,6 +1,6 @@
 inherit_settings: True
 
-zone_system: 3
+zone_system: 2
 
 skim_dict_factory: NumpyArraySkimFactory
 #skim_dict_factory: MemMapSkimFactory
@@ -10,33 +10,16 @@ read_skim_cache: True
 # write memmapped cached skims to output directory after reading from omx, for use in subsequent runs
 write_skim_cache: True
 
-# rebuild and overwrite existing tap_tap_utilities cache
-rebuild_tvpb_cache: True
-
-# when checkpointing cache. also write a csv version of tvpb cache for tracing
-# (writes csv file when writing/checkpointing cache (i.e. when cached changed) even if rebuild_tvpb_cache is False)
-# (n.b. csv file could be quite large if cache is STATIC!)
-trace_tvpb_cache_as_csv: False
-
 taz_skims:
   - traffic_skims_processed_EA.omx
   - traffic_skims_processed_AM.omx
   - traffic_skims_processed_MD.omx
   - traffic_skims_processed_PM.omx
   - traffic_skims_processed_EV.omx
-
-tap_skims:
-    # we require that skims for all tap_tap sets have unique names
-    # and can therefor share a single skim_dict without name collision
-    # e.g. TRN_XWAIT_FAST__AM, TRN_XWAIT_SHORT__AM, TRN_XWAIT_CHEAP__AM
-    - transit_skims_processed.omx
+  - transit_skims.omx
 
 # maz: mazs_xborder.csv   # mgra.csv
 maz: land_use.csv   # mgra.csv
-
-tap: taps.csv   # this is just tap ids
-
-tap_lines: tap_lines.csv
 
 maz_to_maz:
   tables:
@@ -45,20 +28,6 @@ maz_to_maz:
   # maz_to_maz blending distance (missing or 0 means no blending)
   max_blend_distance: 0
 
-maz_to_tap:
-  walk:
-    table: maz_tap_walk.csv  # microMgraTapEquivMinutes.csv
-    # if provided, this column will be used (together with tap_lines table) to trim the near tap set
-    # to only include the nearest tap to origin when more than one tap serves the same line
-    tap_line_distance_col: dist
-    max_dist: 1.2
-  drive:
-    table: maz_tap_drive.csv
-    # if provided, this column will be used (together with tap_lines table) to trim the near tap set
-    # to only include the nearest tap to origin when more than one tap serves the same line
-    tap_line_distance_col: DDIST
-    tap_line_time_col: DTIME
-    max_dist: 5.0
 
 skim_time_periods:
     time_window: 1440
@@ -72,208 +41,26 @@ demographic_segments: &demographic_segments
   - &low_income_segment_id 0
   - &high_income_segment_id 1
 
-# transit virtual path builder settings
-TVPB_SETTINGS:    # find this in sandag bestPathTAP UEC
-
-  tour_mode_choice:
-    units: utility
-    # path types are split by access, egress, and local, premium, mix transit sets
-    path_types:
-      # walk transit
-      WTW:
-        access: walk
-        egress: walk
-        max_paths_across_tap_sets: 4
-        max_paths_per_tap_set: 1
-      # pnr transit
-      PTW:
-        access: drive
-        egress: walk
-        max_paths_across_tap_sets: 3
-        max_paths_per_tap_set: 1
-      WTP:
-        access: walk
-        egress: drive
-        max_paths_across_tap_sets: 3
-        max_paths_per_tap_set: 1
-      # knr transit
-      KTW:
-        access: drive
-        egress: walk
-        max_paths_across_tap_sets: 3
-        max_paths_per_tap_set: 1
-      WTK:
-        access: walk
-        egress: drive
-        max_paths_across_tap_sets: 3
-        max_paths_per_tap_set: 1
-      # TNC transit
-      NTW:
-        access: drive
-        egress: walk
-        max_paths_across_tap_sets: 3
-        max_paths_per_tap_set: 1
-      WTN:
-        access: walk
-        egress: drive
-        max_paths_across_tap_sets: 3
-        max_paths_per_tap_set: 1
-
-    tap_tap_settings:
-      SPEC: tvpb_utility_tap_tap.csv
-      PREPROCESSOR:
-        SPEC: tvpb_utility_tap_tap_annotate_choosers_preprocessor.csv
-        DF: df
-      # FIXME this has to be explicitly specified, since e.g. attribute columns are assigned in expression files
-      attribute_segments:
-        tod: *skim_time_period_labels
-      attributes_as_columns:
-        - tod
-    maz_tap_settings:
-      walk:
-        SPEC: tvpb_utility_walk_maz_tap.csv
-        CHOOSER_COLUMNS:
-          - walkTime
-          - dist
-      drive:
-        SPEC: tvpb_utility_drive_maz_tap.csv
-        CHOOSER_COLUMNS:
-          #- demographic_segment
-          - DDIST
-          - DTIME
-          - WDIST
-
-    CONSTANTS:
-      c_ivt: -0.028
-      c_cost: -0.0011
-      # transit "factors" from SANDAG
-      eb_fac: 1.0
-      brt_fac: 0.9000
-      lrt_fac: 0.6500
-      cr_fac: 0.6500
-      hyp_fac: 0.6500
-      # coeffs used in maz_tap and tap_tap utility expressions
-      c_walk: 1.7
-      c_fwt: 1.5
-      c_waux: 2.5
-      c_xwt: 2
-      C_UNAVAILABLE: -9999
-      # alternative-specific constants
-      exp_asc: 10  # express bus asc
-      brt_asc: -10  # BRT asc
-      lrt_asc: -20  # LRT alternative-specific constant
-      cr_asc: 0.00  # Commuter Rail alternative-specific constant
-
-      # demographic segmentation stuff
-      c_ivt_high_income: -0.028
-      c_ivt_low_income: -0.0175
-      c_cost_high_income: -0.00112
-      c_cost_low_income: -0.00112
-      C_LOW_INCOME_SEGMENT_ID: *low_income_segment_id
-      C_HIGH_INCOME_SEGMENT_ID: *high_income_segment_id
-      TVPB_demographic_segments_by_income_segment:
-       1: *low_income_segment_id
-       2: *low_income_segment_id
-       3: *high_income_segment_id
-       4: *high_income_segment_id
-
-  trip_mode_choice:
-    units: utility
-    path_types:
-      # walk transit
-      WTW:
-        access: walk
-        egress: walk
-        max_paths_across_tap_sets: 4
-        max_paths_per_tap_set: 1
-      # pnr transit
-      PTW:
-        access: drive
-        egress: walk
-        max_paths_across_tap_sets: 3
-        max_paths_per_tap_set: 1
-      WTP:
-        access: walk
-        egress: drive
-        max_paths_across_tap_sets: 3
-        max_paths_per_tap_set: 1
-      # knr transit
-      KTW:
-        access: drive
-        egress: walk
-        max_paths_across_tap_sets: 3
-        max_paths_per_tap_set: 1
-      WTK:
-        access: walk
-        egress: drive
-        max_paths_across_tap_sets: 3
-        max_paths_per_tap_set: 1
-      # TNC transit
-      NTW:
-        access: drive
-        egress: walk
-        max_paths_across_tap_sets: 3
-        max_paths_per_tap_set: 1
-      WTN:
-        access: walk
-        egress: drive
-        max_paths_across_tap_sets: 3
-        max_paths_per_tap_set: 1
-
-    tap_tap_settings:
-      SPEC: tvpb_utility_tap_tap.csv
-      PREPROCESSOR:
-        SPEC: tvpb_utility_tap_tap_annotate_choosers_preprocessor.csv
-        DF: df
-      # FIXME this has to be explicitly specified, since e.g. attribute columns are assigned in expression files
-      attribute_segments:
-        tod: *skim_time_period_labels
-      attributes_as_columns:
-        - tod
-    maz_tap_settings:
-      walk:
-        SPEC: tvpb_utility_walk_maz_tap.csv
-        CHOOSER_COLUMNS:
-          - walkTime
-          - dist
-
-    CONSTANTS:
-      c_ivt: -0.03
-      c_cost: -0.0003
-      # transit "factors" from SANDAG
-      eb_fac: 1.0
-      brt_fac: 0.9000
-      lrt_fac: 0.6500
-      cr_fac: 0.6500
-      # coeffs used in maz_tap and tap_tap utility expressions
-      c_walk: 1.7
-      c_fwt: 1.5
-      c_waux: 2.5
-      c_xwt: 2
-      C_UNAVAILABLE: -9999
-      # alternative-specific constants
-      exp_asc: 10  # express bus asc
-      brt_asc: -10  # BRT asc
-      lrt_asc: -20  # LRT alternative-specific constant
-      cr_asc: 0.00  # Commuter Rail alternative-specific constant
 
 
-  accessibility:
-    units: time
-    path_types:
-      WTW:
-        access: walk
-        egress: walk
-        max_paths_across_tap_sets: 1
-        max_paths_per_tap_set: 1
-    tap_tap_settings:
-      SPEC: tvpb_accessibility_tap_tap_.csv
-    maz_tap_settings:
-        walk:
-          SPEC: tvpb_accessibility_walk_maz_tap.csv
-          CHOOSER_COLUMNS:
-            - walkTime
-            - dist
-    CONSTANTS:
-        out_of_vehicle_walk_time_weight: 1.5
-        out_of_vehicle_wait_time_weight: 2.0
+# CONSTANTS:
+#   c_ivt: -0.028
+#   c_cost: -0.0011
+#   # transit "factors" from SANDAG
+#   eb_fac: 1.0
+#   brt_fac: 0.9000
+#   lrt_fac: 0.6500
+#   cr_fac: 0.6500
+#   hyp_fac: 0.6500
+#   # coeffs used in maz_tap and tap_tap utility expressions
+#   c_walk: 1.7
+#   c_fwt: 1.5
+#   c_waux: 2.5
+#   c_xwt: 2
+#   C_UNAVAILABLE: -9999
+#   # alternative-specific constants
+#   exp_asc: 10  # express bus asc
+#   brt_asc: -10  # BRT asc
+#   lrt_asc: -20  # LRT alternative-specific constant
+#   cr_asc: 0.00  # Commuter Rail alternative-specific constant
+

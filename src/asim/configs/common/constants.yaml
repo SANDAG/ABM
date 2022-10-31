@@ -1,7 +1,15 @@
 ## ActivitySim
 ## See full license in LICENSE.txt.
 
-walk_speed: 3.00
+max_local_walk_dist: 0.85
+max_prm_walk_dist: 1.2
+max_mix_walk_dist: 1.2
+walk_speed: 3 #mph
+
+max_local_walk_time: 17
+max_prm_walk_time: 24
+max_mix_walk_time: 24
+
 
 #HHT_NONE: 0
 #HHT_FAMILY_MARRIED: 1
@@ -159,12 +167,12 @@ TNC_shared_waitTime_sd:
 min_waitTime: 0
 max_waitTime: 50
 
+ivt_lrt_multiplier: 0.65
+ivt_brt_multiplier: 0.90
+ivt_cmr_multiplier: 0.65
+ivt_ltd_multiplier: 1.0
 ivt_cost_multiplier: 0.6
-ivt_lrt_multiplier: 0.9
-ivt_ferry_multiplier: 0.8
-ivt_exp_multiplier: 1
-ivt_hvy_multiplier: 0.8
-ivt_com_multiplier: 0.7
+#
 walktimeshort_multiplier: 2
 walktimelong_multiplier: 10
 biketimeshort_multiplier: 4

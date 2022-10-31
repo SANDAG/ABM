@@ -1,20 +1,6 @@
 LOGIT_TYPE: NL
 #LOGIT_TYPE: MNL
 
-tvpb_mode_path_types:
-  WALK_TRANSIT:
-    od: WTW
-    do: WTW
-  PNR_TRANSIT:
-    od: PTW
-    do: WTP
-  KNR_TRANSIT:
-    od: KTW
-    do: WTK
-  TNC_TRANSIT:
-    od: NTW
-    do: WTN
-
 NESTS:
   name: root
   coefficient: coef_nest_root
@@ -31,12 +17,32 @@ NESTS:
           - WALK
           - BIKE
       - name: TRANSIT
-        coefficient: coef_nest_TRANSIT
+        coefficient:  coef_nest_TRANSIT
         alternatives:
-          - WALK_TRANSIT
-          - PNR_TRANSIT
-          - KNR_TRANSIT
-          - TNC_TRANSIT
+            - name: WALKACCESS
+              coefficient: coef_nest_TRANSIT_WALKACCESS
+              alternatives:
+              - WALK_LOC
+              - WALK_PRM
+              - WALK_MIX
+            - name: PNRACCESS
+              coefficient: coef_nest_TRANSIT_PNRACCESS
+              alternatives:
+              - PNR_LOC
+              - PNR_PRM
+              - PNR_MIX
+            - name: KNRACCESS
+              coefficient: coef_nest_TRANSIT_KNRACCESS
+              alternatives:
+              - KNR_LOC
+              - KNR_PRM
+              - KNR_MIX
+            - name: TNCACCESS
+              coefficient: coef_nest_TRANSIT_TNCACCESS
+              alternatives:
+              - TNC_LOC
+              - TNC_PRM
+              - TNC_MIX
       - name: RIDEHAIL
         coefficient: coef_nest_RIDEHAIL
         alternatives:
