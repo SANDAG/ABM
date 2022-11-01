@@ -2,6 +2,10 @@
 
 # - tracing
 
+# turn shadow_pricing on and off for all models (e.g. school and work)
+# see shadow_pricing.yaml for additional settings
+use_shadow_pricing: False
+
 # trace household id; comment out or leave empty for no trace
 # households with all tour types
 trace_hh_id:
@@ -111,9 +115,6 @@ models:
   - initialize_landuse
   - initialize_households
   - compute_accessibility
-  # --- STATIC cache prebuild steps
-  # single-process step to create attribute_combination list
-  - initialize_los
   # multi-processable step to build STATIC cache
   - external_student_identification
   - external_worker_identification
