@@ -1,3 +1,0 @@
-Label,Description,Expression,utility
-util_drive_time,drive time,"@c_ivt * c_drive * (df.DTIME + (df.WDIST / 5280 / walk_speed * 60))",1
-util_drive_cost,drive cost,"@(df.DDIST * c_auto_operating_cost_per_mile * c_cost)",1
