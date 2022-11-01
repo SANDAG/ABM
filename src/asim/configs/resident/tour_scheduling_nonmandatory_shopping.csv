@@ -53,3 +53,7 @@ util_shopping_duration_constant_duration_greater_than_2_hr_30_minutes_square_roo
 util_shopping_calibration_constant_duration_1,SHOPPING - Calibration Constant - Duration = 1,@((df.duration==0)),coef_shopping_calibration_constant_duration_1
 util_shopping_calibration_constant_duration_2,SHOPPING - Calibration Constant - Duration = 2,@((df.duration==1)),coef_shopping_calibration_constant_duration_2
 util_shopping_calibration_constant_duration_3,SHOPPING - Calibration Constant - Duration = 3,@((df.duration==2)),coef_shopping_calibration_constant_duration_3
+# Including terms for school escorting,,,
+util_outbound_school_escort_tour_start,Outbound school escort tours must match the start time of the escort tour,is_outbound_school_escort_tour & (start != school_escort_tour_start),coef_unavailable
+util_outbound_school_escort_tour_next_start,Outbound school escort tours must end before next escort tour start,is_outbound_school_escort_tour & (end > school_escort_tour_next_start) & (school_escort_tour_next_start > 0),coef_unavailable
+util_inbound_school_escort_tour_end,Inbound school escort tours must match the end time of the escort tour,is_inbound_school_escort_tour & (end != school_escort_tour_end),coef_unavailable

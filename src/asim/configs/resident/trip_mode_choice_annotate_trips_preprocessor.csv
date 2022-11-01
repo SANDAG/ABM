@@ -284,3 +284,5 @@ atwork walktime coef,c_walkTime_cte,"np.where(df.tour_category=='atwork', -0.159
 ,dest_local_time,odt_skims['WALK_LOC_EGR'],
 ,dest_prm_time,odt_skims['WALK_PRM_EGR'],
 ,dest_mix_time,odt_skims['WALK_MIX_EGR'],
+# added for school escorting model,,
+Number of school children in vehicle on trip,num_escortees,df.escort_participants.fillna('').apply(lambda x: len(x.split('_')))

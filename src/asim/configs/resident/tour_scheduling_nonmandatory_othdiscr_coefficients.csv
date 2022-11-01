@@ -52,3 +52,4 @@ coef_discretionary_calibration_constant_departure_30,0.0,F
 coef_discretionary_calibration_constant_departure_31,0.0,F
 coef_discretionary_calibration_constant_departure_32,0.0,F
 coef_mode_choice_logsum,0.06338187336512106,F
+coef_unavailable,-999.0,F

@@ -4,7 +4,7 @@
 
 # trace household id; comment out or leave empty for no trace
 # households with all tour types
-trace_hh_id: 905536
+trace_hh_id:
 
 # trace origin, destination in accessibility calculation; comment out or leave empty for no trace
 #trace_od:
@@ -105,7 +105,7 @@ distributed_time_factor_nonwork_stddev: 0.6
 distributed_time_factor_min: 0.1
 distributed_time_factor_max: 10
 
-resume_after: 
+resume_after: mandatory_tour_frequency
 
 models:
   - initialize_landuse
@@ -130,6 +130,7 @@ models:
   - cdap_simulate
   - mandatory_tour_frequency
   - mandatory_tour_scheduling
+  - school_escorting
   - joint_tour_frequency
   - external_joint_tour_identification
   - joint_tour_composition

@@ -59,3 +59,7 @@ util_eatout_calibration_constant_departure_18,EAT-OUT - Calibration Constant - D
 util_eatout_calibration_constant_departure_19,EAT-OUT - Calibration Constant - Departure  = 19,@((df.start ==19)),coef_eatout_calibration_constant_departure_19
 util_eatout_calibration_constant_departure_20,EAT-OUT - Calibration Constant - Departure  = 20,@((df.start ==20)),coef_eatout_calibration_constant_departure_20
 util_eatout_calibration_constant_departure_21,EAT-OUT - Calibration Constant - Departure  = 21,@((df.start ==21)),coef_eatout_calibration_constant_departure_21
+# Including terms for school escorting,,,
+util_outbound_school_escort_tour_start,Outbound school escort tours must match the start time of the escort tour,is_outbound_school_escort_tour & (start != school_escort_tour_start),coef_unavailable
+util_outbound_school_escort_tour_next_start,Outbound school escort tours must end before next escort tour start,is_outbound_school_escort_tour & (end > school_escort_tour_next_start) & (school_escort_tour_next_start > 0),coef_unavailable
+util_inbound_school_escort_tour_end,Inbound school escort tours must match the end time of the escort tour,is_inbound_school_escort_tour & (end != school_escort_tour_end),coef_unavailable

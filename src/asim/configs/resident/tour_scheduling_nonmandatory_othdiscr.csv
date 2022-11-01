@@ -53,3 +53,7 @@ util_discretionary_calibration_constant_departure_29,DISCRETIONARY -Calibration 
 util_discretionary_calibration_constant_departure_30,DISCRETIONARY -Calibration Constant - Departure = 30,@((df.start==30)),coef_discretionary_calibration_constant_departure_30
 util_discretionary_calibration_constant_departure_31,DISCRETIONARY -Calibration Constant - Departure = 31,@((df.start==31)),coef_discretionary_calibration_constant_departure_31
 util_discretionary_calibration_constant_departure_32,DISCRETIONARY -Calibration Constant - Departure = 32,@((df.start==32)),coef_discretionary_calibration_constant_departure_32
+# Including terms for school escorting,,,
+util_outbound_school_escort_tour_start,Outbound school escort tours must match the start time of the escort tour,is_outbound_school_escort_tour & (start != school_escort_tour_start),coef_unavailable
+util_outbound_school_escort_tour_next_start,Outbound school escort tours must end before next escort tour start,is_outbound_school_escort_tour & (end > school_escort_tour_next_start) & (school_escort_tour_next_start > 0),coef_unavailable
+util_inbound_school_escort_tour_end,Inbound school escort tours must match the end time of the escort tour,is_inbound_school_escort_tour & (end != school_escort_tour_end),coef_unavailable

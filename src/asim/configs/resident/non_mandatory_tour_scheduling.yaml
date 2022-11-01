@@ -1,5 +1,5 @@
-SPEC: tour_scheduling_nonmandatory.csv
-COEFFICIENTS: tour_scheduling_nonmandatory_coeffs.csv
+# SPEC: tour_scheduling_nonmandatory.csv
+# COEFFICIENTS: tour_scheduling_nonmandatory_coeffs.csv
 
 LOGIT_TYPE: MNL
 
@@ -9,6 +9,7 @@ preprocessor:
   TABLES:
     - land_use
     - joint_tour_participants
+    - school_escort_tours
 
 SIMULATE_CHOOSER_COLUMNS:
   - home_zone_id
