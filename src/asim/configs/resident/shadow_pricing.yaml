@@ -37,6 +37,7 @@ school_segmentation_targets:
   university: tot_collegeenroll
   highschool: enrollgrade9to12
   gradeschool: enrollgradekto8
+  preschool: pop
 
 # if target names are the same, they will be combined together
 workplace_segmentation_targets:
