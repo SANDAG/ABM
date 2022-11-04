@@ -6,6 +6,13 @@
 # see shadow_pricing.yaml for additional settings
 use_shadow_pricing: False
 
+# Sample TAZ before MAZ in destination choice
+want_dest_choice_presampling: True
+
+# turn writing of sample_tables on and off for all models
+# (if True, tables will be written if DEST_CHOICE_SAMPLE_TABLE_NAME is specified in individual model settings)
+want_dest_choice_sample_tables: False
+
 # trace household id; comment out or leave empty for no trace
 # households with all tour types
 trace_hh_id:

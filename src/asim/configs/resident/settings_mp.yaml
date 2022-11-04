@@ -1,12 +1,12 @@
 inherit_settings: settings.yaml
 
 multiprocess: True
-households_sample_size: 0
-num_processes: 20
+households_sample_size: 100
+num_processes: 2
 trace_hh_id:
 chunk_training_mode: disabled
 
-use_shadow_pricing: False
+use_shadow_pricing: True
 
 # raise error if any sub-process fails without waiting for others to complete
 # (Shadow pricing requires fail_fast setting in multiprocessing mode)
@@ -86,7 +86,7 @@ multiprocess_steps:
     begin: initialize_landuse
   - name: mp_accessibility
     begin: compute_accessibility
-    num_processes: 16
+    num_processes: 2
     slice:
       tables:
         - accessibility
