@@ -1,10 +1,12 @@
 inherit_settings: settings.yaml
 
 multiprocess: True
-households_sample_size: 10000
+households_sample_size: 0
 num_processes: 20
 trace_hh_id:
 chunk_training_mode: disabled
+
+use_shadow_pricing: False
 
 # raise error if any sub-process fails without waiting for others to complete
 # (Shadow pricing requires fail_fast setting in multiprocessing mode)
@@ -13,16 +15,16 @@ fail_fast: True
 resume_after:
 
 models:
+  ### mp_init_proto_pop (single process)
+  - initialize_proto_population # Separate step so proto tables can be split for multiprocess.
+  ### mp_disaggregate_accessibility
+  - compute_disaggregate_accessibility
+  ### mp_initialize_hhs (single process)
   - initialize_landuse
   - initialize_households
+  ### mp_accessibility
   - compute_accessibility
-  # --- STATIC cache prebuild steps
-  # single-process step to create attribute_combination list
-  - initialize_los
-  # multi-processable step to build STATIC cache
-  # (this step is a NOP if cache already exists and network_los.rebuild_tvpb_cache setting is False)
-  - initialize_tvpb
-  # ---
+  ### mp_households
   - external_student_identification
   - external_worker_identification
   - external_school_location
@@ -38,6 +40,7 @@ models:
   - cdap_simulate
   - mandatory_tour_frequency
   - mandatory_tour_scheduling
+  - school_escorting
   - joint_tour_frequency
   - external_joint_tour_identification
   - joint_tour_composition
@@ -62,13 +65,24 @@ models:
   - trip_purpose_and_destination
   - trip_scheduling
   - trip_mode_choice
+  ### mp_summarize (single process)
   - write_data_dictionary
   - track_skim_usage
   - write_trip_matrices
   - write_tables
 
+
 multiprocess_steps:
-  - name: mp_initialize
+  - name: mp_init_proto_pop
+    begin: initialize_proto_population
+  - name: mp_disaggregate_accessibility
+    begin: compute_disaggregate_accessibility
+    slice:
+      tables:
+        - proto_households
+        - proto_persons
+        - proto_tours
+  - name: mp_initialize_hhs
     begin: initialize_landuse
   - name: mp_accessibility
     begin: compute_accessibility
@@ -76,15 +90,8 @@ multiprocess_steps:
     slice:
       tables:
         - accessibility
-  - name: mp_los
-    begin: initialize_los
-  - name: mp_tvpb
-    begin: initialize_tvpb
-    num_processes: 5
-    slice:
-      tables:
-        - attribute_combinations
-  - name: mp_models
+      except: True  # this is needed so landuse (i.e. destinations) doesn't get split
+  - name: mp_households
     begin: external_student_identification
     slice:
       tables:

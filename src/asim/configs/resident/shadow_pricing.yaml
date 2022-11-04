@@ -47,10 +47,3 @@ workplace_segmentation_targets:
   work_high: emp_total
   work_veryhigh: emp_total
 
-# --- ctramp method settings
-DAMPING_FACTOR: 1
-
-# --- daysim method settings
-# FIXME should these be the same as PERCENT_TOLERANCE and FAIL_THRESHOLD above?
-DAYSIM_ABSOLUTE_TOLERANCE: 50
-DAYSIM_PERCENT_TOLERANCE: 10
