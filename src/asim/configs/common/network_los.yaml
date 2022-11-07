@@ -16,7 +16,7 @@ taz_skims:
   - traffic_skims_processed_MD.omx
   - traffic_skims_processed_PM.omx
   - traffic_skims_processed_EV.omx
-  - transit_skims.omx
+  - transit_skims_processed.omx
 
 # maz: mazs_xborder.csv   # mgra.csv
 maz: land_use.csv   # mgra.csv

@@ -1,7 +1,5 @@
 LOGIT_TYPE: NL
 
-tvpb_mode_path_types:
-
 NESTS:
   name: root
   coefficient: coef_nest_root
@@ -25,8 +23,6 @@ CONSTANTS:
     orig_col_name: origin
     dest_col_name: destination
     wait_time_col_regex: '_wait_[0-9]+$'
-
-use_TVPB_constants: False
 
 # so far, we can use the same spec as for non-joint tours
 preprocessor:

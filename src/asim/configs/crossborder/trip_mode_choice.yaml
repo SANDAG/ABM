@@ -2,9 +2,6 @@ SPEC: trip_mode_choice.csv
 COEFFICIENTS: trip_mode_choice_coefficients.csv
 COEFFICIENT_TEMPLATE: trip_mode_choice_coefficients_template.csv
 
-tvpb_mode_path_types:
-  WALK_TRANSIT: WTW
-
 LOGIT_TYPE: NL
 
 NESTS:
@@ -33,6 +30,24 @@ NESTS:
           - TNC_SHARED
 
 CONSTANTS:
+  c_ivt: -0.03
+  c_cost: -0.0003
+  # transit "factors" from SANDAG
+  eb_fac: 1.0
+  brt_fac: 0.9000
+  lrt_fac: 0.6500
+  cr_fac: 0.6500
+  # coeffs used in maz_tap and tap_tap utility expressions
+  c_walk: 1.7
+  c_fwt: 1.5
+  c_waux: 2.5
+  c_xwt: 2
+  C_UNAVAILABLE: -9999
+  # alternative-specific constants
+  exp_asc: 10  # express bus asc
+  brt_asc: -10  # BRT asc
+  lrt_asc: -20  # LRT alternative-specific constant
+  cr_asc: 0.00  # Commuter Rail alternative-specific constant
   orig_col_name: origin
   dest_col_name: destination
   PERIODS_PER_HOUR: 2
@@ -106,9 +121,6 @@ CONSTANTS:
     - 2000
     - 5000
     - 15000
-
-TVPB_recipe: trip_mode_choice
-use_TVPB_constants: False
 
 # so far, we can use the same spec as for non-joint tours
 preprocessor:

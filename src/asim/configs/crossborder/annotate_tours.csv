@@ -2,3 +2,5 @@ Description,Target,Expression
 ,tour_category,tours.tour_category.str.lower()
 ,tour_type,tours.tour_type.str.lower()
 ,parent_tour_id,None
+,pass_type,"'no pass'"
+,pass_type,"np.where(tours.lane_type.isin(['sentri', 'ready']),tours.lane_type, 'no_pass')"
