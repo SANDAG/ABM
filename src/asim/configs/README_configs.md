@@ -111,6 +111,12 @@ Telecommute frequency
 * commented out occupancy related varibales (df.occup), since I am not sure about the field in the person file. It is likely "occsoc5" that needs to be parsed for the first two digits?
 * currently, only the 2016 calibration constant included, while the ct-ramp UEC has the constants based on scenario year. To be fixed later with EMME integration.
 ---
+CDAP
+* Took configs from WSP's MTC work
+* MTC spec had retail accessibilities by auto occupancy and crossed it with person type.  Replaced this with disaggregate shopping accessibility and collapsed since coefficients accross occupancies were the same. (This appears in _cdap_indiv_and_hhsize1.csv_ and in _cdap_joint_tour_coefficients.csv_)
+* Commented out expressions using `building_size`.  This is a variable included in MTC's synthetic population.
+* Had to add term to turn off M pattern for workers working from home (otherwise you get a zero probability error in MTF).
+---
 Mandatory tour frequency
 * `schoolathome` row commented out for now
 * escort related variables commented out for now (waiting for school dropoff/pickup model)   
