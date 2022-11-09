@@ -4,7 +4,7 @@
 
 # turn shadow_pricing on and off for all models (e.g. school and work)
 # see shadow_pricing.yaml for additional settings
-use_shadow_pricing: False
+use_shadow_pricing: True
 
 # Sample TAZ before MAZ in destination choice
 want_dest_choice_presampling: True
@@ -15,7 +15,7 @@ want_dest_choice_sample_tables: False
 
 # trace household id; comment out or leave empty for no trace
 # households with all tour types
-trace_hh_id:
+trace_hh_id: 11450
 
 chunk_training_mode: disabled
 
@@ -119,7 +119,7 @@ distributed_time_factor_nonwork_stddev: 0.6
 distributed_time_factor_min: 0.1
 distributed_time_factor_max: 10
 
-resume_after:
+resume_after: school_escorting
 
 models:
   ### mp_init_proto_pop (single process)
@@ -148,9 +148,8 @@ models:
   - mandatory_tour_frequency
   - mandatory_tour_scheduling
   - school_escorting
-  - joint_tour_frequency
+  - joint_tour_frequency_composition
   - external_joint_tour_identification
-  - joint_tour_composition
   - joint_tour_participation
   - joint_tour_destination
   - external_joint_tour_destination

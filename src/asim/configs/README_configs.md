@@ -114,8 +114,12 @@ Telecommute frequency
 CDAP
 * Took configs from WSP's MTC work
 * MTC spec had retail accessibilities by auto occupancy and crossed it with person type.  Replaced this with disaggregate shopping accessibility and collapsed since coefficients accross occupancies were the same. (This appears in _cdap_indiv_and_hhsize1.csv_ and in _cdap_joint_tour_coefficients.csv_)
-* Commented out expressions using `building_size`.  This is a variable included in MTC's synthetic population.
+* Commented out expressions using `building_size`.  This is a variable included in MTC's input data.
 * Had to add term to turn off M pattern for workers working from home (otherwise you get a zero probability error in MTF).
+---
+Joint Tour Frequency Composition
+* Took configs from WSP's MTC work
+* accessibilities were segemented by auto occupancy.  Removed the segmentation and swapped the disaggregate shopping_accessibility for shopping and maintenance, and the othdisc_accessibility for other discretionary.
 ---
 Mandatory tour frequency
 * `schoolathome` row commented out for now
