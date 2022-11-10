@@ -1,0 +1,21 @@
+Description,Target,Expression
+,_HH_OVERLAPS,"hh_time_window_overlap(households, persons_merged)"
+,time_window_overlap_adult,_HH_OVERLAPS['aa']
+,time_window_overlap_child,_HH_OVERLAPS['cc']
+,time_window_overlap_adult_child,_HH_OVERLAPS['ac']
+logTimeWindowOverlapAdult,log_time_window_overlap_adult,np.log1p(time_window_overlap_adult)
+logTimeWindowOverlapChild,log_time_window_overlap_child,np.log1p(time_window_overlap_child)
+logTimeWindowOverlapAdultChild,log_time_window_overlap_adult_child,np.log1p(time_window_overlap_adult_child)
+,_PERSON_COUNT,"lambda query, persons_merged, households: persons_merged.query(query).groupby('household_id').size().reindex(households.index).fillna(0).astype(np.int8)"
+number of travel active fulltime workers,num_travel_active_full_time_workers,"_PERSON_COUNT('(ptype == 1) & (cdap_activity != \'H\')', persons_merged, households)"
+number of travel active parttime workers,num_travel_active_part_time_workers,"_PERSON_COUNT('(ptype == 2) & (cdap_activity != \'H\')', persons_merged, households)"
+number of travel active university student,num_travel_active_university_students,"_PERSON_COUNT('(ptype == 3) & (cdap_activity != \'H\')', persons_merged, households)"
+number of travel active non-workers,num_travel_active_non_workers,"_PERSON_COUNT('(ptype == 4) & (cdap_activity != \'H\')', persons_merged, households)"
+number of travel active retirees,num_travel_active_retirees,"_PERSON_COUNT('(ptype == 5) & (cdap_activity != \'H\')', persons_merged, households)"
+number of travel active driving age students,num_travel_active_driving_age_students,"_PERSON_COUNT('(ptype == 6) & (cdap_activity != \'H\')', persons_merged, households)"
+number of travel active pre-driving age school kids,num_travel_active_pre_driving_age_school_kids,"_PERSON_COUNT('(ptype == 7) & (cdap_activity != \'H\')', persons_merged, households)"
+number of travel active pre-school kids,num_travel_active_pre_school_kids,"_PERSON_COUNT('(ptype == 8) & (cdap_activity != \'H\')', persons_merged, households)"
+number of travel active adults,num_travel_active_adults,"_PERSON_COUNT('adult & (cdap_activity != \'H\')', persons_merged, households)"
+number of travel active chilren,num_travel_active_children,"_PERSON_COUNT('~adult & (cdap_activity != \'H\')', persons_merged, households)"
+shopping_accessibility,shopping_accessibility,"persons_merged.groupby('household_id')['shopping_accessibility'].mean().reindex(households.index)"
+othdiscr_accessibility,othdiscr_accessibility,"persons_merged.groupby('household_id')['othdiscr_accessibility'].mean().reindex(households.index)"

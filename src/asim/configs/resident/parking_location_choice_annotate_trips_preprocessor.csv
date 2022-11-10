@@ -1,0 +1,7 @@
+Description,Target,Expression
+Person Type,ptype,"reindex(persons.ptype, df.person_id)"
+Trip mode is drive,drive_trip,"df.trip_mode.isin(['DRIVEALONE', 'SHARED2', 'SHARED3'])"
+Parking segment,parking_segment,setting('segment')
+Parking eligible trip,is_park_eligible,(drive_trip & (df.purpose != "home"))
+Next Trip Departure,_next_trip_depart,df.groupby('tour_id')['depart'].shift()
+Activity duration,activity_duration,"np.where(_next_trip_depart.isna(), 0, _next_trip_depart - df.depart)"

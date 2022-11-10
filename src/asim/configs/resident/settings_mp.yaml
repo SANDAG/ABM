@@ -41,9 +41,8 @@ models:
   - mandatory_tour_frequency
   - mandatory_tour_scheduling
   - school_escorting
-  - joint_tour_frequency
+  - joint_tour_frequency_composition
   - external_joint_tour_identification
-  - joint_tour_composition
   - joint_tour_participation
   - joint_tour_destination
   - external_joint_tour_destination
@@ -65,6 +64,7 @@ models:
   - trip_purpose_and_destination
   - trip_scheduling
   - trip_mode_choice
+  - parking_location
   ### mp_summarize (single process)
   - write_data_dictionary
   - track_skim_usage

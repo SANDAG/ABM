@@ -111,9 +111,26 @@ Telecommute frequency
 * commented out occupancy related varibales (df.occup), since I am not sure about the field in the person file. It is likely "occsoc5" that needs to be parsed for the first two digits?
 * currently, only the 2016 calibration constant included, while the ct-ramp UEC has the constants based on scenario year. To be fixed later with EMME integration.
 ---
+CDAP
+* Took configs from WSP's MTC work
+* MTC spec had retail accessibilities by auto occupancy and crossed it with person type.  Replaced this with disaggregate shopping accessibility and collapsed since coefficients accross occupancies were the same. (This appears in _cdap_indiv_and_hhsize1.csv_ and in _cdap_joint_tour_coefficients.csv_)
+* Commented out expressions using `building_size`.  This is a variable included in MTC's input data.
+* Had to add term to turn off M pattern for workers working from home (otherwise you get a zero probability error in MTF).
+---
+Joint Tour Frequency Composition
+* Took configs from WSP's MTC work
+* accessibilities were segemented by auto occupancy.  Removed the segmentation and swapped the disaggregate shopping_accessibility for shopping and maintenance, and the othdisc_accessibility for other discretionary.
+---
 Mandatory tour frequency
 * `schoolathome` row commented out for now
 * escort related variables commented out for now (waiting for school dropoff/pickup model)   
+---
+Non-Mandatory tour frequency
+* Took configs from WSP's MTC work
+* Commented out lines referring to `educational_attainment`
+* Commented out lines referring to `building_size`
+* Removed acessibilities by auto occupancy and added disaggregate accessibilities in where appropriate.  Should be reviewed.
+* Used `popden` in landuse file for population density. Does this match MTC's units?
 ---
 Tour and Trip Scheduling
 * Replaced all tour and trip scheduling files with SEMCOG versions
@@ -210,6 +227,9 @@ Trip Mode Choice
 * Utility calculations with `parkingArea` commented out -- no `parkingArea` variable and didn't see corresponding expression in trip mode choice uec.
 * `coef_bikeTime` in the coefficients temlate is not being used. Is there an expression missing? Commented it out for now.
 * check expression for `dest_zone_sharedTNC_wait_time_mean`, I made a change to match the other similar variables and left the old one there for review.
+---
+Parking location Choice
+* Only allows people to park in zone with `is_parking_zone`.  This was set to true in annotate_landuse.csv when `parkarea` > 0.  Is this the correct filter?
 ---
 Write Trip Matrices
 * Modified to be consistent with new tour and trip modes and time period definitions

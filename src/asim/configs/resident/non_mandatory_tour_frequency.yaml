@@ -39,4 +39,15 @@ preprocessor:
   DF: persons
   TABLES:
     - tours
+    - households
 #    - accessibility
+
+CONSTANTS:
+  PTYPE_FULL: 1
+  PTYPE_PART: 2
+  PTYPE_UNIVERSITY: 3
+  PTYPE_NONWORK: 4
+  PTYPE_RETIRED: 5
+  PTYPE_DRIVING: 6
+  PTYPE_SCHOOL: 7
+  PTYPE_PRESCHOOL: 8

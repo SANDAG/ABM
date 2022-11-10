@@ -5,6 +5,17 @@ INTERACTION_COEFFICIENTS: cdap_interaction_coefficients.csv
 
 FIXED_RELATIVE_PROPORTIONS_SPEC: cdap_fixed_relative_proportions.csv
 
+# set to True if want to introduce joint tour utility in cdap
+# otherwise set to False or comment out, defaulted to False
+ADD_JOINT_TOUR_UTILITY: True
+JOINT_TOUR_COEFFICIENTS: cdap_joint_tour_coefficients.csv
+JOINT_TOUR_USEFUL_COLUMNS:
+  - auto_ownership
+  - income
+  - num_workers
+  - shopping_accessibility
+  - workplace_location_logsum
+
 CONSTANTS:
   FULL: 1
   PART: 2
