@@ -125,6 +125,13 @@ Mandatory tour frequency
 * `schoolathome` row commented out for now
 * escort related variables commented out for now (waiting for school dropoff/pickup model)   
 ---
+Non-Mandatory tour frequency
+* Took configs from WSP's MTC work
+* Commented out lines referring to `educational_attainment`
+* Commented out lines referring to `building_size`
+* Removed acessibilities by auto occupancy and added disaggregate accessibilities in where appropriate.  Should be reviewed.
+* `population_density` was computed in annotate_landuse.csv as tot_pop / acres.  Does this match MTC's units?
+---
 Tour and Trip Scheduling
 * Replaced all tour and trip scheduling files with SEMCOG versions
   - Updated the annotate person and houssehold files to calculate varibles used
