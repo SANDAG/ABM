@@ -149,7 +149,7 @@ util_retail_accessibility_for_discretionary,Retail Accessibility for Discretiona
 util_retail_accessibility_for_visiting,Retail Accessibility for Visiting,othdiscr_accessibility * social,,,,coef_retail_accessibility_for_visiting,coef_retail_accessibility_for_visiting,,,
 util_walk_accessibility_for_discretionary,Walk Accessibility for Discretionary,nmRetail * othdiscr,coef_walk_accessibility_for_discretionary,coef_walk_accessibility_for_discretionary,,,,,,
 util_walk_accessibility_for_eat_out,Walk Accessibility for Eating Out,nmRetail * eatout,,,coef_walk_accessibility_for_eatout,coef_walk_accessibility_for_eatout,,,,
-util_origin_population_density_for_visiting,Population Density & Visiting tour,population_density * social,,coef_origin_population_density_for_visiting,,,,,,
+util_origin_population_density_for_visiting,Population Density & Visiting tour,popden * social,,coef_origin_population_density_for_visiting,,,,,,
 # no education_attainment for building_size terms,,,,,,,,,,
 # util_college_education_and_escorting,College Education & Escorting tour,(education_attainment>=13) * escort,,,,,coef_college_education_for_escorting,,,
 # util_college_education_and_visiting,College Education & Visiting tour,(education_attainment>=13) * social,coef_college_education_for_visiting,,,,coef_college_education_for_visiting,,,

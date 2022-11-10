@@ -130,7 +130,7 @@ Non-Mandatory tour frequency
 * Commented out lines referring to `educational_attainment`
 * Commented out lines referring to `building_size`
 * Removed acessibilities by auto occupancy and added disaggregate accessibilities in where appropriate.  Should be reviewed.
-* `population_density` was computed in annotate_landuse.csv as tot_pop / acres.  Does this match MTC's units?
+* Used `popden` in landuse file for population density. Does this match MTC's units?
 ---
 Tour and Trip Scheduling
 * Replaced all tour and trip scheduling files with SEMCOG versions
@@ -227,6 +227,9 @@ Trip Mode Choice
 * Utility calculations with `parkingArea` commented out -- no `parkingArea` variable and didn't see corresponding expression in trip mode choice uec.
 * `coef_bikeTime` in the coefficients temlate is not being used. Is there an expression missing? Commented it out for now.
 * check expression for `dest_zone_sharedTNC_wait_time_mean`, I made a change to match the other similar variables and left the old one there for review.
+---
+Parking location Choice
+* Only allows people to park in zone with `is_parking_zone`.  This was set to true in annotate_landuse.csv when `parkarea` > 0.  Is this the correct filter?
 ---
 Write Trip Matrices
 * Modified to be consistent with new tour and trip modes and time period definitions

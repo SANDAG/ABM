@@ -6,3 +6,4 @@ employment_density,employment_density,(land_use.emp_total / land_use.acres.clip(
 density_index,density_index,(household_density *employment_density) / (household_density + employment_density).clip(lower=1)
 ,is_cbd,land_use.pseudomsa == 1
 total college enrollment for shadow pricing,tot_collegeenroll,land_use.adultschenrl + land_use.collegeenroll + land_use.othercollegeenroll
+Is a zone with parking,is_parking_zone,(land_use.parkarea > 0)

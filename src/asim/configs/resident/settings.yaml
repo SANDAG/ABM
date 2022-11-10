@@ -15,7 +15,7 @@ want_dest_choice_sample_tables: False
 
 # trace household id; comment out or leave empty for no trace
 # households with all tour types
-trace_hh_id: 11450
+trace_hh_id:
 
 chunk_training_mode: disabled
 
@@ -171,6 +171,7 @@ models:
   - trip_purpose_and_destination
   - trip_scheduling
   - trip_mode_choice
+  - parking_location
   ### mp_summarize (single process)
   - write_data_dictionary
   - track_skim_usage
