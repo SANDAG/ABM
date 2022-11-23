@@ -335,7 +335,7 @@ util_TNCIN_PRM_In_vehicle_time_on_LTD_EXP,TNCIN_PRM - In-vehicle time on LTD and
 util_TNCIN_PRM_In_vehicle_time_on_URB,TNCIN_PRM - In-vehicle time on BRT,@(ivt_brt_multiplier - 1) * (odt_skims['TNCIN_PRM_BRTREDIVTT'] + odt_skims['TNCIN_PRM_BRTYELIVTT']) * df.time_factor,,,,,,,,,,,,,,,,coef_ivt,,,,,
 util_TNCIN_PRM_FIRST_iwait_time,TNCIN_PRM - First iwait time,@(odt_skims['TNCIN_PRM_FIRSTWAIT']) * df.time_factor,,,,,,,,,,,,,,,,coef_wait,,,,,
 util_TNCIN_PRM_transfer_wait_time,TNCIN_PRM - transfer wait time,@(odt_skims['TNCIN_PRM_XFERWAIT']) * df.time_factor,,,,,,,,,,,,,,,,coef_xwait,,,,,
-util_TNCIN_PRM_number_of_transfers,TNCIN_PRM - number of transfers,"@(-23+23*np.exp(0.414*np.clip(odt_skims['TNCIN_PRM_XFERS'], a_min=None,a_max=4))) * df.time_factor",,,,,,,,,,,,,,,,coef_xfer,,,,,
+util_TNCIN_PRM_number_of_transfers,TNCIN_PRM - number of transfers,"@(-23+23*np.exp(0.414*np.clip(odt_skims['TNCIN_PRM_XFERS'], a_min=None,a_max=4))) * df.time_factor",,,,,,,,,,,,,,,,coef_xferdrive,,,,,
 util_TNCIN_PRM_TNCIN_time,TNCIN_PRM - TNC time,@odt_skims['TNCIN_PRM_ACC'] * df.time_factor,,,,,,,,,,,,,,,,coef_acctime,,,,,
 util_TNCIN_PRM_Walk_access_time_(at_attraction_end),TNCIN_PRM - Walk access time (at attraction end),@(df.origin_local_time) * df.time_factor,,,,,,,,,,,,,,,,coef_acctime,,,,,
 util_TNCIN_PRM_Walk_egress_time_(at_attraction_end),TNCIN_PRM - Walk egress time (at attraction end),@(df.dest_local_time) * df.time_factor,,,,,,,,,,,,,,,,coef_acctime,,,,,
