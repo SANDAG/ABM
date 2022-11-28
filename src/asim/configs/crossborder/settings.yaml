@@ -6,7 +6,7 @@ households_sample_size: 0
 multiprocess: True
 strict: False
 mem_tick: 30
-num_processes: 1 #30
+num_processes: 30
 fail_fast: True
 
 ##############
@@ -43,7 +43,7 @@ keep_mem_logs: True
 
 ##############
 
-trace_hh_id:
+#trace_hh_id:
 
 # input tables
 input_table_list:
@@ -65,6 +65,7 @@ input_table_list:
     filename: tours_xborder.csv
     index_col: tour_id
     keep_columns:
+      - pass_type
       - tour_type
       - purpose_id
       - tour_category
@@ -73,16 +74,12 @@ input_table_list:
       - tour_count
       - household_id
       - person_id
-      - lane_type
 
 
 # set false to disable variability check in simple_simulate and interaction_simulate
 check_for_variability: False
 
 # - shadow pricing global switches
-
-households_sample_size: 100
-trace_hh_id: 93702 #46909 known good hh
 
 # turn shadow_pricing on and off for all models (e.g. school and work)
 # shadow pricing is deprecated for less than full samples
@@ -94,23 +91,21 @@ use_shadow_pricing: False
 want_dest_choice_sample_tables: False
 want_dest_choice_presampling: True
 
-#resume_after: trip_scheduling
+#resume_after: trip_destination
 
 models:
   - initialize_landuse
   - initialize_households
   - initialize_tours
-  # --- STATIC cache prebuild steps
-  # single-process step to create attribute_combination list
   - initialize_los
   - tour_scheduling_probabilistic
   - tour_od_choice
   - tour_mode_choice_simulate
-  #- stop_frequency
-  #- trip_purpose
-  #- trip_scheduling
-  #- trip_destination
-  #- trip_mode_choice
+  - stop_frequency
+  - trip_purpose
+  - trip_scheduling
+  - trip_destination
+  - trip_mode_choice
   - write_trip_matrices
   - write_tables
 

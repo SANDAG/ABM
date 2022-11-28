@@ -43,7 +43,7 @@ keep_mem_logs: True
 
 ############
 
-trace_hh_id:
+trace_hh_id: 85140
 
 # input tables
 input_table_list:
@@ -87,13 +87,7 @@ models:
   - initialize_landuse
   - initialize_households
   - initialize_tours
-  # --- STATIC cache prebuild steps
-  # single-process step to create attribute_combination list
   - initialize_los
-  # multi-processable step to build STATIC cache
-  # (this step is a NOP if cache already exists and network_los.rebuild_tvpb_cache setting is False)
-  - initialize_tvpb
-  # # ---
   - tour_scheduling_probabilistic
   - tour_od_choice
   - tour_mode_choice_simulate
