@@ -11,17 +11,17 @@ read_skim_cache: False
 write_skim_cache: False
 
 taz_skims: 
-  - traffic_skims_xborder_EA.omx
-  - traffic_skims_xborder_AM.omx
-  - traffic_skims_xborder_MD.omx
-  - traffic_skims_xborder_PM.omx
-  - traffic_skims_xborder_EV.omx
-  - transit_skims_xborder_EA.omx
-  - transit_skims_xborder_AM.omx
-  - transit_skims_xborder_MD.omx
-  - transit_skims_xborder_PM.omx
-  - transit_skims_xborder_EV.omx
-  
+  - traffic_skims_processed_EA.omx
+  - traffic_skims_processed_AM.omx
+  - traffic_skims_processed_MD.omx
+  - traffic_skims_processed_PM.omx
+  - traffic_skims_processed_EV.omx
+  - transit_skims_xb_ea.omx
+  - transit_skims_xb_am.omx
+  - transit_skims_xb_md.omx
+  - transit_skims_xb_pm.omx
+  - transit_skims_xb_ev.omx
+  - dest_pmsa.omx
 
 maz: mazs_xborder.csv   # mgra.csv
 
@@ -32,8 +32,9 @@ maz_to_maz:
 skim_time_periods:
     time_window: 1440
     period_minutes: 30
-    periods: [0, 11, 17, 30, 37, 48]  # asim xborder
+    periods: [0, 6, 12, 25, 32, 48]  # asim xborder
     # periods: [0, 3, 9, 22, 29, 48]  # ctramp xborder
     labels: &skim_time_period_labels ['EA', 'AM', 'MD', 'PM', 'EV']
+ 
 
 

@@ -1,3 +1,4 @@
 Description,Target,Expression
 ,is_mandatory,"df.tour_type.isin(['work','school'])"
-
+,work_time_factor,"reindex(persons.work_time_factor, df.person_id)"
+,non_work_time_factor,"reindex(persons.non_work_time_factor, df.person_id)"

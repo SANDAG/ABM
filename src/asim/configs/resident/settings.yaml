@@ -1,5 +1,10 @@
 #inherit_settings: True
 
+chunk_size: 0
+
+# assume enough RAM to not chunk
+chunk_training_mode: disabled
+
 # - tracing
 
 # trace household id; comment out or leave empty for no trace
