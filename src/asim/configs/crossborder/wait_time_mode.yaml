@@ -43,7 +43,7 @@ keep_mem_logs: True
 
 ############
 
-trace_hh_id: 85140
+trace_hh_id: 113610
 
 # input tables
 input_table_list:
@@ -81,7 +81,7 @@ use_shadow_pricing: False
 want_dest_choice_sample_tables: False
 want_dest_choice_presampling: True
 
-#resume_after: _
+resume_after: tour_scheduling_probabilistic
 
 models:
   - initialize_landuse

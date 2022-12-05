@@ -1,5 +1,5 @@
 # misc settings
-data_dir: C:\\ABM_runs\\abm3_dev\\run_dir\\data_test_small_2
+data_dir: C:\\ABM_runs\\abm3_dev\\run_dir\\data_test_2
 config_dir: C:\\ABM_runs\\abm3_dev\\ASR_SANDAG_ABM\\src\\asim\\configs\\crossborder
 output_dir: C:\\ABM_runs\\abm3_dev\\run_dir\\op_2z_xb
 distance_param: -0.19

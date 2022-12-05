@@ -66,7 +66,7 @@ vot-indexed skims,da_dist_skims,((odt_skims['SOV_NT_L_DIST'] * (_vot_bin_da == 1
 ,lb_ivt,odt_skims['WALK_MIX_BUSIVTT']
 ,eb_ivt,odt_skims['WALK_MIX_EXPIVTT']
 ,ltd_ivt,odt_skims['WALK_MIX_LTDEXPIVTT']
-,brt_ivt,odt_skims['WALK_MIX_BRTREDIVTT'] + odt_skims['WALK_MIX_BRTYELIVTT']
+,brt_ivt,odt_skims['WALK_MIX_BRTIVTT']
 ,lrt_ivt,odt_skims['WALK_MIX_LRTIVTT']
 ,cr_ivt,odt_skims['WALK_MIX_CMRIVTT']
 ,first_wait,odt_skims['WALK_MIX_FIRSTWAIT']
