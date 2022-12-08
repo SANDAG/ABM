@@ -6,6 +6,11 @@ preprocessor:
   DF: trips
   TABLES:
     - tours
+    - persons
+TOURS_MERGED_CHOOSER_COLUMNS:
+  - work_time_factor
+  - non_work_time_factor
+  - tour_type
 
 # divide trip counts by household expansion factor
 HH_EXPANSION_WEIGHT_COL: sample_rate  # added when households read in
@@ -14,95 +19,364 @@ HH_EXPANSION_WEIGHT_COL: sample_rate  # added when households read in
 SAVE_TRIPS_TABLE: False
 
 MATRICES:
-  - file_name: trips_ea.omx
+  - file_name: autoCrossborderTrips_EA_low.omx
     tables:
-      - name: DRIVEALONE_EA
-        data_field: DRIVEALONE_EA
-      - name: SHARED2_EA
-        data_field: SHARED2_EA
-      - name: SHARED3_EA
-        data_field: SHARED3_EA
-      - name: WALK_EA
-        data_field: WALK_EA
-      - name: WALK_TRANSIT_WALK_EA
-        data_field: WALK_TRANSIT_WALK_EA
+      - name: SR2_EA
+        data_field: SHARED2_EA_low
+      - name: SR3_EA
+        data_field: SHARED3_EA_low
+      - name: SOV_EA
+        data_field: DRIVEALONE_EA_low
+  - file_name: autoCrossborderTrips_EA_med.omx
+    tables:
+      - name: SR2_EA
+        data_field: SHARED2_EA_med
+      - name: SR3_EA
+        data_field: SHARED3_EA_med
+      - name: SOV_EA
+        data_field: DRIVEALONE_EA_med
+  - file_name: autoCrossborderTrips_EA_high.omx
+    tables:
+      - name: SR2_EA
+        data_field: SHARED2_EA_high
+      - name: SR3_EA
+        data_field: SHARED3_EA_high
+      - name: SOV_EA
+        data_field: DRIVEALONE_EA_high
+  - file_name: tranCrossborderTrips_EA.omx
+    tables:
+      - name: WLK_SET_set1_EA
+        data_field: WALK_TRANSIT_WALK_EA_set1
+      - name: WLK_SET_set2_EA
+        data_field: WALK_TRANSIT_WALK_EA_set2
+      - name: WLK_SET_set3_EA
+        data_field: WALK_TRANSIT_WALK_EA_set3
+      - name: PNR_SET_set1_EA
+        data_field: PNR_TRANSIT_PNR_EA_set1
+      - name: PNR_SET_set2_EA
+        data_field: PNR_TRANSIT_PNR_EA_set2
+      - name: PNR_SET_set3_EA
+        data_field: PNR_TRANSIT_PNR_EA_set3
+      - name: KNR_SET_set1_EA
+        data_field: KNR_TRANSIT_KNR_EA_set1
+      - name: KNR_SET_set2_EA
+        data_field: KNR_TRANSIT_KNR_EA_set2
+      - name: KNR_SET_set3_EA
+        data_field: KNR_TRANSIT_KNR_EA_set3
+  - file_name: othrCrossborderTrips_EA.omx
+    tables:
       - name: TAXI_EA
         data_field: TAXI_EA
       - name: TNC_SINGLE_EA
         data_field: TNC_SINGLE_EA
       - name: TNC_SHARED_EA
         data_field: TNC_SHARED_EA
-  - file_name: trips_am.omx
+  - file_name: nmCrossborderTrips_EA.omx
     tables:
-      - name: DRIVEALONE_AM
-        data_field: DRIVEALONE_AM
-      - name: SHARED2_AM
-        data_field: SHARED2_AM
-      - name: SHARED3_AM
-        data_field: SHARED3_AM
-      - name: WALK_AM
-        data_field: WALK_AM
-      - name: WALK_TRANSIT_WALK_AM
-        data_field: WALK_TRANSIT_WALK_EA
+      - name: WALK_EA
+        data_field: WALK_EA
+      - name: BIKE_EA
+        data_field: BIKE_EA
+  - file_name: autoCrossborderTrips_AM_low.omx
+    tables:
+      - name: SR2_AM
+        data_field: SHARED2_AM_low
+      - name: SR3_AM
+        data_field: SHARED3_AM_low
+      - name: SOV_AM
+        data_field: DRIVEALONE_AM_low
+  - file_name: autoCrossborderTrips_AM_med.omx
+    tables:
+      - name: SR2_AM
+        data_field: SHARED2_AM_med
+      - name: SR3_AM
+        data_field: SHARED3_AM_med
+      - name: SOV_AM
+        data_field: DRIVEALONE_AM_med
+  - file_name: autoCrossborderTrips_AM_high.omx
+    tables:
+      - name: SR2_AM
+        data_field: SHARED2_AM_high
+      - name: SR3_AM
+        data_field: SHARED3_AM_high
+      - name: SOV_AM
+        data_field: DRIVEALONE_AM_high
+  - file_name: tranCrossborderTrips_AM.omx
+    tables:
+      - name: WLK_SET_set1_AM
+        data_field: WALK_TRANSIT_WALK_AM_set1
+      - name: WLK_SET_set2_AM
+        data_field: WALK_TRANSIT_WALK_AM_set2
+      - name: WLK_SET_set3_AM
+        data_field: WALK_TRANSIT_WALK_AM_set3
+      - name: PNR_SET_set1_AM
+        data_field: PNR_TRANSIT_PNR_AM_set1
+      - name: PNR_SET_set2_AM
+        data_field: PNR_TRANSIT_PNR_AM_set2
+      - name: PNR_SET_set3_AM
+        data_field: PNR_TRANSIT_PNR_AM_set3
+      - name: KNR_SET_set1_AM
+        data_field: KNR_TRANSIT_KNR_AM_set1
+      - name: KNR_SET_set2_AM
+        data_field: KNR_TRANSIT_KNR_AM_set2
+      - name: KNR_SET_set3_AM
+        data_field: KNR_TRANSIT_KNR_AM_set3
+  - file_name: othrCrossborderTrips_AM.omx
+    tables:
       - name: TAXI_AM
         data_field: TAXI_AM
       - name: TNC_SINGLE_AM
         data_field: TNC_SINGLE_AM
       - name: TNC_SHARED_AM
         data_field: TNC_SHARED_AM
-  - file_name: trips_md.omx
+  - file_name: nmCrossborderTrips_AM.omx
     tables:
-      - name: DRIVEALONE_MD
-        data_field: DRIVEALONE_MD
-      - name: SHARED2_MD
-        data_field: SHARED2_MD
-      - name: SHARED3_MD
-        data_field: SHARED3_MD
-      - name: WALK_MD
-        data_field: WALK_MD
-      - name: WALK_TRANSIT_WALK_MD
-        data_field: WALK_TRANSIT_WALK_EA
+      - name: WALK_AM
+        data_field: WALK_AM
+      - name: BIKE_AM
+        data_field: BIKE_AM
+  - file_name: autoCrossborderTrips_MD_low.omx
+    tables:
+      - name: SR2_MD
+        data_field: SHARED2_MD_low
+      - name: SR3_MD
+        data_field: SHARED3_MD_low
+      - name: SOV_MD
+        data_field: DRIVEALONE_MD_low
+  - file_name: autoCrossborderTrips_MD_med.omx
+    tables:
+      - name: SR2_MD
+        data_field: SHARED2_MD_med
+      - name: SR3_MD
+        data_field: SHARED3_MD_med
+      - name: SOV_MD
+        data_field: DRIVEALONE_MD_med
+  - file_name: autoCrossborderTrips_MD_high.omx
+    tables:
+      - name: SR2_MD
+        data_field: SHARED2_MD_high
+      - name: SR3_MD
+        data_field: SHARED3_MD_high
+      - name: SOV_MD
+        data_field: DRIVEALONE_MD_high
+  - file_name: tranCrossborderTrips_MD.omx
+    tables:
+      - name: WLK_SET_set1_MD
+        data_field: WALK_TRANSIT_WALK_MD_set1
+      - name: WLK_SET_set2_MD
+        data_field: WALK_TRANSIT_WALK_MD_set2
+      - name: WLK_SET_set3_MD
+        data_field: WALK_TRANSIT_WALK_MD_set3
+      - name: PNR_SET_set1_MD
+        data_field: PNR_TRANSIT_PNR_MD_set1
+      - name: PNR_SET_set2_MD
+        data_field: PNR_TRANSIT_PNR_MD_set2
+      - name: PNR_SET_set3_MD
+        data_field: PNR_TRANSIT_PNR_MD_set3
+      - name: KNR_SET_set1_MD
+        data_field: KNR_TRANSIT_KNR_MD_set1
+      - name: KNR_SET_set2_MD
+        data_field: KNR_TRANSIT_KNR_MD_set2
+      - name: KNR_SET_set3_MD
+        data_field: KNR_TRANSIT_KNR_MD_set3
+  - file_name: othrCrossborderTrips_MD.omx
+    tables:
       - name: TAXI_MD
         data_field: TAXI_MD
       - name: TNC_SINGLE_MD
         data_field: TNC_SINGLE_MD
       - name: TNC_SHARED_MD
         data_field: TNC_SHARED_MD
-  - file_name: trips_pm.omx
+  - file_name: nmCrossborderTrips_MD.omx
     tables:
-      - name: DRIVEALONE_PM
-        data_field: DRIVEALONE_PM
-      - name: SHARED2_PM
-        data_field: SHARED2_PM
-      - name: SHARED3_PM
-        data_field: SHARED3_PM
-      - name: WALK_PM
-        data_field: WALK_PM
-      - name: WALK_TRANSIT_WALK_PM
-        data_field: WALK_TRANSIT_WALK_EA
+      - name: WALK_MD
+        data_field: WALK_MD
+      - name: BIKE_MD
+        data_field: BIKE_MD
+  - file_name: autoCrossborderTrips_PM_low.omx
+    tables:
+      - name: SR2_PM
+        data_field: SHARED2_PM_low
+      - name: SR3_PM
+        data_field: SHARED3_PM_low
+      - name: SOV_PM
+        data_field: DRIVEALONE_PM_low
+  - file_name: autoCrossborderTrips_PM_med.omx
+    tables:
+      - name: SR2_PM
+        data_field: SHARED2_PM_med
+      - name: SR3_PM
+        data_field: SHARED3_PM_med
+      - name: SOV_PM
+        data_field: DRIVEALONE_PM_med
+  - file_name: autoCrossborderTrips_PM_high.omx
+    tables:
+      - name: SR2_PM
+        data_field: SHARED2_PM_high
+      - name: SR3_PM
+        data_field: SHARED3_PM_high
+      - name: SOV_PM
+        data_field: DRIVEALONE_PM_high
+  - file_name: tranCrossborderTrips_PM.omx
+    tables:
+      - name: WLK_SET_set1_PM
+        data_field: WALK_TRANSIT_WALK_PM_set1
+      - name: WLK_SET_set2_PM
+        data_field: WALK_TRANSIT_WALK_PM_set2
+      - name: WLK_SET_set3_PM
+        data_field: WALK_TRANSIT_WALK_PM_set3
+      - name: PNR_SET_set1_PM
+        data_field: PNR_TRANSIT_PNR_PM_set1
+      - name: PNR_SET_set2_PM
+        data_field: PNR_TRANSIT_PNR_PM_set2
+      - name: PNR_SET_set3_PM
+        data_field: PNR_TRANSIT_PNR_PM_set3
+      - name: KNR_SET_set1_PM
+        data_field: KNR_TRANSIT_KNR_PM_set1
+      - name: KNR_SET_set2_PM
+        data_field: KNR_TRANSIT_KNR_PM_set2
+      - name: KNR_SET_set3_PM
+        data_field: KNR_TRANSIT_KNR_PM_set3
+  - file_name: othrCrossborderTrips_PM.omx
+    tables:
       - name: TAXI_PM
         data_field: TAXI_PM
       - name: TNC_SINGLE_PM
         data_field: TNC_SINGLE_PM
       - name: TNC_SHARED_PM
         data_field: TNC_SHARED_PM
-  - file_name: trips_ev.omx
+  - file_name: nmCrossborderTrips_PM.omx
     tables:
-      - name: DRIVEALONE_EV
-        data_field: DRIVEALONE_EV
-      - name: SHARED2_EV
-        data_field: SHARED2_EV
-      - name: SHARED3_EV
-        data_field: SHARED3_EV
-      - name: WALK_EV
-        data_field: WALK_EV
-      - name: WALK_TRANSIT_WALK_EV
-        data_field: WALK_TRANSIT_WALK_EA
+      - name: WALK_PM
+        data_field: WALK_PM
+      - name: BIKE_PM
+        data_field: BIKE_PM
+  - file_name: autoCrossborderTrips_EV_low.omx
+    tables:
+      - name: SR2_EV
+        data_field: SHARED2_EV_low
+      - name: SR3_EV
+        data_field: SHARED3_EV_low
+      - name: SOV_EV
+        data_field: DRIVEALONE_EV_low
+  - file_name: autoCrossborderTrips_EV_med.omx
+    tables:
+      - name: SR2_EV
+        data_field: SHARED2_EV_med
+      - name: SR3_EV
+        data_field: SHARED3_EV_med
+      - name: SOV_EV
+        data_field: DRIVEALONE_EV_med
+  - file_name: autoCrossborderTrips_EV_high.omx
+    tables:
+      - name: SR2_EV
+        data_field: SHARED2_EV_high
+      - name: SR3_EV
+        data_field: SHARED3_EV_high
+      - name: SOV_EV
+        data_field: DRIVEALONE_EV_high
+  - file_name: tranCrossborderTrips_EV.omx
+    tables:
+      - name: WLK_SET_set1_EV
+        data_field: WALK_TRANSIT_WALK_EV_set1
+      - name: WLK_SET_set2_EV
+        data_field: WALK_TRANSIT_WALK_EV_set2
+      - name: WLK_SET_set3_EV
+        data_field: WALK_TRANSIT_WALK_EV_set3
+      - name: PNR_SET_set1_EV
+        data_field: PNR_TRANSIT_PNR_EV_set1
+      - name: PNR_SET_set2_EV
+        data_field: PNR_TRANSIT_PNR_EV_set2
+      - name: PNR_SET_set3_EV
+        data_field: PNR_TRANSIT_PNR_EV_set3
+      - name: KNR_SET_set1_EV
+        data_field: KNR_TRANSIT_KNR_EV_set1
+      - name: KNR_SET_set2_EV
+        data_field: KNR_TRANSIT_KNR_EV_set2
+      - name: KNR_SET_set3_EV
+        data_field: KNR_TRANSIT_KNR_EV_set3
+  - file_name: othrCrossborderTrips_EV.omx
+    tables:
       - name: TAXI_EV
         data_field: TAXI_EV
       - name: TNC_SINGLE_EV
         data_field: TNC_SINGLE_EV
       - name: TNC_SHARED_EV
         data_field: TNC_SHARED_EV
+  - file_name: nmCrossborderTrips_EV.omx
+    tables:
+      - name: WALK_EV
+        data_field: WALK_EV
+      - name: BIKE_EV
+        data_field: BIKE_EV
 
 CONSTANTS:
+  trip_c_ivt_base: -0.021
+  PERIODS_PER_HOUR: 2
+  time_distrib_mean_work: 1.0
+  time_distrib_stddev_work: 0.7
+  time_distrib_mean_nonwork: 1.0
+  time_distrib_stddev_nonwork: 0.6
+  cost_per_mile_fuel: 12.3  # from parametersByYear.csv, depends on simulation year
+  cost_per_mile_maint: 7  # from parametersByYear.csv, depends on simulation year
+  work_dist_coef: -8.6
+  other_dist_coef: -4.9
+  vot_bin_idx_to_skim_label:
+    1: L
+    2: M
+    3: H
+  max_walk_time: 60
+  taxi_base_fare: 2.20
+  taxi_cost_per_mile: 2.30
+  taxi_cost_per_minute: 0.10
+  tnc_single_base_fare: 2.20
+  tnc_single_cost_per_mile: 1.33
+  tnc_single_cost_per_minute: 0.24
+  tnc_single_cost_minimum: 7.20
+  tnc_shared_base_fare: 2.20
+  tnc_shared_cost_per_mile: 0.44
+  tnc_shared_cost_per_minute: 0.08
+  tnc_shared_cost_minimum: 3.00
+  tnc_shared_ivt_factor: 1.25
+  tnc_single_wait_time_mean_by_density:
+    1: 10.3
+    2: 8.5
+    3: 8.4
+    4: 6.3
+    5: 4.7
+  tnc_single_wait_time_sd_by_density:
+    1: 4.1
+    2: 4.1
+    3: 4.1
+    4: 4.1
+    5: 4.1
+  tnc_shared_wait_time_mean_by_density:
+    1: 15.0
+    2: 15.0
+    3: 11.0
+    4: 8.0
+    5: 7.0
+  tnc_shared_wait_time_sd_by_density:
+    1: 4.1
+    2: 4.1
+    3: 4.1
+    4: 4.1
+    5: 4.1
+  taxi_wait_time_mean_by_density:
+    1: 26.5
+    2: 17.3
+    3: 13.3
+    4: 9.5
+    5: 5.5
+  taxi_wait_time_sd_by_density:
+    1: 6.4
+    2: 6.4
+    3: 6.4
+    4: 6.4
+    5: 6.4
+  wait_time_distribution_by_density_breaks:
+    - 500
+    - 2000
+    - 5000
+    - 15000
+

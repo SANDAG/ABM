@@ -11,6 +11,11 @@ Description,Target,Expression
 ,c_xfers,c_ivt * 24
 ,c_walk_time,c_ivt * 1.8
 ,c_xfers_pnr,c_ivt * 15
+# Transit ASCs
+,exp_asc,10.0
+,brt_asc,10.0
+,lrt_asc,20.0
+,cr_asc,0.00
 ,cost_per_mile,cost_per_mile_fuel + cost_per_mile_maint
 intermediate outbound stops on tour,out_stops,df['stop_frequency'].str[0].astype(int)
 intermediate inbound stops on tour,in_stops,df['stop_frequency'].str[5].astype(int)
@@ -56,7 +61,25 @@ vot-indexed skims,da_dist_skims,((odt_skims['SOV_NT_L_DIST'] * (_vot_bin_da == 1
 ,s3_time_skims,((odt_skims['HOV3_L_TIME'] * (_vot_bin_s3 == 1)) + (odt_skims['HOV3_M_TIME'] * (_vot_bin_s3 == 2)) + (odt_skims['HOV3_H_TIME'] * (_vot_bin_s3 == 3)))
 ,walk_time,od_skims['walkTime']
 ,walk_available,((walk_time < max_walk_time) & (walk_time > 0))
-,walk_transit_logsum,tvpb_logsum_odt['WTW']
+,trn_available,(odt_skims['WALK_MIX_TOTALIVTT'] > 0) & (odt_skims['WALK_MIX_TOTALIVTT'] < 240)
+,iwalk_time,odt_skims['WALK_MIX_ACC'] + odt_skims['WALK_MIX_EGR']
+,lb_ivt,odt_skims['WALK_MIX_BUSIVTT']
+,eb_ivt,odt_skims['WALK_MIX_EXPIVTT']
+,ltd_ivt,odt_skims['WALK_MIX_LTDEXPIVTT']
+,brt_ivt,odt_skims['WALK_MIX_BRTIVTT']
+,lrt_ivt,odt_skims['WALK_MIX_LRTIVTT']
+,cr_ivt,odt_skims['WALK_MIX_CMRIVTT']
+,first_wait,odt_skims['WALK_MIX_FIRSTWAIT']
+,xfer_wait,odt_skims['WALK_MIX_XFERWAIT']
+,xwalk_time,odt_skims['WALK_MIX_XFERWALK']
+,fare,odt_skims['WALK_MIX_FARE']
+,transfers,odt_skims['WALK_MIX_XFERS']
+# defined in network_los: exp_asc, brt_asc, lrt_asc, cr_asc
+commuter rail ASC,asc_cr,"trn_available * np.where(cr_ivt > 0, cr_asc * c_ivt, 0)"
+light rail ASC,asc_lrt,"trn_available * np.where(asc_cr == 0, np.where(lrt_ivt > 0, lrt_asc * c_ivt, 0), asc_cr)"
+bus rapid transit ASC,asc_brt,"trn_available * np.where(asc_lrt ==0 , np.where(brt_ivt > 0, brt_asc * c_ivt, 0), asc_lrt)"
+express bus ASC,asc_eb,"trn_available * np.where(asc_brt == 0, np.where(eb_ivt + ltd_ivt > 0, exp_asc * c_ivt, 0), asc_brt)"
+Walk Transit ASC,trn_ASC,"trn_available * asc_eb * np.where(asc_eb > 0, np.where(lb_ivt > 0, 0.5, 1), 1)"
 ,density_measure,"reindex(land_use.PopEmpDenPerMi, df[ORIGIN])"
 ,density_bin,"pd.cut(density_measure, bins=[-np.inf] + wait_time_distribution_by_density_breaks + [np.inf], labels=[1,2,3,4,5]).astype(int)"
 ,taxi_wait_time_mean,"density_bin.map({k: v for k,v in taxi_wait_time_mean_by_density.items()})"
