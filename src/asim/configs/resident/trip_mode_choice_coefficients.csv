@@ -45,6 +45,11 @@ coef_acctime_school,-0.04,F
 coef_acctime_maint,-0.068,F
 coef_acctime_disc,-0.06,F
 coef_acctime_atwork,-0.128,F
+coef_xwalk_work_univ,-0.064,F
+coef_xwalk_school,-0.04,F
+coef_xwalk_maint,-0.068,F
+coef_xwalk_disc,-0.06,F
+coef_xwalk_atwork,-0.128,F
 #,,F
 coef_oMix_nmot_work,0.22519,F
 coef_oMix_wTran_work,0,F

@@ -42,7 +42,7 @@ util_Walk - Age 6-12 (school only),Walk - Age 6-13,"@df.age.between(6,12)",,,,co
 util_Walk - Age 13-15 (school only),Walk - Age 13-16,"@df.age.between(13,15)",,,,coef_age13to15_nmot,,,,,,,,,,,,,,,,,
 #,Bike,,,,,,,,,,,,,,,,,,,,,,
 util_BIKE_Mode unavailable,Bike - Mode unavailable,bikeAvailable == 0,,,,,-999,,,,,,,,,,,,,,,,
-"# ""util_BIKE_Female"," bike""","Bike - Female, bike",@df.female,,,,,coef_female_nmot,,,,,,,,,,,,,,,
+util_BIKE_Female - bike,Bike - Female,@df.female,,,,,coef_female_nmot,,,,,,,,,,,,,,,
 util_BIKE_Bike - logsum inbound,Bike - logsum,bikeLS,,,,,coef_bikeLogsum,,,,,,,,,,,,,,,,
 #,WalktoTransit,,,,,,,,,,,,,,,,,,,,,,
 util_WalkTransit_Unavailable,WalkTransit_Available,walk_local_available == False,,,,,,-999,,,,,,,,,,,,,,,
