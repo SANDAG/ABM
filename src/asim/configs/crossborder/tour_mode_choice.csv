@@ -6,3 +6,12 @@ util_ped_wait,Walk - Wait Time,@df.ped_wait,,,,coef_wait
 util_ASC_s2,Shared Ride 2 - ASC,1,,asc_SHARED2,,
 util_ASC_s3,Shared Ride 3 - ASC,1,,,asc_SHARED3,
 util_ASC_walk,Walk - ASC,1,,,,asc_WALK
+util_trip_logsum_tour_da,Drive alone - Trip Logsum,@(df.logsum_DRIVEALONE_outbound + df.logsum_DRIVEALONE_inbound),trip_logsum_tour,,,
+util_trip_logsum_tour_s2,Shared Ride 2 - Trip Logsum,@(df.logsum_SHARED2_outbound + df.logsum_SHARED2_inbound),,trip_logsum_tour,,
+util_trip_logsum_tour_s3,Shared Ride 3 - Trip Logsum,@(df.logsum_SHARED3_outbound + df.logsum_SHARED3_inbound),,,trip_logsum_tour,
+util_trip_logsum_tour_walk,Walk - Trip Logsum,@(df.logsum_WALK_outbound + df.logsum_WALK_inbound),,,,trip_logsum_tour
+util_otay,Otay Mesa Mode,@(df.origin==23004),,otay_SHARED2,otay_SHARED3,otay_WALK
+util_tecate,Tecate Mode,@(df.origin==23005),,tecate_SHARED2,tecate_SHARED3,tecate_WALK
+util_otay_toll,Otay Toll,@(df.origin==23004)*otay_mesa_toll,otay_toll,otay_toll,otay_toll,
+util_sany_toll,San Ysidro Toll,@(df.origin==23003)*san_ysidro_toll,sany_toll,sany_toll,sany_toll,
+util_tec_toll,Tecate Toll,@(df.origin==23005)*tecate_toll,tec_toll,tec_toll,tec_toll,

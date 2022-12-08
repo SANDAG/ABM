@@ -1,8 +1,8 @@
 inherit_settings: settings.yaml
 
 multiprocess: True
-households_sample_size: 100
-num_processes: 2
+households_sample_size: 200
+num_processes: 10
 trace_hh_id:
 chunk_training_mode: disabled
 
@@ -86,7 +86,7 @@ multiprocess_steps:
     begin: initialize_landuse
   - name: mp_accessibility
     begin: compute_accessibility
-    num_processes: 2
+    num_processes: 10
     slice:
       tables:
         - accessibility
