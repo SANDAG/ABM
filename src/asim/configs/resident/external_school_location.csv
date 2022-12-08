@@ -8,5 +8,5 @@ util_dist_15_up,"Distance, piecewise linear for 15+ miles",@(_DIST-15.0).clip(0)
 util_size_variable,Size variable,@(df['size_term'] * df['shadow_price_size_term_adjustment']).apply(np.log1p),1
 util_utility_adjustment,utility adjustment,@df['shadow_price_utility_adjustment'],1
 util_no_attractions,No attractions,@df['size_term']==0,-999
-# util_mode_choice_logsum,Mode choice logsum,mode_choice_logsum,coef_mode_logsum
-# util_sample_of_corrections_factor,Sample of alternatives correction factor,"@np.minimum(np.log(df.pick_count/df.prob), 60)",1
+#util_mode_choice_logsum,Mode choice logsum,mode_choice_logsum,coef_mode_logsum
+#util_sample_of_corrections_factor,Sample of alternatives correction factor,"@np.minimum(np.log(df.pick_count/df.prob), 60)",1

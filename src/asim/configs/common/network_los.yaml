@@ -21,9 +21,7 @@ taz_skims:
   - transit_skims_MD.omx
   - transit_skims_PM.omx
   - transit_skims_EV.omx
-  
 
-# maz: mazs_xborder.csv   # mgra.csv
 maz: land_use.csv   # mgra.csv
 
 maz_to_maz:

@@ -163,7 +163,7 @@ CONSTANTS:
   vot_threshold_low: 8.81
   vot_threshold_med: 18.00
   max_walk_time: 60
-  costPerMile: 0.50
+
 
 # so far, we can use the same spec as for non-joint tours
 preprocessor:
