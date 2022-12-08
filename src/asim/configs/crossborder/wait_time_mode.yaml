@@ -81,7 +81,7 @@ use_shadow_pricing: False
 want_dest_choice_sample_tables: False
 want_dest_choice_presampling: True
 
-resume_after: tour_scheduling_probabilistic
+#resume_after: 
 
 models:
   - initialize_landuse

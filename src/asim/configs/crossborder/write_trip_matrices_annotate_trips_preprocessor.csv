@@ -46,16 +46,19 @@ Description,Target,Expression
 #placeholder for bike,,
 ,BIKE_EA,((trips.trip_mode == 'BIKE') & is_ea) * tour_participants
 # ea trips transit,,
-,WALK_TRANSIT_WALK_EA_set1,((trips.trip_mode == 'WALK_TRANSIT') & is_ea & (trips.path_set == 'set1')) * tour_participants
-,WALK_TRANSIT_WALK_EA_set2,((trips.trip_mode == 'WALK_TRANSIT') & is_ea & (trips.path_set == 'set2')) * tour_participants
-,WALK_TRANSIT_WALK_EA_set3,((trips.trip_mode == 'WALK_TRANSIT') & is_ea & (trips.path_set == 'set3')) * tour_participants
+,WALK_TRANSIT_WALK_EA,((trips.trip_mode == 'WALK_TRANSIT') & is_ea ) * tour_participants
+,PNR_TRANSIT_PNR_EA,((trips.trip_mode == 'PNR_TRANSIT') & is_ea) * tour_participants
+,KNR_TRANSIT_KNR_EA,((trips.trip_mode == 'KNR_TRANSIT') & is_ea) * tour_participants
+#,WALK_TRANSIT_WALK_EA_set1,((trips.trip_mode == 'WALK_TRANSIT') & is_ea & (trips.path_set == 'set1')) * tour_participants
+#,WALK_TRANSIT_WALK_EA_set2,((trips.trip_mode == 'WALK_TRANSIT') & is_ea & (trips.path_set == 'set2')) * tour_participants
+#,WALK_TRANSIT_WALK_EA_set3,((trips.trip_mode == 'WALK_TRANSIT') & is_ea & (trips.path_set == 'set3')) * tour_participants
 # placeholder for knr/pnr,,
-,PNR_TRANSIT_PNR_EA_set1,((trips.trip_mode == 'PNR_TRANSIT') & is_ea & (trips.path_set == 'set1')) * tour_participants
-,PNR_TRANSIT_PNR_EA_set2,((trips.trip_mode == 'PNR_TRANSIT') & is_ea & (trips.path_set == 'set2')) * tour_participants
-,PNR_TRANSIT_PNR_EA_set3,((trips.trip_mode == 'PNR_TRANSIT') & is_ea & (trips.path_set == 'set3')) * tour_participants
-,KNR_TRANSIT_KNR_EA_set1,((trips.trip_mode == 'KNR_TRANSIT') & is_ea & (trips.path_set == 'set1')) * tour_participants
-,KNR_TRANSIT_KNR_EA_set2,((trips.trip_mode == 'KNR_TRANSIT') & is_ea & (trips.path_set == 'set2')) * tour_participants
-,KNR_TRANSIT_KNR_EA_set3,((trips.trip_mode == 'KNR_TRANSIT') & is_ea & (trips.path_set == 'set3')) * tour_participants
+#,PNR_TRANSIT_PNR_EA_set1,((trips.trip_mode == 'PNR_TRANSIT') & is_ea & (trips.path_set == 'set1')) * tour_participants
+#,PNR_TRANSIT_PNR_EA_set2,((trips.trip_mode == 'PNR_TRANSIT') & is_ea & (trips.path_set == 'set2')) * tour_participants
+#,PNR_TRANSIT_PNR_EA_set3,((trips.trip_mode == 'PNR_TRANSIT') & is_ea & (trips.path_set == 'set3')) * tour_participants
+#,KNR_TRANSIT_KNR_EA_set1,((trips.trip_mode == 'KNR_TRANSIT') & is_ea & (trips.path_set == 'set1')) * tour_participants
+#,KNR_TRANSIT_KNR_EA_set2,((trips.trip_mode == 'KNR_TRANSIT') & is_ea & (trips.path_set == 'set2')) * tour_participants
+#,KNR_TRANSIT_KNR_EA_set3,((trips.trip_mode == 'KNR_TRANSIT') & is_ea & (trips.path_set == 'set3')) * tour_participants
 ,TAXI_EA,((trips.trip_mode == 'TAXI') & is_ea) * tour_participants
 ,TNC_SINGLE_EA,((trips.trip_mode == 'TNC_SINGLE') & is_ea) * tour_participants
 ,TNC_SHARED_EA,((trips.trip_mode == 'TNC_SHARED') & is_ea) * tour_participants
@@ -74,16 +77,19 @@ Description,Target,Expression
 #placeholder for bike,,
 ,BIKE_AM,((trips.trip_mode == 'BIKE') & is_am) * tour_participants
 # am trips transit,,
-,WALK_TRANSIT_WALK_AM_set1,((trips.trip_mode == 'WALK_TRANSIT') & is_am & (trips.path_set == 'set1')) * tour_participants
-,WALK_TRANSIT_WALK_AM_set2,((trips.trip_mode == 'WALK_TRANSIT') & is_am & (trips.path_set == 'set2')) * tour_participants
-,WALK_TRANSIT_WALK_AM_set3,((trips.trip_mode == 'WALK_TRANSIT') & is_am & (trips.path_set == 'set3')) * tour_participants
+,WALK_TRANSIT_WALK_AM,((trips.trip_mode == 'WALK_TRANSIT') & is_am) * tour_participants
+,PNR_TRANSIT_PNR_AM,((trips.trip_mode == 'PNR_TRANSIT') & is_am) * tour_participants
+,KNR_TRANSIT_KNR_AM,((trips.trip_mode == 'KNR_TRANSIT') & is_am) * tour_participants
+#,WALK_TRANSIT_WALK_AM_set1,((trips.trip_mode == 'WALK_TRANSIT') & is_am & (trips.path_set == 'set1')) * tour_participants
+#,WALK_TRANSIT_WALK_AM_set2,((trips.trip_mode == 'WALK_TRANSIT') & is_am & (trips.path_set == 'set2')) * tour_participants
+#,WALK_TRANSIT_WALK_AM_set3,((trips.trip_mode == 'WALK_TRANSIT') & is_am & (trips.path_set == 'set3')) * tour_participants
 # placeholder for knr/pnr,,
-,PNR_TRANSIT_PNR_AM_set1,((trips.trip_mode == 'PNR_TRANSIT') & is_am & (trips.path_set == 'set1')) * tour_participants
-,PNR_TRANSIT_PNR_AM_set2,((trips.trip_mode == 'PNR_TRANSIT') & is_am & (trips.path_set == 'set2')) * tour_participants
-,PNR_TRANSIT_PNR_AM_set3,((trips.trip_mode == 'PNR_TRANSIT') & is_am & (trips.path_set == 'set3')) * tour_participants
-,KNR_TRANSIT_KNR_AM_set1,((trips.trip_mode == 'KNR_TRANSIT') & is_am & (trips.path_set == 'set1')) * tour_participants
-,KNR_TRANSIT_KNR_AM_set2,((trips.trip_mode == 'KNR_TRANSIT') & is_am & (trips.path_set == 'set2')) * tour_participants
-,KNR_TRANSIT_KNR_AM_set3,((trips.trip_mode == 'KNR_TRANSIT') & is_am & (trips.path_set == 'set3')) * tour_participants
+#,PNR_TRANSIT_PNR_AM_set1,((trips.trip_mode == 'PNR_TRANSIT') & is_am & (trips.path_set == 'set1')) * tour_participants
+#,PNR_TRANSIT_PNR_AM_set2,((trips.trip_mode == 'PNR_TRANSIT') & is_am & (trips.path_set == 'set2')) * tour_participants
+#,PNR_TRANSIT_PNR_AM_set3,((trips.trip_mode == 'PNR_TRANSIT') & is_am & (trips.path_set == 'set3')) * tour_participants
+#,KNR_TRANSIT_KNR_AM_set1,((trips.trip_mode == 'KNR_TRANSIT') & is_am & (trips.path_set == 'set1')) * tour_participants
+#,KNR_TRANSIT_KNR_AM_set2,((trips.trip_mode == 'KNR_TRANSIT') & is_am & (trips.path_set == 'set2')) * tour_participants
+#,KNR_TRANSIT_KNR_AM_set3,((trips.trip_mode == 'KNR_TRANSIT') & is_am & (trips.path_set == 'set3')) * tour_participants
 ,TAXI_AM,((trips.trip_mode == 'TAXI') & is_am) * tour_participants
 ,TNC_SINGLE_AM,((trips.trip_mode == 'TNC_SINGLE') & is_am) * tour_participants
 ,TNC_SHARED_AM,((trips.trip_mode == 'TNC_SHARED') & is_am) * tour_participants
@@ -102,16 +108,19 @@ Description,Target,Expression
 #placeholder for bike,,
 ,BIKE_MD,((trips.trip_mode == 'BIKE') & is_md) * tour_participants
 # md trips transit,,
-,WALK_TRANSIT_WALK_MD_set1,((trips.trip_mode == 'WALK_TRANSIT') & is_md & (trips.path_set == 'set1')) * tour_participants
-,WALK_TRANSIT_WALK_MD_set2,((trips.trip_mode == 'WALK_TRANSIT') & is_md & (trips.path_set == 'set2')) * tour_participants
-,WALK_TRANSIT_WALK_MD_set3,((trips.trip_mode == 'WALK_TRANSIT') & is_md & (trips.path_set == 'set3')) * tour_participants
+,WALK_TRANSIT_WALK_MD,((trips.trip_mode == 'WALK_TRANSIT') & is_md) * tour_participants
+,PNR_TRANSIT_PNR_MD,((trips.trip_mode == 'PNR_TRANSIT') & is_md) * tour_participants
+,KNR_TRANSIT_KNR_MD,((trips.trip_mode == 'KNR_TRANSIT') & is_md) * tour_participants
+#,WALK_TRANSIT_WALK_MD_set1,((trips.trip_mode == 'WALK_TRANSIT') & is_md & (trips.path_set == 'set1')) * tour_participants
+#,WALK_TRANSIT_WALK_MD_set2,((trips.trip_mode == 'WALK_TRANSIT') & is_md & (trips.path_set == 'set2')) * tour_participants
+#,WALK_TRANSIT_WALK_MD_set3,((trips.trip_mode == 'WALK_TRANSIT') & is_md & (trips.path_set == 'set3')) * tour_participants
 # placeholder for knr/pnr,,
-,PNR_TRANSIT_PNR_MD_set1,((trips.trip_mode == 'PNR_TRANSIT') & is_md & (trips.path_set == 'set1')) * tour_participants
-,PNR_TRANSIT_PNR_MD_set2,((trips.trip_mode == 'PNR_TRANSIT') & is_md & (trips.path_set == 'set2')) * tour_participants
-,PNR_TRANSIT_PNR_MD_set3,((trips.trip_mode == 'PNR_TRANSIT') & is_md & (trips.path_set == 'set3')) * tour_participants
-,KNR_TRANSIT_KNR_MD_set1,((trips.trip_mode == 'KNR_TRANSIT') & is_md & (trips.path_set == 'set1')) * tour_participants
-,KNR_TRANSIT_KNR_MD_set2,((trips.trip_mode == 'KNR_TRANSIT') & is_md & (trips.path_set == 'set2')) * tour_participants
-,KNR_TRANSIT_KNR_MD_set3,((trips.trip_mode == 'KNR_TRANSIT') & is_md & (trips.path_set == 'set3')) * tour_participants
+#,PNR_TRANSIT_PNR_MD_set1,((trips.trip_mode == 'PNR_TRANSIT') & is_md & (trips.path_set == 'set1')) * tour_participants
+#,PNR_TRANSIT_PNR_MD_set2,((trips.trip_mode == 'PNR_TRANSIT') & is_md & (trips.path_set == 'set2')) * tour_participants
+#,PNR_TRANSIT_PNR_MD_set3,((trips.trip_mode == 'PNR_TRANSIT') & is_md & (trips.path_set == 'set3')) * tour_participants
+#,KNR_TRANSIT_KNR_MD_set1,((trips.trip_mode == 'KNR_TRANSIT') & is_md & (trips.path_set == 'set1')) * tour_participants
+#,KNR_TRANSIT_KNR_MD_set2,((trips.trip_mode == 'KNR_TRANSIT') & is_md & (trips.path_set == 'set2')) * tour_participants
+#,KNR_TRANSIT_KNR_MD_set3,((trips.trip_mode == 'KNR_TRANSIT') & is_md & (trips.path_set == 'set3')) * tour_participants
 ,TAXI_MD,((trips.trip_mode == 'TAXI') & is_md) * tour_participants
 ,TNC_SINGLE_MD,((trips.trip_mode == 'TNC_SINGLE') & is_md) * tour_participants
 ,TNC_SHARED_MD,((trips.trip_mode == 'TNC_SHARED') & is_md) * tour_participants
@@ -130,16 +139,19 @@ Description,Target,Expression
 #placeholder for bike,,
 ,BIKE_PM,((trips.trip_mode == 'BIKE') & is_pm) * tour_participants
 # pm trips transit,,
-,WALK_TRANSIT_WALK_PM_set1,((trips.trip_mode == 'WALK_TRANSIT') & is_pm & (trips.path_set == 'set1')) * tour_participants
-,WALK_TRANSIT_WALK_PM_set2,((trips.trip_mode == 'WALK_TRANSIT') & is_pm & (trips.path_set == 'set2')) * tour_participants
-,WALK_TRANSIT_WALK_PM_set3,((trips.trip_mode == 'WALK_TRANSIT') & is_pm & (trips.path_set == 'set3')) * tour_participants
+,WALK_TRANSIT_WALK_PM,((trips.trip_mode == 'WALK_TRANSIT') & is_pm) * tour_participants
+,PNR_TRANSIT_PNR_PM,((trips.trip_mode == 'PNR_TRANSIT') & is_pm) * tour_participants
+,KNR_TRANSIT_KNR_PM,((trips.trip_mode == 'KNR_TRANSIT') & is_pm) * tour_participants
+#,WALK_TRANSIT_WALK_PM_set1,((trips.trip_mode == 'WALK_TRANSIT') & is_pm & (trips.path_set == 'set1')) * tour_participants
+#,WALK_TRANSIT_WALK_PM_set2,((trips.trip_mode == 'WALK_TRANSIT') & is_pm & (trips.path_set == 'set2')) * tour_participants
+#,WALK_TRANSIT_WALK_PM_set3,((trips.trip_mode == 'WALK_TRANSIT') & is_pm & (trips.path_set == 'set3')) * tour_participants
 # placeholder for knr/pnr,,
-,PNR_TRANSIT_PNR_PM_set1,((trips.trip_mode == 'PNR_TRANSIT') & is_pm & (trips.path_set == 'set1')) * tour_participants
-,PNR_TRANSIT_PNR_PM_set2,((trips.trip_mode == 'PNR_TRANSIT') & is_pm & (trips.path_set == 'set2')) * tour_participants
-,PNR_TRANSIT_PNR_PM_set3,((trips.trip_mode == 'PNR_TRANSIT') & is_pm & (trips.path_set == 'set3')) * tour_participants
-,KNR_TRANSIT_KNR_PM_set1,((trips.trip_mode == 'KNR_TRANSIT') & is_pm & (trips.path_set == 'set1')) * tour_participants
-,KNR_TRANSIT_KNR_PM_set2,((trips.trip_mode == 'KNR_TRANSIT') & is_pm & (trips.path_set == 'set2')) * tour_participants
-,KNR_TRANSIT_KNR_PM_set3,((trips.trip_mode == 'KNR_TRANSIT') & is_pm & (trips.path_set == 'set3')) * tour_participants
+#,PNR_TRANSIT_PNR_PM_set1,((trips.trip_mode == 'PNR_TRANSIT') & is_pm & (trips.path_set == 'set1')) * tour_participants
+#,PNR_TRANSIT_PNR_PM_set2,((trips.trip_mode == 'PNR_TRANSIT') & is_pm & (trips.path_set == 'set2')) * tour_participants
+#,PNR_TRANSIT_PNR_PM_set3,((trips.trip_mode == 'PNR_TRANSIT') & is_pm & (trips.path_set == 'set3')) * tour_participants
+#,KNR_TRANSIT_KNR_PM_set1,((trips.trip_mode == 'KNR_TRANSIT') & is_pm & (trips.path_set == 'set1')) * tour_participants
+#,KNR_TRANSIT_KNR_PM_set2,((trips.trip_mode == 'KNR_TRANSIT') & is_pm & (trips.path_set == 'set2')) * tour_participants
+#,KNR_TRANSIT_KNR_PM_set3,((trips.trip_mode == 'KNR_TRANSIT') & is_pm & (trips.path_set == 'set3')) * tour_participants
 ,TAXI_PM,((trips.trip_mode == 'TAXI') & is_pm) * tour_participants
 ,TNC_SINGLE_PM,((trips.trip_mode == 'TNC_SINGLE') & is_pm) * tour_participants
 ,TNC_SHARED_PM,((trips.trip_mode == 'TNC_SHARED') & is_pm) * tour_participants
@@ -158,16 +170,19 @@ Description,Target,Expression
 #placeholder for bike,,
 ,BIKE_EV,((trips.trip_mode == 'BIKE') & is_ev) * tour_participants
 # ev trips transit,,
-,WALK_TRANSIT_WALK_EV_set1,((trips.trip_mode == 'WALK_TRANSIT') & is_ev & (trips.path_set == 'set1')) * tour_participants
-,WALK_TRANSIT_WALK_EV_set2,((trips.trip_mode == 'WALK_TRANSIT') & is_ev & (trips.path_set == 'set2')) * tour_participants
-,WALK_TRANSIT_WALK_EV_set3,((trips.trip_mode == 'WALK_TRANSIT') & is_ev & (trips.path_set == 'set3')) * tour_participants
+,WALK_TRANSIT_WALK_EV,((trips.trip_mode == 'WALK_TRANSIT') & is_ev) * tour_participants
+,PNR_TRANSIT_PNR_EV,((trips.trip_mode == 'PNR_TRANSIT') & is_ev) * tour_participants
+,KNR_TRANSIT_KNR_EV,((trips.trip_mode == 'KNR_TRANSIT') & is_ev) * tour_participants
+#,WALK_TRANSIT_WALK_EV_set1,((trips.trip_mode == 'WALK_TRANSIT') & is_ev & (trips.path_set == 'set1')) * tour_participants
+#,WALK_TRANSIT_WALK_EV_set2,((trips.trip_mode == 'WALK_TRANSIT') & is_ev & (trips.path_set == 'set2')) * tour_participants
+#,WALK_TRANSIT_WALK_EV_set3,((trips.trip_mode == 'WALK_TRANSIT') & is_ev & (trips.path_set == 'set3')) * tour_participants
 # placeholder for knr/pnr,,
-,PNR_TRANSIT_PNR_EV_set1,((trips.trip_mode == 'PNR_TRANSIT') & is_ev & (trips.path_set == 'set1')) * tour_participants
-,PNR_TRANSIT_PNR_EV_set2,((trips.trip_mode == 'PNR_TRANSIT') & is_ev & (trips.path_set == 'set2')) * tour_participants
-,PNR_TRANSIT_PNR_EV_set3,((trips.trip_mode == 'PNR_TRANSIT') & is_ev & (trips.path_set == 'set3')) * tour_participants
-,KNR_TRANSIT_KNR_EV_set1,((trips.trip_mode == 'KNR_TRANSIT') & is_ev & (trips.path_set == 'set1')) * tour_participants
-,KNR_TRANSIT_KNR_EV_set2,((trips.trip_mode == 'KNR_TRANSIT') & is_ev & (trips.path_set == 'set2')) * tour_participants
-,KNR_TRANSIT_KNR_EV_set3,((trips.trip_mode == 'KNR_TRANSIT') & is_ev & (trips.path_set == 'set3')) * tour_participants
+#,PNR_TRANSIT_PNR_EV_set1,((trips.trip_mode == 'PNR_TRANSIT') & is_ev & (trips.path_set == 'set1')) * tour_participants
+#,PNR_TRANSIT_PNR_EV_set2,((trips.trip_mode == 'PNR_TRANSIT') & is_ev & (trips.path_set == 'set2')) * tour_participants
+#,PNR_TRANSIT_PNR_EV_set3,((trips.trip_mode == 'PNR_TRANSIT') & is_ev & (trips.path_set == 'set3')) * tour_participants
+#,KNR_TRANSIT_KNR_EV_set1,((trips.trip_mode == 'KNR_TRANSIT') & is_ev & (trips.path_set == 'set1')) * tour_participants
+#,KNR_TRANSIT_KNR_EV_set2,((trips.trip_mode == 'KNR_TRANSIT') & is_ev & (trips.path_set == 'set2')) * tour_participants
+#,KNR_TRANSIT_KNR_EV_set3,((trips.trip_mode == 'KNR_TRANSIT') & is_ev & (trips.path_set == 'set3')) * tour_participants
 ,TAXI_EV,((trips.trip_mode == 'TAXI') & is_ev) * tour_participants
 ,TNC_SINGLE_EV,((trips.trip_mode == 'TNC_SINGLE') & is_ev) * tour_participants
 ,TNC_SHARED_EV,((trips.trip_mode == 'TNC_SHARED') & is_ev) * tour_participants
