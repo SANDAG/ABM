@@ -75,6 +75,6 @@ util_escort_calibration_constant_departure_10,ESCORT - Calibration Constant - De
 util_escort_calibration_constant_departure_23,ESCORT - Calibration Constant - Departure = 23,@((df.start==23)),coef_escort_calibration_constant_departure_23
 util_escort_calibration_constant_departure_24,ESCORT - Calibration Constant - Departure = 24,@((df.start==24)),coef_escort_calibration_constant_departure_24
 # Including terms for school escorting,,,
-util_outbound_school_escort_tour_start,Outbound school escort tours must match the start time of the escort tour,is_outbound_school_escort_tour & (start != school_escort_tour_start),coef_unavailable
-util_outbound_school_escort_tour_next_start,Outbound school escort tours must end before next escort tour start,is_outbound_school_escort_tour & (end > school_escort_tour_next_start) & (school_escort_tour_next_start > 0),coef_unavailable
-util_inbound_school_escort_tour_end,Inbound school escort tours must match the end time of the escort tour,is_inbound_school_escort_tour & (end != school_escort_tour_end),coef_unavailable
+util_outbound_school_escort_tour_start,Outbound school escort tours must match the start time of the escort tour,is_outbound_school_escort_tour & (start != school_escort_tour_start),coef_unlikely
+util_outbound_school_escort_tour_next_start,Outbound school escort tours must end before next escort tour start,is_outbound_school_escort_tour & (end > school_escort_tour_next_start) & (school_escort_tour_next_start > 0),coef_unlikely
+util_inbound_school_escort_tour_end,Inbound school escort tours must match the end time of the escort tour,is_inbound_school_escort_tour & (end != school_escort_tour_end),coef_unlikely

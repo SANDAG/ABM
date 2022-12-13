@@ -70,4 +70,5 @@ coef_escort_calibration_constant_departure_9,0.0,F
 coef_escort_calibration_constant_departure_10,0.0,F
 coef_escort_calibration_constant_departure_23,0.0,F
 coef_escort_calibration_constant_departure_24,0.0,F
-coef_unavailable,-999.0,F
+coef_unavailable,-999.0,T
+coef_unlikely,-50.0,T
