@@ -1,0 +1,5 @@
+Description,Target,Expression
+,primary_purpose,df.mode_segment
+,direction,df.direction
+,start,df.start
+,tour_category,df.tour_category

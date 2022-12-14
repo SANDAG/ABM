@@ -1,0 +1,51 @@
+inherit_settings: True
+
+zone_system: 2
+
+skim_dict_factory: NumpyArraySkimFactory
+#skim_dict_factory: MemMapSkimFactory
+
+# read cached skims (using numpy memmap) from output directory (memmap is faster than omx )
+read_skim_cache: True
+# write memmapped cached skims to output directory after reading from omx, for use in subsequent runs
+write_skim_cache: True
+
+
+
+# when checkpointing cache. also write a csv version of tvpb cache for tracing
+# (writes csv file when writing/checkpointing cache (i.e. when cached changed) even if rebuild_tvpb_cache is False)
+# (n.b. csv file could be quite large if cache is STATIC!)
+trace_tvpb_cache_as_csv: False
+
+taz_skims: 
+  - traffic_skims_EA.omx
+  - traffic_skims_AM.omx
+  - traffic_skims_MD.omx
+  - traffic_skims_PM.omx
+  - traffic_skims_EV.omx
+  - transit_skims_processed.omx
+  - dest_poi.omx
+
+
+
+
+# FIXME why no taz.csv?
+# tas: taz.csv
+
+maz: land_use.san.csv   # mgra.csv
+
+
+
+maz_to_maz:
+  tables:
+    - microMgraEquivMinutes.csv
+
+
+skim_time_periods:
+    time_window: 1440
+    period_minutes: 30
+    periods: [0, 11, 17, 30, 37, 48]  # asim xborder
+    # periods: [0, 3, 9, 22, 29, 48]  # ctramp xborder
+    labels: &skim_time_period_labels ['EA', 'AM', 'MD', 'PM', 'EV']
+
+

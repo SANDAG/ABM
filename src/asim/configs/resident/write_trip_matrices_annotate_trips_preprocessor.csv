@@ -1,7 +1,7 @@
 Description,Target,Expression
 # add additional fields,,
-,tour_participants,trips.tour_id.map(tours.number_of_participants)
-,distance,od_skims['DIST']
+,party,trips.tour_id.map(tours.number_of_participants)
+,tour_participants,"np.where(trips.trip_num ==2, 1, party)"
 # code time periods,,
 ,is_ea,"trips.depart.between(time_periods['EA']['first_hour'], time_periods['EA']['last_hour'])"
 ,is_am,"trips.depart.between(time_periods['AM']['first_hour'], time_periods['AM']['last_hour'])"

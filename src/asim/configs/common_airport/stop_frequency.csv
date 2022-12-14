@@ -1,0 +1,3 @@
+Label,Description,Expression,out_0in,0out_in,0out_0in
+util_ASC_tour_departure,ASC for tours departing,direction == 'outbound',coef_one,coef_zero,coef_zero
+util_ASC_tour_arrival,ASC for tours arriving,direction == 'inbound',coef_zero,coef_one,coef_zero
