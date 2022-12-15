@@ -116,7 +116,7 @@ CDAP
 * MTC spec had retail accessibilities by auto occupancy and crossed it with person type.  Replaced this with disaggregate shopping accessibility and collapsed since coefficients accross occupancies were the same. (This appears in _cdap_indiv_and_hhsize1.csv_ and in _cdap_joint_tour_coefficients.csv_)
 * Commented out expressions using `building_size`.  This is a variable included in MTC's input data.
 * Had to add term to turn off M pattern for workers working from home (otherwise you get a zero probability error in MTF).
-  - Had to add additional term in the annotate_persons_cdap.csv where the CDAP was changed from 'M' to 'H' if there is no availabile work or school location
+  - Segmented cdap_fixed_relative_proportions.csv according to this discussion: https://github.com/ActivitySim/activitysim/discussions/619
   - This happens because individual utilities are only calculated for the first 5 persons in the hh based on cdap rank (see util\cdap.py line 1170 with cut on MAX_HHSIZE)
 ---
 Joint Tour Frequency Composition
