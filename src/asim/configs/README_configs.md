@@ -40,6 +40,9 @@ _settings.yaml_
 * re-named columns in households and persons
 * Kept all columns from landuse.  Decreasing the number of landuse columns might make a substantial impact on RAM requirements as they are often jointed to the person and hh tables
 ---
+Disaggregate Accessibilities
+* Currently set number of origin zones to 5000 and number of destinations to 100.  These should be reviewed.
+---
 _annotate_landuse.yaml_
 
 * Capped the employment density (tot_emp / acre) to 500
@@ -60,7 +63,6 @@ _network_los.yaml_
   - Changed time periods in _write_trip_matrices.yaml_ to match
 
 ---
-
 Initialize Households
 
 * In _annotate_households.csv_, `home_is_urban` and `home_is_rural` values are now computed based on `pseudomsa` instead of the previous `area_type` variable that exists in other examples.  Is there a better substitute for this?
@@ -202,6 +204,9 @@ Trip purpose
 Trip Destination
 * `DISTBIKE` and `DISTWALK` changed to `DIST` in _trip_destination_sample.csv_ while waiting on bike and walk distance skims
 ---
+Trip Purpose and Destination
+* Set the number of iterations 2 to instead of 5 because it was taking forever to run.  These two models are currently not consistent and are failing a lot of trips.
+---
 Trip Mode Choice
 * origin and destination terminal times (`oTermTime, dTermTime`) are not included in landuse data, setting to 0 as placeholder until it can be joined
 * Removed the following variables and associated calculations since they were not used anywhere:
@@ -244,8 +249,7 @@ External Model Development
   - Set `CHOOSER_FILTER_COLUMN_NAME: is_internal_student/worker` in school and workplace location yamls to exclude external workers or students from the model
   - Added `is_internal_[student,worker]` to annotate_person file with a default of everyone being internal.  Gets overwritten by external identification models.  This means that we can theoretically choose to turn off the external models and not have to make changes in other configs
 * Implemented external workplace and school location models
-  - calls the same `iterate_location_choice` method as internal school and workplace location models and has all the same functionality
-     - FIXME: I think that shadow pricing, if turned on, will run for these models too.  Is that a good feature?  Changing would not allow us to use the same `iterate_location_choice` function call and would require some extra code development.
+  - shadow pricing is skipped for external workplace or external school location
 * Added `external` options in _shadow_pricing.yaml_ in order to get size terms passed to the calculations
   - Added an `external` segment to _destination_choice_size_terms.csv_ which is currently looking for two landuse columns `external_work`, and `external_nonwork`
     - data was added to landuse using the _input_file_creation.ipynb_ notebook

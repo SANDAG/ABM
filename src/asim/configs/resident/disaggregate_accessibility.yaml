@@ -1,10 +1,8 @@
 # Sampling size. 0 = no limit
 # can be whole integer value or a sample rate (percent of zones)
 # zero or missing defaults to full sample!
-# DESTINATION_SAMPLE_SIZE: 100
-# ORIGIN_SAMPLE_SIZE: 5000
-DESTINATION_SAMPLE_SIZE: 50
-ORIGIN_SAMPLE_SIZE: 50
+DESTINATION_SAMPLE_SIZE: 100
+ORIGIN_SAMPLE_SIZE: 5000
 
 # select origin zones weighted by population (or another landuse variable)
 ORIGIN_WEIGHTING_COLUMN: pop
