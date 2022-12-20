@@ -53,7 +53,7 @@ class VisitorModel(TourEnumMixin,
 
     def __init__(self):
         # Find asim location
-        self.parameters_path = 'src/asim/configs/visitor/settings_visitor.yaml'
+        self.parameters_path = 'configs/visitor/settings_visitor.yaml'
         self.parameters_path = os.path.join(find_root_level(self.parameters_path), self.parameters_path)
         self.processed_data = {}
 
@@ -146,8 +146,8 @@ if __name__ == '__main__':
         asim_root = find_root_level('simulation.py')
 
         # need to pass the configs, data, and output folders to sub process
-        config_args = ['-c', '../../configs/visitor',
-                       '-c', '../../configs/common',
+        config_args = ['-c', 'configs/visitor',
+                       '-c', 'configs/common',
                        '-d', visitor.parameters['data_dir'],
                        '-o', visitor.parameters['output_dir']]
 
