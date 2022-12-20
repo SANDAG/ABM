@@ -16,3 +16,4 @@ util_dist_femaleworker,Distance - female worker,@_DIST * (df.ptype<3) * (df.fema
 #,,,
 util_size_variable,Size variable,@df['size_term'].apply(np.log1p),1
 util_size_variable,Size variable,@df['size_term']==0,-999
+util_sp_utility_adjustment,shadow price utility adjustment,@df['shadow_price_utility_adjustment'],1

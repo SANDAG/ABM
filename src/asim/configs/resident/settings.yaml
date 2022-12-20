@@ -9,7 +9,7 @@ chunk_training_mode: disabled
 
 # turn shadow_pricing on and off for all models (e.g. school and work)
 # see shadow_pricing.yaml for additional settings
-use_shadow_pricing: False
+use_shadow_pricing: True
 
 # Sample TAZ before MAZ in destination choice
 want_dest_choice_presampling: True
@@ -20,7 +20,7 @@ want_dest_choice_sample_tables: False
 
 # trace household id; comment out or leave empty for no trace
 # households with all tour types
-trace_hh_id: 929635
+trace_hh_id:
 
 chunk_training_mode: disabled
 
