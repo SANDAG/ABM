@@ -52,3 +52,4 @@ coef_maintenance_calibration_constant_duration_3,0.0,F
 coef_maintenance_calibration_constant_duration_4,0.25854243359403917,F
 coef_maintenance_calibration_constant_duration_5,0.22211610318873198,F
 coef_mode_choice_logsum,0.23911188143948614,F
+coef_unavailable,-999.0,F

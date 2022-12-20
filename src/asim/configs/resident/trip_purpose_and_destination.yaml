@@ -1,5 +1,5 @@
 
-MAX_ITERATIONS: 5
+MAX_ITERATIONS: 2
 
 # drop failed trips and cleanup failed trip leg_mates for consistency
 # (i.e. adjust trip_count, trip_num, first for missing failed trips)

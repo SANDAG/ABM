@@ -52,3 +52,4 @@ coef_shopping_calibration_constant_duration_1,0.0,F
 coef_shopping_calibration_constant_duration_2,0.0,F
 coef_shopping_calibration_constant_duration_3,0.0,F
 coef_mode_choice_logsum,0.2,F
+coef_unavailable,-999.0,F

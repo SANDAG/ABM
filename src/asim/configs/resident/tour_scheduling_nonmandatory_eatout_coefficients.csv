@@ -58,3 +58,4 @@ coef_eatout_calibration_constant_departure_19,0.0,F
 coef_eatout_calibration_constant_departure_20,0.0,F
 coef_eatout_calibration_constant_departure_21,0.0,F
 coef_mode_choice_logsum,0.2,F
+coef_unavailable,-999.0,F

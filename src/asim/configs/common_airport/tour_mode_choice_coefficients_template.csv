@@ -1,0 +1,3 @@
+coefficient_name,res_bus1,res_bus2,res_bus3,res_bus4,res_bus5,res_bus6,res_bus7,res_bus8,res_per1,res_per2,res_per3,res_per4,res_per5,res_per6,res_per7,res_per8,vis_bus,vis_per
+#same for all segments,,,,,,,,,,,,,,,,,,
+coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one

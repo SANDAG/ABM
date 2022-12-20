@@ -53,3 +53,7 @@ util_social_calibration_constant_duration_6,SOCIAL - Calibration Constant - Dura
 util_social_calibration_constant_duration_7,SOCIAL - Calibration Constant - Duration = 7,@((df.duration ==6)),coef_social_calibration_constant_duration_7
 util_social_calibration_constant_duration_8,SOCIAL - Calibration Constant - Duration = 8,@((df.duration ==7)),coef_social_calibration_constant_duration_8
 util_social_calibration_constant_duration_9,SOCIAL - Calibration Constant - Duration = 9,@((df.duration ==8)),coef_social_calibration_constant_duration_9
+# Including terms for school escorting,,,
+util_outbound_school_escort_tour_start,Outbound school escort tours must match the start time of the escort tour,is_outbound_school_escort_tour & (start != school_escort_tour_start),coef_unavailable
+util_outbound_school_escort_tour_next_start,Outbound school escort tours must end before next escort tour start,is_outbound_school_escort_tour & (end > school_escort_tour_next_start) & (school_escort_tour_next_start > 0),coef_unavailable
+util_inbound_school_escort_tour_end,Inbound school escort tours must match the end time of the escort tour,is_inbound_school_escort_tour & (end != school_escort_tour_end),coef_unavailable

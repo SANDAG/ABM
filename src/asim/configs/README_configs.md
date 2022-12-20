@@ -40,6 +40,9 @@ _settings.yaml_
 * re-named columns in households and persons
 * Kept all columns from landuse.  Decreasing the number of landuse columns might make a substantial impact on RAM requirements as they are often jointed to the person and hh tables
 ---
+Disaggregate Accessibilities
+* Currently set number of origin zones to 5000 and number of destinations to 100.  These should be reviewed.
+---
 _annotate_landuse.yaml_
 
 * Capped the employment density (tot_emp / acre) to 500
@@ -60,7 +63,6 @@ _network_los.yaml_
   - Changed time periods in _write_trip_matrices.yaml_ to match
 
 ---
-
 Initialize Households
 
 * In _annotate_households.csv_, `home_is_urban` and `home_is_rural` values are now computed based on `pseudomsa` instead of the previous `area_type` variable that exists in other examples.  Is there a better substitute for this?
@@ -111,13 +113,33 @@ Telecommute frequency
 * commented out occupancy related varibales (df.occup), since I am not sure about the field in the person file. It is likely "occsoc5" that needs to be parsed for the first two digits?
 * currently, only the 2016 calibration constant included, while the ct-ramp UEC has the constants based on scenario year. To be fixed later with EMME integration.
 ---
+CDAP
+* Took configs from WSP's MTC work
+* MTC spec had retail accessibilities by auto occupancy and crossed it with person type.  Replaced this with disaggregate shopping accessibility and collapsed since coefficients accross occupancies were the same. (This appears in _cdap_indiv_and_hhsize1.csv_ and in _cdap_joint_tour_coefficients.csv_)
+* Commented out expressions using `building_size`.  This is a variable included in MTC's input data.
+* Had to add term to turn off M pattern for workers working from home (otherwise you get a zero probability error in MTF).
+  - Segmented cdap_fixed_relative_proportions.csv according to this discussion: https://github.com/ActivitySim/activitysim/discussions/619
+  - This happens because individual utilities are only calculated for the first 5 persons in the hh based on cdap rank (see util\cdap.py line 1170 with cut on MAX_HHSIZE)
+---
+Joint Tour Frequency Composition
+* Took configs from WSP's MTC work
+* accessibilities were segemented by auto occupancy.  Removed the segmentation and swapped the disaggregate shopping_accessibility for shopping and maintenance, and the othdisc_accessibility for other discretionary.
+---
 Mandatory tour frequency
 * `schoolathome` row commented out for now
 * escort related variables commented out for now (waiting for school dropoff/pickup model)   
 ---
+Non-Mandatory tour frequency
+* Took configs from WSP's MTC work
+* Commented out lines referring to `educational_attainment`
+* Commented out lines referring to `building_size`
+* Removed acessibilities by auto occupancy and added disaggregate accessibilities in where appropriate.  Should be reviewed.
+* Used `popden` in landuse file for population density. Does this match MTC's units?
+---
 Tour and Trip Scheduling
 * Replaced all tour and trip scheduling files with SEMCOG versions
   - Updated the annotate person and houssehold files to calculate varibles used
+* FIXME Had to change the coef_unavailable to coef_unlikely (-50) for escort tours.  This arose from the second work tour getting scheduled over pure escort school tour.  Need to update availability conditions / escort bundle creation in school escorting model to look out for second mandatory tour.
 ---
 Tour destination choice
 * time pressure variable commented out in non-mandatory tour destination choice (max_window problematic for now -- to be fixed)
@@ -182,6 +204,9 @@ Trip purpose
 Trip Destination
 * `DISTBIKE` and `DISTWALK` changed to `DIST` in _trip_destination_sample.csv_ while waiting on bike and walk distance skims
 ---
+Trip Purpose and Destination
+* Set the number of iterations 2 to instead of 5 because it was taking forever to run.  These two models are currently not consistent and are failing a lot of trips.
+---
 Trip Mode Choice
 * origin and destination terminal times (`oTermTime, dTermTime`) are not included in landuse data, setting to 0 as placeholder until it can be joined
 * Removed the following variables and associated calculations since they were not used anywhere:
@@ -211,6 +236,9 @@ Trip Mode Choice
 * `coef_bikeTime` in the coefficients temlate is not being used. Is there an expression missing? Commented it out for now.
 * check expression for `dest_zone_sharedTNC_wait_time_mean`, I made a change to match the other similar variables and left the old one there for review.
 ---
+Parking location Choice
+* Only allows people to park in zone with `is_parking_zone`.  This was set to true in annotate_landuse.csv when `parkarea` > 0.  Is this the correct filter?
+---
 Write Trip Matrices
 * Modified to be consistent with new tour and trip modes and time period definitions
   - Do we want separate demand tables for drive transit modes?
@@ -221,8 +249,7 @@ External Model Development
   - Set `CHOOSER_FILTER_COLUMN_NAME: is_internal_student/worker` in school and workplace location yamls to exclude external workers or students from the model
   - Added `is_internal_[student,worker]` to annotate_person file with a default of everyone being internal.  Gets overwritten by external identification models.  This means that we can theoretically choose to turn off the external models and not have to make changes in other configs
 * Implemented external workplace and school location models
-  - calls the same `iterate_location_choice` method as internal school and workplace location models and has all the same functionality
-     - FIXME: I think that shadow pricing, if turned on, will run for these models too.  Is that a good feature?  Changing would not allow us to use the same `iterate_location_choice` function call and would require some extra code development.
+  - shadow pricing is skipped for external workplace or external school location
 * Added `external` options in _shadow_pricing.yaml_ in order to get size terms passed to the calculations
   - Added an `external` segment to _destination_choice_size_terms.csv_ which is currently looking for two landuse columns `external_work`, and `external_nonwork`
     - data was added to landuse using the _input_file_creation.ipynb_ notebook

@@ -1,0 +1,7 @@
+Description,Target,Expression
+,parent_tour_id,None
+,tour_num,1
+,tour_count,1
+,number_of_participants,df.party_size
+,outbound,df.direction == 'outbound'
+,tour_mode,0

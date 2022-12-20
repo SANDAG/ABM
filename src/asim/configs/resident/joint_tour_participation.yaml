@@ -4,12 +4,16 @@ COEFFICIENTS: joint_tour_participation_coefficients.csv
 
 LOGIT_TYPE: MNL
 
-#max_participation_choice_iterations: 5000
+max_participation_choice_iterations: 1000
+
+# will force anyone with a probability > 0 onto the tour after the max iterations 
+FORCE_PARTICIPATION: True
 
 preprocessor:
   SPEC: joint_tour_participation_annotate_participants_preprocessor
   DF: participants
-#  TABLES:
+  TABLES:
+    - tours
 #    - persons
 #    - accessibility
 

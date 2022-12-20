@@ -1,0 +1,16 @@
+#
+annotate_tables:
+  - tablename: persons
+    annotate:
+      SPEC: annotate_persons
+      DF: persons
+      TABLES:
+        - households
+        - tours
+  - tablename: households
+    annotate:
+      SPEC: annotate_households
+      DF: households
+      TABLES:
+        - persons
+        - tours

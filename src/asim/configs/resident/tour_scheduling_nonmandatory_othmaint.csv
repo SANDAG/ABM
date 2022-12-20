@@ -53,3 +53,7 @@ util_maintenance_calibration_constant_duration_2,MAINTENANCE - Calibration Const
 util_maintenance_calibration_constant_duration_3,MAINTENANCE - Calibration Constant - Duration = 3,@((df.duration==2)),coef_maintenance_calibration_constant_duration_3
 util_maintenance_calibration_constant_duration_4,MAINTENANCE - Calibration Constant - Duration = 4,@((df.duration==3)),coef_maintenance_calibration_constant_duration_4
 util_maintenance_calibration_constant_duration_5,MAINTENANCE - Calibration Constant - Duration = 5,@((df.duration==4)),coef_maintenance_calibration_constant_duration_5
+# Including terms for school escorting,,,
+util_outbound_school_escort_tour_start,Outbound school escort tours must match the start time of the escort tour,is_outbound_school_escort_tour & (start != school_escort_tour_start),coef_unavailable
+util_outbound_school_escort_tour_next_start,Outbound school escort tours must end before next escort tour start,is_outbound_school_escort_tour & (end > school_escort_tour_next_start) & (school_escort_tour_next_start > 0),coef_unavailable
+util_inbound_school_escort_tour_end,Inbound school escort tours must match the end time of the escort tour,is_inbound_school_escort_tour & (end != school_escort_tour_end),coef_unavailable

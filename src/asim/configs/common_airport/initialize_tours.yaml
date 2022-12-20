@@ -1,0 +1,15 @@
+#
+annotate_tours:
+  SPEC: annotate_tours
+  DF: tours
+  TABLES:
+    - land_use
+
+# we want to skip this step bc we're generating our own
+# tour ID's in the pre-processing step and they don't have
+# any of the attributes that this method requires
+skip_patch_tour_ids: True
+
+CONSTANTS:
+  vot_threshold_low: 8.81
+  vot_threshold_med: 18.00

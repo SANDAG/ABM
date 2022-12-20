@@ -1,0 +1,10 @@
+
+
+RETURN_MODE_SEGMENTS:
+    - CURB_LOC1
+    - CURB_LOC2
+    - CURB_LOC3
+    - CURB_LOC4
+    - CURB_LOC5
+    - PARK_ESCORT
+    
