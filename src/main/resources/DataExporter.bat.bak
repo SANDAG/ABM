@@ -7,7 +7,7 @@ call bin\CTRampEnv.bat
 set JAR_LOCATION=%PROJECT_DIRECTORY%/application
 
 rem ### Connecting to Anaconda3 Environment
-set ENV=%CONDA_PREFIX%
+set ENV=C:\ProgramData\Anaconda3
 call %ENV%\Scripts\activate.bat %ENV%
 
 rem ### Checking if Data Exporter environment exists
