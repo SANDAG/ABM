@@ -1,4 +1,4 @@
-set root=%CONDA_PREFIX%
+set root=C:\ProgramData\Anaconda3
 call %root%\Scripts\activate.bat %root%
 cd..
 cd python
