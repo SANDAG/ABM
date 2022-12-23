@@ -315,17 +315,17 @@ def export_highway_shape(scenario_path: str) -> geopandas.GeoDataFrame:
     hwy_tcad["VMT"] = hwy_tcad["Flow"] * hwy_tcad["Length"]
 
     # calculate vehicle hours travelled (vht)
-    hwy_tcad["AB_VHT"] = hwy_tcad["AB_Time_EA"] * hwy_tcad["AB_Flow_EA"] + \
+    hwy_tcad["AB_VHT"] = 1/60 * (hwy_tcad["AB_Time_EA"] * hwy_tcad["AB_Flow_EA"] + \
         hwy_tcad["AB_Time_AM"] * hwy_tcad["AB_Flow_AM"] + \
         hwy_tcad["AB_Time_MD"] * hwy_tcad["AB_Flow_MD"] + \
         hwy_tcad["AB_Time_PM"] * hwy_tcad["AB_Flow_PM"] + \
-        hwy_tcad["AB_Time_EV"] * hwy_tcad["AB_Flow_EV"]
+        hwy_tcad["AB_Time_EV"] * hwy_tcad["AB_Flow_EV"])
 
-    hwy_tcad["BA_VHT"] = hwy_tcad["BA_Time_EA"] * hwy_tcad["BA_Flow_EA"] + \
+    hwy_tcad["BA_VHT"] = 1/60 * (hwy_tcad["BA_Time_EA"] * hwy_tcad["BA_Flow_EA"] + \
         hwy_tcad["BA_Time_AM"] * hwy_tcad["BA_Flow_AM"] + \
         hwy_tcad["BA_Time_MD"] * hwy_tcad["BA_Flow_MD"] + \
         hwy_tcad["BA_Time_PM"] * hwy_tcad["BA_Flow_PM"] + \
-        hwy_tcad["BA_Time_EV"] * hwy_tcad["BA_Flow_EV"]
+        hwy_tcad["BA_Time_EV"] * hwy_tcad["BA_Flow_EV"])
 
     hwy_tcad["VHT"] = hwy_tcad["AB_VHT"] + hwy_tcad["BA_VHT"]
 
