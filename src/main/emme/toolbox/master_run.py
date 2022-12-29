@@ -370,6 +370,8 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         core_abm_files = [mode + name for name in core_abm_files for mode in travel_modes]
         smm_abm_files = ["AirportTrips*.omx", "CrossBorderTrips*.omx", "VisitorTrips*.omx"]
         smm_abm_files = [mode + name for name in smm_abm_files for mode in travel_modes]
+        smm_csv_files = ["airport_out.CBX.csv", "airport_out.SAN.csv", "crossBorderTours.csv", "crossBorderTrips.csv", "visitorTours.csv", "visitorTrips.csv"]
+        smm_abm_files.extend(smm_csv_files)
         maas_abm_files = ["EmptyAVTrips.omx", "TNCVehicleTrips*.omx"]
 
         relative_gap = props["convergence"]

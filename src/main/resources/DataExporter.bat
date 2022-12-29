@@ -7,7 +7,8 @@ call bin\CTRampEnv.bat
 set JAR_LOCATION=%PROJECT_DIRECTORY%/application
 
 rem ### Connecting to Anaconda3 Environment
-set ENV=C:\ProgramData\Anaconda3
+rem CONDA_PREFIX is a system environment variable that points to the location of Anaconda3
+set ENV=%CONDA_PREFIX%
 call %ENV%\Scripts\activate.bat %ENV%
 
 rem ### Checking if Data Exporter environment exists

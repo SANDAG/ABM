@@ -2032,7 +2032,7 @@ class TripLists(ScenarioData):
                        6: "150k-200k",
                        7: "200k+",
 					   -99 : "employee"},
-            "tripMode": {0: "Not Applicable",
+            "tripMode": {0: "Shuttle/Van/Courtesy Vehicle",
 						 1: "Drive Alone",
                          2: "Shared Ride 2",
                          3: "Shared Ride 3+",
