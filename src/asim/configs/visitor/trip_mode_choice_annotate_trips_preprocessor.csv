@@ -65,8 +65,7 @@ is recreation tour,is_recreation,"np.where(purpose_id==1,1,0)"
 is dining tour,is_dining,"np.where(purpose_id==2,1,0)"
 ,walk_time,od_skims['walkTime']
 ,walk_available,"np.where((walk_time < max_walk_time) & (walk_time > 0), 1, 0)"
-,walk_transit_logsum,tvpb_logsum_odt['WTW']
-,walk_transit_available,"np.where((walk_transit_logsum >= -500) | (walk_transit_logsum != 0), 1, 0)"
+,walk_transit_available,(odt_skims['WALK_MIX_TOTALIVTT'] > 0)
 ,bike_time,od_skims['bikeTime']
 ,bike_available,"np.where((bike_time < max_bike_time) & (bike_time > 0), 1, 0)"
 ,da_available,"np.where(df.auto_available & (df.number_of_participants == 1), 1, 0)"
@@ -87,3 +86,5 @@ placeholder for missing autoParkingCostFactorAV,autoParkingCostFactor,1
 placeholder for missing autoCostPerMileFactorAV,autoCPMFactor,1
 #Auto Terminal Time Factor,autoTermTimeFactor,"np.where(useAV==0,1.0,autoTerminalTimeFactorAV)"
 placeholder for missing autoTerminalTimeFactorAV,autoTermTimeFactor,1
+# PLACEHOLDER
+,time_factor,1.0

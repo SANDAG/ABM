@@ -16,6 +16,7 @@ taz_skims:
   - traffic_skims_processed_MD.omx
   - traffic_skims_processed_PM.omx
   - traffic_skims_processed_EV.omx
+  #- transit_skims_processed.omx
   - transit_skims_EA.omx
   - transit_skims_AM.omx
   - transit_skims_MD.omx

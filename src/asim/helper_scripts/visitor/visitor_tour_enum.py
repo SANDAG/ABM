@@ -80,12 +80,12 @@ class TourEnumMixin:
     def simulate_tour_features(self, n_seg_parties, tables):
         # Function to simulate tours for k visitor parties' features (party size, auto availability, and income
         # Require tour_type and visitor_travel_type strings, returns a data frame
-
+        
         # Probability distribution tables
         probs_size = tables['party_size']
         probs_auto = tables['auto_available']
         probs_income = tables['income']
-
+        
         # Generates a list of tour tour_type frequencies per party
         party_tours = self.simulate_tour_types(n_seg_parties, tables)
 
@@ -134,7 +134,6 @@ class TourEnumMixin:
     def simulate_tour_types(self, parties, tables):
         # Probability distribution tables
         probs_visitor_travel_type = tables['visitor_travel_type_frequency']
-
         visitor_travel_type_parties = []
         for s, n in parties.items():
             party_tours = probs_visitor_travel_type[s].sample(n=n, weights='Percent', replace=True).reset_index(drop=True)
@@ -144,12 +143,10 @@ class TourEnumMixin:
             party_tours = party_tours.rename(
                 columns={'WorkTours': 'work', 'RecreationTours': 'recreation', 'DiningTours': 'dining'}
             ).drop(columns=['Percent', 'TotalTours']).reset_index().rename(columns={'index': 'party'})
-
+            party_tours.to_pickle("C:\\abm3_dev\\output_visitors\\temp\\party_tours.pkl")
             # Reshape to long and remove 0s
-            party_tours = pd.melt(party_tours,
-                                  id_vars='party',
-                                  var_name='tour_type',
-                                  value_name='count').replace(0, pd.NA).dropna()
+            party_tours = pd.melt(party_tours, id_vars='party', var_name='tour_type', value_name='count')
+            party_tours = party_tours[party_tours['count'] > 0]
 
             # Add visitor visitor_travel_type group
             party_tours['visitor_travel_type'] = s
