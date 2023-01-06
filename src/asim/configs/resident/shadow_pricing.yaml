@@ -9,7 +9,7 @@ shadow_pricing_models:
 LOAD_SAVED_SHADOW_PRICES: False
 
 # write out choices by iteration to trace folder
-WRITE_ITERATION_CHOICES: True
+WRITE_ITERATION_CHOICES: False
 
 # number of shadow price iterations for cold start
 MAX_ITERATIONS: 10
@@ -37,7 +37,7 @@ school_segmentation_targets:
   university: tot_collegeenroll
   highschool: enrollgrade9to12
   gradeschool: enrollgradekto8
-  preschool: pop
+  preschool: preschool_target
 
 # if target names are the same, they will be combined together
 workplace_segmentation_targets:

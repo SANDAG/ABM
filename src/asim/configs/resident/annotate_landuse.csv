@@ -5,5 +5,6 @@ population_density,population_density,land_use['pop'] / land_use.acres.clip(lowe
 employment_density,employment_density,(land_use.emp_total / land_use.acres.clip(lower=1)).clip(upper=500)
 density_index,density_index,(household_density *employment_density) / (household_density + employment_density).clip(lower=1)
 ,is_cbd,land_use.pseudomsa == 1
-total college enrollment for shadow pricing,tot_collegeenroll,land_use.adultschenrl + land_use.collegeenroll + land_use.othercollegeenroll
+total college enrollment for mandatory constraint target,tot_collegeenroll,land_use.adultschenrl + land_use.collegeenroll + land_use.othercollegeenroll
+preschool target for mandatory constraint - sum of all size terms,preschool_target,land_use['pop'] + land_use.emp_prof_bus_svcs + land_use.emp_prof_bus_svcs_bldg_maint + land_use.emp_pvt_ed_k12 + land_use.emp_pvt_ed_post_k12_oth + land_use.emp_health + land_use.emp_religious + land_use.emp_fed_non_mil + land_use.emp_fed_mil + land_use.emp_state_local_gov_blue + land_use.emp_state_local_gov_white + land_use.emp_state_local_gov_ent + land_use.emp_public_ed
 Is a zone with parking,is_parking_zone,(land_use.parkarea > 0)
