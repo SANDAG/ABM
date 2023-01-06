@@ -200,7 +200,7 @@ coef_calib_civtmax4525sovdistsk_PNR_TRANSIT_work,1,F
 coef_calib_tourbike_DRIVEALONE_work,-999,F
 coef_calib_tourbike_SHARED2_work,-999,F
 coef_calib_tourbike_SHARED3_work,-999,F
-coef_calib_tourbike_WALK_work,-999,F
+coef_calib_tourbike_WALK_work,-20,F
 coef_calib_tourbike_BIKE_work,-0.45,F
 coef_calib_tourbike_WALK_TRANSIT_work,-999,F
 coef_calib_tourbike_PNR_TRANSIT_work,-999,F
@@ -403,7 +403,7 @@ coef_calib_civtmax4525sovdistsk_PNR_TRANSIT_univ,1,F
 coef_calib_tourbike_DRIVEALONE_univ,-999,F
 coef_calib_tourbike_SHARED2_univ,-999,F
 coef_calib_tourbike_SHARED3_univ,-999,F
-coef_calib_tourbike_WALK_univ,-999,F
+coef_calib_tourbike_WALK_univ,-20,F
 coef_calib_tourbike_BIKE_univ,-1.47,F
 coef_calib_tourbike_WALK_TRANSIT_univ,-999,F
 coef_calib_tourbike_PNR_TRANSIT_univ,-999,F
@@ -605,7 +605,7 @@ coef_calib_civtmax4525sovdistsk_PNR_TRANSIT_school,1,F
 coef_calib_tourbike_DRIVEALONE_school,-999,F
 coef_calib_tourbike_SHARED2_school,-999,F
 coef_calib_tourbike_SHARED3_school,-999,F
-coef_calib_tourbike_WALK_school,-999,F
+coef_calib_tourbike_WALK_school,-20,F
 coef_calib_tourbike_BIKE_school,-8.526,F
 coef_calib_tourbike_WALK_TRANSIT_school,-999,F
 coef_calib_tourbike_PNR_TRANSIT_school,-999,F
@@ -756,7 +756,7 @@ coef_calib_jointtour1_TNC_TRANSIT_maint,-1.629,F
 coef_calib_tourbike_DRIVEALONE_maint,-999,F
 coef_calib_tourbike_SHARED2_maint,-999,F
 coef_calib_tourbike_SHARED3_maint,-999,F
-coef_calib_tourbike_WALK_maint,-999,F
+coef_calib_tourbike_WALK_maint,-20,F
 coef_calib_tourbike_WALK_TRANSIT_maint,-999,F
 coef_calib_tourbike_PNR_TRANSIT_maint,-999,F
 coef_calib_tourbike_KNR_TRANSIT_maint,-999,F
@@ -1040,7 +1040,7 @@ coef_calib_civtmax4525sovdistsk_PNR_TRANSIT_disc,1,F
 coef_calib_tourbike_DRIVEALONE_disc,-999,F
 coef_calib_tourbike_SHARED2_disc,-999,F
 coef_calib_tourbike_SHARED3_disc,-999,F
-coef_calib_tourbike_WALK_disc,-999,F
+coef_calib_tourbike_WALK_disc,-20,F
 coef_calib_tourbike_WALK_TRANSIT_disc,-999,F
 coef_calib_tourbike_PNR_TRANSIT_disc,-999,F
 coef_calib_tourbike_KNR_TRANSIT_disc,-999,F
@@ -1344,7 +1344,7 @@ coef_calib_civtmax200133sovdist_WALK_TRANSIT_atwork,1,F
 coef_calib_tourbike_DRIVEALONE_atwork,-999,F
 coef_calib_tourbike_SHARED2_atwork,-999,F
 coef_calib_tourbike_SHARED3_atwork,-999,F
-coef_calib_tourbike_WALK_atwork,-999,F
+coef_calib_tourbike_WALK_atwork,-20,F
 coef_calib_tourbike_BIKE_atwork,-5.36,F
 coef_calib_tourbike_WALK_TRANSIT_atwork,-999,F
 coef_calib_tourbike_TAXI_atwork,-999,F
