@@ -1,0 +1,118 @@
+#######################################################################################
+#                                                                                     #
+#                                Data Pipeline Settings                               #
+#                                                                                     #
+#######################################################################################
+
+
+# Specify data to extract and load
+extract:
+    - filepath: "C:/ABM3_dev/visualizer/output"
+      test_size:
+      data:
+          - "final_households.csv"
+          - "final_persons.csv"
+          - "final_tours.csv"
+          - "final_trips.csv"
+          - "final_joint_tour_participants.csv"
+    - filepath: "C:/ABM3_dev/visualizer/data"
+      test_size:
+      data:
+          - "land_use.csv"
+          - "traffic_skims_MD.omx"
+    - filepath: "C:/ABM3_dev/visualizer/visualizer/data"
+      test_size:
+      data:
+          - "geographicXwalk_PMSA.csv"
+          - "occFactors.csv"
+
+# Specify transformation steps
+transform:
+    processor: "C:/ABM3_dev/visualizer/visualizer/data_pipeliner/config/processor.csv"
+    summarizer: "C:/ABM3_dev/visualizer/visualizer/data_pipeliner/config/expressions.csv"
+    steps:
+        - name: step_0
+          merge:
+              - table_name: hh
+                include:
+                    - final_households
+                    - land_use
+                merge_cols:
+                    - home_zone_id
+                    - MAZ
+                merge_type: left
+              - table_name: persons
+                include:
+                    - final_persons
+                    - geographicXwalk_PMSA 
+                merge_cols:
+                    - home_zone_id
+                    - mgra
+                merge_type: left
+              - table_name: persons
+                include:
+                    - persons
+                    - geographicXwalk_PMSA
+                merge_cols:
+                    - workplace_zone_id
+                    - mgra
+                merge_type: left
+              - table_name: persons
+                include:
+                    - persons
+                    - geographicXwalk_PMSA
+                merge_cols:
+                    - school_zone_id
+                    - mgra
+                merge_type: left
+              
+          process: True
+
+        - name: step_1
+          process: True
+
+        - name: step_2
+          merge:
+              - table_name: hh_itours
+                include:
+                    - final_households
+                    - indivTourData_3
+                merge_cols:
+                    - household_id
+                    - household_id
+                merge_type: left
+              - table_name: hh_jtours
+                include:
+                    - final_households
+                    - jointTourData_3
+                merge_cols:
+                    - household_id
+                    - household_id
+                merge_type: left
+
+        - name: step_3
+          process: True
+
+        - name: step_4
+          concat:
+              - table_name: tours
+                include:
+                    - indivTourData_3
+                    - jointTourData_3
+              - table_name: trips
+                include:
+                    - indivTripData_3
+                    - jointTripData_3
+          process: True
+
+        - name: step_5
+          summarize: True
+          process: True
+        
+        - name: step_6
+          process: True
+
+# Specify where to write results
+load:
+    outdir: "C:/ABM3_dev/visualizer/visualizer/data_pipeliner/output/"
+    empty_fill: 0

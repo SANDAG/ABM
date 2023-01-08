@@ -1,0 +1,82 @@
+HDISTRICT,WDISTRICT,freq
+1: Downtown,1: Downtown,264
+1: Downtown,2: Central,3814
+1: Downtown,3: North City,4830
+1: Downtown,4: South Suburban,2610
+1: Downtown,5: East Suburban,3422
+1: Downtown,6: North County West,2580
+1: Downtown,7: North County East,374
+1: Downtown,8: East County,46
+1: Downtown,,490
+2: Central,1: Downtown,3233
+2: Central,2: Central,59701
+2: Central,3: North City,73121
+2: Central,4: South Suburban,38645
+2: Central,5: East Suburban,52038
+2: Central,6: North County West,38506
+2: Central,7: North County East,6220
+2: Central,8: East County,638
+2: Central,,6917
+3: North City,1: Downtown,3088
+3: North City,2: Central,57973
+3: North City,3: North City,98894
+3: North City,4: South Suburban,43365
+3: North City,5: East Suburban,55781
+3: North City,6: North County West,53626
+3: North City,7: North County East,12210
+3: North City,8: East County,1033
+3: North City,,10295
+4: South Suburban,1: Downtown,1233
+4: South Suburban,2: Central,20976
+4: South Suburban,3: North City,31108
+4: South Suburban,4: South Suburban,16201
+4: South Suburban,5: East Suburban,20624
+4: South Suburban,6: North County West,17626
+4: South Suburban,7: North County East,3128
+4: South Suburban,8: East County,233
+4: South Suburban,,3106
+5: East Suburban,1: Downtown,1761
+5: East Suburban,2: Central,32659
+5: East Suburban,3: North City,48201
+5: East Suburban,4: South Suburban,24318
+5: East Suburban,5: East Suburban,56121
+5: East Suburban,6: North County West,24046
+5: East Suburban,7: North County East,11501
+5: East Suburban,8: East County,1652
+5: East Suburban,,6110
+6: North County West,1: Downtown,1127
+6: North County West,2: Central,22503
+6: North County West,3: North City,41784
+6: North County West,4: South Suburban,19214
+6: North County West,5: East Suburban,20916
+6: North County West,6: North County West,36101
+6: North County West,7: North County East,16436
+6: North County West,8: East County,984
+6: North County West,,8376
+7: North County East,1: Downtown,610
+7: North County East,2: Central,11573
+7: North County East,3: North City,26679
+7: North County East,4: South Suburban,8571
+7: North County East,5: East Suburban,28659
+7: North County East,6: North County West,24424
+7: North County East,7: North County East,92582
+7: North County East,8: East County,2894
+7: North County East,,29594
+8: East County,1: Downtown,107
+8: East County,2: Central,2296
+8: East County,3: North City,4794
+8: East County,4: South Suburban,1864
+8: East County,5: East Suburban,4815
+8: East County,6: North County West,4558
+8: East County,7: North County East,4470
+8: East County,8: East County,3246
+8: East County,,2210
+,1: Downtown,265
+,2: Central,5666
+,3: North City,9912
+,4: South Suburban,4051
+,5: East Suburban,6614
+,6: North County West,8134
+,7: North County East,12598
+,8: East County,868
+,,6430

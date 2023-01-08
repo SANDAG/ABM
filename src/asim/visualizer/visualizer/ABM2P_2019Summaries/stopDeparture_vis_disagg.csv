@@ -1,0 +1,433 @@
+purpose,freq,stop_skim_period,stop_period
+1: Work,3865.8817372086705,1: EA,0.25
+1: Work,16254.0,3: MD,13.25
+1: Work,19413.0,3: MD,13.75
+1: Work,28227.0,3: MD,14.25
+1: Work,30744.0,3: MD,14.75
+1: Work,44384.0,3: MD,15.25
+1: Work,44702.0,4: PM,15.75
+1: Work,54702.0,4: PM,16.25
+1: Work,72735.0,4: PM,16.75
+1: Work,84736.0,4: PM,17.25
+1: Work,52460.0,4: PM,18.25
+1: Work,33480.0,4: PM,18.75
+1: Work,30526.0,5: EV,19.25
+1: Work,19952.0,5: EV,19.75
+1: Work,15102.0,5: EV,20.25
+1: Work,11594.0,5: EV,20.75
+1: Work,9852.0,5: EV,21.25
+1: Work,8119.0,5: EV,21.75
+1: Work,7325.0,5: EV,22.25
+1: Work,6833.0,5: EV,22.75
+1: Work,6663.0,5: EV,23.25
+1: Work,7347.0,5: EV,23.75
+1: Work,14630.0,3: MD,12.75
+1: Work,12642.0,3: MD,12.25
+1: Work,74228.0,4: PM,17.75
+1: Work,11479.0,3: MD,11.25
+1: Work,12277.0,3: MD,11.75
+1: Work,2737.1243802522927,1: EA,0.75
+1: Work,1873.9141815413318,1: EA,1.25
+1: Work,1317.4350639723111,1: EA,1.75
+1: Work,1016.692074989729,1: EA,2.25
+1: Work,914.1129007346575,1: EA,2.75
+1: Work,996.0800202736139,1: EA,3.25
+1: Work,2120.2911872064587,1: EA,4.25
+1: Work,3840.807745869715,1: EA,4.75
+1: Work,9235.0,1: EA,5.25
+1: Work,21148.0,1: EA,5.75
+1: Work,1328.660707951221,1: EA,3.75
+1: Work,10389.0,3: MD,10.75
+1: Work,27729.0,2: AM,6.75
+1: Work,45029.0,2: AM,7.25
+1: Work,61317.0,2: AM,7.75
+1: Work,43397.0,2: AM,8.25
+1: Work,26605.0,2: AM,8.75
+1: Work,19360.0,3: MD,9.25
+1: Work,15973.0,3: MD,9.75
+1: Work,10528.0,3: MD,10.25
+1: Work,19759.0,2: AM,6.25
+2: University,2836.0,4: PM,17.25
+2: University,3052.0,4: PM,16.75
+2: University,2574.0,4: PM,16.25
+2: University,2548.0,4: PM,15.75
+2: University,2545.0,3: MD,13.25
+2: University,2778.0,3: MD,14.75
+2: University,2716.0,3: MD,14.25
+2: University,2541.0,3: MD,13.75
+2: University,2609.0,4: PM,17.75
+2: University,2674.0,3: MD,15.25
+2: University,2406.0,4: PM,18.25
+2: University,388.0,5: EV,23.75
+2: University,1718.0,5: EV,19.25
+2: University,1693.0,5: EV,19.75
+2: University,1646.0,5: EV,20.25
+2: University,1532.0,5: EV,20.75
+2: University,1349.0,5: EV,21.25
+2: University,1153.0,5: EV,21.75
+2: University,935.0,5: EV,22.25
+2: University,734.0,5: EV,22.75
+2: University,520.0,5: EV,23.25
+2: University,2919.0,3: MD,12.75
+2: University,2136.0,4: PM,18.75
+2: University,4396.0,3: MD,12.25
+2: University,49.0,1: EA,5.75
+2: University,2066.0,3: MD,11.25
+2: University,2430.0,3: MD,11.75
+2: University,123.703145477146,1: EA,0.25
+2: University,83.6404486721442,1: EA,0.75
+2: University,52.862769933700775,1: EA,1.25
+2: University,30.624673240757428,1: EA,1.75
+2: University,16.481096964440596,1: EA,2.25
+2: University,8.75672037363413,1: EA,2.75
+2: University,3.7564201162952577,1: EA,3.75
+2: University,3.9129687726232856,1: EA,4.25
+2: University,6.1461172320094795,1: EA,4.75
+2: University,45.0,1: EA,5.25
+2: University,5.115639217248832,1: EA,3.25
+2: University,303.0,2: AM,6.25
+2: University,1743.0,3: MD,10.25
+2: University,2022.0,3: MD,9.75
+2: University,2352.0,3: MD,9.25
+2: University,2845.0,2: AM,8.75
+2: University,2180.0,3: MD,10.75
+2: University,3876.0,2: AM,7.75
+2: University,2551.0,2: AM,7.25
+2: University,531.0,2: AM,6.75
+2: University,2510.0,2: AM,8.25
+3: School,14343.0,4: PM,17.75
+3: School,6796.0,3: MD,13.25
+3: School,8473.0,3: MD,13.75
+3: School,21182.0,3: MD,14.25
+3: School,54816.0,3: MD,14.75
+3: School,53345.0,3: MD,15.25
+3: School,35189.0,4: PM,15.75
+3: School,20951.0,4: PM,16.25
+3: School,18635.0,4: PM,16.75
+3: School,17570.0,4: PM,17.25
+3: School,7398.0,4: PM,18.25
+3: School,295.0,5: EV,23.75
+3: School,2500.0,5: EV,19.25
+3: School,1391.0,5: EV,19.75
+3: School,815.0,5: EV,20.25
+3: School,465.0,5: EV,20.75
+3: School,296.0,5: EV,21.25
+3: School,255.0,5: EV,21.75
+3: School,212.0,5: EV,22.25
+3: School,222.0,5: EV,22.75
+3: School,243.0,5: EV,23.25
+3: School,5337.0,3: MD,12.75
+3: School,4069.0,4: PM,18.75
+3: School,3901.0,3: MD,12.25
+3: School,1745.0,1: EA,5.75
+3: School,2376.0,3: MD,11.25
+3: School,214.2747636264483,1: EA,0.75
+3: School,182.4218349712356,1: EA,1.25
+3: School,140.51426879364467,1: EA,1.75
+3: School,102.35225690649663,1: EA,2.25
+3: School,76.39867800870533,1: EA,2.75
+3: School,64.85296622038533,1: EA,3.25
+3: School,69.53427479634037,1: EA,3.75
+3: School,101.4746043938537,1: EA,4.25
+3: School,204.87298234688754,1: EA,4.75
+3: School,1508.0,1: EA,5.25
+3: School,226.30336993600247,1: EA,0.25
+3: School,1192.0,2: AM,6.25
+3: School,2792.0,3: MD,10.75
+3: School,2254.0,3: MD,10.25
+3: School,3153.0,3: MD,9.75
+3: School,5006.0,3: MD,9.25
+3: School,2864.0,3: MD,11.75
+3: School,41262.0,2: AM,8.25
+3: School,62622.0,2: AM,7.75
+3: School,43019.0,2: AM,7.25
+3: School,11400.0,2: AM,6.75
+3: School,18215.0,2: AM,8.75
+4: Escort,13827.0,3: MD,13.25
+4: Escort,24905.0,3: MD,13.75
+4: Escort,51340.0,3: MD,14.25
+4: Escort,68724.0,3: MD,14.75
+4: Escort,64580.0,3: MD,15.25
+4: Escort,35683.0,4: PM,15.75
+4: Escort,32607.0,4: PM,16.25
+4: Escort,20118.0,4: PM,16.75
+4: Escort,16134.0,4: PM,17.25
+4: Escort,15014.0,4: PM,17.75
+4: Escort,10855.0,5: EV,19.25
+4: Escort,11838.0,4: PM,18.75
+4: Escort,10524.0,5: EV,19.75
+4: Escort,8646.0,5: EV,20.25
+4: Escort,2920.0,5: EV,23.75
+4: Escort,6199.0,5: EV,21.25
+4: Escort,5659.0,5: EV,21.75
+4: Escort,4617.0,5: EV,22.25
+4: Escort,3983.0,5: EV,22.75
+4: Escort,3485.0,5: EV,23.25
+4: Escort,12386.0,3: MD,12.75
+4: Escort,13936.0,4: PM,18.25
+4: Escort,7288.0,5: EV,20.75
+4: Escort,11431.0,3: MD,12.25
+4: Escort,10299.0,3: MD,11.25
+4: Escort,10815.0,3: MD,11.75
+4: Escort,1252.44214000772,1: EA,0.25
+4: Escort,882.2271800409671,1: EA,0.75
+4: Escort,526.1861097524971,1: EA,1.25
+4: Escort,272.895208227258,1: EA,1.75
+4: Escort,134.04352370970335,1: EA,2.25
+4: Escort,47.79660672787306,1: EA,3.25
+4: Escort,46.01436403092644,1: EA,3.75
+4: Escort,67.74445552414765,1: EA,4.25
+4: Escort,148.38125900009047,1: EA,4.75
+4: Escort,1012.0,1: EA,5.25
+4: Escort,71.26915297881689,1: EA,2.75
+4: Escort,6474.0,2: AM,6.25
+4: Escort,2665.0,1: EA,5.75
+4: Escort,9972.0,3: MD,10.25
+4: Escort,12465.0,3: MD,9.75
+4: Escort,15871.0,3: MD,9.25
+4: Escort,42694.0,2: AM,8.75
+4: Escort,11377.0,3: MD,10.75
+4: Escort,76893.0,2: AM,7.75
+4: Escort,40729.0,2: AM,7.25
+4: Escort,13503.0,2: AM,6.75
+4: Escort,70723.0,2: AM,8.25
+5: Individual Maintenance,23839.0,4: PM,17.75
+5: Individual Maintenance,38467.0,3: MD,13.25
+5: Individual Maintenance,38756.0,3: MD,13.75
+5: Individual Maintenance,36798.0,3: MD,14.25
+5: Individual Maintenance,36926.0,3: MD,14.75
+5: Individual Maintenance,34381.0,3: MD,15.25
+5: Individual Maintenance,30386.0,4: PM,15.75
+5: Individual Maintenance,31767.0,4: PM,16.25
+5: Individual Maintenance,26748.0,4: PM,16.75
+5: Individual Maintenance,26169.0,4: PM,17.25
+5: Individual Maintenance,23574.0,4: PM,18.25
+5: Individual Maintenance,40146.0,3: MD,12.75
+5: Individual Maintenance,20428.0,5: EV,19.25
+5: Individual Maintenance,19948.0,5: EV,19.75
+5: Individual Maintenance,17183.0,5: EV,20.25
+5: Individual Maintenance,12889.0,5: EV,20.75
+5: Individual Maintenance,9277.0,5: EV,21.25
+5: Individual Maintenance,6612.0,5: EV,21.75
+5: Individual Maintenance,4956.0,5: EV,22.25
+5: Individual Maintenance,3694.0,5: EV,22.75
+5: Individual Maintenance,2810.0,5: EV,23.25
+5: Individual Maintenance,1999.0,5: EV,23.75
+5: Individual Maintenance,21499.0,4: PM,18.75
+5: Individual Maintenance,40174.0,3: MD,12.25
+5: Individual Maintenance,44937.0,3: MD,11.75
+5: Individual Maintenance,43722.0,3: MD,11.25
+5: Individual Maintenance,756.3174437590753,1: EA,0.25
+5: Individual Maintenance,440.9817372072943,1: EA,0.75
+5: Individual Maintenance,237.82556996379554,1: EA,1.25
+5: Individual Maintenance,126.11003330918611,1: EA,1.75
+5: Individual Maintenance,71.89732914498603,1: EA,2.25
+5: Individual Maintenance,48.469708052808436,1: EA,2.75
+5: Individual Maintenance,46.608434040677054,1: EA,3.75
+5: Individual Maintenance,66.51827740152595,1: EA,4.25
+5: Individual Maintenance,112.70624487577435,1: EA,4.75
+5: Individual Maintenance,343.0,1: EA,5.25
+5: Individual Maintenance,41.565222244876956,1: EA,3.25
+5: Individual Maintenance,1076.0,2: AM,6.25
+5: Individual Maintenance,667.0,1: EA,5.75
+5: Individual Maintenance,43591.0,3: MD,10.25
+5: Individual Maintenance,26228.0,3: MD,9.75
+5: Individual Maintenance,16303.0,3: MD,9.25
+5: Individual Maintenance,11530.0,2: AM,8.75
+5: Individual Maintenance,45447.0,3: MD,10.75
+5: Individual Maintenance,5026.0,2: AM,7.75
+5: Individual Maintenance,2879.0,2: AM,7.25
+5: Individual Maintenance,1878.0,2: AM,6.75
+5: Individual Maintenance,8112.0,2: AM,8.25
+6: Individual Discretionary,23348.0,4: PM,17.75
+6: Individual Discretionary,16435.0,3: MD,13.25
+6: Individual Discretionary,16427.0,3: MD,13.75
+6: Individual Discretionary,14780.0,3: MD,14.25
+6: Individual Discretionary,16457.0,3: MD,14.75
+6: Individual Discretionary,14898.0,3: MD,15.25
+6: Individual Discretionary,13864.0,4: PM,15.75
+6: Individual Discretionary,15203.0,4: PM,16.25
+6: Individual Discretionary,17740.0,4: PM,16.75
+6: Individual Discretionary,22007.0,4: PM,17.25
+6: Individual Discretionary,29442.0,4: PM,18.25
+6: Individual Discretionary,2287.0,5: EV,23.75
+6: Individual Discretionary,26135.0,5: EV,19.25
+6: Individual Discretionary,21416.0,5: EV,19.75
+6: Individual Discretionary,18958.0,5: EV,20.25
+6: Individual Discretionary,20300.0,5: EV,20.75
+6: Individual Discretionary,20993.0,5: EV,21.25
+6: Individual Discretionary,8537.0,5: EV,21.75
+6: Individual Discretionary,7434.0,5: EV,22.25
+6: Individual Discretionary,4964.0,5: EV,22.75
+6: Individual Discretionary,3926.0,5: EV,23.25
+6: Individual Discretionary,16390.0,3: MD,12.75
+6: Individual Discretionary,30325.0,4: PM,18.75
+6: Individual Discretionary,19450.0,3: MD,12.25
+6: Individual Discretionary,20945.0,3: MD,11.75
+6: Individual Discretionary,17339.0,3: MD,11.25
+6: Individual Discretionary,433.24899408451944,1: EA,0.75
+6: Individual Discretionary,233.60128019795593,1: EA,1.25
+6: Individual Discretionary,143.2713391419545,1: EA,1.75
+6: Individual Discretionary,106.93708642804248,1: EA,2.25
+6: Individual Discretionary,100.73289192075869,1: EA,2.75
+6: Individual Discretionary,119.3475422219428,1: EA,3.25
+6: Individual Discretionary,170.96600503464825,1: EA,3.75
+6: Individual Discretionary,278.2049322061795,1: EA,4.25
+6: Individual Discretionary,480.71397241437523,1: EA,4.75
+6: Individual Discretionary,1246.0,1: EA,5.25
+6: Individual Discretionary,842.9759563496232,1: EA,0.25
+6: Individual Discretionary,2703.0,2: AM,6.25
+6: Individual Discretionary,3860.0,2: AM,6.75
+6: Individual Discretionary,5684.0,2: AM,7.25
+6: Individual Discretionary,10400.0,2: AM,7.75
+6: Individual Discretionary,11240.0,2: AM,8.25
+6: Individual Discretionary,12637.0,2: AM,8.75
+6: Individual Discretionary,14777.0,3: MD,9.25
+6: Individual Discretionary,17919.0,3: MD,9.75
+6: Individual Discretionary,20288.0,3: MD,10.25
+6: Individual Discretionary,16266.0,3: MD,10.75
+6: Individual Discretionary,1718.0,1: EA,5.75
+7: Joint Maintenance,4178.0,4: PM,16.75
+7: Joint Maintenance,4589.0,4: PM,16.25
+7: Joint Maintenance,4219.0,4: PM,15.75
+7: Joint Maintenance,5059.0,3: MD,13.25
+7: Joint Maintenance,4770.0,3: MD,14.75
+7: Joint Maintenance,4671.0,3: MD,14.25
+7: Joint Maintenance,5116.0,3: MD,13.75
+7: Joint Maintenance,4296.0,4: PM,17.25
+7: Joint Maintenance,4624.0,3: MD,15.25
+7: Joint Maintenance,4353.0,4: PM,17.75
+7: Joint Maintenance,1946.0,5: EV,21.25
+7: Joint Maintenance,4093.0,5: EV,19.25
+7: Joint Maintenance,4133.0,5: EV,19.75
+7: Joint Maintenance,3516.0,5: EV,20.25
+7: Joint Maintenance,2788.0,5: EV,20.75
+7: Joint Maintenance,1364.0,5: EV,21.75
+7: Joint Maintenance,892.0,5: EV,22.25
+7: Joint Maintenance,660.0,5: EV,22.75
+7: Joint Maintenance,385.0,5: EV,23.25
+7: Joint Maintenance,310.0,5: EV,23.75
+7: Joint Maintenance,5515.0,3: MD,12.75
+7: Joint Maintenance,4282.0,4: PM,18.75
+7: Joint Maintenance,5426.0,3: MD,12.25
+7: Joint Maintenance,4418.0,4: PM,18.25
+7: Joint Maintenance,5760.0,3: MD,11.25
+7: Joint Maintenance,6335.0,3: MD,11.75
+7: Joint Maintenance,53.41417873378546,1: EA,0.75
+7: Joint Maintenance,26.721864763369926,1: EA,1.25
+7: Joint Maintenance,14.129342136314948,1: EA,1.75
+7: Joint Maintenance,8.794162090037172,1: EA,2.25
+7: Joint Maintenance,7.079747044043471,1: EA,2.75
+7: Joint Maintenance,7.735945774063674,1: EA,3.25
+7: Joint Maintenance,11.260908236440088,1: EA,3.75
+7: Joint Maintenance,20.15327160130381,1: EA,4.25
+7: Joint Maintenance,39.53728598231866,1: EA,4.75
+7: Joint Maintenance,113.0,1: EA,5.25
+7: Joint Maintenance,103.17329363832283,1: EA,0.25
+7: Joint Maintenance,194.0,1: EA,5.75
+7: Joint Maintenance,306.0,2: AM,6.25
+7: Joint Maintenance,431.0,2: AM,6.75
+7: Joint Maintenance,478.0,2: AM,7.25
+7: Joint Maintenance,685.0,2: AM,7.75
+7: Joint Maintenance,1054.0,2: AM,8.25
+7: Joint Maintenance,1435.0,2: AM,8.75
+7: Joint Maintenance,2078.0,3: MD,9.25
+7: Joint Maintenance,3492.0,3: MD,9.75
+7: Joint Maintenance,5802.0,3: MD,10.25
+7: Joint Maintenance,6084.0,3: MD,10.75
+8: Joint Discretionary,3952.0,4: PM,17.25
+8: Joint Discretionary,3020.0,4: PM,16.75
+8: Joint Discretionary,2426.0,4: PM,16.25
+8: Joint Discretionary,2019.0,4: PM,15.75
+8: Joint Discretionary,2465.0,3: MD,13.25
+8: Joint Discretionary,2812.0,3: MD,14.75
+8: Joint Discretionary,2368.0,3: MD,14.25
+8: Joint Discretionary,2326.0,3: MD,13.75
+8: Joint Discretionary,2768.0,3: MD,15.25
+8: Joint Discretionary,5851.0,4: PM,18.25
+8: Joint Discretionary,3719.0,5: EV,20.75
+8: Joint Discretionary,5597.0,5: EV,19.25
+8: Joint Discretionary,4506.0,5: EV,19.75
+8: Joint Discretionary,3753.0,5: EV,20.25
+8: Joint Discretionary,199.0,5: EV,23.75
+8: Joint Discretionary,3447.0,5: EV,21.25
+8: Joint Discretionary,1357.0,5: EV,21.75
+8: Joint Discretionary,979.0,5: EV,22.25
+8: Joint Discretionary,488.0,5: EV,22.75
+8: Joint Discretionary,414.0,5: EV,23.25
+8: Joint Discretionary,2333.0,3: MD,12.75
+8: Joint Discretionary,6751.0,4: PM,18.75
+8: Joint Discretionary,2893.0,3: MD,12.25
+8: Joint Discretionary,4418.0,4: PM,17.75
+8: Joint Discretionary,2386.0,3: MD,11.25
+8: Joint Discretionary,78.5741950657949,1: EA,0.25
+8: Joint Discretionary,41.76717569461129,1: EA,0.75
+8: Joint Discretionary,24.20915204789418,1: EA,1.25
+8: Joint Discretionary,16.528369151689958,1: EA,1.75
+8: Joint Discretionary,14.145882613980444,1: EA,2.25
+8: Joint Discretionary,15.589010115947653,1: EA,2.75
+8: Joint Discretionary,3016.0,3: MD,11.75
+8: Joint Discretionary,35.72000183549668,1: EA,3.75
+8: Joint Discretionary,63.81407440634288,1: EA,4.25
+8: Joint Discretionary,112.97244268540531,1: EA,4.75
+8: Joint Discretionary,279.0,1: EA,5.25
+8: Joint Discretionary,21.679696382836763,1: EA,3.25
+8: Joint Discretionary,406.0,2: AM,6.25
+8: Joint Discretionary,572.0,2: AM,6.75
+8: Joint Discretionary,659.0,2: AM,7.25
+8: Joint Discretionary,866.0,2: AM,7.75
+8: Joint Discretionary,920.0,2: AM,8.25
+8: Joint Discretionary,1014.0,2: AM,8.75
+8: Joint Discretionary,1136.0,3: MD,9.25
+8: Joint Discretionary,2206.0,3: MD,9.75
+8: Joint Discretionary,2499.0,3: MD,10.25
+8: Joint Discretionary,2208.0,3: MD,10.75
+8: Joint Discretionary,305.0,1: EA,5.75
+9: Work-based,293.0,4: PM,16.75
+9: Work-based,376.0,4: PM,16.25
+9: Work-based,493.0,4: PM,15.75
+9: Work-based,564.0,3: MD,15.25
+9: Work-based,4960.0,3: MD,12.75
+9: Work-based,1244.0,3: MD,14.25
+9: Work-based,1898.0,3: MD,13.75
+9: Work-based,3266.0,3: MD,13.25
+9: Work-based,807.0,3: MD,14.75
+9: Work-based,265.0,4: PM,17.25
+9: Work-based,104.0,5: EV,22.75
+9: Work-based,151.0,4: PM,18.25
+9: Work-based,146.0,4: PM,18.75
+9: Work-based,140.0,5: EV,19.25
+9: Work-based,146.0,5: EV,19.75
+9: Work-based,156.0,5: EV,20.25
+9: Work-based,136.0,5: EV,20.75
+9: Work-based,128.0,5: EV,21.25
+9: Work-based,100.0,5: EV,21.75
+9: Work-based,108.0,5: EV,22.25
+9: Work-based,3623.0,3: MD,12.25
+9: Work-based,220.0,4: PM,17.75
+9: Work-based,2467.0,3: MD,11.75
+9: Work-based,59.0,1: EA,5.75
+9: Work-based,816.0,3: MD,10.75
+9: Work-based,95.0,5: EV,23.25
+9: Work-based,23.276161188523222,1: EA,0.25
+9: Work-based,12.117009784182022,1: EA,0.75
+9: Work-based,6.107236490220696,1: EA,1.25
+9: Work-based,3.2752843913145653,1: EA,1.75
+9: Work-based,2.0554397958406643,1: EA,2.25
+9: Work-based,1.628334428134995,1: EA,2.75
+9: Work-based,1.6948604814914288,1: EA,3.25
+9: Work-based,2.3057738382123896,1: EA,3.75
+9: Work-based,3.908192243587093,1: EA,4.25
+9: Work-based,7.631707358492926,1: EA,4.75
+9: Work-based,24.0,1: EA,5.25
+9: Work-based,70.0,2: AM,6.25
+9: Work-based,136.0,2: AM,6.75
+9: Work-based,145.0,2: AM,7.25
+9: Work-based,194.0,2: AM,7.75
+9: Work-based,263.0,2: AM,8.25
+9: Work-based,292.0,2: AM,8.75
+9: Work-based,444.0,3: MD,9.25
+9: Work-based,543.0,3: MD,9.75
+9: Work-based,653.0,3: MD,10.25
+9: Work-based,1175.0,3: MD,11.25
+9: Work-based,73.0,5: EV,23.75
