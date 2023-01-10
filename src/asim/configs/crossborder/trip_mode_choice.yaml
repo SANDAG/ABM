@@ -21,7 +21,9 @@ NESTS:
       - name: TRANSIT
         coefficient:  0.50
         alternatives:
-          - WALK_TRANSIT
+          - WALK_LOC
+          - WALK_PRM
+          - WALK_MIX
       - name: RIDEHAIL
         coefficient: 0.50
         alternatives:
