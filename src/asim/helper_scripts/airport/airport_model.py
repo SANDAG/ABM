@@ -45,17 +45,17 @@ def create_tours(settings):
     employee_tours = int(sum(employee_park['Employee Stalls']*employee_park['Share to Terminal']))
     arr_tours = pd.DataFrame(
         index=range(arriving_tours), columns=[
-            'direction', 'purpose','size','nights', 'income'])
+            'direction', 'purpose','party_size','nights', 'income'])
     arr_tours.index.name = 'id'
     arr_tours['direction'] = 'inbound'
     dep_tours = pd.DataFrame(
         index=range(departing_tours), columns=[
-            'direction', 'purpose','size','nights', 'income'])
+            'direction', 'purpose','party_size','nights', 'income'])
     dep_tours.index.name = 'id'
     dep_tours['direction'] = 'outbound'
     emp_tours = pd.DataFrame(
         index=range(employee_tours*2), columns=[
-            'direction', 'purpose','size','nights', 'income'])
+            'direction', 'purpose','party_size','nights', 'income'])
     emp_tours.index.name = 'id'
     emp_tours.loc[0:int(len(emp_tours)/2),'direction'] = 'inbound'
     emp_tours.loc[len(emp_tours)/2:len(emp_tours),'direction'] = 'outbound'
@@ -93,8 +93,8 @@ def create_tours(settings):
             size_scaled_probs = np.subtract(
                 size_cum_probs, np.random.rand(num_purp_tours, 1))
             size = np.argmax((size_scaled_probs + 1.0).astype('i4'), axis=1)
-            group['size'] = size
-            df.loc[group.index, 'size'] = size
+            group['party_size'] = size
+            df.loc[group.index, 'party_size'] = size
 
             #assign nights
             nights_probs = OrderedDict(nights_probs_df[ purp_type])
@@ -137,7 +137,7 @@ def create_tours(settings):
     #enumerate employee tours
     emp_tours['purpose'] = 'purp5_perc'
     emp_tours['purpose_id'] = 5
-    emp_tours['size'] = 1
+    emp_tours['party_size'] = 1
     emp_tours['nights'] = -99
     emp_tours['income'] = 'emp_inc'
     #choose employee park destination
@@ -249,7 +249,7 @@ def create_tours(settings):
     tours['tour_id'] = np.arange(1, len(tours) +1)
     tours = tours.set_index('tour_id')
     tours['tour_category'] = 'non_mandatory'
-    tours['origin'] = 2997
+    tours['origin'] = airport_mgra
     tours.loc[(tours.purpose_id ==0) & (tours.income ==0), 'tour_type'] = 'res_bus1'
     tours.loc[(tours.purpose_id ==0) & (tours.income ==1), 'tour_type'] = 'res_bus2'
     tours.loc[(tours.purpose_id ==0) & (tours.income ==2), 'tour_type'] = 'res_bus3'
