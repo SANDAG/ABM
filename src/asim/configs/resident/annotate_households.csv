@@ -25,6 +25,11 @@ number of university students in the household,num_university_students,"_PERSON_
 number of full time workers,num_fullTime_workers,"_PERSON_COUNT('is_fulltime_worker', persons, households)"
 number of part time workers,num_partTime_workers,"_PERSON_COUNT('is_parttime_worker', persons, households)"
 number of retired adults in the household,num_retired_adults,"_PERSON_COUNT('ptype == 5', persons, households)"
+# Used in auto ownership,,
+,num_children_6_to_15,"_PERSON_COUNT('6 <= age <= 15', persons, households)"
+,num_young_retirees,"_PERSON_COUNT('65 <= age <= 79', persons, households)"
+,num_old_retirees,"_PERSON_COUNT('80 <= age', persons, households)"
+#,,
 non_family,non_family,households.HHT.isin(HHT_NONFAMILY)
 family,family,households.HHT.isin(HHT_FAMILY)
 #,,FIXME is this the best replacement for area_type??

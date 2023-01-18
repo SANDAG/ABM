@@ -102,7 +102,12 @@ Workplace Location Choice
 
 ---
 Auto Ownership
-* Deleted county specific ASCs in _auto_ownership.csv_
+* Converted from MTC example.  Things that should be signed off on:
+  - No `educational_attainment` term in synthetic population.  Commented these terms out.
+  - Density terms are supposed to be in value / acre?
+  - `use_accessibility` setting in MTC configs that were commented out. Left those commented out.
+  - Used aggregate accessibilities.  Should be checked.
+  - CLEANUP: can remove unused coefficients from coefficients file 
 
 ---
 Free Parking
@@ -148,21 +153,15 @@ Tour destination choice
 * @bestTimeToWorkLocation is same as roundtrip_auto_time_to_work? or divided by 2?
 ---
 Tour mode choice
-* changed expression to include the following coefficients and changed the actual coefficient to `coef_one`: `c_wacc`, `c_wegr`, `c_rel_inb`, `c_rel_oub`, `c_fwt`
-  - these were causing crash because they were defined in the pre-processor, but were listed as actual coefficients
 * changed nesting structure in tour_mode_choice.yaml to match UEC. Set all nesting coefs to 0.5 in coeffs file (also matches UEC). Should be double checked.
 * Changed parking cost to use `hparkcost`.  Expressions available for both on and off peak parking, but only one hourly parking cost is available in the landuse file, so they evaluate to the same value
   - same in trip mode choice
-* `tour_type` is not yet decided when calculating logsums, so used df.get() function and set default to 'work'.
-  - Same with `tour_category`, although default varied cause it was used in multiple places
-* Copied `cost_share_[s2,s3]`, `vot_threshold_[low,med], maz_walk_time` from xborder model to tour_mode_choice.yaml.  Should these be moved to (common) constants?
-* `df.transponderOwnership` is not recognized in the preprocessor since there is no Transponder model yet implemented.  Setting `ownsTransponder` to 1 for now.
-  - same in trip mode choice
 * `walk_time_skims_[out,in]` both use the od walkTime skim (assumes walk symmetry).  
   - Would need to add the do_skim to the skim roster tour_mode_choice.py ActivitySim code.
+  - walkTime skim has too small of value (see meeting notes & slides for 1/17/23), so put in placeholder
+* Access and egress times from maz to stop need to be integrated for 2 zone model!
 * `milestocoast` was not defined, replaced with arbitrary value of 5
   - applied in trip mode choice too
-* All of the bike logsums and availability stuff is not defined. commenting out for now.
 * None of the AV related constants are defined.  Commenting them out in prepreocessor for now or adding placeholders where unavoidable
 * `freeParkingEligibility` is not defined, comes from not-implemented employer parking provision and reimbursement model. Set to 0 as placeholder.
   - same with `reimburseProportion`
@@ -170,24 +169,6 @@ Tour mode choice
 * Double check units for parking costs in landuse
 * origin and destination terminal times (`oTermTime, dTermTime`) are not included in landuse data, setting to 0 as placeholder until it can be joined
 * Had to restructure calculation of `parkingCostBeforeReimb` in preprocessor. check to make it is still consistent with UEC
-* `[WLK,PNR,KNR]_available` conditions need to call the TVPB logsums correctly. They are all turned on as a placeholder
-  - large logsum values in the utility expression should make these roughly irrelevant
-* `DTW` path is being used for PNR, KNR, and TNC.  maz to taz drive times only include taps connected to parking lots, meaning knr and tnc are restricted to only these taps
-* Renaming of tour purposes in _tour_mode_choice_coefficients_template.csv_
-  - Copied the maint column into three separate columns named escort, shopping, and othmaint
-  - Copied the disc column into three separate columns named eatout, social, othdiscr
-  - This was needed because all of the other models define different purposes and need to calculate logsums for each purpose. ActivitySim will crash if the purpose names do not match.
-  - Since the columns were just copied and all of the coefficient names remain the same, the utility calculated for each of the maint purposes will be the same (and similarly for disc).
-  - Since thing was applied in trip mode choice
-  - Note that this has implications when performing estimation
-* Made some changes to bike logsum calculations
-  - Old version had different logsums for male and female. Input data only has one logsum.  Removed segmentation by gender.
-  - Bike logsums were separated by inbound and outbound.  Since they don't vary by time of day, and if the path is the same, shouldn't the inbound bike logsum = outbound bike logsum?
-     - This change was made because it is easy to access _od_skims_, but no _do_skims_ object exists (only _dot_skims_)
-     - The logsum matrix is not symmetric about the diagonal, so this assumption doesn't really hold....
-  - Bike is available when the sum of inbound and outbound logsums < -999
-  - Bike time is not being used. bike time coefficient is calculated in pre-processor, but is not used anywhere... MANY VARIABLE ARE DEFINED BUT NOT USED IN abm2+, AND THIS IS ONE.
-  - Same in trip mode choice except there's no inbound / outbound distinction
 ---
 Stop frequency
 * check the tod used in the calibration lines in the uec
