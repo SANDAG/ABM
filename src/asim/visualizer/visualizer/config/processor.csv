@@ -232,7 +232,7 @@ Add up total tours,step_3,raw,,,,total_tours = indivTourData_3.finalweights.sum(
 Add up total trips,step_3,raw,,,,total_trips = indivTripData_3.finalweights.sum() + jointTripData_3.finalweights.sum()
 Add up total stops,step_3,raw,,,,total_stops = indivTripData_3.query('stops == 1').finalweights.sum() + jointTripData_3.query('stops == 1').finalweights.sum()
 Add up total VMT,step_3,replace,indivTripData_3,num_travel,trip_mode,"{'DRIVEALONE': 1, 'SHARED2': 2, 'SHARED3': 3.5, 'WALK': 0, 'BIKE': 0, 'WALK_TRANSIT': 0, 'PNR_TRANSIT': 0, 'KNR_TRANSIT': 0, 'TNC_TRANSIT': 0, 'TAXI': 1.1, 'TNC_SINGLE': 1.2, 'TNC_SHARED': 2, 'SCH_BUS': 0}"
-Add up total VMT,step_3,raw,,,,"indivTripData_3['vmt'] = np.where(indivTripData_3['num_travel'] > 0, indivTripData_3['od_distance'] / indivTripData_3['num_travel'] *indivTripData_3['finalweights']  , 0)"
+Add up total VMT,step_3,raw,,,,"indivTripData_3['vmt'] = np.where(indivTripData_3['num_travel'].astype(int) > 0, indivTripData_3['od_distance'] / indivTripData_3['num_travel'] *indivTripData_3['finalweights']  , 0)"
 Add up total VMT,step_3,raw,,,,total_vmt = indivTripData_3['vmt'].sum()
 Get totals together into series,step_3,raw,,,,"totals_df = pd.Series([total_population, total_households, total_tours, total_trips, total_stops, total_vmt], [""Population"", ""Households"", ""Tours"", ""Trips"", ""Stops"", ""VMT""])"
 Name totals column,step_3,raw,,,,totals_df = pd.DataFrame({'value': totals_df})

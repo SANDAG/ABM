@@ -7,7 +7,7 @@
 
 # Specify data to extract and load
 extract:
-    - filepath: "C:/ABM3_dev/visualizer/output"
+    - filepath: "C:/ABM3_dev/ABM/src/asim/visualizer/output"
       test_size:
       data:
           - "final_households.csv"
@@ -15,12 +15,12 @@ extract:
           - "final_tours.csv"
           - "final_trips.csv"
           - "final_joint_tour_participants.csv"
-    - filepath: "C:/ABM3_dev/visualizer/data"
+    - filepath: "C:/ABM3_dev/ABM/src/asim/visualizer/data"
       test_size:
       data:
           - "land_use.csv"
           - "traffic_skims_MD.omx"
-    - filepath: "C:/ABM3_dev/visualizer/visualizer/data"
+    - filepath: "C:/ABM3_dev/ABM/src/asim/visualizer/visualizer/data"
       test_size:
       data:
           - "geographicXwalk_PMSA.csv"
@@ -28,8 +28,8 @@ extract:
 
 # Specify transformation steps
 transform:
-    processor: "C:/ABM3_dev/visualizer/visualizer/data_pipeliner/config/processor.csv"
-    summarizer: "C:/ABM3_dev/visualizer/visualizer/data_pipeliner/config/expressions.csv"
+    processor: "C:/ABM3_dev/ABM/src/asim/visualizer/visualizer/data_pipeliner/config/processor.csv"
+    summarizer: "C:/ABM3_dev/ABM/src/asim/visualizer/visualizer/data_pipeliner/config/expressions.csv"
     steps:
         - name: step_0
           merge:
@@ -114,5 +114,5 @@ transform:
 
 # Specify where to write results
 load:
-    outdir: "C:/ABM3_dev/visualizer/visualizer/data_pipeliner/output/"
+    outdir: "C:/ABM3_dev/ABM/src/asim/visualizer/visualizer/data_pipeliner/output/"
     empty_fill: 0
