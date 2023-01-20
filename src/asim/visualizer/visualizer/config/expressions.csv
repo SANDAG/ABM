@@ -29,8 +29,8 @@ Average non-mandatory tour length,nonMandTripLengthsTotal,avgDist,tours,TOURPURP
 Average non-mandatory tour length,nonMandTripLengths_et,avgDist,tours,TOURPURP >= 4 and is_external_tour==True,tour_distance,mean,AGGPURP
 Average non-mandatory tour length,nonMandTripLengthsTotal_et,avgDist,tours,TOURPURP >= 4 and is_external_tour==True,tour_distance,mean,
 #,,,,,,,
-Stops by stop departure period,stopDeparture_vis,freq,trips,stops == 1,finalweights,sum,"stop_period,AGGPURP"
-Trips by stop departure period,tripDeparture_vis,freq,trips,,finalweights,sum,"stop_period,AGGPURP"
+Stops by stop departure period,stopDeparture_vis,freq,trips,stops == 1,finalweights,sum,"depart,AGGPURP"
+Trips by stop departure period,tripDeparture_vis,freq,trips,,finalweights,sum,"depart,AGGPURP"
 Tour mode by vehicle ownership category,tmodeProfile_vis,freq,hh_itours,,finalweights_x,sum,"AUTOSUFF,tour_mode,AGGPURP"
 Trip mode by tour mode,tripmodeProfile_vis,value,trips,,finalweights,sum,"trip_mode,tour_mode,AGGPURP"
 Tour Distance Distribution,tourDistProfile_vis,freq,tours,TOURPURP >= 4 and is_internal_tour!=False,finalweights,sum,"tourdistbin,AGGPURP"
@@ -46,8 +46,8 @@ Distance to university distribution,mandTLFD_et,University,final_persons,PERTYPE
 Average out of direction distance,avgStopOutofDirectionDist_vis,avgDist,trips,stops == 1,out_dir_dist,mean,AGGPURP
 Average out of direction distance,avgStopOutofDirectionDistTotal,avgDist,trips,stops == 1,out_dir_dist,mean,
 Histogram of out of direction distance,stopDC_vis,freq,trips,stops == 1,finalweights,sum,"out_dir_distbin,AGGPURP"
-Tour departures by time period,todProfile_vis,freq_dep,tours,,finalweights,sum,"start_period,AGGPURP"
-Tour arrivals by time period,todProfile_vis,freq_arr,tours,,finalweights,sum,"end_period,AGGPURP"
+Tour departures by time period,todProfile_vis,freq_dep,tours,,finalweights,sum,start
+Tour arrivals by time period,todProfile_vis,freq_arr,tours,,finalweights,sum,end
 Tour duration,tourDuration,freq,tours,,finalweights,sum,"tourdur,AGGPURP"
 #,,,,,,,
 Average distance to work,mandTripLengths,Work,final_persons,workplace_zone_id > 0 and work_from_home==False and is_internal_worker==True,WorkLocationDistance,mean,HDISTRICT

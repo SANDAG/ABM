@@ -66,8 +66,8 @@ Bin distances to work,step_1,bin,final_persons,workdistbin,WorkLocationDistance,
 Bin distances to school,step_1,bin,final_persons,schooldistbin,SchoolLocationDistance,[-99999] + list(range(51)) + [99999]
 Recode distance bin to maximum,step_1,apply,final_persons,workdistbin,workdistbin,"(lambda x: int(float(str(x).split(', ')[1].split(']')[0])))"
 Recode distance bin to maximum,step_1,apply,final_persons,schooldistbin,schooldistbin,"(lambda x: int(float(str(x).split(', ')[1].split(']')[0])))"
-Bin tour distance,step_1,bin,indivTourData_3,tourdistbin,tour_distance,list(range(42)) + [99999]
-Bin tour distance,step_1,bin,jointTourData_3,tourdistbin,tour_distance,list(range(42)) + [99999]
+Bin tour distance,step_1,bin,indivTourData_3,tourdistbin,tour_distance,[-99999] + list(range(42)) + [99999]
+Bin tour distance,step_1,bin,jointTourData_3,tourdistbin,tour_distance,[-99999] + list(range(42)) + [99999]
 Recode distance bin to maximum,step_1,apply,indivTourData_3,tourdistbin,tourdistbin,"(lambda x: int(float(str(x).split(', ')[1].split(']')[0])))"
 Recode distance bin to maximum,step_1,apply,jointTourData_3,tourdistbin,tourdistbin,"(lambda x: int(float(str(x).split(', ')[1].split(']')[0])))"
 Reset persons index,step_1,raw,final_persons,,,final_persons = final_persons.reset_index()
@@ -172,9 +172,38 @@ HH Joint Tours of Purpose 9,step_1,raw,,,,final_households['joint9'] = final_hou
 Add all joint tours,step_1,sum,final_households,jtours,"joint5,joint6,joint7,joint8,joint9",
 Categorize joint tours,step_1,cap,final_households,jointCat,jtours,2
 #,,,,,,
-#FIXME joint_tour_frequency model has been replaced with joint_tour_frequency_composition model,,,,,,
-#Rename joint tour categories,step_1,replace,final_households,alt_name,joint_tour_frequency,"{'0_tours': 'No Joint Tours', '1_Shop': '1 Shopping', '1_Main': '1 Maintenance', '1_Eat': '1 Eating Out', '1_Visit': '1 Visiting', '1_Disc': '1 Other Discretionary', '2_SS': '2 Shopping', '2_SM': '1 Shopping / 1 Maintenance', '2_SE': '1 Shopping / 1 Eating Out', '2_SV': '1 Shopping / 1 Visiting', '2_SD': '1 Shopping / 1 Other Discretionary', '2_MM': '2 Maintenance', '2_ME': '1 Maintenance / 1 Eating Out', '2_MV': '1 Maintenance / 1 Visiting', '2_MD': '1 Maintenance / 1 Other Discretionary', '2_EE': '2 Eating Out', '2_EV': '1 Eating Out / 1 Visiting', '2_ED': '1 Eating Out / 1 Other Discretionary', '2_VV': '2 Visiting', '2_VD': '1 Visiting / 1 Other Discretionary', '2_DD': '2 Other Discretionary'}"
-#Add jtf,step_1,replace,final_households,jtf,joint_tour_frequency,"{'0_tours': 1, '1_Shop': 2, '1_Main': 3, '1_Eat': 4, '1_Visit': 5, '1_Disc': 6, '2_SS': 7, '2_SM': 8, '2_SE': 9, '2_SV': 10, '2_SD': 11, '2_MM': 12, '2_ME': 13, '2_MV': 14, '2_MD': 15, '2_EE': 16, '2_EV': 17, '2_ED': 18, '2_VV': 19, '2_VD': 20, '2_DD': 21}"
+Get set of tour ids that are joint tours,step_1,raw,,,,joint_tour_ids = set(final_joint_tour_participants['tour_id'])
+Create subset of just joint tours,step_1,raw,,,,"joint_tours = final_tours[['household_id', 'tour_id', 'tour_purpose']].query('tour_id in @joint_tour_ids')"
+Group joint tours by household ID and tour purpose,step_1,raw,,,,"joint_tours_by_household_purpose = joint_tours.groupby(['household_id', 'tour_purpose']).count().reset_index().pivot('household_id', 'tour_purpose', 'tour_id').fillna(0).astype(int)"
+Get number of joint shopping tours by household,step_1,raw,,,,"final_households['joint_shop'] = np.minimum(final_households['household_id'].map(joint_tours_by_household_purpose['shopping']).fillna(0), 2).astype(int)"
+Get number of joint shopping tours by household,step_1,raw,,,,"final_households['joint_main'] = np.minimum(final_households['household_id'].map(joint_tours_by_household_purpose['othmaint']).fillna(0), 2).astype(int)"
+Get number of joint shopping tours by household,step_1,raw,,,,"final_households['joint_eat'] = np.minimum(final_households['household_id'].map(joint_tours_by_household_purpose['eatout']).fillna(0), 2).astype(int)"
+Get number of joint shopping tours by household,step_1,raw,,,,"final_households['joint_visit'] = np.minimum(final_households['household_id'].map(joint_tours_by_household_purpose['social']).fillna(0), 2).astype(int)"
+Get number of joint shopping tours by household,step_1,raw,,,,"final_households['joint_disc'] = np.minimum(final_households['household_id'].map(joint_tours_by_household_purpose['othdiscr']).fillna(0), 2).astype(int)"
+#,,,,,,
+Initialize joint_tour_frequency column in final_households with no joint tours,step_1,raw,,,,final_households['joint_tour_frequency'] = '0_tours'
+Recode if one joint shopping tour was made,step_1,raw,,,,"final_households['joint_tour_frequency'] = np.where(final_households['joint_shop'] == 1, '1_Shop', final_households['joint_tour_frequency'])"
+,step_1,raw,,,,"final_households['joint_tour_frequency'] = np.where(final_households['joint_main'] == 1, '1_Main', final_households['joint_tour_frequency'])"
+,step_1,raw,,,,"final_households['joint_tour_frequency'] = np.where(final_households['joint_eat'] == 1, '1_Eat', final_households['joint_tour_frequency'])"
+,step_1,raw,,,,"final_households['joint_tour_frequency'] = np.where(final_households['joint_visit'] == 1, '1_Visit', final_households['joint_tour_frequency'])"
+,step_1,raw,,,,"final_households['joint_tour_frequency'] = np.where(final_households['joint_disc'] == 1, '1_Disc', final_households['joint_tour_frequency'])"
+,step_1,raw,,,,"final_households['joint_tour_frequency'] = np.where(final_households['joint_shop'] == 2, '2_SS', final_households['joint_tour_frequency'])"
+,step_1,raw,,,,"final_households['joint_tour_frequency'] = np.where((final_households['joint_shop'] == 1) & (final_households['joint_main'] == 1), '2_SM', final_households['joint_tour_frequency'])"
+,step_1,raw,,,,"final_households['joint_tour_frequency'] = np.where((final_households['joint_shop'] == 1) & (final_households['joint_eat'] == 1), '2_SE', final_households['joint_tour_frequency'])"
+,step_1,raw,,,,"final_households['joint_tour_frequency'] = np.where((final_households['joint_shop'] == 1) & (final_households['joint_visit'] == 1), '2_SV', final_households['joint_tour_frequency'])"
+,step_1,raw,,,,"final_households['joint_tour_frequency'] = np.where((final_households['joint_shop'] == 1) & (final_households['joint_disc'] == 1), '2_SD', final_households['joint_tour_frequency'])"
+,step_1,raw,,,,"final_households['joint_tour_frequency'] = np.where(final_households['joint_main'] == 2, '2_MM', final_households['joint_tour_frequency'])"
+,step_1,raw,,,,"final_households['joint_tour_frequency'] = np.where((final_households['joint_main'] == 1) & (final_households['joint_eat'] == 1), '2_ME', final_households['joint_tour_frequency'])"
+,step_1,raw,,,,"final_households['joint_tour_frequency'] = np.where((final_households['joint_main'] == 1) & (final_households['joint_visit'] == 1), '2_MV', final_households['joint_tour_frequency'])"
+,step_1,raw,,,,"final_households['joint_tour_frequency'] = np.where((final_households['joint_main'] == 1) & (final_households['joint_disc'] == 1), '2_MD', final_households['joint_tour_frequency'])"
+,step_1,raw,,,,"final_households['joint_tour_frequency'] = np.where(final_households['joint_eat'] == 2, '2_EE', final_households['joint_tour_frequency'])"
+,step_1,raw,,,,"final_households['joint_tour_frequency'] = np.where((final_households['joint_eat'] == 1) & (final_households['joint_visit'] == 1), '2_EV', final_households['joint_tour_frequency'])"
+,step_1,raw,,,,"final_households['joint_tour_frequency'] = np.where((final_households['joint_eat'] == 1) & (final_households['joint_disc'] == 1), '2_ED', final_households['joint_tour_frequency'])"
+,step_1,raw,,,,"final_households['joint_tour_frequency'] = np.where(final_households['joint_visit'] == 2, '2_VV', final_households['joint_tour_frequency'])"
+,step_1,raw,,,,"final_households['joint_tour_frequency'] = np.where((final_households['joint_visit'] == 1) & (final_households['joint_disc'] == 1), '2_VD', final_households['joint_tour_frequency'])"
+,step_1,raw,,,,"final_households['joint_tour_frequency'] = np.where(final_households['joint_disc'] == 2, '2_DD', final_households['joint_tour_frequency'])"
+Rename joint tour categories,step_1,replace,final_households,alt_name,joint_tour_frequency,"{'0_tours': 'No Joint Tours', '1_Shop': '1 Shopping', '1_Main': '1 Maintenance', '1_Eat': '1 Eating Out', '1_Visit': '1 Visiting', '1_Disc': '1 Other Discretionary', '2_SS': '2 Shopping', '2_SM': '1 Shopping / 1 Maintenance', '2_SE': '1 Shopping / 1 Eating Out', '2_SV': '1 Shopping / 1 Visiting', '2_SD': '1 Shopping / 1 Other Discretionary', '2_MM': '2 Maintenance', '2_ME': '1 Maintenance / 1 Eating Out', '2_MV': '1 Maintenance / 1 Visiting', '2_MD': '1 Maintenance / 1 Other Discretionary', '2_EE': '2 Eating Out', '2_EV': '1 Eating Out / 1 Visiting', '2_ED': '1 Eating Out / 1 Other Discretionary', '2_VV': '2 Visiting', '2_VD': '1 Visiting / 1 Other Discretionary', '2_DD': '2 Other Discretionary'}"
+Add jtf,step_1,replace,final_households,jtf,joint_tour_frequency,"{'0_tours': 1, '1_Shop': 2, '1_Main': 3, '1_Eat': 4, '1_Visit': 5, '1_Disc': 6, '2_SS': 7, '2_SM': 8, '2_SE': 9, '2_SV': 10, '2_SD': 11, '2_MM': 12, '2_ME': 13, '2_MV': 14, '2_MD': 15, '2_EE': 16, '2_EV': 17, '2_ED': 18, '2_VV': 19, '2_VD': 20, '2_DD': 21}"
 #,,,,,,
 Add number of total stops for individual tours,step_1,raw,,,,indivTourData_3['num_tot_stops'] = indivTourData_3['num_ib_stops'] + indivTourData_3['num_ob_stops']
 Add number of total stops for joint tours,step_1,raw,,,,jointTourData_3['num_tot_stops'] = jointTourData_3['num_ib_stops'] + jointTourData_3['num_ob_stops']
@@ -202,7 +231,7 @@ Add up total households,step_3,raw,,,,total_households = final_households.finalw
 Add up total tours,step_3,raw,,,,total_tours = indivTourData_3.finalweights.sum() + (jointTourData_3['NUMBER_HH_TOTAL']*jointTourData_3['finalweights']).sum()
 Add up total trips,step_3,raw,,,,total_trips = indivTripData_3.finalweights.sum() + jointTripData_3.finalweights.sum()
 Add up total stops,step_3,raw,,,,total_stops = indivTripData_3.query('stops == 1').finalweights.sum() + jointTripData_3.query('stops == 1').finalweights.sum()
-Add up total VMT,step_3,replace,indivTripData_3,num_travel,trip_mode,"{'DRIVEALONE': 1, 'SHARED2': 2, 'SHARED3': 3.5, 'WALK': 0, 'WALK_TRANSIT': 0, 'PNR_TRANSIT': 0, 'KNR_TRANSIT': 0, 'TNC_TRANSIT': 0, 'TAXI': 1.1, 'TNC_SINGLE': 1.2, 'TNC_SHARED': 2, 'SCH_BUS': 0}"
+Add up total VMT,step_3,replace,indivTripData_3,num_travel,trip_mode,"{'DRIVEALONE': 1, 'SHARED2': 2, 'SHARED3': 3.5, 'WALK': 0, 'BIKE': 0, 'WALK_TRANSIT': 0, 'PNR_TRANSIT': 0, 'KNR_TRANSIT': 0, 'TNC_TRANSIT': 0, 'TAXI': 1.1, 'TNC_SINGLE': 1.2, 'TNC_SHARED': 2, 'SCH_BUS': 0}"
 Add up total VMT,step_3,raw,,,,"indivTripData_3['vmt'] = np.where(indivTripData_3['num_travel'] > 0, indivTripData_3['od_distance'] / indivTripData_3['num_travel'] *indivTripData_3['finalweights']  , 0)"
 Add up total VMT,step_3,raw,,,,total_vmt = indivTripData_3['vmt'].sum()
 Get totals together into series,step_3,raw,,,,"totals_df = pd.Series([total_population, total_households, total_tours, total_trips, total_stops, total_vmt], [""Population"", ""Households"", ""Tours"", ""Trips"", ""Stops"", ""VMT""])"
@@ -294,12 +323,16 @@ Recode mandatory tour length district,step_6,replace,mandTripLengths,District,Di
 Recode mandatory tour length district,step_6,replace,mandTLFD_et,District,District,"{1: '1: Downtown', 2: '2: Central', 3: '3: North City', 4: '4: South Suburban', 5: '5: East Suburban', 6: '6: North County West', 7: '7: North County East', 8: '8: East County'}"
 Recode mandatory tour length district,step_6,replace,mandTripLengths_et,District,District,"{1: '1: Downtown', 2: '2: Central', 3: '3: North City', 4: '4: South Suburban', 5: '5: East Suburban', 6: '6: North County West', 7: '7: North County East', 8: '8: East County'}"
 #,,,,,,
-Recode time period,step_6,apply,todProfile_vis,period,period,lambda x: 0.5*x+4.25
-Recode time period,step_6,apply,tripDeparture_vis,stop_period,stop_period,lambda x: 0.5*x+4.25
-Recode time period,step_6,apply,stopDeparture_vis,stop_period,stop_period,lambda x: 0.5*x+4.25
+Recode time period,step_6,apply,todProfile_vis,period,index,lambda x: 0.5*x+4.25
+Recode time period,step_6,apply,tripDeparture_vis,stop_period,depart,lambda x: 0.5*x+4.25
+Recode time period,step_6,apply,stopDeparture_vis,stop_period,depart,lambda x: 0.5*x+4.25
 Recode tour duration,step_6,apply,tourDuration,tourdur,tourdur,lambda x: 0.5*x
 #,,,,,,
 Recode daily activity pattern,step_6,replace,dapSummary_vis,activity_pattern,activity_pattern,"{'H': 'Home', 'M': 'Mandatory', 'N': 'Non-Mandatory'}"
+#,,,,,,
+,step_6,apply,todProfile_vis,period,period,lambda x: ((x-3)%24)+3
+,step_6,apply,stopDeparture_vis,stop_period,stop_period,lambda x: ((x-3)%24)+3
+,step_6,apply,tripDeparture_vis,stop_period,stop_period,lambda x: ((x-3)%24)+3
 #,,,,,,
 Bin tour TOD profile into assignment time periods,step_6,bin,todProfile_vis,skim_period,period,"[3, 6, 9, 15.5, 19, 27]"
 Bin tour TOD profile into assignment time periods,step_6,apply,todProfile_vis,skim_period,skim_period,"(lambda x: int(float(str(x).split(', ')[1].split(']')[0])))"
