@@ -28,8 +28,8 @@ extract:
 
 # Specify transformation steps
 transform:
-    processor: "C:/ABM3_dev/ABM/src/asim/visualizer/visualizer/data_pipeliner/config/processor.csv"
-    summarizer: "C:/ABM3_dev/ABM/src/asim/visualizer/visualizer/data_pipeliner/config/expressions.csv"
+    processor: "config/processor.csv"
+    summarizer: "config/expressions.csv"
     steps:
         - name: step_0
           merge:
@@ -114,5 +114,5 @@ transform:
 
 # Specify where to write results
 load:
-    outdir: "C:/ABM3_dev/ABM/src/asim/visualizer/visualizer/data_pipeliner/output/"
+    outdir: "output/"
     empty_fill: 0

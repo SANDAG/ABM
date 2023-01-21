@@ -1,7 +1,7 @@
 runs:
-  survey: C:/ABM3_dev/visualizer/visualizer\hts
-  model: C:/ABM3_dev/visualizer/visualizer\data_pipeliner\output
-outpath: C:/ABM3_dev/visualizer/visualizer\data
+  survey: hts
+  model: data_pipeliner\output
+outpath: data
 tables:
   #activePertypeDistbn:
   #  merge:

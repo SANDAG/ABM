@@ -46,8 +46,8 @@ Distance to university distribution,mandTLFD_et,University,final_persons,PERTYPE
 Average out of direction distance,avgStopOutofDirectionDist_vis,avgDist,trips,stops == 1,out_dir_dist,mean,AGGPURP
 Average out of direction distance,avgStopOutofDirectionDistTotal,avgDist,trips,stops == 1,out_dir_dist,mean,
 Histogram of out of direction distance,stopDC_vis,freq,trips,stops == 1,finalweights,sum,"out_dir_distbin,AGGPURP"
-Tour departures by time period,todProfile_vis,freq_dep,tours,,finalweights,sum,start
-Tour arrivals by time period,todProfile_vis,freq_arr,tours,,finalweights,sum,end
+Tour departures by time period,todProfile_vis,freq_dep,tours,,finalweights,sum,"start,AGGPURP"
+Tour arrivals by time period,todProfile_vis,freq_arr,tours,,finalweights,sum,"end,AGGPURP"
 Tour duration,tourDuration,freq,tours,,finalweights,sum,"tourdur,AGGPURP"
 #,,,,,,,
 Average distance to work,mandTripLengths,Work,final_persons,workplace_zone_id > 0 and work_from_home==False and is_internal_worker==True,WorkLocationDistance,mean,HDISTRICT
