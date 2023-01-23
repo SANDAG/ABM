@@ -68,21 +68,21 @@ tables:
       - purpose
     total:
       District: Total
-  mandTLFD_et:
-    merge:
-      - distbin
-      - District
-      - purpose
-    total:
-      District: Total
+  # mandTLFD_et:
+  #   merge:
+  #     - distbin
+  #     - District
+  #     - purpose
+  #   total:
+  #     District: Total
   mandTripLengths:
     merge:
       - District
       - purpose
-  mandTripLengths_et:
-    merge:
-      - District
-      - purpose
+  # mandTripLengths_et:
+  #   merge:
+  #     - District
+  #     - purpose
   mtfSummary_vis:
     merge:
       - PERTYPE
@@ -96,9 +96,9 @@ tables:
   nonMandTripLengths:
     merge:
       - purpose
-  nonMandTripLengths_et:
-    merge:
-      - purpose
+  # nonMandTripLengths_et:
+  #   merge:
+  #     - purpose
   pertypeDistbn:
     merge:
       - PERTYPE
@@ -166,10 +166,10 @@ tables:
       - purpose
     total:
       purpose: Total
-  tourDistProfile_et_vis:
-    merge:
-      - distbin
-      - purpose
+  # tourDistProfile_et_vis:
+  #   merge:
+  #     - distbin
+  #     - purpose
     total:
       purpose: Total
   tourDuration:
