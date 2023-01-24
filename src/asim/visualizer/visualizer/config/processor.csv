@@ -237,12 +237,12 @@ Add up total VMT,step_3,raw,,,,total_vmt = indivTripData_3['vmt'].sum()
 Get totals together into series,step_3,raw,,,,"totals_df = pd.Series([total_population, total_households, total_tours, total_trips, total_stops, total_vmt], [""Population"", ""Households"", ""Tours"", ""Trips"", ""Stops"", ""VMT""])"
 Name totals column,step_3,raw,,,,totals_df = pd.DataFrame({'value': totals_df})
 Name totals index,step_3,raw,,,,totals_df.index.name = 'Variable'
-Write totals data frame,step_3,raw,,,,totals_df.to_csv(r'C:/ABM3_dev/ABM/src/asim/visualizer\visualizer\data_pipeliner\output\totals.csv')
+Write totals data frame,step_3,raw,,,,totals_df.to_csv(r'output\totals.csv')
 #,,,,,,
 Create rates data frame,step_3,raw,,,,"rates_df = pd.Series([totals_df['value']['Tours']/totals_df['value']['Population'], totals_df['value']['Trips']/totals_df['value']['Population'], totals_df['value']['Stops']/totals_df['value']['Population'], totals_df['value']['Trips']/totals_df['value']['Households']], ['Tours per Person', 'Trips per Person', 'Stops per Person', 'Trips per Household'])"
 Create rates data frame,step_3,raw,,,,rates_df = pd.DataFrame({'value': rates_df})
 Create rates data frame,step_3,raw,,,,rates_df.index.name = 'Variable'
-Write rates data frame,step_3,raw,,,,rates_df.to_csv(r'C:/ABM3_dev/ABM/src/asim/visualizer\visualizer\data_pipeliner\output\rates.csv')
+Write rates data frame,step_3,raw,,,,rates_df.to_csv(r'output\rates.csv')
 #,,,,,,
 #,,,,,,
 Add totals to average mandatory trip length,step_6,raw,,,,mandTripLengthsTotal['HDISTRICT'] = 'Total'
@@ -343,3 +343,6 @@ Bin stop TOD profile into assignment time periods,step_6,replace,stopDeparture_v
 Bin trip TOD profile into assignment time periods,step_6,bin,tripDeparture_vis,stop_skim_period,stop_period,"[3, 6, 9, 15.5, 19, 27]"
 Bin trip TOD profile into assignment time periods,step_6,apply,tripDeparture_vis,stop_skim_period,stop_skim_period,"(lambda x: int(float(str(x).split(', ')[1].split(']')[0])))"
 Bin trip TOD profile into assignment time periods,step_6,replace,tripDeparture_vis,stop_skim_period,stop_skim_period,"{6: '1: EA', 9: '2: AM', 15: '3: MD', 19: '4: PM', 27: '5: EV'}"
+#,,,,,,
+Remove column depart from stopDeparture_vis,step_6,raw,,,,del stopDeparture_vis['depart']
+Remove column depart from tripDeparture_vis,step_6,raw,,,,del tripDeparture_vis['depart']
