@@ -2,44 +2,87 @@ Description,Target,Expression
 # add additional fields,,
 ,party,trips.tour_id.map(tours.number_of_participants)
 ,tour_participants,"np.where(trips.trip_num ==2, 1, party)"
+#,vot,trips.vot
+#,vot1,vot < vot_threshold_low
+#,vot2,(vot < vot_threshold_med )& (vot >= vot_threshold_low)
+#,vot3,vot > vot_threshold_med
+,vot1,trips.vot1
+,vot2,trips.vot2
+,vot3,trips.vot3
 # code time periods,,
 ,is_ea,"trips.depart.between(time_periods['EA']['first_hour'], time_periods['EA']['last_hour'])"
 ,is_am,"trips.depart.between(time_periods['AM']['first_hour'], time_periods['AM']['last_hour'])"
 ,is_md,"trips.depart.between(time_periods['MD']['first_hour'], time_periods['MD']['last_hour'])"
 ,is_pm,"trips.depart.between(time_periods['PM']['first_hour'], time_periods['PM']['last_hour'])"
 ,is_ev,"trips.depart.between(time_periods['EV']['first_hour'], time_periods['EV']['last_hour'])"
-# ea trips,,
-,DRIVEALONE_EA,"(((trips.trip_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','RENTAL'])) & is_ea & tour_participants ==1) | ((trips.trip_mode.isin(['PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5']) & is_ea & trips.trip_num == 2))) * tour_participants"
-,SHARED2_EA,"(((trips.trip_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','PARK_ESCORT','RENTAL'])) & is_ea & tour_participants ==2) | ((trips.trip_mode.isin(['RIDEHAIL_LOC1','RIDEHAIL_LOC2','TAXI_LOC1','TAXI_LOC2','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5']) & is_ea & tour_participants == 1 & (trips['trip_num'] ==1)))) * tour_participants  / OCC_SHARED2"
-,SHARED3_EA,"(((trips.trip_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','PARK_ESCORT','RENTAL'])) & is_ea & tour_participants >= 3) | ((trips.trip_mode.isin(['RIDEHAIL_LOC1','RIDEHAIL_LOC2','TAXI_LOC1','TAXI_LOC2','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5']) & is_ea & tour_participants >=2))) * tour_participants  / OCC_SHARED3"
-,WALK_EA,((trips.trip_mode == 'WALK') & is_ea) * tour_participants
-,WALK_TRANSIT_EA,"((trips.trip_mode.isin(['WALK_LOC','WALK_PRM','WALK_MIX'])) & is_ea) * tour_participants"
-,DRIVE_TRANSIT_EA,"(trips.trip_mode.isin(['KNR_LOC','KNR_PRM','KNR_MIX','TNC_LOC','TNC_PRM','TNC_MIX']) & is_ea ) * tour_participants"
+,is_drivealone,"(trips.trip_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','RENTAL']) &  (tour_participants ==1)) | (trips.trip_mode.isin(['PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5']) & (trips.trip_num == 2))"
+,is_shared2,"(trips.trip_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','RENTAL']) & ( tour_participants ==2)) | (trips.trip_mode.isin(['RIDEHAIL_LOC1','RIDEHAIL_LOC2','TAXI_LOC1','TAXI_LOC2','PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5'])  & ( tour_participants == 1) & (trips['trip_num'] ==1))"
+,is_shared3,"(trips.trip_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','RENTAL']) &  (tour_participants >= 3)) | (trips.trip_mode.isin(['RIDEHAIL_LOC1','RIDEHAIL_LOC2','TAXI_LOC1','TAXI_LOC2','PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5'])  & (tour_participants >=2) & (trips.trip_num == 1))"
+,is_walk,trips.trip_mode == 'WALK'
+,is_walk_transit,"trips.trip_mode.isin(['WALK_LOC','WALK_PRM','WALK_MIX'])"
+,is_drive_transit,"trips.trip_mode.isin(['KNR_LOC','KNR_PRM','KNR_MIX','TNC_LOC','TNC_PRM','TNC_MIX'])"
+# ea trips,low,
+,DRIVEALONE_EA_LOW,vot1 & is_ea & is_drivealone
+,SHARED2_EA_LOW,vot1 & is_ea & is_shared2
+,SHARED3_EA_LOW,vot1 & is_ea & is_shared3
+,DRIVEALONE_EA_MED,vot2 & is_ea & is_drivealone
+,SHARED2_EA_MED,vot2 & is_ea & is_shared2
+,SHARED3_EA_MED,vot2 & is_ea & is_shared3
+,DRIVEALONE_EA_HIGH,vot3 & is_ea & is_drivealone
+,SHARED2_EA_HIGH,vot3 & is_ea & is_shared2
+,SHARED3_EA_HIGH,vot3 & is_ea & is_shared3
+,WALK_EA, is_ea & is_walk
+,WALK_TRANSIT_EA,is_ea & is_walk_transit
+,DRIVE_TRANSIT_EA,is_ea & is_drive_transit
 # am trips,,
-,DRIVEALONE_AM,"(((trips.trip_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','RENTAL'])) & is_am & tour_participants ==1) | ((trips.trip_mode.isin(['PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5']) & is_am & trips.trip_num == 2))) * tour_participants"
-,SHARED2_AM,"(((trips.trip_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','PARK_ESCORT','RENTAL'])) & is_am & tour_participants ==2) | ((trips.trip_mode.isin(['RIDEHAIL_LOC1','RIDEHAIL_LOC2','TAXI_LOC1','TAXI_LOC2','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5']) & is_am & tour_participants == 1 & (trips['trip_num'] ==1)))) * tour_participants  / OCC_SHARED2"
-,SHARED3_AM,"(((trips.trip_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','PARK_ESCORT','RENTAL'])) & is_am & tour_participants >= 3) | ((trips.trip_mode.isin(['RIDEHAIL_LOC1','RIDEHAIL_LOC2','TAXI_LOC1','TAXI_LOC2','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5']) & is_am & tour_participants >=2))) * tour_participants  / OCC_SHARED3"
-,WALK_AM,((trips.trip_mode == 'WALK') & is_am) * tour_participants
-,WALK_TRANSIT_AM,"((trips.trip_mode.isin(['WALK_LOC','WALK_PRM','WALK_MIX'])) & is_am) * tour_participants"
-,DRIVE_TRANSIT_AM,"(trips.trip_mode.isin(['KNR_LOC','KNR_PRM','KNR_MIX','TNC_LOC','TNC_PRM','TNC_MIX']) & is_am ) * tour_participants"
+,DRIVEALONE_AM_LOW,vot1 & is_am & is_drivealone
+,SHARED2_AM_LOW,vot1 & is_am & is_shared2
+,SHARED3_AM_LOW,vot1 & is_am & is_shared3
+,DRIVEALONE_AM_MED,vot2 & is_am & is_drivealone
+,SHARED2_AM_MED,vot2 & is_am & is_shared2
+,SHARED3_AM_MED,vot2 & is_am & is_shared3
+,DRIVEALONE_AM_HIGH,vot3 & is_am & is_drivealone
+,SHARED2_AM_HIGH,vot3 & is_am & is_shared2
+,SHARED3_AM_HIGH,vot3 & is_am & is_shared3
+,WALK_AM, is_am & is_walk
+,WALK_TRANSIT_AM,is_am & is_walk_transit
+,DRIVE_TRANSIT_AM,is_am & is_drive_transit
 # md trips,,
-,DRIVEALONE_MD,"(((trips.trip_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','RENTAL'])) & is_md & tour_participants ==1) | ((trips.trip_mode.isin(['PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5']) & is_md & trips.trip_num == 2))) * tour_participants"
-,SHARED2_MD,"(((trips.trip_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','PARK_ESCORT','RENTAL'])) & is_md & tour_participants ==2) | ((trips.trip_mode.isin(['RIDEHAIL_LOC1','RIDEHAIL_LOC2','TAXI_LOC1','TAXI_LOC2','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5']) & is_md & tour_participants == 1 & (trips['trip_num'] ==1)))) * tour_participants  / OCC_SHARED2"
-,SHARED3_MD,"(((trips.trip_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','PARK_ESCORT','RENTAL'])) & is_md & tour_participants >= 3) | ((trips.trip_mode.isin(['RIDEHAIL_LOC1','RIDEHAIL_LOC2','TAXI_LOC1','TAXI_LOC2','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5']) & is_md & tour_participants >=2))) * tour_participants  / OCC_SHARED3"
-,WALK_MD,((trips.trip_mode == 'WALK') & is_md) * tour_participants
-,WALK_TRANSIT_MD,"((trips.trip_mode.isin(['WALK_LOC','WALK_PRM','WALK_MIX'])) & is_md) * tour_participants"
-,DRIVE_TRANSIT_MD,"(trips.trip_mode.isin(['KNR_LOC','KNR_PRM','KNR_MIX','TNC_LOC','TNC_PRM','TNC_MIX']) & is_md ) * tour_participants"
+,DRIVEALONE_MD_LOW,vot1 & is_md & is_drivealone
+,SHARED2_MD_LOW,vot1 & is_md & is_shared2
+,SHARED3_MD_LOW,vot1 & is_md & is_shared3
+,DRIVEALONE_MD_MED,vot2 & is_md & is_drivealone
+,SHARED2_MD_MED,vot2 & is_md & is_shared2
+,SHARED3_MD_MED,vot2 & is_md & is_shared3
+,DRIVEALONE_MD_HIGH,vot3 & is_md & is_drivealone
+,SHARED2_MD_HIGH,vot3 & is_md & is_shared2
+,SHARED3_MD_HIGH,vot3 & is_md & is_shared3
+,WALK_MD, is_md & is_walk
+,WALK_TRANSIT_MD,is_md & is_walk_transit
+,DRIVE_TRANSIT_MD,is_md & is_drive_transit
 # pm trips,,
-,DRIVEALONE_PM,"(((trips.trip_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','RENTAL'])) & is_pm & tour_participants ==1) | ((trips.trip_mode.isin(['PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5']) & is_pm & trips.trip_num == 2))) * tour_participants"
-,SHARED2_PM,"(((trips.trip_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','PARK_ESCORT','RENTAL'])) & is_pm & tour_participants ==2) | ((trips.trip_mode.isin(['RIDEHAIL_LOC1','RIDEHAIL_LOC2','TAXI_LOC1','TAXI_LOC2','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5']) & is_pm & tour_participants == 1 & (trips['trip_num'] ==1)))) * tour_participants  / OCC_SHARED2"
-,SHARED3_PM,"(((trips.trip_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','PARK_ESCORT','RENTAL'])) & is_pm & tour_participants >= 3) | ((trips.trip_mode.isin(['RIDEHAIL_LOC1','RIDEHAIL_LOC2','TAXI_LOC1','TAXI_LOC2','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5']) & is_pm & tour_participants >=2))) * tour_participants  / OCC_SHARED3"
-,WALK_PM,((trips.trip_mode == 'WALK') & is_pm) * tour_participants
-,WALK_TRANSIT_PM,"((trips.trip_mode.isin(['WALK_LOC','WALK_PRM','WALK_MIX'])) & is_pm) * tour_participants"
-,DRIVE_TRANSIT_PM,"(trips.trip_mode.isin(['KNR_LOC','KNR_PRM','KNR_MIX','TNC_LOC','TNC_PRM','TNC_MIX']) & is_pm ) * tour_participants"
+,DRIVEALONE_PM_LOW,vot1 & is_pm & is_drivealone
+,SHARED2_PM_LOW,vot1 & is_pm & is_shared2
+,SHARED3_PM_LOW,vot1 & is_pm & is_shared3
+,DRIVEALONE_PM_MED,vot2 & is_pm & is_drivealone
+,SHARED2_PM_MED,vot2 & is_pm & is_shared2
+,SHARED3_PM_MED,vot2 & is_pm & is_shared3
+,DRIVEALONE_PM_HIGH,vot3 & is_pm & is_drivealone
+,SHARED2_PM_HIGH,vot3 & is_pm & is_shared2
+,SHARED3_PM_HIGH,vot3 & is_pm & is_shared3
+,WALK_PM, is_pm & is_walk
+,WALK_TRANSIT_PM,is_pm & is_walk_transit
+,DRIVE_TRANSIT_PM,is_pm & is_drive_transit
 # ev trips,,
-,DRIVEALONE_EV,"(((trips.trip_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','RENTAL'])) & is_ev & tour_participants ==1) | ((trips.trip_mode.isin(['PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5']) & is_ev & trips.trip_num == 2))) * tour_participants"
-,SHARED2_EV,"(((trips.trip_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','PARK_ESCORT','RENTAL'])) & is_ev & tour_participants ==2) | ((trips.trip_mode.isin(['RIDEHAIL_LOC1','RIDEHAIL_LOC2','TAXI_LOC1','TAXI_LOC2','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5']) & is_ev & tour_participants == 1 & (trips['trip_num'] ==1)))) * tour_participants  / OCC_SHARED2"
-,SHARED3_EV,"(((trips.trip_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','PARK_ESCORT','RENTAL'])) & is_ev & tour_participants >= 3) | ((trips.trip_mode.isin(['RIDEHAIL_LOC1','RIDEHAIL_LOC2','TAXI_LOC1','TAXI_LOC2','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5']) & is_ev & tour_participants >=2))) * tour_participants  / OCC_SHARED3"
-,WALK_EV,((trips.trip_mode == 'WALK') & is_ev) * tour_participants
-,WALK_TRANSIT_EV,"((trips.trip_mode.isin(['WALK_LOC','WALK_PRM','WALK_MIX'])) & is_ev) * tour_participants"
-,DRIVE_TRANSIT_EV,"(trips.trip_mode.isin(['KNR_LOC','KNR_PRM','KNR_MIX','TNC_LOC','TNC_PRM','TNC_MIX']) & is_ev ) * tour_participants"
+,DRIVEALONE_EV_LOW,vot1 & is_ev & is_drivealone
+,SHARED2_EV_LOW,vot1 & is_ev & is_shared2
+,SHARED3_EV_LOW,vot1 & is_ev & is_shared3
+,DRIVEALONE_EV_MED,vot2 & is_ev & is_drivealone
+,SHARED2_EV_MED,vot2 & is_ev & is_shared2
+,SHARED3_EV_MED,vot2 & is_ev & is_shared3
+,DRIVEALONE_EV_HIGH,vot3 & is_ev & is_drivealone
+,SHARED2_EV_HIGH,vot3 & is_ev & is_shared2
+,SHARED3_EV_HIGH,vot3 & is_ev & is_shared3
+,WALK_EV, is_ev & is_walk
+,WALK_TRANSIT_EV,is_ev & is_walk_transit
+,DRIVE_TRANSIT_EV,is_ev & is_drive_transit

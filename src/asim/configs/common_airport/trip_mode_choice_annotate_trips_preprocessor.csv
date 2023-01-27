@@ -4,7 +4,7 @@ resident,resident,df.purpose_id < 2
 ,vot,coef_ivt/coef_c_cost*0.6
 ,vot1,vot < vot_threshold_low
 ,vot2,(vot < vot_threshold_med )& (vot >= vot_threshold_low)
-,vot3,vot > vot_threshold_med
+,vot3,vot >= vot_threshold_med
 ,ea,df.depart < eaperiod
 ,am,(df.depart>=eaperiod) & (df.depart <amperiod)
 ,md,(df.depart>=amperiod) & (df.depart <mdperiod)

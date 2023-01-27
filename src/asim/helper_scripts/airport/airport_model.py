@@ -250,54 +250,23 @@ def create_tours(settings):
     tours = tours.set_index('tour_id')
     tours['tour_category'] = 'non_mandatory'
     tours['origin'] = airport_mgra
-    tours.loc[(tours.purpose_id ==0) & (tours.income ==0), 'tour_type'] = 'res_bus1'
-    tours.loc[(tours.purpose_id ==0) & (tours.income ==1), 'tour_type'] = 'res_bus2'
-    tours.loc[(tours.purpose_id ==0) & (tours.income ==2), 'tour_type'] = 'res_bus3'
-    tours.loc[(tours.purpose_id ==0) & (tours.income ==3), 'tour_type'] = 'res_bus4'
-    tours.loc[(tours.purpose_id ==0) & (tours.income ==4), 'tour_type'] = 'res_bus5'
-    tours.loc[(tours.purpose_id ==0) & (tours.income ==5), 'tour_type'] = 'res_bus6'
-    tours.loc[(tours.purpose_id ==0) & (tours.income ==6), 'tour_type'] = 'res_bus7'
-    tours.loc[(tours.purpose_id ==0) & (tours.income ==7), 'tour_type'] = 'res_bus8'
-    tours.loc[(tours.purpose_id ==1) & (tours.income ==0), 'tour_type'] = 'res_per1'
-    tours.loc[(tours.purpose_id ==1) & (tours.income ==1), 'tour_type'] = 'res_per2'
-    tours.loc[(tours.purpose_id ==1) & (tours.income ==2), 'tour_type'] = 'res_per3'
-    tours.loc[(tours.purpose_id ==1) & (tours.income ==3), 'tour_type'] = 'res_per4'
-    tours.loc[(tours.purpose_id ==1) & (tours.income ==4), 'tour_type'] = 'res_per5'
-    tours.loc[(tours.purpose_id ==1) & (tours.income ==5), 'tour_type'] = 'res_per6'
-    tours.loc[(tours.purpose_id ==1) & (tours.income ==6), 'tour_type'] = 'res_per7'
-    tours.loc[(tours.purpose_id ==1) & (tours.income ==7), 'tour_type'] = 'res_per8'
+    for i,purp in enumerate(['bus','per']):
+        for income in range(8):
+            tours.loc[(tours.purpose_id ==i) & (tours.income ==income), 'tour_type'] = 'res_{}{}'.format(purp,income+1)
+            if i == 0:
+                tours.loc[(tours.purpose_id.isin([0,2])) & (tours.income == income), 'mode_segment'] = '{}{}'.format(purp,income+1)
+            else:
+                tours.loc[(tours.purpose_id.isin([1,3])) & (tours.income == income), 'mode_segment'] = '{}{}'.format(purp,income+1)
+
+
     tours.loc[(tours.purpose_id ==2) , 'tour_type'] = 'vis_bus'
     tours.loc[(tours.purpose_id ==3) , 'tour_type'] = 'vis_per'
     tours.loc[(tours.purpose_id ==4) , 'tour_type'] = 'external'
     tours.loc[(tours.purpose_id ==5) , 'tour_type'] = 'emp'
-    tours.loc[(tours.purpose_id.isin([0,2])) & (tours.income == 0), 'mode_segment'] = 'bus1'
-    tours.loc[(tours.purpose_id.isin([0,2])) & (tours.income ==1), 'mode_segment'] = 'bus2'
-    tours.loc[(tours.purpose_id.isin([0,2])) & (tours.income ==2), 'mode_segment'] = 'bus3'
-    tours.loc[(tours.purpose_id.isin([0,2])) & (tours.income ==3), 'mode_segment'] = 'bus4'
-    tours.loc[(tours.purpose_id.isin([0,2])) & (tours.income ==4), 'mode_segment'] = 'bus5'
-    tours.loc[(tours.purpose_id.isin([0,2])) & (tours.income ==5), 'mode_segment'] = 'bus6'
-    tours.loc[(tours.purpose_id.isin([0,2])) & (tours.income ==6), 'mode_segment'] = 'bus7'
-    tours.loc[(tours.purpose_id.isin([0,2])) & (tours.income ==7), 'mode_segment'] = 'bus8'
-    tours.loc[(tours.purpose_id.isin([1,3])) & (tours.income ==0), 'mode_segment'] = 'per1'
-    tours.loc[(tours.purpose_id.isin([1,3])) & (tours.income ==1), 'mode_segment'] = 'per2'
-    tours.loc[(tours.purpose_id.isin([1,3])) & (tours.income ==2), 'mode_segment'] = 'per3'
-    tours.loc[(tours.purpose_id.isin([1,3])) & (tours.income ==3), 'mode_segment'] = 'per4'
-    tours.loc[(tours.purpose_id.isin([1,3])) & (tours.income ==4), 'mode_segment'] = 'per5'
-    tours.loc[(tours.purpose_id.isin([1,3])) & (tours.income ==5), 'mode_segment'] = 'per6'
-    tours.loc[(tours.purpose_id.isin([1,3])) & (tours.income ==6), 'mode_segment'] = 'per7'
-    tours.loc[(tours.purpose_id.isin([1,3])) & (tours.income ==7), 'mode_segment'] = 'per8'
     tours.loc[(tours.purpose_id.isin([5])), 'mode_segment'] = 'emp'
-    # tours.loc[(tours.purpose_id.isin([4])), 'mode_segment'] = 'ext'
-    tours.loc[(tours.purpose_id == 4) & (tours.income ==0), 'mode_segment'] = 'ext1'
-    tours.loc[(tours.purpose_id == 4) & (tours.income ==1), 'mode_segment'] = 'ext2'
-    tours.loc[(tours.purpose_id == 4) & (tours.income ==2), 'mode_segment'] = 'ext3'
-    tours.loc[(tours.purpose_id == 4) & (tours.income ==3), 'mode_segment'] = 'ext4'
-    tours.loc[(tours.purpose_id == 4) & (tours.income ==4), 'mode_segment'] = 'ext5'
-    tours.loc[(tours.purpose_id == 4) & (tours.income ==5), 'mode_segment'] = 'ext6'
-    tours.loc[(tours.purpose_id == 4) & (tours.income ==6), 'mode_segment'] = 'ext7'
-    tours.loc[(tours.purpose_id == 4) & (tours.income ==7), 'mode_segment'] = 'ext8'
+    for income in range(8):
+        tours.loc[(tours.purpose_id == 4) & (tours.income ==income), 'mode_segment'] = 'ext{}'.format(income+1)
 
-    # tours['destination'] = 5263
     return tours
 
 def create_sched_probs(settings):

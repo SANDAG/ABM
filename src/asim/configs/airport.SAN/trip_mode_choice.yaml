@@ -338,8 +338,11 @@ preprocessor:
   DF: df
   TABLES:
     - land_use
-    - tours
 
+CHOOSER_COLS_TO_KEEP:
+  - vot1
+  - vot2
+  - vot3
 #  - SPEC: trip_mode_choice_annotate_trips_preprocessor2
 #    DF: df
 #    TABLES:
