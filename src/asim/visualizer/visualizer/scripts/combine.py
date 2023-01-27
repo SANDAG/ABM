@@ -4,10 +4,13 @@ import os
 import yaml
 
 base_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-config_file = base_path + r'\combine.yaml'
+config_file = base_path + r'\config\combine.yaml'
 with open(config_file, 'r') as f:
     config = yaml.safe_load(f)
 f.close()
+
+if not os.path.isdir(config['outpath']):
+    os.mkdir(config['outpath'])
 
 for table in config['tables']:
     merge_cols = config['tables'][table]['merge']

@@ -1,6 +1,6 @@
 runs:
   survey: hts
-  model: data_pipeliner\output
+  model: output
 outpath: data
 tables:
   #activePertypeDistbn:
