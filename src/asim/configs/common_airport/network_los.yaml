@@ -23,7 +23,11 @@ taz_skims:
   - traffic_skims_MD.omx
   - traffic_skims_PM.omx
   - traffic_skims_EV.omx
-  - transit_skims_processed.omx
+  - transit_skims_EA.omx
+  - transit_skims_AM.omx
+  - transit_skims_MD.omx
+  - transit_skims_PM.omx
+  - transit_skims_EV.omx
   - dest_poi.omx
 
 
