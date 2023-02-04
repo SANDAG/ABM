@@ -22,9 +22,6 @@ data_dir = r"T:\Survey\HHTS\estimation\data\series15\mgra15"
 estimation_path = r"T:\Survey\HHTS\estimation\asim_combined"
 final_output_path = r"{dir}\survey_data".format(dir=estimation_path)
 
-infer_py_location = r"{dir}\scripts\infer.py".format(dir=estimation_path)
-infer_run_command = "python " + infer_py_location + " " + estimation_path + "\data " + configs_dir
-
 # reading in 2016 survey
 data_16_folder = r"T:\Survey\HHTS\estimation\2016"
 # reading in raw survey to be able to geocode home, school, and work locations
@@ -1603,26 +1600,8 @@ trip_output_cols = [
 ]
 output_asim_trip_df = trimmed_asim_trip_df[trip_output_cols].copy()
 
-# %%
 output_asim_hh_df.to_csv(os.path.join(final_output_path, "survey_households.csv"), index=False)
 output_asim_per_df.to_csv(os.path.join(final_output_path, "survey_persons.csv"), index=False)
 output_asim_tour_df.to_csv(os.path.join(final_output_path, "survey_tours.csv"), index=False)
 output_asim_jtour_df.to_csv(os.path.join(final_output_path, "survey_joint_tour_participants.csv"), index=False)
 output_asim_trip_df.to_csv(os.path.join(final_output_path, "survey_trips.csv"), index=False)
-
-# %%
-cur_dir = os.getcwd()
-os.chdir(estimation_path)
-infer_py_location = r"{dir}\scripts\infer.py".format(dir=estimation_path)
-infer_run_command = "python " + infer_py_location + " " + estimation_path + " " + configs_dir
-infer_result = os.system(infer_run_command)
-if infer_result == 0:
-    print("infer script successfully completed")
-else:
-    print("Error in infer script!")
-os.chdir(cur_dir)
-
-# %%
-
-
-
