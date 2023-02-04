@@ -1,4 +1,3 @@
-# %%
 import pandas as pd
 pd.set_option("display.max_columns",250)
 import os
@@ -6,11 +5,9 @@ import numpy as np
 import geopandas
 import matplotlib.pyplot as plt
 
-# %% [markdown]
 # ## Read in SPA Input and Output Tables
 # SPA input is needed in order to merge information from survey that was not written by the SPA tool
 
-# %%
 configs_dir = r"T:\Survey\HHTS\estimation\configs"
 
 landuse_file = r"T:\Survey\HHTS\estimation\data\2019\mgra15_based_input2019_rev.csv"
@@ -35,17 +32,9 @@ raw_22_folder = r"T:\Survey\HHTS\estimation\2022\Raw"
 # number of periods in activitysim (48 30-minute periods)
 num_periods = 48
 
-# %%
 mgra15 = geopandas.read_file(os.path.join(data_dir, 'mgra15.shp'))
-mgra15
-
-# %%
-mgra15.crs
-
-# %%
 mgra15 = mgra15.to_crs(epsg=4326)
 
-# %%
 trips_16 = {}
 tours_16 = {}
 jtours_16 = {}
@@ -90,7 +79,6 @@ print("Number of Trips: ", len(trips_16))
 raw_hh_16 = pd.read_csv(os.path.join(raw_16_folder, 'SDRTS_Household_Data_20170731.csv'))
 raw_person_16 = pd.read_csv(os.path.join(raw_16_folder, 'SDRTS_Person_Data_20170731.csv'))
 
-# %%
 trips_22 = {}
 tours_22 = {}
 jtours_22 = {}
@@ -136,33 +124,13 @@ print("Number of Trips: ", len(trips_22))
 raw_hh_22 = pd.read_csv(os.path.join(raw_22_folder, 'hh.csv'))
 raw_person_22 = pd.read_csv(os.path.join(raw_22_folder, 'person.csv'))
 
-# %%
-raw_person_22
-
-# %%
-raw_person_22.gender.value_counts(dropna=False)
-
-# %%
-raw_person_16.head()
-
-# %%
-raw_person_16.gender.value_counts(dropna=False)
-
-# %%
-# temp, only using 2022 data
-# spa_input_hh_df = pd.read_csv(os.path.join(data_22_folder,"SPA_Inputs", "HH_SPA_INPUT.csv"))
-# spa_input_per_df = pd.read_csv(os.path.join(data_22_folder,"SPA_Inputs", "PER_SPA_INPUT.csv"))
-
 spa_out_hh_df = pd.concat([households_16, households_22]).reset_index(drop=True)
 spa_out_per_df = pd.concat([persons_16, persons_22]).reset_index(drop=True)
 spa_out_tours_df = pd.concat([tours_16, tours_22]).reset_index(drop=True)
 spa_out_ujtours_df = pd.concat([jtours_16, jtours_22]).reset_index(drop=True)
 spa_out_trips_df = pd.concat([trips_16, trips_22]).reset_index(drop=True)
 
-# %% [markdown]
 # ## Geocoding
-
-# %%
 def geocode_to_mgra15(df, cols_to_keep, x_col, y_col):
     df_geocode = geopandas.GeoDataFrame(df[cols_to_keep], geometry=geopandas.points_from_xy(x=df[x_col], y=df[y_col]))
     df_geocode.set_crs(epsg=4326, inplace=True)
@@ -170,50 +138,35 @@ def geocode_to_mgra15(df, cols_to_keep, x_col, y_col):
     assert (df_geocode.index == df.index).all(), "Bad Merge!"
     return df_geocode
 
-# %% [markdown]
 # #### home zone id
-
-# %%
 hh_22_geocode = geocode_to_mgra15(raw_hh_22.set_index('hh_id'), cols_to_keep=['hh_weight'], x_col='home_lon', y_col='home_lat')
 hh_16_geocode = geocode_to_mgra15(raw_hh_16.set_index('hhid'), cols_to_keep=['hh_final_weight_456x'], x_col='home_lng', y_col='home_lat')
 
 hhid_to_home_zone_dict = hh_22_geocode['MGRA'].to_dict()
 hhid_to_home_zone_dict.update(hh_16_geocode['MGRA'].to_dict())
 
-# %%
 assert spa_out_hh_df.HH_ID.isin(hhid_to_home_zone_dict.keys()).all()
 spa_out_hh_df['home_zone_id'] = spa_out_hh_df['HH_ID'].map(hhid_to_home_zone_dict)
 
-# %% [markdown]
 # #### school and work zone ID's
-
-# %%
 sch_22_geocode = geocode_to_mgra15(raw_person_22, cols_to_keep=['hh_id', 'person_num'], x_col='school_lon', y_col='school_lat')
 sch_22_geocode.rename(columns={'MGRA': 'school_zone_id', 'hh_id': 'HH_ID', 'person_num': 'PER_ID'}, inplace=True)
 sch_16_geocode = geocode_to_mgra15(raw_person_16, cols_to_keep=['hhid', 'pernum'], x_col='mainschool_lng', y_col='mainschool_lat')
 sch_16_geocode.rename(columns={'MGRA': 'school_zone_id', 'hhid': 'HH_ID', 'pernum': 'PER_ID'}, inplace=True)
 sch_geocode = pd.concat([sch_22_geocode, sch_16_geocode])
-sch_geocode
 
-# %%
 work_22_geocode = geocode_to_mgra15(raw_person_22, cols_to_keep=['hh_id', 'person_num'], x_col='work_lon', y_col='work_lat')
 work_22_geocode.rename(columns={'MGRA': 'work_zone_id', 'hh_id': 'HH_ID', 'person_num': 'PER_ID'}, inplace=True)
 work_16_geocode = geocode_to_mgra15(raw_person_16, cols_to_keep=['hhid', 'pernum'], x_col='work_lng', y_col='work_lat')
 work_16_geocode.rename(columns={'MGRA': 'work_zone_id', 'hhid': 'HH_ID', 'pernum': 'PER_ID'}, inplace=True)
 work_geocode = pd.concat([work_22_geocode, work_16_geocode])
-work_geocode
 
-# %%
 school_work_geocode = pd.concat([sch_geocode[['HH_ID', 'PER_ID', 'school_zone_id']], work_geocode[['work_zone_id']]], axis=1)
 school_work_geocode
 
-# %%
 spa_out_per_df = spa_out_per_df.merge(school_work_geocode, how='left', on=['HH_ID', 'PER_ID'], suffixes=('', ''))
 
-# %% [markdown]
 # Tours
-
-# %%
 for end in ['ORIG', 'DEST']:
     tour_geocode_df = geopandas.GeoDataFrame(spa_out_tours_df[['HH_ID', 'PER_ID', 'TOUR_ID']], geometry=geopandas.points_from_xy(x=spa_out_tours_df[end + '_X'], y=spa_out_tours_df[end + '_Y']))
     tour_geocode_df.set_crs(epsg=4326, inplace=True)
@@ -222,10 +175,7 @@ for end in ['ORIG', 'DEST']:
     spa_out_tours_df[end + '_MAZ'] = tour_geocode_df['MGRA']
     spa_out_tours_df[end + '_TAZ'] = tour_geocode_df['TAZ']
 
-# %% [markdown]
 # Trips
-
-# %%
 for end in ['ORIG', 'DEST']:
     trip_geocode_df = geopandas.GeoDataFrame(spa_out_trips_df[['HH_ID', 'PER_ID', 'TOUR_ID', 'TRIP_ID']], geometry=geopandas.points_from_xy(x=spa_out_trips_df[end + '_X'], y=spa_out_trips_df[end + '_Y']))
     trip_geocode_df.set_crs(epsg=4326, inplace=True)
@@ -234,22 +184,8 @@ for end in ['ORIG', 'DEST']:
     spa_out_trips_df[end + '_MAZ'] = trip_geocode_df['MGRA']
     spa_out_trips_df[end + '_TAZ'] = trip_geocode_df['TAZ']
 
-# %%
-import folium
-from folium import plugins
-
-heat_data = [[point.xy[1][0], point.xy[0][0]] for point in trip_geocode_df.geometry]
-
-map = folium.Map(location=[32.95, -116.897], tiles="OpenStreetMap", zoom_start=9, height='100%', width='100%')
-
-plugins.HeatMap(heat_data, min_opacity=0.2, radius=12).add_to(map)
-
-map
-
-# %%
 # FIXME need to geocode external tours/trips
 
-# %%
 def reindex(series1, series2):
     result = series1.reindex(series2)
     try:
@@ -258,13 +194,10 @@ def reindex(series1, series2):
         pass
     return result
 
-# %% [markdown]
 # ## Processing Household File
 
-# %% [markdown]
 # The spa output household file just selects SAMPN and HH_SIZE and renames to HH_ID and NUM_PERS.  AREA is not used.  So, processing this file requires just changing the variables for the input hh file.
 
-# %%
 # FIXME: are the income categories the same for the 2016 survey??
 hh_inc_cat_dict = {
     1: [0,14999],
@@ -291,13 +224,6 @@ def interpolate_hh_income(inc_cat):
     else:
         return np.random.randint(hh_inc_cat_dict[inc_cat][0], hh_inc_cat_dict[inc_cat][1])
 
-# %%
-raw_hh_16.hhincome_detailed.value_counts()
-
-# %%
-raw_hh_16.head()
-
-# %%
 asim_hh_df = pd.DataFrame()
 
 asim_hh_df['HH_ID'] = spa_out_hh_df['HH_ID']
@@ -325,22 +251,6 @@ asim_hh_df.loc[pd.isna(asim_hh_df['income']), 'income'] = sampled_incomes.values
 # $1 in 2016 is worth $1.25 in 2022 (https://www.bls.gov/data/inflation_calculator.htm)
 asim_hh_df.loc[asim_hh_df['survey_year'] == 2016, 'income'] = asim_hh_df.loc[asim_hh_df['survey_year'] == 2016, 'income'] * 1.25
 
-# %%
-asim_hh_df
-
-# %%
-asim_hh_df['income'].hist(bins=100)
-
-# %%
-asim_hh_df['auto_ownership'].clip(upper=4).value_counts(dropna=False, normalize=True).loc[[0,1,2,3,4]].plot(kind='bar')
-
-# %%
-asim_hh_df.loc[asim_hh_df['HH_ID'].drop_duplicates().index, 'auto_ownership'].clip(upper=4).value_counts(dropna=False, normalize=True).loc[[0,1,2,3,4]].plot(kind='bar')
-
-# %% [markdown]
-# ## Processing Person File
-
-# %%
 # 2022 & 2016 surveys had different age categories
 age_cat_dict_22 = {
     1: [0, 5],
@@ -389,8 +299,6 @@ def interpolate_age(row):
     else:
         return 45 # generic adult
 
-
-# %%
 asim_per_df = pd.DataFrame()
 
 keep_cols = ['HH_ID', 'PER_ID', 'day', 'survey_year']
@@ -436,13 +344,8 @@ spa_TELECOMM_FREQ_dict = {
 # asim_per_df['telecommute_frequency'] = spa_input_per_df['TELECOMM_FREQ'].apply(lambda x: spa_TELECOMM_FREQ_dict[x])
 asim_per_df['telecommute_frequency'] = 'No_Telecommute'
 
-asim_per_df
-
-
-# %% [markdown]
 # ## Processing Tours
 
-# %% [markdown]
 # Tour mode coding in SPA tool:
 #     * 'SOV': 1,
 #     * 'HOV2': 2,
@@ -484,7 +387,6 @@ asim_per_df
 # 
 # In ActivitySim, JOINT_STATUS == 3 are considered joint tours. Only fully-joint tours have joint_tour_participants.
 
-# %%
 tour_mode_spa_to_asim_dict_22 = {
     1: 'SOV',
     2: 'HOV2',
@@ -543,10 +445,8 @@ tour_purpose_spa_to_asim_dict = {
 }
 
 
-# %%
 spa_out_tours_df[spa_out_tours_df['IS_SUBTOUR'] == 1]['TOURPURP'].value_counts(dropna=False)
 
-# %%
 # determining parent tour purpose for subtours
 spa_out_tours_df = pd.merge(
     spa_out_tours_df,
@@ -558,9 +458,7 @@ spa_out_tours_df = pd.merge(
 )
 spa_out_tours_df.drop(columns='TOUR_ID_y', inplace=True)
 spa_out_tours_df.rename(columns={'TOURPURP_y':'PARENT_TOURPURP'}, inplace=True)
-spa_out_tours_df.head()
 
-# %%
 asim_tour_df = spa_out_tours_df[['HH_ID', 'PER_ID','TOUR_ID', 'PARENT_TOUR_ID', 'JTOUR_ID', 'day']].copy()
 
 asim_tour_df['origin'] = spa_out_tours_df['ORIG_MAZ']
@@ -591,10 +489,8 @@ assert (~asim_tour_df['tour_mode'].isna()).all(), "Missing tour modes!"
 assert (~asim_tour_df['tour_purpose'].isna()).all(), "Missing tour purpose!"
 
 
-# %%
 spa_out_tours_df.loc[spa_out_tours_df['survey_year'] == 2016, 'TOURMODE'].value_counts(dropna=False)
 
-# %%
 def determine_tour_category(row):
     if row['tour_purpose'] in ['work', 'univ', 'school']:
         return 'mandatory'
@@ -620,100 +516,54 @@ asim_tour_df['tour_category'] = asim_tour_df.apply(lambda row: determine_tour_ca
 asim_tour_df['tour_type'] = asim_tour_df.apply(lambda row: determine_tour_type(row), axis=1)
 # asim_tour_df.loc[asim_tour_df['tour_category'] == 'atwork', 'tour_purpose'] = 'atwork'  # has to be after tour_type calculation
 
-# %%
 asim_tour_df[asim_tour_df['tour_category'] == 'atwork']['tour_purpose'].value_counts(normalize=True)
 
-# %%
 asim_tour_df[asim_tour_df['tour_category'] == 'atwork']['tour_type'].value_counts(normalize=True)
 
-# %%
-asim_tour_df.head()
-
-# %%
 asim_tour_df['duration'].hist(bins=np.linspace(0,48,48))
 
-# %%
 asim_tour_df[asim_tour_df['end'] < 0]
 
-# %% [markdown]
 # ### Joint Tour Participants
-
-# %%
-spa_out_ujtours_df.head()
-
-# %%
 asim_jtour_participants_df = pd.melt(spa_out_ujtours_df,
        id_vars=['HH_ID', 'JTOUR_ID', 'day'],
        value_vars=['PERSON_1','PERSON_2','PERSON_3','PERSON_4','PERSON_5','PERSON_6','PERSON_7','PERSON_8','PERSON_9'])
 
-# %%
 asim_jtour_participants_df = asim_jtour_participants_df[pd.notna(asim_jtour_participants_df['value'])]
-asim_jtour_participants_df.head()
-
-# %%
-asim_jtour_participants_df[asim_jtour_participants_df['HH_ID'] == 70004828]
-
-# %%
 asim_jtour_participants_df['participant_num'] = asim_jtour_participants_df['variable'].apply(lambda x: int(x.strip('PERSON_')))
 asim_jtour_participants_df['PER_ID'] = asim_jtour_participants_df['value'].astype(int)
 
-# %%
-asim_jtour_participants_df
-
-# %% [markdown]
 # ## Re-Indexing
 # Need unique household_id, per_id, tour_id, etc. for ActivitySim
 # 
-
-# %% [markdown]
 # #### Household
-
-# %%
 # household ID should be unique already, but we want to be sure
 asim_hh_df['household_id'] = asim_hh_df.reset_index().index + 1
-asim_hh_df.head()
 
-# %% [markdown]
 # #### Person
-
-# %%
 asim_per_df = pd.merge(
     asim_per_df,
     asim_hh_df[['HH_ID', 'household_id', 'day']],
     how='left',
     on=['HH_ID', 'day'],
 )
-
-# %%
 asim_per_df['person_id'] = asim_per_df.reset_index().index + 1
-asim_per_df.head()
 
-# %%
 # need to re-number PNUM
 # not every person is listed for every day in spa output.  See HH_ID == 22008078 for an example.
 # There is a cut in infer looking for PNUM == 1, which every household needs.
 asim_per_df['PNUM'] = asim_per_df.groupby('household_id')['person_id'].cumcount() + 1
 
-# %% [markdown]
 # Determining number of children in each household
-
-# %%
 hh_children = asim_per_df[asim_per_df['age'] < 18].groupby('household_id')['person_id'].count().to_frame()
 hh_children.columns = ['children']
 
-# %%
 asim_hh_df.set_index('household_id', inplace=True)
 asim_hh_df.loc[hh_children.index, 'children'] = hh_children['children']
 asim_hh_df['children'] = asim_hh_df['children'].fillna(0).astype(int)
 asim_hh_df.reset_index(inplace=True)
 
-# %% [markdown]
 # #### Tour
-
-# %%
-asim_tour_df.head()
-
-# %%
 asim_tour_df = pd.merge(
     asim_tour_df,
     asim_per_df[['day', 'HH_ID', 'PER_ID', 'household_id', 'person_id']],
@@ -721,12 +571,10 @@ asim_tour_df = pd.merge(
     on=['HH_ID', 'PER_ID', 'day']
 )
 
-# %% [markdown]
 # Joint tours are replicated in SPA output accross all members of the tour.  asim_tour_df will keep just the first instance of joint tours.  Members of the joint tours are tracked in the asim_jtour_participants_df table.
 # 
 # Not removing duplicated joint tours will cause different tour_id's to be assigned to the same joint tour.
 
-# %%
 asim_tour_df.sort_values(by=['day', 'HH_ID', 'JTOUR_ID', 'PER_ID', 'TOUR_ID',], inplace = True)
 asim_tour_df['prev_JTOUR_ID'] = asim_tour_df['JTOUR_ID'].shift(1)
 asim_tour_df['prev_HH_ID'] = asim_tour_df['HH_ID'].shift(1)
@@ -739,7 +587,6 @@ asim_tour_df.sort_values(by=['day', 'HH_ID', 'PER_ID', 'TOUR_ID'], inplace = Tru
 all_asim_tour_df = asim_tour_df.copy()
 asim_tour_df = asim_tour_df[asim_tour_df['is_duplicated_jtour'] == 0]
 
-# %%
 #asim_tour_df['survey_tour_id'] = asim_tour_df['TOUR_ID']
 #asim_tour_df['survey_person_id'] = asim_tour_df['PER_ID']
 asim_tour_df['tour_id'] = asim_tour_df.reset_index().index + 1
@@ -756,17 +603,10 @@ asim_tour_df = pd.merge(
 asim_tour_df.drop(columns='TOUR_ID_y', inplace=True)
 asim_tour_df.rename(columns={'tour_id_y':'parent_tour_id'}, inplace=True)
 
-# %%
 # do not allow subtours that are not joint from joint tours
 asim_tour_df = asim_tour_df[~(asim_tour_df['PARENT_TOUR_ID'].notna() & asim_tour_df['parent_tour_id'].isna())]
 
-# %% [markdown]
 # #### Joint Tour
-
-# %%
-asim_jtour_participants_df.head()
-
-# %%
 # merging person_id's separately since not every person may be listed in tour_file
 asim_jtour_participants_df = pd.merge(
     asim_jtour_participants_df,
@@ -783,53 +623,31 @@ asim_jtour_participants_df = pd.merge(
     on=['HH_ID', 'JTOUR_ID', 'day'],
 )
 
-# %%
 asim_jtour_participants_df.sort_values(by=['household_id', 'tour_id', 'participant_num'], inplace=True)
 asim_jtour_participants_df['participant_id'] = asim_jtour_participants_df.reset_index().index + 1
-asim_jtour_participants_df.head()
 
-# %%
 all(asim_jtour_participants_df['tour_id'].isin(asim_tour_df['tour_id']))
 
-# %% [markdown]
 # ## Additional changes to make infer.py work
 
-# %% [markdown]
 # #### "univ" is not a trip option
 # converting all univ trips to school
 
-# %%
 num_univ_tours = len(asim_tour_df[asim_tour_df['tour_type'] == 'univ'])
 print("Number of univ tours: ", num_univ_tours)
 
-# %%
 asim_tour_df.loc[asim_tour_df['tour_type'] == 'univ', 'tour_type'] = "school"
 
-# %% [markdown]
 # #### No joint escorting mode
 # error: Unable to parse string "j_escort1"
 # 
 # solution: recategorizing joint escort tours to non_mandatory escort tours
-
-# %%
 asim_tour_df[asim_tour_df['tour_type'] == 'escort']['tour_category'].value_counts()
-
-# %%
 asim_tour_df.loc[asim_tour_df['tour_type'] == 'escort', 'tour_category'] = 'non_mandatory'
-
-# %%
 asim_tour_df[asim_tour_df['tour_type'] == 'escort']['tour_category'].value_counts()
 
-# %% [markdown]
 # ## Removing tours
-
-# %% [markdown]
 # #### Tours with invalid start or end MAZ's are removed
-
-# %%
-asim_tour_df
-
-# %%
 orig_num_tours = len(asim_tour_df)
 asim_tour_df = asim_tour_df[asim_tour_df['origin'].isin(landuse.mgra)]
 asim_tour_df = asim_tour_df[asim_tour_df['destination'].isin(landuse.mgra)]
@@ -840,18 +658,11 @@ print(valid_maz_tours, " tours remain")
 # removing these tours from the joint_tour_participants file
 asim_jtour_participants_df = asim_jtour_participants_df[asim_jtour_participants_df['tour_id'].isin(asim_tour_df['tour_id'])]
 
-# %%
-asim_jtour_participants_df.head()
-
-# %%
 asim_jtour_participants_df['tot_num_participants'] = asim_jtour_participants_df.groupby('tour_id')['participant_num'].transform('max')
 asim_jtour_participants_df['tot_num_participants'].value_counts(dropna=False)
 
-# %% [markdown]
 # ### Using configs files to determine allowed tour frequencies
 # For example, each person can only have 2 mandatory tours
-
-# %%
 mand_tour_freq_alts_df = pd.read_csv(
     os.path.join(configs_dir, 'mandatory_tour_frequency_alternatives.csv'),
     comment="#")
@@ -866,7 +677,6 @@ atwork_subtour_freq_alts_df = pd.read_csv(
     os.path.join(configs_dir, 'atwork_subtour_frequency_alternatives.csv'),
     comment="#")
 
-# %%
 def count_tours_by_category(df, category, count_by, tour_types):
     for tour_type in tour_types:
         count_name = category + "_" + tour_type
@@ -878,7 +688,6 @@ def count_tours_by_category(df, category, count_by, tour_types):
         df[count_name].ffill(inplace=True)
     return df
 
-# %%
 # - checking mandatory tour frequency
 mand_tour_types = list(mand_tour_freq_alts_df.columns.drop('alt'))
 asim_tour_df = count_tours_by_category(
@@ -899,10 +708,6 @@ asim_tour_df.drop(labels=mand_tour_types, axis='columns', inplace=True)
 asim_tour_df.rename(columns={'alt': 'mandatory_alt'}, inplace=True)
 asim_tour_df[asim_tour_df['tour_category'] == 'mandatory']['mandatory_alt'].value_counts(dropna=False)
 
-# %%
-asim_tour_df.head()
-
-# %%
 # - checking non_mandatory tour frequency
 non_mand_tour_types = list(non_mand_tour_freq_alts_df.columns.drop('alt'))
 asim_tour_df = count_tours_by_category(
@@ -923,7 +728,6 @@ asim_tour_df.drop(labels=non_mand_tour_types, axis='columns', inplace=True)
 asim_tour_df.rename(columns={'alt': 'non_mandatory_alt'}, inplace=True)
 asim_tour_df[asim_tour_df['tour_category'] == 'non_mandatory']['non_mandatory_alt'].value_counts(dropna=False)
 
-# %%
 # - checking atwork tour frequency
 atwork_subtour_types = list(atwork_subtour_freq_alts_df.columns.drop('alt'))
 asim_tour_df = count_tours_by_category(
@@ -944,10 +748,8 @@ asim_tour_df.drop(labels=atwork_subtour_types, axis='columns', inplace=True)
 asim_tour_df.rename(columns={'alt': 'atwork_alt'}, inplace=True)
 asim_tour_df[asim_tour_df['tour_category'] == 'atwork']['atwork_alt'].value_counts(dropna=False)
 
-# %%
 asim_tour_df[asim_tour_df['tour_category'] == 'atwork']['tour_type'].value_counts()
 
-# %%
 # - checking joint tour frequency
 # FIXME need to modify to match new joint_tour_frequency_composition model
 joint_tour_types = list(joint_tour_freq_alts_df.columns.drop('alt'))
@@ -969,7 +771,6 @@ asim_tour_df.drop(labels=joint_tour_types, axis='columns', inplace=True)
 asim_tour_df.rename(columns={'alt': 'joint_alt'}, inplace=True)
 asim_tour_df[asim_tour_df['tour_category'] == 'joint']['joint_alt'].value_counts(dropna=False)
 
-# %%
 asim_tour_df['keep_tour'] = 1
 original_num_tours = len(asim_tour_df)
 
@@ -981,21 +782,14 @@ asim_tour_df.loc[(asim_tour_df['tour_category'] == 'joint') & pd.isna(asim_tour_
 after_removed_tours = len(asim_tour_df[asim_tour_df['keep_tour'] == 1])
 print("Removed ", original_num_tours - after_removed_tours, "tours that did not match in the tour frequency configs files")
 
-# %%
-asim_tour_df
-
-# %% [markdown]
 # #### Tour Start and End times must be acceptable
 # Checking the tour_departure_and_duration_alternatives.csv configs file for allowable times
-
-# %%
 tdd_df = pd.read_csv(os.path.join(configs_dir, "tour_departure_and_duration_alternatives.csv"))
 min_start_allowed = tdd_df['start'].min()
 max_start_allowed = tdd_df['start'].max()
 min_end_allowed = tdd_df['end'].min()
 max_end_allowed = tdd_df['end'].max()
 
-# %%
 count_before_tdd = len(asim_tour_df[asim_tour_df['keep_tour'] == 1])
 asim_tour_df.loc[
     (asim_tour_df['start'] < min_start_allowed)
@@ -1010,22 +804,14 @@ count_after_tdd = len(asim_tour_df[asim_tour_df['keep_tour'] == 1])
 
 print("Removed an additional", count_before_tdd - count_after_tdd, "tours due to bad start/end times")
 
-# %% [markdown]
 # ### Reassigning tours from persons that make work or school trip but have invalid work or school MAZ
-
-# %%
 asim_per_df.loc[(asim_per_df['school_zone_id'].isin([0,-9999])) | (asim_per_df['school_zone_id'].isna()), 'school_zone_id'] = -1
 asim_per_df.loc[(asim_per_df['workplace_zone_id'].isin([0,-9999])) | (asim_per_df['workplace_zone_id'].isna()), 'workplace_zone_id'] = -1
 
-# %%
-asim_per_df
-
-# %%
 univ_students = (asim_per_df['pstudent'] == 2)
 gradeschool_students = ((asim_per_df['pstudent'] == 1) & (asim_per_df['age'] < 14))
 highschool_students = ((asim_per_df['pstudent'] == 1) & (asim_per_df['age'] >= 14))
 
-# %%
 landuse['tot_college_enroll'] = landuse['collegeenroll'] + landuse['othercollegeenroll'] + landuse['adultschenrl']
 univ_mazs = landuse[landuse['tot_college_enroll'] > 0]['mgra']
 k_8_mazs = landuse[landuse['enrollgradekto8'] > 0]['mgra']
@@ -1034,7 +820,6 @@ print(len(univ_mazs), 'MAZs with university enrollment')
 print(len(k_8_mazs), 'MAZs with K-8 enrollment')
 print(len(G9_12_mazs), 'MAZs with 9-12 enrollment')
 
-# %%
 def make_school_co(asim_per_df):
     school_co = asim_per_df[univ_students | gradeschool_students | highschool_students].copy()
     school_co['school_segment_named'] = 'university'
@@ -1048,7 +833,6 @@ def make_school_co(asim_per_df):
     return school_co
 school_co = make_school_co(asim_per_df)
 
-# %%
 def make_missing_school_maz_df(school_co):
     missing_maz_df = pd.DataFrame({
         'survey_total': school_co['school_segment_named'].value_counts(),
@@ -1062,7 +846,6 @@ def make_missing_school_maz_df(school_co):
 
 make_missing_school_maz_df(school_co)
 
-# %%
 bad_school_co = school_co[school_co['has_landuse_maz'] == 0]
 bad_school_co_by_maz = bad_school_co.groupby(['school_zone_id', 'school_segment_named']).count().reset_index()
 bad_school_co_by_maz = bad_school_co_by_maz.pivot_table(index='school_zone_id', columns='school_segment_named', values='person_id')
@@ -1071,17 +854,14 @@ bad_school_co_by_maz = bad_school_co_by_maz.rename(columns={'school_zone_id': 'M
 bad_school_co_by_maz = bad_school_co_by_maz[bad_school_co_by_maz['MAZ'] > 0]
 bad_school_co_by_maz
 
-# %%
 maz_shp_landuse = pd.merge(mgra15, landuse, how='left', left_on='MGRA', right_on='mgra')
 # maz_shp_landuse = geopandas.GeoDataFrame(maz_shp_landuse, geometry='geometry', crs=mgra15.crs)
 maz_shp_landuse = maz_shp_landuse.to_crs(epsg=2230)  # CA state plane 6 (feet)
 
-# %%
 bad_school_shp = pd.merge(bad_school_co_by_maz, mgra15, how='left', left_on='MAZ', right_on='MGRA')
 bad_school_shp = geopandas.GeoDataFrame(bad_school_shp, geometry='geometry', crs=mgra15.crs)
 bad_school_shp = bad_school_shp.to_crs(epsg=2230)  # CA state plane 6 (feet)
 
-# %%
 def find_closest_valid_maz(row, maz_shp_landuse):
     if row.MAZ < 0:
         return row
@@ -1107,23 +887,7 @@ def find_closest_valid_maz(row, maz_shp_landuse):
     return row
     
 school_reassign = bad_school_shp.apply(lambda row: find_closest_valid_maz(row, maz_shp_landuse), axis=1)
-school_reassign
 
-# %%
-school_reassign['closest_gradeschool_distance'].hist(bins=20)
-plt.xlabel("Distance [miles]")
-plt.title("Center of Invalid MAZ to closest valid MAZ")
-plt.ylabel("Gradeschool Counts")
-plt.show()
-
-# %%
-school_reassign['closest_highschool_distance'].hist(bins=20)
-plt.xlabel("Distance [miles]")
-plt.title("Center of Invalid MAZ to closest valid MAZ")
-plt.ylabel("Highschool Counts")
-plt.show()
-
-# %%
 # univ_reassign_mazs = (school_reassign['closest_univ_maz'].notna())
 asim_per_with_school_df = pd.merge(asim_per_df, school_reassign, how='left', left_on='school_zone_id', right_on='MAZ')
 # asim_per_with_school_df.head()
@@ -1143,40 +907,32 @@ num_reassigned = (asim_per_with_school_df['school_zone_id'] != asim_per_df['scho
 asim_per_df['school_zone_id'] = asim_per_with_school_df['school_zone_id']
 print("Number of invalid school MAZ's reassigned:", num_reassigned)
 
-# %%
 new_school_co = make_school_co(asim_per_df)
 make_missing_school_maz_df(new_school_co)
 
-# %%
 people_with_invalid_school_maz = asim_per_df.loc[asim_per_df['school_zone_id'] <= 0, 'person_id']
 asim_tour_df.loc[
     (asim_tour_df['tour_type'] == 'school') 
     & asim_tour_df['person_id'].isin(people_with_invalid_school_maz),
     'keep_tour'] = 0
 
-# %% [markdown]
 # ### If person makes a work tour, but has an invalid (missing) workplace maz, use the first work tour destination as workplace maz
-
-# %%
 people_with_invalid_work_maz = asim_per_df.loc[asim_per_df['workplace_zone_id'] <= 0, 'person_id']
 
-# %%
 inferred_workplace_mazs = asim_tour_df[(asim_tour_df['tour_type'] == 'work') & asim_tour_df['person_id'].isin(people_with_invalid_work_maz)][['destination', 'person_id']]
 inferred_workplace_mazs = inferred_workplace_mazs.drop_duplicates('person_id', keep='first')
 inferred_workplace_mazs.set_index('person_id', inplace=True)
 print("Inferred workplace maz for people that have a workplace zone_id missing but make a work tour: ")
-inferred_workplace_mazs
+print(inferred_workplace_mazs)
 
-# %%
 asim_per_df.set_index('person_id', inplace=True)
 asim_per_df.loc[inferred_workplace_mazs.index, 'workplace_zone_id'] = inferred_workplace_mazs['destination']
 asim_per_df.reset_index(inplace=True)
 
-# %% [markdown]
 # #### Change people that go to school and not work, but say they are workers
-# Had a problem where an individual says they are a full time worker and a university student, but do not provide a work location and do not take a work tour, but do take a school tour. school_zone_id was changed to -1 after initialize households (full time workers do not get a school location), but cdap has 1 M school tour.  Since school_zone_id changed to -1, caused 0 probs error in mandatory tour frequency.
-
-# %%
+# Had a problem where an individual says they are a full time worker and a university student, but do not provide a work location and do not take a work tour, but do take a school tour. 
+# school_zone_id was changed to -1 after initialize households (full time workers do not get a school location), but cdap has 1 M school tour.  
+# Since school_zone_id changed to -1, caused 0 probs error in mandatory tour frequency.
 people_making_work_tours = asim_tour_df.loc[
     (asim_tour_df['tour_type'] == 'work')
     & (asim_tour_df['keep_tour'] == 1), 'person_id'].unique()
@@ -1192,17 +948,14 @@ workers_who_are_actually_students = (asim_per_df['person_id'].isin(people_making
 # if so, I think this is fine.  If not, need to change pytpe to part-time worker or univ students
 # asim_per_df.loc[workers_who_are_actually_students, 'ptype'] = ..
 
-# %%
 print("number of workers who are actually students: ", workers_who_are_actually_students.sum())
 
-# %% [markdown]
 # #### Change people that go to work and not school, but say they are students
-# Same problem as above -- peoply say they are students, but only go to work.  This makes for zero probs in mandatory tour frequency because they aren't assigned a workplace maz because they are not listed as workers.
+# Same problem as above -- peoply say they are students, but only go to work.  
+# This makes for zero probs in mandatory tour frequency because they aren't assigned a workplace maz because they are not listed as workers.
 
-# %%
 asim_per_df.pemploy.value_counts()
 
-# %%
 people_making_work_tours = asim_tour_df.loc[
     (asim_tour_df['tour_type'] == 'work')
     & (asim_tour_df['keep_tour'] == 1), 'person_id'].unique()
@@ -1224,25 +977,18 @@ asim_per_df.loc[students_who_are_actually_workers, 'pemploy'] = 2 # part time wo
 # asim_per_df.loc[students_who_are_actually_workers, 'SCHG'] = -9
 # asim_per_df.loc[students_who_are_actually_workers, 'ESR'] = 1
 
-
-# %%
 print("number of students who are actually fulltime workers: ", students_who_are_actually_workers.sum())
 
-# %% [markdown]
-# Also want to count people who are making school and work tours but didn't list themselves as a worker. annotate_persons.csv determines pemploy and it just checks for ESR != [3,6] to determine partime status, so just need to ensure ESR = 1 for all people who make a work tour.
-
-# %%
+# Also want to count people who are making school and work tours but didn't list themselves as a worker. 
+# annotate_persons.csv determines pemploy and it just checks for ESR != [3,6] to determine partime status, 
+# so just need to ensure ESR = 1 for all people who make a work tour.
 # setting them to part time workers
 asim_per_df.loc[(asim_per_df['person_id'].isin(people_making_work_tours) 
                 & (asim_per_df['workplace_zone_id'] > 0)), 'ptype'] = 2
 asim_per_df.loc[(asim_per_df['person_id'].isin(people_making_work_tours) 
                 & (asim_per_df['workplace_zone_id'] > 0)), 'pemploy'] = 2
 
-
-# %% [markdown]
 # #### Activitysim does not allow full-time workers to go to school.  Turning all full time workers going to school into part-time instead.
-
-# %%
 full_time_workers_going_to_school = (asim_per_df['person_id'].isin(people_making_work_tours) 
                 & asim_per_df['person_id'].isin(people_making_school_tours)
                 & (asim_per_df['pemploy'] == 1))
@@ -1250,48 +996,34 @@ full_time_workers_going_to_school = (asim_per_df['person_id'].isin(people_making
 # asim_per_df.loc[full_time_workers_going_to_school, 'WKW'] = 5  # 14-26 number of weeks worked
 # asim_per_df.loc[full_time_workers_going_to_school, 'WKHP'] = 35  # 35 hrs per week
 
-# %%
 print("Number of full time workers also going to school: ", full_time_workers_going_to_school.sum())
 
-# %% [markdown]
 # #### If person or parent tour is removed, also need to remove it's subtours
-
-# %%
 asim_tour_df.loc[
       pd.notna(asim_tour_df['parent_tour_id'])
       & ~(asim_tour_df['parent_tour_id'].isin(asim_tour_df.loc[asim_tour_df['keep_tour'] == 1, 'tour_id'])),
     'keep_tour'] = 0
 
-# %%
 print("Total number of Tours: ", len(asim_tour_df))
 print("Total number of tours removed: ", len(asim_tour_df[asim_tour_df['keep_tour'] == 0]))
 trimmed_asim_tour_df = asim_tour_df[asim_tour_df['keep_tour'] == 1].copy()
 print("Final number of tours: ", len(trimmed_asim_tour_df))
 
-
-# %% [markdown]
 # Also need to remove the tours from the joint tour participants file
-
-# %%
-asim_jtour_participants_df
-
-# %%
 print("Initial number of joint tour participants: ", len(asim_jtour_participants_df))
 trimmed_asim_jtour_participants_df = asim_jtour_participants_df[asim_jtour_participants_df['tour_id'].isin(trimmed_asim_tour_df['tour_id'])]
 print("Final number of joint tour participants: ", len(trimmed_asim_jtour_participants_df))
 
-# %% [markdown]
 # ### Not all joint tours have a matching entry in joint_tour_participants
-# error found in infer.py 'assert (tour_has_adults | tour_has_children).all()' when trying to assign joint tour composition.  If tours are classified as joint, but there are no adults or children on the tour, an error is thrown.
-# 
+# error found in infer.py 'assert (tour_has_adults | tour_has_children).all()' when trying to assign joint tour composition.  
+# If tours are classified as joint, but there are no adults or children on the tour, an error is thrown.
 # Only fully joint tours in the SPA tool have joint tour participants listed.
 # 
-# In this script, setting the asim_tour_df["is_joint"] = 1 for fully joint tours only solves this problem. The following code is a re-implementation of the code in infer.py to check that all joint tours have an adult or child
+# In this script, setting the asim_tour_df["is_joint"] = 1 for fully joint tours only solves this problem. 
+# The following code is a re-implementation of the code in infer.py to check that all joint tours have an adult or child
 
-# %%
 joint_tours = trimmed_asim_tour_df[trimmed_asim_tour_df['is_joint'] == 1]
 
-# %%
 joint_tour_participants = pd.merge(
     trimmed_asim_jtour_participants_df,
     asim_per_df,
@@ -1300,33 +1032,20 @@ joint_tour_participants = pd.merge(
 )
 joint_tour_participants['adult'] = (joint_tour_participants.age >= 18)
 
-# %%
 tour_has_adults = joint_tour_participants[joint_tour_participants.adult]\
         .groupby('tour_id').size().reindex(joint_tours['tour_id']).fillna(0) > 0
-tour_has_adults
 
-# %%
 tour_has_children = joint_tour_participants[~joint_tour_participants.adult]\
         .groupby('tour_id').size().reindex(joint_tours['tour_id']).fillna(0) > 0
-tour_has_children
 
-# %%
 tour_has_children.sum()
-
-# %%
 tour_has_adults.sum()
-
-# %%
 good_tours = (tour_has_children | tour_has_adults)
 good_tours.sum()
 
-# %%
 assert good_tours.sum() == len(joint_tours)
 
-# %% [markdown]
 # ## Trips Processing
-
-# %%
 spa_out_trips_df = pd.merge(
     spa_out_trips_df,
     asim_tour_df[['HH_ID', 'PER_ID', 'TOUR_ID', 'household_id', 'person_id', 'tour_id', 'day', 'tour_purpose']],
@@ -1334,7 +1053,6 @@ spa_out_trips_df = pd.merge(
     on=['HH_ID', 'PER_ID', 'TOUR_ID', 'day'],
 )
 
-# %%
 asim_trip_df = pd.DataFrame()
 
 keep_cols = ['household_id', 'person_id', 'tour_id', 'day', 'survey_year']
@@ -1360,7 +1078,6 @@ asim_trip_df["trip_count"] = asim_trip_df["trip_num"] + grouped.cumcount(ascendi
 asim_trip_df['trip_id'] = asim_trip_df.reset_index().index + 1
 asim_trip_df['keep_trip'] = 1
 
-# %%
 # 2022 survey has same trip & tour modes
 asim_trip_df.loc[asim_trip_df['survey_year'] == 2022, 'trip_mode'] = spa_out_trips_df.loc[
     spa_out_trips_df['survey_year'] == 2022, 'TRIPMODE'].map(tour_mode_spa_to_asim_dict_22)
@@ -1395,10 +1112,6 @@ trip_mode_spa_to_asim_dict_16 = {
 asim_trip_df.loc[asim_trip_df['survey_year'] == 2016, 'trip_mode'] = spa_out_trips_df.loc[
     spa_out_trips_df['survey_year'] == 2016, 'TRIPMODE'].map(trip_mode_spa_to_asim_dict_16)
 
-# %%
-asim_trip_df
-
-# %% [markdown]
 # Perform additional checks on the survey data.
 #  1. Do all trips have a tour?
 #  2. Are there four or fewer trips per tour and direction?
@@ -1411,7 +1124,6 @@ asim_trip_df
 #  9. Do trip purposes match destination_choice_size_terms 
 # 10. Do the joint tours match (tour, person, hh)
 
-# %%
 #  Do all trips still belong to a valid tour?
 count_before_removed_trips = len(asim_trip_df[asim_trip_df['keep_trip'] == 1])
 asim_trip_df.loc[~asim_trip_df['tour_id'].isin(trimmed_asim_tour_df.tour_id), 'keep_trip'] = 0
@@ -1420,7 +1132,6 @@ count_after_removed_trips = len(asim_trip_df[asim_trip_df['keep_trip'] == 1])
 
 print("Removed", count_before_removed_trips - count_after_removed_trips, "trips because their tour was removed")
 
-# %%
 #  Are there four or fewer trips per tour and direction?
 # FIXME do not filter out entire tour, just the trips
 count_before_removed_trips = len(asim_trip_df[asim_trip_df['keep_trip'] == 1])
@@ -1432,7 +1143,6 @@ count_after_removed_trips = len(asim_trip_df[asim_trip_df['keep_trip'] == 1])
 print("Removed an additional", count_before_removed_trips - count_after_removed_trips, "trips because they belonged to tours that had more than the allowed stops")
 print(f"Happens for {len(tours_with_too_many_trips.unique())} tours")
 
-# %%
 #  Do all trips have a person & household?
 count_before_removed_trips = len(asim_trip_df[asim_trip_df['keep_trip'] == 1])
 
@@ -1442,7 +1152,6 @@ count_after_removed_trips = len(asim_trip_df[asim_trip_df['keep_trip'] == 1])
 
 print("Removed an additional", count_before_removed_trips - count_after_removed_trips, "trips did not belong to a person or hh")
 
-# %%
 #  Does first trip on tour start at home
 count_before_removed_trips = len(asim_trip_df[asim_trip_df['keep_trip'] == 1])
 bad_starts = asim_trip_df[(asim_trip_df['trip_num'] == 1) & (asim_trip_df['outbound']) & (asim_trip_df['is_subtour'] == 0) & (asim_trip_df['home_zone_id'] != asim_trip_df['origin'])]
@@ -1454,7 +1163,6 @@ count_after_removed_trips = len(asim_trip_df[asim_trip_df['keep_trip'] == 1])
 print("Removed an additional", count_before_removed_trips - count_after_removed_trips, "trips that belong to tours that do not start at home")
 print(f"Happens for {len(bad_starts)} tours")
 
-# %%
 #  Does first trip on tour end at home
 count_before_removed_trips = len(asim_trip_df[asim_trip_df['keep_trip'] == 1])
 bad_ends = asim_trip_df[
@@ -1470,7 +1178,6 @@ count_after_removed_trips = len(asim_trip_df[asim_trip_df['keep_trip'] == 1])
 print("Removed an additional", count_before_removed_trips - count_after_removed_trips, "trips that belong to tours that do not end at home")
 print(f"Happens for {len(bad_ends)} tours")
 
-# %%
 # Do school and work tours go to the school or workplace zone?
 # just changing primary destination instead of removing them.  Adding flag to filter if needed
 asim_trip_df['mand_dest_changed'] = 0
@@ -1491,22 +1198,15 @@ asim_trip_df.loc[bad_work_trips, 'destination'] = asim_trip_df.loc[bad_work_trip
 asim_trip_df.loc[bad_work_trips, 'mand_dest_changed'] = 1
 print(f"Work trip does not go to workplace zone for {bad_work_trips.sum()} trips")
 
-# %%
 # FIXME need to re-set origin zone if destination was changed!
-
-# %%
 print("Total Number of trips kept after filtering:")
 asim_trip_df['keep_trip'].value_counts()
 
-# %%
 print("Percentage of trip that are kept after filtering:")
 asim_trip_df['keep_trip'].value_counts(normalize=True) * 100
 
-# %% [markdown]
 # ### Need to check tour table for consistency again
 #  Do all tours have trips?
-
-# %%
 trimmed_asim_trip_df = asim_trip_df[asim_trip_df['keep_trip'] == 1]
 
 print(f"Tours before trip cleaning: {len(trimmed_asim_tour_df)}")
@@ -1524,10 +1224,7 @@ print(f"Trips before tour re-cleaning: {len(trimmed_asim_trip_df)}")
 trimmed_asim_trip_df = trimmed_asim_trip_df[trimmed_asim_trip_df['tour_id'].isin(trimmed_asim_tour_df.tour_id)]
 print(f"Trips after tour re-cleaning: {len(trimmed_asim_trip_df)}")
 
-# %% [markdown]
-# ## Writing Output and Running Infer.py
-
-# %%
+# ## Writing Output
 hh_output_cols = [
     'household_id',
     'home_zone_id',
