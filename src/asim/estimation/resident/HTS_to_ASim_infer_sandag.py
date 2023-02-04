@@ -11,29 +11,29 @@ import matplotlib.pyplot as plt
 # SPA input is needed in order to merge information from survey that was not written by the SPA tool
 
 # %%
-configs_dir = r"C:\ABM3_dev\estimation\configs"
+configs_dir = r"T:\Survey\HHTS\estimation\configs"
 
-landuse_file = r"C:\ABM3_dev\estimation\data\2019\mgra15_based_input2019_rev.csv"
+landuse_file = r"T:\Survey\HHTS\estimation\data\2019\mgra15_based_input2019_rev.csv"
 landuse = pd.read_csv(landuse_file)
 
 # contains shape file
-data_dir = r"C:\ABM3_dev\estimation\data\series15\mgra15"
+data_dir = r"T:\Survey\HHTS\estimation\data\series15\mgra15"
 
-estimation_path = r"C:\ABM3_dev\estimation"
+estimation_path = r"T:\Survey\HHTS\estimation\asim_combined"
 final_output_path = r"{dir}\survey_data".format(dir=estimation_path)
 
 infer_py_location = r"{dir}\scripts\infer.py".format(dir=estimation_path)
 infer_run_command = "python " + infer_py_location + " " + estimation_path + "\data " + configs_dir
 
 # reading in 2016 survey
-data_16_folder = r"C:\ABM3_dev\estimation\data\sandag_2016_survey\output"
+data_16_folder = r"T:\Survey\HHTS\estimation\2016"
 # reading in raw survey to be able to geocode home, school, and work locations
-raw_16_folder = r"C:\ABM3_dev\estimation\data\sandag_2016_survey\data"
+raw_16_folder = r"T:\Survey\HHTS\estimation\2016\Raw"
 
 # reading in 2022 survey
-data_22_folder = r"C:\ABM3_dev\estimation\data\sandag_2022_survey"
+data_22_folder = r"T:\Survey\HHTS\estimation\2022"
 # reading in raw survey to be able to geocode home, school, and work locations
-raw_22_folder = r"C:\ABM3_dev\estimation\data\sandag_2022_survey\sandag_hts"
+raw_22_folder = r"T:\Survey\HHTS\estimation\2022\Raw"
 
 # number of periods in activitysim (48 30-minute periods)
 num_periods = 48
@@ -57,7 +57,7 @@ households_16 = {}
 
 for day in range(1,8):
     print("day", day)
-    data_folder = os.path.join(data_16_folder, f"day{day}")
+    data_folder = os.path.join(data_16_folder, "SPA_Processed", f"day{day}")
     
     households_16[day] = pd.read_csv(os.path.join(data_folder, "households.csv"))
     persons_16[day] = pd.read_csv(os.path.join(data_folder, "persons.csv"))
