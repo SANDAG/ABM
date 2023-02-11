@@ -1,0 +1,78 @@
+inherit_settings: True
+
+zone_system: 2
+
+skim_dict_factory: NumpyArraySkimFactory
+#skim_dict_factory: MemMapSkimFactory
+
+# read cached skims (using numpy memmap) from output directory (memmap is faster than omx )
+read_skim_cache: False
+# write memmapped cached skims to output directory after reading from omx, for use in subsequent runs
+write_skim_cache: False
+
+# taz_skims:
+#   - traffic_skims_processed_EA.omx
+#   - traffic_skims_processed_AM.omx
+#   - traffic_skims_processed_MD.omx
+#   - traffic_skims_processed_PM.omx
+#   - traffic_skims_processed_EV.omx
+#   - transit_skims_EA.omx
+#   - transit_skims_AM.omx
+#   - transit_skims_MD.omx
+#   - transit_skims_PM.omx
+#   - transit_skims_EV.omx
+
+# series15
+taz_skims:
+  - traffic_skims_EA.omx
+  - traffic_skims_AM.omx
+  - traffic_skims_MD.omx
+  - traffic_skims_PM.omx
+  - traffic_skims_EV.omx
+  - transit_skims.omx
+
+maz: land_use.csv   # mgra.csv
+
+maz_to_maz:
+  tables:
+    - maz_maz_walk.csv
+    - maz_maz_bike.csv
+  # maz_to_maz blending distance (missing or 0 means no blending)
+  max_blend_distance: 0
+
+
+skim_time_periods:
+    time_window: 1440
+    period_minutes: 30
+    # periods: [0, 11, 17, 30, 37, 48]  # asim xborder
+    # periods: [0, 3, 9, 22, 29, 48]  # ctramp xborder
+    periods: [0, 6, 12, 25, 32, 48]  # time periods to match documentation
+    labels: &skim_time_period_labels ['EA', 'AM', 'MD', 'PM', 'EV']
+
+demographic_segments: &demographic_segments
+  - &low_income_segment_id 0
+  - &high_income_segment_id 1
+
+
+
+# CONSTANTS:
+#   c_ivt: -0.028
+#   c_cost: -0.0011
+#   # transit "factors" from SANDAG
+#   eb_fac: 1.0
+#   brt_fac: 0.9000
+#   lrt_fac: 0.6500
+#   cr_fac: 0.6500
+#   hyp_fac: 0.6500
+#   # coeffs used in maz_tap and tap_tap utility expressions
+#   c_walk: 1.7
+#   c_fwt: 1.5
+#   c_waux: 2.5
+#   c_xwt: 2
+#   C_UNAVAILABLE: -9999
+#   # alternative-specific constants
+#   exp_asc: 10  # express bus asc
+#   brt_asc: -10  # BRT asc
+#   lrt_asc: -20  # LRT alternative-specific constant
+#   cr_asc: 0.00  # Commuter Rail alternative-specific constant
+
