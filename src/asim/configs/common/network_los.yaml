@@ -10,18 +10,23 @@ read_skim_cache: False
 # write memmapped cached skims to output directory after reading from omx, for use in subsequent runs
 write_skim_cache: False
 
+# taz_skims:
+#   - traffic_skims_processed_EA.omx
+#   - traffic_skims_processed_AM.omx
+#   - traffic_skims_processed_MD.omx
+#   - traffic_skims_processed_PM.omx
+#   - traffic_skims_processed_EV.omx
+#   #- transit_skims_processed.omx
+#   - transit_skims_EA.omx
+#   - transit_skims_AM.omx
+#   - transit_skims_MD.omx
+#   - transit_skims_PM.omx
+#   - transit_skims_EV.omx
+
+# series15
 taz_skims:
-  - traffic_skims_processed_EA.omx
-  - traffic_skims_processed_AM.omx
-  - traffic_skims_processed_MD.omx
-  - traffic_skims_processed_PM.omx
-  - traffic_skims_processed_EV.omx
-  #- transit_skims_processed.omx
-  - transit_skims_EA.omx
-  - transit_skims_AM.omx
-  - transit_skims_MD.omx
-  - transit_skims_PM.omx
-  - transit_skims_EV.omx
+  - traffic_skims*.omx
+  - transit_skims*.omx
 
 maz: land_use.csv   # mgra.csv
 
