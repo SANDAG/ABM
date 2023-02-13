@@ -46,6 +46,12 @@ class PropertiesSetter(object):
     skipTransitSkimming_1 = _m.Attribute(bool)
     skipTransitSkimming_2 = _m.Attribute(bool)
     skipTransitSkimming_3 = _m.Attribute(bool)
+    skipTransponderExport_1 = _m.Attribute(bool)
+    skipTransponderExport_2 = _m.Attribute(bool)
+    skipTransponderExport_3 = _m.Attribute(bool)
+    skip2ZoneSkim_1 = _m.Attribute(bool)
+    skip2ZoneSkim_2 = _m.Attribute(bool)
+    skip2ZoneSkim_3 = _m.Attribute(bool)
     skipCoreABM_1 = _m.Attribute(bool)
     skipCoreABM_2 = _m.Attribute(bool)
     skipCoreABM_3 = _m.Attribute(bool)
@@ -95,6 +101,12 @@ class PropertiesSetter(object):
     skipTransitSkimming = property(
         fget=lambda self: self._get_list_prop("skipTransitSkimming"),
         fset=lambda self, value: self._set_list_prop("skipTransitSkimming", value))
+    skipTransponderExport = property(
+        fget=lambda self: self._get_list_prop("skipTransponderExport"),
+        fset=lambda self, value: self._set_list_prop("skipTransponderExport", value))
+    skip2ZoneSkim = property(
+        fget=lambda self: self._get_list_prop("skip2ZoneSkim"),
+        fset=lambda self, value: self._set_list_prop("skip2ZoneSkim", value))
     skipCoreABM = property(
         fget=lambda self: self._get_list_prop("skipCoreABM"),
         fset=lambda self, value: self._set_list_prop("skipCoreABM", value))
@@ -122,13 +134,13 @@ class PropertiesSetter(object):
 
     def __init__(self):
         self._run_model_names = (
-            "useLocalDrive", "skip4Ds",
+            "useLocalDrive", "skip4Ds", "skipInputChecker",
             "startFromIteration", "skipInitialization", "deleteAllMatrices", "skipCopyWarmupTripTables", 
             "skipCopyBikeLogsum", "skipCopyWalkImpedance", "skipWalkLogsums", "skipBikeLogsums", "skipBuildNetwork", 
-            "skipHighwayAssignment", "skipTransitSkimming", "skipCoreABM", "skipOtherSimulateModel", "skipMAASModel","skipCTM", 
+            "skipHighwayAssignment", "skipTransitSkimming", "skipTransponderExport", "skip2ZoneSkim", "skipCoreABM", "skipOtherSimulateModel", "skipMAASModel","skipCTM", 
             "skipEI", "skipExternalExternal", "skipTruck", "skipTripTableCreation", "skipFinalHighwayAssignment", 
             "skipFinalTransitAssignment", "skipVisualizer", "skipDataExport", "skipDataLoadRequest", 
-            "skipDeleteIntermediateFiles", "skipInputChecker")
+            "skipDeleteIntermediateFiles")
         self._properties = None
 
     def add_properties_interface(self, pb, disclosure=False):
@@ -177,6 +189,8 @@ class PropertiesSetter(object):
         skip_per_iteration_items = [
             ("skipHighwayAssignment",   "Skip highway assignments and skims"),
             ("skipTransitSkimming",     "Skip transit skims"),
+            ("skipTransponderExport",   "Skip transponder accessibilities"),
+            ("skip2ZoneSkim",           "Skip 2-zone-specific Skims"),
             ("skipCoreABM",             "Skip core ABM"),
             ("skipOtherSimulateModel",  "Skip other simulation model"),
             ("skipMAASModel",           "Skip MAAS model"),
@@ -307,6 +321,8 @@ class PropertiesSetter(object):
 
         self.skipHighwayAssignment = props.get("RunModel.skipHighwayAssignment", [False, False, False])
         self.skipTransitSkimming = props.get("RunModel.skipTransitSkimming", [False, False, False])
+        self.skipTransponderExport = props.get("RunModel.skipTransponderExport", [False, False, False])
+        self.skip2ZoneSkim = props.get("RunModel.skip2ZoneSkim", [False, False, False])
         self.skipCoreABM = props.get("RunModel.skipCoreABM", [False, False, False])
         self.skipOtherSimulateModel = props.get("RunModel.skipOtherSimulateModel", [False, False, False])
         self.skipMAASModel = props.get("RunModel.skipMAASModel", [False, False, False])
@@ -342,6 +358,8 @@ class PropertiesSetter(object):
         
         props["RunModel.skipHighwayAssignment"] = self.skipHighwayAssignment
         props["RunModel.skipTransitSkimming"] = self.skipTransitSkimming
+        props["RunModel.skipTransponderExport"] = self.skipTransponderExport
+        props["RunModel.skip2ZoneSkim"] = self.skip2ZoneSkim
         props["RunModel.skipCoreABM"] = self.skipCoreABM
         props["RunModel.skipOtherSimulateModel"] = self.skipOtherSimulateModel
         props["RunModel.skipMAASModel"] = self.skipMAASModel
@@ -492,11 +510,11 @@ class Properties(object):
     def save(self, path=None):
         if not path:
             path = self._path
-        # check for possible interference if user edits the 
-        # properties files directly while it is already open in Modeller
-        timestamp = os.path.getmtime(path)
-        if timestamp != self._timestamp:
-            raise Exception("%s file conflict - edited externally after loading" % path)
+            # check for possible interference if user edits the 
+            # properties files directly while it is already open in Modeller
+            timestamp = os.path.getmtime(path)
+            if timestamp != self._timestamp:
+                raise Exception("%s file conflict - edited externally after loading" % path)
         self["SavedFrom"] = "Emme Modeller properties writer Process ID %s" % os.getpid()
         self["SavedLast"] = time.strftime("%b-%d-%Y %H:%M:%S")
         with open(path, 'w') as f:

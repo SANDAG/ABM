@@ -44,5 +44,5 @@ mmms:
     max_maz_future_BRT_stop_walk_dist_feet: 5280   # 
     walk_speed_mph: 3.0 ## ask Nagendra for that
     drive_speed_mph: 25.0
-    maz_maz_walk_output: "maz_to_maz_walk.csv"
-    maz_maz_bike_output: "maz_to_maz_bike.csv"
+    maz_maz_walk_output: "maz_maz_walk.csv"
+    maz_maz_bike_output: "maz_maz_bike.csv"

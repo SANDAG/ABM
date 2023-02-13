@@ -310,6 +310,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         skipTransitConnector = props["RunModel.skipTransitConnector"]
         skipTransitSkimming = props["RunModel.skipTransitSkimming"]
         skipTransponderExport = props["RunModel.skipTransponderExport"]
+        skip2ZoneSkim = props["RunModel.skip2ZoneSkim"]
         skipCoreABM = props["RunModel.skipCoreABM"]
         skipOtherSimulateModel = props["RunModel.skipOtherSimulateModel"]
         skipMAASModel = props["RunModel.skipMAASModel"]
@@ -366,13 +367,13 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             self.set_global_logbook_level(props)
 
             # Swap Server Configurations
-            self.run_proc("serverswap.bat", [drive, path_no_drive, path_forward_slash], "Run ServerSwap")
-            self.check_for_fatal(_join(self._path, "logFiles", "serverswap.log"),
-                                 "ServerSwap failed! Open logFiles/serverswap.log for details.")
-            self.run_proc("checkAtTransitNetworkConsistency.cmd", [drive, path_forward_slash],
-                          "Checking if AT and Transit Networks are consistent")
-            self.check_for_fatal(_join(self._path, "logFiles", "AtTransitCheck_event.log"),
-                                 "AT and Transit network consistency checking failed! Open AtTransitCheck_event.log for details.")
+            # self.run_proc("serverswap.bat", [drive, path_no_drive, path_forward_slash], "Run ServerSwap")
+            # self.check_for_fatal(_join(self._path, "logFiles", "serverswap.log"),
+            #                      "ServerSwap failed! Open logFiles/serverswap.log for details.")
+            # self.run_proc("checkAtTransitNetworkConsistency.cmd", [drive, path_forward_slash],
+            #               "Checking if AT and Transit Networks are consistent")
+            # self.check_for_fatal(_join(self._path, "logFiles", "AtTransitCheck_event.log"),
+            #                      "AT and Transit network consistency checking failed! Open AtTransitCheck_event.log for details.")
 
             if startFromIteration == 1:  # only run the setup / init steps if starting from iteration 1
                 if not skipWalkLogsums:
@@ -386,7 +387,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     run4Ds(path=self._path, int_radius=0.65, ref_path=visualizer_reference_path)
 
 
-                mgraFile = 'mgra13_based_input' + str(scenarioYear) + '.csv'
+                mgraFile = 'mgra15_based_input' + str(scenarioYear) + '.csv'
                 self.complete_work(scenarioYear, input_dir, output_dir, mgraFile, "walkMgraEquivMinutes.csv")
 
                 if not skipBuildNetwork:
@@ -397,6 +398,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         data_table_name=scenarioYear,
                         overwrite=True,
                         emmebank=main_emmebank)
+                
 
                     if "modify_network.py" in os.listdir(os.getcwd()):
                         try:
@@ -410,7 +412,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     if not skipInputChecker:
                         input_checker(path=self._path)
 
-                    export_tap_adjacent_lines(_join(output_dir, "tapLines.csv"), base_scenario)
+                    # export_tap_adjacent_lines(_join(output_dir, "tapLines.csv"), base_scenario)
                     # parse vehicle availablility file by time-of-day
                     availability_file = "vehicle_class_availability.csv"
                     availabilities = self.parse_availability_file(_join(input_dir, availability_file), periods)
@@ -430,9 +432,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         if main_emmebank.scenario(number):
                             main_emmebank.delete_scenario(number)
                         scenario = main_emmebank.copy_scenario(base_scenario.number, number)
-                        scenario.title = title
+                        scenario.title = title 
                         # Apply availabilities by facility and vehicle class to this time period
                         self.apply_availabilities(period, scenario, availabilities)
+                        # Create transit connectors
+                        create_transit_connector(period, scenario, create_connectors=True)
                 else:
                     base_scenario = main_emmebank.scenario(scenario_id)
 
@@ -449,8 +453,8 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     transit_scenario = init_transit_db(base_scenario, add_database=not useLocalDrive)
                     transit_emmebank = transit_scenario.emmebank
                     transit_components = ["transit_skims"]
-                    if not skipCopyWarmupTripTables:
-                        transit_components.append("transit_demand")
+                    # if not skipCopyWarmupTripTables:
+                    #     transit_components.append("transit_demand")
                     init_matrices(transit_components, periods, transit_scenario, deleteAllMatrices)
                 else:
                     transit_emmebank = _eb.Emmebank(_join(self._path, "emme_project", "Database_transit", "emmebank"))
@@ -475,17 +479,17 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 transit_scenario = transit_emmebank.scenario(base_scenario.number)
 
             # Check that setup files were generated
-            self.run_proc("CheckOutput.bat", [drive + path_no_drive, 'Setup'], "Check for outputs")
+            # self.run_proc("CheckOutput.bat", [drive + path_no_drive, 'Setup'], "Check for outputs")
 
         # Note: iteration indexes from 0, msa_iteration indexes from 1
         for iteration in range(startFromIteration - 1, end_iteration):
             msa_iteration = iteration + 1
             with _m.logbook_trace("Iteration %s" % msa_iteration):
-                if not skipCoreABM[iteration] or not skipOtherSimulateModel[iteration] or not skipMAASModel[iteration]:
-                    self.run_proc("runMtxMgr.cmd", [drive, drive + path_no_drive], "Start matrix manager")
-                    self.run_proc("runDriver.cmd", [drive, drive + path_no_drive], "Start JPPF Driver")
-                    self.run_proc("StartHHAndNodes.cmd", [drive, path_no_drive],
-                                  "Start HH Manager, JPPF Driver, and nodes")
+                # if not skipCoreABM[iteration] or not skipOtherSimulateModel[iteration] or not skipMAASModel[iteration]:
+                    # self.run_proc("runMtxMgr.cmd", [drive, drive + path_no_drive], "Start matrix manager")
+                    # self.run_proc("runDriver.cmd", [drive, drive + path_no_drive], "Start JPPF Driver")
+                    # self.run_proc("StartHHAndNodes.cmd", [drive, path_no_drive],
+                    #               "Start HH Manager, JPPF Driver, and nodes")
 
                 if not skipHighwayAssignment[iteration]:
                     # run traffic assignment
@@ -494,8 +498,8 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         self.run_traffic_assignments(
                             base_scenario, period_ids, msa_iteration, relative_gap,
                             max_assign_iterations, num_processors)
-                    self.run_proc("CreateD2TAccessFile.bat", [drive, path_forward_slash],
-                                  "Create drive to transit access file", capture_output=True)
+                    # self.run_proc("CreateD2TAccessFile.bat", [drive, path_forward_slash],
+                    #               "Create drive to transit access file", capture_output=True)
 
                 if not skipTransitSkimming[iteration]:
                     # run transit assignment
@@ -509,15 +513,15 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                                 scenario_id=src_period_scenario.id,
                                 scenario_title="%s %s transit assign" % (base_scenario.title, period),
                                 data_table_name=scenarioYear, overwrite=True)
-
-                            if iteration==0:
-                                create_transit_connector(transit_assign_scen)
                                 
                             transit_assign(period, transit_assign_scen, data_table_name=scenarioYear,
                                            skims_only=True, num_processors=num_processors)
+                            
+                            omx_file = _join(output_dir, "transit_skims_" + period + ".omx")
+                            period_list = [period]
+                            export_transit_skims(omx_file, period_list, transit_scenario)
 
-                        omx_file = _join(output_dir, "transit_skims.omx")
-                        export_transit_skims(omx_file, periods, transit_scenario)
+                        
 
                 if not skipTransponderExport[iteration]:
                     am_scenario = main_emmebank.scenario(base_scenario.number + 2)
@@ -526,12 +530,17 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 # For each step move trip matrices so run will stop if ctramp model
                 # doesn't produced csv/omx files for assignment
                 # also needed as CT-RAMP does not overwrite existing files
-                if not skipCoreABM[iteration]:
-                    self.remove_prev_iter_files(core_abm_files, output_dir, iteration)
+                if not skip2ZoneSkim:
                     self.run_proc(
-                        "runSandagAbm_SDRM.cmd",
+                        "runSandagAbm_2zoneSkim.cmd",
+                        [drive, drive + path_forward_slash],
+                        "Creating maz-maz and maz-stop skim tables", capture_output=True)
+                if not skipCoreABM[iteration]:
+                    # self.remove_prev_iter_files(core_abm_files, output_dir, iteration)
+                    self.run_proc(
+                        "runSandagAbm_ActivitySim.cmd",
                         [drive, drive + path_forward_slash, sample_rate[iteration], msa_iteration],
-                        "Java-Run CT-RAMP", capture_output=True)
+                        "Running ActivitySim", capture_output=True)
                 if not skipOtherSimulateModel[iteration]:
                     self.remove_prev_iter_files(smm_abm_files, output_dir, iteration)
                     self.run_proc(
@@ -615,13 +624,13 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             # Note: uses relative project structure, so cannot redirect to T drive
             self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data",capture_output=True)
         #Validation for 2016 scenario
-        if scenarioYear == "2016":
-            validation(self._path, main_emmebank, base_scenario)
-            ### CL: Below step is temporarily used to update validation output files. When Gregor complete Upload procedure, below step should be removed. 05/31/20
-            self.run_proc("ExcelUpdate.bat",  # forced to update excel links
-                            [drive, path_no_drive, scenarioYear, 0],
-                            "Excel Update",
-                            capture_output=True)
+        # if scenarioYear == "2016":
+        #     validation(self._path, main_emmebank, base_scenario)
+        #     ### CL: Below step is temporarily used to update validation output files. When Gregor complete Upload procedure, below step should be removed. 05/31/20
+        #     self.run_proc("ExcelUpdate.bat",  # forced to update excel links
+        #                     [drive, path_no_drive, scenarioYear, 0],
+        #                     "Excel Update",
+        #                     capture_output=True)
 
 
 

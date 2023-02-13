@@ -631,6 +631,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         EgrPNR = network.create_mode("AUX_TRANSIT", "g")
         AccKNR = network.create_mode("AUX_TRANSIT", "q")
         EgrKNR = network.create_mode("AUX_TRANSIT", "j")
+        AccTNC = network.create_mode("AUX_TRANSIT", "Q")
+        EgrTNC = network.create_mode("AUX_TRANSIT", "J")
 
         bus = network.create_mode("TRANSIT", "b")
         express_bus = network.create_mode("TRANSIT", "e")
@@ -650,6 +652,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         EgrPNR.description = "EGRESS_PNR"
         AccKNR.description = "ACCESS_KNR"
         EgrKNR.description = "EGRESS_KNR"
+        AccTNC.description = "ACCESS_TNC"
+        EgrTNC.description = "EGRESS_TNC"
         bus.description = "BUS"                  # (vehicle type 100, PCE=3.0)
         express_bus.description = "EXP BUS"      # (vehicle type 90 , PCE=3.0)
         ltdexp_bus.description = "LTDEXP BUS"    # (vehicle type 80 , PCE=3.0)
@@ -668,6 +672,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         EgrPNR.speed = 25
         AccKNR.speed = 25
         EgrKNR.speed = 25
+        AccTNC.speed = 25
+        EgrTNC.speed = 25
 
         ## define TAP connectors as centroids
         #is_centroid = lambda arc, node: (int(arc["MINMODE"]) == 3) and (node == "BN")
@@ -687,13 +693,15 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             7:  set([EgrPNR]),                                  # 7  = egress PNR links
             8:  set([AccKNR]),                                  # 8  = access KNR links
             9:  set([EgrKNR]),                                  # 9  = egress KNR links
-            10:  set([coaster_rail]),                             # 4  = Coaster Rail Line
-            11:  set([lrt]),                                      # 5  = Light Rail Transit (LRT) Line
-            12:  set([brt_yellow, ltdexp_bus, express_bus, bus]), # 6  = Yellow Car Bus Rapid Transit (BRT)
-            13:  set([brt_red, ltdexp_bus, express_bus, bus]),    # 7  = Red Car Bus Rapid Transit (BRT)
-            14:  set([ltdexp_bus, express_bus, bus]),             # 8  = Limited Express Bus
-            15:  set([ltdexp_bus, express_bus, bus]),             # 9  = Express Bus
-            16: set([ltdexp_bus, express_bus, bus]),             # 10 = Local Bus
+            10:  set([AccTNC]),                                  # 8  = access TNC links
+            11:  set([EgrTNC]),                                  # 9  = egress TNC links
+            12:  set([coaster_rail]),                             # 4  = Coaster Rail Line
+            13:  set([lrt]),                                      # 5  = Light Rail Transit (LRT) Line
+            14:  set([brt_yellow, ltdexp_bus, express_bus, bus]), # 6  = Yellow Car Bus Rapid Transit (BRT)
+            15:  set([brt_red, ltdexp_bus, express_bus, bus]),    # 7  = Red Car Bus Rapid Transit (BRT)
+            16:  set([ltdexp_bus, express_bus, bus]),             # 8  = Limited Express Bus
+            17:  set([ltdexp_bus, express_bus, bus]),             # 9  = Express Bus
+            18: set([ltdexp_bus, express_bus, bus]),             # 10 = Local Bus
         }
         tier1_rail_link_name = props["transit.newMode"]
 

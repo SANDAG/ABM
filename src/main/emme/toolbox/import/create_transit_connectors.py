@@ -2,6 +2,8 @@ import os
 import inro.modeller as _m
 import inro.emme.desktop.app as _app
 import traceback as _traceback
+modeller = _m.Modeller()
+desktop = modeller.desktop
 
 
 gen_utils = _m.Modeller().module("sandag.utilities.general")
@@ -10,6 +12,8 @@ dem_utils = _m.Modeller().module("sandag.utilities.demand")
 class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
 
     create_connectors = _m.Attribute(bool)
+    scenario =  _m.Attribute(_m.InstanceType)
+    period = _m.Attribute(unicode)
 
     tool_run_msg = ""
 
@@ -20,6 +24,8 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
     def __init__(self):
 
         self.create_connectors = False
+        self.scenario = _m.Modeller().scenario
+        self.period = _m.Attribute(unicode)
       
         #self.scenario = scenario
         self.line_haul_modes_local = ["l"] # local
@@ -36,14 +42,21 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
         self.transit_modes = ["b","celpry"]
         self.line_haul_mode_specs = ["@num_stops_l=1,99","@num_stops_e=1,99"]
 
-        self.max_length_wlk = [0.55, 1.2, 1.2] # length in miles
+        self.max_length_wlk = [1, 1.2, 1.2] # length in miles
         self.max_length_knr = [5, 5, 5]
         self.max_length_pnr = [10, 15, 15]
+        self.max_length_tnc = [5, 5, 5]
 
-        self.acc_modes = ["ufq", "uq", "fq", "u", "f", "q"]
+        self.acc_modes = ["ufqQ", "uq", "fq", "u", "f", "q", "Q"]
         
         self.attributes = [
-           "create_connectors"]
+           "create_connectors", "scenario", "period"]
+        
+    def from_snapshot(self, snapshot):
+        super(CreateTransitConnector, self).from_snapshot(snapshot)
+        # custom from_snapshot to load scenario and database objects
+        self.scenario = _m.Modeller().emmebank.scenario(self.scenario)
+        return self
 
     def page(self):
         
@@ -54,6 +67,16 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
         pb.branding_text = "- SANDAG - "
         if self.tool_run_msg != "":
             pb.tool_run_status(self.tool_run_msg_status)
+        
+        options = [("EA","Early AM"),
+                   ("AM","AM peak"),
+                   ("MD","Mid-day"),
+                   ("PM","PM peak"),
+                   ("EV","Evening")]
+
+        pb.add_select("period", options, title="Period:")
+        pb.add_select_scenario("scenario",
+            title="Transit assignment scenario:")
 
         pb.add_checkbox("create_connectors", title=" ", label="Create connectors")
 
@@ -62,7 +85,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
     def run(self):
         self.tool_run_msg = ""
         try:
-            results = self(self.create_connectors)
+            results = self(self.period, self.scenario, self.create_connectors)
             run_msg = "Transit connectors created"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg)
         except Exception as error:
@@ -70,10 +93,16 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                 error, _traceback.format_exc(error))
             raise
 
-    def __call__(self, create_connectors=False):
+    def __call__(self, period, scenario, create_connectors=False):
 
-        #self.generate_connectors = create_connectors
-
+        attrs = {
+            "period": period,
+            "scenario": scenario.id,
+            "create_tr_connectors": create_connectors,
+            "self": str(self)
+        }
+        
+        self.scenario = scenario
         self.create_tr_connectors(self)
 
     @_m.logbook_trace("Transit connector creator", save_arguments=True)
@@ -86,8 +115,11 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
         netcalc = _m.Modeller().tool("inro.emme.network_calculation.network_calculator")
         export_basenet = _m.Modeller().tool("inro.emme.data.network.base.export_base_network")
         import_basenet = _m.Modeller().tool("inro.emme.data.network.base.base_network_transaction")
+        # desktop = _app.start_dedicated(project=r"C:\ABM_runs\Emme_Setup\emme_project\emme_project.emp", visible=True, user_initials="AE")
 
         if create_connectors:
+            # scenario = desktop.data_explorer().active_database().scenario_by_number(s['periodNum'])
+            desktop.data_explorer().replace_primary_scenario(self.scenario)
             
             for i in range(len(self.line_haul_modes_local)):
 
@@ -152,7 +184,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
     # create connectors for each access and line haul mode and export connectors
                 create_connectors(access_modes=["u"],
                                 egress_modes=["k"],
-                                delete_existing=True,
+                                delete_existing=False,
                                 selection={
                                     "centroid":"all",
                                     "node": "%s" % self.line_haul_mode_specs[i],
@@ -168,7 +200,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                             field_separator = " ")
                 create_connectors(access_modes=["f"],
                                 egress_modes=["g"],
-                                delete_existing=True,
+                                delete_existing=False,
                                 selection={
                                     "centroid":"all",
                                     "node": "%s" % self.line_haul_mode_specs[i],
@@ -184,7 +216,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                             field_separator = " ")                     
                 create_connectors(access_modes=["q"],
                                 egress_modes=["j"],
-                                delete_existing=True,
+                                delete_existing=False,
                                 selection={
                                     "centroid":"all",
                                     "node": "%s" % self.line_haul_mode_specs[i],
@@ -197,10 +229,26 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                 export_basenet(selection = {"link": 'i=1,4996 or j=1,4996',
                                             "node": 'none'},
                             export_file = "connectors_q" + self.line_haul_modes[i] + ".out",
+                            field_separator = " ") 
+                create_connectors(access_modes=["Q"],
+                                egress_modes=["J"],
+                                delete_existing=False,
+                                selection={
+                                    "centroid":"all",
+                                    "node": "%s" % self.line_haul_mode_specs[i],
+                                    "link":"none",
+                                    "exclude_split_links":False,
+                                    "only_midblock_nodes": False},
+                                max_length=self.max_length_tnc[i],
+                                max_connectors=2,
+                                min_angle=0)
+                export_basenet(selection = {"link": 'i=1,4996 or j=1,4996',
+                                            "node": 'none'},
+                            export_file = "connectors_Q" + self.line_haul_modes[i] + ".out",
                             field_separator = " ")                     
                 create_connectors(access_modes=["u", "q"],
                                 egress_modes=["k", "j"],
-                                delete_existing=True,
+                                delete_existing=False,
                                 selection={
                                     "centroid":"all",
                                     "node": "%s" % self.line_haul_mode_specs[i],
@@ -216,7 +264,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                             field_separator = " ")                       
                 create_connectors(access_modes=["f", "q"],
                                 egress_modes=["g", "j"],
-                                delete_existing=True,
+                                delete_existing=False,
                                 selection={
                                     "centroid":"all",
                                     "node": "%s" % self.line_haul_mode_specs[i],
@@ -226,13 +274,13 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                 max_length=self.max_length_knr[i],
                                 max_connectors=2,
                                 min_angle=0)
-                export_basenet(selection = {"link": 'i=1,3649 or j=1,3649',
+                export_basenet(selection = {"link": 'i=1,4996 or j=1,4996',
                                             "node": 'none'},
                             export_file = "connectors_fq" + self.line_haul_modes[i] + ".out",
                             field_separator = " ")     
-                create_connectors(access_modes=["u", "f", "q"],
-                                egress_modes=["k", "g", "j"],
-                                delete_existing=True,
+                create_connectors(access_modes=["u", "f", "q", "Q"],
+                                egress_modes=["k", "g", "j", "J"],
+                                delete_existing=False,
                                 selection={
                                     "centroid":"all",
                                     "node": "%s" % self.line_haul_mode_specs[i],
@@ -244,7 +292,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                 min_angle=0)
                 export_basenet(selection = {"link": 'i=1,4996 or j=1,4996',
                                             "node": 'none'},
-                            export_file = "connectors_ufq" + self.line_haul_modes[i] + ".out",
+                            export_file = "connectors_ufqQ" + self.line_haul_modes[i] + ".out",
                             field_separator = " ")
 
                 # import connectors; if a connector already exists, it's skipped because the connector with the most access modes is imported first
@@ -253,7 +301,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                     print("temp/" + "connectors_" + acc + line_haul + ".out")
                     import_basenet(transaction_file = "connectors_" + acc + line_haul + ".out", revert_on_error = False)
             # export all onnectors
-            export_basenet(selection = {"link": 'i=1,3649 or j=1,3649',
+            export_basenet(selection = {"link": 'i=1,4996 or j=1,4996',
                                         "node": 'none'},
                         export_file = "connectors.out",
                         field_separator = " ")

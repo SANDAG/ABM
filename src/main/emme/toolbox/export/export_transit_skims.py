@@ -45,10 +45,10 @@ TOOLBOX_ORDER = 72
 import inro.modeller as _m
 import traceback as _traceback
 import os
-
+import pandas as pd
 
 gen_utils = _m.Modeller().module("sandag.utilities.general")
-
+compute_matrix = _m.Modeller().tool("inro.emme.matrix_calculation.matrix_calculator")
 
 class ExportSkims(_m.Tool(), gen_utils.Snapshot):
     omx_file = _m.Attribute(unicode)
@@ -60,7 +60,7 @@ class ExportSkims(_m.Tool(), gen_utils.Snapshot):
     def __init__(self):
         self.attributes = ["omx_file", "periods", "big_to_zero"]
         self.periods = "EA, AM, MD, PM, EV"
-
+        self.num_processors = "MAX-1"
     @_m.method(return_type=_m.UnicodeType)
     def tool_run_msg_status(self):
         return self.tool_run_msg
@@ -90,19 +90,66 @@ class ExportSkims(_m.Tool(), gen_utils.Snapshot):
             raise
 
     @_m.logbook_trace("Export transit skims to OMX", save_arguments=True)
-    def __call__(self, omx_file, periods, scenario, big_to_zero=False):
+    def __call__(self, omx_file, periods, scenario, big_to_zero=True):
         attributes = {"omx_file": omx_file, "periods": periods, "big_to_zero": big_to_zero}
         gen_utils.log_snapshot("Export transit skims to OMX", str(self), attributes)
         init_matrices = _m.Modeller().tool("sandag.initialize.initialize_matrices")
-        matrices = init_matrices.get_matrix_names(
-            "transit_skims", periods, scenario)
+        matrices = init_matrices.get_matrix_names("transit_skims", periods, scenario)
+        #TODO: This is a kludgy way to do this...
+        """
+        ['LOC_FIRSTWAIT', 'LOC_XFERWAIT', 'LOC_FARE', 'LOC_XFERS',  'LOC_ACC', 'LOC_XFERWALK', 'LOC_EGR', 'LOC_TOTALWALK',
+                  'LOC_TOTALIVTT', 'LOC_DWELLTIME', 'LOC_BUSIVTT', 'PRM_FIRSTWAIT', 'PRM_XFERWAIT', 'PRM_FARE', 'PRM_XFERS', 'PRM_ACC',
+                  'PRM_XFERWALK', 'PRM_EGR', 'PRM_TOTALWALK', 'PRM_TOTALIVTT', 'PRM_LRTIVTT', 'PRM_CMRIVTT', 'PRM_EXPIVTT', 
+                  'PRM_LTDEXPIVTT', 'PRM_BRTIVTT', 'MIX_FIRSTWAIT', 'MIX_XFERWAIT', 'MIX_FARE', 'MIX_XFERS', 'MIX_ACC', 'MIX_XFERWALK',
+                  'MIX_EGR', 'MIX_TOTALIVTT', 'MIX_BUSIVTT', 'MIX_LRTIVTT', 'MIX_CMRIVTT', 'MIX_EXPIVTT', 'MIX_LTDEXPIVTT', 'MIX_BRTIVTT']
+        """
+        mnames = ['LOC_FIRSTWAIT', 'LOC_XFERWAIT', 'LOC_FARE', 'LOC_XFERS',  'LOC_ACC', 'LOC_XFERWALK', 'LOC_EGR', 'LOC_TOTALWALK',
+                  'LOC_TOTALIVTT', 'LOC_DWELLTIME', 'LOC_BUSIVTT', 'PRM_FIRSTWAIT', 'PRM_XFERWAIT', 'PRM_FARE', 'PRM_XFERS', 'PRM_ACC',
+                  'PRM_XFERWALK', 'PRM_EGR', 'PRM_TOTALWALK', 'PRM_TOTALIVTT', 'PRM_LRTIVTT', 'PRM_CMRIVTT', 'PRM_EXPIVTT', 
+                  'PRM_LTDEXPIVTT', 'PRM_BRTIVTT', 'MIX_FIRSTWAIT', 'MIX_XFERWAIT', 'MIX_FARE', 'MIX_XFERS', 'MIX_ACC', 'MIX_XFERWALK',
+                  'MIX_EGR', 'MIX_TOTALIVTT', 'MIX_BUSIVTT', 'MIX_LRTIVTT', 'MIX_CMRIVTT', 'MIX_EXPIVTT', 'MIX_LTDEXPIVTT', 'MIX_BRTIVTT']
+                  
+        #pd.DataFrame({'id': matrices}).to_csv("C:\\ABM_runs\\Emme_Setup\\emme_project\\Scripts\\matrix_list.csv")
+        matrices_to_export = []
+        for name in matrices:
+            m_chk_arr = name.split("_")
+            m_check = "_".join(m_chk_arr[1:-2])
+            if m_check in mnames:
+                matrices_to_export.append(name)
+                specification = {
+                    "type": "MATRIX_CALCULATION",
+                    "result": name,
+                    "expression": "0",
+                    "constraint": {
+                        "by_zone": None,
+                        "by_value": {
+                        "od_values": name,
+                        "interval_min": 0,
+                        "interval_max": 1e6,
+                        "condition": "EXCLUDE" }}
+                }
+                report = compute_matrix(specification) 
         with gen_utils.ExportOMX(omx_file, scenario, omx_key="NAME") as exporter:
+            exporter.write_matrices(matrices_to_export)
+        """
+        with gen_utils.ExportOMX(omx_file, scenario, omx_key="NAME", big_to_zero = True) as exporter:
             if big_to_zero:
+                emmebank = scenario.emmebank
+                for name in matrices:
+                    m_chk_arr = name.split("_")
+                    m_check = "_".join(m_chk_arr[1:-2])
+                    if m_check in mnames:
+                        matrix = emmebank.matrix(name)
+                        array = matrix.get_numpy_data(scenario)
+                        array[array>10E6] = 0
+                        array = array.round(2).astype('float32')
+                        exporter.write_array(array, exporter.generate_key(matrix))
+            else:
                 emmebank = scenario.emmebank
                 for name in matrices:
                     matrix = emmebank.matrix(name)
                     array = matrix.get_numpy_data(scenario)
-                    array[array>10E6] = 0
+                    array = array.astype('float32')
                     exporter.write_array(array, exporter.generate_key(matrix))
-            else:
-                exporter.write_matrices(matrices)
+                    #exporter.write_matrices(matrices)
+        """
