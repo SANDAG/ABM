@@ -24,10 +24,13 @@ add number of inbound stops,step_1,raw,,num_ib_stops,,final_tours['num_ib_stops'
 add inbound to final trip file,step_1,raw,,inbound,,"final_trips['inbound'] = np.where(final_trips['outbound'] == True, 0, 1)"
 get individual tour file,step_1,raw,,,,indivTourData_3 = final_tours.loc[final_tours['tour_category']!='joint']
 get joint tour file,step_1,raw,,,,jointTourData_3 = final_tours.loc[final_tours['tour_category']=='joint']
+Multiply tour weights by number of participants,step_1,column,jointTourData_3,finalweights,,finalweights * number_of_participants
 get individual trip file,step_1,raw,,,,indiv_list = indivTourData_3['tour_id'].tolist()
 get individual trip file,step_1,raw,,,,indivTripData_3 = final_trips[final_trips['tour_id'].isin(indiv_list)]
 get joint trip file,step_1,raw,,,,joint_list = jointTourData_3['tour_id'].tolist()
 get joint trip file,step_1,raw,,,,jointTripData_3 = final_trips[final_trips['tour_id'].isin(joint_list)]
+Get number of participants on joint trips,step_1,raw,,,,jointTripData_3['number_of_participants'] = jointTripData_3['tour_id'].map(jointTourData_3.set_index('tour_id')['number_of_participants'])
+Multiply trip weights by number of participants,step_1,column,jointTripData_3,finalweights,,finalweights * number_of_participants
 #,,,,,,
 Add unique tour ids to individual tour file,step_1,raw,,,,maxtours = indivTourData_3['person_id'].value_counts().max()
 Add unique tour ids to individual tour file,step_1,raw,,,,"indivTourData_3['cummulative_tours'] = range(1, indivTourData_3.shape[0] + 1)"
@@ -301,9 +304,9 @@ Rename AUTOSUFF column,step_6,rename,tmodeProfile_vis,,,{'AUTOSUFF': 'OwnershipC
 Recode auto ownership category,step_6,replace,tmodeProfile_vis,OwnershipCategory,OwnershipCategory,"{0: '0: No Vehicles', 1: '1: 1+ Veh/Adults > Veh', 2: '2: Vehicles >= Adults'}"
 Rename mandatory distance distribution columns,step_6,rename,mandTLFD,,,"{'level_0': 'distbin', 'HDISTRICT': 'District'}"
 Rename mandatory distance distribution columns,step_6,rename,mandTLFD_et,,,"{'level_0': 'distbin', 'HDISTRICT': 'District'}"
-Recode tour mode,step_6,replace,tmodeProfile_vis,tour_mode,tour_mode,"{'DRIVEALONE': '01: SOV', 'SHARED2': '02: Shared Ride 2', 'SHARED3': '03: Shared Ride 3+', 'WALK': '04: Walk', 'WALK_TRANSIT': '06: Walk to Transit', 'PNR_TRANSIT': '07: PNR to Transit', 'KNR_TRANSIT': '08: KNR to Transit', 'TNC_TRANSIT': '09: TNC to Transit', 'TAXI': '10: Taxi', 'TNC_SINGLE': '11: TNC Single', 'TNC_SHARED': '12: TNC Shared', 'SCH_BUS': '13: School Bus'}"
-Recode tour mode,step_6,replace,tripmodeProfile_vis,tour_mode,tour_mode,"{'DRIVEALONE': '01: SOV', 'SHARED2': '02: Shared Ride 2', 'SHARED3': '03: Shared Ride 3+', 'WALK': '04: Walk', 'WALK_TRANSIT': '06: Walk to Transit', 'PNR_TRANSIT': '07: PNR to Transit', 'KNR_TRANSIT': '08: KNR to Transit', 'TNC_TRANSIT': '09: TNC to Transit', 'TAXI': '10: Taxi', 'TNC_SINGLE': '11: TNC Single', 'TNC_SHARED': '12: TNC Shared', 'SCH_BUS': '13: School Bus'}"
-Recode trip mode,step_6,replace,tripmodeProfile_vis,trip_mode,trip_mode,"{'DRIVEALONE': '01: SOV', 'SHARED2': '02: Shared Ride 2', 'SHARED3': '03: Shared Ride 3+', 'WALK': '04: Walk', 'WALK_TRANSIT': '06: Walk to Transit', 'PNR_TRANSIT': '07: PNR to Transit', 'KNR_TRANSIT': '08: KNR to Transit', 'TNC_TRANSIT': '09: TNC to Transit', 'TAXI': '10: Taxi', 'TNC_SINGLE': '11: TNC Single', 'TNC_SHARED': '12: TNC Shared', 'SCH_BUS': '13: School Bus'}"
+Recode tour mode,step_6,replace,tmodeProfile_vis,tour_mode,tour_mode,"{'DRIVEALONE': '01: SOV', 'SHARED2': '02: Shared Ride 2', 'SHARED3': '03: Shared Ride 3+', 'WALK': '04: Walk', 'BIKE': '05: Bike', 'WALK_TRANSIT': '06: Walk to Transit', 'WALK_LOC': '06: Walk to Transit', 'WALK_PRM': '06: Walk to Transit', 'WALK_MIX': '06: Walk to Transit', 'PNR_TRANSIT': '07: PNR to Transit', 'PNR_LOC': '07: PNR to Transit', 'PNR_PRM': '07: PNR to Transit', 'PNR_MIX': '07: PNR to Transit', 'KNR_TRANSIT': '08: KNR to Transit', 'KNR_LOC': '08: KNR to Transit', 'KNR_PRM': '08: KNR to Transit', 'KNR_MIX': '08: KNR to Transit', 'TNC_TRANSIT': '09: TNC to Transit', 'TNC_LOC': '09: TNC to Transit', 'TNC_PRM': '09: TNC to Transit', 'TNC_MIX': '09: TNC to Transit', 'TAXI': '10: Taxi', 'TNC_SINGLE': '11: TNC Single', 'TNC_SHARED': '12: TNC Shared', 'SCH_BUS': '13: School Bus'}"
+Recode tour mode,step_6,replace,tripmodeProfile_vis,tour_mode,tour_mode,"{'DRIVEALONE': '01: SOV', 'SHARED2': '02: Shared Ride 2', 'SHARED3': '03: Shared Ride 3+', 'WALK': '04: Walk', 'BIKE': '05: Bike', 'WALK_TRANSIT': '06: Walk to Transit', 'WALK_LOC': '06: Walk to Transit', 'WALK_PRM': '06: Walk to Transit', 'WALK_MIX': '06: Walk to Transit', 'PNR_TRANSIT': '07: PNR to Transit', 'PNR_LOC': '07: PNR to Transit', 'PNR_PRM': '07: PNR to Transit', 'PNR_MIX': '07: PNR to Transit', 'KNR_TRANSIT': '08: KNR to Transit', 'KNR_LOC': '08: KNR to Transit', 'KNR_PRM': '08: KNR to Transit', 'KNR_MIX': '08: KNR to Transit', 'TNC_TRANSIT': '09: TNC to Transit', 'TNC_LOC': '09: TNC to Transit', 'TNC_PRM': '09: TNC to Transit', 'TNC_MIX': '09: TNC to Transit', 'TAXI': '10: Taxi', 'TNC_SINGLE': '11: TNC Single', 'TNC_SHARED': '12: TNC Shared', 'SCH_BUS': '13: School Bus'}"
+Recode trip mode,step_6,replace,tripmodeProfile_vis,trip_mode,trip_mode,"{'DRIVEALONE': '01: SOV', 'SHARED2': '02: Shared Ride 2', 'SHARED3': '03: Shared Ride 3+', 'WALK': '04: Walk', 'BIKE': '05: Bike', 'WALK_TRANSIT': '06: Walk to Transit', 'WALK_LOC': '06: Walk to Transit', 'WALK_PRM': '06: Walk to Transit', 'WALK_MIX': '06: Walk to Transit', 'PNR_TRANSIT': '07: PNR to Transit', 'PNR_LOC': '07: PNR to Transit', 'PNR_PRM': '07: PNR to Transit', 'PNR_MIX': '07: PNR to Transit', 'KNR_TRANSIT': '08: KNR to Transit', 'KNR_LOC': '08: KNR to Transit', 'KNR_PRM': '08: KNR to Transit', 'KNR_MIX': '08: KNR to Transit', 'TNC_TRANSIT': '09: TNC to Transit', 'TNC_LOC': '09: TNC to Transit', 'TNC_PRM': '09: TNC to Transit', 'TNC_MIX': '09: TNC to Transit', 'TAXI': '10: Taxi', 'TNC_SINGLE': '11: TNC Single', 'TNC_SHARED': '12: TNC Shared', 'SCH_BUS': '13: School Bus'}"
 Drop null values,step_6,raw,,,,tmodeProfile_vis = tmodeProfile_vis.dropna()
 Melt mand TLFD,step_6,raw,,,,"mandTLFD = pd.melt(mandTLFD, ['distbin', 'District'], var_name = 'purpose')"
 Melt mand TLFD,step_6,raw,,,,"mandTLFD_et = pd.melt(mandTLFD_et, ['distbin', 'District'], var_name = 'purpose')"
@@ -323,9 +326,9 @@ Recode mandatory tour length district,step_6,replace,mandTripLengths,District,Di
 Recode mandatory tour length district,step_6,replace,mandTLFD_et,District,District,"{1: '1: Downtown', 2: '2: Central', 3: '3: North City', 4: '4: South Suburban', 5: '5: East Suburban', 6: '6: North County West', 7: '7: North County East', 8: '8: East County'}"
 Recode mandatory tour length district,step_6,replace,mandTripLengths_et,District,District,"{1: '1: Downtown', 2: '2: Central', 3: '3: North City', 4: '4: South Suburban', 5: '5: East Suburban', 6: '6: North County West', 7: '7: North County East', 8: '8: East County'}"
 #,,,,,,
-Recode time period,step_6,apply,todProfile_vis,period,period,lambda x: 0.5*x+4.25
-Recode time period,step_6,apply,tripDeparture_vis,stop_period,depart,lambda x: 0.5*x+4.25
-Recode time period,step_6,apply,stopDeparture_vis,stop_period,depart,lambda x: 0.5*x+4.25
+Recode time period,step_6,apply,todProfile_vis,period,period,lambda x: (0.5*x+2.75) % 24
+Recode time period,step_6,apply,tripDeparture_vis,stop_period,depart,lambda x: (0.5*x+2.75) % 24
+Recode time period,step_6,apply,stopDeparture_vis,stop_period,depart,lambda x: (0.5*x+2.75) % 24
 Recode tour duration,step_6,apply,tourDuration,tourdur,tourdur,lambda x: 0.5*x
 #,,,,,,
 Recode daily activity pattern,step_6,replace,dapSummary_vis,activity_pattern,activity_pattern,"{'H': 'Home', 'M': 'Mandatory', 'N': 'Non-Mandatory'}"

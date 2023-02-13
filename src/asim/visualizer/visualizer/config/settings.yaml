@@ -103,6 +103,10 @@ transform:
                 include:
                     - indivTripData_3
                     - jointTripData_3
+              - table_name: hh_tours
+                include:
+                    - hh_itours
+                    - hh_jtours
           process: True
 
         - name: step_5

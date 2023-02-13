@@ -31,7 +31,7 @@ Average non-mandatory tour length,nonMandTripLengthsTotal_et,avgDist,tours,TOURP
 #,,,,,,,
 Stops by stop departure period,stopDeparture_vis,freq,trips,stops == 1,finalweights,sum,"depart,AGGPURP"
 Trips by stop departure period,tripDeparture_vis,freq,trips,,finalweights,sum,"depart,AGGPURP"
-Tour mode by vehicle ownership category,tmodeProfile_vis,freq,hh_itours,,finalweights_x,sum,"AUTOSUFF,tour_mode,AGGPURP"
+Tour mode by vehicle ownership category,tmodeProfile_vis,freq,hh_tours,,finalweights_x,sum,"AUTOSUFF,tour_mode,AGGPURP"
 Trip mode by tour mode,tripmodeProfile_vis,value,trips,,finalweights,sum,"trip_mode,tour_mode,AGGPURP"
 Tour Distance Distribution,tourDistProfile_vis,freq,tours,TOURPURP >= 4 and is_internal_tour!=False,finalweights,sum,"tourdistbin,AGGPURP"
 Tour Distance Distribution,tourDistProfile_et_vis,freq,tours,TOURPURP >= 4 and is_external_tour==True,finalweights,sum,"tourdistbin,AGGPURP"
