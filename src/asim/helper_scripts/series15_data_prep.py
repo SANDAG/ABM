@@ -2,7 +2,7 @@
 Script to turn series 15 data into proper ActivitySim Inputs
 
 How to run:
-* check paths, file names, and options listed at the top of the file
+* check paths, file names, and options listed in the __init__(self): function
 * python series15_data_prep.py
 '''
 
@@ -27,6 +27,7 @@ class Series15_Processor:
 
         self.maz_ext_taz_xwalk_file = os.path.join(self.input_dir, 'closest_maz_to_external_tazs.csv')
         self.maz_maz_walk_file = os.path.join(self.input_dir, 'maz_maz_walk.csv')
+        self.maz_stop_walk_file = os.path.join(self.input_dir, 'maz_stop_walk.csv')
         self.maz_maz_bike_file = os.path.join(self.input_dir, 'bikeMgraLogsum.csv')
         self.taz_taz_bike_file = os.path.join(self.input_dir, 'bikeTazLogsum.csv')
 
@@ -195,7 +196,6 @@ class Series15_Processor:
         self.households = households
         self.persons = persons
 
-
     def add_external_counts_to_landuse(self):
         print("Adding external counts to landuse file.")
         ext_data = pd.read_csv(self.ext_data_file)
@@ -242,6 +242,17 @@ class Series15_Processor:
         self.landuse['external_work'] = self.landuse['external_work'].fillna(0)
         self.landuse['external_nonwork'] = self.landuse['external_nonwork'].fillna(0)
         self.landuse.loc[self.landuse.external_MAZ == 1, ['TAZ', 'external_MAZ', 'poe_id', 'external_work', 'external_nonwork']]
+
+
+    def add_maz_stop_walk_to_landuse(self):
+        maz_stop_walk = pd.read_csv(self.maz_stop_walk_file)
+        maz_stop_walk.set_index('maz', inplace=True)
+
+        self.landuse['walk_dist_local_bus'] = maz_stop_walk['walk_dist_local_bus'].reindex(self.landuse.index)
+        self.landuse['walk_dist_premium_transit'] = maz_stop_walk['walk_dist_premium_transit'].reindex(self.landuse.index)
+
+        self.landuse['walk_dist_local_bus'].fillna(999)
+        self.landuse['walk_dist_premium_transit'].fillna(999)
 
 
     def add_transponder_accessibility_to_landuse(self):
@@ -383,6 +394,7 @@ if __name__ == '__main__':
     processor.pre_process_landuse()
     processor.process_synthetic_population()
     processor.add_external_counts_to_landuse()
+    processor.add_maz_stop_walk_to_landuse()
     processor.add_transponder_accessibility_to_landuse()
     processor.add_exernal_stations_to_maz_level_skims()
     processor.add_TAZ_level_skims()

@@ -7,13 +7,22 @@ workplace_in_cbd,workplace_in_cbd,"reindex(land_use.pseudomsa, persons.workplace
 work_zone_area_type,work_zone_area_type,"reindex(land_use.pseudomsa, persons.workplace_zone_id)"
 #,, auto time to work - free flow travel time in both directions. MTC TM1 was MD and MD
 #,,roundtrip_auto_time_to_work
-,_auto_time_home_to_work,"skim_dict.lookup(persons.home_zone_id, workplace_zone_id, ('SOV_TR_M_TIME', 'MD'))"
-,_auto_time_work_to_home,"skim_dict.lookup(workplace_zone_id, persons.home_zone_id, ('SOV_TR_M_TIME', 'MD'))"
-,roundtrip_auto_time_to_work,"np.where(workplace_zone_id>=0,_auto_time_home_to_work + _auto_time_work_to_home,0)"
-#,,_roundtrip_walk_time_to_work
-,_MAX_TIME_TO_WORK,999
-,_WALK_SPEED_MPH,3
-,_walk_time_home_to_work,"60 * skim_dict.lookup(persons.home_zone_id, workplace_zone_id, 'DIST')/_WALK_SPEED_MPH"
-,_walk_time_work_to_home,"60 * skim_dict.lookup(workplace_zone_id, persons.home_zone_id, 'DIST')/_WALK_SPEED_MPH"
-,_work_walk_available,(_walk_time_home_to_work > 0) & (_walk_time_work_to_home > 0)
-,_roundtrip_walk_time_to_work,"np.where(_work_walk_available, _walk_time_home_to_work + _walk_time_work_to_home, _MAX_TIME_TO_WORK)"
+,auto_time_home_to_work,"skim_dict.lookup(persons.home_zone_id, workplace_zone_id, ('SOV_TR_M_TIME', 'AM'))"
+,_auto_time_work_to_home,"skim_dict.lookup(workplace_zone_id, persons.home_zone_id, ('SOV_TR_M_TIME', 'PM'))"
+,roundtrip_auto_time_to_work,"np.where(workplace_zone_id>=0, auto_time_home_to_work + _auto_time_work_to_home,0)"
+# Calculating accessibilities for Auto Ownership,,
+non-motorized factor,_nmFactor,"0.5 * np.minimum(np.maximum(distance_to_work, 1.0), 3.0) - 0.5"
+# auto pk logsum adapted from Accessibilities.xls sov_pk,,
+#,_sov_auto_opp_util,"skim_dict.lookup(persons.home_zone_id, workplace_zone_id, ('SOV_TR_M_TIME', 'AM')) * costPerMile * -0.00159"
+#,_sov_toll_util,"skim_dict.lookup(persons.home_zone_id, workplace_zone_id, ('SOV_TR_M_TOLLCOST', 'AM')) * -0.00159"
+#parking cost in cents,_parking_util,"reindex(land_use.dparkcost, workplace_zone_id) * 100 * -0.00159"
+#,_sov_util,auto_time_home_to_work * -0.028 + _sov_auto_opp_util + _sov_toll_util + _parking_util
+#,auto_work_logsum,np.exp(_sov_util)
+# transit pk logsum,,
+#,_tr_loc_totivtt,"skim_dict.lookup(persons.home_zone_id, workplace_zone_id, ('WALK_LOC_TOTALIVTT', 'AM')) * -0.016"
+#,trn_work_logsum,np.exp(_tr_loc_totivtt)
+#,_logsum_diff,"np.minimum((auto_work_logsum - trn_work_logsum) / 3.0, 1)"
+#What is this if trn logsum > auto logsum?,workAutoDependency,"np.where(auto_work_logsum > trn_work_logsum, _logsum_diff * _nmFactor, 0)"
+#,_tr_prm_tot_ivtt,"skim_dict.lookup(persons.home_zone_id, workplace_zone_id, ('WALK_PRM_TOTALIVTT', 'AM'))"
+#,_tr_prm_rail_ivtt,"skim_dict.lookup(persons.home_zone_id, workplace_zone_id, ('WALK_PRM_CMRIVTT', 'AM'))"
+#placeholder -- only looking at prm service,workRailProp,_tr_prm_rail_ivtt / _tr_prm_tot_ivtt
