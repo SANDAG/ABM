@@ -167,7 +167,7 @@ preprocessor:
     - land_use
     - tours
     - vehicles
-
+    - households
 # annotate_trips:
 #  - SPEC: trip_mode_choice_annotate_trips
 #    DF: df
@@ -192,6 +192,7 @@ TOURS_MERGED_CHOOSER_COLUMNS:
   - sex
   - time_factor_work
   - time_factor_nonwork
+  - transponder_ownership
 
 MODE_CHOICE_LOGSUM_COLUMN_NAME: mode_choice_logsum
 
@@ -199,3 +200,4 @@ CHOOSER_COLS_TO_KEEP:
   - vot_da
   - vot_s2
   - vot_s3
+  - ownsTransponder
