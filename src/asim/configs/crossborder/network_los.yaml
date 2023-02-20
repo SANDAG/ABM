@@ -11,16 +11,16 @@ read_skim_cache: False
 write_skim_cache: False
 
 taz_skims: 
-  - traffic_skims_processed_EA.omx
-  - traffic_skims_processed_AM.omx
-  - traffic_skims_processed_MD.omx
-  - traffic_skims_processed_PM.omx
-  - traffic_skims_processed_EV.omx
-  - transit_skims_xb_ea.omx
-  - transit_skims_xb_am.omx
-  - transit_skims_xb_md.omx
-  - transit_skims_xb_pm.omx
-  - transit_skims_xb_ev.omx
+  - traffic_skims_xborder_EA.omx
+  - traffic_skims_xborder_AM.omx
+  - traffic_skims_xborder_MD.omx
+  - traffic_skims_xborder_PM.omx
+  - traffic_skims_xborder_EV.omx
+  - transit_skims_ea.omx
+  - transit_skims_am.omx
+  - transit_skims_md.omx
+  - transit_skims_pm.omx
+  - transit_skims_ev.omx
   - dest_pmsa.omx
 
 maz: mazs_xborder.csv   # mgra.csv

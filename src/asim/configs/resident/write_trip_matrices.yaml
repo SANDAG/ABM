@@ -14,101 +14,346 @@ HH_EXPANSION_WEIGHT_COL: sample_rate  # added when households read in
 SAVE_TRIPS_TABLE: False
 
 MATRICES:
-  - file_name: trips_ea.omx
+  - file_name: autotrips_ea_low.omx
     tables:
-      - name: DRIVEALONE_EA
-        data_field: DRIVEALONE_EA
-      - name: SHARED2_EA
-        data_field: SHARED2_EA
-      - name: SHARED3_EA
-        data_field: SHARED3_EA
+      - name: SOVNOTRPDR_EA
+        data_field: DRIVEALONE_NOTR_EA_LOW
+      - name: SOVTRPDR_EA
+        data_field: DRIVEALONE_TR_EA_LOW
+      - name: SR2NOTRPDR_EA
+        data_field: SHARED2_NOTR_EA_LOW
+      - name: SR2TRPDR_EA
+        data_field: SHARED2_TR_EA_LOW
+      - name: SR3NOTRPDR_EA
+        data_field: SHARED3_NOTR_EA_LOW
+      - name: SR3TRPDR_EA
+        data_field: SHARED3_TR_EA_LOW
+  - file_name: autotrips_ea_med.omx
+    tables:
+      - name: SOVNOTRPDR_EA
+        data_field: DRIVEALONE_NOTR_EA_MED
+      - name: SOVTRPDR_EA
+        data_field: DRIVEALONE_TR_EA_MED
+      - name: SR2NOTRPDR_EA
+        data_field: SHARED2_NOTR_EA_MED
+      - name: SR2TRPDR_EA
+        data_field: SHARED2_TR_EA_MED
+      - name: SR3NOTRPDR_EA
+        data_field: SHARED3_NOTR_EA_MED
+      - name: SR3TRPDR_EA
+        data_field: SHARED3_TR_EA_MED
+  - file_name: autotrips_ea_high.omx
+    tables:
+      - name: SOVNOTRPDR_EA
+        data_field: DRIVEALONE_NOTR_EA_HIGH
+      - name: SOVTRPDR_EA
+        data_field: DRIVEALONE_TR_EA_HIGH
+      - name: SR2NOTRPDR_EA
+        data_field: SHARED2_NOTR_EA_HIGH
+      - name: SR2TRPDR_EA
+        data_field: SHARED2_TR_EA_HIGH
+      - name: SR3NOTRPDR_EA
+        data_field: SHARED3_NOTR_EA_HIGH
+      - name: SR3TRPDR_EA
+        data_field: SHARED3_TR_EA_HIGH
+  - file_name: autotrips_am_low.omx
+    tables:
+      - name: SOVNOTRPDR_AM
+        data_field: DRIVEALONE_NOTR_AM_LOW
+      - name: SOVTRPDR_AM
+        data_field: DRIVEALONE_TR_AM_LOW
+      - name: SR2NOTRPDR_AM
+        data_field: SHARED2_NOTR_AM_LOW
+      - name: SR2TRPDR_AM
+        data_field: SHARED2_TR_AM_LOW
+      - name: SR3NOTRPDR_AM
+        data_field: SHARED3_NOTR_AM_LOW
+      - name: SR3TRPDR_AM
+        data_field: SHARED3_TR_AM_LOW
+  - file_name: autotrips_am_med.omx
+    tables:
+      - name: SOVNOTRPDR_AM
+        data_field: DRIVEALONE_NOTR_AM_MED
+      - name: SOVTRPDR_AM
+        data_field: DRIVEALONE_TR_AM_MED
+      - name: SR2NOTRPDR_AM
+        data_field: SHARED2_NOTR_AM_MED
+      - name: SR2TRPDR_AM
+        data_field: SHARED2_TR_AM_MED
+      - name: SR3NOTRPDR_AM
+        data_field: SHARED3_NOTR_AM_MED
+      - name: SR3TRPDR_AM
+        data_field: SHARED3_TR_AM_MED
+  - file_name: autotrips_am_high.omx
+    tables:
+      - name: SOVNOTRPDR_AM
+        data_field: DRIVEALONE_NOTR_AM_HIGH
+      - name: SOVTRPDR_AM
+        data_field: DRIVEALONE_TR_AM_HIGH
+      - name: SR2NOTRPDR_AM
+        data_field: SHARED2_NOTR_AM_HIGH
+      - name: SR2TRPDR_AM
+        data_field: SHARED2_TR_AM_HIGH
+      - name: SR3NOTRPDR_AM
+        data_field: SHARED3_NOTR_AM_HIGH
+      - name: SR3TRPDR_AM
+        data_field: SHARED3_TR_AM_HIGH
+  - file_name: autotrips_md_low.omx
+    tables:
+      - name: SOVNOTRPDR_MD
+        data_field: DRIVEALONE_NOTR_MD_LOW
+      - name: SOVTRPDR_MD
+        data_field: DRIVEALONE_TR_MD_LOW
+      - name: SR2NOTRPDR_MD
+        data_field: SHARED2_NOTR_MD_LOW
+      - name: SR2TRPDR_MD
+        data_field: SHARED2_TR_MD_LOW
+      - name: SR3NOTRPDR_MD
+        data_field: SHARED3_NOTR_MD_LOW
+      - name: SR3TRPDR_MD
+        data_field: SHARED3_TR_MD_LOW
+  - file_name: autotrips_md_med.omx
+    tables:
+      - name: SOVNOTRPDR_MD
+        data_field: DRIVEALONE_NOTR_MD_MED
+      - name: SOVTRPDR_MD
+        data_field: DRIVEALONE_TR_MD_MED
+      - name: SR2NOTRPDR_MD
+        data_field: SHARED2_NOTR_MD_MED
+      - name: SR2TRPDR_MD
+        data_field: SHARED2_TR_MD_MED
+      - name: SR3NOTRPDR_MD
+        data_field: SHARED3_NOTR_MD_MED
+      - name: SR3TRPDR_MD
+        data_field: SHARED3_TR_MD_MED
+  - file_name: autotrips_md_high.omx
+    tables:
+      - name: SOVNOTRPDR_MD
+        data_field: DRIVEALONE_NOTR_MD_HIGH
+      - name: SOVTRPDR_MD
+        data_field: DRIVEALONE_TR_MD_HIGH
+      - name: SR2NOTRPDR_MD
+        data_field: SHARED2_NOTR_MD_HIGH
+      - name: SR2TRPDR_MD
+        data_field: SHARED2_TR_MD_HIGH
+      - name: SR3NOTRPDR_MD
+        data_field: SHARED3_NOTR_MD_HIGH
+      - name: SR3TRPDR_MD
+        data_field: SHARED3_TR_MD_HIGH
+  - file_name: autotrips_pm_low.omx
+    tables:
+      - name: SOVNOTRPDR_PM
+        data_field: DRIVEALONE_NOTR_PM_LOW
+      - name: SOVTRPDR_PM
+        data_field: DRIVEALONE_TR_PM_LOW
+      - name: SR2NOTRPDR_PM
+        data_field: SHARED2_NOTR_PM_LOW
+      - name: SR2TRPDR_PM
+        data_field: SHARED2_TR_PM_LOW
+      - name: SR3NOTRPDR_PM
+        data_field: SHARED3_NOTR_PM_LOW
+      - name: SR3TRPDR_PM
+        data_field: SHARED3_TR_PM_LOW
+  - file_name: autotrips_pm_med.omx
+    tables:
+      - name: SOVNOTRPDR_PM
+        data_field: DRIVEALONE_NOTR_PM_MED
+      - name: SOVTRPDR_PM
+        data_field: DRIVEALONE_TR_PM_MED
+      - name: SR2NOTRPDR_PM
+        data_field: SHARED2_NOTR_PM_MED
+      - name: SR2TRPDR_PM
+        data_field: SHARED2_TR_PM_MED
+      - name: SR3NOTRPDR_PM
+        data_field: SHARED3_NOTR_PM_MED
+      - name: SR3TRPDR_PM
+        data_field: SHARED3_TR_PM_MED
+  - file_name: autotrips_pm_high.omx
+    tables:
+      - name: SOVNOTRPDR_PM
+        data_field: DRIVEALONE_NOTR_PM_HIGH
+      - name: SOVTRPDR_PM
+        data_field: DRIVEALONE_TR_PM_HIGH
+      - name: SR2NOTRPDR_PM
+        data_field: SHARED2_NOTR_PM_HIGH
+      - name: SR2TRPDR_PM
+        data_field: SHARED2_TR_PM_HIGH
+      - name: SR3NOTRPDR_PM
+        data_field: SHARED3_NOTR_PM_HIGH
+      - name: SR3TRPDR_PM
+        data_field: SHARED3_TR_PM_HIGH
+  - file_name: autotrips_ev_low.omx
+    tables:
+      - name: SOVNOTRPDR_EV
+        data_field: DRIVEALONE_NOTR_EV_LOW
+      - name: SOVTRPDR_EV
+        data_field: DRIVEALONE_TR_EV_LOW
+      - name: SR2NOTRPDR_EV
+        data_field: SHARED2_NOTR_EV_LOW
+      - name: SR2TRPDR_EV
+        data_field: SHARED2_TR_EV_LOW
+      - name: SR3NOTRPDR_EV
+        data_field: SHARED3_NOTR_EV_LOW
+      - name: SR3TRPDR_EV
+        data_field: SHARED3_TR_EV_LOW
+  - file_name: autotrips_ev_med.omx
+    tables:
+      - name: SOVNOTRPDR_EV
+        data_field: DRIVEALONE_NOTR_EV_MED
+      - name: SOVTRPDR_EV
+        data_field: DRIVEALONE_TR_EV_MED
+      - name: SR2NOTRPDR_EV
+        data_field: SHARED2_NOTR_EV_MED
+      - name: SR2TRPDR_EV
+        data_field: SHARED2_TR_EV_MED
+      - name: SR3NOTRPDR_EV
+        data_field: SHARED3_NOTR_EV_MED
+      - name: SR3TRPDR_EV
+        data_field: SHARED3_TR_EV_MED
+  - file_name: autotrips_ev_high.omx
+    tables:
+      - name: SOVNOTRPDR_EV
+        data_field: DRIVEALONE_NOTR_EV_HIGH
+      - name: SOVTRPDR_EV
+        data_field: DRIVEALONE_TR_EV_HIGH
+      - name: SR2NOTRPDR_EV
+        data_field: SHARED2_NOTR_EV_HIGH
+      - name: SR2TRPDR_EV
+        data_field: SHARED2_TR_EV_HIGH
+      - name: SR3NOTRPDR_EV
+        data_field: SHARED3_NOTR_EV_HIGH
+      - name: SR3TRPDR_EV
+        data_field: SHARED3_TR_EV_HIGH
+  - file_name: trantrips_ea.omx
+    tables:
+      - name: WLK_SET_set1_ea
+        data_field: WALK_LOC_EA
+      - name: KNR_SET_set1_ea
+        data_field: KNR_LOC_EA        
+      - name: PNR_SET_set1_ea
+        data_field: PNR_LOC_EA
+      - name: WLK_SET_set2_ea
+        data_field: WALK_PRM_EA
+      - name: PNR_SET_set2_ea
+        data_field: PNR_PRM_EA
+      - name: KNR_SET_set2_ea
+        data_field: KNR_PRM_EA
+      - name: WLK_SET_set3_ea
+        data_field: WALK_MIX_EA
+      - name: PNR_SET_set3_ea
+        data_field: PNR_MIX_EA
+      - name: KNR_SET_set3_ea
+        data_field: KNR_MIX_EA
+  - file_name: trantrips_am.omx
+    tables:
+      - name: WLK_SET_set1_am
+        data_field: WALK_LOC_AM
+      - name: KNR_SET_set1_am
+        data_field: KNR_LOC_AM        
+      - name: PNR_SET_set1_am
+        data_field: PNR_LOC_AM
+      - name: WLK_SET_set2_am
+        data_field: WALK_PRM_AM
+      - name: PNR_SET_set2_am
+        data_field: PNR_PRM_AM
+      - name: KNR_SET_set2_am
+        data_field: KNR_PRM_AM
+      - name: WLK_SET_set3_am
+        data_field: WALK_MIX_AM
+      - name: PNR_SET_set3_am
+        data_field: PNR_MIX_AM
+      - name: KNR_SET_set3_am
+        data_field: KNR_MIX_AM
+  - file_name: trantrips_md.omx
+    tables:
+      - name: WLK_SET_set1_md
+        data_field: WALK_LOC_MD
+      - name: KNR_SET_set1_md
+        data_field: KNR_LOC_MD        
+      - name: PNR_SET_set1_md
+        data_field: PNR_LOC_MD
+      - name: WLK_SET_set2_md
+        data_field: WALK_PRM_MD
+      - name: PNR_SET_set2_md
+        data_field: PNR_PRM_MD
+      - name: KNR_SET_set2_md
+        data_field: KNR_PRM_MD
+      - name: WLK_SET_set3_md
+        data_field: WALK_MIX_MD
+      - name: PNR_SET_set3_md
+        data_field: PNR_MIX_MD
+      - name: KNR_SET_set3_md
+        data_field: KNR_MIX_MD 
+  - file_name: trantrips_pm.omx
+    tables:
+      - name: WLK_SET_set1_pm
+        data_field: WALK_LOC_PM
+      - name: KNR_SET_set1_pm
+        data_field: KNR_LOC_PM        
+      - name: PNR_SET_set1_pm
+        data_field: PNR_LOC_PM
+      - name: WLK_SET_set2_pm
+        data_field: WALK_PRM_PM
+      - name: PNR_SET_set2_pm
+        data_field: PNR_PRM_PM
+      - name: KNR_SET_set2_pm
+        data_field: KNR_PRM_PM
+      - name: WLK_SET_set3_pm
+        data_field: WALK_MIX_PM
+      - name: PNR_SET_set3_pm
+        data_field: PNR_MIX_PM
+      - name: KNR_SET_set3_pm
+        data_field: KNR_MIX_PM
+  - file_name: trantrips_ev.omx
+    tables:
+      - name: WLK_SET_set1_ev
+        data_field: WALK_LOC_EV
+      - name: KNR_SET_set1_ev
+        data_field: KNR_LOC_EV        
+      - name: PNR_SET_set1_ev
+        data_field: PNR_LOC_EV
+      - name: WLK_SET_set2_ev
+        data_field: WALK_PRM_EV
+      - name: PNR_SET_set2_ev
+        data_field: PNR_PRM_EV
+      - name: KNR_SET_set2_ev
+        data_field: KNR_PRM_EV
+      - name: WLK_SET_set3_ev
+        data_field: WALK_MIX_EV
+      - name: PNR_SET_set3_ev
+        data_field: PNR_MIX_EV
+      - name: KNR_SET_set3_ev
+        data_field: KNR_MIX_EV
+  - file_name: nmottrips_ea.omx
+    tables:
       - name: WALK_EA
         data_field: WALK_EA
       - name: BIKE_EA
         data_field: BIKE_EA
-  - file_name: trips_ea_tap.omx
-    is_tap: True
+  - file_name: nmottrips_am.omx
     tables:
-      - name: WALK_TRANSIT_EA
-        data_field: WALK_TRANSIT_EA
-      - name: DRIVE_TRANSIT_EA
-        data_field: DRIVE_TRANSIT_EA
-  - file_name: trips_am.omx
-    tables:
-      - name: DRIVEALONE_AM
-        data_field: DRIVEALONE_AM
-      - name: SHARED2_AM
-        data_field: SHARED2_AM
-      - name: SHARED3_AM
-        data_field: SHARED3_AM
       - name: WALK_AM
         data_field: WALK_AM
       - name: BIKE_AM
         data_field: BIKE_AM
-  - file_name: trips_am_tap.omx
-    is_tap: True
+  - file_name: nmottrips_md.omx
     tables:
-      - name: WALK_TRANSIT_AM
-        data_field: WALK_TRANSIT_AM
-      - name: DRIVE_TRANSIT_AM
-        data_field: DRIVE_TRANSIT_AM
-  - file_name: trips_md.omx
-    tables:
-      - name: DRIVEALONE_MD
-        data_field: DRIVEALONE_MD
-      - name: SHARED2_MD
-        data_field: SHARED2_MD
-      - name: SHARED3_MD
-        data_field: SHARED3_MD
       - name: WALK_MD
         data_field: WALK_MD
       - name: BIKE_MD
         data_field: BIKE_MD
-  - file_name: trips_md_tap.omx
-    is_tap: True
+  - file_name: nmottrips_pm.omx
     tables:
-      - name: WALK_TRANSIT_MD
-        data_field: WALK_TRANSIT_MD
-      - name: DRIVE_TRANSIT_MD
-        data_field: DRIVE_TRANSIT_MD
-  - file_name: trips_pm.omx
-    tables:
-      - name: DRIVEALONE_PM
-        data_field: DRIVEALONE_PM
-      - name: SHARED2_PM
-        data_field: SHARED2_PM
-      - name: SHARED3_PM
-        data_field: SHARED3_PM
       - name: WALK_PM
         data_field: WALK_PM
       - name: BIKE_PM
         data_field: BIKE_PM
-  - file_name: trips_pm_tap.omx
-    is_tap: True
+  - file_name: nmottrips_ev.omx
     tables:
-      - name: WALK_TRANSIT_PM
-        data_field: WALK_TRANSIT_PM
-      - name: DRIVE_TRANSIT_PM
-        data_field: DRIVE_TRANSIT_PM
-  - file_name: trips_ev.omx
-    tables:
-      - name: DRIVEALONE_EV
-        data_field: DRIVEALONE_EV
-      - name: SHARED2_EV
-        data_field: SHARED2_EV
-      - name: SHARED3_EV
-        data_field: SHARED3_EV
       - name: WALK_EV
         data_field: WALK_EV
       - name: BIKE_EV
         data_field: BIKE_EV
-  - file_name: trips_ev_tap.omx
-    is_tap: True
-    tables:
-      - name: WALK_TRANSIT_EV
-        data_field: WALK_TRANSIT_EV
-      - name: DRIVE_TRANSIT_EV
-        data_field: DRIVE_TRANSIT_EV
 
 CONSTANTS:
   time_periods:
@@ -130,3 +375,5 @@ CONSTANTS:
   # SHARED2 and SHARED3 Occupancies
   OCC_SHARED2: 2.0
   OCC_SHARED3: 3.33
+  vot_threshold_low: 8.81
+  vot_threshold_med: 18.00
