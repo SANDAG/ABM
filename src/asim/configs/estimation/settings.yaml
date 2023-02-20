@@ -10,26 +10,26 @@ input_table_list:
   - tablename: households
     filename: override_households.csv
     index_col: household_id
-    keep_columns:
-      - home_zone_id
-      - income
-      - hhsize
-      - HHT
-      - auto_ownership
-      - num_workers
-      - bldgsz
+    # keep_columns:
+    #   - home_zone_id
+    #   - income
+    #   - hhsize
+    #   - HHT
+    #   - auto_ownership
+    #   - num_workers
+    #   - bldgsz
   - tablename: persons
     filename: override_persons.csv
     index_col: person_id
-    keep_columns:
-      - household_id
-      - age
-      - PNUM
-      - sex
-      - pemploy
-      - pstudent
-      - ptype
-      - educ
+    # keep_columns:
+    #   - household_id
+    #   - age
+    #   - PNUM
+    #   - sex
+    #   - pemploy
+    #   - pstudent
+    #   - ptype
+    #   - educ
   - tablename: land_use
     filename: land_use.csv
     index_col: zone_id

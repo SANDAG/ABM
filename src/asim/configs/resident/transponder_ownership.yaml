@@ -4,6 +4,8 @@ COEFFICIENTS: transponder_ownership_coefficients.csv
 
 LOGIT_TYPE: MNL
 
+TRANSPONDER_OWNERSHIP_ALT: 1
+
 preprocessor:
   SPEC: transponder_ownership_preprocessor
   DF: df

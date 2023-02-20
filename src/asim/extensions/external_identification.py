@@ -77,9 +77,9 @@ def external_identification(
     nest_spec = config.get_logit_model_settings(model_settings)
 
     if estimator:
-        estimator.write_model_settings(model_settings, model_settings_file_name)
+        estimator.write_model_settings(model_settings, model_settings['_yaml_file_name'])
         estimator.write_spec(model_settings)
-        estimator.write_coefficients(coefficients_df)
+        estimator.write_coefficients(coefficients_df, model_settings)
         estimator.write_choosers(choosers)
 
     choices = simulate.simple_simulate(
@@ -111,6 +111,7 @@ def external_worker_identification(
     trace_label = "external_worker_identification"
     model_settings_file_name = "external_worker_identification.yaml"
     model_settings = config.read_model_settings(model_settings_file_name)
+    model_settings['_yaml_file_name'] = model_settings_file_name
 
     estimator = estimation.manager.begin_estimation(trace_label)
 
@@ -126,17 +127,17 @@ def external_worker_identification(
     external_col_name = model_settings["EXTERNAL_COL_NAME"]
     internal_col_name = model_settings["INTERNAL_COL_NAME"]
 
-    persons = persons.to_frame()
-    persons[external_col_name] = (
-        (choices == 0).reindex(persons.index).fillna(False).astype(bool)
-    )
-    persons[internal_col_name] = persons[filter_col] & ~persons[external_col_name]
-
     if estimator:
         estimator.write_choices(choices)
         choices = estimator.get_survey_values(choices, "persons", trace_label)
         estimator.write_override_choices(choices)
         estimator.end_estimation()
+
+    persons = persons.to_frame()
+    persons[external_col_name] = (
+        (choices == 0).reindex(persons.index).fillna(False).astype(bool)
+    )
+    persons[internal_col_name] = persons[filter_col] & ~persons[external_col_name]
 
     pipeline.replace_table("persons", persons)
 
@@ -163,6 +164,7 @@ def external_student_identification(
     trace_label = "external_student_identification"
     model_settings_file_name = "external_student_identification.yaml"
     model_settings = config.read_model_settings(model_settings_file_name)
+    model_settings['_yaml_file_name'] = model_settings_file_name
 
     estimator = estimation.manager.begin_estimation(trace_label)
 
@@ -177,17 +179,17 @@ def external_student_identification(
     external_col_name = model_settings["EXTERNAL_COL_NAME"]
     internal_col_name = model_settings["INTERNAL_COL_NAME"]
 
-    persons = persons.to_frame()
-    persons[external_col_name] = (
-        (choices == 0).reindex(persons.index).fillna(False).astype(bool)
-    )
-    persons[internal_col_name] = persons[filter_col] & ~persons[external_col_name]
-
     if estimator:
         estimator.write_choices(choices)
         choices = estimator.get_survey_values(choices, "persons", trace_label)
         estimator.write_override_choices(choices)
         estimator.end_estimation()
+
+    persons = persons.to_frame()
+    persons[external_col_name] = (
+        (choices == 0).reindex(persons.index).fillna(False).astype(bool)
+    )
+    persons[internal_col_name] = persons[filter_col] & ~persons[external_col_name]
 
     pipeline.replace_table("persons", persons)
 
@@ -241,6 +243,7 @@ def external_non_mandatory_identification(
     trace_label = "external_non_mandatory_identification"
     model_settings_file_name = "external_non_mandatory_identification.yaml"
     model_settings = config.read_model_settings(model_settings_file_name)
+    model_settings['_yaml_file_name'] = model_settings_file_name
 
     estimator = estimation.manager.begin_estimation(trace_label)
 
@@ -251,13 +254,13 @@ def external_non_mandatory_identification(
         model_settings, estimator, choosers, network_los, chunk_size, trace_label
     )
 
-    tours = set_external_tour_variables(tours, choices, model_settings, trace_label)
-
     if estimator:
         estimator.write_choices(choices)
         choices = estimator.get_survey_values(choices, "tours", trace_label)
         estimator.write_override_choices(choices)
         estimator.end_estimation()
+
+    tours = set_external_tour_variables(tours, choices, model_settings, trace_label)
 
     pipeline.replace_table("tours", tours)
 
@@ -285,6 +288,7 @@ def external_joint_tour_identification(
     trace_label = "external_joint_tour_identification"
     model_settings_file_name = "external_joint_tour_identification.yaml"
     model_settings = config.read_model_settings(model_settings_file_name)
+    model_settings['_yaml_file_name'] = model_settings_file_name
 
     estimator = estimation.manager.begin_estimation(trace_label)
 
@@ -301,13 +305,13 @@ def external_joint_tour_identification(
         choices = pd.Series(1, index=choosers.index)
         tracing.no_results(trace_label)
 
-    tours = set_external_tour_variables(tours, choices, model_settings, trace_label)
-
     if estimator:
         estimator.write_choices(choices)
         choices = estimator.get_survey_values(choices, "tours", trace_label)
         estimator.write_override_choices(choices)
         estimator.end_estimation()
+
+    tours = set_external_tour_variables(tours, choices, model_settings, trace_label)
 
     pipeline.replace_table("tours", tours)
 
