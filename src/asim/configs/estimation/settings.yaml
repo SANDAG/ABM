@@ -90,6 +90,8 @@ models:
   - school_location
   - workplace_location
   - work_from_home
+  - transit_pass_subsidy
+  - transit_pass_ownership
   - auto_ownership_simulate
   - vehicle_type_choice
   - transponder_ownership

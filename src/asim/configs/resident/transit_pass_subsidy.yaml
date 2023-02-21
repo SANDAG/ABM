@@ -1,0 +1,14 @@
+SPEC: transit_pass_subsidy.csv
+COEFFICIENTS: transit_pass_subsidy_coefficients.csv
+
+#LOGIT_TYPE: NL
+LOGIT_TYPE: MNL
+
+preprocessor:
+  SPEC: transit_pass_subsidy_preprocessor
+  DF: persons
+  TABLES:
+    - accessibility
+    - land_use
+
+CHOOSER_FILTER_COLUMN_NAME: transit_subsidy_available
