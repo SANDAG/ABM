@@ -76,6 +76,7 @@ TOOLBOX_ORDER = 21
 import inro.modeller as _m
 import inro.emme.core.exception as _except
 import inro.emme.database.emmebank as _eb
+
 import traceback as _traceback
 from copy import deepcopy as _copy
 from collections import defaultdict as _defaultdict
@@ -88,6 +89,7 @@ import math
 
 gen_utils = _m.Modeller().module("sandag.utilities.general")
 dem_utils = _m.Modeller().module("sandag.utilities.demand")
+desktop = _m.Modeller().desktop
 
 
 class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
@@ -201,6 +203,9 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                     transit_emmebank.delete_scenario(scenario_id)
                 else:
                     raise Exception("scenario_id: scenario %s already exists" % scenario_id)
+            
+            copy_att = _m.Modeller().tool("inro.emme.data.network.copy_attribute")
+            netcalc = _m.Modeller().tool("inro.emme.network_calculation.network_calculator")
 
             scenario = transit_emmebank.create_scenario(scenario_id)
             scenario.title = scenario_title[:80]
@@ -325,12 +330,33 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             dst_attrs = ["data2"]
             if scenario.has_traffic_results and "@auto_time" in scenario.attributes("LINK"):
                 src_attrs.append("@auto_time")
+                #change auto_time to data1; this way dst_attrs = ["data2", "data1"] which is basically [ul2,ul1], and the @auto_time will be copied to ul1, instead of auto_time
+                #then in the import_network, change the definiton o tf1 to ul1
                 dst_attrs.append("auto_time")
             values = network.get_attribute_values("LINK", src_attrs)
             network.set_attribute_values("LINK", dst_attrs, values)
+
             scenario.publish_network(network)
+            # spec = {
+            #     "result": "ul2",
+            #     "expression": "ul2 + timau",
+            #     "selections": {
+            #         "link": "all",
+            #     },        
+            #     "type": "NETWORK_CALCULATION"
+            # }      
+            # netcalc[spec, scenario, ]
+            
+            ##copying auto_time to ul1, so it does not get qiped when transit connectors are created. 
+            if scenario.has_traffic_results and "@auto_time" in scenario.attributes("LINK"):
+                copy_att(from_attribute_name='timau',
+                to_attribute_name='ul1',
+                from_scenario=scenario,
+                to_scenario=scenario)
 
             return scenario
+        
+
 
     # @_m.logbook_trace("Convert TAP nodes to centroids")
     # def taps_to_centroids(self, network):

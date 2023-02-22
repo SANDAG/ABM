@@ -244,7 +244,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         init_matrices = modeller.tool("sandag.initialize.initialize_matrices")
         import_demand = modeller.tool("sandag.import.import_seed_demand")
         build_transit_scen = modeller.tool("sandag.assignment.build_transit_scenario")
-        create_transit_connector = modeller.tool("sandag.assignment.create_transit_connector")
+        create_transit_connector = modeller.tool("sandag.import.create_transit_connector")
         transit_assign = modeller.tool("sandag.assignment.transit_assignment")
         run_truck = modeller.tool("sandag.model.truck.run_truck_model")
         external_internal = modeller.tool("sandag.model.external_internal")
@@ -398,8 +398,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         data_table_name=scenarioYear,
                         overwrite=True,
                         emmebank=main_emmebank)
+                    
+                    # Create transit connectors
+                    # period = "AM"
+                    # create_transit_connector(period, base_scenario, create_connectors=True)
                 
-
                     if "modify_network.py" in os.listdir(os.getcwd()):
                         try:
                             with _m.logbook_trace("Modify network script"):
@@ -412,7 +415,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     if not skipInputChecker:
                         input_checker(path=self._path)
 
-                    # export_tap_adjacent_lines(_join(output_dir, "tapLines.csv"), base_scenario)
                     # parse vehicle availablility file by time-of-day
                     availability_file = "vehicle_class_availability.csv"
                     availabilities = self.parse_availability_file(_join(input_dir, availability_file), periods)
@@ -435,8 +437,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         scenario.title = title 
                         # Apply availabilities by facility and vehicle class to this time period
                         self.apply_availabilities(period, scenario, availabilities)
-                        # Create transit connectors
-                        create_transit_connector(period, scenario, create_connectors=True)
+                        
                 else:
                     base_scenario = main_emmebank.scenario(scenario_id)
 
@@ -453,8 +454,8 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     transit_scenario = init_transit_db(base_scenario, add_database=not useLocalDrive)
                     transit_emmebank = transit_scenario.emmebank
                     transit_components = ["transit_skims"]
-                    # if not skipCopyWarmupTripTables:
-                    #     transit_components.append("transit_demand")
+                    if not skipCopyWarmupTripTables:
+                        transit_components.append("transit_demand")
                     init_matrices(transit_components, periods, transit_scenario, deleteAllMatrices)
                 else:
                     transit_emmebank = _eb.Emmebank(_join(self._path, "emme_project", "Database_transit", "emmebank"))
@@ -513,13 +514,15 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                                 scenario_id=src_period_scenario.id,
                                 scenario_title="%s %s transit assign" % (base_scenario.title, period),
                                 data_table_name=scenarioYear, overwrite=True)
+                        
+                            create_transit_connector(period, transit_assign_scen, create_connectors=True)
                                 
                             transit_assign(period, transit_assign_scen, data_table_name=scenarioYear,
                                            skims_only=True, num_processors=num_processors)
                             
-                            omx_file = _join(output_dir, "transit_skims_" + period + ".omx")
-                            period_list = [period]
-                            export_transit_skims(omx_file, period_list, transit_scenario)
+                            # omx_file = _join(output_dir, "transit_skims_" + period + ".omx")
+                            # period_list = [period]
+                            # export_transit_skims(omx_file, period_list, transit_scenario)
 
                         
 

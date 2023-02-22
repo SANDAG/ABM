@@ -1951,7 +1951,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         create_function("fp1", "up1", emmebank=emmebank)  # fixed cost turns stored in turn data 1 (up1)
 
         # buses in mixed traffic, use auto time
-        create_function("ft1", "timau", emmebank=emmebank)
+        create_function("ft1", "ul1", emmebank=emmebank)
         # fixed speed for separate guideway operations
         create_function("ft2", "ul2", emmebank=emmebank)
         # special 0-cost segments for prohibition of walk to different stop from centroid

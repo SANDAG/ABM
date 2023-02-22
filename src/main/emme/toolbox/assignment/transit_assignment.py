@@ -182,8 +182,8 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
             "self": str(self)
         }
         self.scenario = scenario
-        if not scenario.has_traffic_results:
-            raise Exception("missing traffic assignment results for period %s scenario %s" % (period, scenario))
+        # if not scenario.has_traffic_results:
+        #     raise Exception("missing traffic assignment results for period %s scenario %s" % (period, scenario))
         emmebank = scenario.emmebank
         with self.setup(attrs):
             gen_utils.log_snapshot("Transit assignment", str(self), attrs)
