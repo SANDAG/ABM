@@ -40,8 +40,6 @@ is_worker,is_worker,"persons.pemploy.isin([PEMPLOY_FULL, PEMPLOY_PART])"
 is_fulltime_worker,is_fulltime_worker,"persons.pemploy == 1"
 is_parttime_worker,is_parttime_worker,"persons.pemploy == 2"
 #extrnal model variable initialization treating everyone as internal initially,,
-,is_internal_student,is_student
-,is_external_student,0
 ,is_internal_worker,is_worker
 ,is_external_worker,0
 #,,

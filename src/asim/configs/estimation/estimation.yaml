@@ -2,11 +2,10 @@
 enable: True
 
 bundles:
-  - external_student_identification
+  - work_from_home
   - external_worker_identification
   - school_location
   - workplace_location
-  - work_from_home
   - auto_ownership
   - vehicle_type_choice
   - transponder_ownership
@@ -106,11 +105,10 @@ estimation_table_recipes:
 
 
 model_estimation_table_types:
-  external_student_identification: simple_simulate
+  work_from_home: simple_simulate
   external_worker_identification: simple_simulate
   school_location: interaction_sample_simulate
   workplace_location:  interaction_sample_simulate
-  work_from_home: simple_simulate
   auto_ownership: simple_simulate
   vehicle_type_choice: interaction_simulate
   transponder_ownership: simple_simulate

@@ -117,7 +117,7 @@ distributed_time_factor_nonwork_stddev: 0.6
 distributed_time_factor_min: 0.1
 distributed_time_factor_max: 10
 
-resume_after:
+resume_after: compute_disaggregate_accessibility
 
 models:
   ### mp_init_proto_pop (single process)
@@ -131,9 +131,7 @@ models:
   - compute_accessibility
   ### mp_households
   - work_from_home
-  - external_student_identification
   - external_worker_identification
-  - external_school_location
   - external_workplace_location
   - school_location
   - workplace_location
