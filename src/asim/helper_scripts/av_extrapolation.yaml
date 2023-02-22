@@ -1,0 +1,570 @@
+min_fit_year: 2010
+max_extension: 2050
+
+variables_to_extrapolate:
+  - NumMakes
+  - NumModels
+  - MPG
+  - Range
+  - NewPrice
+  - auto_operating_cost
+
+body_types:
+  - Car
+  - Car-AV
+  - Van
+  - Van-AV
+  - SUV
+  - SUV-AV
+  - Pickup
+  - Pickup-AV
+  - Motorcycle
+
+fuel_types:
+  - Gas
+  - Diesel
+  - Hybrid
+  - PEV
+  - BEV
+
+NumMakes:
+  # Car NumMakes
+  Car_Gas:
+    method: assert_values
+    years: 2035
+    values: 2
+  Car_Diesel:
+    method: assert_values
+    years: 2030
+    values: 0
+  Car_Hybrid:
+    method: assert_values
+    years: [2030, 2050]
+    values: [20, 10]
+  Car_PEV:
+    method: assert_values
+    years: [2030, 2050]
+    values: [20, 25]
+  Car_BEV:
+    method: assert_values
+    years: [2030, 2050]
+    values: [25, 30]
+  Car-AV_BEV:
+    method: assert_values
+    years: [2030, 2050]
+    values: [1, 15]
+  Car-AV_PEV:
+    method: assert_values
+    years: [2030, 2050]
+    values: [1, 10]
+  # Van NumMakes
+  Van_Gas:
+    method: assert_values
+    years: 2035
+    values: 2
+  Van_Hybrid:
+    method: assert_values
+    years: [2030, 2050]
+    values: [1, 3]
+  Van_PEV:
+    method: assert_values
+    years: [2035, 2050]
+    values: [1, 5]
+  Van_BEV:
+    method: assert_values
+    years: [2020, 2030, 2050]
+    values: [1, 6, 4]
+  Van-AV_BEV:
+    method: assert_values
+    years: [2030, 2050]
+    values: [1, 5]
+  Van-AV_PEV:
+    method: assert_values
+    years: [2030, 2050]
+    values: [1, 3]
+  # SUV NumMakes
+  SUV_Gas:
+    method: assert_values
+    years: 2035
+    values: 3
+  SUV_Diesel:
+    method: assert_values
+    years: 2030
+    values: 0
+  SUV_Hybrid:
+    method: assert_values
+    years: [2030, 2050]
+    values: [10, 3]
+  SUV_PEV:
+    method: assert_values
+    years: [2030, 2050]
+    values: [3, 5]
+  SUV_BEV:
+    method: assert_values
+    years: [2030, 2050]
+    values: [20, 23]
+  SUV-AV_BEV:
+    method: assert_values
+    years: [2030, 2050]
+    values: [1, 10]
+  SUV-AV_PEV:
+    method: assert_values
+    years: [2030, 2050]
+    values: [1, 5]
+  # Pickup NumMakes
+  Pickup_Gas:
+    method: assert_values
+    years: 2035
+    values: 3
+  Pickup_Diesel:
+    method: assert_values
+    years: 2035
+    values: 2
+  Pickup_Hybrid:
+    method: assert_values
+    years: [2030, 2050]
+    values: [2, 0]
+  Pickup_PEV:
+    method: assert_values
+    years: [2025, 2050]
+    values: [2, 1]
+  Pickup_BEV:
+    method: assert_values
+    years: [2030, 2050]
+    values: [4, 3]
+  Pickup-AV_BEV:
+    method: assert_values
+    years: [2030, 2050]
+    values: [1, 3]
+  Pickup-AV_PEV:
+    method: assert_values
+    years: [2030, 2050]
+    values: [1, 2]
+  # Motorcycle NumMakes
+  Motorcycle_Gas:
+    method: assert_values
+    years: [2030, 2050]
+    values: [8, 4]
+  Motorcycle_BEV:
+    method: assert_values
+    years: [2030, 2050]
+    values: [2, 6]
+
+
+NumModels:
+  # Car NumModels
+  Car_Gas:
+    method: assert_values
+    years: 2035
+    values: 50
+  Car_Diesel:
+    method: assert_values
+    years: 2030
+    values: 0
+  Car_Hybrid:
+    method: assert_values
+    years: [2030, 2050]
+    values: [150, 20]
+  Car_PEV:
+    method: assert_values
+    years: [2030, 2050]
+    values: [100, 10]
+  Car_BEV:
+    method: assert_values
+    years: [2030, 2050]
+    values: [300, 250]
+  Car-AV_BEV:
+    method: assert_values
+    years: [2030, 2050]
+    values: [10, 150]
+  Car-AV_PEV:
+    method: assert_values
+    years: [2030, 2050]
+    values: [5, 50]
+  # Van NumModels
+  Van_Gas:
+    method: assert_values
+    years: 2035
+    values: 5
+  Van_Hybrid:
+    method: assert_values
+    years: [2025, 2050]
+    values: [2, 1]
+  Van_PEV:
+    method: assert_values
+    years: [2035, 2050]
+    values: [3, 2]
+  Van_BEV:
+    method: assert_values
+    years: [2020, 2030, 2050]
+    values: [1, 20, 10]
+  Van-AV_BEV:
+    method: assert_values
+    years: [2030, 2050]
+    values: [1, 8]
+  Van-AV_PEV:
+    method: assert_values
+    years: [2030, 2050]
+    values: [1, 4]
+  # SUV NumModels
+  SUV_Gas:
+    method: assert_values
+    years: 2035
+    values: 40
+  SUV_Diesel:
+    method: assert_values
+    years: 2030
+    values: 0
+  SUV_Hybrid:
+    method: assert_values
+    years: [2030, 2050]
+    values: [15, 5]
+  SUV_PEV:
+    method: assert_values
+    years: [2030, 2050]
+    values: [15, 10]
+  SUV_BEV:
+    method: assert_values
+    years: [2030, 2050]
+    values: [100, 150]
+  SUV-AV_BEV:
+    method: assert_values
+    years: [2029, 2030, 2040, 2050]
+    values: [0, 15, 50, 150]
+  SUV-AV_PEV:
+    method: assert_values
+    years: [2029, 2030, 2040, 2050]
+    values: [0, 5, 10, 50]
+  # Pickup NumModels
+  Pickup_Gas:
+    method: assert_values
+    years: 2035
+    values: 20
+  Pickup_Diesel:
+    method: assert_values
+    years: 2035
+    values: 5
+  Pickup_Hybrid:
+    method: assert_values
+    years: [2030, 2050]
+    values: [10, 5]
+  Pickup_PEV:
+    method: assert_values
+    years: [2025, 2050]
+    values: [20, 10]
+  Pickup_BEV:
+    method: assert_values
+    years: [2030, 2050]
+    values: [30, 45]
+  Pickup-AV_BEV:
+    method: assert_values
+    years: [2029, 2030, 2050]
+    values: [0, 5, 50]
+  Pickup-AV_PEV:
+    method: assert_values
+    years: [2029, 2030, 2050]
+    values: [0, 3, 10]
+  # Motorcycle NumModels
+  Motorcycle_Gas:
+    method: assert_values
+    years: [2030, 2050]
+    values: [15, 10]
+  Motorcycle_BEV:
+    method: assert_values
+    years: [2030, 2050]
+    values: [10, 20]
+
+MPG:
+  # Car MPG
+  Car_Gas:
+    method: percentage_change
+    annual_per_change: 0.015
+  Car_Diesel:
+    method: percentage_change
+    annual_per_change: 0.015
+  Car_Hybrid:
+    method: percentage_change
+    annual_per_change: 0.015
+  Car_PEV:
+    method: percentage_change
+    annual_per_change: 0.015
+  Car_BEV:
+    method: percentage_change
+    annual_per_change: 0.015
+  Car-AV_BEV:
+    method: percentage_change
+    annual_per_change: 0.015
+    start_value: 110
+  Car-AV_PEV:
+    method: percentage_change
+    annual_per_change: 0.015
+    start_value: 35
+  # Van MPG
+  Van_Gas:
+    method: percentage_change
+    annual_per_change: 0.015
+  Van_Hybrid:
+    method: percentage_change
+    annual_per_change: 0.015
+  Van_PEV:
+    method: percentage_change
+    annual_per_change: 0.015
+    start_value: 30
+  Van_BEV:
+    method: percentage_change
+    annual_per_change: 0.015
+    start_value: 30
+  Van-AV_BEV:
+    method: percentage_change
+    annual_per_change: 0.015
+    start_value: 100
+  Van-AV_PEV:
+    method: percentage_change
+    annual_per_change: 0.015
+    start_value: 30
+  # SUV MPG
+  SUV_Gas:
+    method: percentage_change
+    annual_per_change: 0.015
+  SUV_Diesel:
+    method: percentage_change
+    annual_per_change: 0.015
+  SUV_Hybrid:
+    method: percentage_change
+    annual_per_change: 0.015
+  SUV_PEV:
+    method: percentage_change
+    annual_per_change: 0.015
+  SUV_BEV:
+    method: percentage_change
+    annual_per_change: 0.015
+  SUV-AV_BEV:
+    method: percentage_change
+    annual_per_change: 0.015
+    start_value: 100
+  SUV-AV_PEV:
+    method: percentage_change
+    annual_per_change: 0.015
+    start_value: 33
+  # Pickup MPG
+  Pickup_Gas:
+    method: percentage_change
+    annual_per_change: 0.015
+  Pickup_Diesel:
+    method: percentage_change
+    annual_per_change: 0.015
+  Pickup_Hybrid:
+    method: percentage_change
+    annual_per_change: 0.015
+  Pickup_PEV:
+    method: percentage_change
+    annual_per_change: 0.015
+    start_value: 40
+  Pickup_BEV:
+    method: percentage_change
+    annual_per_change: 0.015
+    start_value: 80
+  Pickup-AV_BEV:
+    method: percentage_change
+    annual_per_change: 0.015
+    start_value: 85
+  Pickup-AV_PEV:
+    method: percentage_change
+    annual_per_change: 0.015
+    start_value: 40
+  # Motorcycle MPG
+  Motorcycle_Gas:
+    method: percentage_change
+    annual_per_change: 0.015
+  Motorcycle_BEV:
+    method: percentage_change
+    annual_per_change: 0.015
+
+
+Range:
+  # Car Range
+  Car_BEV:
+    method: percentage_change
+    annual_per_change: 0.015
+  Car-AV_BEV:
+    method: percentage_change
+    annual_per_change: 0.015
+    start_value: 150
+  # Van Range
+  Van_BEV:
+    method: percentage_change
+    annual_per_change: 0.015
+    start_value: 125
+  Van-AV_BEV:
+    method: percentage_change
+    annual_per_change: 0.015
+    start_value: 125
+  # SUV Range
+  SUV_BEV:
+    method: percentage_change
+    annual_per_change: 0.015
+  SUV-AV_BEV:
+    method: percentage_change
+    annual_per_change: 0.015
+    start_value: 200
+  # Pickup Range
+  Pickup_BEV:
+    method: percentage_change
+    annual_per_change: 0.015
+    start_value: 150
+  Pickup-AV_BEV:
+    method: percentage_change
+    annual_per_change: 0.015
+    start_value: 150
+  # Motorcycle Range
+  Motorcycle_BEV:
+    method: percentage_change
+    annual_per_change: 0.015
+
+
+NewPrice:
+  # Car NewPrice
+  Car_Gas:
+    method: average
+  Car_Diesel:
+    method: average
+  Car_Hybrid:
+    method: average
+  Car_PEV:
+    method: average
+  Car_BEV:
+    method: average
+  Car-AV_BEV:
+    method: assert_constant
+    value: 60000
+  Car-AV_PEV:
+    method: assert_constant
+    value: 60000
+  # Van NewPrice
+  Van_Gas:
+    method: average
+  Van_Hybrid:
+    method: average
+  Van_PEV:
+    method: average
+  Van_BEV:
+    method: average
+  Van-AV_BEV:
+    method: assert_constant
+    value: 800000
+  Van-AV_PEV:
+    method: assert_constant
+    value: 800000
+  # SUV NewPrice
+  SUV_Gas:
+    method: average
+  SUV_Diesel:
+    method: average
+  SUV_Hybrid:
+    method: average
+  SUV_PEV:
+    method: average
+  SUV_BEV:
+    method: average
+  SUV-AV_BEV:
+    method: assert_constant
+    value: 700000
+  SUV-AV_PEV:
+    method: assert_constant
+    value: 700000
+  # Pickup NewPrice
+  Pickup_Gas:
+    method: average
+  Pickup_Diesel:
+    method: average
+  Pickup_Hybrid:
+    method: average
+  Pickup_PEV:
+    method: average
+  Pickup_BEV:
+    method: average
+  Pickup-AV_BEV:
+    method: assert_constant
+    value: 900000
+  Pickup-AV_PEV:
+    method: assert_constant
+    value: 900000
+  # Motorcycle NewPrice
+  Motorcycle_Gas:
+    method: average
+  Motorcycle_BEV:
+    method: average
+
+
+auto_operating_cost:
+  # Car auto_operating_cost
+  Car_Gas:
+    method: linear
+  Car_Diesel:
+    method: linear
+  Car_Hybrid:
+    method: linear
+  Car_PEV:
+    method: average
+  Car_BEV:
+    method: linear
+  Car-AV_BEV:
+    method: assert_constant
+    value: 10
+  Car-AV_PEV:
+    method: assert_constant
+    value: 15
+  # Van auto_operating_cost
+  Van_Gas:
+    method: linear
+  Van_Hybrid:
+    method: linear
+  Van_PEV:
+    method: linear
+  Van_BEV:
+    method: linear
+  Van-AV_BEV:
+    method: assert_constant
+    value: 16
+  Van-AV_PEV:
+    method: assert_constant
+    value: 17
+  # SUV auto_operating_cost
+  SUV_Gas:
+    method: linear
+  SUV_Diesel:
+    method: linear
+  SUV_Hybrid:
+    method: linear
+  SUV_PEV:
+    method: linear
+  SUV_BEV:
+    method: linear
+  SUV-AV_BEV:
+    method: assert_constant
+    value: 12
+  SUV-AV_PEV:
+    method: assert_constant
+    value: 15
+  # Pickup auto_operating_cost
+  Pickup_Gas:
+    method: linear
+  Pickup_Diesel:
+    method: linear
+  Pickup_Hybrid:
+    method: linear
+  Pickup_PEV:
+    method: linear
+  Pickup_BEV:
+    method: linear
+  Pickup-AV_BEV:
+    method: assert_constant
+    value: 25
+  Pickup-AV_PEV:
+    method: assert_constant
+    value: 27
+  # Motorcycle auto_operating_cost
+  Motorcycle_Gas:
+    method: linear
+  Motorcycle_BEV:
+    method: linear

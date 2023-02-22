@@ -1,0 +1,8 @@
+coefficient_name,value,constrain
+coef_low_income,-1.0,F
+coef_high_income,1.0,F
+coef_hh_head_age_lt_35,0.5,F
+coef_hh_head_age_gt_65,-1.0,F
+coef_per_hour_commute_time,0.25,F
+coef_static,-3.5,F
+coef_av_target_share,0,F
