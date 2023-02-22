@@ -6,7 +6,7 @@ LOGIT_TYPE: MNL
 
 # boolean column to filter choosers (True means keep)
 # will only expose these people to the model
-CHOOSER_FILTER_COLUMN_NAME: is_worker
+CHOOSER_FILTER_COLUMN_NAME: is_out_of_home_worker
 
 # Adds this column to the persons table and is set to True if workplace is external
 EXTERNAL_COL_NAME: is_external_worker

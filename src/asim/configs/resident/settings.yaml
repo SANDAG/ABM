@@ -130,15 +130,16 @@ models:
   ### mp_accessibility
   - compute_accessibility
   ### mp_households
+  - work_from_home
   - external_student_identification
   - external_worker_identification
   - external_school_location
   - external_workplace_location
   - school_location
   - workplace_location
-  - work_from_home
   - transit_pass_subsidy
   - transit_pass_ownership
+  - av_ownership
   - auto_ownership_simulate
   - vehicle_type_choice
   - transponder_ownership
