@@ -36,7 +36,7 @@ def external_school_location(
 
     estimator = estimation.manager.begin_estimation("external_school_location")
     if estimator:
-        write_estimation_specs(
+        estimator.write_estimation_specs(
             estimator, model_settings, "external_school_location.yaml"
         )
 
@@ -74,7 +74,7 @@ def external_workplace_location(
 
     estimator = estimation.manager.begin_estimation("external_workplace_location")
     if estimator:
-        write_estimation_specs(
+        estimator.write_estimation_specs(
             estimator, model_settings, "external_workplace_location.yaml"
         )
 
