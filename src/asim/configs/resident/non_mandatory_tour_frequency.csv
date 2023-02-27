@@ -63,7 +63,7 @@ util_female_and_shopping_tour,Dummy for Female & Shopping Tour,female * shopping
 util_female_and_maintenance_tour,Dummy for Female & Maintenance Tour,female * othmaint,,,coef_female_and_maintenance_tour,,coef_female_and_maintenance_tour,,,
 util_female_and_eatingout_tour,Dummy for Female & EatingOut Tour,female * eatout,,coef_female_and_eatingout_tour,,,coef_female_and_eatingout_tour,,,
 util_female_and_discretionary_tour,Dummy for Female & Discretionary Tour,female * othdiscr,,,,,coef_female_and_discretionary_tour,,,
-util_female_and_discretionary_tour,Dummy for Female & Visiting Tour,female * social,,,coef_female_and_visit_tour,coef_female_and_visit_tour,,,,
+util_female_and_social_tour,Dummy for Female & Visiting Tour,female * social,,,coef_female_and_visit_tour,coef_female_and_visit_tour,,,,
 util_zero_car_ownership_and_tour_frequency_is_2+,Dummy for zero car ownership & tour frequency >=2,no_cars & (tot_tours >= 2),coef_zero_car_ownership_and_tour_frequency_is_2_plus,coef_zero_car_ownership_and_tour_frequency_is_2_plus,,coef_zero_car_ownership_and_tour_frequency_is_2_plus,,,,
 util_car_shortage_vs_workers_and_tour_frequency_is_2+,Dummy for Car Shortage vs Workers & tour frequency >=2,~no_cars & (car_sufficiency < 0) & (tot_tours >= 2),coef_car_shortage_vs_workers_and_tour_frequency_is_2_plus,coef_car_shortage_vs_workers_and_tour_frequency_is_2_plus,,,,,,
 util_car_surplus_vs_workers_and_tour_frequency_is_1+,Dummy for Car Surplus vs Workers & tour frequency >=1,~no_cars & (car_sufficiency > 0) & (tot_tours >= 1),,,coef_car_surplus_vs_workers_and_tour_frequency_is_1_plus,,,,,

@@ -13,7 +13,7 @@ from activitysim.core import expressions
 
 from activitysim.abm.models.util import estimation
 from activitysim.abm.models.util import tour_destination
-from activitysim.abm.models.location_choice import iterate_location_choice
+from activitysim.abm.models.location_choice import iterate_location_choice, write_estimation_specs
 
 from activitysim.core.util import assign_in_place
 
@@ -36,7 +36,7 @@ def external_school_location(
 
     estimator = estimation.manager.begin_estimation("external_school_location")
     if estimator:
-        estimator.write_estimation_specs(
+        write_estimation_specs(
             estimator, model_settings, "external_school_location.yaml"
         )
 
@@ -74,7 +74,7 @@ def external_workplace_location(
 
     estimator = estimation.manager.begin_estimation("external_workplace_location")
     if estimator:
-        estimator.write_estimation_specs(
+        write_estimation_specs(
             estimator, model_settings, "external_workplace_location.yaml"
         )
 

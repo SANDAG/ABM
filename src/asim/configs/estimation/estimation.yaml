@@ -4,8 +4,11 @@ enable: True
 bundles:
   - work_from_home
   - external_worker_identification
+  - external_workplace_location
   - school_location
   - workplace_location
+  - transit_pass_subsidy
+  - transit_pass_ownership
   - auto_ownership
   - vehicle_type_choice
   - transponder_ownership
@@ -107,8 +110,11 @@ estimation_table_recipes:
 model_estimation_table_types:
   work_from_home: simple_simulate
   external_worker_identification: simple_simulate
+  external_workplace_location: interaction_sample_simulate
   school_location: interaction_sample_simulate
   workplace_location:  interaction_sample_simulate
+  transit_pass_subsidy: simple_simulate
+  transit_pass_ownership: simple_simulate
   auto_ownership: simple_simulate
   vehicle_type_choice: interaction_simulate
   transponder_ownership: simple_simulate

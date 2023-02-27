@@ -95,7 +95,7 @@ multiprocess_steps:
         - accessibility
       except: True  # this is needed so landuse (i.e. destinations) doesn't get split
   - name: mp_households
-    begin: external_student_identification
+    begin: work_from_home
     slice:
       tables:
         - households
