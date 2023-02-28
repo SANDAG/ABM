@@ -9,10 +9,10 @@ fill NaN origin purpose with the purpose of last trip,step_1,raw,,,,m = final_tr
 fill NaN origin purpose with the purpose of last trip,step_1,raw,,,,"final_trips.loc[m, 'orig_purpose'] = final_trips.groupby(['person_id','tour_id']).purpose.tail(1).values"
 rename trip purpose to destination purpose,step_1,rename,final_trips,,,"{'primary_purpose': 'tour_purpose','purpose': 'dest_purpose', 'origin': 'orig_mgra', 'destination': 'dest_mgra'}"
 rename,step_1,rename,final_tours,,,"{'primary_purpose': 'tour_purpose','origin': 'orig_mgra', 'destination': 'dest_mgra',  'duration' : 'tourdur'}"
-Get tour origin TAZ,step_1,raw,final_tours,,,final_tours['originTAZ'] = final_tours['orig_mgra'].map(geographicXwalk_PMSA.set_index('mgra')['taz']).fillna(0)
-Get tour destination TAZ,step_1,raw,final_tours,,,final_tours['destinationTAZ'] = final_tours['dest_mgra'].map(geographicXwalk_PMSA.set_index('mgra')['taz']).fillna(0)
-Get trip origin TAZ,step_1,raw,final_trips,,,final_trips['originTAZ'] =final_trips['orig_mgra'].map(geographicXwalk_PMSA.set_index('mgra')['taz']).fillna(0)
-Get trip destination TAZ,step_1,raw,final_trips,,,final_trips['destinationTAZ'] = final_trips['dest_mgra'].map(geographicXwalk_PMSA.set_index('mgra')['taz']).fillna(0)
+Get tour origin TAZ,step_1,raw,final_tours,,,final_tours['originTAZ'] = final_tours['orig_mgra'].map(land_use.set_index('MAZ')['TAZ']).fillna(0)
+Get tour destination TAZ,step_1,raw,final_tours,,,final_tours['destinationTAZ'] = final_tours['dest_mgra'].map(land_use.set_index('MAZ')['TAZ']).fillna(0)
+Get trip origin TAZ,step_1,raw,final_trips,,,final_trips['originTAZ'] =final_trips['orig_mgra'].map(land_use.set_index('MAZ')['TAZ']).fillna(0)
+Get trip destination TAZ,step_1,raw,final_trips,,,final_trips['destinationTAZ'] = final_trips['dest_mgra'].map(land_use.set_index('MAZ')['TAZ']).fillna(0)
 Trip OD raw distance,step_1,skim,final_trips,od_distance,"originTAZ,destinationTAZ",traffic_skims_MD['MD_SOV_TR_H_DIST']
 adjust tour duration (no 0),step_1,raw,,,,final_tours['tourdur'] = final_tours['tourdur'] + 1
 get person number to final tour file,step_1,raw,,,,final_tours['person_num'] = final_tours['person_id'].map(final_persons.set_index('person_id')['PNUM']).fillna(0)
@@ -57,12 +57,12 @@ Add tour distance to joint tour table,step_1,raw,jointTourData_3,,,"jointTourDat
 #,,,,,,
 Get person hh ID and number,step_1,raw,,,,final_persons['hhper_id'] = final_persons['household_id'].astype(str) + '-' + final_persons['PNUM'].astype(str)
 Cap Auto Ownership,step_1,cap,final_households,HHVEH,auto_ownership,4
-get HH taz,step_1,raw,,,,final_persons['HHTAZ'] = final_persons['home_zone_id'].map(geographicXwalk_PMSA.set_index('mgra')['taz']).fillna(0)
-get HH district,step_1,raw,,,,final_persons['HDISTRICT'] = final_persons['home_zone_id'].map(geographicXwalk_PMSA.set_index('mgra')['pmsa']).fillna(0)
-get work taz,step_1,raw,,,,final_persons['WTAZ'] = final_persons['workplace_zone_id'].map(geographicXwalk_PMSA.set_index('mgra')['taz']).fillna(0)
-get work district,step_1,raw,,,,final_persons['WDISTRICT'] = final_persons['workplace_zone_id'].map(geographicXwalk_PMSA.set_index('mgra')['pmsa']).fillna(0)
-get school taz,step_1,raw,,,,final_persons['STAZ'] = final_persons['school_zone_id'].map(geographicXwalk_PMSA.set_index('mgra')['taz']).fillna(0)
-get school district,step_1,raw,,,,final_persons['SDISTRICT'] = final_persons['school_zone_id'].map(geographicXwalk_PMSA.set_index('mgra')['pmsa']).fillna(0)
+get HH taz,step_1,raw,,,,final_persons['HHTAZ'] = final_persons['home_zone_id'].map(land_use.set_index('MAZ')['TAZ']).fillna(0)
+get HH district,step_1,raw,,,,final_persons['HDISTRICT'] = final_persons['home_zone_id'].map(land_use.set_index('MAZ')['pseudomsa']).fillna(0)
+get work taz,step_1,raw,,,,final_persons['WTAZ'] = final_persons['workplace_zone_id'].map(land_use.set_index('MAZ')['TAZ']).fillna(0)
+get work district,step_1,raw,,,,final_persons['WDISTRICT'] = final_persons['workplace_zone_id'].map(land_use.set_index('MAZ')['pseudomsa']).fillna(0)
+get school taz,step_1,raw,,,,final_persons['STAZ'] = final_persons['school_zone_id'].map(land_use.set_index('MAZ')['TAZ']).fillna(0)
+get school district,step_1,raw,,,,final_persons['SDISTRICT'] = final_persons['school_zone_id'].map(land_use.set_index('MAZ')['pseudomsa']).fillna(0)
 Get work location distances,step_1,skim,final_persons,WorkLocationDistance,"HHTAZ,WTAZ",traffic_skims_MD['MD_SOV_TR_H_DIST']
 Get school location distances,step_1,skim,final_persons,SchoolLocationDistance,"HHTAZ,STAZ",traffic_skims_MD['MD_SOV_TR_H_DIST']
 Bin distances to work,step_1,bin,final_persons,workdistbin,WorkLocationDistance,[-99999] + list(range(51)) + [99999]

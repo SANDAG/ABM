@@ -23,7 +23,6 @@ extract:
     - filepath: "C:/ABM3_dev/ABM/src/asim/visualizer/visualizer/data"
       test_size:
       data:
-          - "geographicXwalk_PMSA.csv"
           - "occFactors.csv"
 
 # Specify transformation steps
@@ -44,26 +43,26 @@ transform:
               - table_name: persons
                 include:
                     - final_persons
-                    - geographicXwalk_PMSA 
+                    - land_use 
                 merge_cols:
                     - home_zone_id
-                    - mgra
+                    - MAZ
                 merge_type: left
               - table_name: persons
                 include:
                     - persons
-                    - geographicXwalk_PMSA
+                    - land_use
                 merge_cols:
                     - workplace_zone_id
-                    - mgra
+                    - MAZ
                 merge_type: left
               - table_name: persons
                 include:
                     - persons
-                    - geographicXwalk_PMSA
+                    - land_use
                 merge_cols:
                     - school_zone_id
-                    - mgra
+                    - MAZ
                 merge_type: left
               
           process: True
