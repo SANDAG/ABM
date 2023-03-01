@@ -28,6 +28,7 @@ round trip path is available,_rt_available,(_trPkTime_od > 0) & (_trPkTime_do > 
 decay function,_decay,_rt_available * exp(_trPkTime * dispersion_parameter_transit)
 transit peak retail,trPkRetail,df.emp_retail * _decay
 transit peak total,trPkTotal,df.emp_total * _decay
+transit peak total,trPkHH,df.hh * _decay
 ####,,
 ####,, transit off-peak
 ####,,

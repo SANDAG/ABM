@@ -26,13 +26,14 @@ models:
   ### mp_accessibility
   - compute_accessibility
   ### mp_households
-  - external_student_identification
+  - work_from_home
   - external_worker_identification
-  - external_school_location
   - external_workplace_location
   - school_location
   - workplace_location
-  - work_from_home
+  - transit_pass_subsidy
+  - transit_pass_ownership
+  - av_ownership
   - auto_ownership_simulate
   - vehicle_type_choice
   - transponder_ownership
@@ -94,7 +95,7 @@ multiprocess_steps:
         - accessibility
       except: True  # this is needed so landuse (i.e. destinations) doesn't get split
   - name: mp_households
-    begin: external_student_identification
+    begin: work_from_home
     slice:
       tables:
         - households

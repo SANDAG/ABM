@@ -12,7 +12,7 @@ OUT_PERIOD: 8
 
 DEST_CHOICE_COLUMN_NAME: external_workplace_zone_id
 # comment out DEST_CHOICE_LOGSUM_COLUMN_NAME if not desired in persons table
-DEST_CHOICE_LOGSUM_COLUMN_NAME: external_workplace_location_logsum
+DEST_CHOICE_LOGSUM_COLUMN_NAME: external_workplace_modechoice_logsum
 
 # comment out DEST_CHOICE_LOGSUM_COLUMN_NAME if saved alt logsum table
 DEST_CHOICE_SAMPLE_TABLE_NAME: external_workplace_location_sample

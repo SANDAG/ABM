@@ -360,6 +360,75 @@ def infer_joint_tour_composition(persons, tours, joint_tour_participants):
     return joint_tours.composition.reindex(tours.index).fillna("").astype(str)
 
 
+def infer_joint_tour_frequency_composition(configs_dir, households, persons, tours, joint_tour_participants):
+    tours["composition"] = infer_joint_tour_composition(
+        persons, tours, joint_tour_participants
+    )
+
+    def read_alts():
+        # right now this file just contains the start and end hour
+        alts = pd.read_csv(
+            os.path.join(configs_dir, "joint_tour_frequency_composition_alternatives.csv"),
+            comment="#",
+            index_col="alt",
+        )
+        alts = alts.astype(np.int8)  # - NARROW
+        return alts
+
+    alts = read_alts()
+    alts['joint_tour_frequency_composition'] = alts.index
+
+    joint_tours = tours[tours.tour_category == "joint"].copy()
+
+    purpose_to_alt_num_dict = {
+        "shopping" : 5,
+        "othmaint" : 6,
+        "eatout" : 7,
+        "social" : 8,
+        "othdiscr" : 9,
+    }
+    joint_tours['purpose_num'] = joint_tours['tour_type'].map(purpose_to_alt_num_dict)
+
+    composition_to_alt_num_dict = {
+        'adults': 1,
+        'mixed': 2,
+        'children': 3,
+    }
+    joint_tours['party_num'] = joint_tours['composition'].map(composition_to_alt_num_dict)
+
+    # need to number in order of purpose due to symmetry in alts
+    joint_tours['joint_tour_num'] = joint_tours.sort_values(by=['household_id', 'purpose_num'], ascending=True).groupby('household_id').cumcount() + 1
+
+    # FIXME: could grab max from alts (purpose1, purpose2) => 2
+    assert (joint_tours['joint_tour_num'] <= 2).all(), \
+        "Only max of 2 joint tours per household allowed in joint_tour_frequency_composition model"
+
+    cols = ['purpose1', 'purpose2', 'party1', 'party2']
+    jtfc = joint_tours.pivot(index='household_id', columns='joint_tour_num', values=['purpose_num', 'party_num']).fillna(0)
+    jtfc.columns = cols
+
+    jtfc = jtfc.reset_index().merge(alts, on=cols, how='left').set_index(households.index.name)
+
+    if jtfc.joint_tour_frequency_composition.isna().any():
+        bad_tour_frequencies = jtfc.joint_tour_frequency_composition.isna()
+        logger.warning(
+            "\nWARNING Bad joint tour frequencies: num_tours\n%s"
+            % joint_tours[
+                joint_tours.household_id.isin(households.index[bad_tour_frequencies])
+            ]
+        )
+        assert False, "Bad joint_tour_frequency_composition alternatives"
+    
+    jtfc_alt = jtfc['joint_tour_frequency_composition'].reindex(households.index).fillna(0).astype(int)
+
+    logger.info(
+        "infer_joint_tour_frequency_composition: %s households with joint tours",
+        (jtfc_alt > 0).sum(),
+    )
+
+    return jtfc_alt
+
+
 def infer_tour_scheduling(configs_dir, tours):
     # given start and end periods, infer tdd
 
@@ -825,6 +894,11 @@ def infer(configs_dir, input_dir, output_dir):
         persons, tours, joint_tour_participants
     )
     assert skip_controls or check_controls("tours", "composition")
+
+    households["joint_tour_frequency_composition"] = infer_joint_tour_frequency_composition(
+        configs_dir, households, persons, tours, joint_tour_participants
+    )
+    assert skip_controls or check_controls("tours", "joint_tour_frequency_composition")
 
     # tours.tdd
     tours["tdd"] = infer_tour_scheduling(configs_dir, tours)

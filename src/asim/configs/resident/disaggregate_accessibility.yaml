@@ -116,7 +116,7 @@ CREATE_TABLES:
 MERGE_ON:
   by: # These should be categorical variables at the household level
     - home_zone_id
-    - auto_ownership
+    - auto_ownership_clipped
     - income_segment
 
 # Include any annotations for persons, households, land_use, or tours.

@@ -1,0 +1,13 @@
+Description,Target,Expression
+,_transit_ivt_home_to_work_walk_loc_peak,"skim_dict.lookup(persons.home_zone_id, persons.workplace_zone_id, ('WALK_LOC_TOTALIVTT', 'AM'))"
+,_transit_ivt_home_to_work_walk_prm_peak,"skim_dict.lookup(persons.home_zone_id, persons.workplace_zone_id, ('WALK_PRM_TOTALIVTT', 'AM'))"
+,_transit_ivt_home_to_work_walk_mix_peak,"skim_dict.lookup(persons.home_zone_id, persons.workplace_zone_id, ('WALK_MIX_TOTALIVTT', 'AM'))"
+,_work_transit_walk_available,(_transit_ivt_home_to_work_walk_loc_peak > 0) | (_transit_ivt_home_to_work_walk_prm_peak > 0) | (_transit_ivt_home_to_work_walk_mix_peak > 0)
+,_transit_ivt_home_to_work_drive_loc_peak,"skim_dict.lookup(persons.home_zone_id, persons.workplace_zone_id, ('PNROUT_LOC_TOTALIVTT', 'AM'))"
+,_transit_ivt_home_to_work_drive_prm_peak,"skim_dict.lookup(persons.home_zone_id, persons.workplace_zone_id, ('PNROUT_PRM_TOTALIVTT', 'AM'))"
+,_transit_ivt_home_to_work_drive_mix_peak,"skim_dict.lookup(persons.home_zone_id, persons.workplace_zone_id, ('PNROUT_MIX_TOTALIVTT', 'AM'))"
+,_work_transit_drive_available,(_transit_ivt_home_to_work_drive_loc_peak > 0) | (_transit_ivt_home_to_work_drive_prm_peak > 0) | (_transit_ivt_home_to_work_drive_mix_peak > 0)
+,_work_transit_available,(_work_transit_walk_available > 0) | (_work_transit_drive_available > 0)
+,transit_subsidy_available,(_work_transit_available) & (persons.workplace_zone_id > 0)
+,trn_wk_access_hh,"np.where(persons.workplace_zone_id > 0, reindex(accessibility.trPkHH, persons.workplace_zone_id), 0)"
+,dparkcost_work,"np.where(persons.workplace_zone_id > 0, reindex(land_use.dparkcost, persons.workplace_zone_id), 0)"

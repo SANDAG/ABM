@@ -1,7 +1,6 @@
 shadow_pricing_models:
   school: school_location
   workplace: workplace_location
-  external_nonwork: external_school_location
   external_work: external_workplace_location
 
 # global switch to enable/disable loading of saved shadow prices

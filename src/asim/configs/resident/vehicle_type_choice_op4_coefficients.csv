@@ -1,4 +1,5 @@
 ﻿coefficient_name,value,constrain
+coef_unavail,-999,F
 coef_ln_nmods,.612,F
 coef_ln_nmakes,.247,F
 coef_mpg,0.007,F

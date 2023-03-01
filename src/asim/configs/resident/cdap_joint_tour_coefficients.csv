@@ -19,5 +19,5 @@ Label,description,Expression,dependency,coefficient
 ,Cars Less than Workers,auto_ownership_p1 < num_workers_p1,,0.088402389
 ,Cars More than Workers,auto_ownership_p1 > num_workers_p1,,-0.005896499
 ,Constant - Joint Tour - MTC TM2 Calibration,1,,-0.5918
-,WorkAccessForMandatoryDap,"@np.where(df.workplace_location_logsum_px > 0, df.workplace_location_logsum_px, 0)",M_px,0.17217579
+,WorkAccessForMandatoryDap,"@np.where(df.workplace_modechoice_logsum_px > 0, df.workplace_modechoice_logsum_px, 0)",M_px,0.17217579
 ,If All Adults stay at Home/ None of the Adults have Dap 1 or 2,(ptype_pxprod < 7) | (ptype_pxprod > 6),H_px,-0.988838929

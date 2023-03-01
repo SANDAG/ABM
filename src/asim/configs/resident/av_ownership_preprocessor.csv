@@ -1,0 +1,3 @@
+Description,Target,Expression
+age of the head of household,hhhead_age,persons.groupby('household_id').age.max().reindex(df.index)
+total household commute time,hh_commute_time,persons.groupby('household_id').roundtrip_auto_time_to_work.sum().reindex(df.index)

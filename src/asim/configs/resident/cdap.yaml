@@ -14,7 +14,7 @@ JOINT_TOUR_USEFUL_COLUMNS:
   - income
   - num_workers
   - shopping_accessibility
-  - workplace_location_logsum
+  - workplace_modechoice_logsum
 
 CONSTANTS:
   FULL: 1

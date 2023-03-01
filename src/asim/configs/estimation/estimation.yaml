@@ -2,21 +2,31 @@
 enable: True
 
 bundles:
+  - work_from_home
+  - external_worker_identification
+  - external_workplace_location
   - school_location
   - workplace_location
+  - transit_pass_subsidy
+  - transit_pass_ownership
   - auto_ownership
   - vehicle_type_choice
+  - transponder_ownership
   - free_parking
+  - telecommute_frequency
   - cdap
   - mandatory_tour_frequency
   - mandatory_tour_scheduling_work
   - mandatory_tour_scheduling_school
-  - joint_tour_frequency
-  - joint_tour_composition
+  - mandatory_tour_scheduling_univ
+  - school_escorting
+  - joint_tour_frequency_composition
+  - external_joint_tour_identification
   - joint_tour_participation
   - joint_tour_destination
   - joint_tour_scheduling
   - non_mandatory_tour_frequency
+  - external_non_mandatory_identification
   - non_mandatory_tour_destination
   - non_mandatory_tour_scheduling
   - tour_mode_choice
@@ -98,21 +108,31 @@ estimation_table_recipes:
 
 
 model_estimation_table_types:
+  work_from_home: simple_simulate
+  external_worker_identification: simple_simulate
+  external_workplace_location: interaction_sample_simulate
   school_location: interaction_sample_simulate
   workplace_location:  interaction_sample_simulate
+  transit_pass_subsidy: simple_simulate
+  transit_pass_ownership: simple_simulate
   auto_ownership: simple_simulate
   vehicle_type_choice: interaction_simulate
+  transponder_ownership: simple_simulate
   free_parking: simple_simulate
+  telecommute_frequency: simple_simulate
   cdap: cdap_simulate
   mandatory_tour_frequency: simple_simulate
   mandatory_tour_scheduling_work: interaction_sample_simulate
   mandatory_tour_scheduling_school: interaction_sample_simulate
-  joint_tour_frequency: simple_simulate
-  joint_tour_composition: simple_simulate
+  mandatory_tour_scheduling_univ: interaction_sample_simulate
+  school_escorting: interaction_sample_simulate
+  joint_tour_frequency_composition: interaction_simulate
+  external_joint_tour_identification: simple_simulate
   joint_tour_participation: simple_simulate
   joint_tour_destination: interaction_sample_simulate
   joint_tour_scheduling: interaction_sample_simulate
   non_mandatory_tour_frequency: interaction_simulate
+  external_non_mandatory_identification: simple_simulate
   non_mandatory_tour_destination: interaction_sample_simulate
   non_mandatory_tour_scheduling: interaction_sample_simulate
   tour_mode_choice: simple_simulate
