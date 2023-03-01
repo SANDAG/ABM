@@ -22,7 +22,7 @@ class Series15_Processor:
         assert os.path.isdir(self.output_dir), f"Cannot find output directory {self.output_dir}"
 
         self.ext_data_file = os.path.join(self.input_dir, 'externalInternalControlTotalsByYear.csv')
-        self.landuse_file = os.path.join(self.input_dir, 'mgra15_based_input2019_rev.csv')
+        self.landuse_file = os.path.join(self.input_dir, 'mgra15_based_input2019.csv')
         self.trans_access_file = os.path.join(self.input_dir, 'transponderModelAccessibilities.csv')
 
         self.maz_ext_taz_xwalk_file = os.path.join(self.input_dir, 'closest_maz_to_external_tazs.csv')
@@ -118,6 +118,7 @@ class Series15_Processor:
     def pre_process_landuse(self):
         landuse = pd.read_csv(self.landuse_file)
         landuse['MAZ'] = landuse['mgra']
+        landuse['TAZ'] = landuse['taz']
 
         # dropping crossborder columns
         cols_to_drop = [col for col in landuse.columns if '_wait_' in col]
