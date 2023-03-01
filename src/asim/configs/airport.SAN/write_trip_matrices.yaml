@@ -39,12 +39,33 @@ MATRICES:
       - name: SR3_EA
         data_field: SHARED3_EA_HIGH
   - file_name: tranairporttrips.san_ea.omx
-    is_tap: True
     tables:
       - name: WALK_TRANSIT_EA
         data_field: WALK_TRANSIT_EA
-      - name: DRIVE_TRANSIT_EA
-        data_field: DRIVE_TRANSIT_EA
+      - name: KNR_LOCOUT_EA
+        data_field: KNR_LOCOUT_EA
+      - name: KNR_PRMOUT_EA
+        data_field: KNR_PRMOUT_EA        
+      - name: KNR_MIXOUT_EA
+        data_field: KNR_MIXOUT_EA        
+      - name: TNC_LOCOUT_EA
+        data_field: TNC_LOCOUT_EA
+      - name: TNC_PRMOUT_EA
+        data_field: TNC_PRMOUT_EA        
+      - name: TNC_MIXOUT_EA
+        data_field: TNC_MIXOUT_EA        
+      - name: KNR_LOCIN_EA
+        data_field: KNR_LOCIN_EA
+      - name: KNR_PRMIN_EA
+        data_field: KNR_PRMIN_EA        
+      - name: KNR_MIXIN_EA
+        data_field: KNR_MIXIN_EA        
+      - name: TNC_LOCIN_EA
+        data_field: TNC_LOCIN_EA
+      - name: TNC_PRMIN_EA
+        data_field: TNC_PRMIN_EA        
+      - name: TNC_MIXIN_EA
+        data_field: TNC_MIXIN_EA        
   - file_name: nmotairporttrips.san_ea.omx
     tables:
       - name: WALK_EA
@@ -75,12 +96,33 @@ MATRICES:
       - name: SR3_AM
         data_field: SHARED3_AM_HIGH
   - file_name: tranairporttrips.san_am.omx
-    is_tap: True
     tables:
       - name: WALK_TRANSIT_AM
         data_field: WALK_TRANSIT_AM
-      - name: DRIVE_TRANSIT_AM
-        data_field: DRIVE_TRANSIT_AM
+      - name: KNR_LOCOUT_AM
+        data_field: KNR_LOCOUT_AM
+      - name: KNR_PRMOUT_AM
+        data_field: KNR_PRMOUT_AM        
+      - name: KNR_MIXOUT_AM
+        data_field: KNR_MIXOUT_AM        
+      - name: TNC_LOCOUT_AM
+        data_field: TNC_LOCOUT_AM
+      - name: TNC_PRMOUT_AM
+        data_field: TNC_PRMOUT_AM        
+      - name: TNC_MIXOUT_AM
+        data_field: TNC_MIXOUT_AM        
+      - name: KNR_LOCIN_AM
+        data_field: KNR_LOCIN_AM
+      - name: KNR_PRMIN_AM
+        data_field: KNR_PRMIN_AM        
+      - name: KNR_MIXIN_AM
+        data_field: KNR_MIXIN_AM        
+      - name: TNC_LOCIN_AM
+        data_field: TNC_LOCIN_AM
+      - name: TNC_PRMIN_AM
+        data_field: TNC_PRMIN_AM        
+      - name: TNC_MIXIN_AM
+        data_field: TNC_MIXIN_AM        
   - file_name: nmotairporttrips.san_am.omx
     tables:
       - name: WALK_AM
@@ -111,12 +153,33 @@ MATRICES:
       - name: SR3_MD
         data_field: SHARED3_MD_HIGH
   - file_name: tranairporttrips.san_md.omx
-    is_tap: True
     tables:
       - name: WALK_TRANSIT_MD
         data_field: WALK_TRANSIT_MD
-      - name: DRIVE_TRANSIT_MD
-        data_field: DRIVE_TRANSIT_MD
+      - name: KNR_LOCOUT_MD
+        data_field: KNR_LOCOUT_MD
+      - name: KNR_PRMOUT_MD
+        data_field: KNR_PRMOUT_MD        
+      - name: KNR_MIXOUT_MD
+        data_field: KNR_MIXOUT_MD        
+      - name: TNC_LOCOUT_MD
+        data_field: TNC_LOCOUT_MD
+      - name: TNC_PRMOUT_MD
+        data_field: TNC_PRMOUT_MD        
+      - name: TNC_MIXOUT_MD
+        data_field: TNC_MIXOUT_MD        
+      - name: KNR_LOCIN_MD
+        data_field: KNR_LOCIN_MD
+      - name: KNR_PRMIN_MD
+        data_field: KNR_PRMIN_MD        
+      - name: KNR_MIXIN_MD
+        data_field: KNR_MIXIN_MD        
+      - name: TNC_LOCIN_MD
+        data_field: TNC_LOCIN_MD
+      - name: TNC_PRMIN_MD
+        data_field: TNC_PRMIN_MD        
+      - name: TNC_MIXIN_MD
+        data_field: TNC_MIXIN_MD        
   - file_name: nmotairporttrips.san_md.omx
     tables:
       - name: WALK_MD
@@ -147,12 +210,33 @@ MATRICES:
       - name: SR3_PM
         data_field: SHARED3_PM_HIGH
   - file_name: tranairporttrips.san_pm.omx
-    is_tap: True
     tables:
       - name: WALK_TRANSIT_PM
         data_field: WALK_TRANSIT_PM
-      - name: DRIVE_TRANSIT_PM
-        data_field: DRIVE_TRANSIT_PM
+      - name: KNR_LOCOUT_PM
+        data_field: KNR_LOCOUT_PM
+      - name: KNR_PRMOUT_PM
+        data_field: KNR_PRMOUT_PM        
+      - name: KNR_MIXOUT_PM
+        data_field: KNR_MIXOUT_PM        
+      - name: TNC_LOCOUT_PM
+        data_field: TNC_LOCOUT_PM
+      - name: TNC_PRMOUT_PM
+        data_field: TNC_PRMOUT_PM        
+      - name: TNC_MIXOUT_PM
+        data_field: TNC_MIXOUT_PM        
+      - name: KNR_LOCIN_PM
+        data_field: KNR_LOCIN_PM
+      - name: KNR_PRMIN_PM
+        data_field: KNR_PRMIN_PM        
+      - name: KNR_MIXIN_PM
+        data_field: KNR_MIXIN_PM        
+      - name: TNC_LOCIN_PM
+        data_field: TNC_LOCIN_PM
+      - name: TNC_PRMIN_PM
+        data_field: TNC_PRMIN_PM        
+      - name: TNC_MIXIN_PM
+        data_field: TNC_MIXIN_PM        
   - file_name: nmotairporttrips.san_pm.omx
     tables:
       - name: WALK_PM
@@ -184,17 +268,38 @@ MATRICES:
       - name: SR3_EV
         data_field: SHARED3_EV_HIGH
   - file_name: tranairporttrips.san_ev.omx
-    is_tap: True
     tables:
       - name: WALK_TRANSIT_EV
         data_field: WALK_TRANSIT_EV
-      - name: DRIVE_TRANSIT_EV
-        data_field: DRIVE_TRANSIT_EV
+      - name: KNR_LOCOUT_EV
+        data_field: KNR_LOCOUT_EV
+      - name: KNR_PRMOUT_EV
+        data_field: KNR_PRMOUT_EV        
+      - name: KNR_MIXOUT_EV
+        data_field: KNR_MIXOUT_EV        
+      - name: TNC_LOCOUT_EV
+        data_field: TNC_LOCOUT_EV
+      - name: TNC_PRMOUT_EV
+        data_field: TNC_PRMOUT_EV        
+      - name: TNC_MIXOUT_EV
+        data_field: TNC_MIXOUT_EV        
+      - name: KNR_LOCIN_EV
+        data_field: KNR_LOCIN_EV
+      - name: KNR_PRMIN_EV
+        data_field: KNR_PRMIN_EV        
+      - name: KNR_MIXIN_EV
+        data_field: KNR_MIXIN_EV        
+      - name: TNC_LOCIN_EV
+        data_field: TNC_LOCIN_EV
+      - name: TNC_PRMIN_EV
+        data_field: TNC_PRMIN_EV        
+      - name: TNC_MIXIN_EV
+        data_field: TNC_MIXIN_EV        
   - file_name: nmotairporttrips.san_ev.omx
     tables:
       - name: WALK_EV
         data_field: WALK_EV
-        
+                
         
 CONSTANTS:
   time_periods:
