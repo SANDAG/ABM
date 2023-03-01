@@ -366,7 +366,7 @@ def infer_joint_tour_frequency_composition(configs_dir, households, persons, tou
     )
 
     def read_alts():
-        # right now this file just contains the start and end hour
+        # jtfc file contains purpose and composition for the 2 joint tour options
         alts = pd.read_csv(
             os.path.join(configs_dir, "joint_tour_frequency_composition_alternatives.csv"),
             comment="#",
@@ -380,6 +380,7 @@ def infer_joint_tour_frequency_composition(configs_dir, households, persons, tou
 
     joint_tours = tours[tours.tour_category == "joint"].copy()
 
+    # FIXME: these dicts can be read from jtfc.yaml instead of hard coded
     purpose_to_alt_num_dict = {
         "shopping" : 5,
         "othmaint" : 6,
@@ -391,8 +392,8 @@ def infer_joint_tour_frequency_composition(configs_dir, households, persons, tou
 
     composition_to_alt_num_dict = {
         'adults': 1,
-        'mixed': 2,
-        'children': 3,
+        'children': 2,
+        'mixed': 3,
     }
     joint_tours['party_num'] = joint_tours['composition'].map(composition_to_alt_num_dict)
 
@@ -899,6 +900,9 @@ def infer(configs_dir, input_dir, output_dir):
         configs_dir, households, persons, tours, joint_tour_participants
     )
     assert skip_controls or check_controls("tours", "joint_tour_frequency_composition")
+    households['has_joint_tour'] = np.where(
+        households["joint_tour_frequency_composition"] > 0, 1, 0
+    )
 
     # tours.tdd
     tours["tdd"] = infer_tour_scheduling(configs_dir, tours)
