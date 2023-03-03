@@ -37,11 +37,9 @@ Tour Distance Distribution,tourDistProfile_vis,freq,tours,TOURPURP >= 4 and is_i
 Tour Distance Distribution,tourDistProfile_et_vis,freq,tours,TOURPURP >= 4 and is_external_tour==True,finalweights,sum,"tourdistbin,AGGPURP"
 #,,,,,,,
 Distance to work distribution,mandTLFD,Work,final_persons,work_from_home==False and workplace_zone_id > 0 and WorkLocationDistance > 0 and is_internal_worker==True,finalweights,sum,"workdistbin,HDISTRICT"
-Distance to university distribution,mandTLFD,University,final_persons,PERTYPE == 3 and school_zone_id > 0 and SchoolLocationDistance > 0 and is_internal_student==True,finalweights,sum,"schooldistbin,HDISTRICT"
-Distance to school distribution,mandTLFD,School,final_persons,PERTYPE >=6 and school_zone_id > 0 and SchoolLocationDistance > 0 and is_internal_student==True,finalweights,sum,"schooldistbin,HDISTRICT"
+Distance to university distribution,mandTLFD,University,final_persons,PERTYPE == 3 and school_zone_id > 0 and SchoolLocationDistance > 0 and is_student==True,finalweights,sum,"schooldistbin,HDISTRICT"
+Distance to school distribution,mandTLFD,School,final_persons,PERTYPE >=6 and school_zone_id > 0 and SchoolLocationDistance > 0 and is_student==True,finalweights,sum,"schooldistbin,HDISTRICT"
 Distance to work distribution,mandTLFD_et,Work,final_persons,work_from_home==False and workplace_zone_id > 0 and WorkLocationDistance > 0 and is_external_worker==True,finalweights,sum,"workdistbin,HDISTRICT"
-Distance to school distribution,mandTLFD_et,School,final_persons,PERTYPE >=6 and school_zone_id > 0 and SchoolLocationDistance > 0 and is_external_student==True,finalweights,sum,"schooldistbin,HDISTRICT"
-Distance to university distribution,mandTLFD_et,University,final_persons,PERTYPE == 3 and school_zone_id > 0 and SchoolLocationDistance > 0 and is_external_student==True,finalweights,sum,"schooldistbin,HDISTRICT"
 #,,,,,,,
 Average out of direction distance,avgStopOutofDirectionDist_vis,avgDist,trips,stops == 1,out_dir_dist,mean,AGGPURP
 Average out of direction distance,avgStopOutofDirectionDistTotal,avgDist,trips,stops == 1,out_dir_dist,mean,
@@ -51,17 +49,13 @@ Tour arrivals by time period,todProfile_vis,freq_arr,tours,,finalweights,sum,"en
 Tour duration,tourDuration,freq,tours,,finalweights,sum,"tourdur,AGGPURP"
 #,,,,,,,
 Average distance to work,mandTripLengths,Work,final_persons,workplace_zone_id > 0 and work_from_home==False and is_internal_worker==True,WorkLocationDistance,mean,HDISTRICT
-Average distance to university,mandTripLengths,University,final_persons,PERTYPE == 3 and school_zone_id > 0 and is_internal_student==True,SchoolLocationDistance,mean,HDISTRICT
-Average distance to school,mandTripLengths,School,final_persons,PERTYPE >=6 and school_zone_id > 0 and is_internal_student==True,SchoolLocationDistance,mean,HDISTRICT
+Average distance to university,mandTripLengths,University,final_persons,PERTYPE == 3 and school_zone_id > 0 and is_student==True,SchoolLocationDistance,mean,HDISTRICT
+Average distance to school,mandTripLengths,School,final_persons,PERTYPE >=6 and school_zone_id > 0 and is_student==True,SchoolLocationDistance,mean,HDISTRICT
 Average distance to work,mandTripLengthsTotal,Work,final_persons,workplace_zone_id > 0 and work_from_home==False and is_internal_worker==True,WorkLocationDistance,mean,
-Average distance to university,mandTripLengthsTotal,University,final_persons,PERTYPE == 3 and school_zone_id > 0 and is_internal_student==True,SchoolLocationDistance,mean,
-Average distance to school,mandTripLengthsTotal,School,final_persons,PERTYPE >=6 and school_zone_id > 0 and is_internal_student==True,SchoolLocationDistance,mean,
+Average distance to university,mandTripLengthsTotal,University,final_persons,PERTYPE == 3 and school_zone_id > 0 and is_student==True,SchoolLocationDistance,mean,
+Average distance to school,mandTripLengthsTotal,School,final_persons,PERTYPE >=6 and school_zone_id > 0 and is_student==True,SchoolLocationDistance,mean,
 Average distance to work,mandTripLengths_et,Work,final_persons,workplace_zone_id > 0 and work_from_home==False and is_external_worker==True,WorkLocationDistance,mean,HDISTRICT
-Average distance to university,mandTripLengths_et,University,final_persons,PERTYPE == 3 and school_zone_id > 0 and is_external_student==True,SchoolLocationDistance,mean,HDISTRICT
-Average distance to school,mandTripLengths_et,School,final_persons,PERTYPE >=6 and school_zone_id > 0 and is_external_student==True,SchoolLocationDistance,mean,HDISTRICT
 Average distance to work,mandTripLengthsTotal_et,Work,final_persons,workplace_zone_id > 0 and work_from_home==False and is_external_worker==True,WorkLocationDistance,mean,
-Average distance to university,mandTripLengthsTotal_et,University,final_persons,PERTYPE == 3 and school_zone_id > 0 and is_external_student==True,SchoolLocationDistance,mean,
-Average distance to school,mandTripLengthsTotal_et,School,final_persons,PERTYPE >=6 and school_zone_id > 0 and is_external_student==True,SchoolLocationDistance,mean,
 #,,,,,,,
 Individual tours by person type,resultsByPType,itours,indivTourData_3,person_type > 0 and TOURPURP != 10,finalweights,sum,person_type
 Joint tours by person type,resultsByPType,jtours,temp_joint,PERTYPE > 0,finalweights,sum,PERTYPE

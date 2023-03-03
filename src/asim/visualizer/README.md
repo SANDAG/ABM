@@ -19,6 +19,8 @@ However, the specific data processing procedures for this visualizer run are lis
 
 The Data-Pipeline-Tool creates a set of summary csvs which are then read into powerBI.  The same summaries have been created for the household travel survey data and are contained in the ./visualizer/hts folder which are also loaded into powerBI for comparison.
 
+TODO: explain steps, best way to debug, etc.
+
 Data Sources:
 ./visualizer/hts files came from BY2016 Summaries.  Sent by Joe Flood via email on 1/3/2023
 ./visualizer/ABM2P_2019Summaries came from ABM2+ 2019 run.  Sent by Joe Flood via email on 1/3/2023
