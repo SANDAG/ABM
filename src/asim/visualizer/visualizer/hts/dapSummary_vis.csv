@@ -1,0 +1,23 @@
+PERTYPE,activity_pattern,freq
+1: Full-Time Worker,Home,80820
+1: Full-Time Worker,Mandatory,895630
+1: Full-Time Worker,Non-Mandatory,117259
+2: Part-Time Worker,Home,46971
+2: Part-Time Worker,Mandatory,193173
+2: Part-Time Worker,Non-Mandatory,112138
+3: University Student,Home,30398
+3: University Student,Mandatory,118471
+3: University Student,Non-Mandatory,36640
+4: Non-Worker,Home,123772
+4: Non-Worker,Non-Mandatory,343384
+5: Retiree,Home,109029
+5: Retiree,Non-Mandatory,262894
+6: Driving Aged Student,Home,5391
+6: Driving Aged Student,Mandatory,81663
+6: Driving Aged Student,Non-Mandatory,3918
+7: Non-Driving Aged Student,Home,8445
+7: Non-Driving Aged Student,Mandatory,444493
+7: Non-Driving Aged Student,Non-Mandatory,27870
+8: Child To Young for School,Home,55203
+8: Child To Young for School,Mandatory,59603
+8: Child To Young for School,Non-Mandatory,108323

@@ -1,0 +1,75 @@
+Description,Out Table,Out Col,In Table,Filter,In Col,Func,Group
+#,,,,,,,
+Auto Ownership,autoOwnership,freq,final_households,,finalweights,sum,HHVEH
+#,,,,,,,
+Household locations for workers in District 1,districtFlows,freq,final_persons,work_from_home==False and workplace_zone_id > 0,finalweights,sum,"HDISTRICT,WDISTRICT"
+Total number of workers by residence district,wfh_summary,Workers,final_persons,workplace_zone_id > 0,finalweights,sum,HDISTRICT
+Total number workers working from home in each district,wfh_summary,WFH,final_persons,work_from_home==True,finalweights,sum,HDISTRICT
+#,,,,,,,
+Daily Activity Pattern by Person Type,dapSummary_vis,freq,final_persons,,finalweights,sum,"PERTYPE,activity_pattern"
+Household Size Distribution,hhSizeDist,freq,final_households,,finalweights,sum,HHSIZE
+Joint Tours by Household Size,hhsizeJoint,freq,final_households,HHSIZE >= 2,finalweights,sum,"HHSIZE,JOINT"
+Number of Individual Non Mandatory Tours,inmSummary_vis,freq,final_persons,,finalweights,sum,"PERTYPE,nmtours"
+Joint Tour Composition,jointComp,freq,jointTourData_3,,finalweights,sum,tour_composition
+Joint Tour Composition by Party Size,jointCompPartySize,freq,jointTourData_3,,finalweights,sum,"tour_composition,NUMBER_HH"
+Joint Tours by Party Size,jointPartySize,freq,jointTourData_3,,finalweights,sum,NUMBER_HH
+Joint Tours by Household Size,jointToursHHSize,freq,final_households,HHSIZE >= 2,finalweights,sum,"jointCat,HHSIZE"
+Individual mandatory tour frequency choice by person type,mtfSummary_vis,freq,final_persons,imf_choice > 0,finalweights,sum,"PERTYPE,imf_choice"
+Person type distribution,pertypeDistbn,freq,final_persons,,finalweights,sum,PERTYPE
+Joint tour frequency,jtf,freq,final_households,,finalweights,sum,"jtf,alt_name"
+#,,,,,,,
+Outbound Work Tour Frequency,stopFreqProfile_vis,Inbound,tours,,finalweights,sum,"num_ob_stops,AGGPURP"
+Inbound Work Tour Frequency,stopFreqProfile_vis,Outbound,tours,,finalweights,sum,"num_ib_stops,AGGPURP"
+Total Work Tour Frequency,stopFreqProfile_vis,Total,tours,,finalweights,sum,"num_tot_stops,AGGPURP"
+#,,,,,,,
+Stops on work tours,stopPurposeByTourPurpose_vis,freq,trips,stops == 1,finalweights,sum,"DPURP,AGGPURP"
+#,,,,,,,
+Average non-mandatory tour length,nonMandTripLengths,avgDist,tours,TOURPURP >= 4 and is_internal_tour!=False,tour_distance,mean,AGGPURP
+Average non-mandatory tour length,nonMandTripLengthsTotal,avgDist,tours,TOURPURP >= 4 and is_internal_tour!=False,tour_distance,mean,
+Average non-mandatory tour length,nonMandTripLengths_et,avgDist,tours,TOURPURP >= 4 and is_external_tour==True,tour_distance,mean,AGGPURP
+Average non-mandatory tour length,nonMandTripLengthsTotal_et,avgDist,tours,TOURPURP >= 4 and is_external_tour==True,tour_distance,mean,
+#,,,,,,,
+Stops by stop departure period,stopDeparture_vis,freq,trips,stops == 1,finalweights,sum,"depart,AGGPURP"
+Trips by stop departure period,tripDeparture_vis,freq,trips,,finalweights,sum,"depart,AGGPURP"
+Tour mode by vehicle ownership category,tmodeProfile_vis,freq,hh_tours,,finalweights_x,sum,"AUTOSUFF,tour_mode,AGGPURP"
+Trip mode by tour mode,tripmodeProfile_vis,value,trips,,finalweights,sum,"trip_mode,tour_mode,AGGPURP"
+Tour Distance Distribution,tourDistProfile_vis,freq,tours,TOURPURP >= 4 and is_internal_tour!=False,finalweights,sum,"tourdistbin,AGGPURP"
+Tour Distance Distribution,tourDistProfile_et_vis,freq,tours,TOURPURP >= 4 and is_external_tour==True,finalweights,sum,"tourdistbin,AGGPURP"
+#,,,,,,,
+Distance to work distribution,mandTLFD,Work,final_persons,work_from_home==False and workplace_zone_id > 0 and WorkLocationDistance > 0 and is_internal_worker==True,finalweights,sum,"workdistbin,HDISTRICT"
+Distance to university distribution,mandTLFD,University,final_persons,PERTYPE == 3 and school_zone_id > 0 and SchoolLocationDistance > 0 and is_student==True,finalweights,sum,"schooldistbin,HDISTRICT"
+Distance to school distribution,mandTLFD,School,final_persons,PERTYPE >=6 and school_zone_id > 0 and SchoolLocationDistance > 0 and is_student==True,finalweights,sum,"schooldistbin,HDISTRICT"
+Distance to work distribution,mandTLFD_et,Work,final_persons,work_from_home==False and workplace_zone_id > 0 and WorkLocationDistance > 0 and is_external_worker==True,finalweights,sum,"workdistbin,HDISTRICT"
+#,,,,,,,
+Average out of direction distance,avgStopOutofDirectionDist_vis,avgDist,trips,stops == 1,out_dir_dist,mean,AGGPURP
+Average out of direction distance,avgStopOutofDirectionDistTotal,avgDist,trips,stops == 1,out_dir_dist,mean,
+Histogram of out of direction distance,stopDC_vis,freq,trips,stops == 1,finalweights,sum,"out_dir_distbin,AGGPURP"
+Tour departures by time period,todProfile_vis,freq_dep,tours,,finalweights,sum,"start,AGGPURP"
+Tour arrivals by time period,todProfile_vis,freq_arr,tours,,finalweights,sum,"end,AGGPURP"
+Tour duration,tourDuration,freq,tours,,finalweights,sum,"tourdur,AGGPURP"
+#,,,,,,,
+Average distance to work,mandTripLengths,Work,final_persons,workplace_zone_id > 0 and work_from_home==False and is_internal_worker==True,WorkLocationDistance,mean,HDISTRICT
+Average distance to university,mandTripLengths,University,final_persons,PERTYPE == 3 and school_zone_id > 0 and is_student==True,SchoolLocationDistance,mean,HDISTRICT
+Average distance to school,mandTripLengths,School,final_persons,PERTYPE >=6 and school_zone_id > 0 and is_student==True,SchoolLocationDistance,mean,HDISTRICT
+Average distance to work,mandTripLengthsTotal,Work,final_persons,workplace_zone_id > 0 and work_from_home==False and is_internal_worker==True,WorkLocationDistance,mean,
+Average distance to university,mandTripLengthsTotal,University,final_persons,PERTYPE == 3 and school_zone_id > 0 and is_student==True,SchoolLocationDistance,mean,
+Average distance to school,mandTripLengthsTotal,School,final_persons,PERTYPE >=6 and school_zone_id > 0 and is_student==True,SchoolLocationDistance,mean,
+Average distance to work,mandTripLengths_et,Work,final_persons,workplace_zone_id > 0 and work_from_home==False and is_external_worker==True,WorkLocationDistance,mean,HDISTRICT
+Average distance to work,mandTripLengthsTotal_et,Work,final_persons,workplace_zone_id > 0 and work_from_home==False and is_external_worker==True,WorkLocationDistance,mean,
+#,,,,,,,
+Individual tours by person type,resultsByPType,itours,indivTourData_3,person_type > 0 and TOURPURP != 10,finalweights,sum,person_type
+Joint tours by person type,resultsByPType,jtours,temp_joint,PERTYPE > 0,finalweights,sum,PERTYPE
+Tours by purpose by person type,tours_pertype_purpose,freq,indivTourData_3,TOURPURP >= 4 and TOURPURP <= 9,finalweights,sum,"person_type,TOURPURP"
+Active people by person type,resultsByPType,active_persons,final_persons,activity_pattern != 'H',finalweights,sum,PERTYPE
+Individual tours by person type,resultsByPTypeTotal,itours,indivTourData_3,person_type > 0 and TOURPURP != 10,finalweights,sum,
+Joint tours by person type,resultsByPTypeTotal,jtours,temp_joint,,finalweights,sum,
+Active people by person type,resultsByPTypeTotal,active_persons,final_persons,activity_pattern != 'H',finalweights,sum,
+#,,,,,,,
+People by person type,nm_tour_rates,TotalPersons,final_persons,,finalweights,sum,PERTYPE
+Escort Tours by Person Type,nm_tour_rates,Escorting,indivTourData_3,TOURPURP == 4,finalweights,sum,PERTYPE
+Shopping Tours by Person Type,nm_tour_rates,Shopping,indivTourData_3,TOURPURP == 5,finalweights,sum,PERTYPE
+Maintenance Tours by Person Type,nm_tour_rates,Maintenance,indivTourData_3,TOURPURP == 6,finalweights,sum,PERTYPE
+EatingOut Tours by Person Type,nm_tour_rates,EatingOut,indivTourData_3,TOURPURP == 7,finalweights,sum,PERTYPE
+Visiting Tours by Person Type,nm_tour_rates,Visiting,indivTourData_3,TOURPURP == 8,finalweights,sum,PERTYPE
+Discretionary Tours by Person Type,nm_tour_rates,Discretionary,indivTourData_3,TOURPURP == 9,finalweights,sum,PERTYPE
+Total Non-Mandatory Tours by Person Type,nm_tour_rates,All,indivTourData_3,TOURPURP >= 4 and TOURPURP <= 9,finalweights,sum,PERTYPE

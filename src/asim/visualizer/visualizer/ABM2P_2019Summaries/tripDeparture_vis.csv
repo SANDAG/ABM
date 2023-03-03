@@ -1,0 +1,361 @@
+stop_period,tour_purpose,freq,stop_skim_period
+4.75,1: Work,31479,1: EA
+4.75,2: University,178,1: EA
+4.75,3: School,4140,1: EA
+4.75,4: Escort,2212,1: EA
+4.75,5: Individual Maintenance,677,1: EA
+4.75,6: Individual Discretionary,2864,1: EA
+4.75,7: Joint Maintenance,257,1: EA
+4.75,8: Joint Discretionary,717,1: EA
+4.75,9: Work-based,78,1: EA
+5.25,1: Work,36813,1: EA
+5.25,2: University,211,1: EA
+5.25,3: School,5522,1: EA
+5.25,4: Escort,5130,1: EA
+5.25,5: Individual Maintenance,1197,1: EA
+5.25,6: Individual Discretionary,3891,1: EA
+5.25,7: Joint Maintenance,362,1: EA
+5.25,8: Joint Discretionary,943,1: EA
+5.25,9: Work-based,185,1: EA
+5.75,1: Work,93057,1: EA
+5.75,2: University,250,1: EA
+5.75,3: School,6625,1: EA
+5.75,4: Escort,12482,1: EA
+5.75,5: Individual Maintenance,2058,1: EA
+5.75,6: Individual Discretionary,5534,1: EA
+5.75,7: Joint Maintenance,588,1: EA
+5.75,8: Joint Discretionary,1130,1: EA
+5.75,9: Work-based,477,1: EA
+6.25,1: Work,69838,2: AM
+6.25,2: University,1344,2: AM
+6.25,3: School,4819,2: AM
+6.25,4: Escort,28276,2: AM
+6.25,5: Individual Maintenance,3488,2: AM
+6.25,6: Individual Discretionary,8446,2: AM
+6.25,7: Joint Maintenance,937,2: AM
+6.25,8: Joint Discretionary,1435,2: AM
+6.25,9: Work-based,570,2: AM
+6.75,1: Work,103617,2: AM
+6.75,2: University,2208,2: AM
+6.75,3: School,52690,2: AM
+6.75,4: Escort,60187,2: AM
+6.75,5: Individual Maintenance,5650,2: AM
+6.75,6: Individual Discretionary,12153,2: AM
+6.75,7: Joint Maintenance,1270,2: AM
+6.75,8: Joint Discretionary,1991,2: AM
+6.75,9: Work-based,839,2: AM
+7.25,1: Work,149674,2: AM
+7.25,2: University,9981,2: AM
+7.25,3: School,190537,2: AM
+7.25,4: Escort,170905,2: AM
+7.25,5: Individual Maintenance,8801,2: AM
+7.25,6: Individual Discretionary,17099,2: AM
+7.25,7: Joint Maintenance,1574,2: AM
+7.25,8: Joint Discretionary,2128,2: AM
+7.25,9: Work-based,1010,2: AM
+7.75,1: Work,191854,2: AM
+7.75,2: University,14969,2: AM
+7.75,3: School,249495,2: AM
+7.75,4: Escort,321878,2: AM
+7.75,5: Individual Maintenance,14928,2: AM
+7.75,6: Individual Discretionary,28561,2: AM
+7.75,7: Joint Maintenance,1929,2: AM
+7.75,8: Joint Discretionary,2459,2: AM
+7.75,9: Work-based,1322,2: AM
+8.25,1: Work,146455,2: AM
+8.25,2: University,10124,2: AM
+8.25,3: School,149696,2: AM
+8.25,4: Escort,281624,2: AM
+8.25,5: Individual Maintenance,24171,2: AM
+8.25,6: Individual Discretionary,31958,2: AM
+8.25,7: Joint Maintenance,2865,2: AM
+8.25,8: Joint Discretionary,2516,2: AM
+8.25,9: Work-based,1898,2: AM
+8.75,1: Work,100103,2: AM
+8.75,2: University,12106,2: AM
+8.75,3: School,78970,2: AM
+8.75,4: Escort,169435,2: AM
+8.75,5: Individual Maintenance,34380,2: AM
+8.75,6: Individual Discretionary,36120,2: AM
+8.75,7: Joint Maintenance,3840,2: AM
+8.75,8: Joint Discretionary,2693,2: AM
+8.75,9: Work-based,2352,2: AM
+9.25,1: Work,66964,3: MD
+9.25,2: University,10143,3: MD
+9.25,3: School,19447,3: MD
+9.25,4: Escort,54166,3: MD
+9.25,5: Individual Maintenance,47794,3: MD
+9.25,6: Individual Discretionary,41584,3: MD
+9.25,7: Joint Maintenance,5496,3: MD
+9.25,8: Joint Discretionary,2938,3: MD
+9.25,9: Work-based,3319,3: MD
+9.75,1: Work,50891,3: MD
+9.75,2: University,9163,3: MD
+9.75,3: School,12016,3: MD
+9.75,4: Escort,38787,3: MD
+9.75,5: Individual Maintenance,79353,3: MD
+9.75,6: Individual Discretionary,50993,3: MD
+9.75,7: Joint Maintenance,9142,3: MD
+9.75,8: Joint Discretionary,5298,3: MD
+9.75,9: Work-based,4122,3: MD
+10.25,1: Work,32816,3: MD
+10.25,2: University,7885,3: MD
+10.25,3: School,8747,3: MD
+10.25,4: Escort,32107,3: MD
+10.25,5: Individual Maintenance,127083,3: MD
+10.25,6: Individual Discretionary,52478,3: MD
+10.25,7: Joint Maintenance,14894,3: MD
+10.25,8: Joint Discretionary,6092,3: MD
+10.25,9: Work-based,5395,3: MD
+10.75,1: Work,31298,3: MD
+10.75,2: University,9080,3: MD
+10.75,3: School,9750,3: MD
+10.75,4: Escort,35210,3: MD
+10.75,5: Individual Maintenance,135650,3: MD
+10.75,6: Individual Discretionary,46680,3: MD
+10.75,7: Joint Maintenance,15877,3: MD
+10.75,8: Joint Discretionary,5422,3: MD
+10.75,9: Work-based,6912,3: MD
+11.25,1: Work,33156,3: MD
+11.25,2: University,8025,3: MD
+11.25,3: School,9266,3: MD
+11.25,4: Escort,34187,3: MD
+11.25,5: Individual Maintenance,129545,3: MD
+11.25,6: Individual Discretionary,51691,3: MD
+11.25,7: Joint Maintenance,15395,3: MD
+11.25,8: Joint Discretionary,6352,3: MD
+11.25,9: Work-based,9269,3: MD
+11.75,1: Work,35526,3: MD
+11.75,2: University,9382,3: MD
+11.75,3: School,11560,3: MD
+11.75,4: Escort,36361,3: MD
+11.75,5: Individual Maintenance,129886,3: MD
+11.75,6: Individual Discretionary,56980,3: MD
+11.75,7: Joint Maintenance,16175,3: MD
+11.75,8: Joint Discretionary,7480,3: MD
+11.75,9: Work-based,24037,3: MD
+12.25,1: Work,36599,3: MD
+12.25,2: University,14942,3: MD
+12.25,3: School,14541,3: MD
+12.25,4: Escort,38527,3: MD
+12.25,5: Individual Maintenance,117134,3: MD
+12.25,6: Individual Discretionary,54295,3: MD
+12.25,7: Joint Maintenance,14077,3: MD
+12.25,8: Joint Discretionary,7256,3: MD
+12.25,9: Work-based,34763,3: MD
+12.75,1: Work,41832,3: MD
+12.75,2: University,10004,3: MD
+12.75,3: School,18833,3: MD
+12.75,4: Escort,42642,3: MD
+12.75,5: Individual Maintenance,113342,3: MD
+12.75,6: Individual Discretionary,46703,3: MD
+12.75,7: Joint Maintenance,13712,3: MD
+12.75,8: Joint Discretionary,6185,3: MD
+12.75,9: Work-based,40710,3: MD
+13.25,1: Work,45796,3: MD
+13.25,2: University,8816,3: MD
+13.25,3: School,23194,3: MD
+13.25,4: Escort,47056,3: MD
+13.25,5: Individual Maintenance,109999,3: MD
+13.25,6: Individual Discretionary,47435,3: MD
+13.25,7: Joint Maintenance,12771,3: MD
+13.25,8: Joint Discretionary,6394,3: MD
+13.25,9: Work-based,25177,3: MD
+13.75,1: Work,51558,3: MD
+13.75,2: University,8768,3: MD
+13.75,3: School,27825,3: MD
+13.75,4: Escort,94401,3: MD
+13.75,5: Individual Maintenance,110841,3: MD
+13.75,6: Individual Discretionary,46897,3: MD
+13.75,7: Joint Maintenance,13014,3: MD
+13.75,8: Joint Discretionary,6361,3: MD
+13.75,9: Work-based,13712,3: MD
+14.25,1: Work,70566,3: MD
+14.25,2: University,8458,3: MD
+14.25,3: School,68973,3: MD
+14.25,4: Escort,203796,3: MD
+14.25,5: Individual Maintenance,103109,3: MD
+14.25,6: Individual Discretionary,41693,3: MD
+14.25,7: Joint Maintenance,11641,3: MD
+14.25,8: Joint Discretionary,5900,3: MD
+14.25,9: Work-based,9337,3: MD
+14.75,1: Work,75764,3: MD
+14.75,2: University,8464,3: MD
+14.75,3: School,172243,3: MD
+14.75,4: Escort,259217,3: MD
+14.75,5: Individual Maintenance,102738,3: MD
+14.75,6: Individual Discretionary,44070,3: MD
+14.75,7: Joint Maintenance,11966,3: MD
+14.75,8: Joint Discretionary,7002,3: MD
+14.75,9: Work-based,6329,3: MD
+15.25,1: Work,106599,3: MD
+15.25,2: University,8469,3: MD
+15.25,3: School,165490,3: MD
+15.25,4: Escort,244757,3: MD
+15.25,5: Individual Maintenance,98462,3: MD
+15.25,6: Individual Discretionary,42362,3: MD
+15.25,7: Joint Maintenance,12025,3: MD
+15.25,8: Joint Discretionary,7291,3: MD
+15.25,9: Work-based,4691,3: MD
+15.75,1: Work,113490,4: PM
+15.75,2: University,7975,4: PM
+15.75,3: School,107153,4: PM
+15.75,4: Escort,143832,4: PM
+15.75,5: Individual Maintenance,90419,4: PM
+15.75,6: Individual Discretionary,40751,4: PM
+15.75,7: Joint Maintenance,11448,4: PM
+15.75,8: Joint Discretionary,5868,4: PM
+15.75,9: Work-based,3631,4: PM
+16.25,1: Work,136869,4: PM
+16.25,2: University,8037,4: PM
+16.25,3: School,63141,4: PM
+16.25,4: Escort,122792,4: PM
+16.25,5: Individual Maintenance,93402,4: PM
+16.25,6: Individual Discretionary,45987,4: PM
+16.25,7: Joint Maintenance,12674,4: PM
+16.25,8: Joint Discretionary,7330,4: PM
+16.25,9: Work-based,2907,4: PM
+16.75,1: Work,181120,4: PM
+16.75,2: University,10722,4: PM
+16.75,3: School,55061,4: PM
+16.75,4: Escort,78503,4: PM
+16.75,5: Individual Maintenance,81379,4: PM
+16.75,6: Individual Discretionary,54470,4: PM
+16.75,7: Joint Maintenance,11529,4: PM
+16.75,8: Joint Discretionary,9110,4: PM
+16.75,9: Work-based,2472,4: PM
+17.25,1: Work,209604,4: PM
+17.25,2: University,9691,4: PM
+17.25,3: School,52086,4: PM
+17.25,4: Escort,64247,4: PM
+17.25,5: Individual Maintenance,77387,4: PM
+17.25,6: Individual Discretionary,67562,4: PM
+17.25,7: Joint Maintenance,12124,4: PM
+17.25,8: Joint Discretionary,12944,4: PM
+17.25,9: Work-based,1904,4: PM
+17.75,1: Work,183756,4: PM
+17.75,2: University,8683,4: PM
+17.75,3: School,42475,4: PM
+17.75,4: Escort,57492,4: PM
+17.75,5: Individual Maintenance,72350,4: PM
+17.75,6: Individual Discretionary,75728,4: PM
+17.75,7: Joint Maintenance,12314,4: PM
+17.75,8: Joint Discretionary,15263,4: PM
+17.75,9: Work-based,1563,4: PM
+18.25,1: Work,130989,4: PM
+18.25,2: University,8031,4: PM
+18.25,3: School,22518,4: PM
+18.25,4: Escort,50389,4: PM
+18.25,5: Individual Maintenance,71959,4: PM
+18.25,6: Individual Discretionary,91287,4: PM
+18.25,7: Joint Maintenance,13025,4: PM
+18.25,8: Joint Discretionary,19393,4: PM
+18.25,9: Work-based,1309,4: PM
+18.75,1: Work,84282,4: PM
+18.75,2: University,7263,4: PM
+18.75,3: School,12206,4: PM
+18.75,4: Escort,43002,4: PM
+18.75,5: Individual Maintenance,67071,4: PM
+18.75,6: Individual Discretionary,97706,4: PM
+18.75,7: Joint Maintenance,12651,4: PM
+18.75,8: Joint Discretionary,23203,4: PM
+18.75,9: Work-based,1223,4: PM
+19.25,1: Work,76168,5: EV
+19.25,2: University,5557,5: EV
+19.25,3: School,7307,5: EV
+19.25,4: Escort,38542,5: EV
+19.25,5: Individual Maintenance,61538,5: EV
+19.25,6: Individual Discretionary,82518,5: EV
+19.25,7: Joint Maintenance,11674,5: EV
+19.25,8: Joint Discretionary,18533,5: EV
+19.25,9: Work-based,1214,5: EV
+19.75,1: Work,50484,5: EV
+19.75,2: University,5391,5: EV
+19.75,3: School,4025,5: EV
+19.75,4: Escort,35294,5: EV
+19.75,5: Individual Maintenance,58981,5: EV
+19.75,6: Individual Discretionary,67568,5: EV
+19.75,7: Joint Maintenance,11647,5: EV
+19.75,8: Joint Discretionary,15325,5: EV
+19.75,9: Work-based,1144,5: EV
+20.25,1: Work,38395,5: EV
+20.25,2: University,5225,5: EV
+20.25,3: School,2317,5: EV
+20.25,4: Escort,29324,5: EV
+20.25,5: Individual Maintenance,51339,5: EV
+20.25,6: Individual Discretionary,62808,5: EV
+20.25,7: Joint Maintenance,10014,5: EV
+20.25,8: Joint Discretionary,13580,5: EV
+20.25,9: Work-based,1141,5: EV
+20.75,1: Work,29957,5: EV
+20.75,2: University,4912,5: EV
+20.75,3: School,1274,5: EV
+20.75,4: Escort,25040,5: EV
+20.75,5: Individual Maintenance,37291,5: EV
+20.75,6: Individual Discretionary,63798,5: EV
+20.75,7: Joint Maintenance,7584,5: EV
+20.75,8: Joint Discretionary,12789,5: EV
+20.75,9: Work-based,976,5: EV
+21.25,1: Work,25354,5: EV
+21.25,2: University,4249,5: EV
+21.25,3: School,842,5: EV
+21.25,4: Escort,21164,5: EV
+21.25,5: Individual Maintenance,26467,5: EV
+21.25,6: Individual Discretionary,64722,5: EV
+21.25,7: Joint Maintenance,5102,5: EV
+21.25,8: Joint Discretionary,11646,5: EV
+21.25,9: Work-based,976,5: EV
+21.75,1: Work,21275,5: EV
+21.75,2: University,3500,5: EV
+21.75,3: School,765,5: EV
+21.75,4: Escort,18975,5: EV
+21.75,5: Individual Maintenance,18661,5: EV
+21.75,6: Individual Discretionary,27757,5: EV
+21.75,7: Joint Maintenance,3612,5: EV
+21.75,8: Joint Discretionary,4761,5: EV
+21.75,9: Work-based,908,5: EV
+22.25,1: Work,19180,5: EV
+22.25,2: University,2908,5: EV
+22.25,3: School,660,5: EV
+22.25,4: Escort,15721,5: EV
+22.25,5: Individual Maintenance,13708,5: EV
+22.25,6: Individual Discretionary,23766,5: EV
+22.25,7: Joint Maintenance,2314,5: EV
+22.25,8: Joint Discretionary,3156,5: EV
+22.25,9: Work-based,853,5: EV
+22.75,1: Work,17857,5: EV
+22.75,2: University,2256,5: EV
+22.75,3: School,670,5: EV
+22.75,4: Escort,13754,5: EV
+22.75,5: Individual Maintenance,9679,5: EV
+22.75,6: Individual Discretionary,15846,5: EV
+22.75,7: Joint Maintenance,1653,5: EV
+22.75,8: Joint Discretionary,1750,5: EV
+22.75,9: Work-based,730,5: EV
+23.25,1: Work,17693,5: EV
+23.25,2: University,1614,5: EV
+23.25,3: School,757,5: EV
+23.25,4: Escort,11999,5: EV
+23.25,5: Individual Maintenance,7117,5: EV
+23.25,6: Individual Discretionary,12769,5: EV
+23.25,7: Joint Maintenance,975,5: EV
+23.25,8: Joint Discretionary,1341,5: EV
+23.25,9: Work-based,615,5: EV
+23.75,1: Work,19457,5: EV
+23.75,2: University,1212,5: EV
+23.75,3: School,763,5: EV
+23.75,4: Escort,10330,5: EV
+23.75,5: Individual Maintenance,4911,5: EV
+23.75,6: Individual Discretionary,7191,5: EV
+23.75,7: Joint Maintenance,782,5: EV
+23.75,8: Joint Discretionary,655,5: EV
+23.75,9: Work-based,478,5: EV
+24.25,1: Work,32341,5: EV
+24.25,2: University,940,5: EV
+24.25,3: School,741,5: EV
+24.25,4: Escort,10159,5: EV
+24.25,5: Individual Maintenance,4013,5: EV
+24.25,6: Individual Discretionary,6473,5: EV
+24.25,7: Joint Maintenance,515,5: EV
+24.25,8: Joint Discretionary,644,5: EV
+24.25,9: Work-based,325,5: EV
