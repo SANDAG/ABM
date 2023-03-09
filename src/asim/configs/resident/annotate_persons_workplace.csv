@@ -1,7 +1,7 @@
 Description,Target,Expression
 #,, annotate persons table after workplace_location model has run
 ,workplace_zone_id,"np.where(persons.get('external_workplace_zone_id',-1) > 0, persons.get('external_workplace_zone_id',-1), persons.workplace_zone_id)"
-,workplace_modechoice_logsum,"np.where(persons.get('external_workplace_zone_id',-1) > 0, persons.get('external_workplace_modechoice_logsum',-1), persons.workplace_modechoice_logsum)"
+,workplace_location_logsum,"np.where(persons.get('external_workplace_zone_id',-1) > 0, persons.get('external_workplace_location_logsum',-1), persons.workplace_location_logsum)"
 ,distance_to_work,"np.where(workplace_zone_id>=0,skim_dict.lookup(persons.home_zone_id, workplace_zone_id, 'DIST'),np.nan)"
 workplace_in_cbd,workplace_in_cbd,"reindex(land_use.pseudomsa, persons.workplace_zone_id) < setting('cbd_threshold')"
 work_zone_area_type,work_zone_area_type,"reindex(land_use.pseudomsa, persons.workplace_zone_id)"
