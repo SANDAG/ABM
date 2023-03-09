@@ -83,6 +83,7 @@ rural_threshold: 5
 c_drive: 1.5
 c_auto_operating_cost_per_mile: 18.29
 
+useAV: 0
 autoIVTFactorAV: 0.75
 autoParkingCostFactorAV: 0.5
 autoCostPerMileFactorAV: 0.7
@@ -101,6 +102,7 @@ longWalk: 0.667
 walkSpeed: 3.00
 bikeThresh: 6.00
 bikeSpeed: 12.00
+driveSpeed: 25.00
 maxCbdAreaTypeThresh: 2
 indivTour: 1.00000
 
