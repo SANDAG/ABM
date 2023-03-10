@@ -1,7 +1,7 @@
 Label,Description,Expression,DRIVEALONE,SHARED2,SHARED3,WALK,BIKE,WALK_LOC,WALK_PRM,WALK_MIX,PNR_LOC,PNR_PRM,PNR_MIX,KNR_LOC,KNR_PRM,KNR_MIX,TNC_LOC,TNC_PRM,TNC_MIX,TAXI,TNC_SINGLE,TNC_SHARED,SCH_BUS
 #,Drive alone,,,,,,,,,,,,,,,,,,,,,,
 util_DRIVEALONEFREE_Unavailable,Drive alone - Unavailable,sov_available == False,-999,,,,,,,,,,,,,,,,,,,,
-util_Drive alone - In-vehicle time,Drive alone - In-vehicle time,(da_dist_skims) * autoIVTFactor * time_factor,coef_ivt,,,,,,,,,,,,,,,,,,,,
+util_Drive alone - In-vehicle time,Drive alone - In-vehicle time,(da_time_skims) * autoIVTFactor * time_factor,coef_ivt,,,,,,,,,,,,,,,,,,,,
 util_Drive alone - reliability ,Drive alone - reliability,"@df.da_rel_skims/np.maximum(df.da_dist_skims,0.1)  * df.time_factor",coef_rel,,,,,,,,,,,,,,,,,,,,
 util_Drive alone - cost,Drive alone - cost,"@(df.auto_op_cost * df.autoCPMFactor * df.da_dist_skims + df.da_cost_skims)/(np.maximum(df.income,1000)**df.income_exponent)",coef_income,,,,,,,,,,,,,,,,,,,,
 util_Drive alone - Parking cost ,Drive alone - Parking cost ,"@(df.parkingCost * df.autoParkingCostFactor)/(np.maximum(df.income,1000)**df.income_exponent)",coef_income,,,,,,,,,,,,,,,,,,,,
