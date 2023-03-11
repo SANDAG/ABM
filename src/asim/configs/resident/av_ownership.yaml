@@ -13,6 +13,6 @@ preprocessor:
 # iterative what-if analysis example
 # omit these settings to not iterate
 AV_OWNERSHIP_ITERATIONS: 5
-AV_OWNERSHIP_TARGET_PERCENT: 0.1
+AV_OWNERSHIP_TARGET_PERCENT: 0.0
 AV_OWNERSHIP_TARGET_PERCENT_TOLERANCE: 0.01
 AV_OWNERSHIP_COEFFICIENT_CONSTANT: coef_av_target_share

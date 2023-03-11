@@ -133,6 +133,14 @@ annotate_proto_tables:
       TABLES:
         - proto_households
 
+# specific annotation for proto_persons
+  - tablename: proto_persons
+    annotate:
+      SPEC: annotate_proto_persons
+      DF: proto_persons
+      TABLES:
+        - proto_households
+
   - tablename: proto_households
     annotate:
       SPEC: annotate_proto_households
@@ -157,3 +165,5 @@ annotate_proto_tables:
       DF: proto_persons
       TABLES:
         - proto_households
+
+
