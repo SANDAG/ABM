@@ -238,16 +238,16 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     visitor_demand = omx_manager.lookup(("autoVisitor", period, vot), "SOV%s" % period)
                     cross_border_demand = omx_manager.lookup(("autoCrossBorder", period, vot), "SOV%s" % period)
                     # NOTE: No non-transponder airport or internal-external demand
-                    total_ct_ramp_trips = (
+                    total_asim_trips = (
                         resident_demand + visitor_demand + cross_border_demand)
                     dem_utils.demand_report([
                             ("resident", resident_demand),
                             ("cross_border", cross_border_demand),
                             ("visitor", visitor_demand),
-                            ("total", total_ct_ramp_trips)
+                            ("total", total_asim_trips)
                         ], 
                         logbook_label, self.scenario, report)
-                    self.set_data(matrix_name, total_ct_ramp_trips)
+                    self.set_data(matrix_name, total_asim_trips)
                     
                     # SOV transponder demand
                     matrix_name = "mf%s_SOV_TR_%s" % (period[1:], vot[1].upper())
@@ -257,18 +257,18 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     airport_demand = omx_manager.lookup(("autoAirport", ".SAN" + period, vot), "SOV%s" % period)
                     if omx_manager.file_exists(("autoAirport", ".CBX" + period, vot)):
                         airport_demand += omx_manager.lookup(("autoAirport", ".CBX" + period, vot), "SOV%s" % period)
-                    internal_external_demand = omx_manager.lookup(("autoInternalExternal", period, vot), "SOV%s" % period)
+                    # internal_external_demand = omx_manager.lookup(("autoInternalExternal", period, vot), "SOV%s" % period)
                     
-                    total_ct_ramp_trips = (
-                        resident_demand + airport_demand + internal_external_demand)
+                    total_asim_trips = (
+                        resident_demand + airport_demand) # + internal_external_demand
                     dem_utils.demand_report([
                             ("resident", resident_demand),
                             ("airport", airport_demand),
-                            ("internal_external", internal_external_demand),
-                            ("total", total_ct_ramp_trips)
+                            # ("internal_external", internal_external_demand),
+                            ("total", total_asim_trips)
                         ], 
                         logbook_label, self.scenario, report)
-                    self.set_data(matrix_name, total_ct_ramp_trips)
+                    self.set_data(matrix_name, total_asim_trips)
 
                     # HOV2 and HOV3 demand
                     matrix_name_map = [
@@ -286,81 +286,81 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                         airport_demand = omx_manager.lookup(("autoAirport", ".SAN" + period, vot), omx_name % period)
                         if omx_manager.file_exists(("autoAirport", ".CBX" + period, vot)):
                             airport_demand += omx_manager.lookup(("autoAirport", ".CBX" + period, vot), omx_name % period)
-                        internal_external_demand = omx_manager.lookup(("autoInternalExternal", period, vot), omx_name % period)
+                        # internal_external_demand = omx_manager.lookup(("autoInternalExternal", period, vot), omx_name % period)
 
-                        total_ct_ramp_trips = (
-                            resident_demand + visitor_demand + cross_border_demand + airport_demand + internal_external_demand)
+                        total_asim_trips = (
+                            resident_demand + visitor_demand + cross_border_demand + airport_demand) # + internal_external_demand
                         dem_utils.demand_report([
                                 ("resident", resident_demand),
                                 ("cross_border", cross_border_demand),
                                 ("visitor", visitor_demand),
                                 ("airport", airport_demand),
-                                ("internal_external", internal_external_demand),
-                                ("total", total_ct_ramp_trips)
+                                # ("internal_external", internal_external_demand),
+                                ("total", total_asim_trips)
                             ],
                             logbook_label, self.scenario, report)
-                        self.set_data(matrix_name, total_ct_ramp_trips)
+                        self.set_data(matrix_name, total_asim_trips)
 
                 # add TNC and TAXI demand to vot="high"
-                for matrix_name_tmplt, share in mode_shares:
-                    matrix_name = matrix_name_tmplt % period[1:]
-                    logbook_label = "Import othr from TAXI, empty AV, and TNC to matrix %s" % (matrix_name)
-                    resident_taxi_demand = (
-                        omx_manager.lookup(("othr", period, ""), "TAXI" + period) * share["TAXI"])
-                    visitor_taxi_demand = (
-                        omx_manager.lookup(("othrVisitor", period, ""), "TAXI" + period) * share["TAXI"])
-                    cross_border_taxi_demand = (
-                        omx_manager.lookup(("othrCrossBorder", period, ""), "TAXI" + period) * share["TAXI"])
-                    # airport SAN
-                    airport_taxi_demand = (
-                        omx_manager.lookup(("othrAirport", ".SAN", period), "TAXI" + period) * share["TAXI"])
-                    # airport CBX (optional)
-                    if omx_manager.file_exists(("othrAirport", ".CBX", period)):
-                        airport_taxi_demand += (
-                            omx_manager.lookup(("othrAirport",".CBX", period), "TAXI" + period) * share["TAXI"])
-                    internal_external_taxi_demand = (
-                        omx_manager.lookup(("othrInternalExternal", period, ""), "TAXI" + period) * share["TAXI"])
+                # for matrix_name_tmplt, share in mode_shares:
+                #     matrix_name = matrix_name_tmplt % period[1:]
+                #     logbook_label = "Import othr from TAXI, empty AV, and TNC to matrix %s" % (matrix_name)
+                #     resident_taxi_demand = (
+                #         omx_manager.lookup(("othr", period, ""), "TAXI" + period) * share["TAXI"])
+                #     visitor_taxi_demand = (
+                #         omx_manager.lookup(("othrVisitor", period, ""), "TAXI" + period) * share["TAXI"])
+                #     cross_border_taxi_demand = (
+                #         omx_manager.lookup(("othrCrossBorder", period, ""), "TAXI" + period) * share["TAXI"])
+                #     # airport SAN
+                #     airport_taxi_demand = (
+                #         omx_manager.lookup(("othrAirport", ".SAN", period), "TAXI" + period) * share["TAXI"])
+                #     # airport CBX (optional)
+                #     if omx_manager.file_exists(("othrAirport", ".CBX", period)):
+                #         airport_taxi_demand += (
+                #             omx_manager.lookup(("othrAirport",".CBX", period), "TAXI" + period) * share["TAXI"])
+                    # internal_external_taxi_demand = (
+                    #     omx_manager.lookup(("othrInternalExternal", period, ""), "TAXI" + period) * share["TAXI"])
 
-                    #AV routing models and TNC fleet model demand
-                    empty_av_demand = omx_manager.lookup(("EmptyAV","",""), "EmptyAV%s" % period)
-                    tnc_demand_0 = omx_manager.lookup(("TNCVehicle","",period), "TNC%s_0" % period)
-                    tnc_demand_1 = omx_manager.lookup(("TNCVehicle","",period), "TNC%s_1" % period)
-                    tnc_demand_2 = omx_manager.lookup(("TNCVehicle","",period), "TNC%s_2" % period)
-                    tnc_demand_3 = omx_manager.lookup(("TNCVehicle","",period), "TNC%s_3" % period)
+                    # Commenting out for now: AV routing models and TNC fleet model demand
+                    # empty_av_demand = omx_manager.lookup(("EmptyAV","",""), "EmptyAV%s" % period)
+                    # tnc_demand_0 = omx_manager.lookup(("TNCVehicle","",period), "TNC%s_0" % period)
+                    # tnc_demand_1 = omx_manager.lookup(("TNCVehicle","",period), "TNC%s_1" % period)
+                    # tnc_demand_2 = omx_manager.lookup(("TNCVehicle","",period), "TNC%s_2" % period)
+                    # tnc_demand_3 = omx_manager.lookup(("TNCVehicle","",period), "TNC%s_3" % period)
                     
                     #AVs: no driver. No AVs: driver
                     #AVs: 0 and 1 passenger would be SOV. there will be empty vehicles as well. No AVs: 0 passanger would be SOV                    
                     #AVs: 2 passenger would be HOV2. No AVs: 1 passenger would be HOV2
                     #AVs: 3 passenger would be HOV3. No AVs: 2 and 3 passengers would be HOV3
-                    if (av_share>0):
-                        if (matrix_name_tmplt[5:-2] == "SOV_TR"):
-                            av_demand = empty_av_demand + tnc_demand_0 + tnc_demand_1
-                        elif (matrix_name_tmplt[5:-2] == "HOV2"): 
-                            av_demand = tnc_demand_2
-                        else:
-                            av_demand = tnc_demand_3
-                    else:
-                        if (matrix_name_tmplt[5:-2] == "SOV_TR"):
-                            av_demand = tnc_demand_0
-                        elif (matrix_name_tmplt[5:-2] == "HOV2"): 
-                            av_demand = tnc_demand_1
-                        else:
-                            av_demand = tnc_demand_2 + tnc_demand_3
+                    # if (av_share>0):
+                    #     if (matrix_name_tmplt[5:-2] == "SOV_TR"):
+                    #         av_demand = empty_av_demand + tnc_demand_0 + tnc_demand_1
+                    #     elif (matrix_name_tmplt[5:-2] == "HOV2"): 
+                    #         av_demand = tnc_demand_2
+                    #     else:
+                    #         av_demand = tnc_demand_3
+                    # else:
+                    #     if (matrix_name_tmplt[5:-2] == "SOV_TR"):
+                    #         av_demand = tnc_demand_0
+                    #     elif (matrix_name_tmplt[5:-2] == "HOV2"): 
+                    #         av_demand = tnc_demand_1
+                    #     else:
+                    #         av_demand = tnc_demand_2 + tnc_demand_3
 
-                    total_ct_ramp_trips = (
-                        resident_taxi_demand + visitor_taxi_demand + cross_border_taxi_demand
-                        + airport_taxi_demand + internal_external_taxi_demand + av_demand)
-                    dem_utils.demand_report([
-                            ("resident_taxi", resident_taxi_demand),
-                            ("visitor_taxi", visitor_taxi_demand),
-                            ("cross_border_taxi", cross_border_taxi_demand),
-                            ("airport_taxi", airport_taxi_demand),
-                            ("internal_external_taxi", internal_external_taxi_demand),
-                            ("av_fleet", av_demand),
-                            ("total", total_ct_ramp_trips)
-                        ],
-                        logbook_label, self.scenario, report)
-                    self.set_data(matrix_name, total_ct_ramp_trips)
+                    # total_asim_trips = (
+                    #     resident_taxi_demand + visitor_taxi_demand + cross_border_taxi_demand
+                    #     + airport_taxi_demand + internal_external_taxi_demand + av_demand)
+                    # dem_utils.demand_report([
+                    #         ("resident_taxi", resident_taxi_demand),
+                    #         ("visitor_taxi", visitor_taxi_demand),
+                    #         ("cross_border_taxi", cross_border_taxi_demand),
+                    #         ("airport_taxi", airport_taxi_demand),
+                    #         ("internal_external_taxi", internal_external_taxi_demand),
+                    #         ("av_fleet", av_demand),
+                    #         ("total", total_asim_trips)
+                    #     ],
+                    #     logbook_label, self.scenario, report)
+                    # self.set_data(matrix_name, total_asim_trips)
         _m.logbook_write(title, report.render())
 
     @_m.logbook_trace('Import commercial vehicle demand')

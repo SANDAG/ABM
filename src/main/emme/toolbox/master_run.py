@@ -353,7 +353,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         external_zones = "1-12"
 
         travel_modes = ["auto", "tran", "nmot", "othr"]
-        core_abm_files = ["Trips*.omx", "InternalExternalTrips*.omx"]
+        core_abm_files = ["Trips*.omx"] #"InternalExternalTrips*.omx"
         core_abm_files = [mode + name for name in core_abm_files for mode in travel_modes]
         smm_abm_files = ["AirportTrips*.omx", "CrossBorderTrips*.omx", "VisitorTrips*.omx"]
         smm_abm_files = [mode + name for name in smm_abm_files for mode in travel_modes]
@@ -570,12 +570,14 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     if not skipTruck[iteration]:
                         # run truck model (generate truck trips)
                         run_truck(True, input_dir, input_truck_dir, num_processors, base_scenario)
-                    # run EI model "US to SD External Trip Model"
-                    if not skipEI[iteration]:
-                        external_internal(input_dir, base_scenario)
-                    # run EE model
-                    if not skipExternal[iteration]:
-                        external_external(input_dir, external_zones, base_scenario)
+                        
+                    # run EI/EE not needed anymore since they are a part of Activitysim now
+
+                    # if not skipEI[iteration]:
+                    #     external_internal(input_dir, base_scenario)
+                    # 
+                    # if not skipExternal[iteration]:
+                    #     external_external(input_dir, external_zones, base_scenario)
 
                 # import demand from all sub-market models from CT-RAMP and
                 #       add CV trips to auto demand

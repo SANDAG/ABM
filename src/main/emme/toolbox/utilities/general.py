@@ -21,6 +21,7 @@ import inro.emme.core.exception as _except
 from osgeo import ogr as _ogr
 from contextlib import contextmanager as _context
 from itertools import izip as _izip
+from math import ceil
 import traceback as _traceback
 import re as _re
 import json as _json
@@ -190,6 +191,121 @@ class DataTableProc(object):
         return self._values[index]
 
 
+class E00FileProc:
+    def __init__(self, table_name, file_path):
+        self._file_path = file_path
+        self._table_name = table_name
+        self._values = []
+        self._attr_names = []
+        self._attr_widths = []
+        self._attr_cast = []
+        self._read_file()
+        
+    def _read_file(self):
+        with open(self._file_path, 'r') as f:
+            for line in f:
+                if line.startswith(self._table_name):
+                    break
+            header = self._parse_header(line)
+            for i in range(header["valid_attributes"]):
+                attribute = self._parse_attribute(next(f))
+                self._attr_names.append(attribute["name"])
+                self._attr_widths.append(self._get_attr_width(attribute))
+                self._attr_cast.append(self._get_attr_caster(attribute))
+            self._parse_records(f, int(header["num_records"]))
+                
+    def _parse_header(self, text):
+        file_name, external_flag, num_valid, num_total, record_length, num_records = \
+            self._parse_fields(text, [32, 2, 4, 4, 4, 10])
+        header = {
+            "file_name": file_name, 
+            "external_flag": external_flag, 
+            "valid_attributes": int(num_valid), 
+            "total_attributes": int(num_total), 
+            "record_length": int(record_length), 
+            "num_records": int(num_records)
+        }
+        return header
+        
+    def _parse_attribute(self, text):
+        name, size, _, start, _, _, fmt_width, fmt_precision, type_id, _, _, _, _, alt_name, index = \
+            self._parse_fields(text, [16, 3, 2, 4, 1, 2, 4, 2, 3, 2, 4, 4, 2, 16, 5])
+        attribute = {
+            "name": name, 
+            "size": int(size), 
+            "start": int(start), 
+            "fmt_width": int(fmt_width), 
+            "fmt_precision": int(fmt_precision), 
+            "type": type_id, 
+            "alt_name": alt_name, 
+            "index": index
+        }
+        return attribute
+    
+    def _parse_fields(self, text, widths):
+        tokens = []
+        index = 0
+        for width in widths:
+            tokens.append(text[index:width+index].strip())
+            index += width
+        return tokens
+    
+    def _get_attr_width(self, attribute):
+        a_type, size = attribute["type"], attribute["size"]
+        if a_type == "10":    # "10": "date"
+            return 8
+        elif a_type == "20" or a_type == "30":  
+            # "20": "string" or "30": "fixed_integer"
+            return size
+        elif a_type == "40":  # "40": "single_float"
+            return 14
+        elif a_type == "50":  # "50": "integer"
+            if size == 2:  # 2 bytes = 6 characters
+                return 6
+            elif size == 4:  # 4 bytes = 11 characters
+                return 11
+        elif a_type == "60":  # "60": "float"
+            if size == 2:  # 2 bytes = 14 characters
+                return 14
+            elif size == 4:  # 4 bytes = 24 characters
+                return 24
+    
+    def _get_attr_caster(self, attribute):
+        str_strip = lambda x: x.strip()
+        mapper = {
+            "10": str_strip,  # "10": "date"
+            "20": str_strip,  # "20": "string"
+            "30": int,        # "30": "fixed_integer"
+            "40": float,      # "40": "single_float"
+            "50": int,        # "50": "integer"
+            "60": float,      # "60": "float"
+        }
+        return mapper[attribute["type"]]
+        
+    def _parse_records(self, reader, num_records):
+        num_lines = int(ceil(sum(self._attr_widths) / 80.0))
+        indices = []
+        index = 0
+        for width, cast in zip(self._attr_widths, self._attr_cast):
+            indices.append((index, width+index, cast))
+            index += width
+        for j in range(num_records):
+            lines = []
+            for j in range(num_lines):
+                lines.append(next(reader).rstrip().ljust(80, " "))
+            line = "".join(lines)
+            self._values.append(
+                [cast(line[start:stop]) for start, stop, cast in indices])
+
+    def __iter__(self):
+        values, attr_names = self._values, self._attr_names
+        return (dict(zip(attr_names, record)) for record in values)
+
+    def values(self, name):
+        index = self._attr_names.index(name)
+        return (v[index] for v in self._values)    
+
+
 class Snapshot(object):
     def __getitem__(self, key):
         return getattr(self, key)
@@ -314,7 +430,7 @@ class ExportOMX(object):
         else:
             chunkshape = None
         attrs["source"] = "Emme"
-        numpy_array = numpy_array.astype(dtype="float32")
+        numpy_array = numpy_array.astype(dtype="float64", copy=False)
         omx_matrix = self.omx_file.create_matrix(
             key, obj=numpy_array, chunkshape=chunkshape, attrs=attrs)
 
