@@ -31,7 +31,7 @@ util_Shared ride 3 - Female,Shared ride 3 - female,@(df.female == 1),,,coef_fema
 util_Walk - Unavailable,Walk - Unavailable,(walkAvailable == 0) & (tourWalk == 0),,,,-999,,,,,,,,,,,,,,,,,
 util_Walk - Unavailable - walkTour,Walk - Unavailable - Walk Tour,(walkAvailable == 0) & (tourWalk == 1),,,,-20,,,,,,,,,,,,,,,,,
 util_Walk - Female,Walk - Female,@df.female,,,,coef_female_nmot,,,,,,,,,,,,,,,,,
-util_Walk - time,Walk - time - clipped for really long walk trips to avoid zero probs,(walk_time_skims * time_factor).clip(upper=1000),,,,coef_walkTime,,,,,,,,,,,,,,,,,
+util_Walk - time,Walk - time - clipped for really long walk trips to avoid zero probs,@(df.walk_time_skims * df.time_factor).clip(upper=1000),,,,coef_walkTime,,,,,,,,,,,,,,,,,
 util_Walk - Origin Mix,Walk - Origin Mix,oMGRAMix,,,,coef_oMix_nmot,,,,,,,,,,,,,,,,,
 util_Walk - Origin Intersection Density,Walk - Origin Intersection Density,oMGRATotInt,,,,coef_oIntDen_nmot,,,,,,,,,,,,,,,,,
 util_Walk - Destination Employment Density,Walk - Destination Employment Density,dMGRAEmpDen,,,,coef_dEmpDen_nmot,,,,,,,,,,,,,,,,,
