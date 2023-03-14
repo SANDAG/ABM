@@ -125,7 +125,7 @@ model_estimation_table_types:
   mandatory_tour_scheduling_work: interaction_sample_simulate
   mandatory_tour_scheduling_school: interaction_sample_simulate
   mandatory_tour_scheduling_univ: interaction_sample_simulate
-  school_escorting: interaction_sample_simulate
+  school_escorting: interaction_simulate
   joint_tour_frequency_composition: interaction_simulate
   external_joint_tour_identification: simple_simulate
   joint_tour_participation: simple_simulate

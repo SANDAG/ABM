@@ -12,6 +12,7 @@ import yaml
 from activitysim.abm.models.util import canonical_ids as cid
 from activitysim.abm.models.util import tour_frequency as tf
 from activitysim.core.util import reindex
+from activitysim.abm.models import school_escorting
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -235,7 +236,7 @@ def infer_non_mandatory_tour_frequency(configs_dir, persons, tours):
                 tours.person_id.isin(persons.index[bad_tour_frequencies])
             ].sort_values("person_id")
         )
-        bug
+        raise RuntimeError("Bad non_mandatory tour frequencies")
 
     tf = unconstrained_tour_counts.rename(
         columns={tour_type: "_%s" % tour_type for tour_type in tour_types}
@@ -304,7 +305,7 @@ def infer_joint_tour_frequency(configs_dir, households, tours):
                 joint_tours.household_id.isin(households.index[bad_tour_frequencies])
             ]
         )
-        bug
+        raise RuntimeError("Bad joint tour frequencies")
 
     logger.info(
         "infer_joint_tour_frequency: %s households with joint tours",
@@ -430,6 +431,138 @@ def infer_joint_tour_frequency_composition(configs_dir, households, persons, tou
     return jtfc_alt
 
 
+def determine_school_escorting_alt_chauf_columns(row, direction='out'):
+    '''
+    School escorting alternatives are determined by the escort pattern for each child.
+    There are 6 fields that denote a unique school alternative:
+    bundle1 - bundle number for child 1
+    bundle2 - bundle number for child 2
+    bundle3 - bundle number for child 3
+    chauf1 - chauffeur number for child 1
+    chauf2 - chauffeur number for child 2
+    chauf3 - chauffeur number for child 3
+
+    chauf is coded as the following:
+    0 - no escorting
+    1 - ride share by chauffeur 1
+    2 - pure escort by chauffeur 1
+    3 - ride share by chauffeur 2
+    4 - pure escort by chauffeur 2
+
+    The variables are determined by looking at the child school tours.
+    Each direction is handled separately, but the logic is the same.
+    '''
+    assert direction in ['out', 'inb']
+    # only counting the school tours
+    if (row['tour_type'] != 'school') | pd.isna(row[f'{direction}_chauf_person_id']) | pd.isna(row[f'{direction}_escort_type']):
+        return row
+    
+    # looping through all three children
+    for i in range(1,4):
+        # is this child making the tour
+        if row[f'child_id{i}'] == row['person_id']:
+            # if the chauffeur is numbered 1
+            if (not pd.isna(row['chauf_id1'])) & (not pd.isna(row[f'{direction}_chauf_person_id'])) & (row['chauf_id1'] == row[f'{direction}_chauf_person_id']):
+                # need to determine escort type
+                if row[f'{direction}_escort_type'] == 'ride_share':
+                    # ride share
+                    row[f'{direction}_chauf{i}'] = 1
+                else:
+                    # pure escort
+                    row[f'{direction}_chauf{i}'] = 2
+
+            # if the chauffeur is numbered 2
+            if (not pd.isna(row['chauf_id1'])) & (not pd.isna(row[f'{direction}_chauf_person_id'])) & (row['chauf_id2'] == row[f'{direction}_chauf_person_id']):
+                # numbers are different for second chauffeur
+                if row[f'{direction}_escort_type'] == 'ride_share':
+                    # ride share
+                    row[f'{direction}_chauf{i}'] = 3
+                else:
+                    # pure escort
+                    row[f'{direction}_chauf{i}'] = 4
+                row[f'inb_bundle{i}'] = row['inb_bundle_num']
+            
+            # assigning bundle number to child i
+            row[f'{direction}_bundle{i}'] = row[f'{direction}_bundle_num']
+
+    return row
+
+
+def infer_school_escorting(configs_dir, households, persons, tours):
+    '''
+    Determining school escorting alternative by counting the escortee tours.
+
+    Required columns in the tours table are:
+    out_chauf_person_id - person_id of the outbound chaueffeur
+    inb_chauf_person_id - person_id of the inbound chaueffeur
+    out_escort_type - escort type of outbound tour
+    in_escort_type - escort type of inbound tour
+        (escort_type is either ride_hail, pure_escort, or NA)
+
+    Required columns in the person table are:
+    is_student, age, and cdap_activity for numbering escortees and chauffeurs
+    '''
+    # reading in necessary school escorting configs
+    with open(os.path.join(configs_dir, "school_escorting.yaml")) as stream:
+        se_model_settings = yaml.load(stream, Loader=yaml.SafeLoader)
+    se_alts = pd.read_csv(
+        os.path.join(configs_dir, "school_escorting_alts.csv")
+    )
+    
+    # numbering children and chauffeurs using the logic in the school escorting model
+    choosers, participant_columns = school_escorting.determine_escorting_participants(
+        choosers=households, 
+        persons=persons, 
+        model_settings=se_model_settings
+    )
+
+    # merging the chauffeur and child numbers onto the tours
+    merge_cols = ['household_id', 'chauf_id1', 'chauf_id2', 'child_id1', 'child_id2', 'child_id3']
+    se_tours = pd.merge(tours, choosers.reset_index()[merge_cols], how='left', on='household_id')
+
+    # bundles are numbered by the chauffeur and the departure time for outbound and the arrival time for inbound
+    se_tours['out_bundle_num'] = se_tours.sort_values(by=['out_chauf_person_id', 'start']).groupby(['out_chauf_person_id', 'start'])['person_id'].cumcount() + 1
+    se_tours['inb_bundle_num'] = se_tours.sort_values(by=['inb_chauf_person_id', 'end']).groupby(['inb_chauf_person_id', 'end'])['person_id'].cumcount() + 1
+
+    # only max of 3 bundles in alternatives, just grouping them together.
+    se_tours['out_bundle_num'].clip(upper=3, inplace=True)
+    se_tours['inb_bundle_num'].clip(upper=3, inplace=True)
+
+    # initialize to no escorting and determine school escort alternative variables
+    out_cols = ['out_chauf1', 'out_chauf2', 'out_chauf3', 'out_bundle1', 'out_bundle2', 'out_bundle3']
+    se_tours[out_cols] = 0
+    se_tours = se_tours.apply(lambda row: determine_school_escorting_alt_chauf_columns(row, 'out'), axis=1)
+
+    inb_cols = ['inb_chauf1', 'inb_chauf2', 'inb_chauf3', 'inb_bundle1', 'inb_bundle2', 'inb_bundle3']
+    se_tours[inb_cols] = 0
+    se_tours = se_tours.apply(lambda row: determine_school_escorting_alt_chauf_columns(row, 'inb'), axis=1)
+
+    # alternatives are unique by the following columns
+    alt_merge_cols = ['bundle1', 'bundle2', 'bundle3', 'chauf1', 'chauf2', 'chauf3']
+
+    # grouping tours by household and summing all alternative variables
+    # we can sum here since unique child tours were counted when calculating the school escorting alt values
+    out_merge_cols = ['out_bundle1', 'out_bundle2', 'out_bundle3', 'out_chauf1', 'out_chauf2', 'out_chauf3']
+    out_hh_se = se_tours.groupby('household_id')[out_merge_cols].sum()
+    out_hh_se = out_hh_se.merge(se_alts, how='left', left_on=out_merge_cols, right_on=alt_merge_cols)
+    households['school_escorting_outbound'] = out_hh_se.Alt.reindex(households.index).fillna(1).astype(int) # no escorting is default alternative
+
+    inb_merge_cols = ['inb_bundle1', 'inb_bundle2', 'inb_bundle3', 'inb_chauf1', 'inb_chauf2', 'inb_chauf3']
+    inb_hh_se = se_tours.groupby('household_id')[inb_merge_cols].sum()
+    inb_hh_se = inb_hh_se.merge(se_alts, how='left', left_on=inb_merge_cols, right_on=alt_merge_cols)
+    households['school_escorting_inbound'] = inb_hh_se.Alt.reindex(households.index).fillna(1).astype(int) # no escorting is default alternative
+
+    # outbound conditional is the same as outbound for survey data
+    households['school_escorting_outbound_cond'] = households['school_escorting_outbound']
+
+    logger.info(f"Number of households with outbound escorting: {(households['school_escorting_outbound'] > 1).sum()}")
+    logger.info(f"Number of households with inbound escorting: {(households['school_escorting_inbound'] > 1).sum()}")
+    logger.info(f"Outbound escorting top 10 Alternatives:\n {households['school_escorting_outbound'].value_counts().head(10)}")
+    logger.info(f"Inbound escorting top 10 Alternatives:\n {households['school_escorting_inbound'].value_counts().head(10)}")
+
+    return households
+
+
 def infer_tour_scheduling(configs_dir, tours):
     # given start and end periods, infer tdd
 
@@ -464,7 +597,7 @@ def infer_tour_scheduling(configs_dir, tours):
         bad_tdds = tours[tdds.tdd.isna()]
         print("Bad tour start/end times:")
         print(bad_tdds)
-        bug
+        raise RuntimeError("Bad start / end times")
 
     # print("tdd_alts\n%s" %tdd_alts, "\n")
     # print("tours\n%s" %tours[['start', 'end']])
@@ -701,7 +834,7 @@ def infer_atwork_subtour_frequency(configs_dir, tours):
                 subtours.parent_tour_id.isin(tour_counts[bad_tour_frequencies].index)
             ].sort_values("parent_tour_id")
         )
-        bug
+        raise RuntimeError("Bad atwork subtour frequencies")
 
     atwork_subtour_frequency = reindex(
         atwork_subtour_frequency, tours[ASIM_TOUR_ID]
@@ -902,6 +1035,10 @@ def infer(configs_dir, input_dir, output_dir):
     assert skip_controls or check_controls("tours", "joint_tour_frequency_composition")
     households['has_joint_tour'] = np.where(
         households["joint_tour_frequency_composition"] > 0, 1, 0
+    )
+
+    households = infer_school_escorting(
+        configs_dir, households, persons, tours
     )
 
     # tours.tdd
