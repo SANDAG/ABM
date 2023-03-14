@@ -13,6 +13,8 @@ Get tour origin TAZ,step_1,raw,final_tours,,,final_tours['originTAZ'] = final_to
 Get tour destination TAZ,step_1,raw,final_tours,,,final_tours['destinationTAZ'] = final_tours['dest_mgra'].map(land_use.set_index('MAZ')['TAZ']).fillna(0)
 Get trip origin TAZ,step_1,raw,final_trips,,,final_trips['originTAZ'] =final_trips['orig_mgra'].map(land_use.set_index('MAZ')['TAZ']).fillna(0)
 Get trip destination TAZ,step_1,raw,final_trips,,,final_trips['destinationTAZ'] = final_trips['dest_mgra'].map(land_use.set_index('MAZ')['TAZ']).fillna(0)
+Add tour origin to final_trips,step_1,raw,,,,final_trips['tour_origin'] = final_trips['tour_id'].map(final_tours.set_index('tour_id')['originTAZ'])
+Add tour destination to final trips,step_1,raw,,,,final_trips['tour_destination'] = final_trips['tour_id'].map(final_tours.set_index('tour_id')['destinationTAZ'])
 Trip OD raw distance,step_1,skim,final_trips,od_distance,"originTAZ,destinationTAZ",traffic_skims_MD['MD_SOV_TR_H_DIST']
 adjust tour duration (no 0),step_1,raw,,,,final_tours['tourdur'] = final_tours['tourdur'] + 1
 get person number to final tour file,step_1,raw,,,,final_tours['person_num'] = final_tours['person_id'].map(final_persons.set_index('person_id')['PNUM']).fillna(0)
@@ -49,11 +51,10 @@ Add unique tour ids to individual trip file,step_1,raw,,,,"indivTripData_3['to_s
 Add unique tour ids to individual trip file,step_1,raw,,,,"for i in range(maxtrips): indivTripData_3['to_subtract'] = np.where(indivTripData_3['to_subtract'] == 0, np.hstack(([0], indivTripData_3['to_subtract'].iloc[:-1])), indivTripData_3['to_subtract'])"
 Add unique tour ids to individual trip file,step_1,raw,,,,indivTripData_3['tour_id2'] = indivTripData_3['cummulative_tours'] - indivTripData_3['to_subtract']
 #,,,,,,
-Individual Tour distance,step_1,raw,indivTripData_3,,,indivTripData_3['tour_distance'] = indivTripData_3.groupby('tour_id')['od_distance'].transform('sum')
-Joint tour distance,step_1,raw,jointTripData_3,,,jointTripData_3['tour_distance'] = jointTripData_3.groupby('tour_id')['od_distance'].transform('sum')
+Individual Tour distance,step_1,skim,indivTripData_3,tour_distance,"tour_origin,tour_destination",traffic_skims_MD['MD_SOV_TR_H_DIST']
+Joint tour distance,step_1,skim,jointTripData_3,tour_distance,"tour_origin,tour_destination",traffic_skims_MD['MD_SOV_TR_H_DIST']
 Add tour distance to individual tour table,step_1,raw,indivTourData_3,,,"indivTourData_3 = indivTourData_3.merge(indivTripData_3[['tour_id','tour_distance']], on = 'tour_id')"
 Add tour distance to joint tour table,step_1,raw,jointTourData_3,,,"jointTourData_3 = jointTourData_3.merge(jointTripData_3[['tour_id','tour_distance']], on = 'tour_id')"
-,,,,,,
 #,,,,,,
 Get person hh ID and number,step_1,raw,,,,final_persons['hhper_id'] = final_persons['household_id'].astype(str) + '-' + final_persons['PNUM'].astype(str)
 Cap Auto Ownership,step_1,cap,final_households,HHVEH,auto_ownership,4
@@ -303,7 +304,7 @@ Rename AGGPURP,step_6,rename,tourDuration,,,{'AGGPURP': 'purpose'}
 Rename AUTOSUFF column,step_6,rename,tmodeProfile_vis,,,{'AUTOSUFF': 'OwnershipCategory'}
 Recode auto ownership category,step_6,replace,tmodeProfile_vis,OwnershipCategory,OwnershipCategory,"{0: '0: No Vehicles', 1: '1: 1+ Veh/Adults > Veh', 2: '2: Vehicles >= Adults'}"
 Rename mandatory distance distribution columns,step_6,rename,mandTLFD,,,"{'level_0': 'distbin', 'HDISTRICT': 'District'}"
-Rename mandatory distance distribution columns,step_6,rename,mandTLFD_et,,,"{'workdistbin': 'distbin', 'HDISTRICT': 'District'}"
+Rename mandatory distance distribution columns,step_6,rename,mandTLFD_et,,,"{'level_0': 'distbin', 'HDISTRICT': 'District'}"
 Recode tour mode,step_6,replace,tmodeProfile_vis,tour_mode,tour_mode,"{'DRIVEALONE': '01: SOV', 'SHARED2': '02: Shared Ride 2', 'SHARED3': '03: Shared Ride 3+', 'WALK': '04: Walk', 'BIKE': '05: Bike', 'WALK_TRANSIT': '06: Walk to Transit', 'WALK_LOC': '06: Walk to Transit', 'WALK_PRM': '06: Walk to Transit', 'WALK_MIX': '06: Walk to Transit', 'PNR_TRANSIT': '07: PNR to Transit', 'PNR_LOC': '07: PNR to Transit', 'PNR_PRM': '07: PNR to Transit', 'PNR_MIX': '07: PNR to Transit', 'KNR_TRANSIT': '08: KNR to Transit', 'KNR_LOC': '08: KNR to Transit', 'KNR_PRM': '08: KNR to Transit', 'KNR_MIX': '08: KNR to Transit', 'TNC_TRANSIT': '09: TNC to Transit', 'TNC_LOC': '09: TNC to Transit', 'TNC_PRM': '09: TNC to Transit', 'TNC_MIX': '09: TNC to Transit', 'TAXI': '10: Taxi', 'TNC_SINGLE': '11: TNC Single', 'TNC_SHARED': '12: TNC Shared', 'SCH_BUS': '13: School Bus'}"
 Recode tour mode,step_6,replace,tripmodeProfile_vis,tour_mode,tour_mode,"{'DRIVEALONE': '01: SOV', 'SHARED2': '02: Shared Ride 2', 'SHARED3': '03: Shared Ride 3+', 'WALK': '04: Walk', 'BIKE': '05: Bike', 'WALK_TRANSIT': '06: Walk to Transit', 'WALK_LOC': '06: Walk to Transit', 'WALK_PRM': '06: Walk to Transit', 'WALK_MIX': '06: Walk to Transit', 'PNR_TRANSIT': '07: PNR to Transit', 'PNR_LOC': '07: PNR to Transit', 'PNR_PRM': '07: PNR to Transit', 'PNR_MIX': '07: PNR to Transit', 'KNR_TRANSIT': '08: KNR to Transit', 'KNR_LOC': '08: KNR to Transit', 'KNR_PRM': '08: KNR to Transit', 'KNR_MIX': '08: KNR to Transit', 'TNC_TRANSIT': '09: TNC to Transit', 'TNC_LOC': '09: TNC to Transit', 'TNC_PRM': '09: TNC to Transit', 'TNC_MIX': '09: TNC to Transit', 'TAXI': '10: Taxi', 'TNC_SINGLE': '11: TNC Single', 'TNC_SHARED': '12: TNC Shared', 'SCH_BUS': '13: School Bus'}"
 Recode trip mode,step_6,replace,tripmodeProfile_vis,trip_mode,trip_mode,"{'DRIVEALONE': '01: SOV', 'SHARED2': '02: Shared Ride 2', 'SHARED3': '03: Shared Ride 3+', 'WALK': '04: Walk', 'BIKE': '05: Bike', 'WALK_TRANSIT': '06: Walk to Transit', 'WALK_LOC': '06: Walk to Transit', 'WALK_PRM': '06: Walk to Transit', 'WALK_MIX': '06: Walk to Transit', 'PNR_TRANSIT': '07: PNR to Transit', 'PNR_LOC': '07: PNR to Transit', 'PNR_PRM': '07: PNR to Transit', 'PNR_MIX': '07: PNR to Transit', 'KNR_TRANSIT': '08: KNR to Transit', 'KNR_LOC': '08: KNR to Transit', 'KNR_PRM': '08: KNR to Transit', 'KNR_MIX': '08: KNR to Transit', 'TNC_TRANSIT': '09: TNC to Transit', 'TNC_LOC': '09: TNC to Transit', 'TNC_PRM': '09: TNC to Transit', 'TNC_MIX': '09: TNC to Transit', 'TAXI': '10: Taxi', 'TNC_SINGLE': '11: TNC Single', 'TNC_SHARED': '12: TNC Shared', 'SCH_BUS': '13: School Bus'}"
