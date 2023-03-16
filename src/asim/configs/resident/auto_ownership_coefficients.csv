@@ -168,9 +168,13 @@ asc_nongq_2_autos,-0.22854766,F
 asc_nongq_3_autos,-0.52300561,F
 asc_nongq_4plus_autos,-0.71936807,F
 asc_allhhs_0_autos,-0.297778526,F
-asc_allhhs_1_auto,-0.001967892,F
-asc_allhhs_2_autos,0.392553519,F
-asc_allhs_3_autos,0.618784778,F
-asc_allhhs_4plus_autos,0.61328122,F
+#asc_allhhs_1_auto,-0.001967892,F
+#asc_allhhs_2_autos,0.392553519,F
+#asc_allhs_3_autos,0.618784778,F
+#asc_allhhs_4plus_autos,0.61328122,F
+asc_allhhs_1_auto,-0.0668,F
+asc_allhhs_2_autos,0.3037,F
+asc_allhs_3_autos,0.5656,F
+asc_allhhs_4plus_autos,0.5405,F
 coef_cars2_av_ownership,-0.22314,F
 coef_cars3_av_ownership,-0.69315,F

@@ -11,6 +11,8 @@ chunk_training_mode: disabled
 # see shadow_pricing.yaml for additional settings
 use_shadow_pricing: True
 
+memory_profiling: False
+
 # Sample TAZ before MAZ in destination choice
 want_dest_choice_presampling: True
 
@@ -130,6 +132,8 @@ models:
   ### mp_accessibility
   - compute_accessibility
   ### mp_households
+  - av_ownership
+  - auto_ownership_simulate
   - work_from_home
   - external_worker_identification
   - external_workplace_location
@@ -137,8 +141,6 @@ models:
   - workplace_location
   - transit_pass_subsidy
   - transit_pass_ownership
-  - av_ownership
-  - auto_ownership_simulate
   - vehicle_type_choice
   - transponder_ownership
   - free_parking
