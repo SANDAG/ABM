@@ -135,74 +135,74 @@ util_rural_hyb,Household is in Rural Area - Hybrid,"home_is_rural & (fuel_type =
 util_rural_ev,Household is in Rural Area - Electric,"home_is_rural & ((fuel_type == 'PEV') | (fuel_type == 'BEV'))",coef_rural_ev
 util_rural_age,Household is in Rural Area - Age,"home_is_rural * age",coef_rural_age
 #,MSA population coefficients,,
-util_smsa_van,MSA population less than 1 million - Van,"@(MSA_POP < 1000000) * (df.body_type.str.contains('Van'))",coef_smsa_van
-util_smsa_suv,MSA population less than 1 million - SUV,"@(MSA_POP < 1000000) * (df.body_type.str.contains('SUV'))",coef_smsa_suv
-util_smsa_pu,MSA population less than 1 million - Pickup,"@(MSA_POP < 1000000) * (df.body_type.str.contains('Pickup'))",coef_smsa_pu
-util_smsa_mc,MSA population less than 1 million - Motorcycle,"@(MSA_POP < 1000000) * (df.body_type.str.contains('Motorcycle'))",coef_smsa_mc
-util_smsa_hyb,MSA population less than 1 million - Hybrid,"@(MSA_POP < 1000000) * (df.fuel_type == 'Hybrid')",coef_smsa_hyb
-util_smsa_ev,MSA population less than 1 million - Electric,"@(MSA_POP < 1000000) * ((df.fuel_type == 'PEV') | (df.fuel_type == 'BEV'))",coef_smsa_ev
+util_smsa_van,MSA population less than 1 million - Van,"@(MSA_POP < 1000000) & (df.body_type.str.contains('Van'))",coef_smsa_van
+util_smsa_suv,MSA population less than 1 million - SUV,"@(MSA_POP < 1000000) & (df.body_type.str.contains('SUV'))",coef_smsa_suv
+util_smsa_pu,MSA population less than 1 million - Pickup,"@(MSA_POP < 1000000) & (df.body_type.str.contains('Pickup'))",coef_smsa_pu
+util_smsa_mc,MSA population less than 1 million - Motorcycle,"@(MSA_POP < 1000000) & (df.body_type.str.contains('Motorcycle'))",coef_smsa_mc
+util_smsa_hyb,MSA population less than 1 million - Hybrid,"@(MSA_POP < 1000000) & (df.fuel_type == 'Hybrid')",coef_smsa_hyb
+util_smsa_ev,MSA population less than 1 million - Electric,"@(MSA_POP < 1000000) & ((df.fuel_type == 'PEV') | (df.fuel_type == 'BEV'))",coef_smsa_ev
 util_smsa_age,MSA population less than 1 million - Age,"@(MSA_POP < 1000000) * df.age",coef_smsa_age
 #,Region Specific Constants,,
-util_sfo_van,SF and San Jose - Van,"@(CBSA == 'SFO') * (df.body_type.str.contains('Van'))",coef_sfo_van
-util_sfo_suv,SF and San Jose - SUV,"@(CBSA == 'SFO') * (df.body_type.str.contains('SUV'))",coef_sfo_suv
-util_sfo_pu,SF and San Jose - Pickup,"@(CBSA == 'SFO') * (df.body_type.str.contains('Pickup'))",coef_sfo_pu
-util_sfo_mc,SF and San Jose - Motorcycle,"@(CBSA == 'SFO') * (df.body_type.str.contains('Motorcycle'))",coef_sfo_mc
-util_sfo_hyb,SF and San Jose - Hybrid,"@(CBSA == 'SFO') * (df.fuel_type == 'Hybrid')",coef_sfo_hyb
-util_sfo_ev,SF and San Jose - Electric,"@(CBSA == 'SFO') * ((df.fuel_type == 'PEV') | (df.fuel_type == 'BEV'))",coef_sfo_ev
+util_sfo_van,SF and San Jose - Van,"@(CBSA == 'SFO') & (df.body_type.str.contains('Van'))",coef_sfo_van
+util_sfo_suv,SF and San Jose - SUV,"@(CBSA == 'SFO') & (df.body_type.str.contains('SUV'))",coef_sfo_suv
+util_sfo_pu,SF and San Jose - Pickup,"@(CBSA == 'SFO') & (df.body_type.str.contains('Pickup'))",coef_sfo_pu
+util_sfo_mc,SF and San Jose - Motorcycle,"@(CBSA == 'SFO') & (df.body_type.str.contains('Motorcycle'))",coef_sfo_mc
+util_sfo_hyb,SF and San Jose - Hybrid,"@(CBSA == 'SFO') & (df.fuel_type == 'Hybrid')",coef_sfo_hyb
+util_sfo_ev,SF and San Jose - Electric,"@(CBSA == 'SFO') & ((df.fuel_type == 'PEV') | (df.fuel_type == 'BEV'))",coef_sfo_ev
 util_sfo_age,SF and San Jose - Age,"@(CBSA == 'SFO') * df.age",coef_sfo_age
-util_san_van,San Diego - Van,"@(CBSA == 'SAN') * (df.body_type.str.contains('Van'))",coef_san_van
-util_san_suv,San Diego - SUV,"@(CBSA == 'SAN') * (df.body_type.str.contains('SUV'))",coef_san_suv
-util_san_pu,San Diego - Pickup,"@(CBSA == 'SAN') * (df.body_type.str.contains('Pickup'))",coef_san_pu
-util_san_mc,San Diego - Motorcycle,"@(CBSA == 'SAN') * (df.body_type.str.contains('Motorcycle'))",coef_san_mc
-util_san_hyb,San Diego - Hybrid,"@(CBSA == 'SAN') * (df.fuel_type == 'Hybrid')",coef_san_hyb
-util_san_ev,San Diego - Electric,"@(CBSA == 'SAN') * ((df.fuel_type == 'PEV') | (df.fuel_type == 'BEV'))",coef_san_ev
+util_san_van,San Diego - Van,"@(CBSA == 'SAN') & (df.body_type.str.contains('Van'))",coef_san_van
+util_san_suv,San Diego - SUV,"@(CBSA == 'SAN') & (df.body_type.str.contains('SUV'))",coef_san_suv
+util_san_pu,San Diego - Pickup,"@(CBSA == 'SAN') & (df.body_type.str.contains('Pickup'))",coef_san_pu
+util_san_mc,San Diego - Motorcycle,"@(CBSA == 'SAN') & (df.body_type.str.contains('Motorcycle'))",coef_san_mc
+util_san_hyb,San Diego - Hybrid,"@(CBSA == 'SAN') & (df.fuel_type == 'Hybrid')",coef_san_hyb
+util_san_ev,San Diego - Electric,"@(CBSA == 'SAN') & ((df.fuel_type == 'PEV') | (df.fuel_type == 'BEV'))",coef_san_ev
 util_san_age,San Diego - Age,"@(CBSA == 'SAN') * df.age",coef_san_age
-util_atl_van,Atlanta - Van,"@(CBSA == 'ATL') * (df.body_type.str.contains('Van'))",coef_atl_van
-util_atl_suv,Atlanta - SUV,"@(CBSA == 'ATL') * (df.body_type.str.contains('SUV'))",coef_atl_suv
-util_atl_pu,Atlanta - Pickup,"@(CBSA == 'ATL') * (df.body_type.str.contains('Pickup'))",coef_atl_pu
-util_atl_mc,Atlanta - Motorcycle,"@(CBSA == 'ATL') * (df.body_type.str.contains('Motorcycle'))",coef_atl_mc
-util_atl_hyb,Atlanta - Hybrid,"@(CBSA == 'ATL') * (df.fuel_type == 'Hybrid')",coef_atl_hyb
-util_atl_ev,Atlanta - Electric,"@(CBSA == 'ATL') * ((df.fuel_type == 'PEV') | (df.fuel_type == 'BEV'))",coef_atl_ev
+util_atl_van,Atlanta - Van,"@(CBSA == 'ATL') & (df.body_type.str.contains('Van'))",coef_atl_van
+util_atl_suv,Atlanta - SUV,"@(CBSA == 'ATL') & (df.body_type.str.contains('SUV'))",coef_atl_suv
+util_atl_pu,Atlanta - Pickup,"@(CBSA == 'ATL') & (df.body_type.str.contains('Pickup'))",coef_atl_pu
+util_atl_mc,Atlanta - Motorcycle,"@(CBSA == 'ATL') & (df.body_type.str.contains('Motorcycle'))",coef_atl_mc
+util_atl_hyb,Atlanta - Hybrid,"@(CBSA == 'ATL') & (df.fuel_type == 'Hybrid')",coef_atl_hyb
+util_atl_ev,Atlanta - Electric,"@(CBSA == 'ATL') & ((df.fuel_type == 'PEV') | (df.fuel_type == 'BEV'))",coef_atl_ev
 util_atl_age,Atlanta - Age,"@(CBSA == 'ATL') * df.age",coef_atl_age
-util_sea_van,Seattle - Van,"@(CBSA == 'SEA') * (df.body_type.str.contains('Van'))",coef_sea_van
-util_sea_suv,Seattle - SUV,"@(CBSA == 'SEA') * (df.body_type.str.contains('SUV'))",coef_sea_suv
-util_sea_pu,Seattle - Pickup,"@(CBSA == 'SEA') * (df.body_type.str.contains('Pickup'))",coef_sea_pu
-util_sea_mc,Seattle - Motorcycle,"@(CBSA == 'SEA') * (df.body_type.str.contains('Motorcycle'))",coef_sea_mc
-util_sea_hyb,Seattle - Hybrid,"@(CBSA == 'SEA') * (df.fuel_type == 'Hybrid')",coef_sea_hyb
-util_sea_ev,Seattle - Electric,"@(CBSA == 'SEA') * ((df.fuel_type == 'PEV') | (df.fuel_type == 'BEV'))",coef_sea_ev
+util_sea_van,Seattle - Van,"@(CBSA == 'SEA') & (df.body_type.str.contains('Van'))",coef_sea_van
+util_sea_suv,Seattle - SUV,"@(CBSA == 'SEA') & (df.body_type.str.contains('SUV'))",coef_sea_suv
+util_sea_pu,Seattle - Pickup,"@(CBSA == 'SEA') & (df.body_type.str.contains('Pickup'))",coef_sea_pu
+util_sea_mc,Seattle - Motorcycle,"@(CBSA == 'SEA') & (df.body_type.str.contains('Motorcycle'))",coef_sea_mc
+util_sea_hyb,Seattle - Hybrid,"@(CBSA == 'SEA') & (df.fuel_type == 'Hybrid')",coef_sea_hyb
+util_sea_ev,Seattle - Electric,"@(CBSA == 'SEA') & ((df.fuel_type == 'PEV') | (df.fuel_type == 'BEV'))",coef_sea_ev
 util_sea_age,Seattle - Age,"@(CBSA == 'SEA') * df.age",coef_sea_age
-util_det_van,Detroit - Van,"@(CBSA == 'DET') * (df.body_type.str.contains('Van'))",coef_det_van
-util_det_suv,Detroit - SUV,"@(CBSA == 'DET') * (df.body_type.str.contains('SUV'))",coef_det_suv
-util_det_pu,Detroit - Pickup,"@(CBSA == 'DET') * (df.body_type.str.contains('Pickup'))",coef_det_pu
-util_det_mc,Detroit - Motorcycle,"@(CBSA == 'DET') * (df.body_type.str.contains('Motorcycle'))",coef_det_mc
-util_det_hyb,Detroit - Hybrid,"@(CBSA == 'DET') * (df.fuel_type == 'Hybrid')",coef_det_hyb
-util_det_ev,Detroit - Electric,"@(CBSA == 'DET') * ((df.fuel_type == 'PEV') | (df.fuel_type == 'BEV'))",coef_det_ev
+util_det_van,Detroit - Van,"@(CBSA == 'DET') & (df.body_type.str.contains('Van'))",coef_det_van
+util_det_suv,Detroit - SUV,"@(CBSA == 'DET') & (df.body_type.str.contains('SUV'))",coef_det_suv
+util_det_pu,Detroit - Pickup,"@(CBSA == 'DET') & (df.body_type.str.contains('Pickup'))",coef_det_pu
+util_det_mc,Detroit - Motorcycle,"@(CBSA == 'DET') & (df.body_type.str.contains('Motorcycle'))",coef_det_mc
+util_det_hyb,Detroit - Hybrid,"@(CBSA == 'DET') & (df.fuel_type == 'Hybrid')",coef_det_hyb
+util_det_ev,Detroit - Electric,"@(CBSA == 'DET') & ((df.fuel_type == 'PEV') | (df.fuel_type == 'BEV'))",coef_det_ev
 util_det_age,Detroit - Age,"@(CBSA == 'DET') * df.age",coef_det_age
-util_msp_van,Minneapolis - Van,"@(CBSA == 'MSP') * (df.body_type.str.contains('Van'))",coef_msp_van
-util_msp_suv,Minneapolis - SUV,"@(CBSA == 'MSP') * (df.body_type.str.contains('SUV'))",coef_msp_suv
-util_msp_pu,Minneapolis - Pickup,"@(CBSA == 'MSP') * (df.body_type.str.contains('Pickup'))",coef_msp_pu
-util_msp_mc,Minneapolis - Motorcycle,"@(CBSA == 'MSP') * (df.body_type.str.contains('Motorcycle'))",coef_msp_mc
-util_msp_hyb,Minneapolis - Hybrid,"@(CBSA == 'MSP') * (df.fuel_type == 'Hybrid')",coef_msp_hyb
-util_msp_ev,Minneapolis - Electric,"@(CBSA == 'MSP') * ((df.fuel_type == 'PEV') | (df.fuel_type == 'BEV'))",coef_msp_ev
+util_msp_van,Minneapolis - Van,"@(CBSA == 'MSP') & (df.body_type.str.contains('Van'))",coef_msp_van
+util_msp_suv,Minneapolis - SUV,"@(CBSA == 'MSP') & (df.body_type.str.contains('SUV'))",coef_msp_suv
+util_msp_pu,Minneapolis - Pickup,"@(CBSA == 'MSP') & (df.body_type.str.contains('Pickup'))",coef_msp_pu
+util_msp_mc,Minneapolis - Motorcycle,"@(CBSA == 'MSP') & (df.body_type.str.contains('Motorcycle'))",coef_msp_mc
+util_msp_hyb,Minneapolis - Hybrid,"@(CBSA == 'MSP') & (df.fuel_type == 'Hybrid')",coef_msp_hyb
+util_msp_ev,Minneapolis - Electric,"@(CBSA == 'MSP') & ((df.fuel_type == 'PEV') | (df.fuel_type == 'BEV'))",coef_msp_ev
 util_msp_age,Minneapolis - Age,"@(CBSA == 'MSP') * df.age",coef_msp_age
-util_dca_van,Washington DC - Van,"@(CBSA == 'DCA') * (df.body_type.str.contains('Van'))",coef_dca_van
-util_dca_suv,Washington DC - SUV,"@(CBSA == 'DCA') * (df.body_type.str.contains('SUV'))",coef_dca_suv
-util_dca_pu,Washington DC - Pickup,"@(CBSA == 'DCA') * (df.body_type.str.contains('Pickup'))",coef_dca_pu
-util_dca_mc,Washington DC - Motorcycle,"@(CBSA == 'DCA') * (df.body_type.str.contains('Motorcycle'))",coef_dca_mc
-util_dca_hyb,Washington DC - Hybrid,"@(CBSA == 'DCA') * (df.fuel_type == 'Hybrid')",coef_dca_hyb
-util_dca_ev,Washington DC - Electric,"@(CBSA == 'DCA') * ((df.fuel_type == 'PEV') | (df.fuel_type == 'BEV'))",coef_dca_ev
+util_dca_van,Washington DC - Van,"@(CBSA == 'DCA') & (df.body_type.str.contains('Van'))",coef_dca_van
+util_dca_suv,Washington DC - SUV,"@(CBSA == 'DCA') & (df.body_type.str.contains('SUV'))",coef_dca_suv
+util_dca_pu,Washington DC - Pickup,"@(CBSA == 'DCA') & (df.body_type.str.contains('Pickup'))",coef_dca_pu
+util_dca_mc,Washington DC - Motorcycle,"@(CBSA == 'DCA') & (df.body_type.str.contains('Motorcycle'))",coef_dca_mc
+util_dca_hyb,Washington DC - Hybrid,"@(CBSA == 'DCA') & (df.fuel_type == 'Hybrid')",coef_dca_hyb
+util_dca_ev,Washington DC - Electric,"@(CBSA == 'DCA') & ((df.fuel_type == 'PEV') | (df.fuel_type == 'BEV'))",coef_dca_ev
 util_dca_age,Washington DC - Age,"@(CBSA == 'DCA') * df.age",coef_dca_age
-util_oreg_van,Oregon - Van,"@(CBSA == 'OREG') * (df.body_type.str.contains('Van'))",coef_oreg_van
-util_oreg_suv,Oregon - SUV,"@(CBSA == 'OREG') * (df.body_type.str.contains('SUV'))",coef_oreg_suv
-util_oreg_pu,Oregon - Pickup,"@(CBSA == 'OREG') * (df.body_type.str.contains('Pickup'))",coef_oreg_pu
-util_oreg_mc,Oregon - Motorcycle,"@(CBSA == 'OREG') * (df.body_type.str.contains('Motorcycle'))",coef_oreg_mc
-util_oreg_hyb,Oregon - Hybrid,"@(CBSA == 'OREG') * (df.fuel_type == 'Hybrid')",coef_oreg_hyb
-util_oreg_ev,Oregon - Electric,"@(CBSA == 'OREG') * ((df.fuel_type == 'PEV') | (df.fuel_type == 'BEV'))",coef_oreg_ev
+util_oreg_van,Oregon - Van,"@(CBSA == 'OREG') & (df.body_type.str.contains('Van'))",coef_oreg_van
+util_oreg_suv,Oregon - SUV,"@(CBSA == 'OREG') & (df.body_type.str.contains('SUV'))",coef_oreg_suv
+util_oreg_pu,Oregon - Pickup,"@(CBSA == 'OREG') & (df.body_type.str.contains('Pickup'))",coef_oreg_pu
+util_oreg_mc,Oregon - Motorcycle,"@(CBSA == 'OREG') & (df.body_type.str.contains('Motorcycle'))",coef_oreg_mc
+util_oreg_hyb,Oregon - Hybrid,"@(CBSA == 'OREG') & (df.fuel_type == 'Hybrid')",coef_oreg_hyb
+util_oreg_ev,Oregon - Electric,"@(CBSA == 'OREG') & ((df.fuel_type == 'PEV') | (df.fuel_type == 'BEV'))",coef_oreg_ev
 util_oreg_age,Oregon - Age,"@(CBSA == 'OREG') * df.age",coef_oreg_age
-util_ohio_van,Ohio - Van,"@(CBSA == 'OHIO') * (df.body_type.str.contains('Van'))",coef_ohio_van
-util_ohio_suv,Ohio - SUV,"@(CBSA == 'OHIO') * (df.body_type.str.contains('SUV'))",coef_ohio_suv
-util_ohio_pu,Ohio - Pickup,"@(CBSA == 'OHIO') * (df.body_type.str.contains('Pickup'))",coef_ohio_pu
-util_ohio_mc,Ohio - Motorcycle,"@(CBSA == 'OHIO') * (df.body_type.str.contains('Motorcycle'))",coef_ohio_mc
-util_ohio_hyb,Ohio - Hybrid,"@(CBSA == 'OHIO') * (df.fuel_type == 'Hybrid')",coef_ohio_hyb
-util_ohio_ev,Ohio - Electric,"@(CBSA == 'OHIO') * ((df.fuel_type == 'PEV') | (df.fuel_type == 'BEV'))",coef_ohio_ev
+util_ohio_van,Ohio - Van,"@(CBSA == 'OHIO') & (df.body_type.str.contains('Van'))",coef_ohio_van
+util_ohio_suv,Ohio - SUV,"@(CBSA == 'OHIO') & (df.body_type.str.contains('SUV'))",coef_ohio_suv
+util_ohio_pu,Ohio - Pickup,"@(CBSA == 'OHIO') & (df.body_type.str.contains('Pickup'))",coef_ohio_pu
+util_ohio_mc,Ohio - Motorcycle,"@(CBSA == 'OHIO') & (df.body_type.str.contains('Motorcycle'))",coef_ohio_mc
+util_ohio_hyb,Ohio - Hybrid,"@(CBSA == 'OHIO') & (df.fuel_type == 'Hybrid')",coef_ohio_hyb
+util_ohio_ev,Ohio - Electric,"@(CBSA == 'OHIO') & ((df.fuel_type == 'PEV') | (df.fuel_type == 'BEV'))",coef_ohio_ev
 util_ohio_age,Ohio - Age,"@(CBSA == 'OHIO') * df.age",coef_ohio_age
