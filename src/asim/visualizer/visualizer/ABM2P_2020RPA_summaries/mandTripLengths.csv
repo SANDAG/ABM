@@ -1,0 +1,28 @@
+District,purpose,value
+1: Downtown,Work,7.23588685705588
+2: Central,Work,9.195970641957251
+3: North City,Work,11.072688015647381
+4: South Suburban,Work,12.607379118141198
+5: East Suburban,Work,13.907751324917564
+6: North County West,Work,12.57202917078561
+7: North County East,Work,13.834355410379564
+8: East County,Work,29.74130885236545
+Total,Work,11.89052049187212
+1: Downtown,University,5.33605690687022
+2: Central,University,7.880570491851561
+3: North City,University,8.480852740784137
+4: South Suburban,University,10.040810842797878
+5: East Suburban,University,10.295469265912843
+6: North County West,University,9.805473785314122
+7: North County East,University,8.651142695966527
+8: East County,University,29.722750271927
+Total,University,9.01759680290906
+1: Downtown,School,3.502355312496626
+2: Central,School,4.4448453436242525
+3: North City,School,5.138217174464779
+4: South Suburban,School,3.4087802797801414
+5: East Suburban,School,3.9718615320817454
+6: North County West,School,4.052048031395859
+7: North County East,School,3.484622592299579
+8: East County,School,10.626119291550776
+Total,School,4.220305209306047
