@@ -151,7 +151,7 @@ Get person type for joint tour participant 7,step_1,raw,,,,jointTourData_3['PTYP
 Get person type for joint tour participant 8,step_1,raw,,,,jointTourData_3['PTYPE8'] = (jointTourData_3['household_id'].astype(str) + '-' + jointTourData_3['PER8'].astype(str)).map(final_persons.set_index('hhper_id')['PERTYPE']).fillna(0)
 #,,,,,,
 ,step_1,raw,,,,toursPertypeDistbn = pd.DataFrame({'freq': indivTourData_3.query('PERTYPE > 0 and TOURPURP != 10')['PERTYPE'].value_counts().sort_index()})
-Melt joint tours into tours by person type,step_1,raw,,,,"temp_joint = pd.melt(jointTourData_3, ['household_id', 'tour_id','finalweights'], ['PTYPE1', 'PTYPE2', 'PTYPE3', 'PTYPE4', 'PTYPE5', 'PTYPE6', 'PTYPE7', 'PTYPE8'], value_name = 'PERTYPE')"
+Melt joint tours into tours by person type,step_1,raw,,,,"temp_joint = pd.melt(jointTourData_3, ['household_id', 'tour_id','finalweights'], ['PTYPE1', 'PTYPE2', 'PTYPE3', 'PTYPE4', 'PTYPE5', 'PTYPE6', 'PTYPE7', 'PTYPE8'], value_name = 'PERTYPE').query('PERTYPE > 0')"
 Reset temp_joint's index,step_1,raw,,,,temp_joint = temp_joint.drop_duplicates().reset_index()
 ,step_1,raw,,,,jtoursPertypeDistbn = pd.DataFrame({'freq': temp_joint['PERTYPE'].astype(int).value_counts().sort_index()})
 ,step_1,raw,,,,totaltoursPertypeDistbn = toursPertypeDistbn.copy()
