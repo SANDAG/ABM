@@ -9,7 +9,7 @@ chunk_training_mode: disabled
 
 use_shadow_pricing: True
 
-memory_profile: True
+memory_profile: False
 
 # raise error if any sub-process fails without waiting for others to complete
 # (Shadow pricing requires fail_fast setting in multiprocessing mode)
