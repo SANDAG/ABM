@@ -74,6 +74,7 @@ import heapq as _heapq
 
 import traceback as _traceback
 import os
+import yaml
 
 _join = os.path.join
 _dir = os.path.dirname
@@ -85,7 +86,8 @@ dem_utils = _m.Modeller().module("sandag.utilities.demand")
 FILE_NAMES = {
     "FARES": "special_fares.txt",
     "OFF_PEAK": "off_peak_toll_factors.csv",
-    "VEHICLE_CLASS": "vehicle_class_toll_factors.csv"
+    "VEHICLE_CLASS": "vehicle_class_toll_factors.csv",
+    "NETWORK_EDITS": "network_edits.yaml"
 }
 
 
@@ -1356,12 +1358,35 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 4: 0.0127692,   # Other, Railway, etc.
             }
         }
+
+        # Check if network editor file is in inputs
+        network_editor_yaml_file = FILE_NAMES["NETWORK_EDITS"]
+        network_editor_bool = False
+        network_editor_yaml_path = _join(self.source, network_editor_yaml_file)
+        if os.path.exists(network_editor_yaml_path):
+            #msg = #"Adjusting off-peak tolls based on factors from %s" % off_peak_factor_file
+            #self._log.append({"type": "text", "content": msg})
+            network_editor_bool = True
+            self._log.append({"type": "text", "content": "%s" % network_editor_yaml_path})
+            with open(network_editor_yaml_path, "r") as stream:
+                network_editor_data = yaml.safe_load(stream)
+                self._log.append({"type": "text", "content": "loaded YAML"})
+
         for link in network.links():
             # Change SR125 toll speed to 70MPH
             if link["@lane_restriction"] == 4 and link.type == 1:
                 link["@speed_posted"] = 70
 
             link["@cost_operating"] = link.length * aoc
+
+            if network_editor_bool:
+                for link_edits in network_editor_data:
+                    if link["@tcov_id"] in link_edits["@tcov_id"]:
+                        #this format permits only one attribute change per edit
+                        try:
+                            link[link_edits["attribute_to_edit"]] = link_edits["new_value"]
+                        except KeyError: #one of two solutions should probably be removed
+                            setattr(link, link_edits["attribute_to_edit"], link_edits["new_value"])
 
             # Expand off-peak TOD attributes, copy peak period attributes
             for time, src_time in zip(time_periods, src_time_periods):
