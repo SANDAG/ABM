@@ -207,7 +207,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                     "exclude_split_links":False,
                                     "only_midblock_nodes": False},
                                 max_length=self.max_length_pnr[i],
-                                max_connectors=2,
+                                max_connectors=5,
                                 min_angle=0,
                                 scenario=self.scenario)
                 export_basenet(selection = {"link": 'i=1,4947 or j=1,4947',
@@ -224,7 +224,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                     "exclude_split_links":False,
                                     "only_midblock_nodes": False},
                                 max_length=self.max_length_knr[i],
-                                max_connectors=2,
+                                max_connectors=5,
                                 min_angle=0,
                                 scenario=self.scenario)
                 export_basenet(selection = {"link": 'i=1,4947 or j=1,4947',
@@ -241,7 +241,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                     "exclude_split_links":False,
                                     "only_midblock_nodes": False},
                                 max_length=self.max_length_tnc[i],
-                                max_connectors=2,
+                                max_connectors=5,
                                 min_angle=0,
                                 scenario=self.scenario)
                 export_basenet(selection = {"link": 'i=1,4947 or j=1,4947',
@@ -258,7 +258,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                     "exclude_split_links":False,
                                     "only_midblock_nodes": False},
                                 max_length=self.max_length_wlk[i],
-                                max_connectors=2,
+                                max_connectors=5,
                                 min_angle=0,
                                 scenario=self.scenario)
                 export_basenet(selection = {"link": 'i=1,4947 or j=1,4947',
@@ -275,7 +275,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                     "exclude_split_links":False,
                                     "only_midblock_nodes": False},
                                 max_length=self.max_length_knr[i],
-                                max_connectors=2,
+                                max_connectors=5,
                                 min_angle=0,
                                 scenario=self.scenario)
                 export_basenet(selection = {"link": 'i=1,4947 or j=1,4947',
@@ -292,7 +292,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                     "exclude_split_links":False,
                                     "only_midblock_nodes": False},
                                 max_length=self.max_length_knr[i],
-                                max_connectors=2,
+                                max_connectors=5,
                                 min_angle=0,
                                 scenario=self.scenario)
                 export_basenet(selection = {"link": 'i=1,4947 or j=1,4947',
@@ -309,7 +309,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                     "exclude_split_links":False,
                                     "only_midblock_nodes": False},
                                 max_length=self.max_length_wlk[i],
-                                max_connectors=2,
+                                max_connectors=5,
                                 min_angle=0,
                                 scenario=self.scenario)
                 export_basenet(selection = {"link": 'i=1,4947 or j=1,4947',

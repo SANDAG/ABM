@@ -444,11 +444,12 @@ class OMXManager(object):
     def lookup(self, name_args, key):
         file_name = self._name_tmplt % name_args
         omx_file = self._omx_files.get(file_name)
-        if omx_file is None:
-            file_path = os.path.join(self._directory, file_name)
-            omx_file = _omx.open_file(file_path, 'r')
-            self._omx_files[file_name] = omx_file
-        return omx_file[key].read()
+        with _m.logbook_trace("file_name: %s" % (file_name)):
+            if omx_file is None:
+                file_path = os.path.join(self._directory, file_name)
+                omx_file = _omx.open_file(file_path, 'r')
+                self._omx_files[file_name] = omx_file
+            return _numpy.array(omx_file[key])
 
     def file_exists(self, name_args):
         file_name = self._name_tmplt % name_args

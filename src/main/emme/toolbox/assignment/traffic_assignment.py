@@ -117,6 +117,8 @@ class TrafficAssignment(_m.Tool(), gen_utils.Snapshot):
     num_processors = _m.Attribute(str)
     select_link = _m.Attribute(unicode)
     raise_zero_dist = _m.Attribute(bool)
+    stochastic = _m.Attribute(bool)
+    input_directory = _m.Attribute(str)
 
     tool_run_msg = ""
 
@@ -127,8 +129,11 @@ class TrafficAssignment(_m.Tool(), gen_utils.Snapshot):
         self.num_processors = "MAX-1"
         self.raise_zero_dist = True
         self.select_link = '[]'
+        self.stochastic = False
+        project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
+        self.input_directory = os.path.join(os.path.dirname(project_dir), "input")
         self.attributes = ["period", "msa_iteration", "relative_gap", "max_iterations",
-                           "num_processors", "select_link", "raise_zero_dist"]
+                           "num_processors", "select_link", "raise_zero_dist", "stochastic", "input_directory"]
         version = os.environ.get("EMMEPATH", "")
         self._version = version[-5:] if version else ""
         self._skim_classes_separately = True  # Used for debugging only
@@ -165,6 +170,13 @@ Assignment matrices and resulting network flows are always in PCE.
         dem_utils.add_select_processors("num_processors", pb, self)
         pb.add_checkbox("raise_zero_dist", title=" ", label="Raise on zero distance value",
             note="Check for and raise an exception if a zero value is found in the SOVGP_DIST matrix.")
+        pb.add_checkbox(
+            'stochastic',
+            title=" ",
+            label="Run as a stochastic assignment", 
+            note="If the current MSA iteration is the last (4th) one, the SOLA traffic assignment is replaced with a stochastic traffic assignment."
+        )
+        pb.add_select_file('input_directory', 'directory', title='Select input directory')
         self._add_select_link_interface(pb)
         return pb.render()
 
@@ -320,7 +332,8 @@ Assignment matrices and resulting network flows are always in PCE.
         try:
             scenario = _m.Modeller().scenario
             results = self(self.period, self.msa_iteration, self.relative_gap, self.max_iterations,
-                           self.num_processors, scenario, self.select_link, self.raise_zero_dist)
+                           self.num_processors, scenario, self.select_link, self.raise_zero_dist,
+                           self.stochastic, self.input_directory)
             run_msg = "Traffic assignment completed"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg)
         except Exception as error:
@@ -329,7 +342,7 @@ Assignment matrices and resulting network flows are always in PCE.
             raise
 
     def __call__(self, period, msa_iteration, relative_gap, max_iterations, num_processors, scenario,
-                 select_link=[], raise_zero_dist=True):
+                 select_link=[], raise_zero_dist=True, stochastic=False, input_directory=None):
         select_link = _json.loads(select_link) if isinstance(select_link, basestring) else select_link
         attrs = {
             "period": period,
@@ -340,6 +353,8 @@ Assignment matrices and resulting network flows are always in PCE.
             "scenario": scenario.id,
             "select_link": _json.dumps(select_link),
             "raise_zero_dist": raise_zero_dist,
+            "stochastic": stochastic,
+            "input_directory": input_directory,
             "self": str(self)
         }
         self._stats = {}
@@ -353,35 +368,35 @@ Assignment matrices and resulting network flows are always in PCE.
             # Main list of assignment classes
             classes = [
                 {   # 0
-                    "name": 'SOV_NT_L', "mode": 's', "PCE": 1, "VOT": 15.0, "cost": '@cost_auto',
+                    "name": 'SOV_NT_L', "mode": 's', "PCE": 1, "VOT": 8.81, "cost": '@cost_auto',
                     "skims": ["TIME", "DIST", "REL", "TOLLCOST.SOV", "TOLLDIST"]
                 },
                 {   # 1
-                    "name": 'SOV_TR_L', "mode": 'S', "PCE": 1, "VOT": 15.0, "cost": '@cost_auto',
+                    "name": 'SOV_TR_L', "mode": 'S', "PCE": 1, "VOT": 8.81, "cost": '@cost_auto',
                     "skims": ["TIME", "DIST", "REL", "TOLLCOST.SOV", "TOLLDIST"]
                 },
                 {   # 2
-                    "name": 'HOV2_L', "mode": 'H', "PCE": 1, "VOT": 15.0, "cost": '@cost_hov2',
+                    "name": 'HOV2_L', "mode": 'H', "PCE": 1, "VOT": 8.81, "cost": '@cost_hov2',
                     "skims": ["TIME", "DIST", "REL", "TOLLCOST.HOV2", "TOLLDIST.HOV2", "HOVDIST"]
                 },
                 {   # 3
-                    "name": 'HOV3_L', "mode": 'I', "PCE": 1, "VOT": 15.0, "cost": '@cost_hov3',
+                    "name": 'HOV3_L', "mode": 'I', "PCE": 1, "VOT": 8.81, "cost": '@cost_hov3',
                     "skims": ["TIME", "DIST", "REL", "TOLLCOST.HOV3", "TOLLDIST.HOV3", "HOVDIST"]
                 },
                 {   # 4
-                    "name": 'SOV_NT_M', "mode": 's', "PCE": 1, "VOT": 30.0, "cost": '@cost_auto',
+                    "name": 'SOV_NT_M', "mode": 's', "PCE": 1, "VOT": 18.0, "cost": '@cost_auto',
                     "skims": ["TIME", "DIST", "REL", "TOLLCOST.SOV", "TOLLDIST"]
                 },
                 {   # 5
-                    "name": 'SOV_TR_M', "mode": 'S', "PCE": 1, "VOT": 30.0, "cost": '@cost_auto',
+                    "name": 'SOV_TR_M', "mode": 'S', "PCE": 1, "VOT": 18.0, "cost": '@cost_auto',
                     "skims": ["TIME", "DIST", "REL", "TOLLCOST.SOV", "TOLLDIST"]
                 },
                 {   # 6
-                    "name": 'HOV2_M', "mode": 'H', "PCE": 1, "VOT": 30.0, "cost": '@cost_hov2',
+                    "name": 'HOV2_M', "mode": 'H', "PCE": 1, "VOT": 18.0, "cost": '@cost_hov2',
                     "skims": ["TIME", "DIST", "REL", "TOLLCOST.HOV2", "TOLLDIST.HOV2", "HOVDIST"]
                 },
                 {   # 7
-                    "name": 'HOV3_M', "mode": 'I', "PCE": 1, "VOT": 30.0, "cost": '@cost_hov3',
+                    "name": 'HOV3_M', "mode": 'I', "PCE": 1, "VOT": 18.0, "cost": '@cost_hov3',
                     "skims": ["TIME", "DIST", "REL", "TOLLCOST.HOV3", "TOLLDIST.HOV3", "HOVDIST"]
                 },
                 {   # 8
@@ -432,7 +447,19 @@ Assignment matrices and resulting network flows are always in PCE.
                 msa_link_flows = scenario.get_attribute_values("LINK", link_attrs)[1:]
                 msa_turn_flows = scenario.get_attribute_values("TURN", turn_attrs)[1:]
 
-            self.run_assignment(period, relative_gap, max_iterations, num_processors, scenario, classes, select_link)
+            if stochastic:
+                self.run_stochastic_assignment(
+                    period,
+                    relative_gap, 
+                    max_iterations, 
+                    num_processors, 
+                    scenario, 
+                    classes,
+                    input_directory 
+                )
+            else:
+                self.run_assignment(period, relative_gap, max_iterations, num_processors, scenario, classes, select_link)
+
 
             if 1 < msa_iteration < 4:
                 link_flows = scenario.get_attribute_values("LINK", link_attrs)
@@ -459,7 +486,7 @@ Assignment matrices and resulting network flows are always in PCE.
 
             self.calc_network_results(period, num_processors, scenario)
 
-            if msa_iteration < 4:
+            if msa_iteration <= 4:
                 self.run_skims(period, num_processors, scenario, classes)
                 self.report(period, scenario, classes)
                 # Check that the distance matrix is valid (no disconnected zones)
@@ -486,6 +513,10 @@ Assignment matrices and resulting network flows are always in PCE.
         traffic_assign = modeller.tool(
             "inro.emme.traffic_assignment.sola_traffic_assignment")
         net_calc = gen_utils.NetworkCalculator(scenario)
+
+        if period in ["AM", "PM"]:
+            # For freeway links in AM and PM periods, convert VDF to type 25
+            net_calc("vdf", "25", "vdf=10")
 
         p = period.lower()
         assign_spec = self.base_assignment_spec(
@@ -622,6 +653,148 @@ Assignment matrices and resulting network flows are always in PCE.
                                 })
         # Run assignment
         traffic_assign(assign_spec, scenario, chart_log_interval=2)
+        return
+
+    def run_stochastic_assignment(
+            self, period, relative_gap, max_iterations, num_processors, scenario,
+            classes, input_directory):
+        load_properties = _m.Modeller().tool('sandag.utilities.properties')
+        main_directory = os.path.dirname(input_directory)
+        props = load_properties(os.path.join(main_directory, "conf", "sandag_abm.properties"))
+        distribution_type = props['stochasticHighwayAssignment.distributionType']
+        replications = props['stochasticHighwayAssignment.replications']
+        a_parameter = props['stochasticHighwayAssignment.aParameter']
+        b_parameter = props['stochasticHighwayAssignment.bParameter']
+        seed = props['stochasticHighwayAssignment.seed']
+
+        emmebank = scenario.emmebank
+
+        modeller = _m.Modeller()
+        set_extra_function_para = modeller.tool(
+            "inro.emme.traffic_assignment.set_extra_function_parameters")
+        create_attribute = modeller.tool(
+            "inro.emme.data.extra_attribute.create_extra_attribute")
+        traffic_assign = modeller.tool(
+            "solutions.stochastic_traffic_assignment")
+        net_calc = gen_utils.NetworkCalculator(scenario)
+
+        if period in ["AM", "PM"]:
+            # For freeway links in AM and PM periods, convert VDF to type 25 
+            net_calc("vdf", "25", "vdf=10")
+            
+        p = period.lower()
+        assign_spec = self.base_assignment_spec(
+            relative_gap, max_iterations, num_processors)
+        assign_spec['background_traffic'] = {
+            "link_component": None,
+            "turn_component": None,
+            "add_transit_vehicles": True
+        }
+        with _m.logbook_trace("Prepare traffic data for period %s" % period):
+            with _m.logbook_trace("Input link attributes"):
+                # set extra attributes for the period for VDF
+                # ul1 = @time_link (period)
+                # ul2 = transit flow -> volad (for assignment only)
+                # ul3 = @capacity_link (period)
+                el1 = "@green_to_cycle"
+                el2 = "@sta_reliability"
+                el3 = "@capacity_inter"
+                set_extra_function_para(el1, el2, el3, emmebank=emmebank)
+
+                # set green to cycle to el1=@green_to_cycle for VDF
+                att_name = "@green_to_cycle_%s" % p
+                att = scenario.extra_attribute(att_name)
+                new_att_name = "@green_to_cycle"
+                create_attribute("LINK", new_att_name, att.description,
+                                  0, overwrite=True, scenario=scenario)
+                net_calc(new_att_name, att_name, "modes=d")
+                # set static reliability to el2=@sta_reliability for VDF
+                att_name = "@sta_reliability_%s" % p
+                att = scenario.extra_attribute(att_name)
+                new_att_name = "@sta_reliability"
+                create_attribute("LINK", new_att_name, att.description,
+                                  0, overwrite=True, scenario=scenario)
+                net_calc(new_att_name, att_name, "modes=d")
+                # set capacity_inter to el3=@capacity_inter for VDF
+                att_name = "@capacity_inter_%s" % p
+                att = scenario.extra_attribute(att_name)
+                new_att_name = "@capacity_inter"
+                create_attribute("LINK", new_att_name, att.description,
+                                  0, overwrite=True, scenario=scenario)
+                net_calc(new_att_name, att_name, "modes=d")
+                # set link time
+                net_calc("ul1", "@time_link_%s" % p, "modes=d")
+                net_calc("ul3", "@capacity_link_%s" % p, "modes=d")
+                # set number of lanes (not used in VDF, just for reference)
+                net_calc("lanes", "@lane_%s" % p, "modes=d")
+                if period in ["EA", "MD", "EV"]:
+                    # For links with signals inactive in the off-peak periods, convert VDF to type 11
+                    net_calc("vdf", "11", "modes=d and @green_to_cycle=0 and @traffic_control=4,5 and vdf=24")
+                # # Set HOV2 cost attribute
+                # create_attribute("LINK", "@cost_hov2_%s" % p, "toll (non-mngd) + cost for HOV2",
+                #                  0, overwrite=True, scenario=scenario)
+                # net_calc("@cost_hov2_%s" % p, "@cost_hov_%s" % p, "modes=d")
+                # net_calc("@cost_hov2_%s" % p, "@cost_auto_%s" % p, "@lane_restriction=3")
+
+            with _m.logbook_trace("Transit line headway and background traffic"):
+                # set headway for the period: format is (attribute_name, period duration in hours) 
+                hdw = {"ea": ("@headway_op", 3),
+                       "am": ("@headway_am", 3),
+                       "md": ("@headway_op", 6.5),
+                       "pm": ("@headway_pm", 3.5),
+                       "ev": ("@headway_op", 5)}
+                net_calc('ul2', '0', {'link': 'all'})
+                net_calc('hdw', '9999.99', {'transit_line': 'all'})
+                net_calc(
+                    'hdw', "{hdw} / {p} ".format(hdw=hdw[p][0], p=hdw[p][1]),
+                    {"transit_line": "%s=0.02,9999" % hdw[p][0]}
+                )
+
+            with _m.logbook_trace("Per-class flow attributes"):
+                for traffic_class in classes:
+                    demand = 'mf"%s_%s"' % (period, traffic_class["name"])
+                    link_cost = "%s_%s" % (traffic_class["cost"], p) if traffic_class["cost"] else "@cost_operating"
+
+                    att_name = "@%s" % (traffic_class["name"].lower())
+                    att_des = "%s %s link volume" % (period, traffic_class["name"])
+                    link_flow = create_attribute("LINK", att_name, att_des, 0, overwrite=True, scenario=scenario)
+                    att_name = "@p%s" % (traffic_class["name"].lower())
+                    att_des = "%s %s turn volume" % (period, traffic_class["name"])
+                    turn_flow = create_attribute("TURN", att_name, att_des, 0, overwrite=True, scenario=scenario)
+
+                    class_spec = {
+                        "mode": traffic_class["mode"],
+                        "demand": demand,
+                        "generalized_cost": {
+                            "link_costs": link_cost, "perception_factor": 1.0 / traffic_class["VOT"]
+                        },
+                        "results": {
+                            "link_volumes": link_flow.id, "turn_volumes": turn_flow.id,
+                            "od_travel_times": None
+                        }
+                    }
+                    assign_spec["classes"].append(class_spec)
+        
+        # Run assignment
+        traffic_assign(
+            assign_spec,
+            dist_par={'type': distribution_type, 'A': a_parameter, 'B': b_parameter},
+            replications=replications,
+            seed=seed,
+            orig_func=False,
+            random_term='ul2',
+            compute_travel_times=False,
+            scenario=scenario
+        )
+        
+        with _m.logbook_trace("Reset transit line headways"):
+                # set headway for the period
+                hdw = {"ea": "@headway_op",
+                       "am": "@headway_am",
+                       "md": "@headway_op",
+                       "pm": "@headway_pm",
+                       "ev": "@headway_op"}
+                net_calc("hdw", hdw[p], {"transit_line": "all"})
         return
 
     def calc_network_results(self, period, num_processors, scenario):
@@ -801,8 +974,8 @@ Assignment matrices and resulting network flows are always in PCE.
             "background_traffic": None,
             "classes": [],
             "stopping_criteria": {
-                "max_iterations": max_iterations, "best_relative_gap": 0.0,
-                "relative_gap": relative_gap, "normalized_gap": 0.0
+                "max_iterations": int(max_iterations), "best_relative_gap": 0.0,
+                "relative_gap": float(relative_gap), "normalized_gap": 0.0
             },
             "performance_settings": {"number_of_processors": num_processors},
         }
@@ -911,3 +1084,4 @@ def temp_functions(emmebank):
         with _m.logbook_trace("Reset functions to assignment parameters"):
             for func, expression in orig_expression.iteritems():
                 change_function(func, expression, emmebank)
+

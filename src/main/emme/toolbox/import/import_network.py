@@ -700,21 +700,21 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             1:  set([transfer]),                                 # 1  = special transfer walk links between certain nearby stops
             2:  set([walk]),                                     # 2  = walk links in the downtown area
             3:  set([access]),                                   # 3  = the special TAP connectors
-            4:  set([AccWlk]),                                  # 4  = access walk links
-            5:  set([EgrWlk]),                                  # 5  = egress walk links
-            6:  set([AccPNR]),                                  # 6  = access PNR links
-            7:  set([EgrPNR]),                                  # 7  = egress PNR links
-            8:  set([AccKNR]),                                  # 8  = access KNR links
-            9:  set([EgrKNR]),                                  # 9  = egress KNR links
-            10:  set([AccTNC]),                                  # 8  = access TNC links
-            11:  set([EgrTNC]),                                  # 9  = egress TNC links
-            12:  set([coaster_rail]),                             # 4  = Coaster Rail Line
-            13:  set([lrt]),                                      # 5  = Light Rail Transit (LRT) Line
-            14:  set([brt_yellow, ltdexp_bus, express_bus, bus]), # 6  = Yellow Car Bus Rapid Transit (BRT)
-            15:  set([brt_red, ltdexp_bus, express_bus, bus]),    # 7  = Red Car Bus Rapid Transit (BRT)
-            16:  set([ltdexp_bus, express_bus, bus]),             # 8  = Limited Express Bus
-            17:  set([ltdexp_bus, express_bus, bus]),             # 9  = Express Bus
-            18: set([ltdexp_bus, express_bus, bus]),             # 10 = Local Bus
+            4:  set([coaster_rail]),                             # 4  = Coaster Rail Line
+            5:  set([lrt]),                                      # 5  = Light Rail Transit (LRT) Line
+            6:  set([brt_yellow, ltdexp_bus, express_bus, bus]), # 6  = Yellow Car Bus Rapid Transit (BRT)
+            7:  set([brt_red, ltdexp_bus, express_bus, bus]),    # 7  = Red Car Bus Rapid Transit (BRT)
+            8:  set([ltdexp_bus, express_bus, bus]),             # 8  = Limited Express Bus
+            9:  set([ltdexp_bus, express_bus, bus]),             # 9  = Express Bus
+            10: set([ltdexp_bus, express_bus, bus]),             # 10 = Local Bus
+            11:  set([AccWlk]),                                  # 4  = access walk links
+            12:  set([EgrWlk]),                                  # 5  = egress walk links
+            13:  set([AccPNR]),                                  # 6  = access PNR links
+            14:  set([EgrPNR]),                                  # 7  = egress PNR links
+            15:  set([AccKNR]),                                  # 8  = access KNR links
+            16:  set([EgrKNR]),                                  # 9  = egress KNR links
+            17:  set([AccTNC]),                                  # 8  = access TNC links
+            18:  set([EgrTNC]),                                  # 9  = egress TNC links
         }
         tier1_rail_link_name = props["transit.newMode"]
 

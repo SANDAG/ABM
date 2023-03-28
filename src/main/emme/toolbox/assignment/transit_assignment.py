@@ -428,7 +428,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
 
     def all_modes_journey_levels(self, params, network, day_pass_cost):
         transfer_penalty = {"on_segments": {"penalty": "@transfer_penalty_s", "perception_factor": 5.0}}
-        transfer_wait = { #
+        transfer_wait = {
             "effective_headways": "@headway_seg",
             "headway_fraction": 0.5,
             "perception_factor": params["xfer_wait"],
@@ -547,7 +547,6 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 next_level = rule["next_journey_level"]
                 rule["next_journey_level"] = level_map[next_level]
         return journey_levels
-
 
     @_m.logbook_trace("Transit assignment by demand set", save_arguments=True)
     def run_assignment(self, period, params, network, day_pass_cost, skims_only, num_processors):
