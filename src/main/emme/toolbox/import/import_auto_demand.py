@@ -79,12 +79,12 @@ gen_utils = _m.Modeller().module("sandag.utilities.general")
 class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
 
     external_zones = _m.Attribute(str)
-    output_dir = _m.Attribute(unicode)
+    output_dir = _m.Attribute(str)
     num_processors = _m.Attribute(str)
     
     tool_run_msg = ""
 
-    @_m.method(return_type=_m.UnicodeType)
+    @_m.method(return_type=str)
     def tool_run_msg_status(self):
         return self.tool_run_msg
 
@@ -185,7 +185,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
             try:
                 yield omx_manager
             finally:
-                for name, value in self._matrix_cache.iteritems():
+                for name, value in self._matrix_cache.items():
                     matrix = emmebank.matrix(name)
                     matrix.set_numpy_data(value, self.scenario.id)
     
@@ -415,13 +415,13 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                 "period": period
             }
         with _m.logbook_trace('Load starting SOV and truck matrices'):
-            for key, value in mapping.iteritems():
+            for key, value in mapping.items():
                 value["array"] = emmebank.matrix(value["orig"]).get_numpy_data(scenario)
         
         with _m.logbook_trace('Processing CVM from TripMatrices.csv'):
             path = os.path.join(self.output_dir, "TripMatrices.csv")
             table = _pandas.read_csv(path)
-            for key, value in mapping.iteritems():
+            for key, value in mapping.items():
                 cvm_array = table[key].values.reshape((props["zones.count"], props["zones.count"]))     # reshape method deprecated since v 0.19.0, yma, 2/12/2019
                 #factor in cvm demand by the scale factor used in trip generation
                 cvm_array = cvm_array/scale_factor
@@ -432,7 +432,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                 value["array"] = value["array"] + (cvm_array * (1-value["share"]))
                 
             #add cvm truck vehicles to light-heavy trucks
-            for key, value in mapping.iteritems():
+            for key, value in mapping.items():
                 period = value["period"]
                 cvm_vehs = ['L','M','H']
                 if key == "CVM_%s:INT" % period:
@@ -446,10 +446,10 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                             value["array"] = value["array"] + (cvm_array * value_new["share"])
         matrix_unique = {}
         with _m.logbook_trace('Save SOV matrix and convert CV and truck vehicle demand to PCEs for assignment'):
-            for key, value in mapping.iteritems():
+            for key, value in mapping.items():
                 matrix = emmebank.matrix(value["dest"])
                 array = value["array"] * value["pce"]
-                if (matrix in matrix_unique.keys()):
+                if (matrix in list(matrix_unique.keys())):
                     array = array + emmebank.matrix(value["dest"]).get_numpy_data(scenario)
                 matrix.set_numpy_data(array, scenario)
                 matrix_unique[matrix] = 1

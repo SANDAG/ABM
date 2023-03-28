@@ -57,7 +57,7 @@ def process_file(config, zone):
        orig_col = 'mgra'
        dest_col = 'tap'
 
-    print('Processing %s ...' % output_file)
+    print(('Processing %s ...' % output_file))
     df = pd.read_csv(output_file, usecols=[walk_time_col, orig_col, dest_col])
     df.rename(columns={walk_time_col:'walkTime'}, inplace=True)
 
@@ -82,7 +82,7 @@ def process_file(config, zone):
 
     all_rows = df.shape[0]
     df = df[mt_avail | walk_avail | mm_avail]
-    print('Filtered out %s unavailable pairs' % str(all_rows - df.shape[0]))
+    print(('Filtered out %s unavailable pairs' % str(all_rows - df.shape[0])))
 
     # micro-mobility
     mm_ivt = length * 60 / config.mm_speed # micro-mobility in-vehicle time
@@ -122,7 +122,7 @@ def process_file(config, zone):
         os.path.basename(output_file).replace('walk', 'micro')
     )
 
-    print("Writing final table to %s" % outfile)
+    print(("Writing final table to %s" % outfile))
     df.to_csv(outfile, index=False)
     print("Done.")
 
@@ -172,7 +172,7 @@ class Config():
 
         filename = self.cli.properties_file
         self.validate_file(filename)
-        print('Parsing tokens from %s ...' % filename)
+        print(('Parsing tokens from %s ...' % filename))
 
         all_props = {}
         with open(filename, 'r') as f:
@@ -232,8 +232,8 @@ class Config():
             use_dummy = 'MicroAccessTime' not in f.readline()
 
         if use_dummy:
-            print('No MicroAccessTime column found in %s, using 2 minute '
-                  'default for PARKAREA==1, 15 minutes otherwise.' % mgra_file_path)
+            print(('No MicroAccessTime column found in %s, using 2 minute '
+                  'default for PARKAREA==1, 15 minutes otherwise.' % mgra_file_path))
             park_area = pd.read_csv(mgra_file_path, usecols=['mgra', 'parkarea'],
                                     index_col='mgra', dtype='Int64', squeeze=True)
             mat = pd.Series(index=park_area.index, data=15.0, name='MicroAccessTime')

@@ -912,7 +912,7 @@ class SkimAppender(object):
                 # create set of unique origin-destination pairs
                 # get time, distance, cost associated with the o-d pairs
                 od = set(zip(records.originTAZ, records.destinationTAZ))
-                o, d = zip(*od)
+                o, d = list(zip(*od))
 
                 # map o-ds to omx matrix indices
                 o_idx = [omx_map[number] for number in o]

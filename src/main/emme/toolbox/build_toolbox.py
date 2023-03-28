@@ -44,27 +44,27 @@ import pickle
 
 
 def check_namespace(ns):
-    if not re.match("^[a-zA-Z][a-zA-Z0-9_]*$", ns):
+    if not re.match("^[a-zA-Z][a-zA-Z0-9_]*$", ns) and ns != '__pycache__':
         raise Exception("Namespace '%s' is invalid" % ns)
 
 
 def get_emme_version():
     emme_process = subprocess.Popen(['Emme', '-V'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     output = emme_process.communicate()[0]
-    return output.split(',')[0]
+    return output.decode().split(',')[0]
 
 
 def usc_transform(value):
     try:
-        return unicode(value)
+        return str(value)
     except Exception:
-        return unicode(str(value), encoding="raw-unicode-escape")
+        return str(str(value), encoding="raw-unicode-escape")
 
 
 class BaseNode(object):
     def __init__(self, namespace, title):
         check_namespace(namespace)
-        self.namespace = namespace 
+        self.namespace = namespace
         self.title = title
         self.element_id = None
         self.parent = None
@@ -87,9 +87,9 @@ class BaseNode(object):
                     if line.startswith("TOOLBOX_TITLE"):
                         title = line.split("=")[1].strip()
                         node.title = title[1:-1]  # exclude first and last quotes
-        except Exception, e:
-            print script_path, namespace
-            print type(e), str(e)
+        except Exception as error:
+            print(script_path, namespace)
+            print(type(e), str(e))
             return None
         return node
 
@@ -99,7 +99,7 @@ class BaseNode(object):
 
     def set_toolbox_order(self):
         self.element_id = self.root.next_id()
-        self.children.sort(key=lambda x: x.order)
+        self.children.sort(key=lambda x: x.order or 0)
         for child in self.children:
             child.set_toolbox_order()
 
@@ -160,14 +160,14 @@ class ToolNode():
     def set_toolbox_order(self):
         self.element_id = self.root.next_id()
 
-class MTBXDatabase():    
+class MTBXDatabase():
     FORMAT_MAGIC_NUMBER = 'B8C224F6_7C94_4E6F_8C2C_5CC06F145271'
     TOOLBOX_MAGIC_NUMBER = 'TOOLBOX_C6809332_CD61_45B3_9060_411D825669F8'
     CATEGORY_MAGIC_NUMBER = 'CATEGORY_984876A0_3350_4374_B47C_6D9C5A47BBC8'
     TOOL_MAGIC_NUMBER = 'TOOL_1AC06B56_6A54_431A_9515_0BF77013646F'
     
     def __init__(self, filepath, title):
-        if os.path.exists(filepath): 
+        if os.path.exists(filepath):
             os.remove(filepath)
         
         self.db = sqllib.connect(filepath)
@@ -252,7 +252,7 @@ class MTBXDatabase():
                 'description': '',
                 'namespace': tree.namespace,
                 MTBXDatabase.TOOLBOX_MAGIC_NUMBER: 'True'}
-        for key, val in atts.iteritems():
+        for key, val in list(atts.items()):
             value_string = "{id}, '{name}', '{value}'".format(
                 id=tree.element_id, name=key, value=val)
             sql = """INSERT INTO attributes (%s)
@@ -284,7 +284,7 @@ class MTBXDatabase():
                 'name': node.title,
                 'children': [c.element_id for c in node.children],
                 MTBXDatabase.CATEGORY_MAGIC_NUMBER: 'True'}
-        for key, val in atts.iteritems():
+        for key, val in list(atts.items()):
             value_string = "{id}, '{name}', '{value}'".format(
                 id=node.element_id, name=key, value=val)
             sql = """INSERT INTO attributes (%s)
@@ -319,7 +319,7 @@ class MTBXDatabase():
                 'python_suffix': node.extension,
                 'name': node.title,
                 MTBXDatabase.TOOL_MAGIC_NUMBER: 'True'}
-        for key, val in atts.iteritems():
+        for key, val in list(atts.items()):
             value_string = "{id}, '{name}', '{value!s}'".format(
                 id=node.element_id, name=key, value=val)
             sql = """INSERT INTO attributes (%s)
@@ -330,31 +330,31 @@ class MTBXDatabase():
 
 
 def build_toolbox(toolbox_file, source_folder, title, namespace, consolidate):
-    print "------------------------"
-    print " Build Toolbox Utility"
-    print "------------------------"
-    print ""
-    print "toolbox: %s" % toolbox_file
-    print "source folder: %s" % source_folder
-    print "title: %s" % title
-    print "namespace: %s" % namespace
-    print ""
-    
-    print "Loading toolbox structure"
+    print("------------------------")
+    print(" Build Toolbox Utility")
+    print("------------------------")
+    print("")
+    print(("toolbox: %s" % toolbox_file))
+    print(("source folder: %s" % source_folder))
+    print(("title: %s" % title))
+    print(("namespace: %s" % namespace))
+    print("")
+
+    print("Loading toolbox structure")
     tree = ElementTree(namespace, title)
     explore_source_folder(source_folder, tree)
     tree.set_toolbox_order()
-    print "Done. Found %s elements." % (tree.next_element_id)
+    print(("Done. Found %s elements." % (tree.next_element_id)))
     if consolidate:
-        print "Consolidating code..."
+        print("Consolidating code...")
         tree.consolidate()
-        print "Consolidate done"
-    
-    print ""
-    print "Building MTBX file..."
+        print("Consolidate done")
+
+    print("")
+    print("Building MTBX file...")
     mtbx = MTBXDatabase(toolbox_file, title)
     mtbx.populate_tables_from_tree(tree)
-    print "Build MTBX file done."
+    print("Build MTBX file done.")
 
 
 def explore_source_folder(root_folder_path, parent_node):
@@ -364,7 +364,7 @@ def explore_source_folder(root_folder_path, parent_node):
         itempath = os.path.join(root_folder_path, item)
         if os.path.isfile(itempath):
             name, extension = os.path.splitext(item)
-            if extension != '.py': 
+            if extension != '.py':
                 continue # skip non-Python files
             if os.path.normpath(itempath) == os.path.normpath(os.path.abspath(__file__)):
                 continue # skip this file
@@ -379,7 +379,7 @@ def explore_source_folder(root_folder_path, parent_node):
     
     for filename, ext in files:
         script_path = os.path.join(root_folder_path, filename + ext)
-        parent_node.add_tool(script_path, namespace=filename)    
+        parent_node.add_tool(script_path, namespace=filename)
 
 
 if __name__ == "__main__":

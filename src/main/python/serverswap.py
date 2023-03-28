@@ -9,8 +9,8 @@ from optparse import OptionParser
 
 def swap_servers(infile, outfile, searchitem, sep_str, swap_value, skip_lines):
     found = 0
-    print infile, outfile
-    print searchitem, sep_str, swap_value
+    print(infile, outfile)
+    print(searchitem, sep_str, swap_value)
     lines = []
     with open(infile) as propInFile:
         for line in propInFile:
@@ -20,7 +20,7 @@ def swap_servers(infile, outfile, searchitem, sep_str, swap_value, skip_lines):
                 else:
                     found += 1
             lines.append(line)
-    with open(outfile, 'w') as propOutFile:
+    with open(outfile, 'w', newline='') as propOutFile:
         for line in lines:
             propOutFile.write(line)
 
@@ -38,13 +38,13 @@ dst_dir_conf = options.path + "/conf/"
 
 # Get IP Address
 ip = socket.gethostbyname(socket.gethostname())
-print str(ip)
+print(str(ip))
 
 # Read Server Info
 fileServer = options.path + "/conf/server-config-local.csv"
 if not os.path.exists(fileServer):
     fileServer = "T:/ABM/release/ABM/config/server-config.csv"
-print fileServer
+print(fileServer)
 logFile = options.path + "/logFiles/serverswap.log"
 if os.path.exists(logFile):
     os.remove(logFile)
@@ -53,12 +53,12 @@ dictServer = csv.DictReader(open(fileServer))
 # Check for Matching IP Address and Stop on Row
 match = 'false'
 for row in dictServer:
-    print row
+    print(row)
     if row['ActualIP'] == str(ip):
         match = 'true'
-        print match
+        print(match)
         serverName = row['ServerName']
-        print serverName
+        print(serverName)
         modelIP = row['ModelIP']
         break
 
@@ -67,22 +67,22 @@ logWriteFile = open(logFile, "w")
 if match == 'false':
     logWriteFile.write('Using server-config file in: ' + fileServer + "\n")
     logWriteFile.write('FATAL, Head Node not found - check for ' + str(ip))
-    print 'Head Node not found'
+    print('Head Node not found')
 else:
     # Update Files in serverswap_files.csv
     logWriteFile.write('Using server-config file in: ' + fileServer + "\n")
     logWriteFile.write('MATCH, Head Node found - ' + str(ip))
     skip = 0
     fileUpdate = options.path + "/conf/serverswap_files.csv"
-    print fileUpdate
+    print(fileUpdate)
     filesToUpdate = csv.DictReader(open(fileUpdate))
     for update in filesToUpdate:
-        print update
+        print(update)
         # Special section for StopABM.cmd which does not have a property=value format
         if update['property'] == 'pskill':
             refValue = row[update['refValue']] + ' java.exe'
-            print row[update['refValue']]
-            print refValue
+            print(row[update['refValue']])
+            print(refValue)
             swap_servers(options.path + update['fileName'], options.path + update['fileName'],
                          update['property'], update['separator'], refValue, skip)
             skip += 1

@@ -9,7 +9,7 @@ import sys
 
 # check if property file exists
 if not os.path.isfile('..\\conf\\sandag_abm.properties'):
-    print "Property File Not Found"
+    print("Property File Not Found")
     raise sys.exit()
 
 # search scenarioYear
@@ -20,7 +20,7 @@ for line in propFile:
          TheYear = line.strip('\n').split('=')[1]
          break
 else:
-    print "scenarioYear Not Found"
+    print("scenarioYear Not Found")
 propFile.close()
 
 # read csv file
@@ -44,16 +44,16 @@ for line in propInFile:
     for key in ParaDict:
         if line.find(key) > -1:
             NewVal = ParaDict[key]
-            print NewVal
+            print(NewVal)
             OldVal = line.strip('\n').split('=')[1]
             line = string.replace(line,OldVal,NewVal)
-            print line
+            print(line)
             break
     Paralines.append(line)
 propInFile.close()
 
 # write into property file
-propOutFile = open('..\\conf\\sandag_abm.properties','w')
+propOutFile = open('..\\conf\\sandag_abm.properties','w', newline='')
 for line in Paralines:
     propOutFile.write(line)
 propOutFile.close()

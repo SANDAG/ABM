@@ -29,7 +29,7 @@ _dir, _join = os.path.dirname, os.path.join
 
 from shapely.geometry import MultiLineString, Point, LineString
 from contextlib import contextmanager as _context
-from itertools import izip as _izip
+
 
 gen_utils = _m.Modeller().module("sandag.utilities.general")
 dem_utils = _m.Modeller().module('sandag.utilities.demand')
@@ -37,8 +37,8 @@ dem_utils = _m.Modeller().module('sandag.utilities.demand')
 
 class ExportForTransponder(_m.Tool(), gen_utils.Snapshot):
 
-    scenario = _m.Attribute(_m.InstanceType)
-    output_directory = _m.Attribute(unicode)
+    scenario = _m.Attribute(object)
+    output_directory = _m.Attribute(str)
     num_processors = _m.Attribute(str)
 
     tool_run_msg = ""
@@ -72,7 +72,7 @@ class ExportForTransponder(_m.Tool(), gen_utils.Snapshot):
         if self.tool_run_msg != "":
             pb.tool_run_status(self.tool_run_msg_status)
 
-        pb.add_select_scenario("scenario", 
+        pb.add_select_scenario("scenario",
             title="Representative scenario")
         pb.add_select_file('output_directory', 'directory',
                            title='Select output directory')
@@ -234,12 +234,12 @@ class ExportForTransponder(_m.Tool(), gen_utils.Snapshot):
     def export_results(self, output_directory, scenario, distances, savings, detour):
         zones = scenario.zone_numbers
         output_file = _join(output_directory, "transponderModelAccessibilities.csv")
-        with open(output_file, 'w') as f:
+        with open(output_file, 'w', newline='') as f:
             f.write("TAZ,DIST,AVGTTS,PCTDETOUR\n")
-            for row in _izip(zones, distances, savings, detour):
+            for row in zip(zones, distances, savings, detour):
                 f.write("%d, %.4f, %.5f, %.5f\n" % row)
 
-    @_m.method(return_type=unicode)
+    @_m.method(return_type=str)
     def tool_run_msg_status(self):
         return self.tool_run_msg
 
@@ -307,7 +307,7 @@ def shortest_paths_impedances(network, mode, link_cost, destinations):
             dest_id, link_cost, excluded_links=excluded_links, consider_turns=True)
         costs = []
         for node in network.centroids():
-            if node.number == dest_id: 
+            if node.number == dest_id:
                 costs.append(0)
             else:
                 try:
@@ -349,13 +349,13 @@ def get_temp_scenario(src_scenario):
         delete_scenario(temp_scenario)
 
 def get_available_mode_id(network):
-    for mode_id in _string.letters:
+    for mode_id in _string.ascii_letters:
         if network.mode(mode_id) is None:
             return mode_id
 
 def get_available_scenario_id(emmebank):
     for i in range(1,10000):
-        if not emmebank.scenario(i): 
+        if not emmebank.scenario(i):
             return i
 
 def bearing(shape):

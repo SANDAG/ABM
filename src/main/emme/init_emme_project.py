@@ -35,11 +35,12 @@ WKT_PROJECTION = 'PROJCS["NAD_1983_NSRS2007_StatePlane_California_VI_FIPS_0406_F
 def init_emme_project(root, title, emmeversion):
     project_path = _app.create_project(root, "emme_project")
     project_root = os.path.dirname(project_path)
-    desktop = _app.start_dedicated(project=project_path, user_initials="WS", visible=False)
+    desktop = _app.start_dedicated(
+        project=project_path, user_initials="WS", visible=False)
     project = desktop.project
     project.name = "SANDAG Emme project"
     prj_file_path = os.path.join(project_root, 'NAD 1983 NSRS2007 StatePlane California VI FIPS 0406 (US Feet).prj')
-    with open(prj_file_path, 'w') as f:
+    with open(prj_file_path,  'w', newline='') as f:
         f.write(WKT_PROJECTION)
     project.spatial_reference_file = prj_file_path
     project.initial_view = _ws_types.Box(6.18187e+06, 1.75917e+06, 6.42519e+06, 1.89371e+06)
@@ -145,7 +146,7 @@ if __name__ == "__main__":
                         default=os.path.abspath(os.getcwd()))
     parser.add_argument('-t', '--title', help="the Emmebank title",
                         default="SANDAG empty database")
-    parser.add_argument('-v', '--emmeversion', help='the Emme version', default='4.3.7')
+    parser.add_argument('-v', '--emmeversion', help='the Emme version', default='4.5.0')
     args = parser.parse_args()
 
     init_emme_project(args.root, args.title, args.emmeversion)

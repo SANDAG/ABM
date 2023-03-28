@@ -1,38 +1,38 @@
 __author__ = 'wsu'
 #Wu.Sun@sandag.org 7-20-2016
 
-import Tkinter
-import Tkconstants
-import tkFileDialog
+import tkinter
+import tkinter.constants
+import tkinter.filedialog
 import os
-from Tkinter import *
+from tkinter import *
 from PIL import Image,ImageTk
 import stringFinder
 import popupMsg
 
 
-class ParametersGUI(Tkinter.Frame):
+class ParametersGUI(tkinter.Frame):
         def __init__(self, root):
-            Tkinter.Frame.__init__(self, root, border=5)
-            self.status = Tkinter.Label(self, text=u"ABM Parameter Editor", font=("Helvetica", 12, 'bold'))
-            self.status.pack(fill=Tkconstants.X, expand=1)
-            body = Tkinter.Frame(self)
-            body.pack(fill=Tkconstants.X, expand=1)
-            sticky = Tkconstants.E + Tkconstants.W
+            tkinter.Frame.__init__(self, root, border=5)
+            self.status = tkinter.Label(self, text="ABM Parameter Editor", font=("Helvetica", 12, 'bold'))
+            self.status.pack(fill=tkinter.constants.X, expand=1)
+            body = tkinter.Frame(self)
+            body.pack(fill=tkinter.constants.X, expand=1)
+            sticky = tkinter.constants.E + tkinter.constants.W
             body.grid_columnconfigure(1, weight=2)
 
             #section labels
-            sectionLabels=(u"Model Initial Start Options",u"Network Building Options",u"Final Assignment Options:",u"Data Loading Options:")
+            sectionLabels=("Model Initial Start Options","Network Building Options","Final Assignment Options:","Data Loading Options:")
             #radio button lables
-            rbLabels=(u"Copy warm start trip tables:",u"Copy bike AT access files:",u"Create bike AT access files:",u"Build highway network:",u"Build transit network:",u"Run highway assignment:",
-                      u"Run highway skimming:",u"Run transit assignment:",u"Run transit skimming:",u"Export results to CSVs:",u"Load results to database:")
+            rbLabels=("Copy warm start trip tables:","Copy bike AT access files:","Create bike AT access files:","Build highway network:","Build transit network:","Run highway assignment:",
+                      "Run highway skimming:","Run transit assignment:","Run transit skimming:","Export results to CSVs:","Load results to database:")
             #properties
             self.properties=("RunModel.skipCopyWarmupTripTables","RunModel.skipCopyBikeLogsum","RunModel.skipBikeLogsums","RunModel.skipBuildHwyNetwork","RunModel.skipBuildTransitNetwork","RunModel.skipFinalHighwayAssignment",
                           "RunModel.skipFinalHighwaySkimming","RunModel.skipFinalTransitAssignment","RunModel.skipFinalTransitSkimming",
                           "RunModel.skipDataExport","RunModel.skipDataLoadRequest")
 
             #divider line
-            divider=u"_"*120
+            divider="_"*120
 
             #number of properties in GUI
             self.pNum=self.properties.__len__()
@@ -53,47 +53,47 @@ class ParametersGUI(Tkinter.Frame):
             #self.setATButtons()
 
             #scenario folder browser
-            Tkinter.Label(body, text=u"Scenario Folder", font=("Helvetica", 8, 'bold'),width=15).grid(row=0)
-            self.scenariopath = Tkinter.Entry(body, width=25)
+            tkinter.Label(body, text="Scenario Folder", font=("Helvetica", 8, 'bold'),width=15).grid(row=0)
+            self.scenariopath = tkinter.Entry(body, width=25)
             self.scenariopath.grid(row=0, column=1, sticky=sticky, columnspan=3)
             self.scenariopath.insert(0,sys.argv[1])
-            button = Tkinter.Button(body, text=u"...",width=4,command=self.get_scenariopath)
+            button = tkinter.Button(body, text="...",width=4,command=self.get_scenariopath)
             button.grid(row=0, column=4)
 
             #initial start section
             for i in range(1,25):
                if i==1: #intial start section header
-                  Tkinter.Label(body, text=divider, font=("Helvetica", 10, 'bold'), width=40, fg='royal blue').grid(row=i,columnspan=5)
-                  Tkinter.Label(body, text=sectionLabels[0], font=("Helvetica", 10, 'bold'), width=30, fg='royal blue').grid(row=i+1,columnspan=5)
+                  tkinter.Label(body, text=divider, font=("Helvetica", 10, 'bold'), width=40, fg='royal blue').grid(row=i,columnspan=5)
+                  tkinter.Label(body, text=sectionLabels[0], font=("Helvetica", 10, 'bold'), width=30, fg='royal blue').grid(row=i+1,columnspan=5)
                elif i>2 and i<6:
-                   Tkinter.Label(body, text=rbLabels[i-3], font=("Helvetica", 8, 'bold')).grid(row=i)
+                   tkinter.Label(body, text=rbLabels[i-3], font=("Helvetica", 8, 'bold')).grid(row=i)
                    self.yButton[i-3].grid(row=i,column=1)
                    self.nButton[i-3].grid(row=i,column=3)
                elif i==6: #network building section header
-                  Tkinter.Label(body, text=divider, font=("Helvetica", 10, 'bold'), width=40, fg='royal blue').grid(row=i,columnspan=5)
-                  Tkinter.Label(body, text=sectionLabels[1], font=("Helvetica", 10, 'bold'), width=30, fg='royal blue').grid(row=i+1,columnspan=5)
+                  tkinter.Label(body, text=divider, font=("Helvetica", 10, 'bold'), width=40, fg='royal blue').grid(row=i,columnspan=5)
+                  tkinter.Label(body, text=sectionLabels[1], font=("Helvetica", 10, 'bold'), width=30, fg='royal blue').grid(row=i+1,columnspan=5)
                elif i>7 and i<10:
-                   Tkinter.Label(body, text=rbLabels[i-5], font=("Helvetica", 8, 'bold')).grid(row=i)
+                   tkinter.Label(body, text=rbLabels[i-5], font=("Helvetica", 8, 'bold')).grid(row=i)
                    self.yButton[i-5].grid(row=i,column=1)
                    self.nButton[i-5].grid(row=i,column=3)
                elif i==10: #final assignment section header
-                  Tkinter.Label(body, text=divider, font=("Helvetica", 10, 'bold'), width=40, fg='royal blue').grid(row=i,columnspan=5)
-                  Tkinter.Label(body, text=sectionLabels[2], font=("Helvetica", 10, 'bold'), width=30, fg='royal blue').grid(row=i+1,columnspan=5)
+                  tkinter.Label(body, text=divider, font=("Helvetica", 10, 'bold'), width=40, fg='royal blue').grid(row=i,columnspan=5)
+                  tkinter.Label(body, text=sectionLabels[2], font=("Helvetica", 10, 'bold'), width=30, fg='royal blue').grid(row=i+1,columnspan=5)
                elif i>11 and i<16:
-                   Tkinter.Label(body, text=rbLabels[i-7], font=("Helvetica", 8, 'bold')).grid(row=i)
+                   tkinter.Label(body, text=rbLabels[i-7], font=("Helvetica", 8, 'bold')).grid(row=i)
                    self.yButton[i-7].grid(row=i,column=1)
                    self.nButton[i-7].grid(row=i,column=3)
                elif i==16: #data load section header
-                  Tkinter.Label(body, text=divider, font=("Helvetica", 10, 'bold'), width=40, fg='royal blue').grid(row=i,columnspan=5)
-                  Tkinter.Label(body, text=sectionLabels[3], font=("Helvetica", 10, 'bold'), width=30, fg='royal blue').grid(row=i+1,columnspan=5)
+                  tkinter.Label(body, text=divider, font=("Helvetica", 10, 'bold'), width=40, fg='royal blue').grid(row=i,columnspan=5)
+                  tkinter.Label(body, text=sectionLabels[3], font=("Helvetica", 10, 'bold'), width=30, fg='royal blue').grid(row=i+1,columnspan=5)
                elif i>17 and i<20:
-                   Tkinter.Label(body, text=rbLabels[i-9], font=("Helvetica", 8, 'bold')).grid(row=i)
+                   tkinter.Label(body, text=rbLabels[i-9], font=("Helvetica", 8, 'bold')).grid(row=i)
                    self.yButton[i-9].grid(row=i,column=1)
                    self.nButton[i-9].grid(row=i,column=3)
                elif i==20: #iteration section
-                    Tkinter.Label(body, text=divider, font=("Helvetica", 10, 'bold'), width=40, fg='royal blue').grid(row=i,columnspan=5)
-                    Tkinter.Label(body, text=u"Iteration Options", font=("Helvetica", 10, 'bold'), width=30, fg='royal blue').grid(row=i+1,columnspan=5)
-                    Tkinter.Label(body, text=u"Start from iteration:", font=("Helvetica", 8, 'bold')).grid(row=i+2)
+                    tkinter.Label(body, text=divider, font=("Helvetica", 10, 'bold'), width=40, fg='royal blue').grid(row=i,columnspan=5)
+                    tkinter.Label(body, text="Iteration Options", font=("Helvetica", 10, 'bold'), width=30, fg='royal blue').grid(row=i+1,columnspan=5)
+                    tkinter.Label(body, text="Start from iteration:", font=("Helvetica", 8, 'bold')).grid(row=i+2)
                     self.var = IntVar(root)
                     self.button1=Radiobutton(body, text="1", variable=self.var, value=1)
                     self.button1.grid(row=i+2,column=1)
@@ -102,7 +102,7 @@ class ParametersGUI(Tkinter.Frame):
                     self.button3=Radiobutton(body, text="3", variable=self.var, value=3).grid(row=i+2,column=3)
                     self.button4=Radiobutton(body, text="Skip", variable=self.var, value=4).grid(row=i+2,column=4)
                elif i==23:
-                    Tkinter.Label(body, text=u"Sample rates:", font=("Helvetica", 8, 'bold')).grid(row=i)
+                    tkinter.Label(body, text="Sample rates:", font=("Helvetica", 8, 'bold')).grid(row=i)
                     sv = StringVar(root)
                     sv.set("0.2,0.5,1.0")
                     self.samplerates="0.2,0.5,1.0"
@@ -111,14 +111,14 @@ class ParametersGUI(Tkinter.Frame):
                     e.config(width=15)
                     e.grid(row=i,column=1,columnspan=3)
                elif i==24:#action buttons
-                    Tkinter.Label(body, text=u"", width=30).grid(row=i,columnspan=2)
-                    buttons = Tkinter.Frame(self)
+                    tkinter.Label(body, text="", width=30).grid(row=i,columnspan=2)
+                    buttons = tkinter.Frame(self)
                     buttons.pack()
-                    botton = Tkinter.Button(buttons, text=u"Update", font=("Helvetica", 9, 'bold'),width=10, command=self.update_parameters)
-                    botton.pack(side=Tkconstants.LEFT)
-                    Tkinter.Frame(buttons, width=10).pack(side=Tkconstants.LEFT)
-                    button = Tkinter.Button(buttons, text=u"Quit", font=("Helvetica", 9, 'bold'), width=10, command=self.quit)
-                    button.pack(side=Tkconstants.RIGHT)
+                    botton = tkinter.Button(buttons, text="Update", font=("Helvetica", 9, 'bold'),width=10, command=self.update_parameters)
+                    botton.pack(side=tkinter.constants.LEFT)
+                    tkinter.Frame(buttons, width=10).pack(side=tkinter.constants.LEFT)
+                    button = tkinter.Button(buttons, text="Quit", font=("Helvetica", 9, 'bold'), width=10, command=self.quit)
+                    button.pack(side=tkinter.constants.RIGHT)
 
         def setsamplerates(self,value):
             self.samplerates=value.get()
@@ -159,13 +159,13 @@ class ParametersGUI(Tkinter.Frame):
             options['mustexist'] = False
             options['parent'] = root
             options['title'] = 'This is a title'
-            scenariopath = tkFileDialog.askdirectory(**self.dir_opt)
+            scenariopath = tkinter.filedialog.askdirectory(**self.dir_opt)
             if scenariopath:
                 scenariopath = os.path.normpath(scenariopath)
-                self.scenariopath.delete(0, Tkconstants.END)
+                self.scenariopath.delete(0, tkinter.constants.END)
                 self.scenariopath.insert(0, scenariopath)
             else:
-                self.scenariopath.delete(0, Tkconstants.END)
+                self.scenariopath.delete(0, tkinter.constants.END)
                 self.scenariopath.insert(0, sys.argv[1])
 
             #property file settings
@@ -188,7 +188,7 @@ class ParametersGUI(Tkinter.Frame):
                         self.yButton[i].select()
                         self.nButton[i].deselect()
                     else:
-                        print "Invalid property "+self.properties[i]+" value!, Property either has to be set to true or false."
+                        print(("Invalid property "+self.properties[i]+" value!, Property either has to be set to true or false."))
             return
 
         # update parameters with user inputs
@@ -213,7 +213,7 @@ class ParametersGUI(Tkinter.Frame):
             for i in range(self.pNum):
                 pair=(self.old_text[i],self.new_text[i])
                 dic.append(pair)
-                print dic[i][0],dic[i][1]
+                print((dic[i][0],dic[i][1]))
             #add iteration update to dictionary
             dic.append(("RunModel.startFromIteration = 1","RunModel.startFromIteration = "+str(self.var.get())))
             #add sample rates update to dictionary
@@ -225,7 +225,7 @@ class ParametersGUI(Tkinter.Frame):
         def checkFile(self):
             result=True
             if not os.path.exists(self.runtimeFile):
-                self.popup=Tkinter.Tk()
+                self.popup=tkinter.Tk()
                 popupMsg.popupmsg(self,self.runtimeFile+" doesn't exist!",1)
                 result=False
             return result
@@ -237,17 +237,17 @@ class ParametersGUI(Tkinter.Frame):
 
         #run batch
         def deleteProperty(self):
-            commandstr=u"del "+self.scenariopath.get()+"\\conf\\sandag_abm.properties"
-            print commandstr
+            commandstr="del "+self.scenariopath.get()+"\\conf\\sandag_abm.properties"
+            print(commandstr)
             os.system(commandstr)
             return
 
-root = Tkinter.Tk()
+root = tkinter.Tk()
 root.resizable(True, False)
 root.minsize(370, 0)
-logo = Tkinter.PhotoImage(file=r"T:\ABM\release\ABM\SANDAG_logo.gif")
+logo = tkinter.PhotoImage(file=r"T:\ABM\release\ABM\SANDAG_logo.gif")
 w=Label(root, image=logo, width=200)
 w.pack(side='top', fill='both', expand='yes')
-ParametersGUI(root).pack(fill=Tkconstants.X, expand=1, anchor=W)
+ParametersGUI(root).pack(fill=tkinter.constants.X, expand=1, anchor=W)
 
 root.mainloop()

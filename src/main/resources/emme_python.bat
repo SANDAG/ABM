@@ -16,7 +16,7 @@ rem if necessary can set the EMMEPATH to point to a specific version of Emme
 rem set EMMEPATH=C:\Program Files\INRO\Emme\Emme 4\Emme-4.3.5
 rem
 rem
-set MODELLER_PYTHON=%EMMEPATH%\Python27\
+set MODELLER_PYTHON=%EMMEPATH%\Python37\
 set path=%EMMEPATH%\programs;%MODELLER_PYTHON%;%PATH%
 rem map T drive for file access
 net use t: \\sandag.org\transdata /persistent:yes

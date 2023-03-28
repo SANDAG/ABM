@@ -111,10 +111,10 @@ if __name__ == "__main__":
         finally:
             desktop.close()
     except Exception as error:
-        with open(_join(database_dir, "finish"), 'w') as f:
+        with open(_join(database_dir, "finish"), 'w', newline='') as f:
             f.write("FATAL ERROR\n")
         logger.write_timestamp("FATAL error execution stopped:")
-        logger.write(unicode(error) + "\n")
+        logger.write(str(error) + "\n")
         logger.write(_traceback.format_exc(error))
     finally:
         _time.sleep(1)

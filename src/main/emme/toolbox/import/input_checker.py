@@ -38,11 +38,11 @@ _dir = os.path.dirname
 
 class input_checker(_m.Tool()):
 
-	path = _m.Attribute(unicode)
+	path = _m.Attribute(str)
 
 	tool_run_msg = ""
 
-	@_m.method(return_type=_m.UnicodeType)
+	@_m.method(return_type=str)
 	def tool_run_msg_status(self):
 		return self.tool_run_msg
 
@@ -302,7 +302,7 @@ class input_checker(_m.Tool()):
 
 	def checks(self):
 		# read all input DFs into memory
-		for key, df in self.inputs.items():
+		for key, df in list(self.inputs.items()):
 			expr = key + ' = df'
 			exec(expr)
 
@@ -337,11 +337,11 @@ class input_checker(_m.Tool()):
 					exec(calc_expr, {}, calc_dict)
 					calc_out = eval(expr, calc_dict)
 				except Exception as error:
-					print('An error occurred with the calculation: {}'.format(test))
+					print(('An error occurred with the calculation: {}'.format(test)))
 					raise
 
 				if str(type(calc_out)) == "<class 'pandas.core.frame.DataFrame'>":
-					print('added '+ row['Test'] + ' as new DataFrame input')
+					print(('added '+ row['Test'] + ' as new DataFrame input'))
 					self.inputs[row['Test']] = calc_out
 					self.inputs_list = self.inputs_list.append({'Input_Table': row['Test'],'Property_Token':'NA','Emme_Object':'NA', \
 						'Fields':'NA','Column_Map':'NA','Input_Description':'NA'}, ignore_index = True)
@@ -373,7 +373,7 @@ class input_checker(_m.Tool()):
 					try:
 						out = eval(expr, calc_dict)
 					except Exception as error:
-						print('An error occurred with the check: {}'.format(test))
+						print(('An error occurred with the check: {}'.format(test)))
 						raise
 
 					# check if test result is a series
@@ -411,7 +411,7 @@ class input_checker(_m.Tool()):
 						try:
 							out = eval(expr)
 						except Exception as error:
-							print('An error occurred with the check: {}'.format(test))
+							print(('An error occurred with the check: {}'.format(test)))
 							raise 
 
 						# compute report statistic
@@ -430,7 +430,7 @@ class input_checker(_m.Tool()):
 					calc_expr = test + ' = ' + expr
 					exec(calc_expr, {}, calc_dict)
 				except Exception as error:
-					print('An error occurred with the calculation: {}'.format(test))
+					print(('An error occurred with the calculation: {}'.format(test)))
 					raise
 
 	def prop_file_paths(self):
@@ -460,7 +460,7 @@ class input_checker(_m.Tool()):
 		now = datetime.datetime.now()
 
 		self.log_path = _join(self.input_checker_path, ('inputCheckerSummary_' + now.strftime("[%Y-%m-%d]") + '.txt'))
-		f = open(self.log_path, 'wb')
+		f = open(self.log_path, 'w', newline='')
 		
 		# define re-usable elements
 		seperator1 = '###########################################################'
@@ -568,7 +568,7 @@ class input_checker(_m.Tool()):
 			# display result for each test val if it was specified
 			if not (pd.isnull(row['Test_Vals'])):
 				fh.write("\r\n\t TEST results for each test val")
-				result_tuples = zip(row['Test_Vals'].split(","), self.result_list[row['Test']])
+				result_tuples = list(zip(row['Test_Vals'].split(","), self.result_list[row['Test']]))
 				fh.write("\r\n\t ")
 				fh.write(','.join('[{} - {}]'.format(x[0],x[1]) for x in result_tuples))
 				
@@ -659,7 +659,7 @@ class input_checker(_m.Tool()):
 			now = datetime.datetime.now()
 
 			self.logical_log_path = _join(self.input_checker_path, ('completeLogicalFails_' + now.strftime("[%Y-%m-%d]") + '.txt'))
-			f = open(self.logical_log_path, 'wb')
+			f = open(self.logical_log_path, 'w', newline='')
 			
 			# define re-usable elements
 			seperator1 = '###########################################################'
@@ -725,7 +725,7 @@ class input_checker(_m.Tool()):
 				# display result for each test val if it was specified
 				if not (pd.isnull(row['Test_Vals'])):
 					fh.write("\r\n\t TEST results for each test val")
-					result_tuples = zip(row['Test_Vals'].split(","), self.result_list[row['Test']])
+					result_tuples = list(zip(row['Test_Vals'].split(","), self.result_list[row['Test']]))
 					fh.write("\r\n\t ")
 					fh.write(','.join('[{} - {}]'.format(x[0],x[1]) for x in result_tuples))
 					

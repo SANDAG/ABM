@@ -50,14 +50,14 @@ gen_utils = _m.Modeller().module("sandag.utilities.general")
 
 class ExportSkims(_m.Tool(), gen_utils.Snapshot):
 
-    omx_file = _m.Attribute(unicode)
+    omx_file = _m.Attribute(str)
     period = _m.Attribute(str)
     tool_run_msg = ""
 
     def __init__(self):
         self.attributes = ["omx_file", "period"]
 
-    @_m.method(return_type=_m.UnicodeType)
+    @_m.method(return_type=str)
     def tool_run_msg_status(self):
         return self.tool_run_msg
         

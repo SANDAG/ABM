@@ -62,7 +62,7 @@ def table_to_dataframe(table):
     for attribute in table.get_data().attributes():
         try:
             df[attribute.name] = attribute.values.astype(float)
-        except Exception, e:
+        except Exception as e:
             df[attribute.name] = attribute.values
 
     return df
@@ -129,10 +129,10 @@ def add_select_processors(tool_attr_name, pb, tool):
 
 
 def parse_num_processors(value):
-    max_processors = _multiprocessing.cpu_count()
+    max_processors = min(_multiprocessing.cpu_count(), int(os.environ.get("NUMBER_OF_PROCESSORS", 999)))
     if isinstance(value, int):
         return value
-    if isinstance(value, basestring):
+    if isinstance(value, str):
         if value == "MAX":
             return max_processors
         if _re.match("^[0-9]+$", value):
@@ -218,7 +218,7 @@ class MatrixCalculator(object):
             spec["constraint"] = None
 
         if aggregation is not None:
-            if isinstance(aggregation, basestring):
+            if isinstance(aggregation, str):
                 aggregation = {"origins": aggregation}
             spec["aggregation"] = aggregation
         else:

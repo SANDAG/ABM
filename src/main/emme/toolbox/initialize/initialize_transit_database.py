@@ -60,11 +60,11 @@ gen_utils = _m.Modeller().module("sandag.utilities.general")
 
 class InitializeTransitDatabase(_m.Tool(), gen_utils.Snapshot):
 
-    base_scenario =  _m.Attribute(_m.InstanceType)
+    base_scenario =  _m.Attribute(object)
 
     tool_run_msg = ""
 
-    @_m.method(return_type=_m.UnicodeType)
+    @_m.method(return_type=str)
     def tool_run_msg_status(self):
         return self.tool_run_msg
 

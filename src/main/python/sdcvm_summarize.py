@@ -33,7 +33,7 @@ with open(options.path + "/conf/" + 'sandag_abm.properties' ,'r') as f:
     for prop in props:
         if prop.startswith('zones.count'):
             maxTaz = int(prop.split('=')[1].replace(" ",""))
-tazList = range(1, maxTaz+1)
+tazList = list(range(1, maxTaz+1))
 tazList, zonals = sdcvm.zonalProperties(fileName=cvmZonalProperties)
 tazDict = {}
 # tazList = tazList[:25]
@@ -42,12 +42,12 @@ for t in range(len(tazList)):
 
 # Read in skims
 
-print "Reading in CVM skims. Time:", round(time.clock()-ts, 2)    
+print("Reading in CVM skims. Time:", round(time.clock()-ts, 2))    
 skimDict = {}
 skimList = []
 
 
-print "... Midday distance",  round(time.clock()-ts, 2) 
+print("... Midday distance",  round(time.clock()-ts, 2)) 
 skimList.append("Dist_Mid")
 skimDict = sdcvm.csvSkim(tazList, tazList, tazDict, tazDict,
                          skimPath + "impldt_MD_Dist.TXT", skimDict, "Dist_Mid")
@@ -56,10 +56,10 @@ skimDict = sdcvm.csvSkim(tazList, tazList, tazDict, tazDict,
 bigDict = {}
 for ind in settings.cvmSectors:
     for tim in settings.cvmTimes:
-        print ind, tim,  round(time.clock()-ts, 2) 
+        print(ind, tim,  round(time.clock()-ts, 2)) 
         fin = open(cvmPath + "Trip_" + ind + "_" + tim + ".csv", "r")
         inFile = csv.reader(fin)
-        header = inFile.next()
+        header = next(inFile)
         for row in inFile:
             mode = row[header.index("Mode")]
             trip = int(row[header.index("Trip")])
@@ -76,7 +76,7 @@ for ind in settings.cvmSectors:
             newjIdx = jIdx  # new index created to add 12 to include external zones 1-12 in the skim matrix
 
             key = (ind, mode, purp, toll, tollAv, tim, home)
-            if bigDict.has_key(key):
+            if key in bigDict:
                 pass
             else:
                 bigDict[key] = [0, 0, 0, 0]
@@ -91,7 +91,7 @@ for ind in settings.cvmSectors:
 fout = open(cvmPath + "Gen and trip sum.csv", "w")
 outFile = csv.writer(fout, excelOne)
 
-keyList = bigDict.keys()
+keyList = list(bigDict.keys())
 keyList.sort()
 header = ["Industry", "Mode", "Purpose", "Toll", "TollAv", "Time", "TAZ", "Tours", "Trips", "Dist", "Intra"]
 outFile.writerow(header)

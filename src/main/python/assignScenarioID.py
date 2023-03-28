@@ -21,7 +21,7 @@ if len(list_shape) and len(df_sql):
             try:
                 os.rename(item, os.getcwd()[:-6]+'report\\hwyLoad_'+ str(scenid) + item[-4:])
             except Exception as error:
-                print('Caught this error: ' + repr(error))
+                print(('Caught this error: ' + repr(error)))
     print ('The scenaio ID has been added to the shapefile.')
 else:
     print ("Cannot find the scenario in the SQ database or hwyloadshape file is not available. Please check...")

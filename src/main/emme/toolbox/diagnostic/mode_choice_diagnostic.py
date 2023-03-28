@@ -57,7 +57,7 @@ class mode_choice_diagnostic(_m.Tool()):
 
 	tool_run_msg = ""
 
-	@_m.method(return_type=_m.UnicodeType)
+	@_m.method(return_type=str)
 	def tool_run_msg_status(self):
 		return self.tool_run_msg
 
@@ -240,7 +240,7 @@ class mode_choice_diagnostic(_m.Tool()):
 
 		household_df = pd.DataFrame.from_dict(household)
 		household_df = self.replicate_df_for_variable(household_df, 'mgra', origin_mgra_data)
-		for key, values in self.household_attributes.items():
+		for key, values in list(self.household_attributes.items()):
 			household_df = self.replicate_df_for_variable(household_df, key, self.maybe_list(values))
 		household_df['hinccat1'] = household_df.apply(lambda hh_row: self.hinccat(hh_row), axis = 1)
 		household_df = self.replicate_df_for_variable(household_df, 'poverty', [1])
@@ -602,10 +602,10 @@ class mode_choice_diagnostic(_m.Tool()):
 						# errors when logged
 						_m.logbook_write("Process run %s report" % name, report.render())
 					except Exception as error:
-						print _time.strftime("%Y-%M-%d %H:%m:%S")
-						print "Error writing report '%s' to logbook" % name
-						print error
-						print _traceback.format_exc(error)
+						print(_time.strftime("%Y-%M-%d %H:%m:%S"))
+						print("Error writing report '%s' to logbook" % name)
+						print(error)
+						print(_traceback.format_exc(error))
 						if self._log_level == "DISABLE_ON_ERROR":
 							_m.logbook_level(_m.LogbookLevel.NONE)
 			else:
@@ -626,7 +626,7 @@ class mode_choice_diagnostic(_m.Tool()):
 		try:
 			_m.logbook_level(log_states[self._log_level])
 		except KeyError:
-			raise Exception("properties.RunModel.LogLevel: value must be one of %s" % ",".join(log_states.keys()))
+			raise Exception("properties.RunModel.LogLevel: value must be one of %s" % ",".join(list(log_states.keys())))
 
 	def move_mcd_files(self):
 

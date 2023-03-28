@@ -133,7 +133,7 @@ def get_tazid_range(data):
 
     # max and min tazid
     
-    id_list = np.array(data.keys())
+    id_list = np.array(list(data.keys()))
     id_list = id_list.astype(np.float)
     
     id_max = int(max(id_list))
@@ -237,7 +237,7 @@ def calculate_taz_variables(data, coords, taz_ids, outfile):
     """
 
     data_calc = {}
-    with open(outfile,"wb") as csvfile:
+    with open(outfile,"w", newline="") as csvfile:
         fieldnames = Header.temptazdatafile
         
         writer = csv.writer(csvfile)
@@ -390,7 +390,7 @@ def write_output(data, taz_ids, outfile):
     Writes taz data to an output
     """
 
-    with open(outfile,"wb") as csvfile:
+    with open(outfile,"w", newline="") as csvfile:
         fieldnames = Header.outfile
         
         writer = csv.writer(csvfile)
@@ -419,8 +419,8 @@ def main(argv):
         tazcentroid_filename = argv[2] # taz centroids filename
         out_filename = argv[3]         # output filename
 
-        print("Project Directory: " + inputs.projdir)
-        print("MGRA File: " + mgra_filename)
+        print(("Project Directory: " + inputs.projdir))
+        print(("MGRA File: " + mgra_filename))
         print("Calculting ...") 
 
         # input and output settings
@@ -450,11 +450,11 @@ def main(argv):
         write_output(taz_data_calc, tazid_info, outputs.outfile)
 
     except Exception as e:
-        print("Error: " + str(e))
+        print(("Error: " + str(e)))
 
     else:
         print("Finished.")
-        print("Output File: " + outputs.outfile)
+        print(("Output File: " + outputs.outfile))
         
 # Run
 if __name__ == "__main__":

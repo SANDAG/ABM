@@ -95,7 +95,7 @@ def logitNestToLogsums(nestDict):
     # if the connection information needs to be used again.
     
     x = 0
-    nodeList = nestDict.keys()
+    nodeList = list(nestDict.keys())
     
     # Do this until the top node has been resolved into a float
     while isinstance(nestDict["top"], list) is True:
@@ -130,8 +130,8 @@ def logitNestToLogsums(nestDict):
                         nestDict[node] = -99999.9               
         
         if x > 250: # Prevent nesting dictionary errors
-            print 250 * "!"
-            print nestDict
+            print(250 * "!")
+            print(nestDict)
             raise RuntimeError("Can't resolve nesting structure!")
         x = x + 1
     return nestDict
@@ -155,10 +155,10 @@ def zonalProperties(fileName, tazList=None):
     #
     #===========================================================================
     
-    print "    Reading zonal property file", fileName
-    fin = open(fileName, "rU")
+    print("    Reading zonal property file", fileName)
+    fin = open(fileName, "r")
     inFile = csv.reader(fin)
-    header = inFile.next()
+    header = next(inFile)
     
     
     tempTazDict = {}
@@ -167,8 +167,8 @@ def zonalProperties(fileName, tazList=None):
         try:
             taz = int(row[header.index("TAZ")])
         except ValueError:
-            print 120 * "#"
-            print "Couldn't process a zone in zonal properties file."
+            print(120 * "#")
+            print("Couldn't process a zone in zonal properties file.")
             raise
             
         tempTazList.append(taz)
@@ -222,20 +222,20 @@ def hdf5Skim(fromList, toList, fromZoneDict, toZoneDict, table, skimDict, skimLi
     # Read in the table row by row
     x = 0
     for row in table.iterrows():
-        if fromZoneDict.has_key(row['origin']):
+        if row['origin'] in fromZoneDict:
             iTaz = fromZoneDict[row['origin']]
-            if toZoneDict.has_key(row['destination']):
+            if row['destination'] in toZoneDict:
                 jTaz = toZoneDict[row['destination']]
                 for s in skimList:
                     try:
                         skimDict[s][iTaz][jTaz] = row[s]
                     except:
-                        print "Skim reading error!", iTaz, jTaz
+                        print("Skim reading error!", iTaz, jTaz)
                     
         x = x + 1
         if x % 500000 == 0:
             pass
-            print "    read", x/1000000.0, "million rows."
+            print("    read", x/1000000.0, "million rows.")
             
     return skimDict
 
@@ -251,7 +251,7 @@ def csvSkim(fromList, toList, fromZoneDict, toZoneDict, skimFile, skimDict, skim
 
     
     # Create blank skims to hold all of the data
-    print skimFile
+    print(skimFile)
     skimDict[skimName] = []
     for c in range(len(fromList)):
         row = len(toList) * [99999.9]
@@ -278,14 +278,14 @@ def csvSkim(fromList, toList, fromZoneDict, toZoneDict, skimFile, skimDict, skim
     err = 0
     for row in inFile:
 
-        if fromZoneDict.has_key(int(row[0])): #Orig
+        if int(row[0]) in fromZoneDict: #Orig
             iTaz = fromZoneDict[int(row[0])]
 #            if skimName == "Time_Mid":
 
             while row.count("") > 0:
                 row[row.index("")] = "0"
                 err = err + 1
-            floatrow = map(float, row[1:])
+            floatrow = list(map(float, row[1:]))
             skimDict[skimName][iTaz] = array("f", floatrow)
 
 #            else:
@@ -298,15 +298,15 @@ def csvSkim(fromList, toList, fromZoneDict, toZoneDict, skimFile, skimDict, skim
             x = x + 1
             if x % 500 == 0:
                 pass
-                print "      read", x, "rows."
-    print "Replaced", err, "null values."       
+                print("      read", x, "rows.")
+    print("Replaced", err, "null values.")       
     return skimDict
 
 
 
 
 def bigrun():
-    ts = time.clock()
+    ts = time.perf_counter()
 
     # ===============================================================================
     #        Set Parser Options
@@ -344,10 +344,10 @@ def bigrun():
 #                scaleName = row
 
     scale = float(options.scale)
-    print 40*"-"
-    print "Scaling tour gen with scale factor", scale
-    print 40*"-"
-    print
+    print(40*"-")
+    print("Scaling tour gen with scale factor", scale)
+    print(40*"-")
+    print()
 
 
     testZones = [1578, 88, 971, 2178, 3798, 2711, 4286]
@@ -367,11 +367,11 @@ def bigrun():
         tazDict[tazList[t]] = t
     
     # Calculate accessibilities
-    print "Calculating accessibilities", round(time.clock(), 2)
+    print("Calculating accessibilities", round(time.clock(), 2))
     
     cvmZonals = {} # This is a zonal properties style dictionary, indexed by thing and containing a list in order of properties
     accDict = settings.cvmAccDict # Dictionary for creating accessibilities; [skim, property, lambda] 
-    accList = accDict.keys()
+    accList = list(accDict.keys())
     
     
     skimList = []
@@ -418,21 +418,21 @@ def bigrun():
 
     # Read in skims
  
-    print "Reading in CVM skims. Time:", round(time.clock()-ts, 2)    
+    print("Reading in CVM skims. Time:", round(time.clock()-ts, 2))    
     skimDict = {}
 
-    for skimName in skimFileDict.keys():
-        print "...", skimName,  round(time.clock()-ts, 2) 
+    for skimName in list(skimFileDict.keys()):
+        print("...", skimName,  round(time.clock()-ts, 2)) 
         skimList.append(skimName)
         skimDict = csvSkim(tazList, tazList, tazDict, tazDict,
                            skimFileDict[skimName][0], skimDict, skimName)
 
-    print skimDict.keys()
-    print len(tazDict.keys())
-    print len(tazList)
+    print(list(skimDict.keys()))
+    print(len(list(tazDict.keys())))
+    print(len(tazList))
     #print tazDict
     
-    print "Skims read in. Time:", round(time.clock()-ts, 2)
+    print("Skims read in. Time:", round(time.clock()-ts, 2))
     idx = 0
     for iTaz in tazList:
         currAcc = len(accList) * [0]
@@ -446,9 +446,9 @@ def bigrun():
                 try:
                     cost = skimDict[skimType][iIdx][jIdx]
                 except:
-                    print skimType, iTaz, jTaz, iIdx, jIdx
-                    print len(skimDict[skimType])
-                    print len(skimDict[skimType][0])
+                    print(skimType, iTaz, jTaz, iIdx, jIdx)
+                    print(len(skimDict[skimType]))
+                    print(len(skimDict[skimType][0]))
                     crash
 #                if accType == "Acc_LE" and cost < maxCost[0]:
 #                    maxCost[0] = cost
@@ -468,7 +468,7 @@ def bigrun():
                 jobs30 = jobs30 +  zonals["TotEmp"][jIdx]        
     
             if idx % 250000 == 0:
-                print "Processed", idx, "OD pairs, most recently", iTaz, jTaz, round(time.clock()-ts,2)
+                print("Processed", idx, "OD pairs, most recently", iTaz, jTaz, round(time.clock()-ts,2))
     
             idx = idx + 1
 #        if idx < 2000000:
@@ -509,13 +509,13 @@ def bigrun():
 #    calibOut.writerow(['Sector', 'Model', 'Iteration', 'Below', 'Within', 'Above', 'Score', 'Average', 'Param', 'Tours'])
     
     for iter in range(1):
-        print 15 * "-", "Iteration", iter, 15 * "-" 
+        print(15 * "-", "Iteration", iter, 15 * "-") 
     
         # ===========================================================================
         # Big loop: iterate through each industry and create generation
         # ===========================================================================
         for sector in settings.cvmSectors:
-            print "Calculating tour generation for sector", sector, round(time.clock()-ts, 2)
+            print("Calculating tour generation for sector", sector, round(time.clock()-ts, 2))
             # Read in control file for this sector
             fin = open(cvmInputPath + sector + ".csv", "r")
             inFile = csv.reader(fin)
@@ -531,14 +531,14 @@ def bigrun():
             
             for row in inFile:
                 model = row[0]
-                if paramDict.has_key(model):
+                if model in paramDict:
                     alt = row[1]
                     type = row[2]
                     nest = row[3]
                     param = float(row[5])
                     if nest == "nest":
                         # put into nesting dictionary
-                        if paramDict[model+"_nest"].has_key(type):
+                        if type in paramDict[model+"_nest"]:
                             pass
                         else:
                             paramDict[model+"_nest"][type] = []
@@ -549,7 +549,7 @@ def bigrun():
                             paramDict[model+"_nest"][type].append([alt, param])
                         
                     else:
-                        if paramDict[model].has_key(alt):
+                        if alt in paramDict[model]:
                             pass
                         else:
                             paramDict[model][alt] = []
@@ -579,7 +579,7 @@ def bigrun():
                 model = "VehicleTourType"
                 #print "Processing:", model, round(time.clock(), 2)
                
-                altList = paramDict[model].keys()
+                altList = list(paramDict[model].keys())
                 utilDict = {}
                 
                 # Begin by calculating the utilities for each alternative
@@ -590,10 +590,10 @@ def bigrun():
                             util = util + par
                             val = "const"
                         else:
-                            if cvmZonals.has_key(name):
+                            if name in cvmZonals:
                                 util = util + cvmZonals[name][taz] * par
                                 val = cvmZonals[name][taz]
-                            elif zonals.has_key(name):
+                            elif name in zonals:
                                 util = util + zonals[name][taz] * par
                                 val = zonals[name][taz]
                             else:
@@ -621,7 +621,7 @@ def bigrun():
                 model = "TourTOD"
                 #print "Processing:", model, round(time.clock(), 2)
                
-                altList = paramDict[model].keys()
+                altList = list(paramDict[model].keys())
                 utilDict = {}
                 
                 # Begin by calculating the utilities for each alternative
@@ -632,10 +632,10 @@ def bigrun():
                             util = util + par
                             val = "const"
                         else:
-                            if cvmZonals.has_key(name):
+                            if name in cvmZonals:
                                 util = util + cvmZonals[name][taz] * par
                                 val = cvmZonals[name][taz]
-                            elif zonals.has_key(name):
+                            elif name in zonals:
                                 util = util + zonals[name][taz] * par
                                 val = zonals[name][taz]
                             elif name == "CUPurpVeh":
@@ -665,7 +665,7 @@ def bigrun():
                 model = "GenPerEmployee"
                 #print "Processing:", model, round(time.clock(), 2)
                
-                altList = paramDict[model].keys()
+                altList = list(paramDict[model].keys())
                 utilDict = {}
                 # Begin by calculating the utilities for each alternative
                 for alt in altList:
@@ -675,10 +675,10 @@ def bigrun():
                             util = util + par
                             val = "const"
                         else:
-                            if cvmZonals.has_key(name):
+                            if name in cvmZonals:
                                 util = util + cvmZonals[name][taz] * par
                                 val = cvmZonals[name][taz]
-                            elif zonals.has_key(name):
+                            elif name in zonals:
                                 util = util + zonals[name][taz] * par
                                 val = zonals[name][taz]
                             elif name == "CUTimeOD":
@@ -700,7 +700,7 @@ def bigrun():
                 model = "ShipNoShip"
                 #print "Processing:", model, round(time.clock(), 2)
                
-                altList = paramDict[model].keys()
+                altList = list(paramDict[model].keys())
                 utilDict = {}
                 
                 # Begin by calculating the utilities for each alternative
@@ -711,10 +711,10 @@ def bigrun():
                             util = util + par
                             val = "const"
                         else:
-                            if cvmZonals.has_key(name):
+                            if name in cvmZonals:
                                 util = util + cvmZonals[name][taz] * par
                                 val = cvmZonals[name][taz]
-                            elif zonals.has_key(name):
+                            elif name in zonals:
                                 util = util + zonals[name][taz] * par
                                 val = zonals[name][taz]
                             elif name == "CUGen":
@@ -776,7 +776,7 @@ def bigrun():
                 probDict = {}
                 
                 # First calculate probabilities for each node with subnodes
-                for node in linkDict.keys():
+                for node in list(linkDict.keys()):
                     if isinstance(linkDict[node], float):
                         pass
                     else:
@@ -807,7 +807,7 @@ def bigrun():
                     try:
                         tours = probDict[timePer] * toursAllDay * scale
                     except:
-                        print "Error in scaling tours:", probDict[timePer], toursAllDay, scale
+                        print("Error in scaling tours:", probDict[timePer], toursAllDay, scale)
                         tours = 0
                     cvmZonals[sector + "_" + timePer].append(round(tours, 2))
                     
@@ -815,12 +815,12 @@ def bigrun():
 # ==========================================================================
 # Output CVM Gen and Accessibility file
 # ==========================================================================
-    print "Writing the data out...", round(time.clock(),2)
+    print("Writing the data out...", round(time.clock(),2))
     fout = open(cvmInputPath + "CVMToursAccess.csv", "w")
     outFile = csv.writer(fout, excelOne)
     
     header = ["Taz"]
-    keyList = cvmZonals.keys()
+    keyList = list(cvmZonals.keys())
     keyList.sort()
     header.extend(keyList)
     outFile.writerow(header)
@@ -834,7 +834,7 @@ def bigrun():
     
 #    tout.close()
 #    cout.close()
-    print "DonE!"
+    print("DonE!")
     
 if __name__ == '__main__':
     bigrun()

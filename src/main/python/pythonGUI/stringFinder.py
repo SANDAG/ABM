@@ -5,7 +5,7 @@ def check(fname, txt):
 
 def replace(old_fname, new_fname, replaceDic):
     f1 = open(old_fname, 'r')
-    f2 = open(new_fname, 'w')
+    f2 = open(new_fname, 'w', newline='')
     for line in f1:
         for pair in replaceDic:
             line=line.replace(pair[0], pair[1])
