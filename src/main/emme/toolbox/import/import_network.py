@@ -1197,6 +1197,27 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         pass_values.add_attribute(_dt.Attribute("pass_type", _np.array(pass_cost_keys).astype("O")))
         pass_values.add_attribute(_dt.Attribute("cost", _np.array(pass_costs).astype("f8")))
         gen_utils.DataTableProc("%s_transit_passes" % self.data_table_name, data=pass_values)
+
+        network_editor_yaml_file = FILE_NAMES["NETWORK_EDITS"]
+        network_editor_bool = False
+        network_editor_yaml_path = _join(self.source, network_editor_yaml_file)
+        if os.path.exists(network_editor_yaml_path):
+            network_editor_bool = True
+            self._log.append({"type": "text", "content": "%s" % network_editor_yaml_path})
+            with open(network_editor_yaml_path, "r") as stream:
+                network_editor_data = yaml.safe_load(stream)
+                self._log.append({"type": "text", "content": "loaded YAML"})
+        if network_editor_bool:
+            for link_edits in network_editor_data.get('transit',[]):
+                for link in network.links():
+                    if link["@tcov_id"] in link_edits.get("@tcov_id",[]):
+                        #this format permits only one attribute change per edit
+                        #could explore using set_attribute_values() method in EMME API
+                        try:
+                            link[link_edits["attribute_to_edit"]] = link_edits["new_value"]
+                        except KeyError: #one of two solutions should probably be removed
+                            setattr(link, link_edits["attribute_to_edit"], link_edits["new_value"])
+
         self._log.append({"type": "text", "content": "Calculate derived transit attributes complete"})
         return
 
