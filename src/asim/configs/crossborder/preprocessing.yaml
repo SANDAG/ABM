@@ -1,15 +1,14 @@
 # misc settings
-data_dir: C:\\abm_runs\\hcc\\asim_airport\\data
-config_dir: C:\\abm_runs\\hcc\\asim_airport\\configs\\crossborder
-output_dir: C:\\abm_runs\\hcc\\asim_airport\\output_xborder
+data_dir: C:\\abm_runs\\abm3_dev\\run_dir\\data
+config_dir: C:\\abm_runs\\abm3_dev\\run_dir\\configs\\crossborder
+output_dir: C:\\abm_runs\\abm3_dev\\run_dir\\output_xborder
 distance_param: -0.19
 walk_speed: 3
 
 
 # non-skim inputs
-maz_input_fname: mgra13_based_input2016.csv
+maz_input_fname: land_use.csv
 colonia_input_fname: crossBorder_supercolonia.csv
-tap_lines_input_fname: tapLines.csv
 tour_scheduling_probs_input_fname: crossBorder_tourEntryAndReturn_old.csv
 poe_wait_times_input_fname: crossBorder_pointOfEntryWaitTime.csv
 stop_frequency_input_fname: crossBorder_stopFrequency.csv
@@ -24,8 +23,6 @@ mazs_output_fname: mazs_xborder.csv
 households_output_fname: households_xborder.csv
 persons_output_fname: persons_xborder.csv
 tours_output_fname: tours_xborder.csv
-tap_lines_output_fname: tap_lines.csv
-taps_output_fname: taps.csv
 
 
 # output configs
@@ -64,7 +61,7 @@ skims:
       - MD
       - PM
       - EV
-    input_base_fname: traffic_skims_processed
+    input_base_fname: traffic_skims
     output_base_fname: traffic_skims_xborder
 
 
@@ -72,19 +69,19 @@ skims:
 poes:
   0:
     name: San Ysidro
-    maz_id: 7090
+    maz_id: 9279
     ext_taz_id: 1
     veh_lanes: 24
     ped_lanes: 15
   1:
     name: Otay Mesa
-    maz_id: 7066
+    maz_id: 9387
     ext_taz_id: 2
     veh_lanes: 13
     ped_lanes: 6
   2:
     name: Tecate
-    maz_id: 21895
+    maz_id: 22324
     ext_taz_id: 4
     veh_lanes: 2
     ped_lanes: 2
