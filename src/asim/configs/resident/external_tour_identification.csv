@@ -9,3 +9,4 @@ util_eatout,eatout tour ASC,"@np.where(df.tour_type == 'eatout', 1, 0)",coef_eat
 util_escort,escort tour ASC,"@np.where(df.tour_type == 'escort', 1, 0)",coef_escort,0
 util_joint,escort tour ASC,"@np.where(df.tour_category == 'joint', 1, 0)",coef_joint,0
 util_asc_placeholder,ASC to play with,1,-15,0
+util_global_switch,Global switch to have everything internal,@NO_EXTERNAL,-999,0

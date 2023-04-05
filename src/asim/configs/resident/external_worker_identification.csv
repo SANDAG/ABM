@@ -4,3 +4,4 @@ util_size_of_nearest_ext_station,Size of nearest external station,"@reindex(land
 util_child_age,Age of worker,"age",coef_child_age,0
 util_income,household income,"income",coef_income,0
 util_asc_placeholder,ASC to play with,1,-8,0
+util_global_switch,Global switch to have everything internal,@NO_EXTERNAL,-999,0
