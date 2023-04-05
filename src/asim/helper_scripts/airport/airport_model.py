@@ -340,7 +340,11 @@ def create_landuse(settings):
     input_lu = pd.read_csv(os.path.join(data_dir, settings['maz_input_fname']))
     synthetic_hh = pd.read_csv(os.path.join(data_dir, settings['hh_input_fname']))
 
-    output_lu = input_lu.copy().rename(columns = {'mgra':'MAZ','taz':'TAZ'})
+    if 'MAZ' not in input_lu.columns:
+        output_lu = input_lu.copy().rename(columns = {'mgra':'MAZ','taz':'TAZ'})
+    else:   
+        output_lu = input_lu.copy()
+
     synthetic_hh['airport_income_bin'] = pd.cut(synthetic_hh['hinc'], bins = [-99999999,25000,50000,75000,100000,125000,150000,200000,9999999999], labels = ['a1','a2','a3','a4','a5','a6','a7','a8'])
     synthetic_hh = synthetic_hh.groupby(['mgra','airport_income_bin'],as_index = False)[['hhid']].count() # TODO: change to sample rate
     synthetic_hh = pd.pivot(synthetic_hh, index = 'mgra', columns = 'airport_income_bin', values= 'hhid')

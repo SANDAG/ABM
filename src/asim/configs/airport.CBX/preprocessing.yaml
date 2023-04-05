@@ -1,12 +1,12 @@
 # misc settings
-data_dir: data_full
+data_dir: data
 config_dir: configs\airport.cbx
 # distance_param: -0.19
 # walk_speed: 3
 
 
 # non-skim inputs
-maz_input_fname: mgra13_based_input2016.csv
+maz_input_fname: land_use.csv
 hh_input_fname: households.csv
 employee_park_fname: airport_employee_park.CBX.csv
 arrival_sched_probs_fname: airport_arrival.CBX.csv
