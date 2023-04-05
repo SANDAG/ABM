@@ -242,12 +242,13 @@ class Series15_Processor:
             ext_maz_nums.append(ext_maz_num)
 
         self.landuse['mgra'] = self.landuse.index.values
+        # FIXME: maintaining two  TAZ cols here... 
+        self.landuse['taz'] = self.landuse['TAZ']
 
         print("\tAdded external mazs: ", ext_maz_nums)
         
         self.landuse['external_work'] = self.landuse['external_work'].fillna(0)
         self.landuse['external_nonwork'] = self.landuse['external_nonwork'].fillna(0)
-        self.landuse.loc[self.landuse.external_MAZ == 1, ['TAZ', 'external_MAZ', 'poe_id', 'external_work', 'external_nonwork']]
 
 
     def add_maz_stop_walk_to_landuse(self):
