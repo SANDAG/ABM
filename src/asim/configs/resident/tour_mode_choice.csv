@@ -63,7 +63,7 @@ util_BIKE_Mode unavailable,Bike - Mode unavailable,bikeAvailable == 0,,,,,-999,,
 "util_BIKE_Female, bike","Bike - Female, bike",@df.female,,,,,coef_female_bike,,,,,,,,,,,,,,,,
 "util_BIKE_Income 100k plus, bike","Bike - Income 100k plus, bike",@(df.income > 99999),,,,,coef_inc100plus_bike,,,,,,,,,,,,,,,,
 util_BIKE_Normalized Landuse Variable [Origin Employment + DU],Bike - - Normalized Landuse Variable [Origin Employment + DU],LUVarsNormalized_bike,,,,,coef_LUnorm_bike,,,,,,,,,,,,,,,,
-util_BIKE_Bike - logsum,Bike - logsum inbound,bikeLSI + bikeLSO,,,,,coef_bikeLogsum,,,,,,,,,,,,,,,,
+util_BIKE_Bike - logsum,Bike - logsum,bikeLSI + bikeLSO,,,,,coef_bikeLogsum,,,,,,,,,,,,,,,,
 util_BIKE_Miles to coast from origin MGRA,Bike - Miles to coast from origin MGRA,DistanceToCoast,,,,,coef_oMlCoast_bike,,,,,,,,,,,,,,,,
 util_BIKE_Miles greater than 2 to coast from origin MGRA,Bike - Miles greater than 2 to coast from origin MGRA,"@(np.maximum(df.DistanceToCoast-2,0))",,,,,coef_oMlCoast2p_bike,,,,,,,,,,,,,,,,
 util_BIKE_Miles greater than 5 to coast from origin MGRA,Bike - Miles greater than 5 to coast from origin MGRA,"@(np.maximum(df.DistanceToCoast-5,0))",,,,,coef_oMlCoast5p_bike,,,,,,,,,,,,,,,,
@@ -324,7 +324,7 @@ util_TNC Single - Cost,TNC Single - Cost,"@(np.maximum(TNC_single_baseFare*2 + (
 #,TNC Shared,,,,,,,,,,,,,,,,,,,,,,
 util_TNC Shared - In-vehicle time,TNC Shared - In-vehicle time,@(df.s2_time_skims_out + df.s2_time_skims_inb) * TNC_shared_IVTFactor * df.time_factor,,,,,,,,,,,,,,,,,,,,coef_ivt,
 util_TNC Shared - Wait time,TNC Shared - Wait time,@ df.totalWaitSharedTNC * df.time_factor,,,,,,,,,,,,,,,,,,,,coef_wait,
-util_TNC Shared - Cost,TNC Shared - Cost,"@(np.maximum(TNC_shared_baseFare*2 + (df.s2_dist_skims_out + df.s2_dist_skims_inb) * TNC_shared_costPerMile + (df.s2_time_skims_out + df.s2_time_skims_inb)* TNC_shared_costPerMinute, TNC_shared_costMinimum*2)*100 + df.s2_cost_skims_out + df.s2_cost_skims_inb)//df.cost_sensitivity",,,,,,,,,,,,,,,,,,,,coef_income,
+util_TNC Shared - Cost,TNC Shared - Cost,"@(np.maximum(TNC_shared_baseFare*2 + (df.s2_dist_skims_out + df.s2_dist_skims_inb) * TNC_shared_costPerMile + (df.s2_time_skims_out + df.s2_time_skims_inb)* TNC_shared_costPerMinute, TNC_shared_costMinimum*2)*100 + df.s2_cost_skims_out + df.s2_cost_skims_inb)/df.cost_sensitivity",,,,,,,,,,,,,,,,,,,,coef_income,
 #,School bus,,,,,,,,,,,,,,,,,,,,,,
 util_School Bus - Unavailable,School Bus - Unavailable,SCHBUS_available==0,,,,,,,,,,,,,,,,,,,,,-999
 util_School Bus - In-vehicle Time at 20 miles per hour,School Bus - In-vehicle Time at 20 miles per hour,(da_dist_skims_out + da_dist_skims_inb)*3 * time_factor,,,,,,,,,,,,,,,,,,,,,coef_ivt
