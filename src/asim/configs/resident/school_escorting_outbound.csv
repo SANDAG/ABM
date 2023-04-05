@@ -75,9 +75,9 @@ util_child3_age_u6_rs,Child 3 age under 6 years old - Ride Share,((chauf3 == 1) 
 util_child1_dist_pe,Child 1 distance to school - Pure escorting,((chauf1 == 2) | (chauf1 == 4)) * dist_home_to_school1,coef_child_dist_pe
 util_child2_dist_pe,Child 2 distance to school - Pure escorting,((chauf2 == 2) | (chauf2 == 4)) * dist_home_to_school2,coef_child_dist_pe
 util_child3_dist_pe,Child 3 distance to school - Pure escorting,((chauf3 == 2) | (chauf3 == 4)) * dist_home_to_school3,coef_child_dist_pe
-util_child1_dist_pe,Child 1 Pure escorting not allowed if over 30 miles,((chauf1 == 2) | (chauf1 == 4)) & (dist_home_to_school1 > 30),coef_unavail
-util_child2_dist_pe,Child 2 Pure escorting not allowed if over 30 miles,((chauf2 == 2) | (chauf2 == 4)) & (dist_home_to_school2 > 30),coef_unavail
-util_child3_dist_pe,Child 3 Pure escorting not allowed if over 30 miles,((chauf3 == 2) | (chauf3 == 4)) & (dist_home_to_school3 > 30),coef_unavail
+util_child1_dist_pe_over30miles,Child 1 Pure escorting not allowed if over 30 miles,((chauf1 == 2) | (chauf1 == 4)) & (dist_home_to_school1 > 30),coef_unavail
+util_child2_dist_pe_over30miles,Child 2 Pure escorting not allowed if over 30 miles,((chauf2 == 2) | (chauf2 == 4)) & (dist_home_to_school2 > 30),coef_unavail
+util_child3_dist_pe_over30miles,Child 3 Pure escorting not allowed if over 30 miles,((chauf3 == 2) | (chauf3 == 4)) & (dist_home_to_school3 > 30),coef_unavail
 # ,Household Interactions,,
 util_hh_inc_u25k_noes,Household income less than 25k - No Escorting,(income <= 25000) & ((bundle1 == 0) | ((bundle2 == 0) & (num_children_going_to_school > 1)) | ((bundle3 == 0) & (num_children_going_to_school > 2))),coef_hh_inc_u25k_noes
 util_hh_inc_25to50k_noes,Household income between 25 and 50k - No Escorting,((income > 25000) & (income <= 50000)) & ((bundle1 == 0) | ((bundle2 == 0) & (num_children_going_to_school > 1)) | ((bundle3 == 0) & (num_children_going_to_school > 2))),coef_hh_inc_25to50k_noes
