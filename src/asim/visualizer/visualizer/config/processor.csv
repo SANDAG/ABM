@@ -230,6 +230,40 @@ Tag active workers with active students in household,step_3,raw,,,,active_worker
 Fill null values with 0,step_3,raw,,,,active_workers = active_workers.fillna(0)
 Reset active_workers index,step_3,raw,,,,active_workers = active_workers.reset_index()
 #,,,,,,
+Add person number within household to trip list,step_3,raw,,,,final_trips['person_num'] = final_trips['person_id'].map(final_persons.set_index('person_id')['PNUM'])
+Get list of escort participants on each trip from string reporting it,step_3,apply,final_trips,escort_participant_list,escort_participants,get_escort_participant_list
+Get number of escortees on each trip,step_3,apply,final_trips,num_escortees,escort_participant_list,len
+Identify outbound escort trips,step_3,raw,,,,"ob_esc_trips = final_trips.query(""school_escort_direction == 'outbound' and tour_purpose != 'school'"")"
+Identify inbound escort trips,step_3,raw,,,,"ib_esc_trips = final_trips.query(""school_escort_direction == 'inbound' and tour_purpose != 'school'"")"
+,step_3,raw,,,,ob_escortees = ob_esc_trips['escort_participant_list'].apply(lambda x: list(x)).sum()
+,step_3,raw,,,,"ob_escorters = np.repeat(ob_esc_trips['person_id'], ob_esc_trips['num_escortees']).values.tolist()"
+,step_3,raw,,,,"ob_escort_map = dict(zip(ob_escortees, ob_escorters))"
+,step_3,raw,indivTourData_3,driver_num_out,person_id,indivTourData_3['driver_num_out'] = indivTourData_3['person_id'].map(ob_escort_map)
+,step_3,raw,,,,ib_escortees = ib_esc_trips['escort_participant_list'].apply(lambda x: list(x)).sum()
+,step_3,raw,,,,"ib_escorters = np.repeat(ib_esc_trips['person_id'], ib_esc_trips['num_escortees']).values.tolist()"
+,step_3,raw,,,,"ib_escort_map = dict(zip(ib_escortees, ib_escorters))"
+,step_3,raw,indivTourData_3,driver_num_in,person_id,indivTourData_3['driver_num_in'] = indivTourData_3['person_id'].map(ib_escort_map)
+Get outbound chauffuer type,step_3,raw,,,,indivTourData_3['out_chauffeur_ptype'] = indivTourData_3['driver_num_in'].map(final_persons.set_index('person_id')['PERTYPE'])
+Get inbound chauffuer type,step_3,raw,,,,indivTourData_3['inb_chauffeur_ptype'] = indivTourData_3['driver_num_out'].map(final_persons.set_index('person_id')['PERTYPE'])
+Get tours with active workers,step_3,raw,,,,"active_workers = indivTourData_3[['tour_purpose', 'person_type', 'household_id', 'person_id']].query('tour_purpose in [""work"", ""atwork""] and person_type in [1, 2]').groupby(['household_id', 'person_id']).max()['person_type'].reset_index()"
+Get tours with active students,step_3,raw,,,,"active_students = indivTourData_3[['tour_purpose', 'person_type', 'household_id', 'person_id']].query('tour_purpose == ""school"" and person_type in [6, 7, 8]').groupby(['household_id', 'person_id']).max()['person_type'].reset_index()"
+Get tours with active students,step_3,raw,,,,active_students['active_student'] = np.ones_like(active_students.index)
+Group active student tours by household,step_3,raw,,,,hh_active_student = active_students.groupby('household_id').max()['active_student']
+Tag active workers with active students in household,step_3,raw,,,,active_workers['active_student'] = active_workers['household_id'].map(hh_active_student).fillna(0)
+List of workers who did outbound rideshare for students,step_3,raw,,,,"out_rs_workers = indivTourData_3[['household_id', 'person_id', 'tour_id2', 'tour_purpose', 'school_esc_outbound', 'driver_num_out', 'out_chauffeur_ptype']].query('tour_purpose == ""school"" and school_esc_outbound == ""ride_share""')[['household_id', 'driver_num_out']].value_counts().sort_index().reset_index().rename(columns = {0: 'out_rs_escort'})"
+List of workers who did outbound pure escort for students,step_3,raw,,,,"out_pe_workers = indivTourData_3[['household_id', 'person_id', 'tour_id2', 'tour_purpose', 'school_esc_outbound', 'driver_num_out', 'out_chauffeur_ptype']].query('tour_purpose == ""school"" and school_esc_outbound == ""pure_escort""')[['household_id', 'driver_num_out']].value_counts().sort_index().reset_index().rename(columns = {0: 'out_pe_escort'})"
+List of workers who did inbound rideshare for students,step_3,raw,,,,"inb_rs_workers = indivTourData_3[['household_id', 'person_id', 'tour_id2', 'tour_purpose', 'school_esc_inbound', 'driver_num_in', 'inb_chauffeur_ptype']].query('tour_purpose == ""school"" and school_esc_inbound == ""ride_share""')[['household_id', 'driver_num_in']].value_counts().sort_index().reset_index().rename(columns = {0: 'inb_rs_escort'})"
+List of workers who did inbound pure escort for students,step_3,raw,,,,"inb_pe_workers = indivTourData_3[['household_id', 'person_id', 'tour_id2', 'tour_purpose', 'school_esc_inbound', 'driver_num_in', 'inb_chauffeur_ptype']].query('tour_purpose == ""school"" and school_esc_inbound == ""pure_escort""')[['household_id', 'driver_num_in']].value_counts().sort_index().reset_index().rename(columns = {0: 'inb_pe_escort'})"
+Add escort type to worker type,step_3,raw,,,,"active_workers = active_workers.merge(out_rs_workers, 'left', left_on = ['household_id', 'person_id'], right_on = ['household_id', 'driver_num_out'])"
+Add escort type to worker type,step_3,raw,,,,"active_workers = active_workers.merge(out_pe_workers, 'left', left_on = ['household_id', 'person_id'], right_on = ['household_id', 'driver_num_out'])"
+Add escort type to worker type,step_3,raw,,,,"active_workers = active_workers.merge(inb_rs_workers, 'left', left_on = ['household_id', 'person_id'], right_on = ['household_id', 'driver_num_in'])"
+Add escort type to worker type,step_3,raw,,,,"active_workers = active_workers.merge(inb_pe_workers, 'left', left_on = ['household_id', 'person_id'], right_on = ['household_id', 'driver_num_in'])"
+Fill null values with 0,step_3,raw,,,,active_workers = active_workers.fillna(0)
+Identify outbound escort type,step_3,raw,,,,"active_workers['out_escort_type'] = np.where(active_workers['out_pe_escort'] > 0, 2, np.where(active_workers['out_rs_escort'], 1, 3))"
+Identify inbound escort type,step_3,raw,,,,"active_workers['inb_escort_type'] = np.where(active_workers['inb_pe_escort'] > 0, 2, np.where(active_workers['inb_rs_escort'], 1, 3))"
+Reset active_workers index,step_3,raw,,,,active_workers = active_workers.reset_index()
+Add person weights to active workers,step_3,raw,,,,active_workers['finalweights'] = active_workers['person_id'].map(final_persons.set_index('person_id')['finalweights'])
+#,,,,,,
 Add up total population,step_3,raw,,,,total_population = final_persons.finalweights.sum()
 Add up total households,step_3,raw,,,,total_households = final_households.finalweights.sum()
 Add up total tours,step_3,raw,,,,total_tours = indivTourData_3.finalweights.sum() + (jointTourData_3['NUMBER_HH_TOTAL']*jointTourData_3['finalweights']).sum()
@@ -247,6 +281,9 @@ Create rates data frame,step_3,raw,,,,"rates_df = pd.Series([totals_df['value'][
 Create rates data frame,step_3,raw,,,,rates_df = pd.DataFrame({'value': rates_df})
 Create rates data frame,step_3,raw,,,,rates_df.index.name = 'Variable'
 Write rates data frame,step_3,raw,,,,rates_df.to_csv(r'output\rates.csv')
+#,,,,,,
+Rename tours that have no escort,step_3,raw,,,,indivTourData_3['school_esc_outbound'] = indivTourData_3['school_esc_outbound'].fillna('No Escort')
+Rename tours that have no escort,step_3,raw,,,,indivTourData_3['school_esc_inbound'] = indivTourData_3['school_esc_inbound'].fillna('No Escort')
 #,,,,,,
 #,,,,,,
 Add totals to average mandatory trip length,step_6,raw,,,,mandTripLengthsTotal['HDISTRICT'] = 'Total'
@@ -304,7 +341,7 @@ Rename AGGPURP,step_6,rename,tourDuration,,,{'AGGPURP': 'purpose'}
 Rename AUTOSUFF column,step_6,rename,tmodeProfile_vis,,,{'AUTOSUFF': 'OwnershipCategory'}
 Recode auto ownership category,step_6,replace,tmodeProfile_vis,OwnershipCategory,OwnershipCategory,"{0: '0: No Vehicles', 1: '1: 1+ Veh/Adults > Veh', 2: '2: Vehicles >= Adults'}"
 Rename mandatory distance distribution columns,step_6,rename,mandTLFD,,,"{'level_0': 'distbin', 'HDISTRICT': 'District'}"
-Rename mandatory distance distribution columns,step_6,rename,mandTLFD_et,,,"{'workdistbin': 'distbin', 'HDISTRICT': 'District'}"
+Rename mandatory distance distribution columns,step_6,rename,mandTLFD_et,,,"{'level_0': 'distbin', 'HDISTRICT': 'District'}"
 Recode tour mode,step_6,replace,tmodeProfile_vis,tour_mode,tour_mode,"{'DRIVEALONE': '01: SOV', 'SHARED2': '02: Shared Ride 2', 'SHARED3': '03: Shared Ride 3+', 'WALK': '04: Walk', 'BIKE': '05: Bike', 'WALK_TRANSIT': '06: Walk to Transit', 'WALK_LOC': '06: Walk to Transit', 'WALK_PRM': '06: Walk to Transit', 'WALK_MIX': '06: Walk to Transit', 'PNR_TRANSIT': '07: PNR to Transit', 'PNR_LOC': '07: PNR to Transit', 'PNR_PRM': '07: PNR to Transit', 'PNR_MIX': '07: PNR to Transit', 'KNR_TRANSIT': '08: KNR to Transit', 'KNR_LOC': '08: KNR to Transit', 'KNR_PRM': '08: KNR to Transit', 'KNR_MIX': '08: KNR to Transit', 'TNC_TRANSIT': '09: TNC to Transit', 'TNC_LOC': '09: TNC to Transit', 'TNC_PRM': '09: TNC to Transit', 'TNC_MIX': '09: TNC to Transit', 'TAXI': '10: Taxi', 'TNC_SINGLE': '11: TNC Single', 'TNC_SHARED': '12: TNC Shared', 'SCH_BUS': '13: School Bus'}"
 Recode tour mode,step_6,replace,tripmodeProfile_vis,tour_mode,tour_mode,"{'DRIVEALONE': '01: SOV', 'SHARED2': '02: Shared Ride 2', 'SHARED3': '03: Shared Ride 3+', 'WALK': '04: Walk', 'BIKE': '05: Bike', 'WALK_TRANSIT': '06: Walk to Transit', 'WALK_LOC': '06: Walk to Transit', 'WALK_PRM': '06: Walk to Transit', 'WALK_MIX': '06: Walk to Transit', 'PNR_TRANSIT': '07: PNR to Transit', 'PNR_LOC': '07: PNR to Transit', 'PNR_PRM': '07: PNR to Transit', 'PNR_MIX': '07: PNR to Transit', 'KNR_TRANSIT': '08: KNR to Transit', 'KNR_LOC': '08: KNR to Transit', 'KNR_PRM': '08: KNR to Transit', 'KNR_MIX': '08: KNR to Transit', 'TNC_TRANSIT': '09: TNC to Transit', 'TNC_LOC': '09: TNC to Transit', 'TNC_PRM': '09: TNC to Transit', 'TNC_MIX': '09: TNC to Transit', 'TAXI': '10: Taxi', 'TNC_SINGLE': '11: TNC Single', 'TNC_SHARED': '12: TNC Shared', 'SCH_BUS': '13: School Bus'}"
 Recode trip mode,step_6,replace,tripmodeProfile_vis,trip_mode,trip_mode,"{'DRIVEALONE': '01: SOV', 'SHARED2': '02: Shared Ride 2', 'SHARED3': '03: Shared Ride 3+', 'WALK': '04: Walk', 'BIKE': '05: Bike', 'WALK_TRANSIT': '06: Walk to Transit', 'WALK_LOC': '06: Walk to Transit', 'WALK_PRM': '06: Walk to Transit', 'WALK_MIX': '06: Walk to Transit', 'PNR_TRANSIT': '07: PNR to Transit', 'PNR_LOC': '07: PNR to Transit', 'PNR_PRM': '07: PNR to Transit', 'PNR_MIX': '07: PNR to Transit', 'KNR_TRANSIT': '08: KNR to Transit', 'KNR_LOC': '08: KNR to Transit', 'KNR_PRM': '08: KNR to Transit', 'KNR_MIX': '08: KNR to Transit', 'TNC_TRANSIT': '09: TNC to Transit', 'TNC_LOC': '09: TNC to Transit', 'TNC_PRM': '09: TNC to Transit', 'TNC_MIX': '09: TNC to Transit', 'TAXI': '10: Taxi', 'TNC_SINGLE': '11: TNC Single', 'TNC_SHARED': '12: TNC Shared', 'SCH_BUS': '13: School Bus'}"
@@ -350,3 +387,13 @@ Bin trip TOD profile into assignment time periods,step_6,replace,tripDeparture_v
 #,,,,,,
 Remove column depart from stopDeparture_vis,step_6,raw,,,,del stopDeparture_vis['depart']
 Remove column depart from tripDeparture_vis,step_6,raw,,,,del tripDeparture_vis['depart']
+#,,,,,,
+Rename escort type column,step_6,rename,esctype_by_childtype,,,"{'level_0': 'esc_type', 'person_type': 'child_type'}"
+Rename escort type column,step_6,rename,esctype_by_chauffeurtype,,,"{'level_0': 'esc_type', 'level_1': 'chauffeur'}"
+Recode person type,step_6,replace,esctype_by_chauffeurtype,chauffeur,chauffeur,"{1: '1: Full-Time Worker', 2: '2: Part-Time Worker', 3: '3: University Student', 4: '4: Non-Worker', 5: '5: Retiree', 6: '6: Driving Aged Student', 7: '7: Non-Driving Aged Student', 8: '8: Child To Young for School'}"
+Recode person type,step_6,replace,esctype_by_childtype,child_type,child_type,"{1: '1: Full-Time Worker', 2: '2: Part-Time Worker', 3: '3: University Student', 4: '4: Non-Worker', 5: '5: Retiree', 6: '6: Driving Aged Student', 7: '7: Non-Driving Aged Student', 8: '8: Child To Young for School'}"
+#,,,,,,
+Recode person type,step_6,replace,esctype_by_childtype,esc_type,esc_type,"{'': 'No Escort', 'ride_share': 'Ride Share', 'pure_escort': 'Pure Escort'}"
+Recode person type,step_6,replace,esctype_by_chauffeurtype,esc_type,esc_type,"{'': 'No Escort', 'ride_share': 'Ride Share', 'pure_escort': 'Pure Escort'}"
+Recode in escort type,step_6,replace,worker_school_escorting,inb_escort_type,inb_escort_type,"{0: 'No Escort', 1: 'Ride Share', 2: 'Pure Escort', 3: 'No Escort'}"
+Recode out escort type,step_6,replace,worker_school_escorting,out_escort_type,out_escort_type,"{0: 'No Escort', 1: 'Ride Share', 2: 'Pure Escort', 3: 'No Escort'}"
