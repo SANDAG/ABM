@@ -34,3 +34,9 @@ NESTS:
           coefficient: 0.3
           alternatives:
             - cars4
+
+annotate_households:
+  SPEC: annotate_households_auto_ownership
+  DF: households
+  TABLES:
+    - persons_merged
