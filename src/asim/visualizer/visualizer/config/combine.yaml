@@ -26,6 +26,18 @@ tables:
       HDISTRICT: Total
     dtype:
       freq: int
+  esctype_by_chauffeurtype:
+    merge:
+      - esc_type
+      - chauffeur
+    total:
+      chauffeur: Total
+  esctype_by_childtype:
+    merge:
+      - esc_type
+      - child_type
+    total:
+      child_type: Total
   hhSizeDist:
     merge:
       - HHSIZE
@@ -204,3 +216,7 @@ tables:
   wfh_summary:
     merge:
       - District
+  worker_school_escorting:
+    merge:
+      - inb_escort_type
+      - out_escort_type
