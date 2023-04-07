@@ -1,5 +1,5 @@
 runs:
-  survey: hts
+  survey: ABM2P_2019sr15_summaries
   model: output
 outpath: data
 tables:
