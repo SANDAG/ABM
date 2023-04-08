@@ -1,5 +1,4 @@
-# This is an example use of annotation for dissaggregate accessibilities
-# But this particular case could probably be handled using variable mapping
+# annotating the proto_disaggregate_accessibilty table
 Description,Target,Expression
 workplace location for zero auto only,workplace_location_accessibility_0,"np.where(df.auto_ownership == 0, df.workplace_location_accessibility, np.nan)"
 workplace location for auto deficient,workplace_location_accessibility_1,"np.where(df.auto_ownership == 1, df.workplace_location_accessibility, np.nan)"

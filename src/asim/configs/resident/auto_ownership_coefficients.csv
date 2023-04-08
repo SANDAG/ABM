@@ -178,3 +178,6 @@ asc_allhs_3_autos,0.5656,F
 asc_allhhs_4plus_autos,0.5405,F
 coef_cars2_av_ownership,-0.22314,F
 coef_cars3_av_ownership,-0.69315,F
+coef_nonmand_logsum_0,0.0,F
+coef_nonmand_logsum_1,0.0,F
+coef_nonmand_logsum_2p,0.0,F

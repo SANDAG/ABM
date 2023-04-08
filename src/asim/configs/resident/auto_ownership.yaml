@@ -35,6 +35,12 @@ NESTS:
           alternatives:
             - cars4
 
+preprocessor:
+  SPEC: auto_ownership_preprocessor
+  DF: choosers
+  TABLES:
+    - persons_merged
+
 annotate_households:
   SPEC: annotate_households_auto_ownership
   DF: households

@@ -37,15 +37,10 @@ Label,Description,Expression,cars0,cars1,cars2,cars3,cars4
 ,Retail Employment Density in 1/2 mile radius of household,empden,coef_retail_density_0_CARS,coef_retail_density_1_CAR,,,
 ,Non-motorized zonal accessbility,nmRetail,coef_nonmotorized_zonal_accessbility_0_CARS,coef_nonmotorized_zonal_accessbility_1_CAR,,coef_nonmotorized_zonal_accessbility_3_CARS,coef_nonmotorized_zonal_accessbility_4_CARS
 ,auto-transit zonal accessibility,auPkTotal - trPkTotal,coef_autotransit_zonal_accessibility_0_CARS,coef_autotransit_zonal_accessibility_1_CAR,,,
-#,worker mandatory tour auto dependency,@((##workersAutoDependency##)),coef_worker_mandatory_tour_auto_dependency_0_CARS,coef_worker_mandatory_tour_auto_dependency_1_CAR,,coef_worker_mandatory_tour_auto_dependency_3_CARS,coef_worker_mandatory_tour_auto_dependency_4_CARS
-#,student mandatory tour auto dependency,@((##studentsAutoDependency##)),coef_student_mandatory_tour_auto_dependency_0_CARS,coef_student_mandatory_tour_auto_dependency_1_CAR,,,
-#,worker mandatory tour rail mode portion,@((##workersRailProportion##)),coef_worker_mandatory_tour_rail_mode_portion_0_CARS,coef_worker_mandatory_tour_rail_mode_portion_1_CAR,,coef_worker_mandatory_tour_rail_mode_portion_3_CARS,coef_worker_mandatory_tour_rail_mode_portion_4_CARS
-#,student mandatory tour rail mode portion,@((##studentsRailProportion##)),coef_student_mandatory_tour_rail_mode_portion_0_CARS,coef_student_mandatory_tour_rail_mode_portion_1_CAR,,,
-# ,alternative specific constant adjustment for POST-AO 0 WORKER households,@((df.HHT>0) & (df.num_workers==0)),,asc_0_workers_1_auto,asc_0_workers_2_autos,asc_0_workers_3_autos,asc_0_workers_4plus_autos
-# ,alternative specific constant adjustment for POST-AO 1 WORKER households,@((df.HHT>0) & (df.num_workers==1)),,asc_1_worker_1_auto,asc_1_worker_2_autos,asc_1_worker_3_autos,asc_1_worker_4plus_autos
-# ,alternative specific constant adjustment for POST-AO 2 WORKER households,@((df.HHT>0) & (df.num_workers==2)),,asc_2_workers_1_auto,asc_2_workers_2_autos,asc_2_workers_3_autos,asc_2_workers_4plus_autos
-# ,alternative specific constant adjustment for POST-AO 3 WORKER households,@((df.HHT>0) & (df.num_workers==3)),,asc_3_workers_1_auto,asc_3_workers_2_autos,asc_3_workers_3_autos,asc_3_workers_4plus_autos
-# ,alternative specific constant adjustment for POST-AO 4+ WORKER households,@((df.HHT>0) & (df.num_workers>3)),,asc_4plus_workers_1_auto,asc_4plus_workers_2_autos,asc_4plus_workers_3_autos,asc_4plus_workers_4plus_autos
+# Disaggregate accessibilities,,,,,,,
+,Average non-mandatory disaggrage accessibility -- 0 autos,(shopping_accessibility_0 + othdiscr_accessibility_0) / 2,coef_nonmand_logsum_0,,,,
+,Average non-mandatory disaggrage accessibility -- 1 autos,(shopping_accessibility_1 + othdiscr_accessibility_1) / 2,,coef_nonmand_logsum_1,,,
+,Average non-mandatory disaggrage accessibility -- 2+ autos,(shopping_accessibility_2 + othdiscr_accessibility_2) / 2,,,coef_nonmand_logsum_2p,coef_nonmand_logsum_2p,coef_nonmand_logsum_2p
 ,alternative specific constant adjustment for non-GQ households,@(df.HHT>0) ,,asc_nongq_1_auto,asc_nongq_2_autos,asc_nongq_3_autos,asc_nongq_4plus_autos
 ,alternative specific constant adjustment for all households,1,asc_allhhs_0_autos,asc_allhhs_1_auto,asc_allhhs_2_autos,asc_allhs_3_autos,asc_allhhs_4plus_autos
 # coefficients for av ownership from DaySim,,,,,,,
