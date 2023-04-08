@@ -22,7 +22,7 @@ class Series15_Processor:
         assert os.path.isdir(self.output_dir), f"Cannot find output directory {self.output_dir}"
 
         self.ext_data_file = os.path.join(self.input_dir, 'externalInternalControlTotalsByYear.csv')
-        self.landuse_file = os.path.join(self.input_dir, 'mgra15_based_input2019_v2.csv')
+        self.landuse_file = os.path.join(self.input_dir, 'mgra15_based_input2019_v3.csv')
         self.trans_access_file = os.path.join(self.input_dir, 'transponderModelAccessibilities.csv')
         self.terminal_time_file = os.path.join(self.input_dir, 'zone_term.csv')
 
