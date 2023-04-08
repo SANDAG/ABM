@@ -11,7 +11,7 @@ chunk_training_mode: disabled
 # see shadow_pricing.yaml for additional settings
 use_shadow_pricing: True
 
-memory_profiling: False
+memory_profile: False
 
 # Sample TAZ before MAZ in destination choice
 want_dest_choice_presampling: True
@@ -111,6 +111,7 @@ output_tables:
     - joint_tour_participants
     - vehicles
     - proto_disaggregate_accessibility
+    - disaggregate_accessibility
 
 distributed_time_factor_work_mean: 1.0
 distributed_time_factor_work_stddev: 0.7

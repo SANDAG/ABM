@@ -1,6 +1,45 @@
 
 enable: True
 
+SKIP_BUNDLE_WRITE_FOR:
+  # - auto_ownership
+  # - work_from_home
+  # - external_worker_identification
+  - external_workplace_location
+  - school_location
+  - workplace_location
+  # - transit_pass_subsidy
+  # - transit_pass_ownership
+  - vehicle_type_choice
+  # - transponder_ownership
+  # - free_parking
+  # - telecommute_frequency
+  # - cdap
+  # - mandatory_tour_frequency
+  - mandatory_tour_scheduling_work
+  - mandatory_tour_scheduling_school
+  - mandatory_tour_scheduling_univ
+  # - school_escorting
+  # - joint_tour_frequency_composition
+  # - external_joint_tour_identification
+  # - joint_tour_participation
+  - joint_tour_destination
+  - joint_tour_scheduling
+  # - non_mandatory_tour_frequency
+  # - external_non_mandatory_identification
+  - non_mandatory_tour_destination
+  - non_mandatory_tour_scheduling
+  - tour_mode_choice
+  # - atwork_subtour_frequency
+  - atwork_subtour_destination
+  - atwork_subtour_scheduling
+  # - atwork_subtour_mode_choice
+  # - stop_frequency
+  # - trip_purpose
+  # - trip_destination
+  # - trip_scheduling
+  # - trip_mode_choice
+
 bundles:
   - work_from_home
   - external_worker_identification
