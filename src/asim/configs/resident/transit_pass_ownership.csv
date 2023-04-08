@@ -1,7 +1,7 @@
 Label,Description,Expression,no_pass,pass
 util_ft,Full-time worker,@df.pemploy==PEMPLOY_FULL,0,coef_ft_pass
 util_pt,Part-time worker,@df.pemploy==PEMPLOY_PART,0,coef_pt_pass
-util_un,University/College,@df.ptype==PTYPE_SCHOOL,0,coef_un_pass
+util_un,University/College,@df.ptype==PTYPE_UNIVERSITY,0,coef_un_pass
 util_nw,Non-working adult,@df.ptype==PTYPE_NONWORK,0,coef_nw_pass
 util_rt,Retired,@df.ptype==PTYPE_RETIRED,0,coef_rt_pass
 util_inc1,0-$9k,"@df.income.between(0, 9000)",0,coef_inc1_pass
