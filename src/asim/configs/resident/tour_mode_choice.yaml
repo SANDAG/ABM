@@ -93,7 +93,6 @@ LOGSUM_CHOOSER_COLUMNS:
   - ptype
   - number_of_participants
   - tour_category
-  - num_workers
   - value_of_time
   - free_parking_at_work
   - income_segment
