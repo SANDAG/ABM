@@ -1407,6 +1407,32 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 link["@time_inter" + time] = link["time_inter" + src_time]
                 link["@toll" + time] = link["toll" + src_time]
 
+        # add check for network editor yaml file
+        # Check if network editor file is in inputs
+        network_editor_yaml_file = FILE_NAMES["NETWORK_EDITS"]
+        network_editor_bool = False
+        network_editor_yaml_path = _join(self.source, network_editor_yaml_file)
+        if os.path.exists(network_editor_yaml_path):
+            network_editor_bool = True
+            self._log.append({"type": "text", "content": "%s" % network_editor_yaml_path})
+            with open(network_editor_yaml_path, "r") as stream:
+                network_editor_data = yaml.safe_load(stream)
+                self._log.append({"type": "text", "content": "loaded YAML"})
+        if network_editor_bool:
+            for link_edits in network_editor_data.get('traffic',[]):
+                if link_edits.get('delete_link', False):
+                    for ij in link_edits['i-j']:
+                        network.delete_link(ij[0], ij[1], cascade=True)
+                else:
+                    for link in network.links():
+                        if link["@tcov_id"] in link_edits.get("@tcov_id",[]):
+                            #this format permits only one attribute change per edit
+                            #could explore using set_attribute_values() method in EMME API
+                            try:
+                                link[link_edits["attribute_to_edit"]] = link_edits["new_value"]
+                            except KeyError: #one of two solutions should probably be removed
+                                setattr(link, link_edits["attribute_to_edit"], link_edits["new_value"])
+
         off_peak_factor_file = FILE_NAMES["OFF_PEAK"]
         if os.path.exists(_join(self.source, off_peak_factor_file)):
             msg = "Adjusting off-peak tolls based on factors from %s" % off_peak_factor_file
@@ -1498,32 +1524,6 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                         (set(periods) - set(factors.keys())), vehicle_class_factor_file, name)
                     self._log.append({"type": "text", "content": msg})
                     self._error.append(msg)
-
-        # add check for network editor yaml file
-        # Check if network editor file is in inputs
-        network_editor_yaml_file = FILE_NAMES["NETWORK_EDITS"]
-        network_editor_bool = False
-        network_editor_yaml_path = _join(self.source, network_editor_yaml_file)
-        if os.path.exists(network_editor_yaml_path):
-            network_editor_bool = True
-            self._log.append({"type": "text", "content": "%s" % network_editor_yaml_path})
-            with open(network_editor_yaml_path, "r") as stream:
-                network_editor_data = yaml.safe_load(stream)
-                self._log.append({"type": "text", "content": "loaded YAML"})
-        if network_editor_bool:
-            for link_edits in network_editor_data.get('traffic',[]):
-                if link_edits.get('delete_link', False):
-                    for ij in link_edits['i-j']:
-                        network.delete_link(ij[0], ij[1], cascade=True)
-                else:
-                    for link in network.links():
-                        if link["@tcov_id"] in link_edits.get("@tcov_id",[]):
-                            #this format permits only one attribute change per edit
-                            #could explore using set_attribute_values() method in EMME API
-                            try:
-                                link[link_edits["attribute_to_edit"]] = link_edits["new_value"]
-                            except KeyError: #one of two solutions should probably be removed
-                                setattr(link, link_edits["attribute_to_edit"], link_edits["new_value"])
 
         def lookup_link_name(link):
             for attr_name in ["#name", "#name_from", "#name_to"]:
