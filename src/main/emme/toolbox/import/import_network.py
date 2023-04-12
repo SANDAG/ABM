@@ -1424,9 +1424,9 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             for link_edits in network_editor_data.get('traffic',[]):
                 if link_edits.get('delete_link', False):
                     for ij in link_edits['i-j']:
-                        traffic_network.delete_link(ij[0], ij[1], cascade=True)
+                        network.delete_link(ij[0], ij[1], cascade=True)
                 else:
-                    for link in traffic_network.links():
+                    for link in network.links():
                         if link["@tcov_id"] in link_edits.get("@tcov_id",[]):
                             #this format permits only one attribute change per edit
                             #could explore using set_attribute_values() method in EMME API
