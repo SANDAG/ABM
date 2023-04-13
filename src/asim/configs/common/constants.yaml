@@ -5,6 +5,9 @@ scenarioYear: 2019
 # set below to 1 for everything to be external, 0 otherwise
 NO_EXTERNAL: 1
 
+# set below to be 1 for years before 2021, 0 otherwise
+PRE_COVID: 0
+
 max_local_walk_dist: 0.85
 max_prm_walk_dist: 1.2
 max_mix_walk_dist: 1.2
