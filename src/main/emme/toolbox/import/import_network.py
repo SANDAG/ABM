@@ -808,13 +808,14 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
             #arc edits to raw_network
             # if network_editor_bool:
-            for link_edits in network_editor_data.get('raw_network',[]):
-                if arc["HWYCOV-ID"] in link_edits.get("@tcov_id",[]):
-                    #could explore using set_attribute_values() method in EMME API
-                    try:
-                        arc[link_edits["attribute_to_edit"]] = link_edits["new_value"]
-                    except KeyError:
-                        setattr(arc, link_edits["attribute_to_edit"], link_edits["new_value"])
+            if arc_id_name == "HWYCOV-ID":
+                for link_edits in network_editor_data.get('raw_network',[]):
+                    if arc["HWYCOV-ID"] in link_edits.get("@tcov_id",[]):
+                        #could explore using set_attribute_values() method in EMME API
+                        try:
+                            arc[link_edits["attribute_to_edit"]] = link_edits["new_value"]
+                        except KeyError:
+                            setattr(arc, link_edits["attribute_to_edit"], link_edits["new_value"])
 
             modes = mode_callback(arc)
             link = network.create_link(i_node, j_node, modes)
