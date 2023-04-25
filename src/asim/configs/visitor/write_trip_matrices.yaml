@@ -14,91 +14,376 @@ HH_EXPANSION_WEIGHT_COL: sample_rate  # added when households read in
 SAVE_TRIPS_TABLE: False
 
 MATRICES:
-  - file_name: trips_ea.omx
+  - file_name: autoVisitorTrips_EA_low.omx
     tables:
-      - name: DRIVEALONE_EA
-        data_field: DRIVEALONE_EA
-      - name: SHARED2_EA
-        data_field: SHARED2_EA
-      - name: SHARED3_EA
-        data_field: SHARED3_EA
+      - name: SOV_EA
+        data_field: DRIVEALONE_EA_LOW
+      - name: SR2_EA
+        data_field: SHARED2_EA_LOW
+      - name: SR3_EA
+        data_field: SHARED3_EA_LOW
+  - file_name: autoVisitorTrips_EA_med.omx
+    tables:
+      - name: SOV_EA
+        data_field: DRIVEALONE_EA_MED
+      - name: SR2_EA
+        data_field: SHARED2_EA_MED
+      - name: SR3_EA
+        data_field: SHARED3_EA_MED
+  - file_name: autoVisitorTrips_EA_high.omx
+    tables:
+      - name: SOV_EA
+        data_field: DRIVEALONE_EA_HIGH
+      - name: SR2_EA
+        data_field: SHARED2_EA_HIGH
+      - name: SR3_EA
+        data_field: SHARED3_EA_HIGH
+  - file_name: autoVisitorTrips_AM_low.omx
+    tables:
+      - name: SOV_AM
+        data_field: DRIVEALONE_AM_LOW
+      - name: SR2_AM
+        data_field: SHARED2_AM_LOW
+      - name: SR3_AM
+        data_field: SHARED3_AM_LOW
+  - file_name: autoVisitorTrips_AM_med.omx
+    tables:
+      - name: SOV_AM
+        data_field: DRIVEALONE_AM_MED
+      - name: SR2_AM
+        data_field: SHARED2_AM_MED
+      - name: SR3_AM
+        data_field: SHARED3_AM_MED
+  - file_name: autoVisitorTrips_AM_high.omx
+    tables:
+      - name: SOV_AM
+        data_field: DRIVEALONE_AM_HIGH
+      - name: SR2_AM
+        data_field: SHARED2_AM_HIGH
+      - name: SR3_AM
+        data_field: SHARED3_AM_HIGH
+  - file_name: autoVisitorTrips_MD_low.omx
+    tables:
+      - name: SOV_MD
+        data_field: DRIVEALONE_MD_LOW
+      - name: SR2_MD
+        data_field: SHARED2_MD_LOW
+      - name: SR3_MD
+        data_field: SHARED3_MD_LOW
+  - file_name: autoVisitorTrips_MD_med.omx
+    tables:
+      - name: SOV_MD
+        data_field: DRIVEALONE_MD_MED
+      - name: SR2_MD
+        data_field: SHARED2_MD_MED
+      - name: SR3_MD
+        data_field: SHARED3_MD_MED
+  - file_name: autoVisitorTrips_MD_high.omx
+    tables:
+      - name: SOV_MD
+        data_field: DRIVEALONE_MD_HIGH
+      - name: SR2_MD
+        data_field: SHARED2_MD_HIGH
+      - name: SR3_MD
+        data_field: SHARED3_MD_HIGH
+  - file_name: autoVisitorTrips_PM_low.omx
+    tables:
+      - name: SOV_PM
+        data_field: DRIVEALONE_PM_LOW
+      - name: SR2_PM
+        data_field: SHARED2_PM_LOW
+      - name: SR3_PM
+        data_field: SHARED3_PM_LOW
+  - file_name: autoVisitorTrips_PM_med.omx
+    tables:
+      - name: SOV_PM
+        data_field: DRIVEALONE_PM_MED
+      - name: SR2_PM
+        data_field: SHARED2_PM_MED
+      - name: SR3_PM
+        data_field: SHARED3_PM_MED
+  - file_name: autoVisitorTrips_PM_high.omx
+    tables:
+      - name: SOV_PM
+        data_field: DRIVEALONE_PM_HIGH
+      - name: SR2_PM
+        data_field: SHARED2_PM_HIGH
+      - name: SR3_PM
+        data_field: SHARED3_PM_HIGH
+  - file_name: autoVisitorTrips_EV_low.omx
+    tables:
+      - name: SOV_EV
+        data_field: DRIVEALONE_EV_LOW
+      - name: SR2_EV
+        data_field: SHARED2_EV_LOW
+      - name: SR3_EV
+        data_field: SHARED3_EV_LOW
+  - file_name: autoVisitorTrips_EV_med.omx
+    tables:
+      - name: SOV_EV
+        data_field: DRIVEALONE_EV_MED
+      - name: SR2_EV
+        data_field: SHARED2_EV_MED
+      - name: SR3_EV
+        data_field: SHARED3_EV_MED
+  - file_name: autoVisitorTrips_EV_high.omx
+    tables:
+      - name: SOV_EV
+        data_field: DRIVEALONE_EV_HIGH
+      - name: SR2_EV
+        data_field: SHARED2_EV_HIGH
+      - name: SR3_EV
+        data_field: SHARED3_EV_HIGH
+  - file_name: tranVisitorTrips_EA.omx
+    tables:
+      - name: WALK_SET_set1_EA
+        data_field: WALK_SET_set1_EA
+      - name: WALK_SET_set2_EA
+        data_field: WALK_SET_set2_EA
+      - name: WALK_SET_set3_EA
+        data_field: WALK_SET_set3_EA
+      - name: PNRIN_SET_set1_EA
+        data_field: PNRIN_SET_set1_EA
+      - name: PNRIN_SET_set2_EA
+        data_field: PNRIN_SET_set2_EA
+      - name: PNRIN_SET_set3_EA
+        data_field: PNRIN_SET_set3_EA
+      - name: KNRIN_SET_set1_EA
+        data_field: KNRIN_SET_set1_EA
+      - name: KNRIN_SET_set2_EA
+        data_field: KNRIN_SET_set2_EA
+      - name: KNRIN_SET_set3_EA
+        data_field: KNRIN_SET_set3_EA
+      - name: TNCIN_SET_set1_EA
+        data_field: TNCIN_SET_set1_EA
+      - name: TNCIN_SET_set2_EA
+        data_field: TNCIN_SET_set2_EA
+      - name: TNCIN_SET_set3_EA
+        data_field: TNCIN_SET_set3_EA
+      - name: PNROUT_SET_set1_EA
+        data_field: PNROUT_SET_set1_EA
+      - name: PNROUT_SET_set2_EA
+        data_field: PNROUT_SET_set2_EA
+      - name: PNROUT_SET_set3_EA
+        data_field: PNROUT_SET_set3_EA
+      - name: KNROUT_SET_set1_EA
+        data_field: KNROUT_SET_set1_EA
+      - name: KNROUT_SET_set2_EA
+        data_field: KNROUT_SET_set2_EA
+      - name: KNROUT_SET_set3_EA
+        data_field: KNROUT_SET_set3_EA
+      - name: TNCOUT_SET_set1_EA
+        data_field: TNCOUT_SET_set1_EA
+      - name: TNCOUT_SET_set2_EA
+        data_field: TNCOUT_SET_set2_EA
+      - name: TNCOUT_SET_set3_EA
+        data_field: TNCOUT_SET_set3_EA        
+  - file_name: tranVisitorTrips_AM.omx
+    tables:
+      - name: WALK_SET_set1_AM
+        data_field: WALK_SET_set1_AM
+      - name: WALK_SET_set2_AM
+        data_field: WALK_SET_set2_AM
+      - name: WALK_SET_set3_AM
+        data_field: WALK_SET_set3_AM
+      - name: PNRIN_SET_set1_AM
+        data_field: PNRIN_SET_set1_AM
+      - name: PNRIN_SET_set2_AM
+        data_field: PNRIN_SET_set2_AM
+      - name: PNRIN_SET_set3_AM
+        data_field: PNRIN_SET_set3_AM
+      - name: KNRIN_SET_set1_AM
+        data_field: KNRIN_SET_set1_AM
+      - name: KNRIN_SET_set2_AM
+        data_field: KNRIN_SET_set2_AM
+      - name: KNRIN_SET_set3_AM
+        data_field: KNRIN_SET_set3_AM
+      - name: TNCIN_SET_set1_AM
+        data_field: TNCIN_SET_set1_AM
+      - name: TNCIN_SET_set2_AM
+        data_field: TNCIN_SET_set2_AM
+      - name: TNCIN_SET_set3_AM
+        data_field: TNCIN_SET_set3_AM
+      - name: PNROUT_SET_set1_AM
+        data_field: PNROUT_SET_set1_AM
+      - name: PNROUT_SET_set2_AM
+        data_field: PNROUT_SET_set2_AM
+      - name: PNROUT_SET_set3_AM
+        data_field: PNROUT_SET_set3_AM
+      - name: KNROUT_SET_set1_AM
+        data_field: KNROUT_SET_set1_AM
+      - name: KNROUT_SET_set2_AM
+        data_field: KNROUT_SET_set2_AM
+      - name: KNROUT_SET_set3_AM
+        data_field: KNROUT_SET_set3_AM
+      - name: TNCOUT_SET_set1_AM
+        data_field: TNCOUT_SET_set1_AM
+      - name: TNCOUT_SET_set2_AM
+        data_field: TNCOUT_SET_set2_AM
+      - name: TNCOUT_SET_set3_AM
+        data_field: TNCOUT_SET_set3_AM        
+  - file_name: tranVisitorTrips_MD.omx
+    tables:
+      - name: WALK_SET_set1_MD
+        data_field: WALK_SET_set1_MD
+      - name: WALK_SET_set2_MD
+        data_field: WALK_SET_set2_MD
+      - name: WALK_SET_set3_MD
+        data_field: WALK_SET_set3_MD
+      - name: PNRIN_SET_set1_MD
+        data_field: PNRIN_SET_set1_MD
+      - name: PNRIN_SET_set2_MD
+        data_field: PNRIN_SET_set2_MD
+      - name: PNRIN_SET_set3_MD
+        data_field: PNRIN_SET_set3_MD
+      - name: KNRIN_SET_set1_MD
+        data_field: KNRIN_SET_set1_MD
+      - name: KNRIN_SET_set2_MD
+        data_field: KNRIN_SET_set2_MD
+      - name: KNRIN_SET_set3_MD
+        data_field: KNRIN_SET_set3_MD
+      - name: TNCIN_SET_set1_MD
+        data_field: TNCIN_SET_set1_MD
+      - name: TNCIN_SET_set2_MD
+        data_field: TNCIN_SET_set2_MD
+      - name: TNCIN_SET_set3_MD
+        data_field: TNCIN_SET_set3_MD
+      - name: PNROUT_SET_set1_MD
+        data_field: PNROUT_SET_set1_MD
+      - name: PNROUT_SET_set2_MD
+        data_field: PNROUT_SET_set2_MD
+      - name: PNROUT_SET_set3_MD
+        data_field: PNROUT_SET_set3_MD
+      - name: KNROUT_SET_set1_MD
+        data_field: KNROUT_SET_set1_MD
+      - name: KNROUT_SET_set2_MD
+        data_field: KNROUT_SET_set2_MD
+      - name: KNROUT_SET_set3_MD
+        data_field: KNROUT_SET_set3_MD
+      - name: TNCOUT_SET_set1_MD
+        data_field: TNCOUT_SET_set1_MD
+      - name: TNCOUT_SET_set2_MD
+        data_field: TNCOUT_SET_set2_MD
+      - name: TNCOUT_SET_set3_MD
+        data_field: TNCOUT_SET_set3_MD        
+  - file_name: tranVisitorTrips_PM.omx
+    tables:
+      - name: WALK_SET_set1_PM
+        data_field: WALK_SET_set1_PM
+      - name: WALK_SET_set2_PM
+        data_field: WALK_SET_set2_PM
+      - name: WALK_SET_set3_PM
+        data_field: WALK_SET_set3_PM
+      - name: PNRIN_SET_set1_PM
+        data_field: PNRIN_SET_set1_PM
+      - name: PNRIN_SET_set2_PM
+        data_field: PNRIN_SET_set2_PM
+      - name: PNRIN_SET_set3_PM
+        data_field: PNRIN_SET_set3_PM
+      - name: KNRIN_SET_set1_PM
+        data_field: KNRIN_SET_set1_PM
+      - name: KNRIN_SET_set2_PM
+        data_field: KNRIN_SET_set2_PM
+      - name: KNRIN_SET_set3_PM
+        data_field: KNRIN_SET_set3_PM
+      - name: TNCIN_SET_set1_PM
+        data_field: TNCIN_SET_set1_PM
+      - name: TNCIN_SET_set2_PM
+        data_field: TNCIN_SET_set2_PM
+      - name: TNCIN_SET_set3_PM
+        data_field: TNCIN_SET_set3_PM
+      - name: PNROUT_SET_set1_PM
+        data_field: PNROUT_SET_set1_PM
+      - name: PNROUT_SET_set2_PM
+        data_field: PNROUT_SET_set2_PM
+      - name: PNROUT_SET_set3_PM
+        data_field: PNROUT_SET_set3_PM
+      - name: KNROUT_SET_set1_PM
+        data_field: KNROUT_SET_set1_PM
+      - name: KNROUT_SET_set2_PM
+        data_field: KNROUT_SET_set2_PM
+      - name: KNROUT_SET_set3_PM
+        data_field: KNROUT_SET_set3_PM
+      - name: TNCOUT_SET_set1_PM
+        data_field: TNCOUT_SET_set1_PM
+      - name: TNCOUT_SET_set2_PM
+        data_field: TNCOUT_SET_set2_PM
+      - name: TNCOUT_SET_set3_PM
+        data_field: TNCOUT_SET_set3_PM        
+  - file_name: tranVisitorTrips_EV.omx
+    tables:
+      - name: WALK_SET_set1_EV
+        data_field: WALK_SET_set1_EV
+      - name: WALK_SET_set2_EV
+        data_field: WALK_SET_set2_EV
+      - name: WALK_SET_set3_EV
+        data_field: WALK_SET_set3_EV
+      - name: PNRIN_SET_set1_EV
+        data_field: PNRIN_SET_set1_EV
+      - name: PNRIN_SET_set2_EV
+        data_field: PNRIN_SET_set2_EV
+      - name: PNRIN_SET_set3_EV
+        data_field: PNRIN_SET_set3_EV
+      - name: KNRIN_SET_set1_EV
+        data_field: KNRIN_SET_set1_EV
+      - name: KNRIN_SET_set2_EV
+        data_field: KNRIN_SET_set2_EV
+      - name: KNRIN_SET_set3_EV
+        data_field: KNRIN_SET_set3_EV
+      - name: TNCIN_SET_set1_EV
+        data_field: TNCIN_SET_set1_EV
+      - name: TNCIN_SET_set2_EV
+        data_field: TNCIN_SET_set2_EV
+      - name: TNCIN_SET_set3_EV
+        data_field: TNCIN_SET_set3_EV
+      - name: PNROUT_SET_set1_EV
+        data_field: PNROUT_SET_set1_EV
+      - name: PNROUT_SET_set2_EV
+        data_field: PNROUT_SET_set2_EV
+      - name: PNROUT_SET_set3_EV
+        data_field: PNROUT_SET_set3_EV
+      - name: KNROUT_SET_set1_EV
+        data_field: KNROUT_SET_set1_EV
+      - name: KNROUT_SET_set2_EV
+        data_field: KNROUT_SET_set2_EV
+      - name: KNROUT_SET_set3_EV
+        data_field: KNROUT_SET_set3_EV
+      - name: TNCOUT_SET_set1_EV
+        data_field: TNCOUT_SET_set1_EV
+      - name: TNCOUT_SET_set2_EV
+        data_field: TNCOUT_SET_set2_EV
+      - name: TNCOUT_SET_set3_EV
+        data_field: TNCOUT_SET_set3_EV        
+  - file_name: nmotVisitortrips_EA.omx
+    tables:
       - name: WALK_EA
         data_field: WALK_EA
       - name: BIKE_EA
         data_field: BIKE_EA
-  - file_name: trips_ea_tap.omx
-    is_tap: True
+  - file_name: nmotVisitortrips_AM.omx
     tables:
-      - name: WALK_TRANSIT_EA
-        data_field: WALK_TRANSIT_EA
-  - file_name: trips_am.omx
-    tables:
-      - name: DRIVEALONE_AM
-        data_field: DRIVEALONE_AM
-      - name: SHARED2_AM
-        data_field: SHARED2_AM
-      - name: SHARED3_AM
-        data_field: SHARED3_AM
       - name: WALK_AM
         data_field: WALK_AM
       - name: BIKE_AM
         data_field: BIKE_AM
-  - file_name: trips_am_tap.omx
-    is_tap: True
+  - file_name: nmotVisitortrips_MD.omx
     tables:
-      - name: WALK_TRANSIT_AM
-        data_field: WALK_TRANSIT_AM
-  - file_name: trips_md.omx
-    tables:
-      - name: DRIVEALONE_MD
-        data_field: DRIVEALONE_MD
-      - name: SHARED2_MD
-        data_field: SHARED2_MD
-      - name: SHARED3_MD
-        data_field: SHARED3_MD
       - name: WALK_MD
         data_field: WALK_MD
       - name: BIKE_MD
         data_field: BIKE_MD
-  - file_name: trips_md_tap.omx
-    is_tap: True
+  - file_name: nmotVisitortrips_PM.omx
     tables:
-      - name: WALK_TRANSIT_MD
-        data_field: WALK_TRANSIT_MD
-  - file_name: trips_pm.omx
-    tables:
-      - name: DRIVEALONE_PM
-        data_field: DRIVEALONE_PM
-      - name: SHARED2_PM
-        data_field: SHARED2_PM
-      - name: SHARED3_PM
-        data_field: SHARED3_PM
       - name: WALK_PM
         data_field: WALK_PM
       - name: BIKE_PM
         data_field: BIKE_PM
-  - file_name: trips_pm_tap.omx
-    is_tap: True
+  - file_name: nmotVisitortrips_EV.omx
     tables:
-      - name: WALK_TRANSIT_PM
-        data_field: WALK_TRANSIT_PM
-  - file_name: trips_ev.omx
-    tables:
-      - name: DRIVEALONE_EV
-        data_field: DRIVEALONE_EV
-      - name: SHARED2_EV
-        data_field: SHARED2_EV
-      - name: SHARED3_EV
-        data_field: SHARED3_EV
       - name: WALK_EV
         data_field: WALK_EV
       - name: BIKE_EV
         data_field: BIKE_EV
-  - file_name: trips_ev_tap.omx
-    is_tap: True
-    tables:
-      - name: WALK_TRANSIT_EV
-        data_field: WALK_TRANSIT_EV
 
 CONSTANTS:
   time_periods:
@@ -120,3 +405,5 @@ CONSTANTS:
   # SHARED2 and SHARED3 Occupancies
   OCC_SHARED2: 2.0
   OCC_SHARED3: 3.33
+  vot_threshold_low: 8.81
+  vot_threshold_med: 18.00

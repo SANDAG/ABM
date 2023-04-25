@@ -66,7 +66,7 @@ is dining tour,is_dining,"np.where(purpose_id==2,1,0)"
 ,walk_time,od_skims['walkTime']
 ,walk_available,"np.where((walk_time < max_walk_time) & (walk_time > 0), 1, 0)"
 ,walk_transit_available,(odt_skims['WALK_MIX_TOTALIVTT'] > 0)
-,bike_time,od_skims['bikeTime']
+,bike_time,od_skims['BIKE_LOGSUM']
 ,bike_available,"np.where((bike_time < max_bike_time) & (bike_time > 0), 1, 0)"
 ,da_available,"np.where(df.auto_available & (df.number_of_participants == 1), 1, 0)"
 ,s2_available,"np.where(df.auto_available & (df.number_of_participants == 2), 1, 0)"
@@ -86,5 +86,20 @@ placeholder for missing autoParkingCostFactorAV,autoParkingCostFactor,1
 placeholder for missing autoCostPerMileFactorAV,autoCPMFactor,1
 #Auto Terminal Time Factor,autoTermTimeFactor,"np.where(useAV==0,1.0,autoTerminalTimeFactorAV)"
 placeholder for missing autoTerminalTimeFactorAV,autoTermTimeFactor,1
-# PLACEHOLDER
-,time_factor,1.0
+# PLACEHOLDER,,
+,time_factor,1
+,walk_local_available,(odt_skims['WALK_LOC_TOTALIVTT']>0)
+,walk_premium_available,(odt_skims['WALK_PRM_TOTALIVTT']>0)
+,walk_mix_available,(odt_skims['WALK_MIX_TOTALIVTT']>0)
+,knr_local_available,(odt_skims['KNROUT_LOC_TOTALIVTT']>0)
+,knr_local_available_inbound,(odt_skims['KNRIN_LOC_TOTALIVTT']>0)
+,knr_premium_available,(odt_skims['KNROUT_PRM_TOTALIVTT']>0)
+,knr_premium_available_inbound,(odt_skims['KNRIN_PRM_TOTALIVTT']>0)
+,knr_mix_available,(odt_skims['KNROUT_MIX_TOTALIVTT']>0)
+,knr_mix_available_inbound,(odt_skims['KNRIN_MIX_TOTALIVTT']>0)
+,tnc_local_available,(odt_skims['TNCOUT_LOC_TOTALIVTT']>0)
+,tnc_local_available_inbound,(odt_skims['TNCIN_LOC_TOTALIVTT']>0)
+,tnc_premium_available,(odt_skims['TNCOUT_PRM_TOTALIVTT']>0)
+,tnc_premium_available_inbound,(odt_skims['TNCIN_PRM_TOTALIVTT']>0)
+,tnc_mix_available,(odt_skims['TNCOUT_MIX_TOTALIVTT']>0)
+,tnc_mix_available_inbound,(odt_skims['TNCIN_MIX_TOTALIVTT']>0)

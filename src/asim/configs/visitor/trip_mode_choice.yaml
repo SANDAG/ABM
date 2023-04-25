@@ -25,7 +25,15 @@ NESTS:
       - name: TRANSIT
         coefficient:  0.50
         alternatives:
-            - WALK_TRANSIT
+            - WALK_LOC
+            - WALK_PRM
+            - WALK_MIX
+            - KNR_LOC
+            - KNR_PRM
+            - KNR_MIX
+            - TNC_LOC
+            - TNC_PRM
+            - TNC_MIX
       - name: RIDEHAIL
         coefficient: 0.50
         alternatives:
@@ -109,8 +117,6 @@ CONSTANTS:
     - 5000
     - 15000
 
-TVPB_recipe: trip_mode_choice
-use_TVPB_constants: False
 
 # so far, we can use the same spec as for non-joint tours
 preprocessor:
@@ -133,3 +139,8 @@ TOURS_MERGED_CHOOSER_COLUMNS:
   - number_of_participants
 
 MODE_CHOICE_LOGSUM_COLUMN_NAME: trip_mode_choice_logsum
+
+CHOOSER_COLS_TO_KEEP:
+  - vot_da
+  - vot_s2
+  - vot_s3
