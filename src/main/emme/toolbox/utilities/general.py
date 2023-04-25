@@ -449,7 +449,7 @@ class OMXManager(object):
                 file_path = os.path.join(self._directory, file_name)
                 omx_file = _omx.open_file(file_path, 'r')
                 self._omx_files[file_name] = omx_file
-            return _numpy.array(omx_file[key])
+            return omx_file[key].read()
 
     def file_exists(self, name_args):
         file_name = self._name_tmplt % name_args

@@ -174,7 +174,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
         self.num_processors = num_processors
         self.import_traffic_trips(props)
         self.import_commercial_vehicle_demand(props)
-        #self.convert_light_trucks_to_pce()
+        self.convert_light_trucks_to_pce()
         # self.add_aggregate_demand()
 
     @_context
@@ -213,7 +213,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
         tnc_shared_pce = props["TNC.shared.passengersPerVehicle"]
         av_share = props["Mobility.AV.Share"]
     
-        periods = ["_EA", "_AM", "_MD", "_PM", "_EV"]
+        periods = ["_AM", "_MD", "_PM", "_EV"]
         vot_bins = ["_low", "_med", "_high"]
         mode_shares = [
             ("mf%s_SOV_TR_H", {
@@ -236,15 +236,15 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     matrix_name = "mf%s_SOV_NT_%s" % (period[1:], vot[1].upper())
                     logbook_label = "Import auto from OMX SOVNOTRPDR to matrix %s" % (matrix_name)
                     resident_demand = omx_manager.lookup(("auto", period, vot), "SOVNOTRPDR%s" % period)
-                    # visitor_demand = omx_manager.lookup(("autoVisitor", period, vot), "SOV%s" % period)
-                    # cross_border_demand = omx_manager.lookup(("autoCrossBorder", period, vot), "SOV%s" % period)
+                    visitor_demand = omx_manager.lookup(("autoVisitor", period, vot), "SOV%s" % period)
+                    cross_border_demand = omx_manager.lookup(("autoCrossBorder", period, vot), "SOV%s" % period)
                     # NOTE: No non-transponder airport or internal-external demand
                     total_asim_trips = (
-                        resident_demand  ) # + cross_border_demand+ visitor_demand
+                        resident_demand + cross_border_demand+ visitor_demand) 
                     dem_utils.demand_report([
                             ("resident", resident_demand),
-                            # ("cross_border", cross_border_demand),
-                            # ("visitor", visitor_demand),
+                            ("cross_border", cross_border_demand),
+                            ("visitor", visitor_demand),
                             ("total", total_asim_trips)
                         ], 
                         logbook_label, self.scenario, report)
@@ -255,17 +255,15 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     logbook_label = "Import auto from OMX SOVTRPDR to matrix %s" % (matrix_name)
                     resident_demand = omx_manager.lookup(("auto", period, vot), "SOVTRPDR%s" % period)
                     # NOTE: No transponder visitor or cross-border demand
-                    # airport_demand = omx_manager.lookup(("autoAirport", ".SAN" + period, vot), "SOV%s" % period)
-                    # if omx_manager.file_exists(("autoAirport", ".CBX" + period, vot)):
-                    #     airport_demand += omx_manager.lookup(("autoAirport", ".CBX" + period, vot), "SOV%s" % period)
-                    # internal_external_demand = omx_manager.lookup(("autoInternalExternal", period, vot), "SOV%s" % period)
+                    airport_demand = omx_manager.lookup(("autoAirport", ".SAN" + period, vot), "SOV%s" % period)
+                    if omx_manager.file_exists(("autoAirport", ".CBX" + period, vot)):
+                        airport_demand += omx_manager.lookup(("autoAirport", ".CBX" + period, vot), "SOV%s" % period)
                     
-                    total_asim_trips = (
-                        resident_demand ) # + internal_external_demand+ airport_demand
+                    total_asim_trips = (resident_demand + airport_demand)
+
                     dem_utils.demand_report([
                             ("resident", resident_demand),
-                            # ("airport", airport_demand),
-                            # ("internal_external", internal_external_demand),
+                            ("airport", airport_demand),
                             ("total", total_asim_trips)
                         ], 
                         logbook_label, self.scenario, report)
@@ -282,20 +280,20 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                         resident_demand = (
                             omx_manager.lookup(("auto", period, vot), omx_name % ("TRPDR" + period))
                             + omx_manager.lookup(("auto", period, vot), omx_name % ("NOTRPDR" + period)))
-                        # visitor_demand = omx_manager.lookup(("autoVisitor", period, vot), omx_name % period)
-                        # cross_border_demand = omx_manager.lookup(("autoCrossBorder", period, vot), omx_name % period)
-                        # airport_demand = omx_manager.lookup(("autoAirport", ".SAN" + period, vot), omx_name % period)
-                        # if omx_manager.file_exists(("autoAirport", ".CBX" + period, vot)):
-                        #     airport_demand += omx_manager.lookup(("autoAirport", ".CBX" + period, vot), omx_name % period)
+                        visitor_demand = omx_manager.lookup(("autoVisitor", period, vot), omx_name % period)
+                        cross_border_demand = omx_manager.lookup(("autoCrossBorder", period, vot), omx_name % period)
+                        airport_demand = omx_manager.lookup(("autoAirport", ".SAN" + period, vot), omx_name % period)
+                        if omx_manager.file_exists(("autoAirport", ".CBX" + period, vot)):
+                            airport_demand += omx_manager.lookup(("autoAirport", ".CBX" + period, vot), omx_name % period)
                         # internal_external_demand = omx_manager.lookup(("autoInternalExternal", period, vot), omx_name % period)
 
                         total_asim_trips = (
-                            resident_demand ) # + internal_external_demand + cross_border_demand + visitor_demand + airport_demand
+                            resident_demand + cross_border_demand + visitor_demand + airport_demand) #+ internal_external_demand
                         dem_utils.demand_report([
                                 ("resident", resident_demand),
-                                # ("cross_border", cross_border_demand),
-                                # ("visitor", visitor_demand),
-                                # ("airport", airport_demand),
+                                ("cross_border", cross_border_demand),
+                                ("visitor", visitor_demand),
+                                ("airport", airport_demand),
                                 # ("internal_external", internal_external_demand),
                                 ("total", total_asim_trips)
                             ],
@@ -319,8 +317,8 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                 #     if omx_manager.file_exists(("othrAirport", ".CBX", period)):
                 #         airport_taxi_demand += (
                 #             omx_manager.lookup(("othrAirport",".CBX", period), "TAXI" + period) * share["TAXI"])
-                    # internal_external_taxi_demand = (
-                    #     omx_manager.lookup(("othrInternalExternal", period, ""), "TAXI" + period) * share["TAXI"])
+                #     internal_external_taxi_demand = (
+                #         omx_manager.lookup(("othrInternalExternal", period, ""), "TAXI" + period) * share["TAXI"])
 
                     # Commenting out for now: AV routing models and TNC fleet model demand
                     # empty_av_demand = omx_manager.lookup(("EmptyAV","",""), "EmptyAV%s" % period)
@@ -350,14 +348,14 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
 
                     # total_asim_trips = (
                     #     resident_taxi_demand + visitor_taxi_demand + cross_border_taxi_demand
-                    #     + airport_taxi_demand + internal_external_taxi_demand + av_demand)
+                    #     + airport_taxi_demand + internal_external_taxi_demand) #+ av_demand
                     # dem_utils.demand_report([
                     #         ("resident_taxi", resident_taxi_demand),
                     #         ("visitor_taxi", visitor_taxi_demand),
                     #         ("cross_border_taxi", cross_border_taxi_demand),
                     #         ("airport_taxi", airport_taxi_demand),
                     #         ("internal_external_taxi", internal_external_taxi_demand),
-                    #         ("av_fleet", av_demand),
+                    #         # ("av_fleet", av_demand),
                     #         ("total", total_asim_trips)
                     #     ],
                     #     logbook_label, self.scenario, report)
@@ -423,7 +421,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
             path = os.path.join(self.output_dir, "TripMatrices.csv")
             table = _pandas.read_csv(path)
             for key, value in mapping.iteritems():
-                cvm_array = table[key].values.reshape((4996, 4996))     # reshape method deprecated since v 0.19.0, yma, 2/12/2019
+                cvm_array = table[key].values.reshape((4947, 4947))     # reshape method deprecated since v 0.19.0, yma, 2/12/2019
                 #factor in cvm demand by the scale factor used in trip generation
                 cvm_array = cvm_array/scale_factor
                 #scale trips to take care of underestimation
@@ -441,7 +439,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                         key_new = "CVM_%s:%sNT" % (period, veh)
                         value_new = mapping[key_new]
                         if value_new["share"] != 0.0:
-                            cvm_array = table[key_new].values.reshape((4996, 4996))
+                            cvm_array = table[key_new].values.reshape((4947, 4947))
                             cvm_array = cvm_array/scale_factor
                             cvm_array = cvm_array * value_new["scale"]
                             value["array"] = value["array"] + (cvm_array * value_new["share"])

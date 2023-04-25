@@ -121,6 +121,8 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
         self._matrix_cache = {}  # used to hold data for reporting and post-processing of skims
         self.acc_egr_walk_percep = "2"
         self.acc_egr_drive_percep = "2"
+        self.acc_spd_fac = {"WALK": "3.0", "PNROUT": "25.0", "PNRIN": "3.0", "KNROUT": "25.0", "KNRIN": "3.0", "TNCOUT": "25.0", "TNCIN": "3.0"}
+        self.egr_spd_fac = {"WALK": "3.0", "PNROUT": "3.0", "PNRIN": "25.0", "KNROUT": "3.0", "KNRIN": "25.0", "TNCOUT": "3.0", "TNCIN": "25.0"}
         
 
     def from_snapshot(self, snapshot):
@@ -898,18 +900,20 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
             }
             path_analysis(path_spec, class_name=class_name, scenario=scenario, num_processors=num_processors)
 
+            acc_mode = mode_name.split('_')[0]
+
             spec_list = [
             {    # walk access time - convert to time with 3 miles/ hr
                 "type": "MATRIX_CALCULATION",
                 "constraint": None,
                 "result": 'mf"%s_ACC__%s"' % (mode_name, period),
-                "expression": '60.0 * %s_ACC__%s / 3.0' % (mode_name, period),
+                "expression": '60.0 * %s_ACC__%s / %s' % (mode_name, period, self.acc_spd_fac[acc_mode]),
             },
             {    # walk egress time - convert to time with 3 miles/ hr
                 "type": "MATRIX_CALCULATION",
                 "constraint": None,
                 "result": 'mf"%s_EGR__%s"' % (mode_name, period),
-                "expression": '60.0 * %s_EGR__%s / 3.0' % (mode_name, period),
+                "expression": '60.0 * %s_EGR__%s / %s' % (mode_name, period, self.egr_spd_fac[acc_mode]),
             },
             {   # transfer walk time = total - access - egress
                 "type": "MATRIX_CALCULATION",

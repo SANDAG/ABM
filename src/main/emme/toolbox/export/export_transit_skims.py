@@ -74,6 +74,7 @@ class ExportSkims(_m.Tool(), gen_utils.Snapshot):
             pb.tool_run_status(self.tool_run_msg_status)
         pb.add_select_file('omx_file', 'save_file', title='Select OMX file')        
         pb.add_text_box('periods', title="Selected periods:")
+        pb.add_checkbox("big_to_zero", title=" ", label="Set large values to zero")
         return pb.render()
 
     def run(self):
@@ -95,44 +96,38 @@ class ExportSkims(_m.Tool(), gen_utils.Snapshot):
         gen_utils.log_snapshot("Export transit skims to OMX", str(self), attributes)
         init_matrices = _m.Modeller().tool("sandag.initialize.initialize_matrices")
         matrices = init_matrices.get_matrix_names("transit_skims", periods, scenario)
+
         #TODO: This is a kludgy way to do this...
-        """
-        ['LOC_FIRSTWAIT', 'LOC_XFERWAIT', 'LOC_FARE', 'LOC_XFERS',  'LOC_ACC', 'LOC_XFERWALK', 'LOC_EGR', 'LOC_TOTALWALK',
-                  'LOC_TOTALIVTT', 'LOC_DWELLTIME', 'LOC_BUSIVTT', 'PRM_FIRSTWAIT', 'PRM_XFERWAIT', 'PRM_FARE', 'PRM_XFERS', 'PRM_ACC',
-                  'PRM_XFERWALK', 'PRM_EGR', 'PRM_TOTALWALK', 'PRM_TOTALIVTT', 'PRM_LRTIVTT', 'PRM_CMRIVTT', 'PRM_EXPIVTT', 
-                  'PRM_LTDEXPIVTT', 'PRM_BRTIVTT', 'MIX_FIRSTWAIT', 'MIX_XFERWAIT', 'MIX_FARE', 'MIX_XFERS', 'MIX_ACC', 'MIX_XFERWALK',
-                  'MIX_EGR', 'MIX_TOTALIVTT', 'MIX_BUSIVTT', 'MIX_LRTIVTT', 'MIX_CMRIVTT', 'MIX_EXPIVTT', 'MIX_LTDEXPIVTT', 'MIX_BRTIVTT']
-        """
         mnames = ['LOC_FIRSTWAIT', 'LOC_XFERWAIT', 'LOC_FARE', 'LOC_XFERS',  'LOC_ACC', 'LOC_XFERWALK', 'LOC_EGR', 'LOC_TOTALWALK',
                   'LOC_TOTALIVTT', 'LOC_DWELLTIME', 'LOC_BUSIVTT', 'PRM_FIRSTWAIT', 'PRM_XFERWAIT', 'PRM_FARE', 'PRM_XFERS', 'PRM_ACC',
                   'PRM_XFERWALK', 'PRM_EGR', 'PRM_TOTALWALK', 'PRM_TOTALIVTT', 'PRM_LRTIVTT', 'PRM_CMRIVTT', 'PRM_EXPIVTT', 
                   'PRM_LTDEXPIVTT', 'PRM_BRTIVTT', 'MIX_FIRSTWAIT', 'MIX_XFERWAIT', 'MIX_FARE', 'MIX_XFERS', 'MIX_ACC', 'MIX_XFERWALK',
-                  'MIX_EGR', 'MIX_TOTALIVTT', 'MIX_BUSIVTT', 'MIX_LRTIVTT', 'MIX_CMRIVTT', 'MIX_EXPIVTT', 'MIX_LTDEXPIVTT', 'MIX_BRTIVTT']
-                  
-        #pd.DataFrame({'id': matrices}).to_csv("C:\\ABM_runs\\Emme_Setup\\emme_project\\Scripts\\matrix_list.csv")
-        matrices_to_export = []
-        for name in matrices:
-            m_chk_arr = name.split("_")
-            m_check = "_".join(m_chk_arr[1:-2])
-            if m_check in mnames:
-                matrices_to_export.append(name)
-                specification = {
-                    "type": "MATRIX_CALCULATION",
-                    "result": name,
-                    "expression": "0",
-                    "constraint": {
-                        "by_zone": None,
-                        "by_value": {
-                        "od_values": name,
-                        "interval_min": 0,
-                        "interval_max": 1e6,
-                        "condition": "EXCLUDE" }}
-                }
-                report = compute_matrix(specification) 
+                  'MIX_EGR', 'MIX_TOTALIVTT', 'MIX_BUSIVTT', 'MIX_LRTIVTT', 'MIX_CMRIVTT', 'MIX_EXPIVTT', 'MIX_LTDEXPIVTT', 'MIX_BRTIVTT']  
+    
+        # matrices_to_export = []
+        # for name in matrices:
+        #     m_chk_arr = name.split("_")
+        #     m_check = "_".join(m_chk_arr[1:-2])
+        #     if m_check in mnames:
+        #         matrices_to_export.append(name)
+        #         specification = {
+        #             "type": "MATRIX_CALCULATION",
+        #             "result": name,
+        #             "expression": "0",
+        #             "constraint": {
+        #                 "by_zone": None,
+        #                 "by_value": {
+        #                 "od_values": name,
+        #                 "interval_min": 0,
+        #                 "interval_max": 1e6,
+        #                 "condition": "EXCLUDE" }}
+        #         }
+        #         report = compute_matrix(specification) 
+        # with gen_utils.ExportOMX(omx_file, scenario, omx_key="NAME") as exporter:
+        #     exporter.write_matrices(matrices_to_export)
+
         with gen_utils.ExportOMX(omx_file, scenario, omx_key="NAME") as exporter:
-            exporter.write_matrices(matrices_to_export)
-        """
-        with gen_utils.ExportOMX(omx_file, scenario, omx_key="NAME", big_to_zero = True) as exporter:
+
             if big_to_zero:
                 emmebank = scenario.emmebank
                 for name in matrices:
@@ -142,14 +137,7 @@ class ExportSkims(_m.Tool(), gen_utils.Snapshot):
                         matrix = emmebank.matrix(name)
                         array = matrix.get_numpy_data(scenario)
                         array[array>10E6] = 0
-                        array = array.round(2).astype('float32')
                         exporter.write_array(array, exporter.generate_key(matrix))
             else:
-                emmebank = scenario.emmebank
-                for name in matrices:
-                    matrix = emmebank.matrix(name)
-                    array = matrix.get_numpy_data(scenario)
-                    array = array.astype('float32')
-                    exporter.write_array(array, exporter.generate_key(matrix))
-                    #exporter.write_matrices(matrices)
-        """
+                 exporter.write_matrices(matrices)
+

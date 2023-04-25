@@ -76,6 +76,7 @@ TOOLBOX_ORDER = 21
 import inro.modeller as _m
 import inro.emme.core.exception as _except
 import inro.emme.database.emmebank as _eb
+import inro.emme.matrix as _matrix
 
 import traceback as _traceback
 from copy import deepcopy as _copy
@@ -347,143 +348,14 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             # }      
             # netcalc[spec, scenario, ]
             
-            ##copying auto_time to ul1, so it does not get qiped when transit connectors are created. 
+            ##copying auto_time to ul1, so it does not get wiped when transit connectors are created. 
             if scenario.has_traffic_results and "@auto_time" in scenario.attributes("LINK"):
                 copy_att(from_attribute_name='timau',
                 to_attribute_name='ul1',
                 from_scenario=scenario,
                 to_scenario=scenario)
 
-            return scenario
-        
-
-
-    # @_m.logbook_trace("Convert TAP nodes to centroids")
-    # def taps_to_centroids(self, network):
-    #     # delete existing traffic centroids
-    #     for centroid in list(network.centroids()):
-    #         network.delete_node(centroid, cascade=True)
-
-    #     node_attrs = network.attributes("NODE")
-    #     link_attrs = network.attributes("LINK")
-    #     for node in list(network.nodes()):
-    #         if node["@tap_id"] > 0:
-    #             centroid = network.create_node(node["@tap_id"], is_centroid=True)
-    #             for attr in node_attrs:
-    #                 centroid[attr] = node[attr]
-    #             for link in node.outgoing_links():
-    #                 connector = network.create_link(centroid, link.j_node, link.modes)
-    #                 connector.vertices = link.vertices
-    #                 for attr in link_attrs:
-    #                     connector[attr] = link[attr]
-    #             for link in node.incoming_links():
-    #                 connector = network.create_link(link.i_node, centroid, link.modes)
-    #                 connector.vertices = link.vertices
-    #                 for attr in link_attrs:
-    #                     connector[attr] = link[attr]
-    #             network.delete_node(node, cascade=True)
-
-    # @_m.logbook_trace("Duplicate TAP access and transfer access stops")
-    # def duplicate_tap_adajcent_stops(self, network):
-    #     # Expand network by duplicating TAP adjacent stops
-    #     network.create_attribute("NODE", "tap_stop", False)
-    #     all_transit_modes = set([mode for mode in network.modes() if mode.type == "TRANSIT"])
-    #     access_mode = set([network.mode("a")])
-    #     transfer_mode =  network.mode("x")
-    #     walk_mode =  network.mode("w")
-
-    #     # Mark TAP adjacent stops and split TAP connectors
-    #     for centroid in network.centroids():
-    #         out_links = list(centroid.outgoing_links())
-    #         in_links = list(centroid.incoming_links())
-    #         for link in out_links + in_links:
-    #             link.length = 0.0005  # setting length so that connector access time = 0.01
-    #         for link in out_links:
-    #             real_stop = link.j_node
-    #             has_adjacent_transfer_links = False
-    #             has_adjacent_walk_links = False
-    #             for stop_link in real_stop.outgoing_links():
-    #                 if stop_link == link.reverse_link:
-    #                     continue
-    #                 if transfer_mode in stop_link.modes :
-    #                     has_adjacent_transfer_links = True
-    #                 if walk_mode in stop_link.modes :
-    #                     has_adjacent_walk_links = True
-
-    #             if has_adjacent_transfer_links or has_adjacent_walk_links:
-    #                 length = link.length
-    #                 tap_stop = network.split_link(centroid, real_stop, self._get_node_id(), include_reverse=True)
-    #                 tap_stop["@network_adj"] = 1
-    #                 real_stop.tap_stop = tap_stop
-    #                 transit_access_link = network.link(real_stop, tap_stop)
-    #                 for link in transit_access_link, transit_access_link.reverse_link:
-    #                     link.modes = all_transit_modes
-    #                     link.length = 0
-    #                     for p in ["ea", "am", "md", "pm", "ev"]:
-    #                         link["@time_link_" + p] = 0
-    #                 access_link = network.link(tap_stop, centroid)
-    #                 access_link.modes = access_mode
-    #                 access_link.reverse_link.modes = access_mode
-    #                 access_link.length = length
-    #                 access_link.reverse_link.length = length
-
-    #     line_attributes = network.attributes("TRANSIT_LINE")
-    #     seg_attributes = network.attributes("TRANSIT_SEGMENT")
-
-    #     # re-route the transit lines through the new TAP-stops
-    #     for line in network.transit_lines():
-    #         # store line and segment data for re-routing
-    #         line_data = dict((k, line[k]) for k in line_attributes)
-    #         line_data["id"] = line.id
-    #         line_data["vehicle"] = line.vehicle
-
-    #         seg_data = {}
-    #         itinerary = []
-    #         tap_adjacent_stops = []
-
-    #         for seg in line.segments(include_hidden=True):
-    #             seg_data[(seg.i_node, seg.j_node, seg.loop_index)] = \
-    #                 dict((k, seg[k]) for k in seg_attributes)
-    #             itinerary.append(seg.i_node.number)
-    #             if seg.i_node.tap_stop and seg.allow_boardings:
-    #                 # insert tap_stop, real_stop loop after tap_stop
-    #                 real_stop = seg.i_node
-    #                 tap_stop = real_stop.tap_stop
-    #                 itinerary.extend([tap_stop.number, real_stop.number])
-    #                 tap_adjacent_stops.append(len(itinerary) - 1)  # index of "real" stop in itinerary
-
-    #         if tap_adjacent_stops:
-    #             network.delete_transit_line(line)
-    #             new_line = network.create_transit_line(
-    #                 line_data.pop("id"),
-    #                 line_data.pop("vehicle"),
-    #                 itinerary)
-    #             for k, v in line_data.iteritems():
-    #                 new_line[k] = v
-
-    #             for seg in new_line.segments(include_hidden=True):
-    #                 data = seg_data.get((seg.i_node, seg.j_node, seg.loop_index), {})
-    #                 for k, v in data.iteritems():
-    #                     seg[k] = v
-    #             for index in tap_adjacent_stops:
-    #                 access_seg = new_line.segment(index - 2)
-    #                 egress_seg = new_line.segment(index - 1)
-    #                 real_seg = new_line.segment(index)
-    #                 for k in seg_attributes:
-    #                     access_seg[k] = egress_seg[k] = real_seg[k]
-    #                 access_seg.allow_boardings = False
-    #                 access_seg.allow_alightings = True
-    #                 access_seg.transit_time_func = 3
-    #                 access_seg.dwell_time = real_seg.dwell_time
-    #                 egress_seg.allow_boardings = True
-    #                 egress_seg.allow_alightings = True
-    #                 egress_seg.transit_time_func = 3
-    #                 egress_seg.dwell_time = 0
-    #                 real_seg.allow_boardings = True
-    #                 real_seg.allow_alightings = False
-    #                 real_seg.dwell_time = 0
-
-    #     network.delete_attribute("NODE", "tap_stop")
+            return scenario 
 
     @_m.logbook_trace("Add timed-transfer links", save_arguments=True)
     def timed_transfers(self, network, timed_transfers_with_walk, period):

@@ -71,6 +71,7 @@ from math import ceil as _ceiling
 from copy import deepcopy as _copy
 import numpy as _np
 import heapq as _heapq
+import pandas as pd
 
 import traceback as _traceback
 import os
@@ -85,7 +86,8 @@ dem_utils = _m.Modeller().module("sandag.utilities.demand")
 FILE_NAMES = {
     "FARES": "special_fares.txt",
     "OFF_PEAK": "off_peak_toll_factors.csv",
-    "VEHICLE_CLASS": "vehicle_class_toll_factors.csv"
+    "VEHICLE_CLASS": "vehicle_class_toll_factors.csv",
+    "node_taz_map": "node_taz_map.csv",
 }
 
 
@@ -252,6 +254,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             "NODE": {
                 "interchange": ("@interchange", "DERIVED", "EXTRA", "is interchange node"),
                 "HNODE":       ("@hnode_hwy",    "DERIVED","EXTRA", "HNODE label from hwycov" ),
+                "zone_id":     ("@zone_id",      "DERIVED", "EXTRA", "TAZ number a node is in"),
             },
             "LINK": OrderedDict([
                 ("HWYCOV-ID", ("@tcov_id",             "TWO_WAY", "EXTRA", "SANDAG-assigned link ID")),
@@ -1168,30 +1171,6 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         for line in network.transit_lines():
             for period in ["am", "pm", "op"]:
                 line["@headway_rev_" + period] = revised_headway(line["@headway_" + period])
-        
-        # #read in csv file with parking node numbers and parking counts
-        # parking_file_name = FILE_NAMES["PARKING"]
-        # parking_file_path = _join(self.source, parking_file_name)
-        # if os.path.isfile(parking_file_path):
-        #     with open(parking_file_path) as parking_file:
-        #         self._log.append({"type": "text", "content": "Using parking node details from %s" % parking_file_name})
-        #         parking_nodes = []
-        #         for line in parking_file:
-        #             #grab the second column
-        #             node_number = line.split("\t")[0]
-        #             parking_nodes.append(int(node_number)) 
-        #         self._log.append({"type": "text", "content": parking_nodes})     
- 
-        #     # Loop through all nodes in the network
-        #     for n in network.nodes():
-        #         # Check if the node is in the list of parking nodes
-        #         if n.number in parking_nodes:
-        #             # If it is, add the attribute to the node
-        #             self._log.append({"type": "text", "content": "node %s has parking" % n.number})
-        #             n["@parking"] = 1
-        #         else:
-        #             n["@parking"] = 0
-
 
         # Special incremental boarding and in-vehicle fares
         # to recreate the coaster zone fares
@@ -1420,6 +1399,19 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 node.is_interchange = False
         for node in network.nodes():
             node["@interchange"] = node.is_interchange
+
+        #add zone_id attribute
+        # map_file_name = FILE_NAMES["node_taz_map"]
+        # map_file_name = _join(self.source, map_file_name)
+        # node_taz_map = pd.read_csv(map_file_name)    
+ 
+        # # Loop through all nodes in the network to 
+        # for n in network.nodes():
+        #     # Check if the node is in the list of nodes we have (ext not there)
+        #     if n.number in node_taz_map.HNODE:
+        #         n["@zone_id"] = int(node_taz_map[node_taz_map.HNODE == n.number]["TAZ"].values[0])
+        #     else:
+        #         n["@zone_id"] = 0
         
         # #read in csv file with parking node numbers and parking counts
         # parking_file_name = FILE_NAMES["PARKING"]

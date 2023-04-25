@@ -492,7 +492,7 @@ Assignment matrices and resulting network flows are always in PCE.
                 # Check that the distance matrix is valid (no disconnected zones)
                 # Using SOVGPL class as representative
                 if raise_zero_dist:
-                    name = "%s_SOV_TR_H_DIST" % period
+                    name = "SOV_TR_H_DIST__%s" % period
                     dist_stats = self._stats[name]
                     if dist_stats[1] == 0:
                         zones = scenario.zone_numbers
@@ -894,7 +894,7 @@ Assignment matrices and resulting network flows are always in PCE.
                     continue
                 class_analysis = []
                 if "GENCOST" in traffic_class["skims"]:
-                    od_travel_times = 'mf"%s_%s_%s"' % (period, traffic_class["name"], "GENCOST")
+                    od_travel_times = 'mf"%s_%s__%s"' % (traffic_class["name"], "GENCOST", period)
                     traffic_class["skims"].remove("GENCOST")
                 else:
                     od_travel_times = None
@@ -911,7 +911,7 @@ Assignment matrices and resulting network flows are always in PCE.
                                 {"analyzed_demand": False, "path_value": True}
                         },
                         "results": {
-                            "od_values": 'mf"%s_%s_%s"' % (period, traffic_class["name"], skim_name),
+                            "od_values": 'mf"%s_%s__%s"' % (traffic_class["name"], skim_name, period),
                             "selected_link_volumes": None,
                             "selected_turn_volumes": None
                         }
@@ -952,7 +952,7 @@ Assignment matrices and resulting network flows are always in PCE.
                     with _m.logbook_trace("Class %s" % class_name):
                         for skim_type in skims:
                             skim_name = skim_type.split(".")[0]
-                            name = '%s_%s_%s' % (period, class_name, skim_name)
+                            name = '%s_%s__%s' % (class_name, skim_name, period)
                             matrix = emmebank.matrix(name)
                             data = matrix.get_numpy_data(scenario)
                             if skim_name == "TIME" or skim_name == "DIST":
@@ -1041,7 +1041,7 @@ Assignment matrices and resulting network flows are always in PCE.
             Values outside -9999999, 9999999 are masked in summaries.<br>""" % (num_zones, num_cells))
         text.append("%-25s %9s %9s %9s %13s %9s" % ("name", "min", "max", "mean", "sum", "mask num"))
         for name in matrices:
-            name = period + "_" + name
+            name = name + "__" + period
             matrix = emmebank.matrix(name)
             stats = self._stats.get(name)
             if stats is None:

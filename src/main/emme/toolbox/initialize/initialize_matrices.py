@@ -231,24 +231,24 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
                     cls_name = "SOV_" + tp_type + "_" + vot_type
                     cls_desc = tp_desc[tp_type] + " " + vot_desc[vot_type] + " VOT"
                     self.add_matrices("traffic_skims", period,
-                        [("mf", period + "_" + cls_name + "_" + name, period + " " + desc % cls_desc) for name, desc in sov_tmplt_matrices])
+                        [("mf", cls_name + "_" + name + "__" + period, period + " " + desc % cls_desc) for name, desc in sov_tmplt_matrices])
                 for hov_type in "2", "3":
                     cls_name = "HOV" + hov_type + "_" + vot_type
                     cls_desc = hov_type + " " + vot_desc[vot_type] + " VOT"
                     self.add_matrices("traffic_skims", period,
-                        [("mf", period + "_" + cls_name + "_" + name,
+                        [("mf", cls_name + "_" + name + "__" + period,
                             period + " " + desc % cls_desc)
                          for name, desc in hov_tmplt_matrices])
             for truck_type in "L", "M", "H":
                 cls_name = "TRK" + "_" + truck_type
                 cls_desc = truck_desc[truck_type]
                 self.add_matrices("traffic_skims", period,
-                    [("mf", period + "_" + cls_name + "_" + name,
+                    [("mf", cls_name + "_" + name + "__" + period,
                       period + " " + desc % cls_desc)
                      for name, desc in truck_tmplt_matrices])
 
         self.add_matrices("traffic_skims", "MD",
-            [("mf", "MD_TRK_TIME", "MD Truck generic travel time")])
+            [("mf", "TRK_TIME__MD", "MD Truck generic travel time")])
 
     def transit_skims(self):
         tmplt_matrices_mix = [
