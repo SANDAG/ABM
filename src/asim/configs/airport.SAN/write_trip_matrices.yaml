@@ -39,12 +39,49 @@ MATRICES:
       - name: SR3_EA
         data_field: SHARED3_EA_HIGH
   - file_name: tranairporttrips.san_ea.omx
-    is_tap: True
     tables:
-      - name: WALK_TRANSIT_EA
-        data_field: WALK_TRANSIT_EA
-      - name: DRIVE_TRANSIT_EA
-        data_field: DRIVE_TRANSIT_EA
+      - name: WALK_SET_set1_EA
+        data_field: WALK_SET_set1_EA
+      - name: WALK_SET_set2_EA
+        data_field: WALK_SET_set2_EA
+      - name: WALK_SET_set3_EA
+        data_field: WALK_SET_set3_EA
+      - name: KNROUT_SET_set1_EA
+        data_field: KNROUT_SET_set1_EA
+      - name: KNROUT_SET_set2_EA
+        data_field: KNROUT_SET_set2_EA        
+      - name: KNROUT_SET_set3_EA
+        data_field: KNROUT_SET_set3_EA
+      - name: PNROUT_SET_set1_EA
+        data_field: PNROUT_SET_set1_EA
+      - name: PNROUT_SET_set2_EA
+        data_field: PNROUT_SET_set2_EA        
+      - name: PNROUT_SET_set3_EA
+        data_field: PNROUT_SET_set3_EA  
+      - name: TNCOUT_SET_set1_EA
+        data_field: TNCOUT_SET_set1_EA
+      - name: TNCOUT_SET_set2_EA
+        data_field: TNCOUT_SET_set2_EA        
+      - name: TNCOUT_SET_set3_EA
+        data_field: TNCOUT_SET_set3_EA        
+      - name: KNRIN_SET_set1_EA
+        data_field: KNRIN_SET_set1_EA
+      - name: KNRIN_SET_set2_EA
+        data_field: KNRIN_SET_set2_EA        
+      - name: KNRIN_SET_set3_EA
+        data_field: KNRIN_SET_set3_EA
+      - name: PNRIN_SET_set1_EA
+        data_field: PNRIN_SET_set1_EA
+      - name: PNRIN_SET_set2_EA
+        data_field: PNRIN_SET_set2_EA        
+      - name: PNRIN_SET_set3_EA
+        data_field: PNRIN_SET_set3_EA        
+      - name: TNCIN_SET_set1_EA
+        data_field: TNCIN_SET_set1_EA
+      - name: TNCIN_SET_set2_EA
+        data_field: TNCIN_SET_set2_EA        
+      - name: TNCIN_SET_set3_EA
+        data_field: TNCIN_SET_set3_EA        
   - file_name: nmotairporttrips.san_ea.omx
     tables:
       - name: WALK_EA
@@ -75,12 +112,49 @@ MATRICES:
       - name: SR3_AM
         data_field: SHARED3_AM_HIGH
   - file_name: tranairporttrips.san_am.omx
-    is_tap: True
     tables:
-      - name: WALK_TRANSIT_AM
-        data_field: WALK_TRANSIT_AM
-      - name: DRIVE_TRANSIT_AM
-        data_field: DRIVE_TRANSIT_AM
+      - name: WALK_SET_set1_AM
+        data_field: WALK_SET_set1_AM
+      - name: WALK_SET_set2_AM
+        data_field: WALK_SET_set2_AM
+      - name: WALK_SET_set3_AM
+        data_field: WALK_SET_set3_AM
+      - name: KNROUT_SET_set1_AM
+        data_field: KNROUT_SET_set1_AM
+      - name: KNROUT_SET_set2_AM
+        data_field: KNROUT_SET_set2_AM        
+      - name: KNROUT_SET_set3_AM
+        data_field: KNROUT_SET_set3_AM
+      - name: PNROUT_SET_set1_AM
+        data_field: PNROUT_SET_set1_AM
+      - name: PNROUT_SET_set2_AM
+        data_field: PNROUT_SET_set2_AM        
+      - name: PNROUT_SET_set3_AM
+        data_field: PNROUT_SET_set3_AM  
+      - name: TNCOUT_SET_set1_AM
+        data_field: TNCOUT_SET_set1_AM
+      - name: TNCOUT_SET_set2_AM
+        data_field: TNCOUT_SET_set2_AM        
+      - name: TNCOUT_SET_set3_AM
+        data_field: TNCOUT_SET_set3_AM        
+      - name: KNRIN_SET_set1_AM
+        data_field: KNRIN_SET_set1_AM
+      - name: KNRIN_SET_set2_AM
+        data_field: KNRIN_SET_set2_AM        
+      - name: KNRIN_SET_set3_AM
+        data_field: KNRIN_SET_set3_AM
+      - name: PNRIN_SET_set1_AM
+        data_field: PNRIN_SET_set1_AM
+      - name: PNRIN_SET_set2_AM
+        data_field: PNRIN_SET_set2_AM        
+      - name: PNRIN_SET_set3_AM
+        data_field: PNRIN_SET_set3_AM        
+      - name: TNCIN_SET_set1_AM
+        data_field: TNCIN_SET_set1_AM
+      - name: TNCIN_SET_set2_AM
+        data_field: TNCIN_SET_set2_AM        
+      - name: TNCIN_SET_set3_AM
+        data_field: TNCIN_SET_set3_AM        
   - file_name: nmotairporttrips.san_am.omx
     tables:
       - name: WALK_AM
@@ -111,12 +185,49 @@ MATRICES:
       - name: SR3_MD
         data_field: SHARED3_MD_HIGH
   - file_name: tranairporttrips.san_md.omx
-    is_tap: True
     tables:
-      - name: WALK_TRANSIT_MD
-        data_field: WALK_TRANSIT_MD
-      - name: DRIVE_TRANSIT_MD
-        data_field: DRIVE_TRANSIT_MD
+      - name: WALK_SET_set1_MD
+        data_field: WALK_SET_set1_MD
+      - name: WALK_SET_set2_MD
+        data_field: WALK_SET_set2_MD
+      - name: WALK_SET_set3_MD
+        data_field: WALK_SET_set3_MD
+      - name: KNROUT_SET_set1_MD
+        data_field: KNROUT_SET_set1_MD
+      - name: KNROUT_SET_set2_MD
+        data_field: KNROUT_SET_set2_MD        
+      - name: KNROUT_SET_set3_MD
+        data_field: KNROUT_SET_set3_MD
+      - name: PNROUT_SET_set1_MD
+        data_field: PNROUT_SET_set1_MD
+      - name: PNROUT_SET_set2_MD
+        data_field: PNROUT_SET_set2_MD        
+      - name: PNROUT_SET_set3_MD
+        data_field: PNROUT_SET_set3_MD  
+      - name: TNCOUT_SET_set1_MD
+        data_field: TNCOUT_SET_set1_MD
+      - name: TNCOUT_SET_set2_MD
+        data_field: TNCOUT_SET_set2_MD        
+      - name: TNCOUT_SET_set3_MD
+        data_field: TNCOUT_SET_set3_MD        
+      - name: KNRIN_SET_set1_MD
+        data_field: KNRIN_SET_set1_MD
+      - name: KNRIN_SET_set2_MD
+        data_field: KNRIN_SET_set2_MD        
+      - name: KNRIN_SET_set3_MD
+        data_field: KNRIN_SET_set3_MD
+      - name: PNRIN_SET_set1_MD
+        data_field: PNRIN_SET_set1_MD
+      - name: PNRIN_SET_set2_MD
+        data_field: PNRIN_SET_set2_MD        
+      - name: PNRIN_SET_set3_MD
+        data_field: PNRIN_SET_set3_MD        
+      - name: TNCIN_SET_set1_MD
+        data_field: TNCIN_SET_set1_MD
+      - name: TNCIN_SET_set2_MD
+        data_field: TNCIN_SET_set2_MD        
+      - name: TNCIN_SET_set3_MD
+        data_field: TNCIN_SET_set3_MD      
   - file_name: nmotairporttrips.san_md.omx
     tables:
       - name: WALK_MD
@@ -147,12 +258,49 @@ MATRICES:
       - name: SR3_PM
         data_field: SHARED3_PM_HIGH
   - file_name: tranairporttrips.san_pm.omx
-    is_tap: True
     tables:
-      - name: WALK_TRANSIT_PM
-        data_field: WALK_TRANSIT_PM
-      - name: DRIVE_TRANSIT_PM
-        data_field: DRIVE_TRANSIT_PM
+      - name: WALK_SET_set1_PM
+        data_field: WALK_SET_set1_PM
+      - name: WALK_SET_set2_PM
+        data_field: WALK_SET_set2_PM
+      - name: WALK_SET_set3_PM
+        data_field: WALK_SET_set3_PM
+      - name: KNROUT_SET_set1_PM
+        data_field: KNROUT_SET_set1_PM
+      - name: KNROUT_SET_set2_PM
+        data_field: KNROUT_SET_set2_PM        
+      - name: KNROUT_SET_set3_PM
+        data_field: KNROUT_SET_set3_PM
+      - name: PNROUT_SET_set1_PM
+        data_field: PNROUT_SET_set1_PM
+      - name: PNROUT_SET_set2_PM
+        data_field: PNROUT_SET_set2_PM        
+      - name: PNROUT_SET_set3_PM
+        data_field: PNROUT_SET_set3_PM  
+      - name: TNCOUT_SET_set1_PM
+        data_field: TNCOUT_SET_set1_PM
+      - name: TNCOUT_SET_set2_PM
+        data_field: TNCOUT_SET_set2_PM        
+      - name: TNCOUT_SET_set3_PM
+        data_field: TNCOUT_SET_set3_PM        
+      - name: KNRIN_SET_set1_PM
+        data_field: KNRIN_SET_set1_PM
+      - name: KNRIN_SET_set2_PM
+        data_field: KNRIN_SET_set2_PM        
+      - name: KNRIN_SET_set3_PM
+        data_field: KNRIN_SET_set3_PM
+      - name: PNRIN_SET_set1_PM
+        data_field: PNRIN_SET_set1_PM
+      - name: PNRIN_SET_set2_PM
+        data_field: PNRIN_SET_set2_PM        
+      - name: PNRIN_SET_set3_PM
+        data_field: PNRIN_SET_set3_PM        
+      - name: TNCIN_SET_set1_PM
+        data_field: TNCIN_SET_set1_PM
+      - name: TNCIN_SET_set2_PM
+        data_field: TNCIN_SET_set2_PM        
+      - name: TNCIN_SET_set3_PM
+        data_field: TNCIN_SET_set3_PM        
   - file_name: nmotairporttrips.san_pm.omx
     tables:
       - name: WALK_PM
@@ -184,17 +332,54 @@ MATRICES:
       - name: SR3_EV
         data_field: SHARED3_EV_HIGH
   - file_name: tranairporttrips.san_ev.omx
-    is_tap: True
     tables:
-      - name: WALK_TRANSIT_EV
-        data_field: WALK_TRANSIT_EV
-      - name: DRIVE_TRANSIT_EV
-        data_field: DRIVE_TRANSIT_EV
+      - name: WALK_SET_set1_EV
+        data_field: WALK_SET_set1_EV
+      - name: WALK_SET_set2_EV
+        data_field: WALK_SET_set2_EV
+      - name: WALK_SET_set3_EV
+        data_field: WALK_SET_set3_EV
+      - name: KNROUT_SET_set1_EV
+        data_field: KNROUT_SET_set1_EV
+      - name: KNROUT_SET_set2_EV
+        data_field: KNROUT_SET_set2_EV        
+      - name: KNROUT_SET_set3_EV
+        data_field: KNROUT_SET_set3_EV
+      - name: PNROUT_SET_set1_EV
+        data_field: PNROUT_SET_set1_EV
+      - name: PNROUT_SET_set2_EV
+        data_field: PNROUT_SET_set2_EV        
+      - name: PNROUT_SET_set3_EV
+        data_field: PNROUT_SET_set3_EV  
+      - name: TNCOUT_SET_set1_EV
+        data_field: TNCOUT_SET_set1_EV
+      - name: TNCOUT_SET_set2_EV
+        data_field: TNCOUT_SET_set2_EV        
+      - name: TNCOUT_SET_set3_EV
+        data_field: TNCOUT_SET_set3_EV        
+      - name: KNRIN_SET_set1_EV
+        data_field: KNRIN_SET_set1_EV
+      - name: KNRIN_SET_set2_EV
+        data_field: KNRIN_SET_set2_EV        
+      - name: KNRIN_SET_set3_EV
+        data_field: KNRIN_SET_set3_EV
+      - name: PNRIN_SET_set1_EV
+        data_field: PNRIN_SET_set1_EV
+      - name: PNRIN_SET_set2_EV
+        data_field: PNRIN_SET_set2_EV        
+      - name: PNRIN_SET_set3_EV
+        data_field: PNRIN_SET_set3_EV        
+      - name: TNCIN_SET_set1_EV
+        data_field: TNCIN_SET_set1_EV
+      - name: TNCIN_SET_set2_EV
+        data_field: TNCIN_SET_set2_EV        
+      - name: TNCIN_SET_set3_EV
+        data_field: TNCIN_SET_set3_EV       
   - file_name: nmotairporttrips.san_ev.omx
     tables:
       - name: WALK_EV
         data_field: WALK_EV
-        
+                
         
 CONSTANTS:
   time_periods:

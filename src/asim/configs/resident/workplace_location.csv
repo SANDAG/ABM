@@ -15,7 +15,7 @@ util_dist_sqrd_pt,Distance squared - parttime worker,@(_DIST**2) * (df.ptype==2)
 util_dist_femaleworker,Distance - female worker,@_DIST * (df.ptype<3) * (df.female==1),coef_dist_femaleworker
 #,,,
 util_size_variable,Size variable,@df['size_term'].apply(np.log1p),1
-util_size_variable,Size variable,@df['size_term']==0,-999
+util_size_unavailable,Size variable,@df['size_term']==0,-999
 util_sp_utility_adjustment,shadow price utility adjustment,@df['shadow_price_utility_adjustment'],1
 #,,,
 util_mode_logsum,Mode choice logsum,mode_choice_logsum,coef_mode_logsum

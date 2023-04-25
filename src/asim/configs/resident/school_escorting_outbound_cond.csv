@@ -75,9 +75,9 @@ util_child3_age_u6_rs,Child 3 age under 6 years old - Ride Share,((chauf3 == 1) 
 util_child1_dist_pe,Child 1 distance to school - Pure escorting,((chauf1 == 2) | (chauf1 == 4)) * dist_home_to_school1,coef_child_dist_pe
 util_child2_dist_pe,Child 2 distance to school - Pure escorting,((chauf2 == 2) | (chauf2 == 4)) * dist_home_to_school2,coef_child_dist_pe
 util_child3_dist_pe,Child 3 distance to school - Pure escorting,((chauf3 == 2) | (chauf3 == 4)) * dist_home_to_school3,coef_child_dist_pe
-util_child1_dist_pe,Child 1 Pure escorting not allowed if over 30 miles,((chauf1 == 2) | (chauf1 == 4)) & (dist_home_to_school1 > 30),coef_unavail
-util_child2_dist_pe,Child 2 Pure escorting not allowed if over 30 miles,((chauf2 == 2) | (chauf2 == 4)) & (dist_home_to_school2 > 30),coef_unavail
-util_child3_dist_pe,Child 3 Pure escorting not allowed if over 30 miles,((chauf3 == 2) | (chauf3 == 4)) & (dist_home_to_school3 > 30),coef_unavail
+util_child1_dist_pe_over30miles,Child 1 Pure escorting not allowed if over 30 miles,((chauf1 == 2) | (chauf1 == 4)) & (dist_home_to_school1 > 30),coef_unavail
+util_child2_dist_pe_over30miles,Child 2 Pure escorting not allowed if over 30 miles,((chauf2 == 2) | (chauf2 == 4)) & (dist_home_to_school2 > 30),coef_unavail
+util_child3_dist_pe_over30miles,Child 3 Pure escorting not allowed if over 30 miles,((chauf3 == 2) | (chauf3 == 4)) & (dist_home_to_school3 > 30),coef_unavail
 # ,Household Interactions,,
 util_hh_inc_u25k_noes,Household income less than 25k - No Escorting,(income <= 25000) & ((bundle1 == 0) | ((bundle2 == 0) & (num_children_going_to_school > 1)) | ((bundle3 == 0) & (num_children_going_to_school > 2))),coef_hh_inc_u25k_noes
 util_hh_inc_25to50k_noes,Household income between 25 and 50k - No Escorting,((income > 25000) & (income <= 50000)) & ((bundle1 == 0) | ((bundle2 == 0) & (num_children_going_to_school > 1)) | ((bundle3 == 0) & (num_children_going_to_school > 2))),coef_hh_inc_25to50k_noes
@@ -149,8 +149,8 @@ util_same_taz_child32_no_escort,Same school TAZ for child 3 and 2 - No Escorting
 util_no_escort_inbound_child1,No escorting in inbound direction - Child 1,(bundle1 == 0) & (child_id1 > 0) & (bundle1_inbound == 0),coef_no_escort_inbound
 util_no_escort_inbound_child2,No escorting in inbound direction - Child 2,(bundle2 == 0) & (child_id2 > 0) & (bundle2_inbound == 0),coef_no_escort_inbound
 util_no_escort_inbound_child3,No escorting in inbound direction - Child 3,(bundle3 == 0) & (child_id3 > 0) & (bundle3_inbound == 0),coef_no_escort_inbound
-util_same_chauf,Same chauffeur in both directions (not child specific) - chauf 1 inbound & inbound,((chauf1 == 1) | (chauf1 == 2) | (chauf2 == 1) | (chauf2 == 2) | (chauf3 == 1) | (chauf3 == 2)) & ((nbund1_inbound > 0)),coef_same_chauf
-util_same_chauf,Same chauffeur in both directions (not child specific) - chauf 2 inbound & inbound,((chauf1 == 3) | (chauf1 == 4) | (chauf2 == 3) | (chauf2 == 4) | (chauf3 == 3) | (chauf3 == 4)) & ((nbund2_inbound > 0)),coef_same_chauf
+util_same_chauf1,Same chauffeur in both directions (not child specific) - chauf 1 inbound & inbound,((chauf1 == 1) | (chauf1 == 2) | (chauf2 == 1) | (chauf2 == 2) | (chauf3 == 1) | (chauf3 == 2)) & ((nbund1_inbound > 0)),coef_same_chauf
+util_same_chauf2,Same chauffeur in both directions (not child specific) - chauf 2 inbound & inbound,((chauf1 == 3) | (chauf1 == 4) | (chauf2 == 3) | (chauf2 == 4) | (chauf3 == 3) | (chauf3 == 4)) & ((nbund2_inbound > 0)),coef_same_chauf
 # ,Calibration constants,,
 util_calib_child1_age_u6_rs,Child 1 age under 6 - Calibration constant - Ride Share,((chauf1 == 1) | (chauf1 == 3)) & (age_child1 < 6),coef_calib_child_age_u6_rs
 util_calib_child2_age_u6_rs,Child 2 age under 6 - Calibration constant - Ride Share,((chauf2 == 1) | (chauf2 == 3)) & (age_child2 < 6),coef_calib_child_age_u6_rs

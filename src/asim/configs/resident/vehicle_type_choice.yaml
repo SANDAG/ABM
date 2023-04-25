@@ -21,9 +21,11 @@ SIMULATION_TYPE: interaction_simulate
 # additional vehicle_type_data merged to the alternatives for use in utility expressions
 # need to have columns body_type, fuel_type, and vehicle_year
 # entries in the data need to match the combinations in combinatorial_alts below
-VEHICLE_TYPE_DATA_FILE: vehicle_type_data.csv
+# VEHICLE_TYPE_DATA_FILE: vehicle_type_data.csv
+VEHICLE_TYPE_DATA_FILE: vehicle_type_data_extended.csv
 
 # age is computed as (1 + FLEET_YEAR - vehicle_year)
+# FLEET_YEAR: 2017
 FLEET_YEAR: 2017
 
 # if PROBS_SPEC is supplied, auto operating cost will not be
@@ -37,9 +39,13 @@ COLS_TO_INCLUDE_IN_VEHICLE_TABLE:
 combinatorial_alts:
   body_type:
     - Car
+    - Car-AV
     - Van
+    - Van-AV
     - SUV
+    - SUV-AV
     - Pickup
+    - Pickup-AV
     - Motorcycle
   age:
     - 1
@@ -96,7 +102,7 @@ preprocessor:
 #     - vehicles
 #
 # annotate_vehicles:
-#   SPEC: annotate_households_vehicle_type
+#   SPEC: annotate_vehicles_vehicle_type
 #   DF: vehicles
 #   TABLES:
 

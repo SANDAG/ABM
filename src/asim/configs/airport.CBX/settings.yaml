@@ -9,7 +9,7 @@ mem_tick: 1
 num_processes: 1
 fail_fast: True
 output_dir: output_airport.cbx
-data_dir: data_full
+data_dir: data
 ##############
 #
 # chunking
@@ -95,8 +95,8 @@ use_shadow_pricing: False
 want_dest_choice_sample_tables: False
 want_dest_choice_presampling: True
 
-trace_hh_id: 1001
-# resume_after: trip_mode_choice
+trace_hh_id: 543
+resume_after: 
 
 models:
   - initialize_landuse

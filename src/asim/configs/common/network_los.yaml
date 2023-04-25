@@ -11,17 +11,22 @@ read_skim_cache: False
 write_skim_cache: False
 
 taz_skims:
-  - traffic_skims_processed_EA.omx
-  - traffic_skims_processed_AM.omx
-  - traffic_skims_processed_MD.omx
-  - traffic_skims_processed_PM.omx
-  - traffic_skims_processed_EV.omx
-  #- transit_skims_processed.omx
-  - transit_skims_EA.omx
-  - transit_skims_AM.omx
-  - transit_skims_MD.omx
-  - transit_skims_PM.omx
-  - transit_skims_EV.omx
+  - traffic_skims_EA.omx
+  - traffic_skims_AM.omx
+  - traffic_skims_MD.omx
+  - traffic_skims_PM.omx
+  - traffic_skims_EV.omx
+  - transit_skims*.omx
+#   - transit_skims_EA.omx
+#   - transit_skims_AM.omx
+#   - transit_skims_MD.omx
+#   - transit_skims_PM.omx
+#   - transit_skims_EV.omx
+
+# series15
+# taz_skims:
+#   - traffic_skims*.omx
+#   - transit_skims*.omx
 
 maz: land_use.csv   # mgra.csv
 
@@ -30,7 +35,7 @@ maz_to_maz:
     - maz_maz_walk.csv
     - maz_maz_bike.csv
   # maz_to_maz blending distance (missing or 0 means no blending)
-  max_blend_distance: 0
+  max_blend_distance: 2
 
 
 skim_time_periods:

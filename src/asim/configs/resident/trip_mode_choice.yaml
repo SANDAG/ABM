@@ -60,103 +60,6 @@ NESTS:
 CONSTANTS:
   orig_col_name: origin
   dest_col_name: destination
-  costPerMile: 18.29
-  costShareSr2: 1.75
-  costShareSr3: 2.50
-  waitThresh: 10.00
-  walkThresh: 1.00
-  shortWalk: 0.333
-  longWalk: 0.667
-  walkSpeed: 3.00
-  bikeThresh: 6.00
-  bikeSpeed: 12.00
-#    maxCbdAreaTypeThresh: 2
-#    indivTour: 1.00000
-#    upperEA: 5
-#    upperAM: 10
-#    upperMD: 15
-#    upperPM: 19
-  I_SOV_MODES: [1, 2]
-  I_SR2_MODES: [3, 4]
-  I_SR3P_MODES: [5, 6]
-  I_AUTO_MODES: [1, 2, 3, 4, 5, 6]
-  I_WALK_MODE: 7
-  I_BIKE_MODE: 8
-  I_WALK_TRANSIT_MODES: [9, 10, 11, 12, 13]
-  I_DRIVE_TRANSIT_MODES: [14, 15, 16, 17, 18]
-  I_RIDE_HAIL_MODES: [19, 20, 21]
-  # RIDEHAIL Settings
-  Taxi_baseFare: 2.20
-  Taxi_costPerMile: 2.30
-  Taxi_costPerMinute: 0.10
-  Taxi_waitTime_mean:
-    1: 25.6
-    2: 17.3
-    3: 13.3
-    4: 9.5
-    5: 5.5
-  Taxi_waitTime_sd:
-    1: 6.4
-    2: 6.4
-    3: 6.4
-    4: 6.4
-    5: 6.4
-  TNC_single_baseFare: 2.20
-  TNC_single_costPerMile: 1.33
-  TNC_single_costPerMinute: 0.24
-  TNC_single_costMinimum: 7.20
-  TNC_single_waitTime_mean:
-    1: 10.3
-    2: 8.5
-    3: 8.4
-    4: 6.3
-    5: 4.7
-  TNC_single_waitTime_sd:
-    1: 4.1
-    2: 4.1
-    3: 4.1
-    4: 4.1
-    5: 4.1
-  TNC_shared_baseFare: 2.20
-  TNC_shared_costPerMile: 0.44
-  TNC_shared_costPerMinute: 0.08
-  TNC_shared_costMinimum: 3.00
-  TNC_shared_IVTFactor: 1.25
-  TNC_shared_waitTime_mean:
-    1: 15.0
-    2: 15.0
-    3: 11.0
-    4: 8.0
-    5: 7.0
-  TNC_shared_waitTime_sd:
-    1: 4.1
-    2: 4.1
-    3: 4.1
-    4: 4.1
-    5: 4.1
-  min_waitTime: 0
-  max_waitTime: 50
-  ivt_cost_multiplier: 0.6
-  topology_bike_multiplier: 20
-  topology_trn_multiplier: 2.20
-  topology_walk_multiplier: 15
-  ridehail_wait_time_multiplier: 1.5
-  walktimelong_multiplier: 5
-  biketimelong_multiplier: 5
-  xfers_wlk_multiplier: 5
-  xfers_drv_multiplier: 15
-  dacc_ratio_multiplier: 0
-  density_index_multiplier: -5
-  origin_density_index_multiplier: -15
-  origin_density_index_max: -15
-  ivt_com_multiplier: 0.80
-  ivt_exp_multiplier: -0.0175
-  ivt_hvy_multiplier: 0.80
-  cost_share_s2: 2
-  cost_share_s3: 3
-  vot_threshold_low: 8.81
-  vot_threshold_med: 18.00
-  max_walk_time: 60
 
 
 # so far, we can use the same spec as for non-joint tours
@@ -167,7 +70,7 @@ preprocessor:
     - land_use
     - tours
     - vehicles
-
+    - households
 # annotate_trips:
 #  - SPEC: trip_mode_choice_annotate_trips
 #    DF: df
@@ -192,6 +95,8 @@ TOURS_MERGED_CHOOSER_COLUMNS:
   - sex
   - time_factor_work
   - time_factor_nonwork
+  - transponder_ownership
+  - ptype
 
 MODE_CHOICE_LOGSUM_COLUMN_NAME: mode_choice_logsum
 
@@ -199,3 +104,4 @@ CHOOSER_COLS_TO_KEEP:
   - vot_da
   - vot_s2
   - vot_s3
+  - ownsTransponder

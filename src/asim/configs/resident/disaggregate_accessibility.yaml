@@ -31,7 +31,7 @@ CREATE_TABLES:
         VARIABLES:
             hinccat1: [1, 2, 3, 4]          # Income categories
             hworkers: 1                  # Household workers
-            veh: [0, 1, 2]               # Household vehicles
+            auto_ownership: [0, 1, 2]    # Household vehicles
             persons: 2                   # Two persons household
             HHT: 1                       # Married-couple family household
             bldgsz: 2                    # Building size - Single family detached
@@ -113,11 +113,28 @@ CREATE_TABLES:
             person_num: pnum            # Specifies which person variable to join the tours on
 
 # Merge on variables
+# will merge onto the persons table
 MERGE_ON:
   by: # These should be categorical variables at the household level
     - home_zone_id
-    - auto_ownership
     - income_segment
+# Note that auto ownership is not included in the merge above.
+# Below columns are created in the post-processor and separate out accessibility by auto ownership.
+# Since auto ownership is not yet decided in the synthetic population, we want them all.
+# Disaggreate accessibility table is grouped by the "by" cols above and the KEEP_COLS are averaged
+#  across the group.  Initializing the below as NA if not in the auto ownership level, they are skipped
+#  in the groupby mean and the values are correct. 
+#  (It's a way to avoid having to update code to reshape the table and introduce new functionality there.)
+KEEP_COLS:
+    - workplace_location_accessibility_0
+    - workplace_location_accessibility_1
+    - workplace_location_accessibility_2
+    - othdiscr_accessibility_0
+    - othdiscr_accessibility_1
+    - othdiscr_accessibility_2
+    - shopping_accessibility_0
+    - shopping_accessibility_1
+    - shopping_accessibility_2
 
 # Include any annotations for persons, households, land_use, or tours.
 # The purpose of a separate annotation setup is that annotation expressions for the main model
@@ -133,13 +150,13 @@ annotate_proto_tables:
       TABLES:
         - proto_households
 
-  - tablename: proto_households
+# specific annotation for proto_persons
+  - tablename: proto_persons
     annotate:
-      SPEC: annotate_proto_households
-      DF: proto_households
+      SPEC: annotate_proto_persons
+      DF: proto_persons
       TABLES:
-        - proto_persons
-        - land_use
+        - proto_households
 
 # Annotate the proto_households table using the main model annotations files
   - tablename: proto_households
@@ -157,3 +174,11 @@ annotate_proto_tables:
       DF: proto_persons
       TABLES:
         - proto_households
+
+postprocess_proto_tables:
+  - tablename: proto_disaggregate_accessibility
+    annotate:
+      SPEC: annotate_disaggregate_accessibility
+      DF: proto_disaggregate_accessibility
+      TABLES:
+        - land_use

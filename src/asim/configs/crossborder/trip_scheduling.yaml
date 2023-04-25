@@ -4,7 +4,7 @@ PROBS_SPEC: trip_scheduling_probs.csv
 # e.g. depart_alt_base = 5 means first column (column 0) represents 5 am
 DEPART_ALT_BASE: 0
 
-MAX_ITERATIONS: 100
+MAX_ITERATIONS: 50
 
 #FAILFIX: drop_and_cleanup
 FAILFIX: choose_most_initial

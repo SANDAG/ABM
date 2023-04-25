@@ -18,6 +18,8 @@ OUT_PERIOD: 8
 DEST_CHOICE_COLUMN_NAME: school_zone_id
 # comment out DEST_CHOICE_LOGSUM_COLUMN_NAME if not desired in persons table
 DEST_CHOICE_LOGSUM_COLUMN_NAME: school_location_logsum
+# comment out MODE_CHOICE_LOGSUM_COLUMN_NAME if not desired in persons table
+MODE_CHOICE_LOGSUM_COLUMN_NAME: school_modechoice_logsum
 
 # comment out DEST_CHOICE_LOGSUM_COLUMN_NAME if saved alt logsum table
 DEST_CHOICE_SAMPLE_TABLE_NAME: school_location_sample
@@ -52,7 +54,7 @@ MODEL_SELECTOR: school
 CHOOSER_SEGMENT_COLUMN_NAME: school_segment
 
 # boolean column to filter choosers (True means keep)
-CHOOSER_FILTER_COLUMN_NAME: is_internal_student
+CHOOSER_FILTER_COLUMN_NAME: is_student
 
 
 # FIXME - these are assigned to persons in annotate_persons. we need a better way to manage this

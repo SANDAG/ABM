@@ -2,18 +2,42 @@ Description,Target,Expression
 #,, annotate persons table after workplace_location model has run
 ,workplace_zone_id,"np.where(persons.get('external_workplace_zone_id',-1) > 0, persons.get('external_workplace_zone_id',-1), persons.workplace_zone_id)"
 ,workplace_location_logsum,"np.where(persons.get('external_workplace_zone_id',-1) > 0, persons.get('external_workplace_location_logsum',-1), persons.workplace_location_logsum)"
+,workplace_modechoice_logsum,"np.where(persons.get('external_workplace_zone_id',-1) > 0, persons.get('external_workplace_modechoice_logsum',-1), persons.workplace_modechoice_logsum)"
 ,distance_to_work,"np.where(workplace_zone_id>=0,skim_dict.lookup(persons.home_zone_id, workplace_zone_id, 'DIST'),np.nan)"
 workplace_in_cbd,workplace_in_cbd,"reindex(land_use.pseudomsa, persons.workplace_zone_id) < setting('cbd_threshold')"
 work_zone_area_type,work_zone_area_type,"reindex(land_use.pseudomsa, persons.workplace_zone_id)"
 #,, auto time to work - free flow travel time in both directions. MTC TM1 was MD and MD
 #,,roundtrip_auto_time_to_work
-,_auto_time_home_to_work,"skim_dict.lookup(persons.home_zone_id, workplace_zone_id, ('SOV_TR_M_TIME', 'MD'))"
-,_auto_time_work_to_home,"skim_dict.lookup(workplace_zone_id, persons.home_zone_id, ('SOV_TR_M_TIME', 'MD'))"
-,roundtrip_auto_time_to_work,"np.where(workplace_zone_id>=0,_auto_time_home_to_work + _auto_time_work_to_home,0)"
-#,,_roundtrip_walk_time_to_work
-,_MAX_TIME_TO_WORK,999
-,_WALK_SPEED_MPH,3
-,_walk_time_home_to_work,"60 * skim_dict.lookup(persons.home_zone_id, workplace_zone_id, 'DIST')/_WALK_SPEED_MPH"
-,_walk_time_work_to_home,"60 * skim_dict.lookup(workplace_zone_id, persons.home_zone_id, 'DIST')/_WALK_SPEED_MPH"
-,_work_walk_available,(_walk_time_home_to_work > 0) & (_walk_time_work_to_home > 0)
-,_roundtrip_walk_time_to_work,"np.where(_work_walk_available, _walk_time_home_to_work + _walk_time_work_to_home, _MAX_TIME_TO_WORK)"
+,auto_time_home_to_work,"skim_dict.lookup(persons.home_zone_id, workplace_zone_id, ('SOV_TR_M_TIME', 'AM'))"
+,_auto_time_work_to_home,"skim_dict.lookup(workplace_zone_id, persons.home_zone_id, ('SOV_TR_M_TIME', 'PM'))"
+,roundtrip_auto_time_to_work,"np.where(workplace_zone_id>=0, auto_time_home_to_work + _auto_time_work_to_home,0)"
+# Calculating accessibilities for Auto Ownership,,
+# non-motorized factor,_nmFactor,"0.5 * np.minimum(np.maximum(distance_to_work, 1.0), 3.0) - 0.5"
+# auto pk logsum adapted from Accessibilities.xls sov_pk,,
+#,_sov_auto_opp_util,"skim_dict.lookup(persons.home_zone_id, workplace_zone_id, ('SOV_TR_M_TIME', 'AM')) * costPerMile * -0.00159"
+#,_sov_toll_util,"skim_dict.lookup(persons.home_zone_id, workplace_zone_id, ('SOV_TR_M_TOLLCOST', 'AM')) * -0.00159"
+#parking cost in cents,_parking_util,"reindex(land_use.dparkcost, workplace_zone_id) * 100 * -0.00159"
+#,_sov_util,auto_time_home_to_work * -0.028 + _sov_auto_opp_util + _sov_toll_util + _parking_util
+#,auto_work_logsum,np.exp(_sov_util)
+# transit pk logsum,,
+#,_tr_loc_totivtt,"skim_dict.lookup(persons.home_zone_id, workplace_zone_id, ('WALK_LOC_TOTALIVTT', 'AM')) * -0.016"
+#,trn_work_logsum,np.exp(_tr_loc_totivtt)
+#,_logsum_diff,"np.minimum((auto_work_logsum - trn_work_logsum) / 3.0, 1)"
+#What is this if trn logsum > auto logsum?,workAutoDependency,"np.where(auto_work_logsum > trn_work_logsum, _logsum_diff * _nmFactor, 0)"
+#,_tr_prm_tot_ivtt,"skim_dict.lookup(persons.home_zone_id, workplace_zone_id, ('WALK_PRM_TOTALIVTT', 'AM'))"
+#,_tr_prm_rail_ivtt,"skim_dict.lookup(persons.home_zone_id, workplace_zone_id, ('WALK_PRM_CMRIVTT', 'AM'))"
+#placeholder -- only looking at prm service,workRailProp,_tr_prm_rail_ivtt / _tr_prm_tot_ivtt
+# calculating work_auto_savings for transit pass ownership,,
+,_transit_ivt_home_to_work,"skim_dict.lookup(persons.home_zone_id, persons.workplace_zone_id, ('WALK_LOC_TOTALIVTT', 'MD'))"
+,_transit_ivt_work_to_home,"skim_dict.lookup(persons.workplace_zone_id, persons.home_zone_id, ('WALK_LOC_TOTALIVTT', 'MD'))"
+,_work_transit_available,(_transit_ivt_home_to_work > 0) & (_transit_ivt_work_to_home > 0)
+,_transit_iwait,"skim_dict.lookup(persons.home_zone_id, persons.workplace_zone_id, ('WALK_LOC_FIRSTWAIT', 'MD')) + skim_dict.lookup(persons.workplace_zone_id, persons.home_zone_id, ('WALK_LOC_FIRSTWAIT', 'MD'))"
+,_transit_xwait,"skim_dict.lookup(persons.home_zone_id, persons.workplace_zone_id, ('WALK_LOC_XFERWAIT', 'MD')) + skim_dict.lookup(persons.workplace_zone_id, persons.home_zone_id, ('WALK_LOC_XFERWAIT', 'MD'))"
+,_transit_waux,"skim_dict.lookup(persons.home_zone_id, persons.workplace_zone_id, ('WALK_LOC_XFERWALK', 'MD')) + skim_dict.lookup(persons.workplace_zone_id, persons.home_zone_id, ('WALK_LOC_XFERWALK', 'MD'))"
+,_transit_wacc_home,"reindex(land_use.walk_dist_local_bus, persons.home_zone_id) if 'walk_dist_local_bus' in land_use else shortWalk"
+,_transit_wacc_work,"reindex(land_use.walk_dist_local_bus, persons.workplace_zone_id) if 'walk_dist_local_bus' in land_use else shortWalk"
+round trip walk access & egress,_transit_wacc_tot, 2 * (_transit_wacc_home + _transit_wacc_work) * 60 / walkSpeed
+,_roundtrip_transit_time_to_work,_transit_ivt_home_to_work + _transit_ivt_work_to_home + _transit_iwait + _transit_xwait + _transit_waux + _transit_wacc_tot
+#,,work_auto_savings_ratio
+,_min_work_walk_transit,"np.where(_work_transit_available, np.minimum(_roundtrip_transit_time_to_work, roundtrip_auto_time_to_work), roundtrip_auto_time_to_work)"
+,work_auto_savings,"np.where(persons.is_worker, _min_work_walk_transit - roundtrip_auto_time_to_work, 0)"

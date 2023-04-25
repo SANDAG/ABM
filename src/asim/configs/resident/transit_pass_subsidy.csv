@@ -1,0 +1,12 @@
+Label,Description,Expression,no_subsidy,subsidy
+util_ft,Full-time worker,@df.pemploy==PEMPLOY_FULL,0,coef_ft
+util_pt,Part-time worker,@df.pemploy==PEMPLOY_PART,0,coef_pt
+util_un,University/College,@df.ptype==PTYPE_UNIVERSITY,0,coef_un
+util_tr_hh_emp,Household transit accessibility to Employment,@df.trPkTotal,0,coef_tr_hh_emp
+util_tr_emp_hh,Employment transit access to HHs,@df.trn_wk_access_hh,0,0
+util_pkcost,Peak parking cost (dollars),@df.dparkcost_work * 8.0,0,coef_pkcost
+util_inc60b,Low income HH,@df.is_income_less25K,0,coef_lowincome
+util_inc25_60,ML income HH,@df.is_income_25K_to_60K,0,coef_medlowincome
+util_inc60_120,MH income HH,@df.is_income_60K_to_120K,0,coef_medhighincome
+util_inc_120p,High income,@df.is_income_greater120K,0,coef_highincome
+utils_sub_asc,Constant,1,0,coef_sub_asc
