@@ -8,18 +8,21 @@ set ITERATION=%4
 %PROJECT_DRIVE%
 cd /d %PROJECT_DIRECTORY%
 
-SET SAMPLE_ITERATION1=300000
-SET SAMPLE_ITERATION2=600000
-SET SAMPLE_ITERATION3=0
+@REM SET SAMPLE_ITERATION1=300000
+@REM SET SAMPLE_ITERATION2=600000
+@REM SET SAMPLE_ITERATION3=0
+
+
 
 :: -------------------------------------------------------------------------------------------------
 :: Loop
 :: -------------------------------------------------------------------------------------------------
 
-IF %ITERATION% EQU 1 SET SAMPLE=%SAMPLE_ITERATION1%
-IF %ITERATION% EQU 2 SET SAMPLE=%SAMPLE_ITERATION2%
-IF %ITERATION% EQU 3 SET SAMPLE=%SAMPLE_ITERATION3%
+@REM IF %ITERATION% EQU 1 SET SAMPLE=%SAMPLE_ITERATION1%
+@REM IF %ITERATION% EQU 2 SET SAMPLE=%SAMPLE_ITERATION2%
+@REM IF %ITERATION% EQU 3 SET SAMPLE=%SAMPLE_ITERATION3%
 
+SET SAMPLE=%SAMPLERATE%
 
 ECHO CURRENT DIRECTORY: %cd%
 CD src\asim\configs\resident
@@ -76,6 +79,8 @@ MD resident\log
 CD ..
 
 :: Run simulation.py
+%PYTHON3% src/asim/scripts/resident/resident_preprocessing.py input output
+
 %PYTHON3% src/asim/simulation.py -s settings_mp.yaml -c src/asim/configs/resident -c src/asim/configs/common -d input -d output/skims -o output/resident
 
 ::::::::::::::::::::::

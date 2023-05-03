@@ -152,7 +152,7 @@ public class HouseholdIndividualMandatoryTourDepartureAndDurationTime
 
     }
 
-    public void applyModel(Household household, boolean runModeChoice)
+    public void applyModel(Household household, boolean runTODChoice, boolean runModeChoice)
     {
         mcTime = 0;
 
@@ -175,14 +175,58 @@ public class HouseholdIndividualMandatoryTourDepartureAndDurationTime
         // get the array of persons for this household
         Person[] personArray = household.getPersons();
 
+        
+        if(!runTODChoice) {
+        	// loop through the persons (1-based array)
+        	for (int j = 1; j < personArray.length; ++j)
+        	{
+
+        		Person person = personArray[j];
+                
+            	if (household.getDebugChoiceModels())
+                {
+                    String decisionMakerLabel = String.format("HH=%d, PersonNum=%d, PersonType=%s",
+                            household.getHhId(), person.getPersonNum(), person.getPersonType());
+                    household.logPersonObject(decisionMakerLabel, modelLogger, person);
+                    if (runModeChoice)
+                        household.logPersonObject(decisionMakerLabel, tourMCManLogger, person);
+                }
+
+            	try {
+            		ArrayList<Tour> workTours = person.getListOfWorkTours();
+            		if(workTours!=null)
+            			if(workTours.size()>0) {
+            				for(Tour tour: workTours) {
+            					runModeChoice(household,person,tour,tour.getTourDepartPeriod(),tour.getTourArrivePeriod());
+            				}
+            			}
+            		ArrayList<Tour> schoolTours = person.getListOfSchoolTours();
+            		if(schoolTours!=null)
+            			if(schoolTours.size()>0) {
+            				for(Tour tour: schoolTours) {
+            					runModeChoice(household,person,tour,tour.getTourDepartPeriod(),tour.getTourArrivePeriod());
+            				}
+            			}
+            	}catch(Exception e) {
+                    logger.error(String
+                            .format("error mandatory mode choice model for j=%d, hhId=%d, persId=%d, persNum=%d, personType=%s.",
+                                    j, person.getHouseholdObject().getHhId(), person.getPersonId(),
+                                    person.getPersonNum(), person.getPersonType()));
+                    throw new RuntimeException(e);
+
+            	}
+
+            }
+        	return;
+        }
+        
         // loop through the persons (1-based array)
         for (int j = 1; j < personArray.length; ++j)
         {
 
             Person person = personArray[j];
             person.resetTimeWindow();
-
-            if (household.getDebugChoiceModels())
+        	if (household.getDebugChoiceModels())
             {
                 String decisionMakerLabel = String.format("HH=%d, PersonNum=%d, PersonType=%s",
                         household.getHhId(), person.getPersonNum(), person.getPersonType());
@@ -208,8 +252,8 @@ public class HouseholdIndividualMandatoryTourDepartureAndDurationTime
 
                 if (person.getPersonIsWorker() == 1)
                 {
-                    applyDepartureTimeChoiceForWorkTours(person, runModeChoice);
-                    if (person.getListOfSchoolTours().size() > 0)
+                	applyDepartureTimeChoiceForWorkTours(person, runModeChoice);
+                	if (person.getListOfSchoolTours().size() > 0)
                     {
                         if (person.getPersonIsUniversityStudent() == 1)
                         {
@@ -599,23 +643,7 @@ public class HouseholdIndividualMandatoryTourDepartureAndDurationTime
 
             if (runModeChoice)
             {
-
-                long check = System.nanoTime();
-
-                // set the mode choice attributes needed by @variables in the
-                // UEC spreadsheets
-                setModeChoiceDmuAttributes(household, person, t, chosenStartPeriod, chosenEndPeriod);
-
-                // use the mcModel object already setup for computing logsums
-                // and get
-                // the mode choice, where the selected
-                // worklocation and subzone an departure time and duration are
-                // set
-                // for this work tour.
-                int chosenMode = mcModel.getModeChoice(mcDmuObject, t.getTourPurpose());
-                t.setTourModeChoice(chosenMode);
-
-                mcTime += (System.nanoTime() - check);
+            	runModeChoice(household, person, t, chosenStartPeriod, chosenEndPeriod);
             }
 
         }
@@ -631,7 +659,29 @@ public class HouseholdIndividualMandatoryTourDepartureAndDurationTime
         return workTours.size();
 
     }
+    
+    private void runModeChoice(Household household, Person person, Tour t, int chosenStartPeriod, int chosenEndPeriod) {
+    	
+        long check = System.nanoTime();
 
+        // set the mode choice attributes needed by @variables in the
+        // UEC spreadsheets
+        setModeChoiceDmuAttributes(household, person, t, chosenStartPeriod, chosenEndPeriod);
+
+        // use the mcModel object already setup for computing logsums
+        // and get
+        // the mode choice, where the selected
+        // worklocation and subzone an departure time and duration are
+        // set
+        // for this work tour.
+        int chosenMode = mcModel.getModeChoice(mcDmuObject, t.getTourPurpose());
+        t.setTourModeChoice(chosenMode);
+
+        mcTime += (System.nanoTime() - check);
+    }
+
+
+    	
     private void setWorkTourModeChoiceLogsumsForDepartureTimeAndDurationAlternatives(Person person,
             Tour tour, boolean[] altAvailable)
     {

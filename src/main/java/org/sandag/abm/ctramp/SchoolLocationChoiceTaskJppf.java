@@ -139,6 +139,28 @@ public class SchoolLocationChoiceTaskJppf
             }
 
             hhDataManager.setHhArray(householdArray, startIndex);
+            
+            //check to make sure hh array got set in hhDataManager
+            boolean allHouseholdsAreSame = false;
+            while(!allHouseholdsAreSame) {
+            	Household[] householdArrayRemote = hhDataManager.getHhArray(startIndex, endIndex);
+            	for(int j = 0; j< householdArrayRemote.length;++j) {
+            	
+            		Household remoteHousehold = householdArrayRemote[j];
+            		Household localHousehold = householdArray[j];
+            	
+            		allHouseholdsAreSame = checkIfSameSchoolLocationResults(remoteHousehold, localHousehold);
+            	
+            		if(!allHouseholdsAreSame)
+            			break;
+            	}
+            	if(!allHouseholdsAreSame) {
+            		System.out.println("Warning: found households in household manager (starting array index "+startIndex+") not updated with school location choice results; updating");
+                    hhDataManager.setHhArray(householdArray, startIndex);
+           
+            	}
+            }
+
 
         } catch (Exception e)
         {
@@ -173,6 +195,39 @@ public class SchoolLocationChoiceTaskJppf
 
         modelManager.returnDcSchoolModelObject(dcModel, taskIndex, startIndex, endIndex);
 
+    }
+
+    /**
+     * Returns true if school location results are the same, else returns false.
+     * 
+     * @param thisHousehold
+     * @param thatHousehold
+     * @return true or false
+     */
+    public boolean checkIfSameSchoolLocationResults(Household thisHousehold, Household thatHousehold) {
+    	
+    	Person[] thisPersons = thisHousehold.getPersons();
+    	Person[] thatPersons = thatHousehold.getPersons();
+    	
+    	if(thisPersons.length!=thatPersons.length)
+    		return false;
+    	
+    	for(int k=1;k<thisPersons.length;++k) {
+    		
+    		Person thisPerson = thisPersons[k];
+    		Person thatPerson = thatPersons[k];
+    		
+    		if(thisPerson.getUsualSchoolLocation() != thatPerson.getUsualSchoolLocation())
+    			return false;
+    		
+    		if(thisPerson.getSchoolLocationLogsum() != thatPerson.getSchoolLocationLogsum())
+            		return false;
+            
+    		if(thisPerson.getSchoolLocationDistance() != thatPerson.getSchoolLocationDistance())
+    			return false;
+    	}
+    	
+    	return true;
     }
 
     public String getId()

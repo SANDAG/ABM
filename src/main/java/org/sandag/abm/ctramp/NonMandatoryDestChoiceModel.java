@@ -321,6 +321,12 @@ public class NonMandatoryDestChoiceModel
         for (int i = 0; i < cumProbability[purpose].length; ++i)
         {
 
+        	//Wu added to prevent large random number resulting in invalid choice
+        	if (random>0.999999) {
+                depart = outboundPeriod[purpose][cumProbability[purpose].length-1];
+                arrive = returnPeriod[purpose][cumProbability[purpose].length-1];
+                break;
+        	}
             if (random < cumProbability[purpose][i])
             {
                 depart = outboundPeriod[purpose][i];

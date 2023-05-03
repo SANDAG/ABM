@@ -2,6 +2,7 @@ ECHO OFF
 
 set PROJECT_DRIVE=%1
 set PROJECT_DIRECTORY=%2
+set ITERATION=%3
 
 %PROJECT_DRIVE%
 cd /d %PROJECT_DIRECTORY%
@@ -55,21 +56,27 @@ MD visitor
 MD resident
 CD ..
 
-ECHO Running resident model pre-processing
-@REM %PYTHON3% src/asim/scripts/resident/2zoneSkim.py %PROJECT_DIRECTORY%
-%PYTHON3% src/asim/scripts/resident/resident_preprocessing.py input output
+if %ITERATION% == 1 (
+    @REM ECHO Running resident model pre-processing
+    @REM %PYTHON3% src/asim/scripts/resident/2zoneSkim.py %PROJECT_DIRECTORY%
+    %PYTHON3% src/asim/scripts/resident/resident_preprocessing.py input output
 
-@REM ECHO Running Airport models pre-processing
-@REM %PYTHON3% src/asim/scripts/airport/airport_model.py -p -c src/asim/configs/airport.CBX -d input -o output/airport.CBX
-@REM %PYTHON3% src/asim/scripts/airport/airport_model.py -p -c src/asim/configs/airport.SAN -d input -o output/airport.SAN
-@REM %PYTHON3% src/asim/scripts/airport/createPOIomx.py %PROJECT_DIRECTORY%
+    @REM ECHO Running Airport models pre-processing
+    @REM %PYTHON3% src/asim/scripts/airport/airport_model.py -p -c src/asim/configs/airport.CBX -d input -o output/airport.CBX
+    @REM %PYTHON3% src/asim/scripts/airport/airport_model.py -p -c src/asim/configs/airport.SAN -d input -o output/airport.SAN
+    @REM %PYTHON3% src/asim/scripts/airport/createPOIomx.py %PROJECT_DIRECTORY%
 
-@REM ECHO Running xborder model pre-processing
-@REM %PYTHON3% src/asim/scripts/xborder/cross_border_model.py -p -c src/asim/configs/crossborder -d input -o output/crossborder
-@REM %PYTHON3% src/asim/scripts/xborder/createPMSAomx.py %PROJECT_DIRECTORY%
+    @REM ECHO Running xborder model pre-processing
+    @REM %PYTHON3% src/asim/scripts/xborder/cross_border_model.py -p -c src/asim/configs/crossborder -d input -o output/crossborder
+    @REM %PYTHON3% src/asim/scripts/xborder/createPMSAomx.py %PROJECT_DIRECTORY%
 
-@REM ECHO Running visitor model pre-processing
-@REM %PYTHON3% src/asim/scripts/visitor/visitor_model.py -t -c src/asim/configs/visitor -d input -o output/visitor
+    @REM ECHO Running visitor model pre-processing
+    @REM %PYTHON3% src/asim/scripts/visitor/visitor_model.py -t -c src/asim/configs/visitor -d input -o output/visitor
+) else (
+    %PYTHON3% src/asim/scripts/resident/resident_preprocessing.py input output
+)
+
+
 
 
 

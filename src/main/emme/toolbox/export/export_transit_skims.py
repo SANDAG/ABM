@@ -91,53 +91,31 @@ class ExportSkims(_m.Tool(), gen_utils.Snapshot):
             raise
 
     @_m.logbook_trace("Export transit skims to OMX", save_arguments=True)
-    def __call__(self, omx_file, periods, scenario, big_to_zero=True):
+    def __call__(self, omx_file, periods, scenario, big_to_zero=False):
         attributes = {"omx_file": omx_file, "periods": periods, "big_to_zero": big_to_zero}
         gen_utils.log_snapshot("Export transit skims to OMX", str(self), attributes)
         init_matrices = _m.Modeller().tool("sandag.initialize.initialize_matrices")
         matrices = init_matrices.get_matrix_names("transit_skims", periods, scenario)
 
-        #TODO: This is a kludgy way to do this...
+        #list of skims strictly required by Activitysim
         mnames = ['LOC_FIRSTWAIT', 'LOC_XFERWAIT', 'LOC_FARE', 'LOC_XFERS',  'LOC_ACC', 'LOC_XFERWALK', 'LOC_EGR', 'LOC_TOTALWALK',
                   'LOC_TOTALIVTT', 'LOC_DWELLTIME', 'LOC_BUSIVTT', 'PRM_FIRSTWAIT', 'PRM_XFERWAIT', 'PRM_FARE', 'PRM_XFERS', 'PRM_ACC',
                   'PRM_XFERWALK', 'PRM_EGR', 'PRM_TOTALWALK', 'PRM_TOTALIVTT', 'PRM_LRTIVTT', 'PRM_CMRIVTT', 'PRM_EXPIVTT', 
                   'PRM_LTDEXPIVTT', 'PRM_BRTIVTT', 'MIX_FIRSTWAIT', 'MIX_XFERWAIT', 'MIX_FARE', 'MIX_XFERS', 'MIX_ACC', 'MIX_XFERWALK',
-                  'MIX_EGR', 'MIX_TOTALIVTT', 'MIX_BUSIVTT', 'MIX_LRTIVTT', 'MIX_CMRIVTT', 'MIX_EXPIVTT', 'MIX_LTDEXPIVTT', 'MIX_BRTIVTT']  
-    
-        # matrices_to_export = []
-        # for name in matrices:
-        #     m_chk_arr = name.split("_")
-        #     m_check = "_".join(m_chk_arr[1:-2])
-        #     if m_check in mnames:
-        #         matrices_to_export.append(name)
-        #         specification = {
-        #             "type": "MATRIX_CALCULATION",
-        #             "result": name,
-        #             "expression": "0",
-        #             "constraint": {
-        #                 "by_zone": None,
-        #                 "by_value": {
-        #                 "od_values": name,
-        #                 "interval_min": 0,
-        #                 "interval_max": 1e6,
-        #                 "condition": "EXCLUDE" }}
-        #         }
-        #         report = compute_matrix(specification) 
-        # with gen_utils.ExportOMX(omx_file, scenario, omx_key="NAME") as exporter:
-        #     exporter.write_matrices(matrices_to_export)
+                  'MIX_EGR', 'MIX_TOTALIVTT', 'MIX_BUSIVTT', 'MIX_LRTIVTT', 'MIX_CMRIVTT', 'MIX_EXPIVTT', 'MIX_LTDEXPIVTT', 'MIX_BRTIVTT']
+
+        matrices_to_export = [name for name in matrices if "_".join(name.split("_")[1:-2]) in mnames]
 
         with gen_utils.ExportOMX(omx_file, scenario, omx_key="NAME") as exporter:
 
             if big_to_zero:
-                emmebank = scenario.emmebank
-                for name in matrices:
-                    m_chk_arr = name.split("_")
-                    m_check = "_".join(m_chk_arr[1:-2])
-                    if m_check in mnames:
+                with _m.logbook_trace("Setting high values to 0"):
+                    emmebank = scenario.emmebank
+                    for name in matrices_to_export:
                         matrix = emmebank.matrix(name)
                         array = matrix.get_numpy_data(scenario)
                         array[array>10E6] = 0
                         exporter.write_array(array, exporter.generate_key(matrix))
             else:
-                 exporter.write_matrices(matrices)
+                 exporter.write_matrices(matrices_to_export)
 

@@ -20,6 +20,8 @@ public class MicromobilityChoiceDMU
     protected double ivtCoeff;
     protected double costCoeff;
     protected float walkTime;
+    protected boolean isTransit;
+    protected boolean microTransitAvailable;
 
  
     public MicromobilityChoiceDMU()
@@ -61,6 +63,22 @@ public class MicromobilityChoiceDMU
 
 	public void setWalkTime(float walkTime) {
 		this.walkTime = walkTime;
+	}
+
+	public boolean isTransit() {
+		return isTransit;
+	}
+
+	public void setTransit(boolean isTransit) {
+		this.isTransit = isTransit;
+	}
+
+	public boolean isMicroTransitAvailable() {
+		return microTransitAvailable;
+	}
+
+	public void setMicroTransitAvailable(boolean microTransitAvailable) {
+		this.microTransitAvailable = microTransitAvailable;
 	}
 
 	public IndexValues getDmuIndexValues()

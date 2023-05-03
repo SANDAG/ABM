@@ -14,7 +14,7 @@
 # 
 # Distributes the total daily trips from production and attraction vectors.
 # Friction factors are calculated based on a blended travel time skim of 
-# 1/3 AM_SOV_NT_M_TIME and 2/3 MD_SOV_NT_M_TIME, and a table of friction factor 
+# 1/3 AM_SOV_NT_M_TIME and 2/3 SOV_NT_M_TIME__MD, and a table of friction factor 
 # lookup values from commVehFF.csv.
 #
 # Inputs:
@@ -26,7 +26,7 @@
 #
 # Matrix inputs:
 #    moCOMVEH_PROD, mdCOMVEH_ATTR
-#    mfAM_SOV_NT_M_TIME, mfMD_SOV_NT_M_TIME
+#    mfAM_SOV_NT_M_TIME, mfSOV_NT_M_TIME__MD
 #
 # Matrix intermediates (only used internally):
 #    mfCOMVEH_BLENDED_SKIM, mfCOMVEH_FRICTION
@@ -86,7 +86,7 @@ class CommercialVehicleDistribution(_m.Tool(), gen_utils.Snapshot):
     <br>
     A simple gravity model is used to distribute the truck trips.  
     A blended travel time of 
-    1/3 AM_SOV_NT_M_TIME and 2/3 MD_SOV_NT_M_TIME is used, along with 
+    1/3 AM_SOV_NT_M_TIME and 2/3 SOV_NT_M_TIME__MD is used, along with 
     friction factor lookup table stored in commVehFF.csv.
     <br>
     Input:  
@@ -145,7 +145,7 @@ class CommercialVehicleDistribution(_m.Tool(), gen_utils.Snapshot):
         matrix_calc = _m.Modeller().tool(
             'inro.emme.matrix_calculation.matrix_calculator')
         spec = {
-            "expression": "0.3333 * mfAM_SOV_NT_M_TIME + 0.6666 * mfMD_SOV_NT_M_TIME",
+            "expression": "0.3333 * mfSOV_NT_M_TIME__AM + 0.6666 * mfSOV_NT_M_TIME__MD",
             "result": "mfCOMVEH_BLENDED_SKIM",
             "type": "MATRIX_CALCULATION"
         }

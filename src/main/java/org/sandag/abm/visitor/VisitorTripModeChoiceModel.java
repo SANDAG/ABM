@@ -171,7 +171,7 @@ public class VisitorTripModeChoiceModel
             		else
             			bestTapPairs = logsumHelper.getBestWtdTripTaps();
             	}
-            	float rn = new Double(tour.getRandom()).floatValue();
+            	double rn = tour.getRandom();
             	int pathIndex = logsumHelper.chooseTripPath(rn, bestTapPairs, tour.getDebugChoiceModels(), logger);
             	int boardTap = (int) bestTapPairs[pathIndex][0];
             	int alightTap = (int) bestTapPairs[pathIndex][1];

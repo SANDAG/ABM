@@ -22,6 +22,7 @@ import org.sandag.abm.active.PathAlternativeList;
 import org.sandag.abm.active.PathAlternativeListGenerationConfiguration;
 import org.sandag.abm.application.SandagModelStructure;
 import org.sandag.abm.ctramp.BikeLogsum;
+import org.sandag.abm.ctramp.Household;
 import org.sandag.abm.ctramp.Person;
 import org.sandag.abm.ctramp.Tour;
 import com.pb.common.util.ResourceUtil;
@@ -71,7 +72,9 @@ public class SandagBikePathChoiceLogsumMatrixApplication
         SandagModelStructure modelStructure = new SandagModelStructure();
         for (int i = 0; i < MARKET_SEGMENT_NAMES.length; i++)
         {
-            persons[i] = new Person(null, 1, modelStructure);
+            //persons[i] = new Person(null, 1, modelStructure);
+			Household hh = new Household(modelStructure);
+			persons[i] = new Person(hh, 1, modelStructure);
             persons[i].setPersGender(MARKET_SEGMENT_GENDER_VALUES[i]);
             tours[i] = new Tour(persons[i], 1, MARKET_SEGMENT_TOUR_PURPOSE_INDICES[i]);
         }

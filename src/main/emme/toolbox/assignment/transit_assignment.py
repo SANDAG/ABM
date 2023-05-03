@@ -305,7 +305,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
             # max_fare = day_pass for local bus and regional_pass for premium modes
             
                 self.mask_allpen(period)
-                # self.mask_highvalues(period)
+                self.mask_highvalues(period)
                 self.report(period)
 
     @_context.contextmanager
@@ -981,50 +981,52 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
         skims = [
             "FIRSTWAIT", "BUSIVTT", "XFERS", #"TOTALWALK",
             "LRTIVTT", "CMRIVTT", "EXPIVTT", "LTDEXPIVTT", "BRTIVTT", 
-            "XFERWAIT", "FARE",
+            "XFERWAIT", "FARE", "DWELLTIME",
             "ACC", "XFERWALK", "EGR", "TOTALIVTT"]
+        
+        with _m.logbook_trace("Reset Mix skims to 0 if not both local and premium"):
 
-        for amode in ['WALK', 'PNRIN', 'PNROUT', 'KNRIN', 'KNROUT', 'TNCIN', 'TNCOUT']:
+            for amode in ['WALK', 'PNRIN', 'PNROUT', 'KNRIN', 'KNROUT', 'TNCIN', 'TNCOUT']:
 
-            localivt_skim = self.get_matrix_data(amode + "_MIX_BUSIVTT" + "__" + period)
-            totalivt_skim = self.get_matrix_data(amode + "_MIX_TOTALIVTT" + "__" + period)
-            has_premium = numpy.greater((totalivt_skim - localivt_skim), 0)
-            has_both = numpy.greater(localivt_skim, 0) * has_premium
+                localivt_skim = self.get_matrix_data(amode + "_MIX_BUSIVTT" + "__" + period)
+                totalivt_skim = self.get_matrix_data(amode + "_MIX_TOTALIVTT" + "__" + period)
+                has_premium = numpy.greater((totalivt_skim - localivt_skim), 0)
+                has_both = numpy.greater(localivt_skim, 0) * has_premium
 
-            for skim in skims:
-                mat_name = amode + "_MIX_" + skim + "__" + period
-                data = self.get_matrix_data(mat_name)
-                self.set_matrix_data(mat_name, data * has_both)
+                for skim in skims:
+                    mat_name = amode + "_MIX_" + skim + "__" + period
+                    data = self.get_matrix_data(mat_name)
+                    self.set_matrix_data(mat_name, data * has_both)
         
     def mask_highvalues(self, period):
         
         matrix_calc = _m.Modeller().tool("inro.emme.matrix_calculation.matrix_calculator")
 
-        skims = [
-            "FIRSTWAIT", "BUSIVTT", "XFERS", #"TOTALWALK",
-            "LRTIVTT", "CMRIVTT", "EXPIVTT", "LTDEXPIVTT", "BRTIVTT", 
-            "XFERWAIT", "FARE",
-            "ACC", "XFERWALK", "EGR", "TOTALIVTT"]
+        #Masking the skims required by ActivitySim
+        skims = ['LOC_FIRSTWAIT', 'LOC_XFERWAIT', 'LOC_FARE', 'LOC_XFERS',  'LOC_ACC', 'LOC_XFERWALK', 'LOC_EGR', 'LOC_TOTALWALK',
+                  'LOC_TOTALIVTT', 'LOC_DWELLTIME', 'LOC_BUSIVTT', 'PRM_FIRSTWAIT', 'PRM_XFERWAIT', 'PRM_FARE', 'PRM_XFERS', 'PRM_ACC',
+                  'PRM_XFERWALK', 'PRM_EGR', 'PRM_TOTALWALK', 'PRM_TOTALIVTT', 'PRM_LRTIVTT', 'PRM_CMRIVTT', 'PRM_EXPIVTT', 
+                  'PRM_LTDEXPIVTT', 'PRM_BRTIVTT', 'MIX_FIRSTWAIT', 'MIX_XFERWAIT', 'MIX_FARE', 'MIX_XFERS', 'MIX_ACC', 'MIX_XFERWALK',
+                  'MIX_EGR', 'MIX_TOTALIVTT', 'MIX_BUSIVTT', 'MIX_LRTIVTT', 'MIX_CMRIVTT', 'MIX_EXPIVTT', 'MIX_LTDEXPIVTT', 'MIX_BRTIVTT']
 
         with _m.logbook_trace("Set high values to 0"):
             for amode in ['WALK', 'PNRIN', 'PNROUT', 'KNRIN', 'KNROUT', 'TNCIN', 'TNCOUT']:
-                for mode in ['LOC', 'PRM', 'MIX']:
-                    for skim in skims:
-                        name = amode + "_" + mode + "_" + skim + "__" + period
-                        # Set high values to 0
-                        
-                        spec = {
-                            "type": "MATRIX_CALCULATION",
-                            "constraint":{
-                                "by_value": {
-                                    "od_values": name,
-                                    "interval_min": -999999, "interval_max": 999999,
-                                    "condition": "EXCLUDE"},
-                            },
-                            "result": name,
-                            "expression": '0',
-                        }
-                        matrix_calc(spec)
+                for skim in skims:
+                    name = amode + "_" + skim + "__" + period
+                    # Set high values to 0
+                    
+                    spec = {
+                        "type": "MATRIX_CALCULATION",
+                        "constraint":{
+                            "by_value": {
+                                "od_values": name,
+                                "interval_min": 0, "interval_max": 999999,
+                                "condition": "EXCLUDE"},
+                        },
+                        "result": name,
+                        "expression": '0',
+                    }
+                    matrix_calc(spec, scenario=self.scenario)
 
     def get_matrix_data(self, name):
         data = self._matrix_cache.get(name)

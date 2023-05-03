@@ -252,8 +252,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         export_transit_skims = modeller.tool("sandag.export.export_transit_skims")
         export_for_transponder = modeller.tool("sandag.export.export_for_transponder")
         export_network_data = modeller.tool("sandag.export.export_data_loader_network")
-        export_matrix_data = modeller.tool("sandag.export.export_data_loader_matrices")
-        export_tap_adjacent_lines = modeller.tool("sandag.export.export_tap_adjacent_lines")
         export_for_commercial_vehicle = modeller.tool("sandag.export.export_for_commercial_vehicle")
         validation = modeller.tool("sandag.validation.validation")
         file_manager = modeller.tool("sandag.utilities.file_manager")
@@ -303,13 +301,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         deleteAllMatrices = props["RunModel.deleteAllMatrices"]
         skipCopyWarmupTripTables = props["RunModel.skipCopyWarmupTripTables"]
         skipCopyBikeLogsum = props["RunModel.skipCopyBikeLogsum"]
-        # skipShadowPricing = props["RunModel.skipShadowPricing"]
         skipCopyWalkImpedance = props["RunModel.skipCopyWalkImpedance"]
         skipWalkLogsums = props["RunModel.skipWalkLogsums"]
         skipBikeLogsums = props["RunModel.skipBikeLogsums"]
         skipBuildNetwork = props["RunModel.skipBuildNetwork"]
         skipHighwayAssignment = props["RunModel.skipHighwayAssignment"]
-        # skipTransitConnector = props["RunModel.skipTransitConnector"]
         skipTransitSkimming = props["RunModel.skipTransitSkimming"]
         skipTransponderExport = props["RunModel.skipTransponderExport"]
         skipABMPreprocessing = props["RunModel.skipABMPreprocessing"]
@@ -457,6 +453,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             # self.check_for_fatal(_join(self._path, "logFiles", "AtTransitCheck_event.log"),
             #                      "AT and Transit network consistency checking failed! Open AtTransitCheck_event.log for details.")
 
+            #get number of households to pass on sample size to activitysim
+            householdFile = pd.read_csv(_join(self._path, "input", "households.csv"))
+            hh_count = len(householdFile)
+            del(householdFile)
+
             if startFromIteration == 1:  # only run the setup / init steps if starting from iteration 1
                 if not skipWalkLogsums:
                     self.run_proc("runSandagWalkLogsums.cmd", [drive, path_forward_slash],
@@ -596,23 +597,22 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                             #output transit skims by period
                             omx_file = _join(output_dir, "skims", "transit_skims_" + period + ".omx")
                             period_list = [period]
-                            export_transit_skims(omx_file, period_list, transit_scenario)  
+                            export_transit_skims(omx_file, period_list, transit_scenario, big_to_zero=False)  
 
                 if not skipTransponderExport[iteration]:
                     am_scenario = main_emmebank.scenario(base_scenario.number + 2)
                     export_for_transponder(output_dir, num_processors, am_scenario)
 
-                #only run preprocessing in iteration 1
-                if iteration == 0:
-                    if not skipABMPreprocessing:
-                        self.run_proc(
-                            "runSandagAbm_Preprocessing.cmd",
-                            [drive, drive + path_forward_slash],
-                            "Creating all the required files to run the ActivitySim models", capture_output=True)
+                
+                if not skipABMPreprocessing[iteration]:
+                    self.run_proc(
+                        "runSandagAbm_Preprocessing.cmd",
+                        [drive, drive + path_forward_slash, msa_iteration],
+                        "Creating all the required files to run the ActivitySim models", capture_output=True)
                 if not skipABMResident[iteration]:
                     self.run_proc(
                         "runSandagAbm_ActivitySimResident.cmd",
-                        [drive, drive + path_forward_slash, sample_rate[iteration], msa_iteration],
+                        [drive, drive + path_forward_slash, sample_rate[iteration] * hh_count, msa_iteration],
                         "Running ActivitySim resident model", capture_output=True)
                 if not skipABMAirport[iteration]:
                     self.run_proc(
@@ -623,7 +623,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     self.run_proc(
                         "runSandagAbm_ActivitySimXborderWaitModel.cmd",
                         [drive, drive + path_forward_slash, sample_rate[iteration], msa_iteration],
-                        "Running ActivitySim crossborder and Wait time models", capture_output=True)
+                        "Running ActivitySim wait time models", capture_output=True)
                 if not skipABMXborder[iteration]:
                     self.run_proc(
                         "runSandagAbm_ActivitySimXborder.cmd",

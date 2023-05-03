@@ -49,7 +49,9 @@ class PropertiesSetter(object):
     skipTransponderExport_1 = _m.Attribute(bool)
     skipTransponderExport_2 = _m.Attribute(bool)
     skipTransponderExport_3 = _m.Attribute(bool)
-    skipABMPreprocessing = _m.Attribute(bool)
+    skipABMPreprocessing_1 = _m.Attribute(bool)
+    skipABMPreprocessing_2 = _m.Attribute(bool)
+    skipABMPreprocessing_3 = _m.Attribute(bool)
     skipABMResident_1 = _m.Attribute(bool)
     skipABMResident_2 = _m.Attribute(bool)
     skipABMResident_3 = _m.Attribute(bool)
@@ -100,9 +102,9 @@ class PropertiesSetter(object):
     skipTransponderExport = property(
         fget=lambda self: self._get_list_prop("skipTransponderExport"),
         fset=lambda self, value: self._set_list_prop("skipTransponderExport", value))
-    # skipABMPreprocessing = property(
-    #     fget=lambda self: self._get_list_prop("skipABMPreprocessing"),
-    #     fset=lambda self, value: self._set_list_prop("skipABMPreprocessing", value))
+    skipABMPreprocessing = property(
+        fget=lambda self: self._get_list_prop("skipABMPreprocessing"),
+        fset=lambda self, value: self._set_list_prop("skipABMPreprocessing", value))
     skipABMResident = property(
         fget=lambda self: self._get_list_prop("skipABMResident"),
         fset=lambda self, value: self._set_list_prop("skipABMResident", value))
@@ -223,7 +225,7 @@ class PropertiesSetter(object):
             contents.append(checkbox_no_data % {"name": "all" + "_" + str(i)})
         for name, label in skip_per_iteration_items:
             contents.append("</tr><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;%s</td>" % label)
-            if name not in  ["skipABMPreprocessing", "skipABMXborderWait"]:
+            if name not in  ["skipABMXborderWait"]:
                 for i in range(1,4):
                     contents.append(checkbox % {"name": name + "_" + str(i), "tag": tool_proxy_tag})
             else:
@@ -322,7 +324,7 @@ class PropertiesSetter(object):
         self.skipHighwayAssignment = props.get("RunModel.skipHighwayAssignment", [False, False, False])
         self.skipTransitSkimming = props.get("RunModel.skipTransitSkimming", [False, False, False])
         self.skipTransponderExport = props.get("RunModel.skipTransponderExport", [False, False, False])
-        self.skipABMPreprocessing = props.get("RunModel.skipABMPreprocessing", False)
+        self.skipABMPreprocessing = props.get("RunModel.skipABMPreprocessing", [False, False, False])
         self.skipABMResident = props.get("RunModel.skipABMResident", [False, False, False])
         self.skipABMAirport = props.get("RunModel.skipABMAirport", [False, False, False])
         self.skipABMXborder = props.get("RunModel.skipABMXborder", [False, False, False])

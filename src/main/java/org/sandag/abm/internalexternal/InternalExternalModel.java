@@ -67,6 +67,14 @@ public class InternalExternalModel
         this.iteration = iteration;
     }
 
+	public float getSampleRate() {
+		return sampleRate;
+	}
+
+	public void setSampleRate(float sampleRate) {
+		this.sampleRate = sampleRate;
+	} 
+    
     /**
      * Run InternalExternal model.
      */
@@ -76,13 +84,13 @@ public class InternalExternalModel
         InternalExternalModelStructure modelStructure = new InternalExternalModelStructure();
 
         InternalExternalDmuFactoryIf dmuFactory = new InternalExternalDmuFactory(modelStructure);
-
-        InternalExternalTourManager tourManager = new InternalExternalTourManager(rbMap, iteration);
-
+        
+        InternalExternalTourManager tourManager = new InternalExternalTourManager(rbMap, iteration, sampleRate);
+        
         tourManager.generateTours();
-
+        
         InternalExternalTour[] tours = tourManager.getTours();
-
+        
         tazDistanceCalculator = new AutoTazSkimsCalculator(rbMap);
         tazDistanceCalculator.computeTazDistanceArrays();
         logsumsCalculator = new McLogsumsCalculator();
@@ -99,7 +107,7 @@ public class InternalExternalModel
 
         InternalExternalTripModeChoiceModel tripModeChoiceModel = new InternalExternalTripModeChoiceModel(
                 rbMap, modelStructure, dmuFactory);
-
+        
         // Run models for array of tours
         for (int i = 0; i < tours.length; ++i)
         {
@@ -136,7 +144,7 @@ public class InternalExternalModel
             tour.setTrips(trips);
 
         }
-
+        
         tourManager.writeOutputFile(rbMap);
 
         logger.info("Internal-External Model successfully completed!");
@@ -184,6 +192,18 @@ public class InternalExternalModel
      */
     public static void main(String[] args)
     {
+        Runtime gfg = Runtime.getRuntime(); 
+        long memory1; 
+        // checking the total memeory 
+        System.out.println("Total memory is: "+ gfg.totalMemory()); 
+        // checking free memory 
+        memory1 = gfg.freeMemory(); 
+        System.out.println("Initial free memory at IE model: "+ memory1); 
+        // calling the garbage collector on demand 
+        gfg.gc(); 
+        memory1 = gfg.freeMemory(); 
+        System.out.println("Free memory after garbage "+ "collection: " + memory1); 
+  	
 
         String propertiesFile = null;
         HashMap<String, String> pMap;
@@ -222,6 +242,7 @@ public class InternalExternalModel
         logger.info("IE Model:"+String.format("-sampleRate %.4f.", sampleRate)+"-iteration  " + iteration);
         InternalExternalModel internalExternalModel = new InternalExternalModel(pMap);
         internalExternalModel.setIteration(iteration);
+        internalExternalModel.setSampleRate(sampleRate);
 
         String matrixServerAddress = "";
         int serverPort = 0;

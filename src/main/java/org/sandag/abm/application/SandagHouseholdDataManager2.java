@@ -69,6 +69,7 @@ public class SandagHouseholdDataManager2
         // read the correspondence files for mapping persons to occupation and
         HashMap<String, Integer> occCodes = readOccupCorrespondenceData();
         int[] indCodes = readIndustryCorrespondenceData();
+		boolean hasSampleRate=(hhTable.getColumnPosition(HH_SAMPLERATE_FIELD_NAME) > -1 ? true : false);
 
         // get the maximum HH id value to use to dimension the hhIndex
         // correspondence
@@ -179,6 +180,14 @@ public class SandagHouseholdDataManager2
                 int numAutos = (int) hhTable.getValueAt(r,
                         hhTable.getColumnPosition(HH_AUTOS_FIELD_NAME));
                 hh.setHhAutos(numAutos);
+				
+				// read sample rate from file if it exists, and multiply by the global sample rate since there might be a sample of households
+                // that doesn't vary by TAZ
+				
+				float hhSampleRate = sampleRate;
+                if(hasSampleRate)
+                	hhSampleRate = hhTable.getValueAt(r,  hhTable.getColumnPosition(HH_SAMPLERATE_FIELD_NAME))*sampleRate;
+                hh.setSampleRate(hhSampleRate);
 
                 // set the hhSize variable and create Person objects for each
                 // person
@@ -305,6 +314,7 @@ public class SandagHouseholdDataManager2
                             personTable.getColumnPosition(PERSON_PERSON_ID_FIELD_NAME));
                     Person person = hh.getPerson(persNum++);
                     person.setPersId(persId);
+					person.setSampleRate(hh.getSampleRate());
                     fieldCount++;
 
                     // get required values from table record and store in Person

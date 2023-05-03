@@ -50,7 +50,7 @@ MD crossborder
 CD ..
 
 :: Run xborder wait time model
-%PYTHON3% src/asim/scripts/xborder/cross_border_model.py -w -c src/asim/configs/crossborder -d input -o output/crossborder
+@REM %PYTHON3% src/asim/scripts/xborder/cross_border_model.py -w -c src/asim/configs/crossborder -d input -o output/crossborder
 
 ECHO ActivitySim Crossborder wait time model run complete!!
 ECHO %startTime%%Time%

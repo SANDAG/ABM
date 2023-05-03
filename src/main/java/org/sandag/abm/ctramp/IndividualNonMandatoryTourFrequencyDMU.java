@@ -511,8 +511,8 @@ public class IndividualNonMandatoryTourFrequencyDMU
     // TODO: right now, assuming total pairwise available hours
     private int getOverlap(Person dmuPerson, Person otherPerson)
     {
-        int[] dmuWindow = dmuPerson.getTimeWindows();
-        int[] otherWindow = otherPerson.getTimeWindows();
+        short[] dmuWindow = dmuPerson.getTimeWindows();
+        short[] otherWindow = otherPerson.getTimeWindows();
 
         int overlap = 0;
         for (int i = 0; i < dmuWindow.length; i++)

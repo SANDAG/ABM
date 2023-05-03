@@ -338,15 +338,6 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             network.set_attribute_values("LINK", dst_attrs, values)
 
             scenario.publish_network(network)
-            # spec = {
-            #     "result": "ul2",
-            #     "expression": "ul2 + timau",
-            #     "selections": {
-            #         "link": "all",
-            #     },        
-            #     "type": "NETWORK_CALCULATION"
-            # }      
-            # netcalc[spec, scenario, ]
             
             ##copying auto_time to ul1, so it does not get wiped when transit connectors are created. 
             if scenario.has_traffic_results and "@auto_time" in scenario.attributes("LINK"):
