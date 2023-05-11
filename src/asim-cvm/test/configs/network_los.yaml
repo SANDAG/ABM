@@ -1,0 +1,27 @@
+inherit_settings: True
+
+zone_system: 2
+
+skim_dict_factory: NumpyArraySkimFactory
+read_skim_cache: False
+write_skim_cache: False
+
+taz_skims:
+  - selected_cropped_skims.omx
+
+maz: land_use.csv
+
+skim_time_periods:
+    time_window: 1440
+    period_minutes: 30
+    periods: [0, 6, 12, 25, 32, 48]  # time periods to match documentation
+    labels: &skim_time_period_labels ['EA', 'AM', 'MD', 'PM', 'EV']
+
+demographic_segments: &demographic_segments
+  - &low_income_segment_id 0
+  - &high_income_segment_id 1
+
+maz_to_maz:
+  # tables: []  # list, not needed for CVM
+  max_blend_distance:
+    DIST: 0

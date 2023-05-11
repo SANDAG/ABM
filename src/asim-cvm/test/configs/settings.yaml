@@ -1,0 +1,61 @@
+establishments_sample_size: 10
+trace_establishment_id:
+resume_after:
+
+inherit_settings: True
+chunk_size: 0
+chunk_training_mode: disabled
+input_table_list:
+  - tablename: establishments
+    filename: establishments-fake.csv
+    index_col: establishment_id
+    rename_columns:
+      businessID: establishment_id
+  - tablename: land_use
+    filename: land_use.csv
+    index_col: zone_id
+    rename_columns:
+      MAZ: zone_id
+    drop_columns:
+      - i1
+      - i2
+      - i3
+      - i4
+      - i5
+      - i6
+      - i7
+      - i8
+      - i9
+      - hs
+      - hs_sf
+      - hs_mf
+      - hs_mh
+      - hh_sf
+      - hh_mf
+      - hh_mh
+      - zip09
+      - luz_id
+
+#output_tables:
+#  h5_store: False
+#  action: include
+#  prefix: final_
+#  sort: True
+#  tables:
+#    - checkpoints
+#    - accessibility
+#    - land_use
+#    - households
+#    - persons
+#    - tours
+#    - trips
+#    - joint_tour_participants
+#    - vehicles
+#    - proto_disaggregate_accessibility
+#    - disaggregate_accessibility
+
+
+models:
+  - cvm_accessibility
+  - route_generation
+

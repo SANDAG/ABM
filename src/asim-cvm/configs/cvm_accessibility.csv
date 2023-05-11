@@ -1,0 +1,7 @@
+Description,Target,Expression
+##### CARS use SOV_TR_M_TIME ######
+peak round trip distance,_autoTime,"skim_od[('SOV_TR_M_TIME', 'AM')] * automobile_am_weight + skim_od[('SOV_TR_M_TIME', 'MD')] * automobile_md_weight + skim_od[('SOV_TR_M_TIME', 'PM')] * automobile_pm_weight"
+decay function,_decay, exp(_autoTime * dispersion_parameter_automobile)
+auto to retail,autoRetail,df.emp_retail * _decay
+auto to total,autoTotal,df.emp_total * _decay
+#####
