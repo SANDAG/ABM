@@ -1,14 +1,8 @@
 Label,Description,Expression,work1,work2,school1,school2,work_and_school
-util_usual_work_location_is_work_at_home_but_theres_a_school_location,usual work location is work_at_home_ but there's a school location,@df.work_from_home == 1,coef_unavailable,coef_unavailable,,,coef_unavailable
-#util_usual_school_location_is_schoolathome_but_theres_a_work_location,usual school location is school_at_home_ but there's a work location,@df.schoolAtHome == 1,,,coef_unavailable,coef_unavailable,coef_unavailable
-util_work_not_available_for_non_driving_children,work not available for non_driving children,@df.ptype == 7,coef_unavailable,coef_unavailable,,,coef_unavailable
-util_work_not_available_for_driving_children_that_are_not_employed,work not available for driving children that are not employed,@(df.ptype == 6) * (df.pemploy == 3),coef_unavailable,coef_unavailable,,,coef_unavailable
-util_no_mandatory_tours_for_non_working_adults,no mandatory tours for non_working adults,@((df.ptype == 4) + (df.ptype == 5)) > 0,coef_unavailable,coef_unavailable,coef_unavailable,coef_unavailable,coef_unavailable
-util_school_not_available_for_ft_pt_workers,school not available for ft_ pt workers,@((df.ptype == 1) + (df.ptype == 2)) > 0,,,coef_unavailable,coef_unavailable,coef_unavailable
-util_work_only_not_available_for_school_aged_students,work only not available for school aged students,@((df.ptype == 6) + (df.ptype == 7)) > 0,coef_unavailable,coef_unavailable,,,
-util_2_work_tours_not_available_for_university_students,2 work tours not available for university students,@(df.ptype == 3) * (df.pemploy <3),,coef_unavailable,,,
-util_work_tour_not_available_for_university_students_that_are_not_employed,work tour not available for university students that are not employed,@(df.ptype == 3) * (df.pemploy == 3),coef_unavailable,coef_unavailable,,,coef_unavailable
-util_availability_pre_driving_age_not_in_school,Unavailable: Pre-driving age child who is not in school,@df.ptype == 8,coef_unavailable,coef_unavailable,,coef_unavailable,coef_unavailable
+# availiability conditions just based on worker or student status,,,,,,,
+util_work_unavailable_for_non_workers,work not available for non-workers,is_worker == False,coef_unavailable,coef_unavailable,,,coef_unavailable
+util_work_unavailable_for_wfh,work not available if work from home,work_from_home == True,coef_unavailable,coef_unavailable,,,coef_unavailable
+util_school_unavailable_for_non_students,school unavailable for non-students,is_student == False,,,coef_unavailable,coef_unavailable,coef_unavailable
 #,,,,,,,
 util_alternative_specific_constant_for_full_time_work,alternative specific constant for full_time work,@df.ptype==1,coef_zero,coef_ft_worker_work2_asc,coef_ft_worker_school1_asc,,coef_ft_worker_work_and_school_asc
 util_alternative_specific_constant_for_part_time_work,alternative specific constant for part_time work,@df.ptype==2,coef_zero,coef_pt_worker_work2_asc,coef_pt_worker_school1_asc,,coef_pt_worker_work_and_school_asc
