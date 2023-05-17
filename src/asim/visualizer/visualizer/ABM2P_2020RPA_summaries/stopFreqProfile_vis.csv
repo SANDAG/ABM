@@ -1,0 +1,175 @@
+num_stops,purpose,Direction,value
+0,1: Work,Inbound,899733.0
+0,2: University,Inbound,93857.0
+0,3: School,Inbound,470000.0
+0,4: Escort,Inbound,814930.0
+0,5: Individual Maintenance,Inbound,515559.0
+0,6: Individual Discretionary,Inbound,358886.0
+0,7: Joint Maintenance,Inbound,61516.0
+0,8: Joint Discretionary,Inbound,54895.0
+0,9: Work-based,Inbound,106982.0
+1,1: Work,Inbound,156018.0
+1,2: University,Inbound,22197.0
+1,3: School,Inbound,78512.0
+1,4: Escort,Inbound,114341.0
+1,5: Individual Maintenance,Inbound,136548.0
+1,6: Individual Discretionary,Inbound,88435.0
+1,7: Joint Maintenance,Inbound,19199.0
+1,8: Joint Discretionary,Inbound,14904.0
+1,9: Work-based,Inbound,7287.0
+2,1: Work,Inbound,52487.0
+2,2: University,Inbound,6024.0
+2,3: School,Inbound,12647.0
+2,4: Escort,Inbound,35628.0
+2,5: Individual Maintenance,Inbound,56937.0
+2,6: Individual Discretionary,Inbound,32995.0
+2,7: Joint Maintenance,Inbound,8070.0
+2,8: Joint Discretionary,Inbound,4551.0
+2,9: Work-based,Inbound,658.0
+3,1: Work,Inbound,68441.0
+3,2: University,Inbound,24.0
+3,3: School,Inbound,21437.0
+3,4: Escort,Inbound,57617.0
+3,5: Individual Maintenance,Inbound,40836.0
+3,6: Individual Discretionary,Inbound,53795.0
+3,7: Joint Maintenance,Inbound,5626.0
+3,8: Joint Discretionary,Inbound,7223.0
+3,9: Work-based,Inbound,1351.0
+4,1: Work,Inbound,
+4,2: University,Inbound,
+4,3: School,Inbound,
+4,4: Escort,Inbound,
+4,5: Individual Maintenance,Inbound,
+4,6: Individual Discretionary,Inbound,
+4,7: Joint Maintenance,Inbound,
+4,8: Joint Discretionary,Inbound,
+5,1: Work,Inbound,
+5,2: University,Inbound,
+5,3: School,Inbound,
+5,4: Escort,Inbound,
+5,5: Individual Maintenance,Inbound,
+5,6: Individual Discretionary,Inbound,
+5,7: Joint Maintenance,Inbound,
+5,8: Joint Discretionary,Inbound,
+6,1: Work,Inbound,
+6,4: Escort,Inbound,
+6,5: Individual Maintenance,Inbound,
+6,6: Individual Discretionary,Inbound,
+6,7: Joint Maintenance,Inbound,
+6,8: Joint Discretionary,Inbound,
+0,1: Work,Outbound,712239.0
+0,2: University,Outbound,88061.0
+0,3: School,Outbound,402467.0
+0,4: Escort,Outbound,776090.0
+0,5: Individual Maintenance,Outbound,476287.0
+0,6: Individual Discretionary,Outbound,390784.0
+0,7: Joint Maintenance,Outbound,57057.0
+0,8: Joint Discretionary,Outbound,59544.0
+0,9: Work-based,Outbound,102084.0
+1,1: Work,Outbound,239685.0
+1,2: University,Outbound,18010.0
+1,3: School,Outbound,99055.0
+1,4: Escort,Outbound,150162.0
+1,5: Individual Maintenance,Outbound,169012.0
+1,6: Individual Discretionary,Outbound,86836.0
+1,7: Joint Maintenance,Outbound,22166.0
+1,8: Joint Discretionary,Outbound,14612.0
+1,9: Work-based,Outbound,10988.0
+2,1: Work,Outbound,91367.0
+2,2: University,Outbound,7555.0
+2,3: School,Outbound,45098.0
+2,4: Escort,Outbound,41242.0
+2,5: Individual Maintenance,Outbound,55943.0
+2,6: Individual Discretionary,Outbound,25505.0
+2,7: Joint Maintenance,Outbound,8471.0
+2,8: Joint Discretionary,Outbound,3504.0
+2,9: Work-based,Outbound,1869.0
+3,1: Work,Outbound,133388.0
+3,2: University,Outbound,8476.0
+3,3: School,Outbound,35976.0
+3,4: Escort,Outbound,55022.0
+3,5: Individual Maintenance,Outbound,48638.0
+3,6: Individual Discretionary,Outbound,30986.0
+3,7: Joint Maintenance,Outbound,6717.0
+3,8: Joint Discretionary,Outbound,3913.0
+3,9: Work-based,Outbound,1337.0
+4,1: Work,Outbound,
+4,2: University,Outbound,
+4,3: School,Outbound,
+4,4: Escort,Outbound,
+4,5: Individual Maintenance,Outbound,
+4,6: Individual Discretionary,Outbound,
+4,7: Joint Maintenance,Outbound,
+4,8: Joint Discretionary,Outbound,
+5,1: Work,Outbound,
+5,2: University,Outbound,
+5,3: School,Outbound,
+5,4: Escort,Outbound,
+5,5: Individual Maintenance,Outbound,
+5,6: Individual Discretionary,Outbound,
+5,7: Joint Maintenance,Outbound,
+5,8: Joint Discretionary,Outbound,
+6,1: Work,Outbound,
+6,4: Escort,Outbound,
+6,5: Individual Maintenance,Outbound,
+6,6: Individual Discretionary,Outbound,
+6,7: Joint Maintenance,Outbound,
+6,8: Joint Discretionary,Outbound,
+0,1: Work,Total,556645.0
+0,2: University,Total,70011.0
+0,3: School,Total,330402.0
+0,4: Escort,Total,650387.0
+0,5: Individual Maintenance,Total,334108.0
+0,6: Individual Discretionary,Total,256350.0
+0,7: Joint Maintenance,Total,36383.0
+0,8: Joint Discretionary,Total,37874.0
+0,9: Work-based,Total,93706.0
+1,1: Work,Total,269589.0
+1,2: University,Total,23557.0
+1,3: School,Total,122692.0
+1,4: Escort,Total,180477.0
+1,5: Individual Maintenance,Total,201040.0
+1,6: Individual Discretionary,Total,119289.0
+1,7: Joint Maintenance,Total,26470.0
+1,8: Joint Discretionary,Total,21952.0
+1,9: Work-based,Total,16561.0
+2,1: Work,Total,124090.0
+2,2: University,Total,16556.0
+2,3: School,Total,57482.0
+2,4: Escort,Total,64593.0
+2,5: Individual Maintenance,Total,96945.0
+2,6: Individual Discretionary,Total,65275.0
+2,7: Joint Maintenance,Total,14886.0
+2,8: Joint Discretionary,Total,9583.0
+2,9: Work-based,Total,3201.0
+3,1: Work,Total,165214.0
+3,2: University,Total,11752.0
+3,3: School,Total,60549.0
+3,4: Escort,Total,83130.0
+3,5: Individual Maintenance,Total,81919.0
+3,6: Individual Discretionary,Total,80909.0
+3,7: Joint Maintenance,Total,13286.0
+3,8: Joint Discretionary,Total,11136.0
+3,9: Work-based,Total,2810.0
+4,1: Work,Total,39625.0
+4,2: University,Total,190.0
+4,3: School,Total,11362.0
+4,4: Escort,Total,30676.0
+4,5: Individual Maintenance,Total,23878.0
+4,6: Individual Discretionary,Total,8700.0
+4,7: Joint Maintenance,Total,2160.0
+4,8: Joint Discretionary,Total,754.0
+5,1: Work,Total,12109.0
+5,2: University,Total,36.0
+5,3: School,Total,109.0
+5,4: Escort,Total,5115.0
+5,5: Individual Maintenance,Total,8397.0
+5,6: Individual Discretionary,Total,2280.0
+5,7: Joint Maintenance,Total,620.0
+5,8: Joint Discretionary,Total,152.0
+6,1: Work,Total,9407.0
+6,4: Escort,Total,8138.0
+6,5: Individual Maintenance,Total,3593.0
+6,6: Individual Discretionary,Total,1308.0
+6,7: Joint Maintenance,Total,606.0
+6,8: Joint Discretionary,Total,122.0

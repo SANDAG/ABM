@@ -1,0 +1,49 @@
+PERTYPE,TOURPURP,freq
+1: Full-Time Worker,4,238193
+1: Full-Time Worker,5,73752
+1: Full-Time Worker,6,80992
+1: Full-Time Worker,7,9722
+1: Full-Time Worker,8,26818
+1: Full-Time Worker,9,74976
+2: Part-Time Worker,4,158966
+2: Part-Time Worker,5,48279
+2: Part-Time Worker,6,61149
+2: Part-Time Worker,7,7593
+2: Part-Time Worker,8,18832
+2: Part-Time Worker,9,51929
+3: University Student,4,58893
+3: University Student,5,20398
+3: University Student,6,13601
+3: University Student,7,1707
+3: University Student,8,8917
+3: University Student,9,15773
+4: Non-Worker,4,355392
+4: Non-Worker,5,95717
+4: Non-Worker,6,93990
+4: Non-Worker,7,13701
+4: Non-Worker,8,18666
+4: Non-Worker,9,41460
+5: Retiree,4,70567
+5: Retiree,5,93541
+5: Retiree,6,108340
+5: Retiree,7,20233
+5: Retiree,8,16666
+5: Retiree,9,92441
+6: Driving Aged Student,4,1962
+6: Driving Aged Student,5,927
+6: Driving Aged Student,6,1869
+6: Driving Aged Student,7,265
+6: Driving Aged Student,8,6066
+6: Driving Aged Student,9,11456
+7: Non-Driving Aged Student,4,36683
+7: Non-Driving Aged Student,5,3175
+7: Non-Driving Aged Student,6,17481
+7: Non-Driving Aged Student,7,723
+7: Non-Driving Aged Student,8,21092
+7: Non-Driving Aged Student,9,52125
+8: Child To Young for School,4,100490
+8: Child To Young for School,5,652
+8: Child To Young for School,6,15020
+8: Child To Young for School,7,2333
+8: Child To Young for School,8,8939
+8: Child To Young for School,9,8482

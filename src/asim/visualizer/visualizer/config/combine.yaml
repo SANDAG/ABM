@@ -1,0 +1,222 @@
+runs:
+  survey: ABM2P_2019sr15_summaries
+  model: output
+outpath: data
+tables:
+  #activePertypeDistbn:
+  #  merge:
+  #    - PERTYPE
+  autoOwnership:
+    merge:
+      - HHVEH
+  avgStopOutofDirectionDist_vis:
+    merge:
+      - purpose
+  dapSummary_vis:
+    merge:
+      - PERTYPE
+      - activity_pattern
+    total:
+      PERTYPE: Total
+  districtFlows:
+    merge:
+      - HDISTRICT
+      - WDISTRICT
+    total:
+      HDISTRICT: Total
+    dtype:
+      freq: int
+  esctype_by_chauffeurtype:
+    merge:
+      - esc_type
+      - chauffeur
+    total:
+      chauffeur: Total
+  esctype_by_childtype:
+    merge:
+      - esc_type
+      - child_type
+    total:
+      child_type: Total
+  hhSizeDist:
+    merge:
+      - HHSIZE
+  hhsizeJoint:
+    merge:
+      - HHSIZE
+      - JOINT
+  inmSummary_vis:
+    merge:
+      - PERTYPE
+      - nmtours
+    total:
+      PERTYPE: Total
+  jointComp:
+    merge:
+      - tour_composition
+  jointCompPartySize:
+    merge:
+      - tour_composition
+      - NUMBER_HH
+    total:
+      tour_composition: Total
+    dtype:
+      freq: float
+  jointPartySize:
+    merge:
+      - NUMBER_HH
+  jointToursHHSize:
+    merge:
+      - jointCat
+      - HHSIZE
+  jtf:
+    merge:
+      - jtf
+      - alt_name
+  mandTLFD:
+    merge:
+      - distbin
+      - District
+      - purpose
+    total:
+      District: Total
+  # mandTLFD_et:
+  #   merge:
+  #     - distbin
+  #     - District
+  #     - purpose
+  #   total:
+  #     District: Total
+  mandTripLengths:
+    merge:
+      - District
+      - purpose
+  # mandTripLengths_et:
+  #   merge:
+  #     - District
+  #     - purpose
+  mtfSummary_vis:
+    merge:
+      - PERTYPE
+      - imf_choice
+    total:
+      PERTYPE: Total
+  nm_tour_rates:
+    merge:
+      - PERTYPE
+      - tour_purp
+  nonMandTripLengths:
+    merge:
+      - purpose
+  # nonMandTripLengths_et:
+  #   merge:
+  #     - purpose
+  pertypeDistbn:
+    merge:
+      - PERTYPE
+  rates:
+    merge:
+      - Variable
+  resultsByPType:
+    merge:
+      - PERTYPE
+  stopDC_vis:
+    merge:
+      - distbin
+      - purpose
+    total:
+      purpose: Total
+    dtype:
+      freq: int
+  stopDeparture_vis:
+    merge:
+      - stop_period
+      - stop_skim_period
+      - purpose
+    dtype:
+      freq: int
+    total:
+      purpose: Total
+  stopFreqProfile_vis:
+    merge:
+      - num_stops
+      - purpose
+      - Direction
+    total:
+      purpose: Total
+  stopPurposeByTourPurpose_vis:
+    merge:
+      - stop_purpose
+      - tour_purpose
+    total:
+      tour_purpose: Total
+  tmodeProfile_vis:
+    merge:
+      - OwnershipCategory
+      - tour_mode
+      - purpose
+    total:
+      OwnershipCategory: All Households
+      purpose: Total
+  todProfile_vis:
+    merge:
+      - period
+      - skim_period
+      - purpose
+    total:
+      purpose: Total
+  totals:
+    merge:
+      - Variable
+    pct_diff:
+      value:
+        - model
+        - survey
+  tourDistProfile_vis:
+    merge:
+      - distbin
+      - purpose
+    total:
+      purpose: Total
+  # tourDistProfile_et_vis:
+  #   merge:
+  #     - distbin
+  #     - purpose
+    total:
+      purpose: Total
+  tourDuration:
+    merge:
+      - tourdur
+      - purpose
+    total:
+      purpose: Total
+    dtype:
+      freq: int
+  tours_pertype_purpose:
+    merge:
+      - PERTYPE
+      - TOURPURP
+  tripDeparture_vis:
+    merge:
+      - stop_period
+      - stop_skim_period
+      - tour_purpose
+    dtype:
+      freq: int
+    total:
+      tour_purpose: Total
+  tripmodeProfile_vis:
+    merge:
+      - trip_mode
+      - tour_mode
+      - purpose
+    total:
+      purpose: Total
+      tour_mode: Total
+  wfh_summary:
+    merge:
+      - District
+  worker_school_escorting:
+    merge:
+      - inb_escort_type
+      - out_escort_type

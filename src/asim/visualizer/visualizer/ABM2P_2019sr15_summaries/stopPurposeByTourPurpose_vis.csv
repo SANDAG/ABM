@@ -1,0 +1,57 @@
+stop_purpose,tour_purpose,freq
+04: Escort,1: Work,353565
+04: Escort,2: University,30007
+04: Escort,3: School,268847
+04: Escort,4: Escort,391353
+04: Escort,5: Individual Maintenance,94328
+04: Escort,6: Individual Discretionary,89348
+04: Escort,7: Joint Maintenance,15676
+04: Escort,8: Joint Discretionary,13789
+04: Escort,9: Work-based,1425
+05: Shopping,1: Work,222204
+05: Shopping,2: University,15213
+05: Shopping,3: School,49527
+05: Shopping,4: Escort,150616
+05: Shopping,5: Individual Maintenance,305005
+05: Shopping,6: Individual Discretionary,134535
+05: Shopping,7: Joint Maintenance,39735
+05: Shopping,8: Joint Discretionary,20513
+05: Shopping,9: Work-based,1541
+06: Maintenance,1: Work,96769
+06: Maintenance,2: University,8928
+06: Maintenance,3: School,28222
+06: Maintenance,4: Escort,81913
+06: Maintenance,5: Individual Maintenance,184904
+06: Maintenance,6: Individual Discretionary,49953
+06: Maintenance,7: Joint Maintenance,24764
+06: Maintenance,8: Joint Discretionary,8499
+06: Maintenance,9: Work-based,2059
+07: Eating,1: Work,348489
+07: Eating,2: University,12181
+07: Eating,3: School,47996
+07: Eating,4: Escort,82467
+07: Eating,5: Individual Maintenance,129305
+07: Eating,6: Individual Discretionary,82793
+07: Eating,7: Joint Maintenance,16936
+07: Eating,8: Joint Discretionary,12774
+07: Eating,9: Work-based,8170
+08: Visiting,1: Work,139851
+08: Visiting,2: University,5401
+08: Visiting,3: School,11014
+08: Visiting,4: Escort,29898
+08: Visiting,5: Individual Maintenance,33433
+08: Visiting,6: Individual Discretionary,70536
+08: Visiting,7: Joint Maintenance,4828
+08: Visiting,8: Joint Discretionary,9055
+08: Visiting,9: Work-based,1222
+09: Other Discretionary,1: Work,70856
+09: Other Discretionary,2: University,13123
+09: Other Discretionary,3: School,78564
+09: Other Discretionary,4: Escort,19042
+09: Other Discretionary,5: Individual Maintenance,39262
+09: Other Discretionary,6: Individual Discretionary,121540
+09: Other Discretionary,7: Joint Maintenance,5363
+09: Other Discretionary,8: Joint Discretionary,15156
+09: Other Discretionary,9: Work-based,103
+10: Work-Related,1: Work,53012
+10: Work-Related,9: Work-based,17591

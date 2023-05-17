@@ -1,0 +1,253 @@
+distbin,purpose,freq
+1,4: Escort,193298
+1,5: Individual Maintenance,122190
+1,6: Individual Discretionary,119333
+1,7: Joint Maintenance,12044
+1,8: Joint Discretionary,15837
+1,9: Work-based,47017
+2,4: Escort,201002
+2,5: Individual Maintenance,153927
+2,6: Individual Discretionary,97727
+2,7: Joint Maintenance,10564
+2,8: Joint Discretionary,12897
+2,9: Work-based,18910
+3,4: Escort,123448
+3,5: Individual Maintenance,113405
+3,6: Individual Discretionary,58915
+3,7: Joint Maintenance,13144
+3,8: Joint Discretionary,10006
+3,9: Work-based,12026
+4,4: Escort,93465
+4,5: Individual Maintenance,68168
+4,6: Individual Discretionary,40292
+4,7: Joint Maintenance,10327
+4,8: Joint Discretionary,6631
+4,9: Work-based,7178
+5,4: Escort,65438
+5,5: Individual Maintenance,54637
+5,6: Individual Discretionary,35740
+5,7: Joint Maintenance,8704
+5,8: Joint Discretionary,6005
+5,9: Work-based,5625
+6,4: Escort,49840
+6,5: Individual Maintenance,39023
+6,6: Individual Discretionary,21868
+6,7: Joint Maintenance,6351
+6,8: Joint Discretionary,3734
+6,9: Work-based,2632
+7,4: Escort,38165
+7,5: Individual Maintenance,27990
+7,6: Individual Discretionary,19175
+7,7: Joint Maintenance,4756
+7,8: Joint Discretionary,3279
+7,9: Work-based,2737
+8,4: Escort,30922
+8,5: Individual Maintenance,20893
+8,6: Individual Discretionary,16546
+8,7: Joint Maintenance,3768
+8,8: Joint Discretionary,2923
+8,9: Work-based,3073
+9,4: Escort,27563
+9,5: Individual Maintenance,16924
+9,6: Individual Discretionary,14375
+9,7: Joint Maintenance,3169
+9,8: Joint Discretionary,2554
+9,9: Work-based,1112
+10,4: Escort,25244
+10,5: Individual Maintenance,15968
+10,6: Individual Discretionary,12744
+10,7: Joint Maintenance,2846
+10,8: Joint Discretionary,2390
+10,9: Work-based,1286
+11,4: Escort,23749
+11,5: Individual Maintenance,12875
+11,6: Individual Discretionary,10592
+11,7: Joint Maintenance,2429
+11,8: Joint Discretionary,1987
+11,9: Work-based,1331
+12,4: Escort,22432
+12,5: Individual Maintenance,10646
+12,6: Individual Discretionary,8742
+12,7: Joint Maintenance,2106
+12,8: Joint Discretionary,1550
+12,9: Work-based,1538
+13,4: Escort,21497
+13,5: Individual Maintenance,8792
+13,6: Individual Discretionary,7145
+13,7: Joint Maintenance,1715
+13,8: Joint Discretionary,1250
+13,9: Work-based,1753
+14,4: Escort,20842
+14,5: Individual Maintenance,6655
+14,6: Individual Discretionary,5645
+14,7: Joint Maintenance,1359
+14,8: Joint Discretionary,1030
+14,9: Work-based,1777
+15,4: Escort,18955
+15,5: Individual Maintenance,5186
+15,6: Individual Discretionary,4467
+15,7: Joint Maintenance,1011
+15,8: Joint Discretionary,750
+15,9: Work-based,1756
+16,4: Escort,16344
+16,5: Individual Maintenance,4053
+16,6: Individual Discretionary,3411
+16,7: Joint Maintenance,840
+16,8: Joint Discretionary,577
+16,9: Work-based,1550
+17,4: Escort,13691
+17,5: Individual Maintenance,3020
+17,6: Individual Discretionary,2552
+17,7: Joint Maintenance,648
+17,8: Joint Discretionary,457
+17,9: Work-based,1191
+18,4: Escort,11259
+18,5: Individual Maintenance,2132
+18,6: Individual Discretionary,2024
+18,7: Joint Maintenance,452
+18,8: Joint Discretionary,342
+18,9: Work-based,761
+19,4: Escort,8213
+19,5: Individual Maintenance,1471
+19,6: Individual Discretionary,1515
+19,7: Joint Maintenance,349
+19,8: Joint Discretionary,244
+19,9: Work-based,462
+20,4: Escort,5159
+20,5: Individual Maintenance,1007
+20,6: Individual Discretionary,1181
+20,7: Joint Maintenance,221
+20,8: Joint Discretionary,229
+20,9: Work-based,179
+21,4: Escort,874
+21,5: Individual Maintenance,801
+21,6: Individual Discretionary,992
+21,7: Joint Maintenance,160
+21,8: Joint Discretionary,157
+21,9: Work-based,110
+22,4: Escort,444
+22,5: Individual Maintenance,746
+22,6: Individual Discretionary,987
+22,7: Joint Maintenance,145
+22,8: Joint Discretionary,147
+22,9: Work-based,75
+23,4: Escort,302
+23,5: Individual Maintenance,710
+23,6: Individual Discretionary,859
+23,7: Joint Maintenance,137
+23,8: Joint Discretionary,132
+23,9: Work-based,75
+24,4: Escort,227
+24,5: Individual Maintenance,674
+24,6: Individual Discretionary,918
+24,7: Joint Maintenance,165
+24,8: Joint Discretionary,128
+24,9: Work-based,47
+25,4: Escort,182
+25,5: Individual Maintenance,594
+25,6: Individual Discretionary,839
+25,7: Joint Maintenance,138
+25,8: Joint Discretionary,146
+25,9: Work-based,38
+26,4: Escort,158
+26,5: Individual Maintenance,618
+26,6: Individual Discretionary,763
+26,7: Joint Maintenance,126
+26,8: Joint Discretionary,105
+26,9: Work-based,29
+27,4: Escort,123
+27,5: Individual Maintenance,641
+27,6: Individual Discretionary,753
+27,7: Joint Maintenance,127
+27,8: Joint Discretionary,113
+27,9: Work-based,30
+28,4: Escort,116
+28,5: Individual Maintenance,592
+28,6: Individual Discretionary,700
+28,7: Joint Maintenance,158
+28,8: Joint Discretionary,107
+28,9: Work-based,27
+29,4: Escort,125
+29,5: Individual Maintenance,571
+29,6: Individual Discretionary,691
+29,7: Joint Maintenance,131
+29,8: Joint Discretionary,104
+29,9: Work-based,11
+30,4: Escort,105
+30,5: Individual Maintenance,545
+30,6: Individual Discretionary,664
+30,7: Joint Maintenance,90
+30,8: Joint Discretionary,93
+30,9: Work-based,14
+31,4: Escort,103
+31,5: Individual Maintenance,536
+31,6: Individual Discretionary,658
+31,7: Joint Maintenance,121
+31,8: Joint Discretionary,87
+31,9: Work-based,12
+32,4: Escort,81
+32,5: Individual Maintenance,532
+32,6: Individual Discretionary,654
+32,7: Joint Maintenance,109
+32,8: Joint Discretionary,95
+32,9: Work-based,5
+33,4: Escort,93
+33,5: Individual Maintenance,518
+33,6: Individual Discretionary,583
+33,7: Joint Maintenance,104
+33,8: Joint Discretionary,81
+33,9: Work-based,3
+34,4: Escort,90
+34,5: Individual Maintenance,477
+34,6: Individual Discretionary,554
+34,7: Joint Maintenance,100
+34,8: Joint Discretionary,85
+34,9: Work-based,4
+35,4: Escort,99
+35,5: Individual Maintenance,465
+35,6: Individual Discretionary,525
+35,7: Joint Maintenance,84
+35,8: Joint Discretionary,88
+35,9: Work-based,3
+36,4: Escort,77
+36,5: Individual Maintenance,511
+36,6: Individual Discretionary,476
+36,7: Joint Maintenance,99
+36,8: Joint Discretionary,86
+36,9: Work-based,8
+37,4: Escort,76
+37,5: Individual Maintenance,508
+37,6: Individual Discretionary,483
+37,7: Joint Maintenance,88
+37,8: Joint Discretionary,86
+37,9: Work-based,3
+38,4: Escort,102
+38,5: Individual Maintenance,496
+38,6: Individual Discretionary,460
+38,7: Joint Maintenance,79
+38,8: Joint Discretionary,68
+38,9: Work-based,4
+39,4: Escort,71
+39,5: Individual Maintenance,448
+39,6: Individual Discretionary,461
+39,7: Joint Maintenance,88
+39,8: Joint Discretionary,64
+39,9: Work-based,5
+40,4: Escort,72
+40,5: Individual Maintenance,448
+40,6: Individual Discretionary,428
+40,7: Joint Maintenance,68
+40,8: Joint Discretionary,70
+40,9: Work-based,3
+41,4: Escort,70
+41,5: Individual Maintenance,481
+41,6: Individual Discretionary,459
+41,7: Joint Maintenance,83
+41,8: Joint Discretionary,73
+41,9: Work-based,1
+99999,4: Escort,1169
+99999,5: Individual Maintenance,8113
+99999,6: Individual Discretionary,5982
+99999,7: Joint Maintenance,1236
+99999,8: Joint Discretionary,952
+99999,9: Work-based,12

@@ -1,0 +1,338 @@
+trip_mode,tour_mode,purpose,value
+01: SOV,01: SOV,1: Work,2462665
+01: SOV,01: SOV,2: University,143083
+01: SOV,01: SOV,3: School,32760
+01: SOV,01: SOV,4: Escort,653668
+01: SOV,01: SOV,5: Individual Maintenance,991102
+01: SOV,01: SOV,6: Individual Discretionary,564367
+01: SOV,01: SOV,9: Work-based,135839
+01: SOV,02: Shared Ride 2,1: Work,299445
+01: SOV,02: Shared Ride 2,2: University,17715
+01: SOV,02: Shared Ride 2,3: School,468
+01: SOV,02: Shared Ride 2,4: Escort,270781
+01: SOV,02: Shared Ride 2,5: Individual Maintenance,147868
+01: SOV,02: Shared Ride 2,6: Individual Discretionary,71550
+01: SOV,02: Shared Ride 2,9: Work-based,5674
+01: SOV,03: Shared Ride 3+,1: Work,115957
+01: SOV,03: Shared Ride 3+,2: University,5487
+01: SOV,03: Shared Ride 3+,3: School,3151
+01: SOV,03: Shared Ride 3+,4: Escort,104378
+01: SOV,03: Shared Ride 3+,5: Individual Maintenance,67279
+01: SOV,03: Shared Ride 3+,6: Individual Discretionary,27039
+01: SOV,03: Shared Ride 3+,9: Work-based,787
+01: SOV,07: PNR to Transit,1: Work,1602
+01: SOV,07: PNR to Transit,2: University,193
+01: SOV,07: PNR to Transit,5: Individual Maintenance,82
+02: Shared Ride 2,02: Shared Ride 2,1: Work,318093
+02: Shared Ride 2,02: Shared Ride 2,2: University,37505
+02: Shared Ride 2,02: Shared Ride 2,3: School,573930
+02: Shared Ride 2,02: Shared Ride 2,4: Escort,655067
+02: Shared Ride 2,02: Shared Ride 2,5: Individual Maintenance,291844
+02: Shared Ride 2,02: Shared Ride 2,6: Individual Discretionary,273576
+02: Shared Ride 2,02: Shared Ride 2,7: Joint Maintenance,194287
+02: Shared Ride 2,02: Shared Ride 2,8: Joint Discretionary,122786
+02: Shared Ride 2,02: Shared Ride 2,9: Work-based,37340
+02: Shared Ride 2,03: Shared Ride 3+,1: Work,41252
+02: Shared Ride 2,03: Shared Ride 3+,2: University,4862
+02: Shared Ride 2,03: Shared Ride 3+,3: School,125998
+02: Shared Ride 2,03: Shared Ride 3+,4: Escort,212141
+02: Shared Ride 2,03: Shared Ride 3+,5: Individual Maintenance,125474
+02: Shared Ride 2,03: Shared Ride 3+,6: Individual Discretionary,55751
+02: Shared Ride 2,03: Shared Ride 3+,7: Joint Maintenance,5606
+02: Shared Ride 2,03: Shared Ride 3+,8: Joint Discretionary,2764
+02: Shared Ride 2,03: Shared Ride 3+,9: Work-based,1808
+02: Shared Ride 2,06: Walk to Transit,1: Work,4100
+02: Shared Ride 2,06: Walk to Transit,2: University,2087
+02: Shared Ride 2,06: Walk to Transit,5: Individual Maintenance,320
+02: Shared Ride 2,06: Walk to Transit,6: Individual Discretionary,1797
+02: Shared Ride 2,06: Walk to Transit,7: Joint Maintenance,132
+02: Shared Ride 2,06: Walk to Transit,8: Joint Discretionary,7
+02: Shared Ride 2,07: PNR to Transit,1: Work,1623
+02: Shared Ride 2,07: PNR to Transit,2: University,754
+02: Shared Ride 2,07: PNR to Transit,5: Individual Maintenance,19
+02: Shared Ride 2,07: PNR to Transit,6: Individual Discretionary,149
+02: Shared Ride 2,08: KNR to Transit,1: Work,6340
+02: Shared Ride 2,08: KNR to Transit,2: University,2042
+02: Shared Ride 2,08: KNR to Transit,3: School,178
+02: Shared Ride 2,08: KNR to Transit,4: Escort,2
+02: Shared Ride 2,08: KNR to Transit,5: Individual Maintenance,574
+02: Shared Ride 2,08: KNR to Transit,6: Individual Discretionary,1014
+02: Shared Ride 2,08: KNR to Transit,7: Joint Maintenance,36
+02: Shared Ride 2,08: KNR to Transit,8: Joint Discretionary,277
+02: Shared Ride 2,09: TNC to Transit,6: Individual Discretionary,470
+02: Shared Ride 2,10: Taxi,1: Work,31
+02: Shared Ride 2,10: Taxi,4: Escort,44
+02: Shared Ride 2,10: Taxi,5: Individual Maintenance,109
+02: Shared Ride 2,10: Taxi,6: Individual Discretionary,285
+02: Shared Ride 2,10: Taxi,7: Joint Maintenance,168
+02: Shared Ride 2,10: Taxi,8: Joint Discretionary,173
+02: Shared Ride 2,11: TNC Single,1: Work,80
+02: Shared Ride 2,11: TNC Single,2: University,1
+02: Shared Ride 2,11: TNC Single,4: Escort,43
+02: Shared Ride 2,11: TNC Single,5: Individual Maintenance,93
+02: Shared Ride 2,11: TNC Single,6: Individual Discretionary,372
+02: Shared Ride 2,11: TNC Single,7: Joint Maintenance,186
+02: Shared Ride 2,11: TNC Single,8: Joint Discretionary,261
+02: Shared Ride 2,12: TNC Shared,1: Work,887
+02: Shared Ride 2,12: TNC Shared,2: University,11
+02: Shared Ride 2,12: TNC Shared,4: Escort,904
+02: Shared Ride 2,12: TNC Shared,5: Individual Maintenance,1221
+02: Shared Ride 2,12: TNC Shared,6: Individual Discretionary,1758
+02: Shared Ride 2,12: TNC Shared,7: Joint Maintenance,824
+02: Shared Ride 2,12: TNC Shared,8: Joint Discretionary,1226
+03: Shared Ride 3+,02: Shared Ride 2,3: School,37113
+03: Shared Ride 3+,03: Shared Ride 3+,1: Work,108229
+03: Shared Ride 3+,03: Shared Ride 3+,2: University,25957
+03: Shared Ride 3+,03: Shared Ride 3+,3: School,634351
+03: Shared Ride 3+,03: Shared Ride 3+,4: Escort,801691
+03: Shared Ride 3+,03: Shared Ride 3+,5: Individual Maintenance,340140
+03: Shared Ride 3+,03: Shared Ride 3+,6: Individual Discretionary,250666
+03: Shared Ride 3+,03: Shared Ride 3+,7: Joint Maintenance,68325
+03: Shared Ride 3+,03: Shared Ride 3+,8: Joint Discretionary,71817
+03: Shared Ride 3+,03: Shared Ride 3+,9: Work-based,11336
+03: Shared Ride 3+,06: Walk to Transit,1: Work,1562
+03: Shared Ride 3+,06: Walk to Transit,2: University,380
+03: Shared Ride 3+,06: Walk to Transit,3: School,1514
+03: Shared Ride 3+,06: Walk to Transit,5: Individual Maintenance,773
+03: Shared Ride 3+,06: Walk to Transit,7: Joint Maintenance,129
+03: Shared Ride 3+,07: PNR to Transit,1: Work,474
+03: Shared Ride 3+,07: PNR to Transit,2: University,142
+03: Shared Ride 3+,07: PNR to Transit,5: Individual Maintenance,1
+03: Shared Ride 3+,07: PNR to Transit,6: Individual Discretionary,215
+03: Shared Ride 3+,08: KNR to Transit,1: Work,1132
+03: Shared Ride 3+,08: KNR to Transit,2: University,96
+03: Shared Ride 3+,08: KNR to Transit,3: School,521
+03: Shared Ride 3+,08: KNR to Transit,5: Individual Maintenance,1946
+03: Shared Ride 3+,08: KNR to Transit,6: Individual Discretionary,3025
+03: Shared Ride 3+,08: KNR to Transit,7: Joint Maintenance,203
+03: Shared Ride 3+,08: KNR to Transit,8: Joint Discretionary,182
+03: Shared Ride 3+,09: TNC to Transit,6: Individual Discretionary,1523
+03: Shared Ride 3+,10: Taxi,1: Work,6
+03: Shared Ride 3+,10: Taxi,4: Escort,13
+03: Shared Ride 3+,10: Taxi,5: Individual Maintenance,16
+03: Shared Ride 3+,10: Taxi,6: Individual Discretionary,717
+03: Shared Ride 3+,10: Taxi,7: Joint Maintenance,26
+03: Shared Ride 3+,10: Taxi,8: Joint Discretionary,177
+03: Shared Ride 3+,10: Taxi,9: Work-based,158
+03: Shared Ride 3+,11: TNC Single,1: Work,15
+03: Shared Ride 3+,11: TNC Single,4: Escort,9
+03: Shared Ride 3+,11: TNC Single,5: Individual Maintenance,22
+03: Shared Ride 3+,11: TNC Single,6: Individual Discretionary,798
+03: Shared Ride 3+,11: TNC Single,7: Joint Maintenance,23
+03: Shared Ride 3+,11: TNC Single,8: Joint Discretionary,225
+03: Shared Ride 3+,11: TNC Single,9: Work-based,158
+03: Shared Ride 3+,12: TNC Shared,1: Work,247
+03: Shared Ride 3+,12: TNC Shared,2: University,15
+03: Shared Ride 3+,12: TNC Shared,4: Escort,173
+03: Shared Ride 3+,12: TNC Shared,5: Individual Maintenance,200
+03: Shared Ride 3+,12: TNC Shared,6: Individual Discretionary,4171
+03: Shared Ride 3+,12: TNC Shared,7: Joint Maintenance,88
+03: Shared Ride 3+,12: TNC Shared,8: Joint Discretionary,1036
+03: Shared Ride 3+,12: TNC Shared,9: Work-based,484
+04: Walk,02: Shared Ride 2,1: Work,20598
+04: Walk,02: Shared Ride 2,2: University,5564
+04: Walk,02: Shared Ride 2,3: School,23756
+04: Walk,02: Shared Ride 2,4: Escort,4346
+04: Walk,02: Shared Ride 2,5: Individual Maintenance,5975
+04: Walk,02: Shared Ride 2,6: Individual Discretionary,21228
+04: Walk,02: Shared Ride 2,7: Joint Maintenance,50
+04: Walk,02: Shared Ride 2,8: Joint Discretionary,2754
+04: Walk,02: Shared Ride 2,9: Work-based,678
+04: Walk,03: Shared Ride 3+,1: Work,7351
+04: Walk,03: Shared Ride 3+,2: University,1319
+04: Walk,03: Shared Ride 3+,3: School,37925
+04: Walk,03: Shared Ride 3+,4: Escort,1364
+04: Walk,03: Shared Ride 3+,5: Individual Maintenance,2887
+04: Walk,03: Shared Ride 3+,6: Individual Discretionary,14468
+04: Walk,03: Shared Ride 3+,7: Joint Maintenance,90
+04: Walk,03: Shared Ride 3+,8: Joint Discretionary,1175
+04: Walk,03: Shared Ride 3+,9: Work-based,462
+04: Walk,04: Walk,1: Work,47995
+04: Walk,04: Walk,2: University,12354
+04: Walk,04: Walk,3: School,50216
+04: Walk,04: Walk,4: Escort,83160
+04: Walk,04: Walk,5: Individual Maintenance,203895
+04: Walk,04: Walk,6: Individual Discretionary,186240
+04: Walk,04: Walk,7: Joint Maintenance,8015
+04: Walk,04: Walk,8: Joint Discretionary,26613
+04: Walk,04: Walk,9: Work-based,64181
+04: Walk,06: Walk to Transit,1: Work,6474
+04: Walk,06: Walk to Transit,2: University,7852
+04: Walk,06: Walk to Transit,3: School,525
+04: Walk,06: Walk to Transit,4: Escort,2
+04: Walk,06: Walk to Transit,5: Individual Maintenance,426
+04: Walk,06: Walk to Transit,6: Individual Discretionary,4209
+04: Walk,06: Walk to Transit,7: Joint Maintenance,4048
+04: Walk,06: Walk to Transit,8: Joint Discretionary,765
+04: Walk,06: Walk to Transit,9: Work-based,90
+04: Walk,07: PNR to Transit,1: Work,414
+04: Walk,07: PNR to Transit,5: Individual Maintenance,14
+04: Walk,07: PNR to Transit,6: Individual Discretionary,269
+04: Walk,08: KNR to Transit,1: Work,1338
+04: Walk,08: KNR to Transit,2: University,269
+04: Walk,08: KNR to Transit,3: School,571
+04: Walk,08: KNR to Transit,5: Individual Maintenance,1
+04: Walk,08: KNR to Transit,6: Individual Discretionary,520
+04: Walk,08: KNR to Transit,7: Joint Maintenance,25
+04: Walk,08: KNR to Transit,8: Joint Discretionary,86
+04: Walk,09: TNC to Transit,1: Work,2
+04: Walk,09: TNC to Transit,6: Individual Discretionary,304
+04: Walk,10: Taxi,1: Work,206
+04: Walk,10: Taxi,2: University,30
+04: Walk,10: Taxi,4: Escort,334
+04: Walk,10: Taxi,5: Individual Maintenance,1511
+04: Walk,10: Taxi,6: Individual Discretionary,2743
+04: Walk,10: Taxi,8: Joint Discretionary,593
+04: Walk,10: Taxi,9: Work-based,9
+04: Walk,11: TNC Single,1: Work,298
+04: Walk,11: TNC Single,2: University,16
+04: Walk,11: TNC Single,4: Escort,191
+04: Walk,11: TNC Single,5: Individual Maintenance,1091
+04: Walk,11: TNC Single,6: Individual Discretionary,1963
+04: Walk,11: TNC Single,7: Joint Maintenance,6
+04: Walk,11: TNC Single,8: Joint Discretionary,491
+04: Walk,11: TNC Single,9: Work-based,5
+04: Walk,12: TNC Shared,1: Work,1403
+04: Walk,12: TNC Shared,2: University,99
+04: Walk,12: TNC Shared,4: Escort,894
+04: Walk,12: TNC Shared,5: Individual Maintenance,5150
+04: Walk,12: TNC Shared,6: Individual Discretionary,6521
+04: Walk,12: TNC Shared,7: Joint Maintenance,2
+04: Walk,12: TNC Shared,8: Joint Discretionary,1592
+04: Walk,12: TNC Shared,9: Work-based,7
+05: Bike,05: Bike,1: Work,100091
+05: Bike,05: Bike,2: University,4099
+05: Bike,05: Bike,3: School,22815
+05: Bike,05: Bike,4: Escort,3651
+05: Bike,05: Bike,5: Individual Maintenance,17664
+05: Bike,05: Bike,6: Individual Discretionary,52776
+05: Bike,05: Bike,7: Joint Maintenance,465
+05: Bike,05: Bike,8: Joint Discretionary,112
+05: Bike,05: Bike,9: Work-based,2219
+06: Walk to Transit,06: Walk to Transit,1: Work,62788
+06: Walk to Transit,06: Walk to Transit,2: University,25272
+06: Walk to Transit,06: Walk to Transit,3: School,8895
+06: Walk to Transit,06: Walk to Transit,4: Escort,105
+06: Walk to Transit,06: Walk to Transit,5: Individual Maintenance,21800
+06: Walk to Transit,06: Walk to Transit,6: Individual Discretionary,15317
+06: Walk to Transit,06: Walk to Transit,7: Joint Maintenance,3180
+06: Walk to Transit,06: Walk to Transit,8: Joint Discretionary,3028
+06: Walk to Transit,06: Walk to Transit,9: Work-based,1018
+06: Walk to Transit,07: PNR to Transit,1: Work,1384
+06: Walk to Transit,08: KNR to Transit,1: Work,2389
+06: Walk to Transit,08: KNR to Transit,2: University,546
+06: Walk to Transit,08: KNR to Transit,3: School,399
+06: Walk to Transit,08: KNR to Transit,5: Individual Maintenance,68
+06: Walk to Transit,08: KNR to Transit,6: Individual Discretionary,1058
+06: Walk to Transit,08: KNR to Transit,7: Joint Maintenance,7
+06: Walk to Transit,09: TNC to Transit,1: Work,1
+06: Walk to Transit,09: TNC to Transit,6: Individual Discretionary,570
+07: PNR to Transit,07: PNR to Transit,1: Work,5807
+07: PNR to Transit,07: PNR to Transit,2: University,3083
+07: PNR to Transit,07: PNR to Transit,3: School,2
+07: PNR to Transit,07: PNR to Transit,4: Escort,2
+07: PNR to Transit,07: PNR to Transit,5: Individual Maintenance,425
+07: PNR to Transit,07: PNR to Transit,6: Individual Discretionary,527
+08: KNR to Transit,08: KNR to Transit,1: Work,8163
+08: KNR to Transit,08: KNR to Transit,2: University,3030
+08: KNR to Transit,08: KNR to Transit,3: School,1268
+08: KNR to Transit,08: KNR to Transit,4: Escort,12
+08: KNR to Transit,08: KNR to Transit,5: Individual Maintenance,1983
+08: KNR to Transit,08: KNR to Transit,6: Individual Discretionary,4770
+08: KNR to Transit,08: KNR to Transit,7: Joint Maintenance,295
+08: KNR to Transit,08: KNR to Transit,8: Joint Discretionary,469
+08: KNR to Transit,09: TNC to Transit,1: Work,5
+08: KNR to Transit,09: TNC to Transit,6: Individual Discretionary,1996
+09: TNC to Transit,08: KNR to Transit,3: School,448
+10: Taxi,06: Walk to Transit,2: University,2
+10: Taxi,06: Walk to Transit,4: Escort,6
+10: Taxi,06: Walk to Transit,5: Individual Maintenance,2779
+10: Taxi,06: Walk to Transit,6: Individual Discretionary,1072
+10: Taxi,06: Walk to Transit,9: Work-based,57
+10: Taxi,08: KNR to Transit,1: Work,11
+10: Taxi,08: KNR to Transit,2: University,31
+10: Taxi,08: KNR to Transit,8: Joint Discretionary,21
+10: Taxi,10: Taxi,1: Work,1
+10: Taxi,10: Taxi,2: University,1
+10: Taxi,10: Taxi,4: Escort,34
+10: Taxi,10: Taxi,5: Individual Maintenance,32
+10: Taxi,10: Taxi,6: Individual Discretionary,15
+10: Taxi,10: Taxi,8: Joint Discretionary,2
+10: Taxi,11: TNC Single,1: Work,2
+10: Taxi,11: TNC Single,2: University,1
+10: Taxi,11: TNC Single,4: Escort,16
+10: Taxi,11: TNC Single,5: Individual Maintenance,30
+10: Taxi,11: TNC Single,6: Individual Discretionary,17
+10: Taxi,11: TNC Single,8: Joint Discretionary,4
+10: Taxi,12: TNC Shared,1: Work,3
+10: Taxi,12: TNC Shared,2: University,1
+10: Taxi,12: TNC Shared,4: Escort,78
+10: Taxi,12: TNC Shared,5: Individual Maintenance,109
+10: Taxi,12: TNC Shared,6: Individual Discretionary,50
+10: Taxi,12: TNC Shared,8: Joint Discretionary,7
+11: TNC Single,06: Walk to Transit,1: Work,1633
+11: TNC Single,06: Walk to Transit,2: University,21
+11: TNC Single,06: Walk to Transit,4: Escort,3
+11: TNC Single,06: Walk to Transit,5: Individual Maintenance,1034
+11: TNC Single,06: Walk to Transit,6: Individual Discretionary,418
+11: TNC Single,06: Walk to Transit,7: Joint Maintenance,66
+11: TNC Single,06: Walk to Transit,8: Joint Discretionary,20
+11: TNC Single,06: Walk to Transit,9: Work-based,30
+11: TNC Single,08: KNR to Transit,1: Work,39
+11: TNC Single,08: KNR to Transit,2: University,44
+11: TNC Single,08: KNR to Transit,8: Joint Discretionary,33
+11: TNC Single,10: Taxi,1: Work,433
+11: TNC Single,10: Taxi,2: University,1
+11: TNC Single,10: Taxi,4: Escort,634
+11: TNC Single,10: Taxi,5: Individual Maintenance,1087
+11: TNC Single,10: Taxi,6: Individual Discretionary,5023
+11: TNC Single,10: Taxi,7: Joint Maintenance,230
+11: TNC Single,10: Taxi,8: Joint Discretionary,614
+11: TNC Single,10: Taxi,9: Work-based,174
+11: TNC Single,11: TNC Single,1: Work,983
+11: TNC Single,11: TNC Single,2: University,26
+11: TNC Single,11: TNC Single,4: Escort,671
+11: TNC Single,11: TNC Single,5: Individual Maintenance,1345
+11: TNC Single,11: TNC Single,6: Individual Discretionary,5633
+11: TNC Single,11: TNC Single,7: Joint Maintenance,304
+11: TNC Single,11: TNC Single,8: Joint Discretionary,813
+11: TNC Single,11: TNC Single,9: Work-based,159
+11: TNC Single,12: TNC Shared,1: Work,3882
+11: TNC Single,12: TNC Shared,2: University,57
+11: TNC Single,12: TNC Shared,4: Escort,3002
+11: TNC Single,12: TNC Shared,5: Individual Maintenance,5355
+11: TNC Single,12: TNC Shared,6: Individual Discretionary,18404
+11: TNC Single,12: TNC Shared,7: Joint Maintenance,722
+11: TNC Single,12: TNC Shared,8: Joint Discretionary,2603
+11: TNC Single,12: TNC Shared,9: Work-based,336
+12: TNC Shared,06: Walk to Transit,2: University,34
+12: TNC Shared,06: Walk to Transit,5: Individual Maintenance,62
+12: TNC Shared,06: Walk to Transit,6: Individual Discretionary,2852
+12: TNC Shared,06: Walk to Transit,9: Work-based,92
+12: TNC Shared,08: KNR to Transit,1: Work,157
+12: TNC Shared,08: KNR to Transit,2: University,275
+12: TNC Shared,08: KNR to Transit,8: Joint Discretionary,143
+12: TNC Shared,10: Taxi,1: Work,25
+12: TNC Shared,10: Taxi,2: University,2
+12: TNC Shared,10: Taxi,4: Escort,1
+12: TNC Shared,10: Taxi,5: Individual Maintenance,5
+12: TNC Shared,10: Taxi,6: Individual Discretionary,234
+12: TNC Shared,10: Taxi,7: Joint Maintenance,136
+12: TNC Shared,10: Taxi,8: Joint Discretionary,62
+12: TNC Shared,10: Taxi,9: Work-based,2
+12: TNC Shared,11: TNC Single,1: Work,90
+12: TNC Shared,11: TNC Single,2: University,8
+12: TNC Shared,11: TNC Single,4: Escort,2
+12: TNC Shared,11: TNC Single,5: Individual Maintenance,8
+12: TNC Shared,11: TNC Single,6: Individual Discretionary,268
+12: TNC Shared,11: TNC Single,7: Joint Maintenance,150
+12: TNC Shared,11: TNC Single,8: Joint Discretionary,70
+12: TNC Shared,12: TNC Shared,1: Work,1126
+12: TNC Shared,12: TNC Shared,2: University,130
+12: TNC Shared,12: TNC Shared,4: Escort,159
+12: TNC Shared,12: TNC Shared,5: Individual Maintenance,184
+12: TNC Shared,12: TNC Shared,6: Individual Discretionary,1827
+12: TNC Shared,12: TNC Shared,7: Joint Maintenance,660
+12: TNC Shared,12: TNC Shared,8: Joint Discretionary,411
+12: TNC Shared,12: TNC Shared,9: Work-based,6
+13: School Bus,13: School Bus,3: School,139168
