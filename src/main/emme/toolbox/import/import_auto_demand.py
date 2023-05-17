@@ -69,6 +69,7 @@ import pandas as _pandas
 import os
 import numpy
 from contextlib import contextmanager as _context
+import inro.emme.matrix as _matrix
 
 _join = os.path.join
 
@@ -196,8 +197,11 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
 
     @_m.logbook_trace("Import ActivitySim traffic trips from OMX")
     def import_traffic_trips(self, props):
-        title = "Import CT-RAMP traffic trips from OMX report"
+        title = "Import ActivitySim traffic trips from OMX report"
         report = _m.PageBuilder(title)
+
+        emmebank = self.scenario.emmebank
+        emme_zones = self.scenario.zone_numbers
     
         taxi_da_share = props["Taxi.da.share"]
         taxi_s2_share = props["Taxi.s2.share"]
@@ -213,7 +217,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
         tnc_shared_pce = props["TNC.shared.passengersPerVehicle"]
         av_share = props["Mobility.AV.Share"]
     
-        periods = ["_AM", "_MD", "_PM", "_EV"]
+        periods = ["_EA", "_AM", "_MD", "_PM", "_EV"] 
         vot_bins = ["_low", "_med", "_high"]
         mode_shares = [
             ("mf%s_SOV_TR_H", {
@@ -229,76 +233,112 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
 
         with self.setup() as omx_manager:
             # SOV transponder "TRPDR" = "TR" and non-transponder "NOTRPDR" = "NT"
+            # Check the OMX zones are the same Emme database, assume all files have the same zones
+            # omx_zones = omx_manager.zone_list("autoTrips%s%s.omx" % (periods[0], vot_bins[0]))
+            
             for period in periods:
-                _m.logbook_trace("Import ActivitySim traffic trips from OMX for %s" % period)
-                for vot in vot_bins:
-                    # SOV non-transponder demand
-                    matrix_name = "mf%s_SOV_NT_%s" % (period[1:], vot[1].upper())
-                    logbook_label = "Import auto from OMX SOVNOTRPDR to matrix %s" % (matrix_name)
-                    resident_demand = omx_manager.lookup(("auto", period, vot), "SOVNOTRPDR%s" % period)
-                    visitor_demand = omx_manager.lookup(("autoVisitor", period, vot), "SOV%s" % period)
-                    cross_border_demand = omx_manager.lookup(("autoCrossBorder", period, vot), "SOV%s" % period)
-                    # NOTE: No non-transponder airport or internal-external demand
-                    total_asim_trips = (
-                        resident_demand + cross_border_demand+ visitor_demand) 
-                    dem_utils.demand_report([
-                            ("resident", resident_demand),
-                            ("cross_border", cross_border_demand),
-                            ("visitor", visitor_demand),
-                            ("total", total_asim_trips)
-                        ], 
-                        logbook_label, self.scenario, report)
-                    self.set_data(matrix_name, total_asim_trips)
-                    
-                    # SOV transponder demand
-                    matrix_name = "mf%s_SOV_TR_%s" % (period[1:], vot[1].upper())
-                    logbook_label = "Import auto from OMX SOVTRPDR to matrix %s" % (matrix_name)
-                    resident_demand = omx_manager.lookup(("auto", period, vot), "SOVTRPDR%s" % period)
-                    # NOTE: No transponder visitor or cross-border demand
-                    airport_demand = omx_manager.lookup(("autoAirport", ".SAN" + period, vot), "SOV%s" % period)
-                    if omx_manager.file_exists(("autoAirport", ".CBX" + period, vot)):
-                        airport_demand += omx_manager.lookup(("autoAirport", ".CBX" + period, vot), "SOV%s" % period)
-                    
-                    total_asim_trips = (resident_demand + airport_demand)
-
-                    dem_utils.demand_report([
-                            ("resident", resident_demand),
-                            ("airport", airport_demand),
-                            ("total", total_asim_trips)
-                        ], 
-                        logbook_label, self.scenario, report)
-                    self.set_data(matrix_name, total_asim_trips)
-
-                    # HOV2 and HOV3 demand
-                    matrix_name_map = [
-                        ("mf%s_HOV2_%s",    "SR2%s"),
-                        ("mf%s_HOV3_%s",    "SR3%s")
-                    ]
-                    for matrix_name_tmplt, omx_name in matrix_name_map:
-                        matrix_name = matrix_name_tmplt % (period[1:], vot[1].upper())
-                        logbook_label = "Import auto from OMX %s to matrix %s" % (omx_name[:3], matrix_name)
-                        resident_demand = (
-                            omx_manager.lookup(("auto", period, vot), omx_name % ("TRPDR" + period))
-                            + omx_manager.lookup(("auto", period, vot), omx_name % ("NOTRPDR" + period)))
-                        visitor_demand = omx_manager.lookup(("autoVisitor", period, vot), omx_name % period)
-                        cross_border_demand = omx_manager.lookup(("autoCrossBorder", period, vot), omx_name % period)
-                        airport_demand = omx_manager.lookup(("autoAirport", ".SAN" + period, vot), omx_name % period)
-                        if omx_manager.file_exists(("autoAirport", ".CBX" + period, vot)):
-                            airport_demand += omx_manager.lookup(("autoAirport", ".CBX" + period, vot), omx_name % period)
-                        # internal_external_demand = omx_manager.lookup(("autoInternalExternal", period, vot), omx_name % period)
-
+                with _m.logbook_trace("Import ActivitySim traffic trips from OMX for %s" % period):
+                    for vot in vot_bins:
+                        # SOV non-transponder demand
+                        matrix_name = "mf%s_SOV_NT_%s" % (period[1:], vot[1].upper())
+                        logbook_label = "Import auto from OMX SOVNOTRPDR to matrix %s" % (matrix_name)
+                        resident_demand = omx_manager.lookup(("auto", period, vot), "SOVNOTRPDR%s" % period)
+                        visitor_demand = omx_manager.lookup(("autoVisitor", period, vot), "SOV%s" % period)
+                        cross_border_demand = omx_manager.lookup(("autoCrossBorder", period, vot), "SOV%s" % period)
+                        # NOTE: No non-transponder airport or internal-external demand
                         total_asim_trips = (
-                            resident_demand + cross_border_demand + visitor_demand + airport_demand) #+ internal_external_demand
+                            resident_demand + cross_border_demand+ visitor_demand)
+
+                        # omx_zones = omx_manager.zone_list("autoTrips_EA_low.omx")
+                        # matrix = emmebank.matrix(matrix_name)
+                        # if omx_zones != emme_zones:
+                        #     with _m.logbook_trace("doing zone mapping for SOV_NT_%s_%s" % (period, vot)):
+                        #         matrix_data = _matrix.MatrixData(type='f', indices=[omx_zones, omx_zones])
+                        #         matrix_data.from_numpy(total_asim_trips)
+                        #         expanded_matrix_data = matrix_data.expand([emme_zones, emme_zones])
+                        #         matrix.set_data(expanded_matrix_data, self.scenario)
+                        # else:
+                        #     matrix.set_numpy_data(total_asim_trips, self.scenario)
+
                         dem_utils.demand_report([
                                 ("resident", resident_demand),
                                 ("cross_border", cross_border_demand),
                                 ("visitor", visitor_demand),
-                                ("airport", airport_demand),
-                                # ("internal_external", internal_external_demand),
                                 ("total", total_asim_trips)
-                            ],
+                            ], 
                             logbook_label, self.scenario, report)
                         self.set_data(matrix_name, total_asim_trips)
+                        
+                        # SOV transponder demand
+                        matrix_name = "mf%s_SOV_TR_%s" % (period[1:], vot[1].upper())
+                        logbook_label = "Import auto from OMX SOVTRPDR to matrix %s" % (matrix_name)
+                        resident_demand = omx_manager.lookup(("auto", period, vot), "SOVTRPDR%s" % period)
+                        # NOTE: No transponder visitor or cross-border demand
+                        airport_demand = omx_manager.lookup(("autoAirport", ".SAN" + period, vot), "SOV%s" % period)
+                        if omx_manager.file_exists(("autoAirport", ".CBX" + period, vot)):
+                            airport_demand += omx_manager.lookup(("autoAirport", ".CBX" + period, vot), "SOV%s" % period)
+                        
+                        total_asim_trips = (resident_demand + airport_demand)
+
+                        
+                        # matrix = emmebank.matrix(matrix_name)
+                        # if omx_zones != emme_zones:
+                        #     matrix_data = _matrix.MatrixData(type='f', indices=[omx_zones, omx_zones])
+                        #     matrix_data.from_numpy(total_asim_trips)
+                        #     expanded_matrix_data = matrix_data.expand([emme_zones, emme_zones])
+                        #     matrix.set_data(expanded_matrix_data, self.scenario)
+                        # else:
+                        #     matrix.set_numpy_data(total_asim_trips, self.scenario)
+
+                        dem_utils.demand_report([
+                                ("resident", resident_demand),
+                                ("airport", airport_demand),
+                                ("total", total_asim_trips)
+                            ], 
+                            logbook_label, self.scenario, report)
+                        self.set_data(matrix_name, total_asim_trips)
+
+                        # HOV2 and HOV3 demand
+                        matrix_name_map = [
+                            ("mf%s_HOV2_%s",    "SR2%s"),
+                            ("mf%s_HOV3_%s",    "SR3%s")
+                        ]
+                        for matrix_name_tmplt, omx_name in matrix_name_map:
+                            matrix_name = matrix_name_tmplt % (period[1:], vot[1].upper())
+                            logbook_label = "Import auto from OMX %s to matrix %s" % (omx_name[:3], matrix_name)
+                            resident_demand = (
+                                omx_manager.lookup(("auto", period, vot), omx_name % ("TRPDR" + period))
+                                + omx_manager.lookup(("auto", period, vot), omx_name % ("NOTRPDR" + period)))
+                            visitor_demand = omx_manager.lookup(("autoVisitor", period, vot), omx_name % period)
+                            cross_border_demand = omx_manager.lookup(("autoCrossBorder", period, vot), omx_name % period)
+                            airport_demand = omx_manager.lookup(("autoAirport", ".SAN" + period, vot), omx_name % period)
+                            if omx_manager.file_exists(("autoAirport", ".CBX" + period, vot)):
+                                airport_demand += omx_manager.lookup(("autoAirport", ".CBX" + period, vot), omx_name % period)
+                            # internal_external_demand = omx_manager.lookup(("autoInternalExternal", period, vot), omx_name % period)
+
+                            total_asim_trips = (
+                                resident_demand + cross_border_demand + visitor_demand + airport_demand)
+                            
+                            # Check the OMX zones are the same Emme database, assume all files have the same zones
+                            # matrix = emmebank.matrix(matrix_name)
+                            # if omx_zones != emme_zones:
+                            #     matrix_data = _matrix.MatrixData(type='f', indices=[omx_zones, omx_zones])
+                            #     matrix_data.from_numpy(total_asim_trips)
+                            #     expanded_matrix_data = matrix_data.expand([emme_zones, emme_zones])
+                            #     matrix.set_data(expanded_matrix_data, self.scenario)
+                            # else:
+                            #     matrix.set_numpy_data(total_asim_trips, self.scenario)
+                            
+                            dem_utils.demand_report([
+                                    ("resident", resident_demand),
+                                    ("cross_border", cross_border_demand),
+                                    ("visitor", visitor_demand),
+                                    ("airport", airport_demand),
+                                    # ("internal_external", internal_external_demand),
+                                    ("total", total_asim_trips)
+                                ],
+                                logbook_label, self.scenario, report)
+                            self.set_data(matrix_name, total_asim_trips)
 
                 # add TNC and TAXI demand to vot="high"
                 # for matrix_name_tmplt, share in mode_shares:

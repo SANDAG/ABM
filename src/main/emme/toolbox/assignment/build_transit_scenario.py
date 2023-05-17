@@ -331,8 +331,6 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             dst_attrs = ["data2"]
             if scenario.has_traffic_results and "@auto_time" in scenario.attributes("LINK"):
                 src_attrs.append("@auto_time")
-                #change auto_time to data1; this way dst_attrs = ["data2", "data1"] which is basically [ul2,ul1], and the @auto_time will be copied to ul1, instead of auto_time
-                #then in the import_network, change the definiton o tf1 to ul1
                 dst_attrs.append("auto_time")
             values = network.get_attribute_values("LINK", src_attrs)
             network.set_attribute_values("LINK", dst_attrs, values)

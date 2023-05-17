@@ -524,7 +524,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     traffic_components = [
                         "traffic_skims",
                         "truck_model",
-                        "external_internal_model", "external_external_model"]
+                        "external_internal_model", "external_external_model", "traffic_demand"]
                     if not skipCopyWarmupTripTables:
                         traffic_components.append("traffic_demand")
                     init_matrices(traffic_components, periods, base_scenario, deleteAllMatrices)
@@ -579,25 +579,27 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 if not skipTransitSkimming[iteration]:
                     # run transit assignment
                     # export transit skims
-                    with _m.logbook_trace("Transit assignments and skims"):
-                        for number, period in period_ids:
-                            src_period_scenario = main_emmebank.scenario(number)
-                            transit_assign_scen = build_transit_scen(
-                                period=period, base_scenario=src_period_scenario,
-                                transit_emmebank=transit_emmebank,
-                                scenario_id=src_period_scenario.id,
-                                scenario_title="%s %s transit assign" % (base_scenario.title, period),
-                                data_table_name=scenarioYear, overwrite=True)
+                    # with _m.logbook_trace("Transit assignments and skims"):
+                    for number, period in period_ids:
+                        src_period_scenario = main_emmebank.scenario(number)
                         
-                            create_transit_connector(period, transit_assign_scen, create_connectors=True)
-                                
-                            transit_assign(period, transit_assign_scen, data_table_name=scenarioYear,
-                                           skims_only=True, num_processors=num_processors)
+                        transit_assign_scen = build_transit_scen(
+                        period=period, base_scenario=src_period_scenario,
+                        transit_emmebank=transit_emmebank,
+                        scenario_id=src_period_scenario.id,
+                        scenario_title="%s %s transit assign" % (base_scenario.title, period),
+                        data_table_name=scenarioYear, overwrite=True)
+                    
+                    
+                        create_transit_connector(period, transit_assign_scen, create_connectors=True)
                             
-                            #output transit skims by period
-                            omx_file = _join(output_dir, "skims", "transit_skims_" + period + ".omx")
-                            period_list = [period]
-                            export_transit_skims(omx_file, period_list, transit_scenario, big_to_zero=False)  
+                        transit_assign(period, transit_assign_scen, data_table_name=scenarioYear,
+                                        skims_only=True, num_processors=num_processors)
+
+                        #output transit skims by period
+                        omx_file = _join(output_dir, "skims", "transit_skims_" + period + ".omx")
+                        period_list = [period]
+                        export_transit_skims(omx_file, period_list, transit_scenario, big_to_zero=False)  
 
                 if not skipTransponderExport[iteration]:
                     am_scenario = main_emmebank.scenario(base_scenario.number + 2)
@@ -612,7 +614,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 if not skipABMResident[iteration]:
                     self.run_proc(
                         "runSandagAbm_ActivitySimResident.cmd",
-                        [drive, drive + path_forward_slash, sample_rate[iteration] * hh_count, msa_iteration],
+                        [drive, drive + path_forward_slash, int(sample_rate[iteration] * hh_count), msa_iteration],
                         "Running ActivitySim resident model", capture_output=True)
                 if not skipABMAirport[iteration]:
                     self.run_proc(
@@ -693,7 +695,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         if not skipVisualizer:
             self.run_proc("RunViz.bat",
-                          [drive, path_no_drive, visualizer_reference_path, visualizer_output_file, "NO", visualizer_reference_label, visualizer_build_label, mgraInputFile],
+                          [drive, drive + path_forward_slash],
                           "HTML Visualizer", capture_output=True)
 
         if not skipDataExport:

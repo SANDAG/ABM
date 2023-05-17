@@ -63,6 +63,8 @@ CALL %CONDA2_ACT% base
 cd /d %PROJECT_DIRECTORY%
 %PYTHON2% src/asim/scripts/convert_tripTables.py visitor output
 
+%PYTHON3% src/asim/scripts/set_zoneMapping.py visitor output
+
 ECHO ActivitySim Visitor run complete!!
 ECHO %startTime%%Time%
 

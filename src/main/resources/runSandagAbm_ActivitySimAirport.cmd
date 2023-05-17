@@ -63,6 +63,9 @@ cd /d %PROJECT_DIRECTORY%
 %PYTHON2% src/asim/scripts/convert_tripTables.py airport.CBX output
 %PYTHON2% src/asim/scripts/convert_tripTables.py airport.SAN output
 
+%PYTHON3% src/asim/scripts/set_zoneMapping.py airport.CBX output
+%PYTHON3% src/asim/scripts/set_zoneMapping.py airport.SAN output
+
 ECHO ActivitySim Airport model runs complete!!
 ECHO %startTime%%Time%
 

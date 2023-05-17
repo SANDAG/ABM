@@ -56,8 +56,8 @@ MD visitor
 MD resident
 CD ..
 
-if %ITERATION% == 1 (
-    @REM ECHO Running resident model pre-processing
+if %ITERATION% equ 1 (
+    ECHO Running resident model pre-processing
     @REM %PYTHON3% src/asim/scripts/resident/2zoneSkim.py %PROJECT_DIRECTORY%
     %PYTHON3% src/asim/scripts/resident/resident_preprocessing.py input output
 
@@ -73,6 +73,7 @@ if %ITERATION% == 1 (
     @REM ECHO Running visitor model pre-processing
     @REM %PYTHON3% src/asim/scripts/visitor/visitor_model.py -t -c src/asim/configs/visitor -d input -o output/visitor
 ) else (
+    ECHO Running resident model pre-processing
     %PYTHON3% src/asim/scripts/resident/resident_preprocessing.py input output
 )
 

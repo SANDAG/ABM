@@ -444,12 +444,12 @@ class OMXManager(object):
     def lookup(self, name_args, key):
         file_name = self._name_tmplt % name_args
         omx_file = self._omx_files.get(file_name)
-        with _m.logbook_trace("file_name: %s" % (file_name)):
-            if omx_file is None:
-                file_path = os.path.join(self._directory, file_name)
-                omx_file = _omx.open_file(file_path, 'r')
-                self._omx_files[file_name] = omx_file
-            return omx_file[key].read()
+        # with _m.logbook_trace("file_name: %s" % (file_name)):
+        if omx_file is None:
+            file_path = os.path.join(self._directory, file_name)
+            omx_file = _omx.open_file(file_path, 'r')
+            self._omx_files[file_name] = omx_file
+        return omx_file[key].read()
 
     def file_exists(self, name_args):
         file_name = self._name_tmplt % name_args
@@ -457,9 +457,11 @@ class OMXManager(object):
         return os.path.isfile(file_path)
 
     def zone_list(self, file_name):
+        
         omx_file = self._omx_files[file_name]
         mapping_name = omx_file.list_mappings()[0]
-        zone_mapping = omx_file.mapping(mapping_name).items()
+        # with _m.logbook_trace("file_name and mapping name: %s and %s" % (file_name, mapping_name)):
+        zone_mapping = omx_file.mapping(str(mapping_name)).items()
         zone_mapping.sort(key=lambda x: x[1])
         omx_zones = [x[0] for x in zone_mapping]
         return omx_zones

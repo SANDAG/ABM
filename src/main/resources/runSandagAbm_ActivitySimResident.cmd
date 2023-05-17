@@ -8,33 +8,23 @@ set ITERATION=%4
 %PROJECT_DRIVE%
 cd /d %PROJECT_DIRECTORY%
 
-@REM SET SAMPLE_ITERATION1=300000
-@REM SET SAMPLE_ITERATION2=600000
-@REM SET SAMPLE_ITERATION3=0
-
-
-
 :: -------------------------------------------------------------------------------------------------
 :: Loop
 :: -------------------------------------------------------------------------------------------------
 
-@REM IF %ITERATION% EQU 1 SET SAMPLE=%SAMPLE_ITERATION1%
-@REM IF %ITERATION% EQU 2 SET SAMPLE=%SAMPLE_ITERATION2%
-@REM IF %ITERATION% EQU 3 SET SAMPLE=%SAMPLE_ITERATION3%
+@REM SET SAMPLE=%SAMPLERATE%
 
-SET SAMPLE=%SAMPLERATE%
-
-ECHO CURRENT DIRECTORY: %cd%
-CD src\asim\configs\resident
-:: Set sample_rate in configs file dynamically
-ECHO # Configs File with Sample Rate set by Model Runner > settings_mp.yaml
-FOR /F "delims=*" %%i IN (settings_mp_source.yaml) DO (
-    SET LINE=%%i
-    SETLOCAL EnableDelayedExpansion
-    SET LINE=!LINE:%%sample_size%%=%SAMPLE%!
-    ECHO !LINE!>>settings_mp.yaml
-    ENDLOCAL
-)
+@REM ECHO CURRENT DIRECTORY: %cd%
+@REM CD src\asim\configs\resident
+@REM :: Set sample_rate in configs file dynamically
+@REM ECHO # Configs File with Sample Rate set by Model Runner > settings_mp.yaml
+@REM FOR /F "delims=*" %%i IN (settings_mp_source.yaml) DO (
+@REM     SET LINE=%%i
+@REM     SETLOCAL EnableDelayedExpansion
+@REM     SET LINE=!LINE:%%sample_size%%=%SAMPLE%!
+@REM     ECHO !LINE!>>settings_mp.yaml
+@REM     ENDLOCAL
+@REM )
 :: -------------------------------------------------------------------------------------------------
 :: Run ActivitySim
 :: ---------------------------------------------------------------------
@@ -79,9 +69,9 @@ MD resident\log
 CD ..
 
 :: Run simulation.py
-%PYTHON3% src/asim/scripts/resident/resident_preprocessing.py input output
+@REM %PYTHON3% src/asim/scripts/resident/resident_preprocessing.py input output
 
-%PYTHON3% src/asim/simulation.py -s settings_mp.yaml -c src/asim/configs/resident -c src/asim/configs/common -d input -d output/skims -o output/resident
+%PYTHON3% src/asim/simulation.py -s settings_mp.yaml -c src/asim/configs/resident -c src/asim/configs/common -d input -d output/skims -o output/resident --households_sample_size %SAMPLERATE%
 
 ::::::::::::::::::::::
 CD /d %ANACONDA2_DIR%\Scripts
@@ -90,6 +80,8 @@ CALL %CONDA2_ACT% base
 
 cd /d %PROJECT_DIRECTORY%
 %PYTHON2% src/asim/scripts/convert_tripTables.py resident output
+
+%PYTHON3% src/asim/scripts/set_zoneMapping.py resident output
 
 
 ECHO ActivitySim run complete!!

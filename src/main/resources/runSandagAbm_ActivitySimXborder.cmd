@@ -63,6 +63,8 @@ CALL %CONDA2_ACT% base
 cd /d %PROJECT_DIRECTORY%
 %PYTHON2% src/asim/scripts/convert_tripTables.py crossborder output
 
+%PYTHON3% src/asim/scripts/set_zoneMapping.py crossborder output
+
 ECHO ActivitySim Crossborder run complete!!
 ECHO %startTime%%Time%
 
