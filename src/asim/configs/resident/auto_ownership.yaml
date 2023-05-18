@@ -2,38 +2,7 @@
 SPEC: auto_ownership.csv
 COEFFICIENTS: auto_ownership_coefficients.csv
 
-LOGIT_TYPE: NL
-
-NESTS:
-  name: root
-  coefficient: 1
-  alternatives:
-    - name: own no car
-      coefficient: 0.668
-      alternatives:
-        - name: zero car
-          coefficient: 0.3
-          alternatives:
-            - cars0
-    - name: own cars
-      coefficient: 0.668
-      alternatives:
-        - name: one car
-          coefficient: 0.3
-          alternatives:
-            - cars1
-        - name: two cars
-          coefficient: 0.3
-          alternatives:
-            - cars2
-        - name: three cars
-          coefficient: 0.3
-          alternatives:
-            - cars3
-        - name: four cars
-          coefficient: 0.3
-          alternatives:
-            - cars4
+LOGIT_TYPE: MNL
 
 preprocessor:
   SPEC: auto_ownership_preprocessor
