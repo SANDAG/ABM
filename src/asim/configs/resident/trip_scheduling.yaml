@@ -12,6 +12,7 @@ FAILFIX: choose_most_initial
 PROBS_SPEC: trip_scheduling_probs_purpose_stops.csv
 
 scheduling_mode: relative
+logic_version: 2
 
 probs_join_cols: 
   - periods_left_min

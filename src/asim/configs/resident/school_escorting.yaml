@@ -15,6 +15,8 @@ LOGIT_TYPE: MNL
 NUM_ESCORTEES: 3
 NUM_CHAPERONES: 2
 
+sharrow_skip: true
+
 preprocessor_outbound:
   SPEC: school_escorting_preprocessor_outbound
   DF: df

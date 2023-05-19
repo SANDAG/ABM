@@ -1,24 +1,23 @@
 # ActivitySim
 # See full license in LICENSE.txt.
+from __future__ import annotations
 import logging
 
 import numpy as np
 
 from activitysim.core import tracing
 from activitysim.core import config
-from activitysim.core import pipeline
 from activitysim.core import simulate
-from activitysim.core import inject
+from activitysim.core import workflow
 from activitysim.core import expressions
-
-from activitysim.abm.models.util import estimation
+from activitysim.core import estimation
 
 logger = logging.getLogger(__name__)
 
 
-@inject.step()
+@workflow.step()
 def transponder_ownership(
-    households_merged, households, network_los, chunk_size, trace_hh_id
+    state: workflow.State, households_merged, households, network_los, chunk_size
 ):
     """
     This model predicts whether the household owns a transponder.
@@ -31,13 +30,14 @@ def transponder_ownership(
 
     trace_label = "transponder_ownership"
     model_settings_file_name = "transponder_ownership.yaml"
-    model_settings = config.read_model_settings(model_settings_file_name)
+    model_settings = state.filesystem.read_model_settings(model_settings_file_name)
+    trace_hh_id = state.settings.trace_hh_id
     transponder_own_alt = model_settings['TRANSPONDER_OWNERSHIP_ALT']
 
-    estimator = estimation.manager.begin_estimation("transponder_ownership")
+    estimator = estimation.manager.begin_estimation(state, "transponder_ownership")
     constants = config.get_model_constants(model_settings)
 
-    choosers = households_merged.to_frame()
+    choosers = households_merged#.to_frame()
     logger.info("Running %s with %d households", trace_label, len(choosers))
 
     # - preprocessor
@@ -48,15 +48,16 @@ def transponder_ownership(
             locals_d.update(constants)
 
         expressions.assign_columns(
+            state,
             df=choosers,
             model_settings=preprocessor_settings,
             locals_dict=locals_d,
             trace_label=trace_label,
         )
 
-    model_spec = simulate.read_model_spec(file_name=model_settings["SPEC"])
-    coefficients_df = simulate.read_model_coefficients(model_settings)
-    model_spec = simulate.eval_coefficients(model_spec, coefficients_df, estimator)
+    model_spec = state.filesystem.read_model_spec(file_name=model_settings["SPEC"])
+    coefficients_df = state.filesystem.read_model_coefficients(model_settings)
+    model_spec = simulate.eval_coefficients(state, model_spec, coefficients_df, estimator)
 
     nest_spec = config.get_logit_model_settings(model_settings)
 
@@ -67,11 +68,11 @@ def transponder_ownership(
         estimator.write_choosers(choosers)
 
     choices = simulate.simple_simulate(
+        state,
         choosers=choosers,
         spec=model_spec,
         nest_spec=nest_spec,
         locals_d=constants,
-        chunk_size=chunk_size,
         trace_label=trace_label,
         trace_choice_name="transponder_ownership",
         estimator=estimator,
@@ -86,11 +87,11 @@ def transponder_ownership(
         estimator.write_override_choices(choices)
         estimator.end_estimation()
 
-    households = households.to_frame()
+    #households = households.to_frame()
     households["transponder_ownership"] = (
         choices.reindex(households.index).fillna(0).astype(bool)
     )
-    pipeline.replace_table("households", households)
+    state.add_table("households", households)
 
     tracing.print_summary(
         "transponder_ownership", households["transponder_ownership"], value_counts=True

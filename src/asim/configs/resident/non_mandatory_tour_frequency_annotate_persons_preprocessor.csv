@@ -44,3 +44,6 @@ Description,Target,Expression
 ,num_pre_school_kids_not_self,"np.where(df.ptype == PTYPE_PRESCHOOL, df.num_young_children - 1, df.num_young_children)"
 ,retiredHh,"np.where(df.num_retired_adults == df.hhsize, 1, 0)"
 ,num_travel_active_pre_drive_students,((persons.ptype == PTYPE_SCHOOL) & persons.travel_active).astype(int).groupby(persons.household_id).transform('sum')
+#,,
+,mandatory_activity_pattern,df.cdap_activity == 'M'
+,non_mandatory_activity_pattern,df.cdap_activity == 'N'

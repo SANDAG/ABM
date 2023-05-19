@@ -42,11 +42,11 @@ Pre-driving-age child who is in school interaction with income less than $30k,(p
 Pre-driving-age child who is too young for school interaction with income between $60k and $100k,(ptype == 8) & (income >= 60000) & (income <= 100000),coef_pre_driving_age_child_who_is_too_young_for_school_interaction_with_income_between_60k_and_100k_M,,
 Pre-driving-age child who is too young for school interaction with income more than $100k,(ptype == 8) & (income >= 100000),coef_pre_driving_age_child_who_is_too_young_for_school_interaction_with_income_more_than_100k_M,,
 #,,,,
-University Student interaction with peak accessibility to all employment,"@np.where((df.ptype == 3)  & (df.school_modechoice_logsum > 0), df.school_modechoice_logsum, 0)",coef_university_student_interaction_with_school_location_mc_logsum_M,,
+#University Student interaction with peak accessibility to all employment,"@np.where((df.ptype == 3)  & (df.school_modechoice_logsum > 0), df.school_modechoice_logsum, 0)",coef_university_student_interaction_with_school_location_mc_logsum_M,,
 # do not have different non-mandatory accessibilities so combining above expressions,,,,
-Full-time Worker interaction with accessibility to retail,"@np.where((df.ptype == 1), df.shopping_accessibility, 0)",,coef_full_time_worker_interaction_with_retail_accessibility_N,
-Non-working adult interaction with accessibility to retail,"@np.where((df.ptype == 4), df.shopping_accessibility, 0)",,coef_non_working_adult_interaction_with_retail_accessibility_N,
-Driving-age child who is in school interaction with accessibility to retail,"@np.where((df.ptype == 6), df.shopping_accessibility, 0)",,coef_driving_age_child_who_is_in_school_interaction_with_retail_accessibility_N,
+#Full-time Worker interaction with accessibility to retail,"@np.where((df.ptype == 1), df.shopping_accessibility, 0)",,coef_full_time_worker_interaction_with_retail_accessibility_N,
+#Non-working adult interaction with accessibility to retail,"@np.where((df.ptype == 4), df.shopping_accessibility, 0)",,coef_non_working_adult_interaction_with_retail_accessibility_N,
+#Driving-age child who is in school interaction with accessibility to retail,"@np.where((df.ptype == 6), df.shopping_accessibility, 0)",,coef_driving_age_child_who_is_in_school_interaction_with_retail_accessibility_N,
 #,,,,
 Full-time worker interaction with detached house,(ptype == 1) & (bldgsz < 3),,,coef_full_time_worker_interaction_with_detached_home_H
 Part-time worker interaction with detached house,(ptype == 2) & (bldgsz < 3),,,coef_part_time_worker_interaction_with_detached_home_H

@@ -6,7 +6,7 @@ import openmatrix as omx
 import pandas as pd
 
 MAZ_OFFSET = 0
-CROP_SKIMS = False
+CROP_SKIMS = True
 CROP_SURVEY_DATA = True
 override_data_path = r'C:\ABM3_dev\estimation\survey_data'
 
@@ -16,9 +16,6 @@ segments = {
     # MAZs in zip code 92103 & 92101 (downtown San Diego)
     "series15": \
         list(pd.read_csv(os.path.join(override_data_path, 'downtown_zones.csv')).MGRA.values) + 
-        [24322, 24323, 24324, 24325, 24326, 24327, 24328, 24329, 24330, 24331, 24332, 24333], # this row contains externals
-    "debug": \
-        list(pd.read_csv(os.path.join(override_data_path, 'se_zones.csv')).MGRA.values) + 
         [24322, 24323, 24324, 24325, 24326, 24327, 24328, 24329, 24330, 24331, 24332, 24333], # this row contains externals
     "new": list(np.arange(2097,3103)) + [6778,  6779,  6784,  6785,  6786,
         6787,  6788,  6789,  6790,  7066,  7088,  7090,  7091,  7113,
@@ -32,12 +29,12 @@ skim_list = [
     'traffic_skims_MD.omx',
     'traffic_skims_PM.omx',
     'traffic_skims_EV.omx',
-    # 'transit_skims.omx'
-    'transit_skims_EA.omx',
-    'transit_skims_AM.omx',
-    'transit_skims_MD.omx',
-    'transit_skims_PM.omx',
-    'transit_skims_EV.omx',
+    'transit_skims.omx'
+    # 'transit_skims_ea.omx',
+    # 'transit_skims_am.omx',
+    # 'transit_skims_md.omx',
+    # 'transit_skims_pm.omx',
+    # 'transit_skims_ev.omx',
 ]
 
 parser = argparse.ArgumentParser(description="crop SANDAG 2 zone raw_data")
@@ -255,12 +252,12 @@ if CROP_SURVEY_DATA:
 
     # checking to make sure all tours & trips from the household are in the cropped area
     trips['in_cropped_area'] = (trips['origin'].isin(maz.MAZ) & trips['destination'].isin(maz.MAZ))
-    households_with_valid_trips = trips.loc[trips.groupby('household_id')['in_cropped_area'].transform('all'), 'household_id'].unique()
-    tours['in_cropped_area'] = (tours['origin'].isin(maz.MAZ) & tours['destination'].isin(maz.MAZ) & tours['household_id'].isin(households_with_valid_trips))
-    households_with_valid_tours = tours.loc[tours.groupby('household_id')['in_cropped_area'].transform('all'), 'household_id'].unique()
+    tours_in_cropped_area = trips.loc[trips.groupby('tour_id')['in_cropped_area'].transform('all'), 'tour_id'].unique()
+    tours['in_cropped_area'] = (tours['origin'].isin(maz.MAZ) & tours['destination'].isin(maz.MAZ) & tours['tour_id'].isin(tours_in_cropped_area))
+    households_with_valid_tours = tours.loc[tours.groupby('household_id')['in_cropped_area'].transform('all'), 'household_id']
     persons['in_cropped_area'] = (((persons['workplace_zone_id'].isin(maz.MAZ)) | (persons['workplace_zone_id'] == -1)) 
                                 & ((persons['school_zone_id'].isin(maz.MAZ)) | (persons['school_zone_id'] == -1)))
-    households_with_valid_persons = persons.loc[persons.groupby('household_id')['in_cropped_area'].transform('all'), 'household_id'].unique()
+    households_with_valid_persons = persons.loc[persons.groupby('household_id')['in_cropped_area'].transform('all'), 'household_id']
     valid_households = households.loc[
         households['home_zone_id'].isin(maz.MAZ) 
         & households['household_id'].isin(households_with_valid_tours)

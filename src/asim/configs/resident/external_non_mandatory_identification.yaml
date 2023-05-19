@@ -1,6 +1,6 @@
 # using the same spec for both non-mandatory and joint tours
-SPEC: external_non_mandatory_identification.csv
-COEFFICIENTS: external_non_mandatory_identification_coefficients.csv
+SPEC: external_tour_identification.csv
+COEFFICIENTS: external_tour_identification_coeffs.csv
 
 #LOGIT_TYPE: NL
 LOGIT_TYPE: MNL

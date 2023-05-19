@@ -1,9 +1,9 @@
 Label,Description,Expression,escort,shopping,eatout,othmaint,social,othdiscr
-,,"_DIST@np.minimum(skims['DIST'], 20)",1,1,1,1,1,1
-,,_DIST_SQUARED@_DIST**2,1,1,1,1,1,1
-,,_DIST_CUBED@_DIST**3,1,1,1,1,1,1
-,,_DIST_LOGGED@np.log(_DIST + 0.001),1,1,1,1,1,1
-,,"_CALIB_DIST@np.where(df.tour_type == 'escort', 20, np.where(df.tour_type == 'othmaint', 8, 10))",1,1,1,1,1,1
+dist,,"_DIST@np.minimum(skims['DIST'], 20)",1,1,1,1,1,1
+square_dist,,_DIST_SQUARED@_DIST**2,1,1,1,1,1,1
+cube_dist,,_DIST_CUBED@_DIST**3,1,1,1,1,1,1
+log_dist,,_DIST_LOGGED@np.log(_DIST + 0.001),1,1,1,1,1,1
+calib_dist,,"_CALIB_DIST@np.where(df.tour_type == 'escort', 20, np.where(df.tour_type == 'othmaint', 8, 10))",1,1,1,1,1,1
 util_dist,dist,@_DIST,coef_dist_escort,coef_dist_shopping,coef_dist_eatout,coef_dist_maint,coef_dist_social,coef_dist_discr
 util_dist_squared,dist_squared,@_DIST_SQUARED,coef_distsqrd_escort,coef_distsqrd_shopping,coef_distsqrd_eatout,coef_distsqrd_maint,coef_distsqrd_social,coef_distsqrd_discr
 util_dist_cubed,dist_cubed,@_DIST_CUBED,coef_zero,coef_distcubed_shopping,coef_distcubed_eatout,coef_zero,coef_distcubed_social,coef_distcubed_discr
@@ -48,11 +48,11 @@ util_abm2_calib_distance,ABM2 calibration - distance,@_DIST,coef_ABM2_calibratio
 util_abm2_calib_distance_squared,ABM2 calibration - distance squared,@_DIST_SQUARED,coef_ABM2_calibration_distance_squared_escort,coef_ABM2_calibration_distance_squared_shopping,coef_ABM2_calibration_distance_squared_eatout,coef_ABM2_calibration_distance_squared_maint,coef_ABM2_calibration_distance_squared_social,coef_ABM2_calibration_distance_squared_disc
 util_abm2_calib_distance_cubed,ABM2 calibration - distance cubed,@_DIST_CUBED,coef_ABM2_calibration_distance_cubed_escort,coef_ABM2_calibration_distance_cubed_shopping,coef_ABM2_calibration_distance_cubed_eatout,coef_ABM2_calibration_distance_cubed_maint,coef_ABM2_calibration_distance_cubed_social,coef_ABM2_calibration_distance_cubed_disc
 util_abm2_calib_distance_logged2,ABM2 calibration - distance logged,"@np.minimum(_DIST_LOGGED, np.log(_CALIB_DIST)) ",coef_ABM2_calibration_distance_logged_escort,coef_ABM2_calibration_distance_logged_shopping,coef_ABM2_calibration_distance_logged_eatout,,coef_ABM2_calibration_distance_logged_social,coef_ABM2_calibration_distance_logged_disc
-util_abm2_calib_0to1_miles_joint_tour","ABM2 calibration - 0-1 miles, joint tour","@np.where(df.get('tour_category', default=False) == 'joint', 1, 0) * (_DIST<1)",,coef_ABM2_calibration_0_1_miles_joint_shopping,coef_ABM2_calibration_0_1_miles_joint_eatout,coef_ABM2_calibration_0_1_miles_joint_maint,coef_ABM2_calibration_0_1_miles_joint_social,coef_ABM2_calibration_0_1_miles_joint_disc
-util_abm2_calib_1to2_miles_joint_tour","ABM2 calibration - 1-2 miles, joint tour","@np.where(df.get('tour_category', default=False) == 'joint', 1, 0) * (_DIST>=1) * (_DIST<2)",,coef_ABM2_calibration_1_2_miles_joint_shopping,coef_ABM2_calibration_1_2_miles_joint_eatout,coef_ABM2_calibration_1_2_miles_joint_maint,coef_ABM2_calibration_1_2_miles_joint_social,coef_ABM2_calibration_1_2_miles_joint_disc
-util_abm2_calib_2to3_miles_joint_tour","ABM2 calibration - 2-3 miles, joint tour","@np.where(df.get('tour_category', default=False) == 'joint', 1, 0) * (_DIST>=2) * (_DIST<3)",,coef_ABM2_calibration_2_3_miles_joint_shopping,,coef_ABM2_calibration_2_3_miles_joint_maint,,
-util_abm2_calib_1to2_miles_indiv_tour","ABM2 calibration - 1-2 miles, indiv tour","@(_DIST < 2) * (_DIST >= 1) * np.where(df.get('tour_category', default=False) == 'joint', 0, 1)",,coef_ABM2_calibration_1_2_miles_shopping,,,,
-util_abm2_calib_2to3_miles_indiv_tour","ABM2 calibration - 2-3 miles, indiv tour","@(_DIST < 3) * (_DIST >= 2) * np.where(df.get('tour_category', default=False) == 'joint', 0, 1)",,coef_ABM2_calibration_2_3_miles_shopping,,,,
+"util_abm2_calib_0to1_miles_joint_tour""","ABM2 calibration - 0-1 miles, joint tour","@np.where(df.get('tour_category', default=False) == 'joint', 1, 0) * (_DIST<1)",,coef_ABM2_calibration_0_1_miles_joint_shopping,coef_ABM2_calibration_0_1_miles_joint_eatout,coef_ABM2_calibration_0_1_miles_joint_maint,coef_ABM2_calibration_0_1_miles_joint_social,coef_ABM2_calibration_0_1_miles_joint_disc
+"util_abm2_calib_1to2_miles_joint_tour""","ABM2 calibration - 1-2 miles, joint tour","@np.where(df.get('tour_category', default=False) == 'joint', 1, 0) * (_DIST>=1) * (_DIST<2)",,coef_ABM2_calibration_1_2_miles_joint_shopping,coef_ABM2_calibration_1_2_miles_joint_eatout,coef_ABM2_calibration_1_2_miles_joint_maint,coef_ABM2_calibration_1_2_miles_joint_social,coef_ABM2_calibration_1_2_miles_joint_disc
+"util_abm2_calib_2to3_miles_joint_tour""","ABM2 calibration - 2-3 miles, joint tour","@np.where(df.get('tour_category', default=False) == 'joint', 1, 0) * (_DIST>=2) * (_DIST<3)",,coef_ABM2_calibration_2_3_miles_joint_shopping,,coef_ABM2_calibration_2_3_miles_joint_maint,,
+"util_abm2_calib_1to2_miles_indiv_tour""","ABM2 calibration - 1-2 miles, indiv tour","@(_DIST < 2) * (_DIST >= 1) * np.where(df.get('tour_category', default=False) == 'joint', 0, 1)",,coef_ABM2_calibration_1_2_miles_shopping,,,,
+"util_abm2_calib_2to3_miles_indiv_tour""","ABM2 calibration - 2-3 miles, indiv tour","@(_DIST < 3) * (_DIST >= 2) * np.where(df.get('tour_category', default=False) == 'joint', 0, 1)",,coef_ABM2_calibration_2_3_miles_shopping,,,,
 util_abm2_calib_distance_logged3,ABM2+ calibration - distance logged,"@(_DIST < 20) * np.minimum(_DIST_LOGGED, np.log(_CALIB_DIST))",coef_ABM2p_calibration_distance_logged_escort,,,,,
 util_abm2_calib_0to1_miles,ABM2+ calibration - 0-1 miles,@(_DIST < 1),coef_ABM2p_calibration_0_1_miles_escort,coef_ABM2p_calibration_0_1_miles_shopping,coef_ABM2p_calibration_0_1_miles_eatout,coef_ABM2p_calibration_0_1_miles_maint,coef_ABM2p_calibration_0_1_miles_social,coef_ABM2p_calibration_0_1_miles_disc
 util_abm2_calib_1to2_miles,ABM2+ calibration - 1-2 miles,@(_DIST < 2) * (_DIST >= 1),coef_ABM2p_calibration_1_2_miles_escort,coef_ABM2p_calibration_1_2_miles_shopping,coef_ABM2p_calibration_1_2_miles_eatout,coef_ABM2p_calibration_1_2_miles_maint,coef_ABM2p_calibration_1_2_miles_social,coef_ABM2p_calibration_1_2_miles_disc

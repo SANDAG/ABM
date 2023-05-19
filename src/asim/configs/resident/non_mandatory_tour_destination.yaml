@@ -15,6 +15,10 @@ DEST_CHOICE_LOGSUM_COLUMN_NAME: destination_logsum
 # comment out DEST_CHOICE_LOGSUM_COLUMN_NAME if saved alt logsum table
 DEST_CHOICE_SAMPLE_TABLE_NAME: tour_destination_sample
 
+#preprocessor:
+#  SPEC: non_mandatory_tour_destination_annotate_choosers_preprocessor
+#  DF: choosers
+
 
 SEGMENTS:
   - shopping

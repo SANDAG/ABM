@@ -5,7 +5,7 @@ SKIP_BUNDLE_WRITE_FOR:
   # - auto_ownership
   # - work_from_home
   # - external_worker_identification
-  # - external_workplace_location
+  - external_workplace_location
   - school_location
   - workplace_location
   # - transit_pass_subsidy

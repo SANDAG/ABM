@@ -32,3 +32,4 @@ adding _trips to avoid conflict with the variables in the tours_merged,age_trips
 ,nonmotorTour,"np.where(tour_mode.isin(['WALK','BIKE']), 1, 0)"
 ,walkTour,"np.where(tour_mode == 'WALK', 1, 0)"
 ,bikeTour,"np.where(tour_mode == 'BIKE', 1, 0)"
+,purpose_index_num,"size_terms.get_cols(df.purpose)"

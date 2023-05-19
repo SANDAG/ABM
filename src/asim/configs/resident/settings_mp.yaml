@@ -72,7 +72,7 @@ models:
   ### mp_summarize (single process)
   - write_data_dictionary
   - track_skim_usage
-  - write_trip_matrices
+  ### - write_trip_matrices
   - write_tables
 
 
@@ -95,7 +95,7 @@ multiprocess_steps:
     slice:
       tables:
         - accessibility
-      except: True  # this is needed so landuse (i.e. destinations) doesn't get split
+      exclude: True  # this is needed so landuse (i.e. destinations) doesn't get split
   - name: mp_households
     begin: av_ownership
     slice:

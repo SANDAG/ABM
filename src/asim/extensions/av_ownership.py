@@ -1,17 +1,17 @@
 # ActivitySim
 # See full license in LICENSE.txt.
+from __future__ import annotations
 import logging
 
 import numpy as np
 
-from activitysim.abm.models.util import estimation
-from activitysim.core import config, expressions, inject, pipeline, simulate, tracing
+from activitysim.core import config, estimation, expressions, simulate, tracing, workflow
 
 logger = logging.getLogger("activitysim")
 
 
-@inject.step()
-def av_ownership(households_merged, households, chunk_size, trace_hh_id):
+@workflow.step()
+def av_ownership(state: workflow.State, households_merged, households, chunk_size):#, trace_hh_id):
     """
     This model predicts whether a household owns an autonomous vehicle.
     The output from this model is TRUE or FALSE.
@@ -20,12 +20,13 @@ def av_ownership(households_merged, households, chunk_size, trace_hh_id):
     trace_label = "av_ownership"
     model_settings_file_name = "av_ownership.yaml"
 
-    choosers = households_merged.to_frame()
-    model_settings = config.read_model_settings(model_settings_file_name)
+    choosers = households_merged#.to_frame()
+    model_settings = state.filesystem.read_model_settings(model_settings_file_name)
+    trace_hh_id = state.settings.trace_hh_id
 
     logger.info("Running %s with %d households", trace_label, len(choosers))
 
-    estimator = estimation.manager.begin_estimation("av_ownership")
+    estimator = estimation.manager.begin_estimation(state, "av_ownership")
 
     constants = config.get_model_constants(model_settings)
     av_ownership_alt = model_settings.get("AV_OWNERSHIP_ALT", 0)
@@ -39,14 +40,15 @@ def av_ownership(households_merged, households, chunk_size, trace_hh_id):
             locals_d.update(constants)
 
         expressions.assign_columns(
+            state,
             df=choosers,
             model_settings=preprocessor_settings,
             locals_dict=locals_d,
             trace_label=trace_label,
         )
 
-    model_spec = simulate.read_model_spec(file_name=model_settings["SPEC"])
-    coefficients_df = simulate.read_model_coefficients(model_settings)
+    model_spec = state.filesystem.read_model_spec(file_name=model_settings["SPEC"])
+    coefficients_df = state.filesystem.read_model_coefficients(model_settings)
     nest_spec = config.get_logit_model_settings(model_settings)
 
     if estimator:
@@ -75,15 +77,15 @@ def av_ownership(households_merged, households, chunk_size, trace_hh_id):
         )
 
         # re-read spec to reset substitution
-        model_spec = simulate.read_model_spec(file_name=model_settings["SPEC"])
-        model_spec = simulate.eval_coefficients(model_spec, coefficients_df, estimator)
+        model_spec = state.filesystem.read_model_spec(file_name=model_settings["SPEC"])
+        model_spec = simulate.eval_coefficients(state, model_spec, coefficients_df, estimator)
 
         choices = simulate.simple_simulate(
+            state,
             choosers=choosers,
             spec=model_spec,
             nest_spec=nest_spec,
             locals_d=constants,
-            chunk_size=chunk_size,
             trace_label=trace_label,
             trace_choice_name="av_ownership",
             estimator=estimator,
@@ -139,12 +141,12 @@ def av_ownership(households_merged, households, chunk_size, trace_hh_id):
         estimator.write_override_choices(choices)
         estimator.end_estimation()
 
-    households = households.to_frame()
+    #households = households.to_frame()
     households["av_ownership"] = (
         choices.reindex(households.index).fillna(0).astype(bool)
     )
 
-    pipeline.replace_table("households", households)
+    state.add_table("households", households)
 
     tracing.print_summary("av_ownership", households.av_ownership, value_counts=True)
 

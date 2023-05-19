@@ -9,9 +9,6 @@ tables:
   autoOwnership:
     merge:
       - HHVEH
-  autoOwnership_AV:
-    merge:
-      - index
   avgStopOutofDirectionDist_vis:
     merge:
       - purpose
@@ -114,11 +111,6 @@ tables:
   # nonMandTripLengths_et:
   #   merge:
   #     - purpose
-  ownership_subsidies:
-    merge:
-      - PERTYPE
-    #total:
-    #  PERTYPE: Total
   pertypeDistbn:
     merge:
       - PERTYPE
@@ -158,9 +150,6 @@ tables:
       - tour_purpose
     total:
       tour_purpose: Total
-  telecommute_frequency:
-    merge:
-      - telecommute_frequency
   tmodeProfile_vis:
     merge:
       - OwnershipCategory
@@ -193,8 +182,8 @@ tables:
   #   merge:
   #     - distbin
   #     - purpose
-    #total:
-    #  purpose: Total
+    total:
+      purpose: Total
   tourDuration:
     merge:
       - tourdur
@@ -207,9 +196,6 @@ tables:
     merge:
       - PERTYPE
       - TOURPURP
-  transponder_ownership:
-    merge:
-      - index
   tripDeparture_vis:
     merge:
       - stop_period
@@ -227,11 +213,6 @@ tables:
     total:
       purpose: Total
       tour_mode: Total
-  vehicle_types:
-    merge:
-      - body_type
-      - age
-      - fuel_type
   wfh_summary:
     merge:
       - District

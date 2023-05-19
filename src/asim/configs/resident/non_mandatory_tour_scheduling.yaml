@@ -1,5 +1,7 @@
 LOGIT_TYPE: MNL
 
+sharrow_skip: true
+
 preprocessor:
   SPEC: non_mandatory_tour_scheduling_annotate_tours_preprocessor
   DF: non_mandatory_tours
@@ -53,21 +55,27 @@ SPEC_SEGMENTS:
   escort:
     'SPEC': tour_scheduling_nonmandatory_escort.csv
     'COEFFICIENTS': tour_scheduling_nonmandatory_escort_coefficients.csv
+    'sharrow_skip': true
   shopping:
     'SPEC': tour_scheduling_nonmandatory_shopping.csv
     'COEFFICIENTS': tour_scheduling_nonmandatory_shopping_coefficients.csv
+    'sharrow_skip': true
   eatout:
     'SPEC': tour_scheduling_nonmandatory_eatout.csv
     'COEFFICIENTS': tour_scheduling_nonmandatory_eatout_coefficients.csv
+    'sharrow_skip': true
   othdiscr:
     'SPEC': tour_scheduling_nonmandatory_othdiscr.csv
     'COEFFICIENTS': tour_scheduling_nonmandatory_othdiscr_coefficients.csv
+    'sharrow_skip': true
   othmaint:
     'SPEC': tour_scheduling_nonmandatory_othmaint.csv
     'COEFFICIENTS': tour_scheduling_nonmandatory_othmaint_coefficients.csv
+    'sharrow_skip': true
   social:
     'SPEC': tour_scheduling_nonmandatory_social.csv
     'COEFFICIENTS': tour_scheduling_nonmandatory_social_coefficients.csv
+    'sharrow_skip': true
 
 ## alts preprocessor keyed by <spec_segment>
 #ALTS_PREPROCESSOR:

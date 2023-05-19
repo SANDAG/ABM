@@ -1,23 +1,23 @@
 # ActivitySim
 # See full license in LICENSE.txt.
+from __future__ import annotations
 import logging
 
 import numpy as np
 
 from activitysim.core import tracing
 from activitysim.core import config
-from activitysim.core import pipeline
 from activitysim.core import simulate
-from activitysim.core import inject
+from activitysim.core import workflow
 from activitysim.core import expressions
 
-from activitysim.abm.models.util import estimation
+from activitysim.core import estimation
 
 logger = logging.getLogger(__name__)
 
 
-@inject.step()
-def airport_returns(trips, chunk_size, trace_hh_id):
+@workflow.step()
+def airport_returns(state: workflow.State, trips, chunk_size):#, trace_hh_id):
     """
     This model updates the airport trip list to include return trips for drop off
     passengers. The output is a larger trip list duplicating the trips which are dropped
@@ -28,10 +28,11 @@ def airport_returns(trips, chunk_size, trace_hh_id):
     trace_label = "airport_returns"
     model_settings_file_name = "airport_returns.yaml"
 
-    trip_list = trips.to_frame()
+    trip_list = trips#.to_frame()
     logger.info("Running %s with %d trips", trace_label, len(trip_list))
 
-    model_settings = config.read_model_settings(model_settings_file_name)
+    model_settings = state.filesystem.read_model_settings(model_settings_file_name)
+    trace_hh_id = state.settings.trace_hh_id
 
     returning_modes = model_settings["RETURN_MODE_SEGMENTS"]
     print(trips.trip_mode.unique())
@@ -51,7 +52,7 @@ def airport_returns(trips, chunk_size, trace_hh_id):
 
     trip_list = trip_list.append(trip_returns)
 
-    pipeline.replace_table("trips", trip_list)
+    state.add_table("trips", trip_list)
 
     # tracing.print_summary('airport_returns', trips.returns, value_counts=True)
 

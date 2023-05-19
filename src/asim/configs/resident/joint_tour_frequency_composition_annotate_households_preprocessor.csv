@@ -17,5 +17,5 @@ number of travel active pre-driving age school kids,num_travel_active_pre_drivin
 number of travel active pre-school kids,num_travel_active_pre_school_kids,"_PERSON_COUNT('(ptype == 8) & (cdap_activity != \'H\')', persons_merged, households)"
 number of travel active adults,num_travel_active_adults,"_PERSON_COUNT('adult & (cdap_activity != \'H\')', persons_merged, households)"
 number of travel active chilren,num_travel_active_children,"_PERSON_COUNT('~adult & (cdap_activity != \'H\')', persons_merged, households)"
-shopping_accessibility,shopping_accessibility,"persons_merged.groupby('household_id')['shopping_accessibility'].mean().reindex(households.index)"
-othdiscr_accessibility,othdiscr_accessibility,"persons_merged.groupby('household_id')['othdiscr_accessibility'].mean().reindex(households.index)"
+#shopping_accessibility,shopping_accessibility,persons_merged.groupby('household_id')['shopping_accessibility'].mean().reindex(households.index)
+#othdiscr_accessibility,othdiscr_accessibility,persons_merged.groupby('household_id')['othdiscr_accessibility'].mean().reindex(households.index)

@@ -1,0 +1,4 @@
+Description,Target,Expression
+Boolean indicating if a tour is escort,is_escort_tour,df.tour_type == 'escort'
+Boolean indicating if a tour is other maintenance,is_othmaint_tour,df.tour_type == 'othmaint'
+Boolean indicating if a tour is joint,is_joint_tour,"df.get('tour_category', default=False) == 'joint'"

@@ -1,17 +1,17 @@
 # ActivitySim
 # See full license in LICENSE.txt.
+from __future__ import annotations
 import logging
 
 import numpy as np
 
 from activitysim.core import tracing
 from activitysim.core import config
-from activitysim.core import pipeline
 from activitysim.core import simulate
-from activitysim.core import inject
+from activitysim.core import workflow
 from activitysim.core import expressions
+from activitysim.core import estimation
 
-from activitysim.abm.models.util import estimation
 from activitysim.abm.models.util import tour_destination
 from activitysim.abm.models.location_choice import iterate_location_choice, write_estimation_specs
 
@@ -21,9 +21,9 @@ from activitysim.core.util import assign_in_place
 logger = logging.getLogger(__name__)
 
 
-@inject.step()
+@workflow.step()
 def external_school_location(
-    persons_merged, persons, households, network_los, chunk_size, trace_hh_id, locutor
+    state: workflow.State, persons_merged, persons, households, network_los, chunk_size, locutor
 ):
     """
     External school location choice model
@@ -32,7 +32,8 @@ def external_school_location(
     """
 
     trace_label = "external_school_location"
-    model_settings = config.read_model_settings("external_school_location.yaml")
+    model_settings = state.filesystem.read_model_settings("external_school_location.yaml")
+    trace_hh_id = state.settings.trace_hh_id
 
     estimator = estimation.manager.begin_estimation("external_school_location")
     if estimator:
@@ -41,6 +42,7 @@ def external_school_location(
         )
 
     persons_df = iterate_location_choice(
+        state,
         model_settings,
         persons_merged,
         persons,
@@ -48,20 +50,19 @@ def external_school_location(
         network_los,
         estimator,
         chunk_size,
-        trace_hh_id,
         locutor,
         trace_label,
     )
 
-    pipeline.replace_table("persons", persons_df)
+    state.add_table("persons", persons_df)
 
     if estimator:
         estimator.end_estimation()
 
 
-@inject.step()
+@workflow.step()
 def external_workplace_location(
-    persons_merged, persons, households, network_los, chunk_size, trace_hh_id, locutor
+    state: workflow.State, persons_merged, persons, households, network_los, chunk_size, locutor
 ):
     """
     External workplace location choice model
@@ -70,15 +71,17 @@ def external_workplace_location(
     """
 
     trace_label = "external_workplace_location"
-    model_settings = config.read_model_settings("external_workplace_location.yaml")
+    model_settings = state.filesystem.read_model_settings("external_workplace_location.yaml")
+    trace_hh_id = state.settings.trace_hh_id
 
-    estimator = estimation.manager.begin_estimation("external_workplace_location")
+    estimator = estimation.manager.begin_estimation(state, "external_workplace_location")
     if estimator:
         write_estimation_specs(
             estimator, model_settings, "external_workplace_location.yaml"
         )
 
     persons_df = iterate_location_choice(
+        state,
         model_settings,
         persons_merged,
         persons,
@@ -86,20 +89,19 @@ def external_workplace_location(
         network_los,
         estimator,
         chunk_size,
-        trace_hh_id,
         locutor,
         trace_label,
     )
 
-    pipeline.replace_table("persons", persons_df)
+    state.add_table("persons", persons_df)
 
     if estimator:
         estimator.end_estimation()
 
 
-@inject.step()
+@workflow.step()
 def external_non_mandatory_destination(
-    tours, persons_merged, network_los, chunk_size, trace_hh_id
+    state: workflow.State, tours, persons_merged, network_los, chunk_size
 ):
 
     """
@@ -110,20 +112,21 @@ def external_non_mandatory_destination(
 
     trace_label = "external_non_mandatory_destination"
     model_settings_file_name = "external_non_mandatory_destination.yaml"
-    model_settings = config.read_model_settings(model_settings_file_name)
+    model_settings = state.filesystem.read_model_settings(model_settings_file_name)
+    trace_hh_id = state.settings.trace_hh_id
 
     logsum_column_name = model_settings.get("DEST_CHOICE_LOGSUM_COLUMN_NAME")
     want_logsums = logsum_column_name is not None
 
     sample_table_name = model_settings.get("DEST_CHOICE_SAMPLE_TABLE_NAME")
     want_sample_table = (
-        config.setting("want_dest_choice_sample_tables")
+        state.settings.want_dest_choice_sample_tables
         and sample_table_name is not None
     )
 
-    tours = tours.to_frame()
+    #tours = tours.to_frame()
 
-    persons_merged = persons_merged.to_frame()
+    #persons_merged = persons_merged.to_frame()
 
     # choosers are tours - in a sense tours are choosing their destination
     non_mandatory_ext_tours = tours[
@@ -136,6 +139,7 @@ def external_non_mandatory_destination(
         return
 
     estimator = estimation.manager.begin_estimation(
+        state,
         "external_non_mandatory_destination"
     )
     if estimator:
@@ -144,10 +148,10 @@ def external_non_mandatory_destination(
         estimator.write_spec(model_settings, tag="SPEC")
         estimator.set_alt_id(model_settings["ALT_DEST_COL_NAME"])
         estimator.write_table(
-            inject.get_injectable("size_terms"), "size_terms", append=False
+            workflow.get_workflowable("size_terms"), "size_terms", append=False
         )
         estimator.write_table(
-            inject.get_table("land_use").to_frame(), "landuse", append=False
+            state.get_dataframe("land_use"), "landuse", append=False
         )
         estimator.write_model_settings(model_settings, model_settings_file_name)
 
@@ -180,12 +184,12 @@ def external_non_mandatory_destination(
         non_mandatory_ext_tours[logsum_column_name] = choices_df["logsum"]
         assign_in_place(tours, non_mandatory_ext_tours[[logsum_column_name]])
 
-    pipeline.replace_table("tours", tours)
+    state.add_table("tours", tours)
 
     if want_sample_table:
         assert len(save_sample_df.index.get_level_values(0).unique()) == len(choices_df)
         # save_sample_df.set_index(model_settings['ALT_DEST_COL_NAME'], append=True, inplace=True)
-        pipeline.extend_table(sample_table_name, save_sample_df)
+        state.extend_table(sample_table_name, save_sample_df)
 
     if trace_hh_id:
         tracing.trace_df(
@@ -198,9 +202,9 @@ def external_non_mandatory_destination(
         )
 
 
-@inject.step()
+@workflow.step()
 def external_joint_tour_destination(
-    tours, persons_merged, network_los, chunk_size, trace_hh_id
+    state: workflow.State, tours, persons_merged, network_los, chunk_size
 ):
 
     """
@@ -211,20 +215,21 @@ def external_joint_tour_destination(
 
     trace_label = "external_joint_tour_destination"
     model_settings_file_name = "external_joint_tour_destination.yaml"
-    model_settings = config.read_model_settings(model_settings_file_name)
+    model_settings = state.filesystem.read_model_settings(model_settings_file_name)
+    trace_hh_id = state.settings.trace_hh_id
 
     logsum_column_name = model_settings.get("DEST_CHOICE_LOGSUM_COLUMN_NAME")
     want_logsums = logsum_column_name is not None
 
     sample_table_name = model_settings.get("DEST_CHOICE_SAMPLE_TABLE_NAME")
     want_sample_table = (
-        config.setting("want_dest_choice_sample_tables")
+        state.settings.want_dest_choice_sample_tables
         and sample_table_name is not None
     )
 
-    tours = tours.to_frame()
+    #tours = tours.to_frame()
 
-    persons_merged = persons_merged.to_frame()
+    #persons_merged = persons_merged.to_frame()
 
     joint_ext_tours = tours[
         (tours.tour_category == "joint")
@@ -243,10 +248,10 @@ def external_joint_tour_destination(
         estimator.write_spec(model_settings, tag="SPEC")
         estimator.set_alt_id(model_settings["ALT_DEST_COL_NAME"])
         estimator.write_table(
-            inject.get_injectable("size_terms"), "size_terms", append=False
+            workflow.get_workflowable("size_terms"), "size_terms", append=False
         )
         estimator.write_table(
-            inject.get_table("land_use").to_frame(), "landuse", append=False
+            state.get_dataframe("land_use"), "landuse", append=False
         )
         estimator.write_model_settings(model_settings, model_settings_file_name)
 
@@ -279,12 +284,12 @@ def external_joint_tour_destination(
         joint_ext_tours[logsum_column_name] = choices_df["logsum"]
         assign_in_place(tours, joint_ext_tours[[logsum_column_name]])
 
-    pipeline.replace_table("tours", tours)
+    state.add_table("tours", tours)
 
     if want_sample_table:
         assert len(save_sample_df.index.get_level_values(0).unique()) == len(choices_df)
         # save_sample_df.set_index(model_settings['ALT_DEST_COL_NAME'], append=True, inplace=True)
-        pipeline.extend_table(sample_table_name, save_sample_df)
+        state.extend_table(sample_table_name, save_sample_df)
 
     if trace_hh_id:
         tracing.trace_df(
