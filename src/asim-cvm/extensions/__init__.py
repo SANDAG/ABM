@@ -5,3 +5,4 @@ from . import cvm_route_generation  # noqa: F401
 from . import cvm_settings  # noqa: F401
 from . import cvm_state  # noqa: F401
 from . import cvm_establishments  # noqa: F401
+from . import cvm_route_purpose_and_vehicle  # noqa: F401

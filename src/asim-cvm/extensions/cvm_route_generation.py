@@ -15,20 +15,14 @@
 #   - Some kind of parameterized count model poisson, negative binomial, etc
 #   - Each segment will have levers to attach generation rates to exogenous info.
 
-import enum
-
 import numpy as np
 import pandas as pd
 
 from activitysim.core import workflow
 
+from .cvm_enum import BusinessTypes
+from .cvm_enum_tools import as_int_enum
 from .cvm_state import State
-
-
-class BusinessTypes(enum.IntEnum):
-    wholesale = 1
-    gigwork = 2
-
 
 _business_type_offset = int(10 ** np.ceil(np.log10(max(BusinessTypes))))
 
@@ -38,6 +32,24 @@ def route_generation(
     state: State,
     establishments: pd.DataFrame,
 ) -> None:
+    """
+    Generate routes from (pseudo-)establishments.
+
+    Each (pseudo-)establishment generates N "routes". A route is the commercial
+    work for a vehicle in a day.  A route is not a single closed tour in the
+    usual modeling sense, as it can potentially return to originating depot
+    multiple times, and/or end the day at a terminal location that is not the
+    same as the originating depot.
+
+    The result of running this component is the creation of the routes table.
+    It contains very little information at creation, just the columns
+    {'route_id', 'establishment_id', 'business_type'}.
+
+    Parameters
+    ----------
+    state : State
+    establishments : pandas.DataFrame
+    """
     max_n_routes_per_business_type = 10000
 
     # TODO: interface with ActivitySim repro-random
@@ -76,13 +88,15 @@ def route_generation(
     routes = pd.DataFrame(
         {
             "establishment_id": np.concatenate(route_estab_id),
-            "business_type": np.concatenate(route_btype),
+            "business_type": as_int_enum(
+                np.concatenate(route_btype), BusinessTypes, categorical=True
+            ),
         }
     )
     route_id = routes.groupby(["establishment_id", "business_type"]).cumcount()
     route_id += (
-        routes["establishment_id"] * _business_type_offset + routes["business_type"]
+        routes["establishment_id"] * _business_type_offset
+        + routes["business_type"].cat.codes
     ) * max_n_routes_per_business_type
     routes = routes.set_index(route_id)
     state.add_table("routes", routes)
-
