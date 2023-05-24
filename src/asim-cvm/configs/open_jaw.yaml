@@ -1,0 +1,3 @@
+SPEC: open_jaw.csv
+COEFFICIENTS: open_jaw_coefficients.csv
+LOGIT_TYPE: MNL

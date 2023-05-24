@@ -98,5 +98,6 @@ def route_generation(
         routes["establishment_id"] * _business_type_offset
         + routes["business_type"].cat.codes
     ) * max_n_routes_per_business_type
-    routes = routes.set_index(route_id)
+    routes = routes.set_index(pd.Index(route_id, name="route_id"))
     state.add_table("routes", routes)
+    state.get_rn_generator().add_channel("routes", routes)
