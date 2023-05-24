@@ -275,7 +275,7 @@ Add person weights to active workers,step_3,raw,,,,active_workers['finalweights'
 #,,,,,,
 Add up total population,step_3,raw,,,,total_population = final_persons.finalweights.sum()
 Add up total households,step_3,raw,,,,total_households = final_households.finalweights.sum()
-Add up total tours,step_3,raw,,,,total_tours = indivTourData_3.finalweights.sum() + (jointTourData_3['NUMBER_HH_TOTAL']*jointTourData_3['finalweights']).sum()
+Add up total tours,step_3,raw,,,,total_tours = indivTourData_3.finalweights.sum() + jointTourData_3.finalweights.sum()
 Add up total trips,step_3,raw,,,,total_trips = indivTripData_3.finalweights.sum() + jointTripData_3.finalweights.sum()
 Add up total stops,step_3,raw,,,,total_stops = indivTripData_3.query('stops == 1').finalweights.sum() + jointTripData_3.query('stops == 1').finalweights.sum()
 Add up total VMT,step_3,raw,indivTripData_3,num_travel,trip_mode,"indivTripData_3['num_travel'] = indivTripData_3['trip_mode'].map({'DRIVEALONE': 1, 'SHARED2': 2, 'SHARED3': 3.5, 'TAXI': 1.1, 'TNC_SINGLE': 1.2, 'TNC_SHARED': 2}).fillna(0)"
