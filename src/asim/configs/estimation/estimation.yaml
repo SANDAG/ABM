@@ -28,6 +28,7 @@ SKIP_BUNDLE_WRITE_FOR:
   # - non_mandatory_tour_frequency
   # - external_non_mandatory_identification
   - non_mandatory_tour_destination
+  # - external_non_mandatory_destination
   - non_mandatory_tour_scheduling
   - tour_mode_choice
   # - atwork_subtour_frequency
@@ -66,6 +67,7 @@ bundles:
   - joint_tour_scheduling
   - non_mandatory_tour_frequency
   - external_non_mandatory_identification
+  - external_non_mandatory_destination
   - non_mandatory_tour_destination
   - non_mandatory_tour_scheduling
   - tour_mode_choice
@@ -173,6 +175,7 @@ model_estimation_table_types:
   non_mandatory_tour_frequency: interaction_simulate
   external_non_mandatory_identification: simple_simulate
   non_mandatory_tour_destination: interaction_sample_simulate
+  external_non_mandatory_destination: interaction_sample_simulate
   non_mandatory_tour_scheduling: interaction_sample_simulate
   tour_mode_choice: simple_simulate
   atwork_subtour_frequency: simple_simulate

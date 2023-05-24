@@ -435,6 +435,16 @@ def infer_joint_tour_frequency_composition(configs_dir, households, persons, tou
     return jtfc_alt
 
 
+def get_list_of_pure_escort_tours(se_tours):
+    pe_tour_ids = []
+    for direction in ['inb', 'out']:
+        for i in range(1,4):
+            col = f'{direction}_chauf{i}'
+            pe_tour_ids.append(se_tours.loc[se_tours[col].isin([2,4]), f'{direction}_chauf_tour_id'])
+    pe_tour_ids = pd.concat(pe_tour_ids)
+    return pe_tour_ids
+
+
 def get_tour_around_time(tour_times, reference_time, window_size=SCHOOL_ESCORT_TIME_WINDOW):
     overlap = (tour_times - reference_time).abs()
     within_window = (overlap <= window_size)
@@ -520,8 +530,8 @@ def determine_school_escorting_alt_chauf_columns(row, direction, tours):
                     # pure escort
                     row[f'{direction}_chauf{i}'] = 4
             
-            # assigning bundle number to child i
-            row[f'{direction}_bundle{i}'] = row[f'{direction}_bundle_num']
+            # bundle number will be mapped later from the chauffeur tour id
+            row[f'{direction}_bundle{i}'] = chauf_tour_id
 
     return row
 
@@ -558,14 +568,6 @@ def infer_school_escorting(configs_dir, households, persons, tours):
     merge_cols = ['household_id', 'chauf_id1', 'chauf_id2', 'child_id1', 'child_id2', 'child_id3']
     se_tours = pd.merge(tours, choosers.reset_index()[merge_cols], how='left', on='household_id')
 
-    # bundles are numbered by the chauffeur and the departure time for outbound and the arrival time for inbound
-    se_tours['out_bundle_num'] = se_tours.sort_values(by=['out_chauf_person_id', 'start']).groupby('out_chauf_person_id')['start'].rank('dense')
-    se_tours['inb_bundle_num'] = se_tours.sort_values(by=['inb_chauf_person_id', 'end']).groupby('inb_chauf_person_id')['end'].rank('dense')
-
-    # only max of 3 bundles in alternatives, just grouping them together.
-    se_tours['out_bundle_num'].clip(upper=3, inplace=True)
-    se_tours['inb_bundle_num'].clip(upper=3, inplace=True)
-
     # initialize to no escorting and determine school escort alternative variables
     out_cols = ['out_chauf1', 'out_chauf2', 'out_chauf3', 'out_bundle1', 'out_bundle2', 'out_bundle3', 'out_chauf_tour_id']
     se_tours[out_cols] = 0
@@ -575,14 +577,29 @@ def infer_school_escorting(configs_dir, households, persons, tours):
     se_tours[inb_cols] = 0
     se_tours = se_tours.apply(lambda row: determine_school_escorting_alt_chauf_columns(row, 'inb', tours), axis=1)
 
+    # Setting bundle number by ordering the chauffeur tours by time
+    out_chauf_tours = tours[tours.survey_tour_id.isin(se_tours.out_chauf_tour_id)]
+    out_chauf_tours['bundle_num'] = out_chauf_tours.sort_values(by=['person_id', 'start']).groupby('person_id')['start'].cumcount() + 1
+    out_chauf_tour_id_to_bundle_map = out_chauf_tours.set_index('survey_tour_id')['bundle_num'].to_dict()
+    inb_chauf_tours = tours[
+        tours.survey_tour_id.isin(se_tours.inb_chauf_tour_id) & 
+        # do not allow escort tours to be used for both outbound and inbound school escorting (since activitysim does not allow)
+        # removing this contraint would cause tours to be created in ActivitySim that do not exist in the model
+        ~(tours.survey_tour_id.isin(out_chauf_tours.survey_tour_id) & (tours.tour_type == 'escort')) 
+    ]
+    inb_chauf_tours['bundle_num'] = inb_chauf_tours.sort_values(by=['person_id', 'end']).groupby('person_id')['end'].cumcount() + 1
+    inb_chauf_tour_id_to_bundle_map = inb_chauf_tours.set_index('survey_tour_id')['bundle_num'].to_dict()
+
+    # mapping bundle number for each child
+    for i in range(1,4):
+        out_col = f'out_bundle{i}'
+        se_tours[out_col] = se_tours[out_col].map(out_chauf_tour_id_to_bundle_map).fillna(0)
+        inb_col = f'inb_bundle{i}'
+        se_tours[inb_col] = se_tours[inb_col].map(inb_chauf_tour_id_to_bundle_map).fillna(0)
+                
     # making list of pure_escort chauffeur tours
     # need separate list since they are created in ActivitySim in the school escorting model and handled uniquely
-    pe_tour_ids = []
-    for direction in ['inb', 'out']:
-        for i in range(1,4):
-            col = f'{direction}_chauf{i}'
-            pe_tour_ids.append(se_tours.loc[se_tours[col].isin([2,4]), f'{direction}_chauf_tour_id'])
-    pe_tour_ids = pd.concat(pe_tour_ids)
+    pe_tour_ids = get_list_of_pure_escort_tours(se_tours)
 
     # alternatives are unique by the following columns
     alt_merge_cols = ['bundle1', 'bundle2', 'bundle3', 'chauf1', 'chauf2', 'chauf3']
