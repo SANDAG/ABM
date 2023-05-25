@@ -244,7 +244,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         init_matrices = modeller.tool("sandag.initialize.initialize_matrices")
         import_demand = modeller.tool("sandag.import.import_seed_demand")
         build_transit_scen = modeller.tool("sandag.assignment.build_transit_scenario")
-        create_transit_connector = modeller.tool("sandag.assignment.create_transit_connector")
+        create_transit_connector = modeller.tool("sandag.assignment.create_transit_connectors")
         transit_assign = modeller.tool("sandag.assignment.transit_assignment")
         run_truck = modeller.tool("sandag.model.truck.run_truck_model")
         import_auto_demand = modeller.tool("sandag.import.import_auto_demand")
