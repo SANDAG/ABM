@@ -69,9 +69,8 @@ MD resident\log
 CD ..
 
 :: Run simulation.py
-@REM %PYTHON3% src/asim/scripts/resident/resident_preprocessing.py input output
 
-%PYTHON3% src/asim/simulation.py -s settings_mp.yaml -c src/asim/configs/resident -c src/asim/configs/common -d input -d output/skims -o output/resident --households_sample_size %SAMPLERATE%
+%PYTHON3% src/asim/simulation.py -s settings_mp.yaml -c src/asim/configs/resident -c src/asim/configs/common -d input -d output/skims -o output/resident
 
 ::::::::::::::::::::::
 CD /d %ANACONDA2_DIR%\Scripts
@@ -79,10 +78,9 @@ ECHO %cd%
 CALL %CONDA2_ACT% base
 
 cd /d %PROJECT_DIRECTORY%
-%PYTHON2% src/asim/scripts/convert_tripTables.py resident output
-
 %PYTHON3% src/asim/scripts/set_zoneMapping.py resident output
 
+%PYTHON2% src/asim/scripts/convert_tripTables.py resident output
 
 ECHO ActivitySim run complete!!
 ECHO %startTime%%Time%

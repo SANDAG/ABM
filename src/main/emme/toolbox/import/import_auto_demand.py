@@ -232,10 +232,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
         ]
 
         with self.setup() as omx_manager:
-            # SOV transponder "TRPDR" = "TR" and non-transponder "NOTRPDR" = "NT"
-            # Check the OMX zones are the same Emme database, assume all files have the same zones
-            # omx_zones = omx_manager.zone_list("autoTrips%s%s.omx" % (periods[0], vot_bins[0]))
-            
+            # SOV transponder "TRPDR" = "TR" and non-transponder "NOTRPDR" = "NT"            
             for period in periods:
                 with _m.logbook_trace("Import ActivitySim traffic trips from OMX for %s" % period):
                     for vot in vot_bins:
@@ -248,17 +245,6 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                         # NOTE: No non-transponder airport or internal-external demand
                         total_asim_trips = (
                             resident_demand + cross_border_demand+ visitor_demand)
-
-                        # omx_zones = omx_manager.zone_list("autoTrips_EA_low.omx")
-                        # matrix = emmebank.matrix(matrix_name)
-                        # if omx_zones != emme_zones:
-                        #     with _m.logbook_trace("doing zone mapping for SOV_NT_%s_%s" % (period, vot)):
-                        #         matrix_data = _matrix.MatrixData(type='f', indices=[omx_zones, omx_zones])
-                        #         matrix_data.from_numpy(total_asim_trips)
-                        #         expanded_matrix_data = matrix_data.expand([emme_zones, emme_zones])
-                        #         matrix.set_data(expanded_matrix_data, self.scenario)
-                        # else:
-                        #     matrix.set_numpy_data(total_asim_trips, self.scenario)
 
                         dem_utils.demand_report([
                                 ("resident", resident_demand),
@@ -279,16 +265,6 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                             airport_demand += omx_manager.lookup(("autoAirport", ".CBX" + period, vot), "SOV%s" % period)
                         
                         total_asim_trips = (resident_demand + airport_demand)
-
-                        
-                        # matrix = emmebank.matrix(matrix_name)
-                        # if omx_zones != emme_zones:
-                        #     matrix_data = _matrix.MatrixData(type='f', indices=[omx_zones, omx_zones])
-                        #     matrix_data.from_numpy(total_asim_trips)
-                        #     expanded_matrix_data = matrix_data.expand([emme_zones, emme_zones])
-                        #     matrix.set_data(expanded_matrix_data, self.scenario)
-                        # else:
-                        #     matrix.set_numpy_data(total_asim_trips, self.scenario)
 
                         dem_utils.demand_report([
                                 ("resident", resident_demand),

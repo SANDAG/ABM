@@ -1,3 +1,4 @@
+#to be run in python2
 import openmatrix as omx, numpy as np, tables, os, sys
 
 #get arguments

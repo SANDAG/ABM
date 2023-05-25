@@ -524,7 +524,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     traffic_components = [
                         "traffic_skims",
                         "truck_model",
-                        "external_internal_model", "external_external_model", "traffic_demand"]
+                        "external_internal_model", "external_external_model"]
                     if not skipCopyWarmupTripTables:
                         traffic_components.append("traffic_demand")
                     init_matrices(traffic_components, periods, base_scenario, deleteAllMatrices)
@@ -579,27 +579,27 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 if not skipTransitSkimming[iteration]:
                     # run transit assignment
                     # export transit skims
-                    # with _m.logbook_trace("Transit assignments and skims"):
-                    for number, period in period_ids:
-                        src_period_scenario = main_emmebank.scenario(number)
-                        
-                        transit_assign_scen = build_transit_scen(
-                        period=period, base_scenario=src_period_scenario,
-                        transit_emmebank=transit_emmebank,
-                        scenario_id=src_period_scenario.id,
-                        scenario_title="%s %s transit assign" % (base_scenario.title, period),
-                        data_table_name=scenarioYear, overwrite=True)
-                    
-                    
-                        create_transit_connector(period, transit_assign_scen, create_connectors=True)
+                    with _m.logbook_trace("Transit assignments and skims"):
+                        for number, period in period_ids:
+                            src_period_scenario = main_emmebank.scenario(number)
                             
-                        transit_assign(period, transit_assign_scen, data_table_name=scenarioYear,
-                                        skims_only=True, num_processors=num_processors)
+                            transit_assign_scen = build_transit_scen(
+                            period=period, base_scenario=src_period_scenario,
+                            transit_emmebank=transit_emmebank,
+                            scenario_id=src_period_scenario.id,
+                            scenario_title="%s %s transit assign" % (base_scenario.title, period),
+                            data_table_name=scenarioYear, overwrite=True)
+                        
+                        
+                            create_transit_connector(period, transit_assign_scen, create_connectors=True)
+                                
+                            transit_assign(period, transit_assign_scen, data_table_name=scenarioYear,
+                                            skims_only=True, num_processors=num_processors)
 
-                        #output transit skims by period
-                        omx_file = _join(output_dir, "skims", "transit_skims_" + period + ".omx")
-                        period_list = [period]
-                        export_transit_skims(omx_file, period_list, transit_scenario, big_to_zero=False)  
+                            #output transit skims by period
+                            omx_file = _join(output_dir, "skims", "transit_skims_" + period + ".omx")
+                            period_list = [period]
+                            export_transit_skims(omx_file, period_list, transit_scenario, big_to_zero=False)  
 
                 if not skipTransponderExport[iteration]:
                     am_scenario = main_emmebank.scenario(base_scenario.number + 2)
@@ -683,9 +683,9 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                                    num_processors=num_processors)
                     
                     #output transit skims by period
-                    omx_file = _join(output_dir, "skims", "transit_skims_" + period + ".omx")
-                    period_list = [period]
-                    export_transit_skims(omx_file, period_list, transit_scenario)
+                    # omx_file = _join(output_dir, "skims", "transit_skims_" + period + ".omx")
+                    # period_list = [period]
+                    # export_transit_skims(omx_file, period_list, transit_scenario)
 
         if not skipTransitShed:
             # write walk and drive transit sheds

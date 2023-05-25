@@ -12,8 +12,6 @@ SET CONDA3_ACT=%ANACONDA3_DIR%\Scripts\activate.bat
 SET CONDA3=%ANACONDA3_DIR%\Scripts\conda.exe
 
 SET PYTHON3=C:\Users\%USERNAME%\.conda\envs\asim_baydag\python.exe
-:: FIX PATH AND ENV HERE LATER
-SET PYTHON2=%ANACONDA2_DIR%\python.exe
 
 ECHO Activate ActivitySim....
 CD /d %ANACONDA3_DIR%\Scripts

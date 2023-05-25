@@ -461,7 +461,7 @@ class OMXManager(object):
         omx_file = self._omx_files[file_name]
         mapping_name = omx_file.list_mappings()[0]
         # with _m.logbook_trace("file_name and mapping name: %s and %s" % (file_name, mapping_name)):
-        zone_mapping = omx_file.mapping(str(mapping_name)).items()
+        zone_mapping = omx_file.mapping(mapping_name).items()
         zone_mapping.sort(key=lambda x: x[1])
         omx_zones = [x[0] for x in zone_mapping]
         return omx_zones

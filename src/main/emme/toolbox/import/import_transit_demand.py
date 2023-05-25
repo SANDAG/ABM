@@ -190,15 +190,15 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     + person_demand) #+ cross_border_demand
 
                 # Check the OMX zones are the same Emme database, assume all files have the same zones
-                omx_zones = omx_manager.zone_list("tranTrips%s.omx" % period)
+                # omx_zones = omx_manager.zone_list("tranTrips%s.omx" % period)
                 matrix = emmebank.matrix(matrix_name)
-                if omx_zones != emme_zones:
-                    matrix_data = _matrix.MatrixData(type='f', indices=[omx_zones, omx_zones])
-                    matrix_data.from_numpy(total_asim_demand)
-                    expanded_matrix_data = matrix_data.expand([emme_zones, emme_zones])
-                    matrix.set_data(expanded_matrix_data, self.scenario)
-                else:
-                    matrix.set_numpy_data(total_asim_demand, self.scenario)
+                # if omx_zones != emme_zones:
+                #     matrix_data = _matrix.MatrixData(type='f', indices=[omx_zones, omx_zones])
+                #     matrix_data.from_numpy(total_asim_demand)
+                #     expanded_matrix_data = matrix_data.expand([emme_zones, emme_zones])
+                #     matrix.set_data(expanded_matrix_data, self.scenario)
+                # else:
+                matrix.set_numpy_data(total_asim_demand, self.scenario)
                     
                 # if ("KNR" in matrix_name):
                 #     dem_utils.demand_report([

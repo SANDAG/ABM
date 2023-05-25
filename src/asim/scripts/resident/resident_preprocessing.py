@@ -101,16 +101,16 @@ class Series15_Processor:
         matrix core names need to have their time period listed at the end:
             AM_SOV_NT_L_DIST -> SOV_NT_L_DIST__AM
         # '''
-        skim_list = self.traffic_skim_list + self.transit_skim_list
-        for skim_file in skim_list:
-            source = os.path.join(self.input_dir, skim_file)
-            dest = os.path.join(self.output_dir, skim_file)
-            print("copying", skim_file)
-            shutil.copy(source, dest)
+        # skim_list = self.traffic_skim_list + self.transit_skim_list
+        # for skim_file in skim_list:
+        #     source = os.path.join(self.input_dir, skim_file)
+        #     dest = os.path.join(self.output_dir, skim_file)
+        #     print("copying", skim_file)
+        #     shutil.copy(source, dest)
 
         # only need to rename traffic skims as transit skims already have correct format
         for skim_file in self.traffic_skim_list:
-            output_skims = omx.open_file(os.path.join(self.output_dir, skim_file), 'a')
+            output_skims = omx.open_file(os.path.join(self.output_dir, 'skims', skim_file), 'a')
             print(f"renaming skims in {skim_file}")
             for skims_name in output_skims.list_matrices():
                 name_elems = skims_name.split('_')
