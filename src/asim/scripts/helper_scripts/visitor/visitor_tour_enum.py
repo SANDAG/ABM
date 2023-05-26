@@ -143,7 +143,7 @@ class TourEnumMixin:
             party_tours = party_tours.rename(
                 columns={'WorkTours': 'work', 'RecreationTours': 'recreation', 'DiningTours': 'dining'}
             ).drop(columns=['Percent', 'TotalTours']).reset_index().rename(columns={'index': 'party'})
-            party_tours.to_pickle("C:\\abm3_dev\\output_visitors\\temp\\party_tours.pkl")
+            # party_tours.to_pickle("C:\\abm3_dev\\output_visitors\\temp\\party_tours.pkl")
             # Reshape to long and remove 0s
             party_tours = pd.melt(party_tours, id_vars='party', var_name='tour_type', value_name='count')
             party_tours = party_tours[party_tours['count'] > 0]

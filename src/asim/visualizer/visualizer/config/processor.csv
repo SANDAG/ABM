@@ -4,6 +4,7 @@ calculate HH weights,step_1,raw,final_households,finalweights,sample_rate,final_
 copy weight files,step_1,raw,final_persons,,,final_persons['finalweights'] = final_persons['household_id'].map(final_households.set_index('household_id')['finalweights']).fillna(0)
 copy weight files,step_1,raw,final_tours,,,final_tours['finalweights'] = final_tours['household_id'].map(final_households.set_index('household_id')['finalweights']).fillna(0)
 copy weight files,step_1,raw,final_trips,,,final_trips['finalweights'] = final_trips['household_id'].map(final_households.set_index('household_id')['finalweights']).fillna(0)
+copy weight files,step_1,raw,final_vehicles,,,final_vehicles['finalweights'] = final_vehicles['household_id'].map(final_households.set_index('household_id')['finalweights']).fillna(0)
 add origin purpose to final trip file,step_1,raw,,,,"final_trips = final_trips.assign(orig_purpose=final_trips.groupby(['person_id','tour_id']).purpose.shift(+1))"
 fill NaN origin purpose with the purpose of last trip,step_1,raw,,,,m = final_trips['orig_purpose'].isna()
 fill NaN origin purpose with the purpose of last trip,step_1,raw,,,,"final_trips.loc[m, 'orig_purpose'] = final_trips.groupby(['person_id','tour_id']).purpose.tail(1).values"
@@ -222,6 +223,9 @@ Classify number of adults,step_1,rename,final_households,,,{'num_adults': 'ADULT
 Classify vehicle ownership category for individual tours,step_3,raw,hh_itours,,,"hh_itours['AUTOSUFF'] = np.where(hh_itours['HHVEH'] == 0, 0, np.where(hh_itours['HHVEH'] < hh_itours['ADULTS'], 1, 2))"
 Classify vehicle ownership category for joint tours,step_3,raw,hh_jtours,,,"hh_jtours['AUTOSUFF'] = np.where(hh_jtours['HHVEH'] == 0, 0, np.where(hh_jtours['HHVEH'] < hh_jtours['ADULTS'], 1, 2))"
 #,,,,,,
+"Identify outbound tours where escorting could have been done, but was not chosen",step_3,raw,,,,"indivTourData_3['school_esc_outbound'] = np.where((indivTourData_3['school_esc_outbound'].isna()) & (indivTourData_3['PERTYPE'] >= 6) & (indivTourData_3['tour_type'] == ""school""), ""No Escort"", indivTourData_3['school_esc_outbound'])"
+"Identify inbound tours where escorting could have been done, but was not chosen",step_3,raw,,,,"indivTourData_3['school_esc_inbound'] = np.where((indivTourData_3['school_esc_inbound'].isna()) & (indivTourData_3['PERTYPE'] >= 6) & (indivTourData_3['tour_type'] == ""school""), ""No Escort"", indivTourData_3['school_esc_inbound'])"
+#,,,,,,
 Get tours with active workers,step_3,raw,,,,"active_workers = indivTourData_3[['tour_purpose', 'person_type', 'household_id', 'person_num']].query('tour_purpose == ""work"" and person_type in [1, 2]').groupby(['household_id', 'person_num']).max()['person_type'].reset_index()"
 Get tours with active students,step_3,raw,,,,"active_students = indivTourData_3[['tour_purpose', 'person_type', 'household_id', 'person_num']].query('tour_purpose == ""school"" and person_type in [6, 7, 8]').groupby(['household_id', 'person_num']).max()['person_type'].reset_index()"
 Get tours with active students,step_3,raw,,,,active_students['active_student'] = np.ones_like(active_students.index)
@@ -235,16 +239,21 @@ Get list of escort participants on each trip from string reporting it,step_3,app
 Get number of escortees on each trip,step_3,apply,final_trips,num_escortees,escort_participant_list,len
 Identify outbound escort trips,step_3,raw,,,,"ob_esc_trips = final_trips.query(""school_escort_direction == 'outbound' and tour_purpose != 'school'"")"
 Identify inbound escort trips,step_3,raw,,,,"ib_esc_trips = final_trips.query(""school_escort_direction == 'inbound' and tour_purpose != 'school'"")"
-,step_3,raw,,,,ob_escortees = ob_esc_trips['escort_participant_list'].apply(lambda x: list(x)).sum()
-,step_3,raw,,,,"ob_escorters = np.repeat(ob_esc_trips['person_id'], ob_esc_trips['num_escortees']).values.tolist()"
-,step_3,raw,,,,"ob_escort_map = dict(zip(ob_escortees, ob_escorters))"
-,step_3,raw,indivTourData_3,driver_num_out,person_id,indivTourData_3['driver_num_out'] = indivTourData_3['person_id'].map(ob_escort_map)
-,step_3,raw,,,,ib_escortees = ib_esc_trips['escort_participant_list'].apply(lambda x: list(x)).sum()
-,step_3,raw,,,,"ib_escorters = np.repeat(ib_esc_trips['person_id'], ib_esc_trips['num_escortees']).values.tolist()"
-,step_3,raw,,,,"ib_escort_map = dict(zip(ib_escortees, ib_escorters))"
-,step_3,raw,indivTourData_3,driver_num_in,person_id,indivTourData_3['driver_num_in'] = indivTourData_3['person_id'].map(ib_escort_map)
-Get outbound chauffuer type,step_3,raw,,,,indivTourData_3['out_chauffeur_ptype'] = indivTourData_3['driver_num_in'].map(final_persons.set_index('person_id')['PERTYPE'])
-Get inbound chauffuer type,step_3,raw,,,,indivTourData_3['inb_chauffeur_ptype'] = indivTourData_3['driver_num_out'].map(final_persons.set_index('person_id')['PERTYPE'])
+#,,,,,,
+Get list of all outbound escortees,step_3,raw,,,,ob_escortees = ob_esc_trips['escort_participant_list'].apply(lambda x: list(x)).sum()
+Get list of the outbound escorters corresponding to the list of outbound escortees,step_3,raw,,,,"ob_escorters = np.repeat(ob_esc_trips['person_id'], ob_esc_trips['num_escortees']).values.tolist()"
+Create a dictionary mapping outbound escortees to their escorters,step_3,raw,,,,"ob_escort_map = dict(zip(ob_escortees, ob_escorters))"
+Identify the driver number in outbound escort tours,step_3,raw,indivTourData_3,driver_num_out,person_id,indivTourData_3['driver_num_out'] = indivTourData_3['person_id'].map(ob_escort_map)
+Remove the driver number if no escorting actually occurred,step_3,raw,,,,"indivTourData_3['driver_num_out'] = np.where(indivTourData_3['school_esc_outbound'] == ""No Escort"", np.nan, indivTourData_3['driver_num_out'])"
+#,,,,,,
+Get list of all inbound escortees,step_3,raw,,,,ib_escortees = ib_esc_trips['escort_participant_list'].apply(lambda x: list(x)).sum()
+Get list of the inbound escorters corresponding to the list of inbound escortees,step_3,raw,,,,"ib_escorters = np.repeat(ib_esc_trips['person_id'], ib_esc_trips['num_escortees']).values.tolist()"
+Create a dictionary mapping inbound escortees to their escorters,step_3,raw,,,,"ib_escort_map = dict(zip(ib_escortees, ib_escorters))"
+Identify the driver number in inbound escort tours,step_3,raw,indivTourData_3,driver_num_in,person_id,indivTourData_3['driver_num_in'] = indivTourData_3['person_id'].map(ib_escort_map)
+Remove the driver number if no escorting actually occurred,step_3,raw,,,,"indivTourData_3['driver_num_in'] = np.where(indivTourData_3['school_esc_inbound'] == ""No Escort"", np.nan, indivTourData_3['driver_num_in'])"
+#,,,,,,
+Get outbound chauffuer type,step_3,raw,,,,indivTourData_3['out_chauffeur_ptype'] = indivTourData_3['driver_num_out'].map(final_persons.set_index('person_id')['PERTYPE'])
+Get inbound chauffuer type,step_3,raw,,,,indivTourData_3['inb_chauffeur_ptype'] = indivTourData_3['driver_num_in'].map(final_persons.set_index('person_id')['PERTYPE'])
 Get tours with active workers,step_3,raw,,,,"active_workers = indivTourData_3[['tour_purpose', 'person_type', 'household_id', 'person_id']].query('tour_purpose in [""work"", ""atwork""] and person_type in [1, 2]').groupby(['household_id', 'person_id']).max()['person_type'].reset_index()"
 Get tours with active students,step_3,raw,,,,"active_students = indivTourData_3[['tour_purpose', 'person_type', 'household_id', 'person_id']].query('tour_purpose == ""school"" and person_type in [6, 7, 8]').groupby(['household_id', 'person_id']).max()['person_type'].reset_index()"
 Get tours with active students,step_3,raw,,,,active_students['active_student'] = np.ones_like(active_students.index)
@@ -266,7 +275,7 @@ Add person weights to active workers,step_3,raw,,,,active_workers['finalweights'
 #,,,,,,
 Add up total population,step_3,raw,,,,total_population = final_persons.finalweights.sum()
 Add up total households,step_3,raw,,,,total_households = final_households.finalweights.sum()
-Add up total tours,step_3,raw,,,,total_tours = indivTourData_3.finalweights.sum() + (jointTourData_3['NUMBER_HH_TOTAL']*jointTourData_3['finalweights']).sum()
+Add up total tours,step_3,raw,,,,total_tours = indivTourData_3.finalweights.sum() + jointTourData_3.finalweights.sum()
 Add up total trips,step_3,raw,,,,total_trips = indivTripData_3.finalweights.sum() + jointTripData_3.finalweights.sum()
 Add up total stops,step_3,raw,,,,total_stops = indivTripData_3.query('stops == 1').finalweights.sum() + jointTripData_3.query('stops == 1').finalweights.sum()
 Add up total VMT,step_3,raw,indivTripData_3,num_travel,trip_mode,"indivTripData_3['num_travel'] = indivTripData_3['trip_mode'].map({'DRIVEALONE': 1, 'SHARED2': 2, 'SHARED3': 3.5, 'TAXI': 1.1, 'TNC_SINGLE': 1.2, 'TNC_SHARED': 2}).fillna(0)"
@@ -282,12 +291,44 @@ Create rates data frame,step_3,raw,,,,rates_df = pd.DataFrame({'value': rates_df
 Create rates data frame,step_3,raw,,,,rates_df.index.name = 'Variable'
 Write rates data frame,step_3,raw,,,,rates_df.to_csv(r'output\rates.csv')
 #,,,,,,
-Rename tours that have no escort,step_3,raw,,,,indivTourData_3['school_esc_outbound'] = indivTourData_3['school_esc_outbound'].fillna('No Escort')
-Rename tours that have no escort,step_3,raw,,,,indivTourData_3['school_esc_inbound'] = indivTourData_3['school_esc_inbound'].fillna('No Escort')
+#Rename tours that have no escort,step_3,raw,,,,indivTourData_3['school_esc_outbound'] = indivTourData_3['school_esc_outbound'].fillna('No Escort')
+#Rename tours that have no escort,step_3,raw,,,,indivTourData_3['school_esc_inbound'] = indivTourData_3['school_esc_inbound'].fillna('No Escort')
+#,,,,,,
+,step_3,raw,,,,"ob_esc_tours = indivTourData_3.dropna(subset = [""school_esc_outbound""])"
+,step_3,raw,,,,"ib_esc_tours = indivTourData_3.dropna(subset = [""school_esc_inbound""])"
+#,,,,,,
+Add total number of households as column in `final_households` to assist with pandas.DataFrame.eval(),step_3,raw,,,,final_households['total_households'] = total_households
+,step_3,column,final_households,av_ownership_weight,,av_ownership * finalweights / total_households
+,step_3,column,final_households,transponder_ownership_weight,,transponder_ownership * finalweights / total_households
+#,,,,,,
+Get total number of households by household size,step_3,raw,,,,"_total_hh_by_size = dict(final_households[['HHSIZE', 'finalweights']].groupby(['HHSIZE']).sum()['finalweights'])"
+Create attribute showing total number of households of that household's size,step_3,replace,final_households,total_hh_by_size,HHSIZE,_total_hh_by_size
+Add weight for counting percentage of households with at least one joint tour,step_3,column,final_households,has_joint_tour_weight,,JOINT * finalweights / total_hh_by_size
+#,,,,,,
+Add work location parking cost to person file,step_3,raw,,,,final_persons['workloc_parkcost'] = final_persons['workplace_zone_id'].map(land_use.set_index('MAZ')['dparkcost'])
+,step_3,raw,,,,_free_parking_weights_by_ptype = dict(final_persons.query('workloc_parkcost > 0').groupby('PERTYPE').sum()['finalweights'])
+,step_3,replace,final_persons,free_parking_ptype_weight_sum,PERTYPE,_free_parking_weights_by_ptype
+Create weight to average for getting parking reimbursement,step_3,column,final_persons,free_parking_weight,,free_parking_at_work * finalweights / free_parking_ptype_weight_sum
+#,,,,,,
+#,step_3,raw,,,,"_num_workers_by_ptype = dict(final_persons[['is_worker', 'PERTYPE', 'finalweights']].query('is_worker').groupby('PERTYPE').sum()['finalweights'])"
+#,step_3,replace,final_persons,num_workers_by_ptype,PERTYPE,_free_parking_weights_by_ptype
+#Create weight to average for getting parking reimbursement,step_3,column,final_persons,telework_frequency_weight,,free_parking_at_work * finalweights / free_parking_ptype_weight_sum
+#,,,,,,
+Create total weights by person type,step_3,raw,,,,"_sum_weights_by_ptype = dict(final_persons[['PERTYPE', 'finalweights']].groupby('PERTYPE').sum()['finalweights'])"
+,step_3,replace,final_persons,ptype_weight_sum,PERTYPE,_sum_weights_by_ptype
+,step_3,column,final_persons,transit_pass_weight,,transit_pass_ownership * finalweights / ptype_weight_sum
+,step_3,column,final_persons,transit_subsidy_weight,,transit_pass_subsidy * finalweights / ptype_weight_sum
+#,,,,,,
+"Split out vehicle body type, age, and fuel type",step_3,apply,final_vehicles,veh_info,vehicle_type,lambda x: x.split('_')
+Extract vehicle body type,step_3,apply,final_vehicles,body_type,veh_info,lambda x: x[0]
+Extract vehicle age,step_3,apply,final_vehicles,age,veh_info,lambda x: x[1]
+Extract vehicle fuel type,step_3,apply,final_vehicles,fuel_type,veh_info,lambda x: x[2]
 #,,,,,,
 Recode tour mode,step_4,replace,hh_tours,tour_mode,tour_mode,"{'DRIVEALONE': '01: SOV', 'SHARED2': '02: Shared Ride 2', 'SHARED3': '03: Shared Ride 3+', 'WALK': '04: Walk', 'BIKE': '05: Bike', 'WALK_TRANSIT': '06: Walk to Transit', 'WALK_LOC': '06: Walk to Transit', 'WALK_PRM': '06: Walk to Transit', 'WALK_MIX': '06: Walk to Transit', 'PNR_TRANSIT': '07: PNR to Transit', 'PNR_LOC': '07: PNR to Transit', 'PNR_PRM': '07: PNR to Transit', 'PNR_MIX': '07: PNR to Transit', 'KNR_TRANSIT': '08: KNR to Transit', 'KNR_LOC': '08: KNR to Transit', 'KNR_PRM': '08: KNR to Transit', 'KNR_MIX': '08: KNR to Transit', 'TNC_TRANSIT': '09: TNC to Transit', 'TNC_LOC': '09: TNC to Transit', 'TNC_PRM': '09: TNC to Transit', 'TNC_MIX': '09: TNC to Transit', 'TAXI': '10: Taxi', 'TNC_SINGLE': '11: TNC Single', 'TNC_SHARED': '12: TNC Shared', 'SCH_BUS': '13: School Bus'}"
 Recode tour mode,step_4,replace,trips,tour_mode,tour_mode,"{'DRIVEALONE': '01: SOV', 'SHARED2': '02: Shared Ride 2', 'SHARED3': '03: Shared Ride 3+', 'WALK': '04: Walk', 'BIKE': '05: Bike', 'WALK_TRANSIT': '06: Walk to Transit', 'WALK_LOC': '06: Walk to Transit', 'WALK_PRM': '06: Walk to Transit', 'WALK_MIX': '06: Walk to Transit', 'PNR_TRANSIT': '07: PNR to Transit', 'PNR_LOC': '07: PNR to Transit', 'PNR_PRM': '07: PNR to Transit', 'PNR_MIX': '07: PNR to Transit', 'KNR_TRANSIT': '08: KNR to Transit', 'KNR_LOC': '08: KNR to Transit', 'KNR_PRM': '08: KNR to Transit', 'KNR_MIX': '08: KNR to Transit', 'TNC_TRANSIT': '09: TNC to Transit', 'TNC_LOC': '09: TNC to Transit', 'TNC_PRM': '09: TNC to Transit', 'TNC_MIX': '09: TNC to Transit', 'TAXI': '10: Taxi', 'TNC_SINGLE': '11: TNC Single', 'TNC_SHARED': '12: TNC Shared', 'SCH_BUS': '13: School Bus'}"
 Recode trip mode,step_4,replace,trips,trip_mode,trip_mode,"{'DRIVEALONE': '01: SOV', 'SHARED2': '02: Shared Ride 2', 'SHARED3': '03: Shared Ride 3+', 'WALK': '04: Walk', 'BIKE': '05: Bike', 'WALK_TRANSIT': '06: Walk to Transit', 'WALK_LOC': '06: Walk to Transit', 'WALK_PRM': '06: Walk to Transit', 'WALK_MIX': '06: Walk to Transit', 'PNR_TRANSIT': '07: PNR to Transit', 'PNR_LOC': '07: PNR to Transit', 'PNR_PRM': '07: PNR to Transit', 'PNR_MIX': '07: PNR to Transit', 'KNR_TRANSIT': '08: KNR to Transit', 'KNR_LOC': '08: KNR to Transit', 'KNR_PRM': '08: KNR to Transit', 'KNR_MIX': '08: KNR to Transit', 'TNC_TRANSIT': '09: TNC to Transit', 'TNC_LOC': '09: TNC to Transit', 'TNC_PRM': '09: TNC to Transit', 'TNC_MIX': '09: TNC to Transit', 'TAXI': '10: Taxi', 'TNC_SINGLE': '11: TNC Single', 'TNC_SHARED': '12: TNC Shared', 'SCH_BUS': '13: School Bus'}"
+#,,,,,,
+Recode telecommute frequency,step_4,replace,final_persons,telecommute_frequency,telecommute_frequency,"{'No_Telecommute': '0 Days/Week', '1_day_week': '1 Day/Week', '2_3_days_week': '2-3 Days/Week', '4_days_week': '4 Days/Week'}"
 #,,,,,,
 #,,,,,,
 Add totals to average mandatory trip length,step_6,raw,,,,mandTripLengthsTotal['HDISTRICT'] = 'Total'
@@ -319,13 +360,15 @@ Melt nm_tour_rates,step_6,raw,,,,"nm_tour_rates = pd.melt(nm_tour_rates, ['PERTY
 Rename person type column,step_6,rename,resultsByPType,,,{'index': 'PERTYPE'}
 Rename person type column,step_6,rename,tours_pertype_purpose,,,{'person_type': 'PERTYPE'}
 #,,,,,,
-Recode person type,step_6,replace,inmSummary_vis,PERTYPE,PERTYPE,"{1: '1: Full-Time Worker', 2: '2: Part-Time Worker', 3: '3: University Student', 4: '4: Non-Worker', 5: '5: Retiree', 6: '6: Driving Aged Student', 7: '7: Non-Driving Aged Student', 8: '8: Child To Young for School'}"
-Recode person type,step_6,replace,tours_pertype_purpose,PERTYPE,PERTYPE,"{1: '1: Full-Time Worker', 2: '2: Part-Time Worker', 3: '3: University Student', 4: '4: Non-Worker', 5: '5: Retiree', 6: '6: Driving Aged Student', 7: '7: Non-Driving Aged Student', 8: '8: Child To Young for School'}"
-Recode person type,step_6,replace,resultsByPType,PERTYPE,PERTYPE,"{1: '1: Full-Time Worker', 2: '2: Part-Time Worker', 3: '3: University Student', 4: '4: Non-Worker', 5: '5: Retiree', 6: '6: Driving Aged Student', 7: '7: Non-Driving Aged Student', 8: '8: Child To Young for School'}"
-Recode person type,step_6,replace,pertypeDistbn,PERTYPE,PERTYPE,"{1: '1: Full-Time Worker', 2: '2: Part-Time Worker', 3: '3: University Student', 4: '4: Non-Worker', 5: '5: Retiree', 6: '6: Driving Aged Student', 7: '7: Non-Driving Aged Student', 8: '8: Child To Young for School'}"
-Recode person type,step_6,replace,dapSummary_vis,PERTYPE,PERTYPE,"{1: '1: Full-Time Worker', 2: '2: Part-Time Worker', 3: '3: University Student', 4: '4: Non-Worker', 5: '5: Retiree', 6: '6: Driving Aged Student', 7: '7: Non-Driving Aged Student', 8: '8: Child To Young for School'}"
-Recode person type,step_6,replace,mtfSummary_vis,PERTYPE,PERTYPE,"{1: '1: Full-Time Worker', 2: '2: Part-Time Worker', 3: '3: University Student', 4: '4: Non-Worker', 5: '5: Retiree', 6: '6: Driving Aged Student', 7: '7: Non-Driving Aged Student', 8: '8: Child To Young for School'}"
-Recode person type,step_6,replace,nm_tour_rates,PERTYPE,PERTYPE,"{1: '1: Full-Time Worker', 2: '2: Part-Time Worker', 3: '3: University Student', 4: '4: Non-Worker', 5: '5: Retiree', 6: '6: Driving Aged Student', 7: '7: Non-Driving Aged Student', 8: '8: Child To Young for School'}"
+Define dictionary for recoding person type,step_6,raw,,,,"_ptype_map = {1: '1: Full-Time Worker', 2: '2: Part-Time Worker', 3: '3: University Student', 4: '4: Non-Worker', 5: '5: Retiree', 6: '6: Driving Aged Student', 7: '7: Non-Driving Aged Student', 8: '8: Child To Young for School'}"
+Recode person type,step_6,replace,inmSummary_vis,PERTYPE,PERTYPE,_ptype_map
+Recode person type,step_6,replace,tours_pertype_purpose,PERTYPE,PERTYPE,_ptype_map
+Recode person type,step_6,replace,resultsByPType,PERTYPE,PERTYPE,_ptype_map
+Recode person type,step_6,replace,pertypeDistbn,PERTYPE,PERTYPE,_ptype_map
+Recode person type,step_6,replace,dapSummary_vis,PERTYPE,PERTYPE,_ptype_map
+Recode person type,step_6,replace,mtfSummary_vis,PERTYPE,PERTYPE,_ptype_map
+Recode person type,step_6,replace,nm_tour_rates,PERTYPE,PERTYPE,_ptype_map
+Recode person type,step_6,replace,ownership_subsidies,PERTYPE,PERTYPE,_ptype_map
 #,,,,,,
 Rename AGGPURP,step_6,rename,stopDC_vis,,,"{'AGGPURP': 'purpose', 'out_dir_distbin': 'distbin'}"
 Rename AGGPURP,step_6,rename,avgStopOutofDirectionDist_vis,,,{'AGGPURP': 'purpose'}
@@ -345,10 +388,10 @@ Rename AGGPURP,step_6,rename,tourDuration,,,{'AGGPURP': 'purpose'}
 Rename AUTOSUFF column,step_6,rename,tmodeProfile_vis,,,{'AUTOSUFF': 'OwnershipCategory'}
 Recode auto ownership category,step_6,replace,tmodeProfile_vis,OwnershipCategory,OwnershipCategory,"{0: '0: No Vehicles', 1: '1: 1+ Veh/Adults > Veh', 2: '2: Vehicles >= Adults'}"
 Rename mandatory distance distribution columns,step_6,rename,mandTLFD,,,"{'level_0': 'distbin', 'HDISTRICT': 'District'}"
-#Rename mandatory distance distribution columns,step_6,rename,mandTLFD_et,,,"{'level_0': 'distbin', 'HDISTRICT': 'District'}"
+Rename mandatory distance distribution columns,step_6,rename,mandTLFD_et,,,"{'level_0': 'distbin', 'HDISTRICT': 'District'}"
 Drop null values,step_6,raw,,,,tmodeProfile_vis = tmodeProfile_vis.dropna()
 Melt mand TLFD,step_6,raw,,,,"mandTLFD = pd.melt(mandTLFD, ['distbin', 'District'], var_name = 'purpose')"
-#Melt mand TLFD,step_6,raw,,,,"mandTLFD_et = pd.melt(mandTLFD_et, ['distbin', 'District'], var_name = 'purpose')"
+Melt mand TLFD,step_6,raw,,,,"mandTLFD_et = pd.melt(mandTLFD_et, ['distbin', 'District'], var_name = 'purpose')"
 Rename mandatory trip length district,step_6,rename,mandTripLengths,,,{'HDISTRICT': 'District'}
 Rename mandatory trip length district,step_6,rename,mandTripLengths_et,,,{'HDISTRICT': 'District'}
 Melt mandatory trip lengths,step_6,raw,,,,"mandTripLengths = pd.melt(mandTripLengths, ['District'], var_name = 'purpose')"
@@ -362,7 +405,7 @@ Recode HH District,step_6,replace,districtFlows,HDISTRICT,HDISTRICT,"{1: '1: Dow
 Recode Work District,step_6,replace,districtFlows,WDISTRICT,WDISTRICT,"{1: '1: Downtown', 2: '2: Central', 3: '3: North City', 4: '4: South Suburban', 5: '5: East Suburban', 6: '6: North County West', 7: '7: North County East', 8: '8: East County'}"
 Recode mandatory tour length district,step_6,replace,mandTLFD,District,District,"{1: '1: Downtown', 2: '2: Central', 3: '3: North City', 4: '4: South Suburban', 5: '5: East Suburban', 6: '6: North County West', 7: '7: North County East', 8: '8: East County'}"
 Recode mandatory tour length district,step_6,replace,mandTripLengths,District,District,"{1: '1: Downtown', 2: '2: Central', 3: '3: North City', 4: '4: South Suburban', 5: '5: East Suburban', 6: '6: North County West', 7: '7: North County East', 8: '8: East County'}"
-#Recode mandatory tour length district,step_6,replace,mandTLFD_et,District,District,"{1: '1: Downtown', 2: '2: Central', 3: '3: North City', 4: '4: South Suburban', 5: '5: East Suburban', 6: '6: North County West', 7: '7: North County East', 8: '8: East County'}"
+Recode mandatory tour length district,step_6,replace,mandTLFD_et,District,District,"{1: '1: Downtown', 2: '2: Central', 3: '3: North City', 4: '4: South Suburban', 5: '5: East Suburban', 6: '6: North County West', 7: '7: North County East', 8: '8: East County'}"
 Recode mandatory tour length district,step_6,replace,mandTripLengths_et,District,District,"{1: '1: Downtown', 2: '2: Central', 3: '3: North City', 4: '4: South Suburban', 5: '5: East Suburban', 6: '6: North County West', 7: '7: North County East', 8: '8: East County'}"
 #,,,,,,
 Recode time period,step_6,apply,todProfile_vis,period,period,lambda x: (0.5*x+2.75) % 24
@@ -394,7 +437,11 @@ Rename escort type column,step_6,rename,esctype_by_chauffeurtype,,,"{'level_0': 
 Recode person type,step_6,replace,esctype_by_chauffeurtype,chauffeur,chauffeur,"{1: '1: Full-Time Worker', 2: '2: Part-Time Worker', 3: '3: University Student', 4: '4: Non-Worker', 5: '5: Retiree', 6: '6: Driving Aged Student', 7: '7: Non-Driving Aged Student', 8: '8: Child To Young for School'}"
 Recode person type,step_6,replace,esctype_by_childtype,child_type,child_type,"{1: '1: Full-Time Worker', 2: '2: Part-Time Worker', 3: '3: University Student', 4: '4: Non-Worker', 5: '5: Retiree', 6: '6: Driving Aged Student', 7: '7: Non-Driving Aged Student', 8: '8: Child To Young for School'}"
 #,,,,,,
-Recode person type,step_6,replace,esctype_by_childtype,esc_type,esc_type,"{'': 'No Escort', 'ride_share': 'Ride Share', 'pure_escort': 'Pure Escort'}"
-Recode person type,step_6,replace,esctype_by_chauffeurtype,esc_type,esc_type,"{'': 'No Escort', 'ride_share': 'Ride Share', 'pure_escort': 'Pure Escort'}"
+Recode person type,step_6,replace,esctype_by_childtype,esc_type,esc_type,"{'ride_share': 'Ride Share', 'pure_escort': 'Pure Escort'}"
+Recode person type,step_6,replace,esctype_by_chauffeurtype,esc_type,esc_type,"{'ride_share': 'Ride Share', 'pure_escort': 'Pure Escort'}"
 Recode in escort type,step_6,replace,worker_school_escorting,inb_escort_type,inb_escort_type,"{0: 'No Escort', 1: 'Ride Share', 2: 'Pure Escort', 3: 'No Escort'}"
 Recode out escort type,step_6,replace,worker_school_escorting,out_escort_type,out_escort_type,"{0: 'No Escort', 1: 'Ride Share', 2: 'Pure Escort', 3: 'No Escort'}"
+Recode number of joint tours in households,step_6,replace,hhsizeJoint,JOINT,JOINT,"{0: '0', 1: '1+'}"
+#,,,,,,
+Reset autoOwnership_AV index,step_6,raw,,,,autoOwnership_AV = autoOwnership_AV.reset_index()
+Reset transponder_ownership index,step_6,raw,,,,transponder_ownership = transponder_ownership.reset_index()

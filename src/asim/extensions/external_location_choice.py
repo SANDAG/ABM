@@ -13,7 +13,7 @@ from activitysim.core import expressions
 
 from activitysim.abm.models.util import estimation
 from activitysim.abm.models.util import tour_destination
-from activitysim.abm.models.location_choice import iterate_location_choice
+from activitysim.abm.models.location_choice import iterate_location_choice, write_estimation_specs
 
 from activitysim.core.util import assign_in_place
 

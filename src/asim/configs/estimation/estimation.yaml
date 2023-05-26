@@ -1,0 +1,189 @@
+
+enable: True
+
+SKIP_BUNDLE_WRITE_FOR:
+  # - auto_ownership
+  # - work_from_home
+  # - external_worker_identification
+  # - external_workplace_location
+  - school_location
+  - workplace_location
+  # - transit_pass_subsidy
+  # - transit_pass_ownership
+  - vehicle_type_choice
+  # - transponder_ownership
+  # - free_parking
+  # - telecommute_frequency
+  # - cdap
+  # - mandatory_tour_frequency
+  - mandatory_tour_scheduling_work
+  - mandatory_tour_scheduling_school
+  - mandatory_tour_scheduling_univ
+  # - school_escorting
+  # - joint_tour_frequency_composition
+  # - external_joint_tour_identification
+  # - joint_tour_participation
+  - joint_tour_destination
+  - joint_tour_scheduling
+  # - non_mandatory_tour_frequency
+  # - external_non_mandatory_identification
+  - non_mandatory_tour_destination
+  # - external_non_mandatory_destination
+  - non_mandatory_tour_scheduling
+  - tour_mode_choice
+  # - atwork_subtour_frequency
+  - atwork_subtour_destination
+  - atwork_subtour_scheduling
+  # - atwork_subtour_mode_choice
+  # - stop_frequency
+  # - trip_purpose
+  # - trip_destination
+  # - trip_scheduling
+  # - trip_mode_choice
+
+bundles:
+  - work_from_home
+  - external_worker_identification
+  - external_workplace_location
+  - school_location
+  - workplace_location
+  - transit_pass_subsidy
+  - transit_pass_ownership
+  - auto_ownership
+  - vehicle_type_choice
+  - transponder_ownership
+  - free_parking
+  - telecommute_frequency
+  - cdap
+  - mandatory_tour_frequency
+  - mandatory_tour_scheduling_work
+  - mandatory_tour_scheduling_school
+  - mandatory_tour_scheduling_univ
+  - school_escorting
+  - joint_tour_frequency_composition
+  - external_joint_tour_identification
+  - joint_tour_participation
+  - joint_tour_destination
+  - joint_tour_scheduling
+  - non_mandatory_tour_frequency
+  - external_non_mandatory_identification
+  - external_non_mandatory_destination
+  - non_mandatory_tour_destination
+  - non_mandatory_tour_scheduling
+  - tour_mode_choice
+  - atwork_subtour_frequency
+  - atwork_subtour_destination
+  - atwork_subtour_scheduling
+  - atwork_subtour_mode_choice
+  - stop_frequency
+  - trip_purpose
+  - trip_destination
+  - trip_scheduling
+  - trip_mode_choice
+
+#  - atwork_subtour_mode_choice  subtours.tour_mode
+
+survey_tables:
+  households:
+    file_name: override_households.csv
+    index_col: household_id
+  persons:
+    file_name: override_persons.csv
+    index_col: person_id
+  tours:
+    file_name: override_tours.csv
+    index_col: tour_id
+  joint_tour_participants:
+    file_name: override_joint_tour_participants.csv
+    index_col: participant_id
+  trips:
+    file_name: override_trips.csv
+    index_col: trip_id
+
+estimation_table_recipes:
+
+  interaction_sample_simulate:
+    omnibus_tables:
+      choosers_combined:
+        - choices
+        - override_choices
+        - choosers
+      alternatives_combined:
+        - interaction_sample_alternatives
+        - interaction_expression_values
+    omnibus_tables_append_columns: [choosers_combined]
+
+  interaction_simulate:
+    omnibus_tables:
+      choosers_combined:
+        - choices
+        - override_choices
+        - choosers
+    omnibus_tables_append_columns: [choosers_combined]
+
+  simple_simulate:
+    omnibus_tables:
+      values_combined:
+        - choices
+        - override_choices
+        - expression_values
+        - choosers
+    omnibus_tables_append_columns: [values_combined]
+
+  cdap_simulate:
+    omnibus_tables:
+      values_combined:
+        - choices
+        - override_choices
+        - choosers
+    omnibus_tables_append_columns: [values_combined]
+
+  simple_probabilistic:
+    omnibus_tables:
+      values_combined:
+        - choices
+        - override_choices
+        - choosers
+        - probs
+    omnibus_tables_append_columns: [values_combined]
+
+
+model_estimation_table_types:
+  work_from_home: simple_simulate
+  external_worker_identification: simple_simulate
+  external_workplace_location: interaction_sample_simulate
+  school_location: interaction_sample_simulate
+  workplace_location:  interaction_sample_simulate
+  transit_pass_subsidy: simple_simulate
+  transit_pass_ownership: simple_simulate
+  auto_ownership: simple_simulate
+  vehicle_type_choice: interaction_simulate
+  transponder_ownership: simple_simulate
+  free_parking: simple_simulate
+  telecommute_frequency: simple_simulate
+  cdap: cdap_simulate
+  mandatory_tour_frequency: simple_simulate
+  mandatory_tour_scheduling_work: interaction_sample_simulate
+  mandatory_tour_scheduling_school: interaction_sample_simulate
+  mandatory_tour_scheduling_univ: interaction_sample_simulate
+  school_escorting: interaction_simulate
+  joint_tour_frequency_composition: interaction_simulate
+  external_joint_tour_identification: simple_simulate
+  joint_tour_participation: simple_simulate
+  joint_tour_destination: interaction_sample_simulate
+  joint_tour_scheduling: interaction_sample_simulate
+  non_mandatory_tour_frequency: interaction_simulate
+  external_non_mandatory_identification: simple_simulate
+  non_mandatory_tour_destination: interaction_sample_simulate
+  external_non_mandatory_destination: interaction_sample_simulate
+  non_mandatory_tour_scheduling: interaction_sample_simulate
+  tour_mode_choice: simple_simulate
+  atwork_subtour_frequency: simple_simulate
+  atwork_subtour_destination: interaction_sample_simulate
+  atwork_subtour_scheduling: interaction_sample_simulate
+  atwork_subtour_mode_choice: simple_simulate
+  stop_frequency: simple_simulate
+  trip_purpose: simple_probabilistic
+  trip_destination: interaction_sample_simulate
+  trip_scheduling: simple_probabilistic
+  trip_mode_choice: simple_simulate

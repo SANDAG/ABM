@@ -32,6 +32,7 @@ def transponder_ownership(
     trace_label = "transponder_ownership"
     model_settings_file_name = "transponder_ownership.yaml"
     model_settings = config.read_model_settings(model_settings_file_name)
+    transponder_own_alt = model_settings['TRANSPONDER_OWNERSHIP_ALT']
 
     estimator = estimation.manager.begin_estimation("transponder_ownership")
     constants = config.get_model_constants(model_settings)
@@ -62,7 +63,7 @@ def transponder_ownership(
     if estimator:
         estimator.write_model_settings(model_settings, model_settings_file_name)
         estimator.write_spec(model_settings)
-        estimator.write_coefficients(coefficients_df)
+        estimator.write_coefficients(coefficients_df, model_settings)
         estimator.write_choosers(choosers)
 
     choices = simulate.simple_simulate(
@@ -75,6 +76,7 @@ def transponder_ownership(
         trace_choice_name="transponder_ownership",
         estimator=estimator,
     )
+    choices = choices == transponder_own_alt
 
     if estimator:
         estimator.write_choices(choices)
