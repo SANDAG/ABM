@@ -1,20 +1,14 @@
 Label,Description,Expression,work1,work2,school1,school2,work_and_school
-util_usual_work_location_is_work_at_home_but_theres_a_school_location,usual work location is work_at_home_ but there's a school location,@df.work_from_home == 1,coef_unavailable,coef_unavailable,,,coef_unavailable
-#util_usual_school_location_is_schoolathome_but_theres_a_work_location,usual school location is school_at_home_ but there's a work location,@df.schoolAtHome == 1,,,coef_unavailable,coef_unavailable,coef_unavailable
-util_work_not_available_for_non_driving_children,work not available for non_driving children,@df.ptype == 7,coef_unavailable,coef_unavailable,,,coef_unavailable
-util_work_not_available_for_driving_children_that_are_not_employed,work not available for driving children that are not employed,@(df.ptype == 6) * (df.pemploy == 3),coef_unavailable,coef_unavailable,,,coef_unavailable
-util_no_mandatory_tours_for_non_working_adults,no mandatory tours for non_working adults,@((df.ptype == 4) + (df.ptype == 5)) > 0,coef_unavailable,coef_unavailable,coef_unavailable,coef_unavailable,coef_unavailable
-util_school_not_available_for_ft_pt_workers,school not available for ft_ pt workers,@((df.ptype == 1) + (df.ptype == 2)) > 0,,,coef_unavailable,coef_unavailable,coef_unavailable
-util_work_only_not_available_for_school_aged_students,work only not available for school aged students,@((df.ptype == 6) + (df.ptype == 7)) > 0,coef_unavailable,coef_unavailable,,,
-util_2_work_tours_not_available_for_university_students,2 work tours not available for university students,@(df.ptype == 3) * (df.pemploy <3),,coef_unavailable,,,
-util_work_tour_not_available_for_university_students_that_are_not_employed,work tour not available for university students that are not employed,@(df.ptype == 3) * (df.pemploy == 3),coef_unavailable,coef_unavailable,,,coef_unavailable
-util_availability_pre_driving_age_not_in_school,Unavailable: Pre-driving age child who is not in school,@df.ptype == 8,coef_unavailable,coef_unavailable,,coef_unavailable,coef_unavailable
+# availiability conditions just based on worker or student status,,,,,,,
+util_work_unavailable_for_non_workers,work not available for non-workers,is_worker == False,coef_unavailable,coef_unavailable,,,coef_unavailable
+util_work_unavailable_for_wfh,work not available if work from home,work_from_home == True,coef_unavailable,coef_unavailable,,,coef_unavailable
+util_school_unavailable_for_non_students,school unavailable for non-students,is_student == False,,,coef_unavailable,coef_unavailable,coef_unavailable
 #,,,,,,,
 util_alternative_specific_constant_for_full_time_work,alternative specific constant for full_time work,@df.ptype==1,coef_zero,coef_ft_worker_work2_asc,coef_ft_worker_school1_asc,,coef_ft_worker_work_and_school_asc
 util_alternative_specific_constant_for_part_time_work,alternative specific constant for part_time work,@df.ptype==2,coef_zero,coef_pt_worker_work2_asc,coef_pt_worker_school1_asc,,coef_pt_worker_work_and_school_asc
 util_alternative_specific_constant_for_university_student,alternative specific constant for university student,@df.ptype==3,coef_univ_work1_asc,,coef_zero,coef_univ_school2_asc,coef_univ_work_and_school_asc
-util_alternative_specific_constant_for_non_worker_U65,alternative specific constant for non_worker U65,@df.ptype==4,coef_zero,,coef_zero,coef_zero,
-util_alternative_specific_constant_for_retiree_65,alternative specific constant for retiree 65+,@df.ptype==5,coef_zero,,coef_zero,coef_zero,
+util_alternative_specific_constant_for_non_worker_U65,alternative specific constant for non_worker U65,@df.ptype==4,coef_zero,,coef_non_worker_school1_asc,coef_zero,
+util_alternative_specific_constant_for_retiree_65,alternative specific constant for retiree 65+,@df.ptype==5,coef_zero,,coef_ret_worker_school1_asc,coef_zero,
 util_alternative_specific_constant_for_school_child_16_17,alternative specific constant for school child 16_17,@df.ptype==6,coef_driving_age_child_work1_asc,,coef_zero,coef_driving_age_child_school2_asc,coef_driving_age_child_work_and_school_asc
 util_alternative_specific_constant_for_school_child_6_15,alternative specific constant for school child 6_15,@df.ptype==7,coef_zero,,coef_zero,coef_pre_driving_age_child_school2_asc,
 #,,,,,,,
@@ -49,20 +43,6 @@ util_minimum_travel_time_to_workplace_part_time_worker,minimum travel time to wo
 util_minimum_travel_time_to_workplace_university_student,minimum travel time to workplace  (excludes non_motorized)_ university student,@df.ptype==3 * df.roundtrip_auto_time_to_work,,,,,coef_univ_timetowork_work_and_school
 util_minimum_travel_time_to_workplace_non_worker_under_65,minimum travel time to workplace  (excludes non_motorized)_ non_worker under 65,@df.ptype==4 * df.roundtrip_auto_time_to_work,,,,,
 util_minimum_travel_time_to_workplace_retiree_65_and_plus,minimum travel time to workplace  (excludes non_motorized)_ retiree 65 and plus,@df.ptype==5 * df.roundtrip_auto_time_to_work,,,,,
-#util_escorting_accessibility_by_car_sufficiency_full_time_worker,escorting accessibility by car sufficiency_ full time worker,@(df.ptype==1)*(df.auto_ownership<df.num_drivers) *df.escortavail,,coef_ftworker_escort_autodef_work2,coef_ftworker_escort_autodef_school2,,coef_ftworker_escort_autodef_work_and_school
-#util_escorting_accessibility_by_car_sufficiency_part_time_worker,escorting accessibility by car sufficiency_ part time worker,@(df.ptype==2)*(df.auto_ownership<df.num_drivers)*df.escortavail,,coef_ptworker_escort_autodef_work2,coef_ptworker_escort_autodef_school2,,coef_ptworker_escort_autodef_work_and_school
-#util_escorting_accessibility_by_car_sufficiency_non_worker_under_65,escorting accessibility by car sufficiency_ non_ worker under 65,@(df.ptype==4)*(df.auto_ownership<df.num_drivers) *df.escortavail,,,coef_nonworker65_escort_autodef_school2,,
-#util_escorting_accessibility_by_car_sufficiency_etiree_65_and_plus,escorting accessibility by car sufficiency_ etiree 65 and plus,@(df.ptype==5)*(df.auto_ownership<df.num_drivers) *df.escortavail,,,coef_retired65_escort_autodef_school2,,
-#util_escorting_accessibility_by_car_sufficiency_full_time_worker,escorting accessibility by car sufficiency_ full time worker,@(df.ptype==1)*(df.auto_ownership==df.num_drivers) *df.escortavail,,coef_ftworker_escort_autoequal_work2,coef_ftworker_escort_autoequal_school2,,coef_ftworker_escort_autoequal_work_and_school
-#util_escorting_accessibility_by_car_sufficiency_part_time_worker,escorting accessibility by car sufficiency_ part time worker,@(df.ptype==2)*(df.auto_ownership==df.num_drivers)*df.escortavail,,coef_ptworker_escort_autoequal_work2,coef_ptworker_escort_autoequal_school2,,coef_ptworker_escort_autoequal_work_and_school
-#util_escorting_accessibility_by_car_sufficiency_non_worker_under_65,escorting accessibility by car sufficiency_ non_ worker under 65,@(df.ptype==4)*(df.auto_ownership==df.num_drivers) *df.escortavail,,,coef_nonworker65_escort_autoequal_school2,,
-#util_escorting_accessibility_by_car_sufficiency_etiree_65_and_plus,escorting accessibility by car sufficiency_ etiree 65 and plus,@(df.ptype==5)*(df.auto_ownership==df.num_drivers) *df.escortavail,,,coef_retired65_escort_autoequal_school2,,
-#util_escorting_accessibility_by_car_sufficiency_full_time_worker,escorting accessibility by car sufficiency_ full time worker,@(df.ptype==1)*(df.auto_ownership>df.num_drivers) *df.escortavail,,coef_ftworker_escort_autosuff_work2,coef_ftworker_escort_autosuff_school2,,coef_ftworker_escort_autosuff_work_and_school
-#util_escorting_accessibility_by_car_sufficiency_part_time_worker,escorting accessibility by car sufficiency_ part time worker,@(df.ptype==2)*(df.auto_ownership>df.num_drivers)*df.escortavail,,coef_ptworker_escort_autosuff_work2,coef_ptworker_escort_autosuff_school2,,coef_ptworker_escort_autosuff_work_and_school
-#util_escorting_accessibility_by_car_sufficiency_non_worker_under_65,escorting accessibility by car sufficiency_ non_ worker under 65,@(df.ptype==4)*(df.auto_ownership>df.num_drivers) *df.escortavail,,,coef_nonworker65_escort_autosuff_school2,,
-#util_escorting_accessibility_by_car_sufficiency_etiree_65_and_plus,escorting accessibility by car sufficiency_ etiree 65 and plus,@(df.ptype==5)*(df.auto_ownership>df.num_drivers) *df.escortavail,,,coef_retired65_escort_autosuff_school2,,
-,,,,,,,
-#escort rows missing here,,,,,,,
 #,,,,,,,
 util_zero_car_full_time_worker,zero car full time worker,@(df.auto_ownership==0)*(df.ptype==1),,coef_ftworker_zerocar_work2,,,coef_ftworker_zerocar_work_and_school
 util_zero_car_part_time_worker,zero car part time worker,@(df.auto_ownership==0)*(df.ptype==2),,coef_ptworker_zerocar_work2,,,coef_ptworker_zerocar_work_and_school
@@ -78,8 +58,6 @@ util_car_fewer_than_drivers_school_child_6_15,car fewer than drivers_ school chi
 util_number_of_pre_school_children_full_time_worker,number of pre_school children_ full time worker,@(df.ptype==1)* df.num_young_children,,coef_ftworker_numprekchildren_work2,,,coef_ftworker_numprekchildren_work_and_school
 util_number_of_pre_school_children_part_time_worker,number of pre_school children_ part time worker,@(df.ptype==2) * df.num_young_children,,coef_ptworker_numprekchildren_work2,,,coef_ptworker_numprekchildren_work_and_school
 util_number_of_pre_school_children_university_student,number of pre_school children_ university student,@(df.ptype==3) * df.num_young_children,,,,coef_univ_numprekchildren_school2,coef_univ_numprekchildren_work_and_school
-#util_number_of_school_age_children_age_6_18_with_pattern_other_than_M_full_time_worker,number of school age children_ age 6_18_ with pattern other than M_ full time worker,@(df.ptype==1) *,,coef_ftworker_scng2school_work2,,,
-#util_number_of_school_age_children_age_6_18_with_pattern_other_than_M_part_time_worker,number of school age children_ age 6_18_ with pattern other than M_ part time worker,@(df.ptype==2) * ,,coef_ftworker_scng2school_work2,,,
 util_non_family_full_time_worker,non family full time worker,@(df.non_family==1)*(df.ptype==1) ,,,,,
 util_non_family_part_time_worker,non family part time worker,@(df.non_family==1)*(df.ptype==2),,,,,
 util_non_family_university_student,non family university student,@(df.non_family==1)*(df.ptype==3),coef_univ_nonfamily_work1,,,,coef_univ_nonfamily_work_and_school

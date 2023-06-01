@@ -33,7 +33,6 @@ Description,Target,Expression
 ,num_mandatory_tours,"_TOUR_COUNT('(tour_category == \'mandatory\')', tours, persons)"
 ,has_mandatory_tour,(num_mandatory_tours > 0) * 1
 ,has_joint_tour,(num_person_joint_tours > 0) * 1
-,tot_tours,num_mandatory_tours + num_person_joint_tours
 # number of person types in household in addition to self,,
 ,num_full_time_workers_not_self,"np.where(df.ptype == PTYPE_FULL, df.num_fullTime_workers-1, df.num_fullTime_workers)"
 ,num_part_time_workers_not_self,"np.where(df.ptype == PTYPE_PART, df.num_partTime_workers-1, df.num_partTime_workers)"

@@ -1,0 +1,57 @@
+PERTYPE,tour_purp,tour_rate
+1: Full-Time Worker,Escorting,0.20366253317172123
+2: Part-Time Worker,Escorting,0.4187596104561763
+3: University Student,Escorting,0.32378345558352023
+4: Non-Worker,Escorting,0.7759090462359453
+5: Retiree,Escorting,0.17463104213078395
+6: Driving Aged Student,Escorting,0.02219499552330239
+7: Non-Driving Aged Student,Escorting,0.07183021040161514
+8: Child To Young for School,Escorting,0.4875187457054153
+1: Full-Time Worker,Shopping,0.06656049333975256
+2: Part-Time Worker,Shopping,0.12843269734155252
+3: University Student,Shopping,0.1097019968074584
+4: Non-Worker,Shopping,0.2172238358415879
+5: Retiree,Shopping,0.23528963377150922
+6: Driving Aged Student,Shopping,0.010378869987276754
+7: Non-Driving Aged Student,Shopping,0.006311214189177915
+8: Child To Young for School,Shopping,0.0031899046539505165
+1: Full-Time Worker,Maintenance,0.07223150668168457
+2: Part-Time Worker,Maintenance,0.16540811376039163
+3: University Student,Maintenance,0.07338928442020115
+4: Non-Worker,Maintenance,0.21719665175724195
+5: Retiree,Maintenance,0.2684601879582774
+6: Driving Aged Student,Maintenance,0.020427878045332453
+7: Non-Driving Aged Student,Maintenance,0.035274806867668894
+8: Child To Young for School,Maintenance,0.07067945972243816
+1: Full-Time Worker,EatingOut,0.00858110335106958
+2: Part-Time Worker,EatingOut,0.020302217154510097
+3: University Student,EatingOut,0.009244660327284479
+4: Non-Worker,EatingOut,0.03086857331652102
+5: Retiree,EatingOut,0.05161475929832844
+6: Driving Aged Student,EatingOut,0.002933415013430093
+7: Non-Driving Aged Student,EatingOut,0.0014161647172676154
+8: Child To Young for School,EatingOut,0.010011084417115143
+1: Full-Time Worker,Visiting,0.02315299052389659
+2: Part-Time Worker,Visiting,0.056208663046785276
+3: University Student,Visiting,0.049117154524889094
+4: Non-Worker,Visiting,0.04330006419626072
+5: Retiree,Visiting,0.04308729584986943
+6: Driving Aged Student,Visiting,0.06429951463173272
+7: Non-Driving Aged Student,Visiting,0.039798608446098144
+8: Child To Young for School,Visiting,0.041172841673395896
+1: Full-Time Worker,Discretionary,0.06609870189263037
+2: Part-Time Worker,Discretionary,0.13947324421591012
+3: University Student,Discretionary,0.08473945530931419
+4: Non-Worker,Discretionary,0.09450233260354522
+5: Retiree,Discretionary,0.23290450126141543
+6: Driving Aged Student,Discretionary,0.13064888553791057
+7: Non-Driving Aged Student,Discretionary,0.10073540453506416
+8: Child To Young for School,Discretionary,0.038123373073392884
+1: Full-Time Worker,All,0.4402873289607549
+2: Part-Time Worker,All,0.9285845459753259
+3: University Student,All,0.6499760069726676
+4: Non-Worker,All,1.3790005039511022
+5: Retiree,All,1.005987420270184
+6: Driving Aged Student,All,0.250883558738985
+7: Non-Driving Aged Student,All,0.25536640915689185
+8: Child To Young for School,All,0.6506954092457079

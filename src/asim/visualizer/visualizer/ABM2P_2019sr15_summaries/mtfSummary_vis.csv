@@ -1,0 +1,15 @@
+PERTYPE,imf_choice,freq
+1: Full-Time Worker,1 Work,853819
+1: Full-Time Worker,2+ Work,46584
+2: Part-Time Worker,1 Work,176648
+2: Part-Time Worker,2+ Work,13160
+3: University Student,1 Work,14243
+3: University Student,1 School,86893
+3: University Student,2+ School,5579
+3: University Student,1 Work & 1 School,11771
+6: Driving Aged Student,1 School,76022
+6: Driving Aged Student,2+ School,4152
+6: Driving Aged Student,1 Work & 1 School,1074
+7: Non-Driving Aged Student,1 School,448512
+7: Non-Driving Aged Student,2+ School,5783
+8: Child To Young for School,1 School,60423

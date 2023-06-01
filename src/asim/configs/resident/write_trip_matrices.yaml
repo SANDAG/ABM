@@ -14,7 +14,7 @@ HH_EXPANSION_WEIGHT_COL: sample_rate  # added when households read in
 SAVE_TRIPS_TABLE: False
 
 MATRICES:
-  - file_name: autotrips_ea_low.omx
+  - file_name: autotrips_EA_low.omx
     tables:
       - name: SOVNOTRPDR_EA
         data_field: DRIVEALONE_NOTR_EA_LOW
@@ -28,7 +28,7 @@ MATRICES:
         data_field: SHARED3_NOTR_EA_LOW
       - name: SR3TRPDR_EA
         data_field: SHARED3_TR_EA_LOW
-  - file_name: autotrips_ea_med.omx
+  - file_name: autotrips_EA_med.omx
     tables:
       - name: SOVNOTRPDR_EA
         data_field: DRIVEALONE_NOTR_EA_MED
@@ -42,7 +42,7 @@ MATRICES:
         data_field: SHARED3_NOTR_EA_MED
       - name: SR3TRPDR_EA
         data_field: SHARED3_TR_EA_MED
-  - file_name: autotrips_ea_high.omx
+  - file_name: autotrips_EA_high.omx
     tables:
       - name: SOVNOTRPDR_EA
         data_field: DRIVEALONE_NOTR_EA_HIGH
@@ -56,7 +56,7 @@ MATRICES:
         data_field: SHARED3_NOTR_EA_HIGH
       - name: SR3TRPDR_EA
         data_field: SHARED3_TR_EA_HIGH
-  - file_name: autotrips_am_low.omx
+  - file_name: autotrips_AM_low.omx
     tables:
       - name: SOVNOTRPDR_AM
         data_field: DRIVEALONE_NOTR_AM_LOW
@@ -70,7 +70,7 @@ MATRICES:
         data_field: SHARED3_NOTR_AM_LOW
       - name: SR3TRPDR_AM
         data_field: SHARED3_TR_AM_LOW
-  - file_name: autotrips_am_med.omx
+  - file_name: autotrips_AM_med.omx
     tables:
       - name: SOVNOTRPDR_AM
         data_field: DRIVEALONE_NOTR_AM_MED
@@ -84,7 +84,7 @@ MATRICES:
         data_field: SHARED3_NOTR_AM_MED
       - name: SR3TRPDR_AM
         data_field: SHARED3_TR_AM_MED
-  - file_name: autotrips_am_high.omx
+  - file_name: autotrips_AM_high.omx
     tables:
       - name: SOVNOTRPDR_AM
         data_field: DRIVEALONE_NOTR_AM_HIGH
@@ -98,7 +98,7 @@ MATRICES:
         data_field: SHARED3_NOTR_AM_HIGH
       - name: SR3TRPDR_AM
         data_field: SHARED3_TR_AM_HIGH
-  - file_name: autotrips_md_low.omx
+  - file_name: autotrips_MD_low.omx
     tables:
       - name: SOVNOTRPDR_MD
         data_field: DRIVEALONE_NOTR_MD_LOW
@@ -112,7 +112,7 @@ MATRICES:
         data_field: SHARED3_NOTR_MD_LOW
       - name: SR3TRPDR_MD
         data_field: SHARED3_TR_MD_LOW
-  - file_name: autotrips_md_med.omx
+  - file_name: autotrips_MD_med.omx
     tables:
       - name: SOVNOTRPDR_MD
         data_field: DRIVEALONE_NOTR_MD_MED
@@ -126,7 +126,7 @@ MATRICES:
         data_field: SHARED3_NOTR_MD_MED
       - name: SR3TRPDR_MD
         data_field: SHARED3_TR_MD_MED
-  - file_name: autotrips_md_high.omx
+  - file_name: autotrips_MD_high.omx
     tables:
       - name: SOVNOTRPDR_MD
         data_field: DRIVEALONE_NOTR_MD_HIGH
@@ -140,7 +140,7 @@ MATRICES:
         data_field: SHARED3_NOTR_MD_HIGH
       - name: SR3TRPDR_MD
         data_field: SHARED3_TR_MD_HIGH
-  - file_name: autotrips_pm_low.omx
+  - file_name: autotrips_PM_low.omx
     tables:
       - name: SOVNOTRPDR_PM
         data_field: DRIVEALONE_NOTR_PM_LOW
@@ -154,7 +154,7 @@ MATRICES:
         data_field: SHARED3_NOTR_PM_LOW
       - name: SR3TRPDR_PM
         data_field: SHARED3_TR_PM_LOW
-  - file_name: autotrips_pm_med.omx
+  - file_name: autotrips_PM_med.omx
     tables:
       - name: SOVNOTRPDR_PM
         data_field: DRIVEALONE_NOTR_PM_MED
@@ -168,7 +168,7 @@ MATRICES:
         data_field: SHARED3_NOTR_PM_MED
       - name: SR3TRPDR_PM
         data_field: SHARED3_TR_PM_MED
-  - file_name: autotrips_pm_high.omx
+  - file_name: autotrips_PM_high.omx
     tables:
       - name: SOVNOTRPDR_PM
         data_field: DRIVEALONE_NOTR_PM_HIGH
@@ -182,7 +182,7 @@ MATRICES:
         data_field: SHARED3_NOTR_PM_HIGH
       - name: SR3TRPDR_PM
         data_field: SHARED3_TR_PM_HIGH
-  - file_name: autotrips_ev_low.omx
+  - file_name: autotrips_EV_low.omx
     tables:
       - name: SOVNOTRPDR_EV
         data_field: DRIVEALONE_NOTR_EV_LOW
@@ -196,7 +196,7 @@ MATRICES:
         data_field: SHARED3_NOTR_EV_LOW
       - name: SR3TRPDR_EV
         data_field: SHARED3_TR_EV_LOW
-  - file_name: autotrips_ev_med.omx
+  - file_name: autotrips_EV_med.omx
     tables:
       - name: SOVNOTRPDR_EV
         data_field: DRIVEALONE_NOTR_EV_MED
@@ -210,7 +210,7 @@ MATRICES:
         data_field: SHARED3_NOTR_EV_MED
       - name: SR3TRPDR_EV
         data_field: SHARED3_TR_EV_MED
-  - file_name: autotrips_ev_high.omx
+  - file_name: autotrips_EV_high.omx
     tables:
       - name: SOVNOTRPDR_EV
         data_field: DRIVEALONE_NOTR_EV_HIGH
@@ -224,251 +224,251 @@ MATRICES:
         data_field: SHARED3_NOTR_EV_HIGH
       - name: SR3TRPDR_EV
         data_field: SHARED3_TR_EV_HIGH
-  - file_name: trantrips_ea.omx
+  - file_name: trantrips_EA.omx
     tables:
-      - name: WLK_SET_set1_ea
+      - name: WALK_SET_set1_EA
         data_field: WALK_LOC_EA
-      - name: KNROUT_SET_set1_ea
+      - name: KNROUT_SET_set1_EA
         data_field: KNR_LOCOUT_EA        
-      - name: PNROUT_SET_set1_ea
+      - name: PNROUT_SET_set1_EA
         data_field: PNR_LOCOUT_EA
-      - name: TNCOUT_SET_set1_ea
+      - name: TNCOUT_SET_set1_EA
         data_field: TNC_LOCOUT_EA
-      - name: KNRIN_SET_set1_ea
+      - name: KNRIN_SET_set1_EA
         data_field: KNR_LOCIN_EA        
-      - name: PNRIN_SET_set1_ea
+      - name: PNRIN_SET_set1_EA
         data_field: PNR_LOCIN_EA
-      - name: TNCIN_SET_set1_ea
+      - name: TNCIN_SET_set1_EA
         data_field: TNC_LOCIN_EA        
-      - name: WLK_SET_set2_ea
+      - name: WALK_SET_set2_EA
         data_field: WALK_PRM_EA
-      - name: KNROUT_SET_set2_ea
+      - name: KNROUT_SET_set2_EA
         data_field: KNR_PRMOUT_EA        
-      - name: PNROUT_SET_set2_ea
+      - name: PNROUT_SET_set2_EA
         data_field: PNR_PRMOUT_EA
-      - name: TNCOUT_SET_set2_ea
+      - name: TNCOUT_SET_set2_EA
         data_field: TNC_PRMOUT_EA
-      - name: KNRIN_SET_set2_ea
+      - name: KNRIN_SET_set2_EA
         data_field: KNR_PRMIN_EA        
-      - name: PNRIN_SET_set2_ea
+      - name: PNRIN_SET_set2_EA
         data_field: PNR_PRMIN_EA
-      - name: TNCIN_SET_set2_ea
+      - name: TNCIN_SET_set2_EA
         data_field: TNC_PRMIN_EA        
-      - name: WLK_SET_set3_ea
+      - name: WALK_SET_set3_EA
         data_field: WALK_MIX_EA
-      - name: KNROUT_SET_set3_ea
+      - name: KNROUT_SET_set3_EA
         data_field: KNR_MIXOUT_EA        
-      - name: PNROUT_SET_set3_ea
+      - name: PNROUT_SET_set3_EA
         data_field: PNR_MIXOUT_EA
-      - name: TNCOUT_SET_set3_ea
+      - name: TNCOUT_SET_set3_EA
         data_field: TNC_MIXOUT_EA
-      - name: KNRIN_SET_set3_ea
+      - name: KNRIN_SET_set3_EA
         data_field: KNR_MIXIN_EA        
-      - name: PNRIN_SET_set3_ea
+      - name: PNRIN_SET_set3_EA
         data_field: PNR_MIXIN_EA
-      - name: TNCIN_SET_set3_ea
+      - name: TNCIN_SET_set3_EA
         data_field: TNC_MIXIN_EA        
-  - file_name: trantrips_am.omx
+  - file_name: trantrips_AM.omx
     tables:
-      - name: WLK_SET_set1_am
+      - name: WALK_SET_set1_AM
         data_field: WALK_LOC_AM
-      - name: KNROUT_SET_set1_am
+      - name: KNROUT_SET_set1_AM
         data_field: KNR_LOCOUT_AM        
-      - name: PNROUT_SET_set1_am
+      - name: PNROUT_SET_set1_AM
         data_field: PNR_LOCOUT_AM
-      - name: TNCOUT_SET_set1_am
+      - name: TNCOUT_SET_set1_AM
         data_field: TNC_LOCOUT_AM
-      - name: KNRIN_SET_set1_am
+      - name: KNRIN_SET_set1_AM
         data_field: KNR_LOCIN_AM        
-      - name: PNRIN_SET_set1_am
+      - name: PNRIN_SET_set1_AM
         data_field: PNR_LOCIN_AM
-      - name: TNCIN_SET_set1_am
+      - name: TNCIN_SET_set1_AM
         data_field: TNC_LOCIN_AM        
-      - name: WLK_SET_set2_am
+      - name: WALK_SET_set2_AM
         data_field: WALK_PRM_AM
-      - name: KNROUT_SET_set2_am
+      - name: KNROUT_SET_set2_AM
         data_field: KNR_PRMOUT_AM        
-      - name: PNROUT_SET_set2_am
+      - name: PNROUT_SET_set2_AM
         data_field: PNR_PRMOUT_AM
-      - name: TNCOUT_SET_set2_am
+      - name: TNCOUT_SET_set2_AM
         data_field: TNC_PRMOUT_AM
-      - name: KNRIN_SET_set2_am
+      - name: KNRIN_SET_set2_AM
         data_field: KNR_PRMIN_AM        
-      - name: PNRIN_SET_set2_am
+      - name: PNRIN_SET_set2_AM
         data_field: PNR_PRMIN_AM
-      - name: TNCIN_SET_set2_am
+      - name: TNCIN_SET_set2_AM
         data_field: TNC_PRMIN_AM        
-      - name: WLK_SET_set3_am
+      - name: WALK_SET_set3_AM
         data_field: WALK_MIX_AM
-      - name: KNROUT_SET_set3_am
+      - name: KNROUT_SET_set3_AM
         data_field: KNR_MIXOUT_AM        
-      - name: PNROUT_SET_set3_am
+      - name: PNROUT_SET_set3_AM
         data_field: PNR_MIXOUT_AM
-      - name: TNCOUT_SET_set3_am
+      - name: TNCOUT_SET_set3_AM
         data_field: TNC_MIXOUT_AM
-      - name: KNRIN_SET_set3_am
+      - name: KNRIN_SET_set3_AM
         data_field: KNR_MIXIN_AM        
-      - name: PNRIN_SET_set3_am
+      - name: PNRIN_SET_set3_AM
         data_field: PNR_MIXIN_AM
-      - name: TNCIN_SET_set3_am
+      - name: TNCIN_SET_set3_AM
         data_field: TNC_MIXIN_AM        
-  - file_name: trantrips_md.omx
+  - file_name: trantrips_MD.omx
     tables:
-      - name: WLK_SET_set1_md
+      - name: WALK_SET_set1_MD
         data_field: WALK_LOC_MD
-      - name: KNROUT_SET_set1_md
+      - name: KNROUT_SET_set1_MD
         data_field: KNR_LOCOUT_MD        
-      - name: PNROUT_SET_set1_md
+      - name: PNROUT_SET_set1_MD
         data_field: PNR_LOCOUT_MD
-      - name: TNCOUT_SET_set1_md
+      - name: TNCOUT_SET_set1_MD
         data_field: TNC_LOCOUT_MD
-      - name: KNRIN_SET_set1_md
+      - name: KNRIN_SET_set1_MD
         data_field: KNR_LOCIN_MD        
-      - name: PNRIN_SET_set1_md
+      - name: PNRIN_SET_set1_MD
         data_field: PNR_LOCIN_MD
-      - name: TNCIN_SET_set1_md
+      - name: TNCIN_SET_set1_MD
         data_field: TNC_LOCIN_MD        
-      - name: WLK_SET_set2_md
+      - name: WALK_SET_set2_MD
         data_field: WALK_PRM_MD
-      - name: KNROUT_SET_set2_md
+      - name: KNROUT_SET_set2_MD
         data_field: KNR_PRMOUT_MD        
-      - name: PNROUT_SET_set2_md
+      - name: PNROUT_SET_set2_MD
         data_field: PNR_PRMOUT_MD
-      - name: TNCOUT_SET_set2_md
+      - name: TNCOUT_SET_set2_MD
         data_field: TNC_PRMOUT_MD
-      - name: KNRIN_SET_set2_md
+      - name: KNRIN_SET_set2_MD
         data_field: KNR_PRMIN_MD        
-      - name: PNRIN_SET_set2_md
+      - name: PNRIN_SET_set2_MD
         data_field: PNR_PRMIN_MD
-      - name: TNCIN_SET_set2_md
+      - name: TNCIN_SET_set2_MD
         data_field: TNC_PRMIN_MD        
-      - name: WLK_SET_set3_md
+      - name: WALK_SET_set3_MD
         data_field: WALK_MIX_MD
-      - name: KNROUT_SET_set3_md
+      - name: KNROUT_SET_set3_MD
         data_field: KNR_MIXOUT_MD        
-      - name: PNROUT_SET_set3_md
+      - name: PNROUT_SET_set3_MD
         data_field: PNR_MIXOUT_MD
-      - name: TNCOUT_SET_set3_md
+      - name: TNCOUT_SET_set3_MD
         data_field: TNC_MIXOUT_MD
-      - name: KNRIN_SET_set3_md
+      - name: KNRIN_SET_set3_MD
         data_field: KNR_MIXIN_MD        
-      - name: PNRIN_SET_set3_md
+      - name: PNRIN_SET_set3_MD
         data_field: PNR_MIXIN_MD
-      - name: TNCIN_SET_set3_md
+      - name: TNCIN_SET_set3_MD
         data_field: TNC_MIXIN_MD        
-  - file_name: trantrips_pm.omx
+  - file_name: trantrips_PM.omx
     tables:
-      - name: WLK_SET_set1_pm
+      - name: WALK_SET_set1_PM
         data_field: WALK_LOC_PM
-      - name: KNROUT_SET_set1_pm
+      - name: KNROUT_SET_set1_PM
         data_field: KNR_LOCOUT_PM        
-      - name: PNROUT_SET_set1_pm
+      - name: PNROUT_SET_set1_PM
         data_field: PNR_LOCOUT_PM
-      - name: TNCOUT_SET_set1_pm
+      - name: TNCOUT_SET_set1_PM
         data_field: TNC_LOCOUT_PM
-      - name: KNRIN_SET_set1_pm
+      - name: KNRIN_SET_set1_PM
         data_field: KNR_LOCIN_PM        
-      - name: PNRIN_SET_set1_pm
+      - name: PNRIN_SET_set1_PM
         data_field: PNR_LOCIN_PM
-      - name: TNCIN_SET_set1_pm
+      - name: TNCIN_SET_set1_PM
         data_field: TNC_LOCIN_PM        
-      - name: WLK_SET_set2_pm
+      - name: WALK_SET_set2_PM
         data_field: WALK_PRM_PM
-      - name: KNROUT_SET_set2_pm
+      - name: KNROUT_SET_set2_PM
         data_field: KNR_PRMOUT_PM        
-      - name: PNROUT_SET_set2_pm
+      - name: PNROUT_SET_set2_PM
         data_field: PNR_PRMOUT_PM
-      - name: TNCOUT_SET_set2_pm
+      - name: TNCOUT_SET_set2_PM
         data_field: TNC_PRMOUT_PM
-      - name: KNRIN_SET_set2_pm
+      - name: KNRIN_SET_set2_PM
         data_field: KNR_PRMIN_PM        
-      - name: PNRIN_SET_set2_pm
+      - name: PNRIN_SET_set2_PM
         data_field: PNR_PRMIN_PM
-      - name: TNCIN_SET_set2_pm
+      - name: TNCIN_SET_set2_PM
         data_field: TNC_PRMIN_PM        
-      - name: WLK_SET_set3_pm
+      - name: WALK_SET_set3_PM
         data_field: WALK_MIX_PM
-      - name: KNROUT_SET_set3_pm
+      - name: KNROUT_SET_set3_PM
         data_field: KNR_MIXOUT_PM        
-      - name: PNROUT_SET_set3_pm
+      - name: PNROUT_SET_set3_PM
         data_field: PNR_MIXOUT_PM
-      - name: TNCOUT_SET_set3_pm
+      - name: TNCOUT_SET_set3_PM
         data_field: TNC_MIXOUT_PM
-      - name: KNRIN_SET_set3_pm
+      - name: KNRIN_SET_set3_PM
         data_field: KNR_MIXIN_PM        
-      - name: PNRIN_SET_set3_pm
+      - name: PNRIN_SET_set3_PM
         data_field: PNR_MIXIN_PM
-      - name: TNCIN_SET_set3_pm
+      - name: TNCIN_SET_set3_PM
         data_field: TNC_MIXIN_PM        
-  - file_name: trantrips_ev.omx
+  - file_name: trantrips_EV.omx
     tables:
-      - name: WLK_SET_set1_ev
+      - name: WALK_SET_set1_EV
         data_field: WALK_LOC_EV
-      - name: KNROUT_SET_set1_ev
+      - name: KNROUT_SET_set1_EV
         data_field: KNR_LOCOUT_EV        
-      - name: PNROUT_SET_set1_ev
+      - name: PNROUT_SET_set1_EV
         data_field: PNR_LOCOUT_EV
-      - name: TNCOUT_SET_set1_ev
+      - name: TNCOUT_SET_set1_EV
         data_field: TNC_LOCOUT_EV
-      - name: KNRIN_SET_set1_ev
+      - name: KNRIN_SET_set1_EV
         data_field: KNR_LOCIN_EV        
-      - name: PNRIN_SET_set1_ev
+      - name: PNRIN_SET_set1_EV
         data_field: PNR_LOCIN_EV
-      - name: TNCIN_SET_set1_ev
+      - name: TNCIN_SET_set1_EV
         data_field: TNC_LOCIN_EV        
-      - name: WLK_SET_set2_ev
+      - name: WALK_SET_set2_EV
         data_field: WALK_PRM_EV
-      - name: KNROUT_SET_set2_ev
+      - name: KNROUT_SET_set2_EV
         data_field: KNR_PRMOUT_EV        
-      - name: PNROUT_SET_set2_ev
+      - name: PNROUT_SET_set2_EV
         data_field: PNR_PRMOUT_EV
-      - name: TNCOUT_SET_set2_ev
+      - name: TNCOUT_SET_set2_EV
         data_field: TNC_PRMOUT_EV
-      - name: KNRIN_SET_set2_ev
+      - name: KNRIN_SET_set2_EV
         data_field: KNR_PRMIN_EV        
-      - name: PNRIN_SET_set2_ev
+      - name: PNRIN_SET_set2_EV
         data_field: PNR_PRMIN_EV
-      - name: TNCIN_SET_set2_ev
+      - name: TNCIN_SET_set2_EV
         data_field: TNC_PRMIN_EV        
-      - name: WLK_SET_set3_ev
+      - name: WALK_SET_set3_EV
         data_field: WALK_MIX_EV
-      - name: KNROUT_SET_set3_ev
+      - name: KNROUT_SET_set3_EV
         data_field: KNR_MIXOUT_EV        
-      - name: PNROUT_SET_set3_ev
+      - name: PNROUT_SET_set3_EV
         data_field: PNR_MIXOUT_EV
-      - name: TNCOUT_SET_set3_ev
+      - name: TNCOUT_SET_set3_EV
         data_field: TNC_MIXOUT_EV
-      - name: KNRIN_SET_set3_ev
+      - name: KNRIN_SET_set3_EV
         data_field: KNR_MIXIN_EV        
-      - name: PNRIN_SET_set3_ev
+      - name: PNRIN_SET_set3_EV
         data_field: PNR_MIXIN_EV
-      - name: TNCIN_SET_set3_ev
+      - name: TNCIN_SET_set3_EV
         data_field: TNC_MIXIN_EV        
-  - file_name: nmottrips_ea.omx
+  - file_name: nmottrips_EA.omx
     tables:
       - name: WALK_EA
         data_field: WALK_EA
       - name: BIKE_EA
         data_field: BIKE_EA
-  - file_name: nmottrips_am.omx
+  - file_name: nmottrips_AM.omx
     tables:
       - name: WALK_AM
         data_field: WALK_AM
       - name: BIKE_AM
         data_field: BIKE_AM
-  - file_name: nmottrips_md.omx
+  - file_name: nmottrips_MD.omx
     tables:
       - name: WALK_MD
         data_field: WALK_MD
       - name: BIKE_MD
         data_field: BIKE_MD
-  - file_name: nmottrips_pm.omx
+  - file_name: nmottrips_PM.omx
     tables:
       - name: WALK_PM
         data_field: WALK_PM
       - name: BIKE_PM
         data_field: BIKE_PM
-  - file_name: nmottrips_ev.omx
+  - file_name: nmottrips_EV.omx
     tables:
       - name: WALK_EV
         data_field: WALK_EV

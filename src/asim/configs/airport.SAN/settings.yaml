@@ -9,7 +9,7 @@ mem_tick: 1
 num_processes: 1
 fail_fast: True
 output_dir: output_airport.san
-data_dir: data_full
+data_dir: data
 ##############
 #
 # chunking
@@ -95,8 +95,8 @@ use_shadow_pricing: False
 want_dest_choice_sample_tables: False
 want_dest_choice_presampling: True
 
-trace_hh_id: 21092
-# resume_after: airport_returns
+# trace_hh_id:
+# resume_after: 
 
 models:
   - initialize_landuse

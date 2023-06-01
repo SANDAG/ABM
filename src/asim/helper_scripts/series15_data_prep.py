@@ -22,8 +22,10 @@ class Series15_Processor:
         assert os.path.isdir(self.output_dir), f"Cannot find output directory {self.output_dir}"
 
         self.ext_data_file = os.path.join(self.input_dir, 'externalInternalControlTotalsByYear.csv')
-        self.landuse_file = os.path.join(self.input_dir, 'mgra15_based_input2019_rev.csv')
+        self.base_year = 2022
+        self.landuse_file = os.path.join(self.input_dir, 'mgra15_based_input2019_v3.csv')
         self.trans_access_file = os.path.join(self.input_dir, 'transponderModelAccessibilities.csv')
+        self.terminal_time_file = os.path.join(self.input_dir, 'zone_term.csv')
 
         self.maz_ext_taz_xwalk_file = os.path.join(self.input_dir, 'closest_maz_to_external_tazs.csv')
         self.maz_maz_walk_file = os.path.join(self.input_dir, 'maz_maz_walk.csv')
@@ -42,7 +44,11 @@ class Series15_Processor:
             'traffic_skims_EV.omx',
         ]
         self.transit_skim_list = [
-            'transit_skims.omx'
+            'transit_skims_EA.omx',
+            'transit_skims_AM.omx',
+            'transit_skims_MD.omx',
+            'transit_skims_PM.omx',
+            'transit_skims_EV.omx',
         ]
         # below omx file and core are used to create 'DIST' skim
         self.traffic_dist_omx_file = os.path.join(self.output_dir, 'traffic_skims_AM.omx')
@@ -118,6 +124,7 @@ class Series15_Processor:
     def pre_process_landuse(self):
         landuse = pd.read_csv(self.landuse_file)
         landuse['MAZ'] = landuse['mgra']
+        landuse['TAZ'] = landuse['taz']
 
         # dropping crossborder columns
         cols_to_drop = [col for col in landuse.columns if '_wait_' in col]
@@ -199,20 +206,21 @@ class Series15_Processor:
     def add_external_counts_to_landuse(self):
         print("Adding external counts to landuse file.")
         ext_data = pd.read_csv(self.ext_data_file)
-        ext_data = ext_data[ext_data.year == 2016].reset_index(drop=True)
+        ext_data = ext_data[ext_data.year == self.base_year].reset_index(drop=True)
         # FIXME:
         # Placeholder data is derived from this table of tour weights from the crossborder survey. (Provided by Hannah). 
         # The estimated values is 20% of the purpose total * 2 to convert from tours to trips.  
         # The other 80% of border crossings are assumed to be from Mexican residents.
         # External taz numbers are also hard-coded here
-        ext_data.loc[len(ext_data)] = ['2016', 1, 12526 * 0.2 * 2, (2337+55317+1872+3657) * 0.2 * 2]
-        ext_data.loc[len(ext_data)] = ['2016', 2, 6443 * 0.2 * 2, (260+18579+1993+4585) * 0.2 * 2]
-        ext_data.loc[len(ext_data)] = ['2016', 4, 2181 * 0.2 * 2, (1148+1052+305+1501) * 0.2 * 2]
+        str_base_year = str(self.base_year)
+        ext_data.loc[len(ext_data)] = [str_base_year, 1, 12526 * 0.2 * 2, (2337+55317+1872+3657) * 0.2 * 2]
+        ext_data.loc[len(ext_data)] = [str_base_year, 2, 6443 * 0.2 * 2, (260+18579+1993+4585) * 0.2 * 2]
+        ext_data.loc[len(ext_data)] = [str_base_year, 4, 2181 * 0.2 * 2, (1148+1052+305+1501) * 0.2 * 2]
         # dummy for other external taz's that are not yet active
         # (all TAZs need to be listed in the landuse file or the output trip omx trip matrices aren't the right shape!)
-        ext_data.loc[len(ext_data)] = ['2016', 3, 0, 0]
-        ext_data.loc[len(ext_data)] = ['2016', 5, 0, 0]
-        ext_data.loc[len(ext_data)] = ['2016', 11, 0, 0]
+        ext_data.loc[len(ext_data)] = [str_base_year, 3, 0, 0]
+        ext_data.loc[len(ext_data)] = [str_base_year, 5, 0, 0]
+        ext_data.loc[len(ext_data)] = [str_base_year, 11, 0, 0]
         
         ext_data.sort_values(by='taz')
 
@@ -236,12 +244,13 @@ class Series15_Processor:
             ext_maz_nums.append(ext_maz_num)
 
         self.landuse['mgra'] = self.landuse.index.values
+        # FIXME: maintaining two  TAZ cols here... 
+        self.landuse['taz'] = self.landuse['TAZ']
 
         print("\tAdded external mazs: ", ext_maz_nums)
         
         self.landuse['external_work'] = self.landuse['external_work'].fillna(0)
         self.landuse['external_nonwork'] = self.landuse['external_nonwork'].fillna(0)
-        self.landuse.loc[self.landuse.external_MAZ == 1, ['TAZ', 'external_MAZ', 'poe_id', 'external_work', 'external_nonwork']]
 
 
     def add_maz_stop_walk_to_landuse(self):
@@ -251,8 +260,8 @@ class Series15_Processor:
         self.landuse['walk_dist_local_bus'] = maz_stop_walk['walk_dist_local_bus'].reindex(self.landuse.index)
         self.landuse['walk_dist_premium_transit'] = maz_stop_walk['walk_dist_premium_transit'].reindex(self.landuse.index)
 
-        self.landuse['walk_dist_local_bus'].fillna(999)
-        self.landuse['walk_dist_premium_transit'].fillna(999)
+        self.landuse['walk_dist_local_bus'].fillna(999, inplace=True)
+        self.landuse['walk_dist_premium_transit'].fillna(999, inplace=True)
 
 
     def add_transponder_accessibility_to_landuse(self):
@@ -261,6 +270,14 @@ class Series15_Processor:
         transponder_data.rename(columns={'DIST':'ML_DIST'}, inplace=True)
 
         self.landuse = pd.merge(self.landuse.reset_index(), transponder_data, how='left', on='TAZ').set_index('MAZ')
+
+    def add_terminal_time_to_landuse(self):
+        print("Adding transponder accessibility variables to landuse file.")
+        tt_data = pd.read_csv(self.terminal_time_file, header=None)
+        tt_data.columns = ['MAZ', 'terminal_time']
+
+        assert self.landuse.index.name == 'MAZ'
+        self.landuse['terminal_time'] = tt_data.set_index('MAZ')['terminal_time'].reindex(self.landuse.index).fillna(0)
 
     def add_external_stations_to_skim_df(self, skim_df, maz_ext_taz_xwalk, landuse, origin_col='OMAZ', dest_col='DMAZ'):
         # helper function to add external stations to an maz-maz level skim
@@ -300,6 +317,7 @@ class Series15_Processor:
         print("adding external stations to maz-maz walk")
         maz_maz_walk = pd.read_csv(self.maz_maz_walk_file)
         maz_maz_walk_updated = self.add_external_stations_to_skim_df(maz_maz_walk, maz_ext_taz_xwalk, self.landuse)
+        maz_maz_walk_updated['walkTime'] = maz_maz_walk_updated['DISTWALK'] / self.walk_speed * 60
         self.maz_maz_walk = maz_maz_walk_updated
 
         # maz-maz bike -- created using logsum file
@@ -308,8 +326,8 @@ class Series15_Processor:
         rename_col_dict = {
             'i': 'OMAZ',
             'j': 'DMAZ',
-            'logsum': 'bikeLogsum',
-            'time': 'bikeTime'
+            'logsum': 'BIKE_LOGSUM',
+            'time': 'BIKE_TIME'
         }
         maz_maz_bike.rename(columns=rename_col_dict, inplace=True)
 
@@ -338,7 +356,6 @@ class Series15_Processor:
             dist_file['walkTime'] = np.array(sov_tr_dist_AM) / self.walk_speed * 60
 
         
-
         # Adding TAZ to TAZ Bike Logsum
         print("Creating bikeLogsum skims")
         taz_taz_bike = pd.read_csv(self.taz_taz_bike_file)
@@ -377,6 +394,14 @@ class Series15_Processor:
                     skim[f'BIKE_TIME__{time_period}'] = biketime_skim.to_numpy()
                 skim.close()
 
+    def process_landuse(self):
+        self.pre_process_landuse()
+        self.add_external_counts_to_landuse()
+        self.add_maz_stop_walk_to_landuse()
+        self.add_transponder_accessibility_to_landuse()
+        self.add_terminal_time_to_landuse()
+
+
     def write_output(self):
         print("Writing final outputs")
         self.landuse.to_csv(os.path.join(self.output_dir, 'land_use.csv'), index=True)
@@ -391,11 +416,8 @@ if __name__ == '__main__':
 
     # running the following processing steps:
     processor.copy_skims_and_process_names()
-    processor.pre_process_landuse()
     processor.process_synthetic_population()
-    processor.add_external_counts_to_landuse()
-    processor.add_maz_stop_walk_to_landuse()
-    processor.add_transponder_accessibility_to_landuse()
+    processor.process_landuse()
     processor.add_exernal_stations_to_maz_level_skims()
     processor.add_TAZ_level_skims()
     processor.write_output()

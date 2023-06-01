@@ -9,6 +9,8 @@ chunk_training_mode: disabled
 
 use_shadow_pricing: True
 
+memory_profile: False
+
 # raise error if any sub-process fails without waiting for others to complete
 # (Shadow pricing requires fail_fast setting in multiprocessing mode)
 fail_fast: True
@@ -26,6 +28,8 @@ models:
   ### mp_accessibility
   - compute_accessibility
   ### mp_households
+  - av_ownership
+  - auto_ownership_simulate
   - work_from_home
   - external_worker_identification
   - external_workplace_location
@@ -33,8 +37,6 @@ models:
   - workplace_location
   - transit_pass_subsidy
   - transit_pass_ownership
-  - av_ownership
-  - auto_ownership_simulate
   - vehicle_type_choice
   - transponder_ownership
   - free_parking
@@ -95,7 +97,7 @@ multiprocess_steps:
         - accessibility
       except: True  # this is needed so landuse (i.e. destinations) doesn't get split
   - name: mp_households
-    begin: work_from_home
+    begin: av_ownership
     slice:
       tables:
         - households

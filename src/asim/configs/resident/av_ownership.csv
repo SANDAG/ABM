@@ -3,6 +3,6 @@ util_low_income,Household income less than 50K,income < 50000,coef_low_income,0
 util_high_income,Household income greater than 100K,income > 100000,coef_high_income,0
 # util_hh_head_age_lt_35,Head of household under age 35,hhhead_age < 35,coef_hh_head_age_lt_35,0
 # util_hh_head_age_gt_65,Head of household over age 65,hhhead_age > 65,coef_hh_head_age_gt_65,0
-util_per_hour_commute_time,Coefficient per hour of total household commute time,hh_commute_time,coef_per_hour_commute_time,0
+# util_per_hour_commute_time,Coefficient per hour of total household commute time,hh_commute_time,coef_per_hour_commute_time,0
 util_static_constant,Static constant that does not change via iterations,1,coef_static,0
 util_av_target_share,Constant to adjust to match set AV target,1,coef_av_target_share,0

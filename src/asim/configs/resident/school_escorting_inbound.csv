@@ -78,9 +78,9 @@ util_child1_age_u6_rs,Child 1 age under 6 years old - Ride Share,((chauf1 == 1) 
 util_child2_age_u6_rs,Child 2 age under 6 years old - Ride Share,((chauf2 == 1) | (chauf2 == 3)) & (age_child2 < 6),coef_child_age_u6_rs
 util_child3_age_u6_rs,Child 3 age under 6 years old - Ride Share,((chauf3 == 1) | (chauf3 == 3)) & (age_child3 < 6),coef_child_age_u6_rs
 # ,Pure Escort Distance,,
-util_child1_dist_pe,Child 1 Pure escorting not allowed if over 30 miles,((chauf1 == 2) | (chauf1 == 4)) & (dist_school_to_home1 > 30),coef_unavail
-util_child2_dist_pe,Child 2 Pure escorting not allowed if over 30 miles,((chauf2 == 2) | (chauf2 == 4)) & (dist_school_to_home2 > 30),coef_unavail
-util_child3_dist_pe,Child 3 Pure escorting not allowed if over 30 miles,((chauf3 == 2) | (chauf3 == 4)) & (dist_school_to_home3 > 30),coef_unavail
+util_child1_dist_pe_over30miles,Child 1 Pure escorting not allowed if over 30 miles,((chauf1 == 2) | (chauf1 == 4)) & (dist_school_to_home1 > 30),coef_unavail
+util_child2_dist_pe_over30miles,Child 2 Pure escorting not allowed if over 30 miles,((chauf2 == 2) | (chauf2 == 4)) & (dist_school_to_home2 > 30),coef_unavail
+util_child3_dist_pe_over30miles,Child 3 Pure escorting not allowed if over 30 miles,((chauf3 == 2) | (chauf3 == 4)) & (dist_school_to_home3 > 30),coef_unavail
 # ,Household Interactions,,
 util_hh_inc_u25k_noes,Household income less than 25k - No Escorting,(income <= 25000) & ((bundle1 == 0) | ((bundle2 == 0) & (num_children_going_to_school > 1)) | ((bundle3 == 0) & (num_children_going_to_school > 2))),coef_hh_inc_u25k_noes
 util_hh_inc_25to50k_noes,Household income between 25 and 50k - No Escorting,((income > 25000) & (income <= 50000)) & ((bundle1 == 0) | ((bundle2 == 0) & (num_children_going_to_school > 1)) | ((bundle3 == 0) & (num_children_going_to_school > 2))),coef_hh_inc_25to50k_noes
@@ -153,10 +153,10 @@ util_no_escort_outbound_child1,No escorting in outbound direction - Child 1,(bun
 util_no_escort_outbound_child2,No escorting in outbound direction - Child 2,(bundle2 == 0) & (child_id2 > 0) & (bundle2_outbound == 0),coef_no_escort_outbound
 util_no_escort_outbound_child3,No escorting in outbound direction - Child 3,(bundle3 == 0) & (child_id3 > 0) & (bundle3_outbound == 0),coef_no_escort_outbound
 util_outbound_rs_child1,Ride sharing in the outbound direction - Child 1,((chauf1 == 1) | (chauf1 == 3)) & ((chauf1_outbound == 1) | (chauf1_outbound == 3)),coef_outbound_rs
-util_outbound_rs_child1,Ride sharing in the outbound direction - Child 2,((chauf2 == 1) | (chauf2 == 3)) & ((chauf2_outbound == 1) | (chauf2_outbound == 3)),coef_outbound_rs
-util_outbound_rs_child1,Ride sharing in the outbound direction - Child 3,((chauf3 == 1) | (chauf3 == 3)) & ((chauf3_outbound == 1) | (chauf3_outbound == 3)),coef_outbound_rs
-util_same_chauf,Same chauffeur in both directions (not child specific) - chauf 1 inbound & outbound,((chauf1 == 1) | (chauf1 == 2) | (chauf2 == 1) | (chauf2 == 2) | (chauf3 == 1) | (chauf3 == 2)) & ((nbund1_outbound > 0)),coef_same_chauf
-util_same_chauf,Same chauffeur in both directions (not child specific) - chauf 2 inbound & outbound,((chauf1 == 3) | (chauf1 == 4) | (chauf2 == 3) | (chauf2 == 4) | (chauf3 == 3) | (chauf3 == 4)) & ((nbund2_outbound > 0)),coef_same_chauf
+util_outbound_rs_child2,Ride sharing in the outbound direction - Child 2,((chauf2 == 1) | (chauf2 == 3)) & ((chauf2_outbound == 1) | (chauf2_outbound == 3)),coef_outbound_rs
+util_outbound_rs_child3,Ride sharing in the outbound direction - Child 3,((chauf3 == 1) | (chauf3 == 3)) & ((chauf3_outbound == 1) | (chauf3_outbound == 3)),coef_outbound_rs
+util_same_chauf1,Same chauffeur in both directions (not child specific) - chauf 1 inbound & outbound,((chauf1 == 1) | (chauf1 == 2) | (chauf2 == 1) | (chauf2 == 2) | (chauf3 == 1) | (chauf3 == 2)) & ((nbund1_outbound > 0)),coef_same_chauf
+util_same_chauf2,Same chauffeur in both directions (not child specific) - chauf 2 inbound & outbound,((chauf1 == 3) | (chauf1 == 4) | (chauf2 == 3) | (chauf2 == 4) | (chauf3 == 3) | (chauf3 == 4)) & ((nbund2_outbound > 0)),coef_same_chauf
 # ,Calibration Constants,,
 util_calib_child1_age_u6_rs,Child 1 age under 6 - Calibration constant - Ride Share,((chauf1 == 1) | (chauf1 == 3)) & (age_child1 < 6),coef_calib_child_age_u6_rs
 util_calib_child2_age_u6_rs,Child 2 age under 6 - Calibration constant - Ride Share,((chauf2 == 1) | (chauf2 == 3)) & (age_child2 < 6),coef_calib_child_age_u6_rs

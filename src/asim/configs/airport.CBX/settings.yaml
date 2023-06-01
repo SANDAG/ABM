@@ -9,7 +9,7 @@ mem_tick: 1
 num_processes: 1
 fail_fast: True
 output_dir: output_airport.cbx
-data_dir: data_full
+data_dir: data
 ##############
 #
 # chunking

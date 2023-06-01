@@ -1,0 +1,8 @@
+inb_escort_type,out_escort_type,freq
+Ride Share,Ride Share,15020
+Ride Share,No Escort,21969
+Pure Escort,Ride Share,5238
+Pure Escort,Pure Escort,3878
+Pure Escort,No Escort,5399
+No Escort,Ride Share,27192
+No Escort,No Escort,296409

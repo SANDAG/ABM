@@ -1,0 +1,406 @@
+2023-01-03 08:39:56,927 - INFO (extract_data): Loading householdData_3
+2023-01-03 08:39:58,012 - INFO (extract_data): Loading personData_3
+2023-01-03 08:40:04,373 - INFO (extract_data): Loading indivTourData_3
+2023-01-03 08:40:34,796 - INFO (extract_data): Loading indivTripData_3
+2023-01-03 08:41:10,480 - INFO (extract_data): Loading jointTripData_3
+2023-01-03 08:41:11,705 - INFO (extract_data): Loading jointTourData_3
+2023-01-03 08:41:13,152 - INFO (extract_data): Loading wsLocResults_3
+2023-01-03 08:41:20,435 - INFO (extract_data): Loading aoResults
+2023-01-03 08:41:21,033 - INFO (extract_data): Loading aoResults_Pre
+2023-01-03 08:41:21,828 - INFO (extract_data): Loading visitorTrips
+2023-01-03 08:41:22,349 - INFO (extract_data): Loading traffic_skims_MD
+2023-01-03 08:41:22,843 - INFO (extract_data): Loading mgra13_based_input2016
+2023-01-03 08:41:23,397 - INFO (extract_data): Loading geographicXwalk_PMSA
+2023-01-03 08:41:23,762 - INFO (extract_data): Loading occFactors
+2023-01-03 08:41:23,814 - INFO (merge): Merging tables householdData_3, mgra13_based_input2016 into hh
+2023-01-03 08:41:27,446 - INFO (merge): Merging tables wsLocResults_3, geographicXwalk_PMSA into wsLoc
+2023-01-03 08:41:28,506 - INFO (merge): Merging tables wsLoc, geographicXwalk_PMSA into wsLoc
+2023-01-03 08:41:29,271 - INFO (merge): Merging tables wsLoc, geographicXwalk_PMSA into wsLoc
+2023-01-03 08:41:30,055 - INFO (process): Raw evaluating maxtours = indivTourData_3['person_id'].value_counts().max()
+2023-01-03 08:41:30,515 - INFO (process): Raw evaluating indivTourData_3['cummulative_tours'] = range(1, indivTourData_3.shape[0] + 1)
+2023-01-03 08:41:30,529 - INFO (process): Raw evaluating indivTourData_3['last_person'] = np.hstack(([0], indivTourData_3['person_id'][:-1]))
+2023-01-03 08:41:30,562 - INFO (process): Raw evaluating indivTourData_3['new_person'] = (indivTourData_3['person_id']) != (indivTourData_3['last_person'])
+2023-01-03 08:41:30,570 - INFO (process): Raw evaluating indivTourData_3['to_subtract'] = indivTourData_3['new_person'] * np.hstack(([0], indivTourData_3['cummulative_tours'].iloc[:-1]))
+2023-01-03 08:41:30,611 - INFO (process): Raw evaluating for i in range(maxtours): indivTourData_3['to_subtract'] = np.where(indivTourData_3['to_subtract'] == 0, np.hstack(([0], indivTourData_3['to_subtract'].iloc[:-1])), indivTourData_3['to_subtract'])
+2023-01-03 08:41:31,183 - INFO (process): Raw evaluating indivTourData_3['tour_id2'] = indivTourData_3['cummulative_tours'] - indivTourData_3['to_subtract']
+2023-01-03 08:41:31,208 - INFO (process): Raw evaluating maxtrips = indivTripData_3['person_id'].value_counts().max()
+2023-01-03 08:41:31,881 - INFO (process): Raw evaluating indivTripData_3['new_tour'] = (indivTripData_3['orig_purpose'] == 'Home') | ((indivTripData_3['tour_purpose'] == 'Work-Based') & (indivTripData_3['orig_purpose'] == 'Work'))
+2023-01-03 08:41:33,451 - INFO (process): Raw evaluating indivTripData_3['cummulative_tours'] = np.cumsum(indivTripData_3['new_tour'])
+2023-01-03 08:41:33,532 - INFO (process): Raw evaluating indivTripData_3['last_person'] = np.hstack(([0], indivTripData_3['person_id'][:-1]))
+2023-01-03 08:41:33,623 - INFO (process): Raw evaluating indivTripData_3['new_person'] = (indivTripData_3['person_id']) != (indivTripData_3['last_person'])
+2023-01-03 08:41:33,639 - INFO (process): Raw evaluating indivTripData_3['to_subtract'] = indivTripData_3['new_person'] * np.hstack(([0], indivTripData_3['cummulative_tours'].iloc[:-1]))
+2023-01-03 08:41:33,698 - INFO (process): Raw evaluating for i in range(maxtrips): indivTripData_3['to_subtract'] = np.where(indivTripData_3['to_subtract'] == 0, np.hstack(([0], indivTripData_3['to_subtract'].iloc[:-1])), indivTripData_3['to_subtract'])
+2023-01-03 08:41:36,295 - INFO (process): Raw evaluating indivTripData_3['tour_id2'] = indivTripData_3['cummulative_tours'] - indivTripData_3['to_subtract']
+2023-01-03 08:41:36,331 - INFO (process): Raw evaluating indivTourData_3['originTAZ'] = indivTourData_3['orig_mgra'].map(geographicXwalk_PMSA.set_index('mgra')['taz']).fillna(0)
+2023-01-03 08:41:36,429 - INFO (process): Raw evaluating indivTourData_3['destinationTAZ'] = indivTourData_3['dest_mgra'].map(geographicXwalk_PMSA.set_index('mgra')['taz']).fillna(0)
+2023-01-03 08:41:36,528 - INFO (process): Raw evaluating jointTourData_3['originTAZ'] = jointTourData_3['orig_mgra'].map(geographicXwalk_PMSA.set_index('mgra')['taz']).fillna(0)
+2023-01-03 08:41:36,533 - INFO (process): Raw evaluating jointTourData_3['destinationTAZ'] = jointTourData_3['dest_mgra'].map(geographicXwalk_PMSA.set_index('mgra')['taz']).fillna(0)
+2023-01-03 08:41:36,540 - INFO (process): Raw evaluating indivTripData_3['originTAZ'] = indivTripData_3['orig_mgra'].map(geographicXwalk_PMSA.set_index('mgra')['taz']).fillna(0)
+2023-01-03 08:41:36,820 - INFO (process): Raw evaluating indivTripData_3['destinationTAZ'] = indivTripData_3['dest_mgra'].map(geographicXwalk_PMSA.set_index('mgra')['taz']).fillna(0)
+2023-01-03 08:41:37,100 - INFO (process): Raw evaluating jointTripData_3['originTAZ'] = jointTripData_3['orig_mgra'].map(geographicXwalk_PMSA.set_index('mgra')['taz']).fillna(0)
+2023-01-03 08:41:37,113 - INFO (process): Raw evaluating jointTripData_3['destinationTAZ'] = jointTripData_3['dest_mgra'].map(geographicXwalk_PMSA.set_index('mgra')['taz']).fillna(0)
+2023-01-03 08:41:37,127 - INFO (process): Querying skim values from traffic_skims_MD['MD_SOV_TR_H_DIST'] for columns originTAZ,destinationTAZ in indivTripData_3
+2023-01-03 08:41:41,107 - INFO (process): Querying skim values from traffic_skims_MD['MD_SOV_TR_H_DIST'] for columns originTAZ,destinationTAZ in jointTripData_3
+2023-01-03 08:41:42,176 - INFO (process): Raw evaluating personData_3['hhper_id'] = personData_3['hh_id'].astype(str) + '-' + personData_3['person_num'].astype(str)
+2023-01-03 08:41:46,089 - INFO (process): Capping AO values in aoResults at 4
+2023-01-03 08:41:46,098 - INFO (process): Capping AO values in aoResults_Pre at 4
+2023-01-03 08:41:46,108 - INFO (process): Capping autos values in householdData_3 at 4
+2023-01-03 08:41:46,119 - INFO (process): Renaming wsLoc columns using {'taz_x': 'HHTAZ', 'taz_y': 'WTAZ', 'taz': 'STAZ', 'pmsa_x': 'HDISTRICT', 'pmsa_y': 'WDISTRICT', 'pmsa': 'SDISTRICT'}
+2023-01-03 08:41:47,226 - INFO (process): Querying skim values from traffic_skims_MD['MD_SOV_TR_H_DIST'] for columns HHTAZ,WTAZ in wsLoc
+2023-01-03 08:41:48,487 - INFO (process): Querying skim values from traffic_skims_MD['MD_SOV_TR_H_DIST'] for columns HHTAZ,STAZ in wsLoc
+2023-01-03 08:41:49,732 - INFO (process): Binning WorkLocationDistance values in wsLoc using [-99999] + list(range(51)) + [99999]
+2023-01-03 08:41:50,492 - INFO (process): Binning SchoolLocationDistance values in wsLoc using [-99999] + list(range(51)) + [99999]
+2023-01-03 08:41:51,234 - INFO (process): Applying (lambda x: int(float(str(x).split(', ')[1].split(']')[0]))) to workdistbin values in wsLoc
+2023-01-03 08:41:54,170 - INFO (process): Applying (lambda x: int(float(str(x).split(', ')[1].split(']')[0]))) to schooldistbin values in wsLoc
+2023-01-03 08:41:57,022 - INFO (process): Binning tour_distance values in indivTourData_3 using list(range(42)) + [99999]
+2023-01-03 08:41:57,983 - INFO (process): Binning tour_distance values in jointTourData_3 using list(range(42)) + [99999]
+2023-01-03 08:41:58,024 - INFO (process): Applying (lambda x: int(float(str(x).split(', ')[1].split(']')[0]))) to tourdistbin values in indivTourData_3
+2023-01-03 08:42:01,663 - INFO (process): Applying (lambda x: int(float(str(x).split(', ')[1].split(']')[0]))) to tourdistbin values in jointTourData_3
+2023-01-03 08:42:01,831 - INFO (process): Raw evaluating wsLoc = wsLoc.reset_index()
+2023-01-03 08:42:02,717 - INFO (process): Replacing type values in personData_3 using {'Full-time worker': 1, 'Part-time worker': 2,  'University student': 3, 'Non-worker': 4, 'Retired': 5, 'Student of driving age': 6, 'Student of non-driving age': 7, 'Child too young for school': 8}
+2023-01-03 08:42:04,003 - INFO (process): Raw evaluating personData_3['activity_pattern'] = np.where((personData_3['activity_pattern'] == 'M') & (personData_3['imf_choice'] == 0),  np.where(personData_3['inmf_choice'] > 0, 'N', 'H'), personData_3['activity_pattern'])
+2023-01-03 08:42:04,218 - INFO (process): Raw evaluating householdData_3['HHSIZ'] = householdData_3['hh_id'].map(personData_3[['hh_id', 'person_id']].groupby('hh_id').count()['person_id'])
+2023-01-03 08:42:05,099 - INFO (process): Capping HHSIZ values in householdData_3 at 5
+2023-01-03 08:42:05,109 - INFO (process): Applying (lambda x: int(x[-1] == 'j')) to cdap_pattern values in householdData_3
+2023-01-03 08:42:05,502 - INFO (process): Replacing tour_purpose values in indivTourData_3 using {'Home': 0, 'Work': 1, 'University': 2,  'School': 3, 'Escort': 4, 'Shop': 5, 'Maintenance': 6, 'Eating Out': 7, 'Visiting': 8, 'Discretionary': 9, 'Work-Based': 10, 'work related': 10}
+2023-01-03 08:42:07,456 - INFO (process): Replacing tour_purpose values in jointTourData_3 using {'Home': 0, 'Work': 1, 'University': 2,  'School': 3, 'Escort': 4, 'Shop': 5, 'Maintenance': 6, 'Eating Out': 7, 'Visiting': 8, 'Discretionary': 9, 'Work-Based': 10, 'work related': 10}
+2023-01-03 08:42:07,529 - INFO (process): Replacing orig_purpose values in indivTripData_3 using {'Home': 0, 'Work': 1, 'University': 2,  'School': 3, 'Escort': 4, 'Shop': 5, 'Maintenance': 6, 'Eating Out': 7, 'Visiting': 8, 'Discretionary': 9, 'Work-Based': 10, 'work related': 10}
+2023-01-03 08:42:13,223 - INFO (process): Replacing dest_purpose values in indivTripData_3 using {'Home': 0, 'Work': 1, 'University': 2,  'School': 3, 'Escort': 4, 'Shop': 5, 'Maintenance': 6, 'Eating Out': 7, 'Visiting': 8, 'Discretionary': 9, 'Work-Based': 10, 'work related': 10}
+2023-01-03 08:42:18,938 - INFO (process): Replacing tour_purpose values in indivTripData_3 using {'Home': 0, 'Work': 1, 'University': 2,  'School': 3, 'Escort': 4, 'Shop': 5, 'Maintenance': 6, 'Eating Out': 7, 'Visiting': 8, 'Discretionary': 9, 'Work-Based': 10, 'work related': 10}
+2023-01-03 08:42:24,411 - INFO (process): Replacing orig_purpose values in jointTripData_3 using {'Home': 0, 'Work': 1, 'University': 2,  'School': 3, 'Escort': 4, 'Shop': 5, 'Maintenance': 6, 'Eating Out': 7, 'Visiting': 8, 'Discretionary': 9, 'Work-Based': 10, 'work related': 10}
+2023-01-03 08:42:24,637 - INFO (process): Replacing dest_purpose values in jointTripData_3 using {'Home': 0, 'Work': 1, 'University': 2,  'School': 3, 'Escort': 4, 'Shop': 5, 'Maintenance': 6, 'Eating Out': 7, 'Visiting': 8, 'Discretionary': 9, 'Work-Based': 10, 'work related': 10}
+2023-01-03 08:42:24,863 - INFO (process): Replacing tour_purpose values in jointTripData_3 using {'Home': 0, 'Work': 1, 'University': 2,  'School': 3, 'Escort': 4, 'Shop': 5, 'Maintenance': 6, 'Eating Out': 7, 'Visiting': 8, 'Discretionary': 9, 'Work-Based': 10, 'work related': 10}
+2023-01-03 08:42:25,073 - INFO (process): Replacing TOURPURP values in indivTourData_3 using {1: '1: Work', 2: '2: University', 3: '3: School', 4: '4: Escort', 5: '5: Individual Maintenance', 6: '5: Individual Maintenance', 7: '6: Individual Discretionary', 8: '6: Individual Discretionary', 9: '6: Individual Discretionary', 10: '9: Work-based'}
+2023-01-03 08:42:25,317 - INFO (process): Replacing TOURPURP values in jointTourData_3 using {5: '7: Joint Maintenance', 6: '7: Joint Maintenance', 7: '8: Joint Discretionary', 8: '8: Joint Discretionary', 9: '8: Joint Discretionary'}
+2023-01-03 08:42:25,324 - INFO (process): Replacing TOURPURP values in indivTripData_3 using {1: '1: Work', 2: '2: University', 3: '3: School', 4: '4: Escort', 5: '5: Individual Maintenance', 6: '5: Individual Maintenance', 7: '6: Individual Discretionary', 8: '6: Individual Discretionary', 9: '6: Individual Discretionary', 10: '9: Work-based'}
+2023-01-03 08:42:25,988 - INFO (process): Replacing TOURPURP values in jointTripData_3 using {5: '7: Joint Maintenance', 6: '7: Joint Maintenance', 7: '8: Joint Discretionary', 8: '8: Joint Discretionary', 9: '8: Joint Discretionary'}
+2023-01-03 08:42:26,009 - INFO (process): Replacing TOURPURP values in indivTourData_3 using {1: 0, 2: 0, 3: 0, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1, 10: 2}
+2023-01-03 08:42:26,165 - INFO (process): Replacing TOURPURP values in indivTripData_3 using {1: 0, 2: 0, 3: 0, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1, 10: 2}
+2023-01-03 08:42:26,564 - INFO (process): Raw evaluating indivTourData_3['lookup'] = indivTourData_3[['hh_id', 'person_num', 'TOURCAT', 'tour_id2']].dot([100000, 1000, 100, 1])
+2023-01-03 08:42:27,746 - INFO (process): Raw evaluating indivTripData_3['lookup'] = indivTripData_3[['hh_id', 'person_num', 'TOURCAT', 'tour_id2']].dot([100000, 1000, 100, 1])
+2023-01-03 08:42:32,405 - INFO (process): Raw evaluating jointTourData_3['lookup'] = list(zip(jointTourData_3['hh_id'], jointTourData_3['tour_id']))
+2023-01-03 08:42:32,466 - INFO (process): Raw evaluating jointTripData_3['lookup'] = list(zip(jointTripData_3['hh_id'], jointTripData_3['tour_id']))
+2023-01-03 08:42:32,618 - INFO (process): Raw evaluating indivTourData_3['label'] = 'purpose'
+2023-01-03 08:42:32,639 - INFO (process): Raw evaluating jointTourData_3['label'] = 'purpose'
+2023-01-03 08:42:32,641 - INFO (process): Raw evaluating indivTripData_3['TOUROTAZ'] = indivTripData_3['lookup'].map(indivTourData_3.set_index('lookup')['originTAZ'])
+2023-01-03 08:42:35,829 - INFO (process): Raw evaluating indivTripData_3['TOURDTAZ'] = indivTripData_3['lookup'].map(indivTourData_3.set_index('lookup')['destinationTAZ'])
+2023-01-03 08:42:39,059 - INFO (process): Raw evaluating indivTripData_3['finaldestTAZ'] = np.where(indivTripData_3['inbound'] == 0, indivTripData_3['TOURDTAZ'], indivTripData_3['TOUROTAZ'])
+2023-01-03 08:42:39,164 - INFO (process): Querying skim values from traffic_skims_MD['MD_SOV_TR_H_DIST'] for columns originTAZ,finaldestTAZ in indivTripData_3
+2023-01-03 08:42:41,218 - INFO (process): Querying skim values from traffic_skims_MD['MD_SOV_TR_H_DIST'] for columns destinationTAZ,finaldestTAZ in indivTripData_3
+2023-01-03 08:42:43,269 - INFO (process): Raw evaluating indivTripData_3['out_dir_dist'] = indivTripData_3['od_distance'] + indivTripData_3['sd_dist'] - indivTripData_3['od_dist']
+2023-01-03 08:42:43,358 - INFO (process): Raw evaluating indivTripData_3['avgDist'] = 'avgDist'
+2023-01-03 08:42:43,419 - INFO (process): Binning out_dir_dist values in indivTripData_3 using [-99999] + list(range(43)) + [99999]
+2023-01-03 08:42:46,125 - INFO (process): Applying (lambda x: int(float(str(x).split(', ')[1].split(']')[0]))+1) to out_dir_distbin values in indivTripData_3
+2023-01-03 08:42:57,155 - INFO (process): Raw evaluating jointTripData_3['TOUROTAZ'] = jointTripData_3['lookup'].map(jointTourData_3.set_index('lookup')['originTAZ'])
+2023-01-03 08:42:57,323 - INFO (process): Raw evaluating jointTripData_3['TOURDTAZ'] = jointTripData_3['lookup'].map(jointTourData_3.set_index('lookup')['destinationTAZ'])
+2023-01-03 08:42:57,483 - INFO (process): Raw evaluating jointTripData_3['finaldestTAZ'] = np.where(jointTripData_3['inbound'] == 0, jointTripData_3['TOURDTAZ'], jointTripData_3['TOUROTAZ'])
+2023-01-03 08:42:57,489 - INFO (process): Querying skim values from traffic_skims_MD['MD_SOV_TR_H_DIST'] for columns originTAZ,finaldestTAZ in jointTripData_3
+2023-01-03 08:42:58,547 - INFO (process): Querying skim values from traffic_skims_MD['MD_SOV_TR_H_DIST'] for columns destinationTAZ,finaldestTAZ in jointTripData_3
+2023-01-03 08:42:59,587 - INFO (process): Raw evaluating jointTripData_3['out_dir_dist'] = jointTripData_3['od_distance'] + jointTripData_3['sd_dist'] - jointTripData_3['od_dist']
+2023-01-03 08:42:59,594 - INFO (process): Raw evaluating jointTripData_3['avgDist'] = 'avgDist'
+2023-01-03 08:42:59,597 - INFO (process): Binning out_dir_dist values in jointTripData_3 using [-99999] + list(range(43)) + [99999]
+2023-01-03 08:42:59,712 - INFO (process): Applying (lambda x: int(float(str(x).split(', ')[1].split(']')[0]))+1) to out_dir_distbin values in jointTripData_3
+2023-01-03 08:43:00,188 - INFO (process): Applying lambda x: x + (8 - (len(x)+1)//2)*' 0' to tour_participants values in jointTourData_3
+2023-01-03 08:43:00,242 - INFO (process): Applying lambda x: x.replace(' ', '')[0] to tour_participants values in jointTourData_3
+2023-01-03 08:43:00,292 - INFO (process): Applying lambda x: x.replace(' ', '')[1] to tour_participants values in jointTourData_3
+2023-01-03 08:43:00,341 - INFO (process): Applying lambda x: x.replace(' ', '')[2] to tour_participants values in jointTourData_3
+2023-01-03 08:43:00,389 - INFO (process): Applying lambda x: x.replace(' ', '')[3] to tour_participants values in jointTourData_3
+2023-01-03 08:43:00,437 - INFO (process): Applying lambda x: x.replace(' ', '')[4] to tour_participants values in jointTourData_3
+2023-01-03 08:43:00,488 - INFO (process): Applying lambda x: x.replace(' ', '')[5] to tour_participants values in jointTourData_3
+2023-01-03 08:43:00,537 - INFO (process): Applying lambda x: x.replace(' ', '')[6] to tour_participants values in jointTourData_3
+2023-01-03 08:43:00,586 - INFO (process): Applying lambda x: x.replace(' ', '')[7] to tour_participants values in jointTourData_3
+2023-01-03 08:43:00,636 - INFO (process): Raw evaluating indivTourData_3['PERTYPE'] = (indivTourData_3['hh_id'].astype(str) + '-' + indivTourData_3['person_num'].astype(str)).map(personData_3.set_index('hhper_id')['PERTYPE']).fillna(0)
+2023-01-03 08:43:08,607 - INFO (process): Raw evaluating indivTripData_3['PERTYPE'] = (indivTripData_3['hh_id'].astype(str) + '-' + indivTripData_3['person_num'].astype(str)).map(personData_3.set_index('hhper_id')['PERTYPE']).fillna(0)
+2023-01-03 08:43:26,879 - INFO (process): Raw evaluating jointTourData_3['PTYPE1'] = (jointTourData_3['hh_id'].astype(str) + '-' + jointTourData_3['PER1'].astype(str)).map(personData_3.set_index('hhper_id')['PERTYPE']).fillna(0)
+2023-01-03 08:43:29,001 - INFO (process): Raw evaluating jointTourData_3['PTYPE2'] = (jointTourData_3['hh_id'].astype(str) + '-' + jointTourData_3['PER2'].astype(str)).map(personData_3.set_index('hhper_id')['PERTYPE']).fillna(0)
+2023-01-03 08:43:31,123 - INFO (process): Raw evaluating jointTourData_3['PTYPE3'] = (jointTourData_3['hh_id'].astype(str) + '-' + jointTourData_3['PER3'].astype(str)).map(personData_3.set_index('hhper_id')['PERTYPE']).fillna(0)
+2023-01-03 08:43:33,232 - INFO (process): Raw evaluating jointTourData_3['PTYPE4'] = (jointTourData_3['hh_id'].astype(str) + '-' + jointTourData_3['PER4'].astype(str)).map(personData_3.set_index('hhper_id')['PERTYPE']).fillna(0)
+2023-01-03 08:43:35,342 - INFO (process): Raw evaluating jointTourData_3['PTYPE5'] = (jointTourData_3['hh_id'].astype(str) + '-' + jointTourData_3['PER5'].astype(str)).map(personData_3.set_index('hhper_id')['PERTYPE']).fillna(0)
+2023-01-03 08:43:37,395 - INFO (process): Raw evaluating jointTourData_3['PTYPE6'] = (jointTourData_3['hh_id'].astype(str) + '-' + jointTourData_3['PER6'].astype(str)).map(personData_3.set_index('hhper_id')['PERTYPE']).fillna(0)
+2023-01-03 08:43:39,490 - INFO (process): Raw evaluating jointTourData_3['PTYPE7'] = (jointTourData_3['hh_id'].astype(str) + '-' + jointTourData_3['PER7'].astype(str)).map(personData_3.set_index('hhper_id')['PERTYPE']).fillna(0)
+2023-01-03 08:43:41,588 - INFO (process): Raw evaluating jointTourData_3['PTYPE8'] = (jointTourData_3['hh_id'].astype(str) + '-' + jointTourData_3['PER8'].astype(str)).map(personData_3.set_index('hhper_id')['PERTYPE']).fillna(0)
+2023-01-03 08:43:43,707 - INFO (process): Raw evaluating toursPertypeDistbn = pd.DataFrame({'freq': indivTourData_3.query('PERTYPE > 0 and TOURPURP != 10')['PERTYPE'].value_counts().sort_index()})
+2023-01-03 08:43:46,268 - INFO (process): Raw evaluating temp_joint = pd.melt(jointTourData_3, ['hh_id', 'tour_id'], ['PTYPE1', 'PTYPE2', 'PTYPE3', 'PTYPE4', 'PTYPE5', 'PTYPE6', 'PTYPE7', 'PTYPE8'], value_name = 'PERTYPE')
+2023-01-03 08:43:46,429 - INFO (process): Raw evaluating temp_joint = temp_joint.reset_index()
+2023-01-03 08:43:46,464 - INFO (process): Raw evaluating jtoursPertypeDistbn = pd.DataFrame({'freq': temp_joint['PERTYPE'].astype(int).value_counts().sort_index()})
+2023-01-03 08:43:46,476 - INFO (process): Raw evaluating totaltoursPertypeDistbn = toursPertypeDistbn.copy()
+2023-01-03 08:43:46,477 - INFO (process): Raw evaluating totaltoursPertypeDistbn['freq'] += jtoursPertypeDistbn['freq']
+2023-01-03 08:43:46,479 - INFO (process): Raw evaluating totaltoursPertypeDistbn.index.name = 'PERTYPE'
+2023-01-03 08:43:46,479 - INFO (process): Raw evaluating personData_3['inmCounts'] = personData_3['person_id'].map(indivTourData_3.query('TOURPURP >= 4 and TOURPURP <= 9')['person_id'].value_counts()).fillna(0)
+2023-01-03 08:43:47,768 - INFO (process): Capping inmCounts values in personData_3 at 3
+2023-01-03 08:43:47,791 - INFO (process): Replacing nmtours values in personData_3 using {0: '0', 1: '1', 2: '2', 3: '3+'}
+2023-01-03 08:43:47,996 - INFO (process): Raw evaluating indivTourData_3 = indivTourData_3.reset_index()
+2023-01-03 08:43:49,036 - INFO (process): Raw evaluating jointTourData_3 = jointTourData_3.reset_index()
+2023-01-03 08:43:49,090 - INFO (process): Raw evaluating indivTripData_3 = indivTripData_3.reset_index()
+2023-01-03 08:43:56,695 - INFO (process): Raw evaluating jointTripData_3 = jointTripData_3.reset_index()
+2023-01-03 08:43:56,967 - INFO (process): Replacing tour_composition values in jointTourData_3 using {1: 'All Adult', 2: 'All Children', 3: 'Mixed'}
+2023-01-03 08:43:56,987 - INFO (process): Applying lambda x: (len(x.replace(' 0', '')) + 1)//2 to tour_participants values in jointTourData_3
+2023-01-03 08:43:57,068 - INFO (process): Capping NUMBER_HH_TOTAL values in jointTourData_3 at 5
+2023-01-03 08:43:57,070 - INFO (process): Raw evaluating householdData_3['joint5'] = householdData_3['hh_id'].map(jointTourData_3.query('TOURPURP == 5')['hh_id'].value_counts()).fillna(0)
+2023-01-03 08:43:57,217 - INFO (process): Raw evaluating householdData_3['joint6'] = householdData_3['hh_id'].map(jointTourData_3.query('TOURPURP == 6')['hh_id'].value_counts()).fillna(0)
+2023-01-03 08:43:57,301 - INFO (process): Raw evaluating householdData_3['joint7'] = householdData_3['hh_id'].map(jointTourData_3.query('TOURPURP == 7')['hh_id'].value_counts()).fillna(0)
+2023-01-03 08:43:57,366 - INFO (process): Raw evaluating householdData_3['joint8'] = householdData_3['hh_id'].map(jointTourData_3.query('TOURPURP == 8')['hh_id'].value_counts()).fillna(0)
+2023-01-03 08:43:57,431 - INFO (process): Raw evaluating householdData_3['joint9'] = householdData_3['hh_id'].map(jointTourData_3.query('TOURPURP == 9')['hh_id'].value_counts()).fillna(0)
+2023-01-03 08:43:57,507 - INFO (process): Setting jtours values in householdData_3 to sum of joint5,joint6,joint7,joint8,joint9 values
+2023-01-03 08:43:57,744 - INFO (process): Capping jtours values in householdData_3 at 2
+2023-01-03 08:43:57,754 - INFO (process): Raw evaluating householdData_3['jtf'] = np.zeros_like(householdData_3.index)
+2023-01-03 08:43:57,767 - INFO (process): Raw evaluating householdData_3['jtf'] = np.where(householdData_3['jtours'] == 0, 1, householdData_3['jtf'])
+2023-01-03 08:43:57,781 - INFO (process): Raw evaluating householdData_3['jtf'] = np.where(householdData_3['joint5'] == 1, 2, householdData_3['jtf'])
+2023-01-03 08:43:57,795 - INFO (process): Raw evaluating householdData_3['jtf'] = np.where(householdData_3['joint6'] == 1, 3, householdData_3['jtf'])
+2023-01-03 08:43:57,808 - INFO (process): Raw evaluating householdData_3['jtf'] = np.where(householdData_3['joint7'] == 1, 4, householdData_3['jtf'])
+2023-01-03 08:43:57,821 - INFO (process): Raw evaluating householdData_3['jtf'] = np.where(householdData_3['joint8'] == 1, 5, householdData_3['jtf'])
+2023-01-03 08:43:57,835 - INFO (process): Raw evaluating householdData_3['jtf'] = np.where(householdData_3['joint9'] == 1, 6, householdData_3['jtf'])
+2023-01-03 08:43:57,848 - INFO (process): Raw evaluating householdData_3['jtf'] = np.where(householdData_3['joint5'] >= 2, 7, householdData_3['jtf'])
+2023-01-03 08:43:57,862 - INFO (process): Raw evaluating householdData_3['jtf'] = np.where(householdData_3['joint6'] >= 2, 8, householdData_3['jtf'])
+2023-01-03 08:43:57,874 - INFO (process): Raw evaluating householdData_3['jtf'] = np.where(householdData_3['joint7'] >= 2, 9, householdData_3['jtf'])
+2023-01-03 08:43:57,888 - INFO (process): Raw evaluating householdData_3['jtf'] = np.where(householdData_3['joint8'] >= 2, 10, householdData_3['jtf'])
+2023-01-03 08:43:57,901 - INFO (process): Raw evaluating householdData_3['jtf'] = np.where(householdData_3['joint9'] >= 2, 11, householdData_3['jtf'])
+2023-01-03 08:43:57,914 - INFO (process): Raw evaluating householdData_3['jtf'] = np.where((householdData_3['joint5'] >= 1) & (householdData_3['joint6'] >= 1), 12, householdData_3['jtf'])
+2023-01-03 08:43:57,930 - INFO (process): Raw evaluating householdData_3['jtf'] = np.where((householdData_3['joint5'] >= 1) & (householdData_3['joint7'] >= 1), 13, householdData_3['jtf'])
+2023-01-03 08:43:57,947 - INFO (process): Raw evaluating householdData_3['jtf'] = np.where((householdData_3['joint5'] >= 1) & (householdData_3['joint8'] >= 1), 14, householdData_3['jtf'])
+2023-01-03 08:43:57,964 - INFO (process): Raw evaluating householdData_3['jtf'] = np.where((householdData_3['joint5'] >= 1) & (householdData_3['joint9'] >= 1), 15, householdData_3['jtf'])
+2023-01-03 08:43:57,980 - INFO (process): Raw evaluating householdData_3['jtf'] = np.where((householdData_3['joint6'] >= 1) & (householdData_3['joint7'] >= 1), 16, householdData_3['jtf'])
+2023-01-03 08:43:57,998 - INFO (process): Raw evaluating householdData_3['jtf'] = np.where((householdData_3['joint6'] >= 1) & (householdData_3['joint8'] >= 1), 17, householdData_3['jtf'])
+2023-01-03 08:43:58,017 - INFO (process): Raw evaluating householdData_3['jtf'] = np.where((householdData_3['joint6'] >= 1) & (householdData_3['joint9'] >= 1), 18, householdData_3['jtf'])
+2023-01-03 08:43:58,034 - INFO (process): Raw evaluating householdData_3['jtf'] = np.where((householdData_3['joint7'] >= 1) & (householdData_3['joint8'] >= 1), 19, householdData_3['jtf'])
+2023-01-03 08:43:58,050 - INFO (process): Raw evaluating householdData_3['jtf'] = np.where((householdData_3['joint7'] >= 1) & (householdData_3['joint9'] >= 1), 20, householdData_3['jtf'])
+2023-01-03 08:43:58,066 - INFO (process): Raw evaluating householdData_3['jtf'] = np.where((householdData_3['joint8'] >= 1) & (householdData_3['joint9'] >= 1), 21, householdData_3['jtf'])
+2023-01-03 08:43:58,083 - INFO (process): Replacing jtf values in householdData_3 using {1: 'No Joint Tours', 2: '1 Shopping', 3: '1 Maintenance', 4: '1 Eating Out', 5: '1 Visiting', 6: '1 Other Discretionary', 7: '2 Shopping', 8: '1 Shopping / 1 Maintenance', 9: '1 Shopping / 1 Eating Out', 10: '1 Shopping / 1 Visiting', 11: '1 Shopping / 1 Other Discretionary', 12: '2 Maintenance', 13: '1 Maintenance / 1 Eating Out', 14: '1 Maintenance / 1 Visiting', 15: '1 Maintenance / 1 Other Discretionary', 16: '2 Eating Out', 17: '1 Eating Out / 1 Visiting', 18: '1 Eating Out / 1 Other Discretionary', 19: '2 Visiting', 20: '1 Visiting / 1 Other Discretionary', 21: '2 Other Discretionary'}
+2023-01-03 08:43:58,180 - INFO (process): Raw evaluating indivTourData_3['num_tot_stops'] = indivTourData_3['num_ib_stops'] + indivTourData_3['num_ob_stops']
+2023-01-03 08:43:58,204 - INFO (process): Raw evaluating jointTourData_3['num_tot_stops'] = jointTourData_3['num_ib_stops'] + jointTourData_3['num_ob_stops']
+2023-01-03 08:43:58,207 - INFO (process): Raw evaluating indivTripData_3['inb_next'] = np.zeros_like(indivTripData_3.index)
+2023-01-03 08:43:58,327 - INFO (process): Raw evaluating indivTripData_3['inb_next'].iloc[:indivTripData_3.shape[0]-1] = indivTripData_3['inbound'][1:]
+2023-01-03 08:43:58,345 - INFO (process): Raw evaluating indivTripData_3['stops'] = np.where((indivTripData_3['DPURP'] > 0) & (((indivTripData_3['inbound'] == 0) & (indivTripData_3['inb_next'] == 0)) | ((indivTripData_3['inbound'] == 1) & (indivTripData_3['inb_next'] == 1))), 1, 0)
+2023-01-03 08:43:58,498 - INFO (process): Raw evaluating jointTripData_3['inb_next'] = np.zeros_like(jointTripData_3.index)
+2023-01-03 08:43:58,504 - INFO (process): Raw evaluating jointTripData_3['inb_next'].iloc[:jointTripData_3.shape[0]-1] = jointTripData_3['inbound'][1:]
+2023-01-03 08:43:58,505 - INFO (process): Raw evaluating jointTripData_3['stops'] = np.where((jointTripData_3['DPURP'] > 0) & (((jointTripData_3['inbound'] == 0) & (jointTripData_3['inb_next'] == 0)) | ((jointTripData_3['inbound'] == 1) & (jointTripData_3['inb_next'] == 1))), 1, 0)
+2023-01-03 08:43:58,512 - INFO (process): Raw evaluating householdData_3['ADULTS'] = householdData_3['hh_id'].map(personData_3[['hh_id', 'person_id', 'age']].query('age >= 18 and age < 99').groupby('hh_id').count()['person_id'])
+2023-01-03 08:43:59,436 - INFO (process): Raw evaluating indivTourData_3['tourdur'] = indivTourData_3['end_period'] - indivTourData_3['start_period'] + 1
+2023-01-03 08:43:59,467 - INFO (process): Raw evaluating jointTourData_3['tourdur'] = jointTourData_3['end_period'] - jointTourData_3['start_period'] + 1
+2023-01-03 08:43:59,501 - INFO (merge): Merging tables householdData_3, indivTourData_3 into hh_itours
+2023-01-03 08:44:12,950 - INFO (merge): Merging tables householdData_3, jointTourData_3 into hh_jtours
+2023-01-03 08:44:16,088 - INFO (process): Raw evaluating hh_itours['AUTOSUFF'] = np.where(hh_itours['HHVEH'] == 0, 0, np.where(hh_itours['HHVEH'] < hh_itours['ADULTS'], 1, 2))
+2023-01-03 08:44:16,123 - INFO (process): Raw evaluating hh_jtours['AUTOSUFF'] = np.where(hh_jtours['HHVEH'] == 0, 0, np.where(hh_jtours['HHVEH'] < hh_jtours['ADULTS'], 1, 2))
+2023-01-03 08:44:16,134 - INFO (process): Raw evaluating total_population = personData_3.shape[0]
+2023-01-03 08:44:16,135 - INFO (process): Raw evaluating total_households = householdData_3.shape[0]
+2023-01-03 08:44:16,137 - INFO (process): Raw evaluating total_tours = indivTourData_3.shape[0] + jointTourData_3['NUMBER_HH_TOTAL'].sum()
+2023-01-03 08:44:16,137 - INFO (process): Raw evaluating total_trips = indivTripData_3.shape[0] + jointTripData_3.shape[0]
+2023-01-03 08:44:16,138 - INFO (process): Raw evaluating total_stops = indivTripData_3.query('stops == 1').shape[0] + jointTripData_3.query('stops == 1').shape[0]
+2023-01-03 08:44:21,830 - INFO (process): Replacing trip_mode values in indivTripData_3 using {1: 1, 2: 2, 3: 3.5, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 1.1, 11: 1.2, 12: 2, 13: 0}
+2023-01-03 08:44:22,371 - INFO (process): Raw evaluating indivTripData_3['vmt'] = np.where(indivTripData_3['num_travel'] > 0, indivTripData_3['od_distance'] / indivTripData_3['num_travel'], 0)
+2023-01-03 08:44:22,492 - INFO (process): Raw evaluating total_vmt = indivTripData_3['vmt'].sum()
+2023-01-03 08:44:22,519 - INFO (process): Raw evaluating totals_df = pd.Series([total_population, total_households, total_tours, total_trips, total_stops, total_vmt], ["Population", "Households", "Tours", "Trips", "Stops", "VMT"])
+2023-01-03 08:44:22,520 - INFO (process): Raw evaluating totals_df = pd.DataFrame({'value': totals_df})
+2023-01-03 08:44:22,522 - INFO (process): Raw evaluating totals_df.index.name = 'Variable'
+2023-01-03 08:44:22,522 - INFO (process): Raw evaluating totals_df.to_csv(r'F:\projects\visualizer\rp2021byResults\data_pipeliner\output\totals.csv')
+2023-01-03 08:44:22,547 - INFO (process): Raw evaluating rates_df = pd.Series([totals_df['value']['Tours']/totals_df['value']['Population'], totals_df['value']['Trips']/totals_df['value']['Population'], totals_df['value']['Stops']/totals_df['value']['Population'], totals_df['value']['Trips']/totals_df['value']['Households']], ['Tours per Person', 'Trips per Person', 'Stops per Person', 'Trips per Household'])
+2023-01-03 08:44:22,548 - INFO (process): Raw evaluating rates_df = pd.DataFrame({'value': rates_df})
+2023-01-03 08:44:22,550 - INFO (process): Raw evaluating rates_df.index.name = 'Variable'
+2023-01-03 08:44:22,550 - INFO (process): Raw evaluating rates_df.to_csv(r'F:\projects\visualizer\rp2021byResults\data_pipeliner\output\rates.csv')
+2023-01-03 08:44:22,574 - INFO (concat): Concatenating tables ['indivTourData_3', 'jointTourData_3'] into tours
+2023-01-03 08:44:25,724 - INFO (concat): Concatenating tables ['indivTripData_3', 'jointTripData_3'] into trips
+2023-01-03 08:44:32,478 - INFO (eval_expressions): Evaluating aoResults.groupby(['HHVEH'], dropna=False)['HHID'].count()
+2023-01-03 08:44:32,506 - INFO (eval_expressions): Evaluating aoResults_Pre.groupby(['HHVEH'], dropna=False)['HHID'].count()
+2023-01-03 08:44:32,534 - INFO (eval_expressions): Evaluating householdData_3.groupby(['AVs'], dropna=False)['hh_id'].count()
+2023-01-03 08:44:32,562 - INFO (eval_expressions): Evaluating wsLoc.query("WorkLocation > 0 and WorkLocation != 99999", engine="python").groupby(['HDISTRICT', 'WDISTRICT'], dropna=False)['HHID'].count()
+2023-01-03 08:44:33,481 - INFO (eval_expressions): Evaluating wsLoc.query("WorkLocation > 0", engine="python").groupby(['HDISTRICT'], dropna=False)['index'].count()
+2023-01-03 08:44:33,819 - INFO (eval_expressions): Evaluating wsLoc.query("WorkLocation == 99999", engine="python").groupby(['HDISTRICT'], dropna=False)['index'].count()
+2023-01-03 08:44:33,899 - INFO (eval_expressions): Evaluating personData_3.groupby(['PERTYPE', 'activity_pattern'], dropna=False)['person_id'].count()
+2023-01-03 08:44:34,181 - INFO (eval_expressions): Evaluating householdData_3.groupby(['HHSIZE'], dropna=False)['hh_id'].count()
+2023-01-03 08:44:34,208 - INFO (eval_expressions): Evaluating householdData_3.query("HHSIZE >= 2", engine="python").groupby(['HHSIZE', 'JOINT'], dropna=False)['hh_id'].count()
+2023-01-03 08:44:34,639 - INFO (eval_expressions): Evaluating personData_3.groupby(['PERTYPE', 'nmtours'], dropna=False)['person_id'].count()
+2023-01-03 08:44:34,922 - INFO (eval_expressions): Evaluating jointTourData_3.groupby(['tour_composition'], dropna=False)['index'].count()
+2023-01-03 08:44:34,932 - INFO (eval_expressions): Evaluating jointTourData_3.groupby(['tour_composition', 'NUMBER_HH'], dropna=False)['index'].count()
+2023-01-03 08:44:34,949 - INFO (eval_expressions): Evaluating jointTourData_3.groupby(['NUMBER_HH'], dropna=False)['index'].count()
+2023-01-03 08:44:34,953 - INFO (eval_expressions): Evaluating householdData_3.query("HHSIZE >= 2", engine="python").groupby(['jointCat', 'HHSIZE'], dropna=False)['hh_id'].count()
+2023-01-03 08:44:35,145 - INFO (eval_expressions): Evaluating personData_3.query("imf_choice > 0", engine="python").groupby(['PERTYPE', 'imf_choice'], dropna=False)['person_id'].count()
+2023-01-03 08:44:35,557 - INFO (eval_expressions): Evaluating personData_3.groupby(['PERTYPE'], dropna=False)['person_id'].count()
+2023-01-03 08:44:35,631 - INFO (eval_expressions): Evaluating householdData_3.groupby(['jtf', 'alt_name'], dropna=False)['hh_id'].count()
+2023-01-03 08:44:35,770 - INFO (eval_expressions): Evaluating tours.groupby(['num_ob_stops', 'AGGPURP'], dropna=False)['index'].count()
+2023-01-03 08:44:36,231 - INFO (eval_expressions): Evaluating tours.groupby(['num_ib_stops', 'AGGPURP'], dropna=False)['index'].count()
+2023-01-03 08:44:36,693 - INFO (eval_expressions): Evaluating tours.groupby(['num_tot_stops', 'AGGPURP'], dropna=False)['index'].count()
+2023-01-03 08:44:37,154 - INFO (eval_expressions): Evaluating trips.query("stops == 1", engine="python").groupby(['DPURP', 'AGGPURP'], dropna=False)['index'].count()
+2023-01-03 08:44:46,058 - INFO (eval_expressions): Evaluating tours.query("TOURPURP >= 4", engine="python").groupby(['AGGPURP'], dropna=False)['tour_distance'].mean()
+2023-01-03 08:44:50,858 - INFO (eval_expressions): Evaluating tours.query("TOURPURP >= 4", engine="python")['tour_distance'].mean()
+2023-01-03 08:44:52,230 - INFO (eval_expressions): Evaluating trips.query("stops == 1", engine="python").groupby(['stop_period', 'AGGPURP'], dropna=False)['index'].count()
+2023-01-03 08:44:54,380 - INFO (eval_expressions): Evaluating trips.groupby(['stop_period', 'AGGPURP'], dropna=False)['index'].count()
+2023-01-03 08:44:55,719 - INFO (eval_expressions): Evaluating hh_itours.groupby(['AUTOSUFF', 'tour_mode', 'AGGPURP'], dropna=False)['index'].count()
+2023-01-03 08:44:56,273 - INFO (eval_expressions): Evaluating trips.groupby(['trip_mode', 'tour_mode', 'AGGPURP'], dropna=False)['index'].count()
+2023-01-03 08:44:57,857 - INFO (eval_expressions): Evaluating tours.query("TOURPURP >= 4", engine="python").groupby(['tourdistbin', 'AGGPURP'], dropna=False)['index'].count()
+2023-01-03 08:44:59,479 - INFO (eval_expressions): Evaluating wsLoc.query("WorkLocation > 0 and WorkLocation != 99999 and WorkLocationDistance > 0", engine="python").groupby(['workdistbin', 'HDISTRICT'], dropna=False)['index'].count()
+2023-01-03 08:44:59,869 - INFO (eval_expressions): Evaluating wsLoc.query("PersonType == 3 and SchoolLocation > 0 and SchoolLocation != 88888 and SchoolLocationDistance > 0", engine="python").groupby(['schooldistbin', 'HDISTRICT'], dropna=False)['index'].count()
+2023-01-03 08:44:59,998 - INFO (eval_expressions): Evaluating wsLoc.query("PersonType >=6 and SchoolLocation > 0 and SchoolLocation != 88888 and SchoolLocationDistance > 0", engine="python").groupby(['schooldistbin', 'HDISTRICT'], dropna=False)['index'].count()
+2023-01-03 08:45:00,260 - INFO (eval_expressions): Evaluating trips.query("stops == 1", engine="python").groupby(['AGGPURP'], dropna=False)['out_dir_dist'].mean()
+2023-01-03 08:45:02,279 - INFO (eval_expressions): Evaluating trips.query("stops == 1", engine="python")['out_dir_dist'].mean()
+2023-01-03 08:45:04,056 - INFO (eval_expressions): Evaluating trips.query("stops == 1", engine="python").groupby(['out_dir_distbin', 'AGGPURP'], dropna=False)['index'].count()
+2023-01-03 08:45:06,235 - INFO (eval_expressions): Evaluating tours.groupby(['start_period', 'AGGPURP'], dropna=False)['index'].count()
+2023-01-03 08:45:06,703 - INFO (eval_expressions): Evaluating tours.groupby(['end_period', 'AGGPURP'], dropna=False)['index'].count()
+2023-01-03 08:45:07,168 - INFO (eval_expressions): Evaluating tours.groupby(['tourdur', 'AGGPURP'], dropna=False)['index'].count()
+2023-01-03 08:45:07,629 - INFO (eval_expressions): Evaluating wsLoc.query("WorkLocation > 0 and WorkLocation != 99999", engine="python").groupby(['HDISTRICT'], dropna=False)['WorkLocationDistance'].mean()
+2023-01-03 08:45:07,948 - INFO (eval_expressions): Evaluating wsLoc.query("PersonType == 3 and SchoolLocation > 0 and SchoolLocation != 88888", engine="python").groupby(['HDISTRICT'], dropna=False)['SchoolLocationDistance'].mean()
+2023-01-03 08:45:08,063 - INFO (eval_expressions): Evaluating wsLoc.query("PersonType >=6 and SchoolLocation > 0 and SchoolLocation != 88888", engine="python").groupby(['HDISTRICT'], dropna=False)['SchoolLocationDistance'].mean()
+2023-01-03 08:45:08,280 - INFO (eval_expressions): Evaluating wsLoc.query("WorkLocation > 0 and WorkLocation != 99999", engine="python")['WorkLocationDistance'].mean()
+2023-01-03 08:45:08,573 - INFO (eval_expressions): Evaluating wsLoc.query("PersonType == 3 and SchoolLocation > 0 and SchoolLocation != 88888", engine="python")['SchoolLocationDistance'].mean()
+2023-01-03 08:45:08,687 - INFO (eval_expressions): Evaluating wsLoc.query("PersonType >=6 and SchoolLocation > 0 and SchoolLocation != 88888", engine="python")['SchoolLocationDistance'].mean()
+2023-01-03 08:45:08,894 - INFO (eval_expressions): Evaluating indivTourData_3.query("person_type > 0 and TOURPURP != 10", engine="python").groupby(['person_type'], dropna=False)['index'].count()
+2023-01-03 08:45:11,773 - INFO (eval_expressions): Evaluating temp_joint.query("PERTYPE > 0", engine="python").groupby(['PERTYPE'], dropna=False)['index'].count()
+2023-01-03 08:45:11,856 - INFO (eval_expressions): Evaluating indivTourData_3.query("TOURPURP >= 4 and TOURPURP <= 9", engine="python").groupby(['person_type', 'TOURPURP'], dropna=False)['index'].count()
+2023-01-03 08:45:12,859 - INFO (eval_expressions): Evaluating personData_3.query("activity_pattern != 'H'", engine="python").groupby(['PERTYPE'], dropna=False)['person_id'].count()
+2023-01-03 08:45:13,370 - INFO (eval_expressions): Evaluating indivTourData_3.query("person_type > 0 and TOURPURP != 10", engine="python")['index'].count()
+2023-01-03 08:45:14,822 - INFO (eval_expressions): Evaluating temp_joint['index'].count()
+2023-01-03 08:45:14,826 - INFO (eval_expressions): Evaluating personData_3.query("activity_pattern != 'H'", engine="python")['person_id'].count()
+2023-01-03 08:45:15,283 - INFO (eval_expressions): Evaluating personData_3.groupby(['PERTYPE'], dropna=False)['person_id'].count()
+2023-01-03 08:45:15,356 - INFO (eval_expressions): Evaluating indivTourData_3.query("TOURPURP == 4", engine="python").groupby(['PERTYPE'], dropna=False)['index'].count()
+2023-01-03 08:45:15,861 - INFO (eval_expressions): Evaluating indivTourData_3.query("TOURPURP == 5", engine="python").groupby(['PERTYPE'], dropna=False)['index'].count()
+2023-01-03 08:45:16,134 - INFO (eval_expressions): Evaluating indivTourData_3.query("TOURPURP == 6", engine="python").groupby(['PERTYPE'], dropna=False)['index'].count()
+2023-01-03 08:45:16,425 - INFO (eval_expressions): Evaluating indivTourData_3.query("TOURPURP == 7", engine="python").groupby(['PERTYPE'], dropna=False)['index'].count()
+2023-01-03 08:45:16,524 - INFO (eval_expressions): Evaluating indivTourData_3.query("TOURPURP == 8", engine="python").groupby(['PERTYPE'], dropna=False)['index'].count()
+2023-01-03 08:45:16,679 - INFO (eval_expressions): Evaluating indivTourData_3.query("TOURPURP == 9", engine="python").groupby(['PERTYPE'], dropna=False)['index'].count()
+2023-01-03 08:45:16,952 - INFO (eval_expressions): Evaluating indivTourData_3.query("TOURPURP >= 4 and TOURPURP <= 9", engine="python").groupby(['PERTYPE'], dropna=False)['index'].count()
+2023-01-03 08:45:17,855 - INFO (coalesce_expressions): Coalescing summary table autoOwnership
+2023-01-03 08:45:17,856 - INFO (coalesce_expressions): Coalescing summary table autoOwnership_Pre
+2023-01-03 08:45:17,858 - INFO (coalesce_expressions): Coalescing summary table autoOwnership_AV
+2023-01-03 08:45:17,859 - INFO (coalesce_expressions): Coalescing summary table districtFlows
+2023-01-03 08:45:17,860 - INFO (coalesce_expressions): Coalescing summary table wfh_summary
+2023-01-03 08:45:17,861 - INFO (coalesce_expressions): Coalescing summary table dapSummary_vis
+2023-01-03 08:45:17,862 - INFO (coalesce_expressions): Coalescing summary table hhSizeDist
+2023-01-03 08:45:17,863 - INFO (coalesce_expressions): Coalescing summary table hhsizeJoint
+2023-01-03 08:45:17,864 - INFO (coalesce_expressions): Coalescing summary table inmSummary_vis
+2023-01-03 08:45:17,866 - INFO (coalesce_expressions): Coalescing summary table jointComp
+2023-01-03 08:45:17,869 - INFO (coalesce_expressions): Coalescing summary table jointCompPartySize
+2023-01-03 08:45:17,870 - INFO (coalesce_expressions): Coalescing summary table jointPartySize
+2023-01-03 08:45:17,871 - INFO (coalesce_expressions): Coalescing summary table jointToursHHSize
+2023-01-03 08:45:17,872 - INFO (coalesce_expressions): Coalescing summary table mtfSummary_vis
+2023-01-03 08:45:17,873 - INFO (coalesce_expressions): Coalescing summary table pertypeDistbn
+2023-01-03 08:45:17,874 - INFO (coalesce_expressions): Coalescing summary table jtf
+2023-01-03 08:45:17,875 - INFO (coalesce_expressions): Coalescing summary table stopFreqProfile_vis
+2023-01-03 08:45:17,882 - INFO (coalesce_expressions): Coalescing summary table stopPurposeByTourPurpose_vis
+2023-01-03 08:45:17,883 - INFO (coalesce_expressions): Coalescing summary table nonMandTripLengths
+2023-01-03 08:45:17,884 - INFO (coalesce_expressions): Coalescing summary table nonMandTripLengthsTotal
+2023-01-03 08:45:17,884 - INFO (coalesce_expressions): Coalescing summary table stopDeparture_vis
+2023-01-03 08:45:17,887 - INFO (coalesce_expressions): Coalescing summary table tripDeparture_vis
+2023-01-03 08:45:17,888 - INFO (coalesce_expressions): Coalescing summary table tmodeProfile_vis
+2023-01-03 08:45:17,891 - INFO (coalesce_expressions): Coalescing summary table tripmodeProfile_vis
+2023-01-03 08:45:17,893 - INFO (coalesce_expressions): Coalescing summary table tourDistProfile_vis
+2023-01-03 08:45:17,894 - INFO (coalesce_expressions): Coalescing summary table mandTLFD
+2023-01-03 08:45:17,899 - INFO (coalesce_expressions): Coalescing summary table avgStopOutofDirectionDist_vis
+2023-01-03 08:45:17,900 - INFO (coalesce_expressions): Coalescing summary table avgStopOutofDirectionDistTotal
+2023-01-03 08:45:17,900 - INFO (coalesce_expressions): Coalescing summary table stopDC_vis
+2023-01-03 08:45:17,902 - INFO (coalesce_expressions): Coalescing summary table todProfile_vis
+2023-01-03 08:45:17,904 - INFO (coalesce_expressions): Coalescing summary table tourDuration
+2023-01-03 08:45:17,905 - INFO (coalesce_expressions): Coalescing summary table mandTripLengths
+2023-01-03 08:45:17,906 - INFO (coalesce_expressions): Coalescing summary table mandTripLengthsTotal
+2023-01-03 08:45:17,907 - INFO (coalesce_expressions): Coalescing summary table resultsByPType
+2023-01-03 08:45:17,908 - INFO (coalesce_expressions): Coalescing summary table tours_pertype_purpose
+2023-01-03 08:45:17,911 - INFO (coalesce_expressions): Coalescing summary table resultsByPTypeTotal
+2023-01-03 08:45:17,911 - INFO (coalesce_expressions): Coalescing summary table nm_tour_rates
+2023-01-03 08:45:17,914 - INFO (process): Raw evaluating mandTripLengthsTotal['HDISTRICT'] = 'Total'
+2023-01-03 08:45:17,915 - INFO (process): Raw evaluating mandTripLengths = pd.concat((mandTripLengths, mandTripLengthsTotal))
+2023-01-03 08:45:17,915 - INFO (process): Raw evaluating resultsByPTypeTotal['index'] = 'Total'
+2023-01-03 08:45:17,916 - INFO (process): Raw evaluating resultsByPType = pd.concat((resultsByPType, resultsByPTypeTotal))
+2023-01-03 08:45:17,917 - INFO (process): Raw evaluating nonMandTripLengths.loc[nonMandTripLengths.index.max()+1] = ['Total', nonMandTripLengthsTotal.loc[0, 'avgDist']]
+2023-01-03 08:45:17,919 - INFO (process): Raw evaluating avgStopOutofDirectionDist_vis.loc[avgStopOutofDirectionDist_vis.index.max()+1] = ['Total', avgStopOutofDirectionDistTotal.loc[0, 'avgDist']]
+2023-01-03 08:45:17,923 - INFO (process): Renaming wfh_summary columns using {'HDISTRICT': 'District'}
+2023-01-03 08:45:17,923 - INFO (process): Raw evaluating wfh_summary.loc[wfh_summary.index.max()+1] = ['Total', wfh_summary['Workers'].sum(), wfh_summary['WFH'].sum()]
+2023-01-03 08:45:17,925 - INFO (process): Adding column '%WFH' to wfh_summary
+2023-01-03 08:45:17,927 - INFO (process): Setting tours values in resultsByPType to sum of itours,jtours values
+2023-01-03 08:45:17,929 - INFO (process): Adding column 'tour_rate' to resultsByPType
+2023-01-03 08:45:17,931 - INFO (process): Adding column 'Escorting' to nm_tour_rates
+2023-01-03 08:45:17,934 - INFO (process): Adding column 'Shopping' to nm_tour_rates
+2023-01-03 08:45:17,936 - INFO (process): Adding column 'Maintenance' to nm_tour_rates
+2023-01-03 08:45:17,938 - INFO (process): Adding column 'EatingOut' to nm_tour_rates
+2023-01-03 08:45:17,940 - INFO (process): Adding column 'Visiting' to nm_tour_rates
+2023-01-03 08:45:17,945 - INFO (process): Adding column 'Discretionary' to nm_tour_rates
+2023-01-03 08:45:17,947 - INFO (process): Adding column 'All' to nm_tour_rates
+2023-01-03 08:45:17,949 - INFO (process): Raw evaluating del nm_tour_rates['TotalPersons']
+2023-01-03 08:45:17,950 - INFO (process): Raw evaluating nm_tour_rates = pd.melt(nm_tour_rates, ['PERTYPE'], var_name = 'tour_purp', value_name = 'tour_rate')
+2023-01-03 08:45:17,952 - INFO (process): Renaming resultsByPType columns using {'index': 'PERTYPE'}
+2023-01-03 08:45:17,953 - INFO (process): Renaming tours_pertype_purpose columns using {'person_type': 'PERTYPE'}
+2023-01-03 08:45:17,953 - INFO (process): Replacing PERTYPE values in inmSummary_vis using {1: '1: Full-Time Worker', 2: '2: Part-Time Worker', 3: '3: University Student', 4: '4: Non-Worker', 5: '5: Retiree', 6: '6: Driving Aged Student', 7: '7: Non-Driving Aged Student', 8: '8: Child To Young for School'}
+2023-01-03 08:45:17,955 - INFO (process): Replacing PERTYPE values in tours_pertype_purpose using {1: '1: Full-Time Worker', 2: '2: Part-Time Worker', 3: '3: University Student', 4: '4: Non-Worker', 5: '5: Retiree', 6: '6: Driving Aged Student', 7: '7: Non-Driving Aged Student', 8: '8: Child To Young for School'}
+2023-01-03 08:45:17,956 - INFO (process): Replacing PERTYPE values in resultsByPType using {1: '1: Full-Time Worker', 2: '2: Part-Time Worker', 3: '3: University Student', 4: '4: Non-Worker', 5: '5: Retiree', 6: '6: Driving Aged Student', 7: '7: Non-Driving Aged Student', 8: '8: Child To Young for School'}
+2023-01-03 08:45:17,958 - INFO (process): Replacing PERTYPE values in pertypeDistbn using {1: '1: Full-Time Worker', 2: '2: Part-Time Worker', 3: '3: University Student', 4: '4: Non-Worker', 5: '5: Retiree', 6: '6: Driving Aged Student', 7: '7: Non-Driving Aged Student', 8: '8: Child To Young for School'}
+2023-01-03 08:45:17,959 - INFO (process): Replacing PERTYPE values in dapSummary_vis using {1: '1: Full-Time Worker', 2: '2: Part-Time Worker', 3: '3: University Student', 4: '4: Non-Worker', 5: '5: Retiree', 6: '6: Driving Aged Student', 7: '7: Non-Driving Aged Student', 8: '8: Child To Young for School'}
+2023-01-03 08:45:17,960 - INFO (process): Replacing PERTYPE values in mtfSummary_vis using {1: '1: Full-Time Worker', 2: '2: Part-Time Worker', 3: '3: University Student', 4: '4: Non-Worker', 5: '5: Retiree', 6: '6: Driving Aged Student', 7: '7: Non-Driving Aged Student', 8: '8: Child To Young for School'}
+2023-01-03 08:45:17,961 - INFO (process): Replacing PERTYPE values in nm_tour_rates using {1: '1: Full-Time Worker', 2: '2: Part-Time Worker', 3: '3: University Student', 4: '4: Non-Worker', 5: '5: Retiree', 6: '6: Driving Aged Student', 7: '7: Non-Driving Aged Student', 8: '8: Child To Young for School'}
+2023-01-03 08:45:17,965 - INFO (process): Renaming stopDC_vis columns using {'AGGPURP': 'purpose', 'out_dir_distbin': 'distbin'}
+2023-01-03 08:45:17,965 - INFO (process): Renaming avgStopOutofDirectionDist_vis columns using {'AGGPURP': 'purpose'}
+2023-01-03 08:45:17,966 - INFO (process): Renaming tmodeProfile_vis columns using {'AGGPURP': 'purpose'}
+2023-01-03 08:45:17,967 - INFO (process): Renaming tourDistProfile_vis columns using {'AGGPURP': 'purpose', 'tourdistbin': 'distbin'}
+2023-01-03 08:45:17,967 - INFO (process): Renaming tripmodeProfile_vis columns using {'AGGPURP': 'purpose'}
+2023-01-03 08:45:17,968 - INFO (process): Renaming nonMandTripLengths columns using {'AGGPURP': 'purpose'}
+2023-01-03 08:45:17,968 - INFO (process): Renaming stopDeparture_vis columns using {'AGGPURP': 'purpose'}
+2023-01-03 08:45:17,969 - INFO (process): Renaming stopFreqProfile_vis columns using {'AGGPURP': 'purpose', 'level_0': 'num_stops'}
+2023-01-03 08:45:17,970 - INFO (process): Renaming stopPurposeByTourPurpose_vis columns using {'AGGPURP': 'tour_purpose', 'DPURP': 'stop_purpose'}
+2023-01-03 08:45:17,970 - INFO (process): Renaming todProfile_vis columns using {'AGGPURP': 'purpose', 'level_0': 'period'}
+2023-01-03 08:45:17,971 - INFO (process): Renaming tripDeparture_vis columns using {'AGGPURP': 'tour_purpose'}
+2023-01-03 08:45:17,972 - INFO (process): Renaming tourDuration columns using {'AGGPURP': 'purpose'}
+2023-01-03 08:45:17,972 - INFO (process): Renaming tmodeProfile_vis columns using {'AUTOSUFF': 'OwnershipCategory'}
+2023-01-03 08:45:17,977 - INFO (process): Replacing OwnershipCategory values in tmodeProfile_vis using {0: '0: No Vehicles', 1: '1: 1+ Veh/Adults > Veh', 2: '2: Vehicles >= Adults'}
+2023-01-03 08:45:17,978 - INFO (process): Renaming mandTLFD columns using {'level_0': 'distbin', 'HDISTRICT': 'District'}
+2023-01-03 08:45:17,978 - INFO (process): Replacing tour_mode values in tmodeProfile_vis using {1: '01: SOV', 2: '02: Shared Ride 2', 3: '03: Shared Ride 3+', 4: '04: Walk', 5: '05: Bike', 6: '06: Walk to Transit', 7: '07: PNR to Transit', 8: '08: KNR to Transit', 9: '09: TNC to Transit', 10: '10: Taxi', 11: '11: TNC Single', 12: '12: TNC Shared', 13: '13: School Bus'}
+2023-01-03 08:45:17,980 - INFO (process): Replacing tour_mode values in tripmodeProfile_vis using {1: '01: SOV', 2: '02: Shared Ride 2', 3: '03: Shared Ride 3+', 4: '04: Walk', 5: '05: Bike', 6: '06: Walk to Transit', 7: '07: PNR to Transit', 8: '08: KNR to Transit', 9: '09: TNC to Transit', 10: '10: Taxi', 11: '11: TNC Single', 12: '12: TNC Shared', 13: '13: School Bus'}
+2023-01-03 08:45:17,982 - INFO (process): Replacing trip_mode values in tripmodeProfile_vis using {1: '01: SOV', 2: '02: Shared Ride 2', 3: '03: Shared Ride 3+', 4: '04: Walk', 5: '05: Bike', 6: '06: Walk to Transit', 7: '07: PNR to Transit', 8: '08: KNR to Transit', 9: '09: TNC to Transit', 10: '10: Taxi', 11: '11: TNC Single', 12: '12: TNC Shared', 13: '13: School Bus'}
+2023-01-03 08:45:17,983 - INFO (process): Raw evaluating tmodeProfile_vis = tmodeProfile_vis.dropna()
+2023-01-03 08:45:17,985 - INFO (process): Raw evaluating mandTLFD = pd.melt(mandTLFD, ['distbin', 'District'], var_name = 'purpose')
+2023-01-03 08:45:17,989 - INFO (process): Renaming mandTripLengths columns using {'HDISTRICT': 'District'}
+2023-01-03 08:45:17,990 - INFO (process): Raw evaluating mandTripLengths = pd.melt(mandTripLengths, ['District'], var_name = 'purpose')
+2023-01-03 08:45:17,991 - INFO (process): Replacing imf_choice values in mtfSummary_vis using {0: "No Mand Tours", 1: "1 Work", 2: "2+ Work", 3: "1 School", 4: "2+ School", 5: "1 Work & 1 School"}
+2023-01-03 08:45:17,992 - INFO (process): Raw evaluating stopFreqProfile_vis = pd.melt(stopFreqProfile_vis, ['num_stops', 'purpose'], var_name = 'Direction')
+2023-01-03 08:45:17,995 - INFO (process): Replacing stop_purpose values in stopPurposeByTourPurpose_vis using {1: '01: Work', 2: '02: University', 3: '03: School', 4: '04: Escort', 5: '05: Shopping', 6: '06: Maintenance', 7: '07: Eating', 8: '08: Visiting', 9: '09: Other Discretionary', 10: '10: Work-Related'}
+2023-01-03 08:45:17,996 - INFO (process): Replacing District values in wfh_summary using {1: '1: Downtown', 2: '2: Central', 3: '3: North City', 4: '4: South Suburban', 5: '5: East Suburban', 6: '6: North County West', 7: '7: North County East', 8: '8: East County'}
+2023-01-03 08:45:17,999 - INFO (process): Replacing HDISTRICT values in districtFlows using {1: '1: Downtown', 2: '2: Central', 3: '3: North City', 4: '4: South Suburban', 5: '5: East Suburban', 6: '6: North County West', 7: '7: North County East', 8: '8: East County'}
+2023-01-03 08:45:18,000 - INFO (process): Replacing WDISTRICT values in districtFlows using {1: '1: Downtown', 2: '2: Central', 3: '3: North City', 4: '4: South Suburban', 5: '5: East Suburban', 6: '6: North County West', 7: '7: North County East', 8: '8: East County'}
+2023-01-03 08:45:18,001 - INFO (process): Replacing District values in mandTLFD using {1: '1: Downtown', 2: '2: Central', 3: '3: North City', 4: '4: South Suburban', 5: '5: East Suburban', 6: '6: North County West', 7: '7: North County East', 8: '8: East County'}
+2023-01-03 08:45:18,003 - INFO (process): Replacing District values in mandTripLengths using {1: '1: Downtown', 2: '2: Central', 3: '3: North City', 4: '4: South Suburban', 5: '5: East Suburban', 6: '6: North County West', 7: '7: North County East', 8: '8: East County'}
+2023-01-03 08:45:18,004 - INFO (process): Applying lambda x: 0.5*x+4.25 to period values in todProfile_vis
+2023-01-03 08:45:18,005 - INFO (process): Applying lambda x: 0.5*x+4.25 to stop_period values in tripDeparture_vis
+2023-01-03 08:45:18,006 - INFO (process): Applying lambda x: 0.5*x+4.25 to stop_period values in stopDeparture_vis
+2023-01-03 08:45:18,007 - INFO (process): Applying lambda x: 0.5*x to tourdur values in tourDuration
+2023-01-03 08:45:18,010 - INFO (process): Replacing activity_pattern values in dapSummary_vis using {'H': 'Home', 'M': 'Mandatory', 'N': 'Non-Mandatory'}
+2023-01-03 08:45:18,011 - INFO (process): Binning period values in todProfile_vis using [3, 6, 9, 15.5, 19, 27]
+2023-01-03 08:45:18,014 - INFO (process): Applying (lambda x: int(float(str(x).split(', ')[1].split(']')[0]))) to skim_period values in todProfile_vis
+2023-01-03 08:45:18,015 - INFO (process): Replacing skim_period values in todProfile_vis using {6: '1: EA', 9: '2: AM', 15: '3: MD', 19: '4: PM', 27: '5: EV'}
+2023-01-03 08:45:18,016 - INFO (process): Binning stop_period values in stopDeparture_vis using [3, 6, 9, 15.5, 19, 27]
+2023-01-03 08:45:18,019 - INFO (process): Applying (lambda x: int(float(str(x).split(', ')[1].split(']')[0]))) to stop_skim_period values in stopDeparture_vis
+2023-01-03 08:45:18,022 - INFO (process): Replacing stop_skim_period values in stopDeparture_vis using {6: '1: EA', 9: '2: AM', 15: '3: MD', 19: '4: PM', 27: '5: EV'}
+2023-01-03 08:45:18,023 - INFO (process): Binning stop_period values in tripDeparture_vis using [3, 6, 9, 15.5, 19, 27]
+2023-01-03 08:45:18,025 - INFO (process): Applying (lambda x: int(float(str(x).split(', ')[1].split(']')[0]))) to stop_skim_period values in tripDeparture_vis
+2023-01-03 08:45:18,027 - INFO (process): Replacing stop_skim_period values in tripDeparture_vis using {6: '1: EA', 9: '2: AM', 15: '3: MD', 19: '4: PM', 27: '5: EV'}
+2023-01-03 08:45:18,028 - INFO (write_results): Writing autoOwnership.csv
+2023-01-03 08:45:18,040 - INFO (write_results): Writing autoOwnership_Pre.csv
+2023-01-03 08:45:18,050 - INFO (write_results): Writing autoOwnership_AV.csv
+2023-01-03 08:45:18,071 - INFO (write_results): Writing districtFlows.csv
+2023-01-03 08:45:18,088 - INFO (write_results): Writing wfh_summary.csv
+2023-01-03 08:45:18,101 - INFO (write_results): Writing dapSummary_vis.csv
+2023-01-03 08:45:18,113 - INFO (write_results): Writing hhSizeDist.csv
+2023-01-03 08:45:18,124 - INFO (write_results): Writing hhsizeJoint.csv
+2023-01-03 08:45:18,134 - INFO (write_results): Writing inmSummary_vis.csv
+2023-01-03 08:45:18,143 - INFO (write_results): Writing jointComp.csv
+2023-01-03 08:45:18,154 - INFO (write_results): Writing jointCompPartySize.csv
+2023-01-03 08:45:18,163 - INFO (write_results): Writing jointPartySize.csv
+2023-01-03 08:45:18,172 - INFO (write_results): Writing jointToursHHSize.csv
+2023-01-03 08:45:18,182 - INFO (write_results): Writing mtfSummary_vis.csv
+2023-01-03 08:45:18,192 - INFO (write_results): Writing pertypeDistbn.csv
+2023-01-03 08:45:18,201 - INFO (write_results): Writing jtf.csv
+2023-01-03 08:45:18,211 - INFO (write_results): Writing stopFreqProfile_vis.csv
+2023-01-03 08:45:18,220 - INFO (write_results): Writing stopPurposeByTourPurpose_vis.csv
+2023-01-03 08:45:18,230 - INFO (write_results): Writing nonMandTripLengths.csv
+2023-01-03 08:45:18,239 - INFO (write_results): Writing nonMandTripLengthsTotal.csv
+2023-01-03 08:45:18,248 - INFO (write_results): Writing stopDeparture_vis.csv
+2023-01-03 08:45:18,260 - INFO (write_results): Writing tripDeparture_vis.csv
+2023-01-03 08:45:18,271 - INFO (write_results): Writing tmodeProfile_vis.csv
+2023-01-03 08:45:18,282 - INFO (write_results): Writing tripmodeProfile_vis.csv
+2023-01-03 08:45:18,294 - INFO (write_results): Writing tourDistProfile_vis.csv
+2023-01-03 08:45:18,304 - INFO (write_results): Writing mandTLFD.csv
+2023-01-03 08:45:18,322 - INFO (write_results): Writing avgStopOutofDirectionDist_vis.csv
+2023-01-03 08:45:18,331 - INFO (write_results): Writing avgStopOutofDirectionDistTotal.csv
+2023-01-03 08:45:18,340 - INFO (write_results): Writing stopDC_vis.csv
+2023-01-03 08:45:18,350 - INFO (write_results): Writing todProfile_vis.csv
+2023-01-03 08:45:18,363 - INFO (write_results): Writing tourDuration.csv
+2023-01-03 08:45:18,373 - INFO (write_results): Writing mandTripLengths.csv
+2023-01-03 08:45:18,382 - INFO (write_results): Writing mandTripLengthsTotal.csv
+2023-01-03 08:45:18,391 - INFO (write_results): Writing resultsByPType.csv
+2023-01-03 08:45:18,402 - INFO (write_results): Writing tours_pertype_purpose.csv
+2023-01-03 08:45:18,412 - INFO (write_results): Writing resultsByPTypeTotal.csv
+2023-01-03 08:45:18,421 - INFO (write_results): Writing nm_tour_rates.csv

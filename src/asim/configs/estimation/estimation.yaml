@@ -1,6 +1,46 @@
 
 enable: True
 
+SKIP_BUNDLE_WRITE_FOR:
+  # - auto_ownership
+  # - work_from_home
+  # - external_worker_identification
+  # - external_workplace_location
+  - school_location
+  - workplace_location
+  # - transit_pass_subsidy
+  # - transit_pass_ownership
+  - vehicle_type_choice
+  # - transponder_ownership
+  # - free_parking
+  # - telecommute_frequency
+  # - cdap
+  # - mandatory_tour_frequency
+  - mandatory_tour_scheduling_work
+  - mandatory_tour_scheduling_school
+  - mandatory_tour_scheduling_univ
+  # - school_escorting
+  # - joint_tour_frequency_composition
+  # - external_joint_tour_identification
+  # - joint_tour_participation
+  - joint_tour_destination
+  - joint_tour_scheduling
+  # - non_mandatory_tour_frequency
+  # - external_non_mandatory_identification
+  - non_mandatory_tour_destination
+  # - external_non_mandatory_destination
+  - non_mandatory_tour_scheduling
+  - tour_mode_choice
+  # - atwork_subtour_frequency
+  - atwork_subtour_destination
+  - atwork_subtour_scheduling
+  # - atwork_subtour_mode_choice
+  # - stop_frequency
+  # - trip_purpose
+  # - trip_destination
+  # - trip_scheduling
+  # - trip_mode_choice
+
 bundles:
   - work_from_home
   - external_worker_identification
@@ -27,6 +67,7 @@ bundles:
   - joint_tour_scheduling
   - non_mandatory_tour_frequency
   - external_non_mandatory_identification
+  - external_non_mandatory_destination
   - non_mandatory_tour_destination
   - non_mandatory_tour_scheduling
   - tour_mode_choice
@@ -125,7 +166,7 @@ model_estimation_table_types:
   mandatory_tour_scheduling_work: interaction_sample_simulate
   mandatory_tour_scheduling_school: interaction_sample_simulate
   mandatory_tour_scheduling_univ: interaction_sample_simulate
-  school_escorting: interaction_sample_simulate
+  school_escorting: interaction_simulate
   joint_tour_frequency_composition: interaction_simulate
   external_joint_tour_identification: simple_simulate
   joint_tour_participation: simple_simulate
@@ -134,6 +175,7 @@ model_estimation_table_types:
   non_mandatory_tour_frequency: interaction_simulate
   external_non_mandatory_identification: simple_simulate
   non_mandatory_tour_destination: interaction_sample_simulate
+  external_non_mandatory_destination: interaction_sample_simulate
   non_mandatory_tour_scheduling: interaction_sample_simulate
   tour_mode_choice: simple_simulate
   atwork_subtour_frequency: simple_simulate

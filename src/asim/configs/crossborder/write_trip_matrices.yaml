@@ -45,23 +45,47 @@ MATRICES:
         data_field: DRIVEALONE_EA_high
   - file_name: tranCrossborderTrips_EA.omx
     tables:
-      - name: WLK_SET_set1_EA
+      - name: WALK_SET_set1_EA
         data_field: WALK_TRANSIT_WALK_EA_set1
-      - name: WLK_SET_set2_EA
+      - name: WALK_SET_set2_EA
         data_field: WALK_TRANSIT_WALK_EA_set2
-      - name: WLK_SET_set3_EA
+      - name: WALK_SET_set3_EA
         data_field: WALK_TRANSIT_WALK_EA_set3
-      - name: PNR_SET_set1_EA
+      - name: PNRIN_SET_set1_EA
         data_field: PNR_TRANSIT_PNR_EA_set1
-      - name: PNR_SET_set2_EA
+      - name: PNRIN_SET_set2_EA
         data_field: PNR_TRANSIT_PNR_EA_set2
-      - name: PNR_SET_set3_EA
+      - name: PNRIN_SET_set3_EA
         data_field: PNR_TRANSIT_PNR_EA_set3
-      - name: KNR_SET_set1_EA
+      - name: KNRIN_SET_set1_EA
         data_field: KNR_TRANSIT_KNR_EA_set1
-      - name: KNR_SET_set2_EA
+      - name: KNRIN_SET_set2_EA
         data_field: KNR_TRANSIT_KNR_EA_set2
-      - name: KNR_SET_set3_EA
+      - name: KNRIN_SET_set3_EA
+        data_field: KNR_TRANSIT_KNR_EA_set3
+      - name: TNCIN_SET_set1_EA
+        data_field: KNR_TRANSIT_KNR_EA_set1
+      - name: TNCIN_SET_set2_EA
+        data_field: KNR_TRANSIT_KNR_EA_set2
+      - name: TNCIN_SET_set3_EA
+        data_field: KNR_TRANSIT_KNR_EA_set3
+      - name: PNROUT_SET_set1_EA
+        data_field: PNR_TRANSIT_PNR_EA_set1
+      - name: PNROUT_SET_set2_EA
+        data_field: PNR_TRANSIT_PNR_EA_set2
+      - name: PNROUT_SET_set3_EA
+        data_field: PNR_TRANSIT_PNR_EA_set3
+      - name: KNROUT_SET_set1_EA
+        data_field: KNR_TRANSIT_KNR_EA_set1
+      - name: KNROUT_SET_set2_EA
+        data_field: KNR_TRANSIT_KNR_EA_set2
+      - name: KNROUT_SET_set3_EA
+        data_field: KNR_TRANSIT_KNR_EA_set3
+      - name: TNCOUT_SET_set1_EA
+        data_field: KNR_TRANSIT_KNR_EA_set1
+      - name: TNCOUT_SET_set2_EA
+        data_field: KNR_TRANSIT_KNR_EA_set2
+      - name: TNCOUT_SET_set3_EA
         data_field: KNR_TRANSIT_KNR_EA_set3
   - file_name: othrCrossborderTrips_EA.omx
     tables:
@@ -103,23 +127,47 @@ MATRICES:
         data_field: DRIVEALONE_AM_high
   - file_name: tranCrossborderTrips_AM.omx
     tables:
-      - name: WLK_SET_set1_AM
+      - name: WALK_SET_set1_AM
         data_field: WALK_TRANSIT_WALK_AM_set1
-      - name: WLK_SET_set2_AM
+      - name: WALK_SET_set2_AM
         data_field: WALK_TRANSIT_WALK_AM_set2
-      - name: WLK_SET_set3_AM
+      - name: WALK_SET_set3_AM
         data_field: WALK_TRANSIT_WALK_AM_set3
-      - name: PNR_SET_set1_AM
+      - name: PNRIN_SET_set1_AM
         data_field: PNR_TRANSIT_PNR_AM_set1
-      - name: PNR_SET_set2_AM
+      - name: PNRIN_SET_set2_AM
         data_field: PNR_TRANSIT_PNR_AM_set2
-      - name: PNR_SET_set3_AM
+      - name: PNRIN_SET_set3_AM
         data_field: PNR_TRANSIT_PNR_AM_set3
-      - name: KNR_SET_set1_AM
+      - name: KNRIN_SET_set1_AM
         data_field: KNR_TRANSIT_KNR_AM_set1
-      - name: KNR_SET_set2_AM
+      - name: KNRIN_SET_set2_AM
         data_field: KNR_TRANSIT_KNR_AM_set2
-      - name: KNR_SET_set3_AM
+      - name: KNRIN_SET_set3_AM
+        data_field: KNR_TRANSIT_KNR_AM_set3
+      - name: TNCIN_SET_set1_AM
+        data_field: KNR_TRANSIT_KNR_AM_set1
+      - name: TNCIN_SET_set2_AM
+        data_field: KNR_TRANSIT_KNR_AM_set2
+      - name: TNCIN_SET_set3_AM
+        data_field: KNR_TRANSIT_KNR_AM_set3
+      - name: PNROUT_SET_set1_AM
+        data_field: PNR_TRANSIT_PNR_AM_set1
+      - name: PNROUT_SET_set2_AM
+        data_field: PNR_TRANSIT_PNR_AM_set2
+      - name: PNROUT_SET_set3_AM
+        data_field: PNR_TRANSIT_PNR_AM_set3
+      - name: KNROUT_SET_set1_AM
+        data_field: KNR_TRANSIT_KNR_AM_set1
+      - name: KNROUT_SET_set2_AM
+        data_field: KNR_TRANSIT_KNR_AM_set2
+      - name: KNROUT_SET_set3_AM
+        data_field: KNR_TRANSIT_KNR_AM_set3
+      - name: TNCOUT_SET_set1_AM
+        data_field: KNR_TRANSIT_KNR_AM_set1
+      - name: TNCOUT_SET_set2_AM
+        data_field: KNR_TRANSIT_KNR_AM_set2
+      - name: TNCOUT_SET_set3_AM
         data_field: KNR_TRANSIT_KNR_AM_set3
   - file_name: othrCrossborderTrips_AM.omx
     tables:
@@ -161,23 +209,47 @@ MATRICES:
         data_field: DRIVEALONE_MD_high
   - file_name: tranCrossborderTrips_MD.omx
     tables:
-      - name: WLK_SET_set1_MD
+      - name: WALK_SET_set1_MD
         data_field: WALK_TRANSIT_WALK_MD_set1
-      - name: WLK_SET_set2_MD
+      - name: WALK_SET_set2_MD
         data_field: WALK_TRANSIT_WALK_MD_set2
-      - name: WLK_SET_set3_MD
+      - name: WALK_SET_set3_MD
         data_field: WALK_TRANSIT_WALK_MD_set3
-      - name: PNR_SET_set1_MD
+      - name: PNRIN_SET_set1_MD
         data_field: PNR_TRANSIT_PNR_MD_set1
-      - name: PNR_SET_set2_MD
+      - name: PNRIN_SET_set2_MD
         data_field: PNR_TRANSIT_PNR_MD_set2
-      - name: PNR_SET_set3_MD
+      - name: PNRIN_SET_set3_MD
         data_field: PNR_TRANSIT_PNR_MD_set3
-      - name: KNR_SET_set1_MD
+      - name: KNRIN_SET_set1_MD
         data_field: KNR_TRANSIT_KNR_MD_set1
-      - name: KNR_SET_set2_MD
+      - name: KNRIN_SET_set2_MD
         data_field: KNR_TRANSIT_KNR_MD_set2
-      - name: KNR_SET_set3_MD
+      - name: KNRIN_SET_set3_MD
+        data_field: KNR_TRANSIT_KNR_MD_set3
+      - name: TNCIN_SET_set1_MD
+        data_field: KNR_TRANSIT_KNR_MD_set1
+      - name: TNCIN_SET_set2_MD
+        data_field: KNR_TRANSIT_KNR_MD_set2
+      - name: TNCIN_SET_set3_MD
+        data_field: KNR_TRANSIT_KNR_MD_set3
+      - name: PNROUT_SET_set1_MD
+        data_field: PNR_TRANSIT_PNR_MD_set1
+      - name: PNROUT_SET_set2_MD
+        data_field: PNR_TRANSIT_PNR_MD_set2
+      - name: PNROUT_SET_set3_MD
+        data_field: PNR_TRANSIT_PNR_MD_set3
+      - name: KNROUT_SET_set1_MD
+        data_field: KNR_TRANSIT_KNR_MD_set1
+      - name: KNROUT_SET_set2_MD
+        data_field: KNR_TRANSIT_KNR_MD_set2
+      - name: KNROUT_SET_set3_MD
+        data_field: KNR_TRANSIT_KNR_MD_set3
+      - name: TNCOUT_SET_set1_MD
+        data_field: KNR_TRANSIT_KNR_MD_set1
+      - name: TNCOUT_SET_set2_MD
+        data_field: KNR_TRANSIT_KNR_MD_set2
+      - name: TNCOUT_SET_set3_MD
         data_field: KNR_TRANSIT_KNR_MD_set3
   - file_name: othrCrossborderTrips_MD.omx
     tables:
@@ -219,23 +291,47 @@ MATRICES:
         data_field: DRIVEALONE_PM_high
   - file_name: tranCrossborderTrips_PM.omx
     tables:
-      - name: WLK_SET_set1_PM
+      - name: WALK_SET_set1_PM
         data_field: WALK_TRANSIT_WALK_PM_set1
-      - name: WLK_SET_set2_PM
+      - name: WALK_SET_set2_PM
         data_field: WALK_TRANSIT_WALK_PM_set2
-      - name: WLK_SET_set3_PM
+      - name: WALK_SET_set3_PM
         data_field: WALK_TRANSIT_WALK_PM_set3
-      - name: PNR_SET_set1_PM
+      - name: PNRIN_SET_set1_PM
         data_field: PNR_TRANSIT_PNR_PM_set1
-      - name: PNR_SET_set2_PM
+      - name: PNRIN_SET_set2_PM
         data_field: PNR_TRANSIT_PNR_PM_set2
-      - name: PNR_SET_set3_PM
+      - name: PNRIN_SET_set3_PM
         data_field: PNR_TRANSIT_PNR_PM_set3
-      - name: KNR_SET_set1_PM
+      - name: KNRIN_SET_set1_PM
         data_field: KNR_TRANSIT_KNR_PM_set1
-      - name: KNR_SET_set2_PM
+      - name: KNRIN_SET_set2_PM
         data_field: KNR_TRANSIT_KNR_PM_set2
-      - name: KNR_SET_set3_PM
+      - name: KNRIN_SET_set3_PM
+        data_field: KNR_TRANSIT_KNR_PM_set3
+      - name: TNCIN_SET_set1_PM
+        data_field: KNR_TRANSIT_KNR_PM_set1
+      - name: TNCIN_SET_set2_PM
+        data_field: KNR_TRANSIT_KNR_PM_set2
+      - name: TNCIN_SET_set3_PM
+        data_field: KNR_TRANSIT_KNR_PM_set3
+      - name: PNROUT_SET_set1_PM
+        data_field: PNR_TRANSIT_PNR_PM_set1
+      - name: PNROUT_SET_set2_PM
+        data_field: PNR_TRANSIT_PNR_PM_set2
+      - name: PNROUT_SET_set3_PM
+        data_field: PNR_TRANSIT_PNR_PM_set3
+      - name: KNROUT_SET_set1_PM
+        data_field: KNR_TRANSIT_KNR_PM_set1
+      - name: KNROUT_SET_set2_PM
+        data_field: KNR_TRANSIT_KNR_PM_set2
+      - name: KNROUT_SET_set3_PM
+        data_field: KNR_TRANSIT_KNR_PM_set3
+      - name: TNCOUT_SET_set1_PM
+        data_field: KNR_TRANSIT_KNR_PM_set1
+      - name: TNCOUT_SET_set2_PM
+        data_field: KNR_TRANSIT_KNR_PM_set2
+      - name: TNCOUT_SET_set3_PM
         data_field: KNR_TRANSIT_KNR_PM_set3
   - file_name: othrCrossborderTrips_PM.omx
     tables:
@@ -277,23 +373,47 @@ MATRICES:
         data_field: DRIVEALONE_EV_high
   - file_name: tranCrossborderTrips_EV.omx
     tables:
-      - name: WLK_SET_set1_EV
+      - name: WALK_SET_set1_EV
         data_field: WALK_TRANSIT_WALK_EV_set1
-      - name: WLK_SET_set2_EV
+      - name: WALK_SET_set2_EV
         data_field: WALK_TRANSIT_WALK_EV_set2
-      - name: WLK_SET_set3_EV
+      - name: WALK_SET_set3_EV
         data_field: WALK_TRANSIT_WALK_EV_set3
-      - name: PNR_SET_set1_EV
+      - name: PNRIN_SET_set1_EV
         data_field: PNR_TRANSIT_PNR_EV_set1
-      - name: PNR_SET_set2_EV
+      - name: PNRIN_SET_set2_EV
         data_field: PNR_TRANSIT_PNR_EV_set2
-      - name: PNR_SET_set3_EV
+      - name: PNRIN_SET_set3_EV
         data_field: PNR_TRANSIT_PNR_EV_set3
-      - name: KNR_SET_set1_EV
+      - name: KNRIN_SET_set1_EV
         data_field: KNR_TRANSIT_KNR_EV_set1
-      - name: KNR_SET_set2_EV
+      - name: KNRIN_SET_set2_EV
         data_field: KNR_TRANSIT_KNR_EV_set2
-      - name: KNR_SET_set3_EV
+      - name: KNRIN_SET_set3_EV
+        data_field: KNR_TRANSIT_KNR_EV_set3
+      - name: TNCIN_SET_set1_EV
+        data_field: KNR_TRANSIT_KNR_EV_set1
+      - name: TNCIN_SET_set2_EV
+        data_field: KNR_TRANSIT_KNR_EV_set2
+      - name: TNCIN_SET_set3_EV
+        data_field: KNR_TRANSIT_KNR_EV_set3
+      - name: PNROUT_SET_set1_EV
+        data_field: PNR_TRANSIT_PNR_EV_set1
+      - name: PNROUT_SET_set2_EV
+        data_field: PNR_TRANSIT_PNR_EV_set2
+      - name: PNROUT_SET_set3_EV
+        data_field: PNR_TRANSIT_PNR_EV_set3
+      - name: KNROUT_SET_set1_EV
+        data_field: KNR_TRANSIT_KNR_EV_set1
+      - name: KNROUT_SET_set2_EV
+        data_field: KNR_TRANSIT_KNR_EV_set2
+      - name: KNROUT_SET_set3_EV
+        data_field: KNR_TRANSIT_KNR_EV_set3
+      - name: TNCOUT_SET_set1_EV
+        data_field: KNR_TRANSIT_KNR_EV_set1
+      - name: TNCOUT_SET_set2_EV
+        data_field: KNR_TRANSIT_KNR_EV_set2
+      - name: TNCOUT_SET_set3_EV
         data_field: KNR_TRANSIT_KNR_EV_set3
   - file_name: othrCrossborderTrips_EV.omx
     tables:
@@ -314,9 +434,9 @@ CONSTANTS:
   trip_c_ivt_base: -0.021
   PERIODS_PER_HOUR: 2
   time_distrib_mean_work: 1.0
-  time_distrib_stddev_work: 0.7
+  time_distrib_stddEA_work: 0.7
   time_distrib_mean_nonwork: 1.0
-  time_distrib_stddev_nonwork: 0.6
+  time_distrib_stddEA_nonwork: 0.6
   cost_per_mile_fuel: 12.3  # from parametersByYear.csv, depends on simulation year
   cost_per_mile_maint: 7  # from parametersByYear.csv, depends on simulation year
   work_dist_coef: -8.6

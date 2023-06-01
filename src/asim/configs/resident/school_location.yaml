@@ -1,4 +1,5 @@
 SAMPLE_SIZE: 30
+ESTIMATION_SAMPLE_SIZE: 10
 
 SIMULATE_CHOOSER_COLUMNS:
   - home_zone_id
@@ -18,6 +19,8 @@ OUT_PERIOD: 8
 DEST_CHOICE_COLUMN_NAME: school_zone_id
 # comment out DEST_CHOICE_LOGSUM_COLUMN_NAME if not desired in persons table
 DEST_CHOICE_LOGSUM_COLUMN_NAME: school_location_logsum
+# comment out MODE_CHOICE_LOGSUM_COLUMN_NAME if not desired in persons table
+MODE_CHOICE_LOGSUM_COLUMN_NAME: school_modechoice_logsum
 
 # comment out DEST_CHOICE_LOGSUM_COLUMN_NAME if saved alt logsum table
 DEST_CHOICE_SAMPLE_TABLE_NAME: school_location_sample

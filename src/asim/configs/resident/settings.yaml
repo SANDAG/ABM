@@ -11,6 +11,8 @@ chunk_training_mode: disabled
 # see shadow_pricing.yaml for additional settings
 use_shadow_pricing: True
 
+memory_profile: False
+
 # Sample TAZ before MAZ in destination choice
 want_dest_choice_presampling: True
 
@@ -109,6 +111,7 @@ output_tables:
     - joint_tour_participants
     - vehicles
     - proto_disaggregate_accessibility
+    - disaggregate_accessibility
 
 distributed_time_factor_work_mean: 1.0
 distributed_time_factor_work_stddev: 0.7
@@ -117,7 +120,7 @@ distributed_time_factor_nonwork_stddev: 0.6
 distributed_time_factor_min: 0.1
 distributed_time_factor_max: 10
 
-resume_after: compute_disaggregate_accessibility
+resume_after:
 
 models:
   ### mp_init_proto_pop (single process)
@@ -130,6 +133,8 @@ models:
   ### mp_accessibility
   - compute_accessibility
   ### mp_households
+  - av_ownership
+  - auto_ownership_simulate
   - work_from_home
   - external_worker_identification
   - external_workplace_location
@@ -137,8 +142,6 @@ models:
   - workplace_location
   - transit_pass_subsidy
   - transit_pass_ownership
-  - av_ownership
-  - auto_ownership_simulate
   - vehicle_type_choice
   - transponder_ownership
   - free_parking
