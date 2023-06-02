@@ -1,0 +1,24 @@
+SPEC: route_terminal.csv
+COEFFICIENTS: route_terminal_coefficients.csv
+
+SIZE_TERM_SELECTOR: commerce
+
+CHOOSER_SEGMENT_COLUMN_NAME: route_purpose
+
+SEGMENTS:
+  - goods
+  - services
+  - goods|services
+  - other
+
+SIMULATE_CHOOSER_COLUMNS:
+  - tour_type
+  - home_zone_id
+  - person_id
+
+LOGSUM_SETTINGS: tour_mode_choice.yaml
+
+# model-specific logsum-related settings
+CHOOSER_ORIG_COL_NAME: home_zone_id
+ALT_DEST_COL_NAME: alt_dest
+OUT_PERIOD: 1

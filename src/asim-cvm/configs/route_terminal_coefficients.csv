@@ -1,0 +1,6 @@
+coefficient_name,value,constrain
+coef_dist_0_2,-0.1499,F
+coef_dist_2_5,-0.8671,F
+coef_goods_dist_5_plus,-0.2137,F
+coef_services_dist_5_plus,-0.1832,F
+coef_other_dist_5_plus,-0.0811,F

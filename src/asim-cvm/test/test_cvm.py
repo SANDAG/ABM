@@ -47,5 +47,8 @@ def test_cvm():
 
     print("### route open jaw ###")
     state.run.open_jaw_route()
+
+    print("### route terminal ###")
+    state.run.route_terminal()
     print(state.get("routes"))
     print(state.get("routes").info())

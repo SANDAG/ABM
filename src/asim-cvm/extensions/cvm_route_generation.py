@@ -14,15 +14,21 @@
 #     - Gig workers
 #   - Some kind of parameterized count model poisson, negative binomial, etc
 #   - Each segment will have levers to attach generation rates to exogenous info.
+from __future__ import annotations
+
+import logging
 
 import numpy as np
 import pandas as pd
 
+from activitysim.abm.tables.util import simple_table_join
 from activitysim.core import workflow
 
 from .cvm_enum import BusinessTypes
 from .cvm_enum_tools import as_int_enum
 from .cvm_state import State
+
+logger = logging.getLogger(__name__)
 
 _business_type_offset = int(10 ** np.ceil(np.log10(max(BusinessTypes))))
 
@@ -101,3 +107,29 @@ def route_generation(
     routes = routes.set_index(pd.Index(route_id, name="route_id"))
     state.add_table("routes", routes)
     state.get_rn_generator().add_channel("routes", routes)
+
+
+@workflow.temp_table
+def routes_merged(
+    state: workflow.State,  # noqa: F841
+    routes: pd.DataFrame,
+    establishments: pd.DataFrame,
+) -> pd.DataFrame:
+    """
+    Join routes with establishment table.
+
+    Parameters
+    ----------
+    state : State
+    routes : DataFrame
+    establishments : DataFrame
+
+    Returns
+    -------
+    DataFrame
+    """
+    return simple_table_join(
+        routes,
+        establishments,
+        left_on="establishment_id",
+    )
