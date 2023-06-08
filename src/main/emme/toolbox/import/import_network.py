@@ -598,7 +598,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 # managed lanes, free for HOV3+, tolls for SOV and HOV2
                 if arc["ITOLLO"] + arc["ITOLLA"] + arc["ITOLLP"]  > 0:
                     return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV3
-                # special case of I-15 managed lanes for base year and 2020, no build 
+                # special case of I-15 managed lanes for base year and 2020, no build
                 elif arc["IFC"] == 1 and arc["IPROJ"] in [41, 42, 486, 373, 711]:
                     return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV3
                 elif arc["IFC"] == 8 or arc["IFC"] == 9:
@@ -786,7 +786,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 self._log.append({"type": "text", "content": "\tYAML Path: %s" % network_editor_yaml_path})
         else:
             self._log.append({"type": "text", "content": "NO Network Edits YAML to load"})
-            
+
         # Create nodes and links
         for arc in data:
             if not arc_filter(arc):
@@ -813,7 +813,6 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 if arc_id_name == "HWYCOV-ID":
                     for link_edits in network_editor_data.get('raw_network',[]):
                         if arc["HWYCOV-ID"] in link_edits.get("@tcov_id",[]):
-                            #could explore using set_attribute_values() method in EMME API
                             for attribute,value in link_edits["attributes_to_edit"].items():
                                 arc[attribute] = value
 
@@ -1222,20 +1221,24 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         pass_values.add_attribute(_dt.Attribute("cost", _np.array(pass_costs).astype("f8")))
         gen_utils.DataTableProc("%s_transit_passes" % self.data_table_name, data=pass_values)
 
+        # Check if network editor file is in inputs
         network_editor_yaml_file = FILE_NAMES["NETWORK_EDITS"]
         network_editor_bool = False
         network_editor_yaml_path = _join(self.source, network_editor_yaml_file)
+        self._log.append({"type": "header", "content": "__Network Edits"})
         if os.path.exists(network_editor_yaml_path):
             network_editor_bool = True
-            self._log.append({"type": "text", "content": "%s" % network_editor_yaml_path})
             with open(network_editor_yaml_path, "r") as stream:
                 network_editor_data = yaml.safe_load(stream)
-                self._log.append({"type": "text", "content": "loaded YAML"})
+                self._log.append({"type": "text", "content": "Successfully loaded Network Edits YAML"})
+                self._log.append({"type": "text", "content": "\tYAML Path: %s" % network_editor_yaml_path})
+        else:
+            self._log.append({"type": "text", "content": "NO Network Edits YAML to load"})
+
         if network_editor_bool:
             for link_edits in network_editor_data.get('transit',[]):
                 for link in network.links():
                     if link["@tcov_id"] in link_edits.get("@tcov_id",[]):
-                        #could explore using set_attribute_values() method in EMME API
                         for attribute,value in link_edits["attributes_to_edit"].items():
                             link[attribute] = value
 
@@ -1429,17 +1432,27 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 link["@time_inter" + time] = link["time_inter" + src_time]
                 link["@toll" + time] = link["toll" + src_time]
 
-        # # add check for network editor yaml file
-        # # Check if network editor file is in inputs
-        # network_editor_yaml_file = FILE_NAMES["NETWORK_EDITS"]
-        # network_editor_bool = False
-        # network_editor_yaml_path = _join(self.source, network_editor_yaml_file)
-        # if os.path.exists(network_editor_yaml_path):
-        #     network_editor_bool = True
-        #     self._log.append({"type": "text", "content": "%s" % network_editor_yaml_path})
-        #     with open(network_editor_yaml_path, "r") as stream:
-        #         network_editor_data = yaml.safe_load(stream)
-        #         self._log.append({"type": "text", "content": "loaded YAML"})
+        # Check if network editor file is in inputs
+        network_editor_yaml_file = FILE_NAMES["NETWORK_EDITS"]
+        network_editor_bool = False
+        network_editor_yaml_path = _join(self.source, network_editor_yaml_file)
+        self._log.append({"type": "header", "content": "__Network Edits"})
+        if os.path.exists(network_editor_yaml_path):
+            network_editor_bool = True
+            with open(network_editor_yaml_path, "r") as stream:
+                network_editor_data = yaml.safe_load(stream)
+                self._log.append({"type": "text", "content": "Successfully loaded Network Edits YAML"})
+                self._log.append({"type": "text", "content": "\tYAML Path: %s" % network_editor_yaml_path})
+        else:
+            self._log.append({"type": "text", "content": "NO Network Edits YAML to load"})
+
+        if network_editor_bool:
+            for link_edits in network_editor_data.get('traffic',[]):
+                for link in network.links():
+                    if link["@tcov_id"] in link_edits.get("@tcov_id",[]):
+                        for attribute,value in link_edits["attributes_to_edit"].items():
+                            link[attribute] = value
+
         # if network_editor_bool:
         #     for link_edits in network_editor_data.get('traffic',[]):
         #         if link_edits.get('delete_link', False):
@@ -1447,13 +1460,6 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         #                 network.delete_link(ij[0], ij[1], cascade=True)
         #         else:
         #             for link in network.links():
-        #                 if link["@tcov_id"] in link_edits.get("@tcov_id",[]):
-        #                     #this format permits only one attribute change per edit
-        #                     #could explore using set_attribute_values() method in EMME API
-        #                     try:
-        #                         link[link_edits["attribute_to_edit"]] = link_edits["new_value"]
-        #                     except KeyError: #one of two solutions should probably be removed
-        #                         setattr(link, link_edits["attribute_to_edit"], link_edits["new_value"])
 
 
         off_peak_factor_file = FILE_NAMES["OFF_PEAK"]
@@ -1484,7 +1490,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             factors = [(3.0/12.0), 1.0, (6.5/12.0), (3.5/3.0), (8.0/12.0)]
             for f, time, src_time in zip(factors, time_periods, src_time_periods):
                 if link["capacity_link" + src_time] != 999999:
-                    link["@capacity_link" + time] = f * link["capacity_link" + src_time]	
+                    link["@capacity_link" + time] = f * link["capacity_link" + src_time]
                 else:
                     link["@capacity_link" + time] = 999999
                 if link["capacity_inter" + src_time] != 999999:
