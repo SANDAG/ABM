@@ -30,10 +30,10 @@ class RouteStopTypeSettings(LogitComponentSettings, extra="forbid"):
     """Setting for the preprocessor."""
 
     RESULT_COL_NAME: str
+    """The name of the column in the route table that is created by this component."""
 
 
-@workflow.step
-def route_terminal_type(
+def route_endpoint_type(
     state: workflow.State,
     routes: pd.DataFrame,
     model_settings: RouteStopTypeSettings | None = None,
@@ -114,7 +114,9 @@ def route_terminal_type(
     )
 
     result_dtype = pd.CategoricalDtype(categories=model_spec.columns)
-    choices = pd.Series(data=pd.Categorical.from_codes(choices, dtype=result_dtype), index=choices.index)
+    choices = pd.Series(
+        data=pd.Categorical.from_codes(choices, dtype=result_dtype), index=choices.index
+    )
 
     if estimator:
         estimator.write_choices(choices)
@@ -131,6 +133,42 @@ def route_terminal_type(
     state.add_table("routes", routes)
 
     tracing.print_summary(
-        model_settings.RESULT_COL_NAME, routes[model_settings.RESULT_COL_NAME], value_counts=True
+        model_settings.RESULT_COL_NAME,
+        routes[model_settings.RESULT_COL_NAME],
+        value_counts=True,
     )
 
+
+@workflow.step
+def route_terminal_type(
+    state: workflow.State,
+    routes: pd.DataFrame,
+    model_settings: RouteStopTypeSettings | None = None,
+    model_settings_file_name: str = "route_terminal_type.yaml",
+    trace_label: str = "route_terminal_type",
+) -> None:
+    return route_endpoint_type(
+        state,
+        routes,
+        model_settings,
+        model_settings_file_name,
+        trace_label,
+    )
+
+
+
+@workflow.step
+def route_origination_type(
+    state: workflow.State,
+    routes: pd.DataFrame,
+    model_settings: RouteStopTypeSettings | None = None,
+    model_settings_file_name: str = "route_origination_type.yaml",
+    trace_label: str = "route_origination_type",
+) -> None:
+    return route_endpoint_type(
+        state,
+        routes,
+        model_settings,
+        model_settings_file_name,
+        trace_label,
+    )

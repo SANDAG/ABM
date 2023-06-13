@@ -45,10 +45,12 @@ def test_cvm():
     print("### route purp and veh ###")
     state.run.route_purpose_and_vehicle()
 
-    print("### route open jaw ###")
-    state.run.route_terminal_type()
+    print("### route origination ###")
+    state.run.route_origination_type()
+    state.run.route_origination()
 
     print("### route terminal ###")
+    state.run.route_terminal_type()
     state.run.route_terminal()
     print(state.get("routes"))
     print(state.get("routes").info())
