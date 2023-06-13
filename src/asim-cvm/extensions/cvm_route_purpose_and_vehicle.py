@@ -7,7 +7,7 @@ import pandas as pd
 
 from activitysim.core import workflow
 
-from .cvm_enum import BusinessTypes, RoutePurposes, VehicleTypes
+from .cvm_enum import BusinessTypes, RoutePurposes, VehicleTypes, CustomerTypes
 from .cvm_enum_tools import as_int_enum
 from .cvm_state import State
 
@@ -109,6 +109,9 @@ def route_purpose_and_vehicle(
     probs["vehicle_type"] = as_int_enum(
         probs["vehicle_type"], VehicleTypes, categorical=True
     )
+    probs["customer_type"] = as_int_enum(
+        probs["customer_type"], CustomerTypes, categorical=True
+    )
 
     # rescale probs to ensure they total 1.0
     probs_float_cols = probs.select_dtypes(include=float).columns
@@ -118,6 +121,7 @@ def route_purpose_and_vehicle(
 
     purposes = []
     vehicles = []
+    customers = []
     for c in probs_float_cols:
         routes_c = routes.query(f"business_type == '{c}'")
 
@@ -135,9 +139,15 @@ def route_purpose_and_vehicle(
                 probs["vehicle_type"].values[routes_c_choices], index=routes_c.index
             )
         )
+        customers.append(
+            pd.Series(
+                probs["customer_type"].values[routes_c_choices], index=routes_c.index
+            )
+        )
 
     routes = routes.assign(
         route_purpose=pd.concat(purposes),
         vehicle_type=pd.concat(vehicles),
+        customer_type=pd.concat(customers),
     )
     state.add_table("routes", routes)

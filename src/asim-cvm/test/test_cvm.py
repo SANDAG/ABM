@@ -52,5 +52,8 @@ def test_cvm():
     print("### route terminal ###")
     state.run.route_terminal_type()
     state.run.route_terminal()
+
+    print("### route start time ###")
+    state.run.route_start_time()
     print(state.get("routes"))
     print(state.get("routes").info())

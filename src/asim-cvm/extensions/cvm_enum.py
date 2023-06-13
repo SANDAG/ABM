@@ -9,7 +9,6 @@ class BusinessTypes(enum.IntEnum):
 class RoutePurposes(enum.IntFlag):
     goods = 1
     services = 2
-    goods_and_services = 3  # important: this is goods|services
     other = 4
 
 
@@ -21,3 +20,7 @@ class VehicleTypes(enum.IntEnum):
     sidewalk_drone = 5
 
 
+class CustomerTypes(enum.IntFlag):
+    residential = 1
+    nonresidential = 2
+    mixed = 3
