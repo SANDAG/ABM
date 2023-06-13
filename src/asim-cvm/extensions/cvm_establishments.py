@@ -52,7 +52,7 @@ def establishments(state: State) -> pd.DataFrame:
         prng = state.get_rn_generator().get_external_rng("sample_establishments")
         df = df_full.take(
             prng.choice(len(df_full), size=establishments_sample_size, replace=False)
-        )
+        ).sort_index()
         establishments_sliced = True
 
         # if tracing and we missed trace_hh in sample, but it is in full store
@@ -72,7 +72,7 @@ def establishments(state: State) -> pd.DataFrame:
     else:
         df = df_full
 
-    state.set("households_sliced", establishments_sliced)
+    state.set("establishments_sliced", establishments_sliced)
 
     if "sample_rate" not in df.columns:
         if establishments_sample_size == 0:

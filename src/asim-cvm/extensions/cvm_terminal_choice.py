@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import logging
+from pathlib import Path
+from typing import Literal
 
 import pandas as pd
 from activitysim.core.configuration import PydanticBase
@@ -11,13 +13,46 @@ from activitysim.core import estimation, los, tracing, workflow, expressions, si
 from activitysim.core.configuration.logit import (
     PreprocessorSettings,
     TourLocationComponentSettings,
+BaseLogitComponentSettings,
 )
 from activitysim.core.util import assign_in_place
 
 logger = logging.getLogger(__name__)
 
 
-class RouteTerminalComponentSettings(TourLocationComponentSettings, extra="forbid"):
+class SimpleLocationComponentSettings(BaseLogitComponentSettings, extra="forbid"):
+    """
+    Base configuration class for components that are non-logsum location choice models.
+    """
+
+    # Logsum-related settings
+    # CHOOSER_ORIG_COL_NAME: str
+    # ALT_DEST_COL_NAME: str
+    # IN_PERIOD: int | dict[str, int] | None = None
+    # OUT_PERIOD: int | dict[str, int] | None = None
+    RESULT_COL_NAME: str
+
+    SEGMENTS: list[str] | None = None
+    SIZE_TERM_SELECTOR: str | None = None
+
+    CHOOSER_FILTER_COLUMN_NAME: str | None = None
+    DEST_CHOICE_COLUMN_NAME: str | None = None
+    DEST_CHOICE_LOGSUM_COLUMN_NAME: str | None = None
+    DEST_CHOICE_SAMPLE_TABLE_NAME: str | None = None
+    CHOOSER_TABLE_NAME: str | None = None
+    CHOOSER_SEGMENT_COLUMN_NAME: str | None = None
+    SEGMENT_IDS: dict[str, int] | None = None
+    SHADOW_PRICE_TABLE: str | None = None
+    MODELED_SIZE_TABLE: str | None = None
+    SIMULATE_CHOOSER_COLUMNS: list[str] | None = None
+    LOGSUM_TOUR_PURPOSE: str | dict[str, str] | None = None
+    MODEL_SELECTOR: Literal["workplace", "school", None] = None
+    SAVED_SHADOW_PRICE_TABLE_NAME: str | None = None
+    CHOOSER_ID_COLUMN: str = "person_id"
+
+    ORIG_ZONE_ID: str | None = None
+    """This setting appears to do nothing..."""
+
     annotate_routes: PreprocessorSettings | None = None
     annotate_establishments: PreprocessorSettings | None = None
 
@@ -176,18 +211,17 @@ from activitysim.core.interaction_sample import interaction_sample
 # ):
 
 
-@workflow.step
-def route_terminal(
+def route_endpoint(
     state: workflow.State,
     routes: pd.DataFrame,
     routes_merged: pd.DataFrame,
     network_los: los.Network_LOS,
-    model_settings: RouteTerminalComponentSettings | None = None,
+    model_settings: SimpleLocationComponentSettings | None = None,
     model_settings_file_name: str = "route_terminal.yaml",
     trace_label: str = "route_terminal",
 ) -> None:
     if model_settings is None:
-        model_settings = RouteTerminalComponentSettings.read_settings_file(
+        model_settings = SimpleLocationComponentSettings.read_settings_file(
             state.filesystem,
             model_settings_file_name,
         )
@@ -202,8 +236,8 @@ def route_terminal(
         state.settings.want_dest_choice_sample_tables and sample_table_name is not None
     )
 
-    # choosers are routes with open jaw
-    all_choosers = routes_merged[routes_merged.open_jaw]
+    # choosers are routes with non-base terminal types
+    all_choosers = routes_merged.sort_index() #[routes_merged[model_settings.CHOOSER_SEGMENT_COLUMN_NAME] != "base"]
 
     if all_choosers.shape[0] == 0:
         tracing.no_results(trace_label)
@@ -213,7 +247,7 @@ def route_terminal(
     if estimator:
         estimator.write_coefficients(model_settings=model_settings)
         estimator.write_spec(model_settings, tag="SPEC")
-        estimator.set_alt_id(model_settings.ALT_DEST_COL_NAME)
+        estimator.set_alt_id(model_settings.RESULT_COL_NAME)
         estimator.write_table(
             state.get_injectable("size_terms"), "size_terms", append=False
         )
@@ -237,6 +271,13 @@ def route_terminal(
         else:
             choosers = all_choosers
 
+        if segment_name == "base":
+            # there is no terminal choice to make, the terminal location is establishment MAZ
+            choices_list.append(
+                pd.Series(name=model_settings.RESULT_COL_NAME, data=choosers["MAZ"], index=choosers.index)
+            )
+            continue
+
         # Note: size_term_calculator omits zones with impossible alternatives
         # (where dest size term is zero)
         segment_destination_size_terms = size_term_calculator.dest_size_terms_df(
@@ -257,12 +298,15 @@ def route_terminal(
             {
                 # "size_terms": size_term_matrix,
                 # "size_terms_array": size_term_matrix.df.to_numpy(),
-                "timeframe": "trip",
+                "timeframe": "timeless",
             }
         )
-        # locals_dict.update(skims)
+
+        skim_dict = network_los.get_default_skim_dict()
+        skims = skim_dict.wrap("zone_id", "MAZ")
+
+        locals_dict.update({"skims":skims})
         log_alt_losers = state.settings.log_alt_losers
-        alt_dest_col_name = model_settings.ALT_DEST_COL_NAME
 
         choices = interaction_sample(
             state,
@@ -270,24 +314,24 @@ def route_terminal(
             segment_destination_size_terms,
             spec,
             sample_size,
-            alt_col_name=alt_dest_col_name,
+            alt_col_name=model_settings.RESULT_COL_NAME,
             allow_zero_probs=False,
             log_alt_losers=False,
-            skims=None,
-            locals_d=None,
+            skims=skims,
+            locals_d=locals_dict,
             chunk_size=0,
             chunk_tag=None,
             trace_label=trace_label,
             zone_layer=None,
         )
-        choices_list.append(choices[alt_dest_col_name])
+        choices_list.append(choices[model_settings.RESULT_COL_NAME])
 
     if len(choices_list) > 0:
         choices_df = pd.concat(choices_list)
     else:
         # this will only happen with small samples (e.g. singleton) with no (e.g.) school segs
         logger.warning("%s no choices", trace_label)
-        choices_df = pd.Series(name=model_settings.ALT_DEST_COL_NAME)
+        choices_df = pd.Series(name=model_settings.RESULT_COL_NAME)
 
     if estimator:
         estimator.write_choices(choices_df)
@@ -297,15 +341,15 @@ def route_terminal(
         estimator.write_override_choices(choices_df)
         estimator.end_estimation()
 
-    assign_in_place(routes, choices_df)
+    assign_in_place(routes, choices_df.to_frame())
 
     # if want_logsums:
     #     choosers[logsum_column_name] = choices_df["logsum"]
     #     assign_in_place(routes, choosers[[logsum_column_name]])
 
     assert all(
-        ~routes["destination"].isna()
-    ), f"Routes are missing destination: {routes[routes['destination'].isna()]}"
+        ~routes[model_settings.RESULT_COL_NAME].isna()
+    ), f"Routes are missing {model_settings.RESULT_COL_NAME}: {routes[routes[model_settings.RESULT_COL_NAME].isna()]}"
 
     state.add_table("routes", routes)
 
@@ -325,3 +369,44 @@ def route_terminal(
     #         columns=None,
     #         warn_if_empty=True,
     #     )
+
+
+@workflow.step
+def route_terminal(
+    state: workflow.State,
+    routes: pd.DataFrame,
+    routes_merged: pd.DataFrame,
+    network_los: los.Network_LOS,
+    model_settings: SimpleLocationComponentSettings | None = None,
+    model_settings_file_name: str = "route_terminal.yaml",
+    trace_label: str = "route_terminal",
+) -> None:
+    return route_endpoint(
+        state=state,
+        routes=routes,
+        routes_merged=routes_merged,
+        network_los=network_los,
+        model_settings= model_settings,
+        model_settings_file_name=model_settings_file_name,
+        trace_label=trace_label,
+    )
+
+@workflow.step
+def route_origination(
+    state: workflow.State,
+    routes: pd.DataFrame,
+    routes_merged: pd.DataFrame,
+    network_los: los.Network_LOS,
+    model_settings: SimpleLocationComponentSettings | None = None,
+    model_settings_file_name: str = "route_origination.yaml",
+    trace_label: str = "route_origination",
+) -> None:
+    return route_endpoint(
+        state=state,
+        routes=routes,
+        routes_merged=routes_merged,
+        network_los=network_los,
+        model_settings= model_settings,
+        model_settings_file_name=model_settings_file_name,
+        trace_label=trace_label,
+    )

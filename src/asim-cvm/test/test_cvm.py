@@ -14,7 +14,7 @@ EXPECTED_MODELS = [
     "cvm_accessibility",
     "route_generation",
     "route_purpose_and_vehicle",
-    "open_jaw_route",
+    "route_terminal_type",
     # "route_terminal",
     # "route_start_time",
     # "route_stop_generation",
@@ -46,7 +46,7 @@ def test_cvm():
     state.run.route_purpose_and_vehicle()
 
     print("### route open jaw ###")
-    state.run.open_jaw_route()
+    state.run.route_terminal_type()
 
     print("### route terminal ###")
     state.run.route_terminal()

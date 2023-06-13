@@ -21,22 +21,24 @@ from activitysim.core.configuration.logit import LogitComponentSettings
 logger = logging.getLogger(__name__)
 
 
-class OpenJawSettings(LogitComponentSettings, extra="forbid"):
+class RouteStopTypeSettings(LogitComponentSettings, extra="forbid"):
     """
-    Settings for the `cvm_open_jaw` component.
+    Settings for the `route_terminal_type` component.
     """
 
     preprocessor: PreprocessorSettings | None = None
     """Setting for the preprocessor."""
 
+    RESULT_COL_NAME: str
+
 
 @workflow.step
-def open_jaw_route(
+def route_terminal_type(
     state: workflow.State,
     routes: pd.DataFrame,
-    model_settings: OpenJawSettings | None = None,
-    model_settings_file_name: str = "open_jaw.yaml",
-    trace_label: str = "open_jaw",
+    model_settings: RouteStopTypeSettings | None = None,
+    model_settings_file_name: str = "route_terminal_type.yaml",
+    trace_label: str = "route_terminal_type",
 ) -> None:
     """
     Determine for each route whether its terminal and depot can be different.
@@ -46,19 +48,19 @@ def open_jaw_route(
     state : workflow.State
     routes : DataFrame
         This represents the 'choosers' table for this component.
-    model_settings : OpenJawSettings, optional
+    model_settings : RouteStopTypeSettings, optional
         The settings used in this model component.  If not provided, they are
         loaded out of the configs directory YAML file referenced by
         the `model_settings_file_name` argument.
-    model_settings_file_name : str, default "open_jaw.yaml"
+    model_settings_file_name : str, default "route_terminal_type.yaml"
         This is where model setting are found if `model_settings` is not given
         explicitly.  The same filename is also used to write settings files to
         the estimation data bundle in estimation mode.
-    trace_label : str, default "open_jaw"
+    trace_label : str, default "route_terminal_type"
         This label is used for various tracing purposes.
     """
     if model_settings is None:
-        model_settings = OpenJawSettings.read_settings_file(
+        model_settings = RouteStopTypeSettings.read_settings_file(
             state.filesystem,
             model_settings_file_name,
         )
@@ -107,27 +109,28 @@ def open_jaw_route(
         nest_spec=nest_spec,
         locals_d=constants,
         trace_label=trace_label,
-        trace_choice_name="open_jaw",
+        trace_choice_name="route_terminal_type",
         estimator=estimator,
     )
 
-    choices = choices.astype(bool)
+    result_dtype = pd.CategoricalDtype(categories=model_spec.columns)
+    choices = pd.Series(data=pd.Categorical.from_codes(choices, dtype=result_dtype), index=choices.index)
 
     if estimator:
         estimator.write_choices(choices)
         choices = estimator.get_survey_values(
-            choices, "routes", "open_jaw"
+            choices, "routes", model_settings.RESULT_COL_NAME
         )
         estimator.write_override_choices(choices)
         estimator.end_estimation()
 
-    routes["open_jaw"] = (
-        choices.reindex(routes.index).fillna(0).astype(bool)
+    routes[model_settings.RESULT_COL_NAME] = (
+        choices.reindex(routes.index).fillna(model_spec.columns[0]).astype(result_dtype)
     )
 
     state.add_table("routes", routes)
 
     tracing.print_summary(
-        "open_jaw", routes.open_jaw, value_counts=True
+        model_settings.RESULT_COL_NAME, routes[model_settings.RESULT_COL_NAME], value_counts=True
     )
 
