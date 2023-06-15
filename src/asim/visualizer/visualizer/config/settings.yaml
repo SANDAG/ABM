@@ -15,6 +15,7 @@ extract:
           - "final_tours.csv"
           - "final_trips.csv"
           - "final_joint_tour_participants.csv"
+          - "final_vehicles.csv"
     - filepath: "../../../../input"
       test_size:
       data:
