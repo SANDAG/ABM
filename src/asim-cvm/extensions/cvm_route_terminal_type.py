@@ -39,7 +39,7 @@ def route_endpoint_type(
     model_settings: RouteStopTypeSettings | None = None,
     model_settings_file_name: str = "route_terminal_type.yaml",
     trace_label: str = "route_terminal_type",
-) -> None:
+) -> pd.DataFrame:
     """
     Determine for each route whether its terminal and depot can be different.
 
@@ -58,6 +58,12 @@ def route_endpoint_type(
         the estimation data bundle in estimation mode.
     trace_label : str, default "route_terminal_type"
         This label is used for various tracing purposes.
+
+    Returns
+    -------
+    routes : pd.DataFrame
+        The modified routes table.  Caller should write this into the workflow
+        State object if desired.
     """
     if model_settings is None:
         model_settings = RouteStopTypeSettings.read_settings_file(
@@ -130,13 +136,13 @@ def route_endpoint_type(
         choices.reindex(routes.index).fillna(model_spec.columns[0]).astype(result_dtype)
     )
 
-    state.add_table("routes", routes)
-
     tracing.print_summary(
         model_settings.RESULT_COL_NAME,
         routes[model_settings.RESULT_COL_NAME],
         value_counts=True,
     )
+
+    return routes
 
 
 @workflow.step
@@ -147,14 +153,14 @@ def route_terminal_type(
     model_settings_file_name: str = "route_terminal_type.yaml",
     trace_label: str = "route_terminal_type",
 ) -> None:
-    return route_endpoint_type(
+    routes = route_endpoint_type(
         state,
         routes,
         model_settings,
         model_settings_file_name,
         trace_label,
     )
-
+    state.add_table("routes", routes)
 
 
 @workflow.step
@@ -165,10 +171,11 @@ def route_origination_type(
     model_settings_file_name: str = "route_origination_type.yaml",
     trace_label: str = "route_origination_type",
 ) -> None:
-    return route_endpoint_type(
+    routes = route_endpoint_type(
         state,
         routes,
         model_settings,
         model_settings_file_name,
         trace_label,
     )
+    state.add_table("routes", routes)

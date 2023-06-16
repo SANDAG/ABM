@@ -5,17 +5,24 @@ from pathlib import Path
 from typing import Literal
 
 import pandas as pd
-from activitysim.core.configuration import PydanticBase
-from activitysim.core.util import reindex
 
 from activitysim.abm.models.util import annotate, tour_destination
-from activitysim.core import estimation, los, tracing, workflow, expressions, simulate, interaction_sample_simulate
+from activitysim.core import (
+    estimation,
+    expressions,
+    interaction_sample_simulate,
+    los,
+    simulate,
+    tracing,
+    workflow,
+)
+from activitysim.core.configuration import PydanticBase
 from activitysim.core.configuration.logit import (
+    BaseLogitComponentSettings,
     PreprocessorSettings,
     TourLocationComponentSettings,
-BaseLogitComponentSettings,
 )
-from activitysim.core.util import assign_in_place
+from activitysim.core.util import assign_in_place, reindex
 
 logger = logging.getLogger(__name__)
 
@@ -86,6 +93,7 @@ def annotate_routes(
         trace_label=tracing.extend_trace_label(trace_label, "annotate_routes"),
     )
     state.add_table("routes", routes)
+
 
 #
 # def destination_simulate(
@@ -226,18 +234,7 @@ def route_endpoint(
             model_settings_file_name,
         )
 
-    trace_hh_id = state.settings.trace_hh_id
-
-    logsum_column_name = model_settings.DEST_CHOICE_LOGSUM_COLUMN_NAME
-    want_logsums = logsum_column_name is not None
-
-    sample_table_name = model_settings.DEST_CHOICE_SAMPLE_TABLE_NAME
-    want_sample_table = (
-        state.settings.want_dest_choice_sample_tables and sample_table_name is not None
-    )
-
-    # choosers are routes with non-base terminal types
-    all_choosers = routes_merged.sort_index() #[routes_merged[model_settings.CHOOSER_SEGMENT_COLUMN_NAME] != "base"]
+    all_choosers = routes_merged.sort_index()
 
     if all_choosers.shape[0] == 0:
         tracing.no_results(trace_label)
@@ -255,6 +252,7 @@ def route_endpoint(
         estimator.write_model_settings(model_settings, model_settings_file_name)
 
     from activitysim.abm.models.util.tour_destination import SizeTermCalculator
+
     size_term_calculator = SizeTermCalculator(state, model_settings.SIZE_TERM_SELECTOR)
 
     # maps segment names to compact (integer) ids
@@ -267,14 +265,20 @@ def route_endpoint(
         segment_trace_label = tracing.extend_trace_label(trace_label, segment_name)
 
         if chooser_segment_column is not None:
-            choosers = all_choosers[all_choosers[chooser_segment_column] == segment_name]
+            choosers = all_choosers[
+                all_choosers[chooser_segment_column] == segment_name
+            ]
         else:
             choosers = all_choosers
 
         if segment_name == "base":
             # there is no terminal choice to make, the terminal location is establishment MAZ
             choices_list.append(
-                pd.Series(name=model_settings.RESULT_COL_NAME, data=choosers["MAZ"], index=choosers.index)
+                pd.Series(
+                    name=model_settings.RESULT_COL_NAME,
+                    data=choosers["MAZ"],
+                    index=choosers.index,
+                )
             )
             continue
 
@@ -305,8 +309,7 @@ def route_endpoint(
         skim_dict = network_los.get_default_skim_dict()
         skims = skim_dict.wrap("zone_id", "MAZ")
 
-        locals_dict.update({"skims":skims})
-        log_alt_losers = state.settings.log_alt_losers
+        locals_dict.update({"skims": skims})
 
         choices = interaction_sample(
             state,
@@ -335,17 +338,11 @@ def route_endpoint(
 
     if estimator:
         estimator.write_choices(choices_df)
-        choices_df = estimator.get_survey_values(
-            choices_df, "tours", "destination"
-        )
+        choices_df = estimator.get_survey_values(choices_df, "tours", "destination")
         estimator.write_override_choices(choices_df)
         estimator.end_estimation()
 
     assign_in_place(routes, choices_df.to_frame())
-
-    # if want_logsums:
-    #     choosers[logsum_column_name] = choices_df["logsum"]
-    #     assign_in_place(routes, choosers[[logsum_column_name]])
 
     assert all(
         ~routes[model_settings.RESULT_COL_NAME].isna()
@@ -355,20 +352,6 @@ def route_endpoint(
 
     if model_settings.annotate_routes:
         annotate.annotate_tours(state, model_settings, trace_label)
-
-    # if want_sample_table:
-    #     assert len(save_sample_df.index.get_level_values(0).unique()) == len(choices_df)
-    #     state.extend_table(sample_table_name, save_sample_df)
-
-    # if trace_hh_id:
-    #     state.tracing.trace_df(
-    #         routes[routes.open_jaw],
-    #         label=trace_label,
-    #         slicer="establishment_id",
-    #         index_label="route",
-    #         columns=None,
-    #         warn_if_empty=True,
-    #     )
 
 
 @workflow.step
@@ -386,10 +369,11 @@ def route_terminal(
         routes=routes,
         routes_merged=routes_merged,
         network_los=network_los,
-        model_settings= model_settings,
+        model_settings=model_settings,
         model_settings_file_name=model_settings_file_name,
         trace_label=trace_label,
     )
+
 
 @workflow.step
 def route_origination(
@@ -406,7 +390,7 @@ def route_origination(
         routes=routes,
         routes_merged=routes_merged,
         network_los=network_los,
-        model_settings= model_settings,
+        model_settings=model_settings,
         model_settings_file_name=model_settings_file_name,
         trace_label=trace_label,
     )

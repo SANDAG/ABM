@@ -1,0 +1,20 @@
+purpose_settings:
+  SPEC: route_stop_purpose.csv
+  COEFFICIENTS: route_stop_purpose_coefficients.csv
+location_type_settings:
+  RESULT_COL_NAME: next_stop_location_type
+  SPEC: route_stop_location_type.csv
+  COEFFICIENTS: route_stop_location_type_coefficients.csv
+  LOGIT_TYPE: MNL
+location_settings:
+  SPEC: route_stop_location.csv
+  COEFFICIENTS: route_stop_location_coefficients.csv
+  RESULT_COL_NAME: next_stop_location
+  SEGMENTS:
+    - base
+    - warehouse
+    - intermodal
+    - residential
+    - commercial
+  SIZE_TERM_SELECTOR: commerce
+  CHOOSER_SEGMENT_COLUMN_NAME: next_stop_location_type

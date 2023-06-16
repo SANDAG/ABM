@@ -55,5 +55,10 @@ def test_cvm():
 
     print("### route start time ###")
     state.run.route_start_time()
+
+    print("### route stops ###")
+    state.run.route_stops()
+
     print(state.get("routes"))
     print(state.get("routes").info())
+

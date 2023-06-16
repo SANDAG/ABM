@@ -1,0 +1,3 @@
+Label,Description,Expression,terminate,base,goods,service,other
+
+,,"@1.0",coef_asc_terminate,coef_asc_base,coef_asc_goods,coef_asc_service,coef_asc_other
