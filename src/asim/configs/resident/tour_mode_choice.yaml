@@ -16,6 +16,8 @@ NESTS:
         alternatives:
           - WALK
           - BIKE
+          - EBIKE
+          - ESCOOTER
       - name: TRANSIT
         coefficient:  coef_nest_TRANSIT
         alternatives:
