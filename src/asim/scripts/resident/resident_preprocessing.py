@@ -25,7 +25,7 @@ class Series15_Processor:
         assert os.path.isdir(self.output_dir), f"Cannot find output directory {self.output_dir}"
 
         self.ext_data_file = os.path.join(self.input_dir, 'externalInternalControlTotalsByYear.csv')
-        self.landuse_file = os.path.join(self.input_dir, 'mgra15_based_input2019.csv')
+        self.landuse_file = os.path.join(self.input_dir, 'mgra15_based_input2022.csv')
         self.trans_access_file = os.path.join(self.output_dir, 'transponderModelAccessibilities.csv')
         self.terminal_time_file = os.path.join(self.input_dir, 'zone_term.csv')
 
@@ -34,6 +34,8 @@ class Series15_Processor:
         self.maz_stop_walk_file = os.path.join(self.output_dir, 'skims', 'maz_stop_walk.csv')
         self.maz_maz_bike_file = os.path.join(self.output_dir, 'bikeMgraLogsum.csv')
         self.taz_taz_bike_file = os.path.join(self.output_dir, 'bikeTazLogsum.csv')
+
+        self.parking_costs_file = os.path.join(self.output_dir, 'parking', 'expected_parking_costs.csv')
 
         self.walk_speed = 3  # mph
 
@@ -122,7 +124,6 @@ class Series15_Processor:
                 output_skims[skims_name].rename(new_name)
             output_skims.close()
             
-
     def pre_process_landuse(self):
         landuse = pd.read_csv(self.landuse_file)
         landuse['MAZ'] = landuse['mgra']
@@ -253,7 +254,6 @@ class Series15_Processor:
         self.landuse['external_nonwork'] = self.landuse['external_nonwork'].fillna(0)
         self.landuse.loc[self.landuse.external_MAZ == 1, ['TAZ', 'external_MAZ', 'poe_id', 'external_work', 'external_nonwork']]
 
-
     def add_maz_stop_walk_to_landuse(self):
         maz_stop_walk = pd.read_csv(self.maz_stop_walk_file)
         maz_stop_walk.set_index('maz', inplace=True)
@@ -263,7 +263,6 @@ class Series15_Processor:
 
         self.landuse['walk_dist_local_bus'].fillna(999, inplace=True)
         self.landuse['walk_dist_premium_transit'].fillna(999, inplace=True)
-
 
     def add_transponder_accessibility_to_landuse(self):
         print("Adding transponder accessibility variables to landuse file.")
@@ -399,12 +398,20 @@ class Series15_Processor:
                     skim[f'BIKE_TIME__{time_period}'] = biketime_skim.to_numpy()
                 skim.close()
 
+    def add_parking_costs(self):
+        parking_cost = pd.read_csv(self.parking_costs_file)
+
+        self.landuse['hparkcost'] = parking_cost.set_index('MGRA')['exp_hourly'].reindex(self.landuse.index).fillna(0)
+        self.landuse['dparkcost'] = parking_cost.set_index('MGRA')['exp_daily'].reindex(self.landuse.index).fillna(0)
+        self.landuse['mparkcost'] = parking_cost.set_index('MGRA')['exp_monthly'].reindex(self.landuse.index).fillna(0)
+
     def process_landuse(self):
         self.pre_process_landuse()
         self.add_external_counts_to_landuse()
         self.add_maz_stop_walk_to_landuse()
         self.add_transponder_accessibility_to_landuse()
         self.add_terminal_time_to_landuse()
+        self.add_parking_costs()
 
 
     def write_output(self):
