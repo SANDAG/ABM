@@ -9,9 +9,11 @@ chunk_training_mode: disabled
 
 # turn shadow_pricing on and off for all models (e.g. school and work)
 # see shadow_pricing.yaml for additional settings
-use_shadow_pricing: True
+use_shadow_pricing: False
 
 memory_profile: False
+
+households_sample_size: 100
 
 # Sample TAZ before MAZ in destination choice
 want_dest_choice_presampling: True
@@ -97,6 +99,12 @@ input_table_list:
       - hh_mh
       - zip09
       - luz_id
+      - taz
+  - tablename: land_use_taz
+    filename: taz.csv
+    index_col: TAZ
+    recode_columns:
+      TAZ: zero-based
 
 output_tables:
   h5_store: False
@@ -127,9 +135,9 @@ resume_after:
 
 models:
   ### mp_init_proto_pop (single process)
-  - initialize_proto_population # Separate step so proto tables can be split for multiprocess.
+  # - initialize_proto_population # Separate step so proto tables can be split for multiprocess.
   ### mp_disaggregate_accessibility
-  - compute_disaggregate_accessibility
+  # - compute_disaggregate_accessibility
   ### mp_initialize_hhs (single process)
   - initialize_landuse
   - initialize_households

@@ -1,0 +1,4 @@
+inherit_settings: True
+sharrow: require
+chunk_training_mode: disabled
+#households_sample_size: 100

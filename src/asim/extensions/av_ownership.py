@@ -5,7 +5,7 @@ import logging
 
 import numpy as np
 
-from activitysim.core import config, estimation, expressions, simulate, tracing, workflow
+from activitysim.core import config, simulate, estimation, expressions, tracing, workflow
 
 logger = logging.getLogger("activitysim")
 
