@@ -2,12 +2,15 @@ package org.sandag.abm.visitor;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.HashSet;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 
 import com.pb.common.calculator.VariableTable;
+import com.pb.common.datafile.TableDataSet;
 import com.pb.common.newmodel.ChoiceModelApplication;
 
 public class VisitorMicromobilityChoiceModel
@@ -19,9 +22,12 @@ public class VisitorMicromobilityChoiceModel
     private static final String    MM_CONTROL_FILE_TARGET = "visitor.micromobility.uec.file";
     private static final String    MM_DATA_SHEET_TARGET   = "visitor.micromobility.data.page";
     private static final String    MM_MODEL_SHEET_TARGET  = "visitor.micromobility.model.page";
+    private static final String    MT_TAP_FILE_TARGET     = "active.microtransit.tap.file";
+    private static final String    MT_MAZ_FILE_TARGET     = "active.microtransit.mgra.file";
 
-    public static final int        MM_MODEL_NO_ALT        = 0;
-    public static final int        MM_MODEL_YES_ALT       = 1;
+    public static final int        MM_MODEL_WALK_ALT                = 0;
+    public static final int        MM_MODEL_MICROMOBILITY_ALT       = 1;
+    public static final int        MM_MODEL_MICROTRANSIT_ALT       = 2;
 
     private ChoiceModelApplication mmModel;
     private VisitorMicromobilityChoiceDMU   mmDmuObject;
@@ -29,7 +35,9 @@ public class VisitorMicromobilityChoiceModel
     private VisitorModelStructure                     modelStructure;
     private MgraDataManager mgraDataManager;
 
-    
+    private HashSet<Integer> microtransitTaps;
+    private HashSet<Integer> microtransitMazs;
+ 
     public VisitorMicromobilityChoiceModel(HashMap<String, String> propertyMap,
     		VisitorModelStructure myModelStructure, VisitorDmuFactoryIf dmuFactory)
     {
@@ -59,6 +67,27 @@ public class VisitorMicromobilityChoiceModel
                 (VariableTable) mmDmuObject);
         
         mgraDataManager = MgraDataManager.getInstance(); 
+        String projectDirectory = propertyMap.get(CtrampApplication.PROPERTIES_PROJECT_DIRECTORY);
+        String microTransitTapFile = projectDirectory + propertyMap.get(MT_TAP_FILE_TARGET);
+        String microTransitMazFile = projectDirectory + propertyMap.get(MT_MAZ_FILE_TARGET);
+        
+        TableDataSet microTransitTapData = Util.readTableDataSet(microTransitTapFile);
+        TableDataSet microTransitMazData = Util.readTableDataSet(microTransitMazFile);
+        
+        microtransitTaps = new HashSet<Integer>();
+        microtransitMazs = new HashSet<Integer>();
+        
+        for(int i=1;i<=microTransitTapData.getRowCount();++i) {
+        	
+        	int tap = (int) microTransitTapData.getValueAt(i,"TAP");
+        	microtransitTaps.add(tap);
+        }
+        	
+       for(int i=1;i<=microTransitMazData.getRowCount();++i) {
+        	
+        	int maz = (int) microTransitMazData.getValueAt(i,"MGRA");
+        	microtransitMazs.add(maz);
+        }
 
     }
     
@@ -85,6 +114,11 @@ public class VisitorMicromobilityChoiceModel
         mmDmuObject.setIncome(tour.getIncome());
         int originMaz = trip.getOriginMgra();
         int destMaz = trip.getDestinationMgra();
+        if(modelStructure.getTourModeIsWalk(trip.getTripMode()))
+	        mmDmuObject.setTransit(false);
+        else
+	        mmDmuObject.setTransit(true);
+        
 
         if(modelStructure.getTourModeIsWalk(trip.getTripMode())) {
             
@@ -93,7 +127,12 @@ public class VisitorMicromobilityChoiceModel
             
             //set destination to origin so that Z can be used to find origin zone access to mode in mgra data file in UEC
             mmDmuObject.setDmuIndexValues(tour.getID(), originMaz, originMaz, originMaz);
-	
+            
+            if(microtransitMazs.contains(originMaz) && microtransitMazs.contains(destMaz))
+            	mmDmuObject.setMicroTransitAvailable(true);
+            else
+            	mmDmuObject.setMicroTransitAvailable(false);
+
             // compute utilities and choose micromobility choice alternative.
             float logsum = (float) mmModel.computeUtilities(mmDmuObject, mmDmuObject.getDmuIndexValues());
             trip.setMicromobilityWalkLogsum(logsum);
@@ -123,6 +162,11 @@ public class VisitorMicromobilityChoiceModel
             //set destination to origin so that Z can be used to find origin zone access to mode in mgra data file in UEC
             mmDmuObject.setDmuIndexValues(tour.getID(), originMaz, originMaz, originMaz);
 
+            if(microtransitTaps.contains(trip.getBoardTap()))
+            	mmDmuObject.setMicroTransitAvailable(true);
+            else
+            	mmDmuObject.setMicroTransitAvailable(false);
+
         	// compute utilities and choose micromobility choice alternative.
             float logsum = (float) mmModel.computeUtilities(mmDmuObject, mmDmuObject.getDmuIndexValues());
             trip.setMicromobilityAccessLogsum(logsum);
@@ -144,6 +188,11 @@ public class VisitorMicromobilityChoiceModel
 	        	tapPosition =  mgraDataManager.getTapPosition(destMaz, trip.getAlightTap());
 	        	walkTime = mgraDataManager.getMgraToTapWalkTime(destMaz, tapPosition);
 	            mmDmuObject.setWalkTime(walkTime);
+
+	            if(microtransitTaps.contains(trip.getAlightTap()))
+	            	mmDmuObject.setMicroTransitAvailable(true);
+	            else
+	            	mmDmuObject.setMicroTransitAvailable(false);
 
 	            //set destination to closest mgra to alighting TAP so that Z can be used to find access to mode in mgra data file in UEC
 	            int closestMazToAlightTap = mgraDataManager.getClosestMgra(trip.getAlightTap());
@@ -176,7 +225,12 @@ public class VisitorMicromobilityChoiceModel
         		   walkTime = mgraDataManager.getMgraToTapWalkTime(originMaz, tapPosition);
                    //set destination to origin so that Z can be used to find origin zone access to mode in mgra data file in UEC
                    mmDmuObject.setDmuIndexValues(tour.getID(), originMaz, originMaz, originMaz);
-        		   
+                   
+                   if(microtransitTaps.contains(trip.getBoardTap()))
+                   	mmDmuObject.setMicroTransitAvailable(true);
+                   else
+                   	mmDmuObject.setMicroTransitAvailable(false);
+
         		}else { //outbound so egress mode is walk.
         		   tapPosition =  mgraDataManager.getTapPosition(destMaz, trip.getAlightTap());
         		   walkTime = mgraDataManager.getMgraToTapWalkTime(destMaz, tapPosition);
@@ -185,7 +239,12 @@ public class VisitorMicromobilityChoiceModel
    	            	mmDmuObject.setDmuIndexValues(tour.getID(), closestMazToAlightTap, closestMazToAlightTap, closestMazToAlightTap);
         		}
 	            mmDmuObject.setWalkTime(walkTime);
-	
+	            	
+	            if(microtransitTaps.contains(trip.getAlightTap()))
+   	            		mmDmuObject.setMicroTransitAvailable(true);
+                   else
+                   		mmDmuObject.setMicroTransitAvailable(false);
+
         		// compute utilities and choose micromobility choice alternative.
                	float logsum = (float) mmModel.computeUtilities(mmDmuObject, mmDmuObject.getDmuIndexValues());
                		
@@ -239,10 +298,10 @@ public class VisitorMicromobilityChoiceModel
         		String errorMessage = String
                     .format("Exception caught for %s, no available micromobility choice alternatives to choose from in choiceModelApplication.",
                             decisionMaker);
-        		logger.error(errorMessage);
+        		logger.info(errorMessage);
 
         		mmModel.logUECResults(logger, decisionMaker);
-        		throw new RuntimeException();
+        		return MM_MODEL_WALK_ALT;
         	}
 
         }

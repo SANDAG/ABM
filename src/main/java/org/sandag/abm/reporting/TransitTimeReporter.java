@@ -49,11 +49,13 @@ public class TransitTimeReporter {
     private static final int WLK_BRTIVT	        = 5;
     private static final int WLK_LRTIVT	        = 6;
     private static final int WLK_CRIVT	        = 7;
-    private static final int WLK_FIRSTWAITTIME  = 8;	
-    private static final int WLK_TRWAITTIME	    = 9;
-    private static final int WLK_FARE	        = 10;
-    private static final int WLK_TOTALIVT	    = 11;
-    private static final int WLK_XFERS          = 12;
+    private static final int WLK_T1IVT	        = 8;    
+    private static final int WLK_FIRSTWAITTIME  = 9;	
+    private static final int WLK_TRWAITTIME	    = 10;
+    private static final int WLK_FARE	        = 11;
+    private static final int WLK_TOTALIVT	    = 12;
+    private static final int WLK_XFERS          = 13;
+    private static final int WLK_DIST           = 14;
 
     //skim locations in DriveTransitWalkSkims UEC
     private static final int DRV_DRIVEACCESSTIME = 0;
@@ -64,11 +66,13 @@ public class TransitTimeReporter {
     private static final int DRV_BRTIVT	        = 5;
     private static final int DRV_LRTIVT	        = 6;
     private static final int DRV_CRIVT	        = 7;
-    private static final int DRV_FIRSTWAITTIME  = 8;	
-    private static final int DRV_TRWAITTIME	    = 9;
-    private static final int DRV_FARE	        = 10;
-    private static final int DRV_TOTALIVT	    = 11;
-    private static final int DRV_XFERS          = 12;
+    private static final int DRV_T1IVT	        = 8;     
+    private static final int DRV_FIRSTWAITTIME  = 9;	
+    private static final int DRV_TRWAITTIME	    = 10;
+    private static final int DRV_FARE	        = 11;
+    private static final int DRV_TOTALIVT	    = 12;
+    private static final int DRV_XFERS          = 13;
+    private static final int DRV_DIST           = 14;
     
     String period; //should be "AM" or "MD"
     float threshold; //tested at 30 minutes
@@ -87,6 +91,7 @@ public class TransitTimeReporter {
      	this.threshold = threshold;
      	this.period = period;
      	this.outWalkFile = outWalkFileName;
+     	this.outDriveFile= outDriveFileName;
      	if(outDriveFile!=null) {
      		this.outDriveFile = outDriveFileName;
      		createDriveFile=true;
@@ -291,11 +296,12 @@ public class TransitTimeReporter {
 					
 					//if total time is less than or equal to the threshold, add the destination MAZ to the output string
 					if(totalTime<=threshold){
-						if(outWalkString==null)
-							outWalkString = String.valueOf(originMaz);
-						
-						outWalkString += ","+destinationMaz; 
-				
+						outWalkString = String.valueOf(originMaz)+","+destinationMaz+","+totalTime;
+						//write the walk access MAZs - origin, dest, mintime
+						if(outWalkString!=null){
+							walkAccessWriter.print(outWalkString+"\n");
+							walkAccessWriter.flush();
+						}
 					}
 				}
 				
@@ -348,29 +354,16 @@ public class TransitTimeReporter {
 					    
 						//if total time is less than or equal to the threshold, add the destination MAZ to the output string
 						if(totalTime<=threshold){
-							if(outDriveString==null)
-								outDriveString = String.valueOf(originMaz);
-							
-							outDriveString += ","+destinationMaz; 
-					
+							outDriveString = String.valueOf(originMaz)+","+destinationMaz+","+totalTime;
+							//write the drive access MAZs - origin, dest, PNRTime?
+							if(outDriveString!=null){
+								driveAccessWriter.print(outDriveString+"\n");
+								driveAccessWriter.flush();
+							}
 						}
 					}
-				}
-				
+				}			
 			} //end for destinations
-
-			//write the walk access MAZs under 30 minutes - origin, dest1, dest2, dest3...etc
-			if(outWalkString!=null){
-				walkAccessWriter.print(outWalkString+"\n");
-				walkAccessWriter.flush();
-			}
-			
-			//write the drive access MAZs under 30 minutes - origin, dest1, dest2, dest3...etc
-			if(createDriveFile||outDriveString!=null){
-				driveAccessWriter.print(outDriveString+"\n");
-				driveAccessWriter.flush();
-			}
-			
 		} //end for origins
 	}
 	

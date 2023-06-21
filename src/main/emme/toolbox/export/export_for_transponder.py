@@ -63,10 +63,9 @@ class ExportForTransponder(_m.Tool(), gen_utils.Snapshot):
 <li>"AVGTTS" - Average travel time savings - average travel time savings 
     across all possible destinations.
 <li>"PCTDETOUR" - Percent detour - The percent difference between the AM 
-    non-transponder travel time 
-    to sample zones and the AM transponder travel time 
-    when the general purpose lanes parallel to all toll lanes using 
-    transponders are not available.
+    transponder travel time and the AM non-transponder travel time 
+    to sample zones when the general purpose lanes parallel to all toll 
+    lanes using transponders are not available.
 </ul>
  ."""
         pb.branding_text = "- SANDAG - Export"
@@ -159,12 +158,12 @@ class ExportForTransponder(_m.Tool(), gen_utils.Snapshot):
         taz = dem_utils.add_missing_zones(taz, scenario)
         taz.reset_index(inplace=True)
 
-        with setup_temp_matrices(emmebank):
+        with setup_for_tt_savings_calc(emmebank):
             employment_matrix = emmebank.matrix("mdemployment")
             employment_matrix.set_numpy_data(taz["emp_total"].values, scenario.id)
             matrix_calc = dem_utils.MatrixCalculator(scenario, num_processors)
-            matrix_calc.add("NTTime",    "AM_SOV_NT_M_TIME + PM_SOV_NT_M_TIME'")
-            matrix_calc.add("TRTime",    "AM_SOV_TR_M_TIME + PM_SOV_TR_M_TIME'")
+            matrix_calc.add("NTTime",    "SOV_NT_M_TIME__AM + SOV_NT_M_TIME__PM'")
+            matrix_calc.add("TRTime",    "SOV_TR_M_TIME__AM + SOV_TR_M_TIME__PM'")
             matrix_calc.add("numerator",   "((NTTime - TRTime).max.0) * employment * exp(-0.01 * NTTime)", 
                             aggregation={"destinations": "+"})
             matrix_calc.add("denominator", "employment * exp(-0.01 * NTTime)", 
@@ -183,70 +182,48 @@ class ExportForTransponder(_m.Tool(), gen_utils.Snapshot):
         # is calculated as
         # 100*(TimeWithoutFacility - NonTransponderTime) / NonTransponderTime
 
-        shortest_paths_tool = _m.Modeller().tool(
-            "inro.emme.network_calculation.shortest_path")
-        destinations = 4027, 2563, 2258
-        # destinations = props["?????????"]
+        destinations = props["transponder.destinations"]
 
-        with get_temp_scenario(scenario) as temp_scenario:
-            temp_scenario.create_extra_attribute("NODE", "@root")
-            temp_scenario.create_extra_attribute("NODE", "@leaf")
-            network.create_attribute("NODE", "@root")
-            network.create_attribute("NODE", "@leaf")
+        network.create_attribute("NODE", "@root")
+        network.create_attribute("NODE", "@leaf")
 
-            mode_id = get_available_mode_id(network)
-            new_mode = network.create_mode("AUX_AUTO", mode_id)
-            sov_non_toll_mode = network.mode("s")
+        mode_id = get_available_mode_id(network)
+        new_mode = network.create_mode("AUX_AUTO", mode_id)
+        sov_non_toll_mode = network.mode("s")
 
-            # Find special managed links and potential parallel GP facilities
-            ml_link_coords = []
-            freeway_links = []
-            for link in network.links():
-                if link["@lane_restriction"] in [2, 3] and link["type"] == 1 and (
-                        link["@toll_am"] + link["@toll_md"] + link["@toll_pm"]) > 0:
-                    ml_link_coords.append(LineString(link.shape))
-                if sov_non_toll_mode in link.modes:
-                    link.modes |= set([new_mode])
-                    if link["type"] == 1:
-                        freeway_links.append(link)
+        # Find special managed links and potential parallel GP facilities
+        ml_link_coords = []
+        freeway_links = []
+        for link in network.links():
+            if link["@lane_restriction"] in [2, 3] and link["type"] == 1 and (
+                    link["@toll_am"] + link["@toll_md"] + link["@toll_pm"]) > 0:
+                ml_link_coords.append(LineString(link.shape))
+            if sov_non_toll_mode in link.modes:
+                link.modes |= set([new_mode])
+                if link["type"] == 1:
+                    freeway_links.append(link)
 
-            # remove mode from nearby GP links to special managed lanes
-            ml_link_collection = MultiLineString(ml_link_coords)
-            for link in freeway_links:
-                link_shape = LineString(link.shape)
-                distance = link_shape.distance(ml_link_collection)
-                if distance < 100:
-                    for ml_shape in ml_link_collection:
-                        if ml_shape.distance(link_shape) and close_bearing(link_shape, ml_shape):
-                            link.modes -= set([new_mode])
-                            break
+        # remove mode from nearby GP links to special managed lanes
+        ml_link_collection = MultiLineString(ml_link_coords)
+        for link in freeway_links:
+            link_shape = LineString(link.shape)
+            distance = link_shape.distance(ml_link_collection)
+            if distance < 100:
+                for ml_shape in ml_link_collection:
+                    if ml_shape.distance(link_shape) and close_bearing(link_shape, ml_shape):
+                        link.modes -= set([new_mode])
+                        break
 
-            for node in network.centroids():
-                node["@root"] = 1
-            for dst in destinations:
-                network.node(dst)["@leaf"] = 1
-            temp_scenario.publish_network(network, resolve_attributes=True)
+        for node in network.centroids():
+            node["@root"] = 1
+        for dst in destinations:
+            network.node(dst)["@leaf"] = 1
 
-            detour_impedances = shortest_paths_tool(
-                    modes=[new_mode],
-                    roots_attribute="@root",
-                    leafs_attribute="@leaf",
-                    link_cost_attribute="@auto_time",
-                    num_processors=num_processors,
-                    direction="AUTO",
-                    use_turns=True,
-                    return_numpy=True,
-                    scenario=temp_scenario)
-            direct_impedances = shortest_paths_tool(
-                    modes=[sov_non_toll_mode],
-                    roots_attribute="@root",
-                    leafs_attribute="@leaf",
-                    link_cost_attribute="@auto_time",
-                    num_processors=num_processors,
-                    direction="AUTO",
-                    use_turns=True,
-                    return_numpy=True,
-                    scenario=temp_scenario)
+        reverse_auto_network(network, "@auto_time")
+        detour_impedances = shortest_paths_impedances(
+            network, new_mode, "@auto_time", destinations)
+        direct_impedances = shortest_paths_impedances(
+            network, sov_non_toll_mode, "@auto_time", destinations)
 
         percent_detour = (detour_impedances - direct_impedances) / direct_impedances
         avg_percent_detour = _np.sum(percent_detour, axis=1) / len(destinations)
@@ -267,8 +244,83 @@ class ExportForTransponder(_m.Tool(), gen_utils.Snapshot):
         return self.tool_run_msg
 
 
+def reverse_auto_network(network, link_cost):
+    # swap directionality of modes and specified link costs, as well as turn prohibitions
+    # delete all transit lines
+    for line in network.transit_lines():
+        network.delete_transit_line(line)
+
+    # backup modes so that turns can be swapped (auto mode remains avialable)
+    network.create_attribute("LINK", "backup_modes")
+    for link in network.links():
+        link.backup_modes = link.modes
+    # add new reverse links (where needed) and get the one-way links to be deleted
+    auto_mode = network.mode("d")
+    links_to_delete = []
+    for link in network.links():
+        reverse_link = network.link(link.j_node.id, link.i_node.id)
+        if reverse_link is None:
+            reverse_link = network.create_link(link.j_node.id, link.i_node.id, link.modes)
+            reverse_link.backup_modes = reverse_link.modes
+            links_to_delete.append(link)
+        reverse_link.modes |= link.modes
+
+    # reverse the turn data
+    visited = set([])
+    for turn in network.turns():
+        if turn in visited:
+            continue
+        reverse_turn = network.turn(turn.k_node, turn.j_node, turn.i_node)
+        time, reverse_time = turn["data1"], turn["data1"]
+        turn["data1"], turn["data1"] = time, reverse_time
+        tpf, reverse_tpf = turn.penalty_func, reverse_turn.penalty_func
+        reverse_turn.penalty_func, turn.penalty_func = tpf, reverse_tpf
+        visited.add(turn)
+        visited.add(reverse_turn)
+
+    # reverse the link data
+    visited = set([])
+    for link in network.links():
+        if link in visited:
+            continue
+        reverse_link = network.link(link.j_node.id, link.i_node.id)
+        time, reverse_time = link[link_cost], reverse_link[link_cost]
+        reverse_link[link_cost], link[link_cost] = time, reverse_time
+        reverse_link.modes, link.modes = link.backup_modes, reverse_link.backup_modes
+        visited.add(link)
+        visited.add(reverse_link)
+        
+    # delete the one-way links
+    for link in links_to_delete:
+        network.delete_link(link.i_node, link.j_node)
+        
+
+def shortest_paths_impedances(network, mode, link_cost, destinations):
+    excluded_links = []
+    for link in network.links():
+        if mode not in link.modes:
+            excluded_links.append(link)
+
+    impedances = []
+    for dest_id in destinations:
+        tree = network.shortest_path_tree(
+            dest_id, link_cost, excluded_links=excluded_links, consider_turns=True)
+        costs = []
+        for node in network.centroids():
+            if node.number == dest_id: 
+                costs.append(0)
+            else:
+                try:
+                    path_cost = tree.cost_to_node(node.id)
+                except KeyError:
+                    path_cost = 600
+                costs.append(path_cost)
+        impedances.append(costs)
+    return _np.array(impedances).T
+
+
 @_context
-def setup_temp_matrices(emmebank):
+def setup_for_tt_savings_calc(emmebank):
     with gen_utils.temp_matrices(emmebank, "FULL", 2) as mf:
         mf[0].name = "NTTime"
         mf[0].description = "Temp AM + PM' Auto non-transponder time"
@@ -286,13 +338,11 @@ def setup_temp_matrices(emmebank):
 
 @_context
 def get_temp_scenario(src_scenario):
-    copy_scenario = _m.Modeller().tool(
-        "inro.emme.data.scenario.copy_scenario")
     delete_scenario = _m.Modeller().tool(
         "inro.emme.data.scenario.delete_scenario")
     emmebank = src_scenario.emmebank
     scenario_id = get_available_scenario_id(emmebank)
-    temp_scenario = copy_scenario(src_scenario, scenario_id)
+    temp_scenario = emmebank.copy_scenario(src_scenario, scenario_id)
     try:
         yield temp_scenario
     finally:

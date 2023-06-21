@@ -1,6 +1,6 @@
 :: script to map a drive and then call a batch file remotely using psexec
-:: 1 is the drive letter to map (e.g. “M:”)
-:: 2 is the share to map (e.g. “\\w-ampdx-d-sag01\mtc”)
+:: 1 is the drive letter to map (e.g. ï¿½M:ï¿½)
+:: 2 is the share to map (e.g. ï¿½\\w-ampdx-d-sag01\mtcï¿½)
 :: 3 is the password
 :: 4 is the user
 :: 5 is the working directory for calling the batch file (starting from the mapped drive letter)

@@ -57,6 +57,7 @@ public class TransportCostManager {
     // The simple auto skims UEC does not use any DMU variables
     protected VariableTable                 dmu         = null;
     protected TazDataManager                tazManager;
+    int totalThreads;
     
 
     /**
@@ -100,6 +101,9 @@ public class TransportCostManager {
        
         tazManager = TazDataManager.getInstance();
         maxTaz = tazManager.getMaxTaz();
+        
+        totalThreads = Util.getIntegerValueFromPropertyMap(rbMap, "TNC.totalThreads");
+        
     }
 
     /**
@@ -251,7 +255,7 @@ public class TransportCostManager {
         //addTimeWithinOriginAndDestination = new float[NUM_PERIODS][maxTaz+1][maxTaz+1][];
         int processors = Runtime.getRuntime().availableProcessors();
         //use 80% of the machine's processing power
-        TAZ_CALCULATOR_THREADS = (int) Math.floor(processors * 0.8);
+        TAZ_CALCULATOR_THREADS = totalThreads;
         int chunkSize = (int) Math.floor(maxTaz / TAZ_CALCULATOR_THREADS);
        
     	logger.info("...Calculating TAZs within distance thresholds with "+TAZ_CALCULATOR_THREADS+ " threads ("+processors+" processors)");

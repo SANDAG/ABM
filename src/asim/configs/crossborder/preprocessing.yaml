@@ -1,7 +1,4 @@
 # misc settings
-data_dir: C:\\abm_runs\\abm3_dev\\run_dir\\data
-config_dir: C:\\abm_runs\\abm3_dev\\run_dir\\configs\\crossborder
-output_dir: C:\\abm_runs\\abm3_dev\\run_dir\\output_xborder
 distance_param: -0.19
 walk_speed: 3
 
@@ -39,30 +36,11 @@ trip_scheduling_probs_output_fname: trip_scheduling_probs.csv
 skims:
   maz_to_maz:
     walk:
-      input_fname: microMgraEquivMinutes.csv
+      input_fname: maz_maz_walk.csv
       output_fname: maz_maz_walk.csv
       rename_columns:
         i: OMAZ
         j: DMAZ
-  maz_to_tap:
-    walk:
-      input_fname: microMgraTapEquivMinutes.csv
-      output_fname: maz_tap_walk.csv
-      rename_columns:
-        tap: TAP
-        mgra: MAZ
-  tap_to_tap:
-    input_fname: transit_skims_processed.omx
-    output_fname: transit_skims_xborder.omx
-  taz_to_taz:
-    periods:
-      - EA
-      - AM
-      - MD
-      - PM
-      - EV
-    input_base_fname: traffic_skims
-    output_base_fname: traffic_skims_xborder
 
 
 # Points of Entry

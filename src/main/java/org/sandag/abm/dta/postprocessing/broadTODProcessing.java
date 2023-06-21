@@ -82,16 +82,14 @@ public class broadTODProcessing {
 		random.setSeed(randomSeed);
 								
 		//Read in factors and maps to aggregate time periods
-		disaggTODPath = Util.getStringValueFromPropertyMap(rbMap, PROPERTIES_DISAGGPATHTOD);
-		String broadFactorsFile = disaggTODPath + Util.getStringValueFromPropertyMap(rbMap, PROPERTIES_BROADTODPROBABILITIES);
+		String broadFactorsFile = Util.getStringValueFromPropertyMap(rbMap, PROPERTIES_BROADTODPROBABILITIES);
 	
 		TableDataSet BroadData = TableDataSet.readFile(broadFactorsFile);
 		int numPeriods = BroadData.getRowCount();
 		broadProbabilities = todDisaggregationModel.getTODProbabilities(BroadData, numPeriods, marketSegment);   
 		broadTODMap = todDisaggregationModel.getTODMap(BroadData, numPeriods);
 		
-		disaggZonePath = Util.getStringValueFromPropertyMap(rbMap, PROPERTIES_DISAGGPATHZONE);
-		String mgraFactorsFile = disaggZonePath + Util.getStringValueFromPropertyMap(rbMap, PROPERTIES_ZONEPROBABILITIES);
+		String mgraFactorsFile = Util.getStringValueFromPropertyMap(rbMap, PROPERTIES_ZONEPROBABILITIES);
 		TableDataSet MGRAData = TableDataSet.readFile(mgraFactorsFile);
 		int numMGRAs = MGRAData.getRowCount();
 		mgraProdProbabilities = spatialDisaggregationModel.getSpatialProbabilities(MGRAData, numMGRAs, "Prods", marketSegment);
@@ -99,8 +97,7 @@ public class broadTODProcessing {
 		tazMap = spatialDisaggregationModel.getSpatialMap(MGRAData, numMGRAs, "taz");
 		mgraTAZMap = spatialDisaggregationModel.getSpatialMap(MGRAData, numMGRAs, "mgra");
 		
-		disaggNodePath = Util.getStringValueFromPropertyMap(rbMap, PROPERTIES_DISAGGPATHNODE);
-		String nodeFactorsFile = disaggNodePath + Util.getStringValueFromPropertyMap(rbMap, PROPERTIES_NODEPROBABILITIES);
+		String nodeFactorsFile = Util.getStringValueFromPropertyMap(rbMap, PROPERTIES_NODEPROBABILITIES);
 		TableDataSet NodeData = TableDataSet.readFile(nodeFactorsFile);
 		int numNodes = NodeData.getRowCount();
 		nodeProbabilities = spatialDisaggregationModel.getSpatialProbabilities(NodeData, numNodes, "Probability", null);
@@ -186,7 +183,9 @@ public class broadTODProcessing {
 						logger.info("TAZ    MGRA     Prob     cumProb     randomNumber");						
 					}
 					int origMGRA = spatialDisaggregationModel.selectMGRAfromTAZ(Trip.getOriginTaz(),mgraTAZMap,tazMap,mgraProdProbabilities,debug);
-					int destMGRA = spatialDisaggregationModel.selectMGRAfromTAZ(Trip.getOriginTaz(),mgraTAZMap,tazMap,mgraAttrProbabilities,debug);
+					
+					//looks like there was a big bug here...origin zone was being used for destination!
+					int destMGRA = spatialDisaggregationModel.selectMGRAfromTAZ(Trip.getDestinationTaz(),mgraTAZMap,tazMap,mgraAttrProbabilities,debug);
 					Trip.setOriginMGRA(origMGRA);
 					Trip.setDestinationMGRA(destMGRA);
 					if (origMGRA==0){

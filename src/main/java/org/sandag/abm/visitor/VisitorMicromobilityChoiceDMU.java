@@ -19,6 +19,8 @@ public class VisitorMicromobilityChoiceDMU
     private IndexValues                dmuIndex;
     protected int                      income;
     protected float walkTime;
+    protected boolean isTransit;
+    protected boolean microTransitAvailable;
 
  
     public VisitorMicromobilityChoiceDMU()
@@ -57,6 +59,21 @@ public class VisitorMicromobilityChoiceDMU
 		this.walkTime = walkTime;
 	}
 
+	public boolean isTransit() {
+		return isTransit;
+	}
+
+	public void setTransit(boolean isTransit) {
+		this.isTransit = isTransit;
+	}
+
+	public boolean isMicroTransitAvailable() {
+		return microTransitAvailable;
+	}
+
+	public void setMicroTransitAvailable(boolean microTransitAvailable) {
+		this.microTransitAvailable = microTransitAvailable;
+	}
 	public IndexValues getDmuIndexValues()
     {
         return dmuIndex;
@@ -73,6 +90,8 @@ public class VisitorMicromobilityChoiceDMU
 
         methodIndexMap.put("getIncome", 0);
         methodIndexMap.put("getWalkTime", 1);
+        methodIndexMap.put("getIsTransit", 3);
+        methodIndexMap.put("getMicroTransitAvailable", 4);
                
       }
 
@@ -86,6 +105,10 @@ public class VisitorMicromobilityChoiceDMU
         case 1:
             return getWalkTime();
 
+        case 3:
+        	return isTransit()? 1 : 0;
+        case 4:
+        	return isMicroTransitAvailable() ? 1 : 0;
         default:
             logger.error("method number = " + variableIndex + " not found");
             throw new RuntimeException("method number = " + variableIndex + " not found");

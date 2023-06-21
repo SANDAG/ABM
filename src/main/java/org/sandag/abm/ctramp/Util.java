@@ -1,5 +1,7 @@
 package org.sandag.abm.ctramp;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,6 +9,9 @@ import java.util.LinkedHashSet;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
+
+import com.pb.common.datafile.CSVFileReader;
+import com.pb.common.datafile.TableDataSet;
 
 public final class Util
         implements Serializable
@@ -345,6 +350,30 @@ public final class Util
 
         }
 
+    }
+    
+    /**
+     * REad a tabledataset from a CSV file and return it.
+     * 
+     * @param fileName
+     * @return
+     */
+    public static TableDataSet readTableDataSet(String fileName) {
+    	
+    	
+        TableDataSet tableData;
+
+        try
+        {
+            CSVFileReader csvFile = new CSVFileReader();
+            tableData = csvFile.readFile(new File(fileName));
+        } catch (IOException e)
+        {
+        	logger.fatal("Error trying to read table data set from csv file: "+ fileName);
+            throw new RuntimeException(e);
+        }
+
+    	return tableData;
     }
 
 }

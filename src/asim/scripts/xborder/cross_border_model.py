@@ -8,6 +8,9 @@ import openmatrix as omx
 import argparse
 import subprocess
 import itertools
+import warnings
+warnings.simplefilter(action='ignore', category=pd.errors.PerformanceWarning)
+
 
 
 def compute_poe_accessibility(
@@ -25,21 +28,12 @@ def compute_poe_accessibility(
 
 def get_poe_wait_times(settings):
 
-    data_dir = settings['data_dir']
     wait_times = pd.read_csv(
         os.path.join(data_dir, settings['poe_wait_times_input_fname']))
-    poes = list(settings['poes'].keys())
-    num_poes = len(poes)
+    num_poes = wait_times.poe.nunique()
     wait_times.rename(columns={
         'StandardWait': 'std_wait', 'SENTRIWait': 'sentri_wait',
         'PedestrianWait': 'ped_wait', 'ReadyWait': 'ready_wait'}, inplace=True)
-    # add new poes if exist
-    if num_poes > len(wait_times.poe.unique()):
-        for i in [i for i in range(0,num_poes) if i not in wait_times.poe.unique()]:
-            wait_time_dummy = wait_times[wait_times.poe == wait_times.poe.unique()[0]].copy()
-            wait_time_dummy[['std_wait','sentri_wait','ped_wait','ready_wait']] = 0
-            wait_time_dummy['poe'] = i
-            wait_times = wait_times.append(wait_time_dummy, ignore_index = True)
     start_hour_mask = wait_times['StartPeriod'] > 16
     wait_times.loc[start_hour_mask, 'StartHour'] = wait_times.loc[
         start_hour_mask, 'StartHour'] + 12
@@ -56,7 +50,7 @@ def get_poe_wait_times(settings):
     wait_times = wait_times.loc[
     wait_times.index.repeat(wait_times['num_hours'])]
     wait_times['asim_start_period'] = np.tile(
-        np.array([i for i in range(43,49)]+[i for i in range(1,43)]), num_poes)
+        np.array(range(1, 49)), num_poes)
 
     # pivot wide
     wait_times_wide = wait_times.pivot(
@@ -66,7 +60,7 @@ def get_poe_wait_times(settings):
         '_'.join([top, str(bottom)])
         for top, bottom in wait_times_wide.columns]
 
-    return wait_times_wide.fillna(0)
+    return wait_times_wide
 
 
 def create_tours(settings):
@@ -184,7 +178,6 @@ def _update_sparse_skims(
 
 def _rename_skims(settings, skim_type):
     
-    data_dir = settings['data_dir']
     skims_settings = settings['skims'][skim_type]
     periods = skims_settings.get('periods', [None])
     walk_speed = settings['walk_speed']
@@ -209,16 +202,16 @@ def _rename_skims(settings, skim_type):
         output_skims = omx.open_file(
             os.path.join(data_dir, output_fname), 'a')
 
-        for skims_name in output_skims.list_matrices():
-            name_elems = skims_name.split('_')
-            new_name = '_'.join(name_elems[1:]) + '__' + name_elems[0]
-            output_skims[skims_name].rename(new_name)
+        # for skims_name in output_skims.list_matrices():
+            # name_elems = skims_name.split('_')
+            # new_name = '_'.join(name_elems[1:]) + '__' + name_elems[0]
+            # output_skims[skims_name].rename(new_name)
 
-        if period == 'MD':
-            output_skims.create_matrix(
-                'walkTime', obj=output_skims['SOV_NT_M_DIST__MD'][:, :])
-            output_skims['walkTime'][:, :] = output_skims[
-                'walkTime'][:, :] / walk_speed * 60
+        # if period == 'MD':
+            # output_skims.create_matrix(
+                # 'walkTime', obj=output_skims['SOV_NT_M_DIST__MD'][:, :])
+            # output_skims['walkTime'][:, :] = output_skims[
+                # 'walkTime'][:, :] / walk_speed * 60
 
         skims.close()
         output_skims.close()
@@ -226,74 +219,39 @@ def _rename_skims(settings, skim_type):
     return
 
 
-def create_taps_tap_lines(settings):
-    
-    skims_settings = settings['skims']
-    data_dir = settings['data_dir']
-
-    transit_skims = omx.open_file(os.path.join(
-        data_dir, skims_settings['tap_to_tap']['input_fname']), 'a')
-    all_taps = pd.DataFrame(
-        pd.Series(list(transit_skims.root.lookup.zone_number)))
-    all_taps.columns = ['TAP']
-    all_taps.to_csv(
-        os.path.join(data_dir, settings['taps_output_fname']), index=False)
-    tap_lines = pd.read_csv(
-        os.path.join(data_dir, settings['tap_lines_input_fname']))
-    tap_lines.to_csv(
-        os.path.join(data_dir, settings['tap_lines_output_fname'])) 
-
-    transit_skims.close()
-
-    return
-
-
 def create_skims_and_tap_files(settings, new_mazs=None):
 
     skims_settings = settings['skims']
-    data_dir = settings['data_dir']
 
     # create taps files and transit skims
     print('Creating tap files.')
-    transit_skims = omx.open_file(os.path.join(
-        data_dir, skims_settings['tap_to_tap']['input_fname']), 'a')
-    all_taps = pd.DataFrame(
-        pd.Series(list(transit_skims.root.lookup.zone_number)))
-    all_taps.columns = ['TAP']
-    all_taps.to_csv(
-        os.path.join(data_dir, settings['taps_output_fname']), index=False)
-    tap_lines = pd.read_csv(
-        os.path.join(data_dir, settings['tap_lines_input_fname']))
-    tap_lines.to_csv(
-        os.path.join(data_dir, settings['tap_lines_output_fname']))
-    transit_skims.close()
+    # transit_skims = omx.open_file(os.path.join(
+        # data_dir, skims_settings['tap_to_tap']['input_fname']), 'a')
+    # all_taps = pd.DataFrame(
+        # pd.Series(list(transit_skims.root.lookup.zone_number)))
+    # all_taps.columns = ['TAP']
+    # all_taps.to_csv(
+        # os.path.join(data_dir, settings['taps_output_fname']), index=False)
+    # tap_lines = pd.read_csv(
+        # os.path.join(data_dir, settings['tap_lines_input_fname']))
+    # tap_lines.to_csv(
+        # os.path.join(data_dir, settings['tap_lines_output_fname']))
+    # transit_skims.close()
     
     
     # update skims/network data
     print('Updating maz-to-maz skims.')
     _update_sparse_skims(
         skims_settings['maz_to_maz']['walk'],
-        data_dir=settings['data_dir'],
+        data_dir=data_dir,
         new_mazs=new_mazs)
     
-    print('Updating maz-to-tap skims.')
-    _update_sparse_skims(
-        skims_settings['maz_to_tap']['walk'],
-        data_dir=settings['data_dir'],
-        filter_col='TAP',
-        filter_list=all_taps.TAP.values,
-        new_mazs=new_mazs)
-    
-    # rename transit and auto skims
-    print('Renaming skim keys')
-    for skim_type in ['tap_to_tap', 'taz_to_taz']:
-        _rename_skims(settings, skim_type)
 
 
 def create_stop_freq_specs(settings):
     print("Creating stop frequency alts and probability lookups.")
     probs_df = pd.read_csv(os.path.join(
-        settings['data_dir'], settings['stop_frequency_input_fname']))
+        data_dir, settings['stop_frequency_input_fname']))
 
     # drop cargo
     if probs_df['Purpose'].max() == 5:
@@ -311,7 +269,7 @@ def create_stop_freq_specs(settings):
     # write out alts table
     alts_df = probs_df.drop_duplicates(['out','in','alt'])[['alt','out','in']]
     alts_df.to_csv(os.path.join(
-        settings['config_dir'], settings['stop_frequency_alts_output_fname']),
+        config_dir, settings['stop_frequency_alts_output_fname']),
         index=False)
 
     purpose_id_map = settings['tours']['purpose_ids']
@@ -332,7 +290,7 @@ def create_stop_freq_specs(settings):
             'stop_frequency_coeffs_output_formattable_fname'].format(
             purpose=purpose)
         coeffs_file.to_csv(
-            os.path.join(settings['config_dir'], coeffs_file_fname),
+            os.path.join(config_dir, coeffs_file_fname),
             index=False)
 
         alt_cols = alts_df['alt'].tolist()
@@ -354,7 +312,7 @@ def create_stop_freq_specs(settings):
             'stop_frequency_expressions_output_formattable_fname'].format(
             purpose=purpose)
         expr_file.to_csv(os.path.join(
-            settings['config_dir'], expr_file_fname.format(purpose)),
+            config_dir, expr_file_fname.format(purpose)),
             index=False)
 
     return
@@ -363,7 +321,7 @@ def create_stop_freq_specs(settings):
 def update_trip_purpose_probs(settings):
     print("Creating trip purpose probability lookup table.")
     probs_df = pd.read_csv(os.path.join(
-        settings['data_dir'], settings['trip_purpose_probs_input_fname']))
+        data_dir, settings['trip_purpose_probs_input_fname']))
     purpose_id_map = settings['tours']['purpose_ids']
     purp_id_to_name = {v: k for k, v in purpose_id_map.items()}
 
@@ -389,7 +347,7 @@ def update_trip_purpose_probs(settings):
         ['primary_purpose','outbound', 'trip_num', 'multistop'] + [
         purp for purp in purpose_id_map.keys()]]
     probs_df.to_csv(os.path.join(
-        settings['config_dir'], settings['trip_purpose_probs_output_fname']),
+        config_dir, settings['trip_purpose_probs_output_fname']),
         index=False)
 
     return
@@ -397,8 +355,6 @@ def update_trip_purpose_probs(settings):
 
 def create_trip_scheduling_duration_probs(settings, los_settings):
     print("Creating trip scheduling probability lookup table.")
-    data_dir = settings['data_dir']
-    config_dir = settings['config_dir']
     period_settings = los_settings['skim_time_periods']
     num_asim_periods = int(
         period_settings['time_window'] / period_settings['period_minutes'])
@@ -440,12 +396,10 @@ def create_trip_scheduling_duration_probs(settings, los_settings):
 
 
 def create_land_use_file(
-        settings, maz_id_field='mgra', poe_id_field='poe_id',
+        settings, maz_id_field='MAZ', poe_id_field='poe_id',
         poe_access_field='colonia_pop_accessibility', colonia_pop_field='Population'):
 
     print('Creating land use (maz) table.')
-
-    data_dir = settings['data_dir']
     maz_input_fname = settings['maz_input_fname']
     colonia_input_fname = settings['colonia_input_fname']
     distance_param = settings['distance_param']
@@ -457,11 +411,12 @@ def create_land_use_file(
     mazs['original_MAZ'] = -1
     mazs['external_TAZ'] = -1
     mazs['external_MAZ'] = -1
-
+    print(len(mazs))
     # update maz table
     for poe_id, poe_attrs in settings['poes'].items():
-
+        # print("working on POE {}".format(poe_id))
         # get poe id for maz's that have one
+        # print(poe_attrs['maz_id'])
         maz_mask = mazs[maz_id_field] == poe_attrs['maz_id']
         mazs.loc[maz_mask, poe_id_field] = poe_id
         mazs.loc[maz_mask, 'external_TAZ'] = poe_attrs['ext_taz_id']
@@ -479,11 +434,11 @@ def create_land_use_file(
         row['external_TAZ'] = -1
         row['external_MAZ'] = -1
         mazs.loc[maz_mask, 'external_MAZ'] = row[maz_id_field]
-        row['taz'] = poe_attrs['ext_taz_id']
+        row['TAZ'] = poe_attrs['ext_taz_id']
         row[poe_id_field] = poe_id
-        row['original_MAZ'] = mazs.loc[maz_mask, 'mgra']
+        row['original_MAZ'] = mazs.loc[maz_mask, 'MAZ']
         mazs = mazs.append(row, ignore_index=True)
-
+    print(len(mazs))
     # compute colonia accessibility for poe mazs
     mazs[poe_access_field] = None
     poe_mask = mazs[poe_id_field] >= 0
@@ -492,19 +447,12 @@ def create_land_use_file(
             compute_poe_accessibility, colonias=colonias,
             colonia_pop_field=colonia_pop_field,
             distance_param=distance_param)
-    mazs = mazs.rename(columns={'mgra': 'MAZ', 'taz': 'TAZ'})
-    maz_dtypes = mazs.dtypes
-    #add external stations if not exist
-    for i in range(1,13):
-        if i not in mazs.TAZ.unique():
-            mazs = mazs.append(pd.Series({'MAZ': int(mazs.MAZ.max())+1, 'TAZ':int(i)}),ignore_index = True)
-    mazs = mazs.fillna(0)
-    # mazs['MAZ'] = mazs['MAZ'].astype(np.int64)
-    mazs = mazs.sort_values('TAZ') # to ensure output matrices go in the correct order
-    for col in mazs.columns:
-        mazs[col] = mazs[col].astype(maz_dtypes[col])
+
     # merge in wide wait times
     wide_wait_times = get_poe_wait_times(settings)
+    print(wide_wait_times.columns)
+    print(mazs.poe_id.unique())
+    
     mazs = pd.merge(
         mazs, wide_wait_times, left_on='poe_id', right_on='poe', how='left')
 
@@ -514,8 +462,7 @@ def create_land_use_file(
 def create_scheduling_probs_and_alts(settings, los_settings):
 
     print("Creating tour scheduling probability lookup and alts tables.")
-    config_dir = settings['config_dir']
-    data_dir = settings['data_dir']
+
     input_fname = settings['tour_scheduling_probs_input_fname']
     output_probs_fname = settings['tour_scheduling_probs_output_fname']
     output_alts_fname = settings['tour_scheduling_alts_output_fname']
@@ -720,6 +667,7 @@ def create_scheduling_probs_and_alts(settings, los_settings):
         check_names=False, check_dtype=False)
     
     # pivot wide
+    print(asim_scheduling_probs.columns)
     asim_scheduling_probs = asim_scheduling_probs.pivot(
         index='purpose_id',
         columns=['asim_entry_period', 'asim_return_period'],
@@ -747,24 +695,6 @@ def assign_hh_p_to_tours(tours, persons):
 
     return tours
 
-def weighted_rmse(series1, series2, weights):
-    return np.sqrt(np.sum((series2-series1)**2*weights)/len(series1))
-
-def order_skim(skim_file,maxzone):
-    skim = omx.open_file(skim_file)
-    lookup = skim.mapping(skim.list_mappings()[0])
-    matarray = []
-    name = []
-    order = [lookup[i] for i in range(1,maxzone)]
-    for mat in skim.list_matrices():
-        matarray.append(np.array(skim[mat]))
-        name.append(mat)
-    skim.close()
-    new_file = omx.open_file(skim_file,'w')    
-    for i in range(len(name)):
-        new_file[name[i]] = matarray[i]
-    new_file.create_mapping('TAZ',np.arange(1,4997))
-    new_file.close()
 
 if __name__ == '__main__':
 
@@ -780,77 +710,50 @@ if __name__ == '__main__':
         '-a', '--asim',
         action='store_true', help='Run activitysim.')
     parser.add_argument(
-        '-c' '--configs', action = 'append',
-        help='Set config path(s)')
+         '-c', '--configs',
+         help = 'Config Directory')
+    parser.add_argument(
+         '-d', '--data',
+         help = 'Input Directory')
+    parser.add_argument(
+         '-o', '--output',
+         help = 'Output Directory')
     
     args = parser.parse_args()
-    update_wait_times = args.wait_times
     run_preprocessor = args.preprocess
     run_asim = args.asim
-    config_paths = args.c__configs
-    print(config_paths)
+    update_wait_times = args.wait_times
+    config_dir = args.configs
+    data_dir = args.data
+    output_dir = args.output
 
     # load settings
-    for x in config_paths:
-        try:
-            with open(os.path.join(x, 'preprocessing.yaml')) as f:
-                settings = yaml.load(f, Loader=yaml.FullLoader)
-                data_dir = settings['data_dir']
-                #config_dir = settings['config_dir']
-                config_dir = x
-        except FileNotFoundError:
-            pass
-        try:
-            with open(os.path.join(x, 'network_los.yaml')) as f:
-                los_settings = yaml.load(f, Loader=yaml.FullLoader)
-        except FileNotFoundError:
-            pass
-        try:
-            #read in tour_scheduling settings to get probabilities for wait time convergence weights
-            with open(os.path.join(x, 'tour_scheduling_probabilistic.yaml')) as f:
-                scheduling_settings = yaml.load(f, Loader=yaml.FullLoader)
-                sched_probs = scheduling_settings['PROBS_SPEC']
-        except FileNotFoundError:
-            pass
-        try:
-            #read in write matrices for filename if needed to re-order output matrices
-            with open(os.path.join(x, 'write_trip_matrices.yaml')) as f:
-                output_matrix = yaml.load(f, Loader=yaml.FullLoader)
-                omx_file_list = output_matrix['MATRICES']
-                omx_file_list = [omx['file_name'] for omx in omx_file_list]
-        except FileNotFoundError:
-            pass
+    with open(os.path.join(config_dir,'preprocessing.yaml')) as f:
+        settings = yaml.load(f, Loader=yaml.FullLoader)
+
+    with open(os.path.join(config_dir, 'network_los.yaml')) as f:
+        los_settings = yaml.load(f, Loader=yaml.FullLoader)
+
     if run_preprocessor:
         print('RUNNING PREPROCESSOR!')
 
         # create input data
         mazs = create_land_use_file(settings)
         new_mazs = mazs[mazs['original_MAZ'] > 0]
-        tours = create_tours(settings)
-        households = create_households(settings)  # 1 per tour
-        persons = create_persons(settings, num_households=len(households))
-        tours = assign_hh_p_to_tours(tours, persons)
 
         # # store input files to disk
         mazs.to_csv(os.path.join(
             data_dir, settings['mazs_output_fname']), index=False)
-        tours.to_csv(os.path.join(
-            data_dir, settings['tours_output_fname']))
-        households.to_csv(os.path.join(
-            data_dir, settings['households_output_fname']), index=False)
-        persons.to_csv(os.path.join(
-            data_dir, settings['persons_output_fname']), index=False)
 
         # create/update configs in place
-        # create_scheduling_probs_and_alts(settings, los_settings)
+        create_scheduling_probs_and_alts(settings, los_settings)
         # create_skims_and_tap_files(settings, new_mazs)
-        # create_stop_freq_specs(settings)
-        # update_trip_purpose_probs(settings)
-        # create_trip_scheduling_duration_probs(settings, los_settings)
+        create_stop_freq_specs(settings)
+        update_trip_purpose_probs(settings)
+        create_trip_scheduling_duration_probs(settings, los_settings)
 
     if update_wait_times:
-        convergeRMSE = 0.65
-        waitRMSE = 100        
+
         # load settings
         wait_time_settings = settings['wait_time_updating']
         period_settings = los_settings['skim_time_periods']
@@ -897,37 +800,19 @@ if __name__ == '__main__':
         all_vol_dfs = []
         
         num_iters = wait_time_settings['iters'] + 1
-        sched_weights = pd.read_csv(os.path.join(config_dir, sched_probs))
-        sched_weights = sched_weights.set_index('purpose_id').T.reset_index()
-        sched_weights['start'] = sched_weights['index'].map(lambda n: n.split('_')[0])
-        sched_weights = sched_weights.drop('index',axis = 1).groupby('start').sum()
-        sched_weights = sched_weights.T
-        sched_weights = sched_weights/5
-        sched_weights.loc['total'] = sched_weights.sum()
-        sched_weights = sched_weights.loc['total'][['{}'.format(i) for i in range(1,49)]]
-        operated_iters = -1
         for i in range(1, num_iters):
-            print('RMSE fit: {}'.format(waitRMSE))
-            if waitRMSE <= convergeRMSE:
-                print("wait times have converged")
-                operated_iters = i
-                break
-            if i == (num_iters - 1):
-                print("iteration limit reached, wait times are not converged!")
-                operated_iters = i
+
             print('UPDATING POE WAIT TIMES: ITER {0}'.format(i))
             process = subprocess.Popen([
-                    'python', '-u', 'src\\asim\\simulation.py', 
-                    '-c', config_dir, 
-                    '-d', data_dir, 
-                    '-o' , "C:\\ABM_runs\\abm3_dev\\run_dir\\op_2z_xb", #FIXME,
-                    '--settings_file', 'wait_time_mode.yaml'],
+                    'python', '-u', 'src/asim/simulation.py', '-s',
+                    'wait_time_mode.yaml', '-c', config_dir ,'-o', output_dir, '-d', data_dir, '-d', 'output/skims'],
                 stdout=sys.stdout, stderr=subprocess.PIPE)
             _, stderr = process.communicate()
             if process.returncode != 0:
                 raise subprocess.SubprocessError(stderr.decode())
+            
             # compute crossing volume from tour POEs
-            tours = pd.read_csv(os.path.join(settings['output_dir'], 'wait_time_tours.csv'))
+            tours = pd.read_csv(output_dir + '/wait_time_tours.csv')
             tours['lane_type'] = tours['pass_type'].copy()
             tours['lane_type'] = tours['lane_type'].replace('no_pass', 'std')
             tours.loc[tours['tour_mode'] == 'WALK', 'lane_type'] = 'ped'
@@ -951,8 +836,8 @@ if __name__ == '__main__':
             # compute dummies
             vol_df['otay'] = (vol_df['name'] == 'Otay Mesa').astype(int)
             vol_df['tecate'] = (vol_df['name'] == 'Tecate').astype(int)
-            vol_df['EA'] = (vol_df['start'] <= 6).astype(int)
-            vol_df['EV'] = (vol_df['start'] > 32).astype(int)
+            vol_df['EA'] = (vol_df['start'] <= 11).astype(int)
+            vol_df['EV'] = (vol_df['start'] > 37).astype(int)
 
             # data matrix
             x = np.zeros((num_obs, len(coef_df.columns)))
@@ -1007,8 +892,8 @@ if __name__ == '__main__':
                 col for col in new_wait_times_wide.columns if
                 ('sentri' in col) or
                 ('ready' in col) or
-                (int(col.split('_')[-1]) < 5) or
-                ((int(col.split('_')[-1]) > 40))]
+                (int(col.split('_')[-1]) < 11) or
+                ((int(col.split('_')[-1]) > 46))]
 
             # otay mesa east has to ped lane
             unavail_om_east_cols = [
@@ -1021,63 +906,37 @@ if __name__ == '__main__':
 
             if 2 in new_wait_times_wide.index.values:
                 new_wait_times_wide.loc[2, unavail_tecate_cols] = 999
-                #set tecate sentri/ready lane wait to same as standard weight  #--added by Hannah Carson 2/18/2022
-                new_wait_times_wide.loc[2, [col for col in new_wait_times_wide.columns if 'sentri' in col]] = list(new_wait_times_wide.loc[2][[col for col in new_wait_times_wide.columns if 'std' in col]])
-                new_wait_times_wide.loc[2, [col for col in new_wait_times_wide.columns if 'ready' in col]] = list(new_wait_times_wide.loc[2][[col for col in new_wait_times_wide.columns if 'std' in col]])
+            
             if 3 in new_wait_times_wide.index.values:
                 new_wait_times_wide.loc[3, unavail_om_east_cols] = 999
             
             if 4 in new_wait_times_wide.index.values:
                 new_wait_times_wide.loc[4, unavail_jacumba_cols] = 999
 
-            #if standard wait is shorter than SENTRI/Ready, use standard wait
-            def min_wait(df, lane = 'SENTRI', period = 1):
-                std_wait = df['std_wait_{}'.format(period)]
-                pass_wait = df['{}_wait_{}'.format(lane, period)]
-                if std_wait < pass_wait:
-                    return std_wait
-                else:
-                    return pass_wait
-            for j in range(1,49):
-                for lane in ['sentri','ready']:
-                    new_wait_times_wide['{}_wait_{}'.format(lane, j)] = new_wait_times_wide.apply(min_wait, args = (lane, j), axis = 1)
             all_vol_dfs.append(vol_df)
-            #ASR: This has got to be the problem - dropping ready pass(?) here
             all_wait_times.append(new_wait_times_wide)
             mazs = mazs[[
                 col for col in mazs.columns
                 if col not in wait_times_wide.columns]]
             mazs = pd.merge(
-                mazs, new_wait_times_wide, left_on='poe_id', right_index=True,
+                mazs, wait_times_wide, left_on='poe_id', right_index=True,
                 how='left')
             mazs.to_csv(os.path.join(
                 data_dir, settings['mazs_output_fname']), index=False)
-            if i > 1:
-                prev_iter = all_vol_dfs[i -2]
-                diff = prev_iter[['poe_id','lane_type','start','vol','wait_time']].merge(vol_df[['poe_id','lane_type','start','vol','wait_time']], how = 'outer', on = ['poe_id','lane_type','start'], suffixes = ['','_iter'])
-                diff['start'] = diff['start'].astype(str)
-                diff = diff.merge(pd.DataFrame(sched_weights).reset_index(), how = 'left', on = 'start')
-                waitRMSE = weighted_rmse(diff['wait_time'],diff['wait_time_iter'],diff['total'])
-                volRMSE = weighted_rmse(diff['vol'],diff['vol_iter'],diff['total'])
-                waitRMSE = min(waitRMSE, volRMSE)
-            print("waitRMSE iter {}".format(i),waitRMSE)
-        all_wait_times = pd.concat(all_wait_times)
-        all_wait_times['iter'] = np.array(range(0, operated_iters + 1)).repeat(
-            all_wait_times.index.nunique())
-        all_wait_times.to_csv(os.path.join(settings['data_dir'], 'all_wait_times.csv'))
 
-        pd.concat(all_vol_dfs).to_csv(os.path.join(settings['data_dir'], 'all_vol_dfs.csv'))
+        all_wait_times = pd.concat(all_wait_times)
+        all_wait_times['iter'] = np.array(range(0, num_iters)).repeat(
+            all_wait_times.index.nunique())
+        all_wait_times.to_csv(data_dir + '/all_wait_times.csv')
+
+        pd.concat(all_vol_dfs).to_csv(data_dir + '/all_vol_dfs.csv')
 
     if run_asim:
 
         print('RUNNING ACTIVITYSIM!')
         process = subprocess.Popen(
-            ['python', '-u', 'simulation.py'],
+            ['python', '-u', 'src/asim/simulation.py', '-c', config_dir ,'-o', output_dir, '-d', data_dir, '-d', 'output/skims'],
             stdout=sys.stdout, stderr=subprocess.PIPE)
         _, stderr = process.communicate()
         if process.returncode != 0:
             raise subprocess.SubprocessError(stderr.decode())
-        # post process matrices
-        maxzone = pd.read_csv(os.path.join('./data',settings['mazs_output_fname'])).TAZ.max()
-        for file in omx_file_list:
-            order_skim(os.path.join('./output',file),maxzone)
