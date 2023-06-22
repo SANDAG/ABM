@@ -16,6 +16,9 @@ NESTS:
         alternatives:
           - WALK
           - BIKE
+      - name: MICROMOBILITY
+        coefficient: coef_nest_MICROMOBILITY
+        alternatives:
           - EBIKE
           - ESCOOTER
       - name: TRANSIT

@@ -4,6 +4,7 @@ coef_one,1,T
 coef_nest_root,1,T
 coef_nest_AUTO,0.5,T
 coef_nest_NONMOTORIZED,0.5,T
+coef_nest_MICROMOBILITY,0.5,T
 coef_nest_TRANSIT,0.5,T
 coef_nest_RIDEHAIL,0.5,T
 coef_nest_SCHOOL_BUS,0.5,T
@@ -1416,3 +1417,15 @@ coef_calib_tourwalk_WALK_TRANSIT_atwork,-999,F
 coef_calib_tourwalk_TAXI_atwork,-999,F
 coef_calib_tourwalk_TNC_SINGLE_atwork,-999,F
 coef_calib_tourwalk_TNC_SHARED_atwork,-999,F
+coef_calib_tourmicromobilityjointtour0_WALK_disc,0,F
+coef_calib_tourmicromobilityjointtour0_WALK_maint,0,F
+coef_calib_tourmicromobilityjointtour1_WALK_disc,0,F
+coef_calib_tourmicromobilityjointtour1_WALK_maint,0,F
+coef_calib_tourmicromobilityjointtour0_EBIKE_disc,0,F
+coef_calib_tourmicromobilityjointtour0_EBIKE_maint,0,F
+coef_calib_tourmicromobilityjointtour1_EBIKE_disc,0,F
+coef_calib_tourmicromobilityjointtour1_EBIKE_maint,0,F
+coef_calib_tourmicromobilityjointtour0_ESCOOTER_disc,0,F
+coef_calib_tourmicromobilityjointtour0_ESCOOTER_maint,0,F
+coef_calib_tourmicromobilityjointtour1_ESCOOTER_disc,0,F
+coef_calib_tourmicromobilityjointtour1_ESCOOTER_maint,0,F

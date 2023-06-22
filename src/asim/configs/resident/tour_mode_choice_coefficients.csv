@@ -4,6 +4,7 @@ coef_one,1,T
 coef_nest_root,1,T
 coef_nest_AUTO,0.5,T
 coef_nest_NONMOTORIZED,0.5,T
+coef_nest_MICROMOBILITY,0.5,T
 coef_nest_TRANSIT,0.5,T
 coef_nest_RIDEHAIL,0.5,T
 coef_nest_SCHOOL_BUS,0.5,T
