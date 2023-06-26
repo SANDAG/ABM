@@ -56,7 +56,7 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration
     
     protected final String                                                 PROPERTIES_TRACE_OUTPUTASSIGNMENTPATHS       = "active.trace.outputassignmentpaths";
 
-    protected String                                                       PROPERTIES_MAXDIST_ZONE;
+    protected double                                                       PROPERTIES_MAXDIST_ZONE;
     protected String                                                       PROPERTIES_TRACE_ORIGINS;
 
     protected Map<Integer, Map<Integer, Double>>                           nearbyZonalDistanceMap;
@@ -234,7 +234,7 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration
             }
             System.out.println("Calculating nearby Zonal Distance Map");
             ShortestPathResultSet<SandagBikeNode> resultSet = sps.getShortestPaths(originNodes,
-                    destinationNodes, Double.parseDouble(propertyMap.get(PROPERTIES_MAXDIST_ZONE)));
+                    destinationNodes, PROPERTIES_MAXDIST_ZONE);
             int originZone, destinationZone;
             for (NodePair<SandagBikeNode> odPair : resultSet)
             {

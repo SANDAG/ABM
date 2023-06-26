@@ -7,7 +7,7 @@
 
 # Specify data to extract and load
 extract:
-    - filepath: "C:/ABM3_dev/ABM/src/asim/visualizer/output"
+    - filepath: "../../../../output/resident"
       test_size:
       data:
           - "final_households.csv"
@@ -15,15 +15,16 @@ extract:
           - "final_tours.csv"
           - "final_trips.csv"
           - "final_joint_tour_participants.csv"
-    - filepath: "C:/ABM3_dev/ABM/src/asim/visualizer/data"
+          - "final_vehicles.csv"
+    - filepath: "../../../../input"
       test_size:
       data:
           - "land_use.csv"
-          - "traffic_skims_MD.omx"
-    - filepath: "C:/ABM3_dev/ABM/src/asim/visualizer/visualizer/data"
+          - "occFactors.csv"
+    - filepath: "../../../../output/skims"
       test_size:
       data:
-          - "occFactors.csv"
+          - "traffic_skims_MD.omx"
 
 # Specify transformation steps
 transform:

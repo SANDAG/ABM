@@ -1,6 +1,6 @@
 # misc settings
-data_dir: data
-config_dir: configs\airport.cbx
+data_dir: input
+config_dir: src\asim\configs\airport.cbx
 # distance_param: -0.19
 # walk_speed: 3
 

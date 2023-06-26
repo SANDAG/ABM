@@ -25,3 +25,6 @@ REM run the java code
 
 REM summarize model outputs
 python %SCEN_DIR%\python\sdcvm_summarize.py -p %SCEN_DIR%
+
+REM checking for CVM outputs
+call %PROJECT_DIRECTORY%\bin\CheckOutput.bat %PROJECT_DIRECTORY% CVM

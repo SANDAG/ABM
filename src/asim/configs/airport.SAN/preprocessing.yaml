@@ -1,5 +1,5 @@
 # misc settings
-data_dir: data
+data_dir: ..\..\input
 config_dir: configs\airport.san
 # distance_param: -0.19
 # walk_speed: 3

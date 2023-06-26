@@ -105,7 +105,8 @@ public class AirportTripTables
     int[] votBins = {3,1,1,1};
     
     public int numSkimSets;
-
+    
+    private int privateTransitMode;
 
     public float getSampleRate() {
 		return sampleRate;
@@ -132,6 +133,8 @@ public class AirportTripTables
         modeIndex = new int[modelStructure.MAXIMUM_TOUR_MODE_ALT_INDEX + 1];
         matrixIndex = new int[modeIndex.length];
         numSkimSets = Util.getIntegerValueFromPropertyMap(rbMap,"utility.bestTransitPath.skim.sets");
+        
+        privateTransitMode = Util.getIntegerValueFromPropertyMap(rbMap,"airport.SAN.private.transit.trip.mode.code");
 
         // set the mode arrays
         for (int i = 1; i < modeIndex.length; ++i)
@@ -340,6 +343,11 @@ public class AirportTripTables
             float valueOfTime = tripData.getValueAt(i,valueOfTimeCol);
 
             int tripMode = (int) tripData.getValueAt(i, "tripMode");
+            
+            // if trip mode is private transit, then do not write out to trip table
+            if (tripMode == privateTransitMode){
+            	continue;
+            }
 
             int originTAZ = (int)tripData.getValueAt(i,"originTaz");
             int destinationTAZ = (int)tripData.getValueAt(i,"destinationTaz");

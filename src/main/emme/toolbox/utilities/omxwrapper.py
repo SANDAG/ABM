@@ -20,9 +20,10 @@ try:
 
     def open_file(file_path, mode):
         return OmxMatrix(_omx.open_file(file_path, mode))
+    
 except Exception, e:
     import omx as _omx
-
+    
 
     def open_file(file_path, mode):
         return OmxMatrix(_omx.openFile(file_path, mode))
