@@ -14,7 +14,7 @@ public class SandagBikeMgraPathAlternativeListGenerationConfiguration
             Network<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal> network)
     {
         super(propertyMap, network);
-        this.PROPERTIES_MAXDIST_ZONE = "active.maxdist.bike.mgra";
+        this.PROPERTIES_MAXDIST_ZONE = Double.parseDouble(propertyMap.get("active.maxdist.bike.mgra"));
         this.PROPERTIES_TRACE_ORIGINS = "active.trace.origins.mgra";
     }
 

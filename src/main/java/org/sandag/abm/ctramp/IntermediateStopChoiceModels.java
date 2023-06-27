@@ -1183,7 +1183,7 @@ public class IntermediateStopChoiceModels
 	                    else {
 	                        
                         	//pick transit path from N-paths
-                        	float rn = (float)household.getHhRandom().nextDouble();
+                        	double rn = household.getHhRandom().nextDouble();
                         	int pathindex = logsumHelper.chooseTripPath(rn, segmentIkBestTapPairs[selectedIndex][accEgr], household.getDebugChoiceModels(), smcLogger);
                         	
                             stop.setBoardTap( (int)segmentIkBestTapPairs[selectedIndex][accEgr][pathindex][0] );
@@ -1503,8 +1503,21 @@ public class IntermediateStopChoiceModels
                         check = System.nanoTime();
 
                         selectedIndex = selectDestinationWithTiming(stop,departPeriodToStop,departPeriodFromStop);
-                        choice = finalSample[selectedIndex];
-                        stop.setDest(choice);
+                        //close small probability logical hole, reset stop destination as intrazonal stop,  log out reset cases
+                        if(selectedIndex<0) {
+                        	selectedIndex=0;
+                        	choice=origMgra;
+                        	stop.setDest(choice);
+                        	modeAlt=tour.getTourModeChoice();
+                        	modeLogsum=0;
+                        	logger.warn("Stop ID"+stop.id+" :destination set as intrazonal stop");
+                        }else {
+                        	choice = finalSample[selectedIndex];
+                        	stop.setDest(choice);
+                            modeAlt = selectModeFromProbabilities(stop,
+                                    mcCumProbsSegmentIk[selectedIndex]);
+                            modeLogsum = (float) mcLogsumsSegmentIk[selectedIndex];
+                        }
 
                         if (sampleMgraInAlightingTapShed[choice])
                             earlierTripWasLocatedInAlightingTapShed = true;
@@ -1551,9 +1564,11 @@ public class IntermediateStopChoiceModels
                         }
 
                         check = System.nanoTime();
+                        /*
                         modeAlt = selectModeFromProbabilities(stop,
                                 mcCumProbsSegmentIk[selectedIndex]);
                         modeLogsum = (float) mcLogsumsSegmentIk[selectedIndex];
+                        */
 
                         if (modeAlt < 0)
                         {
@@ -1642,7 +1657,7 @@ public class IntermediateStopChoiceModels
 	                    else {
 	                    	
 	                    	//pick transit path from N-paths
-                        	float rn = (float)household.getHhRandom().nextDouble();
+                        	double rn = household.getHhRandom().nextDouble();
                         	int pathindex = logsumHelper.chooseTripPath(rn, segmentIkBestTapPairs[selectedIndex][accEgr], household.getDebugChoiceModels(), smcLogger);
                         	
                             stop.setBoardTap( (int)segmentIkBestTapPairs[selectedIndex][accEgr][pathindex][0] );
@@ -1699,9 +1714,16 @@ public class IntermediateStopChoiceModels
                     	}
                     }
                     check = System.nanoTime();
-                    modeAlt = selectModeFromProbabilities(stop,
-                            mcCumProbsSegmentKj[oldSelectedIndex]);
-                    modeLogsum = (float) mcLogsumsSegmentKj[oldSelectedIndex];
+                    //Wu added
+                    if(mcCumProbsSegmentKj[oldSelectedIndex]!=null&&mcLogsumsSegmentKj!=null) {
+	                    modeAlt = selectModeFromProbabilities(stop,
+	                            mcCumProbsSegmentKj[oldSelectedIndex]);
+	                    modeLogsum = (float) mcLogsumsSegmentKj[oldSelectedIndex];
+                    }else {
+	                    modeAlt = tour.getTourModeChoice();
+	                    modeLogsum = 0; 
+	                    logger.warn("Stop ID"+stop.id+" :mode and mode logsum reset.");
+                    }
 
                     if (modeAlt < 0)
                     {

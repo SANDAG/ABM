@@ -29,12 +29,24 @@ public class AirportParty
     private byte            arrivalMode;
     
     private float           valueOfTime;
+    
+    private int				airportAccessMGRA;
+    private int				airportAccessTAZ;
+    
+    private double[][]		APtoTermBestWtwTapPairs;
+	private int				AP2TerminalTransitMode;
 
     private int     boardTap;
     private int     alightTap;
     private int     set = -1;
+    
+    private int		AP2TerminalBoardTap;
+	private int     AP2TerminalAlightTap;
+    private int     AP2TerminalSet = -1;
 
     private boolean avAvailable;
+    
+    private boolean APHasPublicTransit;
     /**
      * Public constructor.
      * 
@@ -165,6 +177,22 @@ public class AirportParty
     {
         this.originMGRA = originMGRA;
     }
+    
+    public int getAirportAccessMGRA() {
+		return airportAccessMGRA;
+	}
+
+	public void setAirportAccessMGRA(int airportAccessMGRA) {
+		this.airportAccessMGRA = airportAccessMGRA;
+	}
+	
+	public int getAirportAccessTAZ() {
+		return airportAccessTAZ;
+	}
+
+	public void setAirportAccessTAZ(int airportAccessTAZ) {
+		this.airportAccessTAZ = airportAccessTAZ;
+	}
 
     /**
      * @return the trip mode
@@ -317,5 +345,54 @@ public class AirportParty
 	public void setAvAvailable(boolean avAvailable) {
 		this.avAvailable = avAvailable;
 	}
+	
+	public double[][] getAPtoTermBestWtwTapPairs() {
+		return APtoTermBestWtwTapPairs;
+	}
+
+	public void setAPtoTermBestWtwTapPairs(double[][] aPtoTermBestWtwTapPairs) {
+		APtoTermBestWtwTapPairs = aPtoTermBestWtwTapPairs;
+	}
+
+	public int getAP2TerminalTransitMode() {
+		return AP2TerminalTransitMode;
+	}
+
+	public void setAP2TerminalTransitMode(int aP2TerminalTransitMode) {
+		AP2TerminalTransitMode = aP2TerminalTransitMode;
+	}
+	
+	public int getAP2TerminalBoardTap() {
+		return AP2TerminalBoardTap;
+	}
+
+	public void setAP2TerminalBoardTap(int aP2TerminalBoardTap) {
+		AP2TerminalBoardTap = aP2TerminalBoardTap;
+	}
+
+	public int getAP2TerminalAlightTap() {
+		return AP2TerminalAlightTap;
+	}
+
+	public void setAP2TerminalAlightTap(int aP2TerminalAlightTap) {
+		AP2TerminalAlightTap = aP2TerminalAlightTap;
+	}
+
+	public int getAP2TerminalSet() {
+		return AP2TerminalSet;
+	}
+
+	public void setAP2TerminalSet(int aP2TerminalSet) {
+		AP2TerminalSet = aP2TerminalSet;
+	}
+	
+	public void setAPHasPublicTransit(boolean apHasPublicTransit) {
+		this.APHasPublicTransit = apHasPublicTransit;
+	}
+	
+	public boolean getAPHasPublicTransit() {
+		return this.APHasPublicTransit;
+	}
+
 
 }

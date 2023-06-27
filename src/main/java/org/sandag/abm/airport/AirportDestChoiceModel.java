@@ -403,7 +403,7 @@ public class AirportDestChoiceModel
      *            Random number
      * @return The chosen MGRA number
      */
-    public int chooseMGRA(int purpose, int income, double randomNumber)
+    public int chooseMGRA(int purpose, int income, AirportParty party)
     {
 
         // first find a TAZ
@@ -412,9 +412,10 @@ public class AirportDestChoiceModel
         double[] tazCumProb = tazProbabilities[segment];
         double altProb = 0;
         double cumProb = 0;
+        double random = party.getRandom();
         for (int i = 0; i < tazCumProb.length; ++i)
         {
-            if (tazCumProb[i] > randomNumber)
+            if (tazCumProb[i] > random)
             {
                 alt = i;
                 if (i != 0)
@@ -440,12 +441,15 @@ public class AirportDestChoiceModel
         // mgra probabilities need to be scaled by the alternatives probability
         int mgraNumber = 0;
         double[] mgraCumProb = mgraProbabilities[segment][tazNumber];
+        random = party.getRandom();  // get a new random number for mgra, instead of using the same one from taz
+        
         for (int i = 0; i < mgraCumProb.length; ++i)
         {
-            cumProb += mgraCumProb[i] * altProb;
-            if (cumProb > randomNumber)
+            cumProb = mgraCumProb[i];
+            if (cumProb > random)
             {
                 mgraNumber = mgraArray[i];
+                break;
             }
         }
         // return the chosen MGRA number
@@ -470,8 +474,16 @@ public class AirportDestChoiceModel
             int purpose = party.getPurpose();
             double random = party.getRandom();
             int mgra = -99;
+            if (purpose == AirportModelStructure.EMPLOYEE)
+            {
+            	int originMgra = party.getOriginMGRA();
+            	party.setOriginTAZ(mgraManager.getTaz(originMgra));
+            	int destinationMgra = party.getDestinationMGRA();
+            	party.setDestinationTAZ(mgraManager.getTaz(destinationMgra));
+            	continue;
+            }
             if (purpose < AirportModelStructure.INTERNAL_PURPOSES){
-                mgra = chooseMGRA(purpose, income, random);
+                mgra = chooseMGRA(purpose, income, party);
 
                 // if this is a departing travel party, the origin is the chosen
                 // mgra, and the destination is the airport terminal

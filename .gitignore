@@ -42,3 +42,4 @@ src/asim/configs_mp/settings.yaml
 src/asim/simulation.py
 src/asim/simulation.py
 src/asim/configs_mp/settings.yaml
+src/main/resources/pskill.exe

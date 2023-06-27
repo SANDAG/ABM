@@ -37,12 +37,12 @@ mmms:
     # mmms_node_nref_id: "NREF_IN_ID"
     # drive_stop_field: "canpnr"
     # stop_parkcost_field: "dpark_cost"
-    max_maz_maz_walk_dist_feet: 5280
+    max_maz_maz_walk_dist_feet: 15840
     max_maz_maz_bike_dist_feet: 26400
-    max_maz_local_bus_stop_walk_dist_feet: 2904     # 0.55 miles 
-    max_maz_premium_transit_stop_walk_dist_feet: 2904   # 
+    max_maz_local_bus_stop_walk_dist_feet: 5280     # 0.55 miles 
+    max_maz_premium_transit_stop_walk_dist_feet: 5280   # 
     max_maz_future_BRT_stop_walk_dist_feet: 5280   # 
     walk_speed_mph: 3.0 ## ask Nagendra for that
     drive_speed_mph: 25.0
-    maz_maz_walk_output: "maz_to_maz_walk.csv"
-    maz_maz_bike_output: "maz_to_maz_bike.csv"
+    maz_maz_walk_output: "maz_maz_walk.csv"
+    maz_maz_bike_output: "maz_maz_bike.csv"

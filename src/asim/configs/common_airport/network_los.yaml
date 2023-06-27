@@ -43,7 +43,7 @@ maz: land_use.san.csv   # mgra.csv
 
 maz_to_maz:
   tables:
-    - microMgraEquivMinutes.csv
+    - maz_maz_walk.csv
 
 
 skim_time_periods:

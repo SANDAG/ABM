@@ -68,6 +68,7 @@ public abstract class HouseholdDataManager
     public static final String        HH_TYPE_FIELD_NAME                                      = "HHT";
     public static final String        HH_BLDGSZ_FIELD_NAME                                    = "BLDGSZ";
     public static final String        HH_UNITTYPE_FIELD_NAME                                  = "UNITTYPE";
+	public static final String 		  HH_SAMPLERATE_FIELD_NAME 								  = "SampleRate";
 
     // HHID,PERID,AGE,SEX,OCCCEN1,INDCEN,PEMPLOY,PSTUDENT,PTYPE,EDUC,GRADE
     public static final String        PERSON_HH_ID_FIELD_NAME                                 = "HHID";
@@ -716,10 +717,13 @@ public abstract class HouseholdDataManager
         // logger.info(String.format("start setHhArray for startIndex=%d, startTime=%d.",
         // startIndex,
         // startTime));
-        for (int i = 0; i < tempHhs.length; i++)
-        {
-            hhs[startIndex + i] = tempHhs[i];
-        }
+       
+    	synchronized(hhs) {
+    		for (int i = 0; i < tempHhs.length; i++)
+        	{
+            	hhs[startIndex + i] = tempHhs[i];
+        	}
+    	}
         // long endTime = System.currentTimeMillis();
         // logger.info(String.format(
         // "end setHhArray for startIndex=%d, endTime=%d, elapsed=%d millisecs.",
@@ -973,6 +977,7 @@ public abstract class HouseholdDataManager
             {
 
                 Person person = persons[p];
+				double expansionFactor = 1.0/person.getSampleRate();
 
                 int purposeIndex = -1;
                 try
@@ -982,7 +987,7 @@ public abstract class HouseholdDataManager
                     {
 
                         purposeIndex = person.getWorkLocationSegmentIndex();
-                        personsWithMandatoryPurpose[purposeIndex][homeMgra]++;
+                        personsWithMandatoryPurpose[purposeIndex][homeMgra]+=expansionFactor;
 
                     }
 
@@ -993,7 +998,7 @@ public abstract class HouseholdDataManager
                     {
 
                         purposeIndex = person.getSchoolLocationSegmentIndex();
-                        personsWithMandatoryPurpose[purposeIndex][homeMgra]++;
+                        personsWithMandatoryPurpose[purposeIndex][homeMgra]+=expansionFactor;
 
                     }
 
@@ -1094,6 +1099,7 @@ public abstract class HouseholdDataManager
             {
 
                 Person person = persons[p];
+				double expansionFactor = 1.0/person.getSampleRate();
 
                 if (person.getPersonIsFullTimeWorker() == 1
                         || person.getPersonIsPartTimeWorker() == 1)
@@ -1106,7 +1112,7 @@ public abstract class HouseholdDataManager
 
                         occup = person.getPersPecasOccup();
                         segmentIndex = segmentValueIndexMap.get(occup);
-                        workersByHomeMgra[segmentIndex][homeMgra]++;
+                        workersByHomeMgra[segmentIndex][homeMgra]+=expansionFactor;
 
                     } catch (Exception e)
                     {
@@ -1149,6 +1155,7 @@ public abstract class HouseholdDataManager
             {
 
                 Person person = persons[p];
+				double expansionFactor = 1.0/person.getSampleRate();
 
                 if (person.getPersonIsPreschoolChild() == 1
                         || person.getPersonIsStudentNonDriving() == 1
@@ -1187,7 +1194,7 @@ public abstract class HouseholdDataManager
                         // if person type is a student but segment index is -1,
                         // the person is not enrolled; assume home schooled and
                         // don't add to sum by home mgra
-                        if (segmentIndex >= 0) studentsByHomeMgra[segmentIndex][homeMgra]++;
+                        if (segmentIndex >= 0) studentsByHomeMgra[segmentIndex][homeMgra]+=expansionFactor;
 
                     } catch (Exception e)
                     {
@@ -1226,6 +1233,7 @@ public abstract class HouseholdDataManager
             {
 
                 Person person = persons[p];
+				double expansionFactor = 1.0/person.getSampleRate();
 
                 ArrayList<Tour> it = person.getListOfIndividualNonMandatoryTours();
 
@@ -1241,7 +1249,7 @@ public abstract class HouseholdDataManager
                         if (purposeString.startsWith(tourPurpose))
                         {
                             int homeMgra = hhs[r].getHhMgra();
-                            individualNonMandatoryTours[homeMgra]++;
+                            individualNonMandatoryTours[homeMgra]+=expansionFactor;
                             count++;
                         }
                     }
@@ -1280,6 +1288,7 @@ public abstract class HouseholdDataManager
             {
 
                 Person person = persons[p];
+				double expansionFactor = 1.0/person.getSampleRate();
 
                 int occup = -1;
                 int segmentIndex = -1;
@@ -1295,7 +1304,7 @@ public abstract class HouseholdDataManager
                         {
                             occup = person.getPersPecasOccup();
                             segmentIndex = segmentValueIndexMap.get(occup);
-                            workTours[segmentIndex][destMgra]++;
+                            workTours[segmentIndex][destMgra]+=expansionFactor;
                         }
 
                     }
@@ -1334,6 +1343,7 @@ public abstract class HouseholdDataManager
             {
 
                 Person person = persons[p];
+				double expansionFactor = 1.0/person.getSampleRate();
 
                 int occup = -1;
                 int segmentIndex = -1;
@@ -1349,7 +1359,7 @@ public abstract class HouseholdDataManager
                         {
                             occup = person.getPersPecasOccup();
                             segmentIndex = segmentValueIndexMap.get(occup);
-                            workAtHome[segmentIndex]++;
+                            workAtHome[segmentIndex]+=expansionFactor;
                         }
 
                     }
@@ -1402,6 +1412,8 @@ public abstract class HouseholdDataManager
             {
 
                 Person person = persons[p];
+				double expansionFactor = 1.0/person.getSampleRate();
+				
                 destMgra = person.getPersonSchoolLocationZone();
                 if (destMgra == 0) continue;
 
@@ -1434,7 +1446,7 @@ public abstract class HouseholdDataManager
                     // if person type is a student but segment index is -1, the
                     // person is not enrolled; assume home schooled and don't
                     // add to sum by home mgra
-                    if (segmentIndex >= 0) schoolTours[segmentIndex][destMgra]++;
+                    if (segmentIndex >= 0) schoolTours[segmentIndex][destMgra]+=expansionFactor;
 
                 } catch (Exception e)
                 {
@@ -1469,7 +1481,9 @@ public abstract class HouseholdDataManager
             try
             {
 
-                Tour[] jt = hhs[r].getJointTourArray();
+                double expansionFactor = 1.0/hhs[r].getSampleRate();
+				
+				Tour[] jt = hhs[r].getJointTourArray();
 
                 if (jt == null) continue;
 
@@ -1479,7 +1493,7 @@ public abstract class HouseholdDataManager
                     if (jt[i].getTourPurpose().equalsIgnoreCase(purposeString))
                     {
                         int homeMgra = hhs[r].getHhMgra();
-                        jointTours[homeMgra]++;
+                        jointTours[homeMgra]+=expansionFactor;
                         count++;
                     }
                 }
@@ -1516,6 +1530,7 @@ public abstract class HouseholdDataManager
             {
 
                 Person person = persons[p];
+				double expansionFactor = 1.0/person.getSampleRate();
 
                 ArrayList<Tour> subtourList = person.getListOfAtWorkSubtours();
 
@@ -1531,7 +1546,7 @@ public abstract class HouseholdDataManager
                         if (tourPurpose.startsWith(purposeString))
                         {
                             int workZone = tour.getTourOrigMgra();
-                            subtours[workZone]++;
+                            subtours[workZone]+=expansionFactor;
                             count++;
                         }
                     }

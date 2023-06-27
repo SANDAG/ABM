@@ -1,6 +1,6 @@
 Description,Expression,res_bus1,res_bus2,res_bus3,res_bus4,res_bus5,res_bus6,res_bus7,res_bus8,res_per1,res_per2,res_per3,res_per4,res_per5,res_per6,res_per7,res_per8,vis_bus,vis_per
 ,_POI@skims[('poi_dest')],1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
-,_DIST@skims['MD_SOV_NT_M_DIST'],1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+,_DIST@skims['DIST'],1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 Size variable,@np.log1p(df.size_term),coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one
 No attractions,@df.size_term==0,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999
 distance >= 20.0,@((_DIST >15) & (_DIST <=30))*cbx,coef_dist_res_bus_15_30,coef_dist_res_bus_15_30,coef_dist_res_bus_15_30,coef_dist_res_bus_15_30,coef_dist_res_bus_15_30,coef_dist_res_bus_15_30,coef_dist_res_bus_15_30,coef_dist_res_bus_15_30,coef_dist_res_per_15_30,coef_dist_res_per_15_30,coef_dist_res_per_15_30,coef_dist_res_per_15_30,coef_dist_res_per_15_30,coef_dist_res_per_15_30,coef_dist_res_per_15_30,coef_dist_res_per_15_30,coef_dist_vis_bus_15_30,coef_dist_vis_per_15_30

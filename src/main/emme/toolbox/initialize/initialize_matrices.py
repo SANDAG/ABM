@@ -195,7 +195,7 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
             ("MIX",  "all modes xfer pen demand"),
         ]
         for period in self._all_periods:
-            for a_name in ["WALK", "PNROUT", "PNRIN", "KNROUT", "KNRIN"]:
+            for a_name in ["WALK", "PNROUT", "PNRIN", "KNROUT", "KNRIN", "TNCIN", "TNCOUT"]:
                 self.add_matrices("transit_demand", period,
                     [("mf", "%s_%s_%s" % (period, a_name, name), "%s %s access %s" % (period, a_name, desc))
                      for name, desc in tmplt_matrices])
@@ -231,28 +231,28 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
                     cls_name = "SOV_" + tp_type + "_" + vot_type
                     cls_desc = tp_desc[tp_type] + " " + vot_desc[vot_type] + " VOT"
                     self.add_matrices("traffic_skims", period,
-                        [("mf", period + "_" + cls_name + "_" + name, period + " " + desc % cls_desc) for name, desc in sov_tmplt_matrices])
+                        [("mf", cls_name + "_" + name + "__" + period, period + " " + desc % cls_desc) for name, desc in sov_tmplt_matrices])
                 for hov_type in "2", "3":
                     cls_name = "HOV" + hov_type + "_" + vot_type
                     cls_desc = hov_type + " " + vot_desc[vot_type] + " VOT"
                     self.add_matrices("traffic_skims", period,
-                        [("mf", period + "_" + cls_name + "_" + name,
+                        [("mf", cls_name + "_" + name + "__" + period,
                             period + " " + desc % cls_desc)
                          for name, desc in hov_tmplt_matrices])
             for truck_type in "L", "M", "H":
                 cls_name = "TRK" + "_" + truck_type
                 cls_desc = truck_desc[truck_type]
                 self.add_matrices("traffic_skims", period,
-                    [("mf", period + "_" + cls_name + "_" + name,
+                    [("mf", cls_name + "_" + name + "__" + period,
                       period + " " + desc % cls_desc)
                      for name, desc in truck_tmplt_matrices])
 
         self.add_matrices("traffic_skims", "MD",
-            [("mf", "MD_TRK_TIME", "MD Truck generic travel time")])
+            [("mf", "TRK_TIME__MD", "MD Truck generic travel time")])
 
     def transit_skims(self):
-        tmplt_matrices = [
-            ("GENCOST",    "total impedance"),
+        tmplt_matrices_mix = [
+            # ("GENCOST",    "total impedance"),
             ("FIRSTWAIT",  "first wait time"),
             ("XFERWAIT",   "transfer wait time"),
             ("TOTALWAIT",  "total wait time"),
@@ -269,16 +269,68 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
             ("CMRIVTT",    "Rail in-vehicle time"),
             ("EXPIVTT",    "Express in-vehicle time"),
             ("LTDEXPIVTT", "Ltd exp bus in-vehicle time"),
-            ("BRTREDIVTT", "BRT red in-vehicle time"),
-            ("BRTYELIVTT", "BRT yellow in-vehicle time"),
+            ("BRTIVTT", "BRT in-vehicle time"),
+            # ("BRTREDIVTT", "BRT red in-vehicle time"),
+            # ("BRTYELIVTT", "BRT yellow in-vehicle time"),
             ("TIER1IVTT",    "Tier1 in-vehicle time"),
-            ("BUSDIST",    "Bus IV distance"),
-            ("LRTDIST",    "LRT IV distance"),
-            ("CMRDIST",    "Rail IV distance"),
-            ("EXPDIST",    "Express and Ltd IV distance"),
-            ("BRTDIST",    "BRT red and yel IV distance"),
-            ("TIER1DIST",    "Tier1 distance"),
-            ("TOTDIST",    "Total transit distance")
+            # ("BUSDIST",    "Bus IV distance"),
+            # ("LRTDIST",    "LRT IV distance"),
+            # ("CMRDIST",    "Rail IV distance"),
+            # ("EXPDIST",    "Express and Ltd IV distance"),
+            # ("BRTDIST",    "BRT red and yel IV distance"),
+            # ("TIER1DIST",    "Tier1 distance"),
+            # ("TOTDIST",    "Total transit distance")
+        ]
+        tmplt_matrices_prm = [
+            # ("GENCOST",    "total impedance"),
+            ("FIRSTWAIT",  "first wait time"),
+            ("XFERWAIT",   "transfer wait time"),
+            ("TOTALWAIT",  "total wait time"),
+            ("FARE",       "fare"),
+            ("XFERS",      "num transfers"),
+            ("ACC",    "access time"),
+            ("XFERWALK",   "transfer walk time"),
+            ("EGR",    "egress time"),
+            ("TOTALWALK",  "total walk time"),
+            ("TOTALIVTT",  "in-vehicle time"),
+            ("DWELLTIME",  "dwell time"),
+            ("LRTIVTT",    "LRT in-vehicle time"),
+            ("CMRIVTT",    "Rail in-vehicle time"),
+            ("EXPIVTT",    "Express in-vehicle time"),
+            ("LTDEXPIVTT", "Ltd exp bus in-vehicle time"),
+            ("BRTIVTT", "BRT in-vehicle time"),
+            # ("BRTREDIVTT", "BRT red in-vehicle time"),
+            # ("BRTYELIVTT", "BRT yellow in-vehicle time"),
+            ("TIER1IVTT",    "Tier1 in-vehicle time"),
+            # ("BUSDIST",    "Bus IV distance"),
+            # ("LRTDIST",    "LRT IV distance"),
+            # ("CMRDIST",    "Rail IV distance"),
+            # ("EXPDIST",    "Express and Ltd IV distance"),
+            # ("BRTDIST",    "BRT red and yel IV distance"),
+            # ("TIER1DIST",    "Tier1 distance"),
+            # ("TOTDIST",    "Total transit distance")
+        ]
+        tmplt_matrices_loc = [
+            # ("GENCOST",    "total impedance"),
+            ("FIRSTWAIT",  "first wait time"),
+            ("XFERWAIT",   "transfer wait time"),
+            ("TOTALWAIT",  "total wait time"),
+            ("FARE",       "fare"),
+            ("XFERS",      "num transfers"),
+            ("ACC",    "access time"),
+            ("XFERWALK",   "transfer walk time"),
+            ("EGR",    "egress time"),
+            ("TOTALWALK",  "total walk time"),
+            ("TOTALIVTT",  "in-vehicle time"),
+            ("DWELLTIME",  "dwell time"),
+            ("BUSIVTT",    "local bus in-vehicle time"),
+            # ("BUSDIST",    "Bus IV distance"),
+            # ("LRTDIST",    "LRT IV distance"),
+            # ("CMRDIST",    "Rail IV distance"),
+            # ("EXPDIST",    "Express and Ltd IV distance"),
+            # ("BRTDIST",    "BRT red and yel IV distance"),
+            # ("TIER1DIST",    "Tier1 distance"),
+            # ("TOTDIST",    "Total transit distance")
         ]
         skim_sets = [
             ("LOC",    "Local bus only"),
@@ -286,12 +338,26 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
             ("MIX", "All w/ xfer pen")
         ]
         for period in self._all_periods:
-            for set_name, set_desc in skim_sets:
-                for amode in ["WALK", "PNROUT", "PNRIN", "KNROUT", "KNRIN"]:
-                    self.add_matrices("transit_skims", period,
-                        [("mf", period + "_" + amode + "_" + set_name + "_" + name,
+            for amode in ["WALK", "PNROUT", "PNRIN", "KNROUT", "KNRIN", "TNCIN", "TNCOUT"]:
+                for set_name, set_desc in skim_sets:
+                    if set_name == 'LOC':
+                        self.add_matrices("transit_skims", period,
+                            [("mf", amode + "_" + set_name + "_" + name + "__" + period,
+                            period + " " + set_desc + ": " + desc)
+                            for name, desc in tmplt_matrices_loc])
+
+                    elif set_name == 'PRM':
+                        self.add_matrices("transit_skims", period,
+                        [("mf", amode + "_" + set_name + "_" + name + "__" + period,
                         period + " " + set_desc + ": " + desc)
-                        for name, desc in tmplt_matrices])
+                        for name, desc in tmplt_matrices_prm])
+
+                    else:
+                        self.add_matrices("transit_skims", period,
+                        [("mf", amode + "_" + set_name + "_" + name + "__" + period,
+                        period + " " + set_desc + ": " + desc)
+                        for name, desc in tmplt_matrices_mix])
+
 
     def truck_model(self):
         tmplt_matrices = [

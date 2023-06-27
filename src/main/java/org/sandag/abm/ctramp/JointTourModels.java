@@ -751,8 +751,9 @@ public class JointTourModels
                 logger.warn("loop count in joint tour participation model is " + loopCount);
                 if (loopCount > 2000)
                 {
-                    logger.error("terminating on excessive loop count.");
-                    throw new RuntimeException();
+                    logger.warn("joint tour party composition-terminating on excessive loop count.");
+                    //logger.error("terminating on excessive loop count.");
+                    //throw new RuntimeException();
                 }
             }
 

@@ -13,7 +13,7 @@ public class SandagBikeTazPathAlternativeListGenerationConfiguration
             Network<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal> network)
     {
         super(propertyMap, network);
-        this.PROPERTIES_MAXDIST_ZONE = "active.maxdist.bike.taz";
+        this.PROPERTIES_MAXDIST_ZONE = Double.parseDouble(propertyMap.get("active.maxdist.bike.taz"));
         this.PROPERTIES_TRACE_ORIGINS = "active.trace.origins.taz";
     }
 

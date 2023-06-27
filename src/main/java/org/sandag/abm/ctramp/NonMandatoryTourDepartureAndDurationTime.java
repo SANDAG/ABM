@@ -214,7 +214,7 @@ public class NonMandatoryTourDepartureAndDurationTime
 
     }
 
-    public void applyIndivModel(Household hh, boolean runModeChoice)
+    public void applyIndivModel(Household hh, boolean runTODChoice, boolean runModeChoice)
     {
 
         indivModeChoiceTime = 0;
@@ -223,6 +223,46 @@ public class NonMandatoryTourDepartureAndDurationTime
 
         // get the person objects for this household
         Person[] persons = hh.getPersons();
+        
+        if(!runTODChoice) {
+    
+        	for (int p = 1; p < persons.length; p++)
+        	{
+
+        		Person person = persons[p];
+        		// if no individual non-mandatory tours, nothing to do.
+        		if (person.getListOfIndividualNonMandatoryTours().size() == 0) continue;
+
+        		// arrange the individual non-mandatory tours for this person in an
+        		// array of ArrayLists by purpose
+        		getPriorityOrderedTourList(person.getListOfIndividualNonMandatoryTours());
+
+        		for (int i = 0; i < TOUR_PURPOSE_INDEX_ORDER.length; i++) {
+        			int tourPurposeIndex = TOUR_PURPOSE_INDEX_ORDER[i];
+        			for (Tour t : purposeTourLists[tourPurposeIndex])
+        				try {
+        					runModeChoice(hh,person,t,t.getTourDepartPeriod(),t.getTourArrivePeriod());
+        		
+        				}catch(Exception e) {
+                            String errorMessage = String
+                                    .format("Exception caught for HHID=%d, personNum=%d, individual non-mandatory mode choice, tour ArrayList index=%d.",
+                                            hh.getHhId(), person.getPersonNum(), tourPurposeIndex);
+                            String decisionMakerLabel = String
+                                    .format("Final Individual Non-Mandatory Departure Time Person Object: HH=%d, PersonNum=%d, PersonType=%s",
+                                            hh.getHhId(), person.getPersonNum(), person.getPersonType());
+                            hh.logPersonObject(decisionMakerLabel, modelLogger, person);
+                            logger.error(errorMessage, e);
+                            throw new RuntimeException(e);
+
+        				}
+        		}
+        	}
+            return;
+
+        }
+        
+        
+        
         for (int p = 1; p < persons.length; p++)
         {
 
@@ -234,8 +274,6 @@ public class NonMandatoryTourDepartureAndDurationTime
             // arrange the individual non-mandatory tours for this person in an
             // array of ArrayLists by purpose
             getPriorityOrderedTourList(person.getListOfIndividualNonMandatoryTours());
-
-            // process tour lists by priority purpose
 
             // define variables to hold depart/arrive periods selected for the
             // most recent tour.
@@ -474,31 +512,7 @@ public class NonMandatoryTourDepartureAndDurationTime
                             if (runModeChoice)
                             {
 
-                                if (hh.getDebugChoiceModels())
-                                    hh.logHouseholdObject(
-                                            "Pre Non-Mandatory Tour Mode Choice Household "
-                                                    + hh.getHhId()
-                                                    + ", Tour "
-                                                    + tourPurpNum
-                                                    + " of "
-                                                    + person.getListOfIndividualNonMandatoryTours()
-                                                            .size(), tourMCNonManLogger);
-
-                                // set the mode choice attributes needed by
-                                // @variables in the UEC spreadsheets
-                                setModeChoiceDmuAttributes(hh, person, t, chosenStartPeriod,
-                                        chosenEndPeriod);
-
-                                // use the mcModel object already setup for
-                                // computing logsums and get
-                                // the mode choice, where the selected
-                                // worklocation and subzone an departure time
-                                // and duration are set
-                                // for this work tour.
-                                int chosenMode = mcModel.getModeChoice(mcDmuObject,
-                                        t.getTourPrimaryPurpose());
-                                t.setTourModeChoice(chosenMode);
-
+                            	runModeChoice( hh, person,t,t.getTourDepartPeriod(),t.getTourArrivePeriod());
                             }
 
                         } else
@@ -623,33 +637,7 @@ public class NonMandatoryTourDepartureAndDurationTime
                             if (runModeChoice)
                             {
 
-                                long check = System.nanoTime();
-
-                                if (hh.getDebugChoiceModels())
-                                    hh.logHouseholdObject(
-                                            "Pre Individual Non-Mandatory Tour Mode Choice Household "
-                                                    + hh.getHhId() + ", Tour " + tourPurpNum
-                                                    + " of "
-                                                    + purposeTourLists[tourPurposeIndex].size(),
-                                            tourMCNonManLogger);
-
-                                // set the mode choice attributes needed by
-                                // @variables in the UEC spreadsheets
-                                setModeChoiceDmuAttributes(hh, person, t, chosenStartPeriod,
-                                        chosenEndPeriod);
-
-                                // use the mcModel object already setup for
-                                // computing logsums and get
-                                // the mode choice, where the selected
-                                // worklocation and subzone an departure time
-                                // and duration are set
-                                // for this work tour.
-                                int chosenMode = mcModel.getModeChoice(mcDmuObject,
-                                        t.getTourPurpose());
-                                t.setTourModeChoice(chosenMode);
-
-                                indivModeChoiceTime += (System.nanoTime() - check);
-
+                            	runModeChoice(hh,person,t,t.getTourDepartPeriod(),t.getTourArrivePeriod());
                             }
 
                         }
@@ -666,7 +654,7 @@ public class NonMandatoryTourDepartureAndDurationTime
                         todModels[m].logUECResults(modelLogger, errorMessage);
 
                         logger.error(errorMessage, e);
-                        throw new RuntimeException();
+                        throw new RuntimeException(e);
                     }
 
                     tourPurpNum++;
@@ -689,7 +677,35 @@ public class NonMandatoryTourDepartureAndDurationTime
 
     }
 
-    public void applyJointModel(Household hh, boolean runModeChoice)
+    
+    public void runModeChoice(Household hh, Person person, Tour t, int chosenStartPeriod, int chosenEndPeriod) {
+        if (hh.getDebugChoiceModels())
+            hh.logHouseholdObject(
+                    "Pre Non-Mandatory Tour Mode Choice Household "
+                            + hh.getHhId()
+                            + ", Tour "
+                            + t.getTourId()
+                            + " of "
+                            + person.getListOfIndividualNonMandatoryTours()
+                                    .size(), tourMCNonManLogger);
+
+        // set the mode choice attributes needed by
+        // @variables in the UEC spreadsheets
+        setModeChoiceDmuAttributes(hh, person, t, chosenStartPeriod,
+                chosenEndPeriod);
+
+        // use the mcModel object already setup for
+        // computing logsums and get
+        // the mode choice, where the selected
+        // worklocation and subzone an departure time
+        // and duration are set
+        // for this work tour.
+        int chosenMode = mcModel.getModeChoice(mcDmuObject,
+                t.getTourPrimaryPurpose());
+        t.setTourModeChoice(chosenMode);
+
+    }
+    public void applyJointModel(Household hh,boolean runTODChoice, boolean runModeChoice)
     {
 
         jointModeChoiceTime = 0;
@@ -705,7 +721,18 @@ public class NonMandatoryTourDepartureAndDurationTime
         getPriorityOrderedTourList(jointTours);
 
         // process tour lists by priority purpose
+        if(!runTODChoice) {
+            for (int i = 0; i < TOUR_PURPOSE_INDEX_ORDER.length; i++)
+            {
 
+                int tourPurposeIndex = TOUR_PURPOSE_INDEX_ORDER[i];
+                for (Tour t : purposeTourLists[tourPurposeIndex])
+                	runModeChoice(hh,t,t.getTourDepartPeriod(),t.getTourArrivePeriod());
+            }
+            return;
+        }
+        
+        
         // define variables to hold depart/arrive periods selected for the most
         // recent tour.
         // if a tour has no non-overlapping period available, set the periods to
@@ -921,28 +948,7 @@ public class NonMandatoryTourDepartureAndDurationTime
 
                         if (runModeChoice)
                         {
-
-                            if (hh.getDebugChoiceModels())
-                                hh.logHouseholdObject(
-                                        "Pre Joint Non-Mandatory Tour Mode Choice Household "
-                                                + hh.getHhId() + ", Tour " + tourPurpNum + " of "
-                                                + purposeTourLists[tourPurposeIndex].size(),
-                                        tourMCNonManLogger);
-
-                            // set the mode choice attributes needed by
-                            // @variables in the UEC spreadsheets
-                            setModeChoiceDmuAttributes(hh, null, t, chosenStartPeriod,
-                                    chosenEndPeriod);
-
-                            // use the mcModel object already setup for
-                            // computing logsums and get
-                            // the mode choice, where the selected
-                            // worklocation and subzone an departure time and
-                            // duration are set
-                            // for this work tour.
-                            int chosenMode = mcModel.getModeChoice(mcDmuObject,
-                                    t.getTourPrimaryPurpose());
-                            t.setTourModeChoice(chosenMode);
+                        	runModeChoice(hh,t,chosenStartPeriod,chosenEndPeriod);
 
                         }
 
@@ -1064,30 +1070,7 @@ public class NonMandatoryTourDepartureAndDurationTime
                         if (runModeChoice)
                         {
 
-                            long check = System.nanoTime();
-
-                            if (hh.getDebugChoiceModels())
-                                hh.logHouseholdObject(
-                                        "Pre Individual Non-Mandatory Tour Mode Choice Household "
-                                                + hh.getHhId() + ", Tour " + tourPurpNum + " of "
-                                                + purposeTourLists[tourPurposeIndex].size(),
-                                        tourMCNonManLogger);
-
-                            // set the mode choice attributes needed by
-                            // @variables in the UEC spreadsheets
-                            setModeChoiceDmuAttributes(hh, null, t, chosenStartPeriod,
-                                    chosenEndPeriod);
-
-                            // use the mcModel object already setup for
-                            // computing logsums and get
-                            // the mode choice, where the selected
-                            // worklocation and subzone an departure time and
-                            // duration are set
-                            // for this work tour.
-                            int chosenMode = mcModel.getModeChoice(mcDmuObject, t.getTourPurpose());
-                            t.setTourModeChoice(chosenMode);
-
-                            jointModeChoiceTime += (System.nanoTime() - check);
+                           runModeChoice(hh,t,chosenStartPeriod,chosenEndPeriod);
 
                         }
 
@@ -1132,6 +1115,46 @@ public class NonMandatoryTourDepartureAndDurationTime
 
     }
 
+    /**
+     * For joint tours
+     * @param hh
+     * @param t
+     * @param chosenStartPeriod
+     * @param chosenEndPeriod
+     */
+    private void runModeChoice(Household hh, Tour t, int chosenStartPeriod, int chosenEndPeriod) {
+    	
+        long check = System.nanoTime();
+
+        if (hh.getDebugChoiceModels())
+            hh.logHouseholdObject(
+                    "Pre Joint Non-Mandatory Tour Mode Choice Household "
+                            + hh.getHhId() + ", Tour " + t.getTourId()+1 + " of "
+                            + hh.getJointTourArray().length,
+                    tourMCNonManLogger);
+
+        // set the mode choice attributes needed by
+        // @variables in the UEC spreadsheets
+        setModeChoiceDmuAttributes(hh, null, t, chosenStartPeriod,
+                chosenEndPeriod);
+
+        // use the mcModel object already setup for
+        // computing logsums and get
+        // the mode choice, where the selected
+        // worklocation and subzone an departure time and
+        // duration are set
+        // for this work tour.
+        int chosenMode = mcModel.getModeChoice(mcDmuObject,
+                t.getTourPrimaryPurpose());
+        t.setTourModeChoice(chosenMode);
+        jointModeChoiceTime += (System.nanoTime() - check);
+
+    }
+    
+    
+    
+    
+    
     private void setModeChoiceDmuAttributes(Household household, Person person, Tour t,
             int startPeriod, int endPeriod)
     {
@@ -1395,8 +1418,8 @@ public class NonMandatoryTourDepartureAndDurationTime
         NonMandatoryTourDepartureAndDurationTime testObject = new NonMandatoryTourDepartureAndDurationTime(
                 propertyMap, modelStructure, dmuFactory, inmmcModel);
 
-        testObject.applyIndivModel(hh[0], true);
-        testObject.applyJointModel(hh[0], true);
+        testObject.applyIndivModel(hh[0], true, true);
+        testObject.applyJointModel(hh[0], true, true);
 
         /**
          * used this block of code to test for typos and implemented dmu

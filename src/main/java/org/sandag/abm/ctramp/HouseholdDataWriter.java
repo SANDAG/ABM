@@ -286,6 +286,7 @@ public class HouseholdDataWriter
         data.add("out_escort_choice");
         data.add("inb_escort_choice");       
         data.add("jtf_choice");
+		data.add("sampleRate");
         
         if(writeLogsums){
         	data.add("aoLogsum");
@@ -311,6 +312,7 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
+		data.add(SqliteDataTypes.REAL);
         
         if(writeLogsums){
         	data.add(SqliteDataTypes.REAL);
@@ -335,6 +337,7 @@ public class HouseholdDataWriter
         data.add(string(hh.getOutboundEscortChoice()));
         data.add(string(hh.getInboundEscortChoice()));
         data.add(string(hh.getJointTourFreqChosenAlt()));
+		data.add(string(hh.getSampleRate()));
         
         if(writeLogsums){
         	data.add(string(hh.getAutoOwnershipLogsum()));
@@ -364,6 +367,7 @@ public class HouseholdDataWriter
         data.add("ie_choice");
         data.add("timeFactorWork");
         data.add("timeFactorNonWork");
+		data.add("sampleRate");
         
         if(writeLogsums){
         	data.add("wfhLogsum");
@@ -399,6 +403,7 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.REAL);
         data.add(SqliteDataTypes.REAL);
+		data.add(SqliteDataTypes.REAL);
         
         if(writeLogsums){
             data.add(SqliteDataTypes.REAL);
@@ -434,6 +439,7 @@ public class HouseholdDataWriter
         data.add(string(p.getInternalExternalTripChoiceResult()));
         data.add(string(p.getTimeFactorWork()));
         data.add(string(p.getTimeFactorNonWork()));
+		data.add(string(p.getSampleRate()));
         
         if(writeLogsums){
         	data.add(string(p.getWorksFromHomeLogsum()));
@@ -476,6 +482,7 @@ public class HouseholdDataWriter
         data.add("escort_type_in");
       	data.add("driver_num_out");
       	data.add("driver_num_in");
+		data.add("sampleRate");
  
         if (saveUtilsProbsFlag)
         {
@@ -533,6 +540,7 @@ public class HouseholdDataWriter
         data.add("num_ob_stops");
         data.add("num_ib_stops");
         data.add("valueOfTime");
+		data.add("sampleRate");
 
         if (saveUtilsProbsFlag)
         {
@@ -596,6 +604,7 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER); 
+		data.add(SqliteDataTypes.REAL);
         
         if (saveUtilsProbsFlag)
         {
@@ -649,6 +658,7 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.REAL);
+		data.add(SqliteDataTypes.REAL);
 
         if (saveUtilsProbsFlag)
         {
@@ -709,6 +719,7 @@ public class HouseholdDataWriter
         data.add(string(t.getEscortTypeInbound()));
         data.add(string(t.getDriverPnumOutbound()));
         data.add(string(t.getDriverPnumInbound()));
+		data.add(string(t.getSampleRate()));
 
        if (saveUtilsProbsFlag)
         {
@@ -785,6 +796,7 @@ public class HouseholdDataWriter
         data.add(string(t.getNumOutboundStops() == 0 ? 0 : t.getNumOutboundStops() - 1));
         data.add(string(t.getNumInboundStops() == 0 ? 0 : t.getNumInboundStops() - 1));
         data.add(string(t.getValueOfTime()));
+		data.add(string(t.getSampleRate()));
 
         if (saveUtilsProbsFlag)
         {
@@ -896,6 +908,7 @@ public class HouseholdDataWriter
         data.add("micro_trnAcc");
         data.add("micro_trnEgr");
         data.add("parkingCost");
+		data.add("sampleRate");
         
         if(writeLogsums) {
         	data.add("tripModeLogsum");
@@ -929,10 +942,12 @@ public class HouseholdDataWriter
         data.add("tour_mode");
         data.add("valueOfTime");
         data.add("transponder_avail");
-        data.add("micro_walkMode");
-        data.add("micro_trnAcc");
-        data.add("micro_trnEgr");
+        //wsu remove micromobility columns, not applicable to joint trips
+        //data.add("micro_walkMode");
+        //data.add("micro_trnAcc");
+        //data.add("micro_trnEgr");
         data.add("parkingCost");
+		data.add("sampleRate");
         
         if(writeLogsums) {
         	data.add("tripModeLogsum");
@@ -977,6 +992,7 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.REAL);
+		data.add(SqliteDataTypes.REAL);
  
         if(writeLogsums) {
         	data.add(SqliteDataTypes.REAL);
@@ -1013,6 +1029,7 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.REAL);
+		data.add(SqliteDataTypes.REAL);
 
         if(writeLogsums) {
         	data.add(SqliteDataTypes.REAL);
@@ -1119,6 +1136,7 @@ public class HouseholdDataWriter
         data.add(string(s.getMicromobilityAccessMode()));
         data.add(string(s.getMicromobilityEgressMode()));
         data.add(string(s.getParkingCost()));
+		data.add(string(t.getSampleRate()));
         
         if(writeLogsums) {
         	data.add(string(s.getModeLogsum()));
@@ -1222,10 +1240,12 @@ public class HouseholdDataWriter
         data.add(string(t.getTourModeChoice()));
         data.add(string(s.getValueOfTime()));
         data.add(string(h.getTpChoice()));
-        data.add(string(s.getMicromobilityWalkMode()));
-        data.add(string(s.getMicromobilityAccessMode()));
-        data.add(string(s.getMicromobilityEgressMode()));
+        //wsu, remove micromobility columns, not applicable to joint trips
+        //data.add(string(s.getMicromobilityWalkMode()));
+        //data.add(string(s.getMicromobilityAccessMode()));
+        //data.add(string(s.getMicromobilityEgressMode()));
         data.add(string(s.getParkingCost()));
+		data.add(string(t.getSampleRate()));
        
         if(writeLogsums) {
         	data.add(string(s.getModeLogsum()));
@@ -1332,14 +1352,14 @@ public class HouseholdDataWriter
      
         data.add(string(t.getTourModeChoice()));
        	
-        if(true){logger.error("Trying to write a tour as a trip");
+       /* if(true){logger.error("Trying to write a tour as a trip");
         
         logger.info("HHID: " +t.getHhId());
         logger.info("PERSNUM: "+ t.getPersonObject().getPersonNum());
         logger.info("TOURID: "+t.getTourId());
         logger.info(inbound ? "inbound" : "outbound");
         }
-    	
+    	*/
         
         data.add(string(t.getValueOfTime()));
         data.add(string(h.getTpChoice()));
@@ -1866,3 +1886,4 @@ public class HouseholdDataWriter
         return results[1];
     }
 }
+

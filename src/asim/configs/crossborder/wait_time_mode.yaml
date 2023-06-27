@@ -1,15 +1,12 @@
 inherit_settings: False
 
 # number of households to simulate
-# households_sample_size: 100
-# chunk_size: 0
 
 households_sample_size: 0
-
 multiprocess: True
 strict: False
 mem_tick: 30
-num_processes: 30
+num_processes: 20
 fail_fast: True
 
 ##############
@@ -17,7 +14,7 @@ fail_fast: True
 # chunking
 #
 
-chunk_size: 50_000_000_000
+chunk_size: 550_000_000_000
 
 # minimum fraction of total chunk_size to reserve for adaptive chunking
 min_available_chunk_ratio: 0.05
@@ -43,7 +40,7 @@ keep_mem_logs: True
 
 ############
 
-trace_hh_id: 113610
+# trace_hh_id: 113610
 
 # input tables
 input_table_list:
@@ -81,7 +78,7 @@ use_shadow_pricing: False
 want_dest_choice_sample_tables: False
 want_dest_choice_presampling: True
 
-#resume_after: 
+resume_after: 
 
 models:
   - initialize_landuse

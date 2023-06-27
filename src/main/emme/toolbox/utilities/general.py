@@ -21,6 +21,7 @@ import inro.emme.core.exception as _except
 from osgeo import ogr as _ogr
 from contextlib import contextmanager as _context
 from itertools import izip as _izip
+from math import ceil
 import traceback as _traceback
 import re as _re
 import json as _json
@@ -125,14 +126,15 @@ def backup_and_restore(scenario, backup_attributes):
         for elem_type, attributes in backup_attributes.iteritems():
             scenario.set_attribute_values(elem_type, attributes, backup[elem_type])
 
-                        
+
 class DataTableProc(object):
 
-    def __init__(self, table_name, path=None, data=None):
+    def __init__(self, table_name, path=None, data=None, convert_numeric=False):
         modeller = _m.Modeller()
         desktop = modeller.desktop
         project = desktop.project
         self._dt_db = dt_db = project.data_tables()
+        self._convert_numeric = convert_numeric
         if path:
             #try:
             source = _dt.DataSource(path)
@@ -150,7 +152,21 @@ class DataTableProc(object):
 
     def _load_data(self):
         data = self._data
-        self._values = [a.values for a in data.attributes()]
+        if self._convert_numeric:
+            values = []
+            for a in data.attributes():
+                attr_values = _numpy.copy(a.values)
+                attr_values[attr_values == ''] = 0
+                try:
+                    values.append(attr_values.astype("int"))
+                except ValueError:
+                    try:
+                        values.append(attr_values.astype("float"))
+                    except ValueError:
+                        values.append(a.values)
+            self._values = values
+        else:
+            self._values = [a.values for a in data.attributes()]
         self._attr_names = [a.name for a in data.attributes()]
         self._index = dict((k, i) for i,k in enumerate(self._attr_names))
         if "geometry" in self._attr_names:
@@ -173,6 +189,121 @@ class DataTableProc(object):
     def values(self, name):
         index = self._index[name]
         return self._values[index]
+
+
+class E00FileProc:
+    def __init__(self, table_name, file_path):
+        self._file_path = file_path
+        self._table_name = table_name
+        self._values = []
+        self._attr_names = []
+        self._attr_widths = []
+        self._attr_cast = []
+        self._read_file()
+        
+    def _read_file(self):
+        with open(self._file_path, 'r') as f:
+            for line in f:
+                if line.startswith(self._table_name):
+                    break
+            header = self._parse_header(line)
+            for i in range(header["valid_attributes"]):
+                attribute = self._parse_attribute(next(f))
+                self._attr_names.append(attribute["name"])
+                self._attr_widths.append(self._get_attr_width(attribute))
+                self._attr_cast.append(self._get_attr_caster(attribute))
+            self._parse_records(f, int(header["num_records"]))
+                
+    def _parse_header(self, text):
+        file_name, external_flag, num_valid, num_total, record_length, num_records = \
+            self._parse_fields(text, [32, 2, 4, 4, 4, 10])
+        header = {
+            "file_name": file_name, 
+            "external_flag": external_flag, 
+            "valid_attributes": int(num_valid), 
+            "total_attributes": int(num_total), 
+            "record_length": int(record_length), 
+            "num_records": int(num_records)
+        }
+        return header
+        
+    def _parse_attribute(self, text):
+        name, size, _, start, _, _, fmt_width, fmt_precision, type_id, _, _, _, _, alt_name, index = \
+            self._parse_fields(text, [16, 3, 2, 4, 1, 2, 4, 2, 3, 2, 4, 4, 2, 16, 5])
+        attribute = {
+            "name": name, 
+            "size": int(size), 
+            "start": int(start), 
+            "fmt_width": int(fmt_width), 
+            "fmt_precision": int(fmt_precision), 
+            "type": type_id, 
+            "alt_name": alt_name, 
+            "index": index
+        }
+        return attribute
+    
+    def _parse_fields(self, text, widths):
+        tokens = []
+        index = 0
+        for width in widths:
+            tokens.append(text[index:width+index].strip())
+            index += width
+        return tokens
+    
+    def _get_attr_width(self, attribute):
+        a_type, size = attribute["type"], attribute["size"]
+        if a_type == "10":    # "10": "date"
+            return 8
+        elif a_type == "20" or a_type == "30":  
+            # "20": "string" or "30": "fixed_integer"
+            return size
+        elif a_type == "40":  # "40": "single_float"
+            return 14
+        elif a_type == "50":  # "50": "integer"
+            if size == 2:  # 2 bytes = 6 characters
+                return 6
+            elif size == 4:  # 4 bytes = 11 characters
+                return 11
+        elif a_type == "60":  # "60": "float"
+            if size == 2:  # 2 bytes = 14 characters
+                return 14
+            elif size == 4:  # 4 bytes = 24 characters
+                return 24
+    
+    def _get_attr_caster(self, attribute):
+        str_strip = lambda x: x.strip()
+        mapper = {
+            "10": str_strip,  # "10": "date"
+            "20": str_strip,  # "20": "string"
+            "30": int,        # "30": "fixed_integer"
+            "40": float,      # "40": "single_float"
+            "50": int,        # "50": "integer"
+            "60": float,      # "60": "float"
+        }
+        return mapper[attribute["type"]]
+        
+    def _parse_records(self, reader, num_records):
+        num_lines = int(ceil(sum(self._attr_widths) / 80.0))
+        indices = []
+        index = 0
+        for width, cast in zip(self._attr_widths, self._attr_cast):
+            indices.append((index, width+index, cast))
+            index += width
+        for j in range(num_records):
+            lines = []
+            for j in range(num_lines):
+                lines.append(next(reader).rstrip().ljust(80, " "))
+            line = "".join(lines)
+            self._values.append(
+                [cast(line[start:stop]) for start, stop, cast in indices])
+
+    def __iter__(self):
+        values, attr_names = self._values, self._attr_names
+        return (dict(zip(attr_names, record)) for record in values)
+
+    def values(self, name):
+        index = self._attr_names.index(name)
+        return (v[index] for v in self._values)    
 
 
 class Snapshot(object):
@@ -246,7 +377,7 @@ class ExportOMX(object):
             self.generate_key = lambda m: m.id.encode(text_encoding)
 
     def __enter__(self):
-        self.trace = _m.logbook_trace(name="Export matrices to OMX", 
+        self.trace = _m.logbook_trace(name="Export matrices to OMX",
             attributes={
                 "file_path": self.file_path, "omx_key": self.omx_key,
                 "scenario": self.scenario, "emmebank": self.emmebank.path})
@@ -303,30 +434,33 @@ class ExportOMX(object):
         omx_matrix = self.omx_file.create_matrix(
             key, obj=numpy_array, chunkshape=chunkshape, attrs=attrs)
 
-            
+
 class OMXManager(object):
     def __init__(self, directory, name_tmplt):
         self._directory = directory
         self._name_tmplt = name_tmplt
         self._omx_files = {}
-        
+
     def lookup(self, name_args, key):
         file_name = self._name_tmplt % name_args
         omx_file = self._omx_files.get(file_name)
+        # with _m.logbook_trace("file_name: %s" % (file_name)):
         if omx_file is None:
             file_path = os.path.join(self._directory, file_name)
             omx_file = _omx.open_file(file_path, 'r')
             self._omx_files[file_name] = omx_file
         return omx_file[key].read()
-        
+
     def file_exists(self, name_args):
         file_name = self._name_tmplt % name_args
         file_path = os.path.join(self._directory, file_name)
         return os.path.isfile(file_path)
 
     def zone_list(self, file_name):
+        
         omx_file = self._omx_files[file_name]
         mapping_name = omx_file.list_mappings()[0]
+        # with _m.logbook_trace("file_name and mapping name: %s and %s" % (file_name, mapping_name)):
         zone_mapping = omx_file.mapping(mapping_name).items()
         zone_mapping.sort(key=lambda x: x[1])
         omx_zones = [x[0] for x in zone_mapping]
@@ -346,21 +480,25 @@ class CSVReader(object):
         self._path = path
         self._f = None
         self._fields = None
-        
+
     def __enter__(self):
         self._f = open(self._path)
         header = self._f.next()
         self._fields = [h.strip().upper() for h in header.split(",")]
         return self
-        
+
     def __exit__(self, exception_type, exception_value, traceback):
         self._f.close()
         self._f = None
         self._fields = None
-        
+
     def __iter__(self):
         return self
-    
+
+    @property
+    def fields(self):
+        return list(self._fields)
+
     def next(self):
         line = self._f.next()
         tokens = [t.strip() for t in line.split(",")]

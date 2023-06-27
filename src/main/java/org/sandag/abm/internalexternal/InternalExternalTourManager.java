@@ -27,6 +27,7 @@ public class InternalExternalTourManager
     public static final String   PROPERTIES_DISTRIBUTED_TIME = "distributedTimeCoefficients";
     protected boolean 				readTimeFactors;
     public static final String        PERSON_TIMEFACTOR_NONWORK_FIELD_NAME                    = "timeFactorNonWork";
+    public static final String        HH_SAMPLERATE_FIELD_NAME                    = "sampleRate";
 
     InternalExternalModelStructure modelStructure;
 
@@ -36,6 +37,7 @@ public class InternalExternalTourManager
     private int                    traceId;
 
     private MersenneTwister        random;
+    
 
     private class HouseholdClass
     {
@@ -44,6 +46,7 @@ public class InternalExternalTourManager
         int income;
         int homeMGRA;
         int autonomousVehicles;
+        float sampleRate;
     }
 
     private HashMap<Long, HouseholdClass> householdData;
@@ -58,7 +61,7 @@ public class InternalExternalTourManager
      * 
      *            Creates the array of cross-border tours.
      */
-    public InternalExternalTourManager(HashMap<String, String> rbMap, int iteration)
+    public InternalExternalTourManager(HashMap<String, String> rbMap, int iteration, float sampleRate)
     {
 
         modelStructure = new InternalExternalModelStructure();
@@ -83,7 +86,7 @@ public class InternalExternalTourManager
         extension = getFileExtension(householdFile);
         householdFile = removeFileExtension(householdFile) + iterationString + extension;
 
-        readHouseholdFile(householdFile);
+        readHouseholdFile(householdFile, sampleRate);
         personData = readFile(personFile);
 
         seek = new Boolean(Util.getStringValueFromPropertyMap(rbMap, "internalExternal.seek"));
@@ -141,9 +144,8 @@ public class InternalExternalTourManager
      * @param fileName
      *            household file path/name.
      */
-    public void readHouseholdFile(String fileName)
+    public void readHouseholdFile(String fileName, float sampleRate)
     {
-
         householdData = new HashMap<Long, HouseholdClass>();
 
         logger.info("Begin reading the data in file " + fileName);
@@ -157,6 +159,8 @@ public class InternalExternalTourManager
         {
             throw new RuntimeException(e);
         }
+        
+        boolean hasSampleRate=(hhData.getColumnPosition(HH_SAMPLERATE_FIELD_NAME) > -1 ? true : false);
 
         // iterate through the table and save number of autos
         for (int i = 1; i <= hhData.getRowCount(); ++i)
@@ -167,6 +171,12 @@ public class InternalExternalTourManager
             int mgra = (int) hhData.getValueAt(i, "home_mgra");
             
             int AVs = (int) hhData.getValueAt(i,"AVs");
+            float hhSampleRate = sampleRate;
+            
+            //hh data here is output of ct-ramp so already has both (regional and hh) sampling in the samplerate field
+            //so directly use the value from the sample rate column
+            if(hasSampleRate)
+            	hhSampleRate = (float) hhData.getValueAt(i, HH_SAMPLERATE_FIELD_NAME);
 
             // new household
             HouseholdClass hh = new HouseholdClass();
@@ -174,6 +184,7 @@ public class InternalExternalTourManager
             hh.income = income;
             hh.homeMGRA = mgra;
             hh.autonomousVehicles = AVs;
+            hh.sampleRate = hhSampleRate;
             
             // store in HashMap
             householdData.put(hhID, hh);
@@ -244,6 +255,7 @@ public class InternalExternalTourManager
                 tour.setIncome(hh.income);
                 tour.setAutos(hh.autos);
                 tour.setAge(age);
+                tour.setSampleRate(hh.sampleRate);
                 
                 if(hh.autonomousVehicles>0)
                 	tour.setAvAvailable(true);
@@ -261,8 +273,10 @@ public class InternalExternalTourManager
                 tour.setNonWorkTimeFactor(timeFactorNonWork);              
                            
                 tourList.add(tour);
+                double expansionFactor = 1.0/tour.getSampleRate();
 
-                ++tourCount;
+                //++tourCount;
+                tourCount += expansionFactor;
             }
 
         }
@@ -305,7 +319,7 @@ public class InternalExternalTourManager
             throw new RuntimeException();
         }
         String tripHeaderString = new String(
-                "hhID,pnum,personID,tourID,originMGRA,destinationMGRA,originTAZ,destinationTAZ,inbound,originIsTourDestination,destinationIsTourDestination,period,tripMode,av_avail,boardingTap,alightingTap,set,valueOfTime\n");
+                "hhID,pnum,personID,tourID,originMGRA,destinationMGRA,originTAZ,destinationTAZ,inbound,originIsTourDestination,destinationIsTourDestination,period,tripMode,av_avail,boardingTap,alightingTap,set,valueOfTime,sampleRate\n");
         tripWriter.print(tripHeaderString);
 
         for (int i = 0; i < tours.length; ++i)
@@ -336,7 +350,7 @@ public class InternalExternalTourManager
                 + trip.isDestinationIsTourDestination() + "," + trip.getPeriod() + ","
                 + trip.getTripMode() + "," + (tour.isAvAvailable() ? 1 : 0) + "," 
                 + trip.getBoardTap() + "," + trip.getAlightTap() + "," + trip.getSet()+ ","
-                +String.format("%9.2f",trip.getValueOfTime()) + "\n");
+                +String.format("%9.2f",trip.getValueOfTime()) + "," + trip.getSampleRate() + "\n");
         writer.print(record);
     }
 
@@ -367,7 +381,7 @@ public class InternalExternalTourManager
         } else propertiesFile = args[0];
 
         pMap = ResourceUtil.getResourceBundleAsHashMap(propertiesFile);
-        InternalExternalTourManager apm = new InternalExternalTourManager(pMap, 1);
+        InternalExternalTourManager apm = new InternalExternalTourManager(pMap, 1, 1);
         apm.generateTours();
         apm.writeOutputFile(pMap);
 

@@ -19,7 +19,7 @@ import com.pb.common.matrix.MatrixWriter;
 
 /**
  * @author Jim Hicks
- *
+ * 
  *         Class for managing matrix data in a remote process and accessed by
  *         UECs using RMI.
  */
@@ -28,7 +28,7 @@ public class MatrixDataServer
 {
 
     private static Logger         logger                     = Logger.getLogger(MatrixDataServer.class);
-
+    
     private Object                     objectLock;
 
     private static final String        VERSION                    = "2.3_OMX_Only";
@@ -44,13 +44,15 @@ public class MatrixDataServer
                                                                           .getCanonicalName();
     private static final String        MATRIX_DATA_SERVER_LABEL   = "matrix server";
 
-    private HashMap<String, MatrixReader> matrixReaderMap;
+    private HashMap<String, DataEntry> matrixEntryMap;
+    private HashMap<String, Matrix>    matrixMap;
 
     public MatrixDataServer()
     {
 
         // create the HashMap objects to keep track of matrix data read by the server
-        matrixReaderMap = new HashMap<String, MatrixReader>();
+        matrixEntryMap = new HashMap<String, DataEntry>();
+        matrixMap = new HashMap<String, Matrix>();
 
         objectLock = new Object();
     }
@@ -71,39 +73,40 @@ public class MatrixDataServer
 
     /*
      * Read a matrix.
-     *
+     * 
      * @param matrixEntry a DataEntry describing the matrix to read
-     *
+     * 
      * @return a Matrix
      */
     public Matrix getMatrix(DataEntry matrixEntry)
     {
 
         Matrix matrix;
-        MatrixReader mr;
 
         synchronized (objectLock)
         {
 
             String name = matrixEntry.name;
-            String fileName = matrixEntry.fileName;
 
-            // create or reuse 64bit matrix reader
-            if (matrixReaderMap.containsKey(fileName))
+            if (matrixEntryMap.containsKey(name))
             {
-                mr = matrixReaderMap.get(fileName);
+                matrix = matrixMap.get(name);
             } else
             {
-                logger.info("Creating MatrixReader for  " + fileName);
-                mr = MatrixReader.createReader(MatrixType.OMX, new File(fileName));
-                matrixReaderMap.put(fileName, mr);
+                
+            	//create 64bit matrix reader
+                String fileName = matrixEntry.fileName;
+                MatrixReader mr = MatrixReader.createReader(MatrixType.OMX, new File(fileName));
+                matrix = mr.readMatrix(matrixEntry.matrixName);
+                logger.info("Read " + matrixEntry.matrixName + " as " + name + " from " + fileName);
+                
+                // Use token name from control file for matrix name (not name
+                // from underlying matrix)
+                matrix.setName(matrixEntry.name);
+
+                matrixMap.put(name, matrix);
+                matrixEntryMap.put(name, matrixEntry);
             }
-
-            matrix = mr.readMatrix(matrixEntry.matrixName);
-            logger.info("Read " + matrixEntry.matrixName + " as " + name + " from " + fileName);
-
-            // Use token name from control file for matrix name (not name from underlying matrix)
-            matrix.setName(name);
 
         }
 
@@ -112,7 +115,7 @@ public class MatrixDataServer
 
     /**
      * Utility method to write a set of matrices to disk.
-     *
+     * 
      * @param fileName
      *            The file name to write to.
      * @param m
@@ -135,7 +138,7 @@ public class MatrixDataServer
 
     /**
      * Utility method to write a set of matrices to disk.
-     *
+     * 
      * @param fileName
      *            The file name to write to.
      * @param m
@@ -145,16 +148,25 @@ public class MatrixDataServer
     {
     	writeMatrixFile(fileName, m);
     }
-
+    
     public void clear()
     {
-        if (matrixReaderMap != null)
+        if (matrixMap != null)
         {
-            matrixReaderMap = new HashMap<String, MatrixReader>();
-            logger.info("MatrixDataServer matrixReaderMap object is cleared.");
+            matrixMap = new HashMap<String, Matrix>();
+            logger.info("MatrixDataServer matrixMap object is cleared.");
         } else
         {
-            logger.info("MatrixDataServer.clear() called, but matrixReaderMap object is null.");
+            logger.info("MatrixDataServer.clear() called, but matrixMap object is null.");
+        }
+
+        if (matrixEntryMap != null)
+        {
+            matrixEntryMap = new HashMap<String, DataEntry>();
+            logger.info("MatrixDataServer matrixEntryMap object is cleared.");
+        } else
+        {
+            logger.info("MatrixDataServer.clear() called, but matrixEntryMap object is null.");
         }
     }
 

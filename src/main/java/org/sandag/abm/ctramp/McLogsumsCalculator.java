@@ -742,8 +742,8 @@ public class McLogsumsCalculator implements Serializable
     }
     
     //select best transit path from N-path for trip
-    public int chooseTripPath(float rnum, double[][] bestTapPairs, boolean myTrace, Logger myLogger) {
-    	return bestPathUEC.chooseTripPath(rnum, bestTapPairs, myTrace, myLogger);
+    public int chooseTripPath(double rnum, double[][] bestTapPairs, boolean myTrace, Logger myLogger) {
+     	return bestPathUEC.chooseTripPath(rnum, bestTapPairs, myTrace, myLogger);
     }
 
 
