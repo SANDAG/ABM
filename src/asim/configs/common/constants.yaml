@@ -233,3 +233,4 @@ microFixedCost: 1.00
 microRentTime: 1
 microConstant: 60
 microAccessThreshold: 100
+microOwnership: 0.008
