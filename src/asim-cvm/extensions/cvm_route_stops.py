@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import logging
 
+import numpy as np
 import pandas as pd
-from pydantic import validator
+from pydantic import NonNegativeFloat, PositiveFloat, validator
 
 from activitysim.core import (
     config,
@@ -23,10 +24,10 @@ from activitysim.core.configuration.logit import (
 from activitysim.core.interaction_sample import interaction_sample
 from activitysim.core.util import assign_in_place
 
-from .cvm_enum import StopPurposes
+from .cvm_enum import LocationTypes, StopPurposes
 from .cvm_enum_tools import as_int_enum
+from .cvm_route_terminal_type import RouteStopTypeSettings, route_endpoint_type
 from .cvm_terminal_choice import SimpleLocationComponentSettings
-from .cvm_route_terminal_type import route_endpoint_type, RouteStopTypeSettings
 
 logger = logging.getLogger(__name__)
 
@@ -53,6 +54,74 @@ class StopLoopLocationSettings(SimpleLocationComponentSettings, extra="forbid"):
     TERMINAL_ZONE_COL_NAME: str = "terminal_zone"
 
 
+class GammaParameters(PydanticReadable, extra="forbid"):
+    """
+    Parameters for a gamma distributed random variable.
+    """
+
+    shape: PositiveFloat
+    """The shape term for a gamma distribution.
+    
+    For the default gamma, this is the only term.  For adjusted gammas,
+    all shape terms are combined multiplicatively.
+    """
+
+    scale: PositiveFloat = 1.0
+    """The scale term for a gamma distribution.
+    
+    For the default gamma, this is the only term.  For adjusted gammas,
+    all scale terms are combined multiplicatively.
+    """
+
+
+class GammaParameterAdjustments(GammaParameters, extra="forbid"):
+    shape: PositiveFloat = 1.0
+
+    add_shape: NonNegativeFloat = 0.0
+    """An additive adjustment for shape term for a gamma distribution.
+
+    Additions are applied cumulatively, and are all applied after the 
+    base term is computed multiplicatively.  So if the base is 1, there are two 
+    `shape` adjustments of 2 and 3, and two `add_shape` values of 4 and 5, the 
+    final shape is `(1 * 2 * 3) + 4 + 5 = 15`.
+    """
+
+    add_scale: NonNegativeFloat = 0.0
+    """An additive adjustment for scale term for a gamma distribution.
+
+    Additions are applied cumulatively, and are all applied after the 
+    base term is computed multiplicatively.  So if the base is 1, there are two 
+    `scale` adjustments of 2 and 3, and two `add_scale` values of 4 and 5, the 
+    final shape is `(1 * 2 * 3) + 4 + 5 = 15`.
+    """
+
+
+class DwellTimeSettings(PydanticReadable, extra="forbid"):
+    purpose_adjustments: dict[StopPurposes, GammaParameterAdjustments] = {}
+    location_adjustments: dict[LocationTypes, GammaParameterAdjustments] = {}
+    default_gamma: GammaParameters
+
+    @validator("purpose_adjustments", pre=True)
+    def decipher_purposes(cls, value):
+        new_value = {}
+        for k, v in value.items():
+            if isinstance(k, str) and k in StopPurposes.__members__:
+                new_value[StopPurposes[k]] = v
+            else:
+                new_value[k] = v
+        return new_value
+
+    @validator("location_adjustments", pre=True)
+    def decipher_locationtypes(cls, value):
+        new_value = {}
+        for k, v in value.items():
+            if isinstance(k, str) and k in LocationTypes.__members__:
+                new_value[LocationTypes[k]] = v
+            else:
+                new_value[k] = v
+        return new_value
+
+
 class StopLoopComponentSettings(PydanticReadable, extra="forbid"):
     """
     Base configuration class for components that are non-logsum location choice models.
@@ -61,6 +130,7 @@ class StopLoopComponentSettings(PydanticReadable, extra="forbid"):
     purpose_settings: StopLoopPurposeSettings
     location_type_settings: RouteStopTypeSettings
     location_settings: StopLoopLocationSettings
+    dwell_settings: DwellTimeSettings
 
     # # Logsum-related settings
     # # CHOOSER_ORIG_COL_NAME: str
@@ -321,6 +391,13 @@ def _route_stop_location(
     return nonterminated_routes
 
 
+def _dwell_time():
+    # TODO: interface with ActivitySim repro-random
+    rng = np.random.default_rng(seed=42)
+
+    rng.gamma()
+
+
 @workflow.step
 def route_stops(
     state: workflow.State,
@@ -389,7 +466,7 @@ def route_stops(
             state,
             nonterminated_routes,
             model_settings=model_settings.location_type_settings,
-            trace_label = "stop_location_type",
+            trace_label="stop_location_type",
         )
 
         # Choose next stop location
