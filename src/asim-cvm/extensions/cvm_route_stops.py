@@ -149,6 +149,10 @@ class StopLoopComponentSettings(PydanticReadable, extra="forbid"):
     location_type_settings: RouteStopTypeSettings
     location_settings: StopLoopLocationSettings
     dwell_settings: DwellTimeSettings
+    travel_time_skim: str
+    """Name of the skim that contains the travel times.
+    
+    These are the values, along with dwell time, used to accumulate elapsed time."""
 
     # # Logsum-related settings
     # # CHOOSER_ORIG_COL_NAME: str
@@ -355,7 +359,7 @@ def _route_stop_location(
             spec_file_name=model_settings.SPEC,
             coefficients_file_name=model_settings.COEFFICIENTS,
         )
-        sample_size = 1  # not really sampling, we are choosing
+        pseudo_sample_size = 1  # not really sampling, we are choosing
         locals_dict = model_settings.CONSTANTS.copy()
         locals_dict.update(
             {
@@ -366,16 +370,33 @@ def _route_stop_location(
         )  # FIXME use timed skims
 
         skim_dict = network_los.get_default_skim_dict()
-        skims = skim_dict.wrap("zone_id", "MAZ")
+        skims = {
+            "skims": skim_dict.wrap("zone_id", "MAZ"),
+            "leg1_skims": skim_dict.wrap_3d(
+                orig_key="_prior_stop_location_",
+                dest_key="zone_id",
+                dim3_key="_time_period_",
+            ),
+            "leg2_skims": skim_dict.wrap_3d(
+                orig_key="zone_id",
+                dest_key=model_settings.TERMINAL_ZONE_COL_NAME,
+                dim3_key="_time_period_",
+            ),
+            "hypotenuse_skims": skim_dict.wrap_3d(
+                orig_key="_prior_stop_location_",
+                dest_key=model_settings.TERMINAL_ZONE_COL_NAME,
+                dim3_key="_time_period_",
+            ),
+        }
 
-        locals_dict.update({"skims": skims})
+        locals_dict.update(skims)
 
         choices = interaction_sample(
             state,
             choosers,
             segment_destination_size_terms,
             spec,
-            sample_size,
+            pseudo_sample_size,
             alt_col_name=model_settings.RESULT_COL_NAME,
             allow_zero_probs=False,
             log_alt_losers=False,
@@ -501,7 +522,9 @@ def route_stops(
         nonterminated_routes["route_elapsed_time"] = 0.0
 
     # initialize prior_stop_location to route origination location
-    prior_stop_location = routes["origination_zone"]
+    nonterminated_routes["_prior_stop_location_"] = prior_stop_location = routes[
+        "origination_zone"
+    ]
 
     nonterminated_routes[model_settings.purpose_settings.NEXT_PURP_COL] = as_int_enum(
         pd.Series(StopPurposes.originate.name, index=nonterminated_routes.index),
@@ -514,14 +537,32 @@ def route_stops(
         categorical=True,
     )
 
-    nonterminated_routes.info(1)
-
     route_trip_num = 1
 
     cv_trips = []
 
     while len(nonterminated_routes) > 0:
         logger.debug(f"{trace_label} processing cv stop {route_trip_num}")
+
+        # use existing elapsed time to compute trip start time
+        nonterminated_routes["trip_start_time"] = nonterminated_routes["start_time"] + (
+            nonterminated_routes["route_elapsed_time"]
+            // state.network_settings.skim_time_periods.period_minutes
+        ).astype(np.int16)
+
+        # override trip start time if it would be after the modeled day
+        too_late = (
+            nonterminated_routes["trip_start_time"]
+            >= state.network_settings.skim_time_periods.periods[-1]
+        )
+        if too_late.any():
+            nonterminated_routes.loc[too_late, "trip_start_time"] = (
+                state.network_settings.skim_time_periods.periods[-1] - 1
+            )
+
+        nonterminated_routes["_time_period_"] = network_los.skim_time_period_label(
+            nonterminated_routes["trip_start_time"]
+        )
 
         # initialize next stop location as -1
         next_stop_location = pd.Series(-1, index=nonterminated_routes.index)
@@ -533,6 +574,12 @@ def route_stops(
         nonterminated_routes = _stop_purpose(
             state, nonterminated_routes, model_settings.purpose_settings
         )
+
+        # override purpose to be terminate if it would be after the modeled day
+        if too_late.any():
+            nonterminated_routes.loc[
+                too_late, model_settings.purpose_settings.NEXT_PURP_COL
+            ] = StopPurposes.terminate.name
 
         routes_continuing = (
             nonterminated_routes[
@@ -575,10 +622,18 @@ def route_stops(
             model_settings.dwell_settings.RESULT_COL_NAME
         ][routes_continuing]
 
-        trip_travel_time = 123.4  # TODO
+        skim_dict = network_los.get_default_skim_dict()
+        dskim = skim_dict.wrap_3d(
+            orig_key="_prior_stop_location_",
+            dest_key=model_settings.location_settings.RESULT_COL_NAME,
+            dim3_key="_time_period_",
+        )
+        dskim.set_df(nonterminated_routes)
+        trip_travel_time = dskim[model_settings.travel_time_skim]
 
+        # update total elapsed time
         nonterminated_routes["route_elapsed_time"] = (
-            nonterminated_routes["route_elapsed_time"] + dwell_time + trip_travel_time
+            nonterminated_routes["route_elapsed_time"] + trip_travel_time + dwell_time
         )
 
         # write to cv_trips table
@@ -595,7 +650,8 @@ def route_stops(
                     "trip_destination_type": nonterminated_routes[
                         "next_stop_location_type"
                     ].values,
-                    "trip_start_time": 9.9,
+                    "trip_start_time": nonterminated_routes["trip_start_time"].values,
+                    "trip_travel_time": trip_travel_time.values,
                     "dwell_time": dwell_time.values,
                     "route_elapsed_time": nonterminated_routes[
                         "route_elapsed_time"

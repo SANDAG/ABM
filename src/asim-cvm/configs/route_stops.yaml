@@ -32,3 +32,4 @@ dwell_settings:
   default_gamma:
     shape: 5
     scale: 1
+travel_time_skim: TRK_M_TIME
