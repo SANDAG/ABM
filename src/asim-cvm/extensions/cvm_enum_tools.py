@@ -18,6 +18,12 @@ def get_enum_name(e, value):
         return result
 
 
+def int_enum_to_categorical_dtype(e):
+    max_enum_value = int(max(e))
+    categories = [get_enum_name(e, i) for i in range(max_enum_value + 1)]
+    return pd.CategoricalDtype(categories=categories)
+
+
 def as_int_enum(series, e, dtype=None, categorical=False):
     min_enum_value = int(min(e))
     max_enum_value = int(max(e))

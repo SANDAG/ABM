@@ -28,6 +28,7 @@ from .cvm_enum import LocationTypes, StopPurposes
 from .cvm_enum_tools import as_int_enum
 from .cvm_route_terminal_type import RouteStopTypeSettings, route_endpoint_type
 from .cvm_terminal_choice import SimpleLocationComponentSettings
+from .cvm_enum_tools import int_enum_to_categorical_dtype
 
 logger = logging.getLogger(__name__)
 
@@ -77,29 +78,47 @@ class GammaParameters(PydanticReadable, extra="forbid"):
 class GammaParameterAdjustments(GammaParameters, extra="forbid"):
     shape: PositiveFloat = 1.0
 
-    add_shape: NonNegativeFloat = 0.0
+    shape_add: NonNegativeFloat = 0.0
     """An additive adjustment for shape term for a gamma distribution.
 
     Additions are applied cumulatively, and are all applied after the 
     base term is computed multiplicatively.  So if the base is 1, there are two 
-    `shape` adjustments of 2 and 3, and two `add_shape` values of 4 and 5, the 
+    `shape` adjustments of 2 and 3, and two `shape_add` values of 4 and 5, the 
     final shape is `(1 * 2 * 3) + 4 + 5 = 15`.
     """
 
-    add_scale: NonNegativeFloat = 0.0
+    scale_add: NonNegativeFloat = 0.0
     """An additive adjustment for scale term for a gamma distribution.
 
     Additions are applied cumulatively, and are all applied after the 
     base term is computed multiplicatively.  So if the base is 1, there are two 
-    `scale` adjustments of 2 and 3, and two `add_scale` values of 4 and 5, the 
+    `scale` adjustments of 2 and 3, and two `scale_add` values of 4 and 5, the 
     final shape is `(1 * 2 * 3) + 4 + 5 = 15`.
     """
 
 
 class DwellTimeSettings(PydanticReadable, extra="forbid"):
+    RESULT_COL_NAME: str = "dwell_time"
+    """The column in the cv_trips table that has the resulting dwell time."""
+
+    purpose_column: str = "next_stop_purpose"
     purpose_adjustments: dict[StopPurposes, GammaParameterAdjustments] = {}
+    location_type_column: str = "next_stop_location_type"
     location_adjustments: dict[LocationTypes, GammaParameterAdjustments] = {}
     default_gamma: GammaParameters
+    min_dwell_time: float = 1
+    """Minimum dwell time for any stop.
+
+    If the random number generator selects a time less than this, it is 
+    truncated to this value.
+    """
+
+    max_dwell_time: float = 360
+    """Maximum dwell time for any stop.
+    
+    If the random number generator selects a time greater than this, it is 
+    truncated to this value.
+    """
 
     @validator("purpose_adjustments", pre=True)
     def decipher_purposes(cls, value):
@@ -234,9 +253,10 @@ def _stop_purpose(
     )
 
     result_dtype = pd.CategoricalDtype(categories=model_spec.columns)
+    desired_result_dtype = int_enum_to_categorical_dtype(StopPurposes)
     choices = pd.Series(
         data=pd.Categorical.from_codes(choices, dtype=result_dtype), index=choices.index
-    )
+    ).astype(desired_result_dtype)
 
     # if estimator:
     #     estimator.write_choices(choices)
@@ -252,7 +272,7 @@ def _stop_purpose(
     nonterminated_routes[model_settings.NEXT_PURP_COL] = (
         choices.reindex(nonterminated_routes.index)
         .fillna(model_spec.columns[0])
-        .astype(result_dtype)
+        .astype(desired_result_dtype)
     )
 
     tracing.print_summary(
@@ -391,11 +411,65 @@ def _route_stop_location(
     return nonterminated_routes
 
 
-def _dwell_time():
+def _dwell_time(    state: workflow.State,
+    nonterminated_routes: pd.DataFrame,
+    model_settings: DwellTimeSettings,
+    trace_label: str = "cv_stop_purpose",
+) -> pd.DataFrame:
     # TODO: interface with ActivitySim repro-random
     rng = np.random.default_rng(seed=42)
 
-    rng.gamma()
+    result_list = []
+
+    for (purpose, locationtype), df in nonterminated_routes.groupby([model_settings.purpose_column,model_settings.location_type_column ]):
+
+        shape = model_settings.default_gamma.shape
+        scale = model_settings.default_gamma.scale
+        shape_add = 0
+        scale_add = 0
+
+        try:
+            purpose_ = StopPurposes[purpose]
+        except KeyError:
+            purpose_ = purpose
+        if purpose_ == StopPurposes.terminate:
+            # no need to compute dwell times on terminating stops
+            result_list.append(pd.Series(0, index=df.index, name=model_settings.RESULT_COL_NAME))
+            continue
+        if purpose_ in model_settings.purpose_adjustments:
+            adj = model_settings.purpose_adjustments[purpose_]
+            shape *= adj.shape
+            scale *= adj.scale
+            shape_add += adj.shape_add
+            scale_add += adj.scale_add
+
+        try:
+            locationtype_ = LocationTypes[locationtype]
+        except KeyError:
+            locationtype_ = locationtype
+        if locationtype_ in model_settings.location_adjustments:
+            adj = model_settings.location_adjustments[locationtype_]
+            shape *= adj.shape
+            scale *= adj.scale
+            shape_add += adj.shape_add
+            scale_add += adj.scale_add
+
+        shape += shape_add
+        scale += scale_add
+
+        random_dwell_times = np.clip(
+            rng.gamma(shape, scale, size=len(df)),
+            a_min=model_settings.min_dwell_time, a_max=model_settings.max_dwell_time,
+        )
+
+
+        result_list.append(pd.Series(random_dwell_times, index=df.index, name=model_settings.RESULT_COL_NAME))
+
+    dwell_times = pd.concat(result_list)
+    assign_in_place(nonterminated_routes, dwell_times.to_frame())
+    return nonterminated_routes
+
+
 
 
 @workflow.step
@@ -417,6 +491,9 @@ def route_stops(
     # Collect all non-terminated routes
 
     nonterminated_routes = routes_merged
+
+    if "route_elapsed_time" not in nonterminated_routes:
+        nonterminated_routes["route_elapsed_time"] = 0.0
 
     # initialize prior_stop_location to route origination location
     prior_stop_location = routes["origination_zone"]
@@ -444,10 +521,14 @@ def route_stops(
         # initialize next stop location as -1
         next_stop_location = pd.Series(-1, index=nonterminated_routes.index)
 
+        # initialize next dwell time as 0
+        dwell_time = pd.Series(0, index=nonterminated_routes.index, dtype=np.float32)
+
         # Choose next stop purpose
         nonterminated_routes = _stop_purpose(
             state, nonterminated_routes, model_settings.purpose_settings
         )
+        nonterminated_routes.to_csv(f"/tmp/A-nonterminated_routes-{route_trip_num}.csv")
 
         routes_continuing = (
             nonterminated_routes[
@@ -455,6 +536,8 @@ def route_stops(
             ].cat.codes
             != StopPurposes.terminate
         )
+
+        routes_continuing.to_csv(f"/tmp/routes_continuing-{route_trip_num}.csv")
 
         # when terminating, set stop location to terminal zone location
         next_stop_location[~routes_continuing] = nonterminated_routes[
@@ -481,7 +564,18 @@ def route_stops(
         ][routes_continuing]
 
         # Choose dwell time
-        pass  # time model
+        nonterminated_routes = _dwell_time(
+            state,
+            nonterminated_routes,
+            model_settings.dwell_settings,
+        )
+        dwell_time[routes_continuing] = nonterminated_routes[
+            model_settings.dwell_settings.RESULT_COL_NAME
+        ][routes_continuing]
+
+        trip_travel_time = 123.4  # TODO
+
+        nonterminated_routes["route_elapsed_time"] = nonterminated_routes["route_elapsed_time"] + dwell_time + trip_travel_time
 
         # write to cv_trips table
         cv_trips.append(
@@ -489,9 +583,13 @@ def route_stops(
                 {
                     "route_id": nonterminated_routes.index.to_numpy(),
                     "route_trip_num": route_trip_num,
-                    "trip_origin": prior_stop_location.to_numpy(),
-                    "trip_destination": next_stop_location.to_numpy(),
+                    "trip_origin": prior_stop_location.values,
+                    "trip_destination": next_stop_location.values,
+                    "trip_destination_purpose": nonterminated_routes['next_stop_purpose'].values,
+                    "trip_destination_type": nonterminated_routes['next_stop_location_type'].values,
                     "trip_start_time": 9.9,
+                    "dwell_time": dwell_time.values,
+                    "route_elapsed_time": nonterminated_routes["route_elapsed_time"].values,
                 },
                 index=pd.Index(
                     nonterminated_routes.index * 1000 + route_trip_num,

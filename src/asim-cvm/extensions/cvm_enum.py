@@ -42,3 +42,22 @@ class LocationTypes(enum.IntEnum):
     residential = 4
     commercial = 5
     terminal = 6
+
+
+def decipher(enum_cls, value):
+    """
+    Get an enum value by name, or return the value unchanged.
+
+    Parameters
+    ----------
+    enum_cls
+    value
+
+    Returns
+    -------
+
+    """
+    if value in enum_cls.__members__:
+        return enum_cls[value]
+    else:
+        return value
