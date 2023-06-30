@@ -25,10 +25,9 @@ from activitysim.core.interaction_sample import interaction_sample
 from activitysim.core.util import assign_in_place
 
 from .cvm_enum import LocationTypes, StopPurposes
-from .cvm_enum_tools import as_int_enum
+from .cvm_enum_tools import as_int_enum, int_enum_to_categorical_dtype
 from .cvm_route_terminal_type import RouteStopTypeSettings, route_endpoint_type
 from .cvm_terminal_choice import SimpleLocationComponentSettings
-from .cvm_enum_tools import int_enum_to_categorical_dtype
 
 logger = logging.getLogger(__name__)
 
@@ -411,7 +410,8 @@ def _route_stop_location(
     return nonterminated_routes
 
 
-def _dwell_time(    state: workflow.State,
+def _dwell_time(
+    state: workflow.State,
     nonterminated_routes: pd.DataFrame,
     model_settings: DwellTimeSettings,
     trace_label: str = "cv_stop_purpose",
@@ -421,8 +421,9 @@ def _dwell_time(    state: workflow.State,
 
     result_list = []
 
-    for (purpose, locationtype), df in nonterminated_routes.groupby([model_settings.purpose_column,model_settings.location_type_column ]):
-
+    for (purpose, locationtype), df in nonterminated_routes.groupby(
+        [model_settings.purpose_column, model_settings.location_type_column]
+    ):
         shape = model_settings.default_gamma.shape
         scale = model_settings.default_gamma.scale
         shape_add = 0
@@ -434,7 +435,9 @@ def _dwell_time(    state: workflow.State,
             purpose_ = purpose
         if purpose_ == StopPurposes.terminate:
             # no need to compute dwell times on terminating stops
-            result_list.append(pd.Series(0, index=df.index, name=model_settings.RESULT_COL_NAME))
+            result_list.append(
+                pd.Series(0, index=df.index, name=model_settings.RESULT_COL_NAME)
+            )
             continue
         if purpose_ in model_settings.purpose_adjustments:
             adj = model_settings.purpose_adjustments[purpose_]
@@ -459,17 +462,19 @@ def _dwell_time(    state: workflow.State,
 
         random_dwell_times = np.clip(
             rng.gamma(shape, scale, size=len(df)),
-            a_min=model_settings.min_dwell_time, a_max=model_settings.max_dwell_time,
+            a_min=model_settings.min_dwell_time,
+            a_max=model_settings.max_dwell_time,
         )
 
-
-        result_list.append(pd.Series(random_dwell_times, index=df.index, name=model_settings.RESULT_COL_NAME))
+        result_list.append(
+            pd.Series(
+                random_dwell_times, index=df.index, name=model_settings.RESULT_COL_NAME
+            )
+        )
 
     dwell_times = pd.concat(result_list)
     assign_in_place(nonterminated_routes, dwell_times.to_frame())
     return nonterminated_routes
-
-
 
 
 @workflow.step
@@ -572,7 +577,9 @@ def route_stops(
 
         trip_travel_time = 123.4  # TODO
 
-        nonterminated_routes["route_elapsed_time"] = nonterminated_routes["route_elapsed_time"] + dwell_time + trip_travel_time
+        nonterminated_routes["route_elapsed_time"] = (
+            nonterminated_routes["route_elapsed_time"] + dwell_time + trip_travel_time
+        )
 
         # write to cv_trips table
         cv_trips.append(
@@ -582,11 +589,17 @@ def route_stops(
                     "route_trip_num": route_trip_num,
                     "trip_origin": prior_stop_location.values,
                     "trip_destination": next_stop_location.values,
-                    "trip_destination_purpose": nonterminated_routes['next_stop_purpose'].values,
-                    "trip_destination_type": nonterminated_routes['next_stop_location_type'].values,
+                    "trip_destination_purpose": nonterminated_routes[
+                        "next_stop_purpose"
+                    ].values,
+                    "trip_destination_type": nonterminated_routes[
+                        "next_stop_location_type"
+                    ].values,
                     "trip_start_time": 9.9,
                     "dwell_time": dwell_time.values,
-                    "route_elapsed_time": nonterminated_routes["route_elapsed_time"].values,
+                    "route_elapsed_time": nonterminated_routes[
+                        "route_elapsed_time"
+                    ].values,
                 },
                 index=pd.Index(
                     nonterminated_routes.index * 1000 + route_trip_num,

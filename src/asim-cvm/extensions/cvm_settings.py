@@ -1,7 +1,7 @@
 from activitysim.core.configuration.top import Settings
 
-class CVMSettings(Settings):
 
+class CVMSettings(Settings):
     establishments_sample_size: int = 0
     """
     Number of establishments to sample and simulate.

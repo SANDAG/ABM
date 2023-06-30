@@ -9,6 +9,7 @@ import pandas as pd
 
 from activitysim.core import tracing, workflow
 from activitysim.core.input import read_input_table
+
 from .cvm_state import State
 
 logger = logging.getLogger(__name__)
@@ -16,7 +17,6 @@ logger = logging.getLogger(__name__)
 
 @workflow.table
 def establishments(state: State) -> pd.DataFrame:
-
     establishments_sample_size = state.settings.establishments_sample_size
     trace_establishment_id = state.settings.trace_establishment_id
 
@@ -97,5 +97,3 @@ def establishments(state: State) -> pd.DataFrame:
         state.tracing.trace_df(df, "raw.establishments", warn_if_empty=True)
 
     return df
-
-

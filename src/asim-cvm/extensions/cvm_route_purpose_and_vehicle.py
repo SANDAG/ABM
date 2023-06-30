@@ -7,7 +7,7 @@ import pandas as pd
 
 from activitysim.core import workflow
 
-from .cvm_enum import BusinessTypes, RoutePurposes, VehicleTypes, CustomerTypes
+from .cvm_enum import BusinessTypes, CustomerTypes, RoutePurposes, VehicleTypes
 from .cvm_enum_tools import as_int_enum
 from .cvm_state import State
 
