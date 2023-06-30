@@ -528,7 +528,6 @@ def route_stops(
         nonterminated_routes = _stop_purpose(
             state, nonterminated_routes, model_settings.purpose_settings
         )
-        nonterminated_routes.to_csv(f"/tmp/A-nonterminated_routes-{route_trip_num}.csv")
 
         routes_continuing = (
             nonterminated_routes[
@@ -536,8 +535,6 @@ def route_stops(
             ].cat.codes
             != StopPurposes.terminate
         )
-
-        routes_continuing.to_csv(f"/tmp/routes_continuing-{route_trip_num}.csv")
 
         # when terminating, set stop location to terminal zone location
         next_stop_location[~routes_continuing] = nonterminated_routes[
