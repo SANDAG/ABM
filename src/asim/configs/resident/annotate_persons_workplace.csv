@@ -41,3 +41,4 @@ round trip walk access & egress,_transit_wacc_tot, 2 * (_transit_wacc_home + _tr
 #,,work_auto_savings_ratio
 ,_min_work_walk_transit,"np.where(_work_transit_available, np.minimum(_roundtrip_transit_time_to_work, roundtrip_auto_time_to_work), roundtrip_auto_time_to_work)"
 ,work_auto_savings,"np.where(persons.is_worker, _min_work_walk_transit - roundtrip_auto_time_to_work, 0)"
+Parking cost at work,dparkcost_work,"reindex(land_use.dparkcost, df.workplace_zone_id).fillna(0)"
