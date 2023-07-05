@@ -1,0 +1,35 @@
+Label,Description,Expression,no_pass,pass
+#util_ft,Full-time worker,@df.ptype==PTYPE_FULL,0,asc_ft_pass
+util_pt,Part-time worker,@df.ptype==PTYPE_PART,0,asc_pt_pass
+util_un,University/College,@df.ptype==PTYPE_UNIVERSITY,asc_un_no_pass,0
+util_nw,Non-working adult,@df.ptype==PTYPE_NONWORK,0,asc_nw_pass
+util_rt,Retired,@df.ptype==PTYPE_RETIRED,0,asc_rt_pass
+util_da,Driving age student,@df.ptype==PTYPE_DRIVING,0,asc_da_pass
+util_nd,Non-driving age student,@df.ptype==PTYPE_SCHOOL,0,asc_nd_pass
+util_ps,Preschool,@df.ptype==PTYPE_PRESCHOOL,0,asc_ps_pass
+util_age_5_to_12,Age Group - 5 yrs to 12 yrs,@(df.age >= 5) & (df.age < 13),0,coef_age_5_to_12_pass
+util_age_13_to_18,Age Group - 13 yrs to 18 yrs,@(df.age >= 13) & (df.age < 19),0,coef_age_13_to_18_pass
+util_age_65_plus,Age Group - 65 yrs or older,@df.age >= 65,0,coef_age_65_plus_pass
+util_persons_0_4_in_hhld,Persons age 0-4 in hhld,num_young_children,0,coef_persons_0_4_in_hhld_pass
+util_persons_5_15_in_hhld,Persons age 5-15 in hhld,num_children_5_to_15,0,coef_persons_5_15_in_hhld_pass
+util_hh_income_0_20k,household income 0_20k,"@df.income.between(0,19999)",0,coef_hh_income_0_20k_pass
+util_hh_income_20_50k,household income 20_50k,"@df.income.between(20000,49999)",0,coef_hh_income_20_50k_pass
+util_hh_income_50_80k,household income 50_80k,"@df.income.between(50000,79999)",0,coef_hh_income_50_80k_pass
+util_hh_income_150k_up,household income 150k or over,@df.income >= 150000,0,coef_hh_income_150k_up_pass
+util_household_density,Household Density,@df.household_density,0,coef_hhld_density_pass
+#util_household_density_0_6,Households/hectare <= 6,@df.household_density <= 6,0,coef_low_hhld_density_pass
+#util_emp_density_at_work,Employment Density At Work,@df.emp_density_at_work.fillna(0).clip(lower=0),0,coef_emp_density_at_work_pass
+#util_retail_transit_no_workers,"Retail accessibility (0.66*PK + 0.34*OP) by transit, if 0 workers",(num_workers==0)*(0.66*trPkRetail+0.34*trOpRetail),0,coef_retail_transit_acc_pass
+#util_retail_transit_workers,"Retail accessibility (0.66*PK + 0.34*OP) by transit, if 1+ workers",(num_workers>0)*(0.66*trPkRetail+0.34*trOpRetail),0,coef_retail_transit_acc_pass
+#util_total_acc_transit_no_workers,"Total accessibility (0.66*PK + 0.34*OP) by transit, if 0 workers",(num_workers==0)*(0.66*trPkTotal+0.34*trOpTotal),0,coef_total_transit_acc_pass
+#util_total_acc_transit_workers,"Total accessibility (0.66*PK + 0.34*OP) by transit, if 1+ workers",(num_workers>0)*(0.66*trPkTotal+0.34*trOpTotal),0,coef_total_transit_acc_pass
+util_total_acc_transit_non_zero_auto_no_workers,"Total accessibility (0.66*PK + 0.34*OP) by transit, if 0 workers",@(df.num_workers==0)*(df.auto_ownership > 0)*(0.66*df.trPkTotal+0.34*df.trOpTotal),0,coef_total_transit_acc_non_zero_auto_pass
+util_total_acc_transit_non_zero_auto_workers,"Total accessibility (0.66*PK + 0.34*OP) by transit, if 1+ workers",@(df.num_workers>0)*(df.auto_ownership > 0)*(0.66*df.trPkTotal+0.34*df.trOpTotal),0,coef_total_transit_acc_non_zero_auto_pass
+util_work_from_home,Work from home,work_from_home,0,coef_work_from_home_pass
+#util_workplace_in_cbd,workplace in CBD,@df.workplace_in_cbd,0,coef_workplace_in_cbd_pass
+util_parking_cost_at_work,Parking cost at work,@df.dparkcost_work,0,coef_parking_cost_at_work_pass
+#util_inc_adj_transit_pass_cost,Income adjusted transit pass cost,"@np.where(df.ptype>=5,1.24*2,2.31*2)*(2.6+(np.minimum(df.income/1000,200)**0.569))/60",0,coef_inc_adj_transit_pass_cost
+util_zero_autos,zero auto household ownership,@df.auto_ownership==0,0,coef_zero_autos_pass
+util_auto_deficient,auto deficient household,@((df.auto_ownership < df.num_workers) & (df.auto_ownership > 0)),0,coef_auto_deficient_pass
+util_subs,Subsidy offered,@df.transit_pass_subsidy,0,coef_subs_pass
+utils_pass_asc,Constant,1,0,asc_pass
