@@ -20,7 +20,7 @@ for period in ['EA', 'AM', 'MD', 'PM', 'EV']:
         #rename the file
         # os.rename(output_dir + "/%s_%s_%s.omx" % (mode, period, vot), output_dir + "/%s_%s_%s_.omx" % (mode, period, vot))
         skim = omx.open_file(output_dir + "/" + model_name + "/%s_%s_%s.omx" % (mode, period, vot), 'r')
-        new_skim = omx.open_file(output_dir + "/%s_%s_%s.omx" % (mode, period, vot), 'w')
+        new_skim = omx.open_file(output_dir + "/assignment/%s_%s_%s.omx" % (mode, period, vot), 'w')
         
         for table in skim.list_matrices():
             new_skim.create_matrix(name = table, obj=np.array(skim[table]), shape = skim[table].shape, atom=tables.Atom.from_dtype(np.dtype('float64')))
@@ -41,7 +41,7 @@ for period in ['EA', 'AM', 'MD', 'PM', 'EV']:
     #rename the file
     # os.rename(r"C:\abm_runs\abm3_dev\emme_setup\output\Tran%s_%s.omx" % (mode, period), r"C:\abm_runs\abm3_dev\emme_setup\output\Tran%s_%s_.omx" % (mode, period))
     skim = omx.open_file(output_dir + "/" + model_name + "/Tran%s_%s.omx" % (mode, period), 'r')
-    new_skim = omx.open_file(output_dir + "/Tran%s_%s.omx" % (mode, period), 'w')
+    new_skim = omx.open_file(output_dir + "/assignment/Tran%s_%s.omx" % (mode, period), 'w')
     
     for table in skim.list_matrices():
         new_skim.create_matrix(name = table, obj=np.array(skim[table]), shape = skim[table].shape, atom=tables.Atom.from_dtype(np.dtype('float64')))
