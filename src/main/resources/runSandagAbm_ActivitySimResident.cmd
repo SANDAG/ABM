@@ -70,7 +70,7 @@ CD ..
 
 :: Run simulation.py
 
-%PYTHON3% src/asim/simulation.py -s settings_mp.yaml -c src/asim/configs/resident -c src/asim/configs/common -d input -d output/skims -o output/resident
+%PYTHON3% src/asim/simulation.py -s settings_mp.yaml -c src/asim/configs/resident -c src/asim/configs/common -d input -d output/skims -o output/resident --households_sample_size %SAMPLERATE% 
 
 ::::::::::::::::::::::
 CD /d %ANACONDA2_DIR%\Scripts

@@ -213,97 +213,14 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
 
             if not assignment_only:
 
-                skim_params = OrderedDict([
-                ("WALK_LOC", {
-                    "modes": [],
-                    "journey_levels": []
-                }),
-                ("PNRIN_LOC", {
-                    "modes": [],
-                    "journey_levels": []
-                }),                
-                ("KNRIN_LOC", {
-                    "modes": [],
-                    "journey_levels": []
-                }),
-                ("PNROUT_LOC", {
-                    "modes": [],
-                    "journey_levels": []
-                }),                
-                ("KNROUT_LOC", {
-                    "modes": [],
-                    "journey_levels": []
-                }),
-                ("TNCOUT_LOC", {
-                    "modes": [],
-                    "journey_levels": []
-                }),                
-                ("TNCIN_LOC", {
-                    "modes": [],
-                    "journey_levels": []
-                }),
-                ("WALK_PRM", {
-                    "modes": [],
-                    "journey_levels": []
-                }),
-                ("PNRIN_PRM", {
-                    "modes": [],
-                    "journey_levels": []
-                }),                
-                ("KNRIN_PRM", {
-                    "modes": [],
-                    "journey_levels": []
-                }),
-                ("PNROUT_PRM", {
-                    "modes": [],
-                    "journey_levels": []
-                }),                
-                ("KNROUT_PRM", {
-                    "modes": [],
-                    "journey_levels": []
-                }),
-                ("TNCOUT_PRM", {
-                    "modes": [],
-                    "journey_levels": []
-                }),                
-                ("TNCIN_PRM", {
-                    "modes": [],
-                    "journey_levels": []
-                }),
-                ("WALK_MIX", {
-                    "modes": [],
-                    "journey_levels": []
-                }),
-                ("PNRIN_MIX", {
-                    "modes": [],
-                    "journey_levels": []
-                }),                
-                ("KNRIN_MIX", {
-                    "modes": [],
-                    "journey_levels": []
-                }),
-                ("PNROUT_MIX", {
-                    "modes": [],
-                    "journey_levels": []
-                }),                
-                ("KNROUT_MIX", {
-                    "modes": [],
-                    "journey_levels": []
-                }),
-                ("TNCOUT_MIX", {
-                    "modes": [],
-                    "journey_levels": []
-                }),                
-                ("TNCIN_MIX", {
-                    "modes": [],
-                    "journey_levels": []
-                })])
+                transit_modes = ['WALK_LOC', 'PNRIN_LOC', 'KNRIN_LOC', 'PNROUT_LOC', 'KNROUT_LOC', 'TNCOUT_LOC', 'TNCIN_LOC',
+                                  'WALK_PRM', 'PNRIN_PRM', 'KNRIN_PRM', 'PNROUT_PRM', 'KNROUT_PRM', 'TNCOUT_PRM', 'TNCIN_PRM',
+                                  'WALK_MIX', 'PNRIN_MIX', 'KNRIN_MIX', 'PNROUT_MIX', 'KNROUT_MIX', 'TNCOUT_MIX', 'TNCIN_MIX']
 
-                for mode_name, _ in skim_params.items():
+                for mode_name in transit_modes:
                     self.run_skims(period, mode_name, params, regional_pass, num_processors, network)
 
-            # max_fare = day_pass for local bus and regional_pass for premium modes
-            
+                # max_fare = day_pass for local bus and regional_pass for premium modes
                 self.mask_allpen(period)
                 self.mask_highvalues(period)
                 self.report(period)
@@ -313,6 +230,12 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
         self._matrix_cache = {}  # initialize cache at beginning of run
         emmebank = self.scenario.emmebank
         period = attrs["period"]
+
+        names = ["TEMP_IN_VEHICLE_COST", "TEMP_LAYOVER_BOARD", "TEMP_PERCEIVED_FARE"]
+        for matrix in emmebank.matrices():
+            if matrix.name in names:
+                emmebank.delete_matrix(matrix)
+
         with _m.logbook_trace("Transit assignment for period %s" % period, attributes=attrs):
             with gen_utils.temp_matrices(emmebank, "FULL", 3) as matrices:
                 matrices[0].name = "TEMP_IN_VEHICLE_COST"

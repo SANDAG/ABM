@@ -56,10 +56,12 @@ MD visitor
 MD resident
 MD parking
 MD parking/plots
+MD assignment
 CD ..
 
 if %ITERATION% equ 1 (
     ECHO Running resident model pre-processing
+    %PYTHON3% src/asim/scripts/syntheticDataProcessing.py input
     %PYTHON3% src/asim/scripts/resident/2zoneSkim.py %PROJECT_DIRECTORY%
 
     CD src\asim\scripts\parking
