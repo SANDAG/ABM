@@ -115,8 +115,9 @@ def process_persons()-> pd.DataFrame:
         'SEX': 'sex',
         'RAC1P': 'rac1p',
         'WKW': 'weeks',
-        'WKHP': 'hours',
-        'NAICS2': 'naics2'}
+        'WKHP': 'hours'}
+    
+    persons.loc[:,'naics2_original_code'] = persons['NAICS2']
     persons = persons.rename(columns=persons_rename_dict).sort_values(by=['hhid','pnum'])
     
     #create household serial number; perid
@@ -215,7 +216,7 @@ def process_persons()-> pd.DataFrame:
                     "rac1p",
                     "hisp",
                     "version",
-                    "naics2"]].sort_values(by=['hhid','pnum','perid'])
+                    'naics2_original_code']].sort_values(by=['hhid','pnum','perid'])
 
 def process_landuse()-> pd.DataFrame:
     '''
