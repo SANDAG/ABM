@@ -6,3 +6,6 @@ coef_Percent_detour_10_to_20,10.514,F
 coef_Transit_accessibility,-0.115,F
 coef_Transit_accessibility_is_zero,-0.317,F
 coef_Constant,-6.476,F
+coef_total_hh_toll_travel_time_savings,0,F
+coef_total_hh_toll_dist,0,F
+coef_total_hh_toll_cost,0,F

@@ -25,8 +25,8 @@ parser.add_option("-p", "--path",
 # ===============================================================================
 cvmInputPath = options.path + "/input/"
 cvmZonalProperties = cvmInputPath + "Zonal Properties CVM.csv"
-skimPath = options.path + "/output/"
-cvmPath = options.path + "/output/"
+skimPath = options.path + "/output/skims/"
+cvmPath = options.path + "/output/cvm/"
 
 tazList = range(1, settings.maxTaz+1)
 tazList, zonals = sdcvm.zonalProperties(fileName=cvmZonalProperties)

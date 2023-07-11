@@ -179,8 +179,8 @@ class FourDs(_m.Tool()):
         _m.logbook_write("Generating density variables")
         self.get_density()
         
-        _m.logbook_write("Creating comparison plots")
-        self.make_plots()
+        # _m.logbook_write("Creating comparison plots")
+        # self.make_plots()
         
         _m.logbook_write("Finished running 4Ds")
 

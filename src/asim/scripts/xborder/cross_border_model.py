@@ -202,16 +202,16 @@ def _rename_skims(settings, skim_type):
         output_skims = omx.open_file(
             os.path.join(data_dir, output_fname), 'a')
 
-        # for skims_name in output_skims.list_matrices():
-            # name_elems = skims_name.split('_')
-            # new_name = '_'.join(name_elems[1:]) + '__' + name_elems[0]
-            # output_skims[skims_name].rename(new_name)
+        for skims_name in output_skims.list_matrices():
+            name_elems = skims_name.split('_')
+            new_name = '_'.join(name_elems[1:]) + '__' + name_elems[0]
+            output_skims[skims_name].rename(new_name)
 
-        # if period == 'MD':
-            # output_skims.create_matrix(
-                # 'walkTime', obj=output_skims['SOV_NT_M_DIST__MD'][:, :])
-            # output_skims['walkTime'][:, :] = output_skims[
-                # 'walkTime'][:, :] / walk_speed * 60
+        if period == 'MD':
+            output_skims.create_matrix(
+                'walkTime', obj=output_skims['SOV_NT_M_DIST__MD'][:, :])
+            output_skims['walkTime'][:, :] = output_skims[
+                'walkTime'][:, :] / walk_speed * 60
 
         skims.close()
         output_skims.close()
@@ -225,18 +225,18 @@ def create_skims_and_tap_files(settings, new_mazs=None):
 
     # create taps files and transit skims
     print('Creating tap files.')
-    # transit_skims = omx.open_file(os.path.join(
-        # data_dir, skims_settings['tap_to_tap']['input_fname']), 'a')
-    # all_taps = pd.DataFrame(
-        # pd.Series(list(transit_skims.root.lookup.zone_number)))
-    # all_taps.columns = ['TAP']
-    # all_taps.to_csv(
-        # os.path.join(data_dir, settings['taps_output_fname']), index=False)
-    # tap_lines = pd.read_csv(
-        # os.path.join(data_dir, settings['tap_lines_input_fname']))
-    # tap_lines.to_csv(
-        # os.path.join(data_dir, settings['tap_lines_output_fname']))
-    # transit_skims.close()
+    transit_skims = omx.open_file(os.path.join(
+        data_dir, skims_settings['tap_to_tap']['input_fname']), 'a')
+    all_taps = pd.DataFrame(
+        pd.Series(list(transit_skims.root.lookup.zone_number)))
+    all_taps.columns = ['TAP']
+    all_taps.to_csv(
+        os.path.join(data_dir, settings['taps_output_fname']), index=False)
+    tap_lines = pd.read_csv(
+        os.path.join(data_dir, settings['tap_lines_input_fname']))
+    tap_lines.to_csv(
+        os.path.join(data_dir, settings['tap_lines_output_fname']))
+    transit_skims.close()
     
     
     # update skims/network data
@@ -411,12 +411,11 @@ def create_land_use_file(
     mazs['original_MAZ'] = -1
     mazs['external_TAZ'] = -1
     mazs['external_MAZ'] = -1
-    print(len(mazs))
+
     # update maz table
     for poe_id, poe_attrs in settings['poes'].items():
-        # print("working on POE {}".format(poe_id))
+
         # get poe id for maz's that have one
-        # print(poe_attrs['maz_id'])
         maz_mask = mazs[maz_id_field] == poe_attrs['maz_id']
         mazs.loc[maz_mask, poe_id_field] = poe_id
         mazs.loc[maz_mask, 'external_TAZ'] = poe_attrs['ext_taz_id']
@@ -438,7 +437,7 @@ def create_land_use_file(
         row[poe_id_field] = poe_id
         row['original_MAZ'] = mazs.loc[maz_mask, 'MAZ']
         mazs = mazs.append(row, ignore_index=True)
-    print(len(mazs))
+
     # compute colonia accessibility for poe mazs
     mazs[poe_access_field] = None
     poe_mask = mazs[poe_id_field] >= 0
@@ -450,9 +449,6 @@ def create_land_use_file(
 
     # merge in wide wait times
     wide_wait_times = get_poe_wait_times(settings)
-    print(wide_wait_times.columns)
-    print(mazs.poe_id.unique())
-    
     mazs = pd.merge(
         mazs, wide_wait_times, left_on='poe_id', right_on='poe', how='left')
 
@@ -667,7 +663,6 @@ def create_scheduling_probs_and_alts(settings, los_settings):
         check_names=False, check_dtype=False)
     
     # pivot wide
-    print(asim_scheduling_probs.columns)
     asim_scheduling_probs = asim_scheduling_probs.pivot(
         index='purpose_id',
         columns=['asim_entry_period', 'asim_return_period'],
@@ -740,10 +735,20 @@ if __name__ == '__main__':
         # create input data
         mazs = create_land_use_file(settings)
         new_mazs = mazs[mazs['original_MAZ'] > 0]
+        tours = create_tours(settings)
+        households = create_households(settings)  # 1 per tour
+        persons = create_persons(settings, num_households=len(households))
+        tours = assign_hh_p_to_tours(tours, persons)
 
         # # store input files to disk
         mazs.to_csv(os.path.join(
             data_dir, settings['mazs_output_fname']), index=False)
+        tours.to_csv(os.path.join(
+            data_dir, settings['tours_output_fname']))
+        households.to_csv(os.path.join(
+            data_dir, settings['households_output_fname']), index=False)
+        persons.to_csv(os.path.join(
+            data_dir, settings['persons_output_fname']), index=False)
 
         # create/update configs in place
         create_scheduling_probs_and_alts(settings, los_settings)

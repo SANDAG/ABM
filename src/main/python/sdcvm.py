@@ -326,7 +326,7 @@ def bigrun():
 
     cvmZonalProperties = cvmInputPath + "Zonal Properties CVM.csv"
 
-    skimPath = options.path + "/output/"
+    skimPath = options.path + "/output/skims/"
 
     skimFileDict = {"Light_Mid": [skimPath + "impldt_MD_DU.TXT"],
                     "Medium_Mid": [skimPath + "impmhdt_MD_DU.TXT"],

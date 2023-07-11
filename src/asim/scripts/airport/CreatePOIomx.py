@@ -37,7 +37,7 @@ print ('Table names:', myfile.list_matrices())   # ['m1','m2',',m3']
 
 
 # %%
-xwalk = pd.read_csv(os.path.join(path,'input','mgra15_based_input2019.csv'), usecols = ['taz','zip09'])
+xwalk = pd.read_csv(os.path.join(path,'input','mgra15_based_input2022.csv'), usecols = ['taz','zip09'])
 xwalk['destination'] = 0
 xwalk.loc[xwalk['zip09'] == 92037, 'destination'] = 1
 xwalk.loc[xwalk['zip09'] == 92101, 'destination'] = 2
