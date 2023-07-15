@@ -70,6 +70,7 @@ input_table_list:
       - pstudent
       - ptype
       - educ
+      - naics2_original_code
   - tablename: land_use
     filename: land_use.csv
     index_col: zone_id
