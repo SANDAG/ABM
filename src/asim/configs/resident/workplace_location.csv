@@ -1,5 +1,7 @@
 Label,Description,Expression,coefficient
 local_dist,,_DIST@skims['DIST'],1
+alt_dest_pmsa,,"_ALT_PMSA@reindex(land_use.pseudomsa, df.alt_dest)",1
+home_zone_pmsa,,"_HOME_PMSA@reindex(land_use.pseudomsa, df.home_zone_id)",1
 #,,,
 util_dist,Distance,@_DIST,coef_dist
 util_dist_sqrt,Square root of distance,@_DIST**0.5,coef_dist_sqrt
@@ -21,7 +23,8 @@ util_sp_utility_adjustment,shadow price utility adjustment,@df['shadow_price_uti
 util_mode_logsum,Mode choice logsum,mode_choice_logsum,coef_mode_logsum
 #,,,
 util_sample_of_corrections_factor,Sample of alternatives correction factor,"@np.minimum(np.log(df.pick_count/df.prob), 60)",1
-#caliration constants,,,
+#calibration constants,,,
+util_calib,pseudomsa 1 to 3,@(_HOME_PMSA == 2) & (_ALT_PMSA == 2),coef_calib
 util_Calibration - 0-1 miles,Calibration - 0-1 miles,@_DIST<1,coef_distance_0_1miles
 util_Calibration - 1-2 miles,Calibration - 1-2 miles,@(_DIST>=1) * (_DIST<2),coef_distance_1_2miles
 util_Calibration - 2-3 miles,Calibration - 2-3 miles,@(_DIST>=2) * (_DIST<3),coef_distance_2_3miles
