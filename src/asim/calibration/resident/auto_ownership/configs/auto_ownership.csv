@@ -28,4 +28,3 @@ util_asc,alternative specific constant adjustment for all households,1,asc_allhh
 util_asc_gq,alternative specific constant adjustment for GQ households,@(df.HHT==0),asc_GQ_0_autos,,coef_unavailable,coef_unavailable,coef_unavailable
 # coefficients for av ownership,,,,,,,
 #util_household_owns_av,Decreasing the number of household autos if hh owns an AV,av_ownership,coef_unavailable,,coef_cars2_av_ownership,coef_cars3_av_ownership,coef_unavailable
-util_2022,Calibration constants,1,cars0_2022,,cars2_2022,cars3_2022,cars4_2022
