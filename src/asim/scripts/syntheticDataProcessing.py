@@ -7,9 +7,9 @@ import sys
 input_dir = sys.argv[1]
 
 # %%
-households_file = os.path.join(input_dir, 'synthetic_households_2022_01.csv')
-persons_file = os.path.join(input_dir, 'synthetic_persons_2022_01.csv')
-landuse_file = os.path.join(input_dir, 'mgra15_based_input_2022_01.csv')
+households_file = os.path.join(input_dir, 'synthetic_households_2022_base.csv')
+persons_file = os.path.join(input_dir, 'synthetic_persons_2022_base.csv')
+landuse_file = os.path.join(input_dir, 'mgra15_based_input_2022_base.csv')
 landuse2019_file = os.path.join(input_dir, 'mgra15_based_input2019.csv')
 
 # %%
