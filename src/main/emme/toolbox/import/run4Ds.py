@@ -151,7 +151,7 @@ class FourDs(_m.Tool()):
         props = load_properties(_join(self.path, "conf", "sandag_abm.properties"))
 
 		
-        self.mgradata_file = props["mgra.socec.file"] #input/filename
+        self.mgradata_file = props["mgra.socec.base.file"] #input/filename
         self.syn_households_file = props["PopulationSynthesizer.InputToCTRAMP.HouseholdFile"] #input/filename
         self.equivmins_file = props["active.logsum.matrix.file.walk.mgra"] #filename
         self.inNet = os.path.basename(props["active.edge.file"])  #filename

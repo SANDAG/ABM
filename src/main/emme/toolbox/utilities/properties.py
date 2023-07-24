@@ -39,6 +39,7 @@ class PropertiesSetter(object):
     skipCopyWalkImpedance = _m.Attribute(bool)
     skipBikeLogsums = _m.Attribute(bool)
     skipCopyBikeLogsum = _m.Attribute(bool)
+    skipTransitConnector = _m.Attribute(bool)
 
     skipHighwayAssignment_1 = _m.Attribute(bool)
     skipHighwayAssignment_2 = _m.Attribute(bool)
@@ -68,6 +69,12 @@ class PropertiesSetter(object):
     skipCTM_1 = _m.Attribute(bool)
     skipCTM_2 = _m.Attribute(bool)
     skipCTM_3 = _m.Attribute(bool)
+    skipEI_1 = _m.Attribute(bool)
+    skipEI_2 = _m.Attribute(bool)
+    skipEI_3 = _m.Attribute(bool)
+    skipExternal_1 = _m.Attribute(bool)
+    skipExternal_2 = _m.Attribute(bool)
+    skipExternal_3 = _m.Attribute(bool)
     skipTruck_1 = _m.Attribute(bool)
     skipTruck_2 = _m.Attribute(bool)
     skipTruck_3 = _m.Attribute(bool)
@@ -123,6 +130,12 @@ class PropertiesSetter(object):
     skipCTM = property(
         fget=lambda self: self._get_list_prop("skipCTM"),
         fset=lambda self, value: self._set_list_prop("skipCTM", value))
+    skipEI = property(
+        fget=lambda self: self._get_list_prop("skipEI"),
+        fset=lambda self, value: self._set_list_prop("skipEI", value))
+    skipExternal = property(
+        fget=lambda self: self._get_list_prop("skipExternal"),
+        fset=lambda self, value: self._set_list_prop("skipExternal", value))
     skipTruck = property(
         fget=lambda self: self._get_list_prop("skipTruck"),
         fset=lambda self, value: self._set_list_prop("skipTruck", value))
@@ -135,8 +148,8 @@ class PropertiesSetter(object):
             "useLocalDrive", "skip4Ds", "skipInputChecker",
             "startFromIteration", "skipInitialization", "deleteAllMatrices", "skipCopyWarmupTripTables", 
             "skipCopyBikeLogsum", "skipCopyWalkImpedance", "skipWalkLogsums", "skipBikeLogsums", "skipBuildNetwork", 
-            "skipHighwayAssignment", "skipTransitSkimming", "skipTransponderExport", "skipABMPreprocessing", "skipABMResident", "skipABMAirport", "skipABMXborderWait", "skipABMXborder", "skipABMVisitor",
-            "skipCTM", "skipTruck", "skipTripTableCreation", "skipFinalHighwayAssignment", 
+            "skipHighwayAssignment", "skipTransitSkimming", "skipTransitConnector", "skipTransponderExport", "skipABMPreprocessing", "skipABMResident", "skipABMAirport", "skipABMXborderWait", "skipABMXborder", "skipABMVisitor",
+            "skipCTM", "skipTruck", "skipEI", "skipExternal", "skipTripTableCreation", "skipFinalHighwayAssignment", 
             "skipFinalTransitAssignment", "skipVisualizer", "skipDataExport", "skipDataLoadRequest", 
             "skipDeleteIntermediateFiles")
         self._properties = None
@@ -187,6 +200,7 @@ class PropertiesSetter(object):
         skip_per_iteration_items = [
             ("skipHighwayAssignment",   "Skip highway assignments and skims"),
             ("skipTransitSkimming",     "Skip transit skims"),
+            ("skipTransitConnector",    "&nbsp;&nbsp;&nbsp;&nbsp;Skip creating new connectors"),
             ("skipTransponderExport",   "Skip transponder accessibilities"),
             ("skipABMPreprocessing",    "Skip ActivitySim preprocessing"),
             ("skipABMResident",         "Skip ActivitySim resident model"),
@@ -196,6 +210,8 @@ class PropertiesSetter(object):
             ("skipABMVisitor",          "Skip ActivitySim visitor model"),
             ("skipCTM",                 "Skip commercial vehicle sub-model"),
             ("skipTruck",               "Skip truck sub-model"),
+            ("skipEI",                  "Skip external-internal sub-model"),
+            ("skipExternal",            "Skip external-external sub-model"),
             ("skipTripTableCreation",   "Skip trip table creation"),
         ]
         skip_final_items = [
@@ -225,7 +241,7 @@ class PropertiesSetter(object):
             contents.append(checkbox_no_data % {"name": "all" + "_" + str(i)})
         for name, label in skip_per_iteration_items:
             contents.append("</tr><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;%s</td>" % label)
-            if name not in  ["skipABMXborderWait"]:
+            if name not in  ["skipABMXborderWait", "skipTransitConnector"]:
                 for i in range(1,4):
                     contents.append(checkbox % {"name": name + "_" + str(i), "tag": tool_proxy_tag})
             else:
@@ -323,6 +339,7 @@ class PropertiesSetter(object):
 
         self.skipHighwayAssignment = props.get("RunModel.skipHighwayAssignment", [False, False, False])
         self.skipTransitSkimming = props.get("RunModel.skipTransitSkimming", [False, False, False])
+        self.skipTransitConnector = props.get("RunModel.skipTransitConnector", False)
         self.skipTransponderExport = props.get("RunModel.skipTransponderExport", [False, False, False])
         self.skipABMPreprocessing = props.get("RunModel.skipABMPreprocessing", [False, False, False])
         self.skipABMResident = props.get("RunModel.skipABMResident", [False, False, False])
@@ -333,6 +350,8 @@ class PropertiesSetter(object):
 
         self.skipCTM = props.get("RunModel.skipCTM", [False, False, False])
         self.skipTruck = props.get("RunModel.skipTruck", [False, False, False])
+        self.skipEI = props.get("RunModel.skipEI", [False, False, False])
+        self.skipExternal = props.get("RunModel.skipExternal", [False, False, False])
         self.skipTripTableCreation = props.get("RunModel.skipTripTableCreation", [False, False, False])
 
         self.skipFinalHighwayAssignment = props.get("RunModel.skipFinalHighwayAssignment", False)
@@ -361,6 +380,7 @@ class PropertiesSetter(object):
         
         props["RunModel.skipHighwayAssignment"] = self.skipHighwayAssignment
         props["RunModel.skipTransitSkimming"] = self.skipTransitSkimming
+        props["RunModel.skipTransitConnector"] = self.skipTransitConnector
         props["RunModel.skipTransponderExport"] = self.skipTransponderExport
         props["RunModel.skipABMPreprocessing"] = self.skipABMPreprocessing
         props["RunModel.skipABMResident"] = self.skipABMResident
@@ -370,6 +390,8 @@ class PropertiesSetter(object):
         props["RunModel.skipABMVisitor"] = self.skipABMVisitor
         props["RunModel.skipCTM"] = self.skipCTM
         props["RunModel.skipTruck"] = self.skipTruck
+        props["RunModel.skipEI"] = self.skipEI
+        props["RunModel.skipExternal"] = self.skipExternal
         props["RunModel.skipTripTableCreation"] = self.skipTripTableCreation
 
         props["RunModel.skipFinalHighwayAssignment"] = self.skipFinalHighwayAssignment

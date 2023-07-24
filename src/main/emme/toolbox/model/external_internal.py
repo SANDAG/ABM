@@ -117,7 +117,7 @@ class ExternalInternal(_m.Tool(), gen_utils.Snapshot):
 
         year = int(props['scenarioYear'])
         mgra = pd.read_csv(
-            os.path.join(input_directory, 'mgra13_based_input%s.csv' % year))
+            os.path.join(input_directory, 'mgra15_based_input%s.csv' % year))
 
         # Load data
         file_path = os.path.join(
@@ -199,7 +199,7 @@ class ExternalInternal(_m.Tool(), gen_utils.Snapshot):
         control_totals = pd.merge(control_totals, taz[['taz']], how='outer')
         control_totals.sort_values('taz', inplace=True)        # method sort was deprecated since pandas version 0.20.0, yma, 2/12/2019
 
-        length_skim = emmebank.matrix('mf"MD_SOV_TR_M_DIST"').get_numpy_data(scenario)
+        length_skim = emmebank.matrix('mf"SOV_TR_M_DIST__MD"').get_numpy_data(scenario)
 
         # Compute probabilities for work purpose
         wrk_dist_coef = -0.029
@@ -266,9 +266,9 @@ class ExternalInternal(_m.Tool(), gen_utils.Snapshot):
                 nwrk_mtx = nw_o * (nw_d_pa * nwrk_pa_mtx + nw_d_ap * nwrk_ap_mtx)
 
                 # Toll choice split
-                f_tm_imp = emmebank.matrix('mf%s_%s_TIME' % (p, skim_lookup[gp_mode])).get_numpy_data(scenario)
-                t_tm_imp = emmebank.matrix('mf%s_%s_TIME' % (p, skim_lookup[toll_mode])).get_numpy_data(scenario)
-                t_cst_imp = emmebank.matrix('mf%s_%s_TOLLCOST' % (p, skim_lookup[toll_mode])).get_numpy_data(scenario)
+                f_tm_imp = emmebank.matrix('mf%s_TIME__%s' % (skim_lookup[gp_mode], p)).get_numpy_data(scenario)
+                t_tm_imp = emmebank.matrix('mf%s_TIME__%s' % (skim_lookup[toll_mode], p)).get_numpy_data(scenario)
+                t_cst_imp = emmebank.matrix('mf%s_TOLLCOST__%s' % (skim_lookup[toll_mode], p)).get_numpy_data(scenario)
 
                 # Toll diversion for work purpose
                 # TODO: .mod no longer needed, to confirm

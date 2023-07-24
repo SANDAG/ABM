@@ -689,7 +689,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 ("BRT", ["r", "y"], ["IVTT"]),
                 #("BRTRED", ["r"],   ["IVTT"]),
                 #("BRTYEL", ["y"],   ["IVTT"]),
-                ("TIER1", ["o"],    ["IVTT"]),
+                # ("TIER1", ["o"],    ["IVTT"]),
             ]
             mode_combinations_prm = [
                 ("LRT", ["l"],      ["IVTT"]),
@@ -698,7 +698,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 ("BRT", ["r", "y"], ["IVTT"]),
                 #("BRTRED", ["r"],   ["IVTT"]),
                 #("BRTYEL", ["y"],   ["IVTT"]),
-                ("TIER1", ["o"],    ["IVTT"]),
+                # ("TIER1", ["o"],    ["IVTT"]),
             ]
             mode_combinations_loc = [
                 ("BUS", ["b"],      ["IVTT"])
