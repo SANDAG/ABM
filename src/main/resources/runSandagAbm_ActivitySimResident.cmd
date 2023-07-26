@@ -12,19 +12,19 @@ cd /d %PROJECT_DIRECTORY%
 :: Loop
 :: -------------------------------------------------------------------------------------------------
 
-@REM SET SAMPLE=%SAMPLERATE%
+SET SAMPLE=%SAMPLERATE%
 
-@REM ECHO CURRENT DIRECTORY: %cd%
-@REM CD src\asim\configs\resident
-@REM :: Set sample_rate in configs file dynamically
-@REM ECHO # Configs File with Sample Rate set by Model Runner > settings_mp.yaml
-@REM FOR /F "delims=*" %%i IN (settings_mp_source.yaml) DO (
-@REM     SET LINE=%%i
-@REM     SETLOCAL EnableDelayedExpansion
-@REM     SET LINE=!LINE:%%sample_size%%=%SAMPLE%!
-@REM     ECHO !LINE!>>settings_mp.yaml
-@REM     ENDLOCAL
-@REM )
+ECHO CURRENT DIRECTORY: %cd%
+CD src\asim\configs\resident
+:: Set sample_rate in configs file dynamically
+ECHO # Configs File with Sample Rate set by Model Runner > settings_mp.yaml
+FOR /F "delims=*" %%i IN (settings_mp_source.yaml) DO (
+    SET LINE=%%i
+    SETLOCAL EnableDelayedExpansion
+    SET LINE=!LINE:%%sample_size%%=%SAMPLE%!
+    ECHO !LINE!>>settings_mp.yaml
+    ENDLOCAL
+)
 :: -------------------------------------------------------------------------------------------------
 :: Run ActivitySim
 :: ---------------------------------------------------------------------
@@ -70,7 +70,7 @@ CD ..
 
 :: Run simulation.py
 
-%PYTHON3% src/asim/simulation.py -s settings_mp.yaml -c src/asim/configs/resident -c src/asim/configs/common -d input -d output/skims -o output/resident --households_sample_size %SAMPLERATE% 
+%PYTHON3% src/asim/simulation.py -s settings_mp.yaml -c src/asim/configs/resident -c src/asim/configs/common -d input -d output/skims -o output/resident
 
 ::::::::::::::::::::::
 CD /d %ANACONDA2_DIR%\Scripts

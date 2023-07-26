@@ -3,11 +3,11 @@ Description,Target,Expression
 ,work_time_factor,"rng.lognormal_for_df(df.set_index('tour_id'), mu=time_distrib_mean_work, sigma=time_distrib_stddev_work, broadcast=True, scale=True).set_axis(df.index, axis='index')"
 ,non_work_time_factor,"rng.lognormal_for_df(df.set_index('tour_id'), mu=time_distrib_mean_nonwork, sigma=time_distrib_stddev_nonwork, broadcast=True, scale=True).set_axis(df.index, axis='index')"
 ,c_ivt,c_ivt_base * (is_work_tour * work_time_factor + (1 - is_work_tour) * non_work_time_factor)
-,c_fwt,c_ivt * 1.5
-,c_xwt,c_ivt * 1.5
+#,c_fwt,c_ivt * 1.5
+#,c_xwt,c_ivt * 1.5
 ,c_wacc,c_ivt * 1.5
 ,c_wegr,c_ivt * 1.5
-,c_waux,c_ivt * 1.5
+#,c_waux,c_ivt * 1.5
 ,c_xfers,c_ivt * 24
 ,c_walk_time,c_ivt * 1.8
 ,c_xfers_pnr,c_ivt * 15
@@ -68,25 +68,19 @@ vot-indexed skims,da_dist_skims,((odt_skims['SOV_NT_L_DIST'] * (_vot_bin_da == 1
 ,origin,df.origin if 'origin' in df.columns else df.home_zone_id
 ,destination,df.destination if 'destination' in df.columns else df.alt_dest
 #access egress distances,,
-#,origin_local_dist,"reindex(land_use.AE_LOCAL, origin)"
-#,origin_prm_dist,"reindex(land_use.AE_PRM, origin)"
-#,origin_mix_dist,"np.minimum(origin_local_dist, origin_prm_dist)"
-#,dest_local_dist,"reindex(land_use.AE_LOCAL, destination)"
-#,dest_prm_dist,"reindex(land_use.AE_PRM, destination)"
-#,dest_mix_dist,"np.minimum(dest_local_dist, dest_prm_dist)"
+,origin_local_dist,"reindex(land_use.walk_dist_local_bus, origin)"
+,origin_prm_dist,"reindex(land_use.walk_dist_premium_transit, origin)"
+,origin_mix_dist,"np.minimum(origin_local_dist, origin_prm_dist)"
+,dest_local_dist,"reindex(land_use.walk_dist_local_bus, destination)"
+,dest_prm_dist,"reindex(land_use.walk_dist_premium_transit, destination)"
+,dest_mix_dist,"np.minimum(dest_local_dist, dest_prm_dist)"
 #access egress times,,
-#,origin_local_time,origin_local_dist * 60/walk_speed
-#,origin_prm_time,origin_prm_dist * 60/walk_speed
-#,origin_mix_time,origin_mix_dist * 60/walk_speed
-#,dest_local_time,dest_local_dist * 60/walk_speed
-#,dest_prm_time,dest_prm_dist * 60/walk_speed
-#,dest_mix_time,dest_mix_dist * 60/walk_speed
-,origin_local_time,odt_skims['WALK_LOC_ACC']
-,origin_prm_time,odt_skims['WALK_PRM_ACC']
-,origin_mix_time,odt_skims['WALK_MIX_ACC']
-,dest_local_time,odt_skims['WALK_LOC_EGR']
-,dest_prm_time,odt_skims['WALK_PRM_EGR']
-,dest_mix_time,odt_skims['WALK_MIX_EGR']
+,origin_local_time,origin_local_dist * 60/walk_speed
+,origin_prm_time,origin_prm_dist * 60/walk_speed
+,origin_mix_time,origin_mix_dist * 60/walk_speed
+,dest_local_time,dest_local_dist * 60/walk_speed
+,dest_prm_time,dest_prm_dist * 60/walk_speed
+,dest_mix_time,dest_mix_dist * 60/walk_speed
 # defined in network_los: exp_asc,,
 ,density_measure,"reindex(land_use.PopEmpDenPerMi, df[ORIGIN])"
 ,density_bin,"pd.cut(density_measure, bins=[-np.inf] + wait_time_distribution_by_density_breaks + [np.inf], labels=[1,2,3,4,5]).astype(int)"

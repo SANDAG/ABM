@@ -15,17 +15,19 @@ from sys import argv
 
 data_dir = argv[1]
 output_dir = argv[2]
+scenario_year = argv[3]
 
 class Series15_Processor:
     def __init__(self):
         # ------------ Run Settings & Input Files --------------
         self.input_dir = data_dir
         self.output_dir = output_dir
+        self.scenario_year = scenario_year
         assert os.path.isdir(self.input_dir), f"Cannot find input directory {self.input_dir}"
         assert os.path.isdir(self.output_dir), f"Cannot find output directory {self.output_dir}"
 
         self.ext_data_file = os.path.join(self.input_dir, 'externalInternalControlTotalsByYear.csv')
-        self.landuse_file = os.path.join(self.input_dir, 'mgra15_based_input2022.csv')
+        self.landuse_file = os.path.join(self.input_dir, f'mgra15_based_input{self.scenario_year}.csv')
         self.trans_access_file = os.path.join(self.output_dir, 'transponderModelAccessibilities.csv')
         self.terminal_time_file = os.path.join(self.input_dir, 'zone_term.csv')
 
@@ -209,20 +211,12 @@ class Series15_Processor:
     def add_external_counts_to_landuse(self):
         print("Adding external counts to landuse file.")
         ext_data = pd.read_csv(self.ext_data_file)
-        ext_data = ext_data[ext_data.year == 2016].reset_index(drop=True)
-        # FIXME:
-        # Placeholder data is derived from this table of tour weights from the crossborder survey. (Provided by Hannah). 
-        # The estimated values is 20% of the purpose total * 2 to convert from tours to trips.  
-        # The other 80% of border crossings are assumed to be from Mexican residents.
-        # External taz numbers are also hard-coded here
-        ext_data.loc[len(ext_data)] = ['2016', 1, 12526 * 0.2 * 2, (2337+55317+1872+3657) * 0.2 * 2]
-        ext_data.loc[len(ext_data)] = ['2016', 2, 6443 * 0.2 * 2, (260+18579+1993+4585) * 0.2 * 2]
-        ext_data.loc[len(ext_data)] = ['2016', 4, 2181 * 0.2 * 2, (1148+1052+305+1501) * 0.2 * 2]
+        ext_data = ext_data[ext_data.year == int(self.scenario_year)].reset_index(drop=True)
         # dummy for other external taz's that are not yet active
         # (all TAZs need to be listed in the landuse file or the output trip omx trip matrices aren't the right shape!)
-        ext_data.loc[len(ext_data)] = ['2016', 3, 0, 0]
-        ext_data.loc[len(ext_data)] = ['2016', 5, 0, 0]
-        ext_data.loc[len(ext_data)] = ['2016', 11, 0, 0]
+        ext_data.loc[len(ext_data)] = [self.scenario_year, 3, 0, 0]
+        ext_data.loc[len(ext_data)] = [self.scenario_year, 5, 0, 0]
+        ext_data.loc[len(ext_data)] = [self.scenario_year, 11, 0, 0]
         
         ext_data.sort_values(by='taz')
 

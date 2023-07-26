@@ -1,6 +1,10 @@
 ## ActivitySim
 ## See full license in LICENSE.txt.
 
+SanYsidro_maz_id: 9279
+OtayMesa_maz_id: 9387
+Tecate_maz_id: 22324
+
 walk_speed: 3.00
 
 #HHT_NONE: 0

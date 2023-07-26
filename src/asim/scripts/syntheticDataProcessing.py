@@ -5,11 +5,12 @@ import pandas as pd
 import sys
 # %%
 input_dir = sys.argv[1]
+scenario_year = sys.argv[2]
 
 # %%
-households_file = os.path.join(input_dir, 'synthetic_households_2022_01.csv')
-persons_file = os.path.join(input_dir, 'synthetic_persons_2022_01.csv')
-landuse_file = os.path.join(input_dir, 'mgra15_based_input_2022_01.csv')
+households_file = os.path.join(input_dir, f'synthetic_households_{scenario_year}_base.csv')
+persons_file = os.path.join(input_dir, f'synthetic_persons_{scenario_year}_base.csv')
+landuse_file = os.path.join(input_dir, f'mgra15_based_input_{scenario_year}_base.csv')
 landuse2019_file = os.path.join(input_dir, 'mgra15_based_input2019.csv')
 
 # %%
@@ -375,4 +376,4 @@ def process_landuse()-> pd.DataFrame:
 # %%
 process_household().to_csv(os.path.join(input_dir, 'households.csv'), index=False)
 process_persons().to_csv(os.path.join(input_dir, 'persons.csv'), index=False)
-process_landuse().to_csv(os.path.join(input_dir, 'mgra15_based_input2022.csv'), index=False)
+process_landuse().to_csv(os.path.join(input_dir, f'mgra15_based_input{scenario_year}.csv'), index=False)
