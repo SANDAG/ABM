@@ -18,7 +18,7 @@ util_attached,attached dwelling,"@np.where(df.bldgsz == 2, 0, 1)",coef_attached_
 # 0.785 sq miles in 1/2 mile radius * 640 acres per square mile = 502,,,,,,,
 util_intersection_density,Intersection count in 1/2 mile radius of household,totint/502,coef_intersection_density_0_CARS,,coef_intersection_density_2_CARS,coef_intersection_density_3_CARS,coef_intersection_density_4_CARS
 util_pop_density,Population Density in 1/2 mile radius of household,popden,coef_population_density_0_CARS,,coef_population_density_2_CARS,coef_population_density_34_CARS,coef_population_density_34_CARS
-util_retail_density,Retail Employment Density in 1/2 mile radius of household,empden,coef_retail_density_0_CARS,,coef_retail_density_2_CARS,coef_retail_density_3_CARS,coef_retail_density_4_CARS
+util_emp_density,Employment Density in 1/2 mile radius of household,empden,coef_emp_density_0_CARS,,coef_emp_density_2_CARS,coef_emp_density_3_CARS,coef_emp_density_4_CARS
 util_nm_accessibility,Non-motorized zonal accessbility,nmRetail,coef_nonmotorized_zonal_accessbility_0_CARS,,coef_nonmotorized_zonal_accessbility_2_CARS,coef_nonmotorized_zonal_accessbility_3_CARS,coef_nonmotorized_zonal_accessbility_4_CARS
 # Disaggregate accessibilities,,,,,,,
 util_nonmand_logsum_0auto,Average non-mandatory disaggrage accessibility -- 0 autos,(shopping_accessibility_0 + othdiscr_accessibility_0) / 2,coef_nonmand_logsum_0,,,,

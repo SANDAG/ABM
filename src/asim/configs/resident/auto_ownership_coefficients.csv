@@ -32,7 +32,7 @@ coef_household_income_100k_0_CARS,-0.901938407,F
 coef_attached_0_CARS,0.583266391,F
 coef_intersection_density_0_CARS,0.788935628,F
 coef_population_density_0_CARS,0.016016885,F
-coef_retail_density_0_CARS,0.014187024,F
+coef_emp_density_0_CARS,0.014187024,F
 coef_nonmotorized_zonal_accessbility_0_CARS,0.304730094,F
 coef_autotransit_zonal_accessibility_0_CARS,0,T
 coef_cars2_has_16_17,0,F
@@ -52,7 +52,7 @@ coef_household_income_100k_2_CARS,0,T
 coef_attached_2_CARS,-0.65382238,F
 coef_intersection_density_2_CARS,0.00678398,F
 coef_population_density_2_CARS,-0.012314708,F
-coef_retail_density_2_CARS,0,T
+coef_emp_density_2_CARS,0,T
 coef_nonmotorized_zonal_accessbility_2_CARS,-0.051503169,F
 coef_autotransit_zonal_accessibility_2_CARS,0,T
 coef_cars34_has_16_17,0,T
@@ -72,7 +72,7 @@ coef_household_income_100k_3_CARS,0,T
 coef_attached_3_CARS,-1.426386743,F
 coef_intersection_density_3_CARS,-0.875111252,F
 coef_population_density_34_CARS,-0.015701116,F
-coef_retail_density_3_CARS,-0.01090242,F
+coef_emp_density_3_CARS,-0.01090242,F
 coef_nonmotorized_zonal_accessbility_3_CARS,-0.068584652,F
 coef_autotransit_zonal_accessibility_3_CARS,-0.000872604,F
 coef_cars4_num_workers_clip_3,0,F
@@ -82,21 +82,18 @@ coef_household_income_3060k_4_CARS,-0.903012312,F
 coef_household_income_100k_4_CARS,0,T
 coef_attached_4_CARS,-1.85939905,F
 coef_intersection_density_4_CARS,-0.593060324,F
-coef_retail_density_4_CARS,-0.016815877,F
+coef_emp_density_4_CARS,-0.016815877,F
 coef_nonmotorized_zonal_accessbility_4_CARS,-0.133879458,F
 coef_autotransit_zonal_accessibility_4_CARS,-0.002525807,F
 coef_nonmand_logsum_0,0.422778026,F
 coef_nonmand_logsum_1,0.517335299,F
 coef_nonmand_logsum_2p,0.495923942,F
-asc_allhhs_0_autos,0,T
-asc_allhhs_2_autos,0,T
-asc_allhs_3_autos,0,T
-asc_allhhs_4plus_autos,0,T
 coef_cars2_av_ownership,0,T
 coef_cars3_av_ownership,0,T
 coef_unavailable,-999,T
 asc_GQ_0_autos,2.468181736,F
-cars0_2016,-0.817507439,F
-cars2_2016,0.255950495,F
-cars3_2016,0.433448909,F
-cars4_2016,0.528642363,F
+# Calibration constants (2021 ACS Data),,
+asc_allhhs_0_autos,-0.205031923,F
+asc_allhhs_2_autos,0.103098218,F
+asc_allhs_3_autos,0.217732491,F
+asc_allhhs_4plus_autos,0.178545411,F
