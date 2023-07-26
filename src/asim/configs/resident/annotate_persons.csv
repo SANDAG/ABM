@@ -45,12 +45,12 @@ is_parttime_worker,is_parttime_worker,persons.pemploy == 2
 #,,
 home_zone_id,home_zone_id,"reindex(households.home_zone_id, persons.household_id)"
 #,,
-,_mean_work,setting('distributed_time_factor_work_mean')
-,_stddev_work,setting('distributed_time_factor_work_stddev')
-,_mean_nonwork,setting('distributed_time_factor_nonwork_mean')
-,_stddev_nonwork,setting('distributed_time_factor_nonwork_stddev')
-,_min_time_factor,setting('distributed_time_factor_min')
-,_max_time_factor,setting('distributed_time_factor_max')
+,_mean_work,distributed_time_factor_work_mean
+,_stddev_work,distributed_time_factor_work_stddev
+,_mean_nonwork,distributed_time_factor_nonwork_mean
+,_stddev_nonwork,distributed_time_factor_nonwork_stddev
+,_min_time_factor,distributed_time_factor_min
+,_max_time_factor,distributed_time_factor_max
 #,,"Below expression was previously done using np.clip, but was producing a NotImplemented error for mixed DataFrame and Series Inputs.  Reimplemented using min & max"
 travel time sensitivity factor for work travel,time_factor_work,"np.minimum(_max_time_factor, np.maximum(rng.lognormal_for_df(persons, mu=_mean_work, sigma=_stddev_work, scale=True), _min_time_factor))"
 travel time sensitivity factor for non-work travel,time_factor_nonwork,"np.minimum(_max_time_factor, np.maximum(rng.lognormal_for_df(persons, mu=_mean_nonwork, sigma=_stddev_nonwork, scale=True), _min_time_factor))  "
