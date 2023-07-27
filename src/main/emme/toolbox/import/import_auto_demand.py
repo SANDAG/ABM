@@ -176,7 +176,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
         self.import_traffic_trips(props)
         self.import_commercial_vehicle_demand(props)
         # self.convert_light_trucks_to_pce()
-        # self.add_aggregate_demand()
+        self.add_aggregate_demand()
 
     @_context
     def setup(self):
@@ -482,50 +482,50 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     demand_name = 'mf%s_%s' % (period, name)
                     matrix_calc.add(demand_name, '(%s_VEH * %s).max.0' % (demand_name, pce))
 
-    # @_m.logbook_trace('Add aggregate demand')
-    # def add_aggregate_demand(self):
-    #     matrix_calc = dem_utils.MatrixCalculator(self.scenario, self.num_processors)
-    #     periods = ["EA", "AM", "MD", "PM", "EV"]
-    #     vots = ["L", "M", "H"]
-    #     # External-internal trips DO have transponder
-    #     # all SOV trips go to SOVTP
-    #     with matrix_calc.trace_run("Add external-internal trips to auto demand"):
-    #         modes = ["SOVGP", "SOVTOLL", "HOV2HOV", "HOV2TOLL", "HOV3HOV", "HOV3TOLL"]
-    #         modes_assign = {"SOVGP":    "SOV_TR",
-    #                         "SOVTOLL":  "SOV_TR",
-    #                         "HOV2HOV":  "HOV2",
-    #                         "HOV2TOLL": "HOV2",
-    #                         "HOV3HOV":  "HOV3",
-    #                         "HOV3TOLL": "HOV3"}
-    #         for period in periods:
-    #             for mode in modes:
-    #                 for vot in vots:
-    #                     # Segment imported demand into 3 equal parts for VOT Low/Med/High
-    #                     assign_mode = modes_assign[mode]
-    #                     params = {'p': period, 'm': mode, 'v': vot, 'am': assign_mode}
-    #                     matrix_calc.add("mf%s_%s_%s" % (period, assign_mode, vot),
-    #                          "mf%(p)s_%(am)s_%(v)s "
-    #                          "+ (1.0/3.0)*mf%(p)s_%(m)s_EIWORK "
-    #                          "+ (1.0/3.0)*mf%(p)s_%(m)s_EINONWORK" % params)
+    @_m.logbook_trace('Add aggregate demand')
+    def add_aggregate_demand(self):
+        matrix_calc = dem_utils.MatrixCalculator(self.scenario, self.num_processors)
+        periods = ["EA", "AM", "MD", "PM", "EV"]
+        vots = ["L", "M", "H"]
+        # External-internal trips DO have transponder
+        # all SOV trips go to SOVTP
+        with matrix_calc.trace_run("Add external-internal trips to auto demand"):
+            modes = ["SOVGP", "SOVTOLL", "HOV2HOV", "HOV2TOLL", "HOV3HOV", "HOV3TOLL"]
+            modes_assign = {"SOVGP":    "SOV_TR",
+                            "SOVTOLL":  "SOV_TR",
+                            "HOV2HOV":  "HOV2",
+                            "HOV2TOLL": "HOV2",
+                            "HOV3HOV":  "HOV3",
+                            "HOV3TOLL": "HOV3"}
+            for period in periods:
+                for mode in modes:
+                    for vot in vots:
+                        # Segment imported demand into 3 equal parts for VOT Low/Med/High
+                        assign_mode = modes_assign[mode]
+                        params = {'p': period, 'm': mode, 'v': vot, 'am': assign_mode}
+                        matrix_calc.add("mf%s_%s_%s" % (period, assign_mode, vot),
+                             "mf%(p)s_%(am)s_%(v)s "
+                             "+ (1.0/3.0)*mf%(p)s_%(m)s_EIWORK "
+                             "+ (1.0/3.0)*mf%(p)s_%(m)s_EINONWORK" % params)
 
-        # # External - external faster with single-processor as number of O-D pairs is so small (12 X 12)
-        # # External-external trips do not have transpnder
-        # # all SOV trips go to SOVNTP
-        # matrix_calc.num_processors = 0
-        # with matrix_calc.trace_run("Add external-external trips to auto demand"):
-        #     modes = ["SOV", "HOV2", "HOV3"]
-        #     for period in periods:
-        #         for mode in modes:
-        #             for vot in vots:
-        #                 # Segment imported demand into 3 equal parts for VOT Low/Med/High
-        #                 params = {'p': period, 'm': mode, 'v': vot}
-        #                 if (mode == "SOV"):
-        #                     matrix_calc.add(
-        #                         "mf%(p)s_%(m)s_NT_%(v)s" % params,
-        #                         "mf%(p)s_%(m)s_NT_%(v)s + (1.0/3.0)*mf%(p)s_%(m)s_EETRIPS" % params,
-        #                         {"origins": self.external_zones, "destinations": self.external_zones})
-        #                 else:
-        #                     matrix_calc.add(
-        #                         "mf%(p)s_%(m)s_%(v)s" % params,
-        #                         "mf%(p)s_%(m)s_%(v)s + (1.0/3.0)*mf%(p)s_%(m)s_EETRIPS" % params,
-        #                         {"origins": self.external_zones, "destinations": self.external_zones})
+        # External - external faster with single-processor as number of O-D pairs is so small (12 X 12)
+        # External-external trips do not have transpnder
+        # all SOV trips go to SOVNTP
+        matrix_calc.num_processors = 0
+        with matrix_calc.trace_run("Add external-external trips to auto demand"):
+            modes = ["SOV", "HOV2", "HOV3"]
+            for period in periods:
+                for mode in modes:
+                    for vot in vots:
+                        # Segment imported demand into 3 equal parts for VOT Low/Med/High
+                        params = {'p': period, 'm': mode, 'v': vot}
+                        if (mode == "SOV"):
+                            matrix_calc.add(
+                                "mf%(p)s_%(m)s_NT_%(v)s" % params,
+                                "mf%(p)s_%(m)s_NT_%(v)s + (1.0/3.0)*mf%(p)s_%(m)s_EETRIPS" % params,
+                                {"origins": self.external_zones, "destinations": self.external_zones})
+                        else:
+                            matrix_calc.add(
+                                "mf%(p)s_%(m)s_%(v)s" % params,
+                                "mf%(p)s_%(m)s_%(v)s + (1.0/3.0)*mf%(p)s_%(m)s_EETRIPS" % params,
+                                {"origins": self.external_zones, "destinations": self.external_zones})

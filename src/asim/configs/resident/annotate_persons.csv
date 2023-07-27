@@ -37,20 +37,23 @@ school_segment highschool,school_segment,"np.where(is_highschool, SCHOOL_SEGMENT
 school_segment university,school_segment,"np.where(is_university, SCHOOL_SEGMENT_UNIV, school_segment).astype(np.int8)"
 #,,
 is_worker,is_worker,"persons.pemploy.isin([PEMPLOY_FULL, PEMPLOY_PART])"
-is_fulltime_worker,is_fulltime_worker,"persons.pemploy == 1"
-is_parttime_worker,is_parttime_worker,"persons.pemploy == 2"
+is_fulltime_worker,is_fulltime_worker,persons.pemploy == 1
+is_parttime_worker,is_parttime_worker,persons.pemploy == 2
 #extrnal model variable initialization treating everyone as internal initially,,
 ,is_internal_worker,is_worker
 ,is_external_worker,0
 #,,
 home_zone_id,home_zone_id,"reindex(households.home_zone_id, persons.household_id)"
 #,,
-,_mean_work,setting('distributed_time_factor_work_mean')
-,_stddev_work,setting('distributed_time_factor_work_stddev')
-,_mean_nonwork,setting('distributed_time_factor_nonwork_mean')
-,_stddev_nonwork,setting('distributed_time_factor_nonwork_stddev')
-,_min_time_factor,setting('distributed_time_factor_min')
-,_max_time_factor,setting('distributed_time_factor_max')
+,_mean_work,distributed_time_factor_work_mean
+,_stddev_work,distributed_time_factor_work_stddev
+,_mean_nonwork,distributed_time_factor_nonwork_mean
+,_stddev_nonwork,distributed_time_factor_nonwork_stddev
+,_min_time_factor,distributed_time_factor_min
+,_max_time_factor,distributed_time_factor_max
 #,,"Below expression was previously done using np.clip, but was producing a NotImplemented error for mixed DataFrame and Series Inputs.  Reimplemented using min & max"
 travel time sensitivity factor for work travel,time_factor_work,"np.minimum(_max_time_factor, np.maximum(rng.lognormal_for_df(persons, mu=_mean_work, sigma=_stddev_work, scale=True), _min_time_factor))"
 travel time sensitivity factor for non-work travel,time_factor_nonwork,"np.minimum(_max_time_factor, np.maximum(rng.lognormal_for_df(persons, mu=_mean_nonwork, sigma=_stddev_nonwork, scale=True), _min_time_factor))  "
+#,,
+,_naics_code,"np.where(persons.naics2_original_code=='3M', 3000, np.where(persons.naics2_original_code=='4M', 4000, np.where(persons.naics2_original_code=='MIL',9000, persons.naics2_original_code))) if 'naics2_original_code' in persons.columns else 0"
+,naics_code,_naics_code.astype('int') if all(_naics_code!=0) else 0

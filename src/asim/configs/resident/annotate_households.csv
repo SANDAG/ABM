@@ -34,8 +34,8 @@ num_highschool_graduates,num_highschool_graduates,"_PERSON_COUNT('9 <= educ', pe
 non_family,non_family,households.HHT.isin(HHT_NONFAMILY)
 family,family,households.HHT.isin(HHT_FAMILY)
 #,,FIXME is this the best replacement for area_type??
-home_is_urban,home_is_urban,"reindex(land_use.pseudomsa, households.home_zone_id) <= setting('urban_threshold')"
-home_is_rural,home_is_rural,"reindex(land_use.pseudomsa, households.home_zone_id) > setting('rural_threshold')"
+home_is_urban,home_is_urban,"reindex(land_use.pseudomsa, households.home_zone_id) <= urban_threshold"
+home_is_rural,home_is_rural,"reindex(land_use.pseudomsa, households.home_zone_id) > rural_threshold"
 #,,
 ,num_hh_in_zone,"reindex(households.groupby('home_zone_id').size(), households.home_zone_id)"
 #,multiple_auto_hh_in_zone,"reindex_i(df.groupby('home_zone_id').multiple_auto_hh.sum(), df.index)"

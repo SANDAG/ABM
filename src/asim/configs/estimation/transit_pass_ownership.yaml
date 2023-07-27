@@ -1,0 +1,7 @@
+
+SPEC: transit_pass_ownership.csv
+COEFFICIENTS: transit_pass_ownership_coefficients.csv
+
+#LOGIT_TYPE: NL
+LOGIT_TYPE: MNL
+

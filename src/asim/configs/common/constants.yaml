@@ -2,8 +2,8 @@
 ## See full license in LICENSE.txt.
 
 scenarioYear: 2019
-# set below to 1 for everything to be external, 0 otherwise
-NO_EXTERNAL: 1
+# set below to 1 for everything to be internal, 0 otherwise
+NO_EXTERNAL: 0
 
 # set below to be 1 for years before 2021, 0 otherwise
 PRE_COVID: 0
@@ -84,6 +84,13 @@ CDAP_ACTIVITY_HOME: H
 cbd_threshold: 2
 urban_threshold: 5
 rural_threshold: 5
+
+distributed_time_factor_work_mean: 1.0
+distributed_time_factor_work_stddev: 0.7
+distributed_time_factor_nonwork_mean: 1.0
+distributed_time_factor_nonwork_stddev: 0.6
+distributed_time_factor_min: 0.1
+distributed_time_factor_max: 10
 
 c_drive: 1.5
 c_auto_operating_cost_per_mile: 18.29

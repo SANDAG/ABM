@@ -16,3 +16,6 @@ Observed share of transponder ownership,pObs,0.009
 ,ml_dist,"reindex(land_use.ML_DIST, df.home_zone_id)"
 ,avgtts,"reindex(land_use.AVGTTS, df.home_zone_id)"
 ,pctDetour,"reindex(land_use.PCTDETOUR, df.home_zone_id)"
+,total_hh_toll_travel_time_savings,persons.groupby('household_id').toll_travel_time_savings_work.sum().reindex(df.index)
+,total_hh_toll_dist,persons.groupby('household_id').toll_dist_work.sum().reindex(df.index)
+,total_hh_toll_cost,persons.groupby('household_id').toll_cost_work.sum().reindex(df.index)

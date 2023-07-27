@@ -151,7 +151,7 @@ class FourDs(_m.Tool()):
         props = load_properties(_join(self.path, "conf", "sandag_abm.properties"))
 
 		
-        self.mgradata_file = props["mgra.socec.file"] #input/filename
+        self.mgradata_file = props["mgra.socec.base.file"] #input/filename
         self.syn_households_file = props["PopulationSynthesizer.InputToCTRAMP.HouseholdFile"] #input/filename
         self.equivmins_file = props["active.logsum.matrix.file.walk.mgra"] #filename
         self.inNet = os.path.basename(props["active.edge.file"])  #filename
@@ -179,8 +179,8 @@ class FourDs(_m.Tool()):
         _m.logbook_write("Generating density variables")
         self.get_density()
         
-        _m.logbook_write("Creating comparison plots")
-        self.make_plots()
+        # _m.logbook_write("Creating comparison plots")
+        # self.make_plots()
         
         _m.logbook_write("Finished running 4Ds")
 

@@ -21,7 +21,7 @@ class Series15_Processor:
         assert os.path.isdir(self.input_dir), f"Cannot find input directory {self.input_dir}"
         assert os.path.isdir(self.output_dir), f"Cannot find output directory {self.output_dir}"
 
-        self.ext_data_file = os.path.join(self.input_dir, 'externalInternalControlTotalsByYear.csv')
+        self.ext_data_file = os.path.join(self.input_dir, 'external_station_resident_counts.csv')
         self.base_year = 2022
         self.landuse_file = os.path.join(self.input_dir, 'mgra15_based_input2019_v3.csv')
         self.trans_access_file = os.path.join(self.input_dir, 'transponderModelAccessibilities.csv')
@@ -206,45 +206,41 @@ class Series15_Processor:
     def add_external_counts_to_landuse(self):
         print("Adding external counts to landuse file.")
         ext_data = pd.read_csv(self.ext_data_file)
-        ext_data = ext_data[ext_data.year == self.base_year].reset_index(drop=True)
-        # FIXME:
-        # Placeholder data is derived from this table of tour weights from the crossborder survey. (Provided by Hannah). 
-        # The estimated values is 20% of the purpose total * 2 to convert from tours to trips.  
-        # The other 80% of border crossings are assumed to be from Mexican residents.
-        # External taz numbers are also hard-coded here
-        str_base_year = str(self.base_year)
-        ext_data.loc[len(ext_data)] = [str_base_year, 1, 12526 * 0.2 * 2, (2337+55317+1872+3657) * 0.2 * 2]
-        ext_data.loc[len(ext_data)] = [str_base_year, 2, 6443 * 0.2 * 2, (260+18579+1993+4585) * 0.2 * 2]
-        ext_data.loc[len(ext_data)] = [str_base_year, 4, 2181 * 0.2 * 2, (1148+1052+305+1501) * 0.2 * 2]
-        # dummy for other external taz's that are not yet active
-        # (all TAZs need to be listed in the landuse file or the output trip omx trip matrices aren't the right shape!)
-        ext_data.loc[len(ext_data)] = [str_base_year, 3, 0, 0]
-        ext_data.loc[len(ext_data)] = [str_base_year, 5, 0, 0]
-        ext_data.loc[len(ext_data)] = [str_base_year, 11, 0, 0]
+
+        # ext_data = ext_data[ext_data.year == self.base_year].reset_index(drop=True)
+        # # Placeholder data is derived from this table of tour weights from the crossborder survey. (Provided by Hannah). 
+        # # The estimated values is 20% of the purpose total * 2 to convert from tours to trips.  
+        # # The other 80% of border crossings are assumed to be from Mexican residents.
+        # # External taz numbers are also hard-coded here
+        # str_base_year = str(self.base_year)
+        # ext_data.loc[len(ext_data)] = [str_base_year, 1, 12526 * 0.2 * 2, (2337+55317+1872+3657) * 0.2 * 2]
+        # ext_data.loc[len(ext_data)] = [str_base_year, 2, 6443 * 0.2 * 2, (260+18579+1993+4585) * 0.2 * 2]
+        # ext_data.loc[len(ext_data)] = [str_base_year, 4, 2181 * 0.2 * 2, (1148+1052+305+1501) * 0.2 * 2]
+        # # dummy for other external taz's that are not yet active
+        # # (all TAZs need to be listed in the landuse file or the output trip omx trip matrices aren't the right shape!)
+        # ext_data.loc[len(ext_data)] = [str_base_year, 3, 0, 0]
+        # ext_data.loc[len(ext_data)] = [str_base_year, 5, 0, 0]
+        # ext_data.loc[len(ext_data)] = [str_base_year, 11, 0, 0]
         
-        ext_data.sort_values(by='taz')
-
-        # FIXME: landuse does not have crossborder poe_ids
-
+        # ext_data.sort_values(by='taz')
         # adding external data to landuse file
         ext_maz_nums = []
         for index, row in ext_data.iterrows():
-            if (row['taz'] in self.landuse.TAZ.values):
-                ext_maz_num = self.landuse[self.landuse.TAZ == row['taz']].index[0]
+            if (row['TAZ'] in self.landuse.TAZ.values):
+                ext_maz_num = self.landuse[self.landuse.TAZ == row['TAZ']].index[0]
             else:
                 ext_maz_num = self.landuse.index.max() + 1
                 self.landuse.loc[ext_maz_num] = 0
                 self.landuse.loc[ext_maz_num, 'poe_id'] = -1
 
-            self.landuse.loc[ext_maz_num, 'TAZ'] = row['taz']
-            self.landuse.loc[ext_maz_num, 'external_work'] = row['work']
-            self.landuse.loc[ext_maz_num, 'external_nonwork'] = row['nonwork']
+            self.landuse.loc[ext_maz_num, 'TAZ'] = row['TAZ']
+            self.landuse.loc[ext_maz_num, 'external_work'] = row['Work']
+            self.landuse.loc[ext_maz_num, 'external_nonwork'] = row['Non-Work']
             self.landuse.loc[ext_maz_num, 'external_TAZ'] = 1
             self.landuse.loc[ext_maz_num, 'external_MAZ'] = 1
             ext_maz_nums.append(ext_maz_num)
 
-        self.landuse['mgra'] = self.landuse.index.values
-        # FIXME: maintaining two  TAZ cols here... 
+        # # FIXME: maintaining two TAZ cols here... 
         self.landuse['taz'] = self.landuse['TAZ']
 
         print("\tAdded external mazs: ", ext_maz_nums)
@@ -415,7 +411,7 @@ if __name__ == '__main__':
     processor = Series15_Processor()
 
     # running the following processing steps:
-    processor.copy_skims_and_process_names()
+    # processor.copy_skims_and_process_names()
     processor.process_synthetic_population()
     processor.process_landuse()
     processor.add_exernal_stations_to_maz_level_skims()

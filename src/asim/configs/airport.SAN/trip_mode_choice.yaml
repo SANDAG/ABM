@@ -330,6 +330,7 @@ CONSTANTS:
   ivt_cmr_multiplier: 0.65
   ivt_ltd_multiplier: 1.0
   ivt_cost_multiplier: 0.6
+  walk_speed: 3.0
 
 
 # so far, we can use the same spec as for non-joint tours

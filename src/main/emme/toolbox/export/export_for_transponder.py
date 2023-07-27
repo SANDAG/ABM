@@ -152,7 +152,7 @@ class ExportForTransponder(_m.Tool(), gen_utils.Snapshot):
         emmebank = scenario.emmebank
         year = int(props['scenarioYear'])
         mgra = _pd.read_csv(
-            _join(input_directory, 'mgra13_based_input%s.csv' % year))
+            _join(input_directory, 'mgra15_based_input%s.csv' % year))
         taz = mgra[['taz', 'emp_total']].groupby('taz').sum()
         taz.reset_index(inplace=True)
         taz = dem_utils.add_missing_zones(taz, scenario)

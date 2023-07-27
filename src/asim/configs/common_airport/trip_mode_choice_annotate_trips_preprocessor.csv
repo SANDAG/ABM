@@ -1948,9 +1948,20 @@
 1932,,partySizeParkEscortLocationAutoIVT,party1*parkEscortLocationShared2IVT + party2*parkEscortLocationShared3IVT + party3*parkEscortLocationShared3IVT
 1933,,partySizeParkEscortLocationAutoDist,party1*parkEscortLocationShared2Dist + party2*parkEscortLocationShared3Dist + party3*parkEscortLocationShared3Dist
 1934,,partySizeParkEscortLocationAutoToll,party1*parkEscortLocationShared2Toll + party2*parkEscortLocationShared3Toll + party3*parkEscortLocationShared3Toll
-1935,,origin_local_time,odt_skims['WALK_LOC_ACC']
-1936,,origin_prm_time,odt_skims['WALK_PRM_ACC']
-1937,min of local and premium dist,origin_mix_time,odt_skims['WALK_MIX_ACC']
-1938,,dest_local_time,dot_skims['WALK_LOC_EGR']
-1939,,dest_prm_time,dot_skims['WALK_PRM_EGR']
-1940,,dest_mix_time,dot_skims['WALK_MIX_EGR']
+#,,,
+,,origin,df.origin if 'origin' in df.columns else df.home_zone_id
+,,destination,df.destination if 'destination' in df.columns else df.alt_dest
+#access egress distances,,,
+,,origin_local_dist,"reindex(land_use.walk_dist_local_bus, origin)"
+,,origin_prm_dist,"reindex(land_use.walk_dist_premium_transit, origin)"
+,,origin_mix_dist,"np.minimum(origin_local_dist, origin_prm_dist)"
+,,dest_local_dist,"reindex(land_use.walk_dist_local_bus, destination)"
+,,dest_prm_dist,"reindex(land_use.walk_dist_premium_transit, destination)"
+,,dest_mix_dist,"np.minimum(dest_local_dist, dest_prm_dist)"
+#access egress times,,,
+,,origin_local_time,origin_local_dist * 60/walk_speed
+,,origin_prm_time,origin_prm_dist * 60/walk_speed
+,,origin_mix_time,origin_mix_dist * 60/walk_speed
+,,dest_local_time,dest_local_dist * 60/walk_speed
+,,dest_prm_time,dest_prm_dist * 60/walk_speed
+,,dest_mix_time,dest_mix_dist * 60/walk_speed
