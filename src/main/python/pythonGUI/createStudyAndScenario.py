@@ -3,7 +3,7 @@ import Tkconstants
 import tkFileDialog
 import os
 from Tkinter import *
-from tkMessageBox import showerror
+#from tkMessageBox import showerror
 from PIL import Image,ImageTk
 import popupMsg
 
@@ -52,18 +52,16 @@ class CreateScenarioGUI(Tkinter.Frame):
 
             #Define land use options
             self.lu_options = {"DS41": {"name": "Baseline",
-                                        "years": ["2016", "2020", "2025nb", "2030nb", "2035nb", "2040nb", "2050nb"]},
+                                        "years": ["2020", "2025nb", "2030nb", "2035nb", "2040nb", "2050nb"]},
                                "DS42": {"name": "Sustainable Community Strategy",
-                                        "years": ["2023", "2025", "2026", "2029", "2030", "2032", "2035", "2040", "2050"]},
-							   "DS41 Hybrid": {"name": "Parking Update",
-							              "years": ["2025", "2030", "2035", "2040", "2050"]}}
+                                        "years": ["2016", "2023", "2025", "2026", "2029", "2030", "2032", "2035", "2040", "2050"]}}
 
             self.root = root
             self.emme_version = emme_version
             self.year = year
             self.geo = geo            
             self.lu = lu
-
+ 
             if self.year not in self.lu_options[self.lu]["years"]:
                 if self.year in self.lu_options["DS41"]["years"]:
                     self.lu = "DS41"
@@ -83,7 +81,7 @@ class CreateScenarioGUI(Tkinter.Frame):
 
             #divider line
             divider=u"_"*200
-            self.releaseDir='T:\\ABM\\release_test\\ABM'
+            self.releaseDir='T:\\ABM\\release\\ABM'
             self.defaultScenarioDir="T:\\projects\\sr14"
             self.defaultNetworkDir="T:\\RTP\\2021RP\\2021rp_final\\network_build"
 
@@ -200,14 +198,14 @@ class CreateScenarioGUI(Tkinter.Frame):
             current_row += 1
             #option.pack(expand = True)
 			
-            Tkinter.Label(body, text=u"Scenario Folder", font=("Helvetica", 8, 'bold')).grid(row=current_row)
+            Tkinter.Label(body, text=u"Scenario Folder", font=("Helvetica", 8, 'bold')).grid(row=13)
             self.scenariopath = Tkinter.Entry(body, width=40)
             self.scenariopath.grid(row=current_row, column=1, sticky=sticky)
             button = Tkinter.Button(body, text=u"...",width=4,command=lambda: self.get_path("scenario"))
             button.grid(row=current_row, column=2)
             current_row += 1
 
-            Tkinter.Label(body, text=u"Network Folder",font=("Helvetica", 8, 'bold')).grid(row=13)
+            Tkinter.Label(body, text=u"Network Folder",font=("Helvetica", 8, 'bold')).grid(row=14)
             self.networkpath = Tkinter.Entry(body, width=40)
             self.networkpath.grid(row=current_row, column=1, sticky=sticky)
             button = Tkinter.Button(body, text=u"...",width=4,command=lambda: self.get_path("network"))
@@ -324,9 +322,9 @@ class CreateScenarioGUI(Tkinter.Frame):
             self.popup=Tkinter.Tk()
             if type=="scenario":
                 #Check if invalid year/land use combo and don't create scenario if that is the case
-                if self.year not in self.lu_options[self.lu]["years"]: 
-                    showerror("Error", "Invalid year/land use combination")
-                    return
+                #if self.year not in self.lu_options[self.lu]["years"]: 
+                #    showerror("Error", "Invalid year/land use combination")
+                #    return
                 if os.path.exists(self.scenariopath.get()):
                     if not self.networkpath.get():
                         popupMsg.popupmsg(self,"Network folder is empty!",1,type)
@@ -394,7 +392,7 @@ class CreateScenarioGUI(Tkinter.Frame):
                 f.write('\n'.join(exclude))
                 f.close()
                 commandstr=u"copy_networkfiles_to_study.cmd "+self.studypath.get()+" "+self.studynetworkpath.get()
-                print commandstr
+                print(commandstr)
                 os.chdir(self.releaseDir+"\\"+self.version+'\\')
                 os.system(commandstr)    
                 os.remove(exclude_file)
