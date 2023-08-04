@@ -19,7 +19,7 @@ RunModel.HouseholdServerPort=1129
 #
 #############################################################################################################################################################################
 #set sample rates
-sample_rates=0.2,0.5,1.0
+sample_rates=1.0,1.0,1.0
 
 #highway assignment convergence criteria
 convergence=0.0005
@@ -32,7 +32,7 @@ RunModel.skip4Ds = false
 RunModel.skipInputChecker = false
 RunModel.skipCopyWarmupTripTables = false
 RunModel.skipCopyBikeLogsum = false
-RunModel.skipShadowPricing = true
+RunModel.skipShadowPricing = false
 RunModel.skipBikeLogsums = true
 #always create walk logsum (walk to TAP file); modification from GUI disallowed
 RunModel.skipCopyWalkImpedance = true
@@ -982,12 +982,12 @@ airport.SAN.mc.mgra.page = 7
 #example:
 #airport.SAN.public.transit.connection.mgras = 2997
 #If there is an APM you need to include the following MGRAs (or the equivalent based on scenario) 
-#2997 is the SDIA terminal MGRA
-#3093 is the CMH site MGRA. It should be consistent with what is defined as central_mobility_hub in the mode choice uec file
-#2994 is the ConRAC parking site MGRA . It should be consistent with what is defined as rental_car_center in mode choice uec file
-#3001 is the employee parking site MGRA. It should be consistent with what is defined in airport_employee_park.SAN 
+#2997 is the terminal MGRA
+#2977 is the CMH site MGRA. It should be consistent with what is defined as central_mobility_hub in the mode choice uec file
+#2994 is the ConRAC parking site MGRA . it should be consistent with what is defined as rental_car_center in mode choice uec file
+#3001 is the employee parking site MGRA. it should be consistent with what is defined in airport_employee_park.SAN 
 #example:
-#airport.SAN.public.transit.connection.mgras = 2997, 3093, 2994, 3001
+#airport.SAN.public.transit.connection.mgras = 2997, 2977, 2994, 3001
 
 airport.SAN.public.transit.connection.mgras = 2997
 
