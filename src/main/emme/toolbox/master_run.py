@@ -376,7 +376,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         relative_gap = props["convergence"]
         max_assign_iterations = 1000
-        mgra_lu_input_file = props["mgra.socec.file"]
+        mgraInputFile = props["mgra.socec.file"]
 
         #change emme databank dimensions based on number of select links - SANDAG ABM2+ Enhancements (06-28-2021)
         num_select_links =  0
@@ -470,7 +470,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     run4Ds(path=self._path, int_radius=0.65, ref_path=visualizer_reference_path)
 
 
-                mgraFile = 'mgra13_based_input' + str(scenarioYear) + '.csv'
+                mgraFile = mgraInputFile.replace("input/","")
                 self.complete_work(scenarioYear, input_dir, output_dir, mgraFile, "walkMgraEquivMinutes.csv")
 
                 if not skipBuildNetwork:
@@ -644,7 +644,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     export_for_commercial_vehicle(output_dir, base_scenario)
                     self.run_proc(
                         "cvm.bat",
-                        [drive, path_no_drive, path_forward_slash, scale_factor, mgra_lu_input_file,
+                        [drive, path_no_drive, path_forward_slash, scale_factor, mgraInputFile,
                          "tazcentroids_cvm.csv"],
                         "Commercial vehicle model", capture_output=True)
                 if msa_iteration == startFromIteration:
