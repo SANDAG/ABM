@@ -19,3 +19,4 @@ abm2_calibration__alternative_specific_constant_adjustment_eaam,ABM2 Calibration
 # No stops for half tour that includes school escorting,,,,,,,,,,,,,,,,,,
 util_no_stops_to_school_escorting,Do not allow stops for school escort half-tour -- outbound,"(school_esc_outbound.isin(['ride_share', 'pure_escort']))",,,,,coef_unavail,coef_unavail,coef_unavail,coef_unavail,coef_unavail,coef_unavail,coef_unavail,coef_unavail,coef_unavail,coef_unavail,coef_unavail,coef_unavail
 util_no_stops_from_school_escorting,Do not allow stops for school escort half-tour -- inbound,"(school_esc_inbound.isin(['ride_share', 'pure_escort']))",,coef_unavail,coef_unavail,coef_unavail,,coef_unavail,coef_unavail,coef_unavail,,coef_unavail,coef_unavail,coef_unavail,,coef_unavail,coef_unavail,coef_unavail
+# accessibility by origin or dest or separately and try segmenting by number of stops

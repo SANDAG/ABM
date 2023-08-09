@@ -1,0 +1,14 @@
+Description,Target,Expression
+,_peak_auto_time_home_to_work,"skim_dict.lookup(persons.home_zone_id, persons.workplace_zone_id, ('SOV_TR_M_TIME', 'AM'))"
+,_peak_transit_ivt_home_to_work,"skim_dict.lookup(persons.home_zone_id, persons.workplace_zone_id, ('WALK_MIX_TOTALIVTT', 'AM'))"
+,_first_wait,"skim_dict.lookup(persons.home_zone_id, persons.workplace_zone_id, ('WALK_MIX_FIRSTWAIT', 'AM'))"
+,_xfer_wait,"skim_dict.lookup(persons.home_zone_id, persons.workplace_zone_id, ('WALK_MIX_XFERWAIT', 'AM'))"
+,_access_time,"reindex(land_use.walk_dist_local_bus, persons.home_zone_id) * 60/walk_speed"
+,_egress_time,"reindex(land_use.walk_dist_local_bus, persons.workplace_zone_id) * 60/walk_speed"
+,_tot_transit_time,_peak_transit_ivt_home_to_work + 1.5*_first_wait + 2*_xfer_wait + 2*(_access_time + _egress_time)
+,auto_minus_transit_access_to_work,(_peak_auto_time_home_to_work - _tot_transit_time).clip(0)
+,dparkcost_work,"np.where(persons.workplace_zone_id > 0, reindex(land_use.dparkcost, persons.workplace_zone_id), 0)"
+# transit pass cost converted to cost per trip and multiplied by trip mode choice cost coefficient in model,,
+# assumes 22 working days per month and 2 trips per work day. reduced fare for children and seniors half price.,,
+,transit_pass_cost_per_trip,monthly_pass_cost / (22 * 2)
+,transit_pass_cost_per_trip,"np.where((df.age >= 65) | (df.age <= 18), transit_pass_cost_per_trip / 2, transit_pass_cost_per_trip)"

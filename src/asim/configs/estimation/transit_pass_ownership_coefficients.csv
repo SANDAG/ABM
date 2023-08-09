@@ -52,3 +52,5 @@ coef_noc10_manu_util_pass,0.0,F
 coef_auto_time_saving_pass,0.0,F
 coef_subs_pass,0.0,F
 asc_pass,-1.1482894158501409,F
+coef_tripmc_cost_coef,0.0,F
+coef_auto_minus_transit_time,0.0,F
