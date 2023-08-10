@@ -28,7 +28,7 @@ trip,univ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
 # not needed as school is not chosen as an intermediate trip destination,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 #trip,gradeschool,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 #trip,highschool,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-external_work,external_work,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+external_workplace,external_workplace,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
 external_nonwork,external_nonwork,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
 external_non_mandatory,escort,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
 external_non_mandatory,shopping,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1

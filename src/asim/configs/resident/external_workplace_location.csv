@@ -1,4 +1,4 @@
-Label,Description,Expression,external_work
+Label,Description,Expression,external_workplace
 local_dist,,_DIST@skims['DIST'],1
 util_dist,,"@np.minimum(_DIST,10)",coef_dist_capped
 util_size_variable,Size variable,@(df['size_term']).apply(np.log1p),coef_size

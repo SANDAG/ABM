@@ -268,3 +268,6 @@ microRentTime: 1
 microConstant: 60
 microAccessThreshold: 100
 microOwnership: 0.008
+
+# cost of "average" monthly transit pass cost.  Used in transit pass ownership model.
+monthly_transit_pass_cost: 100

@@ -33,3 +33,5 @@ util_zero_autos,zero auto household ownership,@df.auto_ownership==0,0,coef_zero_
 util_auto_deficient,auto deficient household,@((df.auto_ownership < df.num_workers) & (df.auto_ownership > 0)),0,coef_auto_deficient_pass
 util_subs,Subsidy offered,@df.transit_pass_subsidy,0,coef_subs_pass
 utils_pass_asc,Constant,1,0,asc_pass
+util_inc_adj_transit_pass_cost,Income adjusted transit pass cost,"@df.transit_pass_cost_per_trip / (np.maximum(df.income, 1000) ** df.income_exponent) / 60",0,coef_tripmc_cost_coef
+util_auto_minus_transit_access_to_work,Income adjusted transit pass cost,"transit_minus_auto_time_to_work",0,coef_auto_minus_transit_time
