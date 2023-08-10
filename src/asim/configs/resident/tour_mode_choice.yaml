@@ -16,6 +16,11 @@ NESTS:
         alternatives:
           - WALK
           - BIKE
+      - name: MICROMOBILITY
+        coefficient: coef_nest_MICROMOBILITY
+        alternatives:
+          - EBIKE
+          - ESCOOTER
       - name: TRANSIT
         coefficient:  coef_nest_TRANSIT
         alternatives:
@@ -101,5 +106,6 @@ LOGSUM_CHOOSER_COLUMNS:
   - time_factor_nonwork
   - num_escortees
   - district27
+  - ebike_owner
 
 MODE_CHOICE_LOGSUM_COLUMN_NAME: mode_choice_logsum
