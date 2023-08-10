@@ -1,4 +1,5 @@
 coefficient_name,value,constrain
+1,0.0,F
 coef_escorting_tour,0.0,F
 coef_discretionary_tour,0.0,F
 coef_shopping_tour,0.0,F
@@ -26,6 +27,9 @@ coef_has_joint_tours_and_iNM_tour_freq_1,0.0,F
 coef_has_joint_tours_and_iNM_tour_freq_1p,0.0,F
 coef_has_joint_tours_and_iNM_tour_freq_2,0.0,F
 coef_has_joint_tours_and_iNM_tour_freq_2p,0.0,F
+coef_number_of_joint_maintenance_tours,0.0,F
+coef_number_of_joint_eating_out_tours,0.0,F
+coef_number_of_joint_discretionary_tours,0.0,F
 coef_unavailable,-999.0,T
 coef_low_income_escort,0.0,F
 coef_low_income_shopping,0.0,F
@@ -50,13 +54,11 @@ coef_high_income_othmaint,0.0,F
 coef_high_income_social,0.0,F
 coef_high_income_othdiscr,0.0,F
 coef_zero_auto_iNM_tour_freq_1,0.0,F
-coef_zero_auto_iNM_tour_freq_1p,0.0,F
-coef_zero_auto_iNM_tour_freq_6,0.0,F
-coef_zero_auto_iNM_tour_freq_2p,0.0,F
+coef_zero_auto_iNM_tour_freq_2,0.0,F
+coef_zero_auto_iNM_tour_freq_3p,0.0,F
 coef_auto_deficient_iNM_tour_freq_1,0.0,F
-coef_auto_deficient_iNM_tour_freq_1p,0.0,F
 coef_auto_deficient_iNM_tour_freq_2,0.0,F
-coef_auto_deficient_iNM_tour_freq_2p,0.0,F
+coef_auto_deficient_iNM_tour_freq_3p,0.0,F
 coef_num_children_escort,0.0,F
 coef_num_children_shopping,0.0,F
 coef_num_children_othmaint,0.0,F

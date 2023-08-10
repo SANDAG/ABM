@@ -1,5 +1,5 @@
 Label,Description,Expression,PTYPE_FULL,PTYPE_PART,PTYPE_UNIVERSITY,PTYPE_NONWORK,PTYPE_RETIRED,PTYPE_DRIVING,PTYPE_SCHOOL,PTYPE_PRESCHOOL
-#util_naming_alts_explicitly,Explicitly naming what tot_tours is defined as,_total_indNM_tours@df.tot_tours,1,1,1,1,1,1,1,1
+util_naming_alts_explicitly,Explicitly naming what tot_tours is defined as,_total_indNM_tours@df.tot_tours,1,1,1,1,1,1,1,1
 util_escorting_tour,Escorting Tour,escort,coef_escorting_tour,coef_escorting_tour,coef_escorting_tour,coef_escorting_tour,coef_escorting_tour,coef_escorting_tour,coef_escorting_tour,coef_escorting_tour
 util_discretionary_tour,Discretionary Tour,othdiscr,coef_discretionary_tour,coef_discretionary_tour,coef_discretionary_tour,coef_discretionary_tour,coef_discretionary_tour,coef_discretionary_tour,coef_discretionary_tour,coef_discretionary_tour
 util_shopping_tour,Shopping Tour,shopping,coef_shopping_tour,coef_shopping_tour,coef_shopping_tour,coef_shopping_tour,coef_shopping_tour,coef_shopping_tour,coef_shopping_tour,coef_shopping_tour
@@ -37,7 +37,7 @@ util_number_of_joint_eating_out_tours,Number of Joint Eating Out tours,(eatout >
 util_number_of_joint_discretionary_tours,Number of Joint Discretionary tours,(othdiscr > 0) * num_person_joint_othdiscr_tours,,,,,,coef_number_of_joint_discretionary_tours,coef_number_of_joint_discretionary_tours,coef_number_of_joint_discretionary_tours
 util_number_of_school_escort_tours,Number of School Escort Tours,escort * num_school_escort_tours,coef_prev_school_escort_tours,coef_prev_school_escort_tours,coef_prev_school_escort_tours,coef_prev_school_escort_tours,,,,
 # availability conditions,,,,,,,,,,
-#util_availability_of_zero_tours,Requires NM tour if no previous tours,(has_previous_tour == 0) & (_total_indNM_tours == 0),coef_unavailable,coef_unavailable,coef_unavailable,coef_unavailable,coef_unavailable,coef_unavailable,coef_unavailable,
+util_availability_of_zero_tours,Requires NM tour if no previous tours,(has_previous_tour == 0) & (_total_indNM_tours == 0),coef_unavailable,coef_unavailable,coef_unavailable,coef_unavailable,coef_unavailable,coef_unavailable,coef_unavailable,
 # income coefficients with medium as base,,,,,,,,,,
 util_low_income_escort,Low income household * number of escort tours,low_income * escort,,coef_low_income_escort,,coef_low_income_escort,coef_low_income_escort,,coef_low_income_escort,coef_low_income_escort
 util_low_income_shopping,Low income household * number of shopping tours,low_income * shopping,,,,,coef_low_income_shopping,,coef_low_income_shopping,coef_low_income_shopping

@@ -1,4 +1,5 @@
 coefficient_name,value,constrain
+1,0.0,F
 coef_escorting_tour,0.0,F
 coef_discretionary_tour,0.0,F
 coef_shopping_tour,0.0,F
@@ -59,14 +60,10 @@ coef_high_income_eatout,0.0,F
 coef_high_income_social,0.0,F
 coef_high_income_othdiscr,0.0,F
 coef_zero_auto_iNM_tour_freq_1,0.0,F
-coef_zero_auto_iNM_tour_freq_1p,0.0,F
-coef_zero_auto_iNM_tour_freq_7,0.0,F
-coef_zero_auto_iNM_tour_freq_2p,0.0,F
+coef_zero_auto_iNM_tour_freq_2,0.0,F
 coef_zero_auto_iNM_tour_freq_3p,0.0,F
 coef_auto_deficient_iNM_tour_freq_1,0.0,F
-coef_auto_deficient_iNM_tour_freq_1p,0.0,F
 coef_auto_deficient_iNM_tour_freq_2,0.0,F
-coef_auto_deficient_iNM_tour_freq_2p,0.0,F
 coef_auto_deficient_iNM_tour_freq_3p,0.0,F
 coef_num_children_escort,0.0,F
 coef_num_children_shopping,0.0,F

@@ -21,7 +21,7 @@ join joint tour participants with tour purpose,_JOINT_TOURS_PERSONS,"pd.merge(jo
 ,num_person_joint_visit_tours,"reindex_i(_JOINT_TOURS_PERSONS[_JOINT_TOURS_PERSONS.tour_type=='Visiting'].groupby(['person_id']).size(), persons.index)"
 ,num_person_joint_othdiscr_tours,"reindex_i(_JOINT_TOURS_PERSONS[_JOINT_TOURS_PERSONS.tour_type=='Discretionary'].groupby(['person_id']).size(), persons.index)"
 # joint tour counts per persons,,
-#,_TOUR_COUNT,"lambda query, tours, persons: tours.query(query).groupby('person_id').size().reindex(persons.index).fillna(0).astype(np.int8)"
+,_TOUR_COUNT,"lambda query, tours, persons: tours.query(query).groupby('person_id').size().reindex(persons.index).fillna(0).astype(np.int8)"
 #,num_person_joint_tours,"_TOUR_COUNT('(tour_category == \'joint\')', tours, persons)"
 #,num_person_joint_shop_tours,"_TOUR_COUNT('(tour_category == \'joint\') & (tour_type == \'shopping\')', tours, persons)"
 #,num_person_joint_maint_tours,"_TOUR_COUNT('(tour_category == \'joint\') & (tour_type == \'othmaint\')', tours, persons)"
