@@ -232,3 +232,6 @@ safari_maz: 19986
 midway_maz: 2654
 zoo_maz: 2754
 torrypines_maz: 4305
+
+# cost of "average" monthly transit pass cost.  Used in transit pass ownership model.
+monthly_transit_pass_cost: 100
