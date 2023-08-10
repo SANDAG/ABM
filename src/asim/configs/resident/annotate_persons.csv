@@ -57,3 +57,5 @@ travel time sensitivity factor for non-work travel,time_factor_nonwork,"np.minim
 #,,
 ,_naics_code,"np.where(persons.naics2_original_code=='3M', 3000, np.where(persons.naics2_original_code=='4M', 4000, np.where(persons.naics2_original_code=='MIL',9000, persons.naics2_original_code))) if 'naics2_original_code' in persons.columns else 0"
 ,naics_code,_naics_code.astype('int') if all(_naics_code!=0) else 0
+#,,
+occupation category based on SOC codes,occupation,persons.soc2.map(soc_occupation_xwalk)

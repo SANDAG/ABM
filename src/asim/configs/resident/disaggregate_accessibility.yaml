@@ -87,6 +87,9 @@ CREATE_TABLES:
                 DAP: # Mandatory, Non-mandatory
                     1: "M"
                     2: "N"
+                soc2: #occupation codes
+                    1: 11   # Management Occupations
+                    2: 0    # Non-worker
 
     PROTO_TOURS:
         index_col: proto_tour_id
