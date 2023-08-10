@@ -259,3 +259,12 @@ safari_maz: 19986
 midway_maz: 2654
 zoo_maz: 2754
 torrypines_maz: 4305
+
+# Micromobility constants
+microSpeed: 12
+microVarCost: 0.20
+microFixedCost: 1.00
+microRentTime: 1
+microConstant: 60
+microAccessThreshold: 100
+microOwnership: 0.008

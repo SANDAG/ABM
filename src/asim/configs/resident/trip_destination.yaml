@@ -26,9 +26,7 @@ PRIMARY_DEST: tour_leg_dest # must be created in preprocessor
 REDUNDANT_TOURS_MERGED_CHOOSER_COLUMNS:
   - tour_mode
   
-CONSTANTS:
-  max_walk_distance: 3
-  max_bike_distance: 12
+
   
 preprocessor:
   SPEC: trip_destination_annotate_trips_preprocessor
@@ -37,6 +35,7 @@ preprocessor:
     - tours
     - persons
     - households
+    - land_use
 
 
 # drop failed trips and cleanup failed trip leg_mates for consistency

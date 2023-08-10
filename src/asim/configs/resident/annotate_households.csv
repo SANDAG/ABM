@@ -40,3 +40,4 @@ home_is_rural,home_is_rural,"reindex(land_use.pseudomsa, households.home_zone_id
 ,num_hh_in_zone,"reindex(households.groupby('home_zone_id').size(), households.home_zone_id)"
 #,multiple_auto_hh_in_zone,"reindex_i(df.groupby('home_zone_id').multiple_auto_hh.sum(), df.index)"
 #,multiple_auto_hh_in_zone_share,multiple_auto_hh_in_zone/num_hh_in_zone
+hh owns an ebike,ebike_owner,"rng.random_for_df(households)[:,0] < microOwnership"
