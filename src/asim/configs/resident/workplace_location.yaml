@@ -4,7 +4,6 @@ ESTIMATION_SAMPLE_SIZE: 10
 SIMULATE_CHOOSER_COLUMNS:
   - income_segment
   - home_zone_id
-  - home_pmsa
   - income
   - age
   - ptype
