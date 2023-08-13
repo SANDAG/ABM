@@ -1,5 +1,6 @@
 package org.sandag.abm.maas;
 
+
 import java.util.ArrayList;
 
 public class TNCVehicle {
