@@ -10,3 +10,6 @@ util_hh_income_veryhigh,household income 150k+,@(df.income>=150000),,coef_income
 util_autos_2plus,Two or more household vehicles,@(df.auto_ownership>1),,coef_autos_2plus
 util_workers_0,No workers in household,@(df.num_workers==0),,coef_workers_0
 util_2016,2016 survey,@PRE_COVID,,coef_2016
+#,,,,
+util_av_ownership_TR, if AV owned then must have transponder,av_ownership,-999,0
+util_Vehyear_based_TR, if HH owns vehicle model after a certain year hh must have TR,hh_tr_veh_year,-999,0
