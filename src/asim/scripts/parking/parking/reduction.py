@@ -6,12 +6,9 @@ from . import base
 class ReduceRawParkingData(base.Base):
     def run_reduction(self):
         print("Reducing raw parking data")
-        in_path = self.settings.get("raw_parking_inventory")
-        self.raw_parking_df = pd.read_csv(in_path).set_index("mgra")
-        self.reduced_df = self.parking_reduction(self.raw_parking_df)
-
-        out_path = self.settings.get("reduced_parking_costs")
-        self.reduced_df.to_csv(out_path)
+        self.reduced_parking_df = self.parking_reduction(self.raw_parking_df)
+        
+        self.combined_df = self.lu_df.join(self.reduced_parking_df)
 
     def parking_reduction(self, raw_parking_df):
         # Free parking spaces

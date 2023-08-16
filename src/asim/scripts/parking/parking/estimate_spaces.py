@@ -12,35 +12,30 @@ from . import base
 
 
 class EstimateStreetParking(base.Base):
+    
     def run_space_estimation(self):
         method = self.settings.get("space_estimation_method")
         cache_dir = self.settings.get("cache_dir")
 
         # Read input
-        in_path = self.settings.get("imputed_parking_costs")
-        lu_path = self.settings.get("land_use")
-        # in_path = self.settings.get('raw_parking_costs')
-        data_path = self.settings.get("aggregated_street_data")
-        out_path = self.settings.get("estimated_spaces_data")
-
-        # in_path = self.settings.get('raw_parking_inventory')
-        parking_costs_df = pd.read_csv(in_path).set_index("mgra")
-        land_use = pd.read_csv(lu_path).set_index("mgra")
         mgra_gdf = self.mgra_data()
 
         assert isinstance(mgra_gdf, gpd.GeoDataFrame)
-        assert isinstance(parking_costs_df, pd.DataFrame)
+        assert isinstance(self.imputed_parking_df, pd.DataFrame)
+        assert isinstance(self.lu_df, pd.DataFrame)
 
-        parking_df = self.aggregate_spaces_data(parking_costs_df)
-        street_data = self.get_streetdata(mgra_gdf, data_path, cache_dir)
+        parking_df = self.aggregate_spaces_data(self.imputed_parking_df)
+        street_data = self.get_streetdata(mgra_gdf, cache_dir)
         estimated_spaces = self.estimate_spaces(
-            street_data, mgra_gdf, parking_df, land_use, method
+            street_data, mgra_gdf, parking_df, self.lu_df, method
         )
 
-        estimated_spaces.to_csv(out_path)
-        self.estimated_spaces = estimated_spaces
+        # estimated_spaces.to_csv(out_path)
+        self.estimated_spaces_df = estimated_spaces
+        
+        # append combined
+        self.combined_df = self.combined_df.join(self.estimated_spaces_df)
 
-        return estimated_spaces
 
     def aggregate_spaces_data(self, raw_parking_df):
         is_raw = any([x for x in raw_parking_df.columns if "on_street" in x])
@@ -128,7 +123,7 @@ class EstimateStreetParking(base.Base):
         )
 
         # Update crs
-        H.graph["crs"] = G.graph["crs"]
+        H.graph["crs"] = G.graph["crs"] # type: ignore
 
         self.cleaned_graph = H
 
@@ -141,11 +136,13 @@ class EstimateStreetParking(base.Base):
 
         # Current crs
         graph_crs = cleaned_graph.graph["crs"]
-        edges_gdf = edges_gdf.set_crs(graph_crs).to_crs(mgra_gdf.crs.to_epsg())
-        nodes_gdf = nodes_gdf.set_crs(graph_crs).to_crs(mgra_gdf.crs.to_epsg())
+        
+        edges_gdf = edges_gdf.set_crs(graph_crs).to_crs(mgra_gdf.crs.to_epsg()) # type: ignore
+        nodes_gdf = nodes_gdf.set_crs(graph_crs).to_crs(mgra_gdf.crs.to_epsg()) # type: ignore
 
         # Intersections have >2 segments
-        intnodes_gdf = nodes_gdf[nodes_gdf.street_count > 2]
+        assert isinstance(nodes_gdf, gpd.GeoDataFrame)
+        intnodes_gdf = nodes_gdf[nodes_gdf.street_count > 2] 
 
         def intersect_zones(geo):
             # First clip search space
@@ -174,15 +171,19 @@ class EstimateStreetParking(base.Base):
         streets_gdf.index = mgra_gdf.index
         return streets_gdf
 
-    def get_streetdata(self, mgra_gdf, data_path, cache_path):
+    def get_streetdata(self, mgra_gdf, cache_dir):
+        data_path = os.path.join(cache_dir, 'aggregated_street_data.csv')
         if not os.path.isfile(data_path):
             print("Aggregated street data")
-            full_graph = self.get_network(mgra_gdf, cache_path)
+            full_graph = self.get_network(mgra_gdf, cache_dir)
             cleaned_graph = self.filter_network(full_graph)
 
             # Aggregate length and number of intersections per zone
             street_data = self.aggregate_streetdata(cleaned_graph, mgra_gdf)
-            street_data[["length", "intcount"]].to_csv(data_path)
+                        
+            df = street_data[["length", "intcount"]]
+            assert isinstance(df, pd.DataFrame)
+            df.to_csv(data_path)
         else:
             street_data = pd.read_csv(data_path).set_index("MGRA")
 

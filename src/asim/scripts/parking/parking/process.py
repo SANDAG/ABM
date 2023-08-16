@@ -15,4 +15,5 @@ class ParkingProcessing(
         
         # Runs models listed in settings.yaml
         for model_name in self.settings.get("models"):
+            print(f"######## Running {model_name} ########")
             getattr(self, model_name)()

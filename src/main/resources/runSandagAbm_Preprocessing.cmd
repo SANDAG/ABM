@@ -69,11 +69,11 @@ if %ITERATION% equ 1 (
     
     %PYTHON3% src/asim/scripts/resident/2zoneSkim.py %PROJECT_DIRECTORY%
 
+    %PYTHON3% src/asim/scripts/resident/resident_preprocessing.py input output %SCENYEAR%
+
     CD src\asim\scripts\parking
     %PYTHON3% run.py
     cd /d %PROJECT_DIRECTORY%
-
-    %PYTHON3% src/asim/scripts/resident/resident_preprocessing.py input output %SCENYEAR%
 
     ECHO Running Airport models pre-processing
     %PYTHON3% src/asim/scripts/airport/airport_model.py -p -c src/asim/configs/airport.CBX -d input -o output/airport.CBX
