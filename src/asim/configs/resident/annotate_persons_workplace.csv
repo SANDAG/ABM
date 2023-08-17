@@ -25,7 +25,7 @@ round trip walk access & egress,_transit_wacc_tot, 2 * (_transit_wacc_home + _tr
 #,,work_auto_savings_ratio
 ,_min_work_walk_transit,"np.where(_work_transit_available, np.minimum(_roundtrip_transit_time_to_work, roundtrip_auto_time_to_work), roundtrip_auto_time_to_work)"
 ,work_auto_savings,"np.where(persons.is_worker, _min_work_walk_transit - roundtrip_auto_time_to_work, 0)"
-Parking cost at work,dparkcost_work,"reindex(land_use.dparkcost, df.workplace_zone_id).fillna(0)"
+Parking cost at work,exp_daily_work,"reindex(land_use.exp_daily, df.workplace_zone_id).fillna(0)"
 # calculating toll and non-toll costs for transponder ownership model,,
 ,non_toll_time_work,"np.where(df.workplace_zone_id >= 0, skim_dict.lookup(df.home_zone_id, df.workplace_zone_id, ('SOV_NT_L_TIME', 'AM')), 0)"
 ,toll_time_work,"np.where(df.workplace_zone_id >= 0, skim_dict.lookup(df.home_zone_id, df.workplace_zone_id, ('SOV_TR_H_TIME', 'AM')), 0)"

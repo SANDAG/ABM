@@ -128,12 +128,6 @@ public class TNCFleetModel {
 		for(int skimPeriod = 0;skimPeriod<numberSkimPeriods;++skimPeriod){
 			int periodLengthInMinutes = 30 * (ModelStructure.PERIOD_ENDS[skimPeriod] - lastPeriodEnd);
 			lastPeriodEnd = ModelStructure.PERIOD_ENDS[skimPeriod];
-			if(skimPeriod==0)
-				periodLengthInMinutes += 90;
-			
-			if(skimPeriod==4)
-				periodLengthInMinutes += 150;
-				
 			endSkimPeriod[skimPeriod] = periodLengthInMinutes/minutesPerSimulationPeriod + lastEndSkimPeriod;
 			lastEndSkimPeriod = endSkimPeriod[skimPeriod];
 			

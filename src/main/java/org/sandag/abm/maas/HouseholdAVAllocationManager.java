@@ -41,8 +41,7 @@ public class HouseholdAVAllocationManager {
 	protected static final String DirectoryProperty = "Project.Directory";
 	protected static final String HouseholdDataFileProperty = "Results.HouseholdDataFile";
 	protected static final String PersonDataFileProperty    = "Results.PersonDataFile";
-	protected static final String IndivTripDataFileProperty = "Results.IndivTripDataFile";
-	protected static final String JointTripDataFileProperty = "Results.JointTripDataFile";
+	protected static final String TripDataFileProperty = "Results.TripDataFile";
 	protected static final String VEHICLETRIP_OUTPUT_FILE_PROPERTY = "Maas.AVAllocationModel.vehicletrip.output.file";
 	protected static final String VEHICLETRIP_OUTPUT_MATRIX_PROPERTY = "Maas.AVAllocationModel.vehicletrip.output.matrix";
 	protected static final String REMOTE_PARKING_COST_PROPERTY = "Mobility.AV.RemoteParkingCostPerHour";
@@ -55,8 +54,10 @@ public class HouseholdAVAllocationManager {
     MgraDataManager mazManager;
     TazDataManager tazManager;
 
-	protected static final int[] AutoModes = {1,2,3};
-	protected static final int MaxAutoMode = 3;
+	//protected static final int[] AutoModes = {1,2,3};
+	//protected static final int MaxAutoMode = 3;
+	protected static final String[] autoModes = {"DRIVEALONE", "SHARED2", "SHARED3"};
+	
 	private long randomSeed = 198761;
 	protected String vehicleTripOutputFile;
 
@@ -68,7 +69,8 @@ public class HouseholdAVAllocationManager {
 	String[] personTypes = {"Full-time worker","Part-time worker","University student",
 			"Non-worker", "Retired","Student of driving age","Student of non-driving age",
 			"Child too young for school"};
-
+	
+	
 	class Household {
 		
 		HashMap <Integer, Person> personMap; //by person_num
@@ -82,6 +84,7 @@ public class HouseholdAVAllocationManager {
 		ArrayList<Vehicle> autonomousVehicles;
 		int seed;
 		boolean debug;
+		int personsRead;
 		
 		public void writeDebug(Logger logger, boolean logAVs) {
 			
@@ -93,6 +96,7 @@ public class HouseholdAVAllocationManager {
 			logger.info("HVs:      "+HVs);
 			logger.info("AVs:      "+AVs);
 			logger.info("Seed:     "+seed);
+			logger.info("Persons   "+personsRead);
 			
 			//log persons
 			if(personMap.size()==0) {
@@ -196,6 +200,14 @@ public class HouseholdAVAllocationManager {
 
 		public void setAutonomousVehicles(ArrayList<Vehicle> autonomousVehicles) {
 			this.autonomousVehicles = autonomousVehicles;
+		}
+
+		public int getPersonsRead() {
+			return personsRead;
+		}
+
+		public void setPersons_read(int personsRread) {
+			this.personsRead = personsRead;
 		}
 
 		public int getSeed() {
@@ -323,7 +335,8 @@ public class HouseholdAVAllocationManager {
         int person_id;
         int person_num;
         int tour_id;
-        int stop_id;
+        int trip_id;
+        int trip_num;
         int inbound;
         String tour_purpose;
         String orig_purpose;
@@ -333,7 +346,7 @@ public class HouseholdAVAllocationManager {
         int parking_maz;
         int stop_period;
         int periodsUntilNextTrip;
-        int trip_mode;
+        String trip_mode;
         int av_avail;
         int tour_mode;
         int driver_pnum;
@@ -357,7 +370,7 @@ public class HouseholdAVAllocationManager {
 			logger.info("Person ID: "+person_id);
 			logger.info("Person Num: "+person_num);
 			logger.info("Tour ID: "+tour_id);
-			logger.info("Stop ID: "+stop_id);
+			logger.info("Trip ID: "+trip_id);
 			logger.info("Inbound: "+inbound);
 			logger.info("Tour purpose: "+tour_purpose);
 			logger.info("Orig purpose: "+orig_purpose);
@@ -397,43 +410,43 @@ public class HouseholdAVAllocationManager {
         @Override     
         public int compareTo(Trip thatTrip) {   
         	
-        	if (this == thatTrip) return 0;
+        	if (this == thatTrip) 
+        		return 0;
         	
         	if(sortByPerson) {
         		
         		if(person_id<thatTrip.getPerson_id())
         			return -1;
-        		else if(person_id>thatTrip.getPerson_id())
+        		if(person_id>thatTrip.getPerson_id())
         			return 1;
-        		else if(person_id==thatTrip.getPerson_id()) {
-        			if(stop_period<thatTrip.getStop_period())
-        				return -1;
-        			else if(stop_period>thatTrip.getStop_period())
-        				return 1;
-        			else if(stop_period==thatTrip.getStop_period()) {
-        				if(tour_purpose.compareTo("Work")==0 && thatTrip.getTour_purpose().compareTo("Work-Based")==0) {
-            				if(inbound==0)
-            					return -1;
-            				else
-            					return 1;
-            			}else if(tour_purpose.compareTo("Work-based")==0 && thatTrip.getTour_purpose().compareTo("Work")==0) {
-            				if(thatTrip.getInbound()==0)
-            					return 1;
-            				else 
-            					return -1;
-            			}
-        				if(tour_id<thatTrip.getTour_id())
-        					return -1;
-        				else if(tour_id>thatTrip.getTour_id())
-        					return 1;
-        				if(inbound==0 && thatTrip.getInbound()==1)
-        					return -1;
-        			}
-        			
-        		}
+        		if(stop_period<thatTrip.getStop_period())
+        			return -1;
+        		if(stop_period>thatTrip.getStop_period())
+        			return 1;
+        		if(tour_purpose.equalsIgnoreCase("work") && thatTrip.getTour_purpose().equalsIgnoreCase("atwork")) 
+            		if(inbound==0)
+            			return -1;
+            		else
+            			return 1;
+            	if(tour_purpose.equalsIgnoreCase("atwork") && thatTrip.getTour_purpose().equalsIgnoreCase("work")) 
+            		if(thatTrip.getInbound()==0)
+            			return 1;
+            		else 
+            			return -1;
+            	/*	
+            	if(tour_id<thatTrip.getTour_id())
+        			return -1;
+        		if(tour_id>thatTrip.getTour_id())
+        			return 1;
+        		*/
+        		if(inbound==0 && thatTrip.getInbound()==1)
+        			return -1;
+        		if(inbound==1 && thatTrip.getInbound()==0)
+        			return 1;
+       			
         		return 0;
-        	}
         	
+        	}
  /*       	
         	//if its the same person and the same tour, use the stop ID
         	if(sameTour(thatTrip)){
@@ -451,30 +464,31 @@ public class HouseholdAVAllocationManager {
         	//its not the same tour
  */        	if(stop_period<thatTrip.getStop_period())
         		return -1;
-        	else if(stop_period>thatTrip.getStop_period())
+        	if(stop_period>thatTrip.getStop_period())
         		return 1;
-        	else if(stop_period==thatTrip.getStop_period()) { //its the same stop period
-        		if((person_id==thatTrip.getPerson_id())) { //same person
-        			if(tour_purpose.compareTo("Work")==0 && thatTrip.getTour_purpose().compareTo("Work-Based")==0) {
-        				if(inbound==0)
-        					return -1;
-        				else
-        					return 1;
-        			}else if(tour_purpose.compareTo("Work-based")==0 && thatTrip.getTour_purpose().compareTo("Work")==0) {
-        				if(thatTrip.getInbound()==0)
-        					return 1;
-        				else 
-        					return -1;
-        			}
- 
-        		}
+        		
+        	if((person_id==thatTrip.getPerson_id())) { //same person
+        		if(tour_purpose.equalsIgnoreCase("work") && thatTrip.getTour_purpose().equalsIgnoreCase("atwork")) 
+        			if(inbound==0)
+        				return -1;
+        			else
+        				return 1;
+        		if(tour_purpose.equalsIgnoreCase("atwork") && thatTrip.getTour_purpose().equalsIgnoreCase("work"))
+        			if(thatTrip.getInbound()==0)
+        				return 1;
+        			else 
+        				return -1;
+        	}
         		/*
         		 * if(periodsUntilNextTrip<thatTrip.getPeriodsUntilNextTrip())
         		 *        			return -1;
         		else if(periodsUntilNextTrip>thatTrip.getPeriodsUntilNextTrip())
         			return 1;
         			*/
-        	}
+       		if(inbound==0 && thatTrip.getInbound()==1)
+    			return -1;
+    		if(inbound==1 && thatTrip.getInbound()==0)
+    			return 1;
         	
         	return 0;
         }
@@ -503,11 +517,17 @@ public class HouseholdAVAllocationManager {
 		public void setTour_id(int tour_id) {
 			this.tour_id = tour_id;
 		}
-		public int getStop_id() {
-			return stop_id;
+		public int getTrip_id() {
+			return trip_id;
 		}
-		public void setStop_id(int stop_id) {
-			this.stop_id = stop_id;
+		public void setTrip_id(int trip_id) {
+			this.trip_id = trip_id;
+		}
+		public int getTrip_num() {
+			return trip_num;
+		}
+		public void setTrip_num(int trip_num) {
+			this.trip_num = trip_num;
 		}
 		public int getInbound() {
 			return inbound;
@@ -557,10 +577,10 @@ public class HouseholdAVAllocationManager {
 		public void setStop_period(int stop_period) {
 			this.stop_period = stop_period;
 		}
-		public int getTrip_mode() {
+		public String getTrip_mode() {
 			return trip_mode;
 		}
-		public void setTrip_mode(int trip_mode) {
+		public void setTrip_mode(String trip_mode) {
 			this.trip_mode = trip_mode;
 		}
 		public int getAv_avail() {
@@ -824,7 +844,7 @@ public class HouseholdAVAllocationManager {
 					writer.print( trip.getPerson_id() + "," +
 							trip.getPerson_num() + "," +
 							trip.getTour_id() + "," +
-							trip.getStop_id() + "," +
+							trip.getTrip_id() + "," +
 							trip.getInbound() + "," + 
 							trip.getTour_purpose() + "," +
 							trip.getOrig_purpose() + "," +
@@ -1033,21 +1053,16 @@ public class HouseholdAVAllocationManager {
 		readPersons();
         String directory = Util.getStringValueFromPropertyMap(propertyMap, DirectoryProperty);
 
-        String indivTripFile = directory
-                + Util.getStringValueFromPropertyMap(propertyMap, IndivTripDataFileProperty);
-        indivTripFile = insertIterationNumber(indivTripFile,iteration);
-     
-		logger.info("...Reading individual trips");
-
-        readTrips(indivTripFile,false);
+        String tripFile = directory
+                + Util.getStringValueFromPropertyMap(propertyMap, TripDataFileProperty);
         
-        String jointTripFile = directory
-                + Util.getStringValueFromPropertyMap(propertyMap, JointTripDataFileProperty);
-        jointTripFile = insertIterationNumber(jointTripFile,iteration);
+        
+        if(iteration>0)
+        	tripFile = insertIterationNumber(tripFile,iteration);
+     
+		logger.info("...Reading trips");
 
-		logger.info("...Reading joint trips");
-
-        readTrips(jointTripFile,true);
+        readTrips(tripFile);
         
         logger.info("Completed reading data");
         
@@ -1128,7 +1143,7 @@ public class HouseholdAVAllocationManager {
 		    	if(trip.getAv_avail()==0)
 		    		itr.remove();
 		    	
-		    	else if(trip.trip_mode>MaxAutoMode)
+		    	else if(!isAutoTrip(trip.getTrip_mode()))
 		    		itr.remove();
 		    }
 		}
@@ -1136,6 +1151,20 @@ public class HouseholdAVAllocationManager {
 		
 	}
 
+
+	/**
+	 * Check mode and return true if it is an auto mode, else return false.
+	 * @param mode
+	 * @return
+	 */
+	public boolean isAutoTrip(String mode) {
+		
+		for(int i=0;i<autoModes.length;++i)
+			if(mode.equalsIgnoreCase(autoModes[i]))
+				return true;
+		return false;
+		
+	}
 	
 	public void sortTrips() {
 		
@@ -1181,7 +1210,9 @@ public class HouseholdAVAllocationManager {
         String directory = Util.getStringValueFromPropertyMap(propertyMap, DirectoryProperty);
         String householdFile = directory
                 + Util.getStringValueFromPropertyMap(propertyMap, HouseholdDataFileProperty);
-        householdFile = insertIterationNumber(householdFile,iteration);
+        
+        if(iteration>0)
+        	householdFile = insertIterationNumber(householdFile,iteration);
         
         //get the household table and fill up the householdMap with households.
         TableDataSet householdDataSet = readTableData(householdFile);
@@ -1191,12 +1222,14 @@ public class HouseholdAVAllocationManager {
 			int seed = Math.abs(random.nextInt());
 
         	//read data
-        	int hhId = (int) householdDataSet.getValueAt(row, "hh_id");
-        	int hhMgra = (int) householdDataSet.getValueAt(row,"home_mgra");
+        	int hhId = (int) householdDataSet.getValueAt(row, "household_id");
+        	int hhMgra = (int) householdDataSet.getValueAt(row,"home_zone_id");
         	int income = (int) householdDataSet.getValueAt(row,"income");
-        	int autos = (int) householdDataSet.getValueAt(row,"autos");
-        	int HVs = (int) householdDataSet.getValueAt(row,"HVs");
-        	int AVs = (int) householdDataSet.getValueAt(row,"AVs");
+        	int autos = (int) householdDataSet.getValueAt(row,"auto_ownership");
+        	
+        	//todo fix
+        	int AVs = 1;
+        	int HVs = autos - AVs;
         	
         	//create household object
         	Household hh = new Household();
@@ -1239,7 +1272,9 @@ public class HouseholdAVAllocationManager {
         String directory = Util.getStringValueFromPropertyMap(propertyMap, DirectoryProperty);
         String personFile = directory
                 + Util.getStringValueFromPropertyMap(propertyMap, PersonDataFileProperty);
-        personFile = insertIterationNumber(personFile,iteration);
+        
+        if(iteration>0)
+        	personFile = insertIterationNumber(personFile,iteration);
         
         //get the household table and fill up the householdMap with households.
         TableDataSet personDataSet = readTableData(personFile);
@@ -1247,34 +1282,33 @@ public class HouseholdAVAllocationManager {
         for(int row=1;row<=personDataSet.getRowCount();++row) {
 
 		
-        	int hh_id = (int) personDataSet.getValueAt(row,"hh_id");
+        	int hh_id = (int) personDataSet.getValueAt(row,"household_id");
         	int person_id = (int) personDataSet.getValueAt(row,"person_id");
-        	int person_num = (int) personDataSet.getValueAt(row,"person_num");
         	int age = (int) personDataSet.getValueAt(row,"age");
-        	String gender = personDataSet.getStringValueAt(row,"gender");
-        	String type = personDataSet.getStringValueAt(row,"type");
-        	float value_of_time =  personDataSet.getValueAt(row,"value_of_time");
-        	float reimb_pct =  personDataSet.getValueAt(row,"reimb_pct");
-        	int parkingChoice = (int) personDataSet.getValueAt(row, "fp_choice");
-        	float timeFactorWork =  personDataSet.getValueAt(row,"timeFactorWork");
-        	float timeFactorNonWork =  personDataSet.getValueAt(row,"timeFactorNonWork");
+        	int gender = (int) personDataSet.getValueAt(row,"sex");
+        	int ptype = (int) personDataSet.getValueAt(row,"ptype");
+        	//float value_of_time =  personDataSet.getValueAt(row,"value_of_time");
+        	String freeParkingAtWork = personDataSet.getStringValueAt(row,  "free_parking_at_work");
+        	float reimb_pct = (freeParkingAtWork.equalsIgnoreCase("TRUE")? (float) 1.0 : 0);
+        	//int parkingChoice = (int) personDataSet.getValueAt(row, "fp_choice");
+        	float timeFactorWork =  personDataSet.getValueAt(row,"time_factor_work");
+        	float timeFactorNonWork =  personDataSet.getValueAt(row,"time_factor_nonwork");
         
         	Person person = new Person();
         	person.setHh_id(hh_id);
         	person.setPerson_id(person_id);
-        	person.setPerson_num(person_num);
         	person.setAge(age);
-        	person.setGender(gender.compareToIgnoreCase("m")==0 ? 1 : 2);
-        	person.setType(personTypeMap.get(type));
-        	person.setValue_of_time(value_of_time);
+        	person.setGender(gender);
+        	person.setType(ptype);
+        	//person.setValue_of_time(value_of_time);
         	person.setReimb_pct(reimb_pct);
-        	person.setFp_choice(parkingChoice);
+        	//person.setFp_choice(parkingChoice);
         	person.setTimeFactorWork(timeFactorWork);
         	person.setTimeFactorNonWork(timeFactorNonWork);
         	
         	if(householdMap.containsKey(hh_id)) {
         		Household hh = householdMap.get(hh_id);
-        		hh.personMap.put(person_num,person);
+        		hh.personMap.put(person_id,person);
         	}else {
         		logger.fatal("Error: No household ID "+hh_id+" in householdMap. Cannot add person object");
         		throw new RuntimeException();
@@ -1284,50 +1318,73 @@ public class HouseholdAVAllocationManager {
 
 	}
 	
-	public void readTrips(String filename, boolean isJoint) {
+	public void readTrips(String filename) {
 		
 		
         //get the household table and fill up the householdMap with households.
         TableDataSet tripDataSet = readTableData(filename);
 
+        //TODO: this is a temporary fix and wont be right if the trip list is out of order
+        int last_hh_id=0;
+        int last_person_id=0;
+        int last_tour_id=0;
+    	String orig_purpose = "home";
+
         for(int row=1;row<=tripDataSet.getRowCount();++row) {
 
 	
-        	int hh_id = (int) tripDataSet.getValueAt(row, "hh_id");
+        	int hh_id = (int) tripDataSet.getValueAt(row, "household_id");
         	int person_id=-9;
-        	int person_num=-9;
-        	int num_participants = 1;
-        	int driver_pnum=-9;
-        	if(!isJoint) {
+        	//int person_num=-9;
+        	int num_participants = (int) tripDataSet.getValueAt(row, "tour_participants");
+        	//int driver_pnum=-9;
+        	if(num_participants==1) {
         		person_id = (int) tripDataSet.getValueAt(row,"person_id");
-        		person_num = (int) tripDataSet.getValueAt(row,"person_num");
-               	driver_pnum = (int) tripDataSet.getValueAt(row,"driver_pnum");
+        		//person_num = (int) tripDataSet.getValueAt(row,"person_num");
+               	//driver_pnum = (int) tripDataSet.getValueAt(row,"driver_pnum");
             }else {
-         		num_participants = (int) tripDataSet.getValueAt(row,"num_participants");
            		person_id = hh_id*100+num_participants;
         	}
         	int tour_id = (int) tripDataSet.getValueAt(row,"tour_id");
-        	int stop_id = (int) tripDataSet.getValueAt(row,"stop_id");
-        	int inbound = (int) tripDataSet.getValueAt(row,"inbound");
-        	String tour_purpose =  tripDataSet.getStringValueAt(row,"tour_purpose");
-        	String orig_purpose = tripDataSet.getStringValueAt(row,"orig_purpose");
-        	String dest_purpose = tripDataSet.getStringValueAt(row,"dest_purpose");
-        	int orig_maz= (int) tripDataSet.getValueAt(row,"orig_mgra");
-        	int dest_maz= (int) tripDataSet.getValueAt(row,"dest_mgra");
-        	int parking_maz = (int) tripDataSet.getValueAt(row,"parking_mgra");
-        	int stop_period =  (int) tripDataSet.getValueAt(row,"stop_period");
-        	int trip_mode =  (int) tripDataSet.getValueAt(row,"trip_mode");
-        	int av_avail = (int) tripDataSet.getValueAt(row,"av_avail");
-        	int tour_mode = (int) tripDataSet.getValueAt(row,"tour_mode");
-        	float valueOfTime = tripDataSet.getValueAt(row,"valueOfTime");
-        	int transponder_avail = (int) tripDataSet.getValueAt(row,"transponder_avail");
+        	
+        	
+        	int trip_id = (int) tripDataSet.getValueAt(row,"trip_id");
+        	int trip_num = (int) tripDataSet.getValueAt(row,"trip_num");
+        	String inboundString = tripDataSet.getStringValueAt(row,"inbound");
+        	int inbound = inboundString.equalsIgnoreCase("TRUE") ? 1 : 0 ;
+        	String tour_purpose =  tripDataSet.getStringValueAt(row,"primary_purpose");
+        	
+        	//TODO: fix once origin purpose is appended to trip list
+        	if(hh_id!=last_hh_id || person_id!=last_person_id || tour_id!=last_tour_id ) 
+        		orig_purpose = tour_purpose.equalsIgnoreCase("atwork") ? "work" : "home";
+        	        	
+        	String dest_purpose = tripDataSet.getStringValueAt(row,"purpose");
+        	int orig_maz= (int) tripDataSet.getValueAt(row,"origin");
+        	int dest_maz= (int) tripDataSet.getValueAt(row,"destination");
+        
+        	//TODO: Change when parking location model implemented
+        	int parking_maz = (int) tripDataSet.getValueAt(row,"destination");
+        	
+          	int stop_period =  (int) tripDataSet.getValueAt(row,"depart");
+        	String trip_mode =  tripDataSet.getStringValueAt(row,"trip_mode");
+        	
+        	//TODO:fix
+        	int av_avail = 1;
+        	
+        	//int tour_mode = (int) tripDataSet.getValueAt(row,"tour_mode");
+        	float valueOfTime = tripDataSet.getValueAt(row,"vot_da");
+        	float valueOfTimeS2 = tripDataSet.getValueAt(row,"vot_s2");
+        	float valueOfTimeS3 = tripDataSet.getValueAt(row,"vot_s3");
+        	
+        	String ownsTransponder = tripDataSet.getStringValueAt(row,"ownsTransponder");
+        	int transponder_avail = ownsTransponder.equalsIgnoreCase("TRUE") ? 1 : 0;
         	
         	Trip trip = new Trip();
         	trip.setHh_id(hh_id);
         	trip.setPerson_id(person_id);
-        	trip.setPerson_num(person_num);
         	trip.setTour_id(tour_id);
-        	trip.setStop_id(stop_id);
+        	trip.setTrip_id(trip_id);
+        	trip.setTrip_num(trip_num);
         	trip.setInbound(inbound);
         	trip.setTour_purpose(tour_purpose);
         	trip.setOrig_purpose(orig_purpose);
@@ -1338,9 +1395,16 @@ public class HouseholdAVAllocationManager {
         	trip.setStop_period(stop_period);
         	trip.setTrip_mode(trip_mode);
         	trip.setAv_avail(av_avail);
-        	trip.setTour_mode(tour_mode);
-        	trip.setDriver_pnum(driver_pnum);
-        	trip.setValueOfTime(valueOfTime);
+        	//trip.setTour_mode(tour_mode);
+        	//trip.setDriver_pnum(driver_pnum);
+        	
+        	if(trip_mode.equalsIgnoreCase("SHARED2"))
+       			trip.setValueOfTime(valueOfTimeS2);
+        	else if(trip_mode.equalsIgnoreCase("SHARED3"))
+        		trip.setValueOfTime(valueOfTimeS3);
+        	else
+        		trip.setValueOfTime(valueOfTime);
+        		
         	trip.setTransponder_avail(transponder_avail);
         	trip.setNum_participants(num_participants);
         	
@@ -1350,9 +1414,9 @@ public class HouseholdAVAllocationManager {
         		//following code only handles individual trips right now
         		//TODO: Revise trip file to include participants, and modify code to 
         		//add all participants.
-        		if(person_num!=-99) {
+        		if(person_id!=-9) {
             		HashMap<Integer,Person> personMap = hh.personMap;
-            		Person person = personMap.get(person_num);
+            		Person person = personMap.get(person_id);
             		ArrayList<Person> personsOnTrip = trip.getPersons();
             		if(personsOnTrip==null)
             			personsOnTrip = new ArrayList<Person>();
@@ -1364,6 +1428,10 @@ public class HouseholdAVAllocationManager {
         		throw new RuntimeException();
 
         	}
+        	orig_purpose = dest_purpose;
+        	last_hh_id=hh_id;
+        	last_person_id=person_id;
+        	last_tour_id=tour_id;
         	
         }
 
@@ -1378,10 +1446,10 @@ public class HouseholdAVAllocationManager {
 	private TableDataSet readTableData(String inputFile){
 		
 		TableDataSet tableDataSet = null;
-		
 		logger.info("Begin reading the data in file " + inputFile);
+		tableDataSet = tableDataSet.readFile(inputFile);
 	    
-	    try
+/**	    try
 	    {
 	    	OLD_CSVFileReader csvFile = new OLD_CSVFileReader();
 	    	tableDataSet = csvFile.readFile(new File(inputFile));
@@ -1390,7 +1458,7 @@ public class HouseholdAVAllocationManager {
 	    	throw new RuntimeException(e);
        }
        logger.info("End reading the data in file " + inputFile);
-       
+   */    
        return tableDataSet;
 	}
 	/** 

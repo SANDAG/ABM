@@ -8,34 +8,26 @@ from sklearn.impute import IterativeImputer
 from . import base
 
 class ImputeParkingCosts(base.Base):
+    
     def run_imputation(self):
-        print("Impute missing parking costs")
+        print("Impute missing parking costs")   
 
-        # Paths
-        lu_path = self.settings.get("land_use")
-        reduced_path = self.settings.get("reduced_parking_costs")
-        out_path = self.settings.get("imputed_parking_costs")
-
-        # Input data
-        lu_df = pd.read_csv(lu_path).set_index("mgra")
-        reduced_df = pd.read_csv(reduced_path).set_index("mgra")
-
+        assert isinstance(self.reduced_parking_df, pd.DataFrame), "Must run create_reduced_parking_df() first"
+        
         # Estimate model fit
-        lm_res = self.linear_model(reduced_df)
+        lm_res = self.linear_model(self.reduced_parking_df)
 
         # Impute missing costs
-        imputed_df = self.MICE_imputation(reduced_df, lu_df)
-        # self.imputed_df = self.manual_imputation(self.lm_res, reduced_df)
-        imputed_df = self.label_imputations(imputed_df, reduced_df)
+        imputed_parking_df = self.MICE_imputation(self.reduced_parking_df, self.lu_df)
+        self.imputed_parking_df = self.label_imputations(imputed_parking_df, self.reduced_parking_df)
 
         # Plotting
-        self.plot_imputation(reduced_df, imputed_df, lm_res)
+        self.plot_imputation(self.reduced_parking_df, self.imputed_parking_df, lm_res)
+        
+        # append combined        
+        new_cols = list(set(self.imputed_parking_df.columns) - set(self.reduced_parking_df.columns))
+        self.combined_df = self.combined_df.join(self.imputed_parking_df[new_cols])
 
-        # Outputs
-        imputed_df.to_csv(out_path)
-        self.imputed_df = imputed_df
-
-        return imputed_df
 
     # Estimate cost conversion model
     def linear_model(self, reduced_df):
@@ -214,6 +206,3 @@ class ImputeParkingCosts(base.Base):
             k /= 10
             txt = f"(x={from_x}, y={to_y}), y = {str(round(mod.intercept, 3))} + {str(round(mod.slope, 3))}x"
             axes[1][1].text(0, k, txt)
-
-        output_dir = self.settings.get("output_dir")
-        fig.savefig(output_dir + "/plots/reg_plot.png")

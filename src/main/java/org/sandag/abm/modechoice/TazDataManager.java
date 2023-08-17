@@ -96,8 +96,8 @@ public final class TazDataManager
         // fields from it for setting TAZ correspondence.
         readMgraTableData(rbMap);
         setTazMgraCorrespondence();
-        readTazTerminalTimeCorrespondence(rbMap);
-        readPnRTapsInfo(rbMap);
+ //       readTazTerminalTimeCorrespondence(rbMap);
+ //       readPnRTapsInfo(rbMap);
 
         //printTazStats();
     }

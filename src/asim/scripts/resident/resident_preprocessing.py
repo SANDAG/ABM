@@ -392,21 +392,12 @@ class Series15_Processor:
                     skim[f'BIKE_TIME__{time_period}'] = biketime_skim.to_numpy()
                 skim.close()
 
-    def add_parking_costs(self):
-        parking_cost = pd.read_csv(self.parking_costs_file)
-
-        self.landuse['hparkcost'] = parking_cost.set_index('MGRA')['exp_hourly'].reindex(self.landuse.index).fillna(0)
-        self.landuse['dparkcost'] = parking_cost.set_index('MGRA')['exp_daily'].reindex(self.landuse.index).fillna(0)
-        self.landuse['mparkcost'] = parking_cost.set_index('MGRA')['exp_monthly'].reindex(self.landuse.index).fillna(0)
-
     def process_landuse(self):
         self.pre_process_landuse()
         self.add_external_counts_to_landuse()
         self.add_maz_stop_walk_to_landuse()
         self.add_transponder_accessibility_to_landuse()
         self.add_terminal_time_to_landuse()
-        self.add_parking_costs()
-
 
     def write_output(self):
         print("Writing final outputs")

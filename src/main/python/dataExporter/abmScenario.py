@@ -1307,7 +1307,7 @@ class TourLists(ScenarioData):
                      "destinationMGRA",
                      "originTAZ",
                      "destinationTAZ",
-                     "tripMode"],
+                     "trip_mode"],
             dtype={"personID": "int32",
                    "tourID": "int32",
                    "outbound": "boolean",
@@ -1316,7 +1316,7 @@ class TourLists(ScenarioData):
                    "destinationMGRA": "int16",
                    "originTAZ": "int16",
                    "destinationTAZ": "int16",
-                   "tripMode": "int8"})
+                   "trip_mode": "int8"})
 
         # create tour list using the first and last trip within each tour
         # all tour data constant across trips excepting start/end times
@@ -1329,7 +1329,7 @@ class TourLists(ScenarioData):
 
         # apply exhaustive field mappings where applicable
         mappings = {
-            "tripMode": {1: "Drive Alone",
+            "trip_mode": {1: "Drive Alone",
                          2: "Shared Ride 2",
                          3: "Shared Ride 3+",
                          4: "Walk",
@@ -1353,7 +1353,7 @@ class TourLists(ScenarioData):
         # rename columns to standard/generic ABM naming conventions
         tours.rename(columns={"periodStart": "departTimeAbmHalfHour",
                               "periodEnd": "arriveTimeAbmHalfHour",
-                              "tripMode": "tourMode"},
+                              "trip_mode": "tourMode"},
                      inplace=True)
 
         return tours[["tourID",
@@ -1843,7 +1843,7 @@ class TripLists(ScenarioData):
                        5: "125k-150k",
                        6: "150k-200k",
                        7: "200k+"},
-            # "tripMode": {1: "Drive Alone",
+            # "trip_mode": {1: "Drive Alone",
             #              2: "Shared Ride 2",
             #              3: "Shared Ride 3+",
             #              4: "Walk",
@@ -1881,7 +1881,7 @@ class TripLists(ScenarioData):
         trips["departTimeFiveTod"] = self._map_time_periods(abm_half_hour=trips.depart)
 
         # concatenate mode and transit skim set for transit trips
-        # trips["tripMode"] = self._combine_mode_set(mode=trips.trip_mode, transit_set=trips.set)
+        # trips["trip_mode"] = self._combine_mode_set(mode=trips.trip_mode, transit_set=trips.set)
 
         # calculate value of time category auto skim set used
         trips["valueOfTimeCategory"] = np.where(trips.vot1, 'Low', np.where(trips.vot2, 'Medium', 'High'))
@@ -1903,7 +1903,7 @@ class TripLists(ScenarioData):
         # rename columns to standard/generic ABM naming conventions
         trips.rename(columns={"trip_id": "tripID",
                               "primary_purpose": "tripPurpose",
-                              "trip_mode": "tripMode",
+                              "trip_mode": "trip_mode",
                               "income": "incomeCategory",
                               "nights": "nightsStayed",
                               "depart": "departTimeAbmHalfHour",
@@ -1924,7 +1924,7 @@ class TripLists(ScenarioData):
                       "originTAZ",
                       "destinationTAZ",
                       "parkingTAZ",
-                      "tripMode",
+                      "trip_mode",
                     #   "arrivalMode",
                       "valueOfTimeCategory",
                       "transponderAvailable",
@@ -1957,7 +1957,7 @@ class TripLists(ScenarioData):
                      "destinationMGRA",
                      "originTAZ",
                      "destinationTAZ",
-                     "tripMode",
+                     "trip_mode",
                      "arrivalMode",
                      "boardingTAP",
                      "alightingTAP",
@@ -1974,7 +1974,7 @@ class TripLists(ScenarioData):
                    "destinationMGRA": "int16",
                    "originTAZ": "int16",
                    "destinationTAZ": "int16",
-                   "tripMode": "int8",
+                   "trip_mode": "int8",
                    "arrivalMode": "int8",
                    "boardingTAP": "int16",
                    "alightingTAP": "int16",
@@ -1996,7 +1996,7 @@ class TripLists(ScenarioData):
                        5: "125k-150k",
                        6: "150k-200k",
                        7: "200k+"},
-            "tripMode": {1: "Drive Alone",
+            "trip_mode": {1: "Drive Alone",
                          2: "Shared Ride 2",
                          3: "Shared Ride 3+",
                          4: "Walk",
@@ -2043,7 +2043,7 @@ class TripLists(ScenarioData):
             abm_half_hour=trips.departTime)
 
         # concatenate mode and transit skim set for transit trips
-        trips["tripMode"] = self._combine_mode_set(mode=trips.tripMode, transit_set=trips.set)
+        trips["trip_mode"] = self._combine_mode_set(mode=trips.trip_mode, transit_set=trips.set)
 
         # calculate value of time category auto skim set used
         trips["valueOfTimeCategory"] = self._map_vot_categories(vot=trips.valueOfTime)
@@ -2084,7 +2084,7 @@ class TripLists(ScenarioData):
                       "originTAZ",
                       "destinationTAZ",
                       "parkingTAZ",
-                      "tripMode",
+                      "trip_mode",
                       "arrivalMode",
                       "boardingTAP",
                       "alightingTAP",
@@ -2118,7 +2118,7 @@ class TripLists(ScenarioData):
                      "destinationMGRA",
                      "originTAZ",
                      "destinationTAZ",
-                     "tripMode",
+                     "trip_mode",
                      "boardingTap",
                      "alightingTap",
                      "set",
@@ -2134,7 +2134,7 @@ class TripLists(ScenarioData):
                    "destinationMGRA": "int16",
                    "originTAZ": "int16",
                    "destinationTAZ": "int16",
-                   "tripMode": "int8",
+                   "trip_mode": "int8",
                    "boardingTap": "int16",
                    "alightingTap": "int16",
                    "set": "int8",
@@ -2163,7 +2163,7 @@ class TripLists(ScenarioData):
                          3: "Shop",
                          4: "Visit",
                          5: "Other"},
-            "tripMode": {1: "Drive Alone",
+            "trip_mode": {1: "Drive Alone",
                          2: "Shared Ride 2",
                          3: "Shared Ride 3+",
                          4: "Walk",
@@ -2198,7 +2198,7 @@ class TripLists(ScenarioData):
             abm_half_hour=trips.period)
 
         # concatenate mode and transit skim set for transit trips
-        trips["tripMode"] = self._combine_mode_set(mode=trips.tripMode,
+        trips["trip_mode"] = self._combine_mode_set(mode=trips.trip_mode,
                                                    transit_set=trips.set)
 
         # calculate value of time category auto skim set used
@@ -2217,11 +2217,11 @@ class TripLists(ScenarioData):
 
         # add vehicle/trip-based weight and person-based weight
         # adjust by the ABM scenario final iteration sample rate
-        conditions = [(trips["tripMode"] == "Shared Ride 2"),
-                      (trips["tripMode"] == "Shared Ride 3+"),
-                      (trips["tripMode"] == "Taxi"),
-                      (trips["tripMode"] == "Non-Pooled TNC"),
-                      (trips["tripMode"] == "Pooled TNC")]
+        conditions = [(trips["trip_mode"] == "Shared Ride 2"),
+                      (trips["trip_mode"] == "Shared Ride 3+"),
+                      (trips["trip_mode"] == "Taxi"),
+                      (trips["trip_mode"] == "Non-Pooled TNC"),
+                      (trips["trip_mode"] == "Pooled TNC")]
         choices = [1 / self.properties["sr2Passengers"],
                    1 / self.properties["sr3Passengers"],
                    1 / self.properties["taxiPassengers"],
@@ -2256,7 +2256,7 @@ class TripLists(ScenarioData):
                       "originTAZ",
                       "destinationTAZ",
                       "parkingTAZ",
-                      "tripMode",
+                      "trip_mode",
                       "boardingTAP",
                       "alightingTAP",
                       "valueOfTimeCategory",
@@ -2285,7 +2285,7 @@ class TripLists(ScenarioData):
 
         # read all trip list files into a Pandas DataFrame
         trips = pd.concat((
-            pd.read_csv(os.path.join(self.scenario_path, "output", file),
+            pd.read_csv(os.path.join(self.scenario_path, "output/cvm", file),
                         usecols=["SerialNo",
                                  "Trip",
                                  "HomeZone",
@@ -2553,7 +2553,7 @@ class TripLists(ScenarioData):
         trips.rename(columns={"OTAZ": "originTAZ",
                               "DTAZ": "destinationTAZ",
                               "TOD": "departTimeFiveTod",
-                              "MODE": "tripMode",
+                              "MODE": "trip_mode",
                               "TIME": "timeDrive",
                               "DIST": "distanceDrive",
                               "AOC": "costOperatingDrive",
@@ -2569,7 +2569,7 @@ class TripLists(ScenarioData):
                       "departTimeFiveTod",
                       "originTAZ",
                       "destinationTAZ",
-                      "tripMode",
+                      "trip_mode",
                       "valueOfTimeCategory",
                       "transponderAvailable",
                       "avUsed",
@@ -2684,7 +2684,7 @@ class TripLists(ScenarioData):
         trips.rename(columns={"OTAZ": "originTAZ",
                               "DTAZ": "destinationTAZ",
                               "TOD": "departTimeFiveTod",
-                              "MODE": "tripMode",
+                              "MODE": "trip_mode",
                               "PURPOSE": "tripPurpose",
                               "TIME": "timeDrive",
                               "DIST": "distanceDrive",
@@ -2701,7 +2701,7 @@ class TripLists(ScenarioData):
                       "departTimeFiveTod",
                       "originTAZ",
                       "destinationTAZ",
-                      "tripMode",
+                      "trip_mode",
                       "tripPurpose",
                       "valueOfTimeCategory",
                       "transponderAvailable",
@@ -2738,7 +2738,7 @@ class TripLists(ScenarioData):
                      "destinationMGRA",
                      "originTAZ",
                      "destinationTAZ",
-                     "tripMode",
+                     "trip_mode",
                      "av_avail",
                      "boardingTap",
                      "alightingTap",
@@ -2753,7 +2753,7 @@ class TripLists(ScenarioData):
                    "destinationMGRA": "int16",
                    "originTAZ": "int16",
                    "destinationTAZ": "int16",
-                   "tripMode": "int8",
+                   "trip_mode": "int8",
                    "av_avail": "bool",
                    "boardingTap": "int16",
                    "alightingTap": "int16",
@@ -2774,7 +2774,7 @@ class TripLists(ScenarioData):
 
         # apply exhaustive field mappings where applicable
         mappings = {
-            "tripMode": {1: "Drive Alone",
+            "trip_mode": {1: "Drive Alone",
                          2: "Shared Ride 2",
                          3: "Shared Ride 3+",
                          4: "Walk",
@@ -2818,8 +2818,8 @@ class TripLists(ScenarioData):
         )
 
         # concatenate mode and transit skim set for transit trips
-        trips["tripMode"] = self._combine_mode_set(
-            mode=trips.tripMode,
+        trips["trip_mode"] = self._combine_mode_set(
+            mode=trips.trip_mode,
             transit_set=trips.set
         )
 
@@ -2834,11 +2834,11 @@ class TripLists(ScenarioData):
 
         # add vehicle/trip-based weight and person-based weight
         # adjust by the ABM scenario final iteration sample rate
-        conditions = [(trips["tripMode"] == "Shared Ride 2"),
-                      (trips["tripMode"] == "Shared Ride 3+"),
-                      (trips["tripMode"] == "Taxi"),
-                      (trips["tripMode"] == "Non-Pooled TNC"),
-                      (trips["tripMode"] == "Pooled TNC")]
+        conditions = [(trips["trip_mode"] == "Shared Ride 2"),
+                      (trips["trip_mode"] == "Shared Ride 3+"),
+                      (trips["trip_mode"] == "Taxi"),
+                      (trips["trip_mode"] == "Non-Pooled TNC"),
+                      (trips["trip_mode"] == "Pooled TNC")]
         choices = [1 / self.properties["sr2Passengers"],
                    1 / self.properties["sr3Passengers"],
                    1 / self.properties["taxiPassengers"],
@@ -2872,7 +2872,7 @@ class TripLists(ScenarioData):
                       "originTAZ",
                       "destinationTAZ",
                       "parkingTAZ",
-                      "tripMode",
+                      "trip_mode",
                       "boardingTAP",
                       "alightingTAP",
                       "valueOfTimeCategory",
@@ -2900,49 +2900,49 @@ class TripLists(ScenarioData):
                      "trip_id",
                      "outbound",
                      "primary_purpose",
-                     "orig_purpose",
-                     "dest_purpose",
-                     "orig_mgra",
-                     "dest_mgra",
-                     "parking_mgra",
-                     "stop_period",
+                    #  "orig_purpose",
+                    #  "dest_purpose",
+                     "origin",
+                     "destination",
+                     "parking_zone",
+                     "depart",
                      "trip_mode",
-                     "av_avail",
-                     "trip_board_tap",
-                     "trip_alight_tap",
-                     "set",
-                     "valueOfTime",
-                     "transponder_avail",
-                     "micro_walkMode",
-                     "micro_trnAcc",
-                     "micro_trnEgr",
-                     "parkingCost"],
+                    #  "av_avail",
+                    #  "set",
+                     "vot_da",
+                     "vot_s2",
+                     "vot_s3",
+                     "ownsTransponder"],
+                    #  "micro_walkMode",
+                    #  "micro_trnAcc",
+                    #  "micro_trnEgr",
+                    #  "parkingCost"],
             dtype={"person_id": "int32",
-                   "tour_id": "int8",
-                   "trip_id": "int8",
+                   "tour_id": "int32",
+                   "trip_id": "int32",
                    "outbound": "bool",
                    "primary_purpose": "string",
-                   "orig_purpose": "string",
-                   "dest_purpose": "string",
-                   "orig_mgra": "int16",
-                   "dest_mgra": "int16",
-                   "parking_mgra": "int16",
-                   "stop_period": "int8",
-                   "trip_mode": "int8",
-                   "av_avail": "bool",
-                   "trip_board_tap": "int16",
-                   "trip_alight_tap": "int16",
-                   "set": "int8",
-                   "valueOfTime": "float32",
-                   "transponder_avail": "bool",
-                   "micro_walkMode": "int8",
-                   "micro_trnAcc": "int8",
-                   "micro_trnEgr": "int8",
-                   "parkingCost": "float32"})
+                #    "orig_purpose": "string",
+                #    "dest_purpose": "string",
+                   "origin": "int16",
+                   "destination": "int16",
+                   "parking_zone": "int16",
+                   "depart": "int8",
+                   "trip_mode": "category",
+                #    "av_avail": "bool",
+                #    "set": "int8",
+                   "vot_da": 'float32',
+                   "vot_s2": 'float32',
+                   "vot_s3": 'float32',
+                   "ownsTransponder": "bool"}, engine='pyarrow')
+                #    "micro_walkMode": "int8",
+                #    "micro_trnAcc": "int8",
+                #    "micro_trnEgr": "int8",
+                #    "parkingCost": "float32"})
 
         # apply exhaustive field mappings where applicable
         mappings = {
-            "parking_mgra": {key: value for (key, value) in
+            "parking_zone": {key: value for (key, value) in
                              zip(list(range(1, len(self.mgra_xref["MGRA"]) + 1)),
                                  list(range(1, len(self.mgra_xref["MGRA"]) + 1)))},
             # "trip_mode": {1: "Drive Alone",
@@ -2974,7 +2974,7 @@ class TripLists(ScenarioData):
         }
 
         for field in mappings:
-            if field in ["parking_mgra"]:
+            if field in ["parking_zone"]:
                 data_type = "float32"
             else:
                 data_type = "category"
@@ -2995,48 +2995,58 @@ class TripLists(ScenarioData):
         # add TAZ information in addition to MGRA information
         taz_info = self.mgra_xref[["MGRA", "TAZ"]]
 
-        trips = trips.merge(taz_info, left_on="orig_mgra", right_on="MGRA")
+        trips = trips.merge(taz_info, left_on="origin", right_on="MGRA")
         trips.rename(columns={"TAZ": "originTAZ"}, inplace=True)
 
-        trips = trips.merge(taz_info, left_on="dest_mgra", right_on="MGRA")
+        trips = trips.merge(taz_info, left_on="destination", right_on="MGRA")
         trips.rename(columns={"TAZ": "destinationTAZ"}, inplace=True)
 
-        trips = trips.merge(taz_info, how="left", left_on="parking_mgra", right_on="MGRA")
+        trips = trips.merge(taz_info, how="left", left_on="parking_zone", right_on="MGRA")
         trips.rename(columns={"TAZ": "parkingTAZ"}, inplace=True)
         trips["parkingTAZ"] = trips["parkingTAZ"].astype("float32")
 
         # map abm half hours to abm five time of day
         trips["departTimeFiveTod"] = self._map_time_periods(
-            abm_half_hour=trips.stop_period
+            abm_half_hour=trips.depart
         )
 
         # concatenate mode and transit skim set for transit trips
-        trips["tripMode"] = self._combine_mode_set(
-            mode=trips.trip_mode,
-            transit_set=trips.set
-        )
+        # trips["trip_mode"] = self._combine_mode_set(
+        #     mode=trips.trip_mode,
+        #     transit_set=trips.set
+        # )
 
         # set appropriate walk mode for walk trips
-        trips["tripMode"] = self._combine_mode_walk(
-            mode=trips.tripMode,
-            walk_mode=trips.micro_walkMode
-        )
+        # trips["trip_mode"] = self._combine_mode_walk(
+        #     mode=trips.trip_mode,
+        #     walk_mode=trips.micro_walkMode
+        # )
+
+        vot_threshold_low = 8.81
+        vot_threshold_med = 18.00    
+
+        trips['_vot_bin_da'] = np.where(trips.vot_da < vot_threshold_low, 1, np.where(trips.vot_da < vot_threshold_med, 2, 3))
+        trips['_vot_bin_s2'] = np.where(trips.vot_s2 < vot_threshold_low, 1, np.where(trips.vot_s2 < vot_threshold_med, 2, 3))
+        trips['_vot_bin_s3'] = np.where(trips.vot_s3 < vot_threshold_low, 1, np.where(trips.vot_s3 < vot_threshold_med, 2, 3))
+        trips['vot1'] = np.where((trips._vot_bin_da == 1) |(trips._vot_bin_s2 == 1) |(trips._vot_bin_s3 ==1),1,0)
+        trips['vot2'] = np.where((trips._vot_bin_da == 2) |(trips._vot_bin_s2 == 2) |(trips._vot_bin_s3 ==2),1,0)
+        trips['vot3'] = np.where((trips._vot_bin_da == 3) |(trips._vot_bin_s2 == 3) |(trips._vot_bin_s3 ==3),1,0)
+
+        trips['avUsed'] = 0
 
         # calculate value of time category auto skim set used
-        trips["valueOfTimeCategory"] = self._map_vot_categories(
-            vot=trips.valueOfTime
-        )
+        trips["valueOfTimeCategory"] = np.where(trips.vot1 == 1, "Low", np.where(trips.vot2 == 1, "Medium", "High"))
 
         # transform parking cost from cents to dollars
-        trips["parkingCost"] = round(trips.parkingCost / 100, 2)
+        # trips["parkingCost"] = round(trips.parkingCost / 100, 2)
 
         # add vehicle/trip-based weight and person-based weight
         # adjust by the ABM scenario final iteration sample rate
-        conditions = [(trips["tripMode"] == "Shared Ride 2"),
-                      (trips["tripMode"] == "Shared Ride 3+"),
-                      (trips["tripMode"] == "Taxi"),
-                      (trips["tripMode"] == "Non-Pooled TNC"),
-                      (trips["tripMode"] == "Pooled TNC")]
+        conditions = [(trips["trip_mode"] == "Shared2"),
+                      (trips["trip_mode"] == "Shared3"),
+                      (trips["trip_mode"] == "Taxi"),
+                      (trips["trip_mode"] == "TNC_SINGLE"),
+                      (trips["trip_mode"] == "TNC_SHARED")]
         choices = [1 / self.properties["sr2Passengers"],
                    1 / self.properties["sr3Passengers"],
                    1 / self.properties["taxiPassengers"],
@@ -3049,19 +3059,19 @@ class TripLists(ScenarioData):
 
         # rename columns to standard/generic ABM naming conventions
         trips.rename(columns={"person_id": "personID",
-                              "orig_purpose": "tripPurposeOrigin",
-                              "dest_purpose": "tripPurposeDestination",
-                              "stop_period": "departTimeAbmHalfHour",
-                              "orig_mgra": "originMGRA",
-                              "dest_mgra": "destinationMGRA",
-                              "parking_mgra": "parkingMGRA",
-                              "parkingCost": "costParking",
-                              "av_avail": "avUsed",
-                              "trip_board_tap": "boardingTAP",
-                              "trip_alight_tap": "alightingTAP",
-                              "transponder_avail": "transponderAvailable",
-                              "micro_trnAcc": "microMobilityTransitAccess",
-                              "micro_trnEgr": "microMobilityTransitEgress"},
+                            #   "orig_purpose": "tripPurposeOrigin",
+                            #   "dest_purpose": "tripPurposeDestination",
+                              "depart": "departTimeAbmHalfHour",
+                              "origin": "originMGRA",
+                              "destination": "destinationMGRA",
+                              "parking_zone": "parkingMGRA",
+                              "trip_mode": "tripMode",
+                            #   "parkingCost": "costParking",
+                            #   "av_avail": "avUsed",
+                         
+                              "ownsTransponder": "transponderAvailable"},
+                            #   "micro_trnAcc": "microMobilityTransitAccess",
+                            #   "micro_trnEgr": "microMobilityTransitEgress"},
                      inplace=True)
 
         return trips[["tripID",
@@ -3069,8 +3079,8 @@ class TripLists(ScenarioData):
                       "tourID",
                       "stopID",
                       "outbound",
-                      "tripPurposeOrigin",
-                      "tripPurposeDestination",
+                    #   "tripPurposeOrigin",
+                    #   "tripPurposeDestination",
                       "departTimeAbmHalfHour",
                       "departTimeFiveTod",
                       "originMGRA",
@@ -3080,16 +3090,14 @@ class TripLists(ScenarioData):
                       "destinationTAZ",
                       "parkingTAZ",
                       "tripMode",
-                      "boardingTAP",
-                      "alightingTAP",
                       "valueOfTimeCategory",
                       "transponderAvailable",
                       "avUsed",
-                      "microMobilityTransitAccess",
-                      "microMobilityTransitEgress",
+                    #   "microMobilityTransitAccess",
+                    #   "microMobilityTransitEgress",
                       "weightTrip",
-                      "weightPersonTrip",
-                      "costParking"]]
+                      "weightPersonTrip"]]
+                    #   "costParking"]]
 
     @property
     @lru_cache(maxsize=1)
@@ -3113,10 +3121,10 @@ class TripLists(ScenarioData):
                      "outbound",
                      "orig_purpose",
                      "dest_purpose",
-                     "orig_mgra",
-                     "dest_mgra",
-                     "parking_mgra",
-                     "stop_period",
+                     "origin",
+                     "destination",
+                     "parking_zone",
+                     "depart",
                      "trip_mode",
                      "av_avail",
                      "num_participants",
@@ -3124,7 +3132,7 @@ class TripLists(ScenarioData):
                      "trip_alight_tap",
                      "set",
                      "valueOfTime",
-                     "transponder_avail",
+                     "ownsTransponder",
                      "parkingCost"],
             dtype={"hh_id": "int32",
                    "tour_id": "int8",
@@ -3132,10 +3140,10 @@ class TripLists(ScenarioData):
                    "outbound": "bool",
                    "orig_purpose": "string",
                    "dest_purpose": "string",
-                   "orig_mgra": "int16",
-                   "dest_mgra": "int16",
-                   "parking_mgra": "int16",
-                   "stop_period": "int8",
+                   "origin": "int16",
+                   "destination": "int16",
+                   "parking_zone": "int16",
+                   "depart": "int8",
                    "trip_mode": "int8",
                    "av_avail": "bool",
                    "num_participants": "int8",
@@ -3143,12 +3151,12 @@ class TripLists(ScenarioData):
                    "trip_alight_tap": "int16",
                    "set": "int8",
                    "valueOfTime": "float32",
-                   "transponder_avail": "bool",
+                   "ownsTransponder": "bool",
                    "parkingCost": "float32"})
 
         # apply exhaustive field mappings where applicable
         mappings = {
-            "parking_mgra": {key: value for (key, value) in
+            "parking_zone": {key: value for (key, value) in
                              zip(list(range(1, 23003)),
                                  list(range(1, 23003)))},
             "trip_mode": {2: "Shared Ride 2",
@@ -3174,7 +3182,7 @@ class TripLists(ScenarioData):
         }
 
         for field in mappings:
-            if field in ["parking_mgra", "trip_board_tap", "trip_alight_tap"]:
+            if field in ["parking_zone", "trip_board_tap", "trip_alight_tap"]:
                 data_type = "float32"
             else:
                 data_type = "category"
@@ -3199,23 +3207,23 @@ class TripLists(ScenarioData):
         # add TAZ information in addition to MGRA information
         taz_info = self.mgra_xref[["MGRA", "TAZ"]]
 
-        trips = trips.merge(taz_info, left_on="orig_mgra", right_on="MGRA")
+        trips = trips.merge(taz_info, left_on="origin", right_on="MGRA")
         trips.rename(columns={"TAZ": "originTAZ"}, inplace=True)
 
-        trips = trips.merge(taz_info, left_on="dest_mgra", right_on="MGRA")
+        trips = trips.merge(taz_info, left_on="destination", right_on="MGRA")
         trips.rename(columns={"TAZ": "destinationTAZ"}, inplace=True)
 
-        trips = trips.merge(taz_info, how="left", left_on="parking_mgra",
+        trips = trips.merge(taz_info, how="left", left_on="parking_zone",
                             right_on="MGRA")
         trips.rename(columns={"TAZ": "parkingTAZ"}, inplace=True)
 
         # map abm half hours to abm five time of day
         trips["departTimeFiveTod"] = self._map_time_periods(
-            abm_half_hour=trips.stop_period
+            abm_half_hour=trips.depart
         )
 
         # concatenate mode and transit skim set for transit trips
-        trips["tripMode"] = self._combine_mode_set(
+        trips["trip_mode"] = self._combine_mode_set(
             mode=trips.trip_mode,
             transit_set=trips.set
         )
@@ -3231,15 +3239,15 @@ class TripLists(ScenarioData):
         # rename columns to standard/generic ABM naming conventions
         trips.rename(columns={"orig_purpose": "tripPurposeOrigin",
                               "dest_purpose": "tripPurposeDestination",
-                              "stop_period": "departTimeAbmHalfHour",
-                              "orig_mgra": "originMGRA",
-                              "dest_mgra": "destinationMGRA",
-                              "parking_mgra": "parkingMGRA",
+                              "depart": "departTimeAbmHalfHour",
+                              "origin": "originMGRA",
+                              "destination": "destinationMGRA",
+                              "parking_zone": "parkingMGRA",
                               "parkingCost": "costParking",
                               "av_avail": "avUsed",
                               "trip_board_tap": "boardingTAP",
                               "trip_alight_tap": "alightingTAP",
-                              "transponder_avail": "transponderAvailable"},
+                              "ownsTransponder": "transponderAvailable"},
                      inplace=True)
 
         # load tour list into Pandas DataFrame
@@ -3313,7 +3321,7 @@ class TripLists(ScenarioData):
                       "originTAZ",
                       "destinationTAZ",
                       "parkingTAZ",
-                      "tripMode",
+                      "trip_mode",
                       "boardingTAP",
                       "alightingTAP",
                       "valueOfTimeCategory",
@@ -3398,7 +3406,7 @@ class TripLists(ScenarioData):
         trips.rename(columns={"OTAZ": "originTAZ",
                               "DTAZ": "destinationTAZ",
                               "TOD": "departTimeFiveTod",
-                              "MODE": "tripMode",
+                              "MODE": "trip_mode",
                               "TIME": "timeDrive",
                               "DIST": "distanceDrive",
                               "AOC": "costOperatingDrive",
@@ -3414,7 +3422,7 @@ class TripLists(ScenarioData):
                       "departTimeFiveTod",
                       "originTAZ",
                       "destinationTAZ",
-                      "tripMode",
+                      "trip_mode",
                       "valueOfTimeCategory",
                       "transponderAvailable",
                       "avUsed",
@@ -3449,7 +3457,7 @@ class TripLists(ScenarioData):
                      "destinationMGRA",
                      "outbound",
                      "period",
-                     "tripMode",
+                     "trip_mode",
                      "avAvailable",
                      "boardingTap",
                      "alightingTap",
@@ -3468,7 +3476,7 @@ class TripLists(ScenarioData):
                    "destinationMGRA": "int16",
                    "outbound": "boolean",
                    "period": "int8",
-                   "tripMode": "int8",
+                   "trip_mode": "int8",
                    "avAvailable": "bool",
                    "boardingTap": "int16",
                    "alightingTap": "int16",
@@ -3490,7 +3498,7 @@ class TripLists(ScenarioData):
                          0: "Work",
                          1: "Recreation",
                          2: "Dining"},
-            "tripMode": {1: "Drive Alone",
+            "trip_mode": {1: "Drive Alone",
                          2: "Shared Ride 2",
                          3: "Shared Ride 3+",
                          4: "Walk",
@@ -3550,14 +3558,14 @@ class TripLists(ScenarioData):
         )
 
         # concatenate mode and transit skim set for transit trips
-        trips["tripMode"] = self._combine_mode_set(
-            mode=trips.tripMode,
+        trips["trip_mode"] = self._combine_mode_set(
+            mode=trips.trip_mode,
             transit_set=trips.set
         )
 
         # set appropriate walk mode for walk trips
-        trips["tripMode"] = self._combine_mode_walk(
-            mode=trips.tripMode,
+        trips["trip_mode"] = self._combine_mode_walk(
+            mode=trips.trip_mode,
             walk_mode=trips.micro_walkMode
         )
 
@@ -3609,7 +3617,7 @@ class TripLists(ScenarioData):
                       "originTAZ",
                       "destinationTAZ",
                       "parkingTAZ",
-                      "tripMode",
+                      "trip_mode",
                       "boardingTAP",
                       "alightingTAP",
                       "valueOfTimeCategory",
@@ -3641,7 +3649,7 @@ class TripLists(ScenarioData):
                 usecols=["hh_id",
                          "veh_id",
                          "vehicleTrip_id",
-                         "orig_mgra",
+                         "origin",
                          "dest_gra",
                          "period",
                          "occupants",
@@ -3653,7 +3661,7 @@ class TripLists(ScenarioData):
                 dtype={"hh_id": "int32",
                        "veh_id": "int32",
                        "vehicleTrip_id": "int32",
-                       "orig_mgra": "int32",
+                       "origin": "int32",
                        "dest_gra": "int32",
                        "period": "int32",
                        "occupants": "int32",
@@ -3686,7 +3694,7 @@ class TripLists(ScenarioData):
             # add TAZ information in addition to MGRA information
             taz_info = self.mgra_xref[["MGRA", "TAZ"]]
 
-            trips = trips.merge(taz_info, left_on="orig_mgra", right_on="MGRA")
+            trips = trips.merge(taz_info, left_on="origin", right_on="MGRA")
             trips.rename(columns={"TAZ": "originTAZ"}, inplace=True)
 
             trips = trips.merge(taz_info, left_on="dest_gra", right_on="MGRA")
@@ -3699,7 +3707,7 @@ class TripLists(ScenarioData):
             trips["departTimeFiveTod"] = self._map_time_periods(abm_half_hour=trips.period)
 
             # all zombie AV trips are Drive Alone and High vot
-            trips["tripMode"] = "Drive Alone"
+            trips["trip_mode"] = "Drive Alone"
             trips["valueOfTimeCategory"] = "High"
             trips["avUsed"] = True
             trips["parkingMGRA"] = np.nan
@@ -3715,7 +3723,7 @@ class TripLists(ScenarioData):
             trips.rename(columns={"hh_id": "hhID",
                                   "veh_id": "vehID",
                                   "vehicleTrip_id": "vehicleTripID",
-                                  "orig_mgra": "originMGRA",
+                                  "origin": "originMGRA",
                                   "dest_gra": "destinationMGRA",
                                   "period": "departTimeAbmHalfHour",
                                   "transponder": "transponderAvailable",
@@ -3738,7 +3746,7 @@ class TripLists(ScenarioData):
                           "originTAZ",
                           "destinationTAZ",
                           "parkingTAZ",
-                          "tripMode",
+                          "trip_mode",
                           "valueOfTimeCategory",
                           "transponderAvailable",
                           "avUsed",
@@ -3764,7 +3772,7 @@ class TripLists(ScenarioData):
                          "originTAZ",
                          "destinationTAZ",
                          "parkingTAZ",
-                         "tripMode",
+                         "trip_mode",
                          "valueOfTimeCategory",
                          "transponderAvailable",
                          "avUsed",
@@ -3874,8 +3882,8 @@ class TripLists(ScenarioData):
 
         # all zombie TNC trips are Drive Alone and High vot
         # assumed Transponder ownership for Drive Alone TNC
-        trips["tripMode"] = "Drive Alone"
-        trips["tripMode"] = trips["tripMode"].astype("category")
+        trips["trip_mode"] = "Drive Alone"
+        trips["trip_mode"] = trips["trip_mode"].astype("category")
         trips["valueOfTimeCategory"] = "High"
         trips["valueOfTimeCategory"] = trips["valueOfTimeCategory"].astype("category")
         trips["transponderAvailable"] = True
@@ -3914,7 +3922,7 @@ class TripLists(ScenarioData):
                       "originTAZ",
                       "destinationTAZ",
                       "parkingTAZ",
-                      "tripMode",
+                      "trip_mode",
                       "valueOfTimeCategory",
                       "transponderAvailable",
                       "avUsed",

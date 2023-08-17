@@ -13,56 +13,52 @@ def export_data(fp):
 
 
     # initialize base ABM scenario data class
-    # print("Initializing Scenario Data")
-    # scenario_data = ScenarioData(scenarioPath)
-
-    # # write out transit TAP park and ride file
-    # print("Writing: Transit PNR Input File")
-    # # scenario_data.pnr_taps.to_csv(os.path.join(reportPath, "transitPNR.csv"), index=False)
+    print("Initializing Scenario Data")
+    scenario_data = ScenarioData(scenarioPath)
 
 
-    # # initialize land use class
-    # # write out MGRA-based input file
-    # print("Initializing Land Use Output")
-    # land_use = LandUse(scenarioPath)
-    # print("Writing: MGRA-Based Input File")
-    # land_use.mgra_input.to_csv(os.path.join(reportPath, "mgraBasedInput.csv"), index=False)
+    # initialize land use class
+    # write out MGRA-based input file
+    print("Initializing Land Use Output")
+    land_use = LandUse(scenarioPath)
+    print("Writing: MGRA-Based Input File")
+    land_use.mgra_input.to_csv(os.path.join(reportPath, "mgraBasedInput.csv"), index=False)
 
 
-    # # initialize synthetic population class
-    # # write out households and persons files
-    # print("Initializing Synthetic Population Output")
-    # population = SyntheticPopulation(scenarioPath)
+    # initialize synthetic population class
+    # write out households and persons files
+    print("Initializing Synthetic Population Output")
+    population = SyntheticPopulation(scenarioPath)
 
-    # print("Writing: Households File")
-    # population.households.to_csv(os.path.join(reportPath, "households.csv"), index=False)
+    print("Writing: Households File")
+    population.households.to_csv(os.path.join(reportPath, "households.csv"), index=False)
 
-    # print("Writing: Persons File")
-    # population.persons.to_csv(os.path.join(reportPath, "persons.csv"), index=False)
+    print("Writing: Persons File")
+    population.persons.to_csv(os.path.join(reportPath, "persons.csv"), index=False)
 
 
     # initialize tour list class
-    ## write out tour list files
-    # print("Initializing Tour List Output")
-    # tours = TourLists(scenarioPath)
+    # write out tour list files
+    print("Initializing Tour List Output")
+    tours = TourLists(scenarioPath)
 
-    # print("Writing: Commercial Vehicle Tours")
-    # tours.cvm.to_csv(os.path.join(reportPath, "commercialVehicleTours.csv"), index=False)
+    print("Writing: Commercial Vehicle Tours")
+    tours.cvm.to_csv(os.path.join(reportPath, "commercialVehicleTours.csv"), index=False)
 
-    # print("Writing: Cross Border Tours")
-    # tours.cross_border.to_csv(os.path.join(reportPath, "crossBorderTours.csv"), index=False)
+    print("Writing: Cross Border Tours")
+    tours.cross_border.to_csv(os.path.join(reportPath, "crossBorderTours.csv"), index=False)
 
-    # print("Writing: Individual Tours")
-    # tours.individual.to_csv(os.path.join(reportPath, "individualTours.csv"), index=False)
+    print("Writing: Individual Tours")
+    tours.individual.to_csv(os.path.join(reportPath, "individualTours.csv"), index=False)
 
-    # print("Writing: Internal-External Tours")
-    # tours.ie.to_csv(os.path.join(reportPath, "internalExternalTours.csv"), index=False)
+    print("Writing: Internal-External Tours")
+    tours.ie.to_csv(os.path.join(reportPath, "internalExternalTours.csv"), index=False)
 
-    # print("Writing: Joint Tours")
-    # tours.joint.to_csv(os.path.join(reportPath, "jointTours.csv"), index=False)
+    print("Writing: Joint Tours")
+    tours.joint.to_csv(os.path.join(reportPath, "jointTours.csv"), index=False)
 
-    # print("Writing: Visitor Tours")
-    # tours.visitor.to_csv(os.path.join(reportPath, "visitorTours.csv"), index=False)
+    print("Writing: Visitor Tours")
+    tours.visitor.to_csv(os.path.join(reportPath, "visitorTours.csv"), index=False)
 
 
     print("Initializing Trip List Output")
@@ -74,52 +70,52 @@ def export_data(fp):
     skims = SkimAppender(scenarioPath)
 
     # write out trip list files
-    # print("Writing: Airport-SAN Trips")
-    # model_trip = trips.airport_san
+    print("Writing: Airport-SAN Trips")
+    model_trip = trips.airport_san
     # skims.append_skims(model_trip,
     #                    auto_only=False,
     #                    terminal_skims=False).to_csv(
     #     os.path.join(reportPath, "airportSANTrips.csv"),
     #     index=False)
 
-    # print("Writing: Airport-CBX Trips")
-    # model_trip = trips.airport_cbx
+    print("Writing: Airport-CBX Trips")
+    model_trip = trips.airport_cbx
     # skims.append_skims(trips.airport_cbx,
     #                    auto_only=False,
     #                    terminal_skims=False).to_csv(
     #     os.path.join(reportPath, "airportCBXTrips.csv"),
     #     index=False)
 
-    # print("Writing: Commercial Vehicle Trips")
-    # skims.append_skims(trips.cvm,
-    #                    auto_only=True,
-    #                    terminal_skims=False).to_csv(
-    #     os.path.join(reportPath, "commercialVehicleTrips.csv"),
-    #     index=False)
+    print("Writing: Commercial Vehicle Trips")
+    skims.append_skims(trips.cvm,
+                       auto_only=True,
+                       terminal_skims=False).to_csv(
+        os.path.join(reportPath, "commercialVehicleTrips.csv"),
+        index=False)
 
-    # print("Writing: Cross-Border Trips")
+    print("Writing: Cross-Border Trips")
     # skims.append_skims(trips.cross_border,
     #                    auto_only=False,
     #                    terminal_skims=False).to_csv(
     #     os.path.join(reportPath, "crossBorderTrips.csv"),
     #     index=False)
 
-    # print("Writing: External-External Trips")
-    # trips.ee.to_csv(
-    #     os.path.join(reportPath, "externalExternalTrips.csv"),
-    #     index=False)
+    print("Writing: External-External Trips")
+    trips.ee.to_csv(
+        os.path.join(reportPath, "externalExternalTrips.csv"),
+        index=False)
 
-    # print("Writing: External-Internal Trips")
-    # trips.ei.to_csv(
-    #     os.path.join(reportPath, "externalInternalTrips.csv"),
-        # index=False)
+    print("Writing: External-Internal Trips")
+    trips.ei.to_csv(
+        os.path.join(reportPath, "externalInternalTrips.csv"),
+        index=False)
 
     print("Writing: Individual Trips")
-    skims.append_skims(trips.individual,
-                       auto_only=False,
-                       terminal_skims=True).to_csv(
-        os.path.join(reportPath, "individualTrips.csv"),
-        index=False)
+    # skims.append_skims(trips.individual,
+    #                    auto_only=False,
+    #                    terminal_skims=True).to_csv(
+    #     os.path.join(reportPath, "individualTrips.csv"),
+    #     index=False)
 
     print("Writing: Internal-External Trips")
     skims.append_skims(trips.ie,

@@ -59,7 +59,7 @@ public final class MgraDataManager
     private static final int            LOG_MGRA                                 = -4502;
     private static final String         LOG_MGRA_FILE                            = LOG_MGRA
                                                                                          + "debug";
-    private static final String MGRA_MGRA_WALK_FILE_PROPERTY = "active.micromobility.file.walk.mgra";
+    private static final String MGRA_MGRA_WALK_FILE_PROPERTY = "active.logsum.matrix.file.walk.mgra";
     private static final String MGRA_TAP_WALK_FILE_PROPERTY = "active.micromobility.file.walk.mgratap";
     
     
@@ -92,18 +92,12 @@ public final class MgraDataManager
     private static final String         MGRA_DISTANCE_COEFF_OTHER                = "mgra.avg.cost.dist.coeff.other";
 
     public static final int             PARK_AREA_ONE                            = 1;
-    private static final String         MGRA_PARKAREA_FIELD                      = "parkarea";
-    private static final String         MGRA_HSTALLSOTH_FIELD                    = "hstallsoth";
-    private static final String         MGRA_HSTALLSSAM_FIELD                    = "hstallssam";
-    private static final String         MGRA_HPARKCOST_FIELD                     = "hparkcost";
-    private static final String         MGRA_NUMFREEHRS_FIELD                    = "numfreehrs";
-    private static final String         MGRA_DSTALLSOTH_FIELD                    = "dstallsoth";
-    private static final String         MGRA_DSTALLSSAM_FIELD                    = "dstallssam";
-    private static final String         MGRA_DPARKCOST_FIELD                     = "dparkcost";
-    private static final String         MGRA_MSTALLSOTH_FIELD                    = "mstallsoth";
-    private static final String         MGRA_MSTALLSSAM_FIELD                    = "mstallssam";
-    private static final String         MGRA_MPARKCOST_FIELD                     = "mparkcost";
-
+    private static final String         MGRA_PARKTYPE_FIELD                      = "parking_type";
+    private static final String         MGRA_EXPHOURLY_FIELD = "exp_hourly";
+    private static final String			MGRA_EXPDAILY_FIELD = "exp_daily";
+    private static final String      	MGRA_EXPMONTHLY_FIELD ="exp_monthly";
+    private static final String  		MGRA_PARKINGSPACES_FIELD = "parking_spaces";
+    
     //for TNC and Taxi wait time calculations
     private static final String MGRA_POPEMPPERSQMI_FIELD = "PopEmpDenPerMi";
     private ArrayList<Integer>          mgras                                    = new ArrayList<Integer>();
@@ -178,28 +172,28 @@ public final class MgraDataManager
     {
         System.out.println("I'm the MgraDataManager");
         readMgraTableData(rbMap);
-        readMgraWlkTaps(rbMap);
+//        readMgraWlkTaps(rbMap);
         readMgraWlkDist(rbMap);
         
-        readTapLines(rbMap);
-        trimTapSet();
+//        readTapLines(rbMap);
+//        trimTapSet();
 
         
         
-        bls = BikeLogsum.getBikeLogsum(rbMap);
+//        bls = BikeLogsum.getBikeLogsum(rbMap);
 
         // pre-process the list of TAPS reachable by drive access for each MGRA
-        mapDriveAccessTapsToMgras(TazDataManager.getInstance(rbMap));
+//        mapDriveAccessTapsToMgras(TazDataManager.getInstance(rbMap));
 
         // create arrays from 4ddensity fields added to MGRA table used by
         // TourModeChoice DMU methods
-        process4ddensityData(rbMap);
+//        process4ddensityData(rbMap);
 
         calculateMgraAvgParkingCosts(rbMap);
 
-        calculateClosestMgraToTap();
+//        calculateClosestMgraToTap();
         
-        printMgraStats();
+//        printMgraStats();
     }
 
     /**
@@ -468,7 +462,7 @@ public final class MgraDataManager
 
         	int oMgra = (int) mgraWalkData.getValueAt(row, "i");
             int dMgra = (int) mgraWalkData.getValueAt(row, "j");
-            int distance =  Math.round( mgraWalkData.getValueAt(row, "minTime") / Constants.walkMinutesPerMile * Constants.feetPerMile);
+            int distance =  Math.round( mgraWalkData.getValueAt(row, "actual") / Constants.walkMinutesPerMile * Constants.feetPerMile);
             
             if (oMgraWalkDistance[oMgra] == null) 
             	oMgraWalkDistance[oMgra] = new HashMap<Integer,Integer>();
@@ -1062,7 +1056,8 @@ public final class MgraDataManager
 
         mgraLuz = new int[maxMgra + 1];
         for (int mgra : mgras)
-            mgraLuz[mgra] = luzs.get(mgra);
+        	if(luzs.containsKey(mgra))
+        		mgraLuz[mgra] = luzs.get(mgra);
 
     }
 
@@ -1177,61 +1172,14 @@ public final class MgraDataManager
         PrintWriter out = null;
 
         String projectPath = propertyMap.get(CtrampApplication.PROPERTIES_PROJECT_DIRECTORY);
-        String outFile = propertyMap.get(PROPERTIES_PARKING_COST_OUTPUT_FILE);
-        outFile = projectPath + outFile;
-
-        try
-        {
-            out = new PrintWriter(new BufferedWriter(new FileWriter(new File(outFile))));
-        } catch (IOException e)
-        {
-            logger.error("Exception caught trying to create file " + outFile);
-            System.out.println("Exception caught trying to create file " + outFile);
-            e.printStackTrace();
-            throw new RuntimeException();
-        }
-
-        // write the header record
-        out.println("mgra,mgraParkArea,lsWgtAvgCostM,lsWgtAvgCostD,lsWgtAvgCostH");
-
-        // open output files for writing debug info for a specific mgra
-        PrintWriter outM = null;
-        PrintWriter outD = null;
-        PrintWriter outH = null;
-
-        if (LOG_MGRA > 0)
-        {
-            try
-            {
-                outM = new PrintWriter(new BufferedWriter(new FileWriter(new File(projectPath
-                        + "output/" + LOG_MGRA_FILE + "M.csv"))));
-                outD = new PrintWriter(new BufferedWriter(new FileWriter(new File(projectPath
-                        + "output/" + LOG_MGRA_FILE + "D.csv"))));
-                outH = new PrintWriter(new BufferedWriter(new FileWriter(new File(projectPath
-                        + "output/" + LOG_MGRA_FILE + "H.csv"))));
-            } catch (IOException e)
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-
-        float workDistCoeff = Float.parseFloat(propertyMap.get(MGRA_DISTANCE_COEFF_WORK));
-        float otherDistCoeff = Float.parseFloat(propertyMap.get(MGRA_DISTANCE_COEFF_OTHER));
-
+ 
         int[] mgraField = mgraTableDataSet.getColumnAsInt(MGRA_FIELD_NAME);
-        int[] mgraParkAreaField = mgraTableDataSet.getColumnAsInt(MGRA_PARKAREA_FIELD);
-        int[] hstallsothField = mgraTableDataSet.getColumnAsInt(MGRA_HSTALLSOTH_FIELD);
-        int[] hstallssamField = mgraTableDataSet.getColumnAsInt(MGRA_HSTALLSSAM_FIELD);
-        float[] hparkcostField = mgraTableDataSet.getColumnAsFloat(MGRA_HPARKCOST_FIELD);
-        int[] numfreehrsField = mgraTableDataSet.getColumnAsInt(MGRA_NUMFREEHRS_FIELD);
-        int[] dstallsothField = mgraTableDataSet.getColumnAsInt(MGRA_DSTALLSOTH_FIELD);
-        int[] dstallssamField = mgraTableDataSet.getColumnAsInt(MGRA_DSTALLSSAM_FIELD);
-        float[] dparkcostField = mgraTableDataSet.getColumnAsFloat(MGRA_DPARKCOST_FIELD);
-        int[] mstallsothField = mgraTableDataSet.getColumnAsInt(MGRA_MSTALLSOTH_FIELD);
-        int[] mstallssamField = mgraTableDataSet.getColumnAsInt(MGRA_MSTALLSSAM_FIELD);
-        float[] mparkcostField = mgraTableDataSet.getColumnAsFloat(MGRA_MPARKCOST_FIELD);
-
+        int[] mgraParkAreaField = mgraTableDataSet.getColumnAsInt(MGRA_PARKTYPE_FIELD);
+        float[] hourlyCost =  mgraTableDataSet.getColumnAsFloat(MGRA_EXPHOURLY_FIELD);
+        float[] dailyCost =  mgraTableDataSet.getColumnAsFloat(MGRA_EXPDAILY_FIELD);
+        float[] monthlyCost =  mgraTableDataSet.getColumnAsFloat(MGRA_EXPMONTHLY_FIELD);
+        float[] spaces =  mgraTableDataSet.getColumnAsFloat(MGRA_PARKINGSPACES_FIELD);
+   
         mgraParkArea = new int[maxMgra + 1];
         numfreehrs = new int[maxMgra + 1];
         hstallsoth = new int[maxMgra + 1];
@@ -1256,173 +1204,10 @@ public final class MgraDataManager
             int mgra = mgraField[k];
 
             mgraParkArea[mgra] = mgraParkAreaField[k];
-            numfreehrs[mgra] = numfreehrsField[k];
-            hstallsoth[mgra] = hstallsothField[k];
-            hstallssam[mgra] = hstallssamField[k];
-            hparkcost[mgra] = hparkcostField[k];
-            dstallsoth[mgra] = dstallsothField[k];
-            dstallssam[mgra] = dstallssamField[k];
-            dparkcost[mgra] = dparkcostField[k];
-            mstallsoth[mgra] = mstallsothField[k];
-            mstallssam[mgra] = mstallssamField[k];
-            mparkcost[mgra] = mparkcostField[k];
-
-            // get the array of mgras within walking distance of m
-            int[] walkMgras = getMgrasWithinWalkDistanceFrom(mgra);
-
-            // park area 1.
-            if (mgraParkArea[mgra] == PARK_AREA_ONE)
-            {
-
-                // calculate weighted average cost from monthly costs
-                double dist = getMgraToMgraWalkDistFrom(mgra, mgra) / 5280.0;
-
-                double numeratorM = mstallssam[mgra] * Math.exp(workDistCoeff * dist)
-                        * mparkcost[mgra];
-                double denominatorM = mstallssam[mgra] * Math.exp(workDistCoeff * dist);
-
-                double numeratorD = dstallssam[mgra] * Math.exp(workDistCoeff * dist)
-                        * dparkcost[mgra];
-                double denominatorD = dstallssam[mgra] * Math.exp(workDistCoeff * dist);
-
-                double discountFactor = Math.max(1 - (numfreehrs[mgra] / 4), 0);
-                double numeratorH = hstallssam[mgra] * Math.exp(workDistCoeff * dist)
-                        * discountFactor * hparkcost[mgra];
-                double denominatorH = hstallssam[mgra] * Math.exp(workDistCoeff * dist);
-
-                if (mgra == LOG_MGRA)
-                {
-                    // log the file header
-                    outM.println("wMgra" + "," + "mgraParkArea" + "," + "workDistCoeff*dist" + ","
-                            + "exp(workDistCoeff*dist)" + "," + "mstallsoth" + "," + "mparkcost"
-                            + "," + "numeratorM" + "," + "denominatorM");
-                    outD.println("wMgra" + "," + "mgraParkArea" + "," + "otherDistCoeff*dist" + ","
-                            + "exp(otherDistCoeff*dist)" + "," + "dstallsoth" + "," + "dparkcost"
-                            + "," + "numeratorD" + "," + "denominatorD");
-                    outH.println("wMgra" + "," + "mgraParkArea" + "," + "otherDistCoeff*dist" + ","
-                            + "exp(otherDistCoeff*dist)" + "," + "discountFactor" + ","
-                            + "hstallsoth" + "," + "hparkcost" + "," + "numeratorH" + ","
-                            + "denominatorH");
-
-                    outM.println(mgra + "," + mgraParkArea[mgra] + "," + workDistCoeff * dist + ","
-                            + Math.exp(workDistCoeff * dist) + "," + mstallsoth[mgra] + ","
-                            + mparkcost[mgra] + "," + numeratorM + "," + denominatorM);
-                    outD.println(mgra + "," + mgraParkArea[mgra] + "," + workDistCoeff * dist + ","
-                            + Math.exp(workDistCoeff * dist) + "," + dstallsoth[mgra] + ","
-                            + dparkcost[mgra] + "," + numeratorD + "," + denominatorD);
-                    outH.println(mgra + "," + mgraParkArea[mgra] + "," + workDistCoeff * dist + ","
-                            + Math.exp(workDistCoeff * dist) + "," + discountFactor + ","
-                            + hstallsoth[mgra] + "," + hparkcost[mgra] + "," + numeratorH + ","
-                            + denominatorH);
-                }
-
-                if (walkMgras != null)
-                {
-
-                    for (int wMgra : walkMgras)
-                    {
-
-                        // skip mgra if not in park area 1 or 2.
-                        if (mgraParkArea[wMgra] > 2)
-                        {
-                            if (mgra == LOG_MGRA)
-                            {
-                                outM.println(wMgra + "," + mgraParkArea[wMgra]);
-                                outD.println(wMgra + "," + mgraParkArea[wMgra]);
-                                outH.println(wMgra + "," + mgraParkArea[wMgra]);
-                            }
-                            continue;
-                        }
-
-                        if (wMgra != mgra)
-                        {
-                            dist = getMgraToMgraWalkDistFrom(mgra, wMgra) / 5280.0;
-
-                            if (dist > MAX_PARKING_WALK_DISTANCE)
-                            {
-                                if (mgra == LOG_MGRA)
-                                {
-                                    outM.println(wMgra + "," + mgraParkArea[wMgra]);
-                                    outD.println(wMgra + "," + mgraParkArea[wMgra]);
-                                    outH.println(wMgra + "," + mgraParkArea[wMgra]);
-                                }
-                                continue;
-                            }
-
-                            numeratorM += mstallsoth[wMgra] * Math.exp(workDistCoeff * dist)
-                                    * mparkcost[wMgra];
-                            denominatorM += mstallsoth[wMgra] * Math.exp(workDistCoeff * dist);
-
-                            numeratorD += dstallsoth[wMgra] * Math.exp(otherDistCoeff * dist)
-                                    * dparkcost[wMgra];
-                            denominatorD += dstallsoth[wMgra] * Math.exp(otherDistCoeff * dist);
-
-                            discountFactor = Math.max(1 - (numfreehrs[wMgra] / 4), 0);
-                            numeratorH += hstallsoth[wMgra] * Math.exp(otherDistCoeff * dist)
-                                    * discountFactor * hparkcost[wMgra];
-                            denominatorH += hstallsoth[wMgra] * Math.exp(otherDistCoeff * dist);
-
-                            if (mgra == LOG_MGRA)
-                            {
-                                outM.println(wMgra + "," + mgraParkArea[wMgra] + ","
-                                        + workDistCoeff * dist + ","
-                                        + Math.exp(workDistCoeff * dist) + "," + mstallsoth[wMgra]
-                                        + "," + mparkcost[wMgra] + "," + numeratorM + ","
-                                        + denominatorM);
-                                outD.println(wMgra + "," + mgraParkArea[wMgra] + ","
-                                        + otherDistCoeff * dist + ","
-                                        + Math.exp(otherDistCoeff * dist) + "," + dstallsoth[wMgra]
-                                        + "," + dparkcost[wMgra] + "," + numeratorD + ","
-                                        + denominatorD);
-                                outH.println(wMgra + "," + mgraParkArea[wMgra] + ","
-                                        + otherDistCoeff * dist + ","
-                                        + Math.exp(otherDistCoeff * dist) + "," + discountFactor
-                                        + "," + hstallsoth[wMgra] + "," + hparkcost[wMgra] + ","
-                                        + numeratorH + "," + denominatorH);
-                            }
-
-                        }
-
-                    }
-
-                }
-                // jef: storing by mgra since they are indexed into by mgra
-                // wsu added if clauses.  If denominators are 0, read costs directly from input file
-                if(denominatorM>0)
-                	lsWgtAvgCostM[mgra] = numeratorM / denominatorM;
-                else
-                	lsWgtAvgCostM[mgra] = mparkcost[mgra];
-                if(denominatorD>0)
-                	lsWgtAvgCostD[mgra] = numeratorD / denominatorD;
-                else
-                	lsWgtAvgCostD[mgra] = dparkcost[mgra];
-                if(denominatorH>0)
-                	lsWgtAvgCostH[mgra] = numeratorH / denominatorH;
-                else
-                	lsWgtAvgCostH[mgra] = hparkcost[mgra];
-            } else
-            {
-
-                lsWgtAvgCostM[mgra] = mparkcost[mgra];
-                lsWgtAvgCostD[mgra] = dparkcost[mgra];
-                lsWgtAvgCostH[mgra] = hparkcost[mgra];
-
-            }
-
-            // write the data record
-            out.println(mgra + "," + mgraParkArea[mgra] + "," + lsWgtAvgCostM[mgra] + ","
-                    + lsWgtAvgCostD[mgra] + "," + lsWgtAvgCostH[mgra]);
+           	lsWgtAvgCostM[mgra] = monthlyCost[k];
+           	lsWgtAvgCostD[mgra] = dailyCost[k];
+            lsWgtAvgCostH[mgra] = hourlyCost[k];
         }
-
-        if (LOG_MGRA > 0)
-        {
-            outM.close();
-            outD.close();
-            outH.close();
-        }
-
-        out.close();
-
     }
 
     public double[] getLsWgtAvgCostM()
@@ -1503,7 +1288,7 @@ public final class MgraDataManager
     public int getMgraHourlyParkingCost(int mgra)
     {
         int row = mgraDataTableMgraRowMap.get(mgra);
-        return (int) mgraTableDataSet.getValueAt(row, MGRA_HPARKCOST_FIELD);
+        return (int) mgraTableDataSet.getValueAt(row, MGRA_EXPHOURLY_FIELD);
     }
 
     public float getRefeulingStations(int mgra)

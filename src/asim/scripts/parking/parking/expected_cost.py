@@ -8,23 +8,18 @@ import matplotlib.pyplot as plt
 from . import base
 
 class ExpectedParkingCost(base.Base):
+    
     def run_expected_parking_cost(self):
         # Inputs
         cache_dir = self.settings.get("cache_dir")
-        costs_path = self.settings.get("imputed_parking_costs")
-        spaces_path = self.settings.get("estimated_spaces_data")
-        districts_path = self.settings.get("district_data")
-        output_dir = self.settings.get("output_dir")
         plots_dir = self.settings.get("plots_dir")
-
-        # Read data
-        imputed_df = pd.read_csv(costs_path).set_index("mgra")
-        spaces_df = pd.read_csv(spaces_path).set_index("MGRA")
-        districts_df = pd.read_csv(districts_path).set_index("MGRA")
+                
+        assert isinstance(self.districts_dict, dict), "Must run create_districts() first"
+        districts_df = self.districts_dict['districts']
         mgra_gdf = self.mgra_data()
-
+        
         # Prepare data
-        costs_df = self.prepare_cost_table(imputed_df, spaces_df, districts_df)
+        costs_df = self.prepare_cost_table(self.imputed_parking_df, self.estimated_spaces_df, districts_df)
         district_ids = districts_df[districts_df.is_prkdistrict].index.unique()
         geos = mgra_gdf.loc[district_ids].geometry
         max_dist = self.settings.get("walk_dist")
@@ -48,12 +43,18 @@ class ExpectedParkingCost(base.Base):
         exp_prkcosts_df = exp_prkcosts_df.reindex(mgra_gdf.index)
         exp_prkcosts_gdf = exp_prkcosts_df.join(mgra_gdf[["geometry"]])
         exp_prkcosts_df = exp_prkcosts_df.fillna(0)
-
-        exp_prkcosts_df.to_csv(f"./{output_dir}/expected_parking_costs.csv")
+        
+        # Map it
         self.map_costs_pngs(exp_prkcosts_gdf, plots_dir)
         self.map_costs(exp_prkcosts_gdf, plots_dir)
 
-        return exp_prkcosts_gdf
+        # exp_prkcosts_df.to_csv(f"./{output_dir}/expected_parking_costs.csv")
+        self.expected_parking_df = exp_prkcosts_df
+        
+        # append combined
+        self.combined_df = self.combined_df.join(self.expected_parking_df)
+
+        # return exp_prkcosts_gdf
 
     def pre_calc_dist(self, geos, max_dist, cache_dir):
         dist_path = os.path.join(cache_dir, "distances.csv")
@@ -175,8 +176,8 @@ class ExpectedParkingCost(base.Base):
                 key_on="feature.properties.MGRA",
                 fill_column=cost_type,
                 fill_color="YlOrRd",  # cmap
-                line_weight=0.1,  # line wight (of the border)
-                line_opacity=0.5,  # line opacity (of the border)
+                line_weight=0.1,  # line wight (of the border) # type: ignore
+                line_opacity=0.5,  # line opacity (of the border) # type: ignore
                 legend_name=f"Expected {cost_type} parking costs",
             ).add_to(
                 map
@@ -191,7 +192,7 @@ class ExpectedParkingCost(base.Base):
             gdf = exp_prkcost_gdf[["geometry", cost_type]].dropna().reset_index()
             gdf = gpd.GeoDataFrame(gdf)
             # ax.axis('off')
-            ax.set_xlim(np.array([6.26, 6.31]) * 1e6)
-            ax.set_ylim(np.array([1.82, 1.86]) * 1e6)
+            ax.set_xlim(np.array([6.26, 6.31]) * 1e6)  # type: ignore
+            ax.set_ylim(np.array([1.82, 1.86]) * 1e6)  # type: ignore
             gdf.plot(column=cost_type, alpha=0.5, ax=ax, legend=True).set_title(f'{lab} Expected Parking Costs')
             fig.savefig(f"{plots_dir}/parking_costs_{cost_type}.png")

@@ -12,3 +12,4 @@ preprocessor:
   TABLES:
     - land_use
     - persons
+    - vehicles
