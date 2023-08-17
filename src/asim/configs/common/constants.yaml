@@ -270,4 +270,5 @@ microAccessThreshold: 100
 microOwnership: 0.008
 
 # cost of "average" monthly transit pass cost.  Used in transit pass ownership model.
+# cost of pass divided by 2 for age < 18 and 65+.
 monthly_transit_pass_cost: 100
