@@ -40,6 +40,7 @@ preprocessor:
   TABLES:
     - tours
     - households
+    - joint_tour_participants
 #    - accessibility
 
 CONSTANTS:
