@@ -5,6 +5,9 @@ Description,Target,Expression
 ,medium_income,(persons.income > 60000) & (persons.income <= 100000)
 ,medium_high_income,(persons.income > 100000) & (persons.income <= 150000)
 ,high_income,(persons.income > 150000)
+,total_hours_available_7am_to_10pm,"person_available_periods(persons, start_bin=8, end_bin=37, continuous=False) / 2"
+,consecutive_hours_available_7am_to_10pm,"person_available_periods(persons, start_bin=8, end_bin=37, continuous=True) / 2"
+,log_total_hours_available_7am_to_10pm,"np.log1p(total_hours_available_7am_to_10pm)"
 ,max_time_window,person_max_window(persons)
 ,log_max_time_window,np.log1p(max_time_window)
 #,,
