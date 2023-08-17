@@ -7,10 +7,10 @@ Number of monthly stalls,_monthly_stalls@df.mstallsoth,1
 Hourly stalls available,_hourly_stalls_available@_hourly_stalls > 0,1
 Daily stalls available,_daily_stalls_available@_daily_stalls > 0,1
 Monthly stalls available,_monthly_stalls_available@_monthly_stalls > 0,1
-Hourly parking cost cents,_hourly_parking_cost@df.hparkcost * 100,1
+Hourly parking cost cents,_hourly_parking_cost@df.exp_hourly * 100,1
 Number of free parking hours,_num_free_hours@df.numfreehrs,1
-Daily parking cost cents,_daily_parking_cost@df.dparkcost * 100,1
-Monthly parking cost cents,_monthly_parking_cost@df.mparkcost * 100,1
+Daily parking cost cents,_daily_parking_cost@df.exp_daily * 100,1
+Monthly parking cost cents,_monthly_parking_cost@df.exp_monthly * 100,1
 Monthly parking is allowed,_monthly_allowed@_monthly_stalls_available & _work_trip & _person_is_worker,1
 Total hourly parking cost,_total_hourly_parking_cost@(_hourly_parking_cost * (df.activity_duration - _num_free_hours)),1
 Hourly is cheaper than daily,"_hourly_cheaper_than_daily@np.where(_daily_stalls_available, _total_hourly_parking_cost < _daily_parking_cost,True)",1
