@@ -352,7 +352,7 @@ class SkimAppender(object):
         #   valueOfTimeCategory
         # nonSOV - departTimeFiveTod + tripMode + valueOfTimeCategory
         skim_map = {"SOV": {"values": [[1, 2, 3, 4, 5],
-                                       ["Drive Alone"],
+                                       ["DRIVEALONE"],
                                        [False, True],
                                        ["Low", "Medium", "High"]],
                             "labels": [["EA", "AM", "MD", "PM", "EV"],
@@ -365,15 +365,15 @@ class SkimAppender(object):
                                      "valueOfTimeCategory",
                                      "matrixName"]},
                     "Non-SOV": {"values": [[1, 2, 3, 4, 5],
-                                           ["Shared Ride 2",
-                                            "Shared Ride 3+",
-                                            "Light Heavy Duty Truck",
-                                            "Medium Heavy Duty Truck",
-                                            "Heavy Heavy Duty Truck",
+                                           ["SHARED2",
+                                            "SHARED3",
+                                            # "Light Heavy Duty Truck",
+                                            # "Medium Heavy Duty Truck",
+                                            # "Heavy Heavy Duty Truck",
                                             "Taxi",
-                                            "Non-Pooled TNC",
-                                            "Pooled TNC",
-                                            "School Bus"],
+                                            "TNC_SINGLE",
+                                            "TNC_SHARED",
+                                            "SCH_BUS"],
                                            ["Low", "Medium", "High"]],
                                 "labels": [["EA", "AM", "MD", "PM", "EV"],
                                            ["HOV2", "HOV3", "TRK", "TRK",
@@ -400,12 +400,12 @@ class SkimAppender(object):
                            itertools.product(*labels))]
             #switch the period to the end of the skim name
             for i in range(len(mapping)):
-                mapping[i][3] = mapping[i][3][3:] + "__" + mapping[i][3][:2]
+                mapping[i][-1] = mapping[i][-1][3:] + "__" + mapping[i][-1][:2]
 
             # create Pandas DataFrame lookup table of column values
             # to skim matrix names
             lookup = pd.DataFrame(mapping, columns=cols)
-            lookup["omxFileName"] = "traffic_skims_" + lookup["matrixName"].str[0:2]
+            lookup["omxFileName"] = "traffic_skims_" + lookup["matrixName"].str[-2:]
 
             # set lookup DataFrame data types
             lookup = lookup.astype({
@@ -964,24 +964,21 @@ class SkimAppender(object):
         # create mappings from trip list to skim matrices
         # departTimeFiveTod + tripMode
         skim_map = {"values": [[1, 2, 3, 4, 5],
-                               ["Walk to Transit - Local Bus",
-                                "Walk to Transit - Premium Transit",
-                                "Walk to Transit - Local Bus and Premium Transit",
-                                "Park and Ride to Transit - Local Bus",
-                                "Park and Ride to Transit - Premium Transit",
-                                "Park and Ride to Transit - Local Bus and Premium Transit",
-                                "Kiss and Ride to Transit - Local Bus",
-                                "Kiss and Ride to Transit - Premium Transit",
-                                "Kiss and Ride to Transit - Local Bus and Premium Transit",
-                                "TNC to Transit - Local Bus",
-                                "TNC to Transit - Premium Transit",
-                                "TNC to Transit - Local Bus and Premium Transit"]],
+                               ["WALK_LOC",
+                                "WALK_PRM",
+                                "WALK_PRM",
+                                "PNR_LOC",
+                                "PNR_PRM",
+                                "PNR_MIX",
+                                "KNR_LOC",
+                                "KNR_PRM",
+                                "KNR_MIX",
+                                "TNC_LOC",
+                                "TNC_PRM",
+                                "TNC_MIX"]],
                     "labels": [["EA", "AM", "MD", "PM", "EV"],
                                ["WALK", "PNROUT", "PNRIN", "KNROUT", "KNRIN", "TNCOUT", "TNCIN"],
-                               ["LOC", "PRM", "MIX",
-                                "LOC", "PRM", "MIX",
-                                "LOC", "PRM", "MIX",
-                                "LOC", "PRM", "MIX"]],
+                               ["LOC", "PRM", "MIX"]],
                     "cols": ["departTimeFiveTod",
                              "tripMode",
                              "matrixName"]}
@@ -1029,55 +1026,60 @@ class SkimAppender(object):
             records = trips.loc[(trips["matrixName"] == matrix)].copy()
 
             # get lists of o-ds
-            o = records.boardingTAP.astype("int16").tolist()
-            d = records.alightingTAP.astype("int16").tolist()
+            o = records.originTAZ.astype("int16").tolist()
+            d = records.destinationTAZ.astype("int16").tolist()
 
             # map o-ds to omx matrix indices
             o_idx = [omx_map[number] for number in o]
             d_idx = [omx_map[number] for number in d]
 
-            # append skims x[:-4] + "_TIME_" + x[-3:]
-            records["timeTransitInVehicle"] = omx_file[matrix[:-2]][matrix[:-4] + "_TOTALIVTT_" + matrix[-3:]][o_idx, d_idx]
-            records["timeTier1TransitInVehicle"] = omx_file[matrix[:-2]][matrix[:-4] + "_TIER1IVTT_"+ matrix[-3:]][o_idx, d_idx]
-            records["timeFreewayRapidTransitInVehicle"] = omx_file[matrix[:-2]][matrix[:-4] + "_BRTYELIVTT_"+ matrix[-3:]][o_idx, d_idx]
-            records["timeArterialRapidTransitInVehicle"] = omx_file[matrix[:-2]][matrix[:-4] + "_BRTREDIVTT_"+ matrix[-3:]][o_idx, d_idx]
-            records["timeExpressBusTransitInVehicle"] = omx_file[matrix[:-2]][matrix[:-4] + "_EXPIVTT_"+ matrix[-3:]][o_idx, d_idx]
-            records["timeLocalBusTransitInVehicle"] = omx_file[matrix[:-2]][matrix[:-4] + "_BUSIVTT_"+ matrix[-3:]][o_idx, d_idx]
-            records["timeLightRailTransitInVehicle"] = omx_file[matrix[:-2]][matrix[:-4] + "_LRTIVTT_"+ matrix[-3:]][o_idx, d_idx]
-            records["timeCommuterRailTransitInVehicle"] = omx_file[matrix[:-2]][matrix[:-4] + "_CMRIVTT_"+ matrix[-3:]][o_idx, d_idx]
-            records["timeTransitInitialWait"] = omx_file[matrix[:-2]][matrix[:-4] + "_FIRSTWAIT_"+ matrix[-3:]][o_idx, d_idx]
-            records["timeTransitWait"] = omx_file[matrix[:-2]][matrix[:-4] + "_TOTALWAIT_"+ matrix[-3:]][o_idx, d_idx]
-            records["timeTransitWalk"] = omx_file[matrix[:-2]][matrix[:-4] + "_TOTALWALK_"+ matrix[-3:]][o_idx, d_idx]
-            records["distanceTransitInVehicle"] = omx_file[matrix[:-2]][matrix[:-4] + "_TOTDIST_"+ matrix[-3:]][o_idx, d_idx]
-            records["costFareTransit"] = omx_file[matrix[:-2]][matrix[:-4] + "_FARE_"+ matrix[-3:]][o_idx, d_idx]
-            records["transfersTransit"] = omx_file[matrix[:-2]][matrix[:-4] + "_XFERS_"+ matrix[-3:]][o_idx, d_idx]
-            records["distanceTransitWalk"] = records.timeTransitWalk * self.properties["walkSpeed"] / 60
+            skim_dict = {"timeTransitInVehicle": "_TOTALIVTT_", "timeRapidTransitInVehicle": "_BRTIVTT_", "timeExpressBusTransitInVehicle": "_EXPIVTT_",
+             "timeLocalBusTransitInVehicle": "_BUSIVTT_", "timeLightRailTransitInVehicle": "_LRTIVTT_", "timeCommuterRailTransitInVehicle": "_CMRIVTT_",
+             "timeTransitInitialWait": "_FIRSTWAIT_", "costFareTransit": "_FARE_", "transfersTransit": "_XFERS_"}
+        
+            for key, value in skim_dict.items():
+                if matrix[:-4] + value + matrix[-3:] in omx_file[matrix[-2:]].list_matrices():
+                    records[key] = omx_file[matrix[-2:]][matrix[:-4] + value + matrix[-3:]][o_idx, d_idx]
+
+            # records["timeTransitInVehicle"] = omx_file[matrix[-2:]][matrix[:-4] + "_TOTALIVTT_" + matrix[-3:]][o_idx, d_idx]
+            # # records["timeTier1TransitInVehicle"] = omx_file[matrix[-2:]][matrix[:-4] + "_TIER1IVTT_"+ matrix[-3:]][o_idx, d_idx]
+            # records["timeRapidTransitInVehicle"] = omx_file[matrix[-2:]][matrix[:-4] + "_BRTIVTT_"+ matrix[-3:]][o_idx, d_idx]
+            # records["timeExpressBusTransitInVehicle"] = omx_file[matrix[-2:]][matrix[:-4] + "_EXPIVTT_"+ matrix[-3:]][o_idx, d_idx]
+            # records["timeLocalBusTransitInVehicle"] = omx_file[matrix[-2:]][matrix[:-4] + "_BUSIVTT_"+ matrix[-3:]][o_idx, d_idx]
+            # records["timeLightRailTransitInVehicle"] = omx_file[matrix[-2:]][matrix[:-4] + "_LRTIVTT_"+ matrix[-3:]][o_idx, d_idx]
+            # records["timeCommuterRailTransitInVehicle"] = omx_file[matrix[-2:]][matrix[:-4] + "_CMRIVTT_"+ matrix[-3:]][o_idx, d_idx]
+            # records["timeTransitInitialWait"] = omx_file[matrix[-2:]][matrix[:-4] + "_FIRSTWAIT_"+ matrix[-3:]][o_idx, d_idx]
+            # # records["timeTransitWait"] = omx_file[matrix[-2:]][matrix[:-4] + "_TOTALWAIT_"+ matrix[-3:]][o_idx, d_idx]
+            # # records["timeTransitWalk"] = omx_file[matrix[-2:]][matrix[:-4] + "_TOTALWALK_"+ matrix[-3:]][o_idx, d_idx]
+            # # records["distanceTransitInVehicle"] = omx_file[matrix[-2:]][matrix[:-4] + "_TOTDIST_"+ matrix[-3:]][o_idx, d_idx]
+            # records["costFareTransit"] = omx_file[matrix[-2:]][matrix[:-4] + "_FARE_"+ matrix[-3:]][o_idx, d_idx]
+            # records["transfersTransit"] = omx_file[matrix[-2:]][matrix[:-4] + "_XFERS_"+ matrix[-3:]][o_idx, d_idx]
+            # # records["distanceTransitWalk"] = records.timeTransitWalk * self.properties["walkSpeed"] / 60
 
             # set skim data types
             records = records.astype({
                 "timeTransitInVehicle": "float32",
                 "timeTransitInitialWait": "float32",
-                "timeTransitWait": "float32",
-                "timeTransitWalk": "float32",
-                "distanceTransitInVehicle": "float32",
+                # "timeTransitWait": "float32",
+                # "timeTransitWalk": "float32",
+                # "distanceTransitInVehicle": "float32",
                 "costFareTransit": "float32",
-                "transfersTransit": "float32",
-                "distanceTransitWalk": "float32"})
+                "transfersTransit": "float32"})
+                # "distanceTransitWalk": "float32"})
 
             records = records[["tripID",
                                "timeTransitInVehicle",
-                               "timeTier1TransitInVehicle",
-                               "timeFreewayRapidTransitInVehicle",
-                               "timeArterialRapidTransitInVehicle",
+                            #    "timeTier1TransitInVehicle",
+                               "timeRapidTransitInVehicle",
                                "timeExpressBusTransitInVehicle",
                                "timeLocalBusTransitInVehicle",
                                "timeLightRailTransitInVehicle",
                                "timeCommuterRailTransitInVehicle",
                                "timeTransitInitialWait",
-                               "timeTransitWait",
-                               "timeTransitWalk",
-                               "distanceTransitInVehicle",
-                               "distanceTransitWalk",
+                            #    "timeTransitWait",
+                            #    "timeTransitWalk",
+                            #    "distanceTransitInVehicle",
+                            #    "distanceTransitWalk",
                                "costFareTransit",
                                "transfersTransit"]]
 
@@ -1087,18 +1089,17 @@ class SkimAppender(object):
             omx_file[period].close()
 
         skim_cols = ["timeTransitInVehicle",
-                     "timeTier1TransitInVehicle",
-                     "timeFreewayRapidTransitInVehicle",
-                     "timeArterialRapidTransitInVehicle",
+                    #  "timeTier1TransitInVehicle",
+                     "timeRapidTransitInVehicle",
                      "timeExpressBusTransitInVehicle",
                      "timeLocalBusTransitInVehicle",
                      "timeLightRailTransitInVehicle",
                      "timeCommuterRailTransitInVehicle",
                      "timeTransitInitialWait",
-                     "timeTransitWait",
-                     "timeTransitWalk",
-                     "distanceTransitInVehicle",
-                     "distanceTransitWalk",
+                    #  "timeTransitWait",
+                    #  "timeTransitWalk",
+                    #  "distanceTransitInVehicle",
+                    #  "distanceTransitWalk",
                      "costFareTransit",
                      "transfersTransit"]
 
