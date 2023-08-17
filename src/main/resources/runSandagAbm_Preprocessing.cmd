@@ -88,7 +88,7 @@ if %ITERATION% equ 1 (
     %PYTHON3% src/asim/scripts/visitor/visitor_model.py -t -c src/asim/configs/visitor -d input -o output/visitor
 ) else (
     ECHO Running resident model pre-processing
-    %PYTHON3% src/asim/scripts/resident/resident_preprocessing.py input output
+    %PYTHON3% src/asim/scripts/resident/resident_preprocessing.py input output %SCENYEAR%
 )
 
 
