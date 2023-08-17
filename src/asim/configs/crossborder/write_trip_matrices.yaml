@@ -16,7 +16,7 @@ TOURS_MERGED_CHOOSER_COLUMNS:
 HH_EXPANSION_WEIGHT_COL: sample_rate  # added when households read in
 
 # save preprocessed trips table to pipeline if desired
-SAVE_TRIPS_TABLE: False
+SAVE_TRIPS_TABLE: True
 
 MATRICES:
   - file_name: autoCrossborderTrips_EA_low.omx
@@ -501,3 +501,28 @@ CONSTANTS:
     - 15000
   trip_c_cost: -0.0003
 
+FINAL_TRIP_COLUMNS:
+  # - trip_id #not used bc the index of the dataframe is converted into the trip_id
+  - person_id
+  - household_id
+  - primary_purpose
+  - trip_num
+  - outbound
+  - trip_count
+  - destination
+  - origin
+  - tour_id
+  - purpose
+  - depart
+  - trip_mode
+  - timeDrive
+  - distanceDrive
+  - costTollDrive
+  - timeTransitInVehicle
+  - timeRapidTransitInVehicle
+  - timeExpressBusTransitInVehicle
+  - timeLightRailTransitInVehicle
+  - timeCommuterRailTransitInVehicle
+  - timeTransitInitialWait
+  - costFareTransit
+  - transfersTransit

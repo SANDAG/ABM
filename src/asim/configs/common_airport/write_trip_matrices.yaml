@@ -11,7 +11,7 @@ preprocessor:
 HH_EXPANSION_WEIGHT_COL: sample_rate  # added when households read in
 
 # save preprocessed trips table to pipeline if desired
-SAVE_TRIPS_TABLE: False
+SAVE_TRIPS_TABLE: True
 
 MATRICES:
   - file_name: trips_ea.omx
@@ -120,3 +120,34 @@ CONSTANTS:
   # SHARED2 and SHARED3 Occupancies
   OCC_SHARED2: 2.0
   OCC_SHARED3: 3.33
+
+FINAL_TRIP_COLUMNS:
+  # - trip_id #not used bc the index of the dataframe is converted into the trip_id
+  - person_id
+  - household_id
+  - primary_purpose
+  - trip_num
+  - outbound
+  - trip_count
+  - destination
+  - origin
+  - tour_id
+  - purpose
+  - depart
+  - trip_mode
+  - arrival_mode
+  - mode_choice_logsum
+  - vot1
+  - vot2
+  - vot3
+  - timeDrive
+  - distanceDrive
+  - costTollDrive
+  - timeTransitInVehicle
+  - timeRapidTransitInVehicle
+  - timeExpressBusTransitInVehicle
+  - timeLightRailTransitInVehicle
+  - timeCommuterRailTransitInVehicle
+  - timeTransitInitialWait
+  - costFareTransit
+  - transfersTransit
