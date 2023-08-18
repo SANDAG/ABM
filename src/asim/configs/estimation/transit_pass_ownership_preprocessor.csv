@@ -25,9 +25,9 @@ Description,Target,Expression
 ,tot_transit_time,"peak_transit_ivt_home_to_work + 1.5*first_wait + 2*xfer_wait + 2*(access_time + egress_time)"
 ,transit_is_available,(access_time < 100) & (egress_time < 100) & (peak_transit_ivt_home_to_work > 0)
 ,transit_minus_auto_time_to_work_prm,"np.where(transit_is_available, (tot_transit_time - peak_auto_time_home_to_work).fillna(0), 0)"
-# determining loc vs mix vs prm,,
-,transit_minus_auto_time_to_work,"np.where((transit_minus_auto_time_to_work_loc < transit_minus_auto_time_to_work_mix) & (transit_minus_auto_time_to_work_loc > 0), transit_minus_auto_time_to_work_loc, transit_minus_auto_time_to_work_mix)"
-,transit_minus_auto_time_to_work,"np.where((transit_minus_auto_time_to_work_prm < transit_minus_auto_time_to_work) & (transit_minus_auto_time_to_work_prm > 0), transit_minus_auto_time_to_work_prm, transit_minus_auto_time_to_work)"
+# determining non-zero minimum between loc vs mix vs prm,,
+,transit_minus_auto_time_to_work,"np.where(((transit_minus_auto_time_to_work_mix < transit_minus_auto_time_to_work_loc) & (transit_minus_auto_time_to_work_mix > 0)) | (transit_minus_auto_time_to_work_loc == 0), transit_minus_auto_time_to_work_mix, transit_minus_auto_time_to_work_loc)"
+,transit_minus_auto_time_to_work,"np.where(((transit_minus_auto_time_to_work_prm < transit_minus_auto_time_to_work) & (transit_minus_auto_time_to_work_prm > 0)) | (transit_minus_auto_time_to_work == 0), transit_minus_auto_time_to_work_prm, transit_minus_auto_time_to_work)"
 ,dparkcost_work,"np.where(persons.workplace_zone_id > 0, reindex(land_use.dparkcost, persons.workplace_zone_id), 0)"
 # transit pass cost converted to cost per trip and multiplied by trip mode choice cost coefficient in model,,
 # assumes 22 working days per month and 2 trips per work day. reduced fare for children and seniors half price.,,

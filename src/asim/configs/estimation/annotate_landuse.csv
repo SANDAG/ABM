@@ -7,3 +7,6 @@ density_index,density_index,(household_density *employment_density) / (household
 ,is_cbd,land_use.pseudomsa == 1
 total college enrollment for shadow pricing,tot_collegeenroll,land_use.adultschenrl + land_use.collegeenroll + land_use.othercollegeenroll
 Is a zone with parking,is_parking_zone,(land_use.parkarea > 0)
+,exp_hourly,land_use.dparkcost
+,exp_daily,land_use.hparkcost
+,exp_monthly,land_use.mparkcost
