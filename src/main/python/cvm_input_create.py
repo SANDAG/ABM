@@ -260,7 +260,7 @@ def calculate_taz_variables(data, coords, taz_ids, outfile):
 
                 # average hh income
                 if (hh>0):
-                    hh_income = (inc1*7500+inc2*22500+inc3*37500+inc4*52500+inc5*67500+inc6*87500+inc7*112500+inc8*137500+inc9*175000+inc10*225)/hh
+                    hh_income = (inc1*7500+inc2*22500+inc3*37500+inc4*52500+inc5*67500+inc6*87500+inc7*112500+inc8*137500+inc9*175000+inc10*225000)/hh
                 else:
                     hh_income=64678
 
