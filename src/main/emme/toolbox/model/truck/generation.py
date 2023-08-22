@@ -234,28 +234,14 @@ class TruckGeneration(_m.Tool(), gen_utils.Snapshot):
         mgra = pd.read_csv(file_path)
         # Combine employment fields that match to the truck trip rate classification
         mgra['TOTEMP'] = mgra.emp_total
-        mgra['emp_agmin'] = mgra.emp_ag
-        mgra['emp_cons'] = mgra.emp_const_bldg_prod + mgra.emp_const_bldg_office
-        mgra['emp_retrade'] = mgra.emp_retail + mgra.emp_personal_svcs_retail
-        mgra['emp_gov']= mgra.emp_state_local_gov_ent \
-                        + mgra.emp_state_local_gov_blue \
-                        + mgra.emp_state_local_gov_white \
-                        + mgra.emp_fed_non_mil \
-                        + mgra.emp_fed_mil
-        mgra['emp_mfg'] = mgra.emp_mfg_prod \
-                         + mgra.emp_mfg_office
-        mgra['emp_twu'] = mgra.emp_trans \
-                      + mgra.emp_utilities_office \
-                      + mgra.emp_utilities_prod
-        mgra['emp_whtrade'] = mgra.emp_whsle_whs
-        mgra['emp_other'] = mgra.TOTEMP \
-                          - mgra.emp_agmin \
-                          - mgra.emp_cons \
-                          - mgra.emp_retrade \
-                          - mgra.emp_gov \
-                          - mgra.emp_mfg \
-                          - mgra.emp_twu \
-                          - mgra.emp_whtrade
+        mgra['emp_agmin'] = mgra.emp_ag_min
+        mgra['emp_cons'] = mgra.emp_con
+        mgra['emp_retrade'] = mgra.emp_ret
+        mgra['emp_gov']= mgra.emp_gov
+        mgra['emp_mfg'] = mgra.emp_mnf
+        mgra['emp_twu'] = mgra.emp_trn_wrh + mgra.emp_utl
+        mgra['emp_whtrade'] = mgra.emp_whl
+        mgra['emp_other'] = mgra.emp_oth
 
         f = {
             'truckregiontype':['mean'],

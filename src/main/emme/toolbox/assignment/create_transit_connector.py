@@ -40,7 +40,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
         self.line_haul_mode_descr = ["Local stops", "Premium stops"]
 
         self.transit_modes = ["b","celpry"]
-        self.line_haul_mode_specs = ["@num_stops_l=1,99","@num_stops_e=1,99"]
+        self.line_haul_mode_specs = ["@num_stops_l=1,99 and not @network_adj=1,3","@num_stops_e=1,99 and not @network_adj=1,3"]
 
         self.max_length_wlk = [1, 1.2] # length in miles
         self.max_length_knr = [5, 5]
@@ -241,7 +241,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                     "exclude_split_links":False,
                                     "only_midblock_nodes": False},
                                 max_length=self.max_length_tnc[i],
-                                max_connectors=5,
+                                max_connectors=3,
                                 min_angle=0,
                                 scenario=self.scenario)
                 export_basenet(selection = {"link": 'i=1,4947 or j=1,4947',

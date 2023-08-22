@@ -137,56 +137,33 @@ class ExternalInternal(_m.Tool(), gen_utils.Snapshot):
         _m.logbook_write("Control totals read from %s" % file_path)
         
         # Aggregate purposes
-        mgra['emp_blu'] = (mgra.emp_const_non_bldg_prod
-                           + mgra.emp_const_non_bldg_office
-                           + mgra.emp_utilities_prod
-                           + mgra.emp_utilities_office
-                           + mgra.emp_const_bldg_prod
-                           + mgra.emp_const_bldg_office
-                           + mgra.emp_mfg_prod
-                           + mgra.emp_mfg_office
-                           + mgra.emp_whsle_whs
-                           + mgra.emp_trans)
+        mgra['emp_blu'] = (mgra.emp_con
+                           + mgra.emp_utl
+                           + mgra.emp_mnf
+                           + mgra.emp_fin_res_mgm
+                           + mgra.emp_whl
+                           + mgra.emp_trn_wrh)
 
-        mgra['emp_svc'] = (mgra.emp_prof_bus_svcs
-                           + mgra.emp_prof_bus_svcs_bldg_maint
-                           + mgra.emp_personal_svcs_office
-                           + mgra.emp_personal_svcs_retail)
+        mgra['emp_svc'] = mgra.emp_bus_svcs
 
-        mgra['emp_edu'] = (mgra.emp_pvt_ed_k12
-                           + mgra.emp_pvt_ed_post_k12_oth
-                           + mgra.emp_public_ed)
-
-        mgra['emp_gov'] = (mgra.emp_state_local_gov_ent
-                           + mgra.emp_fed_non_mil
-                           + mgra.emp_fed_non_mil
-                           + mgra.emp_state_local_gov_blue
-                           + mgra.emp_state_local_gov_white)
-
-        mgra['emp_ent'] = (mgra.emp_amusement
-                           + mgra.emp_hotel
-                           + mgra.emp_restaurant_bar)
-
-        mgra['emp_oth'] = (mgra.emp_religious
-                           + mgra.emp_pvt_hh
-                           + mgra.emp_fed_mil)
+        mgra['emp_edu'] = mgra.emp_educ
 
         mgra['work_size'] = (mgra.emp_blu +
-                             1.364 * mgra.emp_retail +
+                             1.364 * mgra.emp_ret +
                              4.264 * mgra.emp_ent +
                              0.781 * mgra.emp_svc +
                              1.403 * mgra.emp_edu +
-                             1.779 * mgra.emp_health +
+                             1.779 * mgra.emp_hlth +
                              0.819 * mgra.emp_gov +
                              0.708 * mgra.emp_oth)
 
         mgra['non_work_size'] = (mgra.hh +
                                  1.069 * mgra.emp_blu +
-                                 4.001 * mgra.emp_retail +
+                                 4.001 * mgra.emp_ret +
                                  6.274 * mgra.emp_ent +
                                  0.901 * mgra.emp_svc +
                                  1.129 * mgra.emp_edu +
-                                 2.754 * mgra.emp_health +
+                                 2.754 * mgra.emp_hlth +
                                  1.407 * mgra.emp_gov +
                                  0.304 * mgra.emp_oth)
 

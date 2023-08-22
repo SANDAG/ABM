@@ -484,24 +484,24 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                         "title": "Transit %s attributes" % elem_type.lower().replace("_", " "),
                         "disclosure": True
                     })
-                try:
-                    self.create_transit_base(transit_network, transit_attr_map)
-                    self.create_transit_lines(transit_network, transit_attr_map)
-                    self.calc_transit_attributes(transit_network)
-                    new_node_id = max(
-                        max(n.number for n in traffic_network.nodes()),
-                        max(n.number for n in transit_network.nodes())
-                    )
-                    new_node_id = int(_ceiling(new_node_id / 10000.0) * 10000)
-                    new_node_id = self.renumber_transit_nodes(transit_network, new_node_id)
-                finally:
-                    if transit_scenario:
-                        for link in transit_network.links():
-                            if link.type <= 0:
-                                link.type = 99
-                        transit_scenario.publish_network(transit_network, resolve_attributes=True)
-                    if self.merged_scenario_id:
-                        self.add_transit_to_traffic(traffic_network, transit_network, new_node_id)
+                # try:
+                self.create_transit_base(transit_network, transit_attr_map)
+                self.create_transit_lines(transit_network, transit_attr_map)
+                self.calc_transit_attributes(transit_network)
+                new_node_id = max(
+                    max(n.number for n in traffic_network.nodes()),
+                    max(n.number for n in transit_network.nodes())
+                )
+                new_node_id = int(_ceiling(new_node_id / 10000.0) * 10000)
+                new_node_id = self.renumber_transit_nodes(transit_network, new_node_id)
+                # finally:
+                if transit_scenario:
+                    for link in transit_network.links():
+                        if link.type <= 0:
+                            link.type = 99
+                    transit_scenario.publish_network(transit_network, resolve_attributes=True)
+                if self.merged_scenario_id:
+                    self.add_transit_to_traffic(traffic_network, transit_network, new_node_id)
         finally:
             if self.merged_scenario_id:
                 scenario.publish_network(traffic_network, resolve_attributes=True)

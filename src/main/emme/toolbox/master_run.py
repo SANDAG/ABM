@@ -254,6 +254,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         export_transit_skims = modeller.tool("sandag.export.export_transit_skims")
         export_for_transponder = modeller.tool("sandag.export.export_for_transponder")
         export_network_data = modeller.tool("sandag.export.export_data_loader_network")
+        export_matrix_data = modeller.tool("sandag.export.export_data_loader_matrices")
         export_for_commercial_vehicle = modeller.tool("sandag.export.export_for_commercial_vehicle")
         validation = modeller.tool("sandag.validation.validation")
         file_manager = modeller.tool("sandag.utilities.file_manager")
@@ -282,16 +283,16 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         scenarioYear = str(props["scenarioYear"])
         # geographyID = str(props["geographyID"])
         startFromIteration = props["RunModel.startFromIteration"]
-        precision = props["RunModel.MatrixPrecision"]
+        # precision = props["RunModel.MatrixPrecision"]
         minSpaceOnC = props["RunModel.minSpaceOnC"]
         sample_rate = props["sample_rates"]
         end_iteration = len(sample_rate)
         scale_factor = props["cvm.scale_factor"]
-        visualizer_reference_path = props["visualizer.reference.path"]
-        visualizer_output_file = props["visualizer.output"]
-        visualizer_reference_label = props["visualizer.reference.label"]
-        visualizer_build_label = props["visualizer.build.label"]
-        mgraInputFile = props["mgra.socec.file"]
+        # visualizer_reference_path = props["visualizer.reference.path"]
+        # visualizer_output_file = props["visualizer.output"]
+        # visualizer_reference_label = props["visualizer.reference.label"]
+        # visualizer_build_label = props["visualizer.build.label"]
+        # mgraInputFile = props["mgra.socec.file"]
 
         period_ids = list(enumerate(periods, start=int(scenario_id) + 1))
 
@@ -335,9 +336,9 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         skipDataExport = props["RunModel.skipDataExport"]
         skipDataLoadRequest = props["RunModel.skipDataLoadRequest"]
         skipDeleteIntermediateFiles = props["RunModel.skipDeleteIntermediateFiles"]
-        skipTransitShed = props["RunModel.skipTransitShed"]
-        transitShedThreshold = props["transitShed.threshold"]
-        transitShedTOD = props["transitShed.TOD"]
+        # skipTransitShed = props["RunModel.skipTransitShed"]
+        # transitShedThreshold = props["transitShed.threshold"]
+        # transitShedTOD = props["transitShed.TOD"]
 
         #check if visualizer.reference.path is valid in filesbyyears.csv
         # if not os.path.exists(visualizer_reference_path):
@@ -470,11 +471,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     self.run_proc("runSandagWalkLogsums.cmd", [drive, path_forward_slash],
                                   "Walk - create AT logsums and impedances", capture_output=True)
                 if not skipCopyWalkImpedance:
-                    self.copy_files(["walkMgraEquivMinutes.csv", "walkMgraTapEquivMinutes.csv", "microMgraEquivMinutes.csv", "microMgraTapEquivMinutes.csv"],
+                    self.copy_files(["walkMgraEquivMinutes.csv", "microMgraEquivMinutes.csv"],
                                     input_dir, output_dir)
 
                 if not skip4Ds:
-                    run4Ds(path=self._path, int_radius=0.65, ref_path=visualizer_reference_path)
+                    run4Ds(path=self._path, int_radius=0.65, ref_path='visualizer_reference_path')
 
 
                 mgraFile = 'mgra15_based_input' + str(scenarioYear) + '.csv'
@@ -597,7 +598,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                                scenario_title="%s %s transit assign" % (base_scenario.title, period),
                                data_table_name=scenarioYear, overwrite=True)
                             
-                            if (not skipTransitConnector) & (msa_iteration == 1):
+                            if (not skipTransitConnector) and (msa_iteration == 1):
                                 if not os.path.exists(_join(input_dir, "transit_connectors")):
                                     os.mkdir(_join(input_dir, "transit_connectors"))
                                 #in case of new network, create transit connectors from scratch, and export them to the input folder for future runs/iterations
@@ -626,7 +627,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 if not skipABMPreprocessing[iteration]:
                     self.run_proc(
                         "runSandagAbm_Preprocessing.cmd",
-                        [drive, drive + path_forward_slash, msa_iteration],
+                        [drive, drive + path_forward_slash, msa_iteration, scenarioYear],
                         "Creating all the required files to run the ActivitySim models", capture_output=True)
                 if not skipABMResident[iteration]:
                     self.run_proc(
@@ -715,11 +716,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     omx_file = _join(output_dir, "skims", "transit_skims_" + period + ".omx")
                     export_transit_skims(omx_file, [period], transit_scenario, big_to_zero=False)
 
-        if not skipTransitShed:
-            # write walk and drive transit sheds
-            self.run_proc("runtransitreporter.cmd", [drive, path_forward_slash, transitShedThreshold, transitShedTOD],
-                          "Create walk and drive transit sheds",
-                          capture_output=True)
+        # if not skipTransitShed:
+        #     # write walk and drive transit sheds
+        #     self.run_proc("runtransitreporter.cmd", [drive, path_forward_slash, transitShedThreshold, transitShedTOD],
+        #                   "Create walk and drive transit sheds",
+        #                   capture_output=True)
 
         if not skipVisualizer:
             self.run_proc("RunViz.bat",
@@ -728,15 +729,15 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         if not skipDataExport:
             # export network and matrix results from Emme directly to T if using local drive
-            output_directory = _join(self._path, "output")
-            export_network_data(self._path, scenario_id, main_emmebank, transit_emmebank, num_processors)
+            # output_directory = _join(self._path, "output")
+            # export_network_data(self._path, scenario_id, main_emmebank, transit_emmebank, num_processors)
             # export_matrix_data(output_directory, base_scenario, transit_scenario)
             # export core ABM data
             # Note: uses relative project structure, so cannot redirect to T drive
             self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data",capture_output=True)
 
         #Validation for 2022 scenario
-        if scenarioYear == "2022":
+        if scenarioYear == "2016":
             validation(self._path, main_emmebank, base_scenario) # to create source_EMME.xlsx
             
             # #Create Worksheet for ABM Validation using PowerBI Visualization #JY: can be uncommented if deciding to incorporate PowerBI vis in ABM workflow
