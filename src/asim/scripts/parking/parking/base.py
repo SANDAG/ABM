@@ -54,14 +54,20 @@ class Base:
         inputs = self.settings.get('inputs')        
         self.raw_path = inputs.get("raw_parking_inventory")
         self.lu_path = inputs.get("land_use")
+        self.geometry = inputs.get("geometry")
         
         self.raw_parking_df = pd.read_csv(self.raw_path).set_index("mgra")
         self.lu_df = pd.read_csv(self.lu_path).set_index("mgra")
+        if set(['hparkcost', 'dparkcost', 'mparkcost', 'parkarea']).issubset(set(self.lu_df.columns)):
+            self.lu_df.drop(columns=['hparkcost', 'dparkcost', 'mparkcost', 'parkarea'], inplace=True)
+            
+        if set(['exp_hourly', 'exp_daily', 'exp_monthly', 'parking_type', 'parking_spaces']).issubset(set(self.lu_df.columns)):
+            self.lu_df.drop(columns=['exp_hourly', 'exp_daily', 'exp_monthly', 'parking_type', 'parking_spaces'], inplace=True)
 
     def mgra_data(self):
         if self.mgra_gdf is None:
             print("Reading MGRA shapefile data")
-            path = self.settings.get("geometry")
+            path = self.geometry
             cached_path = os.path.join(
                 self.settings.get("cache_dir"), "cached_mgra.shp"
             )
@@ -80,7 +86,6 @@ class Base:
     def write_output(self):
                 
         output_cols = self.settings.get('output_columns')
-        print('Writing outputs')
         for df_name, out_path in self.settings.get('outputs').items():
             df = getattr(self, df_name).reset_index()
             
@@ -92,7 +97,6 @@ class Base:
             
             df.to_csv(out_path, index=False)
             #also write to land use file
-            self.lu_df.drop(columns=['hparkcost', 'dparkcost', 'mparkcost', 'parkarea']).merge(df, left_index=True, right_on='mgra').to_csv(self.lu_path)
+            self.lu_df.merge(df, left_index=True, right_on='mgra').to_csv(self.lu_path)
        
         return
-   

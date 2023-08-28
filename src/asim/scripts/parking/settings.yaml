@@ -17,6 +17,7 @@ output_columns:
     mgra:
     exp_hourly:
     exp_daily:
+    exp_monthly:
     parking_type:
     spaces: parking_spaces
 

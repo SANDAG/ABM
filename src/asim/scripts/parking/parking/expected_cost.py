@@ -11,7 +11,7 @@ class ExpectedParkingCost(base.Base):
     
     def run_expected_parking_cost(self):
         # Inputs
-        cache_dir = self.settings.get("cache_dir")
+        out_dir = self.settings.get("output_dir")
         plots_dir = self.settings.get("plots_dir")
                 
         assert isinstance(self.districts_dict, dict), "Must run create_districts() first"
@@ -26,7 +26,7 @@ class ExpectedParkingCost(base.Base):
         walk_coef = self.settings.get("walk_coef")
 
         print("pre-calculate walk distance matrix")
-        dist_df = self.pre_calc_dist(geos, max_dist, cache_dir)
+        dist_df = self.pre_calc_dist(geos, max_dist, out_dir)
 
         print("Calculate expected costs")
         # Calculate expected cost for all zones in districts, all else are 0 cost
@@ -56,8 +56,8 @@ class ExpectedParkingCost(base.Base):
 
         # return exp_prkcosts_gdf
 
-    def pre_calc_dist(self, geos, max_dist, cache_dir):
-        dist_path = os.path.join(cache_dir, "distances.csv")
+    def pre_calc_dist(self, geos, max_dist, save_dir):
+        dist_path = os.path.join(save_dir, "distances.csv")
 
         if not os.path.isfile(dist_path):
             dist_matrix = np.zeros([len(geos.index)] * 2)
