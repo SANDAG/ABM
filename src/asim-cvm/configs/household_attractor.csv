@@ -1,0 +1,7 @@
+Label,Description,Expression,has attraction,no attraction
+#,package,,,
+,,segment=='package',coef_asc_package,0
+#,food,,,
+,,segment=='food',coef_asc_food,0
+#,service,,,
+,,segment=='service',coef_asc_service,0

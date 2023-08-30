@@ -1,0 +1,5 @@
+SPEC: household_attractor.csv
+COEFFICIENTS: household_attractor_coefficients.csv
+LOGIT_TYPE: MNL
+RESULT_COL_NAME: has_attraction
+HAS_ATTRACTION_ALT: 0

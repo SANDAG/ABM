@@ -1,3 +1,4 @@
+households_sample_size: 0
 establishments_sample_size: 10
 trace_establishment_id:
 resume_after:
@@ -6,6 +7,9 @@ inherit_settings: True
 chunk_size: 0
 chunk_training_mode: disabled
 input_table_list:
+  - tablename: households
+    filename: households.csv
+    index_col: household_id
   - tablename: establishments
     filename: establishments-fake.csv
     index_col: establishment_id
@@ -56,6 +60,7 @@ input_table_list:
 
 
 models:
+  - cvm_household_attractor
   - cvm_accessibility
   - route_generation
   - route_purpose_and_vehicle

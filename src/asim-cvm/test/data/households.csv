@@ -1,0 +1,6 @@
+household_id,num_workers,num_tours,home_zone_id
+1,1,1,2
+2,2,2,12
+3,1,2,19
+4,2,1,25
+5,1,1,28

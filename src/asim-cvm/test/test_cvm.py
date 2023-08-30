@@ -2,6 +2,7 @@
 import sys
 import importlib
 from pathlib import Path
+import pytest
 import activitysim.abm  # register components # noqa: F401
 
 # TODO: should this just be its own installable package?
@@ -11,6 +12,7 @@ extensions = importlib.import_module("extensions")  # register cvm components
 sys.path = sys.path[1:]
 
 EXPECTED_MODELS = [
+    "cvm_household_attractor",
     "cvm_accessibility",
     "route_generation",
     "route_purpose_and_vehicle",
@@ -62,3 +64,14 @@ def test_cvm():
     print(state.get("routes"))
     print(state.get("routes").info())
 
+
+@pytest.mark.attractor
+def test_cvm_attractor():
+
+    state = extensions.cvm_state.State.make_default(__file__, configs_dir=("configs", "../configs"))
+    assert state.settings.models == EXPECTED_MODELS
+    assert state.settings.chunk_size == 0
+    assert not state.settings.sharrow
+
+    print("### household attractor ###")
+    state.run.household_attractor()

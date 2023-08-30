@@ -10,3 +10,4 @@ from . import cvm_settings  # noqa: F401
 from . import cvm_state  # noqa: F401
 from . import cvm_terminal_choice  # noqa: F401
 from . import cvm_route_stops  # noqa: F401
+from . import cvm_household_attractor  # noqa: F401

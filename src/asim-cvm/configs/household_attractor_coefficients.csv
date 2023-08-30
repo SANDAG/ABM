@@ -1,0 +1,4 @@
+coefficient_name,value,constrain
+coef_asc_package,0.1,F
+coef_asc_food,0.2,F
+coef_asc_service,0.3,F
