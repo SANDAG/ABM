@@ -114,8 +114,7 @@ def establishment_attractor(
 
         # calculate the attractor
         land_use_df[model_settings.RESULT_COL_NAME] = land_use_df["industry_emp"] * land_use_df[model_settings.RATE_COL_NAME]
-        land_use_df.to_csv(r"C:\Users\wangs1\Documents\GitHub\wsp-SANDAG_ABM\src\asim-cvm\test\output\cvm_land_use_df.csv")
-
+        
         # log total attractor for industry group
         logger.info(f"Total attractor for industry group {industry_group_info.get('name')}: {land_use_df[model_settings.RESULT_COL_NAME].sum()}")
 
