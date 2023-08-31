@@ -1,0 +1,4 @@
+Description,Target,Expression
+number of eatout tours,num_eatout_tours,"reindex_i(tours[(tours.tour_category!='joint') & (tours.tour_type=='eatout')].groupby('household_id').size(), df.index).fillna(0)"
+number of non shopping non eatout tours,num_non_shop_eatout_tours,"reindex_i(tours[(tours.tour_category!='joint') & ~(tours.tour_type.isin(['shopping','eatout']))].groupby('household_id').size(), df.index).fillna(0)"
+number of working adults,num_adults_worker,df.num_adults-df.num_nonworker_adults

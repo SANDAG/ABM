@@ -8,6 +8,7 @@ import pandas as pd
 from pydantic import validator
 
 from activitysim.core import (
+    los,
     config,
     estimation,
     expressions,
@@ -15,7 +16,7 @@ from activitysim.core import (
     tracing,
     workflow,
 )
-from activitysim.core import los, workflow
+from activitysim.core.input import read_input_table
 from activitysim.core.configuration.base import PreprocessorSettings, PydanticReadable
 from activitysim.core.configuration.logit import LogitComponentSettings
 
@@ -45,7 +46,6 @@ def household_attractor(
     model_settings: HouseholdAttractorSettings | None = None,
     model_settings_file_name: str = "household_attractor.yaml",
     trace_label: str = "household_attractor",
-    output_table_name: str = "household_attractor",
 ) -> None:
     """
     Calculate household attractor for commercial vehicle model.
@@ -53,13 +53,17 @@ def household_attractor(
     Parameters
     ----------
     state : workflow.State
-    hosueholds : DataFrame
+    households : DataFrame
+    households_merged : DataFrame
     network_los : los.Network_LOS
     model_settings : default None
     model_settings_file_name : str, default "cvm_household_attractor.yaml"
     trace_label : str, default "cvm_household_attractor"
-    output_table_name : str, default "household_attractor"
     """
+
+    # read the tours table from ABM and store in the state
+    tours = read_input_table(state, "tours")
+    state.add_table("tours", tours)
 
     if model_settings is None:
         model_settings = HouseholdAttractorSettings.read_settings_file(
@@ -82,6 +86,20 @@ def household_attractor(
     )
 
     nest_spec = config.get_logit_model_settings(model_settings)
+
+    # - preprocessor
+    preprocessor_settings = model_settings.preprocessor
+    if preprocessor_settings:
+        locals_d = {}
+        if constants is not None:
+            locals_d.update(constants)
+        
+        expressions.assign_columns(
+            state,
+            df=households_merged,
+            model_settings=preprocessor_settings,
+            trace_label=trace_label,
+        )
 
     if estimator:
         estimator.write_model_settings(model_settings, model_settings_file_name)
@@ -127,4 +145,4 @@ def household_attractor(
             value_counts=True,
         )
 
-    state.add_table("household_attractor", households)
+    state.add_table("households", households)

@@ -8,8 +8,19 @@ chunk_size: 0
 chunk_training_mode: disabled
 input_table_list:
   - tablename: households
-    filename: households.csv
+    filename: final_households.csv
     index_col: household_id
+    keep_columns:
+      - home_zone_id
+      - income
+      - hhsize
+      - HHT
+      - auto_ownership
+      - num_workers
+      - sample_rate
+      - num_adults
+      - num_nonworker_adults
+      - num_children
   - tablename: establishments
     filename: establishments-fake.csv
     index_col: establishment_id
@@ -39,28 +50,31 @@ input_table_list:
       - hh_mh
       - zip09
       - luz_id
+  - tablename: tours
+    filename: final_tours.csv
+    index_col: tour_id
+    keep_columns:
+      - household_id
+      - primary_purpose
+      - tour_category
+      - tour_type
 
-#output_tables:
-#  h5_store: False
-#  action: include
-#  prefix: final_
-#  sort: True
-#  tables:
-#    - checkpoints
-#    - accessibility
-#    - land_use
-#    - households
-#    - persons
-#    - tours
-#    - trips
-#    - joint_tour_participants
-#    - vehicles
-#    - proto_disaggregate_accessibility
-#    - disaggregate_accessibility
+output_tables:
+ h5_store: False
+ action: include
+ prefix: cvm_
+ sort: True
+ tables:
+   - accessibility
+   - land_use
+   - households
+   - routes
+   - cv_trips
 
 
 models:
   - cvm_household_attractor
+  - cvm_establishment_attractor
   - cvm_accessibility
   - route_generation
   - route_purpose_and_vehicle
