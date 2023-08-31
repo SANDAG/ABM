@@ -28,7 +28,5 @@ with omx.open_file(os.path.join(path,'output','skims','dest_pmsa.omx'), 'w') as 
     pmsa_omx['pmsa_dest'] = np.array([filler]*4947)
     pmsa_omx.create_mapping('taz',np.arange(1,4948))
 
-# %%
-
 
 

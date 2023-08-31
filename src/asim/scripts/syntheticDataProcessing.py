@@ -11,7 +11,9 @@ scenario_year = sys.argv[2]
 households_file = os.path.join(input_dir, f'synthetic_households_{scenario_year}_base.csv')
 persons_file = os.path.join(input_dir, f'synthetic_persons_{scenario_year}_base.csv')
 landuse_file = os.path.join(input_dir, f'mgra15_based_input_{scenario_year}_base.csv')
+#some columns are moved over from 2019 land use file
 landuse2019_file = os.path.join(input_dir, 'mgra15_based_input2019.csv')
+
 
 # %%
 def process_household()-> pd.DataFrame:
@@ -116,7 +118,8 @@ def process_persons()-> pd.DataFrame:
         'SEX': 'sex',
         'RAC1P': 'rac1p',
         'WKW': 'weeks',
-        'WKHP': 'hours'}
+        'WKHP': 'hours',
+        'SOC2': 'soc2'}
     
     persons.loc[:,'naics2_original_code'] = persons['NAICS2']
     persons = persons.rename(columns=persons_rename_dict).sort_values(by=['hhid','pnum'])
@@ -217,7 +220,8 @@ def process_persons()-> pd.DataFrame:
                     "rac1p",
                     "hisp",
                     "version",
-                    'naics2_original_code']].sort_values(by=['hhid','pnum','perid'])
+                    'naics2_original_code',
+                    "soc2"]].sort_values(by=['hhid','pnum','perid'])
 
 def process_landuse()-> pd.DataFrame:
     '''
@@ -237,129 +241,10 @@ def process_landuse()-> pd.DataFrame:
         'othercollegeenroll_total': 'othercollegeenroll',
         'acre': 'acres',
         'landacre':'land_acres',
-        'LUZ':'luz_id'}
+        'LUZ':'luz_id',
+        'emp_tot': 'emp_total'}
     df_mgra = df_mgra.rename(columns=landuse_rename_dict)
-    
-    # create missing attribute
-    #df_mgra['effective_acres'] = df_mgra['acres']
-
-    #WFH to other employment
-    df_mgra['emp_bus_svcs'] = df_mgra['emp_bus_svcs'] + df_mgra['emp_non_ws_wfh']
-
-    df_mgra['emp_ag_min'] = df_mgra['emp_ag_min'] + df_mgra['emp_non_ws_oth'] * 0.034
-    df_mgra['emp_educ'] = df_mgra['emp_educ'] + df_mgra['emp_non_ws_oth'] * 0.054
-    df_mgra['emp_ent'] = df_mgra['emp_ent'] + df_mgra['emp_non_ws_oth'] * 0.053
-    df_mgra['emp_fin_res_mgm'] = df_mgra['emp_fin_res_mgm'] + df_mgra['emp_non_ws_oth']* 0.313
-    df_mgra['emp_hlth'] = df_mgra['emp_hlth'] + df_mgra['emp_non_ws_oth'] * 0.079
-    df_mgra['emp_oth'] = df_mgra['emp_oth'] + df_mgra['emp_non_ws_oth']* 0.171
-    df_mgra['emp_retail'] = df_mgra['emp_ret'] + df_mgra['emp_non_ws_oth']* 0.0712
-    df_mgra['emp_accm'] = df_mgra['emp_accm'] + df_mgra['emp_non_ws_oth'] * 0.0013
-    df_mgra['emp_food'] = df_mgra['emp_food'] + df_mgra['emp_non_ws_oth']* 0.0055
-    df_mgra['emp_trn_wrh_con'] = df_mgra['emp_trn_wrh_con'] + df_mgra['emp_non_ws_oth'] * 0.175
-    df_mgra['emp_utl_mnf_whl'] = df_mgra['emp_utl_mnf_whl'] + df_mgra['emp_non_ws_oth'] * 0.043
-
-    #disaggregate employment category from ABM3 to ABM2+
-    ##State and local government; Federial Civilian
-    df_mgra['emp_state_local_gov_ent'] = df_mgra['emp_gov'] * 0.339
-    df_mgra['emp_fed_non_mil'] = df_mgra['emp_gov'] * 0.198
-    df_mgra['emp_state_local_gov_blue'] = df_mgra['emp_gov'] * 0.168
-    df_mgra['emp_state_local_gov_white'] = df_mgra['emp_gov'] * 0.295
-    df_mgra['emp_public_ed'] = df_mgra['emp_gov'] * 0
-
-    #Federal Military
-    df_mgra['emp_fed_mil'] = df_mgra['emp_mil']
-
-    #Forestry, fishing, and hunting; Farm; Mining
-    df_mgra['emp_ag'] = df_mgra['emp_ag_min'] * 0.82
-    df_mgra['emp_const_non_bldg_office'] = df_mgra['emp_ag_min'] * 0.18
-
-    #Administravtive, support, waste management, and remediation services
-    df_mgra['emp_prof_bus_svcs_bldg_maint'] = df_mgra['emp_bus_svcs']
-
-    #professional business
-    df_mgra['emp_prof_bus_svcs'] = df_mgra['emp_fin_res_mgm']
-
-    #educational services; private
-    df_mgra['emp_pvt_ed_k12'] = df_mgra['emp_educ'] * 0.23
-    df_mgra['emp_pvt_ed_post_k12_oth'] = df_mgra['emp_educ'] * 0.77
-
-    #Health care and social assistance
-    df_mgra['emp_health'] = df_mgra['emp_hlth'] * 0.886
-    df_mgra['emp_personal_svcs_office'] = df_mgra['emp_hlth'] * 0.114
-
-    #retail trade
-    df_mgra['emp_retail'] = df_mgra['emp_ret']
-
-    # Transportation and warehousing, construction
-    df_mgra['emp_const_non_bldg_prod'] = df_mgra['emp_trn_wrh_con'] * 0.051
-    df_mgra['emp_const_bldg_prod'] = df_mgra['emp_trn_wrh_con'] * 0.47
-    df_mgra['emp_const_bldg_office'] = df_mgra['emp_trn_wrh_con'] * 0.159
-    df_mgra['emp_trans'] = df_mgra['emp_trn_wrh_con'] * 0.32
-
-    #Utilities. manifacturing, wholesale trade
-    df_mgra['emp_utilities_prod'] = df_mgra['emp_utl_mnf_whl'] * 0.016
-    df_mgra['emp_utilities_office'] = df_mgra['emp_utl_mnf_whl'] * 0.027
-    df_mgra['emp_mfg_prod'] = df_mgra['emp_utl_mnf_whl'] * 0.304
-    df_mgra['emp_mfg_office'] = df_mgra['emp_utl_mnf_whl'] * 0.378
-    df_mgra['emp_whsle_whs'] = df_mgra['emp_utl_mnf_whl'] * 0.275
-
-    #arts, entertainment and recreation
-    df_mgra['emp_amusement'] = df_mgra['emp_ent']
-
-    #Accommodation
-    df_mgra['emp_hotel'] = df_mgra['emp_accm']
-
-    #food services and drinking places
-    df_mgra['emp_restaurant_bar'] = df_mgra['emp_food']
-
-    #other services
-    df_mgra['emp_personal_svcs_retail'] = df_mgra['emp_oth'] * 1
-    df_mgra['emp_religious'] = df_mgra['emp_oth'] * 0
-    df_mgra['emp_pvt_hh'] = df_mgra['emp_oth'] * 0
-
-    #0 valued field
-    df_mgra['emp_own_occ_dwell_mgmt'] = 0
-    df_mgra['emp_fed_gov_accts'] = 0
-    df_mgra['emp_st_lcl_gov_accts'] = 0
-    df_mgra['emp_cap_accts'] = 0
-    
-    #compute total employment based on new employment category
-    emp_name = ['emp_ag',
-                'emp_const_non_bldg_prod',
-                'emp_const_non_bldg_office',
-                'emp_utilities_prod',
-                'emp_utilities_office',
-                'emp_const_bldg_prod',
-                'emp_const_bldg_office',
-                'emp_mfg_prod',
-                'emp_mfg_office',
-                'emp_whsle_whs',
-                'emp_trans',
-                'emp_retail',
-                'emp_prof_bus_svcs',
-                'emp_prof_bus_svcs_bldg_maint',
-                'emp_pvt_ed_k12',
-                'emp_pvt_ed_post_k12_oth',
-                'emp_health',
-                'emp_personal_svcs_office',
-                'emp_amusement',
-                'emp_hotel',
-                'emp_restaurant_bar',
-                'emp_personal_svcs_retail',
-                'emp_religious',
-                'emp_pvt_hh',
-                'emp_state_local_gov_ent',
-                'emp_fed_non_mil',
-                'emp_fed_mil',
-                'emp_state_local_gov_blue',
-                'emp_state_local_gov_white',
-                'emp_public_ed',
-                'emp_own_occ_dwell_mgmt',
-                'emp_fed_gov_accts',
-                'emp_st_lcl_gov_accts',
-                'emp_cap_accts']
-    df_mgra['emp_total'] = df_mgra[emp_name].sum(axis=1)
-    
+      
     #attributes copy from 2019 land use file
     att_2019 = ['ech_dist', 'hch_dist', 'adultschenrl', 'hstallsoth', 'hstallssam', 'hparkcost', 'numfreehrs', 'dstallsoth',
                 'dstallssam', 'dparkcost', 'mstallsoth', 'mstallssam', 'mparkcost', 'parkarea', 'budgetroom', 'economyroom',
@@ -368,10 +253,7 @@ def process_landuse()-> pd.DataFrame:
                 'dudenbin', 'PopEmpDenPerMi']
     df_mgra[att_2019] = df2019_mgra[att_2019]
     
-    #write ABM2+ columns
-    col_list = list(df2019_mgra)
-    print(col_list)
-    return df_mgra[col_list]
+    return df_mgra
 
 # %%
 process_household().to_csv(os.path.join(input_dir, 'households.csv'), index=False)
