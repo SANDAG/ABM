@@ -8,7 +8,7 @@ chunk_size: 0
 chunk_training_mode: disabled
 input_table_list:
   - tablename: households
-    filename: final_households.csv
+    filename: households.csv
     index_col: household_id
     keep_columns:
       - home_zone_id
@@ -51,7 +51,7 @@ input_table_list:
       - zip09
       - luz_id
   - tablename: tours
-    filename: final_tours.csv
+    filename: tours.csv
     index_col: tour_id
     keep_columns:
       - household_id
@@ -65,7 +65,7 @@ output_tables:
  prefix: cvm_
  sort: True
  tables:
-   - accessibility
+   - commercial_accessibility
    - land_use
    - households
    - routes

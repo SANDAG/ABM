@@ -1,0 +1,4 @@
+Description,Target,Expression
+number of households with food delivery,num_hh_food_delivery,"reindex_i(households.groupby('home_zone_id').has_attraction_food.sum(), df.index).fillna(0)"
+number of households with package delivery,num_hh_package_delivery,"reindex_i(households.groupby('home_zone_id').has_attraction_package.sum(), df.index).fillna(0)"
+number of households with service,num_hh_service,"reindex_i(households.groupby('home_zone_id').has_attraction_service.sum(), df.index).fillna(0)"

@@ -34,6 +34,9 @@ class HouseholdAttractorSettings(LogitComponentSettings, extra="forbid"):
     HAS_ATTRACTION_ALT: int
     """The alternative number that indicates that the household has attraction."""
 
+    annotate_land_use: PreprocessorSettings | None = None
+    """Setting for annotation."""
+
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +45,7 @@ def household_attractor(
     state: workflow.State,
     households: pd.DataFrame,
     households_merged: pd.DataFrame,
+    land_use: pd.DataFrame,
     network_los: los.Network_LOS,
     model_settings: HouseholdAttractorSettings | None = None,
     model_settings_file_name: str = "household_attractor.yaml",
@@ -144,5 +148,14 @@ def household_attractor(
             households[model_settings.RESULT_COL_NAME + "_" + segment],
             value_counts=True,
         )
-
+    
     state.add_table("households", households)
+    
+    expressions.assign_columns(
+        state,
+        df=land_use,
+        model_settings=model_settings.annotate_land_use,
+        trace_label=tracing.extend_trace_label(trace_label, "annotate_land_use"),
+    )
+
+    state.add_table("land_use", land_use)
