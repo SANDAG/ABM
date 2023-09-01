@@ -31,6 +31,8 @@ def test_cvm():
     assert state.settings.chunk_size == 0
     assert not state.settings.sharrow
 
+    state.logging.config_logger()
+
     # for step_name in EXPECTED_MODELS:
     #     state.run.by_name(step_name)
     #     print(f"> cvm_step {step_name}: ok")

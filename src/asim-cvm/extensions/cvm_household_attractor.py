@@ -76,6 +76,7 @@ def household_attractor(
         )
 
     trace_label = "cvm_household_attractor"
+    trace_hh_id = state.settings.trace_hh_id
 
     logger.info("Running %s with %d households", trace_label, len(households))
 
@@ -123,7 +124,7 @@ def household_attractor(
             nest_spec=nest_spec,
             locals_d=constants,
             trace_label=trace_label,
-            trace_choice_name="household_attractor",
+            trace_choice_name=f"household_attractor.{segment}",
             estimator=estimator,
         )
 
@@ -144,10 +145,13 @@ def household_attractor(
         )
 
         tracing.print_summary(
-            model_settings.RESULT_COL_NAME,
+            model_settings.RESULT_COL_NAME + "_" + segment,
             households[model_settings.RESULT_COL_NAME + "_" + segment],
             value_counts=True,
         )
+
+        if trace_hh_id:
+            state.tracing.trace_df(households, label=f"household_attactor_{segment}", warn_if_empty=True)
     
     state.add_table("households", households)
     
