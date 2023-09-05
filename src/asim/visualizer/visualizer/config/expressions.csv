@@ -1,6 +1,6 @@
 Description,Out Table,Out Col,In Table,Filter,In Col,Func,Group
 #,,,,,,,
-Auto Ownership,autoOwnership,freq,final_households,,finalweights,sum,HHVEH
+Auto Ownership,autoOwnership,freq,final_households,unittype == 0,finalweights,sum,HHVEH
 #,,,,,,,
 Household locations for workers in District 1,districtFlows,freq,final_persons,work_from_home==False and workplace_zone_id > 0,finalweights,sum,"HDISTRICT,WDISTRICT"
 Total number of workers by residence district,wfh_summary,Workers,final_persons,workplace_zone_id > 0,finalweights,sum,HDISTRICT
@@ -92,7 +92,16 @@ Transit subsidy,ownership_subsidies,transit_subsidy,final_persons,,transit_subsi
 #,,,,,,,
 Telecommute frequency,telecommute_frequency,freq,final_persons,is_out_of_home_worker,finalweights,sum,telecommute_frequency
 "Share of households with a joint tour (0,1+) by household size ",hh_joint_tours,share,final_households,,has_joint_tour_weight,sum,HHSIZE
-AV Ownership,autoOwnership_AV,share,final_households,,av_ownership_weight,sum,
+AV Ownership,autoOwnership_AV_ebike,av_ownership,final_households,unittype == 0,av_ownership_weight,sum,
+Ebike Ownership,autoOwnership_AV_ebike,ebike_ownership,final_households,unittype == 0,ebike_owner_weight,sum,
 Transponder Ownership,transponder_ownership,share,final_households,,transponder_ownership_weight,sum,
 #,,,,,,,
 Vehicle Types,vehicle_types,freq,final_vehicles,,finalweights,sum,"body_type,age,fuel_type"
+Vehicle allocation for drive alone tours,vehicle_allocation,Drive Alone,final_tours,,finalweights,sum,"vehicle_body_type_1,vehicle_age_1,vehicle_fuel_type_1"
+Vehicle allocation for shared ride 2 tours,vehicle_allocation,Shared Ride 2,final_tours,,finalweights,sum,"vehicle_body_type_2,vehicle_age_2,vehicle_fuel_type_2"
+Vehicle allocation for shared ride 3+ tours,vehicle_allocation,Shared Ride 3+,final_tours,,finalweights,sum,"vehicle_body_type_3.5,vehicle_age_3.5,vehicle_fuel_type_3.5"
+Vehicle allocation for chosen mode on tours,vehicle_allocation,Selected Tour Mode,final_tours,,finalweights,sum,"vehicle_body_type_selected,vehicle_age_selected,vehicle_fuel_type_selected"
+#,,,,,,,
+External worker frequency,externalFrequency,workers,final_persons,is_worker,external_worker_weight,sum,
+External nonmandatory tour frequency,externalFrequency,nonmand_tours,final_tours,tour_category == 'non_mandatory',external_nonmandatory_tour_weight,sum,
+External joint tour frequency,externalFrequency,joint_tours,final_tours,tour_category == 'joint',external_joint_tour_weight,sum,

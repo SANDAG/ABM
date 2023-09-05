@@ -8,7 +8,7 @@
 # Specify data to extract and load
 extract:
     - filepath: "../../../../output/resident"
-      test_size:
+      test_size: 1000
       data:
           - "final_households.csv"
           - "final_persons.csv"
@@ -19,11 +19,13 @@ extract:
     - filepath: "../../../../input"
       test_size:
       data:
+          - "households.csv"
           - "land_use.csv"
           - "occFactors.csv"
     - filepath: "../../../../output/skims"
       test_size:
       data:
+          - "maz_maz_walk.csv"
           - "traffic_skims_MD.omx"
 
 # Specify transformation steps
@@ -33,6 +35,14 @@ transform:
     steps:
         - name: step_0
           merge:
+              - table_name: final_households
+                include:
+                    - final_households
+                    - households
+                merge_cols:
+                    - household_id
+                    - hhid
+                merge_type: left
               - table_name: hh
                 include:
                     - final_households
