@@ -419,6 +419,7 @@ FINAL_TRIP_COLUMNS:
   - destination
   - origin
   - tour_id
+  - num_participants
   - purpose
   - destination_logsum
   - depart

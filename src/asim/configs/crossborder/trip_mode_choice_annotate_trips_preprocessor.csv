@@ -34,13 +34,13 @@ tour duration in hours,duration_hours,df['duration'] / PERIODS_PER_HOUR
 for tour_od_choice logsums read tour_dest from trips table,tour_dest,"reindex(tours.destination, df.tour_id) if _TOURS_HAVE_DEST else df.tour_destination"
 ,trip_orig_is_tour_dest,df.origin == tour_dest
 ,trip_dest_is_tour_dest,df.destination == tour_dest
-sandag costs need to be in cents,park_cost_day,"reindex(land_use.exp_daily, tour_dest) * 100"
-,park_cost_hour,"reindex(land_use.exp_hourly, tour_dest) * 100"
-,park_cost_month,"reindex(land_use.exp_monthly, tour_dest) * 100"
+sandag costs need to be in cents,park_cost_day,"reindex(land_use.dparkcost, tour_dest) * 100"
+,park_cost_hour,"reindex(land_use.hparkcost, tour_dest) * 100"
+,park_cost_month,"reindex(land_use.mparkcost, tour_dest) * 100"
 effective parking cost,park_cost_prim_dest,"pd.concat((park_cost_day, park_cost_hour * duration_hours), axis=1).min(axis=1)"
 ,park_cost_tour_dest_contrib,park_cost_prim_dest / tot_trips
-,park_cost_trip_orig,"reindex(land_use.exp_hourly, df[ORIGIN]) * 100"
-,park_cost_trip_dest,"reindex(land_use.exp_hourly, df[DESTINATION]) * 100"
+,park_cost_trip_orig,"reindex(land_use.hparkcost, df[ORIGIN]) * 100"
+,park_cost_trip_dest,"reindex(land_use.hparkcost, df[DESTINATION]) * 100"
 ,park_cost_trip_orig_contrib,((1 - first_trip) * (1 - trip_orig_is_tour_dest)) * (park_cost_trip_orig / 2) + (trip_orig_is_tour_dest * (park_cost_tour_dest_contrib / (tot_trips + 2)))
 ,park_cost_trip_dest_contrib,((1 - last_trip) * (1 - trip_dest_is_tour_dest)) * (park_cost_trip_dest / 2) + (trip_dest_is_tour_dest * (park_cost_tour_dest_contrib / (tot_trips + 2)))
 ,parking_cost,park_cost_tour_dest_contrib + park_cost_trip_orig_contrib + park_cost_trip_dest_contrib
