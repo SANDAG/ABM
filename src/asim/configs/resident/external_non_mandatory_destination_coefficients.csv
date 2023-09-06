@@ -1,0 +1,9 @@
+coefficient_name,value,constrain
+coef_mode_logsum,0.27,F
+coef_dist_escort,-0.356,F
+coef_dist_shopping,-0.42,F
+coef_dist_maint,-0.18,F
+coef_dist_eatout,-0.312,F
+coef_dist_social,-0.273,F
+coef_dist_discr,-0.345,F
+coef_size,1,T
