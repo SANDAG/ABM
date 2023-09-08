@@ -70,7 +70,13 @@ def get_commit_info(repo_path):
                 commit_hash = repo.head.commit.hexsha[:7]
                 if not repo.head.is_detached:
                     branch_name = repo.active_branch.name
-        except (git.InvalidGitRepositoryError, AttributeError):
+            else:
+                branch_name = repo.active_branch.name
+                branch_file = open(repo_path + "\\refs\\heads\\" + branch_name, "r")
+                commit_hash = branch_file.read()[:7]
+                # commit_hash = branch_file.read(7)
+                branch_file.close()
+        except (git.InvalidGitRepositoryError, AttributeError, FileNotFoundError):
             pass
 
     return {"short_commit_hash": commit_hash, "branch_name": branch_name}
@@ -156,7 +162,14 @@ def create_metadata_df(input_dir, unique_id, ts, time_to_write):
 
     # repo branch name and commit hash: abm3
     abm_configs_dir = inject.get_injectable("configs_dir")[0]
-    abm_git_folder = find_git_folder(abm_configs_dir, "../../../..")
+    abm_path_level = ".."
+    # check one to four levels up for git folder
+    for i in range(4):
+        abm_git_folder = find_git_folder(abm_configs_dir, abm_path_level)
+        if os.path.exists(abm_git_folder):
+            break
+        else:
+            abm_path_level += "/.."
     abm_commit_info = get_commit_info(abm_git_folder)
 
     username = os.getenv("USERNAME")
