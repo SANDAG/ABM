@@ -1,0 +1,20 @@
+Description,Target,Expression
+# define primary_purpose to use for slicing choosers with a value that identifies the spec to be used ,,
+# e.g. univ segment means there will be a spec called stop_frequency_univ.csv,,
+# so the 'school' tour_type can treat univ and non-univ school tours differently,,
+,primary_purpose,"df.tour_type.where((df.tour_type != 'school') | ~df.is_university, 'univ')"
+,primary_purpose,"primary_purpose.where(df.tour_category!='atwork', 'atwork')"
+,tour_mode_is_non_motorized,"df.tour_mode.isin(['WALK', 'BIKE', 'ESCOOTER', 'EBIKE'])"
+,tour_mode_is_sov,df.tour_mode == 'SOV'
+,tour_mode_is_hov,"df.tour_mode.isin(['HOV2', 'HOV3'])"
+,tour_mode_is_transit,"df.tour_mode.isin(['WALK_LOC', 'WALK_PRM', 'WALK_MIX', 'PNR_LOC', 'PNR_PRM', 'PNR_MIX', 'KNR_LOC', 'KNR_PRM', 'KNR_MIX', 'TNC_LOC', 'TNC_PRM', 'TNC_MIX'])"
+,tour_mode_is_taxi,"df.tour_mode.isin(['TAXI', 'TNC_SINGLE', 'TNC_SHARED'])"
+,distance_in_miles,od_skims['DIST']
+,is_joint,df.tour_category=='joint'
+,_HH_PERSON_COUNT,"lambda exp, persons: persons.query(exp).groupby('household_id').size()"
+,num_full,"reindex_i(_HH_PERSON_COUNT('ptype == %s' % PEMPLOY_FULL, persons), df.household_id)"
+,num_part,"reindex_i(_HH_PERSON_COUNT('ptype == %s' % PEMPLOY_PART, persons), df.household_id)"
+,num_student,"reindex_i(_HH_PERSON_COUNT('pstudent != %s' % PSTUDENT_NOT, persons), df.household_id)"
+Num Kids between 0 and 4 (including) years old,num_age_0_4,"reindex_i(_HH_PERSON_COUNT('age < 5', persons), df.household_id)"
+Num kids between 4 and 15 (including) years old,num_age_5_15,"reindex_i(_HH_PERSON_COUNT('(age >= 5) & (age <16)', persons), df.household_id)"
+,num_total_tours,"reindex_i(df.groupby('person_id').size(), df.person_id)"
