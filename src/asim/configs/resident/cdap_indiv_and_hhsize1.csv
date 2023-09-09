@@ -1,64 +1,46 @@
 Description,Expression,M,N,H
-Full-time worker alternative-specific constants,ptype == 1,coef_full_time_worker_asc_M,coef_full_time_worker_asc_N,
-Part-time worker alternative-specific constants,ptype == 2,coef_part_time_worker_asc_M,coef_part_time_worker_asc_N,
-University student alternative-specific constants,ptype == 3,coef_university_student_asc_M,coef_university_student_asc_N,
-Non-working adult alternative-specific constants,ptype == 4,coef_non_working_adult_asc_M,coef_non_working_adult_asc_N,
-Retired alternative-specific constants,ptype == 5,coef_retired_asc_M,coef_retired_asc_N,
-Driving-age child who is in school alternative-specific constants,ptype == 6,coef_driving_age_child_who_is_in_school_asc_M,coef_driving_age_child_who_is_in_school_asc_N,
-Pre-driving-age child who is in school alternative-specific constants,ptype == 7,coef_pre_driving_age_child_who_is_in_school_asc_M,coef_pre_driving_age_child_who_is_in_school_asc_N,
-Pre-driving-age child who is too young for school alternative-specific constants,ptype == 8,coef_pre_driving_age_child_who_is_too_young_for_school_asc_M,coef_pre_driving_age_child_who_is_too_young_for_school_asc_N,
-#,,,,
-Pre-driving-age child who is too young for school interaction with age 0 to 1,(ptype == 8) & (age >= 0) & (age <= 1),coef_pre_driving_age_child_who_is_too_young_for_school_interaction_with_age_0_to_1_M,coef_pre_driving_age_child_who_is_too_young_for_school_interaction_with_age_0_to_1_N,
-Pre-driving-age child who is too young for school interaction with age 4 to 5,(ptype == 8) & (age >= 4) & (age <= 5),coef_pre_driving_age_child_who_is_too_young_for_school_interaction_with_age_4_to_5_M,coef_pre_driving_age_child_who_is_too_young_for_school_interaction_with_age_4_to_5_N,
-Pre-driving-age child who is in school interaction with age 13 to 15,(ptype == 7) & (age >= 13) & (age <= 15),coef_pre_driving_age_child_who_is_in_school_interaction_with_age_13_to_15_M,,
-Full-time worker interaction with age less than 35,(ptype == 1) & (age < 35),,coef_full_time_worker_interaction_with_age_less_than_35_N,
-Part-time worker interaction with age less than 35,(ptype == 2) & (age < 35),coef_part_time_worker_interaction_with_age_less_than_35_N,coef_part_time_worker_interaction_with_age_less_than_35_N,
-#,,,,
-Full-time worker interaction with female gender,(ptype == 1) & (sex == 2),coef_full_time_worker_interaction_with_female_gender_M,coef_full_time_worker_interaction_with_female_gender_N,
-Part-time worker interaction with female gender,(ptype == 2) & (sex == 2),coef_part_time_worker_interaction_with_female_gender_M,coef_part_time_worker_interaction_with_female_gender_N,
-University student interaction with female gender,(ptype == 3) & (sex == 2),coef_university_student_interaction_with_female_gender_M,coef_university_student_interaction_with_female_gender_N,
-Non-working adult interaction with female gender,(ptype == 4) & (sex == 2),,coef_non_working_adult_interaction_with_female_gender_N,
-Retired interaction with female,(ptype == 5) & (sex == 2),coef_retired_interaction_with_female_M,coef_retired_interaction_with_female_N,
-Driving-age child interaction with female,(ptype == 6) & (sex == 2),,coef_driving_age_child_who_is_in_school_interaction_with_female_N,
-#,,,,
-Full-time worker interaction with more cars than workers,(ptype == 1) & (auto_ownership > num_workers),,coef_full_time_worker_interaction_with_more_cars_than_workers_N,
-Non-working adult interaction with more cars than workers,(ptype == 4) & (auto_ownership > num_workers),,coef_non_working_adult_interaction_with_more_cars_than_workers_N,
-Retired interaction with more cars than workers,(ptype == 5) & (auto_ownership > num_workers),,coef_retired_interaction_with_more_cars_than_workers_N,
-Driving-age child who is in school interaction with more cars than workers,(ptype == 6) & (auto_ownership > num_workers),coef_driving_age_child_who_is_in_school_interaction_with_more_cars_than_workers_M,,
-Full-time worker interaction with zero cars,(ptype == 1) & (auto_ownership==0),coef_full_time_worker_interaction_with_zero_cars_M,,
-Pre-driving-age child who is too young for school interaction with zero cars,(ptype == 8) & (auto_ownership==0),coef_pre_driving_age_child_who_is_too_young_for_school_interaction_with_zero_cars_M,coef_pre_driving_age_child_who_is_too_young_for_school_interaction_with_zero_cars_N,
-Full-time worker interaction with fewer cars than workers,(ptype == 1) & (auto_ownership < num_workers),coef_full_time_worker_interaction_with_fewer_cars_than_workers_M,,
-Pre-driving-age child who is too young for school interaction with fewer cars than workers,(ptype == 8) & (auto_ownership < num_workers),coef_pre_driving_age_child_who_is_too_young_for_school_interaction_with_fewer_cars_than_workers_M,coef_pre_driving_age_child_who_is_too_young_for_school_interaction_with_fewer_cars_than_workers_N,
-#,,,,
-Full-time worker interaction with income less than $30k,(ptype == 1) & (income < 30000),coef_full_time_worker_interaction_with_income_less_than_30k_M,,coef_full_time_worker_interaction_with_income_less_than_30k_H
-Part-time worker interaction with income less than $30k,(ptype == 2) & (income < 30000),coef_part_time_worker_interaction_with_income_less_than_30k_M,,
-University student interaction with income less than $30k,(ptype == 3) & (income < 30000),coef_university_student_interaction_with_income_less_than_30k_M,,
-University student interaction with income between $60k and $100k,(ptype == 3) & (income >= 60000) & (income <= 100000),,,coef_university_student_interaction_with_income_between_60k_and_100k_H
-University student interaction with income more than $100k,(ptype == 3) & (income >= 100000),,,coef_university_student_interaction_with_income_more_than_100k_H
-Non-working adult interaction with income more than $100k,(ptype == 4) & (income >= 100000),,,coef_non_working_adult_interaction_with_income_more_than_100k_H
-Retired interaction with income between $60k and $100k,(ptype == 5) & (income >= 60000) & (income <= 100000),,,
-Retired interaction with income more than $100k,(ptype == 5) & (income >= 100000),coef_retired_interaction_with_income_more_than_100k_M,,coef_retired_interaction_with_income_more_than_100k_H
-Pre-driving-age child who is in school interaction with income less than $30k,(ptype == 7) & (income < 30000),coef_pre_driving_age_child_who_is_in_school_interaction_with_income_less_than_30k_M,,coef_pre_driving_age_child_who_is_in_school_interaction_with_income_less_than_30k_H
-Pre-driving-age child who is too young for school interaction with income between $60k and $100k,(ptype == 8) & (income >= 60000) & (income <= 100000),coef_pre_driving_age_child_who_is_too_young_for_school_interaction_with_income_between_60k_and_100k_M,,
-Pre-driving-age child who is too young for school interaction with income more than $100k,(ptype == 8) & (income >= 100000),coef_pre_driving_age_child_who_is_too_young_for_school_interaction_with_income_more_than_100k_M,,
-#,,,,
-University Student interaction with peak accessibility to all employment,"@np.where((df.ptype == 3)  & (df.school_modechoice_logsum > 0), df.school_modechoice_logsum, 0)",coef_university_student_interaction_with_school_location_mc_logsum_M,,
-# do not have different non-mandatory accessibilities so combining above expressions,,,,
-Full-time Worker interaction with accessibility to retail,"@np.where((df.ptype == 1), df.shopping_accessibility, 0)",,coef_full_time_worker_interaction_with_retail_accessibility_N,
-Non-working adult interaction with accessibility to retail,"@np.where((df.ptype == 4), df.shopping_accessibility, 0)",,coef_non_working_adult_interaction_with_retail_accessibility_N,
-Driving-age child who is in school interaction with accessibility to retail,"@np.where((df.ptype == 6), df.shopping_accessibility, 0)",,coef_driving_age_child_who_is_in_school_interaction_with_retail_accessibility_N,
-#,,,,
-Full-time worker interaction with detached house,(ptype == 1) & (bldgsz < 3),,,coef_full_time_worker_interaction_with_detached_home_H
-Part-time worker interaction with detached house,(ptype == 2) & (bldgsz < 3),,,coef_part_time_worker_interaction_with_detached_home_H
-Retired interaction with detached house,(ptype == 5) & (bldgsz < 3),,,coef_retired_interaction_with_detached_home_H
-Pre-driving-age child in School interaction with detached house,(ptype == 6) & (bldgsz < 3),,,coef_driving_age_child_who_is_in_school_interaction_with_detached_home_H
-#,,,,
-Mandatory pattern unavailable for retired person,ptype == 5,coef_UNAVAILABLE,,
-Mandatory pattern unavailable for nonworking adult person type,ptype == 4,coef_UNAVAILABLE,,
-# turning Mandatory pattern off for FT and PT who work from home,,,,
-Full time worker who works from home,(ptype == 1) & (work_from_home),coef_UNAVAILABLE,coef_ft_worker_work_from_home_N,
-Part time worker who works from home,(ptype == 2) & (work_from_home),coef_UNAVAILABLE,,
-#Simulate telecommuting by reducing mandatory patterns,,,,
+Full-time worker ASC,ptype == 1,coef_full_time_worker_asc_M,coef_full_time_worker_asc_N,
+Part-time worker ASC,ptype == 2,coef_part_time_worker_asc_M,coef_part_time_worker_asc_N,
+University student ASC,ptype == 3,coef_university_student_asc_M,coef_university_student_asc_N,
+Non-working adult ASC,ptype == 4,,coef_non_working_adult_asc_N,
+Retired ASC,ptype == 5,,coef_retired_asc_N,
+Driving-age child who is in school ASC,ptype == 6,coef_driving_age_child_asc_M,coef_driving_age_child_asc_N,
+Pre-driving-age child who is in school ASC,ptype == 7,coef_pre_driving_age_child_asc_M,coef_pre_driving_age_child_asc_N,
+Preschool child ASC,ptype == 8,coef_preschool_child_asc_M,coef_preschool_child_asc_N,
+Full-time worker interaction with age less than 35,(ptype == 1) & (age < 35),coef_full_time_worker_age_less_than_35_M,coef_full_time_worker_age_less_than_35_N,
+Part-time worker interaction with age less than 35,(ptype == 2) & (age < 35),coef_part_time_worker_age_less_than_35_M,coef_full_time_worker_age_less_than_35_N,
+Age over 80,(age >= 80),,coef_age_80_plus_N,
+Zero auto ownership base,(auto_ownership == 0),coef_base_zero_auto_M,coef_base_zero_auto_N,
+Zero auto ownership university_student,(ptype == 3) & (auto_ownership == 0),,coef_university_student_zero_auto_N,
+Zero auto ownership non_working_adult,(ptype == 4) & (auto_ownership == 0),,coef_non_working_adult_zero_auto_N,
+Auto Deficient part-time worker,(ptype == 2) & (auto_ownership > 0) & (auto_ownership < num_adults),coef_part_time_worker_auto_deficient_M,,
+Auto Deficient university_student,(ptype == 3) & (auto_ownership > 0) & (auto_ownership < num_adults),coef_university_student_auto_deficient_M,coef_university_student_auto_deficient_N,
+Auto Deficient non_working_adult,(ptype == 4) & (auto_ownership > 0) & (auto_ownership < num_adults),,coef_non_working_adult_auto_deficient_N,
+Auto Deficient retired,(ptype == 5) & (auto_ownership > 0) & (auto_ownership < num_adults),,coef_retired_auto_deficient_N,
+Auto Deficient driving_age_child,(ptype == 6) & (auto_ownership > 0) & (auto_ownership < num_adults),,coef_driving_age_child_auto_deficient_N,
+Auto Deficient pre_driving_age_child,(ptype == 7) & (auto_ownership > 0) & (auto_ownership < num_adults),coef_pre_driving_age_child_auto_deficient_M,coef_pre_driving_age_child_auto_deficient_N,
+Auto Deficient preschool_child,(ptype == 8) & (auto_ownership > 0) & (auto_ownership < num_adults),coef_preschool_child_auto_deficient_M,,
+Full-time worker interaction with income less than $30k,(ptype == 1) & (income < 30000),,,coef_full_time_worker_income_less_than_30k_H
+Part-time worker interaction with income less than $30k,(ptype == 2) & (income < 30000),,,coef_part_time_worker_income_less_than_30k_H
+University student interaction with income between $60k and $100k,(ptype == 3) & (income >= 60000) & (income <= 100000),,,coef_university_student_income_between_60k_and_100k_H
+Preschool child interaction with income between $60k and $100k,(ptype == 8) & (income >= 60000) & (income <= 100000),coef_preschool_child_income_between_60k_and_100k_M,,
+Mandatory pattern unavailable if not worker or student,(is_student == False) & (is_worker == False),coef_UNAVAILABLE,,
+Mandatory pattern unavailable if not works from home,(work_from_home) & (is_student == False),coef_UNAVAILABLE,,
+Base works from home,(work_from_home),,coef_base_work_from_home_N,
+Base works from home 2016,(work_from_home),,coef_base_work_from_home_2016_N,
+Part time worker who works from home,(ptype == 2) & (work_from_home),,coef_part_time_worker_work_from_home_N,
+Part time worker who works from home,@(df.ptype == 2) & (df.work_from_home) & (PRE_COVID),,coef_part_time_worker_work_from_home_2016_N,
 Telecommutes 1 day per week,telecommute_frequency=='1_day_week',,coef_telecommute_1_day_week_N,coef_telecommute_1_day_week_H
 Telecommutes 2-3 days per week,telecommute_frequency=='2_3_days_week',,coef_telecommute_2_3_days_week_N,coef_telecommute_2_3_days_week_H
 Telecommutes 4 days per week,telecommute_frequency=='4_days_week',,coef_telecommute_4_days_week_N,coef_telecommute_4_days_week_H
+Full-time worker 2016 ASC,@(df.ptype == 1) & (PRE_COVID),coef_full_time_worker_2016_asc_M,coef_full_time_worker_2016_asc_N,
+Part-time worker 2016 ASC,@(df.ptype == 2) & (PRE_COVID),coef_part_time_worker_2016_asc_M,coef_part_time_worker_2016_asc_N,
+University student 2016 ASC,@(df.ptype == 3) & (PRE_COVID),coef_university_student_2016_asc_M,coef_university_student_2016_asc_N,
+Non-working adult 2016 ASC,@(df.ptype == 4) & (PRE_COVID),,coef_non_working_adult_2016_asc_N,
+Retired 2016 ASC,@(df.ptype == 5) & (PRE_COVID),,coef_retired_2016_asc_N,
+Driving-age child who is in school 2016 ASC,@(df.ptype == 6) & (PRE_COVID),coef_driving_age_child_2016_asc_M,coef_driving_age_child_2016_asc_N,
+Pre-driving-age child who is in school 2016 ASC,@(df.ptype == 7) & (PRE_COVID),coef_pre_driving_age_child_2016_asc_M,coef_pre_driving_age_child_2016_asc_N,
+Preschool child 2016 ASC,@(df.ptype == 8) & (PRE_COVID),coef_preschool_child_2016_asc_M,coef_preschool_child_2016_asc_N,
+Telecommutes 1 day per week 2016,@(df.telecommute_frequency=='1_day_week') & (PRE_COVID),,coef_telecommute_1_day_week_2016_N,coef_telecommute_1_day_week_2016_H
+Telecommutes 2-3 days per week 2016,@(df.telecommute_frequency=='2_3_days_week') & (PRE_COVID),,coef_telecommute_2_3_days_week_2016_N,coef_telecommute_2_3_days_week_2016_H
+Telecommutes 4 days per week 2016,@(df.telecommute_frequency=='4_days_week') & (PRE_COVID),,coef_telecommute_4_days_week_2016_N,coef_telecommute_4_days_week_2016_H
