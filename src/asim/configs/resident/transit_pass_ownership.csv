@@ -1,21 +1,20 @@
 Label,Description,Expression,no_pass,pass
-util_ft,Full-time worker,@df.pemploy==PEMPLOY_FULL,0,coef_ft_pass
-util_pt,Part-time worker,@df.pemploy==PEMPLOY_PART,0,coef_pt_pass
-util_un,University/College,@df.ptype==PTYPE_UNIVERSITY,0,coef_un_pass
-util_nw,Non-working adult,@df.ptype==PTYPE_NONWORK,0,coef_nw_pass
-util_rt,Retired,@df.ptype==PTYPE_RETIRED,0,coef_rt_pass
-util_inc1,0-$9k,"@df.income.between(0, 9000)",0,coef_inc1_pass
-util_inc2,$10-$24k,"@df.income.between(10000, 24000)",0,coef_inc2_pass
-util_inc3,$25-$34k,"@df.income.between(25000,34000)",0,coef_inc3_pass
-util_inc4,$35-$49k,"@df.income.between(35000,49000)",0,coef_inc4_pass
-util_inc10,$250k+,@df.income >= 250000,0,coef_inc10_pass
-#util_na20,NAICS 20 (mining/utilities/construct),@df.industry_naics=='20',0,coef_na20_pas
-#util_na30,NAICS 30 (manufacturing,@df.industry_naics=='30',0,coef_na30_pas
-#util_na50,NAICS 50 (Info/Fin/insur/real estate/prof/sci/tech/manage/admin),@df.industry_naics=='50',0,coef_na50_pas
-#util_na70,NAICS 70 (Entertain/accom),@df.industry_naics=='70',0,coef_na70_pas
-#util_na80,NAICS 80 (Other services),@df.industry_naics=='80',0,coef_na80_pas
-#util_publ,NAICS 90 (Public admin),@df.industry_naics=='90',0,coef_publ_pas
-#approximate measure for the time being,,,,
-util_wrkamt,Auto minus transit time (work),@df.work_auto_savings * -1,0,coef_wrkamt_pas
-util_subs,Subsidy offered,@df.transit_pass_subsidy,0,coef_subs_pas
-utils_pass_asc,Constant,1,0,coef_pass_asc
+util_pass_asc,Constant,1,0,asc_pass
+util_age_19_to_34,Age Group - 19  yrs to 34 yrs,@(df.age >= 19) & (df.age < 35),0,coef_age_19_to_34_pass
+util_age_35_to_44,Age Group - 35 yrs to 44 yrs,@(df.age >= 35) & (df.age < 45),0,coef_age_35_to_44_pass
+util_age_55_to_64,Age Group - 55 yrs to 64 yrs,@(df.age >= 55) & (df.age < 65),0,coef_age_55_to_64_pass
+util_age_65_to_79,Age Group - 65 yrs to 79 yrs,@(df.age >= 65) & (df.age < 80),0,coef_age_65_to_79_pass
+util_hhinc_less_15,"Income less than 15,000",@df.income<15000,0,coef_hhinc_less_15
+util_hhinc_15_25,"income between 15,000- 24,999","@df.income.between(15000,24999)",0,coef_hhinc_15_25
+util_hhinc_50_100,"income between 50,000 and 99,999","@df.income.between(50000,99999)",0,coef_hhinc_50_100
+util_hhinc_100_200,"income between 100,000 and 199,999","@df.income.between(100000,199999)",0,coef_hhinc_100_200
+util_hhinc_200_plus,"income greater than 250,000",@df.income>=200000,0,coef_hhinc_200_plus
+util_persons_0_4_in_hhld,Persons age 0-4 in hhld,@df.num_young_children,0,coef_persons_0_4_in_hhld_pass
+util_persons_5_15_in_hhld,Persons age 5-15 in hhld,@df.num_children_5_to_15,0,coef_persons_5_15_in_hhld_pass
+util_zero_autos,zero auto household ownership,@df.auto_ownership==0,0,coef_zero_autos_pass
+util_auto_deficient,auto deficient household,@((df.auto_ownership < df.num_workers) & (df.auto_ownership > 0)),0,coef_auto_deficient_pass
+util_subs,Subsidy offered,@df.transit_pass_subsidy,0,coef_subs_pass
+util_inc_adj_transit_pass_cost,Income adjusted transit pass cost,"@df.transit_pass_cost_per_trip / (np.maximum(df.income, 1000) ** df.income_exponent) / 60",0,coef_tripmc_cost_coef
+util_parking_cost_at_work,Parking cost at work,@df.exp_daily_work,0,coef_parking_cost_at_work_pass
+util_total_acc_transit,Total accessibility (0.66*PK + 0.34*OP) by transit,@(0.66*df.trPkTotal+0.34*df.trOpTotal),0,coef_total_transit_acc_pass
+util_is_univ,University student,@df.is_university,0,coef_is_univ

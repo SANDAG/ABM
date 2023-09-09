@@ -1,12 +1,20 @@
 Label,Description,Expression,no_subsidy,subsidy
-util_ft,Full-time worker,@df.pemploy==PEMPLOY_FULL,0,coef_ft
 util_pt,Part-time worker,@df.pemploy==PEMPLOY_PART,0,coef_pt
 util_un,University/College,@df.ptype==PTYPE_UNIVERSITY,0,coef_un
 util_tr_hh_emp,Household transit accessibility to Employment,@df.trPkTotal,0,coef_tr_hh_emp
-util_tr_emp_hh,Employment transit access to HHs,@df.trn_wk_access_hh,0,0
-util_pkcost,Peak parking cost (dollars),@df.exp_daily_work * 8.0,0,coef_pkcost
-util_inc60b,Low income HH,@df.is_income_less25K,0,coef_lowincome
-util_inc25_60,ML income HH,@df.is_income_25K_to_60K,0,coef_medlowincome
-util_inc60_120,MH income HH,@df.is_income_60K_to_120K,0,coef_medhighincome
-util_inc_120p,High income,@df.is_income_greater120K,0,coef_highincome
+util_tr_emp_hh,Employment transit access to HHs,@df.trn_wk_access_hh,0,coef_tr_emp_hh
+util_pkcost,Peak parking cost (dollars),@df.exp_daily_work,0,coef_pkcost
+util_hhinc_less_15,"Income less than 15,000",@df.income<15000,0,coef_hhinc_less_15
+util_hhinc_100_200,"income between 100,000 and 200,000","@df.income.between(100000,199999)",0,coef_hhinc_100_200
+util_ind_bus_srv,Industry type is business services,@df.naics_code==54,0,coef_ind_bus_srv
+util_ind_construct,Industry type is construction,@df.naics_code==23,0,coef_ind_construct
+util_ind_edu,Industry type is education,@df.naics_code==61,0,coef_ind_edu
+util_ind_food_srv,Industry type is food services,@df.naics_code==722,0,coef_ind_food_srv
+util_ind_gov,Industry type is government,@df.naics_code==92,0,coef_ind_gov
+util_ind_health,Industry type is healthcare,@df.naics_code==62,0,coef_ind_health
+util_ind_mgmt_srv,Industry type is management services,@df.naics_code==55,0,coef_ind_mgmt_srv
+util_ind_mil,Industry type is military,@df.naics_code==9000,0,coef_ind_mil
+util_ind_retail,Industry type is retail,@df.naics_code==721,0,coef_ind_retail
+util_is_student,Student status,@df.is_student,0,coef_is_student
 utils_sub_asc,Constant,1,0,coef_sub_asc
+util_availability,Availability of transit pass,transit_subsidy_available,0,coef_unavailable

@@ -1,13 +1,20 @@
-coefficient_name,coefficient description,value,constrain
-coef_ft,Full-time worker,0.00,T
-coef_pt,Part-time worker,-0.276,F
-coef_un,University student,-1.15,F
-coef_highincome,High income,0.00,T
-coef_medhighincome,Med-high income,-0.261,F
-coef_medlowincome,Med-low income,-0.806,F
-coef_lowincome,Low income,-1.87,F
-coef_pkcost,Daily parking cost (dollars),0.000472,F
-coef_tr_hh_emp,Transit accessibility to households,0.223,F
-coef_sub_asc,Constant,-2.60,F
-
-
+coefficient_name,value,constrain
+coef_hhinc_100_200,-0.340,F
+coef_hhinc_less_15,-0.866,F
+coef_ind_bus_srv,1.07,F
+coef_ind_construct,0.904,F
+coef_ind_edu,0.635,F
+coef_ind_food_srv,-2.11,F
+coef_ind_gov,1.46,F
+coef_ind_health,0.895,F
+coef_ind_mgmt_srv,0.800,F
+coef_ind_mil,1.72,F
+coef_ind_retail,-1.59,F
+coef_is_student,-0.870,F
+coef_pkcost,0.0630,F
+coef_pt,-0.685,F
+coef_sub_asc,-4.19,F
+coef_tr_emp_hh,0.0431,F
+coef_tr_hh_emp,0.0434,F
+coef_un,0.508,F
+coef_unavailable,-999.0,F
