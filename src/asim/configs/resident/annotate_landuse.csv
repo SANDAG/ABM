@@ -7,5 +7,5 @@ density_index,density_index,(household_density *employment_density) / (household
 ,is_cbd,land_use.pseudomsa == 1
 total college enrollment for mandatory constraint target,tot_collegeenroll,land_use.adultschenrl + land_use.collegeenroll + land_use.othercollegeenroll
 preschool target for mandatory constraint - sum of all size terms,preschool_target,land_use['pop'] + land_use.emp_bus_svcs + land_use.emp_educ + land_use.emp_fin_res_mgm + land_use.emp_gov + land_use.emp_hlth + land_use.emp_mil + land_use.emp_oth
-Is a zone with parking,is_parking_zone,(land_use.parking_type > 0)
+Is a zone with parking,is_parking_zone,(land_use.parking_type == 1)
 Total Employment excluding non-salaried workers,emp_total,land_use['emp_total'] - land_use['emp_non_ws_wfh'] - land_use['emp_non_ws_oth']

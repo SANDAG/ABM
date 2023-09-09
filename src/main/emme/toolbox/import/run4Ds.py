@@ -266,10 +266,10 @@ class FourDs(_m.Tool()):
             mgra_circa_int = eqmn[eqmn['dist'] < self.int_radius]['j'].unique()
             mgra_circa_oth = eqmn[eqmn['dist'] < self.oth_radius]['j'].unique()
             totEmp = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['emp_total'].sum()
-            totRet = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['emp_retail'].sum() + mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['emp_personal_svcs_retail'].sum() + mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['emp_restaurant_bar'].sum()
+            totRet = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['emp_ret'].sum()
             totHH = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['hh'].sum()
             totPop = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['persons'].sum()
-            totAcres = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['land_acres'].sum()
+            totAcres = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['landacre'].sum()
             totInt = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_int)]['icnt'].sum()
             if(totAcres>0):
                 empDen = totEmp/totAcres

@@ -25,7 +25,7 @@ class EstimateStreetParking(base.Base):
         assert isinstance(self.lu_df, pd.DataFrame)
 
         parking_df = self.aggregate_spaces_data(self.imputed_parking_df)
-        street_data = self.get_streetdata(mgra_gdf, cache_dir)
+        street_data = self.get_streetdata(mgra_gdf)
         estimated_spaces = self.estimate_spaces(
             street_data, mgra_gdf, parking_df, self.lu_df, method
         )
@@ -171,8 +171,11 @@ class EstimateStreetParking(base.Base):
         streets_gdf.index = mgra_gdf.index
         return streets_gdf
 
-    def get_streetdata(self, mgra_gdf, cache_dir):
-        data_path = os.path.join(cache_dir, 'aggregated_street_data.csv')
+    def get_streetdata(self, mgra_gdf):        
+        out_dir = self.settings.get("output_dir")
+        cache_dir = self.settings.get("cache_dir")
+        data_path = os.path.join(out_dir, 'aggregated_street_data.csv')
+        
         if not os.path.isfile(data_path):
             print("Aggregated street data")
             full_graph = self.get_network(mgra_gdf, cache_dir)

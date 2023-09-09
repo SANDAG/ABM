@@ -6,6 +6,7 @@ preprocessor:
   DF: trips
   TABLES:
     - tours
+    - land_use
 
 # divide trip counts by household expansion factor
 HH_EXPANSION_WEIGHT_COL: sample_rate  # added when households read in
@@ -419,6 +420,7 @@ FINAL_TRIP_COLUMNS:
   - destination
   - origin
   - tour_id
+  - num_participants
   - purpose
   - destination_logsum
   - depart

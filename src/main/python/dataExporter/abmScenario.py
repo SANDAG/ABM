@@ -2285,7 +2285,7 @@ class TripLists(ScenarioData):
 
         # read all trip list files into a Pandas DataFrame
         trips = pd.concat((
-            pd.read_csv(os.path.join(self.scenario_path, "output/cvm", file),
+            pd.read_csv(os.path.join(self.scenario_path, "output", file),
                         usecols=["SerialNo",
                                  "Trip",
                                  "HomeZone",
@@ -2435,7 +2435,7 @@ class TripLists(ScenarioData):
                               "DPurp": "tripPurposeDestination",
                               "I": "originTAZ",
                               "J": "destinationTAZ",
-                              "Mode": "tripMode",
+                              "Mode": "trip_mode",
                               "StopDuration": "stopDuration"},
                      inplace=True)
 
@@ -2452,7 +2452,7 @@ class TripLists(ScenarioData):
                       "originTAZ",
                       "destinationTAZ",
                       "parkingTAZ",
-                      "tripMode",
+                      "trip_mode",
                       "valueOfTimeCategory",
                       "transponderAvailable",
                       "avUsed",

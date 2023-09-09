@@ -113,7 +113,9 @@ shortWalk: 0.333
 longWalk: 0.667
 walkSpeed: 3.00
 bikeThresh: 6.00
-bikeSpeed: 12.00
+bikeSpeed: 7.80
+ebikeSpeed: 10.00
+escooterSpeed: 6.70
 driveSpeed: 25.00
 maxCbdAreaTypeThresh: 2
 indivTour: 1.00000
@@ -262,12 +264,14 @@ torrypines_maz: 4305
 
 # Micromobility constants
 microSpeed: 12
-microVarCost: 0.20
-microFixedCost: 1.00
+microVarCost: 20 #cents
+microFixedCost: 100 #cents
 microRentTime: 1
 microConstant: 60
 microAccessThreshold: 100
-microOwnership: 0.008
+ebikeownership: 0.008
+ebikeMaxDist: 10.50
+escooterMaxDist: 2.00
 
 # cost of "average" monthly transit pass cost.  Used in transit pass ownership model.
 # cost of pass divided by 2 for age < 18 and 65+.

@@ -138,7 +138,6 @@ output_tables:
     - persons
     - tours
     - trips
-    - attribute_combinations
 
 output_summaries:
   tours:

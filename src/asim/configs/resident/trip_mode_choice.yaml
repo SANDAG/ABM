@@ -103,6 +103,8 @@ TOURS_MERGED_CHOOSER_COLUMNS:
   - transponder_ownership
   - ptype
   - ebike_owner
+  - start
+  - end
 
 MODE_CHOICE_LOGSUM_COLUMN_NAME: mode_choice_logsum
 

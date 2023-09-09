@@ -9,7 +9,7 @@ tables:
   autoOwnership:
     merge:
       - HHVEH
-  autoOwnership_AV:
+  autoOwnership_AV_ebike:
     merge:
       - index
   avgStopOutofDirectionDist_vis:
@@ -41,6 +41,9 @@ tables:
       - child_type
     total:
       child_type: Total
+  externalFrequency:
+    merge:
+      - index
   hhSizeDist:
     merge:
       - HHSIZE
@@ -227,6 +230,12 @@ tables:
     total:
       purpose: Total
       tour_mode: Total
+  vehicle_allocation:
+    merge:
+      - Vehicle Body Type
+      - Vehicle Age
+      - Vehicle Fuel Type
+      - Tour Mode
   vehicle_types:
     merge:
       - body_type

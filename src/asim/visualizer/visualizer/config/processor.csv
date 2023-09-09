@@ -220,6 +220,19 @@ Add variable indicating if next stop is on inbound tour leg to joint trip data,s
 Add variable indicating if joint trip is intermediate stop on tour,step_1,raw,,,,"jointTripData_3['stops'] = np.where((jointTripData_3['DPURP'] > 0) & (((jointTripData_3['inbound'] == 0) & (jointTripData_3['inb_next'] == 0)) | ((jointTripData_3['inbound'] == 1) & (jointTripData_3['inb_next'] == 1))), 1, 0)"
 Classify number of adults,step_1,rename,final_households,,,{'num_adults': 'ADULTS'}
 #,,,,,,
+Get vehicle body type for drive alone,step_1,apply,final_tours,vehicle_body_type_1,vehicle_occup_1,get_vehicle_body_type
+Get vehicle age for drive alone,step_1,apply,final_tours,vehicle_age_1,vehicle_occup_1,get_vehicle_age
+Get vehicle fuel type for drive alone,step_1,apply,final_tours,vehicle_fuel_type_1,vehicle_occup_1,get_vehicle_fuel_type
+Get vehicle body type for shared ride 2,step_1,apply,final_tours,vehicle_body_type_2,vehicle_occup_2,get_vehicle_body_type
+Get vehicle age for shared ride 2,step_1,apply,final_tours,vehicle_age_2,vehicle_occup_2,get_vehicle_age
+Get vehicle fuel type for shared ride 2,step_1,apply,final_tours,vehicle_fuel_type_2,vehicle_occup_2,get_vehicle_fuel_type
+Get vehicle body type for shared ride 3+,step_1,apply,final_tours,vehicle_body_type_3.5,vehicle_occup_3.5,get_vehicle_body_type
+Get vehicle age for shared ride 3+,step_1,apply,final_tours,vehicle_age_3.5,vehicle_occup_3.5,get_vehicle_age
+Get vehicle fuel type for shared ride 3+,step_1,apply,final_tours,vehicle_fuel_type_3.5,vehicle_occup_3.5,get_vehicle_fuel_type
+Get vehicle body type for chosen mode,step_1,apply,final_tours,vehicle_body_type_selected,selected_vehicle,get_vehicle_body_type
+Get vehicle age for chosen mode,step_1,apply,final_tours,vehicle_age_selected,selected_vehicle,get_vehicle_age
+Get vehicle fuel type for chosen mode,step_1,apply,final_tours,vehicle_fuel_type_selected,selected_vehicle,get_vehicle_fuel_type
+#,,,,,,
 Classify vehicle ownership category for individual tours,step_3,raw,hh_itours,,,"hh_itours['AUTOSUFF'] = np.where(hh_itours['HHVEH'] == 0, 0, np.where(hh_itours['HHVEH'] < hh_itours['ADULTS'], 1, 2))"
 Classify vehicle ownership category for joint tours,step_3,raw,hh_jtours,,,"hh_jtours['AUTOSUFF'] = np.where(hh_jtours['HHVEH'] == 0, 0, np.where(hh_jtours['HHVEH'] < hh_jtours['ADULTS'], 1, 2))"
 #,,,,,,
@@ -309,6 +322,7 @@ Add work location parking cost to person file,step_3,raw,,,,final_persons['workl
 ,step_3,raw,,,,_free_parking_weights_by_ptype = dict(final_persons.query('workloc_parkcost > 0').groupby('PERTYPE').sum()['finalweights'])
 ,step_3,replace,final_persons,free_parking_ptype_weight_sum,PERTYPE,_free_parking_weights_by_ptype
 Create weight to average for getting parking reimbursement,step_3,column,final_persons,free_parking_weight,,free_parking_at_work * finalweights / free_parking_ptype_weight_sum
+,step_3,column,final_households,ebike_owner_weight,,ebike_owner * finalweights / total_households
 #,,,,,,
 #,step_3,raw,,,,"_num_workers_by_ptype = dict(final_persons[['is_worker', 'PERTYPE', 'finalweights']].query('is_worker').groupby('PERTYPE').sum()['finalweights'])"
 #,step_3,replace,final_persons,num_workers_by_ptype,PERTYPE,_free_parking_weights_by_ptype
@@ -318,6 +332,15 @@ Create total weights by person type,step_3,raw,,,,"_sum_weights_by_ptype = dict(
 ,step_3,replace,final_persons,ptype_weight_sum,PERTYPE,_sum_weights_by_ptype
 ,step_3,column,final_persons,transit_pass_weight,,transit_pass_ownership * finalweights / ptype_weight_sum
 ,step_3,column,final_persons,transit_subsidy_weight,,transit_pass_subsidy * finalweights / ptype_weight_sum
+,step_3,raw,,,,final_persons['total_workers'] = (final_persons['is_worker'] * final_persons['finalweights']).sum()
+,step_3,column,final_persons,external_worker_weight,,is_external_worker * finalweights / total_workers
+,step_3,raw,,,,"final_tours['total_nonmandatory_tours'] = final_tours.query('tour_category == ""non_mandatory""')['finalweights'].sum()"
+,step_3,raw,,,,"final_tours['total_joint_tours'] = final_tours.query('tour_category == ""joint""')['finalweights'].sum()"
+,step_3,column,final_tours,is_nonmandatory_tour,,"tour_category == ""non_mandatory"""
+,step_3,column,final_tours,is_joint_tour,,"tour_category == ""joint"""
+,step_3,raw,,,,final_tours['is_external_tour_filled'] = final_tours['is_external_tour'].fillna(False)
+,step_3,column,final_tours,external_nonmandatory_tour_weight,,is_external_tour_filled * is_nonmandatory_tour * finalweights / total_nonmandatory_tours
+,step_3,column,final_tours,external_joint_tour_weight,,is_external_tour_filled * is_joint_tour * finalweights / total_joint_tours
 #,,,,,,
 "Split out vehicle body type, age, and fuel type",step_3,apply,final_vehicles,veh_info,vehicle_type,lambda x: x.split('_')
 Extract vehicle body type,step_3,apply,final_vehicles,body_type,veh_info,lambda x: x[0]
@@ -443,5 +466,10 @@ Recode in escort type,step_6,replace,worker_school_escorting,inb_escort_type,inb
 Recode out escort type,step_6,replace,worker_school_escorting,out_escort_type,out_escort_type,"{0: 'No Escort', 1: 'Ride Share', 2: 'Pure Escort', 3: 'No Escort'}"
 Recode number of joint tours in households,step_6,replace,hhsizeJoint,JOINT,JOINT,"{0: '0', 1: '1+'}"
 #,,,,,,
-Reset autoOwnership_AV index,step_6,raw,,,,autoOwnership_AV = autoOwnership_AV.reset_index()
+Reset autoOwnership_AV index,step_6,raw,,,,autoOwnership_AV_ebike = autoOwnership_AV_ebike.reset_index()
 Reset transponder_ownership index,step_6,raw,,,,transponder_ownership = transponder_ownership.reset_index()
+Reset externalFrequency index,step_6,raw,,,,externalFrequency = externalFrequency.reset_index()
+#,,,,,,
+Rename vehicle allocation columns,step_6,rename,vehicle_allocation,,,"{""level_0"": ""Vehicle Body Type"", ""level_1"": ""Vehicle Age"", ""level_2"": ""Vehicle Fuel Type""}"
+Fill null values with 0,step_6,raw,,,,vehicle_allocation = vehicle_allocation.fillna(0)
+Melt vehicle allocation table,step_6,raw,,,,"vehicle_allocation = pd.melt(vehicle_allocation, id_vars = ['Vehicle Body Type', 'Vehicle Age', 'Vehicle Fuel Type'], var_name = 'Tour Mode', value_name = 'freq').rename(columns = {'index': 'Vehicle Number'})"

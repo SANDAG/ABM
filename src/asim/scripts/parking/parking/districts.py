@@ -13,7 +13,7 @@ class CreateDistricts(base.Base):
     
     def create_districts(self):
 
-        out_dir = os.path.join(self.settings.get("output_dir"), "shapefiles")
+        out_dir = self.settings.get("output_dir")
 
         mgra_gdf = self.mgra_data()        
         print("Creating parking districts")
@@ -34,7 +34,7 @@ class CreateDistricts(base.Base):
         
         # Skip this step if nothing to update
         if all_shp_files and same:
-            print("Using existing district data")
+            print("Using existing district data")            
             self.districts_df = pd.read_csv(os.path.join(out_dir, 'districts.csv'))
         else:
             # Read input
@@ -148,22 +148,23 @@ class CreateDistricts(base.Base):
         parking_districts["is_noprkspace"] = False
         parking_districts.loc[is_district, "is_prkdistrict"] = True
         parking_districts.loc[is_hull & is_nodata, "is_noprkspace"] = True
-
+        
+        # parking_type:
+        # 1: parking constrained area: has cluster_id AND district_id
+        # 2: buffer around parking constrained area which is used to include free spaces to average into parking cost calculation: has district_id but no cluster_id
+        # 3: no parking cost: Has neither cluster_id nor district_id
+        
+        parking_districts['parking_type'] = None
+        parking_districts.loc[~parking_districts.cluster_id.isnull() & ~parking_districts.district_id.isnull(), "parking_type"] = 1
+        parking_districts.loc[parking_districts.cluster_id.isnull() & ~parking_districts.district_id.isnull(), "parking_type"] = 2
+        parking_districts['parking_type'] = parking_districts['parking_type'].fillna(3)
+                
         output = {
             "districts": parking_districts,
             "hulls": hull_geoms,
             "buffered_hulls": buffer_geoms,
             "clusters": parking_clusters,
         }
-        
-        # parking_type:
-        # 1: parking constrained area, 
-        # 2: buffer around parking constrained area which is used to include free spaces to average into parking cost calculation, 
-        # 3: no parking cost      
-        
-        parking_districts["parking_type"] = 3
-        parking_districts.loc[~parking_districts.cluster_id.isnull(), "parking_type"] = 1
-        parking_districts.loc[~parking_districts.district_id.isnull(), "parking_type"] = 2
 
         return output
 
@@ -262,9 +263,9 @@ class CreateDistricts(base.Base):
     def save_districts(self, geo):
         print(f"Saving {geo} shapefile")
         # Create cach directory if not already there
-        out_dir = os.path.join(self.settings.get("output_dir"), "shapefiles")
-        if not os.path.exists(out_dir):
-            os.mkdir(out_dir)
+        shp_dir = os.path.join(self.settings.get("output_dir"), "shapefiles")
+        if not os.path.exists(shp_dir):
+            os.mkdir(shp_dir)
 
-        out_path = os.path.join(out_dir, geo + ".shp")
+        out_path = os.path.join(shp_dir, geo + ".shp")
         self.districts_dict[geo].to_file(out_path)
