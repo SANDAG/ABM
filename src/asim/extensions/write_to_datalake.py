@@ -226,12 +226,8 @@ def final_trips_column_filter(df):
     final_cols_passed = [col for col in final_cols if col in df.columns]
     cols_not_in_df = [col for col in final_cols if col not in df.columns]
     if cols_not_in_df:
-        df[
-            cols_not_in_df
-        ] = None  # (Should this be a flag indicating this column does not exist for this model instead?)
-        print(
-            f"\nColumns missing in output trip table, so empty columns were created: {cols_not_in_df}\n"
-        )  # is there a better way to flag this? a log or something? kinda swamped in the terminal output
+        df[cols_not_in_df] = None
+        logger.info(f"Columns missing in output trip table, so null columns were created: {cols_not_in_df}")
     return df[final_cols]
 
 
