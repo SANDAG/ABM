@@ -408,11 +408,10 @@ def get_output_table(table_name, output_tables_settings):
     if table_name == "households":
         output_table["sample_rate"] = output_table["sample_rate"].astype(float)
 
-    # drop write_trip_matrice skim columns
-    if table_name == "trips":
-        output_table = final_trips_column_filter(output_table)
-        output_table.reset_index(drop=False, inplace=True)
-
+    # # drop write_trip_matrice skim columns
+    # if table_name == "trips":
+    #     output_table = final_trips_column_filter(output_table)
+    #     output_table.reset_index(drop=False, inplace=True)
 
     # split vehicle_type column
     if table_name == "vehicles":
@@ -503,6 +502,11 @@ def write_model_outputs_to_datalake(
 
     # add the timestamp as a new column to the DataFrame
     output_table["scenario_ts"] = pd.to_datetime(now)
+
+    # drop write_trip_matrice skim columns
+    if output_table.name == "trips":
+        output_table = final_trips_column_filter(output_table)
+        output_table.reset_index(drop=False, inplace=True)
 
     # Construct the model output filename w guid
     model_output_file = f"{base_filename }_{timestamp_str}_{guid}"

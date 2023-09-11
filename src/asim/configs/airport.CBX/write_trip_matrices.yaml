@@ -405,7 +405,6 @@ CONSTANTS:
   vot_threshold_med: 18.00
 
 FINAL_TRIP_COLUMNS:
-  # - trip_id #not used bc the index of the dataframe is converted into the trip_id
   - person_id
   - household_id
   - primary_purpose
@@ -415,14 +414,30 @@ FINAL_TRIP_COLUMNS:
   - destination
   - origin
   - tour_id
+  - escort_participants
+  - school_escort_direction
   - purpose
+  - destination_logsum
   - depart
   - trip_mode
-  - arrival_mode
   - mode_choice_logsum
+  - vot_da
+  - vot_s2
+  - vot_s3
+  - ownsTransponder
+  - parking_zone
+  - trip_period
+  - tour_participants
+  - distance
+  - is_ea
+  - is_am
+  - is_md
+  - is_pm
+  - is_ev
   - vot1
   - vot2
   - vot3
+  - inbound
   - timeDrive
   - distanceDrive
   - costTollDrive
@@ -434,4 +449,8 @@ FINAL_TRIP_COLUMNS:
   - timeTransitInitialWait
   - costFareTransit
   - transfersTransit
-
+  - sample_rate
+  - otaz
+  - dtaz
+  - arrival_mode
+  - num_participants
