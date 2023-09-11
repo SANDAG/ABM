@@ -232,7 +232,7 @@ def final_trips_column_filter(df):
 
 
 def write_summarize_files(
-    summarize_dir, timestamp_str, guid, year_folder, month_folder, container, current_ts
+    summarize_dir, timestamp_str, guid, year_folder, month_folder, day_folder, container, current_ts
 ):
     """
     Write output from the summarize model to the Azure Storage container.
@@ -259,7 +259,7 @@ def write_summarize_files(
             summarize_out_file = f"{base_summarize_filename}_{timestamp_str}_{guid}.csv"
 
             # Create the Blob Storage path for the output file.
-            summarize_path = f"summarize/{base_summarize_filename}/{year_folder}/{month_folder}/{summarize_out_file}"
+            summarize_path = f"summarize/{base_summarize_filename}/{year_folder}/{month_folder}/{day_folder}/{summarize_out_file}"
 
             # Read the CSV data from the summarize folder.
             summarize_df = pd.read_csv(os.path.join(summarize_dir, summarize_file))
@@ -482,6 +482,7 @@ def write_model_outputs_to_datalake(
     # create folder structure for hierarchical organization of files
     year_folder = now.strftime("%Y")
     month_folder = now.strftime("%m")
+    day_folder = now.strftime("%d")
 
     # Split the prefix in settings.yaml (final_, final_san, final_cbx, etc.)
     split_prefix = prefix.split("_")
@@ -493,16 +494,16 @@ def write_model_outputs_to_datalake(
     # remove duplicate column
     drop_duplicate_column(output_table, base_filename, "taz")
 
+    # drop write_trip_matrice skim columns
+    if output_table.name == "trips":
+        output_table = final_trips_column_filter(output_table)
+        output_table.reset_index(drop=False, inplace=True)
+
     # add unique identifier
     output_table["scenario_guid"] = guid
 
     # add the timestamp as a new column to the DataFrame
     output_table["scenario_ts"] = pd.to_datetime(now)
-
-    # drop write_trip_matrice skim columns
-    if output_table.name == "trips":
-        output_table = final_trips_column_filter(output_table)
-        output_table.reset_index(drop=False, inplace=True)
 
     # Construct the model output filename w guid
     model_output_file = f"{base_filename }_{timestamp_str}_{guid}"
@@ -510,7 +511,7 @@ def write_model_outputs_to_datalake(
     # extract table name from base filename, e.g. households, trips, persons, etc.
     tablename = base_filename.split("final_")[1]
 
-    lake_file = f"{tablename}/{year_folder}/{month_folder}/{model_output_file}.parquet"
+    lake_file = f"{tablename}/{year_folder}/{month_folder}/{day_folder}/{model_output_file}.parquet"
 
     # replace empty strings with None
     # otherwise conversation error for boolean types
@@ -539,6 +540,7 @@ def write_summaries_to_datalake(output_dir, container, guid, now):
             guid,
             now.strftime("%Y"),  # year_folder
             now.strftime("%m"),  # month_folder
+            now.strftime("%d"),  # day_folder
             container,
             now,
         )
@@ -560,7 +562,7 @@ def write_metadata_to_datalake(data_dir, t0, container, guid, now):
     # generate metadata filename and path
     metadata_file = f"model_run_{timestamp_str}_{guid}.parquet"
     metadata_path = (
-        f"scenario/{now.strftime('%Y')}/{now.strftime('%m')}/{metadata_file}"
+        f"scenario/{now.strftime('%Y')}/{now.strftime('%m')}/{now.strftime('%d')}/{metadata_file}"
     )
 
     # write metadata to data lake
