@@ -583,7 +583,8 @@ def get_scenario_guid(output_dir):
         datalake_metadata_path = os.path.join(output_dir, "datalake_metadata.yaml")
         with open(datalake_metadata_path, "r") as stream:
             guid = yaml.safe_load(stream)["scenario_guid"]
-    except FileNotFoundError:  ## TODO: introduce error flag if this occurs
+    except FileNotFoundError as e:
+        logger.DEBUG(f"{e} - datalake_metadata.yaml file not found in output")
         guid = uuid.uuid4().hex
         # write guid to file for DataExporter
         file_path_guid = config.output_file_path("scenario_guid.txt")
