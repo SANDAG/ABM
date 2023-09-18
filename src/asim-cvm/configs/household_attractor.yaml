@@ -4,11 +4,17 @@ LOGIT_TYPE: MNL
 RESULT_COL_NAME: has_attraction
 HAS_ATTRACTION_ALT: 0
 
+segments:
+  - food
+  - package
+  - service
+
 preprocessor: 
   SPEC: household_attractor_preprocessor.csv
   DF: df
   TABLES:
     - tours
+    - persons
 
 annotate_land_use:
   SPEC: annotate_land_use_hh_attractor

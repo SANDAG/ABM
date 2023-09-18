@@ -37,6 +37,9 @@ class HouseholdAttractorSettings(LogitComponentSettings, extra="forbid"):
     annotate_land_use: PreprocessorSettings | None = None
     """Setting for annotation."""
 
+    segments: list[str]
+    """The segments to run the model for."""
+
 
 logger = logging.getLogger(__name__)
 
@@ -92,6 +95,10 @@ def household_attractor(
 
     nest_spec = config.get_logit_model_settings(model_settings)
 
+    # - segments
+    segments = model_settings.segments
+    segment_dtype = pd.CategoricalDtype(categories=segments, ordered=False)
+
     # - preprocessor
     preprocessor_settings = model_settings.preprocessor
     if preprocessor_settings:
@@ -114,8 +121,8 @@ def household_attractor(
         )
         estimator.write_choosers(households)
     
-    for segment in ["package", "food", "service"]:
-        households_merged["segment"] = segment
+    for segment in model_settings.segments:
+        households_merged["segment"] = pd.Series(segment, index=households_merged.index, dtype=segment_dtype)
 
         choices = simulate.simple_simulate(
             state,
