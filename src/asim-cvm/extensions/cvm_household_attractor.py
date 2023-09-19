@@ -162,11 +162,9 @@ def household_attractor(
     
     state.add_table("households", households)
     
-    expressions.assign_columns(
-        state,
-        df=land_use,
-        model_settings=model_settings.annotate_land_use,
-        trace_label=tracing.extend_trace_label(trace_label, "annotate_land_use"),
-    )
+    # summarize total household attractions by zone
+    land_use['num_hh_food_delivery'] = (households.groupby('home_zone_id')[model_settings.RESULT_COL_NAME + '_food'].sum()).fillna(0)
+    land_use['num_hh_package_delivery'] = households.groupby('home_zone_id')[model_settings.RESULT_COL_NAME + '_package'].sum().fillna(0)
+    land_use['num_hh_service'] = households.groupby('home_zone_id')[model_settings.RESULT_COL_NAME + '_service'].sum().fillna(0)
 
     state.add_table("land_use", land_use)
