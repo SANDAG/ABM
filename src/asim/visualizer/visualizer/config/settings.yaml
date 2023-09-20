@@ -8,7 +8,7 @@
 # Specify data to extract and load
 extract:
     - filepath: "../../../../output/resident"
-      test_size: 1000
+      test_size:
       data:
           - "final_households.csv"
           - "final_persons.csv"
