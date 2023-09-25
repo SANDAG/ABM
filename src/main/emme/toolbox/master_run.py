@@ -733,12 +733,16 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         if not skipDataExport:
             # export network and matrix results from Emme directly to T if using local drive
-            # output_directory = _join(self._path, "output")
-            # export_network_data(self._path, scenario_id, main_emmebank, transit_emmebank, num_processors)
-            # export_matrix_data(output_directory, base_scenario, transit_scenario)
+            output_directory = _join(self._path, "output")
+            export_network_data(self._path, scenario_id, main_emmebank, transit_emmebank, num_processors)
+            export_matrix_data(output_directory, base_scenario, transit_scenario)
             # export core ABM data
             # Note: uses relative project structure, so cannot redirect to T drive
-            self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data",capture_output=True)
+            # self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data",capture_output=True)
+            aggregate_models = {}
+            for agg_model in ['eetrip', 'eitrip', 'trucktrip']:#TODO ['commercialVehicleTrips','internalExternalTrips']:
+                aggregate_models[agg_model] = str(os.path.join(self._path,'report',agg_model+'.csv'))
+            gen_utils.DataLakeExporter(ScenarioPath=self._path).write_to_datalake(aggregate_models)
 
         #Validation for 2022 scenario
         if scenarioYear == "2016":
