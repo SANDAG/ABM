@@ -1371,6 +1371,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         datalake_metadata_dict = {
             "main_directory" : main_directory.encode('utf-8')
             ,"scenario_guid" : uuid.uuid4().hex
+            ,'scenario_guid_created_at' : datetime.datetime.now()
             ,"scenario_title" : scenario_title.encode('utf-8')
             ,"scenario_year": scenarioYear
             ,"select_link" : select_link.encode('utf-8')
