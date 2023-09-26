@@ -356,10 +356,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             local_directory = file_manager(
                 "DOWNLOAD", main_directory, username, scenario_id, initialize=initialize)
             self._path = local_directory
-            self.write_metadata(main_directory, scenario_title, select_link, username)
+            self.write_metadata(main_directory, scenario_title, select_link, username, scenarioYear)
         else:
             self._path = main_directory
-            self.write_metadata(main_directory, scenario_title, select_link, username)
+            self.write_metadata(main_directory, scenario_title, select_link, username, scenarioYear)
 
         drive, path_no_drive = os.path.splitdrive(self._path)
         path_forward_slash = path_no_drive.replace("\\", "/")
@@ -575,6 +575,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         # Note: iteration indexes from 0, msa_iteration indexes from 1
         for iteration in range(startFromIteration - 1, end_iteration):
             msa_iteration = iteration + 1
+            self.update_metadata_iteration(main_directory, msa_iteration)
             with _m.logbook_trace("Iteration %s" % msa_iteration):
                 #create a folder to store skims
                 if not os.path.exists(_join(output_dir, "skims")):
@@ -1365,20 +1366,29 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         else:
             return "The data load request was not successfully made, please double check the [data_load].[load_request] table to confirm."
 
-    def write_metadata(self, main_directory, scenario_title, select_link, username):
+    def write_metadata(self, main_directory, scenario_title, select_link, username, scenarioYear):
         '''Write YAML file containing scenario guid and other scenario info to output folder for writing to datalake'''
-
         datalake_metadata_dict = {
             "main_directory" : main_directory.encode('utf-8')
             ,"scenario_guid" : uuid.uuid4().hex
             ,"scenario_title" : scenario_title.encode('utf-8')
+            ,"scenario_year": scenarioYear
             ,"select_link" : select_link.encode('utf-8')
             ,"username" : username.encode('utf-8')
+            ,"iteration" : None
         }
         datalake_metadata_path = os.path.join(main_directory,'output','datalake_metadata.yaml')
         with open(datalake_metadata_path, 'w') as file:
             yaml.dump(datalake_metadata_dict, file, default_flow_style=False)
 
+    def update_metadata_iteration(self, main_directory, msa_iteration):
+        """update iteration value in metadata YAML"""
+        datalake_metadata_path = os.path.join(main_directory,'output','datalake_metadata.yaml')
+        with open(datalake_metadata_path, 'r') as file:
+            datalake_metadata_dict = yaml.safe_load(file)
+        datalake_metadata_dict['iteration'] = msa_iteration
+        with open(datalake_metadata_path, 'w') as file:
+            yaml.dump(datalake_metadata_dict, file, default_flow_style=False)
 
 '''
     def send_notification(self,str_message,user):      # YMA, 1/24/2019, not working on server
