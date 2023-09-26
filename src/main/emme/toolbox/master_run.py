@@ -356,10 +356,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             local_directory = file_manager(
                 "DOWNLOAD", main_directory, username, scenario_id, initialize=initialize)
             self._path = local_directory
-            self.write_metadata(main_directory, scenario_title, select_link, username, scenarioYear)
+            self.write_metadata(main_directory, scenario_title, select_link, username, scenarioYear, end_iteration)
         else:
             self._path = main_directory
-            self.write_metadata(main_directory, scenario_title, select_link, username, scenarioYear)
+            self.write_metadata(main_directory, scenario_title, select_link, username, scenarioYear, end_iteration)
 
         drive, path_no_drive = os.path.splitdrive(self._path)
         path_forward_slash = path_no_drive.replace("\\", "/")
@@ -1366,7 +1366,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         else:
             return "The data load request was not successfully made, please double check the [data_load].[load_request] table to confirm."
 
-    def write_metadata(self, main_directory, scenario_title, select_link, username, scenarioYear):
+    def write_metadata(self, main_directory, scenario_title, select_link, username, scenarioYear, end_iteration):
         '''Write YAML file containing scenario guid and other scenario info to output folder for writing to datalake'''
         datalake_metadata_dict = {
             "main_directory" : main_directory.encode('utf-8')
@@ -1376,7 +1376,8 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             ,"scenario_year": scenarioYear
             ,"select_link" : select_link.encode('utf-8')
             ,"username" : username.encode('utf-8')
-            ,"iteration" : None
+            ,"current_iteration" : None
+            ,"end_iteration" : end_iteration
         }
         datalake_metadata_path = os.path.join(main_directory,'output','datalake_metadata.yaml')
         with open(datalake_metadata_path, 'w') as file:
@@ -1387,7 +1388,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         datalake_metadata_path = os.path.join(main_directory,'output','datalake_metadata.yaml')
         with open(datalake_metadata_path, 'r') as file:
             datalake_metadata_dict = yaml.safe_load(file)
-        datalake_metadata_dict['iteration'] = msa_iteration
+        datalake_metadata_dict['current_iteration'] = msa_iteration
         with open(datalake_metadata_path, 'w') as file:
             yaml.dump(datalake_metadata_dict, file, default_flow_style=False)
 
