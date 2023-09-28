@@ -218,17 +218,14 @@ def create_metadata_df(input_dir, unique_id, ts, time_to_write):
 
 def final_trips_column_filter(df):
     # get list of columns to go into final trip table
-    model_settings_file_name = "write_trip_matrices.yaml"
-    model_settings = config.read_model_settings(model_settings_file_name)
-    final_cols = model_settings["FINAL_TRIP_COLUMNS"]
+    output_settings_file_name = "..\common\outputs.yaml"
+    output_settings = config.read_model_settings(output_settings_file_name)
+    remove_cols = output_settings["REMOVE_COLUMNS"]
 
-    # select + return selected trip columns, for missing columns flag + create empty columns
-    final_cols_passed = [col for col in final_cols if col in df.columns]
-    cols_not_in_df = [col for col in final_cols if col not in df.columns]
-    if cols_not_in_df:
-        df[cols_not_in_df] = None
-        logger.info(f"Columns missing in output trip table, so null columns were created: {cols_not_in_df}")
-    return df[final_cols]
+    remove_filter = df.filter(remove_cols)
+    df_removed = df.drop(columns=remove_filter)
+    
+    return df_removed
 
 
 def write_summarize_files(
