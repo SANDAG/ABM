@@ -224,6 +224,7 @@ def final_trips_column_filter(df):
 
     remove_filter = df.filter(remove_cols)
     df_removed = df.drop(columns=remove_filter)
+    df_removed.name = df.name
     
     return df_removed
 
@@ -453,6 +454,7 @@ def connect_to_Azure(path_override=None):
     """
     try:
         sas_url = os.environ["AZURE_STORAGE_SAS_TOKEN"]
+        sas_url = "https://adlsdasadsdevwest.blob.core.windows.net/bronze/abm3dev?si=ABM3-Dev&spr=https&sv=2021-12-02&sr=d&sig=e0xnK93k55W1WYxGuUlpYycCtXKE4kvtBi%2FmNUiWtDc%3D&sdd=1"
         container = ContainerClient.from_container_url(sas_url)
         return True, container
     except KeyError as e:
@@ -490,17 +492,6 @@ def write_model_outputs_to_datalake(
 
     # remove duplicate column
     drop_duplicate_column(output_table, base_filename, "taz")
-
-    # drop write_trip_matrice skim columns
-    if output_table.name == "trips":
-        output_table = final_trips_column_filter(output_table)
-        output_table.reset_index(drop=False, inplace=True)
-
-    # add unique identifier
-    output_table["scenario_guid"] = guid
-
-    # add the timestamp as a new column to the DataFrame
-    output_table["scenario_ts"] = pd.to_datetime(now)
 
     # Construct the model output filename w guid
     model_output_file = f"{base_filename }_{timestamp_str}_{guid}"
@@ -645,6 +636,17 @@ def write_to_datalake(
     # write out model outputs to local and datalake (if permitted)
     for table_name in output_tables_list:
         output_table = get_output_table(table_name, output_tables_settings)
+
+        # drop write_trip_matrice skim columns
+        if output_table.name == "trips":
+            output_table = final_trips_column_filter(output_table)
+
+        # add unique identifier
+        output_table["scenario_guid"] = guid
+
+        # add the timestamp as a new column to the DataFrame
+        output_table["scenario_ts"] = pd.to_datetime(now)
+
         write_model_outputs_to_local(output_table, output_tables_settings)
         if cloud_bool:
             write_model_outputs_to_datalake(output_table, prefix, container, guid, now)
