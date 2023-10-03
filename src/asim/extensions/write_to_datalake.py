@@ -454,8 +454,8 @@ def connect_to_Azure(path_override=None):
     """
     try:
         sas_url = os.environ["AZURE_STORAGE_SAS_TOKEN"]
-        sas_url = "https://adlsdasadsdevwest.blob.core.windows.net/bronze/abm3dev?si=ABM3-Dev&spr=https&sv=2021-12-02&sr=d&sig=e0xnK93k55W1WYxGuUlpYycCtXKE4kvtBi%2FmNUiWtDc%3D&sdd=1"
         container = ContainerClient.from_container_url(sas_url)
+        container.get_account_information()
         return True, container
     except KeyError as e:
         print(f"{e}No SAS_Token in environment")
@@ -641,11 +641,11 @@ def write_to_datalake(
         if output_table.name == "trips":
             output_table = final_trips_column_filter(output_table)
 
-        # add unique identifier
-        output_table["scenario_guid"] = guid
-
-        # add the timestamp as a new column to the DataFrame
-        output_table["scenario_ts"] = pd.to_datetime(now)
+        if cloud_bool:
+            # add unique identifier
+            output_table["scenario_guid"] = guid
+            # add the timestamp as a new column to the DataFrame
+            output_table["scenario_ts"] = pd.to_datetime(now)
 
         write_model_outputs_to_local(output_table, output_tables_settings)
         if cloud_bool:
