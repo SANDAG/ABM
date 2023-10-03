@@ -416,11 +416,6 @@ def get_output_table(table_name, output_tables_settings):
         ].str.split(pat="_", expand=True)
         # output_table.drop(columns={'vehicle_type'}, inplace=True) ## TODO decide whether to drop column here or in bronze -> silver filter
 
-    # add model name: resident, visitor, etc.
-    first_config_name = inject.get_injectable("configs_dir")[0]
-    model_name = os.path.basename(first_config_name)
-    output_table["model"] = model_name
-
     output_table.name = table_name
     return output_table
 
@@ -505,6 +500,11 @@ def write_model_output_to_datalake(
     if output_table.name == "trips":
         output_table = final_trips_column_filter(output_table)
         output_table.reset_index(drop=False, inplace=True)
+
+    # add model name: resident, visitor, etc.
+    first_config_name = inject.get_injectable("configs_dir")[0]
+    model_name = os.path.basename(first_config_name)
+    output_table["model"] = model_name
 
     # add unique identifier
     output_table["scenario_guid"] = guid
