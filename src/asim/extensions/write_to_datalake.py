@@ -347,7 +347,7 @@ def get_output_table(table_name, output_tables_settings):
             if output_table.index.name in traceable_table_indexes:
                 output_table = output_table.sort_index()
                 logger.debug(
-                    f"write_tables sorting {table_name} on index {output_table.index.name}"
+                    f"write_to_datalake sorting {table_name} on index {output_table.index.name}"
                 )
             else:
                 # find all registered columns we can use to sort this table
@@ -419,16 +419,11 @@ def get_output_table(table_name, output_tables_settings):
         ].str.split(pat="_", expand=True)
         # output_table.drop(columns={'vehicle_type'}, inplace=True) ## TODO decide whether to drop column here or in bronze -> silver filter
 
-    # add model name: resident, visitor, etc.
-    first_config_name = inject.get_injectable("configs_dir")[0]
-    model_name = os.path.basename(first_config_name)
-    output_table["model"] = model_name
-
     output_table.name = table_name
     return output_table
 
 
-def write_model_outputs_to_local(output_table: pd.DataFrame(), output_tables_settings):
+def write_model_output_to_local(output_table: pd.DataFrame(), output_tables_settings):
     """
     Write pipeline tables as csv files to local drive.
     """
@@ -460,17 +455,24 @@ def connect_to_Azure(path_override=None):
     try:
         sas_url = os.environ["AZURE_STORAGE_SAS_TOKEN"]
         container = ContainerClient.from_container_url(sas_url)
+        logger.info("write_to_datalake step connected to Azure container")
         return True, container
     except KeyError as e:
-        print(f"{e}No SAS_Token in environment")
+        error_statment = f"{e}: write_to_datalake could not find SAS_Token in environment, only writing tables locally\n"
+        print(error_statement, "\n")
+        logger.debug(error_statement)
         return False, None
     except ServiceRequestError as e:
-        print(f"{e}\nSAS_Token in environment likely malconfigured")
+        error_statement = f"""
+            {e}: write_to_datalake had issue connecting to Azure container using SAS_Token in environment,
+            token likely malconfigured, only writing tables locally"""
+        print(error_statement,"\n")
+        logger.debug(error_statement)
         return False, None
 
 
-def write_model_outputs_to_datalake(
-    output_table: pd.DataFrame(), prefix, container, EMME_metadata, now
+def write_model_output_to_datalake(
+    output_table: pd.DataFrame(), prefix, container, guid, now
 ):
     """
     Write pipeline tables as csv files to Azure Data Lake Storage as
@@ -503,6 +505,11 @@ def write_model_outputs_to_datalake(
     if output_table.name == "trips":
         output_table = final_trips_column_filter(output_table)
         output_table.reset_index(drop=False, inplace=True)
+
+    # add model name: resident, visitor, etc.
+    first_config_name = inject.get_injectable("configs_dir")[0]
+    model_name = os.path.basename(first_config_name)
+    output_table["model"] = model_name
 
     # add unique identifier
     output_table["scenario_guid"] = guid
@@ -672,9 +679,10 @@ def write_to_datalake(
     # write out model outputs to local and datalake (if permitted)
     for table_name in output_tables_list:
         output_table = get_output_table(table_name, output_tables_settings)
-        write_model_outputs_to_local(output_table, output_tables_settings)
+        write_model_output_to_local(output_table, output_tables_settings)
         if cloud_bool:
-            write_model_outputs_to_datalake(output_table, prefix, container, EMME_metadata, now)
+            write_model_output_to_datalake(output_table, prefix, container, guid, now)
+            logger.info(f"write_to_datalake writing {table_name} to cloud")
 
     # write out summary and metadata tables to datalake (if permitted)
     if cloud_bool:
