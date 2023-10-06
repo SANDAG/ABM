@@ -221,17 +221,15 @@ def create_metadata_df(input_dir, ts, time_to_write, EMME_metadata):
 
 def final_trips_column_filter(df):
     # get list of columns to go into final trip table
-    model_settings_file_name = "write_trip_matrices.yaml"
-    model_settings = config.read_model_settings(model_settings_file_name)
-    final_cols = model_settings["FINAL_TRIP_COLUMNS"]
+    output_settings_file_name = "..\common\outputs.yaml"
+    output_settings = config.read_model_settings(output_settings_file_name)
+    remove_cols = output_settings["REMOVE_COLUMNS"]
 
-    # select + return selected trip columns, for missing columns flag + create empty columns
-    final_cols_passed = [col for col in final_cols if col in df.columns]
-    cols_not_in_df = [col for col in final_cols if col not in df.columns]
-    if cols_not_in_df:
-        df[cols_not_in_df] = None
-        logger.info(f"Columns missing in output trip table, so null columns were created: {cols_not_in_df}")
-    return df[final_cols]
+    remove_filter = df.filter(remove_cols)
+    df_removed = df.drop(columns=remove_filter)
+    df_removed.name = df.name
+    
+    return df_removed
 
 
 def write_summarize_files(
@@ -455,6 +453,7 @@ def connect_to_Azure(path_override=None):
     try:
         sas_url = os.environ["AZURE_STORAGE_SAS_TOKEN"]
         container = ContainerClient.from_container_url(sas_url)
+        container.get_account_information()
         logger.info("write_to_datalake step connected to Azure container")
         return True, container
     except KeyError as e:
@@ -472,7 +471,7 @@ def connect_to_Azure(path_override=None):
 
 
 def write_model_output_to_datalake(
-    output_table: pd.DataFrame(), prefix, container, guid, now
+    output_table: pd.DataFrame(), prefix, container, EMME_metadata, now
 ):
     """
     Write pipeline tables as csv files to Azure Data Lake Storage as
@@ -501,21 +500,10 @@ def write_model_output_to_datalake(
     # remove duplicate column
     drop_duplicate_column(output_table, base_filename, "taz")
 
-    # drop write_trip_matrice skim columns
-    if output_table.name == "trips":
-        output_table = final_trips_column_filter(output_table)
-        output_table.reset_index(drop=False, inplace=True)
-
     # add model name: resident, visitor, etc.
     first_config_name = inject.get_injectable("configs_dir")[0]
     model_name = os.path.basename(first_config_name)
     output_table["model"] = model_name
-
-    # add unique identifier
-    output_table["scenario_guid"] = guid
-
-    # add the timestamp as a new column to the DataFrame
-    output_table["scenario_ts"] = pd.to_datetime(now)
 
     output_table["current_iteration"] = EMME_metadata["current_iteration"]
     output_table["end_iteration"] = EMME_metadata["end_iteration"]
@@ -679,9 +667,20 @@ def write_to_datalake(
     # write out model outputs to local and datalake (if permitted)
     for table_name in output_tables_list:
         output_table = get_output_table(table_name, output_tables_settings)
+
+        # drop write_trip_matrice skim columns
+        if output_table.name == "trips":
+            output_table = final_trips_column_filter(output_table)
+
+        if cloud_bool:
+            # add unique identifier
+            output_table["scenario_guid"] = EMME_metadata["scenario_guid"]
+            # add the timestamp as a new column to the DataFrame
+            output_table["scenario_ts"] = pd.to_datetime(now)
+
         write_model_output_to_local(output_table, output_tables_settings)
         if cloud_bool:
-            write_model_output_to_datalake(output_table, prefix, container, guid, now)
+            write_model_output_to_datalake(output_table, prefix, container, EMME_metadata, now)
             logger.info(f"write_to_datalake writing {table_name} to cloud")
 
     # write out summary and metadata tables to datalake (if permitted)
