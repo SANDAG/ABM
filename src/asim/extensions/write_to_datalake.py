@@ -135,7 +135,7 @@ def drop_duplicate_column(table_df, table_name, column_name):
         logger.info(f"Dropped duplicate column {column_name} in {table_name}")
 
 
-def create_metadata_df(input_dir, unique_id, ts, time_to_write):
+def create_metadata_df(input_dir, ts, time_to_write, EMME_metadata):
     """
     create a metadata dataframe containing the git commit, branch, model run timestamp, guid,
     and input data dir.
@@ -172,7 +172,6 @@ def create_metadata_df(input_dir, unique_id, ts, time_to_write):
             abm_path_level += "/.."
     abm_commit_info = get_commit_info(abm_git_folder)
 
-    username = os.getenv("USERNAME")
     machine_name = socket.gethostname()
     model_name = os.path.basename(abm_configs_dir)
     inputdir, inputfile = os.path.split(input_dir)  # os.path.split(data_dir[0])
@@ -191,9 +190,9 @@ def create_metadata_df(input_dir, unique_id, ts, time_to_write):
     total_time = calc_execute_time(metadata_settings["resume_after"]) + time_to_write
 
     metadata = {
-        "scenario_name": ["abm3_dev"],
-        "scenario_yr": ["2022"],
-        "login_name": [username],
+        "scenario_name": [EMME_metadata["scenario_title"]],
+        "scenario_yr": [EMME_metadata["scenario_year"]],
+        "login_name": [EMME_metadata["username"]],
         "machine_name": [machine_name],
         "model": [model_name],
         "asim_branch_name": [asim_commit_info["branch_name"]],
@@ -205,7 +204,11 @@ def create_metadata_df(input_dir, unique_id, ts, time_to_write):
         "resume_after": metadata_settings["resume_after"],
         "multiprocess": metadata_settings["multiprocess"],
         "time_to_execute": [total_time],
-        "scenario_guid": [unique_id],
+        "scenario_guid": [EMME_metadata["scenario_guid"]],
+        "current_iteration" : [EMME_metadata["current_iteration"]],
+        "end_iteration" : [EMME_metadata["end_iteration"]],
+        "main_directory" : [EMME_metadata["main_directory"]],
+        "select_link" : [EMME_metadata["select_link"]]
     }
 
     meta_df = pd.DataFrame(metadata)
@@ -342,7 +345,7 @@ def get_output_table(table_name, output_tables_settings):
             if output_table.index.name in traceable_table_indexes:
                 output_table = output_table.sort_index()
                 logger.debug(
-                    f"write_tables sorting {table_name} on index {output_table.index.name}"
+                    f"write_to_datalake sorting {table_name} on index {output_table.index.name}"
                 )
             else:
                 # find all registered columns we can use to sort this table
@@ -414,16 +417,11 @@ def get_output_table(table_name, output_tables_settings):
         ].str.split(pat="_", expand=True)
         # output_table.drop(columns={'vehicle_type'}, inplace=True) ## TODO decide whether to drop column here or in bronze -> silver filter
 
-    # add model name: resident, visitor, etc.
-    first_config_name = inject.get_injectable("configs_dir")[0]
-    model_name = os.path.basename(first_config_name)
-    output_table["model"] = model_name
-
     output_table.name = table_name
     return output_table
 
 
-def write_model_outputs_to_local(output_table: pd.DataFrame(), output_tables_settings):
+def write_model_output_to_local(output_table: pd.DataFrame(), output_tables_settings):
     """
     Write pipeline tables as csv files to local drive.
     """
@@ -456,17 +454,24 @@ def connect_to_Azure(path_override=None):
         sas_url = os.environ["AZURE_STORAGE_SAS_TOKEN"]
         container = ContainerClient.from_container_url(sas_url)
         container.get_account_information()
+        logger.info("write_to_datalake step connected to Azure container")
         return True, container
     except KeyError as e:
-        print(f"{e}No SAS_Token in environment")
+        error_statment = f"{e}: write_to_datalake could not find SAS_Token in environment, only writing tables locally\n"
+        print(error_statement, "\n")
+        logger.debug(error_statement)
         return False, None
     except ServiceRequestError as e:
-        print(f"{e}\nSAS_Token in environment likely malconfigured")
+        error_statement = f"""
+            {e}: write_to_datalake had issue connecting to Azure container using SAS_Token in environment,
+            token likely malconfigured, only writing tables locally"""
+        print(error_statement,"\n")
+        logger.debug(error_statement)
         return False, None
 
 
-def write_model_outputs_to_datalake(
-    output_table: pd.DataFrame(), prefix, container, guid, now
+def write_model_output_to_datalake(
+    output_table: pd.DataFrame(), prefix, container, EMME_metadata, now
 ):
     """
     Write pipeline tables as csv files to Azure Data Lake Storage as
@@ -475,6 +480,8 @@ def write_model_outputs_to_datalake(
     Azure environment variable must exist on server for Azure storage.
 
     """
+    guid = EMME_metadata["scenario_guid"]
+
     # format the timestamp as a string in a consistent format
     timestamp_str = now.strftime("%Y-%m-%d_%H-%M-%S")
 
@@ -492,6 +499,14 @@ def write_model_outputs_to_datalake(
 
     # remove duplicate column
     drop_duplicate_column(output_table, base_filename, "taz")
+
+    # add model name: resident, visitor, etc.
+    first_config_name = inject.get_injectable("configs_dir")[0]
+    model_name = os.path.basename(first_config_name)
+    output_table["model"] = model_name
+
+    output_table["current_iteration"] = EMME_metadata["current_iteration"]
+    output_table["end_iteration"] = EMME_metadata["end_iteration"]
 
     # Construct the model output filename w guid
     model_output_file = f"{base_filename }_{timestamp_str}_{guid}"
@@ -534,7 +549,7 @@ def write_summaries_to_datalake(output_dir, container, guid, now):
         )
 
 
-def write_metadata_to_datalake(data_dir, t0, container, guid, now):
+def write_metadata_to_datalake(data_dir, t0, EMME_metadata, container, now):
     """
     write scenario and write_to_datalake metadata to the datalake
         after model outputs are exported to the datalake
@@ -542,13 +557,13 @@ def write_metadata_to_datalake(data_dir, t0, container, guid, now):
 
     t1 = tracing.print_elapsed_time()
     write_time = round((t1 - t0) / 60.0, 1)
-    scenario_df = create_metadata_df(data_dir[0], guid, now, write_time)
+    scenario_df = create_metadata_df(data_dir[0], now, write_time, EMME_metadata)
 
     # format the timestamp as a string in a consistent format
     timestamp_str = now.strftime("%Y-%m-%d_%H-%M-%S")
 
     # generate metadata filename and path
-    metadata_file = f"model_run_{timestamp_str}_{guid}.parquet"
+    metadata_file = f"model_run_{timestamp_str}_{EMME_metadata['scenario_guid']}.parquet"
     metadata_path = (
         f"scenario/{now.strftime('%Y')}/{now.strftime('%m')}/{now.strftime('%d')}/{metadata_file}"
     )
@@ -561,24 +576,40 @@ def write_metadata_to_datalake(data_dir, t0, container, guid, now):
     container.upload_blob(name=metadata_path, data=parquet_file)
 
 
-def get_scenario_guid(output_dir):
+def get_scenario_metadata(output_dir):
     """
     get scenario's guid (globally unique identifier)
     if guid not in scenario's output directory (generated by EMME's master_run.py),
         then generate a model-specific guid
     """
-    datalake_metadata_path = config.output_file_path("datalake_metadata.yaml")
+    not_iteration = 999
+    datalake_metadata_path = os.path.abspath(os.path.join(output_dir, '../', "datalake_metadata.yaml"))
     if os.path.isfile(datalake_metadata_path):
         with open(datalake_metadata_path, "r") as stream:
-            guid = yaml.safe_load(stream)["scenario_guid"]
+            model_metadata_dict = yaml.safe_load(stream)
+            logger.info(f"datalake_metadata.yaml file found at: {datalake_metadata_path}")
+        # overwrite existing guid if running model from cmd so that model runs do not share guid
+        if model_metadata_dict["end_iteration"] == not_iteration:
+            model_metadata_dict['scenario_guid'] = uuid.uuid4().hex
+            model_metadata_dict['scenario_guid_created_at'] = datetime.datetime.now()
+            with open(datalake_metadata_path, "w") as file:
+                yaml.dump(model_metadata_dict, file, default_flow_style=False)
+            logger.info(f"overwriting guid in datalake_metadata.yaml file found at: {datalake_metadata_path}")
     else:
-        logger.info(f"datalake_metadata.yaml file not found at: {datalake_metadata_path}")
-        guid = uuid.uuid4().hex
+        logger.info(f"datalake_metadata.yaml file NOT found at: {datalake_metadata_path}, using new guid")
+        model_metadata_dict = {"main_directory" : None
+                                ,"scenario_guid" : uuid.uuid4().hex
+                                ,'scenario_guid_created_at' : datetime.datetime.now()
+                                ,"scenario_title" : "abm3_dev" #TODO change this to None when development ends
+                                ,"scenario_year": "2022" #TODO change this to None when development ends
+                                ,"select_link" : None
+                                ,"username" : os.getenv("USERNAME")
+                                ,"current_iteration" : not_iteration
+                                ,"end_iteration": not_iteration}
         # write guid to file for DataExporter
-        file_path_guid = config.output_file_path("scenario_guid.txt")
-        with open(file_path_guid, "w") as file:
-            file.write(guid)
-    return guid
+        with open(datalake_metadata_path, "w") as file:
+            yaml.dump(model_metadata_dict, file, default_flow_style=False)
+    return model_metadata_dict
 
 
 def get_output_table_names(output_tables_settings, output_tables_settings_name):
@@ -631,7 +662,7 @@ def write_to_datalake(
     if cloud_bool:
         now = datetime.datetime.now()
         prefix = output_tables_settings.get("prefix", "final_")
-        guid = get_scenario_guid(output_dir)
+        EMME_metadata = get_scenario_metadata(output_dir)
 
     # write out model outputs to local and datalake (if permitted)
     for table_name in output_tables_list:
@@ -643,15 +674,16 @@ def write_to_datalake(
 
         if cloud_bool:
             # add unique identifier
-            output_table["scenario_guid"] = guid
+            output_table["scenario_guid"] = EMME_metadata["scenario_guid"]
             # add the timestamp as a new column to the DataFrame
             output_table["scenario_ts"] = pd.to_datetime(now)
 
-        write_model_outputs_to_local(output_table, output_tables_settings)
+        write_model_output_to_local(output_table, output_tables_settings)
         if cloud_bool:
-            write_model_outputs_to_datalake(output_table, prefix, container, guid, now)
+            write_model_output_to_datalake(output_table, prefix, container, EMME_metadata, now)
+            logger.info(f"write_to_datalake writing {table_name} to cloud")
 
     # write out summary and metadata tables to datalake (if permitted)
     if cloud_bool:
-        write_summaries_to_datalake(output_dir, container, guid, now)
-        write_metadata_to_datalake(data_dir, t0, container, guid, now)
+        write_summaries_to_datalake(output_dir, container, EMME_metadata["scenario_guid"], now)
+        write_metadata_to_datalake(data_dir, t0, EMME_metadata, container, now)

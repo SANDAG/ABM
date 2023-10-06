@@ -52,6 +52,7 @@ input_table_list:
       - auto_ownership
       - num_workers
       - bldgsz
+      - unittype
   - tablename: persons
     filename: persons.csv
     index_col: person_id
