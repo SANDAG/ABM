@@ -173,11 +173,10 @@ def create_metadata_df(input_dir, ts, time_to_write, EMME_metadata):
     abm_commit_info = get_commit_info(abm_git_folder)
 
     machine_name = socket.gethostname()
-    model_name = os.path.basename(abm_configs_dir)
     inputdir, inputfile = os.path.split(input_dir)  # os.path.split(data_dir[0])
 
     settings = inject.get_injectable("settings")
-    settings_to_write = ["households_sample_size", "resume_after", "multiprocess"]
+    settings_to_write = ["households_sample_size", "resume_after", "multiprocess", "model_name"]
     default_value = "None"
     metadata_settings = {}
     for key in settings_to_write:
@@ -194,7 +193,7 @@ def create_metadata_df(input_dir, ts, time_to_write, EMME_metadata):
         "scenario_yr": [EMME_metadata["scenario_year"]],
         "login_name": [EMME_metadata["username"]],
         "machine_name": [machine_name],
-        "model": [model_name],
+        "model": [metadata_settings["model_name"]],
         "asim_branch_name": [asim_commit_info["branch_name"]],
         "asim_commit_hash": [asim_commit_info["short_commit_hash"]],
         "abm_branch_name": [abm_commit_info["branch_name"]],
@@ -501,8 +500,12 @@ def write_model_output_to_datalake(
     drop_duplicate_column(output_table, base_filename, "taz")
 
     # add model name: resident, visitor, etc.
-    first_config_name = inject.get_injectable("configs_dir")[0]
-    model_name = os.path.basename(first_config_name)
+    settings = inject.get_injectable("settings")
+    try:
+        model_name = settings["model_name"]
+    except KeyError:
+        model_name = "None"
+
     output_table["model"] = model_name
 
     output_table["current_iteration"] = EMME_metadata["current_iteration"]

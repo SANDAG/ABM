@@ -1,3 +1,5 @@
+model_name: resident
+
 #inherit_settings: True
 
 chunk_size: 0
