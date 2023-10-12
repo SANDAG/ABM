@@ -76,6 +76,8 @@ import time as _time
 import socket as _socket
 import sys
 import os
+import uuid
+import yaml
 
 import pandas as pd
 import numpy as np
@@ -343,7 +345,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         #check if visualizer.reference.path is valid in filesbyyears.csv
         # if not os.path.exists(visualizer_reference_path):
         #     raise Exception("Visualizer reference %s does not exist. Check filesbyyears.csv." %(visualizer_reference_path))
-            
+
         if useLocalDrive:
             folder_name = os.path.basename(main_directory)
             if not os.path.exists(_join(self.LOCAL_ROOT, username, folder_name, "report")): # check free space only if it is a new run
@@ -354,8 +356,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             local_directory = file_manager(
                 "DOWNLOAD", main_directory, username, scenario_id, initialize=initialize)
             self._path = local_directory
+            self.write_metadata(main_directory, scenario_title, select_link, username, scenarioYear, end_iteration)
         else:
             self._path = main_directory
+            self.write_metadata(main_directory, scenario_title, select_link, username, scenarioYear, end_iteration)
 
         drive, path_no_drive = os.path.splitdrive(self._path)
         path_forward_slash = path_no_drive.replace("\\", "/")
@@ -393,24 +397,24 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         num_transit_lines = dims['transit_lines']
         num_transit_segments = dims['transit_segments']
         num_traffic_classes = 15
-        
+
         additional_node_extra_attributes = 4
         additional_link_extra_attributes = 26
         additional_line_extra_attributes = 4
         additional_segment_extra_attributes = 12
-        
-        extra_attribute_values = 18000000 
+
+        extra_attribute_values = 18000000
         extra_attribute_values += (num_nodes + 1) * additional_node_extra_attributes
         extra_attribute_values += (num_links + 1) * additional_link_extra_attributes
-        extra_attribute_values += (num_transit_lines + 1)* additional_line_extra_attributes 
+        extra_attribute_values += (num_transit_lines + 1)* additional_line_extra_attributes
         extra_attribute_values += (num_transit_segments + 1) * additional_segment_extra_attributes
 
         if num_select_links > 3:
-            extra_attribute_values += (num_select_links - 3) * ((num_links + 1) * (num_traffic_classes + 1) + (num_turn_entries + 1) * (num_traffic_classes)) 
-            
+            extra_attribute_values += (num_select_links - 3) * ((num_links + 1) * (num_traffic_classes + 1) + (num_turn_entries + 1) * (num_traffic_classes))
+
         if extra_attribute_values > dims["extra_attribute_values"] or dims["full_matrices"] < 9999:
             dims["extra_attribute_values"] = extra_attribute_values
-            dims["full_matrices"] = 9999 
+            dims["full_matrices"] = 9999
             #add logging for when this setp is run, add before and after attribute value
             #change_dimensions(emmebank_dimensions=dims, emmebank=main_emmebank, keep_backup=False)
             #replaced the above line with the below lines - suggested by Antoine, Bentley (2022-06-02)
@@ -420,7 +424,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         # with open(_join(self._path, "logFiles", "select_link_log.txt"),"a+") as f:
 		#     f.write("Num Select links {}\nExtra Attribute Value {}".format(num_select_links,extra_attribute_values))
         # f.close()
-            
+
         if os.path.exists(_join(self._path, "emme_project", "Database_transit", "emmebank")):
             with _eb.Emmebank(_join(self._path, "emme_project", "Database_transit", "emmebank")) as transit_db:
                 transit_db_dims = transit_db.dimensions
@@ -430,25 +434,25 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 num_transit_lines = transit_db_dims['transit_lines']
                 num_transit_segments = transit_db_dims['transit_segments']
                 num_traffic_classes = 15
-                
-                extra_attribute_values = 18000000 
+
+                extra_attribute_values = 18000000
                 extra_attribute_values += (num_nodes + 1) * additional_node_extra_attributes
                 extra_attribute_values += (num_links + 1) * additional_link_extra_attributes
-                extra_attribute_values += (num_transit_lines + 1)* additional_line_extra_attributes 
+                extra_attribute_values += (num_transit_lines + 1)* additional_line_extra_attributes
                 extra_attribute_values += (num_transit_segments + 1) * additional_segment_extra_attributes
-                
+
                 if num_select_links > 3:
                     extra_attribute_values += 18000000 + (num_select_links - 3) * ((num_links + 1) * (num_traffic_classes + 1) + (num_turn_entries + 1) * (num_traffic_classes))
-                    
+
                 if extra_attribute_values > transit_db_dims["extra_attribute_values"] or transit_db_dims["full_matrices"] < 9999:
                     transit_db_dims["extra_attribute_values"] = extra_attribute_values
-                    transit_db_dims["full_matrices"] = 9999 
+                    transit_db_dims["full_matrices"] = 9999
                     #change_dimensions(emmebank_dimensions=transit_db_dims, emmebank=transit_db, keep_backup=False)
                     #replaced the above line with the below lines - suggested by Antoine, Bentley (2022-06-02)
                     if transit_db.scenario(1) is None:
                         transit_db.create_scenario(1)
                     change_dimensions(transit_db_dims, transit_db, False)
-                
+
         with _m.logbook_trace("Setup and initialization"):
             self.set_global_logbook_level(props)
 
@@ -571,6 +575,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         # Note: iteration indexes from 0, msa_iteration indexes from 1
         for iteration in range(startFromIteration - 1, end_iteration):
             msa_iteration = iteration + 1
+            self.update_metadata_iteration(main_directory, msa_iteration)
             with _m.logbook_trace("Iteration %s" % msa_iteration):
                 #create a folder to store skims
                 if not os.path.exists(_join(output_dir, "skims")):
@@ -588,7 +593,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     # run transit assignment
                     # export transit skims
                     with _m.logbook_trace("Transit assignments and skims"):
-                        
+
                         for number, period in period_ids:
                             src_period_scenario = main_emmebank.scenario(number)
                             transit_assign_scen = build_transit_scen(
@@ -597,7 +602,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                                scenario_id=src_period_scenario.id,
                                scenario_title="%s %s transit assign" % (base_scenario.title, period),
                                data_table_name=scenarioYear, overwrite=True)
-                            
+
                             if (not skipTransitConnector) and (msa_iteration == 1):
                                 if not os.path.exists(_join(input_dir, "transit_connectors")):
                                     os.mkdir(_join(input_dir, "transit_connectors"))
@@ -611,7 +616,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         # Running in same process slows OMX skim export for unknown reason
                         # transit_emmebank need to be closed and re-opened to be accessed by separate process
                         transit_emmebank = self.run_transit_assignments(transit_emmebank, scenarioYear)
-                        _m.Modeller().desktop.refresh_data()  
+                        _m.Modeller().desktop.refresh_data()
 
                         #output transit skims by period
                         for number, period in period_ids:
@@ -623,7 +628,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     am_scenario = main_emmebank.scenario(base_scenario.number + 2)
                     export_for_transponder(output_dir, num_processors, am_scenario)
 
-                
+
                 if not skipABMPreprocessing[iteration]:
                     self.run_proc(
                         "runSandagAbm_Preprocessing.cmd",
@@ -700,7 +705,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         scenario_id=src_period_scenario.id,
                         scenario_title="%s %s transit assign" % (base_scenario.title, period),
                         data_table_name=scenarioYear, overwrite=True)
-                    
+
                     #this would import connectors from the input/transit_connectors folder, and not create them from scratch
                     create_transit_connector(period, transit_assign_scen, create_connector_flag=False)
 
@@ -708,7 +713,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 # Running in same process slows OMX skim export for unknown reason
                 # transit_emmebank need to be closed and re-opened to be accessed by separate process
                 transit_emmebank = self.run_transit_assignments(transit_emmebank, scenarioYear)
-                _m.Modeller().desktop.refresh_data()  
+                _m.Modeller().desktop.refresh_data()
 
                 #output transit skims by period
                 for number, period in period_ids:
@@ -729,17 +734,21 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         if not skipDataExport:
             # export network and matrix results from Emme directly to T if using local drive
-            # output_directory = _join(self._path, "output")
-            # export_network_data(self._path, scenario_id, main_emmebank, transit_emmebank, num_processors)
-            # export_matrix_data(output_directory, base_scenario, transit_scenario)
+            output_directory = _join(self._path, "output")
+            export_network_data(self._path, scenario_id, main_emmebank, transit_emmebank, num_processors)
+            export_matrix_data(output_directory, base_scenario, transit_scenario)
             # export core ABM data
             # Note: uses relative project structure, so cannot redirect to T drive
-            self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data",capture_output=True)
+            # self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data",capture_output=True)
+            aggregate_models = {}
+            for agg_model in ['eetrip', 'eitrip', 'trucktrip']:#TODO ['commercialVehicleTrips','internalExternalTrips']:
+                aggregate_models[agg_model] = str(os.path.join(self._path,'report',agg_model+'.csv'))
+            gen_utils.DataLakeExporter(ScenarioPath=self._path).write_to_datalake(aggregate_models)
 
         #Validation for 2022 scenario
         if scenarioYear == "2016":
             validation(self._path, main_emmebank, base_scenario) # to create source_EMME.xlsx
-            
+
             # #Create Worksheet for ABM Validation using PowerBI Visualization #JY: can be uncommented if deciding to incorporate PowerBI vis in ABM workflow
             # self.run_proc("VisPowerBI.bat",  # forced to update excel links
             #                 [drive, path_no_drive, scenarioYear, 0],
@@ -817,7 +826,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 self.delete_files(
                     ["auto*Trips*.omx", "tran*Trips*.omx", "nmot*.omx", "othr*.omx", "trip*.omx"],
                     _join(output_dir, "iter%s" % (msa_iteration)))
-    
+
         # record run time
         # run_summary(path=self._path)
 
@@ -839,7 +848,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             raise Exception("properties.RunModel.LogLevel: value must be one of %s" % ",".join(log_states.keys()))
 
     def run_transit_assignments(self, transit_emmebank, scenarioYear):
-        
+
         transit_emmebank_path = transit_emmebank.path
         emme_project_dir = _dir(_dir(transit_emmebank_path))
         main_directory = _dir(emme_project_dir)
@@ -871,7 +880,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             err_file = os.fdopen(err_file_ref, "w")
             try:
                 output = _subprocess.check_output(
-                    [sys.executable, script, "--root_dir", '"%s"' % main_directory, "--project_path", '"%s"' % project_path], 
+                    [sys.executable, script, "--root_dir", '"%s"' % main_directory, "--project_path", '"%s"' % project_path],
                     stderr=err_file, shell=True)
                 report.add_html('Output:<br><br><div class="preformat">%s</div>' % output)
             except _subprocess.CalledProcessError as error:
@@ -1357,6 +1366,31 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         else:
             return "The data load request was not successfully made, please double check the [data_load].[load_request] table to confirm."
 
+    def write_metadata(self, main_directory, scenario_title, select_link, username, scenarioYear, end_iteration):
+        '''Write YAML file containing scenario guid and other scenario info to output folder for writing to datalake'''
+        datalake_metadata_dict = {
+            "main_directory" : main_directory.encode('utf-8')
+            ,"scenario_guid" : uuid.uuid4().hex
+            ,'scenario_guid_created_at' : datetime.datetime.now()
+            ,"scenario_title" : scenario_title.encode('utf-8')
+            ,"scenario_year": scenarioYear
+            ,"select_link" : select_link.encode('utf-8')
+            ,"username" : username.encode('utf-8')
+            ,"current_iteration" : None
+            ,"end_iteration" : end_iteration
+        }
+        datalake_metadata_path = os.path.join(main_directory,'output','datalake_metadata.yaml')
+        with open(datalake_metadata_path, 'w') as file:
+            yaml.dump(datalake_metadata_dict, file, default_flow_style=False)
+
+    def update_metadata_iteration(self, main_directory, msa_iteration):
+        """update iteration value in metadata YAML"""
+        datalake_metadata_path = os.path.join(main_directory,'output','datalake_metadata.yaml')
+        with open(datalake_metadata_path, 'r') as file:
+            datalake_metadata_dict = yaml.safe_load(file)
+        datalake_metadata_dict['current_iteration'] = msa_iteration
+        with open(datalake_metadata_path, 'w') as file:
+            yaml.dump(datalake_metadata_dict, file, default_flow_style=False)
 
 '''
     def send_notification(self,str_message,user):      # YMA, 1/24/2019, not working on server

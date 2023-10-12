@@ -48,7 +48,8 @@ def airport_returns(trips, chunk_size, trace_hh_id):
         lambda n: "{}_return".format(n)
     )
     trip_returns = trip_returns.drop(["return_origin", "return_dest"], axis=1)
-
+    trip_returns['trip_id'] = np.arange(trip_list.index.max() +1, trip_list.index.max() +1 + len(trip_returns))
+    trip_returns = trip_returns.set_index('trip_id')
     trip_list = trip_list.append(trip_returns)
 
     pipeline.replace_table("trips", trip_list)

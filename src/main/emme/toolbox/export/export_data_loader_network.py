@@ -65,6 +65,13 @@ import os
 import pandas as pd
 import numpy as _np
 
+
+import datetime
+from io import BytesIO
+from io import StringIO
+import uuid
+import yaml
+
 gen_utils = _m.Modeller().module("sandag.utilities.general")
 dem_utils = _m.Modeller().module("sandag.utilities.demand")
 
@@ -89,6 +96,14 @@ class ExportDataLoaderNetwork(_m.Tool(), gen_utils.Snapshot):
         self.transit_emmebank = os.path.join(project_dir, "Database_transit", "emmebank")
         self.num_processors = "MAX-1"
         self.attributes = ["main_directory", "base_scenario_id", "traffic_emmebank", "transit_emmebank", "num_processors"]
+
+        self.container = gen_utils.DataLakeExporter().get_datalake_connection()
+        self.guid = gen_utils.DataLakeExporter(ScenarioPath=self.main_directory).get_scenario_guid()
+        self.timestamp = datetime.datetime.now()
+        self.util_DataLakeExporter = gen_utils.DataLakeExporter(ScenarioPath=self.main_directory
+                                                                ,connection_info = [self.guid,self.container]
+                                                                ,timestamp = self.timestamp)
+
 
     def page(self):
         pb = _m.ToolPageBuilder(self)
@@ -485,6 +500,8 @@ Export network results to csv files for SQL data loader."""
                             values.append(format(link[att]))
                 fout.write(",".join(values))
                 fout.write("\n")
+        if self.container:
+            self.util_DataLakeExporter.write_to_datalake({os.path.basename(filename)[:-4]:str(filename)})
 
     @_m.logbook_trace("Export transit results")
     def export_transit_results(self, export_path, input_path, transit_emmebank, period_scenario_ids, num_processors):
@@ -501,6 +518,8 @@ Export network results to csv files for SQL data loader."""
         trrt_out = trrt[trrt_atts]
         trrt_outfile = os.path.join(export_path, "trrt.csv")
         trrt_out.to_csv(trrt_outfile, index=False)
+        if self.container:
+            self.util_DataLakeExporter.write_to_datalake({'trrt':trrt_out})
 
         #transit stop file
         trstop_infile = os.path.join(input_path, "trstop.csv")
@@ -510,6 +529,8 @@ Export network results to csv files for SQL data loader."""
         trstop_out = trstop[trstop_atts]
         trstop_outfile = os.path.join(export_path, "trstop.csv")
         trstop_out.to_csv(trstop_outfile, index=False)
+        if self.container:
+            self.util_DataLakeExporter.write_to_datalake({'trstop':trstop_out})
 
         use_node_analysis_to_get_transit_transfers = False
 
@@ -701,6 +722,11 @@ Export network results to csv files for SQL data loader."""
             fout_stop.close()
             fout_link.close()
             fout_seg.close()
+
+            if self.container:
+                self.util_DataLakeExporter.write_to_datalake({'transit_flow':str(transit_flow_file)
+                                                                ,'transit_aggregate_flow':str(transit_aggregate_flow_file)
+                                                                ,'transit_onoff':str(transit_onoff_file)})
         return
 
     @_m.logbook_trace("Export geometries")
@@ -771,7 +797,6 @@ Export network results to csv files for SQL data loader."""
         # df = df[is_tap]
         # df.columns = ['tapID', 'geometry']
         # df.to_csv(os.path.join(export_path, 'transitTap.csv'), index=False)
-
         df = export_as_csv('TRANSIT_LINE', transit_line_attributes)
         df = df[['line', 'geometry']]
         df.columns = ['Route_Name', 'geometry']
@@ -779,6 +804,8 @@ Export network results to csv files for SQL data loader."""
         df_routeFull = pd.read_csv(os.path.join(export_path, 'trrt.csv'))
         result = pd.merge(df_routeFull, df, how='left', on=['Route_Name'])
         result.to_csv(os.path.join(export_path, 'transitRoute.csv'), index=False)
+        if self.container:
+            self.util_DataLakeExporter.write_to_datalake({'transitRoute':result})
         os.remove(os.path.join(export_path, 'trrt.csv'))
 
         df = export_as_csv('TRANSIT_SEGMENT', transit_segment_attributes, None)
@@ -801,6 +828,8 @@ Export network results to csv files for SQL data loader."""
         df_stopFull = pd.read_csv(os.path.join(export_path, 'trstop.csv'))
         result = pd.merge(df_stopFull, df_stop, how='left', on=['Stop_ID'])
         result.to_csv(os.path.join(export_path, 'transitStop.csv'), index=False)
+        if self.container:
+            self.util_DataLakeExporter.write_to_datalake({'transitStop':result})
         os.remove(os.path.join(export_path, 'trstop.csv'))
 
         df = export_as_csv('LINK', link_attributes, None)
@@ -809,6 +838,8 @@ Export network results to csv files for SQL data loader."""
         df_linkFull = pd.read_csv(os.path.join(export_path, 'hwy_tcad.csv'))
         result = pd.merge(df_linkFull, df_link, how='left', on=['hwycov-id:1'])
         result.to_csv(os.path.join(export_path, 'hwyTcad.csv'), index=False)
+        if self.container:
+            self.util_DataLakeExporter.write_to_datalake({'hwyTcad':result})
         os.remove(os.path.join(export_path, 'hwy_tcad.csv'))
         ##mode_list = ['Y','b','c','e','l','p','r','y','a','x','w']##
         df_transit_link = df[df.modes.str.contains('|'.join(mode_list))]
@@ -819,6 +850,8 @@ Export network results to csv files for SQL data loader."""
         df_transit_link['trcovID'] = abs(df_transit_link['trcovID'])
         df_transit_link = df_transit_link[['trcovID', 'AB', 'geometry']]
         df_transit_link.to_csv(os.path.join(export_path, 'transitLink.csv'), index=False)
+        if self.container:
+            self.util_DataLakeExporter.write_to_datalake({'transitLink':df_transit_link})
         network_table.close()
         try:
             previous_active_database.open()
@@ -1085,7 +1118,6 @@ Export network results to csv files for SQL data loader."""
             "constraint": None,
             "type": "EXTENDED_TRANSIT_NETWORK_RESULTS"
         }
-        
         network_results(specification=spec, scenario=scenario,
                         class_name=class_name, num_processors=num_processors)
         cal_spec = {

@@ -23,14 +23,9 @@ util_mode_logsum,Mode choice logsum,mode_choice_logsum,coef_mode_logsum
 #,,,
 util_sample_of_corrections_factor,Sample of alternatives correction factor,"@np.minimum(np.log(df.pick_count/df.prob), 60)",1
 #calibration constants,,,
-util_Calibration - 0-1 miles,Calibration - 0-1 miles,@_DIST<1,coef_distance_0_1miles
-util_Calibration - 1-2 miles,Calibration - 1-2 miles,@(_DIST>=1) * (_DIST<2),coef_distance_1_2miles
-util_Calibration - 2-3 miles,Calibration - 2-3 miles,@(_DIST>=2) * (_DIST<3),coef_distance_2_3miles
-util_ABM2 calibration - 3-4 miles,ABM2 calibration - 3-4 miles,@(_DIST>=3) * (_DIST<4),coef_distance_3_4miles
-util_ABM2 calibration - 4-5 miles,ABM2 calibration - 4-5 miles,@(_DIST>=4) * (_DIST<5),coef_distance_4_5miles
-util_ABM2 calibration - 5-6 miles,ABM2 calibration - 5-6 miles,@(_DIST>=5) * (_DIST<6),coef_distance_5_6miles
-util_ABM2 calibration - 6-7 miles,ABM2 calibration - 6-7 miles,@(_DIST>=6) * (_DIST<7),coef_distance_6_7miles
-util_ABM2 calibration - 7-8 miles,ABM2 calibration - 7-8 miles,@(_DIST>=7) * (_DIST<8),coef_distance_7_8miles
-util_ABM2 calibration - 8-9 miles,ABM2 calibration - 8-9 miles,@(_DIST>=8) * (_DIST<9),coef_distance_8_9miles
-# pmsa-pmsa calibration,,,
-#util_calib,pseudomsa 1 to 3,@(df.home_pmsa == 1) & (_PMSA == 3),coef_calib
+util_Calibration 0-2 - miles,Calibration 0-2 - miles,@_DIST<=2,coef_distance_0_2miles
+util_Calibration 2-5 - miles,Calibration 2-5 - miles,@(_DIST>2) * (_DIST<=5),coef_distance_2_5miles
+util_Calibration 5-10 - miles,Calibration 5-10 - miles,@(_DIST>5) * (_DIST<=10),coef_distance_5_10miles
+util_ABM2 calibration 10-20 - miles,ABM2 calibration 10-20 - miles,@(_DIST>10) * (_DIST<=20),coef_distance_10_20miles
+util_ABM2 calibration 20-30 - miles,ABM2 calibration 20-30 - miles,@(_DIST>20) * (_DIST<=30),coef_distance_20_30miles
+util_ABM2 calibration >30 - miles,ABM2 calibration >30 - miles,@(_DIST>30),coef_distance_30plusmiles

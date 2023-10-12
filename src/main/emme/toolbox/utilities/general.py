@@ -28,6 +28,11 @@ import json as _json
 import time as _time
 import os
 import numpy as _numpy
+import datetime
+import pandas as pd
+import uuid
+import yaml
+
 
 _omx = _m.Modeller().module("sandag.utilities.omxwrapper")
 
@@ -200,7 +205,7 @@ class E00FileProc:
         self._attr_widths = []
         self._attr_cast = []
         self._read_file()
-        
+
     def _read_file(self):
         with open(self._file_path, 'r') as f:
             for line in f:
@@ -213,35 +218,35 @@ class E00FileProc:
                 self._attr_widths.append(self._get_attr_width(attribute))
                 self._attr_cast.append(self._get_attr_caster(attribute))
             self._parse_records(f, int(header["num_records"]))
-                
+
     def _parse_header(self, text):
         file_name, external_flag, num_valid, num_total, record_length, num_records = \
             self._parse_fields(text, [32, 2, 4, 4, 4, 10])
         header = {
-            "file_name": file_name, 
-            "external_flag": external_flag, 
-            "valid_attributes": int(num_valid), 
-            "total_attributes": int(num_total), 
-            "record_length": int(record_length), 
+            "file_name": file_name,
+            "external_flag": external_flag,
+            "valid_attributes": int(num_valid),
+            "total_attributes": int(num_total),
+            "record_length": int(record_length),
             "num_records": int(num_records)
         }
         return header
-        
+
     def _parse_attribute(self, text):
         name, size, _, start, _, _, fmt_width, fmt_precision, type_id, _, _, _, _, alt_name, index = \
             self._parse_fields(text, [16, 3, 2, 4, 1, 2, 4, 2, 3, 2, 4, 4, 2, 16, 5])
         attribute = {
-            "name": name, 
-            "size": int(size), 
-            "start": int(start), 
-            "fmt_width": int(fmt_width), 
-            "fmt_precision": int(fmt_precision), 
-            "type": type_id, 
-            "alt_name": alt_name, 
+            "name": name,
+            "size": int(size),
+            "start": int(start),
+            "fmt_width": int(fmt_width),
+            "fmt_precision": int(fmt_precision),
+            "type": type_id,
+            "alt_name": alt_name,
             "index": index
         }
         return attribute
-    
+
     def _parse_fields(self, text, widths):
         tokens = []
         index = 0
@@ -249,12 +254,12 @@ class E00FileProc:
             tokens.append(text[index:width+index].strip())
             index += width
         return tokens
-    
+
     def _get_attr_width(self, attribute):
         a_type, size = attribute["type"], attribute["size"]
         if a_type == "10":    # "10": "date"
             return 8
-        elif a_type == "20" or a_type == "30":  
+        elif a_type == "20" or a_type == "30":
             # "20": "string" or "30": "fixed_integer"
             return size
         elif a_type == "40":  # "40": "single_float"
@@ -269,7 +274,7 @@ class E00FileProc:
                 return 14
             elif size == 4:  # 4 bytes = 24 characters
                 return 24
-    
+
     def _get_attr_caster(self, attribute):
         str_strip = lambda x: x.strip()
         mapper = {
@@ -281,7 +286,7 @@ class E00FileProc:
             "60": float,      # "60": "float"
         }
         return mapper[attribute["type"]]
-        
+
     def _parse_records(self, reader, num_records):
         num_lines = int(ceil(sum(self._attr_widths) / 80.0))
         indices = []
@@ -303,7 +308,7 @@ class E00FileProc:
 
     def values(self, name):
         index = self._attr_names.index(name)
-        return (v[index] for v in self._values)    
+        return (v[index] for v in self._values)
 
 
 class Snapshot(object):
@@ -457,7 +462,7 @@ class OMXManager(object):
         return os.path.isfile(file_path)
 
     def zone_list(self, file_name):
-        
+
         omx_file = self._omx_files[file_name]
         mapping_name = omx_file.list_mappings()[0]
         # with _m.logbook_trace("file_name and mapping name: %s and %s" % (file_name, mapping_name)):
@@ -503,3 +508,100 @@ class CSVReader(object):
         line = self._f.next()
         tokens = [t.strip() for t in line.split(",")]
         return dict(zip(self._fields, tokens))
+
+class DataLakeExporter(object):
+    """
+    _________________
+
+
+    """
+    def __init__(self
+                 ,ScenarioPath = os.path.dirname(_m.Modeller().desktop.project.path)
+                 ,connection_info = [None, None]
+                 ,timestamp = datetime.datetime.now()):
+        self.ScenarioPath = ScenarioPath
+        self.ReportPath = os.path.join(self.ScenarioPath, "report")
+        self.guid = connection_info[0]
+        self.container = connection_info[1]
+        self.timestamp = timestamp
+
+    def get_datalake_connection(self):
+        """
+        ________
+
+
+        Check if Azure Storage SAS Token is properly configured in local machine's environment.
+            Return Azure ContainerClient and boolean indicating cloud connection was made successfully.
+            If it is not, pass argument back to write_to_datalake to only write outputs locally.
+        """
+        try:
+            from azure.storage.blob import ContainerClient
+            from azure.core.exceptions import ServiceRequestError
+            sas_url = os.environ["AZURE_STORAGE_SAS_TOKEN"]
+            container = ContainerClient.from_container_url(sas_url)
+            _m.logbook_write("Successfully created Azure container")
+            return container
+        except ModuleNotFoundError as e:
+            _m.logbook_write("Failed to create Azure container - unable to import azure module")
+            return None
+        except KeyError as e:
+            _m.logbook_write("Failed to create Azure container - No SAS_Token in environment")
+            return None
+        except ServiceRequestError as e:
+            _m.logbook_write("Failed to create Azure container - SAS_Token in environment likely malconfigured")
+            return None
+
+
+    def get_scenario_guid(self):
+        """
+        get scenario's guid (globally unique identifier)
+        if guid not in scenario's output directory (generated by EMME's master_run.py),
+            then generate a model-specific guid
+        """
+        datalake_metadata_path = os.path.join(self.ScenarioPath,"output", "datalake_metadata.yaml")
+        if os.path.isfile(datalake_metadata_path):
+            with open(datalake_metadata_path, "r") as stream:
+                guid = yaml.safe_load(stream)["scenario_guid"]
+        else:
+            with _m.logbook_write("FileNotFound - datalake_metadata.yaml file not found at %s. Creating new scenario guid" % (datalake_metadata_path)):
+                guid = uuid.uuid4().hex
+                # write guid to file for DataExporter
+                file_path_guid = os.path.join(self.ReportPath,"scenario_guid-report.txt")
+                with open(file_path_guid, "w") as file:
+                    file.write(guid)
+        return guid
+
+
+    def export_data(self, output_table_dict):
+        timestamp_str = self.timestamp.strftime("%Y-%m-%d_%H-%M-%S")
+        year_folder = self.timestamp.strftime("%Y")
+        month_folder = self.timestamp.strftime("%m")
+        day_folder = self.timestamp.strftime("%d")
+
+        for tablename,table in output_table_dict.items():
+            model_output_file = "_".join([tablename, timestamp_str, self.guid])
+            lake_file_name = '/'.join(["report",tablename,year_folder,month_folder,day_folder,model_output_file]) + ".csv"
+
+            if isinstance(table, str):
+                _m.logbook_write("Read csv of %s" % (table))
+                table = pd.read_csv(table)#os.path.join(self.ReportPath,tablename+'.csv'))
+            table["scenario_ts"] = pd.to_datetime(self.timestamp)
+            table["scenario_guid"] = self.guid
+            table.replace("", None, inplace=True) # replace empty strings with None - otherwise conversation error for boolean types
+
+            file = table.to_csv(index_label='idx', encoding = "utf-8")
+
+            t0 = datetime.datetime.now()
+            self.container.upload_blob(name=lake_file_name, data=file)
+            _m.logbook_write("Write to Data Lake: %s took %s to write to Azure" % (tablename, str(datetime.datetime.now()-t0)))
+
+
+    def write_to_datalake(self, output_table_dict):
+        #create Azure connection if one is not passed to DataLakeExporter object
+        if not self.container:
+            self.container = self.get_datalake_connection()
+        #export data if Azure container successfully built
+        if self.container:
+            if not self.guid:
+                self.guid = self.get_scenario_guid()
+            self.export_data(output_table_dict)

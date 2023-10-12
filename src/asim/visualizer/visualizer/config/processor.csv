@@ -1,4 +1,11 @@
 Description,Step,Type,Table,Out Col,In Col,Func
+Switch to determine whether or not to exclude group quarters,step_1,raw,,,,__exclude_gq = True
+Determine list of GQ households,step_1,raw,,,,excluded_hh = households[households['unittype'] == 1].index.values if __exclude_gq else []
+Remove GQ from households,step_1,raw,,,,final_households = final_households.query('household_id not in @excluded_hh')
+Remove GQ from persons,step_1,raw,,,,final_persons = final_persons.query('household_id not in @excluded_hh')
+Remove GQ from tours,step_1,raw,,,,final_tours = final_tours.query('household_id not in @excluded_hh')
+Remove GQ from trips,step_1,raw,,,,final_trips = final_trips.query('household_id not in @excluded_hh')
+Remove GQ from vehicles,step_1,raw,,,,final_vehicles = final_vehicles.query('household_id not in @excluded_hh')
 #,,,,,,
 calculate HH weights,step_1,raw,final_households,finalweights,sample_rate,final_households['finalweights'] = 1/final_households['sample_rate']
 copy weight files,step_1,raw,final_persons,,,final_persons['finalweights'] = final_persons['household_id'].map(final_households.set_index('household_id')['finalweights']).fillna(0)
@@ -436,7 +443,7 @@ Recode time period,step_6,apply,tripDeparture_vis,stop_period,depart,lambda x: (
 Recode time period,step_6,apply,stopDeparture_vis,stop_period,depart,lambda x: (0.5*x+2.75) % 24
 Recode tour duration,step_6,apply,tourDuration,tourdur,tourdur,lambda x: 0.5*x
 #,,,,,,
-Recode daily activity pattern,step_6,replace,dapSummary_vis,activity_pattern,activity_pattern,"{'H': 'Home', 'M': 'Mandatory', 'N': 'Non-Mandatory'}"
+Recode daily activity pattern,step_6,replace,dapSummary_vis,activity_pattern,activity_pattern,"{'H': '3: Home', 'M': '1: Mandatory', 'N': '2: Non-Mandatory'}"
 #,,,,,,
 ,step_6,apply,todProfile_vis,period,period,lambda x: ((x-3)%24)+3
 ,step_6,apply,stopDeparture_vis,stop_period,stop_period,lambda x: ((x-3)%24)+3
@@ -473,3 +480,6 @@ Reset externalFrequency index,step_6,raw,,,,externalFrequency = externalFrequenc
 Rename vehicle allocation columns,step_6,rename,vehicle_allocation,,,"{""level_0"": ""Vehicle Body Type"", ""level_1"": ""Vehicle Age"", ""level_2"": ""Vehicle Fuel Type""}"
 Fill null values with 0,step_6,raw,,,,vehicle_allocation = vehicle_allocation.fillna(0)
 Melt vehicle allocation table,step_6,raw,,,,"vehicle_allocation = pd.melt(vehicle_allocation, id_vars = ['Vehicle Body Type', 'Vehicle Age', 'Vehicle Fuel Type'], var_name = 'Tour Mode', value_name = 'freq').rename(columns = {'index': 'Vehicle Number'})"
+Rename non-hh vehicles,step_6,replace,vehicle_allocation,Vehicle Body Type,Vehicle Body Type,"{""non_hh_vehicle"": ""Non-HH Vehicle""}"
+Rename non-hh vehicles,step_6,replace,vehicle_allocation,Vehicle Age,Vehicle Age,"{""non_hh_vehicle"": ""Non-HH Vehicle""}"
+Rename non-hh vehicles,step_6,replace,vehicle_allocation,Vehicle Fuel Type,Vehicle Fuel Type,"{""non_hh_vehicle"": ""Non-HH Vehicle""}"

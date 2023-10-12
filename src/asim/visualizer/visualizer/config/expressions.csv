@@ -86,9 +86,9 @@ Outbound escort type by chauffeur type,esctype_by_chauffeurtype,freq_out,ob_esc_
 Inbound escort type by chauffeur type,esctype_by_chauffeurtype,freq_inb,ib_esc_tours,tour_purpose == 'school' and person_type >= 6 and inb_chauffeur_ptype > 0,finalweights,sum,"school_esc_inbound,inb_chauffeur_ptype"
 Outbound escort type for inbound ride share,worker_school_escorting,freq,active_workers,active_student == 1,finalweights,sum,"inb_escort_type,out_escort_type"
 #,,,,,,,
-Free parking at work,ownership_subsidies,free_parking_at_work,final_persons,workloc_parkcost > 0,free_parking_weight,sum,PERTYPE
-Transit pass,ownership_subsidies,transit_pass_ownership,final_persons,,transit_pass_weight,sum,PERTYPE
-Transit subsidy,ownership_subsidies,transit_subsidy,final_persons,,transit_subsidy_weight,sum,PERTYPE
+Free parking at work,ownership_subsidies,free_parking_at_work,final_persons,workloc_parkcost > 0 and (is_worker or is_student),free_parking_weight,sum,PERTYPE
+Transit pass,ownership_subsidies,transit_pass_ownership,final_persons,is_worker or is_student,transit_pass_weight,sum,PERTYPE
+Transit subsidy,ownership_subsidies,transit_subsidy,final_persons,is_worker or is_student,transit_subsidy_weight,sum,PERTYPE
 #,,,,,,,
 Telecommute frequency,telecommute_frequency,freq,final_persons,is_out_of_home_worker,finalweights,sum,telecommute_frequency
 "Share of households with a joint tour (0,1+) by household size ",hh_joint_tours,share,final_households,,has_joint_tour_weight,sum,HHSIZE

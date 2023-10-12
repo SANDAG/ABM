@@ -1,3 +1,5 @@
+model_name: airport.CBX
+
 inherit_settings: False
 
 # number of households to simulate

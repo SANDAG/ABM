@@ -22,4 +22,10 @@ coef_distance_5_6miles,-0.473709788,F
 coef_distance_6_7miles,-0.288581712,F
 coef_distance_7_8miles,-0.309358702,F
 coef_distance_8_9miles,-0.13398685,F
-# pmsa-pmsa calibration,,
+#work distance calibration,,
+coef_distance_0_2miles,-0.440694055,F
+coef_distance_2_5miles,-0.462691408,F
+coef_distance_5_10miles,0.027668545,F
+coef_distance_10_20miles,0.417824336,F
+coef_distance_20_30miles,0.322358358,F
+coef_distance_30plusmiles,0.531161279,F

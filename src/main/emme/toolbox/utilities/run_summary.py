@@ -20,17 +20,7 @@ _join = os.path.join
 ATTR_SUFFIX = "_304A7365_C276_493A_AB3B_9B2D195E203F"
 
 # Define unneeded entries
-exclude = ('Copy project data to local drive',
-           'Export results for transponder ownership model',
-           'Check free space on C',
-           'Data load request',
-           'Delete',
-           'Move',
-           'Create drive',
-           'Start matrix',
-           'Start JPPF',
-           'Start Hh',
-           'Start HH')
+exclude = ()
 
 
 class RunTime(_m.Tool()):
@@ -75,12 +65,25 @@ class RunTime(_m.Tool()):
         self.end = "end" + ATTR_SUFFIX
         attrs = [self.begin, self.end]
 
+        # DAG (Directed Acyclic Graph) for topological sort
+        # An edge is created between each step and the next step in the run
+        step_dict = {
+            'Total Run Time': {
+                'next': set(),
+                'prev': set()
+            }
+        }
+        prev_step = ''
+
         runtime_dfs = []
         for run_id in run_ids:
+
             name = 'Run ID: {}'.format(run_id)
 
             # Creating dummy total time
             total_entry = (run_id, 'Total Run Time', '0:0')
+
+            prev_step = 'Total Run Time'
 
             # Get second level child entry run times if they exist
             child_runtimes = self.get_child_runtimes(run_id, attrs)
@@ -90,14 +93,33 @@ class RunTime(_m.Tool()):
             for index, info in enumerate(child_runtimes):
                 if info[1] == 'Final traffic assignments':
                     final_runtimes.append([0, 'Iteration 4', 0])
+
+                    # add edge to DAG
+                    if 'Iteration 4' in step_dict:
+                        step_dict['Iteration 4']['prev'].add(prev_step)
+                    else:
+                        step_dict['Iteration 4'] = {
+                            'next': set(),
+                            'prev': {prev_step}
+                        }
+                    step_dict[prev_step]['next'].add('Iteration 4')
+                    prev_step = 'Iteration 4'
+
                 final_runtimes.append(info)
+
+                # add edge to DAG
+                if info[1] in step_dict:
+                    step_dict[info[1]]['prev'].add(prev_step)
+                else:
+                    step_dict[info[1]] = {
+                        'next': set(),
+                        'prev': {prev_step}
+                    }
+                step_dict[prev_step]['next'].add(info[1])
+                prev_step = info[1]
+
                 if 'Iteration' in info[1]:
                     iter_str = '_{}'.format(info[1])
-
-                    # Manually inserting matrix, hh, node, and jppf runtimes
-                    start_proc = "Start Matrix manager, JPPF Driver, " + \
-                                 "HH manager, and Nodes manager" + iter_str
-                    final_runtimes += [[0, start_proc, '0:01']]
 
                     # Add iteration to children
                     iteration_children = self.get_child_runtimes(
@@ -105,6 +127,17 @@ class RunTime(_m.Tool()):
                     for index, child in enumerate(iteration_children):
                         step = child[1]
                         iteration_children[index][1] = step + iter_str
+
+                        # add edge to DAG
+                        if (step + iter_str) in step_dict:
+                            step_dict[step + iter_str]['prev'].add(prev_step)
+                        else:
+                            step_dict[step + iter_str] = {
+                                'next': set(),
+                                'prev': {prev_step}
+                            }
+                        step_dict[prev_step]['next'].add(step + iter_str)
+                        prev_step = step + iter_str
 
                     final_runtimes += iteration_children
 
@@ -138,15 +171,12 @@ class RunTime(_m.Tool()):
             run_str = 'Total Run Time'
             runtime_df.loc[run_str, :] = self.format_runtime(total_time)
 
-            # Remove unneeded entries
-            is_excluded = pd.Series(runtime_df.index).str.startswith(exclude)
-            runtime_df = runtime_df[~(is_excluded.values)]
             runtime_dfs.append(runtime_df)
 
         # Merge all run time data frames if more than one exists and save
         file_name = 'runtime_summary.csv'
         self.output_path = _join(path, 'output', file_name)
-        result = self.combine_dfs(runtime_dfs)
+        result = self.combine_dfs(runtime_dfs, step_dict)
         if result[1]:
             result[0].to_csv(self.output_path, header=True, index=False)
         else:
@@ -291,7 +321,7 @@ class RunTime(_m.Tool()):
 
         return runtime_child_entries
 
-    def combine_dfs(self, df_list):
+    def combine_dfs(self, df_list, step_dict):
         """
         Combines a list of Pandas DataFrames into a single
         summary DataFrame
@@ -301,6 +331,21 @@ class RunTime(_m.Tool()):
                   and boolean whether it contains multiple runs
         """
         if len(df_list) > 1:
+            # Compute final step order
+            # Topological sort with Kahn's algorithm
+            # "Total Run Time" is always the first step
+            # Steps are added to the final order only after all parent steps have been added
+            step_no_prev = {'Total Run Time'}
+            step_order = []
+            while step_no_prev:
+                curr_step = step_no_prev.pop()
+                step_order.append(curr_step)
+                while step_dict[curr_step]['next']:
+                    next_step = step_dict[curr_step]['next'].pop()
+                    step_dict[next_step]['prev'].remove(curr_step)
+                    if not step_dict[next_step]['prev']:
+                        step_no_prev.add(next_step)
+
             # Drop tables with less than 2 entries
             final_dfs = []
             for df in df_list:
@@ -311,6 +356,14 @@ class RunTime(_m.Tool()):
             final_df = reduce(lambda left, right:
                               pd.merge(left, right, on=['index'], how='outer'),
                               final_dfs)
+            
+            # Sort data by step order
+            final_df = final_df.set_index('index', drop= False)
+            final_df = final_df.reindex(step_order)
+
+            # Remove unneeded entries
+            is_excluded = pd.Series(final_df.index).str.startswith(exclude)
+            final_df = final_df[~(is_excluded.values)]
 
             # Remove appended iteration markers
             final_df['index'] = (final_df['index'].apply(

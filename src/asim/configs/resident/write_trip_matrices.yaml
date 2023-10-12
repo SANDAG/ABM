@@ -547,5 +547,6 @@ FINAL_TRIP_COLUMNS:
   - sample_rate
   - otaz
   - dtaz
+  - model
   - arrival_mode
   - num_participants

@@ -1,0 +1,31 @@
+Label,Description,Expression,coefficient
+local_dist,,_DIST@skims['DIST'],1
+alt_dest_pmsa,,"_ALT_PMSA@reindex(land_use.pseudomsa, df.alt_dest)",1
+#,,,
+util_dist,Distance,@_DIST,coef_dist
+util_dist_sqrt,Square root of distance,@_DIST**0.5,coef_dist_sqrt
+util_dist_sqrd,Distance squared,@_DIST**2,coef_dist_sqrd
+util_dist_cubed,Distance cubed,@_DIST**3,coef_dist_cubed
+util_dist_lowincome,Distance - low income,@_DIST * (df.income<=2),coef_dist_lowincme
+util_dist_sqrt_lowincome,Distance sqrt - low income,@(_DIST**0.5) * (df.income<=2),coef_dist_sqrt_lowincme
+util_dist_sqrd_lowincome,Distance squared - low income,@(_DIST**2) * (df.income<=2),coef_dist_sqrd__lowincme
+util_dist_highincome,Distance - high income,@_DIST * (df.income>=4),coef_dist_highincme
+util_dist_sqrd_highincome,Distance squared - high income,@(_DIST**2) * (df.income>=4),coef_dist_sqrd_highincme
+util_dist_pt,Distance - parttime worker,@_DIST * (df.ptype==2),coef_dist_ptworker
+util_dist_sqrd_pt,Distance squared - parttime worker,@(_DIST**2) * (df.ptype==2),coef_dist_sqrd_ptworker
+util_dist_femaleworker,Distance - female worker,@_DIST * (df.ptype<3) * (df.female==1),coef_dist_femaleworker
+#,,,
+util_size_variable,Size variable,@df['size_term'].apply(np.log1p),1
+util_size_unavailable,Size variable,@df['size_term']==0,-999
+util_sp_utility_adjustment,shadow price utility adjustment,@df['shadow_price_utility_adjustment'],1
+#,,,
+util_mode_logsum,Mode choice logsum,mode_choice_logsum,coef_mode_logsum
+#,,,
+util_sample_of_corrections_factor,Sample of alternatives correction factor,"@np.minimum(np.log(df.pick_count/df.prob), 60)",1
+#calibration constants,,,
+util_Calibration 0-2 - miles,Calibration 0-2 - miles,@_DIST<=2,coef_distance_0_2miles
+util_Calibration 2-5 - miles,Calibration 2-5 - miles,@(_DIST>2) * (_DIST<=5),coef_distance_2_5miles
+util_Calibration 5-10 - miles,Calibration 5-10 - miles,@(_DIST>5) * (_DIST<=10),coef_distance_5_10miles
+util_ABM2 calibration 10-20 - miles,ABM2 calibration 10-20 - miles,@(_DIST>10) * (_DIST<=20),coef_distance_10_20miles
+util_ABM2 calibration 20-30 - miles,ABM2 calibration 20-30 - miles,@(_DIST>20) * (_DIST<=30),coef_distance_20_30miles
+util_ABM2 calibration >30 - miles,ABM2 calibration >30 - miles,@(_DIST>30),coef_distance_30plusmiles
