@@ -1,3 +1,5 @@
+model_name: airport.SAN
+
 inherit_settings: False
 
 # number of households to simulate

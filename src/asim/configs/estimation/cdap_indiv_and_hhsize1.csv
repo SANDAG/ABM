@@ -1,0 +1,53 @@
+Description,Expression,M,N,H
+Full-time worker ASC,ptype == 1,coef_full_time_worker_asc_M,coef_full_time_worker_asc_N,
+Part-time worker ASC,ptype == 2,coef_part_time_worker_asc_M,coef_part_time_worker_asc_N,
+University student ASC,ptype == 3,coef_university_student_asc_M,coef_university_student_asc_N,
+Non-working adult ASC,ptype == 4,,coef_non_working_adult_asc_N,
+Retired ASC,ptype == 5,,coef_retired_asc_N,
+Driving-age child who is in school ASC,ptype == 6,coef_driving_age_child_asc_M,coef_driving_age_child_asc_N,
+Pre-driving-age child who is in school ASC,ptype == 7,coef_pre_driving_age_child_asc_M,coef_pre_driving_age_child_asc_N,
+Preschool child ASC,ptype == 8,coef_preschool_child_asc_M,coef_preschool_child_asc_N,
+Full-time worker interaction with age less than 35,(ptype == 1) & (age < 35),coef_full_time_worker_age_less_than_35_M,coef_full_time_worker_age_less_than_35_N,
+Part-time worker interaction with age less than 35,(ptype == 2) & (age < 35),coef_part_time_worker_age_less_than_35_M,coef_full_time_worker_age_less_than_35_N,
+Age over 80,(age >= 80),,coef_age_80_plus_N,
+Zero auto ownership base,(auto_ownership == 0),coef_base_zero_auto_M,coef_base_zero_auto_N,
+#Zero auto ownership university_student,(ptype == 3) & (auto_ownership == 0),,coef_university_student_zero_auto_N,
+#Zero auto ownership non_working_adult,(ptype == 4) & (auto_ownership == 0),,coef_non_working_adult_zero_auto_N,
+Auto Deficient part-time worker,(ptype == 2) & (auto_ownership > 0) & (auto_ownership < num_adults),coef_part_time_worker_auto_deficient_M,,
+Auto Deficient university_student,(ptype == 3) & (auto_ownership > 0) & (auto_ownership < num_adults),,coef_university_student_auto_deficient_N,
+Auto Deficient non_working_adult,(ptype == 4) & (auto_ownership > 0) & (auto_ownership < num_adults),,coef_non_working_adult_auto_deficient_N,
+Auto Deficient retired,(ptype == 5) & (auto_ownership > 0) & (auto_ownership < num_adults),,coef_retired_auto_deficient_N,
+Auto Deficient driving_age_child,(ptype == 6) & (auto_ownership > 0) & (auto_ownership < num_adults),,coef_driving_age_child_auto_deficient_N,
+#Auto Deficient pre_driving_age_child,(ptype == 7) & (auto_ownership > 0) & (auto_ownership < num_adults),coef_pre_driving_age_child_auto_deficient_M,coef_pre_driving_age_child_auto_deficient_N,
+Auto Deficient preschool_child,(ptype == 8) & (auto_ownership > 0) & (auto_ownership < num_adults),coef_preschool_child_auto_deficient_M,,
+Full-time worker interaction with income less than $30k,(ptype == 1) & (income < 30000),,,coef_full_time_worker_income_less_than_30k_H
+Part-time worker interaction with income less than $30k,(ptype == 2) & (income < 30000),,,coef_part_time_worker_income_less_than_30k_H
+#University student interaction with income between $60k and $100k,(ptype == 3) & (income >= 60000) & (income <= 100000),,,coef_university_student_income_between_60k_and_100k_H
+Preschool child interaction with income between $60k and $100k,(ptype == 8) & (income >= 60000) & (income <= 100000),coef_preschool_child_income_between_60k_and_100k_M,,
+Base works from home,(work_from_home == True),,coef_base_work_from_home_N,
+Base works from home 2016,(work_from_home == True) & (survey_year == 2016),,coef_base_work_from_home_2016_N,
+Part time worker who works from home,(ptype == 2) & (work_from_home == True),,coef_part_time_worker_work_from_home_N,
+Part time worker who works from home,(ptype == 2) & (work_from_home == True) & (survey_year == 2016),,coef_part_time_worker_work_from_home_2016_N,
+Telecommutes 1 day per week,telecommute_frequency=='1_day_week',,coef_telecommute_1_day_week_N,coef_telecommute_1_day_week_H
+Telecommutes 2-3 days per week,telecommute_frequency=='2_3_days_week',,coef_telecommute_2_3_days_week_N,coef_telecommute_2_3_days_week_H
+Telecommutes 4 days per week,telecommute_frequency=='4_days_week',,coef_telecommute_4_days_week_N,coef_telecommute_4_days_week_H
+Full-time worker 2016 ASC,(ptype == 1) & (survey_year == 2016),coef_full_time_worker_2016_asc_M,coef_full_time_worker_2016_asc_N,
+Part-time worker 2016 ASC,(ptype == 2) & (survey_year == 2016),coef_part_time_worker_2016_asc_M,coef_part_time_worker_2016_asc_N,
+University student 2016 ASC,(ptype == 3) & (survey_year == 2016),coef_university_student_2016_asc_M,coef_university_student_2016_asc_N,
+Non-working adult 2016 ASC,(ptype == 4) & (survey_year == 2016),,coef_non_working_adult_2016_asc_N,
+Retired 2016 ASC,(ptype == 5) & (survey_year == 2016),,coef_retired_2016_asc_N,
+Driving-age child who is in school 2016 ASC,(ptype == 6) & (survey_year == 2016),coef_driving_age_child_2016_asc_M,coef_driving_age_child_2016_asc_N,
+Pre-driving-age child who is in school 2016 ASC,(ptype == 7) & (survey_year == 2016),coef_pre_driving_age_child_2016_asc_M,coef_pre_driving_age_child_2016_asc_N,
+Preschool child 2016 ASC,(ptype == 8) & (survey_year == 2016),coef_preschool_child_2016_asc_M,coef_preschool_child_2016_asc_N,
+Telecommutes 1 day per week 2016,(telecommute_frequency=='1_day_week') & (survey_year == 2016),,coef_telecommute_1_day_week_2016_N,coef_telecommute_1_day_week_2016_H
+Telecommutes 2-3 days per week 2016,(telecommute_frequency=='2_3_days_week') & (survey_year == 2016),,coef_telecommute_2_3_days_week_2016_N,coef_telecommute_2_3_days_week_2016_H
+Telecommutes 4 days per week 2016,(telecommute_frequency=='4_days_week') & (survey_year == 2016),,coef_telecommute_4_days_week_2016_N,coef_telecommute_4_days_week_2016_H
+Mandatory pattern unavailable if not worker or student,(is_student == False) & (is_worker == False),coef_UNAVAILABLE,,
+Mandatory pattern unavailable if not works from home,(work_from_home == True) & (is_student == False),coef_UNAVAILABLE,,
+# cutting non-mandatory accessibility into roughly quartiles with low as base,,,,
+Non-mandatory accessibility med low,(non_mand_accessibility >= 12) & (non_mand_accessibility < 13.5),,coef_non_mand_accessibility_med_low_N,
+Non-mandatory accessibility med high,(non_mand_accessibility >= 13.5) & (non_mand_accessibility < 15),,coef_non_mand_accessibility_med_high_N,
+Non-mandatory accessibility high,(non_mand_accessibility > 15),,coef_non_mand_accessibility_high_N,
+Non-mandatory accessibility med low,(non_mand_accessibility >= 12) & (non_mand_accessibility < 13.5) & (survey_year == 2016),,coef_non_mand_accessibility_med_low_2016_N,
+Non-mandatory accessibility med high,(non_mand_accessibility >= 13.5) & (non_mand_accessibility < 15) & (survey_year == 2016),,coef_non_mand_accessibility_med_high_2016_N,
+Non-mandatory accessibility high,(non_mand_accessibility > 15) & (survey_year == 2016),,coef_non_mand_accessibility_high_2016_N,
