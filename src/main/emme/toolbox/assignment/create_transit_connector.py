@@ -85,7 +85,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
     def run(self):
         self.tool_run_msg = ""
         try:
-            results = self(self.period, self.scenario, self.create_connectors)
+            results = self(self.period, self.scenario, self.create_connector_flag)
             run_msg = "Transit connectors created"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg)
         except Exception as error:
@@ -190,7 +190,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                     "exclude_split_links":False,
                                     "only_midblock_nodes": False},
                                 max_length=self.max_length_wlk[i],
-                                max_connectors=10,
+                                max_connectors=8,
                                 min_angle=0,
                                 scenario=self.scenario)
                 export_basenet(selection = {"link": 'i=1,4947 or j=1,4947',
@@ -261,6 +261,20 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                 max_connectors=2,
                                 min_angle=0,
                                 scenario=self.scenario)
+                #for mexico external zones, make sure walk access connectors are created
+                create_connectors(access_modes=["u", "q", "Q"],
+                                egress_modes=["k", "j", "J"],
+                                delete_existing=True,
+                                selection={
+                                    "centroid":"i=1,4",
+                                    "node": "%s" % self.line_haul_mode_specs[i],
+                                    "link":"none",
+                                    "exclude_split_links":False,
+                                    "only_midblock_nodes": False},
+                                max_length=5,
+                                max_connectors=2,
+                                min_angle=0,
+                                scenario=self.scenario)
                 export_basenet(selection = {"link": 'i=1,4947 or j=1,4947',
                                             "node": 'none'},
                             export_file = "connectors_uqQ" + self.line_haul_modes[i] + ".out",
@@ -309,6 +323,19 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                     "exclude_split_links":False,
                                     "only_midblock_nodes": False},
                                 max_length=self.max_length_wlk[i],
+                                max_connectors=2,
+                                min_angle=0,
+                                scenario=self.scenario)
+                create_connectors(access_modes=["u", "f", "q", "Q"],
+                                egress_modes=["k", "g", "j", "J"],
+                                delete_existing=True,
+                                selection={
+                                    "centroid":"i=1,4",
+                                    "node": "@ipark=1,9 and %s" % self.line_haul_mode_specs[i],
+                                    "link":"none",
+                                    "exclude_split_links":False,
+                                    "only_midblock_nodes": False},
+                                max_length=5,
                                 max_connectors=2,
                                 min_angle=0,
                                 scenario=self.scenario)
