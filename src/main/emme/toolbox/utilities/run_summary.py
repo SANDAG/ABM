@@ -24,6 +24,13 @@ exclude = ()
 
 
 class RunTime(_m.Tool()):
+    runtime_depth = _m.Attribute(int)
+
+    def page(self):
+        pb = _m.ToolPageBuilder(self)
+        pb.title = 'Runtime Summary'
+        pb.add_text_box('runtime_depth', title='Depth:', note='Depth of substeps to display in output, default 0')
+        return pb.render()
 
     def __init__(self):
         project_dir = _dir(_m.Modeller().desktop.project.path)
@@ -56,6 +63,9 @@ class RunTime(_m.Tool()):
 
         :param path: Scenario file path
         """
+
+        if self.runtime_depth is None:
+            self.runtime_depth = 0
 
         # Get element IDs for model runs
         run_ids = self.get_runs()
@@ -90,56 +100,7 @@ class RunTime(_m.Tool()):
 
             # Get third (final) level child entry run times
             final_runtimes = [total_entry]
-            for index, info in enumerate(child_runtimes):
-                if info[1] == 'Final traffic assignments':
-                    final_runtimes.append([0, 'Iteration 4', 0])
-
-                    # add edge to DAG
-                    if 'Iteration 4' in step_dict:
-                        step_dict['Iteration 4']['prev'].add(prev_step)
-                    else:
-                        step_dict['Iteration 4'] = {
-                            'next': set(),
-                            'prev': {prev_step}
-                        }
-                    step_dict[prev_step]['next'].add('Iteration 4')
-                    prev_step = 'Iteration 4'
-
-                final_runtimes.append(info)
-
-                # add edge to DAG
-                if info[1] in step_dict:
-                    step_dict[info[1]]['prev'].add(prev_step)
-                else:
-                    step_dict[info[1]] = {
-                        'next': set(),
-                        'prev': {prev_step}
-                    }
-                step_dict[prev_step]['next'].add(info[1])
-                prev_step = info[1]
-
-                if 'Iteration' in info[1]:
-                    iter_str = '_{}'.format(info[1])
-
-                    # Add iteration to children
-                    iteration_children = self.get_child_runtimes(
-                                                        info[0], attrs)
-                    for index, child in enumerate(iteration_children):
-                        step = child[1]
-                        iteration_children[index][1] = step + iter_str
-
-                        # add edge to DAG
-                        if (step + iter_str) in step_dict:
-                            step_dict[step + iter_str]['prev'].add(prev_step)
-                        else:
-                            step_dict[step + iter_str] = {
-                                'next': set(),
-                                'prev': {prev_step}
-                            }
-                        step_dict[prev_step]['next'].add(step + iter_str)
-                        prev_step = step + iter_str
-
-                    final_runtimes += iteration_children
+            self.add_runtimes(final_runtimes, child_runtimes, '', '', step_dict, prev_step, attrs, self.runtime_depth)
 
             # Create run time summary table
             index = [x[1] for x in final_runtimes]
@@ -152,10 +113,11 @@ class RunTime(_m.Tool()):
             zero_time = pd.to_datetime('0:0', format='%H:%M')
 
             # Calculate iteration 4 run time if it exists
-            iter_str = 'Iteration 4'
+            iter_str = 'Iteration 4_0'
             if iter_str in runtime_df.index:
-                iter_4_index = runtime_df.index.get_loc('Iteration 4')
+                iter_4_index = runtime_df.index.get_loc(iter_str)
                 iter_4_df = runtime_df.iloc[iter_4_index+1:, :].copy()
+                iter_4_df = iter_4_df[['  -    -  ' not in i for i in iter_4_df.index]]
                 iter_4_df[name] = (pd.to_datetime(
                                             iter_4_df[name], format='%H:%M') -
                                    zero_time)
@@ -164,7 +126,11 @@ class RunTime(_m.Tool()):
 
             # Calculate total runtime
             is_iter_row = pd.Series(runtime_df.index).str.startswith('Iter')
-            total_df = runtime_df[~is_iter_row.values].copy()
+            iter_only_df = runtime_df[['_Iter' in i for i in runtime_df.index]].copy()
+            iter_only_df = iter_only_df[['  -    -  ' not in i for i in iter_only_df.index]]
+            no_substeps_df = runtime_df[~is_iter_row.values].copy()
+            no_substeps_df = no_substeps_df[['  -  ' not in i for i in no_substeps_df.index]]
+            total_df = pd.concat([iter_only_df, no_substeps_df], axis=0)
             total_df[name] = (pd.to_datetime(total_df[name], format='%H:%M') -
                               zero_time)
             total_time = total_df[name].sum()
@@ -377,3 +343,43 @@ class RunTime(_m.Tool()):
             result = (final_df, False)
 
         return result
+    
+    def add_runtimes(self, final_runtimes, runtimes, prefix, suffix, step_dict, prev_step, attrs, depth):
+        index_dict = {}
+        for index, info in enumerate(runtimes):
+            if info[1] == 'Final traffic assignments':
+                prev_step = self.add_runtimes(final_runtimes, [[0, 'Iteration 4', 0]], prefix, suffix, step_dict, prev_step, attrs, 0)
+                prefix = '  -  ' + prefix
+                suffix = suffix + '_Iteration 4'
+
+            temp_info = info[1]
+            
+            # add prefix for indentation, suffix to distinguish steps with the same name
+            if info[1] in index_dict:
+                index_dict[info[1]] += 1
+            else:
+                index_dict[info[1]] = 0
+            info[1] = prefix + info[1] + suffix + '_' + str(index_dict[info[1]])
+            
+            final_runtimes.append(info)
+
+            # add edge to DAG
+            if info[1] in step_dict:
+                step_dict[info[1]]['prev'].add(prev_step)
+            else:
+                step_dict[info[1]] = {
+                    'next': set(),
+                    'prev': {prev_step}
+                }
+            step_dict[prev_step]['next'].add(info[1])
+            prev_step = info[1]
+
+            # get child steps 
+            if 'Iteration' in temp_info:
+                child_runtimes = self.get_child_runtimes(info[0], attrs)
+                prev_step = self.add_runtimes(final_runtimes, child_runtimes, '  -  ' + prefix, suffix + '_' + info[1], step_dict, prev_step, attrs, depth)
+            elif depth > 0:
+                child_runtimes = self.get_child_runtimes(info[0], attrs)
+                prev_step = self.add_runtimes(final_runtimes, child_runtimes, '  -  ' + prefix, suffix + '_' + info[1], step_dict, prev_step, attrs, depth - 1)
+            
+        return prev_step
