@@ -77,19 +77,19 @@ CONSTANTS:
   terminal: 1
   central_mobility_hub: 2
   nearest: 3
-  parkLocation1Mgra: 7061
+  parkLocation1Mgra: 9350
   parkLocation2Mgra: -999
   parkLocation3Mgra: -999
   parkLocation4Mgra: -999
   parkLocation5Mgra: -999
-  parkEscortLocationMgra: 7061
-  rentalLocationMgra: 7061
-  terminalMgra: 7061
+  parkEscortLocationMgra: 9350
+  rentalLocationMgra: 9350
+  terminalMgra: 9350
   centralMobilityHubMgra: 0
-  ridehailLocation1Mgra: 7061
+  ridehailLocation1Mgra: 9350
   ridehailLocation2Mgra: -999
   transitMgra: -999
-  curbLocation1Mgra: 7061
+  curbLocation1Mgra: 9350
   curbLocation2Mgra: -999
   curbLocation3Mgra: -999
   curbLocation4Mgra: -999
