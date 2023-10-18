@@ -12,10 +12,15 @@ Description,Target,Expression
 ,c_walk_time,c_ivt * 1.8
 ,c_xfers_pnr,c_ivt * 15
 # Transit ASCs,,
-,exp_asc,10
-,brt_asc,10
-,lrt_asc,20
-,cr_asc,0
+commuter rail ASC,asc_cr_mix,"np.where(odt_skims['WALK_MIX_CMRIVTT'] > 0, cr_asc * c_ivt, 0)"
+light rail ASC,asc_lrt_mix,"np.where(asc_cr_mix==0, np.where(odt_skims['WALK_MIX_LRTIVTT'] > 0, lrt_asc * c_ivt, 0), asc_cr_mix)"
+bus rapid transit ASC,asc_brt_mix,"np.where(asc_lrt_mix==0, np.where(odt_skims['WALK_MIX_BRTIVTT'] > 0, brt_asc * c_ivt, 0), asc_lrt_mix)"
+express bus ASC,asc_eb_mix,"np.where(asc_brt_mix==0, np.where(odt_skims['WALK_MIX_LTDEXPIVTT'] + odt_skims['WALK_MIX_EXPIVTT'] > 0, exp_asc * c_ivt, 0), asc_brt_mix)"
+commuter rail ASC,asc_cr_prm,"np.where(odt_skims['WALK_PRM_CMRIVTT'] > 0, cr_asc * c_ivt, 0)"
+light rail ASC,asc_lrt_prm,"np.where(asc_cr_prm==0, np.where(odt_skims['WALK_PRM_LRTIVTT'] > 0, lrt_asc * c_ivt, 0), asc_cr_prm)"
+bus rapid transit ASC,asc_brt_prm,"np.where(asc_lrt_prm==0, np.where(odt_skims['WALK_PRM_BRTIVTT'] > 0, brt_asc * c_ivt, 0), asc_lrt_prm)"
+express bus ASC,asc_eb_prm,"np.where(asc_brt_prm==0, np.where(odt_skims['WALK_PRM_LTDEXPIVTT'] + odt_skims['WALK_PRM_EXPIVTT'] > 0, exp_asc * c_ivt, 0), asc_brt_prm)"
+#,,
 ,cost_per_mile,cost_per_mile_fuel + cost_per_mile_maint
 intermediate outbound stops on tour,out_stops,df['stop_frequency'].str[0].astype(int)
 intermediate inbound stops on tour,in_stops,df['stop_frequency'].str[5].astype(int)

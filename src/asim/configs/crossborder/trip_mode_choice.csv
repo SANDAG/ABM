@@ -34,6 +34,8 @@ util_WALK_PRM_transfers_penalty,WALK_PRM - number of transfers,"@(-23+23*np.exp(
 util_WALK_PRM_Walk_access_time,WALK_PRM - Walk access time,@(df.origin_prm_time) * df.c_ivt * c_walk ,,,,,,1,,,,
 util_WALK_PRM_Walk_egress_time,WALK_PRM - Walk egress time,@ df.dest_prm_time * df.c_ivt * c_walk,,,,,,1,,,,
 util_WALK_PRM_Fare,WALK_PRM - Fare,@odt_skims['WALK_PRM_FARE'] * c_cost * 100,,,,,,1,,,,
+util_WALK_PRM_ASC,ASC,asc_eb_prm,,,,,,1,,,,
+util_cr_long_distance_prm,CR long distance bonus,"@(odt_skims['WALK_PRM_CMRIVTT'] > 10) * df.c_ivt * -1.0 * (np.clip(odt_skims['WALK_PRM_CMRIVTT'], a_min=None, a_max=60) + np.where(odt_skims['WALK_PRM_CMRIVTT'] > 40, (odt_skims['WALK_PRM_CMRIVTT'] - 40) * 0.6, 0))",,,,,,1,,,,
 #,Walk mix,,,,,,,,,,,
 util_WALK_MIX_Unavailable,WALK_MIX - Unavailable,walk_mix_available == False,,,,,,,-999,,,
 util_WALK_MIX_In_vehicle_time,WALK_MIX - In-vehicle time,@(odt_skims['WALK_MIX_TOTALIVTT']) * df.c_ivt,,,,,,,1,,,
@@ -48,6 +50,8 @@ util_WALK_MIX_Walk_access_time,WALK_MIX - Walk access time,@(df.origin_mix_time)
 util_WALK_MIX_Walk_egress_time,WALK_MIX - Walk egress time,@(df.dest_mix_time) * df.c_ivt * c_walk,,,,,,,1,,,
 util_WALK_MIX_Walk_other_time,WALK_MIX - Walk other time,@(odt_skims['WALK_MIX_XFERWALK'])* c_waux * df.c_ivt ,,,,,,,1,,,
 util_WALK_MIX_Fare,WALK_MIX - Fare,@(odt_skims['WALK_MIX_FARE']) * c_cost * 100,,,,,,,1,,,
+util_WALK_MIX_ASC,ASC,"@df.asc_eb_mix * np.where(odt_skims['WALK_LOC_TOTALIVTT'] > 0, 0.5, 1)",,,,,,,1,,,
+util_cr_long_distance_prm,CR long distance bonus,"@(odt_skims['WALK_PRM_CMRIVTT'] > 10) * df.c_ivt * -1.0 * (np.clip(odt_skims['WALK_PRM_CMRIVTT'], a_min=None, a_max=60) + np.where(odt_skims['WALK_PRM_CMRIVTT'] > 40, (odt_skims['WALK_PRM_CMRIVTT'] - 40) * 0.6, 0))",,,,,,,1,,,
 #,,,,,,,,,,,,
 util_TAXI_IVT,Taxi - In-vehicle time,c_ivt * s2_time_skims,,,,,,,,1,,
 util_TAXI_wait,Taxi - Wait time,c_ivt * taxi_wait_time,,,,,,,,1,,
@@ -58,6 +62,7 @@ util_TNC_SINGLE_cost,TNC Single - Cost,@c_cost * ((tnc_single_base_fare + (df.s2
 util_TNC_SHARED_IVT,TNC Shared - In-vehicle time,@df.c_ivt * df.s2_time_skims * tnc_shared_ivt_factor,,,,,,,,,,1
 util_TNC_SHARED_wait,TNC Shared - Wait time,c_ivt * 1.5 * tnc_shared_wait_time,,,,,,,,,,1
 util_TNC_SHARED_cost,TNC Shared - Cost,@c_cost * ((tnc_shared_base_fare + (df.s2_dist_skims * tnc_shared_cost_per_mile) + (df.s2_time_skims * tnc_shared_cost_per_minute).clip(lower=tnc_shared_cost_minimum)) * 100 + df.s2_cost_skims),,,,,,,,,,1
+#,,,,,,,,,,,,
 util_S2_ASC_tour_DA,s2 ASC - Tour Mode DA,@df.tour_mode_is_da * s2_ASC_tour_da,,1,,,,,,,,
 util_S3_ASC_tour_DA,s3 ASC - Tour Mode DA,@df.tour_mode_is_da * s3_ASC_tour_da,,,1,,,,,,,
 util_WALK_ASC_tour_DA,walk ASC - Tour Mode DA,@df.tour_mode_is_da * walk_ASC_tour_da,,,,1,,,,,,
