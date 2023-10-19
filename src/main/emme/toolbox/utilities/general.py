@@ -541,7 +541,7 @@ class DataLakeExporter(object):
             container = ContainerClient.from_container_url(sas_url)
             _m.logbook_write("Successfully created Azure container")
             return container
-        except ModuleNotFoundError as e:
+        except ImportError as e:
             _m.logbook_write("Failed to create Azure container - unable to import azure module")
             return None
         except KeyError as e:
