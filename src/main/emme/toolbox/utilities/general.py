@@ -563,12 +563,12 @@ class DataLakeExporter(object):
             with open(datalake_metadata_path, "r") as stream:
                 guid = yaml.safe_load(stream)["scenario_guid"]
         else:
-            with _m.logbook_write("FileNotFound - datalake_metadata.yaml file not found at %s. Creating new scenario guid" % (datalake_metadata_path)):
-                guid = uuid.uuid4().hex
-                # write guid to file for DataExporter
-                file_path_guid = os.path.join(self.ReportPath,"scenario_guid-report.txt")
-                with open(file_path_guid, "w") as file:
-                    file.write(guid)
+            _m.logbook_write("FileNotFound - datalake_metadata.yaml file not found at %s. Creating new scenario guid" % (datalake_metadata_path))
+            guid = uuid.uuid4().hex
+            # write guid to file for DataExporter
+            file_path_guid = os.path.join(self.ReportPath,"scenario_guid-report.txt")
+            with open(file_path_guid, "w") as file:
+                file.write(guid)
         return guid
 
 
