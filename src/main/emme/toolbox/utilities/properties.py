@@ -30,6 +30,7 @@ class PropertiesSetter(object):
 
     useLocalDrive = _m.Attribute(bool)
     skip4Ds = _m.Attribute(bool)
+    skipNewScenarioGUID = _m.Attribute(bool)
     skipBuildNetwork = _m.Attribute(bool)
     skipInputChecker = _m.Attribute(bool)
     skipInitialization = _m.Attribute(bool)
@@ -145,12 +146,12 @@ class PropertiesSetter(object):
 
     def __init__(self):
         self._run_model_names = (
-            "useLocalDrive", "skip4Ds", "skipInputChecker",
-            "startFromIteration", "skipInitialization", "deleteAllMatrices", "skipCopyWarmupTripTables", 
-            "skipCopyBikeLogsum", "skipCopyWalkImpedance", "skipWalkLogsums", "skipBikeLogsums", "skipBuildNetwork", 
+            "useLocalDrive", "skip4Ds", "skipNewScenarioGUID", "skipInputChecker",
+            "startFromIteration", "skipInitialization", "deleteAllMatrices", "skipCopyWarmupTripTables",
+            "skipCopyBikeLogsum", "skipCopyWalkImpedance", "skipWalkLogsums", "skipBikeLogsums", "skipBuildNetwork",
             "skipHighwayAssignment", "skipTransitSkimming", "skipTransitConnector", "skipTransponderExport", "skipABMPreprocessing", "skipABMResident", "skipABMAirport", "skipABMXborderWait", "skipABMXborder", "skipABMVisitor",
-            "skipCTM", "skipTruck", "skipEI", "skipExternal", "skipTripTableCreation", "skipFinalHighwayAssignment", 
-            "skipFinalTransitAssignment", "skipVisualizer", "skipDataExport", "skipDataLoadRequest", 
+            "skipCTM", "skipTruck", "skipEI", "skipExternal", "skipTripTableCreation", "skipFinalHighwayAssignment",
+            "skipFinalTransitAssignment", "skipVisualizer", "skipDataExport", "skipDataLoadRequest",
             "skipDeleteIntermediateFiles")
         self._properties = None
 
@@ -166,9 +167,9 @@ class PropertiesSetter(object):
                 <label for="startFromIteration">
                     <strong>Start from iteration:</strong></label>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <select id="startFromIteration" 
-                    data-ref="parent.%(tool_proxy_tag)s.startFromIteration" 
-                    class="-inro-modeller  no_search"> 
+                <select id="startFromIteration"
+                    data-ref="parent.%(tool_proxy_tag)s.startFromIteration"
+                    class="-inro-modeller  no_search">
                     <option value="1">Iteration 1</option>
                     <option value="2">Iteration 2</option>
                     <option value="3">Iteration 3</option>
@@ -187,6 +188,7 @@ class PropertiesSetter(object):
         skip_startup_items = [
             ("useLocalDrive",           "Use the local drive during the model run"),
             ("skip4Ds",                 "Skip running 4Ds"),
+            ("skipNewScenarioGUID",     "Skip creating new scenario guid"),
             ("skipBuildNetwork",        "Skip build of highway and transit network"),
             ("skipInputChecker",		"Skip running input checker"),
             ("skipInitialization",      "Skip matrix and transit database initialization"),
@@ -228,10 +230,10 @@ class PropertiesSetter(object):
                 <div class="t_block t_element -inro-util-disclosure">
                     <div class="-inro-util-disclosure-header t_local_title">%s</div>""" % title)
             title = ""
-        
+
         checkbox = '<td><input class="-inro-modeller checkbox_entry" type="checkbox" id="%(name)s" data-ref="%(tag)s.%(name)s"></td>'
         checkbox_no_data = '<td><input class="-inro-modeller checkbox_entry" type="checkbox" id="%(name)s"></td>'
-            
+
         for name, label in skip_startup_items:
             contents.append("<tr><td>%s</td>" % label)
             contents.append(checkbox % {"name": name, "tag": tool_proxy_tag})
@@ -273,39 +275,39 @@ class PropertiesSetter(object):
                 .prop("number", number)
                 .bind('click', function()    {
                     var state = $(this).prop("checked");
-                    for (var i = 0; i < iter_names.length; i++) { 
+                    for (var i = 0; i < iter_names.length; i++) {
                         $("#" + iter_names[i] + "_" + $(this).prop("number"))
                             .prop("checked", state)
                             .trigger('change');
                     }
                 });
         }
-        
+
         $("#startFromIteration").bind('change', function()    {
             $(this).commit();
             var iter = $(this).val();
             for (var j = 1; j < iter; j++)
-                for (var i = 0; i < iter_names.length; i++) { 
+                for (var i = 0; i < iter_names.length; i++) {
                     $("#" + iter_names[i] + "_" + j.toString()).prop('disabled', true);
             }
             for (var j = iter; j <= 3; j++)
-                for (var i = 0; i < iter_names.length; i++) { 
+                for (var i = 0; i < iter_names.length; i++) {
                     $("#" + iter_names[i] + "_" + j.toString()).prop('disabled', false);
             }
             if (iter > 1) {
-                for (var i = 0; i < startup_names.length; i++) { 
+                for (var i = 0; i < startup_names.length; i++) {
                     $("#" + startup_names[i]).prop('disabled', true);
                 }
             }
             else {
-                for (var i = 0; i < startup_names.length; i++) { 
+                for (var i = 0; i < startup_names.length; i++) {
                     $("#" + startup_names[i]).prop('disabled', false);
                 }
             }
 
         }).trigger('change');
    });
-</script>""" % {"tool_proxy_tag": tool_proxy_tag, 
+</script>""" % {"tool_proxy_tag": tool_proxy_tag,
                 "iter_items": str([x[0] for x in skip_per_iteration_items]),
                 "startup_items": str([x[0] for x in skip_startup_items]),
                 })
@@ -324,9 +326,10 @@ class PropertiesSetter(object):
 
         self.startFromIteration = props.get("RunModel.startFromIteration", 1)
         self.sample_rates = ",".join(str(x) for x in props.get("sample_rates"))
-        
+
         self.useLocalDrive = props.get("RunModel.useLocalDrive", True)
         self.skip4Ds = props.get("RunModel.skip4Ds", False)
+        self.skipNewScenarioGUID = props.get("RunModel.skipNewScenarioGUID", False)
         self.skipBuildNetwork = props.get("RunModel.skipBuildNetwork", False)
         self.skipInputChecker = props.get("RunModel.skipInputChecker", False)
         self.skipInitialization = props.get("RunModel.skipInitialization", False)
@@ -355,7 +358,7 @@ class PropertiesSetter(object):
         self.skipTripTableCreation = props.get("RunModel.skipTripTableCreation", [False, False, False])
 
         self.skipFinalHighwayAssignment = props.get("RunModel.skipFinalHighwayAssignment", False)
-        self.skipFinalTransitAssignment = props.get("RunModel.skipFinalTransitAssignment", False) 
+        self.skipFinalTransitAssignment = props.get("RunModel.skipFinalTransitAssignment", False)
         self.skipVisualizer = props.get("RunModel.skipVisualizer", False)
         self.skipDataExport = props.get("RunModel.skipDataExport", False)
         self.skipDataLoadRequest = props.get("RunModel.skipDataLoadRequest", False)
@@ -365,9 +368,10 @@ class PropertiesSetter(object):
         props = self._properties
         props["RunModel.startFromIteration"] = self.startFromIteration
         props["sample_rates"] = [float(x) for x in self.sample_rates.split(",")]
-        
+
         props["RunModel.useLocalDrive"] = self.useLocalDrive
         props["RunModel.skip4Ds"] = self.skip4Ds
+        props["RunModel.skipNewScenarioGUID"] = self.skipNewScenarioGUID
         props["RunModel.skipBuildNetwork"] = self.skipBuildNetwork
         props["RunModel.skipInputChecker"] = self.skipInputChecker
         props["RunModel.skipInitialization"] = self.skipInitialization
@@ -377,7 +381,7 @@ class PropertiesSetter(object):
         props["RunModel.skipCopyWalkImpedance"] = self.skipCopyWalkImpedance
         props["RunModel.skipBikeLogsums"] = self.skipBikeLogsums
         props["RunModel.skipCopyBikeLogsum"] = self.skipCopyBikeLogsum
-        
+
         props["RunModel.skipHighwayAssignment"] = self.skipHighwayAssignment
         props["RunModel.skipTransitSkimming"] = self.skipTransitSkimming
         props["RunModel.skipTransitConnector"] = self.skipTransitConnector
@@ -448,7 +452,7 @@ class PropertiesTool(PropertiesSetter, _m.Tool()):
 
         var run_text = $(".-inro-util-execute-button").children().next();
         run_text.html("Save")
-        
+
         $("#load_reset").bind('click', function()    {
             tool.load_properties()
             $("input:checkbox").each(function() {
@@ -535,7 +539,7 @@ class Properties(object):
     def save(self, path=None):
         if not path:
             path = self._path
-            # check for possible interference if user edits the 
+            # check for possible interference if user edits the
             # properties files directly while it is already open in Modeller
             timestamp = os.path.getmtime(path)
             if timestamp != self._timestamp:
@@ -568,19 +572,19 @@ class Properties(object):
             raise Exception("Row with year %s not found in %s" % (self["scenarioYear"], file_path))
         self.update(year_properties)
 
-    def __setitem__(self, key, item): 
+    def __setitem__(self, key, item):
         self._prop[key] = item
 
-    def __getitem__(self, key): 
+    def __getitem__(self, key):
         return self._prop[key]
 
-    def __repr__(self): 
+    def __repr__(self):
         return "Properties(%s)" % self._path
 
-    def __len__(self): 
+    def __len__(self):
         return len(self._prop)
 
-    def __delitem__(self, key): 
+    def __delitem__(self, key):
         del self._prop[key]
 
     def clear(self):
