@@ -227,7 +227,7 @@ def final_trips_column_filter(df):
     remove_filter = df.filter(remove_cols)
     df_removed = df.drop(columns=remove_filter)
     df_removed.name = df.name
-    
+
     return df_removed
 
 
@@ -512,7 +512,7 @@ def write_model_output_to_datalake(
     output_table["end_iteration"] = EMME_metadata["end_iteration"]
 
     # Construct the model output filename w guid
-    model_output_file = f"{base_filename }_{timestamp_str}_{guid}"
+    model_output_file = f"{base_filename }_{EMME_metadata['username']}_{str(EMME_metadata['scenario_title'])}_{timestamp_str}_{guid[:5]}"
 
     # extract table name from base filename, e.g. households, trips, persons, etc.
     tablename = base_filename.split("final_")[1]
