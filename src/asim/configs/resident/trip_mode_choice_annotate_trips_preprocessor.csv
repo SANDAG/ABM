@@ -1,270 +1,277 @@
-Description,Target,Expression,
-,is_joint,(df.number_of_participants > 1),
-,is_indiv,(df.number_of_participants == 1),
-#,,,
-,dest_density_index,"reindex(land_use.density_index, df[dest_col_name])",
-#,,,
-,tour_type,"df.get('tour_type', default='work')",
-# cost coef,,,
-,income_exponent,"np.where(df.tour_type == 'work', 0.6, 0.5)",
-,c_cost,"(coef_income) /(df.income.clip(0,1000).pow(income_exponent))",
-,cost_sensitivity,"np.maximum(df.income,1000).pow(income_exponent)",
-# ivt coef,,,
-,time_factor,"np.where(df.tour_type=='work', df.time_factor_work, df.time_factor_nonwork)",
-#time_factor placeholder,time_factor,1,
-,c_ivt,coef_ivt * time_factor,
-,origin,df.origin if 'origin' in df.columns else df.home_zone_id,
-,destination,df.destination if 'destination' in df.columns else df.alt_dest,
-#,,,
-# cost coef,,,
-,income_exponent,"np.where(tour_type == 'work', 0.6, 0.5)",
-,c_cost,"(coef_income) /(np.maximum(df.income,1000).pow(income_exponent))",
-#,,,
-,vot_da,c_ivt / c_cost * 0.6,
-,vot_s2,vot_da / cost_share_s2,
-,vot_s3,vot_da / cost_share_s3,
-,_vot_bin_da,"np.where(vot_da < vot_threshold_low, 1, np.where(vot_da < vot_threshold_med, 2, 3))",
-,_vot_bin_s2,"np.where(vot_s2 < vot_threshold_low, 1, np.where(vot_s2 < vot_threshold_med, 2, 3))",
-,_vot_bin_s3,"np.where(vot_s3 < vot_threshold_low, 1, np.where(vot_s3 < vot_threshold_med, 2, 3))",
-#,,,
-#,is_atwork_subtour,(df.tour_category == 'atwork') if _DF_IS_TOUR else False,
-#,parent_tour_veh,"reindex(tours['selected_vehicle'], df['parent_tour_id']) if 'selected_vehicle' in df.columns else np.nan",
-#,sov_veh_option,"np.where(is_atwork_subtour, parent_tour_veh, df.get('vehicle_occup_1', np.nan))",
-#,sr2_veh_option,"np.where(is_atwork_subtour, parent_tour_veh, df.get('vehicle_occup_2', np.nan))",
-#,sr3p_veh_option,"np.where(is_atwork_subtour, parent_tour_veh, df.get('vehicle_occup_3.5', np.nan))",
-#,sov_auto_op_cost,"reindex(vehicles.groupby('vehicle_type')['auto_operating_cost'].mean(), pd.Series(sov_veh_option, df.index)) if 'vehicle_occup_1' in df.columns else np.nan",
-#,sov_auto_op_cost,"np.where(sov_auto_op_cost.isna() | (pd.Series(sov_veh_option, df.index) == 'non_hh_veh'), costPerMile, sov_auto_op_cost)",
-#,sr2_auto_op_cost,"reindex(vehicles.groupby('vehicle_type')['auto_operating_cost'].mean(), pd.Series(sr2_veh_option, df.index)) if 'vehicle_occup_2' in df.columns else np.nan",
-#,sr2_auto_op_cost,"np.where(sr2_auto_op_cost.isna() | (pd.Series(sr2_veh_option, df.index) == 'non_hh_veh'), costPerMile, sr2_auto_op_cost)",
-#,sr3p_auto_op_cost,"reindex(vehicles.groupby('vehicle_type')['auto_operating_cost'].mean(), pd.Series(sr3p_veh_option, df.index)) if 'vehicle_occup_3.5' in df.columns else np.nan",
-#,sr3p_auto_op_cost,"np.where(sr3p_auto_op_cost.isna() | (pd.Series(sr3p_veh_option, df.index) == 'non_hh_veh'), costPerMile, sr3p_auto_op_cost)",
-#Result of transponder ownership model (1=owns," 0=not)""",ownsTransponder,
-#household Variable transponder_ownership,,,
-Transponder ownership model,ownsTransponder,df.transponder_ownership,
-#vot-indexed skims,,,
-DA skim based on Transponder ownership,da_dist_skims,"(np.where(ownsTransponder==1, odt_skims['SOV_TR_L_DIST'], odt_skims['SOV_NT_L_DIST']) * (_vot_bin_da == 1)) + (np.where(ownsTransponder==1, odt_skims['SOV_TR_M_DIST'], odt_skims['SOV_NT_M_DIST']) * (_vot_bin_da == 2)) + (np.where(ownsTransponder==1, odt_skims['SOV_TR_H_DIST'], odt_skims['SOV_NT_H_DIST']) * (_vot_bin_da == 3))",
-,da_cost_skims,"(np.where(ownsTransponder==1, odt_skims['SOV_TR_L_TOLLCOST'], odt_skims['SOV_NT_L_TOLLCOST']) * (_vot_bin_da == 1)) + (np.where(ownsTransponder==1, odt_skims['SOV_TR_M_TOLLCOST'], odt_skims['SOV_NT_M_TOLLCOST']) * (_vot_bin_da == 2)) + (np.where(ownsTransponder==1, odt_skims['SOV_TR_H_TOLLCOST'], odt_skims['SOV_NT_H_TOLLCOST']) * (_vot_bin_da == 3))",
-,da_time_skims,"(np.where(ownsTransponder==1, odt_skims['SOV_TR_L_TIME'], odt_skims['SOV_NT_L_TIME']) * (_vot_bin_da == 1)) + (np.where(ownsTransponder==1, odt_skims['SOV_TR_M_TIME'], odt_skims['SOV_NT_M_TIME']) * (_vot_bin_da == 2)) + (np.where(ownsTransponder==1, odt_skims['SOV_TR_H_TIME'], odt_skims['SOV_NT_H_TIME']) * (_vot_bin_da == 3))",
-,da_rel_skims,(((odt_skims['SOV_NT_L_REL']) * (_vot_bin_da == 1)) + ((odt_skims['SOV_NT_M_REL']) * (_vot_bin_da == 2)) + ((odt_skims['SOV_NT_H_REL']) * (_vot_bin_da == 3))),
-,s2_dist_skims,(((odt_skims['HOV2_L_DIST']) * (_vot_bin_s2 == 1)) + ((odt_skims['HOV2_M_DIST']) * (_vot_bin_s2 == 2)) + ((odt_skims['HOV2_H_DIST']) * (_vot_bin_s2 == 3))),
-,s2_cost_skims,(((odt_skims['HOV2_L_TOLLCOST']) * (_vot_bin_s2 == 1)) + ((odt_skims['HOV2_M_TOLLCOST']) * (_vot_bin_s2 == 2)) + ((odt_skims['HOV2_H_TOLLCOST']) * (_vot_bin_s2 == 3))),
-,s2_time_skims,(((odt_skims['HOV2_L_TIME']) * (_vot_bin_s2 == 1)) + ((odt_skims['HOV2_M_TIME']) * (_vot_bin_s2 == 2)) + ((odt_skims['HOV2_H_TIME']) * (_vot_bin_s2 == 3))),
-,s2_rel_skims,(((odt_skims['HOV2_L_REL']) * (_vot_bin_da == 1)) + ((odt_skims['HOV2_M_REL']) * (_vot_bin_da == 2)) + ((odt_skims['HOV2_H_REL']) * (_vot_bin_da == 3))),
-,s3_dist_skims,(((odt_skims['HOV3_L_DIST']) * (_vot_bin_s2 == 1)) + ((odt_skims['HOV3_M_DIST']) * (_vot_bin_s2 == 2)) + ((odt_skims['HOV3_H_DIST']) * (_vot_bin_s2 == 3))),
-,s3_cost_skims,(((odt_skims['HOV3_L_TOLLCOST']) * (_vot_bin_s2 == 1)) + ((odt_skims['HOV3_M_TOLLCOST']) * (_vot_bin_s2 == 2)) + ((odt_skims['HOV3_H_TOLLCOST']) * (_vot_bin_s2 == 3))),
-,s3_time_skims,(((odt_skims['HOV3_L_TIME']) * (_vot_bin_s2 == 1)) + ((odt_skims['HOV3_M_TIME']) * (_vot_bin_s2 == 2)) + ((odt_skims['HOV3_H_TIME']) * (_vot_bin_s2 == 3))),
-,s3_rel_skims,(((odt_skims['HOV3_L_REL']) * (_vot_bin_da == 1)) + ((odt_skims['HOV3_M_REL']) * (_vot_bin_da == 2)) + ((odt_skims['HOV3_H_REL']) * (_vot_bin_da == 3))),
-,walk_time_skims,od_skims['walkTime'],
-#,,,
-,inbound,~df.outbound,
-,first_trip,df.trip_num == 1,
-,last_trip,df.trip_num == df.trip_count,
-#,,,
-# FIXME no transit subzones so all zones short walk to transit,,,
-,_walk_transit_origin,True,
-,_walk_transit_destination,True,
-,walk_transit_available,_walk_transit_origin & _walk_transit_destination,
-,drive_transit_available,"np.where(df.outbound, _walk_transit_destination, _walk_transit_origin) & (df.auto_ownership > 0)",
-# RIDEHAIL,,,
-household_density calculated in annotate_landuse in acres and is converted to sq miles here,_origin_density_measure,"reindex(land_use.PopEmpDenPerMi, df[orig_col_name])",
-employment_density calculated in annotate_landuse in acres and is converted to sq miles here,_dest_density_measure,"reindex(land_use.PopEmpDenPerMi, df[dest_col_name])",
-,origin_density,"pd.cut(_origin_density_measure, bins=[-np.inf, 500, 2000, 5000, 15000, np.inf], labels=[5, 4, 3, 2, 1]).astype(int)",
-,dest_density,"pd.cut(_dest_density_measure, bins=[-np.inf, 500, 2000, 5000, 15000, np.inf], labels=[5, 4, 3, 2, 1]).astype(int)",
-Origin MGRA Dwelling Unit Density,oMGRADUDen,"reindex(land_use.duden,df.origin)",
-Origin MGRA Employment Density,oMGRAEmpDen,"reindex(land_use.empden,df.origin)",
-Origin MGRA Total Intersections,oMGRATotInt,"reindex(land_use.totint,df.origin)",
-Destination MGRA Dwelling Unit Density,dMGRADUDen,"reindex(land_use.duden,df.destination)",
-Destination MGRA Employment Density,dMGRAEmpDen,"reindex(land_use.empden,df.destination)",
-Destination MGRA Total Intersections,dMGRATotInt,"reindex(land_use.totint,df.destination)",
-Origin MGRA Mix,oMGRAMix,"np.where(oMGRADUDen+oMGRAEmpDen > 0,(oMGRADUDen*oMGRAEmpDen)/(oMGRADUDen+oMGRAEmpDen),0)",
-Destination MGRA Mix,dMGRAMix,"np.where(dMGRADUDen+dMGRAEmpDen > 0,(dMGRADUDen*dMGRAEmpDen)/(dMGRADUDen+dMGRAEmpDen),0)",
-,origin_zone_taxi_wait_time_mean,"origin_density.map({k: v for k, v in Taxi_waitTime_mean.items()})",
-,origin_zone_taxi_wait_time_sd,"origin_density.map({k: v for k, v in Taxi_waitTime_sd.items()})",
-,dest_zone_taxi_wait_time_mean,"dest_density.map({k: v for k, v in Taxi_waitTime_mean.items()})",
-,dest_zone_taxi_wait_time_sd,"dest_density.map({k: v for k, v in Taxi_waitTime_sd.items()})",
-# ,, Note that the mean and standard deviation are not the values for the distribution itself,
-,origTaxiWaitTime,"rng.lognormal_for_df(df, mu=origin_zone_taxi_wait_time_mean, sigma=origin_zone_taxi_wait_time_sd, broadcast=True, scale=True).clip(min_waitTime, max_waitTime)",
-,destTaxiWaitTime,"rng.lognormal_for_df(df, mu=dest_zone_taxi_wait_time_mean, sigma=dest_zone_taxi_wait_time_sd, broadcast=True, scale=True).clip(min_waitTime, max_waitTime)",
-,origin_zone_singleTNC_wait_time_mean,"origin_density.map({k: v for k, v in TNC_single_waitTime_mean.items()})",
-,origin_zone_singleTNC_wait_time_sd,"origin_density.map({k: v for k, v in TNC_single_waitTime_sd.items()})",
-,dest_zone_singleTNC_wait_time_mean,"dest_density.map({k: v for k, v in TNC_single_waitTime_mean.items()})",
-,dest_zone_singleTNC_wait_time_sd,"dest_density.map({k: v for k, v in TNC_single_waitTime_sd.items()})",
-,origSingleTNCWaitTime,"rng.lognormal_for_df(df, mu=origin_zone_singleTNC_wait_time_mean, sigma=origin_zone_singleTNC_wait_time_sd, broadcast=True, scale=True).clip(min_waitTime, max_waitTime)",
-,destSingleTNCWaitTime,"rng.lognormal_for_df(df, mu=dest_zone_singleTNC_wait_time_mean, sigma=dest_zone_singleTNC_wait_time_sd, broadcast=True, scale=True).clip(min_waitTime, max_waitTime)",
-,origin_zone_sharedTNC_wait_time_mean,"origin_density.map({k: v for k, v in TNC_shared_waitTime_mean.items()})",
-,origin_zone_sharedTNC_wait_time_sd,"origin_density.map({k: v for k, v in TNC_shared_waitTime_sd.items()})",
-# wrong? producing bad probs error,dest_zone_sharedTNC_wait_time_mean,"np.maximum((200+(-133 * da_dist_skims)),0) * time_factor",
-,dest_zone_sharedTNC_wait_time_mean,"dest_density.map({k: v for k, v in TNC_shared_waitTime_mean.items()})",
-,dest_zone_sharedTNC_wait_time_sd,"dest_density.map({k: v for k, v in TNC_shared_waitTime_sd.items()})",
-,origSharedTNCWaitTime,"rng.lognormal_for_df(df, mu=origin_zone_sharedTNC_wait_time_mean, sigma=origin_zone_sharedTNC_wait_time_sd, broadcast=True, scale=True).clip(min_waitTime, max_waitTime)",
-,destSharedTNCWaitTime,"rng.lognormal_for_df(df, mu=dest_zone_sharedTNC_wait_time_mean, sigma=dest_zone_sharedTNC_wait_time_sd, broadcast=True, scale=True).clip(min_waitTime, max_waitTime)",
-,totalWaitTaxi,origTaxiWaitTime + destTaxiWaitTime,
-,totalWaitSingleTNC,origSingleTNCWaitTime + destSingleTNCWaitTime,
-,totalWaitSharedTNC,origSharedTNCWaitTime + destSharedTNCWaitTime,
-#,,,
-Household autos,autos,df.auto_ownership,
-Number of adults (age 18+) in household,adults,df.num_adults,
-Household size (number of persons),hhSize,df.hhsize,
-Person age,age,df.age,
-Person is female,female,(df.sex == 2),
-# Female in party,femaleInParty,df.femaleInParty,
-# Male in party,maleInParty,df.maleInParty,
-# Auto operating costs,,,
-,selected_tour_vehicle,"reindex(tours.selected_vehicle, df.tour_id)",
-,auto_op_cost,"reindex(vehicles.groupby('vehicle_type')['auto_operating_cost'].mean(), pd.Series(selected_tour_vehicle, df.index))",
-,auto_op_cost,"np.where(pd.isna(auto_op_cost), costPerMile, auto_op_cost)",
-#,,,
-Does tour use an AV,useAV,selected_tour_vehicle.str.contains('AV'),
-Auto IVT Factor,autoIVTFactor,"np.where(useAV,1.0,autoIVTFactorAV)",
-Auto Parking Cost Factor,autoParkingCostFactor,"np.where(useAV,1.0,autoParkingCostFactorAV)",
-Auto CPM Factor,autoCPMFactor,"np.where(useAV,1.0,autoCostPerMileFactorAV)",
-Auto Terminal Time Factor,autoTermTimeFactor,"np.where(useAV,1.0,autoTerminalTimeFactorAV)",
-MinimumAgeDriveAlone,minimumAgeDA,"np.where(useAV,16,minAgeDriveAloneAV)",
-#,,,
-Zero auto households,zeroAutoHH,"np.where(autos==0,1,0)",
-Auto deficient household (more adults than autos),autoDeficientHH,"np.where(autos<adults,1,0) * (np.where(zeroAutoHH,0,1))",
-Auto sufficient household (enough autos for each adult),autoSufficientHH,"np.where(autos>=adults,1,0) * (np.where(zeroAutoHH,0,1))",
-Joint tour,jointTour,(df.tour_category == 'joint'),
-Number of participants in joint tour,numberOfParticipantsInJointTour,df.number_of_participants * jointTour,
-Individual tour,indivTour,1 * (jointTour==0),
-Number of stops - outbound direction,outStops,df.trip_count * df.outbound,
-Number of stops - return direction,retStops,df.trip_count * ~df.outbound,
-Total stops on tour,totStops,outStops + retStops,
-First trip of tour,firstTrip,df.trip_num == 1,
-Last trip of tour,lastTrip,df.trip_num == df.trip_count,
-First leg of multi-stop outbound,firstOfMultipleTrips,firstTrip *(outStops>1),
-Last leg of multi-stop return,lastofMultipleTrips,lastTrip *( retStops>1),
-# Flag for setting availability of auto modes for drive-transit access/egress trip segments,autoAllowedForDriveTransit,df.autoModeAllowedForTripSegment,
-# Flag for setting availability of walk mode for drive-transit access/egress trip segments,walkAllowedForDriveTransit,df.walkModeAllowedForTripSegment,
-Tour mode is drive-alone,tourDA,(df.tour_mode == 'DRIVEALONE').astype(int),
-Tour mode is shared-2,tourS2,(df.tour_mode == 'SHARED2').astype(int),
-Tour mode is shared-3+,tourS3,(df.tour_mode == 'SHARED3').astype(int),
-Tour mode is walk,tourWalk,(df.tour_mode == 'WALK').astype(int),
-Tour mode is bike,tourBike,(df.tour_mode == 'BIKE').astype(int),
-Tour mode is walk-transit,tourWTran,df.tour_mode.str.contains('WALK_').astype(int),
-Tour mode is PNR-transit,tourPNR,df.tour_mode.str.contains('PNR_').astype(int),
-Tour mode is KNR-transit,tourKNR,df.tour_mode.str.contains('KNR_').astype(int),
-Tour mode is TNR-transit,tourTNR,"df.tour_mode.isin(['TNC_LOC','TNC_PRM','TNC_MIXED']).astype(int)",
-Tour mode is MaaS,tourMaaS,"(df.tour_mode.isin(['TAXI', 'TNC_SINGLE', 'TNC_SHARED'])).astype(int)",
-Tour mode is school bus,tourSchBus,(df.tour_mode == 'SCH_BUS').astype(int),
-Tour mode is Ebike,tourEbike,(df.tour_mode == 'EBIKE').astype(int),
-Tour mode is Escooter,tourEscooter,(df.tour_mode == 'ESCOOTER').astype(int),
-#,#,,
+Description,Target,Expression
+,is_joint,(df.number_of_participants > 1)
+,is_indiv,(df.number_of_participants == 1)
+#,,
+,dest_density_index,"reindex(land_use.density_index, df[dest_col_name])"
+#,,
+,tour_type,"df.get('tour_type', default='work')"
+# cost coef,,
+,income_exponent,"np.where(df.tour_type == 'work', 0.6, 0.5)"
+,c_cost,"(coef_income) /(df.income.clip(0,1000).pow(income_exponent))"
+,cost_sensitivity,"np.maximum(df.income,1000).pow(income_exponent)"
+# ivt coef,,
+,time_factor,"np.where(df.tour_type=='work', df.time_factor_work, df.time_factor_nonwork)"
+#time_factor placeholder,time_factor,1
+,c_ivt,coef_ivt * time_factor
+,origin,df.origin if 'origin' in df.columns else df.home_zone_id
+,destination,df.destination if 'destination' in df.columns else df.alt_dest
+#,,
+# cost coef,,
+,income_exponent,"np.where(tour_type == 'work', 0.6, 0.5)"
+,c_cost,"(coef_income) /(np.maximum(df.income,1000).pow(income_exponent))"
+#,,
+,vot_da,c_ivt / c_cost * 0.6
+,vot_s2,vot_da / cost_share_s2
+,vot_s3,vot_da / cost_share_s3
+,_vot_bin_da,"np.where(vot_da < vot_threshold_low, 1, np.where(vot_da < vot_threshold_med, 2, 3))"
+,_vot_bin_s2,"np.where(vot_s2 < vot_threshold_low, 1, np.where(vot_s2 < vot_threshold_med, 2, 3))"
+,_vot_bin_s3,"np.where(vot_s3 < vot_threshold_low, 1, np.where(vot_s3 < vot_threshold_med, 2, 3))"
+#,,
+#,is_atwork_subtour,(df.tour_category == 'atwork') if _DF_IS_TOUR else False
+#,parent_tour_veh,"reindex(tours['selected_vehicle'], df['parent_tour_id']) if 'selected_vehicle' in df.columns else np.nan"
+#,sov_veh_option,"np.where(is_atwork_subtour, parent_tour_veh, df.get('vehicle_occup_1', np.nan))"
+#,sr2_veh_option,"np.where(is_atwork_subtour, parent_tour_veh, df.get('vehicle_occup_2', np.nan))"
+#,sr3p_veh_option,"np.where(is_atwork_subtour, parent_tour_veh, df.get('vehicle_occup_3.5', np.nan))"
+#,sov_auto_op_cost,"reindex(vehicles.groupby('vehicle_type')['auto_operating_cost'].mean(), pd.Series(sov_veh_option, df.index)) if 'vehicle_occup_1' in df.columns else np.nan"
+#,sov_auto_op_cost,"np.where(sov_auto_op_cost.isna() | (pd.Series(sov_veh_option, df.index) == 'non_hh_veh'), costPerMile, sov_auto_op_cost)"
+#,sr2_auto_op_cost,"reindex(vehicles.groupby('vehicle_type')['auto_operating_cost'].mean(), pd.Series(sr2_veh_option, df.index)) if 'vehicle_occup_2' in df.columns else np.nan"
+#,sr2_auto_op_cost,"np.where(sr2_auto_op_cost.isna() | (pd.Series(sr2_veh_option, df.index) == 'non_hh_veh'), costPerMile, sr2_auto_op_cost)"
+#,sr3p_auto_op_cost,"reindex(vehicles.groupby('vehicle_type')['auto_operating_cost'].mean(), pd.Series(sr3p_veh_option, df.index)) if 'vehicle_occup_3.5' in df.columns else np.nan"
+#,sr3p_auto_op_cost,"np.where(sr3p_auto_op_cost.isna() | (pd.Series(sr3p_veh_option, df.index) == 'non_hh_veh'), costPerMile, sr3p_auto_op_cost)"
+#Result of transponder ownership model (1=owns," 0=not)""",ownsTransponder
+#household Variable transponder_ownership,,
+Transponder ownership model,ownsTransponder,df.transponder_ownership
+#vot-indexed skims,,
+DA skim based on Transponder ownership,da_dist_skims,"(np.where(ownsTransponder==1, odt_skims['SOV_TR_L_DIST'], odt_skims['SOV_NT_L_DIST']) * (_vot_bin_da == 1)) + (np.where(ownsTransponder==1, odt_skims['SOV_TR_M_DIST'], odt_skims['SOV_NT_M_DIST']) * (_vot_bin_da == 2)) + (np.where(ownsTransponder==1, odt_skims['SOV_TR_H_DIST'], odt_skims['SOV_NT_H_DIST']) * (_vot_bin_da == 3))"
+,da_cost_skims,"(np.where(ownsTransponder==1, odt_skims['SOV_TR_L_TOLLCOST'], odt_skims['SOV_NT_L_TOLLCOST']) * (_vot_bin_da == 1)) + (np.where(ownsTransponder==1, odt_skims['SOV_TR_M_TOLLCOST'], odt_skims['SOV_NT_M_TOLLCOST']) * (_vot_bin_da == 2)) + (np.where(ownsTransponder==1, odt_skims['SOV_TR_H_TOLLCOST'], odt_skims['SOV_NT_H_TOLLCOST']) * (_vot_bin_da == 3))"
+,da_time_skims,"(np.where(ownsTransponder==1, odt_skims['SOV_TR_L_TIME'], odt_skims['SOV_NT_L_TIME']) * (_vot_bin_da == 1)) + (np.where(ownsTransponder==1, odt_skims['SOV_TR_M_TIME'], odt_skims['SOV_NT_M_TIME']) * (_vot_bin_da == 2)) + (np.where(ownsTransponder==1, odt_skims['SOV_TR_H_TIME'], odt_skims['SOV_NT_H_TIME']) * (_vot_bin_da == 3))"
+,da_rel_skims,(((odt_skims['SOV_NT_L_REL']) * (_vot_bin_da == 1)) + ((odt_skims['SOV_NT_M_REL']) * (_vot_bin_da == 2)) + ((odt_skims['SOV_NT_H_REL']) * (_vot_bin_da == 3)))
+,s2_dist_skims,(((odt_skims['HOV2_L_DIST']) * (_vot_bin_s2 == 1)) + ((odt_skims['HOV2_M_DIST']) * (_vot_bin_s2 == 2)) + ((odt_skims['HOV2_H_DIST']) * (_vot_bin_s2 == 3)))
+,s2_cost_skims,(((odt_skims['HOV2_L_TOLLCOST']) * (_vot_bin_s2 == 1)) + ((odt_skims['HOV2_M_TOLLCOST']) * (_vot_bin_s2 == 2)) + ((odt_skims['HOV2_H_TOLLCOST']) * (_vot_bin_s2 == 3)))
+,s2_time_skims,(((odt_skims['HOV2_L_TIME']) * (_vot_bin_s2 == 1)) + ((odt_skims['HOV2_M_TIME']) * (_vot_bin_s2 == 2)) + ((odt_skims['HOV2_H_TIME']) * (_vot_bin_s2 == 3)))
+,s2_rel_skims,(((odt_skims['HOV2_L_REL']) * (_vot_bin_da == 1)) + ((odt_skims['HOV2_M_REL']) * (_vot_bin_da == 2)) + ((odt_skims['HOV2_H_REL']) * (_vot_bin_da == 3)))
+,s3_dist_skims,(((odt_skims['HOV3_L_DIST']) * (_vot_bin_s2 == 1)) + ((odt_skims['HOV3_M_DIST']) * (_vot_bin_s2 == 2)) + ((odt_skims['HOV3_H_DIST']) * (_vot_bin_s2 == 3)))
+,s3_cost_skims,(((odt_skims['HOV3_L_TOLLCOST']) * (_vot_bin_s2 == 1)) + ((odt_skims['HOV3_M_TOLLCOST']) * (_vot_bin_s2 == 2)) + ((odt_skims['HOV3_H_TOLLCOST']) * (_vot_bin_s2 == 3)))
+,s3_time_skims,(((odt_skims['HOV3_L_TIME']) * (_vot_bin_s2 == 1)) + ((odt_skims['HOV3_M_TIME']) * (_vot_bin_s2 == 2)) + ((odt_skims['HOV3_H_TIME']) * (_vot_bin_s2 == 3)))
+,s3_rel_skims,(((odt_skims['HOV3_L_REL']) * (_vot_bin_da == 1)) + ((odt_skims['HOV3_M_REL']) * (_vot_bin_da == 2)) + ((odt_skims['HOV3_H_REL']) * (_vot_bin_da == 3)))
+,walk_time_skims,od_skims['walkTime']
+#,,
+,inbound,~df.outbound
+,first_trip,df.trip_num == 1
+,last_trip,df.trip_num == df.trip_count
+#,,
+# FIXME no transit subzones so all zones short walk to transit,,
+,_walk_transit_origin,True
+,_walk_transit_destination,True
+,walk_transit_available,_walk_transit_origin & _walk_transit_destination
+,drive_transit_available,"np.where(df.outbound, _walk_transit_destination, _walk_transit_origin) & (df.auto_ownership > 0)"
+# RIDEHAIL,,
+household_density calculated in annotate_landuse in acres and is converted to sq miles here,_origin_density_measure,"reindex(land_use.PopEmpDenPerMi, df[orig_col_name])"
+employment_density calculated in annotate_landuse in acres and is converted to sq miles here,_dest_density_measure,"reindex(land_use.PopEmpDenPerMi, df[dest_col_name])"
+,origin_density,"pd.cut(_origin_density_measure, bins=[-np.inf, 500, 2000, 5000, 15000, np.inf], labels=[5, 4, 3, 2, 1]).astype(int)"
+,dest_density,"pd.cut(_dest_density_measure, bins=[-np.inf, 500, 2000, 5000, 15000, np.inf], labels=[5, 4, 3, 2, 1]).astype(int)"
+Origin MGRA Dwelling Unit Density,oMGRADUDen,"reindex(land_use.duden,df.origin)"
+Origin MGRA Employment Density,oMGRAEmpDen,"reindex(land_use.empden,df.origin)"
+Origin MGRA Total Intersections,oMGRATotInt,"reindex(land_use.totint,df.origin)"
+Destination MGRA Dwelling Unit Density,dMGRADUDen,"reindex(land_use.duden,df.destination)"
+Destination MGRA Employment Density,dMGRAEmpDen,"reindex(land_use.empden,df.destination)"
+Destination MGRA Total Intersections,dMGRATotInt,"reindex(land_use.totint,df.destination)"
+Origin MGRA Mix,oMGRAMix,"np.where(oMGRADUDen+oMGRAEmpDen > 0,(oMGRADUDen*oMGRAEmpDen)/(oMGRADUDen+oMGRAEmpDen),0)"
+Destination MGRA Mix,dMGRAMix,"np.where(dMGRADUDen+dMGRAEmpDen > 0,(dMGRADUDen*dMGRAEmpDen)/(dMGRADUDen+dMGRAEmpDen),0)"
+,origin_zone_taxi_wait_time_mean,"origin_density.map({k: v for k, v in Taxi_waitTime_mean.items()})"
+,origin_zone_taxi_wait_time_sd,"origin_density.map({k: v for k, v in Taxi_waitTime_sd.items()})"
+,dest_zone_taxi_wait_time_mean,"dest_density.map({k: v for k, v in Taxi_waitTime_mean.items()})"
+,dest_zone_taxi_wait_time_sd,"dest_density.map({k: v for k, v in Taxi_waitTime_sd.items()})"
+# ,, Note that the mean and standard deviation are not the values for the distribution itself
+,origTaxiWaitTime,"rng.lognormal_for_df(df, mu=origin_zone_taxi_wait_time_mean, sigma=origin_zone_taxi_wait_time_sd, broadcast=True, scale=True).clip(min_waitTime, max_waitTime)"
+,destTaxiWaitTime,"rng.lognormal_for_df(df, mu=dest_zone_taxi_wait_time_mean, sigma=dest_zone_taxi_wait_time_sd, broadcast=True, scale=True).clip(min_waitTime, max_waitTime)"
+,origin_zone_singleTNC_wait_time_mean,"origin_density.map({k: v for k, v in TNC_single_waitTime_mean.items()})"
+,origin_zone_singleTNC_wait_time_sd,"origin_density.map({k: v for k, v in TNC_single_waitTime_sd.items()})"
+,dest_zone_singleTNC_wait_time_mean,"dest_density.map({k: v for k, v in TNC_single_waitTime_mean.items()})"
+,dest_zone_singleTNC_wait_time_sd,"dest_density.map({k: v for k, v in TNC_single_waitTime_sd.items()})"
+,origSingleTNCWaitTime,"rng.lognormal_for_df(df, mu=origin_zone_singleTNC_wait_time_mean, sigma=origin_zone_singleTNC_wait_time_sd, broadcast=True, scale=True).clip(min_waitTime, max_waitTime)"
+,destSingleTNCWaitTime,"rng.lognormal_for_df(df, mu=dest_zone_singleTNC_wait_time_mean, sigma=dest_zone_singleTNC_wait_time_sd, broadcast=True, scale=True).clip(min_waitTime, max_waitTime)"
+,origin_zone_sharedTNC_wait_time_mean,"origin_density.map({k: v for k, v in TNC_shared_waitTime_mean.items()})"
+,origin_zone_sharedTNC_wait_time_sd,"origin_density.map({k: v for k, v in TNC_shared_waitTime_sd.items()})"
+# wrong? producing bad probs error,dest_zone_sharedTNC_wait_time_mean,"np.maximum((200+(-133 * da_dist_skims)),0) * time_factor"
+,dest_zone_sharedTNC_wait_time_mean,"dest_density.map({k: v for k, v in TNC_shared_waitTime_mean.items()})"
+,dest_zone_sharedTNC_wait_time_sd,"dest_density.map({k: v for k, v in TNC_shared_waitTime_sd.items()})"
+,origSharedTNCWaitTime,"rng.lognormal_for_df(df, mu=origin_zone_sharedTNC_wait_time_mean, sigma=origin_zone_sharedTNC_wait_time_sd, broadcast=True, scale=True).clip(min_waitTime, max_waitTime)"
+,destSharedTNCWaitTime,"rng.lognormal_for_df(df, mu=dest_zone_sharedTNC_wait_time_mean, sigma=dest_zone_sharedTNC_wait_time_sd, broadcast=True, scale=True).clip(min_waitTime, max_waitTime)"
+,totalWaitTaxi,origTaxiWaitTime + destTaxiWaitTime
+,totalWaitSingleTNC,origSingleTNCWaitTime + destSingleTNCWaitTime
+,totalWaitSharedTNC,origSharedTNCWaitTime + destSharedTNCWaitTime
+#,,
+Household autos,autos,df.auto_ownership
+Number of adults (age 18+) in household,adults,df.num_adults
+Household size (number of persons),hhSize,df.hhsize
+Person age,age,df.age
+Person is female,female,(df.sex == 2)
+# Female in party,femaleInParty,df.femaleInParty
+# Male in party,maleInParty,df.maleInParty
+# Auto operating costs,,
+,selected_tour_vehicle,"reindex(tours.selected_vehicle, df.tour_id)"
+,auto_op_cost,"reindex(vehicles.groupby('vehicle_type')['auto_operating_cost'].mean(), pd.Series(selected_tour_vehicle, df.index))"
+,auto_op_cost,"np.where(pd.isna(auto_op_cost), costPerMile, auto_op_cost)"
+#,,
+Does tour use an AV,useAV,selected_tour_vehicle.str.contains('AV')
+Auto IVT Factor,autoIVTFactor,"np.where(useAV,1.0,autoIVTFactorAV)"
+Auto Parking Cost Factor,autoParkingCostFactor,"np.where(useAV,1.0,autoParkingCostFactorAV)"
+Auto CPM Factor,autoCPMFactor,"np.where(useAV,1.0,autoCostPerMileFactorAV)"
+Auto Terminal Time Factor,autoTermTimeFactor,"np.where(useAV,1.0,autoTerminalTimeFactorAV)"
+MinimumAgeDriveAlone,minimumAgeDA,"np.where(useAV,16,minAgeDriveAloneAV)"
+#,,
+Zero auto households,zeroAutoHH,"np.where(autos==0,1,0)"
+Auto deficient household (more adults than autos),autoDeficientHH,"np.where(autos<adults,1,0) * (np.where(zeroAutoHH,0,1))"
+Auto sufficient household (enough autos for each adult),autoSufficientHH,"np.where(autos>=adults,1,0) * (np.where(zeroAutoHH,0,1))"
+Joint tour,jointTour,(df.tour_category == 'joint')
+Number of participants in joint tour,numberOfParticipantsInJointTour,df.number_of_participants * jointTour
+Individual tour,indivTour,1 * (jointTour==0)
+Number of stops - outbound direction,outStops,df.trip_count * df.outbound
+Number of stops - return direction,retStops,df.trip_count * ~df.outbound
+Total stops on tour,totStops,outStops + retStops
+First trip of tour,firstTrip,df.trip_num == 1
+Last trip of tour,lastTrip,df.trip_num == df.trip_count
+First leg of multi-stop outbound,firstOfMultipleTrips,firstTrip *(outStops>1)
+Last leg of multi-stop return,lastofMultipleTrips,lastTrip *( retStops>1)
+# Flag for setting availability of auto modes for drive-transit access/egress trip segments,autoAllowedForDriveTransit,df.autoModeAllowedForTripSegment
+# Flag for setting availability of walk mode for drive-transit access/egress trip segments,walkAllowedForDriveTransit,df.walkModeAllowedForTripSegment
+Tour mode is drive-alone,tourDA,(df.tour_mode == 'DRIVEALONE').astype(int)
+Tour mode is shared-2,tourS2,(df.tour_mode == 'SHARED2').astype(int)
+Tour mode is shared-3+,tourS3,(df.tour_mode == 'SHARED3').astype(int)
+Tour mode is walk,tourWalk,(df.tour_mode == 'WALK').astype(int)
+Tour mode is bike,tourBike,(df.tour_mode == 'BIKE').astype(int)
+Tour mode is walk-transit,tourWTran,df.tour_mode.str.contains('WALK_').astype(int)
+Tour mode is PNR-transit,tourPNR,df.tour_mode.str.contains('PNR_').astype(int)
+Tour mode is KNR-transit,tourKNR,df.tour_mode.str.contains('KNR_').astype(int)
+Tour mode is TNR-transit,tourTNR,"df.tour_mode.isin(['TNC_LOC','TNC_PRM','TNC_MIX']).astype(int)"
+Tour mode is MaaS,tourMaaS,"(df.tour_mode.isin(['TAXI', 'TNC_SINGLE', 'TNC_SHARED'])).astype(int)"
+Tour mode is school bus,tourSchBus,(df.tour_mode == 'SCH_BUS').astype(int)
+Tour mode is Ebike,tourEbike,(df.tour_mode == 'EBIKE').astype(int)
+Tour mode is Escooter,tourEscooter,(df.tour_mode == 'ESCOOTER').astype(int)
+#,#,
 ,free_parking_available,(df.tour_type == 'work') & df.free_parking_at_work
-person has free on-site parking at workplace,freeOnsite,"(free_parking_available)*np.where(is_indiv,1,0)",
-new reimbursement amount,reimburseProportion,0,
+person has free on-site parking at workplace,freeOnsite,"(free_parking_available)*np.where(is_indiv,1,0)"
+new reimbursement amount,reimburseProportion,0
 tour primary destination,tour_dest,"reindex(tours.destination, df.tour_id)"
 half tour duration,tourDuration,"reindex(tours.duration, df.tour_id)/2"
-new daily parking cost with reimbursement,parkingCostDayDollars,"reindex(land_use.exp_daily, tour_dest)",
-new hourly parking cost with reimbursement,parkingCostHourDollars,"reindex(land_use.exp_hourly, tour_dest)",
-new monthly parking cost with reimbursement,parkingCostMonthDollars,"reindex(land_use.exp_monthly, tour_dest)",
-Parking area,parkingConstrainedArea,"np.where(reindex(land_use.parking_type, tour_dest) == 1, 1, 0)",
-daily cost converted to cents,parkingCostDay,parkingCostDayDollars*100,
-hourly cost converted to cents,parkingCostHour,parkingCostHourDollars*100,
-monthly cost converted to cents,parkingCostMonth,parkingCostMonthDollars*100,
-Tour parking cost for full-time workers and university students,_parkingCostBeforeReimb,"df.ptype.isin([1,3]) * is_indiv * np.minimum(parkingCostMonth/22, parkingCostDay)",
-Tour parking cost for full-time workers and university students,_parkingCostBeforeReimb,"df.ptype.isin([1,3]) * is_indiv * np.minimum(_parkingCostBeforeReimb, parkingCostHour * tourDuration)",
-Tour parking cost for other person types,parkingCostBeforeReimb,"np.where((~df.ptype.isin([1,3]) * is_indiv) | (is_joint), np.minimum(parkingCostDay, parkingCostHour * tourDuration), _parkingCostBeforeReimb)",
-Reimbursement applies to this tour purpose,reimbursePurpose,"reindex(tours.tour_type, df.tour_id)=='work'",
-Effective parking cost for free parkers,_parkingCost,"0 * np.where(reimbursePurpose*freeOnsite,1,0)",
-Effective parking cost for reimbursed parkers,_parkingCost,"np.where(is_indiv*reimbursePurpose*(1-freeOnsite), np.maximum((1-reimburseProportion) * parkingCostBeforeReimb, 0),_parkingCost)",
-Effective parking cost applied to tour purpose,parkingCostPrimDest,"np.where(is_joint+is_indiv*(1-reimbursePurpose), parkingCostBeforeReimb,_parkingCost)",
-#,,,
-Total trips on tour,totalTrips,totStops+2,
-Indicator for trip origin is tour prim. Destination,tripOrigIsTourDest,~df.outbound*df.trip_num==1,
-Indicator for trip destination is tour prim. Destination,tripDestIsTourDest,df.outbound*df.trip_num==df.trip_count,
-Contribution to trip parking cost from primary destination,parkCostTourDestContrib,parkingCostPrimDest/(totalTrips+2),
+new daily parking cost with reimbursement,parkingCostDayDollars,"reindex(land_use.exp_daily, tour_dest)"
+new hourly parking cost with reimbursement,parkingCostHourDollars,"reindex(land_use.exp_hourly, tour_dest)"
+new monthly parking cost with reimbursement,parkingCostMonthDollars,"reindex(land_use.exp_monthly, tour_dest)"
+Parking area,parkingConstrainedArea,"np.where(reindex(land_use.parking_type, tour_dest) == 1, 1, 0)"
+daily cost converted to cents,parkingCostDay,parkingCostDayDollars*100
+hourly cost converted to cents,parkingCostHour,parkingCostHourDollars*100
+monthly cost converted to cents,parkingCostMonth,parkingCostMonthDollars*100
+Tour parking cost for full-time workers and university students,_parkingCostBeforeReimb,"df.ptype.isin([1,3]) * is_indiv * np.minimum(parkingCostMonth/22, parkingCostDay)"
+Tour parking cost for full-time workers and university students,_parkingCostBeforeReimb,"df.ptype.isin([1,3]) * is_indiv * np.minimum(_parkingCostBeforeReimb, parkingCostHour * tourDuration)"
+Tour parking cost for other person types,parkingCostBeforeReimb,"np.where((~df.ptype.isin([1,3]) * is_indiv) | (is_joint), np.minimum(parkingCostDay, parkingCostHour * tourDuration), _parkingCostBeforeReimb)"
+Reimbursement applies to this tour purpose,reimbursePurpose,"reindex(tours.tour_type, df.tour_id)=='work'"
+Effective parking cost for free parkers,_parkingCost,"0 * np.where(reimbursePurpose*freeOnsite,1,0)"
+Effective parking cost for reimbursed parkers,_parkingCost,"np.where(is_indiv*reimbursePurpose*(1-freeOnsite), np.maximum((1-reimburseProportion) * parkingCostBeforeReimb, 0),_parkingCost)"
+Effective parking cost applied to tour purpose,parkingCostPrimDest,"np.where(is_joint+is_indiv*(1-reimbursePurpose), parkingCostBeforeReimb,_parkingCost)"
+#,,
+Total trips on tour,totalTrips,totStops+2
+Indicator for trip origin is tour prim. Destination,tripOrigIsTourDest,~df.outbound*df.trip_num==1
+Indicator for trip destination is tour prim. Destination,tripDestIsTourDest,df.outbound*df.trip_num==df.trip_count
+Contribution to trip parking cost from primary destination,parkCostTourDestContrib,parkingCostPrimDest/(totalTrips+2)
 Hourly parking cost at trip origin,parkCostTripOrig,"reindex(land_use.exp_hourly, origin)*100"
 Hourly parking cost at trip destination,parkCostTripDest,"reindex(land_use.exp_hourly, destination)*100"
-Contribution to trip parking cost from trip origin,parkCostTripOrigContrib,parkCostTripOrig*(1-firstTrip)*(1-tripOrigIsTourDest),
-Contribution to trip parking cost from trip origin,parkCostTripOrigContrib,parkingCostPrimDest/(totalTrips+2) * tripOrigIsTourDest,
-Contribution to trip parking cost from trip destination,parkCostTripDestContrib,parkCostTripDest * (1-lastTrip)*(1-tripDestIsTourDest),
-Contribution to trip parking cost from trip destination,parkCostTripDestContrib,parkingCostPrimDest/(totalTrips+2) * tripDestIsTourDest,
-Final parking cost,parkingCost,parkCostTourDestContrib + parkCostTripOrigContrib + parkCostTripDestContrib,
-#,,,
-Origin Terminal Time,oTermTime,"reindex(land_use.terminal_time,origin)",
-Destination Terminal Time,dTermTime,"reindex(land_use.terminal_time,destination)",
-#,,,
-bike logsum,bikeLS,od_skims['BIKE_LOGSUM'],
-bike time inbound,bike_time,od_skims['BIKE_TIME'],
-#,,,
-"Cost factor for shared 2 tours, 1/(2^0.8)",costFactorS2,0.57,
-"Cost factor for shared 3+ tours, 1/(3.5^0.8)",costFactorS3,0.37,
-# no sov for 0 autos or age< min drving age,sov_available,(autos>0) * (age>=minimumAgeDA) ,
-no sov for age < min drving age,sov_available,(age>=minimumAgeDA) * is_indiv,
-no long walks,walkAvailable,"np.where((walk_time_skims < max_walk_time),1,0)",
-,PNR_available,(autos>0) * (age>15),
-,SCHBUS_available,(df.tour_type =='school') & (df.ptype!=3),
-#,,,
-,walk_local_available,(odt_skims['WALK_LOC_TOTALIVTT']>0)&(tourWTran),
-,walk_premium_available,(odt_skims['WALK_PRM_TOTALIVTT']>0)&(tourWTran),
-,walk_mix_available,(odt_skims['WALK_MIX_TOTALIVTT']>0)&(tourWTran),
-,pnr_local_available,((df.outbound & (odt_skims['PNROUT_LOC_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['PNRIN_LOC_TOTALIVTT']>0)))&(tourPNR),
-,pnr_premium_available,((df.outbound & (odt_skims['PNROUT_PRM_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['PNRIN_PRM_TOTALIVTT']>0)))&(tourPNR),
-,pnr_mix_available,((df.outbound & (odt_skims['PNROUT_MIX_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['PNRIN_MIX_TOTALIVTT']>0)))&(tourPNR),
-,knr_local_available,((df.outbound & (odt_skims['KNROUT_LOC_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['KNRIN_LOC_TOTALIVTT']>0)))&(tourKNR),
-,knr_premium_available,((df.outbound & (odt_skims['KNROUT_PRM_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['KNRIN_PRM_TOTALIVTT']>0)))&(tourKNR),
-,knr_mix_available,((df.outbound & (odt_skims['KNROUT_MIX_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['KNRIN_MIX_TOTALIVTT']>0)))&(tourKNR),
-,tnc_local_available,((df.outbound & (odt_skims['TNCOUT_LOC_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['TNCIN_LOC_TOTALIVTT']>0)))&(tourTNR),
-,tnc_premium_available,((df.outbound & (odt_skims['TNCOUT_PRM_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['TNCIN_PRM_TOTALIVTT']>0)))&(tourTNR),
-,tnc_mix_available,((df.outbound & (odt_skims['TNCOUT_MIX_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['TNCIN_MIX_TOTALIVTT']>0)))&(tourTNR),
-#access egress distances,,,
-,origin_local_dist,"reindex(land_use.walk_dist_local_bus, origin)",
-,origin_prm_dist,"reindex(land_use.walk_dist_premium_transit, origin)",
-,origin_mix_dist,"np.minimum(origin_local_dist, origin_prm_dist)",
-,dest_local_dist,"reindex(land_use.walk_dist_local_bus, destination)",
-,dest_prm_dist,"reindex(land_use.walk_dist_premium_transit, destination)",
-,dest_mix_dist,"np.minimum(dest_local_dist, dest_prm_dist)",
-#access egress times,,,
-,origin_local_time,origin_local_dist * 60/walk_speed,
-,origin_prm_time,origin_prm_dist * 60/walk_speed,
-,origin_mix_time,origin_mix_dist * 60/walk_speed,
-,dest_local_time,dest_local_dist * 60/walk_speed,
-,dest_prm_time,dest_prm_dist * 60/walk_speed,
-,dest_mix_time,dest_mix_dist * 60/walk_speed,
-# added for school escorting model,,,
-Number of school children in vehicle on trip,num_escortees,df.escort_participants.fillna('').apply(lambda x: len(x.split('_'))),
-# commuter rail constants based on commuter rail IVTT,,,
-,wlk_prm_cr_asc,"(-1.0) * (np.minimum(odt_skims['WALK_PRM_CMRIVTT'],60) + np.where(odt_skims['WALK_PRM_CMRIVTT']>40,(np.minimum(odt_skims['WALK_PRM_CMRIVTT'],60)-40)*0.6,0))",
-,wlk_mix_cr_asc,"(-1.0) * (np.minimum(odt_skims['WALK_MIX_CMRIVTT'],60) + np.where(odt_skims['WALK_MIX_CMRIVTT']>40,(np.minimum(odt_skims['WALK_MIX_CMRIVTT'],60)-40)*0.6,0))",
-,pnr_prm_out_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['PNROUT_PRM_CMRIVTT']>20,(odt_skims['PNROUT_PRM_CMRIVTT']-20),0)+np.where(odt_skims['PNROUT_PRM_CMRIVTT']>40,(odt_skims['PNROUT_PRM_CMRIVTT']-40)*1.5,0)),65)",
-,pnr_prm_inb_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['PNRIN_PRM_CMRIVTT']>20,(odt_skims['PNRIN_PRM_CMRIVTT']-20),0)+np.where(odt_skims['PNRIN_PRM_CMRIVTT']>40,(odt_skims['PNRIN_PRM_CMRIVTT']-40)*1.5,0)),65)",
-,pnr_mix_out_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['PNROUT_MIX_CMRIVTT']>20,(odt_skims['PNROUT_MIX_CMRIVTT']-20),0)+np.where(odt_skims['PNROUT_MIX_CMRIVTT']>40,(odt_skims['PNROUT_MIX_CMRIVTT']-40)*1.5,0)),65)",
-,pnr_mix_inb_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['PNRIN_MIX_CMRIVTT']>20,(odt_skims['PNRIN_MIX_CMRIVTT']-20),0)+np.where(odt_skims['PNRIN_MIX_CMRIVTT']>40,(odt_skims['PNRIN_MIX_CMRIVTT']-40)*1.5,0)),65)",
-,knr_prm_out_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['KNROUT_PRM_CMRIVTT']>20,(odt_skims['KNROUT_PRM_CMRIVTT']-20),0)+np.where(odt_skims['KNROUT_PRM_CMRIVTT']>40,(odt_skims['KNROUT_PRM_CMRIVTT']-40)*1.5,0)),65)",
-,knr_prm_inb_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['KNRIN_PRM_CMRIVTT']>20,(odt_skims['KNRIN_PRM_CMRIVTT']-20),0)+np.where(odt_skims['KNRIN_PRM_CMRIVTT']>40,(odt_skims['KNRIN_PRM_CMRIVTT']-40)*1.5,0)),65)",
-,knr_mix_out_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['KNROUT_MIX_CMRIVTT']>20,(odt_skims['KNROUT_MIX_CMRIVTT']-20),0)+np.where(odt_skims['KNROUT_MIX_CMRIVTT']>40,(odt_skims['KNROUT_MIX_CMRIVTT']-40)*1.5,0)),65)",
-,knr_mix_inb_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['KNRIN_MIX_CMRIVTT']>20,(odt_skims['KNRIN_MIX_CMRIVTT']-20),0)+np.where(odt_skims['KNRIN_MIX_CMRIVTT']>40,(odt_skims['KNRIN_MIX_CMRIVTT']-40)*1.5,0)),65)",
-,tnc_prm_out_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['TNCOUT_PRM_CMRIVTT']>20,(odt_skims['TNCOUT_PRM_CMRIVTT']-20),0)+np.where(odt_skims['TNCOUT_PRM_CMRIVTT']>40,(odt_skims['TNCOUT_PRM_CMRIVTT']-40)*1.5,0)),65)",
-,tnc_prm_inb_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['TNCIN_PRM_CMRIVTT']>20,(odt_skims['TNCIN_PRM_CMRIVTT']-20),0)+np.where(odt_skims['TNCIN_PRM_CMRIVTT']>40,(odt_skims['TNCIN_PRM_CMRIVTT']-40)*1.5,0)),65)",
-,tnc_mix_out_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['TNCOUT_MIX_CMRIVTT']>20,(odt_skims['TNCOUT_MIX_CMRIVTT']-20),0)+np.where(odt_skims['TNCOUT_MIX_CMRIVTT']>40,(odt_skims['TNCOUT_MIX_CMRIVTT']-40)*1.5,0)),65)",
-,tnc_mix_inb_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['TNCIN_MIX_CMRIVTT']>20,(odt_skims['TNCIN_MIX_CMRIVTT']-20),0)+np.where(odt_skims['TNCIN_MIX_CMRIVTT']>40,(odt_skims['TNCIN_MIX_CMRIVTT']-40)*1.5,0)),65)",
-# Note: Hyperloop not implemented in ASC calculations since we arent skimming hyperloop IVTT,,,
-,wlk_prm_asc,"np.where(odt_skims['WALK_PRM_CMRIVTT'] > 10, wlk_prm_cr_asc,np.where(odt_skims['WALK_PRM_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['WALK_PRM_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['WALK_PRM_LTDEXPIVTT'] > 0, eb_equiv_asc,0))))",
-,pnr_prm_out_asc,"np.where(odt_skims['PNROUT_PRM_CMRIVTT'] > 10, pnr_prm_out_cr_asc,np.where(odt_skims['PNROUT_PRM_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['PNROUT_PRM_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['PNROUT_PRM_LTDEXPIVTT'] > 0, eb_equiv_asc,0))))",
-,pnr_prm_inb_asc,"np.where(odt_skims['PNRIN_PRM_CMRIVTT'] > 10, pnr_prm_inb_cr_asc,np.where(odt_skims['PNRIN_PRM_LRTIVTT']>0,pnr_lrt_equiv_asc,np.where(odt_skims['PNRIN_PRM_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['PNRIN_PRM_LTDEXPIVTT'] > 0, eb_equiv_asc,0))))",
-,knr_prm_out_asc,"np.where(odt_skims['KNROUT_PRM_CMRIVTT'] > 10, knr_prm_out_cr_asc,np.where(odt_skims['KNROUT_PRM_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['KNROUT_PRM_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['KNROUT_PRM_LTDEXPIVTT'] > 0, eb_equiv_asc,0))))",
-,knr_prm_inb_asc,"np.where(odt_skims['KNRIN_PRM_CMRIVTT'] > 10, knr_prm_inb_cr_asc,np.where(odt_skims['KNRIN_PRM_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['KNRIN_PRM_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['KNRIN_PRM_LTDEXPIVTT'] > 0, eb_equiv_asc,0))))",
-,tnc_prm_out_asc,"np.where(odt_skims['TNCOUT_PRM_CMRIVTT'] > 10, tnc_prm_out_cr_asc,np.where(odt_skims['TNCOUT_PRM_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['TNCOUT_PRM_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['TNCOUT_PRM_LTDEXPIVTT'] > 0, eb_equiv_asc,0))))",
-,tnc_prm_inb_asc,"np.where(odt_skims['TNCIN_PRM_CMRIVTT'] > 10, tnc_prm_inb_cr_asc,np.where(odt_skims['TNCIN_PRM_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['TNCIN_PRM_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['TNCIN_PRM_LTDEXPIVTT'] > 0, eb_equiv_asc,0))))",
-,wlk_mix_max_asc,"np.where(odt_skims['WALK_MIX_CMRIVTT'] > 10, wlk_mix_cr_asc,np.where(odt_skims['WALK_MIX_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['WALK_MIX_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['WALK_MIX_LTDEXPIVTT']> 0, eb_equiv_asc,0))))",
-,pnr_mix_out_max_asc,"np.where(odt_skims['PNROUT_MIX_CMRIVTT'] > 10, pnr_mix_out_cr_asc,np.where(odt_skims['PNROUT_MIX_LRTIVTT']>0,pnr_lrt_equiv_asc,np.where(odt_skims['PNROUT_MIX_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['PNROUT_MIX_LTDEXPIVTT']> 0, eb_equiv_asc,0))))",
-,pnr_mix_inb_max_asc,"np.where(odt_skims['PNRIN_MIX_CMRIVTT'] > 10, pnr_mix_inb_cr_asc,np.where(odt_skims['PNRIN_MIX_LRTIVTT']>0,pnr_lrt_equiv_asc,np.where(odt_skims['PNRIN_MIX_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['PNRIN_MIX_LTDEXPIVTT']> 0, eb_equiv_asc,0))))",
-,knr_mix_out_max_asc,"np.where(odt_skims['KNROUT_MIX_CMRIVTT'] > 10,knr_mix_out_cr_asc,np.where(odt_skims['KNROUT_MIX_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['KNROUT_MIX_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['KNROUT_MIX_LTDEXPIVTT']> 0, eb_equiv_asc,0))))",
-,knr_mix_inb_max_asc,"np.where(odt_skims['KNRIN_MIX_CMRIVTT'] > 10, knr_mix_inb_cr_asc,np.where(odt_skims['KNRIN_MIX_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['KNRIN_MIX_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['KNRIN_MIX_LTDEXPIVTT']> 0, eb_equiv_asc,0))))",
-,tnc_mix_out_max_asc,"np.where(odt_skims['TNCOUT_MIX_CMRIVTT'] > 10, tnc_mix_out_cr_asc,np.where(odt_skims['TNCOUT_MIX_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['TNCOUT_MIX_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['TNCOUT_MIX_LTDEXPIVTT']> 0, eb_equiv_asc,0))))",
-,tnc_mix_inb_max_asc,"np.where(odt_skims['TNCIN_MIX_CMRIVTT'] > 10, tnc_mix_inb_cr_asc,np.where(odt_skims['TNCIN_MIX_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['TNCIN_MIX_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['TNCIN_MIX_LTDEXPIVTT']> 0, eb_equiv_asc,0))))",
-# reduce by 50% if bus transfer and constant is positive,,,
-,wlk_mix_asc,"np.where((wlk_mix_max_asc > 0) & (odt_skims['WALK_MIX_BUSIVTT'] > 0), 0.5 * wlk_mix_max_asc, wlk_mix_max_asc)",
-,pnr_mix_out_asc,"np.where((pnr_mix_out_max_asc > 0) & (odt_skims['PNROUT_MIX_BUSIVTT'] > 0), 0.5 * pnr_mix_out_max_asc, pnr_mix_out_max_asc)",
-,pnr_mix_inb_asc,"np.where((pnr_mix_inb_max_asc > 0) & (odt_skims['PNRIN_MIX_BUSIVTT'] > 0), 0.5 * pnr_mix_inb_max_asc, pnr_mix_inb_max_asc)",
-,knr_mix_out_asc,"np.where((knr_mix_out_max_asc > 0) & (odt_skims['KNROUT_MIX_BUSIVTT'] > 0), 0.5 * knr_mix_out_max_asc, knr_mix_out_max_asc)",
-,knr_mix_inb_asc,"np.where((knr_mix_inb_max_asc > 0) & (odt_skims['KNRIN_MIX_BUSIVTT'] > 0), 0.5 * knr_mix_inb_max_asc, knr_mix_inb_max_asc)",
-,tnc_mix_out_asc,"np.where((tnc_mix_out_max_asc > 0) & (odt_skims['TNCOUT_MIX_BUSIVTT'] > 0), 0.5 * tnc_mix_out_max_asc, tnc_mix_out_max_asc)",
-,tnc_mix_inb_asc,"np.where((tnc_mix_inb_max_asc > 0) & (odt_skims['TNCIN_MIX_BUSIVTT'] > 0), 0.5 * tnc_mix_inb_max_asc, tnc_mix_inb_max_asc)",
-# Micromobility times,,,
-ebike time,ebike_time,bike_time * bikeSpeed / ebikeSpeed,
-escooter time,escooter_time,bike_time * bikeSpeed / escooterSpeed,
-Micromobility access Time,MicroAccessTime,"reindex(land_use.MicroAccessTime,origin)",
-ebike max distance availability,ebikeMaxDistance,(od_skims['DIST'] > ebikeMaxDist),
-escooter max distance availability,escooterMaxDistance,(od_skims['DIST'] > escooterMaxDist),
+Contribution to trip parking cost from trip origin,parkCostTripOrigContrib,parkCostTripOrig*(1-firstTrip)*(1-tripOrigIsTourDest)
+Contribution to trip parking cost from trip origin,parkCostTripOrigContrib,parkingCostPrimDest/(totalTrips+2) * tripOrigIsTourDest
+Contribution to trip parking cost from trip destination,parkCostTripDestContrib,parkCostTripDest * (1-lastTrip)*(1-tripDestIsTourDest)
+Contribution to trip parking cost from trip destination,parkCostTripDestContrib,parkingCostPrimDest/(totalTrips+2) * tripDestIsTourDest
+Final parking cost,parkingCost,parkCostTourDestContrib + parkCostTripOrigContrib + parkCostTripDestContrib
+#,,
+Origin Terminal Time,oTermTime,"reindex(land_use.terminal_time,origin)"
+Destination Terminal Time,dTermTime,"reindex(land_use.terminal_time,destination)"
+#,,
+bike logsum,bikeLS,od_skims['BIKE_LOGSUM']
+bike time inbound,bike_time,od_skims['BIKE_TIME']
+#,,
+"Cost factor for shared 2 tours, 1/(2^0.8)",costFactorS2,0.57
+"Cost factor for shared 3+ tours, 1/(3.5^0.8)",costFactorS3,0.37
+# no sov for 0 autos or age< min drving age,sov_available,(autos>0) * (age>=minimumAgeDA) 
+no sov for age < min drving age,sov_available,"(age>=minimumAgeDA) * is_indiv * np.where((tourPNR)|(tourKNR)|(tourTNR)|(tourMaaS)|(tourSchBus)|(tourEbike)|(tourEscooter),0,1)"
+,sr2_available,"np.where((tourPNR)|(tourKNR)|(tourTNR)|(tourMaaS)|(tourSchBus)|(tourEbike)|(tourEscooter),0,1)"
+,sr3_available,"np.where((tourPNR)|(tourKNR)|(tourTNR)|(tourMaaS)|(tourSchBus)|(tourEbike)|(tourEscooter),0,1)"
+no long walks,walkAvailable,"np.where((walk_time_skims < max_walk_time),1,0) * np.where((tourPNR)|(tourKNR)|(tourTNR)|(tourMaaS)|(tourSchBus)|(tourEbike)|(tourEscooter),0,1)"
+,Escooter_available,"np.where((tourDA)|(tourS2)|(tourS3)|(tourWalk)|(tourBike)|(tourWTran)|(tourPNR)|(tourKNR)|(tourTNR)|(tourMaaS)|(tourSchBus)|(tourEbike),0,1)"
+,Ebike_available,"np.where((tourDA)|(tourS2)|(tourS3)|(tourWalk)|(tourBike)|(tourWTran)|(tourPNR)|(tourKNR)|(tourTNR)|(tourMaaS)|(tourSchBus)|(tourEscooter),0,1)"
+,PNR_available,"(autos>0) * (age>15) * np.where((tourDA)|(tourS2)|(tourS3)|(tourWalk)|(tourBike)|(tourWTran)|(tourKNR)|(tourTNR)|(tourMaaS)|(tourSchBus)|(tourEbike)|(tourEscooter),0,1)"
+,KNR_available,"np.where((tourDA)|(tourS2)|(tourS3)|(tourWalk)|(tourBike)|(tourWTran)|(tourPNR)|(tourTNR)|(tourMaaS)|(tourSchBus)|(tourEbike)|(tourEscooter),0,1)"
+,TNR_available,"np.where((tourDA)|(tourS2)|(tourS3)|(tourWalk)|(tourBike)|(tourWTran)|(tourPNR)|(tourKNR)|(tourMaaS)|(tourSchBus)|(tourEbike)|(tourEscooter),0,1)"
+,RideHail_available,"np.where((tourDA)|(tourS2)|(tourS3)|(tourWalk)|(tourBike)|(tourWTran)|(tourPNR)|(tourKNR)|(tourTNR)|(tourSchBus)|(tourEbike)|(tourEscooter),0,1)"
+,SCHBUS_available,"(df.tour_type =='school') & (df.ptype!=3)*np.where((tourDA)|(tourS2)|(tourS3)|(tourWalk)|(tourBike)|(tourWTran)|(tourPNR)|(tourKNR)|(tourTNR)|(tourMaaS)|(tourEbike)|(tourEscooter),0,1)"
+#,,
+,walk_local_available,(odt_skims['WALK_LOC_TOTALIVTT']>0)&(tourWTran)
+,walk_premium_available,(odt_skims['WALK_PRM_TOTALIVTT']>0)&(tourWTran)
+,walk_mix_available,(odt_skims['WALK_MIX_TOTALIVTT']>0)&(tourWTran)
+,pnr_local_available,((df.outbound & (odt_skims['PNROUT_LOC_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['PNRIN_LOC_TOTALIVTT']>0)))&(tourPNR)
+,pnr_premium_available,((df.outbound & (odt_skims['PNROUT_PRM_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['PNRIN_PRM_TOTALIVTT']>0)))&(tourPNR)
+,pnr_mix_available,((df.outbound & (odt_skims['PNROUT_MIX_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['PNRIN_MIX_TOTALIVTT']>0)))&(tourPNR)
+,knr_local_available,((df.outbound & (odt_skims['KNROUT_LOC_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['KNRIN_LOC_TOTALIVTT']>0)))&(tourKNR)
+,knr_premium_available,((df.outbound & (odt_skims['KNROUT_PRM_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['KNRIN_PRM_TOTALIVTT']>0)))&(tourKNR)
+,knr_mix_available,((df.outbound & (odt_skims['KNROUT_MIX_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['KNRIN_MIX_TOTALIVTT']>0)))&(tourKNR)
+,tnc_local_available,((df.outbound & (odt_skims['TNCOUT_LOC_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['TNCIN_LOC_TOTALIVTT']>0)))&(tourTNR)
+,tnc_premium_available,((df.outbound & (odt_skims['TNCOUT_PRM_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['TNCIN_PRM_TOTALIVTT']>0)))&(tourTNR)
+,tnc_mix_available,((df.outbound & (odt_skims['TNCOUT_MIX_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['TNCIN_MIX_TOTALIVTT']>0)))&(tourTNR)
+#access egress distances,,
+,origin_local_dist,"reindex(land_use.walk_dist_local_bus, origin)"
+,origin_prm_dist,"reindex(land_use.walk_dist_premium_transit, origin)"
+,origin_mix_dist,"np.minimum(origin_local_dist, origin_prm_dist)"
+,dest_local_dist,"reindex(land_use.walk_dist_local_bus, destination)"
+,dest_prm_dist,"reindex(land_use.walk_dist_premium_transit, destination)"
+,dest_mix_dist,"np.minimum(dest_local_dist, dest_prm_dist)"
+#access egress times,,
+,origin_local_time,origin_local_dist * 60/walk_speed
+,origin_prm_time,origin_prm_dist * 60/walk_speed
+,origin_mix_time,origin_mix_dist * 60/walk_speed
+,dest_local_time,dest_local_dist * 60/walk_speed
+,dest_prm_time,dest_prm_dist * 60/walk_speed
+,dest_mix_time,dest_mix_dist * 60/walk_speed
+# added for school escorting model,,
+Number of school children in vehicle on trip,num_escortees,df.escort_participants.fillna('').apply(lambda x: len(x.split('_')))
+# commuter rail constants based on commuter rail IVTT,,
+,wlk_prm_cr_asc,"(-1.0) * (np.minimum(odt_skims['WALK_PRM_CMRIVTT'],60) + np.where(odt_skims['WALK_PRM_CMRIVTT']>40,(np.minimum(odt_skims['WALK_PRM_CMRIVTT'],60)-40)*0.6,0))"
+,wlk_mix_cr_asc,"(-1.0) * (np.minimum(odt_skims['WALK_MIX_CMRIVTT'],60) + np.where(odt_skims['WALK_MIX_CMRIVTT']>40,(np.minimum(odt_skims['WALK_MIX_CMRIVTT'],60)-40)*0.6,0))"
+,pnr_prm_out_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['PNROUT_PRM_CMRIVTT']>20,(odt_skims['PNROUT_PRM_CMRIVTT']-20),0)+np.where(odt_skims['PNROUT_PRM_CMRIVTT']>40,(odt_skims['PNROUT_PRM_CMRIVTT']-40)*1.5,0)),65)"
+,pnr_prm_inb_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['PNRIN_PRM_CMRIVTT']>20,(odt_skims['PNRIN_PRM_CMRIVTT']-20),0)+np.where(odt_skims['PNRIN_PRM_CMRIVTT']>40,(odt_skims['PNRIN_PRM_CMRIVTT']-40)*1.5,0)),65)"
+,pnr_mix_out_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['PNROUT_MIX_CMRIVTT']>20,(odt_skims['PNROUT_MIX_CMRIVTT']-20),0)+np.where(odt_skims['PNROUT_MIX_CMRIVTT']>40,(odt_skims['PNROUT_MIX_CMRIVTT']-40)*1.5,0)),65)"
+,pnr_mix_inb_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['PNRIN_MIX_CMRIVTT']>20,(odt_skims['PNRIN_MIX_CMRIVTT']-20),0)+np.where(odt_skims['PNRIN_MIX_CMRIVTT']>40,(odt_skims['PNRIN_MIX_CMRIVTT']-40)*1.5,0)),65)"
+,knr_prm_out_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['KNROUT_PRM_CMRIVTT']>20,(odt_skims['KNROUT_PRM_CMRIVTT']-20),0)+np.where(odt_skims['KNROUT_PRM_CMRIVTT']>40,(odt_skims['KNROUT_PRM_CMRIVTT']-40)*1.5,0)),65)"
+,knr_prm_inb_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['KNRIN_PRM_CMRIVTT']>20,(odt_skims['KNRIN_PRM_CMRIVTT']-20),0)+np.where(odt_skims['KNRIN_PRM_CMRIVTT']>40,(odt_skims['KNRIN_PRM_CMRIVTT']-40)*1.5,0)),65)"
+,knr_mix_out_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['KNROUT_MIX_CMRIVTT']>20,(odt_skims['KNROUT_MIX_CMRIVTT']-20),0)+np.where(odt_skims['KNROUT_MIX_CMRIVTT']>40,(odt_skims['KNROUT_MIX_CMRIVTT']-40)*1.5,0)),65)"
+,knr_mix_inb_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['KNRIN_MIX_CMRIVTT']>20,(odt_skims['KNRIN_MIX_CMRIVTT']-20),0)+np.where(odt_skims['KNRIN_MIX_CMRIVTT']>40,(odt_skims['KNRIN_MIX_CMRIVTT']-40)*1.5,0)),65)"
+,tnc_prm_out_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['TNCOUT_PRM_CMRIVTT']>20,(odt_skims['TNCOUT_PRM_CMRIVTT']-20),0)+np.where(odt_skims['TNCOUT_PRM_CMRIVTT']>40,(odt_skims['TNCOUT_PRM_CMRIVTT']-40)*1.5,0)),65)"
+,tnc_prm_inb_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['TNCIN_PRM_CMRIVTT']>20,(odt_skims['TNCIN_PRM_CMRIVTT']-20),0)+np.where(odt_skims['TNCIN_PRM_CMRIVTT']>40,(odt_skims['TNCIN_PRM_CMRIVTT']-40)*1.5,0)),65)"
+,tnc_mix_out_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['TNCOUT_MIX_CMRIVTT']>20,(odt_skims['TNCOUT_MIX_CMRIVTT']-20),0)+np.where(odt_skims['TNCOUT_MIX_CMRIVTT']>40,(odt_skims['TNCOUT_MIX_CMRIVTT']-40)*1.5,0)),65)"
+,tnc_mix_inb_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['TNCIN_MIX_CMRIVTT']>20,(odt_skims['TNCIN_MIX_CMRIVTT']-20),0)+np.where(odt_skims['TNCIN_MIX_CMRIVTT']>40,(odt_skims['TNCIN_MIX_CMRIVTT']-40)*1.5,0)),65)"
+# Note: Hyperloop not implemented in ASC calculations since we arent skimming hyperloop IVTT,,
+,wlk_prm_asc,"np.where(odt_skims['WALK_PRM_CMRIVTT'] > 10, wlk_prm_cr_asc,np.where(odt_skims['WALK_PRM_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['WALK_PRM_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['WALK_PRM_LTDEXPIVTT'] > 0, eb_equiv_asc,0))))"
+,pnr_prm_out_asc,"np.where(odt_skims['PNROUT_PRM_CMRIVTT'] > 10, pnr_prm_out_cr_asc,np.where(odt_skims['PNROUT_PRM_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['PNROUT_PRM_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['PNROUT_PRM_LTDEXPIVTT'] > 0, eb_equiv_asc,0))))"
+,pnr_prm_inb_asc,"np.where(odt_skims['PNRIN_PRM_CMRIVTT'] > 10, pnr_prm_inb_cr_asc,np.where(odt_skims['PNRIN_PRM_LRTIVTT']>0,pnr_lrt_equiv_asc,np.where(odt_skims['PNRIN_PRM_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['PNRIN_PRM_LTDEXPIVTT'] > 0, eb_equiv_asc,0))))"
+,knr_prm_out_asc,"np.where(odt_skims['KNROUT_PRM_CMRIVTT'] > 10, knr_prm_out_cr_asc,np.where(odt_skims['KNROUT_PRM_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['KNROUT_PRM_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['KNROUT_PRM_LTDEXPIVTT'] > 0, eb_equiv_asc,0))))"
+,knr_prm_inb_asc,"np.where(odt_skims['KNRIN_PRM_CMRIVTT'] > 10, knr_prm_inb_cr_asc,np.where(odt_skims['KNRIN_PRM_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['KNRIN_PRM_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['KNRIN_PRM_LTDEXPIVTT'] > 0, eb_equiv_asc,0))))"
+,tnc_prm_out_asc,"np.where(odt_skims['TNCOUT_PRM_CMRIVTT'] > 10, tnc_prm_out_cr_asc,np.where(odt_skims['TNCOUT_PRM_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['TNCOUT_PRM_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['TNCOUT_PRM_LTDEXPIVTT'] > 0, eb_equiv_asc,0))))"
+,tnc_prm_inb_asc,"np.where(odt_skims['TNCIN_PRM_CMRIVTT'] > 10, tnc_prm_inb_cr_asc,np.where(odt_skims['TNCIN_PRM_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['TNCIN_PRM_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['TNCIN_PRM_LTDEXPIVTT'] > 0, eb_equiv_asc,0))))"
+,wlk_mix_max_asc,"np.where(odt_skims['WALK_MIX_CMRIVTT'] > 10, wlk_mix_cr_asc,np.where(odt_skims['WALK_MIX_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['WALK_MIX_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['WALK_MIX_LTDEXPIVTT']> 0, eb_equiv_asc,0))))"
+,pnr_mix_out_max_asc,"np.where(odt_skims['PNROUT_MIX_CMRIVTT'] > 10, pnr_mix_out_cr_asc,np.where(odt_skims['PNROUT_MIX_LRTIVTT']>0,pnr_lrt_equiv_asc,np.where(odt_skims['PNROUT_MIX_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['PNROUT_MIX_LTDEXPIVTT']> 0, eb_equiv_asc,0))))"
+,pnr_mix_inb_max_asc,"np.where(odt_skims['PNRIN_MIX_CMRIVTT'] > 10, pnr_mix_inb_cr_asc,np.where(odt_skims['PNRIN_MIX_LRTIVTT']>0,pnr_lrt_equiv_asc,np.where(odt_skims['PNRIN_MIX_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['PNRIN_MIX_LTDEXPIVTT']> 0, eb_equiv_asc,0))))"
+,knr_mix_out_max_asc,"np.where(odt_skims['KNROUT_MIX_CMRIVTT'] > 10,knr_mix_out_cr_asc,np.where(odt_skims['KNROUT_MIX_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['KNROUT_MIX_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['KNROUT_MIX_LTDEXPIVTT']> 0, eb_equiv_asc,0))))"
+,knr_mix_inb_max_asc,"np.where(odt_skims['KNRIN_MIX_CMRIVTT'] > 10, knr_mix_inb_cr_asc,np.where(odt_skims['KNRIN_MIX_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['KNRIN_MIX_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['KNRIN_MIX_LTDEXPIVTT']> 0, eb_equiv_asc,0))))"
+,tnc_mix_out_max_asc,"np.where(odt_skims['TNCOUT_MIX_CMRIVTT'] > 10, tnc_mix_out_cr_asc,np.where(odt_skims['TNCOUT_MIX_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['TNCOUT_MIX_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['TNCOUT_MIX_LTDEXPIVTT']> 0, eb_equiv_asc,0))))"
+,tnc_mix_inb_max_asc,"np.where(odt_skims['TNCIN_MIX_CMRIVTT'] > 10, tnc_mix_inb_cr_asc,np.where(odt_skims['TNCIN_MIX_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['TNCIN_MIX_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['TNCIN_MIX_LTDEXPIVTT']> 0, eb_equiv_asc,0))))"
+# reduce by 50% if bus transfer and constant is positive,,
+,wlk_mix_asc,"np.where((wlk_mix_max_asc > 0) & (odt_skims['WALK_MIX_BUSIVTT'] > 0), 0.5 * wlk_mix_max_asc, wlk_mix_max_asc)"
+,pnr_mix_out_asc,"np.where((pnr_mix_out_max_asc > 0) & (odt_skims['PNROUT_MIX_BUSIVTT'] > 0), 0.5 * pnr_mix_out_max_asc, pnr_mix_out_max_asc)"
+,pnr_mix_inb_asc,"np.where((pnr_mix_inb_max_asc > 0) & (odt_skims['PNRIN_MIX_BUSIVTT'] > 0), 0.5 * pnr_mix_inb_max_asc, pnr_mix_inb_max_asc)"
+,knr_mix_out_asc,"np.where((knr_mix_out_max_asc > 0) & (odt_skims['KNROUT_MIX_BUSIVTT'] > 0), 0.5 * knr_mix_out_max_asc, knr_mix_out_max_asc)"
+,knr_mix_inb_asc,"np.where((knr_mix_inb_max_asc > 0) & (odt_skims['KNRIN_MIX_BUSIVTT'] > 0), 0.5 * knr_mix_inb_max_asc, knr_mix_inb_max_asc)"
+,tnc_mix_out_asc,"np.where((tnc_mix_out_max_asc > 0) & (odt_skims['TNCOUT_MIX_BUSIVTT'] > 0), 0.5 * tnc_mix_out_max_asc, tnc_mix_out_max_asc)"
+,tnc_mix_inb_asc,"np.where((tnc_mix_inb_max_asc > 0) & (odt_skims['TNCIN_MIX_BUSIVTT'] > 0), 0.5 * tnc_mix_inb_max_asc, tnc_mix_inb_max_asc)"
+# Micromobility times,,
+ebike time,ebike_time,bike_time * bikeSpeed / ebikeSpeed
+escooter time,escooter_time,bike_time * bikeSpeed / escooterSpeed
+Micromobility access Time,MicroAccessTime,"reindex(land_use.MicroAccessTime,origin)"
+ebike max distance availability,ebikeMaxDistance,(od_skims['DIST'] > ebikeMaxDist)
+escooter max distance availability,escooterMaxDistance,(od_skims['DIST'] > escooterMaxDist)
