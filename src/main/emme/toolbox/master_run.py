@@ -1383,6 +1383,8 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         datalake_metadata_path = os.path.join(main_directory,'output','datalake_metadata.yaml')
         with open(datalake_metadata_path, 'w') as file:
             yaml.dump(datalake_metadata_dict, file, default_flow_style=False)
+        _m.logbook_write("Created new scenario_guid: %s" % (datalake_metadata_dict['scenario_guid']))
+
 
     def update_metadata_iteration(self, main_directory, msa_iteration):
         """update iteration value in metadata YAML"""
@@ -1392,6 +1394,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         datalake_metadata_dict['current_iteration'] = msa_iteration
         with open(datalake_metadata_path, 'w') as file:
             yaml.dump(datalake_metadata_dict, file, default_flow_style=False)
+        _m.logbook_write("Updated Iteration in datalake_metadata.yaml file")
 
     def add_html(self, report, html):
         try:
