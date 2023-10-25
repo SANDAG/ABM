@@ -166,9 +166,12 @@ def household_attractor(
     state.add_table("households", households)
     
     # summarize total household attractions by zone
-    land_use['num_hh_food_delivery'] = (households.groupby('home_zone_id')[model_settings.RESULT_COL_NAME + '_food'].sum()).fillna(0)
-    land_use['num_hh_package_delivery'] = households.groupby('home_zone_id')[model_settings.RESULT_COL_NAME + '_package'].sum().fillna(0)
-    land_use['num_hh_service'] = households.groupby('home_zone_id')[model_settings.RESULT_COL_NAME + '_service'].sum().fillna(0)
+    land_use['num_hh_food_delivery'] = households.groupby('home_zone_id')[model_settings.RESULT_COL_NAME + '_food'].sum()
+    land_use['num_hh_food_delivery'] = land_use['num_hh_food_delivery'].fillna(0)
+    land_use['num_hh_package_delivery'] = households.groupby('home_zone_id')[model_settings.RESULT_COL_NAME + '_package'].sum()
+    land_use['num_hh_package_delivery'] = land_use['num_hh_package_delivery'].fillna(0)
+    land_use['num_hh_service'] = households.groupby('home_zone_id')[model_settings.RESULT_COL_NAME + '_service'].sum()
+    land_use['num_hh_service'] = land_use['num_hh_service'].fillna(0)
 
     # scale household attraction by input household sample rate
     land_use['num_hh_food_delivery'] = land_use['num_hh_food_delivery'] / households[model_settings.HOUSEHOLD_SAMPLE_RATE_COLUMN].iloc[0]
