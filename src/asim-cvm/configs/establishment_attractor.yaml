@@ -1,100 +1,72 @@
-SPEC: establishment_attractor_rates.csv
-
 RESULT_COL_NAME: establishment_attraction
 
-INDUSTRY_GROUP_COL_NAME: industry_groups
-ESTABLISHMENT_SIZE_GROUP_COL_NAME: establishment_size_groups
-RATE_COL_NAME: attraction_rate
-
 industry_groups:
-  1:
-    name: agriculture_min_employeesing
-    columns:
-      - emp_ag
-  2:
-    name: manufacturing
-    columns:
-      - emp_mfg_prod
-      - emp_mfg_office
-  3:
-    name: industry_utilities
-    columns:
-      - emp_utilities_prod
-      - emp_utilities_office
-  4:
-    name: retail
-    columns:
-      - emp_retail
-  5:
-    name: wholesale
-    columns:
-      - emp_whsle_whs
-  6:
-    name: construction
-    columns:
-      - emp_const_bldg_prod
-      - emp_const_bldg_office
-  7:
-    name: transportation
-    columns:
-      - emp_trans
-  8:
-    name: info_finance_insurance_realestate_professional
-    columns:
-      - emp_prof_bus_svcs
-      - emp_prof_bus_svcs_bldg_maint
-  9:
-    name: education_publicservices
-    columns:
-      - emp_pvt_ed_k12
-      - emp_pvt_ed_post_k12_oth
-      - emp_state_local_gov_ent
-      - emp_fed_non_mil
-      - emp_fed_mil
-      - emp_state_local_gov_blue
-      - emp_state_local_gov_white
-      - emp_public_ed
-      - emp_fed_gov_accts
-      - emp_st_lcl_gov_accts
-  10:
-    name: medical_health
-    columns:
-      - emp_health
-      - emp_personal_svcs_office
-      - emp_personal_svcs_retail
-  11:
-    name: leisure_accommondation_food
-    columns:
-      - emp_amusement
-      - emp_hotel
-      - emp_restaurant_bar
-  12:
-    name: other
-    columns:
-      - emp_religious
-      - emp_pvt_hh
-      - emp_own_occ_dwell_mgmt
-      - emp_cap_accts
+  1: 
+    description: agriculture_mining
+    name: AGM
+    industry_factor: 1.0261
+  2: 
+    description: manufacturing
+    name: MFG
+    industry_factor: 0.8064
+  3: 
+    description: industry_utilities
+    name: IUT
+    industry_factor: 0.9019
+  4: 
+    description: retail
+    name: RET
+    industry_factor: 1.0816
+  5: 
+    description: wholesale
+    name: WHL
+    industry_factor: 0.9856
+  6: 
+    description: construction
+    name: CON
+    industry_factor: 0.9076
+  7: 
+    description: transportation
+    name: TRN
+    industry_factor: 1.0186
+  8: 
+    description: info_finance_insurance_realestate_professional
+    name: IFR
+    industry_factor: 0.9687
+  9: 
+    description: education_publicservices
+    name: EPO
+    industry_factor: 1.0743
+  10: 
+    description: medical_health
+    name: MHS
+    industry_factor: 1.5098
+  11: 
+    description: leisure_accommondation_food
+    name: LAF
+    industry_factor: 1.2698
 
 establishment_size_groups:
   1:
-    min_employees: 0
-    max_employees: 5
+    min_employees: 1
+    max_employees: 4
+    attractors_per_employee: 0.2323
   2:
-    min_employees: 6
-    max_employees: 9
-  3:
-    min_employees: 10
+    min_employees: 5
     max_employees: 19
-  4:
+    attractors_per_employee: 0.0160
+  3:
     min_employees: 20
     max_employees: 49
-  5:
+    attractors_per_employee: 0.0139
+  4:
     min_employees: 50
     max_employees: 99
-  6:
+    attractors_per_employee: 0.0032
+  5:
     min_employees: 100
-    max_employees: 249
-  7:
-    min_employees: 250
     max_employees: inf
+    attractors_per_employee: 0.0030
+
+CONSTANTS:
+  beta_employment: 0.0899

@@ -1,5 +1,5 @@
 households_sample_size: 0
-establishments_sample_size: 10
+establishments_sample_size: 0
 trace_establishment_id:
 trace_hh_id: 479044
 resume_after:
@@ -23,10 +23,14 @@ input_table_list:
       - num_nonworker_adults
       - num_children
   - tablename: establishments
-    filename: establishments-fake.csv
+    filename: SynthEstablishments_BaseYr_2023-10-17.csv
     index_col: establishment_id
     rename_columns:
-      businessID: establishment_id
+      Industry_No: industry_number
+      Industry_Name: industry_name
+      MGRA: zone_id
+      Employees: employees
+      Size_Class: size_class
   - tablename: land_use
     filename: land_use.csv
     index_col: zone_id
@@ -77,6 +81,7 @@ output_tables:
    - households
    - routes
    - cv_trips
+   - establishments
 
 
 models:
