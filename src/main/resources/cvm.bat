@@ -1,27 +1,56 @@
+ECHO ON
 set PROJECT_DRIVE=%1
 set PROJECT_DIRECTORY=%2
-set PROJECT_DIRECTORY_FWD=%3
-set CVM_ScaleFactor=%4
-set MGRA_DATA=%5
-set TAZ_CENTROIDS=%6
 
-set "SCEN_DIR=%PROJECT_DRIVE%%PROJECT_DIRECTORY%"
-set "SCEN_DIR_FWD=%PROJECT_DRIVE%%PROJECT_DIRECTORY_FWD%"
-%PROJECT_DRIVE%
-cd %SCEN_DIR%
+ECHO Activate ActivitySim for CVM...
+:: if the activitysim environment for CVM is in the src directory
+set ENVPYTHON=%PROJECT_DRIVE%%PROJECT_DIRECTORY%\src\asim-cvm\ASIM-DEV-SANDAG-CVM\python.exe
+:: TODO perhaps we don't want to keep the asim-cvm environment in the src directory
 
-call %SCEN_DIR%\bin\CTRampEnv.bat
+:: FIX PATH AND ENV HERE LATER
+SET PYTHON2=%ANACONDA2_DIR%\python.exe
 
-set CLASSPATH=%SCEN_DIR%/application/*
+set MKL_NUM_THREADS=1
+set MKL=1
 
-REM create the land-use data
-python %SCEN_DIR%\python\cvm_input_create.py %SCEN_DIR% %MGRA_DATA% %TAZ_CENTROIDS% "Zonal Properties CVM.csv"
+CD /d %PROJECT_DRIVE%%PROJECT_DIRECTORY%
 
-REM create the commercial vehicle tours
-python %SCEN_DIR%\python\sdcvm.py -s %CVM_ScaleFactor% -p %SCEN_DIR%
+:: Create directory to store CVM outputs
+CD Output
+ECHO Create directory to store CVM outputs...
+MD CVM
+CD ..
 
-REM run the java code
-%JAVA_64_PATH%\bin\java.exe -Xmx24000m -Xmn16000M -Dlog4j.configuration=file:./conf/log4j.xml -Djava.library.path=%SCEN_DIR%/application -DSCENDIR=%SCEN_DIR_FWD% -cp %CLASSPATH% org.sandag.cvm.activityTravel.cvm.GenerateCommercialTours "conf/cvm.properties"
+SET CVM_INPUT_DIR=%PROJECT_DRIVE%%PROJECT_DIRECTORY%\input\CVM,%PROJECT_DRIVE%%PROJECT_DIRECTORY%\Output\resident,%PROJECT_DRIVE%%PROJECT_DIRECTORY%\Output\skims
+SET CVM_CONFIGS_DIR=%PROJECT_DRIVE%%PROJECT_DIRECTORY%\src\asim-cvm\configs
+SET CVM_OUTPUT_DIR=%PROJECT_DRIVE%%PROJECT_DIRECTORY%\output\CVM
 
-REM summarize model outputs
-python %SCEN_DIR%\python\sdcvm_summarize.py -p %SCEN_DIR%
+:: run run_cvm.py
+ECHO Run CVM...
+CD /d %PROJECT_DRIVE%%PROJECT_DIRECTORY%\src\asim-cvm\
+%ENVPYTHON% run_cvm.py %CVM_INPUT_DIR% %CVM_CONFIGS_DIR% %CVM_OUTPUT_DIR% 2>>%PROJECT_DRIVE%%PROJECT_DIRECTORY%\logFiles\event-cvm.txt
+IF %ERRORLEVEL% NEQ 0 (GOTO :ERROR) else (GOTO :SUCCESS)
+
+:SUCCESS
+    ECHO CVM complete!
+    ECHO %DATE% %TIME%
+
+    CD /d %PROJECT_DRIVE%%PROJECT_DIRECTORY%
+
+    ::::::::::::::::::::::
+    :: Post-process CVM outputs
+
+    :: sort TAZ zone index in omx
+    %ENVPYTHON% src/asim-cvm/scripts/set_zoneMapping.py cvm output
+    :: append cvm omx to assignment omx
+    :: TODO Jielin to update the script to append omx
+    :: %PYTHON2% src/asim-cvm/scripts/convert_tripTables.py cvm output
+
+    :: finish and exit batch file
+    EXIT /B 0
+
+:ERROR
+    CD /d %PROJECT_DRIVE%%PROJECT_DIRECTORY%
+    ECHO ERROR: CVM failed!
+    ECHO %DATE% %TIME%
+    PAUSE

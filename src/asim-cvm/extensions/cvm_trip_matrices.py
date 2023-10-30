@@ -13,7 +13,7 @@ from activitysim.core import config, expressions, los, workflow
 logger = logging.getLogger(__name__)
 
 
-@workflow.step(copy_tables=["trips"])
+@workflow.step(copy_tables=["cv_trips"])
 def write_cvm_trip_matrices(
     state: workflow.State,
     network_los: los.Network_LOS,
