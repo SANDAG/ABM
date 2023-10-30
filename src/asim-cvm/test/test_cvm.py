@@ -71,5 +71,8 @@ def test_cvm():
     print(state.get("routes"))
     print(state.get("routes").info())
 
+    print("### write out omx ###")
+    state.run.write_cvm_trip_matrices()
+
     print("### write out csv ###")
     state.run.write_tables()
