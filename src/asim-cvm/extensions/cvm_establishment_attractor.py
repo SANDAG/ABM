@@ -142,5 +142,8 @@ def establishment_attractor(
     logger.info("Running %s step 5 scale by sample rate %s", trace_label, establishments["sample_rate"].iloc[0])
     land_use[model_settings.get("RESULT_COL_NAME")] *= 1/establishments["sample_rate"].iloc[0]
 
+    # fill na with 0
+    land_use[model_settings.get("RESULT_COL_NAME")] = land_use[model_settings.get("RESULT_COL_NAME")].fillna(0)
+
     # write land use table back to state
     state.add_table("land_use", land_use)
