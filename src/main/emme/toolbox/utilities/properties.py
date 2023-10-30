@@ -30,6 +30,7 @@ class PropertiesSetter(object):
 
     useLocalDrive = _m.Attribute(bool)
     skip4Ds = _m.Attribute(bool)
+    skipNewScenarioGUID = _m.Attribute(bool)
     skipBuildNetwork = _m.Attribute(bool)
     skipInputChecker = _m.Attribute(bool)
     skipInitialization = _m.Attribute(bool)
@@ -39,6 +40,7 @@ class PropertiesSetter(object):
     skipCopyWalkImpedance = _m.Attribute(bool)
     skipBikeLogsums = _m.Attribute(bool)
     skipCopyBikeLogsum = _m.Attribute(bool)
+    skipTransitConnector = _m.Attribute(bool)
 
     skipHighwayAssignment_1 = _m.Attribute(bool)
     skipHighwayAssignment_2 = _m.Attribute(bool)
@@ -46,24 +48,34 @@ class PropertiesSetter(object):
     skipTransitSkimming_1 = _m.Attribute(bool)
     skipTransitSkimming_2 = _m.Attribute(bool)
     skipTransitSkimming_3 = _m.Attribute(bool)
-    skipCoreABM_1 = _m.Attribute(bool)
-    skipCoreABM_2 = _m.Attribute(bool)
-    skipCoreABM_3 = _m.Attribute(bool)
-    skipOtherSimulateModel_1 = _m.Attribute(bool)
-    skipOtherSimulateModel_2 = _m.Attribute(bool)
-    skipOtherSimulateModel_3 = _m.Attribute(bool)
-    skipMAASModel_1 = _m.Attribute(bool)
-    skipMAASModel_2 = _m.Attribute(bool)
-    skipMAASModel_3 = _m.Attribute(bool)
+    skipTransponderExport_1 = _m.Attribute(bool)
+    skipTransponderExport_2 = _m.Attribute(bool)
+    skipTransponderExport_3 = _m.Attribute(bool)
+    skipABMPreprocessing_1 = _m.Attribute(bool)
+    skipABMPreprocessing_2 = _m.Attribute(bool)
+    skipABMPreprocessing_3 = _m.Attribute(bool)
+    skipABMResident_1 = _m.Attribute(bool)
+    skipABMResident_2 = _m.Attribute(bool)
+    skipABMResident_3 = _m.Attribute(bool)
+    skipABMAirport_1 = _m.Attribute(bool)
+    skipABMAirport_2 = _m.Attribute(bool)
+    skipABMAirport_3 = _m.Attribute(bool)
+    skipABMXborderWait = _m.Attribute(bool)
+    skipABMXborder_1 = _m.Attribute(bool)
+    skipABMXborder_2 = _m.Attribute(bool)
+    skipABMXborder_3 = _m.Attribute(bool)
+    skipABMVisitor_1 = _m.Attribute(bool)
+    skipABMVisitor_2 = _m.Attribute(bool)
+    skipABMVisitor_3 = _m.Attribute(bool)
     skipCTM_1 = _m.Attribute(bool)
     skipCTM_2 = _m.Attribute(bool)
     skipCTM_3 = _m.Attribute(bool)
     skipEI_1 = _m.Attribute(bool)
     skipEI_2 = _m.Attribute(bool)
     skipEI_3 = _m.Attribute(bool)
-    skipExternalExternal_1 = _m.Attribute(bool)
-    skipExternalExternal_2 = _m.Attribute(bool)
-    skipExternalExternal_3 = _m.Attribute(bool)
+    skipExternal_1 = _m.Attribute(bool)
+    skipExternal_2 = _m.Attribute(bool)
+    skipExternal_3 = _m.Attribute(bool)
     skipTruck_1 = _m.Attribute(bool)
     skipTruck_2 = _m.Attribute(bool)
     skipTruck_3 = _m.Attribute(bool)
@@ -95,24 +107,36 @@ class PropertiesSetter(object):
     skipTransitSkimming = property(
         fget=lambda self: self._get_list_prop("skipTransitSkimming"),
         fset=lambda self, value: self._set_list_prop("skipTransitSkimming", value))
-    skipCoreABM = property(
-        fget=lambda self: self._get_list_prop("skipCoreABM"),
-        fset=lambda self, value: self._set_list_prop("skipCoreABM", value))
-    skipOtherSimulateModel = property(
-        fget=lambda self: self._get_list_prop("skipOtherSimulateModel"),
-        fset=lambda self, value: self._set_list_prop("skipOtherSimulateModel", value))
-    skipMAASModel = property(
-        fget=lambda self: self._get_list_prop("skipMAASModel"),
-        fset=lambda self, value: self._set_list_prop("skipMAASModel", value)) 
+    skipTransponderExport = property(
+        fget=lambda self: self._get_list_prop("skipTransponderExport"),
+        fset=lambda self, value: self._set_list_prop("skipTransponderExport", value))
+    skipABMPreprocessing = property(
+        fget=lambda self: self._get_list_prop("skipABMPreprocessing"),
+        fset=lambda self, value: self._set_list_prop("skipABMPreprocessing", value))
+    skipABMResident = property(
+        fget=lambda self: self._get_list_prop("skipABMResident"),
+        fset=lambda self, value: self._set_list_prop("skipABMResident", value))
+    skipABMAirport = property(
+        fget=lambda self: self._get_list_prop("skipABMAirport"),
+        fset=lambda self, value: self._set_list_prop("skipABMAirport", value))
+    # skipABMXborderWait = property(
+    #     fget=lambda self: self._get_list_prop("skipABMXborderWait"),
+    #     fset=lambda self, value: self._set_list_prop("skipABMXborderWait", value))
+    skipABMXborder = property(
+        fget=lambda self: self._get_list_prop("skipABMXborder"),
+        fset=lambda self, value: self._set_list_prop("skipABMXborder", value))
+    skipABMVisitor = property(
+        fget=lambda self: self._get_list_prop("skipABMVisitor"),
+        fset=lambda self, value: self._set_list_prop("skipABMVisitor", value))
     skipCTM = property(
         fget=lambda self: self._get_list_prop("skipCTM"),
         fset=lambda self, value: self._set_list_prop("skipCTM", value))
     skipEI = property(
         fget=lambda self: self._get_list_prop("skipEI"),
         fset=lambda self, value: self._set_list_prop("skipEI", value))
-    skipExternalExternal = property(
-        fget=lambda self: self._get_list_prop("skipExternalExternal"),
-        fset=lambda self, value: self._set_list_prop("skipExternalExternal", value))
+    skipExternal = property(
+        fget=lambda self: self._get_list_prop("skipExternal"),
+        fset=lambda self, value: self._set_list_prop("skipExternal", value))
     skipTruck = property(
         fget=lambda self: self._get_list_prop("skipTruck"),
         fset=lambda self, value: self._set_list_prop("skipTruck", value))
@@ -122,13 +146,13 @@ class PropertiesSetter(object):
 
     def __init__(self):
         self._run_model_names = (
-            "useLocalDrive", "skip4Ds",
-            "startFromIteration", "skipInitialization", "deleteAllMatrices", "skipCopyWarmupTripTables", 
-            "skipCopyBikeLogsum", "skipCopyWalkImpedance", "skipWalkLogsums", "skipBikeLogsums", "skipBuildNetwork", 
-            "skipHighwayAssignment", "skipTransitSkimming", "skipCoreABM", "skipOtherSimulateModel", "skipMAASModel","skipCTM", 
-            "skipEI", "skipExternalExternal", "skipTruck", "skipTripTableCreation", "skipFinalHighwayAssignment", 
-            "skipFinalTransitAssignment", "skipVisualizer", "skipDataExport", "skipDataLoadRequest", 
-            "skipDeleteIntermediateFiles", "skipInputChecker")
+            "useLocalDrive", "skip4Ds", "skipNewScenarioGUID", "skipInputChecker",
+            "startFromIteration", "skipInitialization", "deleteAllMatrices", "skipCopyWarmupTripTables",
+            "skipCopyBikeLogsum", "skipCopyWalkImpedance", "skipWalkLogsums", "skipBikeLogsums", "skipBuildNetwork",
+            "skipHighwayAssignment", "skipTransitSkimming", "skipTransitConnector", "skipTransponderExport", "skipABMPreprocessing", "skipABMResident", "skipABMAirport", "skipABMXborderWait", "skipABMXborder", "skipABMVisitor",
+            "skipCTM", "skipTruck", "skipEI", "skipExternal", "skipTripTableCreation", "skipFinalHighwayAssignment",
+            "skipFinalTransitAssignment", "skipVisualizer", "skipDataExport", "skipDataLoadRequest",
+            "skipDeleteIntermediateFiles")
         self._properties = None
 
     def add_properties_interface(self, pb, disclosure=False):
@@ -143,9 +167,9 @@ class PropertiesSetter(object):
                 <label for="startFromIteration">
                     <strong>Start from iteration:</strong></label>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <select id="startFromIteration" 
-                    data-ref="parent.%(tool_proxy_tag)s.startFromIteration" 
-                    class="-inro-modeller  no_search"> 
+                <select id="startFromIteration"
+                    data-ref="parent.%(tool_proxy_tag)s.startFromIteration"
+                    class="-inro-modeller  no_search">
                     <option value="1">Iteration 1</option>
                     <option value="2">Iteration 2</option>
                     <option value="3">Iteration 3</option>
@@ -164,6 +188,7 @@ class PropertiesSetter(object):
         skip_startup_items = [
             ("useLocalDrive",           "Use the local drive during the model run"),
             ("skip4Ds",                 "Skip running 4Ds"),
+            ("skipNewScenarioGUID",     "Skip creating new scenario guid"),
             ("skipBuildNetwork",        "Skip build of highway and transit network"),
             ("skipInputChecker",		"Skip running input checker"),
             ("skipInitialization",      "Skip matrix and transit database initialization"),
@@ -177,13 +202,18 @@ class PropertiesSetter(object):
         skip_per_iteration_items = [
             ("skipHighwayAssignment",   "Skip highway assignments and skims"),
             ("skipTransitSkimming",     "Skip transit skims"),
-            ("skipCoreABM",             "Skip core ABM"),
-            ("skipOtherSimulateModel",  "Skip other simulation model"),
-            ("skipMAASModel",           "Skip MAAS model"),
+            ("skipTransitConnector",    "&nbsp;&nbsp;&nbsp;&nbsp;Skip creating new connectors"),
+            ("skipTransponderExport",   "Skip transponder accessibilities"),
+            ("skipABMPreprocessing",    "Skip ActivitySim preprocessing"),
+            ("skipABMResident",         "Skip ActivitySim resident model"),
+            ("skipABMAirport",          "Skip ActivitySim airport models"),
+            ("skipABMXborder",          "Skip ActivitySim cross-border model"),
+            ("skipABMXborderWait",      "&nbsp;&nbsp;&nbsp;&nbsp;Skip wait time model"),
+            ("skipABMVisitor",          "Skip ActivitySim visitor model"),
             ("skipCTM",                 "Skip commercial vehicle sub-model"),
             ("skipTruck",               "Skip truck sub-model"),
             ("skipEI",                  "Skip external-internal sub-model"),
-            ("skipExternalExternal",    "Skip external-external sub-model"),
+            ("skipExternal",            "Skip external-external sub-model"),
             ("skipTripTableCreation",   "Skip trip table creation"),
         ]
         skip_final_items = [
@@ -200,10 +230,10 @@ class PropertiesSetter(object):
                 <div class="t_block t_element -inro-util-disclosure">
                     <div class="-inro-util-disclosure-header t_local_title">%s</div>""" % title)
             title = ""
-        
+
         checkbox = '<td><input class="-inro-modeller checkbox_entry" type="checkbox" id="%(name)s" data-ref="%(tag)s.%(name)s"></td>'
         checkbox_no_data = '<td><input class="-inro-modeller checkbox_entry" type="checkbox" id="%(name)s"></td>'
-            
+
         for name, label in skip_startup_items:
             contents.append("<tr><td>%s</td>" % label)
             contents.append(checkbox % {"name": name, "tag": tool_proxy_tag})
@@ -213,8 +243,12 @@ class PropertiesSetter(object):
             contents.append(checkbox_no_data % {"name": "all" + "_" + str(i)})
         for name, label in skip_per_iteration_items:
             contents.append("</tr><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;%s</td>" % label)
-            for i in range(1,4):
-                contents.append(checkbox % {"name": name + "_" + str(i), "tag": tool_proxy_tag})
+            if name not in  ["skipABMXborderWait", "skipTransitConnector"]:
+                for i in range(1,4):
+                    contents.append(checkbox % {"name": name + "_" + str(i), "tag": tool_proxy_tag})
+            else:
+                contents.append(checkbox % {"name": name, "tag": tool_proxy_tag})
+                contents.append("<td></td><td></td>")
         for name, label in skip_final_items:
             contents.append("</tr><tr><td>%s</td>" % label)
             contents.append("<td></td><td></td>")
@@ -241,39 +275,39 @@ class PropertiesSetter(object):
                 .prop("number", number)
                 .bind('click', function()    {
                     var state = $(this).prop("checked");
-                    for (var i = 0; i < iter_names.length; i++) { 
+                    for (var i = 0; i < iter_names.length; i++) {
                         $("#" + iter_names[i] + "_" + $(this).prop("number"))
                             .prop("checked", state)
                             .trigger('change');
                     }
                 });
         }
-        
+
         $("#startFromIteration").bind('change', function()    {
             $(this).commit();
             var iter = $(this).val();
             for (var j = 1; j < iter; j++)
-                for (var i = 0; i < iter_names.length; i++) { 
+                for (var i = 0; i < iter_names.length; i++) {
                     $("#" + iter_names[i] + "_" + j.toString()).prop('disabled', true);
             }
             for (var j = iter; j <= 3; j++)
-                for (var i = 0; i < iter_names.length; i++) { 
+                for (var i = 0; i < iter_names.length; i++) {
                     $("#" + iter_names[i] + "_" + j.toString()).prop('disabled', false);
             }
             if (iter > 1) {
-                for (var i = 0; i < startup_names.length; i++) { 
+                for (var i = 0; i < startup_names.length; i++) {
                     $("#" + startup_names[i]).prop('disabled', true);
                 }
             }
             else {
-                for (var i = 0; i < startup_names.length; i++) { 
+                for (var i = 0; i < startup_names.length; i++) {
                     $("#" + startup_names[i]).prop('disabled', false);
                 }
             }
 
         }).trigger('change');
    });
-</script>""" % {"tool_proxy_tag": tool_proxy_tag, 
+</script>""" % {"tool_proxy_tag": tool_proxy_tag,
                 "iter_items": str([x[0] for x in skip_per_iteration_items]),
                 "startup_items": str([x[0] for x in skip_startup_items]),
                 })
@@ -292,9 +326,10 @@ class PropertiesSetter(object):
 
         self.startFromIteration = props.get("RunModel.startFromIteration", 1)
         self.sample_rates = ",".join(str(x) for x in props.get("sample_rates"))
-        
+
         self.useLocalDrive = props.get("RunModel.useLocalDrive", True)
         self.skip4Ds = props.get("RunModel.skip4Ds", False)
+        self.skipNewScenarioGUID = props.get("RunModel.skipNewScenarioGUID", False)
         self.skipBuildNetwork = props.get("RunModel.skipBuildNetwork", False)
         self.skipInputChecker = props.get("RunModel.skipInputChecker", False)
         self.skipInitialization = props.get("RunModel.skipInitialization", False)
@@ -307,17 +342,23 @@ class PropertiesSetter(object):
 
         self.skipHighwayAssignment = props.get("RunModel.skipHighwayAssignment", [False, False, False])
         self.skipTransitSkimming = props.get("RunModel.skipTransitSkimming", [False, False, False])
-        self.skipCoreABM = props.get("RunModel.skipCoreABM", [False, False, False])
-        self.skipOtherSimulateModel = props.get("RunModel.skipOtherSimulateModel", [False, False, False])
-        self.skipMAASModel = props.get("RunModel.skipMAASModel", [False, False, False])
+        self.skipTransitConnector = props.get("RunModel.skipTransitConnector", False)
+        self.skipTransponderExport = props.get("RunModel.skipTransponderExport", [False, False, False])
+        self.skipABMPreprocessing = props.get("RunModel.skipABMPreprocessing", [False, False, False])
+        self.skipABMResident = props.get("RunModel.skipABMResident", [False, False, False])
+        self.skipABMAirport = props.get("RunModel.skipABMAirport", [False, False, False])
+        self.skipABMXborder = props.get("RunModel.skipABMXborder", [False, False, False])
+        self.skipABMXborderWait = props.get("RunModel.skipABMXborderWait", False)
+        self.skipABMVisitor = props.get("RunModel.skipABMVisitor", [False, False, False])
+
         self.skipCTM = props.get("RunModel.skipCTM", [False, False, False])
-        self.skipEI = props.get("RunModel.skipEI", [False, False, False])
-        self.skipExternalExternal = props.get("RunModel.skipExternalExternal", [False, False, False])
         self.skipTruck = props.get("RunModel.skipTruck", [False, False, False])
+        self.skipEI = props.get("RunModel.skipEI", [False, False, False])
+        self.skipExternal = props.get("RunModel.skipExternal", [False, False, False])
         self.skipTripTableCreation = props.get("RunModel.skipTripTableCreation", [False, False, False])
 
         self.skipFinalHighwayAssignment = props.get("RunModel.skipFinalHighwayAssignment", False)
-        self.skipFinalTransitAssignment = props.get("RunModel.skipFinalTransitAssignment", False) 
+        self.skipFinalTransitAssignment = props.get("RunModel.skipFinalTransitAssignment", False)
         self.skipVisualizer = props.get("RunModel.skipVisualizer", False)
         self.skipDataExport = props.get("RunModel.skipDataExport", False)
         self.skipDataLoadRequest = props.get("RunModel.skipDataLoadRequest", False)
@@ -327,9 +368,10 @@ class PropertiesSetter(object):
         props = self._properties
         props["RunModel.startFromIteration"] = self.startFromIteration
         props["sample_rates"] = [float(x) for x in self.sample_rates.split(",")]
-        
+
         props["RunModel.useLocalDrive"] = self.useLocalDrive
         props["RunModel.skip4Ds"] = self.skip4Ds
+        props["RunModel.skipNewScenarioGUID"] = self.skipNewScenarioGUID
         props["RunModel.skipBuildNetwork"] = self.skipBuildNetwork
         props["RunModel.skipInputChecker"] = self.skipInputChecker
         props["RunModel.skipInitialization"] = self.skipInitialization
@@ -339,16 +381,21 @@ class PropertiesSetter(object):
         props["RunModel.skipCopyWalkImpedance"] = self.skipCopyWalkImpedance
         props["RunModel.skipBikeLogsums"] = self.skipBikeLogsums
         props["RunModel.skipCopyBikeLogsum"] = self.skipCopyBikeLogsum
-        
+
         props["RunModel.skipHighwayAssignment"] = self.skipHighwayAssignment
         props["RunModel.skipTransitSkimming"] = self.skipTransitSkimming
-        props["RunModel.skipCoreABM"] = self.skipCoreABM
-        props["RunModel.skipOtherSimulateModel"] = self.skipOtherSimulateModel
-        props["RunModel.skipMAASModel"] = self.skipMAASModel
+        props["RunModel.skipTransitConnector"] = self.skipTransitConnector
+        props["RunModel.skipTransponderExport"] = self.skipTransponderExport
+        props["RunModel.skipABMPreprocessing"] = self.skipABMPreprocessing
+        props["RunModel.skipABMResident"] = self.skipABMResident
+        props["RunModel.skipABMAirport"] = self.skipABMAirport
+        props["RunModel.skipABMXborderWait"] = self.skipABMXborderWait
+        props["RunModel.skipABMXborder"] = self.skipABMXborder
+        props["RunModel.skipABMVisitor"] = self.skipABMVisitor
         props["RunModel.skipCTM"] = self.skipCTM
-        props["RunModel.skipEI"] = self.skipEI
-        props["RunModel.skipExternalExternal"] = self.skipExternalExternal
         props["RunModel.skipTruck"] = self.skipTruck
+        props["RunModel.skipEI"] = self.skipEI
+        props["RunModel.skipExternal"] = self.skipExternal
         props["RunModel.skipTripTableCreation"] = self.skipTripTableCreation
 
         props["RunModel.skipFinalHighwayAssignment"] = self.skipFinalHighwayAssignment
@@ -405,7 +452,7 @@ class PropertiesTool(PropertiesSetter, _m.Tool()):
 
         var run_text = $(".-inro-util-execute-button").children().next();
         run_text.html("Save")
-        
+
         $("#load_reset").bind('click', function()    {
             tool.load_properties()
             $("input:checkbox").each(function() {
@@ -492,11 +539,11 @@ class Properties(object):
     def save(self, path=None):
         if not path:
             path = self._path
-        # check for possible interference if user edits the 
-        # properties files directly while it is already open in Modeller
-        timestamp = os.path.getmtime(path)
-        if timestamp != self._timestamp:
-            raise Exception("%s file conflict - edited externally after loading" % path)
+            # check for possible interference if user edits the
+            # properties files directly while it is already open in Modeller
+            timestamp = os.path.getmtime(path)
+            if timestamp != self._timestamp:
+                raise Exception("%s file conflict - edited externally after loading" % path)
         self["SavedFrom"] = "Emme Modeller properties writer Process ID %s" % os.getpid()
         self["SavedLast"] = time.strftime("%b-%d-%Y %H:%M:%S")
         with open(path, 'w') as f:
@@ -525,19 +572,19 @@ class Properties(object):
             raise Exception("Row with year %s not found in %s" % (self["scenarioYear"], file_path))
         self.update(year_properties)
 
-    def __setitem__(self, key, item): 
+    def __setitem__(self, key, item):
         self._prop[key] = item
 
-    def __getitem__(self, key): 
+    def __getitem__(self, key):
         return self._prop[key]
 
-    def __repr__(self): 
+    def __repr__(self):
         return "Properties(%s)" % self._path
 
-    def __len__(self): 
+    def __len__(self):
         return len(self._prop)
 
-    def __delitem__(self, key): 
+    def __delitem__(self, key):
         del self._prop[key]
 
     def clear(self):

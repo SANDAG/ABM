@@ -1,9 +1,9 @@
 ## ActivitySim
 ## See full license in LICENSE.txt.
 
-scenarioYear: 2019
-# set below to 1 for everything to be external, 0 otherwise
-NO_EXTERNAL: 1
+scenarioYear: 2022
+# set below to 1 for everything to be internal, 0 otherwise
+NO_EXTERNAL: 0
 
 # set below to be 1 for years before 2021, 0 otherwise
 PRE_COVID: 0
@@ -85,9 +85,17 @@ cbd_threshold: 2
 urban_threshold: 5
 rural_threshold: 5
 
+distributed_time_factor_work_mean: 1.0
+distributed_time_factor_work_stddev: 0.7
+distributed_time_factor_nonwork_mean: 1.0
+distributed_time_factor_nonwork_stddev: 0.6
+distributed_time_factor_min: 0.1
+distributed_time_factor_max: 10
+
 c_drive: 1.5
 c_auto_operating_cost_per_mile: 18.29
 
+useAV: 0
 autoIVTFactorAV: 0.75
 autoParkingCostFactorAV: 0.5
 autoCostPerMileFactorAV: 0.7
@@ -105,7 +113,9 @@ shortWalk: 0.333
 longWalk: 0.667
 walkSpeed: 3.00
 bikeThresh: 6.00
-bikeSpeed: 12.00
+bikeSpeed: 7.80
+ebikeSpeed: 10.00
+escooterSpeed: 6.70
 driveSpeed: 25.00
 maxCbdAreaTypeThresh: 2
 indivTour: 1.00000
@@ -121,6 +131,33 @@ upperPM: 19
 # upperAM: 12
 # upperMD: 25
 # upperPM: 32
+
+### Crosswalk between SOC codes and SANDAG occupation classification
+soc_occupation_xwalk:
+  11: mngt_busi_scic_arts # 11 - Management Occupations
+  13: mngt_busi_scic_arts # 13 - Business and Financial Operations Occupations
+  15: mngt_busi_scic_arts # 15 - Computer and Mathematical Occupations
+  17: mngt_busi_scic_arts # 17 - Architecture and Engineering Occupations
+  19: mngt_busi_scic_arts # 19 - Life, Physical, and Social Science Occupations
+  21: mngt_busi_scic_arts # 21 - Community and Social Service Occupations
+  23: mngt_busi_scic_arts # 23 - Legal Occupations
+  25: services  # 25 - Educational Instruction and Library Occupations
+  27: mngt_busi_scic_arts # 27 - Arts, Design, Entertainment, Sports, and Media Occupations
+  29: health  # 29 - Healthcare Practitioners and Technical Occupations
+  31: health # 31 - Healthcare Support Occupations
+  33: services  # 33 - Protective Service Occupations
+  35: services # 35 - Food Preparation and Serving Related Occupations
+  37: services # 37 - Building and Grounds Cleaning and Maintenance Occupations
+  39: services # 39 - Personal Care and Service Occupations
+  41: sales_office  # 41 - Sales and Related Occupations
+  43: sales_office # 43 - Office and Administrative Support Occupations
+  45: constr_maint  # 45 - Farming, Fishing, and Forestry Occupations
+  47: constr_maint # 47 - Construction and Extraction Occupations
+  49: constr_maint # 49 - Installation, Maintenance, and Repair Occupations
+  51: prod_trans_move  # 51 - Production Occupations
+  53: prod_trans_move # 53 - Transportation and Material Moving Occupations
+  55: military  # 55 - Military Specific Occupations
+  99:  # 99 -  Non-workers, Code not part of SOC system
 
 # RIDEHAIL Settings
 Taxi_baseFare: 2.20
@@ -208,8 +245,8 @@ density_index_multiplier: -0.2
 #    joint_sr2_ASC_auto_deficient: 0
 #    joint_sr2_ASC_auto_sufficient: 0
 #    joint_drive_transit_ASC_no_auto: 0
-cost_share_s2: 2
-cost_share_s3: 3
+cost_share_s2: 0.57
+cost_share_s3: 0.37
 vot_threshold_low: 8.81
 vot_threshold_med: 18.00
 max_walk_time: 60
@@ -217,10 +254,28 @@ max_bike_time: 60
 max_walk_distance: 3
 max_bike_distance: 12
 # Location of attractions for associated special size terms
-cabrillo_maz: 6777
-seaworld_maz: 3637
-legoland_maz: 22939
-safari_maz: 19986
-midway_maz: 2654
-zoo_maz: 2754
-torrypines_maz: 4305
+cabrillo_maz: 23831
+seaworld_maz: 8127
+legoland_maz: 24245
+safari_maz: 14345
+midway_maz: 10646
+zoo_maz: 10561
+torrypines_maz: 4093
+
+# Micromobility constants
+microSpeed: 12
+microVarCost: 20 #cents
+microFixedCost: 100 #cents
+microRentTime: 1
+microConstant: 60
+microAccessThreshold: 100
+ebikeownership: 0.008
+ebikeMaxDist: 10.50
+escooterMaxDist: 2.00
+
+# cost of "average" monthly transit pass cost.  Used in transit pass ownership model.
+# cost of pass divided by 2 for age < 18 and 65+.
+monthly_transit_pass_cost: 100
+
+# year after which a vehicle (therefore its household) must have transponder
+hhTR_Vehyear: 2035

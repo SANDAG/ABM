@@ -160,9 +160,9 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
             for period in self.periods:
                 for key, name, pce in name_mapping:
                     matrix_data = emmebank.matrix(period + "_" + name + "_VEH").get_data(scenario)
-                    matrix_data_time = emmebank.matrix(period + "_" + name + "_TIME").get_data(scenario)
-                    matrix_data_dist = emmebank.matrix(period + "_" + name + "_DIST").get_data(scenario)
-                    matrix_data_tollcost = emmebank.matrix(period + "_" + name + "_TOLLCOST").get_data(scenario)
+                    matrix_data_time = emmebank.matrix(name + "_TIME__" + period).get_data(scenario)
+                    matrix_data_dist = emmebank.matrix(name + "_DIST__"+ period).get_data(scenario)
+                    matrix_data_tollcost = emmebank.matrix(name + "_TOLLCOST__" + period).get_data(scenario)
                     rounded_demand = 0
                     for orig in zones:
                         for dest in zones:
@@ -204,9 +204,9 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
             with open(ee_trip_path, 'w') as f:
                 f.write("OTAZ,DTAZ,TOD,MODE,TRIPS,TIME,DIST,AOC,TOLLCOST\n")
                 for period in self.periods:
-                    matrix_data_time = emmebank.matrix(period + "_SOV_NT_M_TIME").get_data(scenario)
-                    matrix_data_dist = emmebank.matrix(period + "_SOV_NT_M_DIST").get_data(scenario)
-                    matrix_data_tollcost = emmebank.matrix(period + "_SOV_NT_M_TOLLCOST").get_data(scenario)				
+                    matrix_data_time = emmebank.matrix("SOV_NT_M_TIME__" + period).get_data(scenario)
+                    matrix_data_dist = emmebank.matrix("SOV_NT_M_DIST__" + period).get_data(scenario)
+                    matrix_data_tollcost = emmebank.matrix("SOV_NT_M_TOLLCOST__" + period).get_data(scenario)				
                     for key, name in name_mapping:
                         matrix_data = emmebank.matrix(period + "_" + name + "_EETRIPS").get_data(scenario)
                         rounded_demand = 0
@@ -244,10 +244,10 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
             with open(ei_trip_path, 'w') as f:
                 f.write("OTAZ,DTAZ,TOD,MODE,PURPOSE,TRIPS,TIME,DIST,AOC,TOLLCOST\n")
                 for period in self.periods:
-                    matrix_data_time = emmebank.matrix(period + "_SOV_TR_M_TIME").get_data(scenario)
-                    matrix_data_dist = emmebank.matrix(period + "_SOV_TR_M_DIST").get_data(scenario)
+                    matrix_data_time = emmebank.matrix("SOV_TR_M_TIME__" + period).get_data(scenario)
+                    matrix_data_dist = emmebank.matrix("SOV_TR_M_DIST__" + period).get_data(scenario)
                     if "TOLL" in name:
-                        matrix_data_tollcost = emmebank.matrix(period + "_SOV_NT_M_TOLLCOST").get_data(scenario)
+                        matrix_data_tollcost = emmebank.matrix("SOV_NT_M_TOLLCOST__" + period).get_data(scenario)
                     for purpose in ["WORK", "NONWORK"]:
                         for key, name in name_mapping:
                             matrix_data = emmebank.matrix(period + "_" + name + "_EI" + purpose).get_data(scenario)

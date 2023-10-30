@@ -1,0 +1,15 @@
+coefficient_name,value,constrain
+coef_dist_to_nearest_ext_station,-0.06913447619232407,F
+coef_log_size_of_nearest_ext_station,0.40435031197856747,F
+coef_escort,-8.056823449462565,F
+coef_shopping,-7.413630670471193,F
+coef_othmaint,-6.453644115005783,F
+coef_eatout,-7.27668098767437,F
+coef_social,-6.566754062811491,F
+coef_othdiscr,-7.415691288097906,F
+coef_income_lt_15,-0.706806612224066,F
+coef_income_15_50,-0.2533987244055551,F
+coef_income_100_250,0.11811329788815791,F
+coef_income_250_plus,0.6221129017397624,F
+coef_autos_0,-0.5505407390480237,F
+coef_dist_lt_2p5,2.6495984313112557,F

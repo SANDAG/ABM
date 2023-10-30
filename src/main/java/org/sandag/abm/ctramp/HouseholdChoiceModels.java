@@ -264,10 +264,7 @@ public class HouseholdChoiceModels
                         TourModeChoiceModel.MANDATORY_MODEL_INDICATOR, dmuFactory, logsumHelper);
                 if (measureObjectSizes)
                     logger.info("IMMC size:       " + ObjectUtil.sizeOf(immcModel));
-            }
-
-            if (runMandatoryTourDepartureTimeAndDurationModel)
-            {
+ 
                 imtodModel = new HouseholdIndividualMandatoryTourDepartureAndDurationTime(
                         propertyMap, modelStructure, aggAcc.getWorkSegmentNameList(), dmuFactory,
                         immcModel);
@@ -317,7 +314,7 @@ public class HouseholdChoiceModels
             }
 
             if (runIndividualNonMandatoryTourDepartureTimeAndDurationModel
-                    || runJointTourDepartureTimeAndDurationModel)
+                    || runJointTourDepartureTimeAndDurationModel||runIndividualNonMandatoryTourModeChoiceModel)
             {
                 nmtodModel = new NonMandatoryTourDepartureAndDurationTime(propertyMap,
                         modelStructure, dmuFactory, nmmcModel);
@@ -495,8 +492,8 @@ public class HouseholdChoiceModels
             tvtcModel.applyModelToMandatoryTours(hhObject);
         }
 
-        if (runMandatoryTourDepartureTimeAndDurationModel)
-            imtodModel.applyModel(hhObject, runMandatoryTourModeChoiceModel);
+        if (runMandatoryTourDepartureTimeAndDurationModel||runMandatoryTourModeChoiceModel)
+            imtodModel.applyModel(hhObject, runMandatoryTourDepartureTimeAndDurationModel,runMandatoryTourModeChoiceModel);
 
         if(runEscortModel){
          	try {
@@ -515,7 +512,7 @@ public class HouseholdChoiceModels
         if (runJointTourLocationChoiceModel) nmlcModel.applyJointModel(hhObject);
 
         if (runJointTourDepartureTimeAndDurationModel)
-            nmtodModel.applyJointModel(hhObject, runJointTourModeChoiceModel);
+            nmtodModel.applyJointModel(hhObject, runJointTourDepartureTimeAndDurationModel, runJointTourModeChoiceModel);
 
         if (runIndividualNonMandatoryTourFrequencyModel) {
         	inmtfModel.applyModel(hhObject);
@@ -524,8 +521,8 @@ public class HouseholdChoiceModels
 
         if (runIndividualNonMandatoryTourLocationChoiceModel) nmlcModel.applyIndivModel(hhObject);
 
-        if (runIndividualNonMandatoryTourDepartureTimeAndDurationModel)
-            nmtodModel.applyIndivModel(hhObject, runIndividualNonMandatoryTourModeChoiceModel);
+        if (runIndividualNonMandatoryTourDepartureTimeAndDurationModel||runIndividualNonMandatoryTourModeChoiceModel)
+            nmtodModel.applyIndivModel(hhObject, runIndividualNonMandatoryTourDepartureTimeAndDurationModel, runIndividualNonMandatoryTourModeChoiceModel);
 
         if (runAtWorkSubTourFrequencyModel) {
         	awfModel.applyModel(hhObject);
@@ -607,13 +604,13 @@ public class HouseholdChoiceModels
             imtfTime += (System.nanoTime() - check);
         }
 
-        if (runMandatoryTourDepartureTimeAndDurationModel)
+        if (runMandatoryTourDepartureTimeAndDurationModel||runMandatoryTourModeChoiceModel);
         {
             long check = System.nanoTime();
             // long hhSeed = globalSeed + hhObject.getHhId() +
             // IMTOD_SEED_OFFSET;
             // hhObject.getHhRandom().setSeed( hhSeed );
-            imtodModel.applyModel(hhObject, runMandatoryTourModeChoiceModel);
+            imtodModel.applyModel(hhObject, runMandatoryTourDepartureTimeAndDurationModel,runMandatoryTourModeChoiceModel);
             long mcTime = imtodModel.getModeChoiceTime();
             imtodTime += (System.nanoTime() - check - mcTime);
             imtmcTime += mcTime;
@@ -654,7 +651,7 @@ public class HouseholdChoiceModels
             long check = System.nanoTime();
             // long hhSeed = globalSeed + hhObject.getHhId() + JTOD_SEED_OFFSET;
             // hhObject.getHhRandom().setSeed( hhSeed );
-            nmtodModel.applyJointModel(hhObject, runJointTourModeChoiceModel);
+            nmtodModel.applyJointModel(hhObject, runJointTourDepartureTimeAndDurationModel,runJointTourModeChoiceModel);
             long mcTime = nmtodModel.getJointModeChoiceTime();
             jtodTime += (System.nanoTime() - check - mcTime);
             jtmcTime += mcTime;
@@ -683,13 +680,13 @@ public class HouseholdChoiceModels
             inmtdcTime += (System.nanoTime() - check);
         }
 
-        if (runIndividualNonMandatoryTourDepartureTimeAndDurationModel)
+        if (runIndividualNonMandatoryTourDepartureTimeAndDurationModel||runIndividualNonMandatoryTourModeChoiceModel)
         {
             long check = System.nanoTime();
             // long hhSeed = globalSeed + hhObject.getHhId() +
             // INMTOD_SEED_OFFSET;
             // hhObject.getHhRandom().setSeed( hhSeed );
-            nmtodModel.applyIndivModel(hhObject, runIndividualNonMandatoryTourModeChoiceModel);
+            nmtodModel.applyIndivModel(hhObject, runIndividualNonMandatoryTourDepartureTimeAndDurationModel,runIndividualNonMandatoryTourModeChoiceModel);
             long mcTime = nmtodModel.getIndivModeChoiceTime();
             inmtodTime += (System.nanoTime() - check - mcTime);
             inmtmcTime += mcTime;

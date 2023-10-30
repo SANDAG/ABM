@@ -1,0 +1,26 @@
+Label,Description,Expression,work_at_home,work_away_from_home
+util_work_from_home_constant,Constant for Working from home,1,coef_work_from_home_constant,
+util_part_time_worker,Part time worker,@df.ptype==2,coef_part_time_worker,
+util_access_to_workplaces,Accessibility to workplaces of the home mgra,@df.workplace_location_accessibility,,coef_access_to_workplaces
+util_2016,Year 2016 survey,@PRE_COVID,coef_2016,
+util_age_35_to_44,Age Group - 35 yrs to 44 yrs,"@df.age.between(35, 44)",coef_age_35_to_44,
+util_age_45_to_54,Age Group - 45 yrs to 54 yrs,"@df.age.between(45, 54)",coef_age_45_to_54,
+util_age_55_to_64,Age Group - 55 yrs to 64 yrs,"@df.age.between(55, 64)",coef_age_55_to_64,
+util_age_65_79,Age 65-79,"@df.age.between(65, 79)",coef_age_65_79,
+util_age_80_plus,Age 80 plus,@df.age > 79,coef_age_80_plus,
+util_inc_lt_15,Household income less than 15k,@df.income<15000,coef_inc_lt_15,
+util_inc_150_250,Household income between 150k-249999k,"@df.income.between(150000,249999)",coef_inc_150_250,
+util_ind_accom,Industry type is accomodation,@df.naics_code==721,coef_ind_accom,
+util_ind_bus_srv,Industry type is business services,@df.naics_code==54,coef_ind_bus_srv,
+util_ind_construct,Industry type is construction,@df.naics_code==23,coef_ind_construct,
+util_ind_edu,Industry type is education,@df.naics_code==61,coef_ind_edu,
+util_ind_enter,Industry type is entertainment,@df.naics_code==71,coef_ind_enter,
+util_ind_food_srv,Industry type is food services,@df.naics_code==722,coef_ind_food_srv,
+util_ind_gov,Industry type is government,@df.naics_code==92,coef_ind_gov,
+util_ind_health,Industry type is healthcare,@df.naics_code==62,coef_ind_health,
+util_ind_manu,Industry type is manufacturing,"@df.naics_code.isin([31,32,33])",coef_ind_manu,
+util_ind_mgmt_srv,Industry type is management services,@df.naics_code==55,coef_ind_mgmt_srv,
+util_ind_mil,Industry type is military,@df.naics_code==9000,coef_ind_mil,
+util_cbd,PMSA 1 - CBD,@df.pseudomsa==1,coef_cbd,
+util_emp_non_ws_wfh,Non-wage & non-salary workers work from home at home zone,@df.emp_non_ws_wfh,coef_emp_non_ws_wfh
+util_emp_non_ws_oth,Non-wage & non-salary workers other at home zone,@df.emp_non_ws_oth,coef_emp_non_ws_oth

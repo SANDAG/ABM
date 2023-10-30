@@ -1,20 +1,20 @@
-coefficient_name,coefficient_name,value,constrain
-coef_ft_pass,Full-time worker,2.034739841,F
-coef_pt_pass,Part-time worker,1.934451611,F
-coef_un_pass,University/College,2.38777737,F
-coef_nw_pass,Non-working adult,1.520740664,F
-coef_rt_pass,Retired,1.963879497,F
-coef_inc1_pass,0-$9k,0.609753946,F
-coef_inc2_pass,$10-$24k,0.421989203,F
-coef_inc3_pass,$25-$34k,0.2119704,F
-coef_inc4_pass,$35-$49k,0.139201682,F
-coef_inc10_pass,$250k+,-0.169998314,F
-coef_wrkamt_pas,Auto minus transit time (work),0.001934995,F
-coef_na20_pas,NAICS 20  (mining/utilities/construct),-0.324742563,F
-coef_na30_pas,NAICS 30 (manufacturing),-0.473249951,F
-coef_na50_pas,NAICS 50 (Info/Fin/insur/real estate/prof/sci/tech/manage/admin),0.2731,F
-coef_na70_pas,NAICS 70 (Entertain/accom),0.219432837,F
-coef_na80_pas,NAICS 80 (Other services),-0.585251651,F
-coef_publ_pas,NAICS 90 (Public admin),0.30410587,F
-coef_subs_pas,Subsidy offered,1.967569275,F
-coef_pass_asc,Constant,-3.932862618,F
+coefficient_name,value,constrain
+asc_pass,-4.10,F
+coef_age_19_to_34_pass,0.520,F
+coef_age_35_to_44_pass,0.346,F
+coef_age_55_to_64_pass,0.384,F
+coef_age_65_to_79_pass,0.315,F
+coef_auto_deficient_pass,1.21,F
+coef_hhinc_100_200,1.17,F
+coef_hhinc_15_25,0.336,F
+coef_hhinc_200_plus,1.17,F
+coef_hhinc_50_100,0.233,F
+coef_hhinc_less_15,0.492,F
+coef_is_univ,1.22,F
+coef_parking_cost_at_work_pass,0.0484,F
+coef_persons_0_4_in_hhld_pass,-0.551,F
+coef_persons_5_15_in_hhld_pass,-0.578,F
+coef_subs_pass,1.49,F
+coef_total_transit_acc_pass,0.0692,F
+coef_tripmc_cost_coef,-1.25,T
+coef_zero_autos_pass,3.32,F

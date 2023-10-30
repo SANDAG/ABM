@@ -124,21 +124,21 @@ class ExportForCommercialVehicleModel(_m.Tool(), gen_utils.Snapshot):
         skim_mat = {}
         for cls in classes:
             for skim in skims:
-                name = '%s_%s_%s' % (period, cls, skim)
+                name = '%s_%s__%s' % (cls, skim, period)
                 if name not in skim_mat:
                     skim_mat[name] = emmebank.matrix(name).get_numpy_data(scenario)
                     
         output_matrices = {
-            'impldt_MD_Time.txt': skim_mat['MD_SOV_TR_H_TIME'],
-            'impldt_MD_Dist.txt': skim_mat['MD_SOV_TR_H_DIST'],
+            'impldt_MD_Time.txt': skim_mat['SOV_TR_H_TIME__MD'],
+            'impldt_MD_Dist.txt': skim_mat['SOV_TR_H_DIST__MD'],
         }
         
         # Calculate DU matrices in numpy
         for mode in modes:
-            time = skim_mat['%s_%s_TIME' % (period, mode_class[mode])]
-            distance = skim_mat['%s_%s_DIST' % (period, mode_class[mode])]
+            time = skim_mat['%s_TIME__%s' % (mode_class[mode], period)]
+            distance = skim_mat['%s_DIST__%s' % (mode_class[mode], period)]
             # All classes now have a tollcost skim available
-            toll_cost = skim_mat['%s_%s_TOLLCOST' % (period, mode_class[mode])]
+            toll_cost = skim_mat['%s_TOLLCOST__%s' % (mode_class[mode], period)]
             _np.fill_diagonal(toll_cost, 0)
 
             coeffs = DUCoef[modes_util[mode]]

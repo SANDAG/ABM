@@ -10,4 +10,3 @@ Description,Target,Expression
 ,_work_transit_available,(_work_transit_walk_available > 0) | (_work_transit_drive_available > 0)
 ,transit_subsidy_available,(_work_transit_available) & (persons.workplace_zone_id > 0)
 ,trn_wk_access_hh,"np.where(persons.workplace_zone_id > 0, reindex(accessibility.trPkHH, persons.workplace_zone_id), 0)"
-,dparkcost_work,"np.where(persons.workplace_zone_id > 0, reindex(land_use.dparkcost, persons.workplace_zone_id), 0)"

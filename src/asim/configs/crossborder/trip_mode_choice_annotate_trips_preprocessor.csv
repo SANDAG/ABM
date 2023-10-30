@@ -3,19 +3,24 @@ Description,Target,Expression
 ,work_time_factor,"rng.lognormal_for_df(df.set_index('tour_id'), mu=time_distrib_mean_work, sigma=time_distrib_stddev_work, broadcast=True, scale=True).set_axis(df.index, axis='index')"
 ,non_work_time_factor,"rng.lognormal_for_df(df.set_index('tour_id'), mu=time_distrib_mean_nonwork, sigma=time_distrib_stddev_nonwork, broadcast=True, scale=True).set_axis(df.index, axis='index')"
 ,c_ivt,c_ivt_base * (is_work_tour * work_time_factor + (1 - is_work_tour) * non_work_time_factor)
-,c_fwt,c_ivt * 1.5
-,c_xwt,c_ivt * 1.5
+#,c_fwt,c_ivt * 1.5
+#,c_xwt,c_ivt * 1.5
 ,c_wacc,c_ivt * 1.5
 ,c_wegr,c_ivt * 1.5
-,c_waux,c_ivt * 1.5
+#,c_waux,c_ivt * 1.5
 ,c_xfers,c_ivt * 24
 ,c_walk_time,c_ivt * 1.8
 ,c_xfers_pnr,c_ivt * 15
 # Transit ASCs,,
-,exp_asc,10
-,brt_asc,10
-,lrt_asc,20
-,cr_asc,0
+commuter rail ASC,asc_cr_mix,"np.where(odt_skims['WALK_MIX_CMRIVTT'] > 0, cr_asc * c_ivt, 0)"
+light rail ASC,asc_lrt_mix,"np.where(asc_cr_mix==0, np.where(odt_skims['WALK_MIX_LRTIVTT'] > 0, lrt_asc * c_ivt, 0), asc_cr_mix)"
+bus rapid transit ASC,asc_brt_mix,"np.where(asc_lrt_mix==0, np.where(odt_skims['WALK_MIX_BRTIVTT'] > 0, brt_asc * c_ivt, 0), asc_lrt_mix)"
+express bus ASC,asc_eb_mix,"np.where(asc_brt_mix==0, np.where(odt_skims['WALK_MIX_LTDEXPIVTT'] + odt_skims['WALK_MIX_EXPIVTT'] > 0, exp_asc * c_ivt, 0), asc_brt_mix)"
+commuter rail ASC,asc_cr_prm,"np.where(odt_skims['WALK_PRM_CMRIVTT'] > 0, cr_asc * c_ivt, 0)"
+light rail ASC,asc_lrt_prm,"np.where(asc_cr_prm==0, np.where(odt_skims['WALK_PRM_LRTIVTT'] > 0, lrt_asc * c_ivt, 0), asc_cr_prm)"
+bus rapid transit ASC,asc_brt_prm,"np.where(asc_lrt_prm==0, np.where(odt_skims['WALK_PRM_BRTIVTT'] > 0, brt_asc * c_ivt, 0), asc_lrt_prm)"
+express bus ASC,asc_eb_prm,"np.where(asc_brt_prm==0, np.where(odt_skims['WALK_PRM_LTDEXPIVTT'] + odt_skims['WALK_PRM_EXPIVTT'] > 0, exp_asc * c_ivt, 0), asc_brt_prm)"
+#,,
 ,cost_per_mile,cost_per_mile_fuel + cost_per_mile_maint
 intermediate outbound stops on tour,out_stops,df['stop_frequency'].str[0].astype(int)
 intermediate inbound stops on tour,in_stops,df['stop_frequency'].str[5].astype(int)
@@ -34,13 +39,13 @@ tour duration in hours,duration_hours,df['duration'] / PERIODS_PER_HOUR
 for tour_od_choice logsums read tour_dest from trips table,tour_dest,"reindex(tours.destination, df.tour_id) if _TOURS_HAVE_DEST else df.tour_destination"
 ,trip_orig_is_tour_dest,df.origin == tour_dest
 ,trip_dest_is_tour_dest,df.destination == tour_dest
-sandag costs need to be in cents,park_cost_day,"reindex(land_use.dparkcost, tour_dest) * 100"
-,park_cost_hour,"reindex(land_use.hparkcost, tour_dest) * 100"
-,park_cost_month,"reindex(land_use.mparkcost, tour_dest) * 100"
+sandag costs need to be in cents,park_cost_day,"reindex(land_use.exp_daily, tour_dest) * 100"
+,park_cost_hour,"reindex(land_use.exp_hourly, tour_dest) * 100"
+,park_cost_month,"reindex(land_use.exp_monthly, tour_dest) * 100"
 effective parking cost,park_cost_prim_dest,"pd.concat((park_cost_day, park_cost_hour * duration_hours), axis=1).min(axis=1)"
 ,park_cost_tour_dest_contrib,park_cost_prim_dest / tot_trips
-,park_cost_trip_orig,"reindex(land_use.hparkcost, df[ORIGIN]) * 100"
-,park_cost_trip_dest,"reindex(land_use.hparkcost, df[DESTINATION]) * 100"
+,park_cost_trip_orig,"reindex(land_use.exp_hourly, df[ORIGIN]) * 100"
+,park_cost_trip_dest,"reindex(land_use.exp_hourly, df[DESTINATION]) * 100"
 ,park_cost_trip_orig_contrib,((1 - first_trip) * (1 - trip_orig_is_tour_dest)) * (park_cost_trip_orig / 2) + (trip_orig_is_tour_dest * (park_cost_tour_dest_contrib / (tot_trips + 2)))
 ,park_cost_trip_dest_contrib,((1 - last_trip) * (1 - trip_dest_is_tour_dest)) * (park_cost_trip_dest / 2) + (trip_dest_is_tour_dest * (park_cost_tour_dest_contrib / (tot_trips + 2)))
 ,parking_cost,park_cost_tour_dest_contrib + park_cost_trip_orig_contrib + park_cost_trip_dest_contrib
@@ -68,25 +73,19 @@ vot-indexed skims,da_dist_skims,((odt_skims['SOV_NT_L_DIST'] * (_vot_bin_da == 1
 ,origin,df.origin if 'origin' in df.columns else df.home_zone_id
 ,destination,df.destination if 'destination' in df.columns else df.alt_dest
 #access egress distances,,
-#,origin_local_dist,"reindex(land_use.AE_LOCAL, origin)"
-#,origin_prm_dist,"reindex(land_use.AE_PRM, origin)"
-#,origin_mix_dist,"np.minimum(origin_local_dist, origin_prm_dist)"
-#,dest_local_dist,"reindex(land_use.AE_LOCAL, destination)"
-#,dest_prm_dist,"reindex(land_use.AE_PRM, destination)"
-#,dest_mix_dist,"np.minimum(dest_local_dist, dest_prm_dist)"
+,origin_local_dist,"reindex(land_use.walk_dist_local_bus, origin)"
+,origin_prm_dist,"reindex(land_use.walk_dist_premium_transit, origin)"
+,origin_mix_dist,"np.minimum(origin_local_dist, origin_prm_dist)"
+,dest_local_dist,"reindex(land_use.walk_dist_local_bus, destination)"
+,dest_prm_dist,"reindex(land_use.walk_dist_premium_transit, destination)"
+,dest_mix_dist,"np.minimum(dest_local_dist, dest_prm_dist)"
 #access egress times,,
-#,origin_local_time,origin_local_dist * 60/walk_speed
-#,origin_prm_time,origin_prm_dist * 60/walk_speed
-#,origin_mix_time,origin_mix_dist * 60/walk_speed
-#,dest_local_time,dest_local_dist * 60/walk_speed
-#,dest_prm_time,dest_prm_dist * 60/walk_speed
-#,dest_mix_time,dest_mix_dist * 60/walk_speed
-,origin_local_time,odt_skims['WALK_LOC_ACC']
-,origin_prm_time,odt_skims['WALK_PRM_ACC']
-,origin_mix_time,odt_skims['WALK_MIX_ACC']
-,dest_local_time,odt_skims['WALK_LOC_EGR']
-,dest_prm_time,odt_skims['WALK_PRM_EGR']
-,dest_mix_time,odt_skims['WALK_MIX_EGR']
+,origin_local_time,origin_local_dist * 60/walk_speed
+,origin_prm_time,origin_prm_dist * 60/walk_speed
+,origin_mix_time,origin_mix_dist * 60/walk_speed
+,dest_local_time,dest_local_dist * 60/walk_speed
+,dest_prm_time,dest_prm_dist * 60/walk_speed
+,dest_mix_time,dest_mix_dist * 60/walk_speed
 # defined in network_los: exp_asc,,
 ,density_measure,"reindex(land_use.PopEmpDenPerMi, df[ORIGIN])"
 ,density_bin,"pd.cut(density_measure, bins=[-np.inf] + wait_time_distribution_by_density_breaks + [np.inf], labels=[1,2,3,4,5]).astype(int)"

@@ -18,7 +18,9 @@ NESTS:
       - name: TRANSIT
         coefficient: coef_nest_TRANSIT
         alternatives:
-          - WALK_TRANSIT
+          - WALK_LOC
+          - WALK_PRM
+          - WALK_MIX
 #          - PNR_TRANSIT
 #          - KNR_TRANSIT
 #          - TNC_TRANSIT

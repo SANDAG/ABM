@@ -1,0 +1,117 @@
+Label,Description,Expression,PTYPE_FULL,PTYPE_PART,PTYPE_UNIVERSITY,PTYPE_NONWORK,PTYPE_RETIRED,PTYPE_DRIVING,PTYPE_SCHOOL,PTYPE_PRESCHOOL
+util_naming_alts_explicitly,Explicitly naming what tot_tours is defined as,_total_indNM_tours@df.tot_tours,1,1,1,1,1,1,1,1
+util_escorting_tour,Escorting Tour,escort,coef_escorting_tour,coef_escorting_tour,coef_escorting_tour,coef_escorting_tour,coef_escorting_tour,coef_escorting_tour,coef_escorting_tour,coef_escorting_tour
+util_discretionary_tour,Discretionary Tour,othdiscr,coef_discretionary_tour,coef_discretionary_tour,coef_discretionary_tour,coef_discretionary_tour,coef_discretionary_tour,coef_discretionary_tour,coef_discretionary_tour,coef_discretionary_tour
+util_shopping_tour,Shopping Tour,shopping,coef_shopping_tour,coef_shopping_tour,coef_shopping_tour,coef_shopping_tour,coef_shopping_tour,coef_shopping_tour,coef_shopping_tour,coef_shopping_tour
+util_maintenance_tour,Maintenance Tour,othmaint,coef_maintenance_tour,coef_maintenance_tour,coef_maintenance_tour,coef_maintenance_tour,coef_maintenance_tour,coef_maintenance_tour,coef_maintenance_tour,coef_maintenance_tour
+util_visiting_or_social_tour,Visiting/Social Tour,social,coef_visiting_or_social_tour,coef_visiting_or_social_tour,coef_visiting_or_social_tour,coef_visiting_or_social_tour,coef_visiting_or_social_tour,coef_visiting_or_social_tour,coef_visiting_or_social_tour,coef_visiting_or_social_tour
+util_eating_out_tour,Eating Out Tour,eatout,coef_eating_out_tour,coef_eating_out_tour,coef_eating_out_tour,coef_eating_out_tour,coef_eating_out_tour,coef_eating_out_tour,coef_eating_out_tour,coef_eating_out_tour
+util_total_indNM_tours_is_0_prior_tours,Total individual NM Tours = 0 (1 or more Prior Tours),(_total_indNM_tours == 0) & (has_previous_tour == 1),,coef_total_indNM_tours_is_0_prior_tours,coef_total_indNM_tours_is_0_prior_tours,,,,coef_total_indNM_tours_is_0_prior_tours,coef_total_indNM_tours_is_0_prior_tours
+util_total_indNM_tours_is_1,Total individual NM Tours = 1,(_total_indNM_tours == 1),coef_total_indNM_tours_is_1,coef_total_indNM_tours_is_1,coef_total_indNM_tours_is_1,coef_total_indNM_tours_is_1,coef_total_indNM_tours_is_1,coef_total_indNM_tours_is_1,coef_total_indNM_tours_is_1,coef_total_indNM_tours_is_1
+util_total_indNM_tours_is_2,Total individual NM Tours = 2,(_total_indNM_tours == 2),coef_total_indNM_tours_is_2,coef_total_indNM_tours_is_2,coef_total_indNM_tours_is_2,coef_total_indNM_tours_is_2,coef_total_indNM_tours_is_2,,,
+util_total_indNM_tours_is_2p,Total individual NM Tours >= 2,(_total_indNM_tours >= 2),,,,,,,coef_total_indNM_tours_is_2p,coef_total_indNM_tours_is_2p
+util_total_indNM_tours_is_3,Total individual NM Tours = 3,(_total_indNM_tours == 3),coef_total_indNM_tours_is_3,,,,coef_total_indNM_tours_is_3,,,
+util_total_indNM_tours_is_3p,Total individual NM Tours >= 3,(_total_indNM_tours >= 3),,coef_total_indNM_tours_is_3p,coef_total_indNM_tours_is_3p,coef_total_indNM_tours_is_3p,,,,
+util_total_indNM_tours_is_4,Total individual NM Tours = 4,(_total_indNM_tours >= 4),coef_total_indNM_tours_is_4p,,,,coef_total_indNM_tours_is_4p,,,
+util_total_indNM_tours_2016_is_1,Total individual NM Tours = 1,(_total_indNM_tours == 1) & (survey_year == 2016),coef_total_indNM_tours_2016_is_1,coef_total_indNM_tours_2016_is_1,,coef_total_indNM_tours_2016_is_1,coef_total_indNM_tours_2016_is_1,coef_total_indNM_tours_2016_is_1,,coef_total_indNM_tours_2016_is_1
+util_total_indNM_tours_2016_is_2,Total individual NM Tours = 2,(_total_indNM_tours == 2) & (survey_year == 2016),coef_total_indNM_tours_2016_is_2,coef_total_indNM_tours_2016_is_2,,,coef_total_indNM_tours_2016_is_2,,,
+util_total_indNM_tours_2016_is_2p,Total individual NM Tours >= 2,(_total_indNM_tours >= 2) & (survey_year == 2016),,,coef_total_indNM_tours_2016_is_2p,coef_total_indNM_tours_2016_is_2p,,coef_total_indNM_tours_2016_is_2p,coef_total_indNM_tours_2016_is_2p,coef_total_indNM_tours_2016_is_2p
+util_total_indNM_tours_2016_is_3,Total individual NM Tours = 3,(_total_indNM_tours == 3) & (survey_year == 2016),,coef_total_indNM_tours_2016_is_3,,,,,,
+util_total_indNM_tours_2016_is_3p,Total individual NM Tours >= 3,(_total_indNM_tours >= 3) & (survey_year == 2016),coef_total_indNM_tours_2016_is_3p,,,,coef_total_indNM_tours_2016_is_3p,,,
+util_total_indNM_tours_2016_is_4,Total individual NM Tours = 4,(_total_indNM_tours >= 4) & (survey_year == 2016),,coef_total_indNM_tours_2016_is_4p,,,,,,
+util_has_mandatory_tours_and_iNM_tour_freq_1,One or more Mandatory tour & tour frequency =1,(num_mandatory_tours > 0) & (_total_indNM_tours == 1),coef_has_mandatory_tours_and_iNM_tour_freq_1,,,,,,,
+util_has_mandatory_tours_and_iNM_tour_freq_2p,One or more Mandatory tour & tour frequency =2p,(num_mandatory_tours > 0) & (_total_indNM_tours >= 2),coef_has_mandatory_tours_and_iNM_tour_freq_2p,,,,,,,
+util_has_joint_tours_and_iNM_tour_freq_1,One or more Joint tour & tour frequency =1,(num_person_joint_tours > 0) & (_total_indNM_tours == 1),coef_has_joint_tours_and_iNM_tour_freq_1,coef_has_joint_tours_and_iNM_tour_freq_1,,coef_has_joint_tours_and_iNM_tour_freq_1,coef_has_joint_tours_and_iNM_tour_freq_1,,coef_has_joint_tours_and_iNM_tour_freq_1,
+util_has_joint_tours_and_iNM_tour_freq_2p,One or more Joint tour & tour frequency =2p,(num_person_joint_tours > 0) & (_total_indNM_tours >= 2),coef_has_joint_tours_and_iNM_tour_freq_2p,,,coef_has_joint_tours_and_iNM_tour_freq_2p,coef_has_joint_tours_and_iNM_tour_freq_2p,,,
+util_number_of_school_escort_tours,Number of School Escort Tours,escort * num_school_escort_tours,coef_prev_school_escort_tours,coef_prev_school_escort_tours,,coef_prev_school_escort_tours,,,,
+# availability conditions,,,,,,,,,,
+# util_availability_of_zero_tours,Requires NM tour if no previous tours,(has_previous_tour == 0) & (_total_indNM_tours == 0),coef_unavailable,coef_unavailable,coef_unavailable,coef_unavailable,coef_unavailable,coef_unavailable,coef_unavailable,
+# income coefficients with medium as base,,,,,,,,,,
+util_low_income_escort,Low income household * number of escort tours,low_income * escort,,coef_low_income_escort,,coef_low_income_escort,coef_low_income_escort,,coef_low_income_escort,
+util_low_income_shopping,Low income household * number of shopping tours,low_income * shopping,,,,,coef_low_income_shopping,,coef_low_income_shopping,coef_low_income_shopping
+util_low_income_othmaint,Low income household * number of othmaint tours,low_income * othmaint,coef_low_income_othmaint,,,coef_low_income_othmaint,coef_low_income_othmaint,,,
+util_low_income_eatout,Low income household * number of eatout tours,low_income * eatout,,,,,coef_low_income_eatout,,,
+util_low_income_othdiscr,Low income household * number of othdiscr tours,low_income * othdiscr,coef_low_income_othdiscr,coef_low_income_othdiscr,,,coef_low_income_othdiscr,,,coef_low_income_othdiscr
+util_medium_low_income_escort,Medium-low income household * number of escort tours,medium_low_income * escort,coef_medium_low_income_escort,coef_medium_low_income_escort,,coef_medium_low_income_escort,,,,
+util_medium_low_income_othmaint,Medium-low income household * number of othmaint tours,medium_low_income * othmaint,,,,coef_medium_low_income_othmaint,coef_medium_low_income_othmaint,,,
+util_medium_low_income_othdiscr,Medium-low income household * number of othdiscr tours,medium_low_income * othdiscr,coef_medium_low_income_othdiscr,,,,,,,
+util_medium_high_income_shopping,Medium-high income household * number of shopping tours,medium_high_income * shopping,,,,,,,coef_medium_high_income_shopping,coef_medium_high_income_shopping
+util_medium_high_income_othmaint,Medium-high income household * number of othmaint tours,medium_high_income * othmaint,,,,,,,,
+util_medium_high_income_othdiscr,Medium-high income household * number of othdiscr tours,medium_high_income * othdiscr,coef_medium_high_income_othdiscr,,,coef_medium_high_income_othdiscr,,,,
+util_high_income_escort,High income household * number of escort tours,high_income * escort,coef_high_income_escort,,,,,,,
+util_high_income_shopping,High income household * number of shopping tours,high_income * shopping,,,,,coef_high_income_shopping,,,
+util_high_income_othdiscr,High income household * number of othdiscr tours,high_income * othdiscr,coef_high_income_othdiscr,,,,,,coef_high_income_othdiscr,coef_high_income_othdiscr
+# car ownership coefficients,,,,,,,,,,
+util_zero_auto_iNM_tour_freq_1,zero auto ownership & tour freq is 1,(auto_ownership == 0) & (_total_indNM_tours == 1),coef_zero_auto_iNM_tour_freq_1,coef_zero_auto_iNM_tour_freq_1,coef_zero_auto_iNM_tour_freq_1,,,,,
+util_zero_auto_iNM_tour_freq_2,zero auto ownership & tour freq is 2,(auto_ownership == 0) & (_total_indNM_tours == 2),coef_zero_auto_iNM_tour_freq_2,,,,,,,
+util_zero_auto_iNM_tour_freq_2p,zero auto ownership & tour freq is 2p,(auto_ownership == 0) & (_total_indNM_tours >= 2),,coef_zero_auto_iNM_tour_freq_2p,coef_zero_auto_iNM_tour_freq_2p,,,,,
+util_zero_auto_iNM_tour_freq_3p,zero auto ownership & tour freq is 3p,(auto_ownership == 0) & (_total_indNM_tours >= 3),coef_zero_auto_iNM_tour_freq_3p,,,coef_zero_auto_iNM_tour_freq_3p,,,,
+util_auto_deficient_iNM_tour_freq_1,auto deficient & tour freq is 1,(auto_ownership > 0) & (auto_ownership < num_adults) & (_total_indNM_tours == 1),coef_auto_deficient_iNM_tour_freq_1,coef_auto_deficient_iNM_tour_freq_1,coef_auto_deficient_iNM_tour_freq_1,coef_auto_deficient_iNM_tour_freq_1,coef_auto_deficient_iNM_tour_freq_1,,,coef_auto_deficient_iNM_tour_freq_1
+util_auto_deficient_iNM_tour_freq_2,auto deficient & tour freq is 2,(auto_ownership > 0) & (auto_ownership < num_adults) & (_total_indNM_tours == 2),,,coef_auto_deficient_iNM_tour_freq_2,,coef_auto_deficient_iNM_tour_freq_2,,,
+util_auto_deficient_iNM_tour_freq_2p,auto deficient & tour freq is 2p,(auto_ownership > 0) & (auto_ownership < num_adults) & (_total_indNM_tours >= 2),coef_auto_deficient_iNM_tour_freq_2p,coef_auto_deficient_iNM_tour_freq_2p,,coef_auto_deficient_iNM_tour_freq_2p,,,,coef_auto_deficient_iNM_tour_freq_2p
+util_auto_deficient_iNM_tour_freq_3p,auto deficient & tour freq is 3p,(auto_ownership > 0) & (auto_ownership < num_adults) & (_total_indNM_tours >= 3),,,coef_auto_deficient_iNM_tour_freq_3p,,coef_auto_deficient_iNM_tour_freq_3p,,,
+# household member interactions,,,,,,,,,,
+util_num_children_escort,Number of household children * number of escort tours,num_children * escort,coef_num_children_escort,coef_num_children_escort,coef_num_children_escort,coef_num_children_escort,coef_num_children_escort,coef_num_children_escort,,coef_num_children_escort
+util_num_children_shopping,Number of household children * number of shopping tours,num_children * shopping,coef_num_children_shopping,coef_num_children_shopping,,,,,,
+util_num_children_othmaint,Number of household children * number of othmaint tours,num_children * othmaint,coef_num_children_othmaint,,,,,,,
+util_num_children_social,Number of household children * number of social tours,num_children * social,coef_num_children_social,,,coef_num_children_social,,,,
+util_num_children_othdiscr,Number of household children * number of othdiscr tours,num_children * othdiscr,coef_num_children_othdiscr,coef_num_children_othdiscr,,,,,,
+util_num_full_time_workers_escort,Number of household full time workers * number of escort tours,num_fullTime_workers * escort,coef_num_full_time_workers_escort,,,coef_num_full_time_workers_escort,coef_num_full_time_workers_escort,,coef_num_full_time_workers_escort,
+util_num_full_time_workers_shopping,Number of household full time workers * number of shopping tours,num_fullTime_workers * shopping,,,,,,,,
+util_num_full_time_workers_othmaint,Number of household full time workers * number of othmaint tours,num_fullTime_workers * othmaint,,,,coef_num_full_time_workers_othmaint,,,,
+util_num_full_time_workers_eatout,Number of household full time workers * number of eatout tours,num_fullTime_workers * eatout,,coef_num_full_time_workers_eatout,coef_num_full_time_workers_eatout,,,coef_num_full_time_workers_eatout,,
+util_num_full_time_workers_social,Number of household full time workers * number of social tours,num_fullTime_workers * social,,,,,,,,coef_num_full_time_workers_social
+util_num_full_time_workers_othdiscr,Number of household full time workers * number of othdiscr tours,num_fullTime_workers * othdiscr,coef_num_full_time_workers_othdiscr,,,,,,coef_num_full_time_workers_othdiscr,
+util_hhsize_escort,household size * number of escort tours,hhsize * escort,,,,coef_hhsize_escort,,,coef_hhsize_escort,
+util_hhsize_shopping,household size * number of shopping tours,hhsize * shopping,coef_hhsize_shopping,,,,coef_hhsize_shopping,coef_hhsize_shopping,coef_hhsize_shopping,
+util_hhsize_othmaint,household size * number of othmaint tours,hhsize * othmaint,coef_hhsize_othmaint,,,coef_hhsize_othmaint,coef_hhsize_othmaint,,,
+util_hhsize_eatout,household size * number of eatout tours,hhsize * eatout,coef_hhsize_eatout,,coef_hhsize_eatout,coef_hhsize_eatout,coef_hhsize_eatout,,coef_hhsize_eatout,
+util_hhsize_social,household size * number of social tours,hhsize * social,coef_hhsize_social,,,,,,,
+util_hhsize_othdiscr,household size * number of othdiscr tours,hhsize * othdiscr,coef_hhsize_othdiscr,,,,coef_hhsize_othdiscr,,,coef_hhsize_othdiscr
+util_retired_hh_escort,Retirees and Non-workers only household * Escorting,retiredHh * escort,,,,,coef_retired_hh_escort,,,
+# age effects by purpose,,,,,,,,,,
+util_retired_80p_escort,Retiree over age 80 escort,(age >= 80) * escort,,,,,coef_age_80p_escort,,,
+util_retired_80p_eatout,Retiree over age 80 eatout,(age >= 80) * eatout,,,,,coef_age_80p_eatout,,,
+util_adult_18to24_escort,Age 18 to 24 escort,((age > 18) & (age <= 24)) * escort,coef_age_18to24_escort,coef_age_18to24_escort,,,,,,
+util_adult_18to24_shopping,Age 18 to 24 shopping,((age > 18) & (age <= 24)) * shopping,,,coef_age_18to24_shopping,,,,,
+util_adult_18to24_othmaint,Age 18 to 24 othmaint,((age > 18) & (age <= 24)) * othmaint,,,,,,,,
+util_adult_18to24_eatout,Age 18 to 24 eatout,((age > 18) & (age <= 24)) * eatout,,,coef_age_18to24_eatout,,,,,
+util_adult_18to24_social,Age 18 to 24 social,((age > 18) & (age <= 24)) * social,,,,coef_age_18to24_social,,,,
+util_child_24to35_escort,Age 24 to 35 escort,((age > 24) & (age <= 35)) * escort,coef_age_24to35_escort,coef_age_24to35_escort,,coef_age_24to35_escort,,,,
+util_child_24to35_shopping,Age 24 to 35 shopping,((age > 24) & (age <= 35)) * shopping,,coef_age_24to35_shopping,coef_age_24to35_shopping,coef_age_24to35_shopping,,,,
+util_child_24to35_othmaint,Age 24 to 35 othmaint,((age > 24) & (age <= 35)) * othmaint,,,,,,,,
+util_child_24to35_eatout,Age 24 to 35 eatout,((age > 24) & (age <= 35)) * eatout,coef_age_24to35_eatout,,,,,,,
+util_child_24to35_othdiscr,Age 24 to 35 othdiscr,((age > 24) & (age <= 35)) * othdiscr,,coef_age_24to35_othdiscr,,coef_age_24to35_othdiscr,,,,
+util_child_50to79_escort,Age 50 to 79 escort,((age >= 50) & (age <= 79)) * escort,coef_age_50to79_escort,coef_age_50to79_escort,,coef_age_50to79_escort,,,,
+util_child_50to79_eatout,Age 50 to 79 eatout,((age >= 50) & (age <= 79)) * eatout,coef_age_50to79_eatout,,,,,,,
+util_child_50to79_othdiscr,Age 50 to 79 othdiscr,((age >= 50) & (age <= 79)) * othdiscr,coef_age_50to79_othdiscr,,coef_age_50to79_othdiscr,,,,,
+# age effects by frequency,,,,,,,,,,
+util_retired_80p_and_iNM_tour_freq_2,Age 80+ & Tour Frequency =2,(age >= 80) & (_total_indNM_tours == 2),,,,,coef_age_80p_and_iNM_tour_freq_2,,,
+util_adult_18to24_and_iNM_tour_freq_2,Age 18 to 24 & Tour Frequency =2,((age > 18) & (age <= 24)) & (_total_indNM_tours == 2),coef_age_18to24_and_iNM_tour_freq_2,,,coef_age_18to24_and_iNM_tour_freq_2,,,,
+# residual time window,,,,,,,,,,
+util_log_total_hours_available_7am_to_10pm_window_escort,log_Total hours available 1am to 10pm tours escort,log_total_hours_available_7am_to_10pm * escort,coef_log_total_hours_available_7am_to_10pm_escort,coef_log_total_hours_available_7am_to_10pm_escort,coef_log_total_hours_available_7am_to_10pm_escort,coef_log_total_hours_available_7am_to_10pm_escort,coef_log_total_hours_available_7am_to_10pm_escort,coef_log_total_hours_available_7am_to_10pm_escort,coef_log_total_hours_available_7am_to_10pm_escort,coef_log_total_hours_available_7am_to_10pm_escort
+util_log_total_hours_available_7am_to_10pm_window_shopping,log_Total hours available 1am to 10pm tours shopping,log_total_hours_available_7am_to_10pm * shopping,coef_log_total_hours_available_7am_to_10pm_shopping,coef_log_total_hours_available_7am_to_10pm_shopping,coef_log_total_hours_available_7am_to_10pm_shopping,,coef_log_total_hours_available_7am_to_10pm_shopping,coef_log_total_hours_available_7am_to_10pm_shopping,coef_log_total_hours_available_7am_to_10pm_shopping,coef_log_total_hours_available_7am_to_10pm_shopping
+util_log_total_hours_available_7am_to_10pm_window_othmaint,log_Total hours available 1am to 10pm tours othmaint,log_total_hours_available_7am_to_10pm * othmaint,coef_log_total_hours_available_7am_to_10pm_othmaint,coef_log_total_hours_available_7am_to_10pm_othmaint,coef_log_total_hours_available_7am_to_10pm_othmaint,,coef_log_total_hours_available_7am_to_10pm_othmaint,coef_log_total_hours_available_7am_to_10pm_othmaint,coef_log_total_hours_available_7am_to_10pm_othmaint,coef_log_total_hours_available_7am_to_10pm_othmaint
+util_log_total_hours_available_7am_to_10pm_window_eatout,log_Total hours available 1am to 10pm tours eatout,log_total_hours_available_7am_to_10pm * eatout,coef_log_total_hours_available_7am_to_10pm_eatout,coef_log_total_hours_available_7am_to_10pm_eatout,coef_log_total_hours_available_7am_to_10pm_eatout,,,coef_log_total_hours_available_7am_to_10pm_eatout,coef_log_total_hours_available_7am_to_10pm_eatout,coef_log_total_hours_available_7am_to_10pm_eatout
+util_log_total_hours_available_7am_to_10pm_window_social,log_Total hours available 1am to 10pm tours social,log_total_hours_available_7am_to_10pm * social,coef_log_total_hours_available_7am_to_10pm_social,coef_log_total_hours_available_7am_to_10pm_social,,,,coef_log_total_hours_available_7am_to_10pm_social,coef_log_total_hours_available_7am_to_10pm_social,
+util_log_total_hours_available_7am_to_10pm_window_othdiscr,log_Total hours available 1am to 10pm tours othdiscr,log_total_hours_available_7am_to_10pm * othdiscr,coef_log_total_hours_available_7am_to_10pm_othdiscr,coef_log_total_hours_available_7am_to_10pm_othdiscr,,,coef_log_total_hours_available_7am_to_10pm_othdiscr,coef_log_total_hours_available_7am_to_10pm_othdiscr,coef_log_total_hours_available_7am_to_10pm_othdiscr,coef_log_total_hours_available_7am_to_10pm_othdiscr
+util_consecutive_hours_available_7am_to_10pm_window_escort,Consecutive hours available 1am to 10pmtours escort,consecutive_hours_available_7am_to_10pm * escort,,,,,coef_consecutive_hours_available_7am_to_10pm_escort,,,
+util_consecutive_hours_available_7am_to_10pm_window_shopping,Consecutive hours available 1am to 10pmtours shopping,consecutive_hours_available_7am_to_10pm * shopping,coef_consecutive_hours_available_7am_to_10pm_shopping,coef_consecutive_hours_available_7am_to_10pm_shopping,,coef_consecutive_hours_available_7am_to_10pm_shopping,,,,
+util_consecutive_hours_available_7am_to_10pm_window_othmaint,Consecutive hours available 1am to 10pmtours othmaint,consecutive_hours_available_7am_to_10pm * othmaint,coef_consecutive_hours_available_7am_to_10pm_othmaint,,,coef_consecutive_hours_available_7am_to_10pm_othmaint,,,coef_consecutive_hours_available_7am_to_10pm_othmaint,
+util_consecutive_hours_available_7am_to_10pm_window_eatout,Consecutive hours available 1am to 10pmtours eatout,consecutive_hours_available_7am_to_10pm * eatout,,,,,coef_consecutive_hours_available_7am_to_10pm_eatout,,,
+util_consecutive_hours_available_7am_to_10pm_window_othdiscr,Consecutive hours available 1am to 10pmtours othdiscr,consecutive_hours_available_7am_to_10pm * othdiscr,,,coef_consecutive_hours_available_7am_to_10pm_othdiscr,coef_consecutive_hours_available_7am_to_10pm_othdiscr,,,,
+# accessibilities,,,,,,,,,,
+util_othdiscr_accessibility_for_escorting,Retail Accessibility for Escorting,shopping_accessibility * escort,,coef_shopping_accessibility_escorting,,,,,coef_shopping_accessibility_escorting,
+util_shopping_accessibility_shopping,Retail Accessibility for Shopping,shopping_accessibility * shopping,coef_shopping_accessibility_shopping,coef_shopping_accessibility_shopping,coef_shopping_accessibility_shopping,coef_shopping_accessibility_shopping,,coef_shopping_accessibility_shopping,,coef_shopping_accessibility_shopping
+util_shopping_accessibility_maintenance,Retail Accessibility for Maintenance,shopping_accessibility * othmaint,,,coef_shopping_accessibility_maintenance,,,,coef_shopping_accessibility_maintenance,coef_shopping_accessibility_maintenance
+util_othdiscr_accessibility_eating_out,Retail Accessibility for Eating Out,othdiscr_accessibility * eatout,coef_othdiscr_accessibility_eating_out,coef_othdiscr_accessibility_eating_out,coef_othdiscr_accessibility_eating_out,,coef_othdiscr_accessibility_eating_out,,,
+util_othdiscr_accessibility_discretionary,Retail Accessibility for Discretionary,othdiscr_accessibility * othdiscr,coef_othdiscr_accessibility_othdiscr,coef_othdiscr_accessibility_othdiscr,coef_othdiscr_accessibility_othdiscr,coef_othdiscr_accessibility_othdiscr,,,,coef_othdiscr_accessibility_othdiscr
+util_othdiscr_accessibility_visiting,Retail Accessibility for Visiting,othdiscr_accessibility * social,coef_othdiscr_accessibility_social,coef_othdiscr_accessibility_social,,coef_othdiscr_accessibility_social,,,coef_othdiscr_accessibility_social,coef_othdiscr_accessibility_social
+# work from home and telecommute_frequency,,,,,,,,,,
+util_work_from_home_and_iNM_tour_freq_2,Work From Home  & Tour Frequency =2,(work_from_home) & (_total_indNM_tours == 2),coef_work_from_home_and_iNM_tour_freq_2,,,,,,,
+util_work_from_home_and_iNM_tour_freq_3p,Work From Home & Tour Frequency =3p,(work_from_home) & (_total_indNM_tours >= 3),coef_work_from_home_and_iNM_tour_freq_3p,,,,,,,
+util_telecommute_2_3_days_week_and_iNM_tour_freq_2,Telecommute 1 day per week  & Tour Frequency =2,(telecommute_frequency == '2_3_days_week') & (_total_indNM_tours == 2),coef_telecommute_2_3_days_week_and_iNM_tour_freq_2,,,,,,,
+util_telecommute_2_3_days_week_and_iNM_tour_freq_2p,Telecommute 1 day per week  & Tour Frequency =2p,(telecommute_frequency == '2_3_days_week') & (_total_indNM_tours >= 2),,,,,,,,
+util_telecommute_2_3_days_week_and_iNM_tour_freq_3p,Telecommute 1 day per week & Tour Frequency =3p,(telecommute_frequency == '2_3_days_week') & (_total_indNM_tours >= 3),coef_telecommute_2_3_days_week_and_iNM_tour_freq_3p,,,,,,,
+util_telecommute_4_days_week_and_iNM_tour_freq_1,Telecommute 1 day per week & Tour Frequency =1,(telecommute_frequency == '4_days_week') & (_total_indNM_tours == 1),,coef_telecommute_4_days_week_and_iNM_tour_freq_1,,,,,,
+

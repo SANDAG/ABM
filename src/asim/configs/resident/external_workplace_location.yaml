@@ -32,7 +32,7 @@ LOGSUM_TOUR_PURPOSE: work
 CHOOSER_TABLE_NAME: persons
 
 # size_terms model_selector
-MODEL_SELECTOR: external_work
+MODEL_SELECTOR: external_workplace
 
 # chooser column with segment_id for this segment type
 CHOOSER_SEGMENT_COLUMN_NAME: is_external_worker
@@ -43,7 +43,7 @@ CHOOSER_FILTER_COLUMN_NAME: is_external_worker
 
 # FIXME - these are assigned to persons in annotate_persons. we need a better way to manage this
 SEGMENT_IDS:
-  external_work: True  # using only one segment
+  external_workplace: True  # using only one segment
 
 # model adds these tables (informational - not added if commented out)
 # SHADOW_PRICE_TABLE: workplace_shadow_prices

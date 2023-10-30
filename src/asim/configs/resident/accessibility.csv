@@ -5,7 +5,7 @@ Description,Target,Expression
 #,, assume peak occurs in AM for outbound and PM for inbound
 peak round trip distance,_auPkTime,"skim_od[('SOV_TR_M_TIME', 'AM')] + skim_do[('SOV_TR_M_TIME', 'PM')]"
 decay function,_decay, exp(_auPkTime * dispersion_parameter_automobile)
-auto peak retail,auPkRetail,df.emp_retail * _decay
+auto peak retail,auPkRetail,df.emp_ret * _decay
 auto peak total,auPkTotal,df.emp_total * _decay
 #,,
 #,, auto off-peak
@@ -13,20 +13,25 @@ auto peak total,auPkTotal,df.emp_total * _decay
 #,, assume midday occurs entirely in the midday period
 off-peak round trip distance,_auOpTime,"skim_od[('SOV_TR_M_TIME', 'MD')] + skim_do[('SOV_TR_M_TIME', 'MD')]"
 decay function,_decay, exp(_auOpTime * dispersion_parameter_automobile)
-auto off-peak retail,auOpRetail,df.emp_retail * _decay
+auto off-peak retail,auOpRetail,df.emp_ret * _decay
 auto off-peak total,auOpTotal,df.emp_total * _decay
 #,,
 #,, transit peak
-#,,
-#,, FIXME - don't need WLK_TRN_WLK_WACC and WLK_TRN_WLK_WEGR as we are using walk_time?
 #,, assume peak outbound transit occurs in AM
-o-d peak transit time,_trPkTime_od,"skim_od[('WALK_MIX_TOTALIVTT', 'AM')]"
+o-d peak transit time,_inVehicletime_od,"skim_od[('WALK_MIX_TOTALIVTT', 'AM')]"
+o-d out of vehicle transit time,_outOfVehicleTime_od,"skim_od[('WALK_MIX_FIRSTWAIT', 'AM')] + skim_od[('WALK_MIX_XFERWAIT', 'AM')] + reindex(df.walk_dist_local_bus, df.orig) + skim_od[('WALK_MIX_XFERWALK', 'AM')] + reindex(df.walk_dist_local_bus, df.dest)"
+total o-d peak transit time,_trPkTime_od,(_inVehicletime_od +  out_of_vehicle_time_weight * _outOfVehicleTime_od)
 #,, assume peak inbound transit occurs in PM
-o-d peak transit time,_trPkTime_do,"skim_do[('WALK_MIX_TOTALIVTT', 'PM')]"
+o-d peak transit time,_inVehicletime_do,"skim_do[('WALK_MIX_TOTALIVTT', 'PM')]"
+o-d out of vehicle transit time,_outOfVehicleTime_do,"skim_do[('WALK_MIX_FIRSTWAIT', 'PM')] + skim_do[('WALK_MIX_XFERWAIT', 'PM')] + reindex(df.walk_dist_local_bus, df.orig) + skim_do[('WALK_MIX_XFERWALK', 'PM')] + reindex(df.walk_dist_local_bus, df.dest)"
+total o-d peak transit time,_trPkTime_do,(_inVehicletime_do +  out_of_vehicle_time_weight * _outOfVehicleTime_do)
+#,,
+#o-d peak transit time,_trPkTime_do,"skim_do[('WALK_MIX_TOTALIVTT', 'PM')]"
+#,_outOfVehicleTime_do,"skim_do[('WLK_TRN_IWAIT', 'PM')] + skim_do[('WLK_TRN_XWAIT', 'PM')] + skim_do[('WLK_TRN_WACC', 'PM')] + skim_do[('WLK_TRN_WAUX', 'PM')] + skim_do[('WLK_TRN_WEGR', 'PM')]"
 peak transit time,_trPkTime,(_trPkTime_od + _trPkTime_do).clip(0)
 round trip path is available,_rt_available,(_trPkTime_od > 0) & (_trPkTime_do > 0)
 decay function,_decay,_rt_available * exp(_trPkTime * dispersion_parameter_transit)
-transit peak retail,trPkRetail,df.emp_retail * _decay
+transit peak retail,trPkRetail,df.emp_ret * _decay
 transit peak total,trPkTotal,df.emp_total * _decay
 transit peak total,trPkHH,df.hh * _decay
 ####,,
@@ -38,7 +43,7 @@ d-o off-peak transit time,_trOpTime_do,"skim_do[('WALK_MIX_TOTALIVTT', 'MD')]"
 off-peak transit time,_trOpTime,(_trOpTime_od + _trPkTime_do).clip(0)
 round trip path is available,_rt_available,(_trOpTime_od > 0) & (_trOpTime_do > 0)
 decay function,_decay,_rt_available * exp(_trOpTime * dispersion_parameter_transit)
-transit off-peak retail,trOpRetail,df.emp_retail * _decay
+transit off-peak retail,trOpRetail,df.emp_ret * _decay
 transit off-peak total,trOpTotal,df.emp_total * _decay
 #,,
 #,, non motorized
@@ -46,5 +51,5 @@ transit off-peak total,trOpTotal,df.emp_total * _decay
 non-motorized round trip distance,_nmDist,skim_od['DIST'] + skim_do['DIST']
 round trip path is available,_rt_available,_nmDist <= maximum_walk_distance
 decay function,_decay,_rt_available * exp(_nmDist * dispersion_parameter_walk)
-retail accessibility,nmRetail,df.emp_retail * _decay
+retail accessibility,nmRetail,df.emp_ret * _decay
 total accessibility,nmTotal,df.emp_total * _decay

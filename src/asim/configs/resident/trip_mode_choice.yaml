@@ -19,6 +19,11 @@ NESTS:
         alternatives:
           - WALK
           - BIKE
+      - name: MICROMOBILITY
+        coefficient: coef_nest_MICROMOBILITY
+        alternatives:
+          - EBIKE
+          - ESCOOTER
       - name: TRANSIT
         coefficient: coef_nest_TRANSIT
         alternatives:
@@ -97,6 +102,9 @@ TOURS_MERGED_CHOOSER_COLUMNS:
   - time_factor_nonwork
   - transponder_ownership
   - ptype
+  - ebike_owner
+  - start
+  - end
 
 MODE_CHOICE_LOGSUM_COLUMN_NAME: mode_choice_logsum
 

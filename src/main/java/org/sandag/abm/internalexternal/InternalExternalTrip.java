@@ -21,6 +21,7 @@ public class InternalExternalTrip
     private boolean lastTrip;
     private boolean originIsTourDestination;
     private boolean destinationIsTourDestination;
+    private float sampleRate;
 
  	private int boardTap;
  	private int alightTap;
@@ -88,6 +89,7 @@ public class InternalExternalTrip
             this.originIsTourDestination = true;
             this.destinationIsTourDestination = false;
         }
+        this.sampleRate = tour.getSampleRate();
 
     }
     /**
@@ -308,6 +310,14 @@ public class InternalExternalTrip
 
 	public void setValueOfTime(double valueOfTime) {
 		this.valueOfTime = valueOfTime;
+	}
+	
+	public float getSampleRate() {
+		return sampleRate;
+	}
+
+	public void setSampleRate(float sampleRate) {
+		this.sampleRate = sampleRate;
 	}
 
 }

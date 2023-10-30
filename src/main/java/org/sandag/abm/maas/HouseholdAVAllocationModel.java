@@ -575,7 +575,7 @@ public class HouseholdAVAllocationModel {
         	// if the choice model has at least one available alternative, make
         	// choice.
         	int chosenAlt;
-            long seed = hh.getSeed() + (vehicleChoiceOffset + trip.getStop_id()*23 +trip.getPerson_id()*34 + trip.getStop_period()*23);
+            long seed = hh.getSeed() + (vehicleChoiceOffset + trip.getTrip_num()*23 +trip.getPerson_id()*34 + trip.getStop_period()*23);
             random.setSeed(seed);
 
         	if (vehicleChoiceModel.getAvailabilityCount() > 0)
@@ -597,7 +597,7 @@ public class HouseholdAVAllocationModel {
         		return chosenAlt;
         	} else
         	{
-        		String decisionMaker = String.format("Household " + hh.getId()+" "+trip.getStop_id());
+        		String decisionMaker = String.format("Household " + hh.getId()+" "+trip.getTrip_num());
         		String errorMessage = String
                     .format("Exception caught for %s, no available vehicle choice alternatives to choose from in choiceModelApplication.",
                             decisionMaker);
@@ -619,7 +619,7 @@ public class HouseholdAVAllocationModel {
         	// if the choice model has at least one available alternative, make
         	// choice.
         	int chosenAlt;
-            long seed = hh.getSeed() + (parkingChoiceOffset + trip.getStop_id()*123 +trip.getPerson_id()*23 + trip.getStop_period()*18);
+            long seed = hh.getSeed() + (parkingChoiceOffset + trip.getTrip_num()*123 +trip.getPerson_id()*23 + trip.getStop_period()*18);
             random.setSeed(seed);
 
         	if (parkingChoiceModel.getAvailabilityCount() > 0)
@@ -642,7 +642,7 @@ public class HouseholdAVAllocationModel {
         		return chosenAlt;
         	} else
         	{
-        		String decisionMaker = String.format("Household " + hh.getId()+" "+trip.getStop_id());
+        		String decisionMaker = String.format("Household " + hh.getId()+" "+trip.getTrip_num());
         		String errorMessage = String
                     .format("Exception caught for %s, no available vehicle choice alternatives to choose from in choiceModelApplication.",
                             decisionMaker);

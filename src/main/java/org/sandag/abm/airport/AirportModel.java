@@ -60,7 +60,7 @@ public class AirportModel
         destChoiceModel.chooseOrigins(parties);
 
         AirportModeChoiceModel modeChoiceModel = new AirportModeChoiceModel(rbMap, dmuFactory,airportCode);
-        modeChoiceModel.chooseModes(parties, dmuFactory);
+        modeChoiceModel.chooseModes(rbMap, parties, dmuFactory, airportCode);
 
         apm.writeOutputFile(rbMap);
 

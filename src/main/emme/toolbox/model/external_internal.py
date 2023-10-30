@@ -117,7 +117,7 @@ class ExternalInternal(_m.Tool(), gen_utils.Snapshot):
 
         year = int(props['scenarioYear'])
         mgra = pd.read_csv(
-            os.path.join(input_directory, 'mgra13_based_input%s.csv' % year))
+            os.path.join(input_directory, 'mgra15_based_input%s.csv' % year))
 
         # Load data
         file_path = os.path.join(
@@ -137,56 +137,33 @@ class ExternalInternal(_m.Tool(), gen_utils.Snapshot):
         _m.logbook_write("Control totals read from %s" % file_path)
         
         # Aggregate purposes
-        mgra['emp_blu'] = (mgra.emp_const_non_bldg_prod
-                           + mgra.emp_const_non_bldg_office
-                           + mgra.emp_utilities_prod
-                           + mgra.emp_utilities_office
-                           + mgra.emp_const_bldg_prod
-                           + mgra.emp_const_bldg_office
-                           + mgra.emp_mfg_prod
-                           + mgra.emp_mfg_office
-                           + mgra.emp_whsle_whs
-                           + mgra.emp_trans)
+        mgra['emp_blu'] = (mgra.emp_con
+                           + mgra.emp_utl
+                           + mgra.emp_mnf
+                           + mgra.emp_fin_res_mgm
+                           + mgra.emp_whl
+                           + mgra.emp_trn_wrh)
 
-        mgra['emp_svc'] = (mgra.emp_prof_bus_svcs
-                           + mgra.emp_prof_bus_svcs_bldg_maint
-                           + mgra.emp_personal_svcs_office
-                           + mgra.emp_personal_svcs_retail)
+        mgra['emp_svc'] = mgra.emp_bus_svcs
 
-        mgra['emp_edu'] = (mgra.emp_pvt_ed_k12
-                           + mgra.emp_pvt_ed_post_k12_oth
-                           + mgra.emp_public_ed)
-
-        mgra['emp_gov'] = (mgra.emp_state_local_gov_ent
-                           + mgra.emp_fed_non_mil
-                           + mgra.emp_fed_non_mil
-                           + mgra.emp_state_local_gov_blue
-                           + mgra.emp_state_local_gov_white)
-
-        mgra['emp_ent'] = (mgra.emp_amusement
-                           + mgra.emp_hotel
-                           + mgra.emp_restaurant_bar)
-
-        mgra['emp_oth'] = (mgra.emp_religious
-                           + mgra.emp_pvt_hh
-                           + mgra.emp_fed_mil)
+        mgra['emp_edu'] = mgra.emp_educ
 
         mgra['work_size'] = (mgra.emp_blu +
-                             1.364 * mgra.emp_retail +
+                             1.364 * mgra.emp_ret +
                              4.264 * mgra.emp_ent +
                              0.781 * mgra.emp_svc +
                              1.403 * mgra.emp_edu +
-                             1.779 * mgra.emp_health +
+                             1.779 * mgra.emp_hlth +
                              0.819 * mgra.emp_gov +
                              0.708 * mgra.emp_oth)
 
         mgra['non_work_size'] = (mgra.hh +
                                  1.069 * mgra.emp_blu +
-                                 4.001 * mgra.emp_retail +
+                                 4.001 * mgra.emp_ret +
                                  6.274 * mgra.emp_ent +
                                  0.901 * mgra.emp_svc +
                                  1.129 * mgra.emp_edu +
-                                 2.754 * mgra.emp_health +
+                                 2.754 * mgra.emp_hlth +
                                  1.407 * mgra.emp_gov +
                                  0.304 * mgra.emp_oth)
 
@@ -199,7 +176,7 @@ class ExternalInternal(_m.Tool(), gen_utils.Snapshot):
         control_totals = pd.merge(control_totals, taz[['taz']], how='outer')
         control_totals.sort_values('taz', inplace=True)        # method sort was deprecated since pandas version 0.20.0, yma, 2/12/2019
 
-        length_skim = emmebank.matrix('mf"MD_SOV_TR_M_DIST"').get_numpy_data(scenario)
+        length_skim = emmebank.matrix('mf"SOV_TR_M_DIST__MD"').get_numpy_data(scenario)
 
         # Compute probabilities for work purpose
         wrk_dist_coef = -0.029
@@ -266,9 +243,9 @@ class ExternalInternal(_m.Tool(), gen_utils.Snapshot):
                 nwrk_mtx = nw_o * (nw_d_pa * nwrk_pa_mtx + nw_d_ap * nwrk_ap_mtx)
 
                 # Toll choice split
-                f_tm_imp = emmebank.matrix('mf%s_%s_TIME' % (p, skim_lookup[gp_mode])).get_numpy_data(scenario)
-                t_tm_imp = emmebank.matrix('mf%s_%s_TIME' % (p, skim_lookup[toll_mode])).get_numpy_data(scenario)
-                t_cst_imp = emmebank.matrix('mf%s_%s_TOLLCOST' % (p, skim_lookup[toll_mode])).get_numpy_data(scenario)
+                f_tm_imp = emmebank.matrix('mf%s_TIME__%s' % (skim_lookup[gp_mode], p)).get_numpy_data(scenario)
+                t_tm_imp = emmebank.matrix('mf%s_TIME__%s' % (skim_lookup[toll_mode], p)).get_numpy_data(scenario)
+                t_cst_imp = emmebank.matrix('mf%s_TOLLCOST__%s' % (skim_lookup[toll_mode], p)).get_numpy_data(scenario)
 
                 # Toll diversion for work purpose
                 # TODO: .mod no longer needed, to confirm

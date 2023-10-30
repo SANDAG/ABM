@@ -71,6 +71,7 @@ from math import ceil as _ceiling
 from copy import deepcopy as _copy
 import numpy as _np
 import heapq as _heapq
+import pandas as pd
 
 import traceback as _traceback
 import os
@@ -85,7 +86,8 @@ dem_utils = _m.Modeller().module("sandag.utilities.demand")
 FILE_NAMES = {
     "FARES": "special_fares.txt",
     "OFF_PEAK": "off_peak_toll_factors.csv",
-    "VEHICLE_CLASS": "vehicle_class_toll_factors.csv"
+    "VEHICLE_CLASS": "vehicle_class_toll_factors.csv",
+    "node_taz_map": "node_taz_map.csv",
 }
 
 
@@ -250,7 +252,9 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
     def execute(self):
         traffic_attr_map = {
             "NODE": {
-                "interchange": ("@interchange", "DERIVED", "EXTRA", "is interchange node")
+                "interchange": ("@interchange", "DERIVED", "EXTRA", "is interchange node"),
+                "HNODE":       ("@hnode_hwy",    "DERIVED","EXTRA", "HNODE label from hwycov" ),
+                "zone_id":     ("@zone_id",      "DERIVED", "EXTRA", "TAZ number a node is in"),
             },
             "LINK": OrderedDict([
                 ("HWYCOV-ID", ("@tcov_id",             "TWO_WAY", "EXTRA", "SANDAG-assigned link ID")),
@@ -332,8 +336,9 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     (attr + time, "DERIVED", "EXTRA", time_name[time] + desc_tmplt)
 
         transit_attr_map = {
-            "NODE": OrderedDict([
-                ("@tap_id",   ("@tap_id",              "DERIVED",  "EXTRA", "Transit-access point ID")),
+            "NODE": OrderedDict([             
+                ("IPARK",     ("@ipark",               "DERIVED",  "EXTRA", "parking indicator" )),
+                ("HNODE",     ("@hnode_tr",            "DERIVED",  "EXTRA", "HNODE label from trcov" )),
             ]),
             "LINK": OrderedDict([
                 ("TRCOV-ID",  ("@tcov_id",              "TWO_WAY", "EXTRA", "SANDAG-assigned link ID")),
@@ -479,18 +484,24 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                         "title": "Transit %s attributes" % elem_type.lower().replace("_", " "),
                         "disclosure": True
                     })
-                try:
-                    self.create_transit_base(transit_network, transit_attr_map)
-                    self.create_transit_lines(transit_network, transit_attr_map)
-                    self.calc_transit_attributes(transit_network)
-                finally:
-                    if transit_scenario:
-                        for link in transit_network.links():
-                            if link.type <= 0:
-                                link.type = 99
-                        transit_scenario.publish_network(transit_network, resolve_attributes=True)
-                    if self.merged_scenario_id:
-                        self.add_transit_to_traffic(traffic_network, transit_network)
+                # try:
+                self.create_transit_base(transit_network, transit_attr_map)
+                self.create_transit_lines(transit_network, transit_attr_map)
+                self.calc_transit_attributes(transit_network)
+                new_node_id = max(
+                    max(n.number for n in traffic_network.nodes()),
+                    max(n.number for n in transit_network.nodes())
+                )
+                new_node_id = int(_ceiling(new_node_id / 10000.0) * 10000)
+                new_node_id = self.renumber_transit_nodes(transit_network, new_node_id)
+                # finally:
+                if transit_scenario:
+                    for link in transit_network.links():
+                        if link.type <= 0:
+                            link.type = 99
+                    transit_scenario.publish_network(transit_network, resolve_attributes=True)
+                if self.merged_scenario_id:
+                    self.add_transit_to_traffic(traffic_network, transit_network, new_node_id)
         finally:
             if self.merged_scenario_id:
                 scenario.publish_network(traffic_network, resolve_attributes=True)
@@ -584,8 +595,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 # managed lanes, free for HOV2 and HOV3+, tolls for SOV
                 if arc["ITOLLO"] + arc["ITOLLA"] + arc["ITOLLP"] > 0:
                     return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV2
-                # special case of I-15 managed lanes
-                elif arc["IFC"] == 1 and arc["IPROJ"] in [41, 42, 486]:
+                # special case of I-15 managed lanes base year and 2020, no build
+                elif arc["IFC"] == 1 and arc["IPROJ"] in [41, 42, 486, 373, 711]:
                     return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV2
                 elif arc["IFC"] == 8 or arc["IFC"] == 9:
                     return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV2
@@ -595,8 +606,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 # managed lanes, free for HOV3+, tolls for SOV and HOV2
                 if arc["ITOLLO"] + arc["ITOLLA"] + arc["ITOLLP"]  > 0:
                     return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV3
-                # special case of I-15 managed lanes
-                elif arc["IFC"] == 1 and arc["IPROJ"] in [41, 42, 486]:
+                # special case of I-15 managed lanes for base year and 2020, no build 
+                elif arc["IFC"] == 1 and arc["IPROJ"] in [41, 42, 486, 373, 711]:
                     return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV3
                 elif arc["IFC"] == 8 or arc["IFC"] == 9:
                     return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV3
@@ -610,6 +621,11 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         self._create_base_net(
             hwy_data, network, mode_callback=define_modes, centroid_callback=is_centroid,
             arc_id_name="HWYCOV-ID", link_attr_map=attr_map["LINK"])
+        hwy_node_data = gen_utils.E00FileProc("HWYCOV.NAT", _join(self.source, "hwycov.e00"))
+        for record in hwy_node_data:
+            node = network.node(record["HWYCOV-ID"])
+            if node:
+                node["@hnode_hwy"] = record["HNODE"]
         self._log.append({"type": "text", "content": "Import traffic base network complete"})
 
     def create_transit_base(self, network, attr_map):
@@ -631,6 +647,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         EgrPNR = network.create_mode("AUX_TRANSIT", "g")
         AccKNR = network.create_mode("AUX_TRANSIT", "q")
         EgrKNR = network.create_mode("AUX_TRANSIT", "j")
+        AccTNC = network.create_mode("AUX_TRANSIT", "Q")
+        EgrTNC = network.create_mode("AUX_TRANSIT", "J")
 
         bus = network.create_mode("TRANSIT", "b")
         express_bus = network.create_mode("TRANSIT", "e")
@@ -650,6 +668,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         EgrPNR.description = "EGRESS_PNR"
         AccKNR.description = "ACCESS_KNR"
         EgrKNR.description = "EGRESS_KNR"
+        AccTNC.description = "ACCESS_TNC"
+        EgrTNC.description = "EGRESS_TNC"
         bus.description = "BUS"                  # (vehicle type 100, PCE=3.0)
         express_bus.description = "EXP BUS"      # (vehicle type 90 , PCE=3.0)
         ltdexp_bus.description = "LTDEXP BUS"    # (vehicle type 80 , PCE=3.0)
@@ -668,6 +688,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         EgrPNR.speed = 25
         AccKNR.speed = 25
         EgrKNR.speed = 25
+        AccTNC.speed = 25
+        EgrTNC.speed = 25
 
         ## define TAP connectors as centroids
         #is_centroid = lambda arc, node: (int(arc["MINMODE"]) == 3) and (node == "BN")
@@ -681,19 +703,21 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             1:  set([transfer]),                                 # 1  = special transfer walk links between certain nearby stops
             2:  set([walk]),                                     # 2  = walk links in the downtown area
             3:  set([access]),                                   # 3  = the special TAP connectors
-            4:  set([AccWlk]),                                  # 4  = access walk links
-            5:  set([EgrWlk]),                                  # 5  = egress walk links
-            6:  set([AccPNR]),                                  # 6  = access PNR links
-            7:  set([EgrPNR]),                                  # 7  = egress PNR links
-            8:  set([AccKNR]),                                  # 8  = access KNR links
-            9:  set([EgrKNR]),                                  # 9  = egress KNR links
-            10:  set([coaster_rail]),                             # 4  = Coaster Rail Line
-            11:  set([lrt]),                                      # 5  = Light Rail Transit (LRT) Line
-            12:  set([brt_yellow, ltdexp_bus, express_bus, bus]), # 6  = Yellow Car Bus Rapid Transit (BRT)
-            13:  set([brt_red, ltdexp_bus, express_bus, bus]),    # 7  = Red Car Bus Rapid Transit (BRT)
-            14:  set([ltdexp_bus, express_bus, bus]),             # 8  = Limited Express Bus
-            15:  set([ltdexp_bus, express_bus, bus]),             # 9  = Express Bus
-            16: set([ltdexp_bus, express_bus, bus]),             # 10 = Local Bus
+            4:  set([coaster_rail]),                             # 4  = Coaster Rail Line
+            5:  set([lrt]),                                      # 5  = Light Rail Transit (LRT) Line
+            6:  set([brt_yellow, ltdexp_bus, express_bus, bus]), # 6  = Yellow Car Bus Rapid Transit (BRT)
+            7:  set([brt_red, ltdexp_bus, express_bus, bus]),    # 7  = Red Car Bus Rapid Transit (BRT)
+            8:  set([ltdexp_bus, express_bus, bus]),             # 8  = Limited Express Bus
+            9:  set([ltdexp_bus, express_bus, bus]),             # 9  = Express Bus
+            10: set([ltdexp_bus, express_bus, bus]),             # 10 = Local Bus
+            11:  set([AccWlk]),                                  # 4  = access walk links
+            12:  set([EgrWlk]),                                  # 5  = egress walk links
+            13:  set([AccPNR]),                                  # 6  = access PNR links
+            14:  set([EgrPNR]),                                  # 7  = egress PNR links
+            15:  set([AccKNR]),                                  # 8  = access KNR links
+            16:  set([EgrKNR]),                                  # 9  = egress KNR links
+            17:  set([AccTNC]),                                  # 8  = access TNC links
+            18:  set([EgrTNC]),                                  # 9  = egress TNC links
         }
         tier1_rail_link_name = props["transit.newMode"]
 
@@ -709,7 +733,6 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             transit_data, network, mode_callback=define_modes, centroid_callback=is_centroid,
             arc_id_name="TRCOV-ID", link_attr_map=attr_map["LINK"], arc_filter=arc_filter)
 
-        self._log.append({"type" : "text", "content": "Created base network"})
         # second pass to add special walk links / modify modes on existing links
         reverse_dir_map = {1:3, 3:1, 2:4, 4:2, 0:0}
 
@@ -739,8 +762,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 continue
             coordinates = arc["geo_coordinates"]
             arc_length = arc["LENGTH"] / 5280.0  # convert feet to miles
-            i_node = get_node(network, arc['AN'], coordinates[0], False)
-            j_node = get_node(network, arc['BN'], coordinates[-1], False)
+            i_node = get_node(network, arc['AN'], coordinates[0])
+            j_node = get_node(network, arc['BN'], coordinates[-1])
             modes = define_modes(arc)
             link = network.link(i_node, j_node)
             split_link_case = False
@@ -773,6 +796,18 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                         link.vertices = coordinates[1:-1]
             if not split_link_case:
                 set_reverse_link(link, modes)
+
+        for attr, _, emme_type, _ in attr_map["NODE"].itervalues():
+            default = "" if emme_type == "STRING" else 0
+            network.create_attribute("NODE", attr, default)
+        transit_node_data = gen_utils.E00FileProc("TRCOV.NAT", _join(self.source, "trcov.e00"))
+        # Load IPARK data onto transit nodes
+        for record in transit_node_data:
+            node = network.node(record["TRCOV-ID"])
+            if node:
+                node["@ipark"] = record["IPARK"]
+                node["@hnode_tr"] = record["HNODE"]
+
         self._log.append({"type": "text", "content": "Import transit base network complete"})
 
     def _create_base_net(self, data, network, mode_callback, centroid_callback, arc_id_name, link_attr_map, arc_filter=None):
@@ -893,7 +928,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
         trrt_attrs = []
         mode5tod_attrs = []
-        for elem_type in "TRANSIT_LINE", "TRANSIT_SEGMENT", "NODE":
+        for elem_type in "TRANSIT_LINE", "TRANSIT_SEGMENT":
             mapping = attr_map[elem_type]
             for field, (attr, tcoved_type, emme_type, desc) in mapping.iteritems():
                 default = "" if emme_type == "STRING" else 0
@@ -952,7 +987,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 is_tier1_rail = False
                 for name in tier1_rail_route_names:
                     if str(record["Route_Name"]).startswith(name):
-                        print 'record["Route_Name"]2', record["Route_Name"]
+                        print('record["Route_Name"]2', record["Route_Name"])
                         is_tier1_rail = True
                         break
                 if is_tier1_rail:
@@ -1053,7 +1088,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     continue
                 link_id = int(stop['Link_ID'])
                 node_id = int(stop['TrnNode'])
-                while tcov_id != link_id:
+                while segment.link and tcov_id != link_id:
                     segment = itinerary.next()
                     if segment.link is None:
                         break
@@ -1061,7 +1096,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
                 if node_id == segment.i_node.number:
                     pass
-                elif node_id == segment.j_node.number:
+                elif segment.j_node and node_id == segment.j_node.number:
                     segment = itinerary.next()  # its the next segment
                 else:
                     msg = "Transit line %s: could not find stop on link ID %s at node ID %s" % (line_name, link_id, node_id)
@@ -1071,7 +1106,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     continue
                 segment.allow_boardings = True
                 segment.allow_alightings = True
-                segment.dwell_time = tline.default_dwell_time
+                segment.dwell_time = min(tline.default_dwell_time, 99.99)
                 for field, attr in seg_string_attr_map:
                     segment[attr] = stop[field]
                 for field, attr in seg_float_attr_map:
@@ -1137,9 +1172,6 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             for period in ["am", "pm", "op"]:
                 line["@headway_rev_" + period] = revised_headway(line["@headway_" + period])
 
-        for c in network.centroids():
-            c["@tap_id"] = c.number
-
         # Special incremental boarding and in-vehicle fares
         # to recreate the coaster zone fares
         fares_file_name = FILE_NAMES["FARES"]
@@ -1172,22 +1204,22 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             special_fares = {
                 "boarding_cost": {
                     "base": [
-                        {"line": "398104", "cost" : 3.63},
-                        {"line": "398204", "cost" : 3.63}
+                        {"line": "398104", "cost" : 4.0},
+                        {"line": "398204", "cost" : 4.0}
                     ],
                     "stop_increment": [
-                        {"line": "398104", "stop": "SORRENTO VALLEY", "cost": 0.46},
-                        {"line": "398204", "stop": "SORRENTO VALLEY", "cost": 0.46}
+                        {"line": "398104", "stop": "SORRENTO VALLEY", "cost": 0.5},
+                        {"line": "398204", "stop": "SORRENTO VALLEY", "cost": 0.5}
                     ]
                 },
                 "in_vehicle_cost": [
-                    {"line": "398104", "from": "SOLANA BEACH", "cost": 0.45},
-                    {"line": "398104", "from": "SORRENTO VALLEY", "cost": 0.45},
-                    {"line": "398204", "from": "OLD TOWN", "cost": 0.45},
-                    {"line": "398204", "from": "SORRENTO VALLEY", "cost": 0.45}
+                    {"line": "398104", "from": "SOLANA BEACH", "cost": 1.0},
+                    {"line": "398104", "from": "SORRENTO VALLEY", "cost": 0.5},
+                    {"line": "398204", "from": "OLD TOWN", "cost": 1.0},
+                    {"line": "398204", "from": "SORRENTO VALLEY", "cost": 0.5}
                 ],
-                "day_pass": 4.54,
-                "regional_pass": 10.90
+                "day_pass": 5.0,
+                "regional_pass": 12.0
             }
             self._log.append({"type": "text", "content": "Using default coaster fare based on 2012 base year setup."})
 
@@ -1227,21 +1259,43 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         gen_utils.DataTableProc("%s_transit_passes" % self.data_table_name, data=pass_values)
         self._log.append({"type": "text", "content": "Calculate derived transit attributes complete"})
         return
+    
+    def renumber_transit_nodes(self, network, new_node_id):
+        nodes_to_renumber = []
+        # 1. find all node which have valid HNODE IDs,
+        #    and renumber all other nodes to their new IDs
+        for node in network.nodes():
+            if node["@hnode_tr"] > 0:
+                nodes_to_renumber.append(node)
+            else:
+                node.number = new_node_id
+                new_node_id += 1
+        # 2. renumber nodes with HNODE values to move them
+        #    out of the way
+        hnode_new_id = new_node_id
+        for node in nodes_to_renumber:
+            node.number = hnode_new_id
+            hnode_new_id += 1
+        # 3. renumber nodes with HNODE values to their
+        #    final IDs
+        for node in nodes_to_renumber:
+            node.number = node["@hnode_tr"]
+        return new_node_id
 
     def create_turns(self, network):
         self._log.append({"type": "header", "content": "Import turns and turn restrictions"})
         self._log.append({"type": "text", "content": "Process LINKTYPETURNS.DBF for turn prohibited by type"})
         # Process LINKTYPETURNS.DBF for turn prohibited by type
-        f = _fiona.open(_join(self.source, "LINKTYPETURNS.DBF"), 'r')
-        link_type_turns = _defaultdict(lambda: {})
-        for record in f:
-            record = record['properties']
-            link_type_turns[record["FROM"]][record["TO"]] = {
-                "LEFT": record["LEFT"],
-                "RIGHT": record["RIGHT"],
-                "STRAIGHT": record["STRAIGHT"],
-                "UTURN": record["UTURN"]
-            }
+        with _fiona.open(_join(self.source, "LINKTYPETURNS.DBF"), 'r') as f:
+            link_type_turns = _defaultdict(lambda: {})
+            for record in f:
+                record = record['properties']
+                link_type_turns[record["FROM"]][record["TO"]] = {
+                    "LEFT": record["LEFT"],
+                    "RIGHT": record["RIGHT"],
+                    "STRAIGHT": record["STRAIGHT"],
+                    "UTURN": record["UTURN"]
+                }
         for from_link in network.links():
             if from_link.type in link_type_turns:
                 to_link_turns = link_type_turns[from_link.type]
@@ -1346,6 +1400,42 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         for node in network.nodes():
             node["@interchange"] = node.is_interchange
 
+        #add zone_id attribute
+        # map_file_name = FILE_NAMES["node_taz_map"]
+        # map_file_name = _join(self.source, map_file_name)
+        # node_taz_map = pd.read_csv(map_file_name)    
+ 
+        # # Loop through all nodes in the network to 
+        # for n in network.nodes():
+        #     # Check if the node is in the list of nodes we have (ext not there)
+        #     if n.number in node_taz_map.HNODE:
+        #         n["@zone_id"] = int(node_taz_map[node_taz_map.HNODE == n.number]["TAZ"].values[0])
+        #     else:
+        #         n["@zone_id"] = 0
+        
+        # #read in csv file with parking node numbers and parking counts
+        # parking_file_name = FILE_NAMES["PARKING"]
+        # parking_file_path = _join(self.source, parking_file_name)
+        # if os.path.isfile(parking_file_path):
+        #     with open(parking_file_path) as parking_file:
+        #         self._log.append({"type": "text", "content": "Using parking node details from %s" % parking_file_name})
+        #         parking_nodes = []
+        #         for line in parking_file:
+        #             #grab the second column
+        #             node_number = line.split("\t")[0]
+        #             parking_nodes.append(int(node_number)) 
+        #         self._log.append({"type": "text", "content": parking_nodes})     
+ 
+        #     # Loop through all nodes in the network
+        #     for n in network.nodes():
+        #         # Check if the node is in the list of parking nodes
+        #         if n.number in parking_nodes:
+        #             # If it is, add the attribute to the node
+        #             self._log.append({"type": "text", "content": "node %s has parking" % n.number})
+        #             n["@parking"] = 1
+        #         else:
+        #             n["@parking"] = 0
+
         for link in network.links():
             if link.type == 1 and mode_d in link.modes:
                 link["@intdist_down"] = interchange_distance(link, "DOWNSTREAM")
@@ -1404,7 +1494,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
 		        # make speed on HOV lanes (70mph) the same as parallel GP lanes (65mph)
                 # - set speed back to posted speed - increase travel time by (speed_adj/speed_posted)
-                if link.type == 1 and link["@lane_restriction"] == 2:
+                if link.type == 1 and (link["@lane_restriction"] == 2 or link["@lane_restriction"] == 3):
                     speed_adj = link["@speed_adjusted"]
                     speed_posted = link["@speed_posted"]
                     if speed_adj>0:
@@ -1448,6 +1538,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     link["@capacity_inter" + time] = f * link["capacity_inter" + src_time]
                 else:
                     link["@capacity_inter" + time] = 999999
+                if link["@capacity_hourly" + src_time] != 0:
+                    link["@capacity_hourly" + src_time] = round(link["@capacity_hourly" + src_time])
 
         # Required file
         vehicle_class_factor_file = FILE_NAMES["VEHICLE_CLASS"]
@@ -1591,6 +1683,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         # fd22: cycle length 2.0
         # fd23: cycle length 2.5
         # fd24: cycle length 2.5 and metered ramp
+        # fd25: freeway node approach AM and PM only
         network.create_attribute("LINK", "green_to_cycle")
         network.create_attribute("LINK", "cycle")
         vdf_cycle_map = {1.25: 20, 1.5: 21, 2.0: 22, 2.5: 23}
@@ -1692,7 +1785,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             if not access:
                 raise Exception("No access permitted to zone %s" % centroid.id)
 
-    def add_transit_to_traffic(self, hwy_network, tr_network):
+    def add_transit_to_traffic(self, hwy_network, tr_network, new_node_id):
         if not self.merged_scenario_id or not hwy_network or not tr_network:
             return
         self._log.append({"type": "header", "content": "Merge transit network to traffic network"})
@@ -1732,12 +1825,17 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             if not hwy_link:
                 not_matched_links.append(tr_link)
             else:
-                hwy_node_index[tr_link.i_node] = hwy_link.i_node
-                hwy_node_index[tr_link.j_node] = hwy_link.j_node
+                if tr_link.i_node not in hwy_node_index:
+                    hwy_node_index[tr_link.i_node] = hwy_link.i_node
+                    for attr in tr_network.attributes("NODE"):
+                        hwy_link.i_node[attr] = tr_link.i_node[attr]
+                if tr_link.j_node not in hwy_node_index:
+                    hwy_node_index[tr_link.j_node] = hwy_link.j_node
+                    for attr in tr_network.attributes("NODE"):
+                        hwy_link.j_node[attr] = tr_link.j_node[attr]
+
                 hwy_link.modes |= tr_link.modes
 
-        new_node_id = max(n.number for n in hwy_network.nodes())
-        new_node_id = int(_ceiling(new_node_id / 10000.0) * 10000)
         bus_mode = tr_network.mode("b")
 
         def lookup_node(src_node, new_node_id):
@@ -1745,10 +1843,18 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             if not node:
                 node = hwy_node_position_index.get((src_node.x, src_node.y))
                 if not node:
-                    node = hwy_network.create_regular_node(new_node_id)
-                    new_node_id += 1
-                    for attr in tr_network.attributes("NODE"):
-                        node[attr] = src_node[attr]
+                    if hwy_network.node(src_node.number):
+                        node = hwy_network.create_regular_node(new_node_id)
+                        new_node_id += 1
+                        self._log.append({
+                            "type": "text",
+                            "content": "Duplicate node ID, renumber transit node %s to %s" %
+                            (src_node.number, new_node_id)
+                        })
+                    else:
+                        node = hwy_network.create_regular_node(src_node.number)
+                for attr in tr_network.attributes("NODE"):
+                    node[attr] = src_node[attr]
                 hwy_node_index[src_node] = node
             return node, new_node_id
 
@@ -1774,8 +1880,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             except Exception as error:
                 self._log.append({
                     "type": "text",
-                    "content": "Error creating link '%s', I-node '%s', J-node '%s'. Error message %s, %s " %
-                    (tr_link["@tcov_id"], i_node, j_node, error, tr_link.modes)
+                    "content": "Error creating link '%s', I-node '%s', J-node '%s'. Error message %s" %
+                    (tr_link["@tcov_id"], i_node, j_node, error)
                 })
                 self._error.append("Cannot create transit link '%s' in traffic network" % tr_link["@tcov_id"])
                 fatal_errors += 1
@@ -1855,7 +1961,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         set_extra_function_params = _m.Modeller().tool(
             "inro.emme.traffic_assignment.set_extra_function_parameters")
         emmebank = self.emmebank
-        for f_id in ["fd10", "fd11", "fd20", "fd21", "fd22", "fd23", "fd24", "fp1", "ft1", "ft2", "ft3", "ft4"]:
+        for f_id in ["fd10", "fd11", "fd20", "fd21", "fd22", "fd23", "fd24", "fd25",
+                     "fp1", "ft1", "ft2", "ft3", "ft4"]:
             function = emmebank.function(f_id)
             if function:
                 emmebank.delete_function(function)
@@ -1935,6 +2042,12 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             "2.5/ 2 * (1-el1) ** 2 * (1.0 + 6.0 * ( (volau + volad) / el3 ) ** 2.0))"
             + reliability_tmplt.format(**parameters["road"]),
             emmebank=emmebank)
+        # freeway fd25 (AM and PM only)
+        create_function(
+            "fd25",
+            "(ul1 * (1.0 + 0.6 * put((volau + volad) / ul3) ** 4))"
+            + reliability_tmplt.format(**parameters["freeway"]),
+            emmebank=emmebank)
 
         set_extra_function_params(
             el1="@green_to_cycle", el2="@sta_reliability", el3="@capacity_inter_am",
@@ -1943,7 +2056,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         create_function("fp1", "up1", emmebank=emmebank)  # fixed cost turns stored in turn data 1 (up1)
 
         # buses in mixed traffic, use auto time
-        create_function("ft1", "timau", emmebank=emmebank)
+        create_function("ft1", "ul1", emmebank=emmebank)
         # fixed speed for separate guideway operations
         create_function("ft2", "ul2", emmebank=emmebank)
         # special 0-cost segments for prohibition of walk to different stop from centroid
@@ -2065,7 +2178,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         _m.logbook_write("Import network report", report.render())
 
 
-def get_node(network, number, coordinates, is_centroid):
+def get_node(network, number, coordinates, is_centroid=False):
     node = network.node(number)
     if not node:
         node = network.create_node(number, is_centroid)

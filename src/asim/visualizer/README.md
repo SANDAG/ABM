@@ -22,3 +22,16 @@ The Data-Pipeline-Tool creates a set of summary csvs which are then read into po
 Data Sources:
 ./visualizer/hts files came from BY2016 Summaries.  Sent by Joe Flood via email on 1/3/2023
 ./visualizer/ABM2P_2019Summaries came from ABM2+ 2019 run.  Sent by Joe Flood via email on 1/3/2023
+
+# NOTE:
+These summary files in ABM2P_2019sr15_summaries are placeholders for now:
+
+autoOwnership_AV.csv
+
+telecommute_frequency.csv
+
+ownership_subsidies.csv
+
+vehicle_type.csv
+
+transponder_ownership.csv

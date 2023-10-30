@@ -1,0 +1,845 @@
+Vehicle Body Type,Vehicle Age,Vehicle Fuel Type,Tour Mode,freq
+Car,1,BEV,Drive Alone,2069
+Car,1,Diesel,Drive Alone,3367
+Car,1,Gas,Drive Alone,244968
+Car,1,Hybrid,Drive Alone,9335
+Car,1,PEV,Drive Alone,1826
+Car,2,BEV,Drive Alone,1638
+Car,2,Diesel,Drive Alone,3458
+Car,2,Gas,Drive Alone,289129
+Car,2,Hybrid,Drive Alone,11842
+Car,2,PEV,Drive Alone,1246
+Car,3,BEV,Drive Alone,1814
+Car,3,Diesel,Drive Alone,6803
+Car,3,Gas,Drive Alone,278926
+Car,3,Hybrid,Drive Alone,11412
+Car,3,PEV,Drive Alone,2258
+Car,4,BEV,Drive Alone,1593
+Car,4,Diesel,Drive Alone,6134
+Car,4,Gas,Drive Alone,270209
+Car,4,Hybrid,Drive Alone,12872
+Car,4,PEV,Drive Alone,3688
+Car,5,BEV,Drive Alone,639
+Car,5,Diesel,Drive Alone,3606
+Car,5,Gas,Drive Alone,240028
+Car,5,Hybrid,Drive Alone,11487
+Car,5,PEV,Drive Alone,1078
+Car,6,BEV,Drive Alone,372
+Car,6,Diesel,Drive Alone,2272
+Car,6,Gas,Drive Alone,190072
+Car,6,Hybrid,Drive Alone,6639
+Car,6,PEV,Drive Alone,926
+Car,7,BEV,Drive Alone,391
+Car,7,Diesel,Drive Alone,2517
+Car,7,Gas,Drive Alone,184728
+Car,7,Hybrid,Drive Alone,5819
+Car,7,PEV,Drive Alone,1191
+Car,8,BEV,Drive Alone,6
+Car,8,Diesel,Drive Alone,2194
+Car,8,Gas,Drive Alone,165763
+Car,8,Hybrid,Drive Alone,3885
+Car,8,PEV,Drive Alone,438
+Car-AV,1,BEV,Drive Alone,10136
+Car-AV,1,PEV,Drive Alone,4977
+Car-AV,2,BEV,Drive Alone,11389
+Car-AV,2,PEV,Drive Alone,5365
+Car-AV,3,BEV,Drive Alone,10317
+Car-AV,3,PEV,Drive Alone,5329
+Car-AV,4,BEV,Drive Alone,8629
+Car-AV,4,PEV,Drive Alone,4881
+Car-AV,5,BEV,Drive Alone,7334
+Car-AV,5,PEV,Drive Alone,4360
+Car-AV,6,BEV,Drive Alone,5350
+Car-AV,6,PEV,Drive Alone,3358
+Car-AV,7,BEV,Drive Alone,6059
+Car-AV,7,PEV,Drive Alone,3911
+Car-AV,8,BEV,Drive Alone,5204
+Car-AV,8,PEV,Drive Alone,3521
+Motorcycle,1,BEV,Drive Alone,41
+Motorcycle,1,Diesel,Drive Alone,21
+Motorcycle,1,Gas,Drive Alone,888
+Motorcycle,1,Hybrid,Drive Alone,15
+Motorcycle,1,PEV,Drive Alone,11
+Motorcycle,2,BEV,Drive Alone,34
+Motorcycle,2,Diesel,Drive Alone,30
+Motorcycle,2,Gas,Drive Alone,1214
+Motorcycle,2,Hybrid,Drive Alone,19
+Motorcycle,2,PEV,Drive Alone,11
+Motorcycle,3,BEV,Drive Alone,36
+Motorcycle,3,Diesel,Drive Alone,20
+Motorcycle,3,Gas,Drive Alone,1188
+Motorcycle,3,Hybrid,Drive Alone,21
+Motorcycle,3,PEV,Drive Alone,18
+Motorcycle,4,BEV,Drive Alone,36
+Motorcycle,4,Diesel,Drive Alone,24
+Motorcycle,4,Gas,Drive Alone,1086
+Motorcycle,4,Hybrid,Drive Alone,17
+Motorcycle,4,PEV,Drive Alone,30
+Motorcycle,5,BEV,Drive Alone,30
+Motorcycle,5,Diesel,Drive Alone,17
+Motorcycle,5,Gas,Drive Alone,1108
+Motorcycle,5,Hybrid,Drive Alone,24
+Motorcycle,5,PEV,Drive Alone,13
+Motorcycle,6,BEV,Drive Alone,28
+Motorcycle,6,Diesel,Drive Alone,16
+Motorcycle,6,Gas,Drive Alone,717
+Motorcycle,6,Hybrid,Drive Alone,12
+Motorcycle,6,PEV,Drive Alone,17
+Motorcycle,7,BEV,Drive Alone,40
+Motorcycle,7,Diesel,Drive Alone,16
+Motorcycle,7,Gas,Drive Alone,823
+Motorcycle,7,Hybrid,Drive Alone,9
+Motorcycle,7,PEV,Drive Alone,15
+Motorcycle,8,BEV,Drive Alone,42
+Motorcycle,8,Diesel,Drive Alone,22
+Motorcycle,8,Gas,Drive Alone,884
+Motorcycle,8,Hybrid,Drive Alone,19
+Motorcycle,8,PEV,Drive Alone,19
+Pickup,1,Diesel,Drive Alone,3360
+Pickup,1,Gas,Drive Alone,59136
+Pickup,1,Hybrid,Drive Alone,2281
+Pickup,1,PEV,Drive Alone,212
+Pickup,2,Diesel,Drive Alone,4072
+Pickup,2,Gas,Drive Alone,61430
+Pickup,2,Hybrid,Drive Alone,2692
+Pickup,2,PEV,Drive Alone,109
+Pickup,3,Diesel,Drive Alone,2135
+Pickup,3,Gas,Drive Alone,54334
+Pickup,3,Hybrid,Drive Alone,672
+Pickup,3,PEV,Drive Alone,232
+Pickup,4,Diesel,Drive Alone,1720
+Pickup,4,Gas,Drive Alone,55814
+Pickup,4,Hybrid,Drive Alone,628
+Pickup,4,PEV,Drive Alone,488
+Pickup,5,Diesel,Drive Alone,565
+Pickup,5,Gas,Drive Alone,51001
+Pickup,5,Hybrid,Drive Alone,2278
+Pickup,5,PEV,Drive Alone,217
+Pickup,6,BEV,Drive Alone,2
+Pickup,6,Diesel,Drive Alone,509
+Pickup,6,Gas,Drive Alone,53282
+Pickup,6,Hybrid,Drive Alone,1841
+Pickup,6,PEV,Drive Alone,291
+Pickup,7,Diesel,Drive Alone,961
+Pickup,7,Gas,Drive Alone,59180
+Pickup,7,Hybrid,Drive Alone,1854
+Pickup,7,PEV,Drive Alone,642
+Pickup,8,BEV,Drive Alone,1
+Pickup,8,Diesel,Drive Alone,421
+Pickup,8,Gas,Drive Alone,52896
+Pickup,8,Hybrid,Drive Alone,1613
+Pickup,8,PEV,Drive Alone,498
+SUV,1,BEV,Drive Alone,2456
+SUV,1,Diesel,Drive Alone,2242
+SUV,1,Gas,Drive Alone,152976
+SUV,1,Hybrid,Drive Alone,4195
+SUV,1,PEV,Drive Alone,713
+SUV,2,BEV,Drive Alone,1192
+SUV,2,Diesel,Drive Alone,5031
+SUV,2,Gas,Drive Alone,166813
+SUV,2,Hybrid,Drive Alone,5027
+SUV,2,PEV,Drive Alone,441
+SUV,3,BEV,Drive Alone,1
+SUV,3,Diesel,Drive Alone,4330
+SUV,3,Gas,Drive Alone,162723
+SUV,3,Hybrid,Drive Alone,5512
+SUV,3,PEV,Drive Alone,379
+SUV,4,BEV,Drive Alone,324
+SUV,4,Diesel,Drive Alone,3880
+SUV,4,Gas,Drive Alone,148008
+SUV,4,Hybrid,Drive Alone,5335
+SUV,4,PEV,Drive Alone,397
+SUV,5,BEV,Drive Alone,161
+SUV,5,Diesel,Drive Alone,2668
+SUV,5,Gas,Drive Alone,133285
+SUV,5,Hybrid,Drive Alone,4999
+SUV,5,PEV,Drive Alone,176
+SUV,6,BEV,Drive Alone,193
+SUV,6,Diesel,Drive Alone,1319
+SUV,6,Gas,Drive Alone,105454
+SUV,6,Hybrid,Drive Alone,4333
+SUV,6,PEV,Drive Alone,257
+SUV,7,Diesel,Drive Alone,1418
+SUV,7,Gas,Drive Alone,116868
+SUV,7,Hybrid,Drive Alone,6061
+SUV,7,PEV,Drive Alone,494
+SUV,8,BEV,Drive Alone,1
+SUV,8,Diesel,Drive Alone,1351
+SUV,8,Gas,Drive Alone,99009
+SUV,8,Hybrid,Drive Alone,4599
+SUV,8,PEV,Drive Alone,505
+Van,1,BEV,Drive Alone,6
+Van,1,Diesel,Drive Alone,537
+Van,1,Gas,Drive Alone,22837
+Van,1,Hybrid,Drive Alone,612
+Van,1,PEV,Drive Alone,426
+Van,2,Diesel,Drive Alone,651
+Van,2,Gas,Drive Alone,25693
+Van,2,Hybrid,Drive Alone,614
+Van,2,PEV,Drive Alone,123
+Van,3,Diesel,Drive Alone,695
+Van,3,Gas,Drive Alone,39600
+Van,3,Hybrid,Drive Alone,616
+Van,3,PEV,Drive Alone,319
+Van,4,Diesel,Drive Alone,585
+Van,4,Gas,Drive Alone,48329
+Van,4,Hybrid,Drive Alone,626
+Van,4,PEV,Drive Alone,556
+Van,5,BEV,Drive Alone,1
+Van,5,Diesel,Drive Alone,543
+Van,5,Gas,Drive Alone,43288
+Van,5,Hybrid,Drive Alone,501
+Van,5,PEV,Drive Alone,325
+Van,6,Diesel,Drive Alone,506
+Van,6,Gas,Drive Alone,37733
+Van,6,Hybrid,Drive Alone,476
+Van,6,PEV,Drive Alone,314
+Van,7,BEV,Drive Alone,3
+Van,7,Diesel,Drive Alone,455
+Van,7,Gas,Drive Alone,36898
+Van,7,Hybrid,Drive Alone,461
+Van,7,PEV,Drive Alone,712
+Van,8,Diesel,Drive Alone,433
+Van,8,Gas,Drive Alone,23552
+Van,8,Hybrid,Drive Alone,321
+Van,8,PEV,Drive Alone,595
+non_hh_veh,non_hh_veh,non_hh_veh,Drive Alone,232881
+Pickup,1,BEV,Drive Alone,0
+Pickup,4,BEV,Drive Alone,0
+Pickup,5,BEV,Drive Alone,0
+Van,6,BEV,Drive Alone,0
+Van,8,BEV,Drive Alone,0
+Van,4,BEV,Drive Alone,0
+Car,1,BEV,Shared Ride 2,2066
+Car,1,Diesel,Shared Ride 2,3414
+Car,1,Gas,Shared Ride 2,238888
+Car,1,Hybrid,Shared Ride 2,9226
+Car,1,PEV,Shared Ride 2,1692
+Car,2,BEV,Shared Ride 2,1519
+Car,2,Diesel,Shared Ride 2,3304
+Car,2,Gas,Shared Ride 2,279025
+Car,2,Hybrid,Shared Ride 2,11440
+Car,2,PEV,Shared Ride 2,1214
+Car,3,BEV,Shared Ride 2,1656
+Car,3,Diesel,Shared Ride 2,6480
+Car,3,Gas,Shared Ride 2,265391
+Car,3,Hybrid,Shared Ride 2,11052
+Car,3,PEV,Shared Ride 2,2058
+Car,4,BEV,Shared Ride 2,1487
+Car,4,Diesel,Shared Ride 2,5720
+Car,4,Gas,Shared Ride 2,255772
+Car,4,Hybrid,Shared Ride 2,12131
+Car,4,PEV,Shared Ride 2,3374
+Car,5,BEV,Shared Ride 2,533
+Car,5,Diesel,Shared Ride 2,3380
+Car,5,Gas,Shared Ride 2,223844
+Car,5,Hybrid,Shared Ride 2,10615
+Car,5,PEV,Shared Ride 2,999
+Car,6,BEV,Shared Ride 2,334
+Car,6,Diesel,Shared Ride 2,2076
+Car,6,Gas,Shared Ride 2,174831
+Car,6,Hybrid,Shared Ride 2,6189
+Car,6,PEV,Shared Ride 2,835
+Car,7,BEV,Shared Ride 2,381
+Car,7,Diesel,Shared Ride 2,2337
+Car,7,Gas,Shared Ride 2,168521
+Car,7,Hybrid,Shared Ride 2,5428
+Car,7,PEV,Shared Ride 2,1031
+Car,8,BEV,Shared Ride 2,5
+Car,8,Diesel,Shared Ride 2,1962
+Car,8,Gas,Shared Ride 2,148869
+Car,8,Hybrid,Shared Ride 2,3440
+Car,8,PEV,Shared Ride 2,379
+Car-AV,1,BEV,Shared Ride 2,10141
+Car-AV,1,PEV,Shared Ride 2,4899
+Car-AV,2,BEV,Shared Ride 2,11005
+Car-AV,2,PEV,Shared Ride 2,5256
+Car-AV,3,BEV,Shared Ride 2,9859
+Car-AV,3,PEV,Shared Ride 2,5079
+Car-AV,4,BEV,Shared Ride 2,8237
+Car-AV,4,PEV,Shared Ride 2,4733
+Car-AV,5,BEV,Shared Ride 2,6954
+Car-AV,5,PEV,Shared Ride 2,4029
+Car-AV,6,BEV,Shared Ride 2,5057
+Car-AV,6,PEV,Shared Ride 2,3119
+Car-AV,7,BEV,Shared Ride 2,5553
+Car-AV,7,PEV,Shared Ride 2,3506
+Car-AV,8,BEV,Shared Ride 2,4606
+Car-AV,8,PEV,Shared Ride 2,3159
+Motorcycle,1,BEV,Shared Ride 2,21
+Motorcycle,1,Diesel,Shared Ride 2,15
+Motorcycle,1,Gas,Shared Ride 2,520
+Motorcycle,1,Hybrid,Shared Ride 2,2
+Motorcycle,1,PEV,Shared Ride 2,4
+Motorcycle,2,BEV,Shared Ride 2,21
+Motorcycle,2,Diesel,Shared Ride 2,18
+Motorcycle,2,Gas,Shared Ride 2,623
+Motorcycle,2,Hybrid,Shared Ride 2,11
+Motorcycle,2,PEV,Shared Ride 2,7
+Motorcycle,3,BEV,Shared Ride 2,12
+Motorcycle,3,Diesel,Shared Ride 2,11
+Motorcycle,3,Gas,Shared Ride 2,611
+Motorcycle,3,Hybrid,Shared Ride 2,12
+Motorcycle,3,PEV,Shared Ride 2,15
+Motorcycle,4,BEV,Shared Ride 2,20
+Motorcycle,4,Diesel,Shared Ride 2,17
+Motorcycle,4,Gas,Shared Ride 2,512
+Motorcycle,4,Hybrid,Shared Ride 2,11
+Motorcycle,4,PEV,Shared Ride 2,16
+Motorcycle,5,BEV,Shared Ride 2,13
+Motorcycle,5,Diesel,Shared Ride 2,10
+Motorcycle,5,Gas,Shared Ride 2,540
+Motorcycle,5,Hybrid,Shared Ride 2,10
+Motorcycle,5,PEV,Shared Ride 2,10
+Motorcycle,6,BEV,Shared Ride 2,5
+Motorcycle,6,Diesel,Shared Ride 2,4
+Motorcycle,6,Gas,Shared Ride 2,347
+Motorcycle,6,Hybrid,Shared Ride 2,6
+Motorcycle,6,PEV,Shared Ride 2,4
+Motorcycle,7,BEV,Shared Ride 2,14
+Motorcycle,7,Diesel,Shared Ride 2,11
+Motorcycle,7,Gas,Shared Ride 2,363
+Motorcycle,7,Hybrid,Shared Ride 2,7
+Motorcycle,7,PEV,Shared Ride 2,15
+Motorcycle,8,BEV,Shared Ride 2,15
+Motorcycle,8,Diesel,Shared Ride 2,18
+Motorcycle,8,Gas,Shared Ride 2,385
+Motorcycle,8,Hybrid,Shared Ride 2,5
+Motorcycle,8,PEV,Shared Ride 2,10
+Pickup,1,Diesel,Shared Ride 2,3116
+Pickup,1,Gas,Shared Ride 2,55225
+Pickup,1,Hybrid,Shared Ride 2,2126
+Pickup,1,PEV,Shared Ride 2,206
+Pickup,2,Diesel,Shared Ride 2,3746
+Pickup,2,Gas,Shared Ride 2,56836
+Pickup,2,Hybrid,Shared Ride 2,2474
+Pickup,2,PEV,Shared Ride 2,115
+Pickup,3,Diesel,Shared Ride 2,1875
+Pickup,3,Gas,Shared Ride 2,49293
+Pickup,3,Hybrid,Shared Ride 2,537
+Pickup,3,PEV,Shared Ride 2,227
+Pickup,4,Diesel,Shared Ride 2,1525
+Pickup,4,Gas,Shared Ride 2,50028
+Pickup,4,Hybrid,Shared Ride 2,596
+Pickup,4,PEV,Shared Ride 2,436
+Pickup,5,Diesel,Shared Ride 2,515
+Pickup,5,Gas,Shared Ride 2,45780
+Pickup,5,Hybrid,Shared Ride 2,2008
+Pickup,5,PEV,Shared Ride 2,179
+Pickup,6,BEV,Shared Ride 2,0
+Pickup,6,Diesel,Shared Ride 2,436
+Pickup,6,Gas,Shared Ride 2,46643
+Pickup,6,Hybrid,Shared Ride 2,1560
+Pickup,6,PEV,Shared Ride 2,292
+Pickup,7,Diesel,Shared Ride 2,837
+Pickup,7,Gas,Shared Ride 2,50962
+Pickup,7,Hybrid,Shared Ride 2,1608
+Pickup,7,PEV,Shared Ride 2,547
+Pickup,8,BEV,Shared Ride 2,0
+Pickup,8,Diesel,Shared Ride 2,342
+Pickup,8,Gas,Shared Ride 2,44902
+Pickup,8,Hybrid,Shared Ride 2,1379
+Pickup,8,PEV,Shared Ride 2,418
+SUV,1,BEV,Shared Ride 2,2760
+SUV,1,Diesel,Shared Ride 2,2558
+SUV,1,Gas,Shared Ride 2,173579
+SUV,1,Hybrid,Shared Ride 2,4659
+SUV,1,PEV,Shared Ride 2,833
+SUV,2,BEV,Shared Ride 2,1375
+SUV,2,Diesel,Shared Ride 2,5775
+SUV,2,Gas,Shared Ride 2,187704
+SUV,2,Hybrid,Shared Ride 2,5669
+SUV,2,PEV,Shared Ride 2,499
+SUV,3,BEV,Shared Ride 2,0
+SUV,3,Diesel,Shared Ride 2,4876
+SUV,3,Gas,Shared Ride 2,180387
+SUV,3,Hybrid,Shared Ride 2,6229
+SUV,3,PEV,Shared Ride 2,446
+SUV,4,BEV,Shared Ride 2,373
+SUV,4,Diesel,Shared Ride 2,4335
+SUV,4,Gas,Shared Ride 2,162730
+SUV,4,Hybrid,Shared Ride 2,5967
+SUV,4,PEV,Shared Ride 2,449
+SUV,5,BEV,Shared Ride 2,202
+SUV,5,Diesel,Shared Ride 2,2929
+SUV,5,Gas,Shared Ride 2,145449
+SUV,5,Hybrid,Shared Ride 2,5460
+SUV,5,PEV,Shared Ride 2,206
+SUV,6,BEV,Shared Ride 2,189
+SUV,6,Diesel,Shared Ride 2,1426
+SUV,6,Gas,Shared Ride 2,113359
+SUV,6,Hybrid,Shared Ride 2,4715
+SUV,6,PEV,Shared Ride 2,259
+SUV,7,Diesel,Shared Ride 2,1442
+SUV,7,Gas,Shared Ride 2,123879
+SUV,7,Hybrid,Shared Ride 2,6399
+SUV,7,PEV,Shared Ride 2,562
+SUV,8,BEV,Shared Ride 2,0
+SUV,8,Diesel,Shared Ride 2,1425
+SUV,8,Gas,Shared Ride 2,104480
+SUV,8,Hybrid,Shared Ride 2,4931
+SUV,8,PEV,Shared Ride 2,553
+Van,1,BEV,Shared Ride 2,5
+Van,1,Diesel,Shared Ride 2,695
+Van,1,Gas,Shared Ride 2,29387
+Van,1,Hybrid,Shared Ride 2,785
+Van,1,PEV,Shared Ride 2,586
+Van,2,Diesel,Shared Ride 2,842
+Van,2,Gas,Shared Ride 2,32731
+Van,2,Hybrid,Shared Ride 2,816
+Van,2,PEV,Shared Ride 2,174
+Van,3,Diesel,Shared Ride 2,903
+Van,3,Gas,Shared Ride 2,49370
+Van,3,Hybrid,Shared Ride 2,789
+Van,3,PEV,Shared Ride 2,366
+Van,4,Diesel,Shared Ride 2,776
+Van,4,Gas,Shared Ride 2,59599
+Van,4,Hybrid,Shared Ride 2,766
+Van,4,PEV,Shared Ride 2,710
+Van,5,BEV,Shared Ride 2,1
+Van,5,Diesel,Shared Ride 2,661
+Van,5,Gas,Shared Ride 2,52605
+Van,5,Hybrid,Shared Ride 2,583
+Van,5,PEV,Shared Ride 2,388
+Van,6,Diesel,Shared Ride 2,637
+Van,6,Gas,Shared Ride 2,45710
+Van,6,Hybrid,Shared Ride 2,589
+Van,6,PEV,Shared Ride 2,393
+Van,7,BEV,Shared Ride 2,2
+Van,7,Diesel,Shared Ride 2,576
+Van,7,Gas,Shared Ride 2,43725
+Van,7,Hybrid,Shared Ride 2,576
+Van,7,PEV,Shared Ride 2,832
+Van,8,Diesel,Shared Ride 2,479
+Van,8,Gas,Shared Ride 2,27741
+Van,8,Hybrid,Shared Ride 2,397
+Van,8,PEV,Shared Ride 2,737
+non_hh_veh,non_hh_veh,non_hh_veh,Shared Ride 2,228569
+Pickup,1,BEV,Shared Ride 2,1
+Pickup,4,BEV,Shared Ride 2,2
+Pickup,5,BEV,Shared Ride 2,1
+Van,6,BEV,Shared Ride 2,1
+Van,8,BEV,Shared Ride 2,1
+Van,4,BEV,Shared Ride 2,0
+Car,1,BEV,Shared Ride 3+,1951
+Car,1,Diesel,Shared Ride 3+,3172
+Car,1,Gas,Shared Ride 3+,229100
+Car,1,Hybrid,Shared Ride 3+,8740
+Car,1,PEV,Shared Ride 3+,1646
+Car,2,BEV,Shared Ride 3+,1461
+Car,2,Diesel,Shared Ride 3+,3091
+Car,2,Gas,Shared Ride 3+,262973
+Car,2,Hybrid,Shared Ride 3+,10944
+Car,2,PEV,Shared Ride 3+,1143
+Car,3,BEV,Shared Ride 3+,1602
+Car,3,Diesel,Shared Ride 3+,6046
+Car,3,Gas,Shared Ride 3+,246078
+Car,3,Hybrid,Shared Ride 3+,10300
+Car,3,PEV,Shared Ride 3+,1891
+Car,4,BEV,Shared Ride 3+,1297
+Car,4,Diesel,Shared Ride 3+,5153
+Car,4,Gas,Shared Ride 3+,233226
+Car,4,Hybrid,Shared Ride 3+,10997
+Car,4,PEV,Shared Ride 3+,3103
+Car,5,BEV,Shared Ride 3+,475
+Car,5,Diesel,Shared Ride 3+,3006
+Car,5,Gas,Shared Ride 3+,199556
+Car,5,Hybrid,Shared Ride 3+,9466
+Car,5,PEV,Shared Ride 3+,908
+Car,6,BEV,Shared Ride 3+,293
+Car,6,Diesel,Shared Ride 3+,1797
+Car,6,Gas,Shared Ride 3+,153323
+Car,6,Hybrid,Shared Ride 3+,5560
+Car,6,PEV,Shared Ride 3+,728
+Car,7,BEV,Shared Ride 3+,309
+Car,7,Diesel,Shared Ride 3+,2029
+Car,7,Gas,Shared Ride 3+,145116
+Car,7,Hybrid,Shared Ride 3+,4607
+Car,7,PEV,Shared Ride 3+,879
+Car,8,BEV,Shared Ride 3+,3
+Car,8,Diesel,Shared Ride 3+,1632
+Car,8,Gas,Shared Ride 3+,125790
+Car,8,Hybrid,Shared Ride 3+,2927
+Car,8,PEV,Shared Ride 3+,326
+Car-AV,1,BEV,Shared Ride 3+,9751
+Car-AV,1,PEV,Shared Ride 3+,4772
+Car-AV,2,BEV,Shared Ride 3+,10545
+Car-AV,2,PEV,Shared Ride 3+,4946
+Car-AV,3,BEV,Shared Ride 3+,9291
+Car-AV,3,PEV,Shared Ride 3+,4746
+Car-AV,4,BEV,Shared Ride 3+,7428
+Car-AV,4,PEV,Shared Ride 3+,4296
+Car-AV,5,BEV,Shared Ride 3+,6311
+Car-AV,5,PEV,Shared Ride 3+,3686
+Car-AV,6,BEV,Shared Ride 3+,4409
+Car-AV,6,PEV,Shared Ride 3+,2731
+Car-AV,7,BEV,Shared Ride 3+,4865
+Car-AV,7,PEV,Shared Ride 3+,2983
+Car-AV,8,BEV,Shared Ride 3+,4003
+Car-AV,8,PEV,Shared Ride 3+,2765
+Motorcycle,1,BEV,Shared Ride 3+,7
+Motorcycle,1,Diesel,Shared Ride 3+,2
+Motorcycle,1,Gas,Shared Ride 3+,262
+Motorcycle,1,Hybrid,Shared Ride 3+,3
+Motorcycle,1,PEV,Shared Ride 3+,2
+Motorcycle,2,BEV,Shared Ride 3+,4
+Motorcycle,2,Diesel,Shared Ride 3+,7
+Motorcycle,2,Gas,Shared Ride 3+,285
+Motorcycle,2,Hybrid,Shared Ride 3+,5
+Motorcycle,2,PEV,Shared Ride 3+,1
+Motorcycle,3,BEV,Shared Ride 3+,6
+Motorcycle,3,Diesel,Shared Ride 3+,7
+Motorcycle,3,Gas,Shared Ride 3+,263
+Motorcycle,3,Hybrid,Shared Ride 3+,5
+Motorcycle,3,PEV,Shared Ride 3+,0
+Motorcycle,4,BEV,Shared Ride 3+,6
+Motorcycle,4,Diesel,Shared Ride 3+,9
+Motorcycle,4,Gas,Shared Ride 3+,236
+Motorcycle,4,Hybrid,Shared Ride 3+,4
+Motorcycle,4,PEV,Shared Ride 3+,2
+Motorcycle,5,BEV,Shared Ride 3+,6
+Motorcycle,5,Diesel,Shared Ride 3+,5
+Motorcycle,5,Gas,Shared Ride 3+,213
+Motorcycle,5,Hybrid,Shared Ride 3+,4
+Motorcycle,5,PEV,Shared Ride 3+,5
+Motorcycle,6,BEV,Shared Ride 3+,4
+Motorcycle,6,Diesel,Shared Ride 3+,3
+Motorcycle,6,Gas,Shared Ride 3+,160
+Motorcycle,6,Hybrid,Shared Ride 3+,4
+Motorcycle,6,PEV,Shared Ride 3+,2
+Motorcycle,7,BEV,Shared Ride 3+,7
+Motorcycle,7,Diesel,Shared Ride 3+,5
+Motorcycle,7,Gas,Shared Ride 3+,146
+Motorcycle,7,Hybrid,Shared Ride 3+,4
+Motorcycle,7,PEV,Shared Ride 3+,5
+Motorcycle,8,BEV,Shared Ride 3+,7
+Motorcycle,8,Diesel,Shared Ride 3+,7
+Motorcycle,8,Gas,Shared Ride 3+,164
+Motorcycle,8,Hybrid,Shared Ride 3+,1
+Motorcycle,8,PEV,Shared Ride 3+,4
+Pickup,1,Diesel,Shared Ride 3+,2866
+Pickup,1,Gas,Shared Ride 3+,49101
+Pickup,1,Hybrid,Shared Ride 3+,1890
+Pickup,1,PEV,Shared Ride 3+,190
+Pickup,2,Diesel,Shared Ride 3+,3369
+Pickup,2,Gas,Shared Ride 3+,49806
+Pickup,2,Hybrid,Shared Ride 3+,2146
+Pickup,2,PEV,Shared Ride 3+,86
+Pickup,3,Diesel,Shared Ride 3+,1684
+Pickup,3,Gas,Shared Ride 3+,42466
+Pickup,3,Hybrid,Shared Ride 3+,491
+Pickup,3,PEV,Shared Ride 3+,174
+Pickup,4,Diesel,Shared Ride 3+,1284
+Pickup,4,Gas,Shared Ride 3+,42486
+Pickup,4,Hybrid,Shared Ride 3+,436
+Pickup,4,PEV,Shared Ride 3+,360
+Pickup,5,Diesel,Shared Ride 3+,421
+Pickup,5,Gas,Shared Ride 3+,37907
+Pickup,5,Hybrid,Shared Ride 3+,1677
+Pickup,5,PEV,Shared Ride 3+,156
+Pickup,6,BEV,Shared Ride 3+,0
+Pickup,6,Diesel,Shared Ride 3+,349
+Pickup,6,Gas,Shared Ride 3+,37788
+Pickup,6,Hybrid,Shared Ride 3+,1299
+Pickup,6,PEV,Shared Ride 3+,187
+Pickup,7,Diesel,Shared Ride 3+,670
+Pickup,7,Gas,Shared Ride 3+,40852
+Pickup,7,Hybrid,Shared Ride 3+,1287
+Pickup,7,PEV,Shared Ride 3+,456
+Pickup,8,BEV,Shared Ride 3+,0
+Pickup,8,Diesel,Shared Ride 3+,270
+Pickup,8,Gas,Shared Ride 3+,35099
+Pickup,8,Hybrid,Shared Ride 3+,1087
+Pickup,8,PEV,Shared Ride 3+,314
+SUV,1,BEV,Shared Ride 3+,3274
+SUV,1,Diesel,Shared Ride 3+,3158
+SUV,1,Gas,Shared Ride 3+,203054
+SUV,1,Hybrid,Shared Ride 3+,5493
+SUV,1,PEV,Shared Ride 3+,949
+SUV,2,BEV,Shared Ride 3+,1543
+SUV,2,Diesel,Shared Ride 3+,6732
+SUV,2,Gas,Shared Ride 3+,216370
+SUV,2,Hybrid,Shared Ride 3+,6630
+SUV,2,PEV,Shared Ride 3+,619
+SUV,3,BEV,Shared Ride 3+,0
+SUV,3,Diesel,Shared Ride 3+,5521
+SUV,3,Gas,Shared Ride 3+,205943
+SUV,3,Hybrid,Shared Ride 3+,7116
+SUV,3,PEV,Shared Ride 3+,468
+SUV,4,BEV,Shared Ride 3+,425
+SUV,4,Diesel,Shared Ride 3+,4896
+SUV,4,Gas,Shared Ride 3+,183144
+SUV,4,Hybrid,Shared Ride 3+,6722
+SUV,4,PEV,Shared Ride 3+,518
+SUV,5,BEV,Shared Ride 3+,189
+SUV,5,Diesel,Shared Ride 3+,3316
+SUV,5,Gas,Shared Ride 3+,161060
+SUV,5,Hybrid,Shared Ride 3+,6089
+SUV,5,PEV,Shared Ride 3+,238
+SUV,6,BEV,Shared Ride 3+,194
+SUV,6,Diesel,Shared Ride 3+,1611
+SUV,6,Gas,Shared Ride 3+,124674
+SUV,6,Hybrid,Shared Ride 3+,5179
+SUV,6,PEV,Shared Ride 3+,281
+SUV,7,Diesel,Shared Ride 3+,1571
+SUV,7,Gas,Shared Ride 3+,133664
+SUV,7,Hybrid,Shared Ride 3+,6918
+SUV,7,PEV,Shared Ride 3+,653
+SUV,8,BEV,Shared Ride 3+,1
+SUV,8,Diesel,Shared Ride 3+,1557
+SUV,8,Gas,Shared Ride 3+,110901
+SUV,8,Hybrid,Shared Ride 3+,5248
+SUV,8,PEV,Shared Ride 3+,567
+Van,1,BEV,Shared Ride 3+,9
+Van,1,Diesel,Shared Ride 3+,1003
+Van,1,Gas,Shared Ride 3+,38805
+Van,1,Hybrid,Shared Ride 3+,995
+Van,1,PEV,Shared Ride 3+,743
+Van,2,Diesel,Shared Ride 3+,1064
+Van,2,Gas,Shared Ride 3+,42206
+Van,2,Hybrid,Shared Ride 3+,1086
+Van,2,PEV,Shared Ride 3+,215
+Van,3,Diesel,Shared Ride 3+,1184
+Van,3,Gas,Shared Ride 3+,63835
+Van,3,Hybrid,Shared Ride 3+,1008
+Van,3,PEV,Shared Ride 3+,488
+Van,4,Diesel,Shared Ride 3+,982
+Van,4,Gas,Shared Ride 3+,75993
+Van,4,Hybrid,Shared Ride 3+,984
+Van,4,PEV,Shared Ride 3+,963
+Van,5,BEV,Shared Ride 3+,0
+Van,5,Diesel,Shared Ride 3+,850
+Van,5,Gas,Shared Ride 3+,66674
+Van,5,Hybrid,Shared Ride 3+,744
+Van,5,PEV,Shared Ride 3+,559
+Van,6,Diesel,Shared Ride 3+,834
+Van,6,Gas,Shared Ride 3+,56948
+Van,6,Hybrid,Shared Ride 3+,736
+Van,6,PEV,Shared Ride 3+,475
+Van,7,BEV,Shared Ride 3+,3
+Van,7,Diesel,Shared Ride 3+,725
+Van,7,Gas,Shared Ride 3+,53627
+Van,7,Hybrid,Shared Ride 3+,695
+Van,7,PEV,Shared Ride 3+,1050
+Van,8,Diesel,Shared Ride 3+,635
+Van,8,Gas,Shared Ride 3+,33968
+Van,8,Hybrid,Shared Ride 3+,496
+Van,8,PEV,Shared Ride 3+,879
+non_hh_veh,non_hh_veh,non_hh_veh,Shared Ride 3+,224056
+Pickup,1,BEV,Shared Ride 3+,0
+Pickup,4,BEV,Shared Ride 3+,0
+Pickup,5,BEV,Shared Ride 3+,0
+Van,6,BEV,Shared Ride 3+,2
+Van,8,BEV,Shared Ride 3+,1
+Van,4,BEV,Shared Ride 3+,1
+Car,1,BEV,Selected Tour Mode,1600
+Car,1,Diesel,Selected Tour Mode,2557
+Car,1,Gas,Selected Tour Mode,177972
+Car,1,Hybrid,Selected Tour Mode,6765
+Car,1,PEV,Selected Tour Mode,1299
+Car,2,BEV,Selected Tour Mode,1209
+Car,2,Diesel,Selected Tour Mode,2547
+Car,2,Gas,Selected Tour Mode,207272
+Car,2,Hybrid,Selected Tour Mode,8644
+Car,2,PEV,Selected Tour Mode,866
+Car,3,BEV,Selected Tour Mode,1325
+Car,3,Diesel,Selected Tour Mode,4973
+Car,3,Gas,Selected Tour Mode,197760
+Car,3,Hybrid,Selected Tour Mode,8169
+Car,3,PEV,Selected Tour Mode,1519
+Car,4,BEV,Selected Tour Mode,1106
+Car,4,Diesel,Selected Tour Mode,4377
+Car,4,Gas,Selected Tour Mode,189118
+Car,4,Hybrid,Selected Tour Mode,9152
+Car,4,PEV,Selected Tour Mode,2590
+Car,5,BEV,Selected Tour Mode,413
+Car,5,Diesel,Selected Tour Mode,2525
+Car,5,Gas,Selected Tour Mode,165267
+Car,5,Hybrid,Selected Tour Mode,7923
+Car,5,PEV,Selected Tour Mode,778
+Car,6,BEV,Selected Tour Mode,270
+Car,6,Diesel,Selected Tour Mode,1540
+Car,6,Gas,Selected Tour Mode,128615
+Car,6,Hybrid,Selected Tour Mode,4670
+Car,6,PEV,Selected Tour Mode,651
+Car,7,BEV,Selected Tour Mode,297
+Car,7,Diesel,Selected Tour Mode,1732
+Car,7,Gas,Selected Tour Mode,123586
+Car,7,Hybrid,Selected Tour Mode,3918
+Car,7,PEV,Selected Tour Mode,762
+Car,8,BEV,Selected Tour Mode,5
+Car,8,Diesel,Selected Tour Mode,1479
+Car,8,Gas,Selected Tour Mode,108992
+Car,8,Hybrid,Selected Tour Mode,2610
+Car,8,PEV,Selected Tour Mode,272
+Car-AV,1,BEV,Selected Tour Mode,7531
+Car-AV,1,PEV,Selected Tour Mode,3602
+Car-AV,2,BEV,Selected Tour Mode,8267
+Car-AV,2,PEV,Selected Tour Mode,3902
+Car-AV,3,BEV,Selected Tour Mode,7401
+Car-AV,3,PEV,Selected Tour Mode,3801
+Car-AV,4,BEV,Selected Tour Mode,6013
+Car-AV,4,PEV,Selected Tour Mode,3385
+Car-AV,5,BEV,Selected Tour Mode,5256
+Car-AV,5,PEV,Selected Tour Mode,2998
+Car-AV,6,BEV,Selected Tour Mode,3673
+Car-AV,6,PEV,Selected Tour Mode,2329
+Car-AV,7,BEV,Selected Tour Mode,4057
+Car-AV,7,PEV,Selected Tour Mode,2586
+Car-AV,8,BEV,Selected Tour Mode,3473
+Car-AV,8,PEV,Selected Tour Mode,2350
+Motorcycle,1,BEV,Selected Tour Mode,16
+Motorcycle,1,Diesel,Selected Tour Mode,7
+Motorcycle,1,Gas,Selected Tour Mode,457
+Motorcycle,1,Hybrid,Selected Tour Mode,8
+Motorcycle,1,PEV,Selected Tour Mode,0
+Motorcycle,2,BEV,Selected Tour Mode,15
+Motorcycle,2,Diesel,Selected Tour Mode,7
+Motorcycle,2,Gas,Selected Tour Mode,594
+Motorcycle,2,Hybrid,Selected Tour Mode,9
+Motorcycle,2,PEV,Selected Tour Mode,4
+Motorcycle,3,BEV,Selected Tour Mode,14
+Motorcycle,3,Diesel,Selected Tour Mode,10
+Motorcycle,3,Gas,Selected Tour Mode,603
+Motorcycle,3,Hybrid,Selected Tour Mode,11
+Motorcycle,3,PEV,Selected Tour Mode,5
+Motorcycle,4,BEV,Selected Tour Mode,20
+Motorcycle,4,Diesel,Selected Tour Mode,11
+Motorcycle,4,Gas,Selected Tour Mode,532
+Motorcycle,4,Hybrid,Selected Tour Mode,7
+Motorcycle,4,PEV,Selected Tour Mode,14
+Motorcycle,5,BEV,Selected Tour Mode,14
+Motorcycle,5,Diesel,Selected Tour Mode,7
+Motorcycle,5,Gas,Selected Tour Mode,523
+Motorcycle,5,Hybrid,Selected Tour Mode,11
+Motorcycle,5,PEV,Selected Tour Mode,5
+Motorcycle,6,BEV,Selected Tour Mode,10
+Motorcycle,6,Diesel,Selected Tour Mode,3
+Motorcycle,6,Gas,Selected Tour Mode,339
+Motorcycle,6,Hybrid,Selected Tour Mode,6
+Motorcycle,6,PEV,Selected Tour Mode,7
+Motorcycle,7,BEV,Selected Tour Mode,21
+Motorcycle,7,Diesel,Selected Tour Mode,8
+Motorcycle,7,Gas,Selected Tour Mode,396
+Motorcycle,7,Hybrid,Selected Tour Mode,7
+Motorcycle,7,PEV,Selected Tour Mode,8
+Motorcycle,8,BEV,Selected Tour Mode,16
+Motorcycle,8,Diesel,Selected Tour Mode,12
+Motorcycle,8,Gas,Selected Tour Mode,379
+Motorcycle,8,Hybrid,Selected Tour Mode,10
+Motorcycle,8,PEV,Selected Tour Mode,9
+Pickup,1,Diesel,Selected Tour Mode,2418
+Pickup,1,Gas,Selected Tour Mode,40714
+Pickup,1,Hybrid,Selected Tour Mode,1606
+Pickup,1,PEV,Selected Tour Mode,154
+Pickup,2,Diesel,Selected Tour Mode,2812
+Pickup,2,Gas,Selected Tour Mode,42188
+Pickup,2,Hybrid,Selected Tour Mode,1861
+Pickup,2,PEV,Selected Tour Mode,72
+Pickup,3,Diesel,Selected Tour Mode,1461
+Pickup,3,Gas,Selected Tour Mode,36789
+Pickup,3,Hybrid,Selected Tour Mode,457
+Pickup,3,PEV,Selected Tour Mode,149
+Pickup,4,Diesel,Selected Tour Mode,1141
+Pickup,4,Gas,Selected Tour Mode,36936
+Pickup,4,Hybrid,Selected Tour Mode,420
+Pickup,4,PEV,Selected Tour Mode,314
+Pickup,5,Diesel,Selected Tour Mode,374
+Pickup,5,Gas,Selected Tour Mode,33426
+Pickup,5,Hybrid,Selected Tour Mode,1512
+Pickup,5,PEV,Selected Tour Mode,149
+Pickup,6,BEV,Selected Tour Mode,0
+Pickup,6,Diesel,Selected Tour Mode,308
+Pickup,6,Gas,Selected Tour Mode,34189
+Pickup,6,Hybrid,Selected Tour Mode,1145
+Pickup,6,PEV,Selected Tour Mode,176
+Pickup,7,Diesel,Selected Tour Mode,592
+Pickup,7,Gas,Selected Tour Mode,37641
+Pickup,7,Hybrid,Selected Tour Mode,1224
+Pickup,7,PEV,Selected Tour Mode,404
+Pickup,8,BEV,Selected Tour Mode,1
+Pickup,8,Diesel,Selected Tour Mode,264
+Pickup,8,Gas,Selected Tour Mode,33121
+Pickup,8,Hybrid,Selected Tour Mode,1004
+Pickup,8,PEV,Selected Tour Mode,274
+SUV,1,BEV,Selected Tour Mode,2320
+SUV,1,Diesel,Selected Tour Mode,2137
+SUV,1,Gas,Selected Tour Mode,138920
+SUV,1,Hybrid,Selected Tour Mode,3802
+SUV,1,PEV,Selected Tour Mode,684
+SUV,2,BEV,Selected Tour Mode,1133
+SUV,2,Diesel,Selected Tour Mode,4482
+SUV,2,Gas,Selected Tour Mode,149440
+SUV,2,Hybrid,Selected Tour Mode,4563
+SUV,2,PEV,Selected Tour Mode,437
+SUV,3,BEV,Selected Tour Mode,1
+SUV,3,Diesel,Selected Tour Mode,3745
+SUV,3,Gas,Selected Tour Mode,143582
+SUV,3,Hybrid,Selected Tour Mode,4794
+SUV,3,PEV,Selected Tour Mode,358
+SUV,4,BEV,Selected Tour Mode,301
+SUV,4,Diesel,Selected Tour Mode,3417
+SUV,4,Gas,Selected Tour Mode,128321
+SUV,4,Hybrid,Selected Tour Mode,4706
+SUV,4,PEV,Selected Tour Mode,338
+SUV,5,BEV,Selected Tour Mode,150
+SUV,5,Diesel,Selected Tour Mode,2332
+SUV,5,Gas,Selected Tour Mode,114262
+SUV,5,Hybrid,Selected Tour Mode,4321
+SUV,5,PEV,Selected Tour Mode,157
+SUV,6,BEV,Selected Tour Mode,173
+SUV,6,Diesel,Selected Tour Mode,1129
+SUV,6,Gas,Selected Tour Mode,89021
+SUV,6,Hybrid,Selected Tour Mode,3687
+SUV,6,PEV,Selected Tour Mode,218
+SUV,7,Diesel,Selected Tour Mode,1149
+SUV,7,Gas,Selected Tour Mode,96100
+SUV,7,Hybrid,Selected Tour Mode,4985
+SUV,7,PEV,Selected Tour Mode,457
+SUV,8,BEV,Selected Tour Mode,0
+SUV,8,Diesel,Selected Tour Mode,1139
+SUV,8,Gas,Selected Tour Mode,81009
+SUV,8,Hybrid,Selected Tour Mode,3805
+SUV,8,PEV,Selected Tour Mode,421
+Van,1,BEV,Selected Tour Mode,7
+Van,1,Diesel,Selected Tour Mode,650
+Van,1,Gas,Selected Tour Mode,26408
+Van,1,Hybrid,Selected Tour Mode,659
+Van,1,PEV,Selected Tour Mode,540
+Van,2,Diesel,Selected Tour Mode,706
+Van,2,Gas,Selected Tour Mode,28738
+Van,2,Hybrid,Selected Tour Mode,739
+Van,2,PEV,Selected Tour Mode,156
+Van,3,Diesel,Selected Tour Mode,798
+Van,3,Gas,Selected Tour Mode,43374
+Van,3,Hybrid,Selected Tour Mode,679
+Van,3,PEV,Selected Tour Mode,352
+Van,4,Diesel,Selected Tour Mode,670
+Van,4,Gas,Selected Tour Mode,51876
+Van,4,Hybrid,Selected Tour Mode,696
+Van,4,PEV,Selected Tour Mode,715
+Van,5,BEV,Selected Tour Mode,0
+Van,5,Diesel,Selected Tour Mode,561
+Van,5,Gas,Selected Tour Mode,45870
+Van,5,Hybrid,Selected Tour Mode,550
+Van,5,PEV,Selected Tour Mode,392
+Van,6,Diesel,Selected Tour Mode,562
+Van,6,Gas,Selected Tour Mode,39616
+Van,6,Hybrid,Selected Tour Mode,516
+Van,6,PEV,Selected Tour Mode,341
+Van,7,BEV,Selected Tour Mode,1
+Van,7,Diesel,Selected Tour Mode,485
+Van,7,Gas,Selected Tour Mode,37455
+Van,7,Hybrid,Selected Tour Mode,492
+Van,7,PEV,Selected Tour Mode,727
+Van,8,Diesel,Selected Tour Mode,451
+Van,8,Gas,Selected Tour Mode,23929
+Van,8,Hybrid,Selected Tour Mode,339
+Van,8,PEV,Selected Tour Mode,623
+non_hh_veh,non_hh_veh,non_hh_veh,Selected Tour Mode,47016
+Pickup,1,BEV,Selected Tour Mode,0
+Pickup,4,BEV,Selected Tour Mode,0
+Pickup,5,BEV,Selected Tour Mode,0
+Van,6,BEV,Selected Tour Mode,1
+Van,8,BEV,Selected Tour Mode,1
+Van,4,BEV,Selected Tour Mode,1

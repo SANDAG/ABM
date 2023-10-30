@@ -61,6 +61,7 @@ VIRUTALENV_PATH = "C:\\python_virtualenv\\abm14_2_0"
 
 import inro.modeller as _m
 import inro.emme.database.emmebank as _eb
+import inro.emme.desktop.app as _app
 
 import traceback as _traceback
 import glob as _glob
@@ -75,6 +76,8 @@ import time as _time
 import socket as _socket
 import sys
 import os
+import uuid
+import yaml
 
 import pandas as pd
 import numpy as np
@@ -82,6 +85,7 @@ import csv
 import datetime
 import pyodbc
 import win32com.client as win32
+import shutil
 
 _join = os.path.join
 _dir = os.path.dirname
@@ -247,26 +251,25 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         create_transit_connector = modeller.tool("sandag.assignment.create_transit_connector")
         transit_assign = modeller.tool("sandag.assignment.transit_assignment")
         run_truck = modeller.tool("sandag.model.truck.run_truck_model")
-        external_internal = modeller.tool("sandag.model.external_internal")
-        external_external = modeller.tool("sandag.model.external_external")
         import_auto_demand = modeller.tool("sandag.import.import_auto_demand")
         import_transit_demand = modeller.tool("sandag.import.import_transit_demand")
         export_transit_skims = modeller.tool("sandag.export.export_transit_skims")
         export_for_transponder = modeller.tool("sandag.export.export_for_transponder")
         export_network_data = modeller.tool("sandag.export.export_data_loader_network")
         export_matrix_data = modeller.tool("sandag.export.export_data_loader_matrices")
-        export_tap_adjacent_lines = modeller.tool("sandag.export.export_tap_adjacent_lines")
         export_for_commercial_vehicle = modeller.tool("sandag.export.export_for_commercial_vehicle")
         validation = modeller.tool("sandag.validation.validation")
         file_manager = modeller.tool("sandag.utilities.file_manager")
         utils = modeller.module('sandag.utilities.demand')
         load_properties = modeller.tool('sandag.utilities.properties')
+        # run_summary = modeller.tool("sandag.utilities.run_summary")
 
         self.username = username
         self.password = password
 
         props = load_properties(_join(main_directory, "conf", "sandag_abm.properties"))
         props.set_year_specific_properties(_join(main_directory, "input", "parametersByYears.csv"))
+        props.set_year_specific_properties(_join(main_directory, "input", "filesByYears.csv"))
         props.save()
         # Log current state of props file for debugging of UI / file sync issues
         attributes = dict((name, props["RunModel." + name]) for name in self._run_model_names)
@@ -280,23 +283,25 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     raise Exception(error_text % name)
 
         scenarioYear = str(props["scenarioYear"])
+        # geographyID = str(props["geographyID"])
         startFromIteration = props["RunModel.startFromIteration"]
-        precision = props["RunModel.MatrixPrecision"]
+        # precision = props["RunModel.MatrixPrecision"]
         minSpaceOnC = props["RunModel.minSpaceOnC"]
         sample_rate = props["sample_rates"]
         end_iteration = len(sample_rate)
         scale_factor = props["cvm.scale_factor"]
-        visualizer_reference_path = props["visualizer.reference.path"]
-        visualizer_output_file = props["visualizer.output"]
-        visualizer_reference_label = props["visualizer.reference.label"]
-        visualizer_build_label = props["visualizer.build.label"]
-        mgraInputFile = props["mgra.socec.file"]
+        # visualizer_reference_path = props["visualizer.reference.path"]
+        # visualizer_output_file = props["visualizer.output"]
+        # visualizer_reference_label = props["visualizer.reference.label"]
+        # visualizer_build_label = props["visualizer.build.label"]
+        # mgraInputFile = props["mgra.socec.file"]
 
         period_ids = list(enumerate(periods, start=int(scenario_id) + 1))
 
         useLocalDrive = props["RunModel.useLocalDrive"]
 
         skip4Ds = props["RunModel.skip4Ds"]
+        skipNewScenarioGUID = props["RunModel.skipNewScenarioGUID"]
         skipInputChecker = props["RunModel.skipInputChecker"]
         skipInitialization = props["RunModel.skipInitialization"]
         deleteAllMatrices = props["RunModel.deleteAllMatrices"]
@@ -307,36 +312,51 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         skipBikeLogsums = props["RunModel.skipBikeLogsums"]
         skipBuildNetwork = props["RunModel.skipBuildNetwork"]
         skipHighwayAssignment = props["RunModel.skipHighwayAssignment"]
-        skipTransitConnector = props["RunModel.skipTransitConnector"]
         skipTransitSkimming = props["RunModel.skipTransitSkimming"]
+        skipTransitConnector = props["RunModel.skipTransitConnector"]
         skipTransponderExport = props["RunModel.skipTransponderExport"]
-        skipCoreABM = props["RunModel.skipCoreABM"]
-        skipOtherSimulateModel = props["RunModel.skipOtherSimulateModel"]
-        skipMAASModel = props["RunModel.skipMAASModel"]
+        skipABMPreprocessing = props["RunModel.skipABMPreprocessing"]
+        skipABMResident = props["RunModel.skipABMResident"]
+        skipABMAirport = props["RunModel.skipABMAirport"]
+        skipABMXborderWait = props["RunModel.skipABMXborderWait"]
+        skipABMXborder = props["RunModel.skipABMXborder"]
+        skipABMVisitor = props["RunModel.skipABMVisitor"]
         skipCTM = props["RunModel.skipCTM"]
         skipEI = props["RunModel.skipEI"]
-        skipExternal = props["RunModel.skipExternalExternal"]
+        skipExternal = props["RunModel.skipExternal"]
         skipTruck = props["RunModel.skipTruck"]
+        external_internal = modeller.tool("sandag.model.external_internal")
+        external_external = modeller.tool("sandag.model.external_external")
         skipTripTableCreation = props["RunModel.skipTripTableCreation"]
         skipFinalHighwayAssignment = props["RunModel.skipFinalHighwayAssignment"]
+        skipFinalHighwayAssignmentStochastic = props["RunModel.skipFinalHighwayAssignmentStochastic"]
+        if skipFinalHighwayAssignmentStochastic == True:
+        	makeFinalHighwayAssignmentStochastic = False
+        else:
+        	makeFinalHighwayAssignmentStochastic = True
         skipFinalTransitAssignment = props["RunModel.skipFinalTransitAssignment"]
         skipVisualizer = props["RunModel.skipVisualizer"]
         skipDataExport = props["RunModel.skipDataExport"]
         skipDataLoadRequest = props["RunModel.skipDataLoadRequest"]
         skipDeleteIntermediateFiles = props["RunModel.skipDeleteIntermediateFiles"]
-        skipTransitShed = props["RunModel.skipTransitShed"]
-        transitShedThreshold = props["transitShed.threshold"]
-        transitShedTOD = props["transitShed.TOD"]
+        # skipTransitShed = props["RunModel.skipTransitShed"]
+        # transitShedThreshold = props["transitShed.threshold"]
+        # transitShedTOD = props["transitShed.TOD"]
+
+        #check if visualizer.reference.path is valid in filesbyyears.csv
+        # if not os.path.exists(visualizer_reference_path):
+        #     raise Exception("Visualizer reference %s does not exist. Check filesbyyears.csv." %(visualizer_reference_path))
 
         if useLocalDrive:
+            folder_name = os.path.basename(main_directory)
+            if not os.path.exists(_join(self.LOCAL_ROOT, username, folder_name, "report")): # check free space only if it is a new run
+                self.check_free_space(minSpaceOnC)
+            # if initialization copy ALL files from remote
+            # else check file meta data and copy those that have changed
             initialize = (skipInitialization == False and startFromIteration == 1)
             local_directory = file_manager(
                 "DOWNLOAD", main_directory, username, scenario_id, initialize=initialize)
             self._path = local_directory
-            if not os.path.exists(_join(self._path, "output")): # check free space only if it is a new run
-                self.check_free_space(minSpaceOnC)
-            # if initialization copy ALL files from remote
-            # else check file meta data and copy those that have changed
         else:
             self._path = main_directory
 
@@ -352,41 +372,118 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         external_zones = "1-12"
 
         travel_modes = ["auto", "tran", "nmot", "othr"]
-        core_abm_files = ["Trips*.omx", "InternalExternalTrips*.omx"]
+        core_abm_files = ["Trips*.omx"]
         core_abm_files = [mode + name for name in core_abm_files for mode in travel_modes]
         smm_abm_files = ["AirportTrips*.omx", "CrossBorderTrips*.omx", "VisitorTrips*.omx"]
         smm_abm_files = [mode + name for name in smm_abm_files for mode in travel_modes]
+        smm_csv_files = ["airport_out.CBX.csv", "airport_out.SAN.csv", "crossBorderTours.csv", "crossBorderTrips.csv", "visitorTours.csv", "visitorTrips.csv"]
+        smm_abm_files.extend(smm_csv_files)
         maas_abm_files = ["EmptyAVTrips.omx", "TNCVehicleTrips*.omx"]
 
         relative_gap = props["convergence"]
-        max_assign_iterations = 1000
+        max_assign_iterations = 100
         mgra_lu_input_file = props["mgra.socec.file"]
+
+        #change emme databank dimensions based on number of select links - SANDAG ABM2+ Enhancements (06-28-2021)
+        num_select_links =  0
+        if select_link:
+            num_select_links = len(_json.loads(select_link))
+        change_dimensions = modeller.tool("inro.emme.data.database.change_database_dimensions")
+        dims = main_emmebank.dimensions
+        num_nodes = dims["regular_nodes"] + dims['centroids']
+        num_links = dims["links"]
+        num_turn_entries = dims["turn_entries"]
+        num_transit_lines = dims['transit_lines']
+        num_transit_segments = dims['transit_segments']
+        num_traffic_classes = 15
+
+        additional_node_extra_attributes = 4
+        additional_link_extra_attributes = 26
+        additional_line_extra_attributes = 4
+        additional_segment_extra_attributes = 12
+
+        extra_attribute_values = 18000000
+        extra_attribute_values += (num_nodes + 1) * additional_node_extra_attributes
+        extra_attribute_values += (num_links + 1) * additional_link_extra_attributes
+        extra_attribute_values += (num_transit_lines + 1)* additional_line_extra_attributes
+        extra_attribute_values += (num_transit_segments + 1) * additional_segment_extra_attributes
+
+        if num_select_links > 3:
+            extra_attribute_values += (num_select_links - 3) * ((num_links + 1) * (num_traffic_classes + 1) + (num_turn_entries + 1) * (num_traffic_classes))
+
+        if extra_attribute_values > dims["extra_attribute_values"] or dims["full_matrices"] < 9999:
+            dims["extra_attribute_values"] = extra_attribute_values
+            dims["full_matrices"] = 9999
+            #add logging for when this setp is run, add before and after attribute value
+            #change_dimensions(emmebank_dimensions=dims, emmebank=main_emmebank, keep_backup=False)
+            #replaced the above line with the below lines - suggested by Antoine, Bentley (2022-06-02)
+            if main_emmebank.scenario(1) is None:
+                main_emmebank.create_scenario(1)
+            change_dimensions(dims, main_emmebank, False)
+        # with open(_join(self._path, "logFiles", "select_link_log.txt"),"a+") as f:
+		#     f.write("Num Select links {}\nExtra Attribute Value {}".format(num_select_links,extra_attribute_values))
+        # f.close()
+
+        if os.path.exists(_join(self._path, "emme_project", "Database_transit", "emmebank")):
+            with _eb.Emmebank(_join(self._path, "emme_project", "Database_transit", "emmebank")) as transit_db:
+                transit_db_dims = transit_db.dimensions
+                num_nodes = transit_db_dims["regular_nodes"] + transit_db_dims['centroids']
+                num_links = transit_db_dims["links"]
+                num_turn_entries = transit_db_dims["turn_entries"]
+                num_transit_lines = transit_db_dims['transit_lines']
+                num_transit_segments = transit_db_dims['transit_segments']
+                num_traffic_classes = 15
+
+                extra_attribute_values = 18000000
+                extra_attribute_values += (num_nodes + 1) * additional_node_extra_attributes
+                extra_attribute_values += (num_links + 1) * additional_link_extra_attributes
+                extra_attribute_values += (num_transit_lines + 1)* additional_line_extra_attributes
+                extra_attribute_values += (num_transit_segments + 1) * additional_segment_extra_attributes
+
+                if num_select_links > 3:
+                    extra_attribute_values += 18000000 + (num_select_links - 3) * ((num_links + 1) * (num_traffic_classes + 1) + (num_turn_entries + 1) * (num_traffic_classes))
+
+                if extra_attribute_values > transit_db_dims["extra_attribute_values"] or transit_db_dims["full_matrices"] < 9999:
+                    transit_db_dims["extra_attribute_values"] = extra_attribute_values
+                    transit_db_dims["full_matrices"] = 9999
+                    #change_dimensions(emmebank_dimensions=transit_db_dims, emmebank=transit_db, keep_backup=False)
+                    #replaced the above line with the below lines - suggested by Antoine, Bentley (2022-06-02)
+                    if transit_db.scenario(1) is None:
+                        transit_db.create_scenario(1)
+                    change_dimensions(transit_db_dims, transit_db, False)
 
         with _m.logbook_trace("Setup and initialization"):
             self.set_global_logbook_level(props)
 
             # Swap Server Configurations
-            self.run_proc("serverswap.bat", [drive, path_no_drive, path_forward_slash], "Run ServerSwap")
-            self.check_for_fatal(_join(self._path, "logFiles", "serverswap.log"),
-                                 "ServerSwap failed! Open logFiles/serverswap.log for details.")
-            self.run_proc("checkAtTransitNetworkConsistency.cmd", [drive, path_forward_slash],
-                          "Checking if AT and Transit Networks are consistent")
-            self.check_for_fatal(_join(self._path, "logFiles", "AtTransitCheck_event.log"),
-                                 "AT and Transit network consistency checking failed! Open AtTransitCheck_event.log for details.")
+            # self.run_proc("serverswap.bat", [drive, path_no_drive, path_forward_slash], "Run ServerSwap")
+            # self.check_for_fatal(_join(self._path, "logFiles", "serverswap.log"),
+            #                      "ServerSwap failed! Open logFiles/serverswap.log for details.")
+            # self.run_proc("checkAtTransitNetworkConsistency.cmd", [drive, path_forward_slash],
+            #               "Checking if AT and Transit Networks are consistent")
+            # self.check_for_fatal(_join(self._path, "logFiles", "AtTransitCheck_event.log"),
+            #                      "AT and Transit network consistency checking failed! Open AtTransitCheck_event.log for details.")
+
+            #get number of households to pass on sample size to activitysim
+            householdFile = pd.read_csv(_join(self._path, "input", "synthetic_households_2022_base.csv"))
+            hh_count = len(householdFile)
+            del(householdFile)
 
             if startFromIteration == 1:  # only run the setup / init steps if starting from iteration 1
                 if not skipWalkLogsums:
                     self.run_proc("runSandagWalkLogsums.cmd", [drive, path_forward_slash],
-                                  "Walk - create AT logsums and impedances")
+                                  "Walk - create AT logsums and impedances", capture_output=True)
                 if not skipCopyWalkImpedance:
-                    self.copy_files(["walkMgraEquivMinutes.csv", "walkMgraTapEquivMinutes.csv"],
+                    self.copy_files(["walkMgraEquivMinutes.csv", "microMgraEquivMinutes.csv"],
                                     input_dir, output_dir)
 
                 if not skip4Ds:
-                    run4Ds(path=self._path, int_radius=0.65, ref_path=visualizer_reference_path)
+                    run4Ds(path=self._path, int_radius=0.65, ref_path='visualizer_reference_path')
 
+                if not skipNewScenarioGUID:
+                    self.write_metadata(main_directory, scenario_title, select_link, username, scenarioYear, end_iteration)
 
-                mgraFile = 'mgra13_based_input' + str(scenarioYear) + '.csv'
+                mgraFile = 'mgra15_based_input' + str(scenarioYear) + '.csv'
                 self.complete_work(scenarioYear, input_dir, output_dir, mgraFile, "walkMgraEquivMinutes.csv")
 
                 if not skipBuildNetwork:
@@ -410,7 +507,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     if not skipInputChecker:
                         input_checker(path=self._path)
 
-                    export_tap_adjacent_lines(_join(output_dir, "tapLines.csv"), base_scenario)
                     # parse vehicle availablility file by time-of-day
                     availability_file = "vehicle_class_availability.csv"
                     availabilities = self.parse_availability_file(_join(input_dir, availability_file), periods)
@@ -462,30 +558,29 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         omx_file = _join(input_dir, "trip_%s.omx" % period)
                         import_demand(omx_file, "AUTO", period, base_scenario)
                         import_demand(omx_file, "TRUCK", period, base_scenario)
-                        
+
                 if not skipBikeLogsums:
                     self.run_proc("runSandagBikeLogsums.cmd", [drive, path_forward_slash],
                                   "Bike - create AT logsums and impedances")
                 if not skipCopyBikeLogsum:
                     self.copy_files(["bikeMgraLogsum.csv", "bikeTazLogsum.csv"], input_dir, output_dir)
-                    
+
             else:
                 base_scenario = main_emmebank.scenario(scenario_id)
                 transit_emmebank = _eb.Emmebank(_join(self._path, "emme_project", "Database_transit", "emmebank"))
                 transit_scenario = transit_emmebank.scenario(base_scenario.number)
 
             # Check that setup files were generated
-            self.run_proc("CheckOutput.bat", [drive + path_no_drive, 'Setup'], "Check for outputs")
+            # self.run_proc("CheckOutput.bat", [drive + path_no_drive, 'Setup'], "Check for outputs")
 
         # Note: iteration indexes from 0, msa_iteration indexes from 1
         for iteration in range(startFromIteration - 1, end_iteration):
             msa_iteration = iteration + 1
+            self.update_metadata_iteration(main_directory, msa_iteration)
             with _m.logbook_trace("Iteration %s" % msa_iteration):
-                if not skipCoreABM[iteration] or not skipOtherSimulateModel[iteration] or not skipMAASModel[iteration]:
-                    self.run_proc("runMtxMgr.cmd", [drive, drive + path_no_drive], "Start matrix manager")
-                    self.run_proc("runDriver.cmd", [drive, drive + path_no_drive], "Start JPPF Driver")
-                    self.run_proc("StartHHAndNodes.cmd", [drive, path_no_drive],
-                                  "Start HH Manager, JPPF Driver, and nodes")
+                #create a folder to store skims
+                if not os.path.exists(_join(output_dir, "skims")):
+                    os.mkdir(_join(output_dir, "skims"))
 
                 if not skipHighwayAssignment[iteration]:
                     # run traffic assignment
@@ -494,60 +589,80 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         self.run_traffic_assignments(
                             base_scenario, period_ids, msa_iteration, relative_gap,
                             max_assign_iterations, num_processors)
-                    self.run_proc("CreateD2TAccessFile.bat", [drive, path_forward_slash],
-                                  "Create drive to transit access file", capture_output=True)
 
                 if not skipTransitSkimming[iteration]:
                     # run transit assignment
                     # export transit skims
                     with _m.logbook_trace("Transit assignments and skims"):
+
                         for number, period in period_ids:
                             src_period_scenario = main_emmebank.scenario(number)
                             transit_assign_scen = build_transit_scen(
-                                period=period, base_scenario=src_period_scenario,
-                                transit_emmebank=transit_emmebank,
-                                scenario_id=src_period_scenario.id,
-                                scenario_title="%s %s transit assign" % (base_scenario.title, period),
-                                data_table_name=scenarioYear, overwrite=True)
+                               period=period, base_scenario=src_period_scenario,
+                               transit_emmebank=transit_emmebank,
+                               scenario_id=src_period_scenario.id,
+                               scenario_title="%s %s transit assign" % (base_scenario.title, period),
+                               data_table_name=scenarioYear, overwrite=True)
 
-                            if iteration==0:
-                                create_transit_connector(transit_assign_scen)
-                                
-                            transit_assign(period, transit_assign_scen, data_table_name=scenarioYear,
-                                           skims_only=True, num_processors=num_processors)
+                            if (not skipTransitConnector) and (msa_iteration == 1):
+                                if not os.path.exists(_join(input_dir, "transit_connectors")):
+                                    os.mkdir(_join(input_dir, "transit_connectors"))
+                                #in case of new network, create transit connectors from scratch, and export them to the input folder for future runs/iterations
+                                create_transit_connector(period, transit_assign_scen, create_connector_flag=True)
+                            else:
+                                #this would import connectors from the input/transit_connectors folder, and not create them from scratch
+                                create_transit_connector(period, transit_assign_scen, create_connector_flag=False)
 
-                        omx_file = _join(output_dir, "transit_skims.omx")
-                        export_transit_skims(omx_file, periods, transit_scenario)
+                        # Run transit assignment in separate process
+                        # Running in same process slows OMX skim export for unknown reason
+                        # transit_emmebank need to be closed and re-opened to be accessed by separate process
+                        transit_emmebank = self.run_transit_assignments(transit_emmebank, scenarioYear)
+                        _m.Modeller().desktop.refresh_data()
+
+                        #output transit skims by period
+                        for number, period in period_ids:
+                            transit_scenario = transit_emmebank.scenario(number)
+                            omx_file = _join(output_dir, "skims", "transit_skims_" + period + ".omx")
+                            export_transit_skims(omx_file, [period], transit_scenario, big_to_zero=False)
 
                 if not skipTransponderExport[iteration]:
                     am_scenario = main_emmebank.scenario(base_scenario.number + 2)
                     export_for_transponder(output_dir, num_processors, am_scenario)
 
-                # For each step move trip matrices so run will stop if ctramp model
-                # doesn't produced csv/omx files for assignment
-                # also needed as CT-RAMP does not overwrite existing files
-                if not skipCoreABM[iteration]:
-                    self.remove_prev_iter_files(core_abm_files, output_dir, iteration)
-                    self.run_proc(
-                        "runSandagAbm_SDRM.cmd",
-                        [drive, drive + path_forward_slash, sample_rate[iteration], msa_iteration],
-                        "Java-Run CT-RAMP", capture_output=True)
-                if not skipOtherSimulateModel[iteration]:
-                    self.remove_prev_iter_files(smm_abm_files, output_dir, iteration)
-                    self.run_proc(
-                        "runSandagAbm_SMM.cmd",
-                        [drive, drive + path_forward_slash, sample_rate[iteration], msa_iteration],
-                        "Java-Run airport model, visitor model, cross-border model", capture_output=True)
 
-                if not skipMAASModel[iteration]:
-                    self.remove_prev_iter_files(maas_abm_files, output_dir, iteration)
+                if not skipABMPreprocessing[iteration]:
                     self.run_proc(
-                        "runSandagAbm_MAAS.cmd",
+                        "runSandagAbm_Preprocessing.cmd",
+                        [drive, drive + path_forward_slash, msa_iteration, scenarioYear],
+                        "Creating all the required files to run the ActivitySim models", capture_output=True)
+                if not skipABMResident[iteration]:
+                    self.run_proc(
+                        "runSandagAbm_ActivitySimResident.cmd",
+                        [drive, drive + path_forward_slash, int(sample_rate[iteration] * hh_count), msa_iteration],
+                        "Running ActivitySim resident model", capture_output=True)
+                if not skipABMAirport[iteration]:
+                    self.run_proc(
+                        "runSandagAbm_ActivitySimAirport.cmd",
                         [drive, drive + path_forward_slash, sample_rate[iteration], msa_iteration],
-                        "Java-Run AV allocation model and TNC routing model", capture_output=True)
+                        "Running ActivitySim airport models", capture_output=True)
+                if (not skipABMXborderWait) and (iteration == 0):
+                    self.run_proc(
+                        "runSandagAbm_ActivitySimXborderWaitModel.cmd",
+                        [drive, drive + path_forward_slash, sample_rate[iteration], msa_iteration],
+                        "Running ActivitySim wait time models", capture_output=True)
+                if not skipABMXborder[iteration]:
+                    self.run_proc(
+                        "runSandagAbm_ActivitySimXborder.cmd",
+                        [drive, drive + path_forward_slash, sample_rate[iteration], msa_iteration],
+                        "Running ActivitySim crossborder model", capture_output=True)
+                if not skipABMVisitor[iteration]:
+                    self.run_proc(
+                        "runSandagAbm_ActivitySimVisitor.cmd",
+                        [drive, drive + path_forward_slash, sample_rate[iteration], msa_iteration],
+                        "Running ActivitySim visitor model", capture_output=True)
 
                 if not skipCTM[iteration]:
-                    export_for_commercial_vehicle(output_dir, base_scenario)
+                    export_for_commercial_vehicle(output_dir + '/skims', base_scenario)
                     self.run_proc(
                         "cvm.bat",
                         [drive, path_no_drive],
@@ -557,18 +672,18 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     if not skipTruck[iteration]:
                         # run truck model (generate truck trips)
                         run_truck(True, input_dir, input_truck_dir, num_processors, base_scenario)
-                    # run EI model "US to SD External Trip Model"
+                        # run EI model "US to SD External Trip Model"
                     if not skipEI[iteration]:
                         external_internal(input_dir, base_scenario)
                     # run EE model
                     if not skipExternal[iteration]:
                         external_external(input_dir, external_zones, base_scenario)
 
+
                 # import demand from all sub-market models from CT-RAMP and
                 #       add CV trips to auto demand
-                #       add EE and EI trips to auto demand
                 if not skipTripTableCreation[iteration]:
-                    import_auto_demand(output_dir, external_zones, num_processors, base_scenario)
+                    import_auto_demand(output_dir + '/assignment', external_zones, num_processors, base_scenario)
 
         if not skipFinalHighwayAssignment:
             with _m.logbook_trace("Final traffic assignments"):
@@ -576,33 +691,45 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 final_iteration = 4
                 self.run_traffic_assignments(
                     base_scenario, period_ids, final_iteration, relative_gap, max_assign_iterations,
-                    num_processors, select_link)
+                    num_processors, select_link, makeFinalHighwayAssignmentStochastic, input_dir)
 
         if not skipFinalTransitAssignment:
-            import_transit_demand(output_dir, transit_scenario)
+            import_transit_demand(output_dir + '/assignment', transit_scenario)
             with _m.logbook_trace("Final transit assignments"):
                 # Final iteration includes the transit skims per ABM-1072
                 for number, period in period_ids:
                     src_period_scenario = main_emmebank.scenario(number)
                     transit_assign_scen = build_transit_scen(
                         period=period, base_scenario=src_period_scenario,
-                        transit_emmebank=transit_emmebank, scenario_id=src_period_scenario.id,
-                        scenario_title="%s - %s transit assign" % (base_scenario.title, period),
+                        transit_emmebank=transit_emmebank,
+                        scenario_id=src_period_scenario.id,
+                        scenario_title="%s %s transit assign" % (base_scenario.title, period),
                         data_table_name=scenarioYear, overwrite=True)
-                    transit_assign(period, transit_assign_scen, data_table_name=scenarioYear,
-                                   num_processors=num_processors)
-                omx_file = _join(output_dir, "transit_skims.omx")
-                export_transit_skims(omx_file, periods, transit_scenario, big_to_zero=True)
 
-        if not skipTransitShed:
-            # write walk and drive transit sheds
-            self.run_proc("runtransitreporter.cmd", [drive, path_forward_slash, transitShedThreshold, transitShedTOD],
-                          "Create walk and drive transit sheds",
-                          capture_output=True)
+                    #this would import connectors from the input/transit_connectors folder, and not create them from scratch
+                    create_transit_connector(period, transit_assign_scen, create_connector_flag=False)
+
+                # Run transit assignment in separate process
+                # Running in same process slows OMX skim export for unknown reason
+                # transit_emmebank need to be closed and re-opened to be accessed by separate process
+                transit_emmebank = self.run_transit_assignments(transit_emmebank, scenarioYear)
+                _m.Modeller().desktop.refresh_data()
+
+                #output transit skims by period
+                for number, period in period_ids:
+                    transit_scenario = transit_emmebank.scenario(number)
+                    omx_file = _join(output_dir, "skims", "transit_skims_" + period + ".omx")
+                    export_transit_skims(omx_file, [period], transit_scenario, big_to_zero=False)
+
+        # if not skipTransitShed:
+        #     # write walk and drive transit sheds
+        #     self.run_proc("runtransitreporter.cmd", [drive, path_forward_slash, transitShedThreshold, transitShedTOD],
+        #                   "Create walk and drive transit sheds",
+        #                   capture_output=True)
 
         if not skipVisualizer:
             self.run_proc("RunViz.bat",
-                          [drive, path_no_drive, visualizer_reference_path, visualizer_output_file, "NO", visualizer_reference_label, visualizer_build_label, mgraInputFile],
+                          [drive, drive + path_forward_slash],
                           "HTML Visualizer", capture_output=True)
 
         if not skipDataExport:
@@ -612,34 +739,27 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             export_matrix_data(output_directory, base_scenario, transit_scenario)
             # export core ABM data
             # Note: uses relative project structure, so cannot redirect to T drive
-            self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data",capture_output=True)
-        #Validation for 2016 scenario
+            # self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data",capture_output=True)
+            aggregate_models = {}
+            for agg_model in ['eetrip', 'eitrip', 'trucktrip']:#TODO ['commercialVehicleTrips','internalExternalTrips']:
+                aggregate_models[agg_model] = str(os.path.join(self._path,'report',agg_model+'.csv'))
+            gen_utils.DataLakeExporter(ScenarioPath=self._path).write_to_datalake(aggregate_models)
+
+        #Validation for 2022 scenario
         if scenarioYear == "2016":
-            validation(self._path, main_emmebank, base_scenario)
+            validation(self._path, main_emmebank, base_scenario) # to create source_EMME.xlsx
+
+            # #Create Worksheet for ABM Validation using PowerBI Visualization #JY: can be uncommented if deciding to incorporate PowerBI vis in ABM workflow
+            # self.run_proc("VisPowerBI.bat",  # forced to update excel links
+            #                 [drive, path_no_drive, scenarioYear, 0],
+            #                 "VisPowerBI",
+            #                 capture_output=True)
+
             ### CL: Below step is temporarily used to update validation output files. When Gregor complete Upload procedure, below step should be removed. 05/31/20
-            self.run_proc("ExcelUpdate.bat",  # forced to update excel links
-                            [drive, path_no_drive, scenarioYear, 0],
-                            "Excel Update",
-                            capture_output=True)
-
-
-
-        # UPLOAD DATA AND SWITCH PATHS
-        if useLocalDrive:
-            file_manager("UPLOAD", main_directory, username, scenario_id,
-                         delete_local_files=not skipDeleteIntermediateFiles)
-            self._path = main_directory
-            drive, path_no_drive = os.path.splitdrive(self._path)
-            init_transit_db.add_database(
-                _eb.Emmebank(_join(main_directory, "emme_project", "Database_transit", "emmebank")))
-
-        if not skipDataLoadRequest:
-            start_db_time = datetime.datetime.now()  # record the time to search for request id in the load request table, YMA, 1/23/2019
-            # start_db_time = start_db_time + datetime.timedelta(minutes=0)
-
-            self.run_proc("DataLoadRequest.bat",
-                          [drive + path_no_drive, end_iteration, scenarioYear, sample_rate[end_iteration - 1]],
-                          "Data load request")
+            # self.run_proc("ExcelUpdate.bat",  # forced to update excel links
+                            # [drive, path_no_drive, scenarioYear, 0],
+                            # "ExcelUpdate",
+                            # capture_output=True)
 
             ### ES: Commented out until this segment is updated to reference new database. 9/10/20 ###
             # add segments below for auto-reporting, YMA, 1/23/2019
@@ -676,6 +796,30 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             #                  "Excel Update",
             #                  capture_output=True)
 
+        # # terminate all java processes
+        # _subprocess.call("taskkill /F /IM java.exe")
+
+        # # close all DOS windows
+        # _subprocess.call("taskkill /F /IM cmd.exe")
+
+        # UPLOAD DATA AND SWITCH PATHS
+        if useLocalDrive:
+            file_manager("UPLOAD", main_directory, username, scenario_id,
+                         delete_local_files=not skipDeleteIntermediateFiles)
+            self._path = main_directory
+            drive, path_no_drive = os.path.splitdrive(self._path)
+            # self._path = main_directory
+            # drive, path_no_drive = os.path.splitdrive(self._path)
+            init_transit_db.add_database(
+                _eb.Emmebank(_join(main_directory, "emme_project", "Database_transit", "emmebank")))
+
+        if not skipDataLoadRequest:
+            start_db_time = datetime.datetime.now()  # record the time to search for request id in the load request table, YMA, 1/23/2019
+            # start_db_time = start_db_time + datetime.timedelta(minutes=0)
+            # self.run_proc("DataLoadRequest.bat",
+            #               [drive + path_no_drive, end_iteration, scenarioYear, sample_rate[end_iteration - 1], geographyID],
+            #               "Data load request")
+
         # delete trip table files in iteration sub folder if model finishes without errors
         if not useLocalDrive and not skipDeleteIntermediateFiles:
             for msa_iteration in range(startFromIteration, end_iteration + 1):
@@ -683,11 +827,8 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     ["auto*Trips*.omx", "tran*Trips*.omx", "nmot*.omx", "othr*.omx", "trip*.omx"],
                     _join(output_dir, "iter%s" % (msa_iteration)))
 
-        # terminate all java processes
-        _subprocess.call("taskkill /F /IM java.exe")
-
-        # close all DOS windows
-        _subprocess.call("taskkill /F /IM cmd.exe")
+        # record run time
+        # run_summary(path=self._path)
 
     def set_global_logbook_level(self, props):
         self._log_level = props.get("RunModel.LogbookLevel", "ENABLED")
@@ -706,8 +847,64 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         except KeyError:
             raise Exception("properties.RunModel.LogLevel: value must be one of %s" % ",".join(log_states.keys()))
 
+    def run_transit_assignments(self, transit_emmebank, scenarioYear):
+
+        transit_emmebank_path = transit_emmebank.path
+        emme_project_dir = _dir(_dir(transit_emmebank_path))
+        main_directory = _dir(emme_project_dir)
+
+
+        if os.path.exists(_join(emme_project_dir, "transit_assign_dummy_project")):
+            shutil.rmtree(_join(emme_project_dir, "transit_assign_dummy_project"))
+        project_path = _app.create_project(emme_project_dir, "transit_assign_dummy_project")
+        dummy_desktop = _app.start_dedicated(visible=False, user_initials="SD", project=project_path)
+        dummy_desktop.add_modeller_toolbox(_join(main_directory, "emme_project", "Scripts", "sandag_toolbox.mtbx"))
+        data_explorer = dummy_desktop.data_explorer()
+        db = data_explorer.add_database(transit_emmebank.path)
+        db.open()
+
+        project_table_db = _m.Modeller().desktop.project.data_tables()
+        data = project_table_db.table("%s_transit_passes" % scenarioYear).get_data()
+        dummy_project_table_db = dummy_desktop.project.data_tables()
+        dummy_project_table_db.create_table("%s_transit_passes" % scenarioYear, data, overwrite=True)
+
+        dummy_desktop.project.save()
+        dummy_desktop.close()
+        transit_emmebank.dispose()
+
+        _time.sleep(2)
+        with _m.logbook_trace("Running all period transit assignmens"):
+            report = _m.PageBuilder(title="Command report")
+            script = _join(main_directory, "python", "emme", "run_transit_assignment.py")
+            err_file_ref, err_file_path = _tempfile.mkstemp(suffix='.log')
+            err_file = os.fdopen(err_file_ref, "w")
+            try:
+                output = _subprocess.check_output(
+                    [sys.executable, script, "--root_dir", '"%s"' % main_directory, "--project_path", '"%s"' % project_path],
+                    stderr=err_file, shell=True)
+                self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % output)
+            except _subprocess.CalledProcessError as error:
+                self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % error.output)
+                raise
+            finally:
+                err_file.close()
+                with open(err_file_path, 'r') as f:
+                    error_msg = f.read()
+                os.remove(err_file_path)
+                if error_msg:
+                    self.add_html(report, 'Error message(s):<br><br><div class="preformat">%s</div>' % error_msg)
+                _m.logbook_write("Transit assignment process record", report.render())
+        _time.sleep(2)
+
+        # NOTE: could remove project when done
+        #shutil.rmtree(project_dir)
+        # NOTE: need to pass back re-opened objects
+        transit_emmebank = _eb.Emmebank(transit_emmebank_path)
+        return transit_emmebank
+
     def run_traffic_assignments(self, base_scenario, period_ids, msa_iteration, relative_gap,
-                                max_assign_iterations, num_processors, select_link=None):
+                                max_assign_iterations, num_processors, select_link=None,
+                                makeFinalHighwayAssignmentStochastic=False, input_dir=None):
         modeller = _m.Modeller()
         traffic_assign = modeller.tool("sandag.assignment.traffic_assignment")
         export_traffic_skims = modeller.tool("sandag.export.export_traffic_skims")
@@ -728,7 +925,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                                  "conf\\server-config.csv ServerName column")
                 server_config = {"SNODE": "yes"}
         distributed = server_config["SNODE"] == "no"
-        if distributed:
+        if distributed and not makeFinalHighwayAssignmentStochastic:
             scen_map = dict((p, main_emmebank.scenario(n)) for n, p in period_ids)
             input_args = {
                 "msa_iteration": msa_iteration,
@@ -758,8 +955,8 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     local_scenario = scen_map[period]
                     traffic_assign(period, msa_iteration, relative_gap, max_assign_iterations,
                                    num_processors, local_scenario, select_link)
-                    omx_file = _join(output_dir, "traffic_skims_%s.omx" % period)
-                    if msa_iteration < 4:
+                    omx_file = _join(output_dir, "skims", "traffic_skims_%s.omx" % period)
+                    if msa_iteration <= 4:
                         export_traffic_skims(period, omx_file, base_scenario)
                 scenarios = {
                     database_path1: [scen_map[p] for p in periods_node1],
@@ -779,9 +976,9 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             for number, period in period_ids:
                 period_scenario = main_emmebank.scenario(number)
                 traffic_assign(period, msa_iteration, relative_gap, max_assign_iterations,
-                               num_processors, period_scenario, select_link)
-                omx_file = _join(output_dir, "traffic_skims_%s.omx" % period)
-                if msa_iteration < 4:
+                               num_processors, period_scenario, select_link, stochastic=makeFinalHighwayAssignmentStochastic, input_directory=input_dir)
+                omx_file = _join(output_dir, "skims", "traffic_skims_%s.omx" % period)
+                if msa_iteration <= 4:
                     export_traffic_skims(period, omx_file, base_scenario)
 
     def run_proc(self, name, arguments, log_message, capture_output=False):
@@ -793,15 +990,15 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         with _m.logbook_trace(log_message, attributes=attrs):
             if capture_output and self._log_level != "NO_EXTERNAL_REPORTS":
                 report = _m.PageBuilder(title="Process run %s" % name)
-                report.add_html('Command:<br><br><div class="preformat">%s</div><br>' % command)
+                self.add_html(report, 'Command:<br><br><div class="preformat">%s</div><br>' % command)
                 # temporary file to capture output error messages generated by Java
                 err_file_ref, err_file_path = _tempfile.mkstemp(suffix='.log')
                 err_file = os.fdopen(err_file_ref, "w")
                 try:
                     output = _subprocess.check_output(command, stderr=err_file, cwd=self._path, shell=True)
-                    report.add_html('Output:<br><br><div class="preformat">%s</div>' % output)
+                    self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % output)
                 except _subprocess.CalledProcessError as error:
-                    report.add_html('Output:<br><br><div class="preformat">%s</div>' % error.output)
+                    self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % error.output)
                     raise
                 finally:
                     err_file.close()
@@ -809,7 +1006,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         error_msg = f.read()
                     os.remove(err_file_path)
                     if error_msg:
-                        report.add_html('Error message(s):<br><br><div class="preformat">%s</div>' % error_msg)
+                        self.add_html(report, 'Error message(s):<br><br><div class="preformat">%s</div>' % error_msg)
                     try:
                         # No raise on writing report error
                         # due to observed issue with runs generating reports which cause
@@ -1169,6 +1366,41 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         else:
             return "The data load request was not successfully made, please double check the [data_load].[load_request] table to confirm."
 
+    def write_metadata(self, main_directory, scenario_title, select_link, username, scenarioYear, end_iteration):
+        '''Write YAML file containing scenario guid and other scenario info to output folder for writing to datalake'''
+        datalake_metadata_dict = {
+            "main_directory" : main_directory.encode('utf-8')
+            ,"scenario_guid" : uuid.uuid4().hex
+            ,'scenario_guid_created_at' : datetime.datetime.now()
+            ,"scenario_title" : scenario_title.encode('utf-8')
+            ,"scenario_year": scenarioYear
+            ,"select_link" : select_link.encode('utf-8')
+            ,"username" : username.encode('utf-8')
+            ,"current_iteration" : None
+            ,"end_iteration" : end_iteration
+        }
+        datalake_metadata_path = os.path.join(main_directory,'output','datalake_metadata.yaml')
+        with open(datalake_metadata_path, 'w') as file:
+            yaml.dump(datalake_metadata_dict, file, default_flow_style=False)
+        _m.logbook_write("Created new scenario_guid: %s" % (datalake_metadata_dict['scenario_guid']))
+
+
+    def update_metadata_iteration(self, main_directory, msa_iteration):
+        """update iteration value in metadata YAML"""
+        datalake_metadata_path = os.path.join(main_directory,'output','datalake_metadata.yaml')
+        with open(datalake_metadata_path, 'r') as file:
+            datalake_metadata_dict = yaml.safe_load(file)
+        datalake_metadata_dict['current_iteration'] = msa_iteration
+        with open(datalake_metadata_path, 'w') as file:
+            yaml.dump(datalake_metadata_dict, file, default_flow_style=False)
+        _m.logbook_write("Updated Iteration in datalake_metadata.yaml file")
+
+    def add_html(self, report, html):
+        try:
+            report.add_html(html)
+        except Exception:
+            fix_html = html.replace(r'\U', r'/U').replace(r'\u', r'/u')
+            report.add_html(fix_html)
 
 '''
     def send_notification(self,str_message,user):      # YMA, 1/24/2019, not working on server

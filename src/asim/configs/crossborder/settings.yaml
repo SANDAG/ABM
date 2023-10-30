@@ -1,3 +1,5 @@
+model_name: crossborder
+
 inherit_settings: False
 
 # number of households to simulate
@@ -107,7 +109,8 @@ models:
   - trip_destination
   - trip_mode_choice
   - write_trip_matrices
-  - write_tables
+  - write_to_datalake
+  # - write_tables
 
 multiprocess_steps:
   - name: mp_initialize
@@ -135,7 +138,6 @@ output_tables:
     - persons
     - tours
     - trips
-    - attribute_combinations
 
 output_summaries:
   tours:

@@ -1,5 +1,5 @@
 # misc settings
-data_dir: data
+data_dir: ..\..\input
 config_dir: configs\airport.san
 # distance_param: -0.19
 # walk_speed: 3
@@ -78,9 +78,9 @@ skims:
 # airport.CBX.airportMgra = 7061
 # Tours
 tours:
-  num_enplanements: 9804911
+  num_enplanements: 13727381
   avg_party_size: 1.7
   annualization_factor: 365
-  connecting: 572581
-  airport_mgra: 2997
+  connecting: 808619
+  airport_mgra: 11249
 

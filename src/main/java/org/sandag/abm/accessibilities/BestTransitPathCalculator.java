@@ -125,7 +125,9 @@ public class BestTransitPathCalculator implements Serializable
     private int[] utilityCount;								//counter for utilities    
     private double[] expUtilities;							//exponentiated utility array for path choice
       
-    private float nestingCoefficient;
+    private double nestingCoefficient;
+    private static double WORST_UTILITY = -500;
+    
     /**
      * Constructor.
      * 
@@ -216,7 +218,7 @@ public class BestTransitPathCalculator implements Serializable
         utilityCount = new int[numSkimSets];
         expUtilities = new double[numTransitAlts];
         
-        nestingCoefficient =  new Float(Util.getStringValueFromPropertyMap(rbMap, "utility.bestTransitPath.nesting.coeff")).floatValue();
+        nestingCoefficient =  new Double(Util.getStringValueFromPropertyMap(rbMap, "utility.bestTransitPath.nesting.coeff")).floatValue();
         
      }
     
@@ -920,7 +922,7 @@ public class BestTransitPathCalculator implements Serializable
      * @param myLogger
      * @return
      */
-    public int chooseTripPath(float rnum, double[][] bestTapPairs, boolean myTrace, Logger myLogger) {
+    public int chooseTripPath(double rnum, double[][] bestTapPairs, boolean myTrace, Logger myLogger) {
     	
     	if(myTrace){
     		myLogger.info("****************************************");
@@ -935,7 +937,7 @@ public class BestTransitPathCalculator implements Serializable
     	for(int i = 0; i<bestTapPairs.length;++i){
     		if(bestTapPairs[i] == null)
     			continue;
-    		if(bestTapPairs[i][3]<-500)
+    		if(bestTapPairs[i][3]<WORST_UTILITY)
     			continue;
     		expUtilities[i] = Math.exp(bestTapPairs[i][3]/nestingCoefficient);
     		sumExpUtility += expUtilities[i]; 
@@ -947,7 +949,7 @@ public class BestTransitPathCalculator implements Serializable
     		for(int i = 0; i<bestTapPairs.length;++i){
         		if(bestTapPairs[i] == null)
         			continue;
-        		if(bestTapPairs[i][3]<-500)
+        		if(bestTapPairs[i][3]<WORST_UTILITY)
         			continue;
    				cumProb += (expUtilities[i]/sumExpUtility);
    				
@@ -964,6 +966,21 @@ public class BestTransitPathCalculator implements Serializable
     	}
     	else{
     		myLogger.info("No best taps to pick set from");
+    	}
+    	
+    	if(alt==-1) {
+        	myLogger.fatal("");
+        	myLogger.fatal("Error trying to choose TAP pair and set from TAP pair array with random number "+rnum);
+        	myLogger.fatal("");
+        	myLogger.fatal("Alt, BoardTap, AlightTap, Set, Utility");
+            for(int i = 0; i < bestTapPairs.length; ++i){
+                myLogger.fatal(i + "," 
+                        + (bestTapPairs[i] == null ? "NA" : bestTapPairs[i][0]) + ","
+                        + (bestTapPairs[i] == null ? "NA" : bestTapPairs[i][1]) + ","
+                        + (bestTapPairs[i] == null ? "NA" : bestTapPairs[i][2]) + ","
+                        + (bestTapPairs[i] == null ? "NA" : bestTapPairs[i][3]));
+            }
+            throw new RuntimeException();
     	}
     	return alt;
     }
@@ -1143,7 +1160,7 @@ public class BestTransitPathCalculator implements Serializable
     	//utilityCount tracks how many utilities included in logsum calc by skimset
     	Arrays.fill(utilityCount,0); 
     	for(int i = 0; i<bestUtilities.length;++i){
-    		if(bestUtilities[i] > -500){
+    		if(bestUtilities[i] > WORST_UTILITY){
     			int skimSet = bestSet[i];
     			
     			//only include the utility in the logsum if the count

@@ -1,3 +1,5 @@
+model_name: airport.SAN
+
 inherit_settings: False
 
 # number of households to simulate
@@ -95,8 +97,8 @@ use_shadow_pricing: False
 want_dest_choice_sample_tables: False
 want_dest_choice_presampling: True
 
-# trace_hh_id:
-# resume_after: 
+# trace_hh_id: 21092
+resume_after: 
 
 models:
   - initialize_landuse
@@ -110,7 +112,8 @@ models:
   - trip_mode_choice
   - airport_returns
   - write_trip_matrices
-  - write_tables
+  - write_to_datalake
+  # - write_tables
 
 multiprocess_steps:
   - name: mp_initialize
@@ -137,7 +140,6 @@ output_tables:
     - persons
     - tours
     - trips
-    - attribute_combinations
 
 output_summaries:
   tours:

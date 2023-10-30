@@ -3,7 +3,9 @@ rem @echo off
 set PROJECT_DRIVE=%1
 set PROJECT_DIRECTORY=%2
 set SAMPLERATE=%3
-set ITERATION=%4
+
+rem iteration number not appended to output files, so setting it to 0
+set ITERATION=0
 
 %PROJECT_DRIVE%
 cd %PROJECT_DRIVE%%PROJECT_DIRECTORY%

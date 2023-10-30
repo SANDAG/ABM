@@ -9,7 +9,6 @@ class PersonTrip implements Comparable, Cloneable{
     protected String uniqueId;
     protected long hhid;		
     protected long personId;
-    protected int personNumber;
     protected int tourid;
     protected int stopid;
     protected int inbound;
@@ -20,18 +19,16 @@ class PersonTrip implements Comparable, Cloneable{
     protected short departPeriod;
     protected float departTime; //minutes after 3 AM
     protected float sampleRate;
-    protected int mode;
+    protected String mode;
     protected int parkingMaz;
-    protected byte avAvailable;
     protected boolean rideSharer;
 	protected int pickupMaz;
 	protected int dropoffMaz;
 	
-	public PersonTrip(String uniqueId,long hhid,long personId,int personNumber, int tourid,int stopid,int inbound,int joint,int originMaz, int destinationMaz, int departPeriod, float departTime, float sampleRate, int mode, int boardingTap, int alightingTap, int set, boolean rideSharer){
+	public PersonTrip(String uniqueId,long hhid,long personId,int tourid,int stopid,int inbound,int joint,int originMaz, int destinationMaz, int departPeriod, float departTime, float sampleRate, String mode, boolean rideSharer){
        	this.uniqueId = uniqueId;
 		this.hhid = hhid;		
        	this.personId = personId;
-    	this.personNumber = personNumber;
     	this.tourid = tourid;
     	this.stopid =  stopid;
     	this.inbound = inbound;
@@ -75,14 +72,6 @@ class PersonTrip implements Comparable, Cloneable{
 
 	public void setPersonId(long personId) {
 		this.personId = personId;
-	}
-
-	public int getPersonNumber() {
-		return personNumber;
-	}
-
-	public void setPersonNumber(int personNumber) {
-		this.personNumber = personNumber;
 	}
 
 	public int getTourid() {
@@ -173,11 +162,11 @@ class PersonTrip implements Comparable, Cloneable{
 		this.sampleRate = sampleRate;
 	}
 
-	public int getMode() {
+	public String getMode() {
 		return mode;
 	}
 
-	public void setMode(int mode) {
+	public void setMode(String mode) {
 		this.mode = mode;
 	}
 
@@ -188,14 +177,6 @@ class PersonTrip implements Comparable, Cloneable{
 
 	public void setParkingMaz(int parkingMaz) {
 		this.parkingMaz = parkingMaz;
-	}
-
-	public int getAvAvailable() {
-		return avAvailable;
-	}
-
-	public void setAvAvailable(byte avAvailable) {
-		this.avAvailable = avAvailable;
 	}
 
 	public boolean isRideSharer() {

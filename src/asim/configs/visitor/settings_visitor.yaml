@@ -1,10 +1,12 @@
+model_name: visitor
+
 # misc settings
-tables_dir: ../../configs/visitor/prob_tables
+# tables_dir: ../../configs/visitor/prob_tables
 # data_dir: C:\abm_runs\rsg\abm3_dev\run_dir\data_full
-data_dir: ../../data
-config_dir: ../../configs/visitor
-plot_dir: ../../configs/visitor/figs
-output_dir: ../../output_visitor
+# data_dir: ../../data
+# config_dir: ../../configs/visitor
+# plot_dir: ../../configs/visitor/figs
+# output_dir: ../../output_visitor
 plot_show: False
 plot_save: True
 overwrite: True

@@ -151,7 +151,7 @@ class FourDs(_m.Tool()):
         props = load_properties(_join(self.path, "conf", "sandag_abm.properties"))
 
 		
-        self.mgradata_file = props["mgra.socec.file"] #input/filename
+        self.mgradata_file = props["mgra.socec.base.file"] #input/filename
         self.syn_households_file = props["PopulationSynthesizer.InputToCTRAMP.HouseholdFile"] #input/filename
         self.equivmins_file = props["active.logsum.matrix.file.walk.mgra"] #filename
         self.inNet = os.path.basename(props["active.edge.file"])  #filename
@@ -179,8 +179,8 @@ class FourDs(_m.Tool()):
         _m.logbook_write("Generating density variables")
         self.get_density()
         
-        _m.logbook_write("Creating comparison plots")
-        self.make_plots()
+        # _m.logbook_write("Creating comparison plots")
+        # self.make_plots()
         
         _m.logbook_write("Finished running 4Ds")
 
@@ -266,10 +266,10 @@ class FourDs(_m.Tool()):
             mgra_circa_int = eqmn[eqmn['dist'] < self.int_radius]['j'].unique()
             mgra_circa_oth = eqmn[eqmn['dist'] < self.oth_radius]['j'].unique()
             totEmp = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['emp_total'].sum()
-            totRet = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['emp_retail'].sum() + mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['emp_personal_svcs_retail'].sum() + mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['emp_restaurant_bar'].sum()
+            totRet = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['emp_ret'].sum()
             totHH = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['hh'].sum()
             totPop = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['persons'].sum()
-            totAcres = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['land_acres'].sum()
+            totAcres = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['landacre'].sum()
             totInt = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_int)]['icnt'].sum()
             if(totAcres>0):
                 empDen = totEmp/totAcres

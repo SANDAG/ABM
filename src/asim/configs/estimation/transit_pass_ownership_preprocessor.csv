@@ -1,0 +1,36 @@
+Description,Target,Expression
+,peak_auto_time_home_to_work,"skim_dict.lookup(persons.home_zone_id, persons.workplace_zone_id, ('SOV_TR_M_TIME', 'AM'))"
+# mix transit option,,
+,peak_transit_ivt_home_to_work,"skim_dict.lookup(persons.home_zone_id, persons.workplace_zone_id, ('WALK_MIX_TOTALIVTT', 'AM'))"
+,first_wait,"skim_dict.lookup(persons.home_zone_id, persons.workplace_zone_id, ('WALK_MIX_FIRSTWAIT', 'AM'))"
+,xfer_wait,"skim_dict.lookup(persons.home_zone_id, persons.workplace_zone_id, ('WALK_MIX_XFERWAIT', 'AM'))"
+,access_time,"(reindex(land_use.walk_dist_local_bus, persons.home_zone_id) * 60/walk_speed)"
+,egress_time,"(reindex(land_use.walk_dist_local_bus, persons.workplace_zone_id) * 60/walk_speed)"
+,tot_transit_time,"peak_transit_ivt_home_to_work + 1.5*first_wait + 2*xfer_wait + 2*(access_time + egress_time)"
+,transit_is_available,(access_time < 100) & (egress_time < 100) & (peak_transit_ivt_home_to_work > 0)
+,transit_minus_auto_time_to_work_mix,"np.where(transit_is_available, (tot_transit_time - peak_auto_time_home_to_work).fillna(0), 0)"
+# local transit option,,
+,peak_transit_ivt_home_to_work,"skim_dict.lookup(persons.home_zone_id, persons.workplace_zone_id, ('WALK_LOC_TOTALIVTT', 'AM'))"
+,first_wait,"skim_dict.lookup(persons.home_zone_id, persons.workplace_zone_id, ('WALK_LOC_FIRSTWAIT', 'AM'))"
+,xfer_wait,"skim_dict.lookup(persons.home_zone_id, persons.workplace_zone_id, ('WALK_LOC_XFERWAIT', 'AM'))"
+,tot_transit_time,"peak_transit_ivt_home_to_work + 1.5*first_wait + 2*xfer_wait + 2*(access_time + egress_time)"
+,transit_is_available,(access_time < 100) & (egress_time < 100) & (peak_transit_ivt_home_to_work > 0)
+,transit_minus_auto_time_to_work_loc,"np.where(transit_is_available, (tot_transit_time - peak_auto_time_home_to_work).fillna(0), 0)"
+# premium transit option,,
+,peak_transit_ivt_home_to_work,"skim_dict.lookup(persons.home_zone_id, persons.workplace_zone_id, ('WALK_PRM_TOTALIVTT', 'AM'))"
+,first_wait,"skim_dict.lookup(persons.home_zone_id, persons.workplace_zone_id, ('WALK_PRM_FIRSTWAIT', 'AM'))"
+,xfer_wait,"skim_dict.lookup(persons.home_zone_id, persons.workplace_zone_id, ('WALK_PRM_XFERWAIT', 'AM'))"
+,access_time,"(reindex(land_use.walk_dist_premium_transit, persons.home_zone_id) * 60/walk_speed)"
+,egress_time,"(reindex(land_use.walk_dist_premium_transit, persons.workplace_zone_id) * 60/walk_speed)"
+,tot_transit_time,"peak_transit_ivt_home_to_work + 1.5*first_wait + 2*xfer_wait + 2*(access_time + egress_time)"
+,transit_is_available,(access_time < 100) & (egress_time < 100) & (peak_transit_ivt_home_to_work > 0)
+,transit_minus_auto_time_to_work_prm,"np.where(transit_is_available, (tot_transit_time - peak_auto_time_home_to_work).fillna(0), 0)"
+# determining non-zero minimum between loc vs mix vs prm,,
+,transit_minus_auto_time_to_work,"np.where(((transit_minus_auto_time_to_work_mix < transit_minus_auto_time_to_work_loc) & (transit_minus_auto_time_to_work_mix > 0)) | (transit_minus_auto_time_to_work_loc == 0), transit_minus_auto_time_to_work_mix, transit_minus_auto_time_to_work_loc)"
+,transit_minus_auto_time_to_work,"np.where(((transit_minus_auto_time_to_work_prm < transit_minus_auto_time_to_work) & (transit_minus_auto_time_to_work_prm > 0)) | (transit_minus_auto_time_to_work == 0), transit_minus_auto_time_to_work_prm, transit_minus_auto_time_to_work)"
+,dparkcost_work,"np.where(persons.workplace_zone_id > 0, reindex(land_use.dparkcost, persons.workplace_zone_id), 0)"
+# transit pass cost converted to cost per trip and multiplied by trip mode choice cost coefficient in model,,
+# assumes 22 working days per month and 2 trips per work day. reduced fare for children and seniors half price.,,
+,income_exponent,0.6
+,transit_pass_cost_per_trip,monthly_transit_pass_cost / (22 * 2)
+,transit_pass_cost_per_trip,"np.where((df.age >= 65) | (df.age <= 18), transit_pass_cost_per_trip / 2, transit_pass_cost_per_trip)"

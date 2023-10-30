@@ -1,0 +1,5 @@
+Label,Description,Expression,escort,shopping,eatout,othmaint,social,othdiscr
+local_dist,Distance capped at 20 miles,"_DIST@np.minimum(skims['DIST'], 20)",1,1,1,1,1,1
+util_dist,dist,@_DIST,coef_dist_escort,coef_dist_shopping,coef_dist_eatout,coef_dist_maint,coef_dist_social,coef_dist_discr
+util_size_term,Size variable,@df['size_term'].apply(np.log1p),coef_size,coef_size,coef_size,coef_size,coef_size,coef_size
+utl_zero_size_term,,@df['size_term']==0,-999,-999,-999,-999,-999,-999

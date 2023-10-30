@@ -78,19 +78,19 @@ CONSTANTS:
   terminal: 1
   central_mobility_hub: 2
   nearest: 3
-  parkLocation1Mgra: 2997
+  parkLocation1Mgra: 11249
   parkLocation2Mgra: -999
   parkLocation3Mgra: -999
   parkLocation4Mgra: 6528
   parkLocation5Mgra: 2802
-  parkEscortLocationMgra: 2997
+  parkEscortLocationMgra: 11249
   rentalLocationMgra: 2994
-  terminalMgra: 2997
+  terminalMgra: 11249
   centralMobilityHubMgra: 0
-  ridehailLocation1Mgra: 2997
+  ridehailLocation1Mgra: 11249
   ridehailLocation2Mgra: -999
   transitMgra: -999
-  curbLocation1Mgra: 2997
+  curbLocation1Mgra: 11249
   curbLocation2Mgra: -999
   curbLocation3Mgra: -999
   curbLocation4Mgra: -999
@@ -330,6 +330,7 @@ CONSTANTS:
   ivt_cmr_multiplier: 0.65
   ivt_ltd_multiplier: 1.0
   ivt_cost_multiplier: 0.6
+  walk_speed: 3.0
 
 
 # so far, we can use the same spec as for non-joint tours

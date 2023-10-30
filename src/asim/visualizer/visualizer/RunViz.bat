@@ -7,6 +7,10 @@
 :: Run the data pipeline tool to summarize model results
 :: If path not found, try un-commenting below
 :: call python T:\data\tools\Data-Pipeline-Tool\run.py
+
+:: change directory to where the batch file is
+@REM cd %~dp0
+
 call python \\sandag.org\transdata\data\tools\Data-Pipeline-Tool\run.py
 if ERRORLEVEL 1 goto error
 

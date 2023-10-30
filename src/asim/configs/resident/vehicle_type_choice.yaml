@@ -34,6 +34,7 @@ COLS_TO_INCLUDE_IN_VEHICLE_TABLE:
   - auto_operating_cost
   - Range
   - MPG
+  - vehicle_year
 
 # If PROBS_SPEC is supplied, fuel_type will be ignored
 combinatorial_alts:
