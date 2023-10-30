@@ -1,0 +1,72 @@
+RESULT_COL_NAME: establishment_attraction
+
+industry_groups:
+  1: 
+    description: agriculture_mining
+    name: AGM
+    industry_factor: 1.0261
+  2: 
+    description: manufacturing
+    name: MFG
+    industry_factor: 1.0186
+  3: 
+    description: industry_utilities
+    name: IUT
+    industry_factor: 1.0186
+  4: 
+    description: retail
+    name: RET
+    industry_factor: 1.0743
+  5: 
+    description: wholesale
+    name: WHL
+    industry_factor: 1.2698
+  6: 
+    description: construction
+    name: CON
+    industry_factor: 0.8064
+  7: 
+    description: transportation
+    name: TRN
+    industry_factor: 1.5098
+  8: 
+    description: info_finance_insurance_realestate_professional
+    name: IFR
+    industry_factor: 0.9856
+  9: 
+    description: education_publicservices
+    name: EPO
+    industry_factor: 0.9019
+  10: 
+    description: medical_health
+    name: MHS
+    industry_factor: 0.9687
+  11: 
+    description: leisure_accommondation_food
+    name: LAF
+    industry_factor: 0.9076
+
+establishment_size_groups:
+  1:
+    min_employees: 1
+    max_employees: 4
+    attractors_per_employee: 0.2323
+  2:
+    min_employees: 5
+    max_employees: 19
+    attractors_per_employee: 0.0160
+  3:
+    min_employees: 20
+    max_employees: 49
+    attractors_per_employee: 0.0139
+  4:
+    min_employees: 50
+    max_employees: 99
+    attractors_per_employee: 0.0032
+  5:
+    min_employees: 100
+    max_employees: inf
+    attractors_per_employee: 0.0030
+
+CONSTANTS:
+  beta_employment: 0.0899

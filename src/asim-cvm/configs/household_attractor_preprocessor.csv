@@ -1,0 +1,12 @@
+Description,Target,Expression
+number of eatout tours,num_eatout_tours,"reindex_i(tours[(tours.tour_category!='joint') & (tours.tour_type=='eatout')].groupby('household_id').size(), df.index).fillna(0)"
+number of non shopping non eatout tours,num_non_shop_eatout_tours,"reindex_i(tours[(tours.tour_category!='joint') & ~(tours.tour_type.isin(['shopping','eatout']))].groupby('household_id').size(), df.index).fillna(0)"
+number of working adults,num_adults_worker,df.num_adults-df.num_nonworker_adults
+number of adults between 18 and 34 years old,num_adults_18_34,"reindex_i(persons[(persons.age>=18) & (persons.age<35)].groupby('household_id').size(), df.index).fillna(0)"
+number of adults between 35 and 54 years old,num_adults_35_54,"reindex_i(persons[(persons.age>=35) & (persons.age<55)].groupby('household_id').size(), df.index).fillna(0)"
+number of adults between 55 and 74 years old,num_adults_55_74,"reindex_i(persons[(persons.age>=55) & (persons.age<75)].groupby('household_id').size(), df.index).fillna(0)"
+number of adults above 75 years old,num_adults_75_plus,"reindex_i(persons[(persons.age>=75)].groupby('household_id').size(), df.index).fillna(0)"
+portion of adults between 18 and 34 years old,age_18_34,"np.where(df.num_adults>0,num_adults_18_34/df.num_adults,0)"
+portion of adults between 35 and 54 years old,age_35_54,"np.where(df.num_adults>0,num_adults_35_54/df.num_adults,0)"
+portion of adults between 55 and 74 years old,age_55_74,"np.where(df.num_adults>0,num_adults_55_74/df.num_adults,0)"
+portion of adults above 75 years old,age_75_plus,"np.where(df.num_adults>0,num_adults_75_plus/df.num_adults,0)"

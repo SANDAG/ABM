@@ -62,7 +62,7 @@ def route_generation(
     rng = np.random.default_rng(seed=42)
 
     ## WHOLESALE ## Some kind of parameterization p and r based on data....
-    x_mean = np.clip(establishments["n_employees"], 1, 200)
+    x_mean = np.clip(establishments["employees"], 1, 200)
     x_variance = x_mean * 1.2
     p = np.clip(x_mean / x_variance, 0.05, 0.95)
     r = np.square(x_mean) / np.clip(x_variance - x_mean, 0.05, np.inf)
@@ -71,7 +71,7 @@ def route_generation(
     n_routes_total = x
 
     ## GIG WORKERS ## Some kind of parameterization p and r based on data....
-    x_mean = np.clip(establishments["n_small_ests"], 1, 200)
+    x_mean = np.clip(establishments["employees"], 1, 200)
     x_variance = x_mean * 1.2
     p = np.clip(x_mean / x_variance, 0.05, 0.95)
     r = np.square(x_mean) / np.clip(x_variance - x_mean, 0.05, np.inf)

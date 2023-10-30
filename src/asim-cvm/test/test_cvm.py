@@ -2,6 +2,7 @@
 import sys
 import importlib
 from pathlib import Path
+import pytest
 import activitysim.abm  # register components # noqa: F401
 
 # TODO: should this just be its own installable package?
@@ -11,6 +12,8 @@ extensions = importlib.import_module("extensions")  # register cvm components
 sys.path = sys.path[1:]
 
 EXPECTED_MODELS = [
+    "cvm_household_attractor",
+    "cvm_establishment_attractor",
     "cvm_accessibility",
     "route_generation",
     "route_purpose_and_vehicle",
@@ -28,11 +31,17 @@ def test_cvm():
     assert state.settings.chunk_size == 0
     assert not state.settings.sharrow
 
+    state.logging.config_logger()
+
     # for step_name in EXPECTED_MODELS:
     #     state.run.by_name(step_name)
     #     print(f"> cvm_step {step_name}: ok")
 
-    print()
+    print("### household attractor ###")
+    state.run.household_attractor()
+
+    print("### establishment attractor ###")
+    state.run.establishment_attractor()
 
     print("### commercial_accessibility ###")
     state.run.cvm_accessibility()
@@ -62,3 +71,8 @@ def test_cvm():
     print(state.get("routes"))
     print(state.get("routes").info())
 
+    print("### write out omx ###")
+    state.run.write_cvm_trip_matrices()
+
+    print("### write out csv ###")
+    state.run.write_tables()

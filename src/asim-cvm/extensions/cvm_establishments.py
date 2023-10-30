@@ -78,7 +78,7 @@ def establishments(state: State) -> pd.DataFrame:
         if establishments_sample_size == 0:
             sample_rate = 1
         else:
-            sample_rate = round(establishments_sample_size / n_total_establishments, 3)
+            sample_rate = round(establishments_sample_size / n_total_establishments, 5)
 
         df["sample_rate"] = sample_rate
 
