@@ -276,7 +276,7 @@ def route_endpoint(
             choices_list.append(
                 pd.Series(
                     name=model_settings.RESULT_COL_NAME,
-                    data=choosers["MAZ"],
+                    data=choosers["zone_id"],
                     index=choosers.index,
                 )
             )
@@ -307,7 +307,7 @@ def route_endpoint(
         )
 
         skim_dict = network_los.get_default_skim_dict()
-        skims = skim_dict.wrap("zone_id", "MAZ")
+        skims = skim_dict.wrap("zone_id", "zone_id")
 
         locals_dict.update({"skims": skims})
 

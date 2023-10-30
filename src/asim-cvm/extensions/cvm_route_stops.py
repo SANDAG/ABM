@@ -339,7 +339,7 @@ def _route_stop_location(
             choices_list.append(
                 pd.Series(
                     name=model_settings.RESULT_COL_NAME,
-                    data=choosers["MAZ"],
+                    data=choosers["zone_id"],
                     index=choosers.index,
                 )
             )
@@ -371,7 +371,7 @@ def _route_stop_location(
 
         skim_dict = network_los.get_default_skim_dict()
         skims = {
-            "skims": skim_dict.wrap("zone_id", "MAZ"),
+            "skims": skim_dict.wrap("zone_id", "zone_id"),
             "leg1_skims": skim_dict.wrap_3d(
                 orig_key="_prior_stop_location_",
                 dest_key="zone_id",
