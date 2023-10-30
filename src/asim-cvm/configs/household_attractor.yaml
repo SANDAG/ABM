@@ -16,9 +16,3 @@ preprocessor:
   TABLES:
     - tours
     - persons
-
-annotate_land_use:
-  SPEC: annotate_land_use_hh_attractor
-  DF: land_use
-  TABLES:
-    - households

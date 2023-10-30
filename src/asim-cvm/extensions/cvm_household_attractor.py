@@ -34,9 +34,6 @@ class HouseholdAttractorSettings(LogitComponentSettings, extra="forbid"):
     HAS_ATTRACTION_ALT: int
     """The alternative number that indicates that the household has attraction."""
 
-    annotate_land_use: PreprocessorSettings | None = None
-    """Setting for annotation."""
-
     segments: list[str]
     """The segments to run the model for."""
 
