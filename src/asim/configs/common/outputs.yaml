@@ -1,4 +1,4 @@
-REMOVE_COLUMNS:
+REMOVE_COLUMNS_TRIPS:
   - DRIVEALONE_NOTR_EA_LOW
   - SHARED2_NOTR_EA_LOW
   - SHARED3_NOTR_EA_LOW
@@ -433,3 +433,118 @@ REMOVE_COLUMNS:
   - is_drive_loc
   - is_drive_prm
   - is_drive_mix
+
+REMOVE_COLUMNS_HOUSEHOLDS:
+  - dudenbin
+  - othercollege_All_Graduate
+  - PopEmpDenPerMi
+  - remoteAVParking
+  - parking_type
+  - emp_gov
+  - mstallsoth
+  - walk_dist_premium_transit
+  - mgra.1
+  - othercollege_ft_Undergrad
+  - gq_mil
+  - emp_ag_min
+  - hotelroomtotal
+  - enrollgrade9to12
+  - emp_non_ws_wfh
+  - dstallsoth
+  - refueling_stations
+  - emp_hlth
+  - totintbin
+  - emp_mil
+  - exp_daily
+  - parkactive
+  - AVGTTS
+  - hch_dist
+  - emp_whl
+  - truckregiontype
+  - othercollegeenroll
+  - enrollgradekto8
+  - empdenbin
+  - othercollege_pt_Undergrad
+  - dparkcost
+  - emp_food
+  - emp_ret
+  - terminal_time
+  - major_All_Graduate
+  - duden
+  - luxuryroom
+  - midpriceroom
+  - hh
+  - walk_dist_local_bus
+  - majorcollege_pt_Undergrad
+  - emp_bus_svcs
+  - hstallsoth
+  - hparkcost
+  - emp_retail
+  - pseudomsa
+  - exp_hourly
+  - ech_dist
+  - othercollege_All_Undergrad
+  - mparkcost
+  - effective_acres
+  - MicroAccessTime
+  - TAZ.1
+  - land_acres
+  - empden
+  - acres
+  - emp_fin_res_mgm
+  - PCTDETOUR
+  - pop
+  - majorcollege_All_Undergrad
+  - hhp
+  - milestocoast
+  - popden
+  - majorcollege_ft_Undergrad
+  - emp_restaurant_bar
+  - external_work
+  - is_parking_zone
+  - emp_amusement
+  - external_TAZ
+  - totint
+  - hhs
+  - emp_total
+  - emp_mnf
+  - dstallssam
+  - external_nonwork
+  - poe_id
+  - is_cbd
+  - exp_monthly
+  - density_index
+  - tot_collegeenroll
+  - collegeenroll
+  - preschool_target
+  - retempden
+  - gq_civ
+  - household_density
+  - numfreehrs
+  - i10
+  - emp_educ
+  - emp_utl
+  - emp_con
+  - parkarea
+  - mstallssam
+  - parking_spaces
+  - population_density
+  - emp_accm
+  - end_iteration
+  - district27
+  - emp_hotel.1
+  - employment_density
+  - openspaceparkpreserve
+  - emp_trn_wrh
+  - emp_oth
+  - emp_ent
+  - beachactive
+  - upscaleroom
+  - hstallssam
+  - adultschenrl
+  - external_MAZ
+  - emp_hotel
+  - ML_DIST
+  - emp_non_ws_oth
+  - budgetroom
+  - economyroom

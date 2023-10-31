@@ -218,11 +218,11 @@ def create_metadata_df(input_dir, ts, time_to_write, EMME_metadata):
     return meta_df
 
 
-def final_trips_column_filter(df):
-    # get list of columns to go into final trip table
+def column_filter(df, setting):
+    # remove columns from a final table
     output_settings_file_name = "..\common\outputs.yaml"
     output_settings = config.read_model_settings(output_settings_file_name)
-    remove_cols = output_settings["REMOVE_COLUMNS"]
+    remove_cols = output_settings[setting]
 
     remove_filter = df.filter(remove_cols)
     df_removed = df.drop(columns=remove_filter)
@@ -686,7 +686,10 @@ def write_to_datalake(
 
         # drop write_trip_matrice skim columns
         if output_table.name == "trips":
-            output_table = final_trips_column_filter(output_table)
+            output_table = column_filter(output_table, "REMOVE_COLUMNS_TRIPS")
+
+        if output_table.name == "households":
+            output_table = column_filter(output_table, "REMOVE_COLUMNS_HOUSEHOLDS")
 
         if cloud_bool:
             # add unique identifier
