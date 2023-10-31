@@ -91,7 +91,7 @@ class RunTime(_m.Tool()):
             name = 'Run ID: {}'.format(run_id)
 
             # Creating dummy total time
-            total_entry = (run_id, 'Total Run Time', '0:0')
+            total_entry = (run_id, 'Total Run Time', '0:0:0')
 
             prev_step = 'Total Run Time'
 
@@ -110,28 +110,28 @@ class RunTime(_m.Tool()):
             runtime_df = runtime_series.to_frame()
 
             # Create intial time
-            zero_time = pd.to_datetime('0:0', format='%H:%M')
+            zero_time = pd.to_datetime('0:0:0', format='%H:%M:%S')
 
             # Calculate iteration 4 run time if it exists
-            iter_str = 'Iteration 4_0'
+            iter_str = 'Iteration 4___0'
             if iter_str in runtime_df.index:
                 iter_4_index = runtime_df.index.get_loc(iter_str)
                 iter_4_df = runtime_df.iloc[iter_4_index+1:, :].copy()
                 iter_4_df = iter_4_df[['  -    -  ' not in i for i in iter_4_df.index]]
                 iter_4_df[name] = (pd.to_datetime(
-                                            iter_4_df[name], format='%H:%M') -
+                                            iter_4_df[name], format='%H:%M:%S') -
                                    zero_time)
                 iter_4_time = iter_4_df[name].sum()
                 runtime_df.loc[iter_str, :] = self.format_runtime(iter_4_time)
 
             # Calculate total runtime
             is_iter_row = pd.Series(runtime_df.index).str.startswith('Iter')
-            iter_only_df = runtime_df[['_Iter' in i for i in runtime_df.index]].copy()
+            iter_only_df = runtime_df[['___Iter' in i for i in runtime_df.index]].copy()
             iter_only_df = iter_only_df[['  -    -  ' not in i for i in iter_only_df.index]]
             no_substeps_df = runtime_df[~is_iter_row.values].copy()
             no_substeps_df = no_substeps_df[['  -  ' not in i for i in no_substeps_df.index]]
             total_df = pd.concat([iter_only_df, no_substeps_df], axis=0)
-            total_df[name] = (pd.to_datetime(total_df[name], format='%H:%M') -
+            total_df[name] = (pd.to_datetime(total_df[name], format='%H:%M:%S') -
                               zero_time)
             total_time = total_df[name].sum()
             run_str = 'Total Run Time'
@@ -207,7 +207,8 @@ class RunTime(_m.Tool()):
 
         hours = str(int(time.total_seconds() // 3600))
         minutes = str(int((time.total_seconds() % 3600) // 60)).zfill(2)
-        formatted_runtime = hours + ":" + minutes
+        seconds = str(int(time.total_seconds() % 60)).zfill(2)
+        formatted_runtime = hours + ":" + minutes + ":" + seconds
 
         return formatted_runtime
 
@@ -230,8 +231,8 @@ class RunTime(_m.Tool()):
         formatted_runtime = self.format_runtime(total_runtime)
 
         # Defaulting zero second times to 1 second
-        if formatted_runtime == '0:00':
-            formatted_runtime = '0:01'
+        if formatted_runtime == '0:00:00':
+            formatted_runtime = '0:00:01'
 
         return formatted_runtime
 
@@ -322,7 +323,7 @@ class RunTime(_m.Tool()):
             final_df = reduce(lambda left, right:
                               pd.merge(left, right, on=['index'], how='outer'),
                               final_dfs)
-            
+
             # Sort data by step order
             final_df = final_df.set_index('index', drop= False)
             final_df = final_df.reindex(step_order)
@@ -333,7 +334,7 @@ class RunTime(_m.Tool()):
 
             # Remove appended iteration markers
             final_df['index'] = (final_df['index'].apply(
-                                            lambda x: x.split('_')[0]))
+                                            lambda x: x.split('___')[0]))
 
             final_df = final_df.rename(columns={'index': 'Step'})
             result = (final_df, True)
@@ -350,7 +351,7 @@ class RunTime(_m.Tool()):
             if info[1] == 'Final traffic assignments':
                 prev_step = self.add_runtimes(final_runtimes, [[0, 'Iteration 4', 0]], prefix, suffix, step_dict, prev_step, attrs, 0)
                 prefix = '  -  ' + prefix
-                suffix = suffix + '_Iteration 4'
+                suffix = suffix + '___Iteration 4'
 
             temp_info = info[1]
             
@@ -359,7 +360,7 @@ class RunTime(_m.Tool()):
                 index_dict[info[1]] += 1
             else:
                 index_dict[info[1]] = 0
-            info[1] = prefix + info[1] + suffix + '_' + str(index_dict[info[1]])
+            info[1] = prefix + info[1] + suffix + '___' + str(index_dict[info[1]])
             
             final_runtimes.append(info)
 
@@ -377,9 +378,9 @@ class RunTime(_m.Tool()):
             # get child steps 
             if 'Iteration' in temp_info:
                 child_runtimes = self.get_child_runtimes(info[0], attrs)
-                prev_step = self.add_runtimes(final_runtimes, child_runtimes, '  -  ' + prefix, suffix + '_' + info[1], step_dict, prev_step, attrs, depth)
+                prev_step = self.add_runtimes(final_runtimes, child_runtimes, '  -  ' + prefix, suffix + '___' + info[1], step_dict, prev_step, attrs, depth)
             elif depth > 0:
                 child_runtimes = self.get_child_runtimes(info[0], attrs)
-                prev_step = self.add_runtimes(final_runtimes, child_runtimes, '  -  ' + prefix, suffix + '_' + info[1], step_dict, prev_step, attrs, depth - 1)
+                prev_step = self.add_runtimes(final_runtimes, child_runtimes, '  -  ' + prefix, suffix + '___' + info[1], step_dict, prev_step, attrs, depth - 1)
             
         return prev_step

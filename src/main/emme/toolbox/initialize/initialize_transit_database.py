@@ -104,7 +104,7 @@ class InitializeTransitDatabase(_m.Tool(), gen_utils.Snapshot):
             raise
 
     @_m.logbook_trace('Initialize transit database', save_arguments=True)
-    def __call__(self, base_scenario, add_database=True):
+    def __call__(self, base_scenario, period, add_database=True):
         attributes = {"base_scenario": base_scenario.id}
         gen_utils.log_snapshot("Initialize transit database", str(self), attributes)
         create_function = _m.Modeller().tool("inro.emme.data.function.create_function")
@@ -117,7 +117,7 @@ class InitializeTransitDatabase(_m.Tool(), gen_utils.Snapshot):
         props = load_properties(os.path.join(main_directory, "conf", "sandag_abm.properties"))
         scenarioYear = props["scenarioYear"]
 
-        transit_db_dir = join(project_dir, "Database_transit")
+        transit_db_dir = join(project_dir, "Database_transit_" + period)
         transit_db_path = join(transit_db_dir, "emmebank")
         network = base_scenario.get_partial_network(["NODE"], include_attributes=True)
         #num_zones = sum([1 for n in network.nodes() if n["isZone"] > 0])
@@ -137,7 +137,7 @@ class InitializeTransitDatabase(_m.Tool(), gen_utils.Snapshot):
         else:
             transit_eb = _eb.create(transit_db_path, dimensions)
 
-        transit_eb.title = base_eb.title[:65] + "-transit"
+        transit_eb.title = base_eb.title[:65] + "-transit-" + period
         transit_eb.coord_unit_length = base_eb.coord_unit_length
         transit_eb.unit_of_length = base_eb.unit_of_length
         transit_eb.unit_of_cost = base_eb.unit_of_cost
