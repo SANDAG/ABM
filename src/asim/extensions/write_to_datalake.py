@@ -482,7 +482,7 @@ def write_model_output_to_datalake(
     guid = EMME_metadata["scenario_guid"]
 
     # format the timestamp as a string in a consistent format
-    timestamp_str = now.strftime("%Y-%m-%d_%H-%M-%S")
+    timestamp_str = now.strftime("%Y%m%d_%H%M%S")
 
     # create folder structure for hierarchical organization of files
     year_folder = now.strftime("%Y")
@@ -511,13 +511,16 @@ def write_model_output_to_datalake(
     output_table["current_iteration"] = EMME_metadata["current_iteration"]
     output_table["end_iteration"] = EMME_metadata["end_iteration"]
 
-    # Construct the model output filename w guid
-    model_output_file = f"{base_filename }_{EMME_metadata['username']}_{str(EMME_metadata['scenario_title'])}_{timestamp_str}_{guid[:5]}"
-
     # extract table name from base filename, e.g. households, trips, persons, etc.
     tablename = base_filename.split("final_")[1]
-
-    lake_file = f"{tablename}/{year_folder}/{month_folder}/{day_folder}/{model_output_file}.parquet"
+    
+    # Construct the model output filename w guid
+    short_guid = str(guid)[:5]
+    iteration = EMME_metadata['current_iteration']
+    scenario_title = EMME_metadata["scenario_title"]
+    username  = EMME_metadata['username']
+    model_output_file = f"{tablename}__{timestamp_str}__{iteration}"
+    lake_file = f"abm_15_0_0/{scenario_title}__{username}__{short_guid}/{iteration}/{model_name}/{model_output_file}.parquet"
 
     # replace empty strings with None
     # otherwise conversation error for boolean types
@@ -563,13 +566,23 @@ def write_metadata_to_datalake(data_dir, t0, EMME_metadata, container, now):
     scenario_df = create_metadata_df(data_dir[0], now, write_time, EMME_metadata)
 
     # format the timestamp as a string in a consistent format
-    timestamp_str = now.strftime("%Y-%m-%d_%H-%M-%S")
+    timestamp_str = now.strftime("%Y%m%d_%H%M%S")
+
+    # add model name: resident, visitor, etc.
+    settings = inject.get_injectable("settings")
+    try:
+        model_name = settings["model_name"]
+    except KeyError:
+        model_name = "None"
 
     # generate metadata filename and path
-    metadata_file = f"model_run_{timestamp_str}_{EMME_metadata['scenario_guid']}.parquet"
-    metadata_path = (
-        f"scenario/{now.strftime('%Y')}/{now.strftime('%m')}/{now.strftime('%d')}/{metadata_file}"
-    )
+    scenario_title = EMME_metadata["scenario_title"]
+    username = EMME_metadata["username"]
+    short_guid = EMME_metadata['scenario_guid'][:5]
+    iteration =  EMME_metadata["current_iteration"]
+
+    metadata_file = f"scenario__{timestamp_str}__{iteration}.parquet"
+    metadata_path = f"abm_15_0_0/{scenario_title}__{username}__{short_guid}/{iteration}/{model_name}/{metadata_file}"
 
     # write metadata to data lake
     parquet_file = BytesIO()
@@ -603,7 +616,7 @@ def get_scenario_metadata(output_dir):
         model_metadata_dict = {"main_directory" : None
                                 ,"scenario_guid" : uuid.uuid4().hex
                                 ,'scenario_guid_created_at' : datetime.datetime.now()
-                                ,"scenario_title" : "abm3_dev" #TODO change this to None when development ends
+                                ,"scenario_title" : "abm2022" #TODO change this to None when development ends
                                 ,"scenario_year": "2022" #TODO change this to None when development ends
                                 ,"select_link" : None
                                 ,"username" : os.getenv("USERNAME")
