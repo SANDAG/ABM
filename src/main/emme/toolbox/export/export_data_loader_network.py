@@ -66,12 +66,6 @@ import pandas as pd
 import numpy as _np
 
 
-import datetime
-from io import BytesIO
-from io import StringIO
-import uuid
-import yaml
-
 gen_utils = _m.Modeller().module("sandag.utilities.general")
 dem_utils = _m.Modeller().module("sandag.utilities.demand")
 
@@ -98,11 +92,8 @@ class ExportDataLoaderNetwork(_m.Tool(), gen_utils.Snapshot):
         self.attributes = ["main_directory", "base_scenario_id", "traffic_emmebank", "transit_emmebank", "num_processors"]
 
         self.container = gen_utils.DataLakeExporter().get_datalake_connection()
-        self.guid = gen_utils.DataLakeExporter(ScenarioPath=self.main_directory).get_scenario_guid()
-        self.timestamp = datetime.datetime.now()
         self.util_DataLakeExporter = gen_utils.DataLakeExporter(ScenarioPath=self.main_directory
-                                                                ,connection_info = [self.guid,self.container]
-                                                                ,timestamp = self.timestamp)
+                                                                ,container = self.container)
 
 
     def page(self):
