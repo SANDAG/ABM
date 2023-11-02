@@ -22,4 +22,10 @@ coef_ind_manu,-0.566600437,F
 coef_ind_mgmt_srv,0.386847827,F
 coef_ind_mil,-2.257002339,F
 coef_external_worker_identification,-999,T
-coef_cbd,0.498794661,F
+coef_regional_calibration,-0.14,T
+coef_cbd,-0.35,F
+coef_NCounty, 0.2,F
+coef_SSuburb,-0.4,F
+coef_ECounty,-5,F
+coef_NWCounty,0.3,F
+

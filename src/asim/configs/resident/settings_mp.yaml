@@ -2,7 +2,7 @@ inherit_settings: settings.yaml
 
 multiprocess: True
 households_sample_size: 0
-num_processes: 40
+num_processes: 20
 trace_hh_id:
 chunk_training_mode: disabled
 # chunk_size: 240_000_000_000
@@ -15,7 +15,7 @@ memory_profile: False
 # (Shadow pricing requires fail_fast setting in multiprocessing mode)
 fail_fast: True
 
-resume_after:
+resume_after: atwork_subtour_mode_choice
 
 models:
   ### mp_init_proto_pop (single process)
@@ -63,25 +63,25 @@ models:
   - atwork_subtour_scheduling
   - atwork_subtour_mode_choice
   - stop_frequency
-  - trip_purpose
-  - trip_destination
-  - trip_purpose_and_destination
-  - trip_scheduling
-  - trip_mode_choice
-  - parking_location
+  # - trip_purpose
+  # - trip_destination
+  # - trip_purpose_and_destination
+  # - trip_scheduling
+  # - trip_mode_choice
+  # - parking_location
   ### mp_summarize (single process)
   - write_data_dictionary
   - track_skim_usage
-  - write_trip_matrices
-  - write_to_datalake
-  # - write_tables
+  # - write_trip_matrices
+  # - write_to_datalake
+  - write_tables
 
 
 multiprocess_steps:
   - name: mp_init_proto_pop
     begin: initialize_proto_population
   - name: mp_disaggregate_accessibility
-    num_processes: 20
+    num_processes: 10
     begin: compute_disaggregate_accessibility
     slice:
       tables:

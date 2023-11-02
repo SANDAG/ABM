@@ -74,4 +74,5 @@ util_alternative_specific_constant_adjustment_for_part_time_work,alternative spe
 util_alternative_specific_constant_adjustment_for_university_student,alternative specific constant adjustment for university student,@df.ptype==3,0.362762501,,,0.52545937,1.0066602
 util_alternative_specific_constant_adjustment_for_school_child_16_17,alternative specific constant adjustment for school child 16_17,@df.ptype==6,,,,0.1478192,0.4715931
 util_alternative_specific_constant_adjustment_for_school_child_6_15,alternative specific constant adjustment for school child 6_15,@df.ptype==7,,,,0.0969167,
+util_alternative_specific_constant_adjustment_for_school_child_0_5,alternative specific constant adjustment for school child 0_5,@df.ptype==8,,,0.72,-0.67,
 #,,,,,,,
