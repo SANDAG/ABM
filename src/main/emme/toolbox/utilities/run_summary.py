@@ -348,10 +348,6 @@ class RunTime(_m.Tool()):
     def add_runtimes(self, final_runtimes, runtimes, prefix, suffix, step_dict, prev_step, attrs, depth):
         index_dict = {}
         for index, info in enumerate(runtimes):
-            if info[1] == 'Final traffic assignments':
-                prev_step = self.add_runtimes(final_runtimes, [[0, 'Iteration 4', 0]], prefix, suffix, step_dict, prev_step, attrs, 0)
-                prefix = '  -  ' + prefix
-                suffix = suffix + '___Iteration 4'
 
             temp_info = info[1]
             
@@ -382,5 +378,10 @@ class RunTime(_m.Tool()):
             elif depth > 0:
                 child_runtimes = self.get_child_runtimes(info[0], attrs)
                 prev_step = self.add_runtimes(final_runtimes, child_runtimes, '  -  ' + prefix, suffix + '___' + info[1], step_dict, prev_step, attrs, depth - 1)
+            
+            if temp_info == 'Iteration 3':
+                prev_step = self.add_runtimes(final_runtimes, [[0, 'Iteration 4', 0]], prefix, suffix, step_dict, prev_step, attrs, 0)
+                prefix = '  -  ' + prefix
+                suffix = suffix + '___Iteration 4'
             
         return prev_step
