@@ -629,6 +629,8 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         # Running in same process slows OMX skim export for unknown reason
                         # transit_emmebank need to be closed and re-opened to be accessed by separate process
                         transit_emmebank_dict = self.run_transit_assignments(transit_emmebank_dict, scenarioYear, output_dir, export_transit_skims)
+                        for period in periods:
+                            transit_scenario_dict[period] = transit_emmebank_dict[period].scenario(base_scenario.number)
                         # _m.Modeller().desktop.refresh_data()
 
                         # #output transit skims by period
@@ -726,6 +728,8 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 # Running in same process slows OMX skim export for unknown reason
                 # transit_emmebank need to be closed and re-opened to be accessed by separate process
                 transit_emmebank_dict = self.run_transit_assignments(transit_emmebank_dict, scenarioYear, output_dir, export_transit_skims)
+                for period in periods:
+                    transit_scenario_dict[period] = transit_emmebank_dict[period].scenario(base_scenario.number)
                 # _m.Modeller().desktop.refresh_data()
 
                 # #output transit skims by period
@@ -901,12 +905,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 _time.sleep(2)
                 
                 script = _join(main_directory, "python", "emme", "run_transit_assignment.py")
-                err_file_ref, err_file_path = _tempfile.mkstemp(suffix='.log')
-                err_file = os.fdopen(err_file_ref, "w")
                 p = _subprocess.Popen(
                     [sys.executable, script, "--root_dir", '"%s"' % main_directory, "--project_path", '"%s"' % project_path,
                     "--period", '"%s"' % period, "--number", '"%s"' % number, "--proc", '"%s"' % transit_processors], 
-                    stderr=err_file, shell=True)
+                    shell=True)
                 processes.append({
                     "p": p,
                     "period": period
@@ -928,17 +930,17 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     raise
 
 
-        transit_emmebank_dict = {}
+        new_transit_emmebank_dict = {}
         for number, period in period_ids:
 
-            transit_emmebank_dict[period] = _eb.Emmebank(transit_emmebank_path_dict[period])
+            new_transit_emmebank_dict[period] = _eb.Emmebank(transit_emmebank_path_dict[period])
             # return transit_emmebank
             _m.Modeller().desktop.refresh_data()  
-            transit_scenario = transit_emmebank_dict[period].scenario(number)
+            transit_scenario = new_transit_emmebank_dict[period].scenario(number)
             omx_file = _join(output_dir, "skims", "transit_skims_" + period + ".omx")
             export_transit_skims(omx_file, [period], transit_scenario, big_to_zero=False)
         
-        return transit_emmebank_dict
+        return new_transit_emmebank_dict
 
     def run_traffic_assignments(self, base_scenario, period_ids, msa_iteration, relative_gap,
                                 max_assign_iterations, num_processors, select_link=None,
