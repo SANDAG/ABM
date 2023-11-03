@@ -218,10 +218,13 @@ def create_metadata_df(input_dir, ts, time_to_write, EMME_metadata):
     return meta_df
 
 
-def column_filter(df, setting):
+def column_filter(df):
     # remove columns from a final table
     output_settings_file_name = "..\common\outputs.yaml"
     output_settings = config.read_model_settings(output_settings_file_name)
+    setting = "REMOVE_COLUMNS_" + df.name.upper()
+    if setting not in output_settings:
+        return df
     remove_cols = output_settings[setting]
 
     remove_filter = df.filter(remove_cols)
@@ -229,6 +232,26 @@ def column_filter(df, setting):
     df_removed.name = df.name
 
     return df_removed
+
+def reorder_columns(df):
+    # reorder columns in a final table
+    output_settings_file_name = "..\common\outputs.yaml"
+    output_settings = config.read_model_settings(output_settings_file_name)
+    setting = "REORDER_COLUMNS_" + df.name.upper()
+    if setting not in output_settings:
+        return df
+    reorder_cols = output_settings[setting]
+
+    existing_cols = df.columns.values.tolist()
+    for col in existing_cols:
+        if col not in reorder_cols:
+            reorder_cols.append(col)
+    
+    for col in reorder_cols:
+        if col not in existing_cols:
+            df[col] = np.nan
+    
+    return df[reorder_cols]
 
 
 def write_summarize_files(
@@ -684,12 +707,8 @@ def write_to_datalake(
     for table_name in output_tables_list:
         output_table = get_output_table(table_name, output_tables_settings)
 
-        # drop write_trip_matrice skim columns
-        if output_table.name == "trips":
-            output_table = column_filter(output_table, "REMOVE_COLUMNS_TRIPS")
-
-        if output_table.name == "households":
-            output_table = column_filter(output_table, "REMOVE_COLUMNS_HOUSEHOLDS")
+        output_table = column_filter(output_table)
+        output_table = reorder_columns(output_table)
 
         if cloud_bool:
             # add unique identifier
