@@ -218,7 +218,7 @@ def create_metadata_df(input_dir, ts, time_to_write, EMME_metadata):
     return meta_df
 
 
-def column_filter(df):
+def remove_columns(df):
     # remove columns from a final table
     output_settings_file_name = "..\common\outputs.yaml"
     output_settings = config.read_model_settings(output_settings_file_name)
@@ -242,6 +242,10 @@ def reorder_columns(df):
         return df
     reorder_cols = output_settings[setting]
 
+    # index will not get reordered
+    if df.index.name in reorder_cols:
+        reorder_cols.remove(df.index.name)
+
     existing_cols = df.columns.values.tolist()
     for col in existing_cols:
         if col not in reorder_cols:
@@ -250,8 +254,11 @@ def reorder_columns(df):
     for col in reorder_cols:
         if col not in existing_cols:
             df[col] = np.nan
+
+    df_reorder = df[reorder_cols]
+    df_reorder.name = df.name
     
-    return df[reorder_cols]
+    return df_reorder
 
 
 def write_summarize_files(
@@ -707,8 +714,8 @@ def write_to_datalake(
     for table_name in output_tables_list:
         output_table = get_output_table(table_name, output_tables_settings)
 
-        output_table = column_filter(output_table)
         output_table = reorder_columns(output_table)
+        output_table = remove_columns(output_table)
 
         if cloud_bool:
             # add unique identifier
