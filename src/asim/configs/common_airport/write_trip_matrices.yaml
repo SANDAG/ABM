@@ -120,6 +120,7 @@ CONSTANTS:
   # SHARED2 and SHARED3 Occupancies
   OCC_SHARED2: 2.0
   OCC_SHARED3: 3.33
+  costPerMile: 18.29
 
 FINAL_TRIP_COLUMNS:
   # - trip_id #not used bc the index of the dataframe is converted into the trip_id
@@ -151,3 +152,7 @@ FINAL_TRIP_COLUMNS:
   - timeTransitInitialWait
   - costFareTransit
   - transfersTransit
+  - distance
+  - costOperatingDrive
+  - weightTrip
+  - weightPersonTrip

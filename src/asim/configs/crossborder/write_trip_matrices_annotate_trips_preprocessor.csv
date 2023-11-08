@@ -1,7 +1,10 @@
 Description,Target,Expression
 # add additional fields,,
 ,tour_participants,trips.tour_id.map(tours.number_of_participants)
-#,distance,odt_skims['SOV_NT_M_DIST']
+,distance,od_skims['DIST']
+,costOperatingDrive,"np.where(trips.trip_mode.isin(['DRIVEALONE','SHARED2','SHARED3']), costPerMile * distance/100, np.NaN)"
+,weightTrip,"np.where(trips.trip_mode == 'SHARED2', tour_participants/OCC_SHARED2, np.where(trips.trip_mode == 'SHARED3', tour_participants/OCC_SHARED3, np.where(trips.trip_mode == 'TAXI', tour_participants/OCC_TAXI, np.where(trips.trip_mode == 'TNC_SINGLE', tour_participants/OCC_TNC_SINGLE, np.where(trips.trip_mode == 'TNC_SHARED', tour_participants/OCC_TNC_SHARED,1)))))"
+,weightPersonTrip,tour_participants
 # code time periods,,
 ,is_ea,trips.trip_period == 'EA'
 ,is_am,trips.trip_period == 'AM'
@@ -11,15 +14,15 @@ Description,Target,Expression
 ,is_walk_LOC_transit,trips.trip_mode == 'WALK_LOC'
 ,is_walk_PRM_transit,trips.trip_mode.isin == 'WALK_PRM'
 ,is_walk_MIX_transit,trips.trip_mode.isin == 'WALK_MIX'
-,is_knr_loc,"trips.trip_mode.isin(['KNR_LOC'])"
-,is_knr_prm,"trips.trip_mode.isin(['KNR_PRM'])"
-,is_knr_mix,"trips.trip_mode.isin(['KNR_MIX'])"
-,is_tnc_loc,"trips.trip_mode.isin(['TNC_LOC'])"
-,is_tnc_prm,"trips.trip_mode.isin(['TNC_PRM'])"
-,is_tnc_mix,"trips.trip_mode.isin(['TNC_MIX'])"
-,is_pnr_loc,"trips.trip_mode.isin(['PNR_LOC'])"
-,is_pnr_prm,"trips.trip_mode.isin(['PNR_PRM'])"
-,is_pnr_mix,"trips.trip_mode.isin(['PNR_MIX'])"
+,is_knr_loc,trips.trip_mode.isin(['KNR_LOC'])
+,is_knr_prm,trips.trip_mode.isin(['KNR_PRM'])
+,is_knr_mix,trips.trip_mode.isin(['KNR_MIX'])
+,is_tnc_loc,trips.trip_mode.isin(['TNC_LOC'])
+,is_tnc_prm,trips.trip_mode.isin(['TNC_PRM'])
+,is_tnc_mix,trips.trip_mode.isin(['TNC_MIX'])
+,is_pnr_loc,trips.trip_mode.isin(['PNR_LOC'])
+,is_pnr_prm,trips.trip_mode.isin(['PNR_PRM'])
+,is_pnr_mix,trips.trip_mode.isin(['PNR_MIX'])
 ,outbound,trips.outbound
 ,inbound,~trips.outbound
 # code vot bin,,

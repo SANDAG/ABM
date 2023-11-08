@@ -408,6 +408,9 @@ CONSTANTS:
   OCC_SHARED3: 3.33
   vot_threshold_low: 8.81
   vot_threshold_med: 18.00
+  OCC_TAXI: 1.1
+  OCC_TNC_SINGLE: 1.2
+  OCC_TNC_SHARED: 2.0
 
 FINAL_TRIP_COLUMNS:
   - person_id
@@ -460,3 +463,7 @@ FINAL_TRIP_COLUMNS:
   - model
   - arrival_mode
   - num_participants
+  - distance
+  - costOperatingDrive
+  - weightTrip
+  - weightPersonTrip

@@ -9,6 +9,10 @@ Description,Target,Expression
 ,vot1,trips.vot1
 ,vot2,trips.vot2
 ,vot3,trips.vot3
+,distance,od_skims['DIST']
+,costOperatingDrive,"np.where(trips.trip_mode.isin(['DRIVEALONE', 'SHARED2', 'SHARED3']), costPerMile * distance/100, np.NaN)"
+,weightTrip,"np.where(trips.trip_num ==2, 0, 1)"
+,weightPersonTrip,"np.where(trips.trip_num ==2, 0, party)"
 # code time periods,,
 ,is_ea,"trips.depart.between(time_periods['EA']['first_hour'], time_periods['EA']['last_hour'])"
 ,is_am,"trips.depart.between(time_periods['AM']['first_hour'], time_periods['AM']['last_hour'])"
@@ -22,20 +26,20 @@ Description,Target,Expression
 ,is_walk_LOC_transit,trips.trip_mode == 'WALK_LOC'
 ,is_walk_PRM_transit,trips.trip_mode.isin == 'WALK_PRM'
 ,is_walk_MIX_transit,trips.trip_mode.isin == 'WALK_MIX'
-,is_drive_loc,"trips.trip_mode.isin(['KNR_LOC'])"
-,is_drive_prm,"trips.trip_mode.isin(['KNR_PRM'])"
-,is_drive_mix,"trips.trip_mode.isin(['KNR_MIX'])"
-,is_tnc_loc,"trips.trip_mode.isin(['TNC_LOC'])"
-,is_tnc_prm,"trips.trip_mode.isin(['TNC_PRM'])"
-,is_tnc_mix,"trips.trip_mode.isin(['TNC_MIX'])"
-#
+,is_drive_loc,trips.trip_mode.isin(['KNR_LOC'])
+,is_drive_prm,trips.trip_mode.isin(['KNR_PRM'])
+,is_drive_mix,trips.trip_mode.isin(['KNR_MIX'])
+,is_tnc_loc,trips.trip_mode.isin(['TNC_LOC'])
+,is_tnc_prm,trips.trip_mode.isin(['TNC_PRM'])
+,is_tnc_mix,trips.trip_mode.isin(['TNC_MIX'])
+#,,
 ,arrival_mode, trips.trip_mode
 ,_trip_mode, trips.trip_mode
 ,_trip_mode," np.where(is_drivealone, 'DRIVEALONE', _trip_mode)"
 ,_trip_mode," np.where(is_shared2, 'SHARED2',_trip_mode)"
 ,_trip_mode," np.where((is_shared3) | (trips.trip_mode.isin(['HOTEL_COURTESY', 'SHUTTLEVAN'])), 'SHARED3', _trip_mode)"
 ,trip_mode,_trip_mode
-#trip legs are swapped since origin is airport and home end is destination
+#trip legs are swapped since origin is airport and home end is destination,,
 ,outbound, ~trips.outbound
 ,inbound, trips.outbound
 # ea trips,low,
@@ -89,7 +93,7 @@ Description,Target,Expression
 ,KNRIN_SET_set3_AM,is_am & is_drive_mix & inbound
 ,TNCIN_SET_set1_AM,is_am & is_tnc_loc & inbound
 ,TNCIN_SET_set2_AM,is_am & is_tnc_prm & inbound
-,TNCIN_SET_set3_AM,is_am & is_tnc_mix & inbound# md trips,,
+,TNCIN_SET_set3_AM,is_am & is_tnc_mix & inbound# md trips
 ,DRIVEALONE_MD_LOW,vot1 & is_md & is_drivealone
 ,SHARED2_MD_LOW,vot1 & is_md & is_shared2
 ,SHARED3_MD_LOW,vot1 & is_md & is_shared3
@@ -198,7 +202,7 @@ Description,Target,Expression
 ,PNRIN_SET_set1_EV,is_ea & is_drive_loc & (outbound==-9)
 ,PNRIN_SET_set2_EV,is_ea & is_drive_prm & (outbound==-9)
 ,PNRIN_SET_set3_EV,is_ea & is_drive_mix & (outbound==-9)
-#
+#,,
 #auto skims,,
 ,_timeDrive,"odt_skims['SOV_NT_L_TIME'] * np.where(((trip_mode == 'DRIVEALONE') & vot1),1,0)"
 ,_timeDrive,"_timeDrive + odt_skims['HOV2_L_TIME'] * np.where(((trip_mode == 'SHARED2') & vot1),1,0)"
