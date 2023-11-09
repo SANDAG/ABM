@@ -118,11 +118,12 @@ class RunTime(_m.Tool()):
                 iter_4_index = runtime_df.index.get_loc(iter_str)
                 iter_4_df = runtime_df.iloc[iter_4_index+1:, :].copy()
                 iter_4_df = iter_4_df[['  -    -  ' not in i for i in iter_4_df.index]]
-                iter_4_df[name] = (pd.to_datetime(
-                                            iter_4_df[name], format='%H:%M:%S') -
-                                   zero_time)
-                iter_4_time = iter_4_df[name].sum()
-                runtime_df.loc[iter_str, :] = self.format_runtime(iter_4_time)
+                if not iter_4_df.empty:
+                    iter_4_df[name] = (pd.to_datetime(
+                                                iter_4_df[name], format='%H:%M:%S') -
+                                    zero_time)
+                    iter_4_time = iter_4_df[name].sum()
+                    runtime_df.loc[iter_str, :] = self.format_runtime(iter_4_time)
 
             # Calculate total runtime
             is_iter_row = pd.Series(runtime_df.index).str.startswith('Iter')
