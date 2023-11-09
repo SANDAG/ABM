@@ -77,7 +77,7 @@ class ExportDataLoaderNetwork(_m.Tool(), gen_utils.Snapshot):
     main_directory = _m.Attribute(str)
     base_scenario_id = _m.Attribute(int)
     traffic_emmebank = _m.Attribute(str)
-    transit_emmebank = _m.Attribute(str)
+    # transit_emmebank = _m.Attribute(str)
     num_processors = _m.Attribute(str)
 
     tool_run_msg = ""
@@ -87,9 +87,10 @@ class ExportDataLoaderNetwork(_m.Tool(), gen_utils.Snapshot):
         self.main_directory = os.path.dirname(project_dir)
         self.base_scenario_id = 100
         self.traffic_emmebank = os.path.join(project_dir, "Database", "emmebank")
-        self.transit_emmebank = os.path.join(project_dir, "Database_transit", "emmebank")
+        # self.transit_emmebank = os.path.join(project_dir, "Database_transit", "emmebank")
+        self.transit_emmebank_dict = {}
         self.num_processors = "MAX-1"
-        self.attributes = ["main_directory", "base_scenario_id", "traffic_emmebank", "transit_emmebank", "num_processors"]
+        self.attributes = ["main_directory", "base_scenario_id", "traffic_emmebank", "num_processors"]
 
         self.container = gen_utils.DataLakeExporter().get_datalake_connection()
         self.util_DataLakeExporter = gen_utils.DataLakeExporter(ScenarioPath=self.main_directory
@@ -111,8 +112,8 @@ Export network results to csv files for SQL data loader."""
         pb.add_text_box('base_scenario_id', title="Base scenario ID:", size=10)
         pb.add_select_file('traffic_emmebank', 'file',
                            title='Select traffic emmebank')
-        pb.add_select_file('transit_emmebank', 'file',
-                           title='Select transit emmebank')
+        # pb.add_select_file('transit_emmebank', 'file',
+        #                    title='Select transit emmebank')
 
         dem_utils.add_select_processors("num_processors", pb, self)
 
@@ -122,7 +123,7 @@ Export network results to csv files for SQL data loader."""
         self.tool_run_msg = ""
         try:
             results = self(self.main_directory, self.base_scenario_id,
-                           self.traffic_emmebank, self.transit_emmebank,
+                           self.traffic_emmebank, self.transit_emmebank_dict,
                            self.num_processors)
             run_msg = "Export completed"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg)
@@ -132,10 +133,9 @@ Export network results to csv files for SQL data loader."""
             raise
 
     @_m.logbook_trace("Export network results for Data Loader", save_arguments=True)
-    def __call__(self, main_directory, base_scenario_id, traffic_emmebank, transit_emmebank, num_processors):
+    def __call__(self, main_directory, base_scenario_id, traffic_emmebank, transit_emmebank_dict, num_processors):
         attrs = {
             "traffic_emmebank": str(traffic_emmebank),
-            "transit_emmebank": str(transit_emmebank),
             "main_directory": main_directory,
             "base_scenario_id": base_scenario_id,
             "self": str(self)
@@ -145,7 +145,7 @@ Export network results to csv files for SQL data loader."""
         props = load_properties(os.path.join(main_directory, "conf", "sandag_abm.properties"))
 
         traffic_emmebank = _eb.Emmebank(traffic_emmebank)
-        transit_emmebank = _eb.Emmebank(transit_emmebank)
+        # transit_emmebank = _eb.Emmebank(transit_emmebank)
         if not os.path.exists(os.path.join(main_directory, "report")):
             os.mkdir(os.path.join(main_directory, "report"))
         export_path = os.path.join(main_directory, "report")
@@ -159,7 +159,7 @@ Export network results to csv files for SQL data loader."""
 
         self.export_traffic_attribute(base_scenario, export_path, traffic_emmebank, period_scenario_ids, props)
         self.export_traffic_load_by_period(export_path, traffic_emmebank, period_scenario_ids)
-        self.export_transit_results(export_path, input_path, transit_emmebank, period_scenario_ids, num_processors)
+        self.export_transit_results(export_path, input_path, transit_emmebank_dict, period_scenario_ids, num_processors)
         self.export_geometry(export_path, traffic_emmebank)
 
     @_m.logbook_trace("Export traffic attribute data")
@@ -495,7 +495,7 @@ Export network results to csv files for SQL data loader."""
             self.util_DataLakeExporter.write_to_datalake({os.path.basename(filename)[:-4]:str(filename)})
 
     @_m.logbook_trace("Export transit results")
-    def export_transit_results(self, export_path, input_path, transit_emmebank, period_scenario_ids, num_processors):
+    def export_transit_results(self, export_path, input_path, transit_emmebank_dict, period_scenario_ids, num_processors):
         # Note: Node analysis for transfers is VERY time consuming
         #       this implementation will be replaced when new Emme version is available
 
@@ -606,7 +606,7 @@ Export network results to csv files for SQL data loader."""
             premium_modes = ["c", "l", "e", "p", "r", "y", "o", "w", "x", "k", "u", "f", "g", "q", "j", "Q", "J"]
             for tod, scen_id in period_scenario_ids.iteritems():
                 with _m.logbook_trace("Processing period %s" % tod):
-                    scenario = transit_emmebank.scenario(scen_id)
+                    scenario = transit_emmebank_dict[tod].scenario(scen_id)
                     with _m.logbook_trace("Scen %s" % (scenario)):
                     # attributes
                         total_walk_flow = create_attribute("LINK", "@volax", "total walk flow on links",

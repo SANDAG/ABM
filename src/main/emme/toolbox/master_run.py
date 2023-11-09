@@ -87,6 +87,8 @@ import pyodbc
 import win32com.client as win32
 import shutil
 
+import multiprocessing
+
 _join = os.path.join
 _dir = os.path.dirname
 _norm = os.path.normpath
@@ -424,33 +426,34 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 		#     f.write("Num Select links {}\nExtra Attribute Value {}".format(num_select_links,extra_attribute_values))
         # f.close()
 
-        if os.path.exists(_join(self._path, "emme_project", "Database_transit", "emmebank")):
-            with _eb.Emmebank(_join(self._path, "emme_project", "Database_transit", "emmebank")) as transit_db:
-                transit_db_dims = transit_db.dimensions
-                num_nodes = transit_db_dims["regular_nodes"] + transit_db_dims['centroids']
-                num_links = transit_db_dims["links"]
-                num_turn_entries = transit_db_dims["turn_entries"]
-                num_transit_lines = transit_db_dims['transit_lines']
-                num_transit_segments = transit_db_dims['transit_segments']
-                num_traffic_classes = 15
-
-                extra_attribute_values = 18000000
-                extra_attribute_values += (num_nodes + 1) * additional_node_extra_attributes
-                extra_attribute_values += (num_links + 1) * additional_link_extra_attributes
-                extra_attribute_values += (num_transit_lines + 1)* additional_line_extra_attributes
-                extra_attribute_values += (num_transit_segments + 1) * additional_segment_extra_attributes
-
-                if num_select_links > 3:
-                    extra_attribute_values += 18000000 + (num_select_links - 3) * ((num_links + 1) * (num_traffic_classes + 1) + (num_turn_entries + 1) * (num_traffic_classes))
-
-                if extra_attribute_values > transit_db_dims["extra_attribute_values"] or transit_db_dims["full_matrices"] < 9999:
-                    transit_db_dims["extra_attribute_values"] = extra_attribute_values
-                    transit_db_dims["full_matrices"] = 9999
-                    #change_dimensions(emmebank_dimensions=transit_db_dims, emmebank=transit_db, keep_backup=False)
-                    #replaced the above line with the below lines - suggested by Antoine, Bentley (2022-06-02)
-                    if transit_db.scenario(1) is None:
-                        transit_db.create_scenario(1)
-                    change_dimensions(transit_db_dims, transit_db, False)
+        for period in periods:
+            if os.path.exists(_join(self._path, "emme_project", "Database_transit_" + period, "emmebank")):
+                with _eb.Emmebank(_join(self._path, "emme_project", "Database_transit_" + period, "emmebank")) as transit_db:
+                    transit_db_dims = transit_db.dimensions
+                    num_nodes = transit_db_dims["regular_nodes"] + transit_db_dims['centroids']
+                    num_links = transit_db_dims["links"]
+                    num_turn_entries = transit_db_dims["turn_entries"]
+                    num_transit_lines = transit_db_dims['transit_lines']
+                    num_transit_segments = transit_db_dims['transit_segments']
+                    num_traffic_classes = 15
+                    
+                    extra_attribute_values = 18000000 
+                    extra_attribute_values += (num_nodes + 1) * additional_node_extra_attributes
+                    extra_attribute_values += (num_links + 1) * additional_link_extra_attributes
+                    extra_attribute_values += (num_transit_lines + 1)* additional_line_extra_attributes 
+                    extra_attribute_values += (num_transit_segments + 1) * additional_segment_extra_attributes
+                    
+                    if num_select_links > 3:
+                        extra_attribute_values += 18000000 + (num_select_links - 3) * ((num_links + 1) * (num_traffic_classes + 1) + (num_turn_entries + 1) * (num_traffic_classes))
+                        
+                    if extra_attribute_values > transit_db_dims["extra_attribute_values"] or transit_db_dims["full_matrices"] < 9999:
+                        transit_db_dims["extra_attribute_values"] = extra_attribute_values
+                        transit_db_dims["full_matrices"] = 9999 
+                        #change_dimensions(emmebank_dimensions=transit_db_dims, emmebank=transit_db, keep_backup=False)
+                        #replaced the above line with the below lines - suggested by Antoine, Bentley (2022-06-02)
+                        if transit_db.scenario(1) is None:
+                            transit_db.create_scenario(1)
+                        change_dimensions(transit_db_dims, transit_db, False)
 
         with _m.logbook_trace("Setup and initialization"):
             self.set_global_logbook_level(props)
@@ -542,15 +545,21 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         traffic_components.append("traffic_demand")
                     init_matrices(traffic_components, periods, base_scenario, deleteAllMatrices)
 
-                    transit_scenario = init_transit_db(base_scenario, add_database=not useLocalDrive)
-                    transit_emmebank = transit_scenario.emmebank
-                    transit_components = ["transit_skims"]
-                    if not skipCopyWarmupTripTables:
-                        transit_components.append("transit_demand")
-                    init_matrices(transit_components, periods, transit_scenario, deleteAllMatrices)
+                    transit_scenario_dict = {}
+                    transit_emmebank_dict = {}
+                    for period in periods:
+                        transit_scenario_dict[period] = init_transit_db(base_scenario, period, add_database=not useLocalDrive)
+                        transit_emmebank_dict[period] = transit_scenario_dict[period].emmebank
+                        transit_components = ["transit_skims"]
+                        if not skipCopyWarmupTripTables:
+                            transit_components.append("transit_demand")
+                        init_matrices(transit_components, [period], transit_scenario_dict[period], deleteAllMatrices)
                 else:
-                    transit_emmebank = _eb.Emmebank(_join(self._path, "emme_project", "Database_transit", "emmebank"))
-                    transit_scenario = transit_emmebank.scenario(base_scenario.number)
+                    transit_scenario_dict = {}
+                    transit_emmebank_dict = {}
+                    for period in periods:
+                        transit_emmebank_dict[period] = _eb.Emmebank(_join(self._path, "emme_project", "Database_transit_" + period, "emmebank"))
+                        transit_scenario_dict[period] = transit_emmebank_dict[period].scenario(base_scenario.number)
 
                 if not skipCopyWarmupTripTables:
                     # import seed auto demand and seed truck demand
@@ -567,8 +576,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
             else:
                 base_scenario = main_emmebank.scenario(scenario_id)
-                transit_emmebank = _eb.Emmebank(_join(self._path, "emme_project", "Database_transit", "emmebank"))
-                transit_scenario = transit_emmebank.scenario(base_scenario.number)
+                transit_scenario_dict = {}
+                transit_emmebank_dict = {}
+                for period in periods:
+                    transit_emmebank_dict[period] = _eb.Emmebank(_join(self._path, "emme_project", "Database_transit_" + period, "emmebank"))
+                    transit_scenario_dict[period] = transit_emmebank_dict[period].scenario(base_scenario.number)
 
             # Check that setup files were generated
             # self.run_proc("CheckOutput.bat", [drive + path_no_drive, 'Setup'], "Check for outputs")
@@ -599,7 +611,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                             src_period_scenario = main_emmebank.scenario(number)
                             transit_assign_scen = build_transit_scen(
                                period=period, base_scenario=src_period_scenario,
-                               transit_emmebank=transit_emmebank,
+                               transit_emmebank=transit_emmebank_dict[period],
                                scenario_id=src_period_scenario.id,
                                scenario_title="%s %s transit assign" % (base_scenario.title, period),
                                data_table_name=scenarioYear, overwrite=True)
@@ -616,14 +628,16 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         # Run transit assignment in separate process
                         # Running in same process slows OMX skim export for unknown reason
                         # transit_emmebank need to be closed and re-opened to be accessed by separate process
-                        transit_emmebank = self.run_transit_assignments(transit_emmebank, scenarioYear)
-                        _m.Modeller().desktop.refresh_data()
+                        transit_emmebank_dict = self.run_transit_assignments(transit_emmebank_dict, scenarioYear, output_dir, export_transit_skims)
+                        for period in periods:
+                            transit_scenario_dict[period] = transit_emmebank_dict[period].scenario(base_scenario.number)
+                        # _m.Modeller().desktop.refresh_data()
 
-                        #output transit skims by period
-                        for number, period in period_ids:
-                            transit_scenario = transit_emmebank.scenario(number)
-                            omx_file = _join(output_dir, "skims", "transit_skims_" + period + ".omx")
-                            export_transit_skims(omx_file, [period], transit_scenario, big_to_zero=False)
+                        # #output transit skims by period
+                        # for number, period in period_ids:
+                        #     transit_scenario = transit_emmebank.scenario(number)
+                        #     omx_file = _join(output_dir, "skims", "transit_skims_" + period + ".omx")
+                        #     export_transit_skims(omx_file, [period], transit_scenario, big_to_zero=False)
 
                 if not skipTransponderExport[iteration]:
                     am_scenario = main_emmebank.scenario(base_scenario.number + 2)
@@ -695,14 +709,14 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     num_processors, select_link, makeFinalHighwayAssignmentStochastic, input_dir)
 
         if not skipFinalTransitAssignment:
-            import_transit_demand(output_dir + '/assignment', transit_scenario)
+            import_transit_demand(output_dir + '/assignment', transit_scenario_dict)
             with _m.logbook_trace("Final transit assignments"):
                 # Final iteration includes the transit skims per ABM-1072
                 for number, period in period_ids:
                     src_period_scenario = main_emmebank.scenario(number)
                     transit_assign_scen = build_transit_scen(
                         period=period, base_scenario=src_period_scenario,
-                        transit_emmebank=transit_emmebank,
+                        transit_emmebank=transit_emmebank_dict[period],
                         scenario_id=src_period_scenario.id,
                         scenario_title="%s %s transit assign" % (base_scenario.title, period),
                         data_table_name=scenarioYear, overwrite=True)
@@ -713,14 +727,16 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 # Run transit assignment in separate process
                 # Running in same process slows OMX skim export for unknown reason
                 # transit_emmebank need to be closed and re-opened to be accessed by separate process
-                transit_emmebank = self.run_transit_assignments(transit_emmebank, scenarioYear)
-                _m.Modeller().desktop.refresh_data()
+                transit_emmebank_dict = self.run_transit_assignments(transit_emmebank_dict, scenarioYear, output_dir, export_transit_skims)
+                for period in periods:
+                    transit_scenario_dict[period] = transit_emmebank_dict[period].scenario(base_scenario.number)
+                # _m.Modeller().desktop.refresh_data()
 
-                #output transit skims by period
-                for number, period in period_ids:
-                    transit_scenario = transit_emmebank.scenario(number)
-                    omx_file = _join(output_dir, "skims", "transit_skims_" + period + ".omx")
-                    export_transit_skims(omx_file, [period], transit_scenario, big_to_zero=False)
+                # #output transit skims by period
+                # for number, period in period_ids:
+                #     transit_scenario = transit_emmebank.scenario(number)
+                #     omx_file = _join(output_dir, "skims", "transit_skims_" + period + ".omx")
+                #     export_transit_skims(omx_file, [period], transit_scenario, big_to_zero=False)
 
         # if not skipTransitShed:
         #     # write walk and drive transit sheds
@@ -736,8 +752,8 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         if not skipDataExport:
             # export network and matrix results from Emme directly to T if using local drive
             output_directory = _join(self._path, "output")
-            export_network_data(self._path, scenario_id, main_emmebank, transit_emmebank, num_processors)
-            export_matrix_data(output_directory, base_scenario, transit_scenario)
+            export_network_data(self._path, scenario_id, main_emmebank, transit_emmebank_dict, num_processors)
+            export_matrix_data(output_directory, base_scenario, transit_scenario_dict["EA"])
             # export core ABM data
             # Note: uses relative project structure, so cannot redirect to T drive
             # self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data",capture_output=True)
@@ -811,8 +827,9 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             drive, path_no_drive = os.path.splitdrive(self._path)
             # self._path = main_directory
             # drive, path_no_drive = os.path.splitdrive(self._path)
-            init_transit_db.add_database(
-                _eb.Emmebank(_join(main_directory, "emme_project", "Database_transit", "emmebank")))
+            for period in periods:
+                init_transit_db.add_database(
+                    _eb.Emmebank(_join(main_directory, "emme_project", "Database_transit_" + period, "emmebank")))
 
         if not skipDataLoadRequest:
             start_db_time = datetime.datetime.now()  # record the time to search for request id in the load request table, YMA, 1/23/2019
@@ -848,60 +865,82 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         except KeyError:
             raise Exception("properties.RunModel.LogLevel: value must be one of %s" % ",".join(log_states.keys()))
 
-    def run_transit_assignments(self, transit_emmebank, scenarioYear):
+    def run_transit_assignments(self, transit_emmebank_dict, scenarioYear, output_dir, export_transit_skims):
 
-        transit_emmebank_path = transit_emmebank.path
-        emme_project_dir = _dir(_dir(transit_emmebank_path))
-        main_directory = _dir(emme_project_dir)
+        scenario_id = 100
+        periods = ["EA", "AM", "MD", "PM", "EV"]
+        period_ids = list(enumerate(periods, start=int(scenario_id) + 1))
 
+        transit_processors = (multiprocessing.cpu_count() - 1) // 5
 
-        if os.path.exists(_join(emme_project_dir, "transit_assign_dummy_project")):
-            shutil.rmtree(_join(emme_project_dir, "transit_assign_dummy_project"))
-        project_path = _app.create_project(emme_project_dir, "transit_assign_dummy_project")
-        dummy_desktop = _app.start_dedicated(visible=False, user_initials="SD", project=project_path)
-        dummy_desktop.add_modeller_toolbox(_join(main_directory, "emme_project", "Scripts", "sandag_toolbox.mtbx"))
-        data_explorer = dummy_desktop.data_explorer()
-        db = data_explorer.add_database(transit_emmebank.path)
-        db.open()
+        transit_emmebank_path_dict = {}
 
-        project_table_db = _m.Modeller().desktop.project.data_tables()
-        data = project_table_db.table("%s_transit_passes" % scenarioYear).get_data()
-        dummy_project_table_db = dummy_desktop.project.data_tables()
-        dummy_project_table_db.create_table("%s_transit_passes" % scenarioYear, data, overwrite=True)
+        processes = []
 
-        dummy_desktop.project.save()
-        dummy_desktop.close()
-        transit_emmebank.dispose()
-
-        _time.sleep(2)
         with _m.logbook_trace("Running all period transit assignmens"):
-            report = _m.PageBuilder(title="Command report")
-            script = _join(main_directory, "python", "emme", "run_transit_assignment.py")
-            err_file_ref, err_file_path = _tempfile.mkstemp(suffix='.log')
-            err_file = os.fdopen(err_file_ref, "w")
-            try:
-                output = _subprocess.check_output(
-                    [sys.executable, script, "--root_dir", '"%s"' % main_directory, "--project_path", '"%s"' % project_path],
-                    stderr=err_file, shell=True)
-                self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % output)
-            except _subprocess.CalledProcessError as error:
-                self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % error.output)
-                raise
-            finally:
-                err_file.close()
-                with open(err_file_path, 'r') as f:
-                    error_msg = f.read()
-                os.remove(err_file_path)
-                if error_msg:
-                    self.add_html(report, 'Error message(s):<br><br><div class="preformat">%s</div>' % error_msg)
-                _m.logbook_write("Transit assignment process record", report.render())
-        _time.sleep(2)
+            for number, period in period_ids:
 
-        # NOTE: could remove project when done
-        #shutil.rmtree(project_dir)
-        # NOTE: need to pass back re-opened objects
-        transit_emmebank = _eb.Emmebank(transit_emmebank_path)
-        return transit_emmebank
+                transit_emmebank_path_dict[period] = transit_emmebank_dict[period].path
+                emme_project_dir = _dir(_dir(transit_emmebank_path_dict[period]))
+                main_directory = _dir(emme_project_dir)
+
+                if os.path.exists(_join(emme_project_dir, "transit_assign_dummy_project_" + period)):
+                    shutil.rmtree(_join(emme_project_dir, "transit_assign_dummy_project_" + period))
+                project_path = _app.create_project(emme_project_dir, "transit_assign_dummy_project_" + period)
+                dummy_desktop = _app.start_dedicated(visible=False, user_initials="SD", project=project_path)
+                dummy_desktop.add_modeller_toolbox(_join(main_directory, "emme_project", "Scripts", "sandag_toolbox.mtbx"))
+                data_explorer = dummy_desktop.data_explorer()
+                db = data_explorer.add_database(transit_emmebank_dict[period].path)
+                db.open()
+
+                project_table_db = _m.Modeller().desktop.project.data_tables()
+                data = project_table_db.table("%s_transit_passes" % scenarioYear).get_data()
+                dummy_project_table_db = dummy_desktop.project.data_tables()
+                dummy_project_table_db.create_table("%s_transit_passes" % scenarioYear, data, overwrite=True)
+
+                dummy_desktop.project.save()
+                dummy_desktop.close()
+                transit_emmebank_dict[period].dispose()
+
+                _time.sleep(2)
+                
+                script = _join(main_directory, "python", "emme", "run_transit_assignment.py")
+                p = _subprocess.Popen(
+                    [sys.executable, script, "--root_dir", '"%s"' % main_directory, "--project_path", '"%s"' % project_path,
+                    "--period", '"%s"' % period, "--number", '"%s"' % number, "--proc", '"%s"' % transit_processors], 
+                    shell=True)
+                processes.append({
+                    "p": p,
+                    "period": period
+                })
+                _time.sleep(2)
+
+                # NOTE: could remove project when done
+                #shutil.rmtree(project_dir)
+                # NOTE: need to pass back re-opened objects
+
+            for p in processes:
+                report = _m.PageBuilder(title="Command report")
+                out, err = p["p"].communicate()
+                self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % out)
+                if err:
+                    self.add_html(report, 'Error message(s):<br><br><div class="preformat">%s</div>' % err)
+                _m.logbook_write("Transit assignment process record for period " + p["period"], report.render()) 
+                if p["p"].returncode != 0:
+                    raise
+
+
+        new_transit_emmebank_dict = {}
+        for number, period in period_ids:
+
+            new_transit_emmebank_dict[period] = _eb.Emmebank(transit_emmebank_path_dict[period])
+            # return transit_emmebank
+            _m.Modeller().desktop.refresh_data()  
+            transit_scenario = new_transit_emmebank_dict[period].scenario(number)
+            omx_file = _join(output_dir, "skims", "transit_skims_" + period + ".omx")
+            export_transit_skims(omx_file, [period], transit_scenario, big_to_zero=False)
+        
+        return new_transit_emmebank_dict
 
     def run_traffic_assignments(self, base_scenario, period_ids, msa_iteration, relative_gap,
                                 max_assign_iterations, num_processors, select_link=None,

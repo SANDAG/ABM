@@ -163,7 +163,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             root_dir = os.path.dirname(_m.Modeller().desktop.project.path)
             main_emmebank = _eb.Emmebank(os.path.join(root_dir, "Database", "emmebank"))
             base_scenario = main_emmebank.scenario(self.base_scenario_id)
-            transit_emmebank = _eb.Emmebank(os.path.join(root_dir, "Database_transit", "emmebank"))
+            transit_emmebank = _eb.Emmebank(os.path.join(root_dir, "Database_transit_" + self.period, "emmebank"))
             results = self(
                 self.period, base_scenario, transit_emmebank,
                 self.scenario_id, self.scenario_title,

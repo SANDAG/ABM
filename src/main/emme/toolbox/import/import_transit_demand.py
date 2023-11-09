@@ -117,18 +117,18 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
             raise
 
     @_m.logbook_trace("Create TOD transit trip tables", save_arguments=True)
-    def __call__(self, output_dir, scenario):
+    def __call__(self, output_dir, scenario_dict):
         attributes = {"output_dir": output_dir}
         gen_utils.log_snapshot("Sum demand", str(self), attributes)
 
-        self.scenario = scenario
+        self.scenario_dict = scenario_dict
         self.output_dir = output_dir
         self.import_transit_trips()
 
     @_m.logbook_trace("Import ActivitySim transit trips from OMX")
     def import_transit_trips(self):
-        emmebank = self.scenario.emmebank
-        emme_zones = self.scenario.zone_numbers
+        # emmebank = self.scenario.emmebank
+        # emme_zones = self.scenario.zone_numbers
         matrix_name_tmplts = [
             ("mf%s_%s_LOC", "%s_%s_set1_%s"),
             ("mf%s_%s_PRM", "%s_%s_set2_%s"),
@@ -147,6 +147,8 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
         with gen_utils.OMXManager(self.output_dir, "tran%sTrips%s.omx") as omx_manager:
             for period, matrix_name, omx_key in matrix_names:
                 logbook_label = "Report on import from OMX key %s to matrix %s" % (omx_key %"SET", matrix_name)
+
+                emmebank = self.scenario_dict[period[1:]].emmebank
                 
                 #add both KNR_SET and TNC_SET into KNR
                 # if ("KNR" in matrix_name):
@@ -198,7 +200,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                 #     expanded_matrix_data = matrix_data.expand([emme_zones, emme_zones])
                 #     matrix.set_data(expanded_matrix_data, self.scenario)
                 # else:
-                matrix.set_numpy_data(total_asim_demand, self.scenario)
+                matrix.set_numpy_data(total_asim_demand, self.scenario_dict[period[1:]])
                     
                 # if ("KNR" in matrix_name):
                 #     dem_utils.demand_report([
@@ -227,4 +229,4 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     ("airport_demand", airport_demand), 
                     ("visitor_demand", visitor_demand), 
                     ("total_asim_demand", total_asim_demand)
-                ], logbook_label, self.scenario)
+                ], logbook_label, self.scenario_dict[period[1:]])

@@ -229,7 +229,11 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
         # create new emmebanks and copy emmebank data to local drive
         import_from_db = _m.Modeller().tool("inro.emme.data.database.import_from_database")
         emmebank_paths = []
-        for db_dir in ["Database", "Database_transit"]:
+        periods = ["EA", "AM", "MD", "PM", "EV"]
+        dbs = ["Database"]
+        for period in periods:
+            dbs.append("Database_transit_" + period)
+        for db_dir in dbs:
             src_db_path = _join(src, "emme_project", db_dir, "emmebank")
             if not os.path.exists(src_db_path):
                 # skip if the database does not exist (will be created later)

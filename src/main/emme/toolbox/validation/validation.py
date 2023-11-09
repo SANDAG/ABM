@@ -90,7 +90,7 @@ Export traffic flow to Excel files for base year validation."""
         traffic_emmebank = _eb.Emmebank(traffic_emmebank)
         #transit_emmebank = _eb.Emmebank(transit_emmebank)
         export_path = os.path.join(main_directory, "analysis/validation")
-        transitbank_path = os.path.join(main_directory, "emme_project/Database_transit/emmebank")
+        # transitbank_path = os.path.join(main_directory, "emme_project/Database_transit/emmebank")
         source_file = os.path.join(export_path, "source_EMME.xlsx")
         df = pd.read_excel(source_file, header=None, sheet_name='raw')
         writer = pd.ExcelWriter(source_file, engine='openpyxl')
@@ -148,24 +148,34 @@ Export traffic flow to Excel files for base year validation."""
         desktop = _m.Modeller().desktop
         data_explorer = desktop.data_explorer()
 
-        try:
-            data_explorer.add_database(transitbank_path)
-        except:
-            pass  #if transit database already included in the project
-        all_databases = data_explorer.databases()
-        for database in all_databases:
-            if "transit" in database.name():
-                database.open()
-                break
+        # try:
+        #     data_explorer.add_database(transitbank_path)
+        # except:
+        #     pass  #if transit database already included in the project
+        # all_databases = data_explorer.databases()
+        # for database in all_databases:
+        #     if "transit" in database.name():
+        #         database.open()
+        #         break
         for p, scen_id in period_scenario_ids.iteritems():
+            try:
+                data_explorer.add_database(os.path.join(main_directory, "emme_project", "Database_transit_" + p, "emmebank"))
+            except:
+                pass  #if transit database already included in the project
+            all_databases = data_explorer.databases()
+            for database in all_databases:
+                if ("transit-" + p) in database.name():
+                    database.open()
+                    break
             scen = database.scenario_by_number(scen_id)
             data_explorer.replace_primary_scenario(scen)
             self.export_transit(export_path, desktop, p)
+            # -----------------close or remove transit databack from the project-----------------
+            database.close()
+            if "T:" not in main_directory:
+                data_explorer.remove_database(database)
 
-        # -----------------close or remove transit databack from the project-----------------
-        database.close()
-        if "T:" not in main_directory:
-            data_explorer.remove_database(database)
+
         all_databases = data_explorer.databases()
         for database in all_databases:
             if "transit" not in database.name():
