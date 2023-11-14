@@ -195,7 +195,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                 scenario=self.scenario)
                 export_basenet(selection = {"link": 'i=1,4947 or j=1,4947',
                                             "node": 'none'},
-                            export_file = "connectors_u" + self.line_haul_modes[i] + ".out",
+                            export_file = period + "_connectors_u" + self.line_haul_modes[i] + ".out",
                             field_separator = " ", scenario=self.scenario)
                 create_connectors(access_modes=["f"],
                                 egress_modes=["g"],
@@ -212,7 +212,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                 scenario=self.scenario)
                 export_basenet(selection = {"link": 'i=1,4947 or j=1,4947',
                                             "node": 'none'},
-                            export_file = "connectors_f" + self.line_haul_modes[i] + ".out",
+                            export_file = period + "_connectors_f" + self.line_haul_modes[i] + ".out",
                             field_separator = " ", scenario=self.scenario)                     
                 create_connectors(access_modes=["q"],
                                 egress_modes=["j"],
@@ -229,7 +229,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                 scenario=self.scenario)
                 export_basenet(selection = {"link": 'i=1,4947 or j=1,4947',
                                             "node": 'none'},
-                            export_file = "connectors_q" + self.line_haul_modes[i] + ".out",
+                            export_file = period + "_connectors_q" + self.line_haul_modes[i] + ".out",
                             field_separator = " ", scenario=self.scenario) 
                 create_connectors(access_modes=["Q"],
                                 egress_modes=["J"],
@@ -246,7 +246,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                 scenario=self.scenario)
                 export_basenet(selection = {"link": 'i=1,4947 or j=1,4947',
                                             "node": 'none'},
-                            export_file = "connectors_Q" + self.line_haul_modes[i] + ".out",
+                            export_file = period + "_connectors_Q" + self.line_haul_modes[i] + ".out",
                             field_separator = " ", scenario=self.scenario)                     
                 create_connectors(access_modes=["u", "q", "Q"],
                                 egress_modes=["k", "j", "J"],
@@ -277,7 +277,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                 scenario=self.scenario)
                 export_basenet(selection = {"link": 'i=1,4947 or j=1,4947',
                                             "node": 'none'},
-                            export_file = "connectors_uqQ" + self.line_haul_modes[i] + ".out",
+                            export_file = period + "_connectors_uqQ" + self.line_haul_modes[i] + ".out",
                             field_separator = " ", scenario=self.scenario)                       
                 create_connectors(access_modes=["f", "q", "Q"],
                                 egress_modes=["g", "j", "J"],
@@ -294,7 +294,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                 scenario=self.scenario)
                 export_basenet(selection = {"link": 'i=1,4947 or j=1,4947',
                                             "node": 'none'},
-                            export_file = "connectors_fqQ" + self.line_haul_modes[i] + ".out",
+                            export_file = period + "_connectors_fqQ" + self.line_haul_modes[i] + ".out",
                             field_separator = " ", scenario=self.scenario)
                 create_connectors(access_modes=["q", "Q"],
                                 egress_modes=["j", "J"],
@@ -311,7 +311,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                 scenario=self.scenario)
                 export_basenet(selection = {"link": 'i=1,4947 or j=1,4947',
                                             "node": 'none'},
-                            export_file = "connectors_qQ" + self.line_haul_modes[i] + ".out",
+                            export_file = period + "_connectors_qQ" + self.line_haul_modes[i] + ".out",
                             field_separator = " ", scenario=self.scenario)       
                 create_connectors(access_modes=["u", "f", "q", "Q"],
                                 egress_modes=["k", "g", "j", "J"],
@@ -341,14 +341,14 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                 scenario=self.scenario)
                 export_basenet(selection = {"link": 'i=1,4947 or j=1,4947',
                                             "node": 'none'},
-                            export_file = "connectors_ufqQ" + self.line_haul_modes[i] + ".out",
+                            export_file = period + "_connectors_ufqQ" + self.line_haul_modes[i] + ".out",
                             field_separator = " ", scenario=self.scenario)
 
             # import connectors; if a connector already exists, it's skipped because the connector with the most access modes is imported first
             for line_haul in self.line_haul_modes:
                 for acc in self.acc_modes:
-                    print("temp/" + "connectors_" + acc + line_haul + ".out")
-                    import_basenet(transaction_file = "connectors_" + acc + line_haul + ".out", revert_on_error = False, scenario=self.scenario)
+                    print("temp/" + period + "_connectors_" + acc + line_haul + ".out")
+                    import_basenet(transaction_file = period + "_connectors_" + acc + line_haul + ".out", revert_on_error = False, scenario=self.scenario)
             # export all connectors
             export_basenet(selection = {"link": 'i=1,4947 or j=1,4947',
                                         "node": 'none'},
@@ -358,7 +358,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
             for line_haul in self.line_haul_modes:
                 for acc in self.acc_modes:
                     try:
-                        os.remove("connectors_" + acc + line_haul + ".out")
+                        os.remove(period + "_connectors_" + acc + line_haul + ".out")
                     except:
                         pass
 

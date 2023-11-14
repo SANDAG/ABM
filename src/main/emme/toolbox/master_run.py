@@ -255,7 +255,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         run_truck = modeller.tool("sandag.model.truck.run_truck_model")
         import_auto_demand = modeller.tool("sandag.import.import_auto_demand")
         import_transit_demand = modeller.tool("sandag.import.import_transit_demand")
-        export_transit_skims = modeller.tool("sandag.export.export_transit_skims")
+        # export_transit_skims = modeller.tool("sandag.export.export_transit_skims")
         export_for_transponder = modeller.tool("sandag.export.export_for_transponder")
         export_network_data = modeller.tool("sandag.export.export_data_loader_network")
         export_matrix_data = modeller.tool("sandag.export.export_data_loader_matrices")
@@ -619,16 +619,16 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                             if (not skipTransitConnector) and (msa_iteration == 1):
                                 if not os.path.exists(_join(input_dir, "transit_connectors")):
                                     os.mkdir(_join(input_dir, "transit_connectors"))
-                                #in case of new network, create transit connectors from scratch, and export them to the input folder for future runs/iterations
-                                create_transit_connector(period, transit_assign_scen, create_connector_flag=True)
-                            else:
-                                #this would import connectors from the input/transit_connectors folder, and not create them from scratch
-                                create_transit_connector(period, transit_assign_scen, create_connector_flag=False)
+                            #     #in case of new network, create transit connectors from scratch, and export them to the input folder for future runs/iterations
+                            #     create_transit_connector(period, transit_assign_scen, create_connector_flag=True)
+                            # else:
+                            #     #this would import connectors from the input/transit_connectors folder, and not create them from scratch
+                            #     create_transit_connector(period, transit_assign_scen, create_connector_flag=False)
 
                         # Run transit assignment in separate process
                         # Running in same process slows OMX skim export for unknown reason
                         # transit_emmebank need to be closed and re-opened to be accessed by separate process
-                        transit_emmebank_dict = self.run_transit_assignments(transit_emmebank_dict, scenarioYear, output_dir, export_transit_skims)
+                        transit_emmebank_dict = self.run_transit_assignments(transit_emmebank_dict, scenarioYear, output_dir, ((not skipTransitConnector) and (msa_iteration == 1)))
                         for period in periods:
                             transit_scenario_dict[period] = transit_emmebank_dict[period].scenario(base_scenario.number)
                         # _m.Modeller().desktop.refresh_data()
@@ -722,12 +722,12 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         data_table_name=scenarioYear, overwrite=True)
 
                     #this would import connectors from the input/transit_connectors folder, and not create them from scratch
-                    create_transit_connector(period, transit_assign_scen, create_connector_flag=False)
+                    # create_transit_connector(period, transit_assign_scen, create_connector_flag=False)
 
                 # Run transit assignment in separate process
                 # Running in same process slows OMX skim export for unknown reason
                 # transit_emmebank need to be closed and re-opened to be accessed by separate process
-                transit_emmebank_dict = self.run_transit_assignments(transit_emmebank_dict, scenarioYear, output_dir, export_transit_skims)
+                transit_emmebank_dict = self.run_transit_assignments(transit_emmebank_dict, scenarioYear, output_dir, False)
                 for period in periods:
                     transit_scenario_dict[period] = transit_emmebank_dict[period].scenario(base_scenario.number)
                 # _m.Modeller().desktop.refresh_data()
@@ -865,7 +865,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         except KeyError:
             raise Exception("properties.RunModel.LogLevel: value must be one of %s" % ",".join(log_states.keys()))
 
-    def run_transit_assignments(self, transit_emmebank_dict, scenarioYear, output_dir, export_transit_skims):
+    def run_transit_assignments(self, transit_emmebank_dict, scenarioYear, output_dir, create_connector_flag):
 
         scenario_id = 100
         periods = ["EA", "AM", "MD", "PM", "EV"]
@@ -905,10 +905,12 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 _time.sleep(2)
                 
                 script = _join(main_directory, "python", "emme", "run_transit_assignment.py")
-                p = _subprocess.Popen(
-                    [sys.executable, script, "--root_dir", '"%s"' % main_directory, "--project_path", '"%s"' % project_path,
-                    "--period", '"%s"' % period, "--number", '"%s"' % number, "--proc", '"%s"' % transit_processors], 
-                    shell=True)
+                args = [sys.executable, script, "--root_dir", '"%s"' % main_directory, "--project_path", '"%s"' % project_path,
+                    "--period", '"%s"' % period, "--number", '"%s"' % number, "--proc", '"%s"' % transit_processors, 
+                    "--output_dir", '"%s"' % output_dir]
+                if create_connector_flag:
+                    args.append("--create_connector_flag")
+                p = _subprocess.Popen(args, shell=True)
                 processes.append({
                     "p": p,
                     "period": period
@@ -932,13 +934,8 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         new_transit_emmebank_dict = {}
         for number, period in period_ids:
-
             new_transit_emmebank_dict[period] = _eb.Emmebank(transit_emmebank_path_dict[period])
-            # return transit_emmebank
-            _m.Modeller().desktop.refresh_data()  
-            transit_scenario = new_transit_emmebank_dict[period].scenario(number)
-            omx_file = _join(output_dir, "skims", "transit_skims_" + period + ".omx")
-            export_transit_skims(omx_file, [period], transit_scenario, big_to_zero=False)
+        _m.Modeller().desktop.refresh_data()
         
         return new_transit_emmebank_dict
 
