@@ -264,7 +264,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         file_manager = modeller.tool("sandag.utilities.file_manager")
         utils = modeller.module('sandag.utilities.demand')
         load_properties = modeller.tool('sandag.utilities.properties')
-        # run_summary = modeller.tool("sandag.utilities.run_summary")
+        run_summary = modeller.tool("sandag.utilities.run_summary")
 
         self.username = username
         self.password = password
@@ -846,7 +846,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     _join(output_dir, "iter%s" % (msa_iteration)))
 
         # record run time
-        # run_summary(path=self._path)
+        run_summary(path=self._path)
 
     def set_global_logbook_level(self, props):
         self._log_level = props.get("RunModel.LogbookLevel", "ENABLED")
