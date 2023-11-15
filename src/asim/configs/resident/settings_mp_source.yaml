@@ -73,7 +73,7 @@ models:
   - write_data_dictionary
   - track_skim_usage
   - write_trip_matrices
-  - write_to_datalake
+  # - write_to_datalake
   # - write_tables
 
 

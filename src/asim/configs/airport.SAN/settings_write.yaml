@@ -1,0 +1,21 @@
+model_name: airport.SAN
+
+output_tables:
+  h5_store: False
+  action: include
+  prefix: final_san
+  # FIXME sort is an undocumented feature - sorts table by best index or ref_col according to traceable_table_indexes
+  sort: True
+  tables:
+    - accessibility
+    - land_use
+    - households
+    - persons
+    - tours
+    - trips
+
+resume_after: write_trip_matrices
+
+models:
+  - write_trip_matrices
+  - write_to_datalake

@@ -750,6 +750,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                           "HTML Visualizer", capture_output=True)
 
         if not skipDataExport:
+            self.run_proc(
+                "runSandagAbm_WriteToDatalake.cmd",
+                [drive, drive + path_forward_slash],
+                "Writing ActivitySim model output to datalake", capture_output=True)
+
             # export network and matrix results from Emme directly to T if using local drive
             output_directory = _join(self._path, "output")
             export_network_data(self._path, scenario_id, main_emmebank, transit_emmebank_dict, num_processors)

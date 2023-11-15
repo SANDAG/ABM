@@ -109,7 +109,7 @@ models:
   - trip_destination
   - trip_mode_choice
   - write_trip_matrices
-  - write_to_datalake
+  # - write_to_datalake
   # - write_tables
 
 multiprocess_steps:
