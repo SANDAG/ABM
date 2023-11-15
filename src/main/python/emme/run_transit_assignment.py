@@ -19,6 +19,8 @@ if __name__ == "__main__":
     parser.add_argument("--number")
     parser.add_argument("--period")
     parser.add_argument("--proc")
+    parser.add_argument("-o", "--output_dir")
+    parser.add_argument("--create_connector_flag", action='store_true')
     args = parser.parse_args()
     print(args)
     main_directory = args.root_dir.strip('"')
@@ -26,6 +28,8 @@ if __name__ == "__main__":
     number = args.number.strip('"')
     period = args.period.strip('"')
     num_processors = str(args.proc.strip('"'))
+    output_dir = args.output_dir.strip('"')
+    create_connector_flag = args.create_connector_flag
     print(main_directory, project_path)
     desktop = _app.start_dedicated(visible=True, user_initials="SD", project=project_path)
     modeller = _m.Modeller(desktop)
@@ -33,6 +37,8 @@ if __name__ == "__main__":
     with _m.logbook_trace("Running transit assignment for period " + period):
         transit_assign  = modeller.tool("sandag.assignment.transit_assignment")
         load_properties = modeller.tool('sandag.utilities.properties')
+        export_transit_skims = modeller.tool("sandag.export.export_transit_skims")
+        create_transit_connector = modeller.tool("sandag.assignment.create_transit_connector")
 
         props = load_properties(os.path.join(main_directory, "conf", "sandag_abm.properties"))
         # scenario_id = 100
@@ -44,10 +50,16 @@ if __name__ == "__main__":
         # num_processors = "9"
         scenarioYear = str(props["scenarioYear"])
 
-        # for number, period in period_ids:
         transit_assign_scen = transit_emmebank.scenario(number)
+
+        create_transit_connector(period, transit_assign_scen, create_connector_flag)
+
+        # for number, period in period_ids:
         transit_assign(period, transit_assign_scen, data_table_name=scenarioYear,
                        skims_only=True, num_processors=num_processors)
+        
+        omx_file = _join(output_dir, "skims", "transit_skims_" + period + ".omx")
+        export_transit_skims(omx_file, [period], transit_assign_scen, big_to_zero=False)
 
         transit_emmebank.dispose()
     desktop.close()

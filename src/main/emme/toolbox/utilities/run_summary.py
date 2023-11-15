@@ -64,7 +64,9 @@ class RunTime(_m.Tool()):
         :param path: Scenario file path
         """
 
-        if self.runtime_depth is None:
+        # Depth 1 shows runtime for sub-steps, depth 2 shows sub-sub-steps, etc.
+        # Default to 0
+        if (not hasattr(self, 'runtime_depth')) or self.runtime_depth is None:
             self.runtime_depth = 0
 
         # Get element IDs for model runs
