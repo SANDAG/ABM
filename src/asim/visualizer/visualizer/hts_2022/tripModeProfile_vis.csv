@@ -1,0 +1,1353 @@
+trip_mode,tour_mode,purpose,value
+01: SOV,01: SOV,1: Work,1478581.361
+01: SOV,02: Shared Ride 2,1: Work,127936.8098
+01: SOV,03: Shared Ride 3+,1: Work,127729.0063
+01: SOV,04: Walk,1: Work,0
+01: SOV,05: Bike,1: Work,0
+01: SOV,08: Walk to Transit,1: Work,123.5783766
+01: SOV,09: PNR to Transit,1: Work,677.2203912
+01: SOV,10: KNR to Transit,1: Work,544.6175204
+01: SOV,11: TNC to Transit,1: Work,3241.647811
+01: SOV,12: Taxi,1: Work,0
+01: SOV,13: TNC Single,1: Work,0
+01: SOV,14: TNC Shared,1: Work,0
+01: SOV,15: School Bus,1: Work,0
+01: SOV,01: SOV,2: University,68758.70213
+01: SOV,02: Shared Ride 2,2: University,17476.41744
+01: SOV,03: Shared Ride 3+,2: University,1843.323826
+01: SOV,04: Walk,2: University,4006.920841
+01: SOV,05: Bike,2: University,0
+01: SOV,08: Walk to Transit,2: University,30.86205005
+01: SOV,09: PNR to Transit,2: University,0
+01: SOV,10: KNR to Transit,2: University,0
+01: SOV,11: TNC to Transit,2: University,0
+01: SOV,12: Taxi,2: University,0
+01: SOV,13: TNC Single,2: University,0
+01: SOV,14: TNC Shared,2: University,0
+01: SOV,15: School Bus,2: University,0
+01: SOV,01: SOV,3: School,12500.20501
+01: SOV,02: Shared Ride 2,3: School,0
+01: SOV,03: Shared Ride 3+,3: School,0
+01: SOV,04: Walk,3: School,0
+01: SOV,05: Bike,3: School,0
+01: SOV,08: Walk to Transit,3: School,0
+01: SOV,09: PNR to Transit,3: School,0
+01: SOV,10: KNR to Transit,3: School,0
+01: SOV,11: TNC to Transit,3: School,0
+01: SOV,12: Taxi,3: School,0
+01: SOV,13: TNC Single,3: School,0
+01: SOV,14: TNC Shared,3: School,0
+01: SOV,15: School Bus,3: School,49.03230215
+01: SOV,01: SOV,5: Individual Maintenance,1822103.347
+01: SOV,02: Shared Ride 2,5: Individual Maintenance,360974.5951
+01: SOV,03: Shared Ride 3+,5: Individual Maintenance,233261.8293
+01: SOV,04: Walk,5: Individual Maintenance,3274.244757
+01: SOV,05: Bike,5: Individual Maintenance,0
+01: SOV,08: Walk to Transit,5: Individual Maintenance,957.7085721
+01: SOV,09: PNR to Transit,5: Individual Maintenance,946.9812566
+01: SOV,10: KNR to Transit,5: Individual Maintenance,270.7635659
+01: SOV,11: TNC to Transit,5: Individual Maintenance,0
+01: SOV,12: Taxi,5: Individual Maintenance,0
+01: SOV,13: TNC Single,5: Individual Maintenance,1001.192648
+01: SOV,14: TNC Shared,5: Individual Maintenance,0
+01: SOV,15: School Bus,5: Individual Maintenance,0
+01: SOV,01: SOV,6: Individual Discretionary,780358.9711
+01: SOV,02: Shared Ride 2,6: Individual Discretionary,107154.4501
+01: SOV,03: Shared Ride 3+,6: Individual Discretionary,57529.86616
+01: SOV,04: Walk,6: Individual Discretionary,379.1996045
+01: SOV,05: Bike,6: Individual Discretionary,0
+01: SOV,08: Walk to Transit,6: Individual Discretionary,1603.156294
+01: SOV,09: PNR to Transit,6: Individual Discretionary,27.72202079
+01: SOV,10: KNR to Transit,6: Individual Discretionary,48.44429253
+01: SOV,11: TNC to Transit,6: Individual Discretionary,0
+01: SOV,12: Taxi,6: Individual Discretionary,0
+01: SOV,13: TNC Single,6: Individual Discretionary,2102.110226
+01: SOV,14: TNC Shared,6: Individual Discretionary,0
+01: SOV,15: School Bus,6: Individual Discretionary,0
+01: SOV,01: SOV,7: Joint Maintenance,0
+01: SOV,02: Shared Ride 2,7: Joint Maintenance,0
+01: SOV,03: Shared Ride 3+,7: Joint Maintenance,0
+01: SOV,04: Walk,7: Joint Maintenance,0
+01: SOV,05: Bike,7: Joint Maintenance,0
+01: SOV,08: Walk to Transit,7: Joint Maintenance,0
+01: SOV,09: PNR to Transit,7: Joint Maintenance,0
+01: SOV,10: KNR to Transit,7: Joint Maintenance,0
+01: SOV,11: TNC to Transit,7: Joint Maintenance,0
+01: SOV,12: Taxi,7: Joint Maintenance,0
+01: SOV,13: TNC Single,7: Joint Maintenance,0
+01: SOV,14: TNC Shared,7: Joint Maintenance,0
+01: SOV,15: School Bus,7: Joint Maintenance,0
+01: SOV,01: SOV,8: Joint Discretionary,0
+01: SOV,02: Shared Ride 2,8: Joint Discretionary,0
+01: SOV,03: Shared Ride 3+,8: Joint Discretionary,0
+01: SOV,04: Walk,8: Joint Discretionary,0
+01: SOV,05: Bike,8: Joint Discretionary,0
+01: SOV,08: Walk to Transit,8: Joint Discretionary,0
+01: SOV,09: PNR to Transit,8: Joint Discretionary,0
+01: SOV,10: KNR to Transit,8: Joint Discretionary,0
+01: SOV,11: TNC to Transit,8: Joint Discretionary,0
+01: SOV,12: Taxi,8: Joint Discretionary,0
+01: SOV,13: TNC Single,8: Joint Discretionary,0
+01: SOV,14: TNC Shared,8: Joint Discretionary,0
+01: SOV,15: School Bus,8: Joint Discretionary,0
+01: SOV,01: SOV,9: Work-based,203970.5
+01: SOV,02: Shared Ride 2,9: Work-based,7735.109
+01: SOV,03: Shared Ride 3+,9: Work-based,2899.977
+01: SOV,04: Walk,9: Work-based,0
+01: SOV,05: Bike,9: Work-based,0
+01: SOV,08: Walk to Transit,9: Work-based,0
+01: SOV,09: PNR to Transit,9: Work-based,0
+01: SOV,10: KNR to Transit,9: Work-based,0
+01: SOV,11: TNC to Transit,9: Work-based,0
+01: SOV,12: Taxi,9: Work-based,0
+01: SOV,13: TNC Single,9: Work-based,0
+01: SOV,14: TNC Shared,9: Work-based,0
+01: SOV,15: School Bus,9: Work-based,0
+02: Shared Ride 2,01: SOV,1: Work,0
+02: Shared Ride 2,02: Shared Ride 2,1: Work,129701.1067
+02: Shared Ride 2,03: Shared Ride 3+,1: Work,44898.92144
+02: Shared Ride 2,04: Walk,1: Work,0
+02: Shared Ride 2,05: Bike,1: Work,0
+02: Shared Ride 2,08: Walk to Transit,1: Work,3306.609192
+02: Shared Ride 2,09: PNR to Transit,1: Work,11.50909269
+02: Shared Ride 2,10: KNR to Transit,1: Work,302.5897006
+02: Shared Ride 2,11: TNC to Transit,1: Work,0
+02: Shared Ride 2,12: Taxi,1: Work,0
+02: Shared Ride 2,13: TNC Single,1: Work,0
+02: Shared Ride 2,14: TNC Shared,1: Work,0
+02: Shared Ride 2,15: School Bus,1: Work,0
+02: Shared Ride 2,01: SOV,2: University,4555.673779
+02: Shared Ride 2,02: Shared Ride 2,2: University,12622.63595
+02: Shared Ride 2,03: Shared Ride 3+,2: University,874.8565986
+02: Shared Ride 2,04: Walk,2: University,0
+02: Shared Ride 2,05: Bike,2: University,0
+02: Shared Ride 2,08: Walk to Transit,2: University,64.88979609
+02: Shared Ride 2,09: PNR to Transit,2: University,0
+02: Shared Ride 2,10: KNR to Transit,2: University,20.62435531
+02: Shared Ride 2,11: TNC to Transit,2: University,0
+02: Shared Ride 2,12: Taxi,2: University,0
+02: Shared Ride 2,13: TNC Single,2: University,0
+02: Shared Ride 2,14: TNC Shared,2: University,0
+02: Shared Ride 2,15: School Bus,2: University,0
+02: Shared Ride 2,01: SOV,3: School,0
+02: Shared Ride 2,02: Shared Ride 2,3: School,113532.4235
+02: Shared Ride 2,03: Shared Ride 3+,3: School,24652.02292
+02: Shared Ride 2,04: Walk,3: School,0
+02: Shared Ride 2,05: Bike,3: School,0
+02: Shared Ride 2,08: Walk to Transit,3: School,11.03218248
+02: Shared Ride 2,09: PNR to Transit,3: School,0
+02: Shared Ride 2,10: KNR to Transit,3: School,0
+02: Shared Ride 2,11: TNC to Transit,3: School,0
+02: Shared Ride 2,12: Taxi,3: School,0
+02: Shared Ride 2,13: TNC Single,3: School,0
+02: Shared Ride 2,14: TNC Shared,3: School,0
+02: Shared Ride 2,15: School Bus,3: School,151.7950557
+02: Shared Ride 2,01: SOV,5: Individual Maintenance,1835.268103
+02: Shared Ride 2,02: Shared Ride 2,5: Individual Maintenance,827729.4512
+02: Shared Ride 2,03: Shared Ride 3+,5: Individual Maintenance,207912.8592
+02: Shared Ride 2,04: Walk,5: Individual Maintenance,0
+02: Shared Ride 2,05: Bike,5: Individual Maintenance,0
+02: Shared Ride 2,08: Walk to Transit,5: Individual Maintenance,1418.674094
+02: Shared Ride 2,09: PNR to Transit,5: Individual Maintenance,213.0984055
+02: Shared Ride 2,10: KNR to Transit,5: Individual Maintenance,166.0034652
+02: Shared Ride 2,11: TNC to Transit,5: Individual Maintenance,0
+02: Shared Ride 2,12: Taxi,5: Individual Maintenance,0
+02: Shared Ride 2,13: TNC Single,5: Individual Maintenance,0
+02: Shared Ride 2,14: TNC Shared,5: Individual Maintenance,0
+02: Shared Ride 2,15: School Bus,5: Individual Maintenance,0
+02: Shared Ride 2,01: SOV,6: Individual Discretionary,2046.838099
+02: Shared Ride 2,02: Shared Ride 2,6: Individual Discretionary,384908.1835
+02: Shared Ride 2,03: Shared Ride 3+,6: Individual Discretionary,31961.21682
+02: Shared Ride 2,04: Walk,6: Individual Discretionary,0
+02: Shared Ride 2,05: Bike,6: Individual Discretionary,45.5669122
+02: Shared Ride 2,08: Walk to Transit,6: Individual Discretionary,100.9608768
+02: Shared Ride 2,09: PNR to Transit,6: Individual Discretionary,150.3183141
+02: Shared Ride 2,10: KNR to Transit,6: Individual Discretionary,143.4729573
+02: Shared Ride 2,11: TNC to Transit,6: Individual Discretionary,0
+02: Shared Ride 2,12: Taxi,6: Individual Discretionary,0
+02: Shared Ride 2,13: TNC Single,6: Individual Discretionary,0
+02: Shared Ride 2,14: TNC Shared,6: Individual Discretionary,0
+02: Shared Ride 2,15: School Bus,6: Individual Discretionary,0
+02: Shared Ride 2,01: SOV,7: Joint Maintenance,0
+02: Shared Ride 2,02: Shared Ride 2,7: Joint Maintenance,187705.9458
+02: Shared Ride 2,03: Shared Ride 3+,7: Joint Maintenance,1053.241284
+02: Shared Ride 2,04: Walk,7: Joint Maintenance,160.2382726
+02: Shared Ride 2,05: Bike,7: Joint Maintenance,0
+02: Shared Ride 2,08: Walk to Transit,7: Joint Maintenance,0
+02: Shared Ride 2,09: PNR to Transit,7: Joint Maintenance,0
+02: Shared Ride 2,10: KNR to Transit,7: Joint Maintenance,0
+02: Shared Ride 2,11: TNC to Transit,7: Joint Maintenance,0
+02: Shared Ride 2,12: Taxi,7: Joint Maintenance,0
+02: Shared Ride 2,13: TNC Single,7: Joint Maintenance,0
+02: Shared Ride 2,14: TNC Shared,7: Joint Maintenance,0
+02: Shared Ride 2,15: School Bus,7: Joint Maintenance,0
+02: Shared Ride 2,01: SOV,8: Joint Discretionary,0
+02: Shared Ride 2,02: Shared Ride 2,8: Joint Discretionary,134435.1
+02: Shared Ride 2,03: Shared Ride 3+,8: Joint Discretionary,510.3953
+02: Shared Ride 2,04: Walk,8: Joint Discretionary,0
+02: Shared Ride 2,05: Bike,8: Joint Discretionary,0
+02: Shared Ride 2,08: Walk to Transit,8: Joint Discretionary,0
+02: Shared Ride 2,09: PNR to Transit,8: Joint Discretionary,0
+02: Shared Ride 2,10: KNR to Transit,8: Joint Discretionary,0
+02: Shared Ride 2,11: TNC to Transit,8: Joint Discretionary,0
+02: Shared Ride 2,12: Taxi,8: Joint Discretionary,0
+02: Shared Ride 2,13: TNC Single,8: Joint Discretionary,0
+02: Shared Ride 2,14: TNC Shared,8: Joint Discretionary,0
+02: Shared Ride 2,15: School Bus,8: Joint Discretionary,0
+02: Shared Ride 2,01: SOV,9: Work-based,146.5562
+02: Shared Ride 2,02: Shared Ride 2,9: Work-based,17406.64
+02: Shared Ride 2,03: Shared Ride 3+,9: Work-based,11.14593
+02: Shared Ride 2,04: Walk,9: Work-based,0
+02: Shared Ride 2,05: Bike,9: Work-based,0
+02: Shared Ride 2,08: Walk to Transit,9: Work-based,0
+02: Shared Ride 2,09: PNR to Transit,9: Work-based,0
+02: Shared Ride 2,10: KNR to Transit,9: Work-based,0
+02: Shared Ride 2,11: TNC to Transit,9: Work-based,0
+02: Shared Ride 2,12: Taxi,9: Work-based,0
+02: Shared Ride 2,13: TNC Single,9: Work-based,0
+02: Shared Ride 2,14: TNC Shared,9: Work-based,0
+02: Shared Ride 2,15: School Bus,9: Work-based,0
+03: Shared Ride 3+,01: SOV,1: Work,33.26580444
+03: Shared Ride 3+,02: Shared Ride 2,1: Work,0
+03: Shared Ride 3+,03: Shared Ride 3+,1: Work,135830.7477
+03: Shared Ride 3+,04: Walk,1: Work,0
+03: Shared Ride 3+,05: Bike,1: Work,0
+03: Shared Ride 3+,08: Walk to Transit,1: Work,409.029033
+03: Shared Ride 3+,09: PNR to Transit,1: Work,90.2426858
+03: Shared Ride 3+,10: KNR to Transit,1: Work,0
+03: Shared Ride 3+,11: TNC to Transit,1: Work,0
+03: Shared Ride 3+,12: Taxi,1: Work,0
+03: Shared Ride 3+,13: TNC Single,1: Work,0
+03: Shared Ride 3+,14: TNC Shared,1: Work,0
+03: Shared Ride 3+,15: School Bus,1: Work,0
+03: Shared Ride 3+,01: SOV,2: University,0
+03: Shared Ride 3+,02: Shared Ride 2,2: University,0
+03: Shared Ride 3+,03: Shared Ride 3+,2: University,1914.198471
+03: Shared Ride 3+,04: Walk,2: University,0
+03: Shared Ride 3+,05: Bike,2: University,0
+03: Shared Ride 3+,08: Walk to Transit,2: University,164.1301822
+03: Shared Ride 3+,09: PNR to Transit,2: University,0
+03: Shared Ride 3+,10: KNR to Transit,2: University,6.874785102
+03: Shared Ride 3+,11: TNC to Transit,2: University,0
+03: Shared Ride 3+,12: Taxi,2: University,0
+03: Shared Ride 3+,13: TNC Single,2: University,0
+03: Shared Ride 3+,14: TNC Shared,2: University,0
+03: Shared Ride 3+,15: School Bus,2: University,0
+03: Shared Ride 3+,01: SOV,3: School,86.50465452
+03: Shared Ride 3+,02: Shared Ride 2,3: School,0
+03: Shared Ride 3+,03: Shared Ride 3+,3: School,222471.7169
+03: Shared Ride 3+,04: Walk,3: School,0
+03: Shared Ride 3+,05: Bike,3: School,0
+03: Shared Ride 3+,08: Walk to Transit,3: School,1171.022878
+03: Shared Ride 3+,09: PNR to Transit,3: School,0
+03: Shared Ride 3+,10: KNR to Transit,3: School,0
+03: Shared Ride 3+,11: TNC to Transit,3: School,0
+03: Shared Ride 3+,12: Taxi,3: School,0
+03: Shared Ride 3+,13: TNC Single,3: School,0
+03: Shared Ride 3+,14: TNC Shared,3: School,0
+03: Shared Ride 3+,15: School Bus,3: School,0
+03: Shared Ride 3+,01: SOV,5: Individual Maintenance,568.6984913
+03: Shared Ride 3+,02: Shared Ride 2,5: Individual Maintenance,819.7882133
+03: Shared Ride 3+,03: Shared Ride 3+,5: Individual Maintenance,918570.6438
+03: Shared Ride 3+,04: Walk,5: Individual Maintenance,31.6594783
+03: Shared Ride 3+,05: Bike,5: Individual Maintenance,0
+03: Shared Ride 3+,08: Walk to Transit,5: Individual Maintenance,236.7946858
+03: Shared Ride 3+,09: PNR to Transit,5: Individual Maintenance,0
+03: Shared Ride 3+,10: KNR to Transit,5: Individual Maintenance,622.0427405
+03: Shared Ride 3+,11: TNC to Transit,5: Individual Maintenance,0
+03: Shared Ride 3+,12: Taxi,5: Individual Maintenance,0
+03: Shared Ride 3+,13: TNC Single,5: Individual Maintenance,0
+03: Shared Ride 3+,14: TNC Shared,5: Individual Maintenance,0
+03: Shared Ride 3+,15: School Bus,5: Individual Maintenance,0
+03: Shared Ride 3+,01: SOV,6: Individual Discretionary,136.3982835
+03: Shared Ride 3+,02: Shared Ride 2,6: Individual Discretionary,0
+03: Shared Ride 3+,03: Shared Ride 3+,6: Individual Discretionary,384228.5232
+03: Shared Ride 3+,04: Walk,6: Individual Discretionary,0
+03: Shared Ride 3+,05: Bike,6: Individual Discretionary,0
+03: Shared Ride 3+,08: Walk to Transit,6: Individual Discretionary,1675.236017
+03: Shared Ride 3+,09: PNR to Transit,6: Individual Discretionary,0
+03: Shared Ride 3+,10: KNR to Transit,6: Individual Discretionary,0
+03: Shared Ride 3+,11: TNC to Transit,6: Individual Discretionary,0
+03: Shared Ride 3+,12: Taxi,6: Individual Discretionary,0
+03: Shared Ride 3+,13: TNC Single,6: Individual Discretionary,0
+03: Shared Ride 3+,14: TNC Shared,6: Individual Discretionary,0
+03: Shared Ride 3+,15: School Bus,6: Individual Discretionary,0
+03: Shared Ride 3+,01: SOV,7: Joint Maintenance,0
+03: Shared Ride 3+,02: Shared Ride 2,7: Joint Maintenance,794.8764039
+03: Shared Ride 3+,03: Shared Ride 3+,7: Joint Maintenance,46956.70599
+03: Shared Ride 3+,04: Walk,7: Joint Maintenance,0
+03: Shared Ride 3+,05: Bike,7: Joint Maintenance,0
+03: Shared Ride 3+,08: Walk to Transit,7: Joint Maintenance,0
+03: Shared Ride 3+,09: PNR to Transit,7: Joint Maintenance,0
+03: Shared Ride 3+,10: KNR to Transit,7: Joint Maintenance,0
+03: Shared Ride 3+,11: TNC to Transit,7: Joint Maintenance,0
+03: Shared Ride 3+,12: Taxi,7: Joint Maintenance,0
+03: Shared Ride 3+,13: TNC Single,7: Joint Maintenance,0
+03: Shared Ride 3+,14: TNC Shared,7: Joint Maintenance,0
+03: Shared Ride 3+,15: School Bus,7: Joint Maintenance,0
+03: Shared Ride 3+,01: SOV,8: Joint Discretionary,0
+03: Shared Ride 3+,02: Shared Ride 2,8: Joint Discretionary,0
+03: Shared Ride 3+,03: Shared Ride 3+,8: Joint Discretionary,67861.7
+03: Shared Ride 3+,04: Walk,8: Joint Discretionary,0
+03: Shared Ride 3+,05: Bike,8: Joint Discretionary,0
+03: Shared Ride 3+,08: Walk to Transit,8: Joint Discretionary,0
+03: Shared Ride 3+,09: PNR to Transit,8: Joint Discretionary,0
+03: Shared Ride 3+,10: KNR to Transit,8: Joint Discretionary,0
+03: Shared Ride 3+,11: TNC to Transit,8: Joint Discretionary,0
+03: Shared Ride 3+,12: Taxi,8: Joint Discretionary,0
+03: Shared Ride 3+,13: TNC Single,8: Joint Discretionary,0
+03: Shared Ride 3+,14: TNC Shared,8: Joint Discretionary,0
+03: Shared Ride 3+,15: School Bus,8: Joint Discretionary,0
+03: Shared Ride 3+,01: SOV,9: Work-based,0
+03: Shared Ride 3+,02: Shared Ride 2,9: Work-based,0
+03: Shared Ride 3+,03: Shared Ride 3+,9: Work-based,16119.27
+03: Shared Ride 3+,04: Walk,9: Work-based,0
+03: Shared Ride 3+,05: Bike,9: Work-based,0
+03: Shared Ride 3+,08: Walk to Transit,9: Work-based,0
+03: Shared Ride 3+,09: PNR to Transit,9: Work-based,0
+03: Shared Ride 3+,10: KNR to Transit,9: Work-based,0
+03: Shared Ride 3+,11: TNC to Transit,9: Work-based,0
+03: Shared Ride 3+,12: Taxi,9: Work-based,0
+03: Shared Ride 3+,13: TNC Single,9: Work-based,0
+03: Shared Ride 3+,14: TNC Shared,9: Work-based,0
+03: Shared Ride 3+,15: School Bus,9: Work-based,0
+04: Walk,01: SOV,1: Work,30017.1435
+04: Walk,02: Shared Ride 2,1: Work,18326.99465
+04: Walk,03: Shared Ride 3+,1: Work,4056.932504
+04: Walk,04: Walk,1: Work,22081.19035
+04: Walk,05: Bike,1: Work,0
+04: Walk,08: Walk to Transit,1: Work,514.5906514
+04: Walk,09: PNR to Transit,1: Work,90.01338868
+04: Walk,10: KNR to Transit,1: Work,5.143022375
+04: Walk,11: TNC to Transit,1: Work,0
+04: Walk,12: Taxi,1: Work,0
+04: Walk,13: TNC Single,1: Work,591.8763743
+04: Walk,14: TNC Shared,1: Work,0
+04: Walk,15: School Bus,1: Work,0
+04: Walk,01: SOV,2: University,1585.29852
+04: Walk,02: Shared Ride 2,2: University,380.7439552
+04: Walk,03: Shared Ride 3+,2: University,0
+04: Walk,04: Walk,2: University,20039.70651
+04: Walk,05: Bike,2: University,88.21750652
+04: Walk,08: Walk to Transit,2: University,7359.231973
+04: Walk,09: PNR to Transit,2: University,1206.257528
+04: Walk,10: KNR to Transit,2: University,0
+04: Walk,11: TNC to Transit,2: University,0
+04: Walk,12: Taxi,2: University,0
+04: Walk,13: TNC Single,2: University,0
+04: Walk,14: TNC Shared,2: University,0
+04: Walk,15: School Bus,2: University,0
+04: Walk,01: SOV,3: School,0
+04: Walk,02: Shared Ride 2,3: School,6534.897148
+04: Walk,03: Shared Ride 3+,3: School,16269.47144
+04: Walk,04: Walk,3: School,19324.38129
+04: Walk,05: Bike,3: School,0
+04: Walk,08: Walk to Transit,3: School,0
+04: Walk,09: PNR to Transit,3: School,0
+04: Walk,10: KNR to Transit,3: School,0
+04: Walk,11: TNC to Transit,3: School,0
+04: Walk,12: Taxi,3: School,0
+04: Walk,13: TNC Single,3: School,0
+04: Walk,14: TNC Shared,3: School,0
+04: Walk,15: School Bus,3: School,0
+04: Walk,01: SOV,5: Individual Maintenance,78521.51659
+04: Walk,02: Shared Ride 2,5: Individual Maintenance,46673.03636
+04: Walk,03: Shared Ride 3+,5: Individual Maintenance,51031.36747
+04: Walk,04: Walk,5: Individual Maintenance,268398.0906
+04: Walk,05: Bike,5: Individual Maintenance,9422.015719
+04: Walk,08: Walk to Transit,5: Individual Maintenance,7907.220645
+04: Walk,09: PNR to Transit,5: Individual Maintenance,9.968009025
+04: Walk,10: KNR to Transit,5: Individual Maintenance,2952.876502
+04: Walk,11: TNC to Transit,5: Individual Maintenance,0
+04: Walk,12: Taxi,5: Individual Maintenance,4738.432483
+04: Walk,13: TNC Single,5: Individual Maintenance,333.9602319
+04: Walk,14: TNC Shared,5: Individual Maintenance,0
+04: Walk,15: School Bus,5: Individual Maintenance,0
+04: Walk,01: SOV,6: Individual Discretionary,25369.19795
+04: Walk,02: Shared Ride 2,6: Individual Discretionary,20734.58162
+04: Walk,03: Shared Ride 3+,6: Individual Discretionary,100670.3315
+04: Walk,04: Walk,6: Individual Discretionary,444822.0677
+04: Walk,05: Bike,6: Individual Discretionary,1908.63419
+04: Walk,08: Walk to Transit,6: Individual Discretionary,5549.494954
+04: Walk,09: PNR to Transit,6: Individual Discretionary,0
+04: Walk,10: KNR to Transit,6: Individual Discretionary,119.3448281
+04: Walk,11: TNC to Transit,6: Individual Discretionary,0
+04: Walk,12: Taxi,6: Individual Discretionary,0
+04: Walk,13: TNC Single,6: Individual Discretionary,2811.122057
+04: Walk,14: TNC Shared,6: Individual Discretionary,0
+04: Walk,15: School Bus,6: Individual Discretionary,0
+04: Walk,01: SOV,7: Joint Maintenance,0
+04: Walk,02: Shared Ride 2,7: Joint Maintenance,2219.946724
+04: Walk,03: Shared Ride 3+,7: Joint Maintenance,0
+04: Walk,04: Walk,7: Joint Maintenance,22723.88136
+04: Walk,05: Bike,7: Joint Maintenance,0
+04: Walk,08: Walk to Transit,7: Joint Maintenance,0
+04: Walk,09: PNR to Transit,7: Joint Maintenance,0
+04: Walk,10: KNR to Transit,7: Joint Maintenance,0
+04: Walk,11: TNC to Transit,7: Joint Maintenance,0
+04: Walk,12: Taxi,7: Joint Maintenance,0
+04: Walk,13: TNC Single,7: Joint Maintenance,0
+04: Walk,14: TNC Shared,7: Joint Maintenance,0
+04: Walk,15: School Bus,7: Joint Maintenance,0
+04: Walk,01: SOV,8: Joint Discretionary,0
+04: Walk,02: Shared Ride 2,8: Joint Discretionary,999.4201
+04: Walk,03: Shared Ride 3+,8: Joint Discretionary,0
+04: Walk,04: Walk,8: Joint Discretionary,35852.34
+04: Walk,05: Bike,8: Joint Discretionary,0
+04: Walk,08: Walk to Transit,8: Joint Discretionary,41.55184
+04: Walk,09: PNR to Transit,8: Joint Discretionary,0
+04: Walk,10: KNR to Transit,8: Joint Discretionary,0
+04: Walk,11: TNC to Transit,8: Joint Discretionary,0
+04: Walk,12: Taxi,8: Joint Discretionary,0
+04: Walk,13: TNC Single,8: Joint Discretionary,0
+04: Walk,14: TNC Shared,8: Joint Discretionary,0
+04: Walk,15: School Bus,8: Joint Discretionary,0
+04: Walk,01: SOV,9: Work-based,1354.095
+04: Walk,02: Shared Ride 2,9: Work-based,19.94988
+04: Walk,03: Shared Ride 3+,9: Work-based,11.14593
+04: Walk,04: Walk,9: Work-based,69966.36
+04: Walk,05: Bike,9: Work-based,18.36328
+04: Walk,08: Walk to Transit,9: Work-based,0
+04: Walk,09: PNR to Transit,9: Work-based,0
+04: Walk,10: KNR to Transit,9: Work-based,0
+04: Walk,11: TNC to Transit,9: Work-based,0
+04: Walk,12: Taxi,9: Work-based,0
+04: Walk,13: TNC Single,9: Work-based,0
+04: Walk,14: TNC Shared,9: Work-based,0
+04: Walk,15: School Bus,9: Work-based,0
+05: Bike,01: SOV,1: Work,775.4080014
+05: Bike,02: Shared Ride 2,1: Work,32.55741452
+05: Bike,03: Shared Ride 3+,1: Work,0
+05: Bike,04: Walk,1: Work,0
+05: Bike,05: Bike,1: Work,28661.9248
+05: Bike,08: Walk to Transit,1: Work,5.903920744
+05: Bike,09: PNR to Transit,1: Work,0
+05: Bike,10: KNR to Transit,1: Work,6897.499072
+05: Bike,11: TNC to Transit,1: Work,0
+05: Bike,12: Taxi,1: Work,0
+05: Bike,13: TNC Single,1: Work,0
+05: Bike,14: TNC Shared,1: Work,0
+05: Bike,15: School Bus,1: Work,0
+05: Bike,01: SOV,2: University,0
+05: Bike,02: Shared Ride 2,2: University,0
+05: Bike,03: Shared Ride 3+,2: University,0
+05: Bike,04: Walk,2: University,0
+05: Bike,05: Bike,2: University,8690.731418
+05: Bike,08: Walk to Transit,2: University,0
+05: Bike,09: PNR to Transit,2: University,0
+05: Bike,10: KNR to Transit,2: University,0
+05: Bike,11: TNC to Transit,2: University,0
+05: Bike,12: Taxi,2: University,0
+05: Bike,13: TNC Single,2: University,0
+05: Bike,14: TNC Shared,2: University,0
+05: Bike,15: School Bus,2: University,0
+05: Bike,01: SOV,3: School,0
+05: Bike,02: Shared Ride 2,3: School,0
+05: Bike,03: Shared Ride 3+,3: School,38.24702254
+05: Bike,04: Walk,3: School,0
+05: Bike,05: Bike,3: School,46435.90721
+05: Bike,08: Walk to Transit,3: School,53.38712475
+05: Bike,09: PNR to Transit,3: School,0
+05: Bike,10: KNR to Transit,3: School,0
+05: Bike,11: TNC to Transit,3: School,0
+05: Bike,12: Taxi,3: School,0
+05: Bike,13: TNC Single,3: School,0
+05: Bike,14: TNC Shared,3: School,0
+05: Bike,15: School Bus,3: School,0
+05: Bike,01: SOV,5: Individual Maintenance,764.1260641
+05: Bike,02: Shared Ride 2,5: Individual Maintenance,22.9927728
+05: Bike,03: Shared Ride 3+,5: Individual Maintenance,112.0706764
+05: Bike,04: Walk,5: Individual Maintenance,0
+05: Bike,05: Bike,5: Individual Maintenance,51379.14018
+05: Bike,08: Walk to Transit,5: Individual Maintenance,0
+05: Bike,09: PNR to Transit,5: Individual Maintenance,0
+05: Bike,10: KNR to Transit,5: Individual Maintenance,33.96118411
+05: Bike,11: TNC to Transit,5: Individual Maintenance,0
+05: Bike,12: Taxi,5: Individual Maintenance,0
+05: Bike,13: TNC Single,5: Individual Maintenance,0
+05: Bike,14: TNC Shared,5: Individual Maintenance,0
+05: Bike,15: School Bus,5: Individual Maintenance,0
+05: Bike,01: SOV,6: Individual Discretionary,21526.96648
+05: Bike,02: Shared Ride 2,6: Individual Discretionary,393.7033766
+05: Bike,03: Shared Ride 3+,6: Individual Discretionary,6131.463346
+05: Bike,04: Walk,6: Individual Discretionary,0
+05: Bike,05: Bike,6: Individual Discretionary,24289.50565
+05: Bike,08: Walk to Transit,6: Individual Discretionary,0
+05: Bike,09: PNR to Transit,6: Individual Discretionary,0
+05: Bike,10: KNR to Transit,6: Individual Discretionary,771.1236171
+05: Bike,11: TNC to Transit,6: Individual Discretionary,0
+05: Bike,12: Taxi,6: Individual Discretionary,0
+05: Bike,13: TNC Single,6: Individual Discretionary,0
+05: Bike,14: TNC Shared,6: Individual Discretionary,0
+05: Bike,15: School Bus,6: Individual Discretionary,0
+05: Bike,01: SOV,7: Joint Maintenance,0
+05: Bike,02: Shared Ride 2,7: Joint Maintenance,0
+05: Bike,03: Shared Ride 3+,7: Joint Maintenance,0
+05: Bike,04: Walk,7: Joint Maintenance,0
+05: Bike,05: Bike,7: Joint Maintenance,5012.745743
+05: Bike,08: Walk to Transit,7: Joint Maintenance,0
+05: Bike,09: PNR to Transit,7: Joint Maintenance,0
+05: Bike,10: KNR to Transit,7: Joint Maintenance,0
+05: Bike,11: TNC to Transit,7: Joint Maintenance,0
+05: Bike,12: Taxi,7: Joint Maintenance,0
+05: Bike,13: TNC Single,7: Joint Maintenance,0
+05: Bike,14: TNC Shared,7: Joint Maintenance,0
+05: Bike,15: School Bus,7: Joint Maintenance,0
+05: Bike,01: SOV,8: Joint Discretionary,0
+05: Bike,02: Shared Ride 2,8: Joint Discretionary,0
+05: Bike,03: Shared Ride 3+,8: Joint Discretionary,0
+05: Bike,04: Walk,8: Joint Discretionary,0
+05: Bike,05: Bike,8: Joint Discretionary,632.9716
+05: Bike,08: Walk to Transit,8: Joint Discretionary,0
+05: Bike,09: PNR to Transit,8: Joint Discretionary,0
+05: Bike,10: KNR to Transit,8: Joint Discretionary,0
+05: Bike,11: TNC to Transit,8: Joint Discretionary,0
+05: Bike,12: Taxi,8: Joint Discretionary,0
+05: Bike,13: TNC Single,8: Joint Discretionary,0
+05: Bike,14: TNC Shared,8: Joint Discretionary,0
+05: Bike,15: School Bus,8: Joint Discretionary,0
+05: Bike,01: SOV,9: Work-based,0
+05: Bike,02: Shared Ride 2,9: Work-based,0
+05: Bike,03: Shared Ride 3+,9: Work-based,0
+05: Bike,04: Walk,9: Work-based,0
+05: Bike,05: Bike,9: Work-based,13555.4
+05: Bike,08: Walk to Transit,9: Work-based,0
+05: Bike,09: PNR to Transit,9: Work-based,0
+05: Bike,10: KNR to Transit,9: Work-based,0
+05: Bike,11: TNC to Transit,9: Work-based,0
+05: Bike,12: Taxi,9: Work-based,0
+05: Bike,13: TNC Single,9: Work-based,0
+05: Bike,14: TNC Shared,9: Work-based,0
+05: Bike,15: School Bus,9: Work-based,0
+08: Walk to Transit,01: SOV,1: Work,0
+08: Walk to Transit,02: Shared Ride 2,1: Work,0
+08: Walk to Transit,03: Shared Ride 3+,1: Work,0
+08: Walk to Transit,04: Walk,1: Work,0
+08: Walk to Transit,05: Bike,1: Work,0
+08: Walk to Transit,08: Walk to Transit,1: Work,21473.32819
+08: Walk to Transit,09: PNR to Transit,1: Work,116.5306175
+08: Walk to Transit,10: KNR to Transit,1: Work,1909.46195
+08: Walk to Transit,11: TNC to Transit,1: Work,10.23801137
+08: Walk to Transit,12: Taxi,1: Work,0
+08: Walk to Transit,13: TNC Single,1: Work,0
+08: Walk to Transit,14: TNC Shared,1: Work,0
+08: Walk to Transit,15: School Bus,1: Work,0
+08: Walk to Transit,01: SOV,2: University,0
+08: Walk to Transit,02: Shared Ride 2,2: University,0
+08: Walk to Transit,03: Shared Ride 3+,2: University,0
+08: Walk to Transit,04: Walk,2: University,0
+08: Walk to Transit,05: Bike,2: University,0
+08: Walk to Transit,08: Walk to Transit,2: University,25847.37402
+08: Walk to Transit,09: PNR to Transit,2: University,0
+08: Walk to Transit,10: KNR to Transit,2: University,0
+08: Walk to Transit,11: TNC to Transit,2: University,0
+08: Walk to Transit,12: Taxi,2: University,0
+08: Walk to Transit,13: TNC Single,2: University,0
+08: Walk to Transit,14: TNC Shared,2: University,0
+08: Walk to Transit,15: School Bus,2: University,0
+08: Walk to Transit,01: SOV,3: School,0
+08: Walk to Transit,02: Shared Ride 2,3: School,0
+08: Walk to Transit,03: Shared Ride 3+,3: School,0
+08: Walk to Transit,04: Walk,3: School,0
+08: Walk to Transit,05: Bike,3: School,0
+08: Walk to Transit,08: Walk to Transit,3: School,1297.22698
+08: Walk to Transit,09: PNR to Transit,3: School,0
+08: Walk to Transit,10: KNR to Transit,3: School,0
+08: Walk to Transit,11: TNC to Transit,3: School,0
+08: Walk to Transit,12: Taxi,3: School,0
+08: Walk to Transit,13: TNC Single,3: School,0
+08: Walk to Transit,14: TNC Shared,3: School,0
+08: Walk to Transit,15: School Bus,3: School,0
+08: Walk to Transit,01: SOV,5: Individual Maintenance,0
+08: Walk to Transit,02: Shared Ride 2,5: Individual Maintenance,0
+08: Walk to Transit,03: Shared Ride 3+,5: Individual Maintenance,0
+08: Walk to Transit,04: Walk,5: Individual Maintenance,0
+08: Walk to Transit,05: Bike,5: Individual Maintenance,0
+08: Walk to Transit,08: Walk to Transit,5: Individual Maintenance,31771.6105
+08: Walk to Transit,09: PNR to Transit,5: Individual Maintenance,4124.146877
+08: Walk to Transit,10: KNR to Transit,5: Individual Maintenance,271.3971463
+08: Walk to Transit,11: TNC to Transit,5: Individual Maintenance,20.68508361
+08: Walk to Transit,12: Taxi,5: Individual Maintenance,0
+08: Walk to Transit,13: TNC Single,5: Individual Maintenance,0
+08: Walk to Transit,14: TNC Shared,5: Individual Maintenance,0
+08: Walk to Transit,15: School Bus,5: Individual Maintenance,0
+08: Walk to Transit,01: SOV,6: Individual Discretionary,0
+08: Walk to Transit,02: Shared Ride 2,6: Individual Discretionary,0
+08: Walk to Transit,03: Shared Ride 3+,6: Individual Discretionary,0
+08: Walk to Transit,04: Walk,6: Individual Discretionary,0
+08: Walk to Transit,05: Bike,6: Individual Discretionary,0
+08: Walk to Transit,08: Walk to Transit,6: Individual Discretionary,24944.66467
+08: Walk to Transit,09: PNR to Transit,6: Individual Discretionary,0
+08: Walk to Transit,10: KNR to Transit,6: Individual Discretionary,21.54405305
+08: Walk to Transit,11: TNC to Transit,6: Individual Discretionary,0
+08: Walk to Transit,12: Taxi,6: Individual Discretionary,0
+08: Walk to Transit,13: TNC Single,6: Individual Discretionary,0
+08: Walk to Transit,14: TNC Shared,6: Individual Discretionary,0
+08: Walk to Transit,15: School Bus,6: Individual Discretionary,0
+08: Walk to Transit,01: SOV,7: Joint Maintenance,0
+08: Walk to Transit,02: Shared Ride 2,7: Joint Maintenance,0
+08: Walk to Transit,03: Shared Ride 3+,7: Joint Maintenance,0
+08: Walk to Transit,04: Walk,7: Joint Maintenance,0
+08: Walk to Transit,05: Bike,7: Joint Maintenance,0
+08: Walk to Transit,08: Walk to Transit,7: Joint Maintenance,0
+08: Walk to Transit,09: PNR to Transit,7: Joint Maintenance,0
+08: Walk to Transit,10: KNR to Transit,7: Joint Maintenance,0
+08: Walk to Transit,11: TNC to Transit,7: Joint Maintenance,0
+08: Walk to Transit,12: Taxi,7: Joint Maintenance,0
+08: Walk to Transit,13: TNC Single,7: Joint Maintenance,0
+08: Walk to Transit,14: TNC Shared,7: Joint Maintenance,0
+08: Walk to Transit,15: School Bus,7: Joint Maintenance,0
+08: Walk to Transit,01: SOV,8: Joint Discretionary,0
+08: Walk to Transit,02: Shared Ride 2,8: Joint Discretionary,0
+08: Walk to Transit,03: Shared Ride 3+,8: Joint Discretionary,0
+08: Walk to Transit,04: Walk,8: Joint Discretionary,0
+08: Walk to Transit,05: Bike,8: Joint Discretionary,0
+08: Walk to Transit,08: Walk to Transit,8: Joint Discretionary,0
+08: Walk to Transit,09: PNR to Transit,8: Joint Discretionary,0
+08: Walk to Transit,10: KNR to Transit,8: Joint Discretionary,0
+08: Walk to Transit,11: TNC to Transit,8: Joint Discretionary,0
+08: Walk to Transit,12: Taxi,8: Joint Discretionary,0
+08: Walk to Transit,13: TNC Single,8: Joint Discretionary,0
+08: Walk to Transit,14: TNC Shared,8: Joint Discretionary,0
+08: Walk to Transit,15: School Bus,8: Joint Discretionary,0
+08: Walk to Transit,01: SOV,9: Work-based,0
+08: Walk to Transit,02: Shared Ride 2,9: Work-based,0
+08: Walk to Transit,03: Shared Ride 3+,9: Work-based,0
+08: Walk to Transit,04: Walk,9: Work-based,0
+08: Walk to Transit,05: Bike,9: Work-based,0
+08: Walk to Transit,08: Walk to Transit,9: Work-based,29.20778
+08: Walk to Transit,09: PNR to Transit,9: Work-based,0
+08: Walk to Transit,10: KNR to Transit,9: Work-based,0
+08: Walk to Transit,11: TNC to Transit,9: Work-based,0
+08: Walk to Transit,12: Taxi,9: Work-based,0
+08: Walk to Transit,13: TNC Single,9: Work-based,0
+08: Walk to Transit,14: TNC Shared,9: Work-based,0
+08: Walk to Transit,15: School Bus,9: Work-based,0
+09: PNR to Transit,01: SOV,1: Work,0
+09: PNR to Transit,02: Shared Ride 2,1: Work,0
+09: PNR to Transit,03: Shared Ride 3+,1: Work,0
+09: PNR to Transit,04: Walk,1: Work,0
+09: PNR to Transit,05: Bike,1: Work,0
+09: PNR to Transit,08: Walk to Transit,1: Work,0
+09: PNR to Transit,09: PNR to Transit,1: Work,1163.541859
+09: PNR to Transit,10: KNR to Transit,1: Work,0
+09: PNR to Transit,11: TNC to Transit,1: Work,0
+09: PNR to Transit,12: Taxi,1: Work,0
+09: PNR to Transit,13: TNC Single,1: Work,0
+09: PNR to Transit,14: TNC Shared,1: Work,0
+09: PNR to Transit,15: School Bus,1: Work,0
+09: PNR to Transit,01: SOV,2: University,0
+09: PNR to Transit,02: Shared Ride 2,2: University,0
+09: PNR to Transit,03: Shared Ride 3+,2: University,0
+09: PNR to Transit,04: Walk,2: University,0
+09: PNR to Transit,05: Bike,2: University,0
+09: PNR to Transit,08: Walk to Transit,2: University,0
+09: PNR to Transit,09: PNR to Transit,2: University,1206.257528
+09: PNR to Transit,10: KNR to Transit,2: University,0
+09: PNR to Transit,11: TNC to Transit,2: University,0
+09: PNR to Transit,12: Taxi,2: University,0
+09: PNR to Transit,13: TNC Single,2: University,0
+09: PNR to Transit,14: TNC Shared,2: University,0
+09: PNR to Transit,15: School Bus,2: University,0
+09: PNR to Transit,01: SOV,3: School,0
+09: PNR to Transit,02: Shared Ride 2,3: School,0
+09: PNR to Transit,03: Shared Ride 3+,3: School,0
+09: PNR to Transit,04: Walk,3: School,0
+09: PNR to Transit,05: Bike,3: School,0
+09: PNR to Transit,08: Walk to Transit,3: School,0
+09: PNR to Transit,09: PNR to Transit,3: School,0
+09: PNR to Transit,10: KNR to Transit,3: School,0
+09: PNR to Transit,11: TNC to Transit,3: School,0
+09: PNR to Transit,12: Taxi,3: School,0
+09: PNR to Transit,13: TNC Single,3: School,0
+09: PNR to Transit,14: TNC Shared,3: School,0
+09: PNR to Transit,15: School Bus,3: School,0
+09: PNR to Transit,01: SOV,5: Individual Maintenance,0
+09: PNR to Transit,02: Shared Ride 2,5: Individual Maintenance,0
+09: PNR to Transit,03: Shared Ride 3+,5: Individual Maintenance,0
+09: PNR to Transit,04: Walk,5: Individual Maintenance,0
+09: PNR to Transit,05: Bike,5: Individual Maintenance,0
+09: PNR to Transit,08: Walk to Transit,5: Individual Maintenance,0
+09: PNR to Transit,09: PNR to Transit,5: Individual Maintenance,1244.231802
+09: PNR to Transit,10: KNR to Transit,5: Individual Maintenance,0
+09: PNR to Transit,11: TNC to Transit,5: Individual Maintenance,0
+09: PNR to Transit,12: Taxi,5: Individual Maintenance,0
+09: PNR to Transit,13: TNC Single,5: Individual Maintenance,0
+09: PNR to Transit,14: TNC Shared,5: Individual Maintenance,0
+09: PNR to Transit,15: School Bus,5: Individual Maintenance,0
+09: PNR to Transit,01: SOV,6: Individual Discretionary,0
+09: PNR to Transit,02: Shared Ride 2,6: Individual Discretionary,0
+09: PNR to Transit,03: Shared Ride 3+,6: Individual Discretionary,0
+09: PNR to Transit,04: Walk,6: Individual Discretionary,0
+09: PNR to Transit,05: Bike,6: Individual Discretionary,0
+09: PNR to Transit,08: Walk to Transit,6: Individual Discretionary,0
+09: PNR to Transit,09: PNR to Transit,6: Individual Discretionary,195.1659505
+09: PNR to Transit,10: KNR to Transit,6: Individual Discretionary,0
+09: PNR to Transit,11: TNC to Transit,6: Individual Discretionary,0
+09: PNR to Transit,12: Taxi,6: Individual Discretionary,0
+09: PNR to Transit,13: TNC Single,6: Individual Discretionary,0
+09: PNR to Transit,14: TNC Shared,6: Individual Discretionary,0
+09: PNR to Transit,15: School Bus,6: Individual Discretionary,0
+09: PNR to Transit,01: SOV,7: Joint Maintenance,0
+09: PNR to Transit,02: Shared Ride 2,7: Joint Maintenance,0
+09: PNR to Transit,03: Shared Ride 3+,7: Joint Maintenance,0
+09: PNR to Transit,04: Walk,7: Joint Maintenance,0
+09: PNR to Transit,05: Bike,7: Joint Maintenance,0
+09: PNR to Transit,08: Walk to Transit,7: Joint Maintenance,0
+09: PNR to Transit,09: PNR to Transit,7: Joint Maintenance,0
+09: PNR to Transit,10: KNR to Transit,7: Joint Maintenance,0
+09: PNR to Transit,11: TNC to Transit,7: Joint Maintenance,0
+09: PNR to Transit,12: Taxi,7: Joint Maintenance,0
+09: PNR to Transit,13: TNC Single,7: Joint Maintenance,0
+09: PNR to Transit,14: TNC Shared,7: Joint Maintenance,0
+09: PNR to Transit,15: School Bus,7: Joint Maintenance,0
+09: PNR to Transit,01: SOV,8: Joint Discretionary,0
+09: PNR to Transit,02: Shared Ride 2,8: Joint Discretionary,0
+09: PNR to Transit,03: Shared Ride 3+,8: Joint Discretionary,0
+09: PNR to Transit,04: Walk,8: Joint Discretionary,0
+09: PNR to Transit,05: Bike,8: Joint Discretionary,0
+09: PNR to Transit,08: Walk to Transit,8: Joint Discretionary,0
+09: PNR to Transit,09: PNR to Transit,8: Joint Discretionary,0
+09: PNR to Transit,10: KNR to Transit,8: Joint Discretionary,0
+09: PNR to Transit,11: TNC to Transit,8: Joint Discretionary,0
+09: PNR to Transit,12: Taxi,8: Joint Discretionary,0
+09: PNR to Transit,13: TNC Single,8: Joint Discretionary,0
+09: PNR to Transit,14: TNC Shared,8: Joint Discretionary,0
+09: PNR to Transit,15: School Bus,8: Joint Discretionary,0
+09: PNR to Transit,01: SOV,9: Work-based,0
+09: PNR to Transit,02: Shared Ride 2,9: Work-based,0
+09: PNR to Transit,03: Shared Ride 3+,9: Work-based,0
+09: PNR to Transit,04: Walk,9: Work-based,0
+09: PNR to Transit,05: Bike,9: Work-based,0
+09: PNR to Transit,08: Walk to Transit,9: Work-based,0
+09: PNR to Transit,09: PNR to Transit,9: Work-based,0
+09: PNR to Transit,10: KNR to Transit,9: Work-based,0
+09: PNR to Transit,11: TNC to Transit,9: Work-based,0
+09: PNR to Transit,12: Taxi,9: Work-based,0
+09: PNR to Transit,13: TNC Single,9: Work-based,0
+09: PNR to Transit,14: TNC Shared,9: Work-based,0
+09: PNR to Transit,15: School Bus,9: Work-based,0
+10: KNR to Transit,01: SOV,1: Work,0
+10: KNR to Transit,02: Shared Ride 2,1: Work,0
+10: KNR to Transit,03: Shared Ride 3+,1: Work,0
+10: KNR to Transit,04: Walk,1: Work,0
+10: KNR to Transit,05: Bike,1: Work,0
+10: KNR to Transit,08: Walk to Transit,1: Work,0
+10: KNR to Transit,09: PNR to Transit,1: Work,0
+10: KNR to Transit,10: KNR to Transit,1: Work,3048.988004
+10: KNR to Transit,11: TNC to Transit,1: Work,0
+10: KNR to Transit,12: Taxi,1: Work,0
+10: KNR to Transit,13: TNC Single,1: Work,0
+10: KNR to Transit,14: TNC Shared,1: Work,0
+10: KNR to Transit,15: School Bus,1: Work,0
+10: KNR to Transit,01: SOV,2: University,0
+10: KNR to Transit,02: Shared Ride 2,2: University,0
+10: KNR to Transit,03: Shared Ride 3+,2: University,0
+10: KNR to Transit,04: Walk,2: University,0
+10: KNR to Transit,05: Bike,2: University,0
+10: KNR to Transit,08: Walk to Transit,2: University,0
+10: KNR to Transit,09: PNR to Transit,2: University,0
+10: KNR to Transit,10: KNR to Transit,2: University,566.0053003
+10: KNR to Transit,11: TNC to Transit,2: University,0
+10: KNR to Transit,12: Taxi,2: University,0
+10: KNR to Transit,13: TNC Single,2: University,0
+10: KNR to Transit,14: TNC Shared,2: University,0
+10: KNR to Transit,15: School Bus,2: University,0
+10: KNR to Transit,01: SOV,3: School,0
+10: KNR to Transit,02: Shared Ride 2,3: School,0
+10: KNR to Transit,03: Shared Ride 3+,3: School,0
+10: KNR to Transit,04: Walk,3: School,0
+10: KNR to Transit,05: Bike,3: School,0
+10: KNR to Transit,08: Walk to Transit,3: School,0
+10: KNR to Transit,09: PNR to Transit,3: School,0
+10: KNR to Transit,10: KNR to Transit,3: School,0
+10: KNR to Transit,11: TNC to Transit,3: School,0
+10: KNR to Transit,12: Taxi,3: School,0
+10: KNR to Transit,13: TNC Single,3: School,0
+10: KNR to Transit,14: TNC Shared,3: School,0
+10: KNR to Transit,15: School Bus,3: School,0
+10: KNR to Transit,01: SOV,5: Individual Maintenance,0
+10: KNR to Transit,02: Shared Ride 2,5: Individual Maintenance,0
+10: KNR to Transit,03: Shared Ride 3+,5: Individual Maintenance,0
+10: KNR to Transit,04: Walk,5: Individual Maintenance,0
+10: KNR to Transit,05: Bike,5: Individual Maintenance,0
+10: KNR to Transit,08: Walk to Transit,5: Individual Maintenance,0
+10: KNR to Transit,09: PNR to Transit,5: Individual Maintenance,0
+10: KNR to Transit,10: KNR to Transit,5: Individual Maintenance,6658.417326
+10: KNR to Transit,11: TNC to Transit,5: Individual Maintenance,0
+10: KNR to Transit,12: Taxi,5: Individual Maintenance,0
+10: KNR to Transit,13: TNC Single,5: Individual Maintenance,0
+10: KNR to Transit,14: TNC Shared,5: Individual Maintenance,0
+10: KNR to Transit,15: School Bus,5: Individual Maintenance,0
+10: KNR to Transit,01: SOV,6: Individual Discretionary,0
+10: KNR to Transit,02: Shared Ride 2,6: Individual Discretionary,0
+10: KNR to Transit,03: Shared Ride 3+,6: Individual Discretionary,0
+10: KNR to Transit,04: Walk,6: Individual Discretionary,0
+10: KNR to Transit,05: Bike,6: Individual Discretionary,0
+10: KNR to Transit,08: Walk to Transit,6: Individual Discretionary,0
+10: KNR to Transit,09: PNR to Transit,6: Individual Discretionary,0
+10: KNR to Transit,10: KNR to Transit,6: Individual Discretionary,700.3628923
+10: KNR to Transit,11: TNC to Transit,6: Individual Discretionary,0
+10: KNR to Transit,12: Taxi,6: Individual Discretionary,0
+10: KNR to Transit,13: TNC Single,6: Individual Discretionary,0
+10: KNR to Transit,14: TNC Shared,6: Individual Discretionary,0
+10: KNR to Transit,15: School Bus,6: Individual Discretionary,0
+10: KNR to Transit,01: SOV,7: Joint Maintenance,0
+10: KNR to Transit,02: Shared Ride 2,7: Joint Maintenance,0
+10: KNR to Transit,03: Shared Ride 3+,7: Joint Maintenance,0
+10: KNR to Transit,04: Walk,7: Joint Maintenance,0
+10: KNR to Transit,05: Bike,7: Joint Maintenance,0
+10: KNR to Transit,08: Walk to Transit,7: Joint Maintenance,0
+10: KNR to Transit,09: PNR to Transit,7: Joint Maintenance,0
+10: KNR to Transit,10: KNR to Transit,7: Joint Maintenance,0
+10: KNR to Transit,11: TNC to Transit,7: Joint Maintenance,0
+10: KNR to Transit,12: Taxi,7: Joint Maintenance,0
+10: KNR to Transit,13: TNC Single,7: Joint Maintenance,0
+10: KNR to Transit,14: TNC Shared,7: Joint Maintenance,0
+10: KNR to Transit,15: School Bus,7: Joint Maintenance,0
+10: KNR to Transit,01: SOV,8: Joint Discretionary,0
+10: KNR to Transit,02: Shared Ride 2,8: Joint Discretionary,0
+10: KNR to Transit,03: Shared Ride 3+,8: Joint Discretionary,0
+10: KNR to Transit,04: Walk,8: Joint Discretionary,0
+10: KNR to Transit,05: Bike,8: Joint Discretionary,0
+10: KNR to Transit,08: Walk to Transit,8: Joint Discretionary,0
+10: KNR to Transit,09: PNR to Transit,8: Joint Discretionary,0
+10: KNR to Transit,10: KNR to Transit,8: Joint Discretionary,0
+10: KNR to Transit,11: TNC to Transit,8: Joint Discretionary,0
+10: KNR to Transit,12: Taxi,8: Joint Discretionary,0
+10: KNR to Transit,13: TNC Single,8: Joint Discretionary,0
+10: KNR to Transit,14: TNC Shared,8: Joint Discretionary,0
+10: KNR to Transit,15: School Bus,8: Joint Discretionary,0
+10: KNR to Transit,01: SOV,9: Work-based,0
+10: KNR to Transit,02: Shared Ride 2,9: Work-based,0
+10: KNR to Transit,03: Shared Ride 3+,9: Work-based,0
+10: KNR to Transit,04: Walk,9: Work-based,0
+10: KNR to Transit,05: Bike,9: Work-based,0
+10: KNR to Transit,08: Walk to Transit,9: Work-based,0
+10: KNR to Transit,09: PNR to Transit,9: Work-based,0
+10: KNR to Transit,10: KNR to Transit,9: Work-based,0
+10: KNR to Transit,11: TNC to Transit,9: Work-based,0
+10: KNR to Transit,12: Taxi,9: Work-based,0
+10: KNR to Transit,13: TNC Single,9: Work-based,0
+10: KNR to Transit,14: TNC Shared,9: Work-based,0
+10: KNR to Transit,15: School Bus,9: Work-based,0
+11: TNC to Transit,01: SOV,1: Work,0
+11: TNC to Transit,02: Shared Ride 2,1: Work,0
+11: TNC to Transit,03: Shared Ride 3+,1: Work,0
+11: TNC to Transit,04: Walk,1: Work,0
+11: TNC to Transit,05: Bike,1: Work,0
+11: TNC to Transit,08: Walk to Transit,1: Work,0
+11: TNC to Transit,09: PNR to Transit,1: Work,0
+11: TNC to Transit,10: KNR to Transit,1: Work,0
+11: TNC to Transit,11: TNC to Transit,1: Work,3251.885822
+11: TNC to Transit,12: Taxi,1: Work,0
+11: TNC to Transit,13: TNC Single,1: Work,0
+11: TNC to Transit,14: TNC Shared,1: Work,0
+11: TNC to Transit,15: School Bus,1: Work,0
+11: TNC to Transit,01: SOV,2: University,0
+11: TNC to Transit,02: Shared Ride 2,2: University,0
+11: TNC to Transit,03: Shared Ride 3+,2: University,0
+11: TNC to Transit,04: Walk,2: University,0
+11: TNC to Transit,05: Bike,2: University,0
+11: TNC to Transit,08: Walk to Transit,2: University,0
+11: TNC to Transit,09: PNR to Transit,2: University,0
+11: TNC to Transit,10: KNR to Transit,2: University,0
+11: TNC to Transit,11: TNC to Transit,2: University,0
+11: TNC to Transit,12: Taxi,2: University,0
+11: TNC to Transit,13: TNC Single,2: University,0
+11: TNC to Transit,14: TNC Shared,2: University,0
+11: TNC to Transit,15: School Bus,2: University,0
+11: TNC to Transit,01: SOV,3: School,0
+11: TNC to Transit,02: Shared Ride 2,3: School,0
+11: TNC to Transit,03: Shared Ride 3+,3: School,0
+11: TNC to Transit,04: Walk,3: School,0
+11: TNC to Transit,05: Bike,3: School,0
+11: TNC to Transit,08: Walk to Transit,3: School,0
+11: TNC to Transit,09: PNR to Transit,3: School,0
+11: TNC to Transit,10: KNR to Transit,3: School,0
+11: TNC to Transit,11: TNC to Transit,3: School,0
+11: TNC to Transit,12: Taxi,3: School,0
+11: TNC to Transit,13: TNC Single,3: School,0
+11: TNC to Transit,14: TNC Shared,3: School,0
+11: TNC to Transit,15: School Bus,3: School,0
+11: TNC to Transit,01: SOV,5: Individual Maintenance,0
+11: TNC to Transit,02: Shared Ride 2,5: Individual Maintenance,0
+11: TNC to Transit,03: Shared Ride 3+,5: Individual Maintenance,0
+11: TNC to Transit,04: Walk,5: Individual Maintenance,0
+11: TNC to Transit,05: Bike,5: Individual Maintenance,0
+11: TNC to Transit,08: Walk to Transit,5: Individual Maintenance,0
+11: TNC to Transit,09: PNR to Transit,5: Individual Maintenance,0
+11: TNC to Transit,10: KNR to Transit,5: Individual Maintenance,0
+11: TNC to Transit,11: TNC to Transit,5: Individual Maintenance,96.09166433
+11: TNC to Transit,12: Taxi,5: Individual Maintenance,0
+11: TNC to Transit,13: TNC Single,5: Individual Maintenance,0
+11: TNC to Transit,14: TNC Shared,5: Individual Maintenance,0
+11: TNC to Transit,15: School Bus,5: Individual Maintenance,0
+11: TNC to Transit,01: SOV,6: Individual Discretionary,0
+11: TNC to Transit,02: Shared Ride 2,6: Individual Discretionary,0
+11: TNC to Transit,03: Shared Ride 3+,6: Individual Discretionary,0
+11: TNC to Transit,04: Walk,6: Individual Discretionary,0
+11: TNC to Transit,05: Bike,6: Individual Discretionary,0
+11: TNC to Transit,08: Walk to Transit,6: Individual Discretionary,0
+11: TNC to Transit,09: PNR to Transit,6: Individual Discretionary,0
+11: TNC to Transit,10: KNR to Transit,6: Individual Discretionary,0
+11: TNC to Transit,11: TNC to Transit,6: Individual Discretionary,0
+11: TNC to Transit,12: Taxi,6: Individual Discretionary,0
+11: TNC to Transit,13: TNC Single,6: Individual Discretionary,0
+11: TNC to Transit,14: TNC Shared,6: Individual Discretionary,0
+11: TNC to Transit,15: School Bus,6: Individual Discretionary,0
+11: TNC to Transit,01: SOV,7: Joint Maintenance,0
+11: TNC to Transit,02: Shared Ride 2,7: Joint Maintenance,0
+11: TNC to Transit,03: Shared Ride 3+,7: Joint Maintenance,0
+11: TNC to Transit,04: Walk,7: Joint Maintenance,0
+11: TNC to Transit,05: Bike,7: Joint Maintenance,0
+11: TNC to Transit,08: Walk to Transit,7: Joint Maintenance,0
+11: TNC to Transit,09: PNR to Transit,7: Joint Maintenance,0
+11: TNC to Transit,10: KNR to Transit,7: Joint Maintenance,0
+11: TNC to Transit,11: TNC to Transit,7: Joint Maintenance,0
+11: TNC to Transit,12: Taxi,7: Joint Maintenance,0
+11: TNC to Transit,13: TNC Single,7: Joint Maintenance,0
+11: TNC to Transit,14: TNC Shared,7: Joint Maintenance,0
+11: TNC to Transit,15: School Bus,7: Joint Maintenance,0
+11: TNC to Transit,01: SOV,8: Joint Discretionary,0
+11: TNC to Transit,02: Shared Ride 2,8: Joint Discretionary,0
+11: TNC to Transit,03: Shared Ride 3+,8: Joint Discretionary,0
+11: TNC to Transit,04: Walk,8: Joint Discretionary,0
+11: TNC to Transit,05: Bike,8: Joint Discretionary,0
+11: TNC to Transit,08: Walk to Transit,8: Joint Discretionary,0
+11: TNC to Transit,09: PNR to Transit,8: Joint Discretionary,0
+11: TNC to Transit,10: KNR to Transit,8: Joint Discretionary,0
+11: TNC to Transit,11: TNC to Transit,8: Joint Discretionary,0
+11: TNC to Transit,12: Taxi,8: Joint Discretionary,0
+11: TNC to Transit,13: TNC Single,8: Joint Discretionary,0
+11: TNC to Transit,14: TNC Shared,8: Joint Discretionary,0
+11: TNC to Transit,15: School Bus,8: Joint Discretionary,0
+11: TNC to Transit,01: SOV,9: Work-based,0
+11: TNC to Transit,02: Shared Ride 2,9: Work-based,0
+11: TNC to Transit,03: Shared Ride 3+,9: Work-based,0
+11: TNC to Transit,04: Walk,9: Work-based,0
+11: TNC to Transit,05: Bike,9: Work-based,0
+11: TNC to Transit,08: Walk to Transit,9: Work-based,0
+11: TNC to Transit,09: PNR to Transit,9: Work-based,0
+11: TNC to Transit,10: KNR to Transit,9: Work-based,0
+11: TNC to Transit,11: TNC to Transit,9: Work-based,0
+11: TNC to Transit,12: Taxi,9: Work-based,0
+11: TNC to Transit,13: TNC Single,9: Work-based,0
+11: TNC to Transit,14: TNC Shared,9: Work-based,0
+11: TNC to Transit,15: School Bus,9: Work-based,0
+12: Taxi,01: SOV,1: Work,0
+12: Taxi,02: Shared Ride 2,1: Work,0
+12: Taxi,03: Shared Ride 3+,1: Work,0
+12: Taxi,04: Walk,1: Work,0
+12: Taxi,05: Bike,1: Work,0
+12: Taxi,08: Walk to Transit,1: Work,0
+12: Taxi,09: PNR to Transit,1: Work,0
+12: Taxi,10: KNR to Transit,1: Work,0
+12: Taxi,11: TNC to Transit,1: Work,0
+12: Taxi,12: Taxi,1: Work,0
+12: Taxi,13: TNC Single,1: Work,0
+12: Taxi,14: TNC Shared,1: Work,0
+12: Taxi,15: School Bus,1: Work,0
+12: Taxi,01: SOV,2: University,0
+12: Taxi,02: Shared Ride 2,2: University,0
+12: Taxi,03: Shared Ride 3+,2: University,0
+12: Taxi,04: Walk,2: University,0
+12: Taxi,05: Bike,2: University,0
+12: Taxi,08: Walk to Transit,2: University,0
+12: Taxi,09: PNR to Transit,2: University,0
+12: Taxi,10: KNR to Transit,2: University,0
+12: Taxi,11: TNC to Transit,2: University,0
+12: Taxi,12: Taxi,2: University,0
+12: Taxi,13: TNC Single,2: University,0
+12: Taxi,14: TNC Shared,2: University,0
+12: Taxi,15: School Bus,2: University,0
+12: Taxi,01: SOV,3: School,0
+12: Taxi,02: Shared Ride 2,3: School,0
+12: Taxi,03: Shared Ride 3+,3: School,0
+12: Taxi,04: Walk,3: School,0
+12: Taxi,05: Bike,3: School,0
+12: Taxi,08: Walk to Transit,3: School,0
+12: Taxi,09: PNR to Transit,3: School,0
+12: Taxi,10: KNR to Transit,3: School,0
+12: Taxi,11: TNC to Transit,3: School,0
+12: Taxi,12: Taxi,3: School,0
+12: Taxi,13: TNC Single,3: School,0
+12: Taxi,14: TNC Shared,3: School,0
+12: Taxi,15: School Bus,3: School,0
+12: Taxi,01: SOV,5: Individual Maintenance,0
+12: Taxi,02: Shared Ride 2,5: Individual Maintenance,9.159429883
+12: Taxi,03: Shared Ride 3+,5: Individual Maintenance,0
+12: Taxi,04: Walk,5: Individual Maintenance,0
+12: Taxi,05: Bike,5: Individual Maintenance,0
+12: Taxi,08: Walk to Transit,5: Individual Maintenance,0
+12: Taxi,09: PNR to Transit,5: Individual Maintenance,0
+12: Taxi,10: KNR to Transit,5: Individual Maintenance,12.81793775
+12: Taxi,11: TNC to Transit,5: Individual Maintenance,0
+12: Taxi,12: Taxi,5: Individual Maintenance,7051.424477
+12: Taxi,13: TNC Single,5: Individual Maintenance,0
+12: Taxi,14: TNC Shared,5: Individual Maintenance,0
+12: Taxi,15: School Bus,5: Individual Maintenance,0
+12: Taxi,01: SOV,6: Individual Discretionary,0
+12: Taxi,02: Shared Ride 2,6: Individual Discretionary,0
+12: Taxi,03: Shared Ride 3+,6: Individual Discretionary,0
+12: Taxi,04: Walk,6: Individual Discretionary,0
+12: Taxi,05: Bike,6: Individual Discretionary,0
+12: Taxi,08: Walk to Transit,6: Individual Discretionary,0
+12: Taxi,09: PNR to Transit,6: Individual Discretionary,0
+12: Taxi,10: KNR to Transit,6: Individual Discretionary,0
+12: Taxi,11: TNC to Transit,6: Individual Discretionary,0
+12: Taxi,12: Taxi,6: Individual Discretionary,0
+12: Taxi,13: TNC Single,6: Individual Discretionary,0
+12: Taxi,14: TNC Shared,6: Individual Discretionary,0
+12: Taxi,15: School Bus,6: Individual Discretionary,0
+12: Taxi,01: SOV,7: Joint Maintenance,0
+12: Taxi,02: Shared Ride 2,7: Joint Maintenance,0
+12: Taxi,03: Shared Ride 3+,7: Joint Maintenance,0
+12: Taxi,04: Walk,7: Joint Maintenance,0
+12: Taxi,05: Bike,7: Joint Maintenance,0
+12: Taxi,08: Walk to Transit,7: Joint Maintenance,0
+12: Taxi,09: PNR to Transit,7: Joint Maintenance,0
+12: Taxi,10: KNR to Transit,7: Joint Maintenance,0
+12: Taxi,11: TNC to Transit,7: Joint Maintenance,0
+12: Taxi,12: Taxi,7: Joint Maintenance,0
+12: Taxi,13: TNC Single,7: Joint Maintenance,0
+12: Taxi,14: TNC Shared,7: Joint Maintenance,0
+12: Taxi,15: School Bus,7: Joint Maintenance,0
+12: Taxi,01: SOV,8: Joint Discretionary,0
+12: Taxi,02: Shared Ride 2,8: Joint Discretionary,0
+12: Taxi,03: Shared Ride 3+,8: Joint Discretionary,0
+12: Taxi,04: Walk,8: Joint Discretionary,0
+12: Taxi,05: Bike,8: Joint Discretionary,0
+12: Taxi,08: Walk to Transit,8: Joint Discretionary,0
+12: Taxi,09: PNR to Transit,8: Joint Discretionary,0
+12: Taxi,10: KNR to Transit,8: Joint Discretionary,0
+12: Taxi,11: TNC to Transit,8: Joint Discretionary,0
+12: Taxi,12: Taxi,8: Joint Discretionary,0
+12: Taxi,13: TNC Single,8: Joint Discretionary,0
+12: Taxi,14: TNC Shared,8: Joint Discretionary,0
+12: Taxi,15: School Bus,8: Joint Discretionary,0
+12: Taxi,01: SOV,9: Work-based,0
+12: Taxi,02: Shared Ride 2,9: Work-based,0
+12: Taxi,03: Shared Ride 3+,9: Work-based,0
+12: Taxi,04: Walk,9: Work-based,0
+12: Taxi,05: Bike,9: Work-based,0
+12: Taxi,08: Walk to Transit,9: Work-based,0
+12: Taxi,09: PNR to Transit,9: Work-based,0
+12: Taxi,10: KNR to Transit,9: Work-based,0
+12: Taxi,11: TNC to Transit,9: Work-based,0
+12: Taxi,12: Taxi,9: Work-based,0
+12: Taxi,13: TNC Single,9: Work-based,0
+12: Taxi,14: TNC Shared,9: Work-based,0
+12: Taxi,15: School Bus,9: Work-based,0
+13: TNC Single,01: SOV,1: Work,0
+13: TNC Single,02: Shared Ride 2,1: Work,1735.600024
+13: TNC Single,03: Shared Ride 3+,1: Work,0
+13: TNC Single,04: Walk,1: Work,0
+13: TNC Single,05: Bike,1: Work,0
+13: TNC Single,08: Walk to Transit,1: Work,112.2548696
+13: TNC Single,09: PNR to Transit,1: Work,0
+13: TNC Single,10: KNR to Transit,1: Work,0
+13: TNC Single,11: TNC to Transit,1: Work,0
+13: TNC Single,12: Taxi,1: Work,0
+13: TNC Single,13: TNC Single,1: Work,10694.8923
+13: TNC Single,14: TNC Shared,1: Work,0
+13: TNC Single,15: School Bus,1: Work,0
+13: TNC Single,01: SOV,2: University,78.90088716
+13: TNC Single,02: Shared Ride 2,2: University,0
+13: TNC Single,03: Shared Ride 3+,2: University,0
+13: TNC Single,04: Walk,2: University,0
+13: TNC Single,05: Bike,2: University,0
+13: TNC Single,08: Walk to Transit,2: University,460.361384
+13: TNC Single,09: PNR to Transit,2: University,0
+13: TNC Single,10: KNR to Transit,2: University,0
+13: TNC Single,11: TNC to Transit,2: University,0
+13: TNC Single,12: Taxi,2: University,0
+13: TNC Single,13: TNC Single,2: University,1387.29585
+13: TNC Single,14: TNC Shared,2: University,0
+13: TNC Single,15: School Bus,2: University,0
+13: TNC Single,01: SOV,3: School,0
+13: TNC Single,02: Shared Ride 2,3: School,0
+13: TNC Single,03: Shared Ride 3+,3: School,0
+13: TNC Single,04: Walk,3: School,0
+13: TNC Single,05: Bike,3: School,0
+13: TNC Single,08: Walk to Transit,3: School,0
+13: TNC Single,09: PNR to Transit,3: School,0
+13: TNC Single,10: KNR to Transit,3: School,0
+13: TNC Single,11: TNC to Transit,3: School,0
+13: TNC Single,12: Taxi,3: School,0
+13: TNC Single,13: TNC Single,3: School,0
+13: TNC Single,14: TNC Shared,3: School,0
+13: TNC Single,15: School Bus,3: School,0
+13: TNC Single,01: SOV,5: Individual Maintenance,175.8188805
+13: TNC Single,02: Shared Ride 2,5: Individual Maintenance,246.3601658
+13: TNC Single,03: Shared Ride 3+,5: Individual Maintenance,236.7759234
+13: TNC Single,04: Walk,5: Individual Maintenance,0
+13: TNC Single,05: Bike,5: Individual Maintenance,0
+13: TNC Single,08: Walk to Transit,5: Individual Maintenance,208.6218042
+13: TNC Single,09: PNR to Transit,5: Individual Maintenance,0
+13: TNC Single,10: KNR to Transit,5: Individual Maintenance,0
+13: TNC Single,11: TNC to Transit,5: Individual Maintenance,20.68508361
+13: TNC Single,12: Taxi,5: Individual Maintenance,0
+13: TNC Single,13: TNC Single,5: Individual Maintenance,10405.6861
+13: TNC Single,14: TNC Shared,5: Individual Maintenance,0
+13: TNC Single,15: School Bus,5: Individual Maintenance,0
+13: TNC Single,01: SOV,6: Individual Discretionary,114.7486598
+13: TNC Single,02: Shared Ride 2,6: Individual Discretionary,211.9481734
+13: TNC Single,03: Shared Ride 3+,6: Individual Discretionary,212.2201874
+13: TNC Single,04: Walk,6: Individual Discretionary,0
+13: TNC Single,05: Bike,6: Individual Discretionary,0
+13: TNC Single,08: Walk to Transit,6: Individual Discretionary,1873.366605
+13: TNC Single,09: PNR to Transit,6: Individual Discretionary,0
+13: TNC Single,10: KNR to Transit,6: Individual Discretionary,0
+13: TNC Single,11: TNC to Transit,6: Individual Discretionary,0
+13: TNC Single,12: Taxi,6: Individual Discretionary,0
+13: TNC Single,13: TNC Single,6: Individual Discretionary,3675.282712
+13: TNC Single,14: TNC Shared,6: Individual Discretionary,0
+13: TNC Single,15: School Bus,6: Individual Discretionary,0
+13: TNC Single,01: SOV,7: Joint Maintenance,0
+13: TNC Single,02: Shared Ride 2,7: Joint Maintenance,0
+13: TNC Single,03: Shared Ride 3+,7: Joint Maintenance,0
+13: TNC Single,04: Walk,7: Joint Maintenance,0
+13: TNC Single,05: Bike,7: Joint Maintenance,0
+13: TNC Single,08: Walk to Transit,7: Joint Maintenance,0
+13: TNC Single,09: PNR to Transit,7: Joint Maintenance,0
+13: TNC Single,10: KNR to Transit,7: Joint Maintenance,0
+13: TNC Single,11: TNC to Transit,7: Joint Maintenance,0
+13: TNC Single,12: Taxi,7: Joint Maintenance,0
+13: TNC Single,13: TNC Single,7: Joint Maintenance,0
+13: TNC Single,14: TNC Shared,7: Joint Maintenance,0
+13: TNC Single,15: School Bus,7: Joint Maintenance,0
+13: TNC Single,01: SOV,8: Joint Discretionary,0
+13: TNC Single,02: Shared Ride 2,8: Joint Discretionary,0
+13: TNC Single,03: Shared Ride 3+,8: Joint Discretionary,0
+13: TNC Single,04: Walk,8: Joint Discretionary,0
+13: TNC Single,05: Bike,8: Joint Discretionary,0
+13: TNC Single,08: Walk to Transit,8: Joint Discretionary,0
+13: TNC Single,09: PNR to Transit,8: Joint Discretionary,0
+13: TNC Single,10: KNR to Transit,8: Joint Discretionary,0
+13: TNC Single,11: TNC to Transit,8: Joint Discretionary,0
+13: TNC Single,12: Taxi,8: Joint Discretionary,0
+13: TNC Single,13: TNC Single,8: Joint Discretionary,0
+13: TNC Single,14: TNC Shared,8: Joint Discretionary,0
+13: TNC Single,15: School Bus,8: Joint Discretionary,0
+13: TNC Single,01: SOV,9: Work-based,18.26529
+13: TNC Single,02: Shared Ride 2,9: Work-based,0
+13: TNC Single,03: Shared Ride 3+,9: Work-based,0
+13: TNC Single,04: Walk,9: Work-based,0
+13: TNC Single,05: Bike,9: Work-based,0
+13: TNC Single,08: Walk to Transit,9: Work-based,0
+13: TNC Single,09: PNR to Transit,9: Work-based,0
+13: TNC Single,10: KNR to Transit,9: Work-based,0
+13: TNC Single,11: TNC to Transit,9: Work-based,0
+13: TNC Single,12: Taxi,9: Work-based,0
+13: TNC Single,13: TNC Single,9: Work-based,0
+13: TNC Single,14: TNC Shared,9: Work-based,0
+13: TNC Single,15: School Bus,9: Work-based,0
+14: TNC Shared,01: SOV,1: Work,0
+14: TNC Shared,02: Shared Ride 2,1: Work,0
+14: TNC Shared,03: Shared Ride 3+,1: Work,0
+14: TNC Shared,04: Walk,1: Work,0
+14: TNC Shared,05: Bike,1: Work,0
+14: TNC Shared,08: Walk to Transit,1: Work,0
+14: TNC Shared,09: PNR to Transit,1: Work,0
+14: TNC Shared,10: KNR to Transit,1: Work,0
+14: TNC Shared,11: TNC to Transit,1: Work,0
+14: TNC Shared,12: Taxi,1: Work,0
+14: TNC Shared,13: TNC Single,1: Work,0
+14: TNC Shared,14: TNC Shared,1: Work,0
+14: TNC Shared,15: School Bus,1: Work,0
+14: TNC Shared,01: SOV,2: University,0
+14: TNC Shared,02: Shared Ride 2,2: University,0
+14: TNC Shared,03: Shared Ride 3+,2: University,0
+14: TNC Shared,04: Walk,2: University,0
+14: TNC Shared,05: Bike,2: University,0
+14: TNC Shared,08: Walk to Transit,2: University,0
+14: TNC Shared,09: PNR to Transit,2: University,0
+14: TNC Shared,10: KNR to Transit,2: University,0
+14: TNC Shared,11: TNC to Transit,2: University,0
+14: TNC Shared,12: Taxi,2: University,0
+14: TNC Shared,13: TNC Single,2: University,0
+14: TNC Shared,14: TNC Shared,2: University,0
+14: TNC Shared,15: School Bus,2: University,0
+14: TNC Shared,01: SOV,3: School,0
+14: TNC Shared,02: Shared Ride 2,3: School,0
+14: TNC Shared,03: Shared Ride 3+,3: School,0
+14: TNC Shared,04: Walk,3: School,0
+14: TNC Shared,05: Bike,3: School,0
+14: TNC Shared,08: Walk to Transit,3: School,0
+14: TNC Shared,09: PNR to Transit,3: School,0
+14: TNC Shared,10: KNR to Transit,3: School,0
+14: TNC Shared,11: TNC to Transit,3: School,0
+14: TNC Shared,12: Taxi,3: School,0
+14: TNC Shared,13: TNC Single,3: School,0
+14: TNC Shared,14: TNC Shared,3: School,0
+14: TNC Shared,15: School Bus,3: School,0
+14: TNC Shared,01: SOV,5: Individual Maintenance,0
+14: TNC Shared,02: Shared Ride 2,5: Individual Maintenance,0
+14: TNC Shared,03: Shared Ride 3+,5: Individual Maintenance,0
+14: TNC Shared,04: Walk,5: Individual Maintenance,0
+14: TNC Shared,05: Bike,5: Individual Maintenance,0
+14: TNC Shared,08: Walk to Transit,5: Individual Maintenance,0
+14: TNC Shared,09: PNR to Transit,5: Individual Maintenance,0
+14: TNC Shared,10: KNR to Transit,5: Individual Maintenance,0
+14: TNC Shared,11: TNC to Transit,5: Individual Maintenance,0
+14: TNC Shared,12: Taxi,5: Individual Maintenance,0
+14: TNC Shared,13: TNC Single,5: Individual Maintenance,0
+14: TNC Shared,14: TNC Shared,5: Individual Maintenance,0
+14: TNC Shared,15: School Bus,5: Individual Maintenance,0
+14: TNC Shared,01: SOV,6: Individual Discretionary,0
+14: TNC Shared,02: Shared Ride 2,6: Individual Discretionary,0
+14: TNC Shared,03: Shared Ride 3+,6: Individual Discretionary,0
+14: TNC Shared,04: Walk,6: Individual Discretionary,0
+14: TNC Shared,05: Bike,6: Individual Discretionary,0
+14: TNC Shared,08: Walk to Transit,6: Individual Discretionary,0
+14: TNC Shared,09: PNR to Transit,6: Individual Discretionary,0
+14: TNC Shared,10: KNR to Transit,6: Individual Discretionary,0
+14: TNC Shared,11: TNC to Transit,6: Individual Discretionary,0
+14: TNC Shared,12: Taxi,6: Individual Discretionary,0
+14: TNC Shared,13: TNC Single,6: Individual Discretionary,0
+14: TNC Shared,14: TNC Shared,6: Individual Discretionary,0
+14: TNC Shared,15: School Bus,6: Individual Discretionary,0
+14: TNC Shared,01: SOV,7: Joint Maintenance,0
+14: TNC Shared,02: Shared Ride 2,7: Joint Maintenance,0
+14: TNC Shared,03: Shared Ride 3+,7: Joint Maintenance,0
+14: TNC Shared,04: Walk,7: Joint Maintenance,0
+14: TNC Shared,05: Bike,7: Joint Maintenance,0
+14: TNC Shared,08: Walk to Transit,7: Joint Maintenance,0
+14: TNC Shared,09: PNR to Transit,7: Joint Maintenance,0
+14: TNC Shared,10: KNR to Transit,7: Joint Maintenance,0
+14: TNC Shared,11: TNC to Transit,7: Joint Maintenance,0
+14: TNC Shared,12: Taxi,7: Joint Maintenance,0
+14: TNC Shared,13: TNC Single,7: Joint Maintenance,0
+14: TNC Shared,14: TNC Shared,7: Joint Maintenance,0
+14: TNC Shared,15: School Bus,7: Joint Maintenance,0
+14: TNC Shared,01: SOV,8: Joint Discretionary,0
+14: TNC Shared,02: Shared Ride 2,8: Joint Discretionary,0
+14: TNC Shared,03: Shared Ride 3+,8: Joint Discretionary,0
+14: TNC Shared,04: Walk,8: Joint Discretionary,0
+14: TNC Shared,05: Bike,8: Joint Discretionary,0
+14: TNC Shared,08: Walk to Transit,8: Joint Discretionary,0
+14: TNC Shared,09: PNR to Transit,8: Joint Discretionary,0
+14: TNC Shared,10: KNR to Transit,8: Joint Discretionary,0
+14: TNC Shared,11: TNC to Transit,8: Joint Discretionary,0
+14: TNC Shared,12: Taxi,8: Joint Discretionary,0
+14: TNC Shared,13: TNC Single,8: Joint Discretionary,0
+14: TNC Shared,14: TNC Shared,8: Joint Discretionary,0
+14: TNC Shared,15: School Bus,8: Joint Discretionary,0
+14: TNC Shared,01: SOV,9: Work-based,0
+14: TNC Shared,02: Shared Ride 2,9: Work-based,0
+14: TNC Shared,03: Shared Ride 3+,9: Work-based,0
+14: TNC Shared,04: Walk,9: Work-based,0
+14: TNC Shared,05: Bike,9: Work-based,0
+14: TNC Shared,08: Walk to Transit,9: Work-based,0
+14: TNC Shared,09: PNR to Transit,9: Work-based,0
+14: TNC Shared,10: KNR to Transit,9: Work-based,0
+14: TNC Shared,11: TNC to Transit,9: Work-based,0
+14: TNC Shared,12: Taxi,9: Work-based,0
+14: TNC Shared,13: TNC Single,9: Work-based,0
+14: TNC Shared,14: TNC Shared,9: Work-based,0
+14: TNC Shared,15: School Bus,9: Work-based,0
+15: School Bus,01: SOV,1: Work,0
+15: School Bus,02: Shared Ride 2,1: Work,0
+15: School Bus,03: Shared Ride 3+,1: Work,0
+15: School Bus,04: Walk,1: Work,0
+15: School Bus,05: Bike,1: Work,0
+15: School Bus,08: Walk to Transit,1: Work,0
+15: School Bus,09: PNR to Transit,1: Work,0
+15: School Bus,10: KNR to Transit,1: Work,0
+15: School Bus,11: TNC to Transit,1: Work,0
+15: School Bus,12: Taxi,1: Work,0
+15: School Bus,13: TNC Single,1: Work,0
+15: School Bus,14: TNC Shared,1: Work,0
+15: School Bus,15: School Bus,1: Work,0
+15: School Bus,01: SOV,2: University,0
+15: School Bus,02: Shared Ride 2,2: University,0
+15: School Bus,03: Shared Ride 3+,2: University,0
+15: School Bus,04: Walk,2: University,0
+15: School Bus,05: Bike,2: University,0
+15: School Bus,08: Walk to Transit,2: University,0
+15: School Bus,09: PNR to Transit,2: University,0
+15: School Bus,10: KNR to Transit,2: University,0
+15: School Bus,11: TNC to Transit,2: University,0
+15: School Bus,12: Taxi,2: University,0
+15: School Bus,13: TNC Single,2: University,0
+15: School Bus,14: TNC Shared,2: University,0
+15: School Bus,15: School Bus,2: University,0
+15: School Bus,01: SOV,3: School,0
+15: School Bus,02: Shared Ride 2,3: School,0
+15: School Bus,03: Shared Ride 3+,3: School,0
+15: School Bus,04: Walk,3: School,0
+15: School Bus,05: Bike,3: School,0
+15: School Bus,08: Walk to Transit,3: School,0
+15: School Bus,09: PNR to Transit,3: School,0
+15: School Bus,10: KNR to Transit,3: School,0
+15: School Bus,11: TNC to Transit,3: School,0
+15: School Bus,12: Taxi,3: School,0
+15: School Bus,13: TNC Single,3: School,0
+15: School Bus,14: TNC Shared,3: School,0
+15: School Bus,15: School Bus,3: School,9382.240652
+15: School Bus,01: SOV,5: Individual Maintenance,0
+15: School Bus,02: Shared Ride 2,5: Individual Maintenance,0
+15: School Bus,03: Shared Ride 3+,5: Individual Maintenance,0
+15: School Bus,04: Walk,5: Individual Maintenance,0
+15: School Bus,05: Bike,5: Individual Maintenance,0
+15: School Bus,08: Walk to Transit,5: Individual Maintenance,0
+15: School Bus,09: PNR to Transit,5: Individual Maintenance,0
+15: School Bus,10: KNR to Transit,5: Individual Maintenance,0
+15: School Bus,11: TNC to Transit,5: Individual Maintenance,0
+15: School Bus,12: Taxi,5: Individual Maintenance,0
+15: School Bus,13: TNC Single,5: Individual Maintenance,0
+15: School Bus,14: TNC Shared,5: Individual Maintenance,0
+15: School Bus,15: School Bus,5: Individual Maintenance,0
+15: School Bus,01: SOV,6: Individual Discretionary,0
+15: School Bus,02: Shared Ride 2,6: Individual Discretionary,0
+15: School Bus,03: Shared Ride 3+,6: Individual Discretionary,0
+15: School Bus,04: Walk,6: Individual Discretionary,0
+15: School Bus,05: Bike,6: Individual Discretionary,0
+15: School Bus,08: Walk to Transit,6: Individual Discretionary,0
+15: School Bus,09: PNR to Transit,6: Individual Discretionary,0
+15: School Bus,10: KNR to Transit,6: Individual Discretionary,0
+15: School Bus,11: TNC to Transit,6: Individual Discretionary,0
+15: School Bus,12: Taxi,6: Individual Discretionary,0
+15: School Bus,13: TNC Single,6: Individual Discretionary,0
+15: School Bus,14: TNC Shared,6: Individual Discretionary,0
+15: School Bus,15: School Bus,6: Individual Discretionary,0
+15: School Bus,01: SOV,7: Joint Maintenance,0
+15: School Bus,02: Shared Ride 2,7: Joint Maintenance,0
+15: School Bus,03: Shared Ride 3+,7: Joint Maintenance,0
+15: School Bus,04: Walk,7: Joint Maintenance,0
+15: School Bus,05: Bike,7: Joint Maintenance,0
+15: School Bus,08: Walk to Transit,7: Joint Maintenance,0
+15: School Bus,09: PNR to Transit,7: Joint Maintenance,0
+15: School Bus,10: KNR to Transit,7: Joint Maintenance,0
+15: School Bus,11: TNC to Transit,7: Joint Maintenance,0
+15: School Bus,12: Taxi,7: Joint Maintenance,0
+15: School Bus,13: TNC Single,7: Joint Maintenance,0
+15: School Bus,14: TNC Shared,7: Joint Maintenance,0
+15: School Bus,15: School Bus,7: Joint Maintenance,0
+15: School Bus,01: SOV,8: Joint Discretionary,0
+15: School Bus,02: Shared Ride 2,8: Joint Discretionary,0
+15: School Bus,03: Shared Ride 3+,8: Joint Discretionary,0
+15: School Bus,04: Walk,8: Joint Discretionary,0
+15: School Bus,05: Bike,8: Joint Discretionary,0
+15: School Bus,08: Walk to Transit,8: Joint Discretionary,0
+15: School Bus,09: PNR to Transit,8: Joint Discretionary,0
+15: School Bus,10: KNR to Transit,8: Joint Discretionary,0
+15: School Bus,11: TNC to Transit,8: Joint Discretionary,0
+15: School Bus,12: Taxi,8: Joint Discretionary,0
+15: School Bus,13: TNC Single,8: Joint Discretionary,0
+15: School Bus,14: TNC Shared,8: Joint Discretionary,0
+15: School Bus,15: School Bus,8: Joint Discretionary,0
+15: School Bus,01: SOV,9: Work-based,0
+15: School Bus,02: Shared Ride 2,9: Work-based,0
+15: School Bus,03: Shared Ride 3+,9: Work-based,0
+15: School Bus,04: Walk,9: Work-based,0
+15: School Bus,05: Bike,9: Work-based,0
+15: School Bus,08: Walk to Transit,9: Work-based,0
+15: School Bus,09: PNR to Transit,9: Work-based,0
+15: School Bus,10: KNR to Transit,9: Work-based,0
+15: School Bus,11: TNC to Transit,9: Work-based,0
+15: School Bus,12: Taxi,9: Work-based,0
+15: School Bus,13: TNC Single,9: Work-based,0
+15: School Bus,14: TNC Shared,9: Work-based,0
+15: School Bus,15: School Bus,9: Work-based,0
