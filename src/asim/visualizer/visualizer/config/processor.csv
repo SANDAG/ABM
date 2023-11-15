@@ -59,10 +59,10 @@ Add unique tour ids to individual trip file,step_1,raw,,,,"indivTripData_3['to_s
 Add unique tour ids to individual trip file,step_1,raw,,,,"for i in range(maxtrips): indivTripData_3['to_subtract'] = np.where(indivTripData_3['to_subtract'] == 0, np.hstack(([0], indivTripData_3['to_subtract'].iloc[:-1])), indivTripData_3['to_subtract'])"
 Add unique tour ids to individual trip file,step_1,raw,,,,indivTripData_3['tour_id2'] = indivTripData_3['cummulative_tours'] - indivTripData_3['to_subtract']
 #,,,,,,
-Individual Tour distance,step_1,skim,indivTripData_3,tour_distance,"tour_origin,tour_destination",traffic_skims_MD['SOV_TR_H_DIST__MD']
-Joint tour distance,step_1,skim,jointTripData_3,tour_distance,"tour_origin,tour_destination",traffic_skims_MD['SOV_TR_H_DIST__MD']
-Add tour distance to individual tour table,step_1,raw,indivTourData_3,,,"indivTourData_3 = indivTourData_3.merge(indivTripData_3[['tour_id','tour_distance']], on = 'tour_id')"
-Add tour distance to joint tour table,step_1,raw,jointTourData_3,,,"jointTourData_3 = jointTourData_3.merge(jointTripData_3[['tour_id','tour_distance']], on = 'tour_id')"
+Individual Tour distance,step_1,skim,indivTourData_3,tour_distance,"originTAZ,destinationTAZ",traffic_skims_MD['SOV_TR_H_DIST__MD']
+Joint tour distance,step_1,skim,jointTourData_3,tour_distance,"originTAZ,destinationTAZ",traffic_skims_MD['SOV_TR_H_DIST__MD']
+#Add tour distance to individual tour table,step_1,raw,indivTourData_3,,,"indivTourData_3 = indivTourData_3.merge(indivTripData_3[['tour_id','tour_distance']], on = 'tour_id')"
+#Add tour distance to joint tour table,step_1,raw,jointTourData_3,,,"jointTourData_3 = jointTourData_3.merge(jointTripData_3[['tour_id','tour_distance']], on = 'tour_id')"
 #,,,,,,
 Get person hh ID and number,step_1,raw,,,,final_persons['hhper_id'] = final_persons['household_id'].astype(str) + '-' + final_persons['PNUM'].astype(str)
 Cap Auto Ownership,step_1,cap,final_households,HHVEH,auto_ownership,4

@@ -1,0 +1,1207 @@
+distbin,District,purpose,value
+2,7: North County East,Work,49.0
+3,4: South Suburban,Work,22.0
+3,6: North County West,Work,310.0
+3,7: North County East,Work,15.0
+4,4: South Suburban,Work,17.0
+4,7: North County East,Work,9.0
+5,4: South Suburban,Work,20.0
+5,7: North County East,Work,13.0
+6,4: South Suburban,Work,27.0
+6,7: North County East,Work,20.0
+7,4: South Suburban,Work,11.0
+7,7: North County East,Work,69.0
+8,4: South Suburban,Work,7.0
+8,6: North County West,Work,4.0
+8,7: North County East,Work,110.0
+9,4: South Suburban,Work,3.0
+9,7: North County East,Work,98.0
+10,4: South Suburban,Work,3.0
+10,7: North County East,Work,194.0
+11,4: South Suburban,Work,2.0
+11,7: North County East,Work,122.0
+12,7: North County East,Work,26.0
+13,2: Central,Work,1.0
+13,5: East Suburban,Work,1.0
+13,7: North County East,Work,41.0
+14,2: Central,Work,2.0
+14,7: North County East,Work,27.0
+15,2: Central,Work,3.0
+15,6: North County West,Work,29.0
+15,7: North County East,Work,41.0
+16,2: Central,Work,1.0
+16,6: North County West,Work,8.0
+16,7: North County East,Work,48.0
+17,1: Downtown,Work,1.0
+17,6: North County West,Work,15.0
+17,7: North County East,Work,22.0
+18,2: Central,Work,1.0
+18,6: North County West,Work,18.0
+18,7: North County East,Work,9.0
+19,1: Downtown,Work,1.0
+19,2: Central,Work,3.0
+19,6: North County West,Work,57.0
+19,7: North County East,Work,34.0
+20,2: Central,Work,3.0
+20,6: North County West,Work,254.0
+20,7: North County East,Work,46.0
+21,5: East Suburban,Work,1.0
+21,6: North County West,Work,255.0
+21,7: North County East,Work,105.0
+22,2: Central,Work,1.0
+22,6: North County West,Work,322.0
+22,7: North County East,Work,188.0
+23,3: North City,Work,1.0
+23,6: North County West,Work,222.0
+23,7: North County East,Work,358.0
+24,3: North City,Work,2.0
+24,5: East Suburban,Work,1.0
+24,6: North County West,Work,352.0
+24,7: North County East,Work,238.0
+25,3: North City,Work,2.0
+25,6: North County West,Work,392.0
+25,7: North County East,Work,332.0
+26,6: North County West,Work,379.0
+26,7: North County East,Work,333.0
+27,6: North County West,Work,322.0
+27,7: North County East,Work,248.0
+28,6: North County West,Work,119.0
+28,7: North County East,Work,156.0
+29,3: North City,Work,1.0
+29,5: East Suburban,Work,1.0
+29,6: North County West,Work,52.0
+29,7: North County East,Work,269.0
+30,3: North City,Work,44.0
+30,6: North County West,Work,135.0
+30,7: North County East,Work,149.0
+31,3: North City,Work,46.0
+31,6: North County West,Work,109.0
+31,7: North County East,Work,246.0
+32,3: North City,Work,131.0
+32,6: North County West,Work,153.0
+32,7: North County East,Work,236.0
+33,3: North City,Work,93.0
+33,5: East Suburban,Work,1.0
+33,6: North County West,Work,177.0
+33,7: North County East,Work,157.0
+34,3: North City,Work,174.0
+34,6: North County West,Work,204.0
+34,7: North County East,Work,168.0
+35,3: North City,Work,166.0
+35,6: North County West,Work,272.0
+35,7: North County East,Work,186.0
+36,3: North City,Work,58.0
+36,6: North County West,Work,175.0
+36,7: North County East,Work,146.0
+37,3: North City,Work,92.0
+37,5: East Suburban,Work,1.0
+37,6: North County West,Work,165.0
+37,7: North County East,Work,137.0
+38,3: North City,Work,117.0
+38,5: East Suburban,Work,1.0
+38,6: North County West,Work,131.0
+38,7: North County East,Work,116.0
+39,3: North City,Work,72.0
+39,6: North County West,Work,183.0
+39,7: North County East,Work,52.0
+40,3: North City,Work,93.0
+40,6: North County West,Work,179.0
+40,7: North County East,Work,144.0
+41,3: North City,Work,37.0
+41,6: North County West,Work,209.0
+41,7: North County East,Work,118.0
+42,3: North City,Work,40.0
+42,6: North County West,Work,104.0
+42,7: North County East,Work,149.0
+43,3: North City,Work,36.0
+43,5: East Suburban,Work,2.0
+43,6: North County West,Work,72.0
+43,7: North County East,Work,106.0
+44,3: North City,Work,42.0
+44,5: East Suburban,Work,2.0
+44,6: North County West,Work,18.0
+44,7: North County East,Work,36.0
+45,3: North City,Work,70.0
+45,5: East Suburban,Work,32.0
+45,6: North County West,Work,25.0
+45,7: North County East,Work,13.0
+46,3: North City,Work,91.0
+46,5: East Suburban,Work,12.0
+46,6: North County West,Work,73.0
+46,7: North County East,Work,28.0
+46,8: East County,Work,1.0
+47,3: North City,Work,109.0
+47,5: East Suburban,Work,1.0
+47,6: North County West,Work,28.0
+47,7: North County East,Work,12.0
+48,3: North City,Work,155.0
+48,5: East Suburban,Work,1.0
+48,6: North County West,Work,30.0
+48,7: North County East,Work,12.0
+49,3: North City,Work,216.0
+49,5: East Suburban,Work,3.0
+49,6: North County West,Work,54.0
+49,7: North County East,Work,14.0
+50,2: Central,Work,4.0
+50,3: North City,Work,210.0
+50,5: East Suburban,Work,1.0
+50,6: North County West,Work,51.0
+50,7: North County East,Work,5.0
+99999,1: Downtown,Work,160.0
+99999,2: Central,Work,978.0
+99999,3: North City,Work,544.0
+99999,4: South Suburban,Work,692.0
+99999,5: East Suburban,Work,315.0
+99999,6: North County West,Work,97.0
+99999,7: North County East,Work,64.0
+99999,8: East County,Work,11.0
+1,1: Downtown,Work,
+1,2: Central,Work,
+1,3: North City,Work,
+1,4: South Suburban,Work,
+1,5: East Suburban,Work,
+1,6: North County West,Work,
+1,7: North County East,Work,
+1,8: East County,Work,
+2,1: Downtown,Work,
+2,2: Central,Work,
+2,3: North City,Work,
+2,4: South Suburban,Work,
+2,5: East Suburban,Work,
+2,6: North County West,Work,
+2,8: East County,Work,
+3,1: Downtown,Work,
+3,2: Central,Work,
+3,3: North City,Work,
+3,5: East Suburban,Work,
+3,8: East County,Work,
+4,1: Downtown,Work,
+4,2: Central,Work,
+4,3: North City,Work,
+4,5: East Suburban,Work,
+4,6: North County West,Work,
+4,8: East County,Work,
+5,1: Downtown,Work,
+5,2: Central,Work,
+5,3: North City,Work,
+5,5: East Suburban,Work,
+5,6: North County West,Work,
+5,8: East County,Work,
+6,1: Downtown,Work,
+6,2: Central,Work,
+6,3: North City,Work,
+6,5: East Suburban,Work,
+6,6: North County West,Work,
+6,8: East County,Work,
+7,1: Downtown,Work,
+7,2: Central,Work,
+7,3: North City,Work,
+7,5: East Suburban,Work,
+7,6: North County West,Work,
+7,8: East County,Work,
+8,1: Downtown,Work,
+8,2: Central,Work,
+8,3: North City,Work,
+8,5: East Suburban,Work,
+8,8: East County,Work,
+9,1: Downtown,Work,
+9,2: Central,Work,
+9,3: North City,Work,
+9,5: East Suburban,Work,
+9,6: North County West,Work,
+9,8: East County,Work,
+10,1: Downtown,Work,
+10,2: Central,Work,
+10,3: North City,Work,
+10,5: East Suburban,Work,
+10,6: North County West,Work,
+10,8: East County,Work,
+11,1: Downtown,Work,
+11,2: Central,Work,
+11,3: North City,Work,
+11,5: East Suburban,Work,
+11,6: North County West,Work,
+11,8: East County,Work,
+12,1: Downtown,Work,
+12,2: Central,Work,
+12,3: North City,Work,
+12,4: South Suburban,Work,
+12,5: East Suburban,Work,
+12,6: North County West,Work,
+12,8: East County,Work,
+13,1: Downtown,Work,
+13,3: North City,Work,
+13,4: South Suburban,Work,
+13,6: North County West,Work,
+13,8: East County,Work,
+14,1: Downtown,Work,
+14,3: North City,Work,
+14,4: South Suburban,Work,
+14,5: East Suburban,Work,
+14,6: North County West,Work,
+14,8: East County,Work,
+15,1: Downtown,Work,
+15,3: North City,Work,
+15,4: South Suburban,Work,
+15,5: East Suburban,Work,
+15,8: East County,Work,
+16,1: Downtown,Work,
+16,3: North City,Work,
+16,4: South Suburban,Work,
+16,5: East Suburban,Work,
+16,8: East County,Work,
+17,2: Central,Work,
+17,3: North City,Work,
+17,4: South Suburban,Work,
+17,5: East Suburban,Work,
+17,8: East County,Work,
+18,1: Downtown,Work,
+18,3: North City,Work,
+18,4: South Suburban,Work,
+18,5: East Suburban,Work,
+18,8: East County,Work,
+19,3: North City,Work,
+19,4: South Suburban,Work,
+19,5: East Suburban,Work,
+19,8: East County,Work,
+20,1: Downtown,Work,
+20,3: North City,Work,
+20,4: South Suburban,Work,
+20,5: East Suburban,Work,
+20,8: East County,Work,
+21,1: Downtown,Work,
+21,2: Central,Work,
+21,3: North City,Work,
+21,4: South Suburban,Work,
+21,8: East County,Work,
+22,1: Downtown,Work,
+22,3: North City,Work,
+22,4: South Suburban,Work,
+22,5: East Suburban,Work,
+22,8: East County,Work,
+23,1: Downtown,Work,
+23,2: Central,Work,
+23,4: South Suburban,Work,
+23,5: East Suburban,Work,
+23,8: East County,Work,
+24,1: Downtown,Work,
+24,2: Central,Work,
+24,4: South Suburban,Work,
+24,8: East County,Work,
+25,1: Downtown,Work,
+25,2: Central,Work,
+25,4: South Suburban,Work,
+25,5: East Suburban,Work,
+25,8: East County,Work,
+26,1: Downtown,Work,
+26,2: Central,Work,
+26,3: North City,Work,
+26,4: South Suburban,Work,
+26,5: East Suburban,Work,
+26,8: East County,Work,
+27,1: Downtown,Work,
+27,2: Central,Work,
+27,3: North City,Work,
+27,4: South Suburban,Work,
+27,5: East Suburban,Work,
+27,8: East County,Work,
+28,1: Downtown,Work,
+28,2: Central,Work,
+28,3: North City,Work,
+28,4: South Suburban,Work,
+28,5: East Suburban,Work,
+28,8: East County,Work,
+29,1: Downtown,Work,
+29,2: Central,Work,
+29,4: South Suburban,Work,
+29,8: East County,Work,
+30,1: Downtown,Work,
+30,2: Central,Work,
+30,4: South Suburban,Work,
+30,5: East Suburban,Work,
+30,8: East County,Work,
+31,1: Downtown,Work,
+31,2: Central,Work,
+31,4: South Suburban,Work,
+31,5: East Suburban,Work,
+31,8: East County,Work,
+32,2: Central,Work,
+32,4: South Suburban,Work,
+32,5: East Suburban,Work,
+32,8: East County,Work,
+33,1: Downtown,Work,
+33,2: Central,Work,
+33,4: South Suburban,Work,
+33,8: East County,Work,
+34,1: Downtown,Work,
+34,2: Central,Work,
+34,4: South Suburban,Work,
+34,5: East Suburban,Work,
+34,8: East County,Work,
+35,1: Downtown,Work,
+35,2: Central,Work,
+35,4: South Suburban,Work,
+35,5: East Suburban,Work,
+35,8: East County,Work,
+36,1: Downtown,Work,
+36,2: Central,Work,
+36,4: South Suburban,Work,
+36,5: East Suburban,Work,
+36,8: East County,Work,
+37,1: Downtown,Work,
+37,2: Central,Work,
+37,4: South Suburban,Work,
+37,8: East County,Work,
+38,1: Downtown,Work,
+38,2: Central,Work,
+38,4: South Suburban,Work,
+38,8: East County,Work,
+39,1: Downtown,Work,
+39,2: Central,Work,
+39,4: South Suburban,Work,
+39,5: East Suburban,Work,
+39,8: East County,Work,
+40,2: Central,Work,
+40,4: South Suburban,Work,
+40,5: East Suburban,Work,
+40,8: East County,Work,
+41,1: Downtown,Work,
+41,2: Central,Work,
+41,4: South Suburban,Work,
+41,5: East Suburban,Work,
+41,8: East County,Work,
+42,2: Central,Work,
+42,4: South Suburban,Work,
+42,5: East Suburban,Work,
+42,8: East County,Work,
+43,2: Central,Work,
+43,4: South Suburban,Work,
+43,8: East County,Work,
+44,1: Downtown,Work,
+44,2: Central,Work,
+44,4: South Suburban,Work,
+44,8: East County,Work,
+45,1: Downtown,Work,
+45,2: Central,Work,
+45,4: South Suburban,Work,
+45,8: East County,Work,
+46,2: Central,Work,
+46,4: South Suburban,Work,
+47,1: Downtown,Work,
+47,2: Central,Work,
+47,4: South Suburban,Work,
+47,8: East County,Work,
+48,1: Downtown,Work,
+48,2: Central,Work,
+48,4: South Suburban,Work,
+48,8: East County,Work,
+49,2: Central,Work,
+49,4: South Suburban,Work,
+49,8: East County,Work,
+50,4: South Suburban,Work,
+50,8: East County,Work,
+42,1: Downtown,Work,
+2,7: North County East,School,17343.0
+3,4: South Suburban,School,14456.0
+3,6: North County West,School,10014.0
+3,7: North County East,School,14774.0
+4,4: South Suburban,School,9211.0
+4,7: North County East,School,9230.0
+5,4: South Suburban,School,6076.0
+5,7: North County East,School,5828.0
+6,4: South Suburban,School,4264.0
+6,7: North County East,School,4321.0
+7,4: South Suburban,School,3039.0
+7,7: North County East,School,3218.0
+8,4: South Suburban,School,2411.0
+8,6: North County West,School,2571.0
+8,7: North County East,School,2819.0
+9,4: South Suburban,School,1976.0
+9,7: North County East,School,2412.0
+10,4: South Suburban,School,1717.0
+10,7: North County East,School,2373.0
+11,4: South Suburban,School,1620.0
+11,7: North County East,School,2224.0
+12,7: North County East,School,1988.0
+13,2: Central,School,2277.0
+13,5: East Suburban,School,2268.0
+13,7: North County East,School,1931.0
+14,2: Central,School,1967.0
+14,7: North County East,School,1866.0
+15,2: Central,School,1780.0
+15,6: North County West,School,1427.0
+15,7: North County East,School,1900.0
+16,2: Central,School,1575.0
+16,6: North County West,School,1226.0
+16,7: North County East,School,1936.0
+17,1: Downtown,School,23.0
+17,6: North County West,School,1147.0
+17,7: North County East,School,1743.0
+18,2: Central,School,1302.0
+18,6: North County West,School,1194.0
+18,7: North County East,School,1871.0
+19,1: Downtown,School,21.0
+19,2: Central,School,1179.0
+19,6: North County West,School,1134.0
+19,7: North County East,School,1752.0
+20,2: Central,School,1169.0
+20,6: North County West,School,1099.0
+20,7: North County East,School,1554.0
+21,5: East Suburban,School,1222.0
+21,6: North County West,School,787.0
+21,7: North County East,School,1131.0
+22,2: Central,School,495.0
+22,6: North County West,School,699.0
+22,7: North County East,School,1008.0
+23,3: North City,School,1217.0
+23,6: North County West,School,685.0
+23,7: North County East,School,998.0
+24,3: North City,School,1189.0
+24,5: East Suburban,School,833.0
+24,6: North County West,School,617.0
+24,7: North County East,School,813.0
+25,3: North City,School,991.0
+25,6: North County West,School,584.0
+25,7: North County East,School,816.0
+26,6: North County West,School,509.0
+26,7: North County East,School,668.0
+27,6: North County West,School,531.0
+27,7: North County East,School,716.0
+28,6: North County West,School,495.0
+28,7: North County East,School,604.0
+29,3: North City,School,702.0
+29,5: East Suburban,School,476.0
+29,6: North County West,School,445.0
+29,7: North County East,School,507.0
+30,3: North City,School,614.0
+30,6: North County West,School,429.0
+30,7: North County East,School,583.0
+31,3: North City,School,525.0
+31,6: North County West,School,384.0
+31,7: North County East,School,476.0
+32,3: North City,School,412.0
+32,6: North County West,School,393.0
+32,7: North County East,School,387.0
+33,3: North City,School,397.0
+33,5: East Suburban,School,299.0
+33,6: North County West,School,332.0
+33,7: North County East,School,377.0
+34,3: North City,School,365.0
+34,6: North County West,School,299.0
+34,7: North County East,School,365.0
+35,3: North City,School,267.0
+35,6: North County West,School,328.0
+35,7: North County East,School,344.0
+36,3: North City,School,208.0
+36,6: North County West,School,245.0
+36,7: North County East,School,312.0
+37,3: North City,School,182.0
+37,5: East Suburban,School,216.0
+37,6: North County West,School,219.0
+37,7: North County East,School,241.0
+38,3: North City,School,158.0
+38,5: East Suburban,School,181.0
+38,6: North County West,School,187.0
+38,7: North County East,School,232.0
+39,3: North City,School,118.0
+39,6: North County West,School,222.0
+39,7: North County East,School,225.0
+40,3: North City,School,126.0
+40,6: North County West,School,164.0
+40,7: North County East,School,175.0
+41,3: North City,School,81.0
+41,6: North County West,School,124.0
+41,7: North County East,School,153.0
+42,3: North City,School,47.0
+42,6: North County West,School,103.0
+42,7: North County East,School,121.0
+43,3: North City,School,40.0
+43,5: East Suburban,School,86.0
+43,6: North County West,School,69.0
+43,7: North County East,School,124.0
+44,3: North City,School,33.0
+44,5: East Suburban,School,53.0
+44,6: North County West,School,39.0
+44,7: North County East,School,89.0
+45,3: North City,School,22.0
+45,5: East Suburban,School,76.0
+45,6: North County West,School,68.0
+45,7: North County East,School,63.0
+46,3: North City,School,22.0
+46,5: East Suburban,School,58.0
+46,6: North County West,School,28.0
+46,7: North County East,School,58.0
+46,8: East County,School,18.0
+47,3: North City,School,9.0
+47,5: East Suburban,School,75.0
+47,6: North County West,School,16.0
+47,7: North County East,School,54.0
+48,3: North City,School,13.0
+48,5: East Suburban,School,36.0
+48,6: North County West,School,15.0
+48,7: North County East,School,31.0
+49,3: North City,School,9.0
+49,5: East Suburban,School,32.0
+49,6: North County West,School,6.0
+49,7: North County East,School,19.0
+50,2: Central,School,9.0
+50,3: North City,School,12.0
+50,5: East Suburban,School,18.0
+50,6: North County West,School,6.0
+50,7: North County East,School,22.0
+99999,1: Downtown,School,8.0
+99999,2: Central,School,517.0
+99999,3: North City,School,436.0
+99999,4: South Suburban,School,649.0
+99999,5: East Suburban,School,760.0
+99999,6: North County West,School,5109.0
+99999,7: North County East,School,2947.0
+99999,8: East County,School,1472.0
+1,1: Downtown,School,1984.0
+1,2: Central,School,30696.0
+1,3: North City,School,38951.0
+1,4: South Suburban,School,28935.0
+1,5: East Suburban,School,27086.0
+1,6: North County West,School,19280.0
+1,7: North County East,School,23551.0
+1,8: East County,School,180.0
+2,1: Downtown,School,488.0
+2,2: Central,School,17452.0
+2,3: North City,School,21136.0
+2,4: South Suburban,School,17039.0
+2,5: East Suburban,School,16926.0
+2,6: North County West,School,12797.0
+2,8: East County,School,247.0
+3,1: Downtown,School,341.0
+3,2: Central,School,14582.0
+3,3: North City,School,18140.0
+3,5: East Suburban,School,13353.0
+3,8: East County,School,141.0
+4,1: Downtown,School,226.0
+4,2: Central,School,9225.0
+4,3: North City,School,13062.0
+4,5: East Suburban,School,9743.0
+4,6: North County West,School,8065.0
+4,8: East County,School,97.0
+5,1: Downtown,School,133.0
+5,2: Central,School,6399.0
+5,3: North City,School,8983.0
+5,5: East Suburban,School,6669.0
+5,6: North County West,School,7579.0
+5,8: East County,School,92.0
+6,1: Downtown,School,151.0
+6,2: Central,School,4964.0
+6,3: North City,School,6863.0
+6,5: East Suburban,School,4992.0
+6,6: North County West,School,5081.0
+6,8: East County,School,51.0
+7,1: Downtown,School,102.0
+7,2: Central,School,4017.0
+7,3: North City,School,5589.0
+7,5: East Suburban,School,3822.0
+7,6: North County West,School,3558.0
+7,8: East County,School,60.0
+8,1: Downtown,School,95.0
+8,2: Central,School,3342.0
+8,3: North City,School,4847.0
+8,5: East Suburban,School,3168.0
+8,8: East County,School,29.0
+9,1: Downtown,School,73.0
+9,2: Central,School,3280.0
+9,3: North City,School,4544.0
+9,5: East Suburban,School,2764.0
+9,6: North County West,School,2257.0
+9,8: East County,School,31.0
+10,1: Downtown,School,67.0
+10,2: Central,School,2995.0
+10,3: North City,School,4135.0
+10,5: East Suburban,School,2628.0
+10,6: North County West,School,1821.0
+10,8: East County,School,12.0
+11,1: Downtown,School,49.0
+11,2: Central,School,2939.0
+11,3: North City,School,3565.0
+11,5: East Suburban,School,2424.0
+11,6: North County West,School,2337.0
+11,8: East County,School,13.0
+12,1: Downtown,School,38.0
+12,2: Central,School,2607.0
+12,3: North City,School,3255.0
+12,4: South Suburban,School,1495.0
+12,5: East Suburban,School,2276.0
+12,6: North County West,School,1434.0
+12,8: East County,School,35.0
+13,1: Downtown,School,51.0
+13,3: North City,School,3137.0
+13,4: South Suburban,School,1421.0
+13,6: North County West,School,1418.0
+13,8: East County,School,21.0
+14,1: Downtown,School,42.0
+14,3: North City,School,3105.0
+14,4: South Suburban,School,1394.0
+14,5: East Suburban,School,2146.0
+14,6: North County West,School,1544.0
+14,8: East County,School,36.0
+15,1: Downtown,School,27.0
+15,3: North City,School,3044.0
+15,4: South Suburban,School,1327.0
+15,5: East Suburban,School,2217.0
+15,8: East County,School,22.0
+16,1: Downtown,School,45.0
+16,3: North City,School,3012.0
+16,4: South Suburban,School,1280.0
+16,5: East Suburban,School,2242.0
+16,8: East County,School,27.0
+17,2: Central,School,1453.0
+17,3: North City,School,3016.0
+17,4: South Suburban,School,1220.0
+17,5: East Suburban,School,2246.0
+17,8: East County,School,12.0
+18,1: Downtown,School,25.0
+18,3: North City,School,3151.0
+18,4: South Suburban,School,1146.0
+18,5: East Suburban,School,2216.0
+18,8: East County,School,22.0
+19,3: North City,School,2965.0
+19,4: South Suburban,School,1183.0
+19,5: East Suburban,School,2228.0
+19,8: East County,School,11.0
+20,1: Downtown,School,22.0
+20,3: North City,School,2806.0
+20,4: South Suburban,School,1068.0
+20,5: East Suburban,School,2049.0
+20,8: East County,School,20.0
+21,1: Downtown,School,9.0
+21,2: Central,School,745.0
+21,3: North City,School,1658.0
+21,4: South Suburban,School,590.0
+21,8: East County,School,13.0
+22,1: Downtown,School,12.0
+22,3: North City,School,1436.0
+22,4: South Suburban,School,520.0
+22,5: East Suburban,School,1036.0
+22,8: East County,School,7.0
+23,1: Downtown,School,19.0
+23,2: Central,School,441.0
+23,4: South Suburban,School,450.0
+23,5: East Suburban,School,969.0
+23,8: East County,School,5.0
+24,1: Downtown,School,13.0
+24,2: Central,School,439.0
+24,4: South Suburban,School,404.0
+24,8: East County,School,15.0
+25,1: Downtown,School,6.0
+25,2: Central,School,346.0
+25,4: South Suburban,School,350.0
+25,5: East Suburban,School,766.0
+25,8: East County,School,13.0
+26,1: Downtown,School,7.0
+26,2: Central,School,310.0
+26,3: North City,School,900.0
+26,4: South Suburban,School,294.0
+26,5: East Suburban,School,707.0
+26,8: East County,School,7.0
+27,1: Downtown,School,8.0
+27,2: Central,School,285.0
+27,3: North City,School,775.0
+27,4: South Suburban,School,268.0
+27,5: East Suburban,School,601.0
+27,8: East County,School,18.0
+28,1: Downtown,School,4.0
+28,2: Central,School,278.0
+28,3: North City,School,750.0
+28,4: South Suburban,School,300.0
+28,5: East Suburban,School,532.0
+28,8: East County,School,15.0
+29,1: Downtown,School,6.0
+29,2: Central,School,220.0
+29,4: South Suburban,School,253.0
+29,8: East County,School,11.0
+30,1: Downtown,School,2.0
+30,2: Central,School,192.0
+30,4: South Suburban,School,226.0
+30,5: East Suburban,School,447.0
+30,8: East County,School,9.0
+31,1: Downtown,School,2.0
+31,2: Central,School,166.0
+31,4: South Suburban,School,217.0
+31,5: East Suburban,School,384.0
+31,8: East County,School,13.0
+32,2: Central,School,127.0
+32,4: South Suburban,School,191.0
+32,5: East Suburban,School,325.0
+32,8: East County,School,8.0
+33,1: Downtown,School,2.0
+33,2: Central,School,138.0
+33,4: South Suburban,School,209.0
+33,8: East County,School,24.0
+34,1: Downtown,School,4.0
+34,2: Central,School,114.0
+34,4: South Suburban,School,206.0
+34,5: East Suburban,School,242.0
+34,8: East County,School,23.0
+35,1: Downtown,School,3.0
+35,2: Central,School,139.0
+35,4: South Suburban,School,213.0
+35,5: East Suburban,School,250.0
+35,8: East County,School,41.0
+36,1: Downtown,School,3.0
+36,2: Central,School,144.0
+36,4: South Suburban,School,146.0
+36,5: East Suburban,School,172.0
+36,8: East County,School,18.0
+37,1: Downtown,School,4.0
+37,2: Central,School,130.0
+37,4: South Suburban,School,93.0
+37,8: East County,School,21.0
+38,1: Downtown,School,2.0
+38,2: Central,School,125.0
+38,4: South Suburban,School,101.0
+38,8: East County,School,61.0
+39,1: Downtown,School,4.0
+39,2: Central,School,103.0
+39,4: South Suburban,School,85.0
+39,5: East Suburban,School,188.0
+39,8: East County,School,23.0
+40,2: Central,School,74.0
+40,4: South Suburban,School,56.0
+40,5: East Suburban,School,176.0
+40,8: East County,School,38.0
+41,1: Downtown,School,2.0
+41,2: Central,School,77.0
+41,4: South Suburban,School,41.0
+41,5: East Suburban,School,142.0
+41,8: East County,School,46.0
+42,2: Central,School,50.0
+42,4: South Suburban,School,52.0
+42,5: East Suburban,School,111.0
+42,8: East County,School,30.0
+43,2: Central,School,48.0
+43,4: South Suburban,School,33.0
+43,8: East County,School,19.0
+44,1: Downtown,School,3.0
+44,2: Central,School,36.0
+44,4: South Suburban,School,30.0
+44,8: East County,School,30.0
+45,1: Downtown,School,3.0
+45,2: Central,School,37.0
+45,4: South Suburban,School,21.0
+45,8: East County,School,23.0
+46,2: Central,School,35.0
+46,4: South Suburban,School,20.0
+47,1: Downtown,School,1.0
+47,2: Central,School,30.0
+47,4: South Suburban,School,25.0
+47,8: East County,School,10.0
+48,1: Downtown,School,1.0
+48,2: Central,School,22.0
+48,4: South Suburban,School,12.0
+48,8: East County,School,8.0
+49,2: Central,School,18.0
+49,4: South Suburban,School,7.0
+49,8: East County,School,5.0
+50,4: South Suburban,School,6.0
+50,8: East County,School,4.0
+42,1: Downtown,School,
+2,7: North County East,University,1868.0
+3,4: South Suburban,University,2921.0
+3,6: North County West,University,851.0
+3,7: North County East,University,1774.0
+4,4: South Suburban,University,2396.0
+4,7: North County East,University,2063.0
+5,4: South Suburban,University,1616.0
+5,7: North County East,University,1212.0
+6,4: South Suburban,University,1217.0
+6,7: North County East,University,1324.0
+7,4: South Suburban,University,966.0
+7,7: North County East,University,1697.0
+8,4: South Suburban,University,708.0
+8,6: North County West,University,1016.0
+8,7: North County East,University,1791.0
+9,4: South Suburban,University,902.0
+9,7: North County East,University,1876.0
+10,4: South Suburban,University,740.0
+10,7: North County East,University,1246.0
+11,4: South Suburban,University,813.0
+11,7: North County East,University,788.0
+12,7: North County East,University,412.0
+13,2: Central,University,1468.0
+13,5: East Suburban,University,813.0
+13,7: North County East,University,299.0
+14,2: Central,University,1302.0
+14,7: North County East,University,228.0
+15,2: Central,University,761.0
+15,6: North County West,University,583.0
+15,7: North County East,University,259.0
+16,2: Central,University,517.0
+16,6: North County West,University,450.0
+16,7: North County East,University,350.0
+17,1: Downtown,University,9.0
+17,6: North County West,University,635.0
+17,7: North County East,University,235.0
+18,2: Central,University,294.0
+18,6: North County West,University,309.0
+18,7: North County East,University,526.0
+19,1: Downtown,University,1.0
+19,2: Central,University,203.0
+19,6: North County West,University,423.0
+19,7: North County East,University,450.0
+20,2: Central,University,158.0
+20,6: North County West,University,281.0
+20,7: North County East,University,289.0
+21,5: East Suburban,University,348.0
+21,6: North County West,University,326.0
+21,7: North County East,University,290.0
+22,2: Central,University,73.0
+22,6: North County West,University,233.0
+22,7: North County East,University,292.0
+23,3: North City,University,273.0
+23,6: North County West,University,365.0
+23,7: North County East,University,203.0
+24,3: North City,University,251.0
+24,5: East Suburban,University,199.0
+24,6: North County West,University,208.0
+24,7: North County East,University,223.0
+25,3: North City,University,158.0
+25,6: North County West,University,222.0
+25,7: North County East,University,365.0
+26,6: North County West,University,180.0
+26,7: North County East,University,249.0
+27,6: North County West,University,107.0
+27,7: North County East,University,189.0
+28,6: North County West,University,77.0
+28,7: North County East,University,108.0
+29,3: North City,University,88.0
+29,5: East Suburban,University,115.0
+29,6: North County West,University,79.0
+29,7: North County East,University,144.0
+30,3: North City,University,81.0
+30,6: North County West,University,73.0
+30,7: North County East,University,125.0
+31,3: North City,University,40.0
+31,6: North County West,University,53.0
+31,7: North County East,University,70.0
+32,3: North City,University,33.0
+32,6: North County West,University,40.0
+32,7: North County East,University,38.0
+33,3: North City,University,36.0
+33,5: East Suburban,University,57.0
+33,6: North County West,University,35.0
+33,7: North County East,University,23.0
+34,3: North City,University,27.0
+34,6: North County West,University,35.0
+34,7: North County East,University,22.0
+35,3: North City,University,23.0
+35,6: North County West,University,27.0
+35,7: North County East,University,45.0
+36,3: North City,University,14.0
+36,6: North County West,University,22.0
+36,7: North County East,University,25.0
+37,3: North City,University,18.0
+37,5: East Suburban,University,5.0
+37,6: North County West,University,26.0
+37,7: North County East,University,18.0
+38,3: North City,University,18.0
+38,5: East Suburban,University,6.0
+38,6: North County West,University,10.0
+38,7: North County East,University,7.0
+39,3: North City,University,13.0
+39,6: North County West,University,6.0
+39,7: North County East,University,5.0
+40,3: North City,University,12.0
+40,6: North County West,University,5.0
+40,7: North County East,University,5.0
+41,3: North City,University,7.0
+41,6: North County West,University,1.0
+41,7: North County East,University,3.0
+42,3: North City,University,4.0
+42,6: North County West,University,2.0
+42,7: North County East,University,3.0
+43,3: North City,University,3.0
+43,5: East Suburban,University,5.0
+43,6: North County West,University,1.0
+43,7: North County East,University,2.0
+44,3: North City,University,1.0
+44,5: East Suburban,University,4.0
+44,6: North County West,University,
+44,7: North County East,University,
+45,3: North City,University,1.0
+45,5: East Suburban,University,5.0
+45,6: North County West,University,
+45,7: North County East,University,
+46,3: North City,University,2.0
+46,5: East Suburban,University,6.0
+46,6: North County West,University,
+46,7: North County East,University,
+46,8: East County,University,2.0
+47,3: North City,University,3.0
+47,5: East Suburban,University,4.0
+47,6: North County West,University,
+47,7: North County East,University,
+48,3: North City,University,
+48,5: East Suburban,University,8.0
+48,6: North County West,University,
+48,7: North County East,University,
+49,3: North City,University,1.0
+49,5: East Suburban,University,2.0
+49,6: North County West,University,
+49,7: North County East,University,
+50,2: Central,University,
+50,3: North City,University,
+50,5: East Suburban,University,
+50,6: North County West,University,
+50,7: North County East,University,
+99999,1: Downtown,University,
+99999,2: Central,University,3.0
+99999,3: North City,University,1.0
+99999,4: South Suburban,University,43.0
+99999,5: East Suburban,University,1.0
+99999,6: North County West,University,
+99999,7: North County East,University,8.0
+99999,8: East County,University,28.0
+1,1: Downtown,University,301.0
+1,2: Central,University,2348.0
+1,3: North City,University,1495.0
+1,4: South Suburban,University,650.0
+1,5: East Suburban,University,333.0
+1,6: North County West,University,422.0
+1,7: North County East,University,493.0
+1,8: East County,University,5.0
+2,1: Downtown,University,146.0
+2,2: Central,University,3003.0
+2,3: North City,University,3975.0
+2,4: South Suburban,University,1854.0
+2,5: East Suburban,University,682.0
+2,6: North County West,University,821.0
+2,8: East County,University,16.0
+3,1: Downtown,University,8.0
+3,2: Central,University,2479.0
+3,3: North City,University,4399.0
+3,5: East Suburban,University,1160.0
+3,8: East County,University,30.0
+4,1: Downtown,University,9.0
+4,2: Central,University,1940.0
+4,3: North City,University,3157.0
+4,5: East Suburban,University,1310.0
+4,6: North County West,University,898.0
+4,8: East County,University,32.0
+5,1: Downtown,University,35.0
+5,2: Central,University,1955.0
+5,3: North City,University,2140.0
+5,5: East Suburban,University,1313.0
+5,6: North County West,University,1250.0
+5,8: East County,University,27.0
+6,1: Downtown,University,63.0
+6,2: Central,University,2338.0
+6,3: North City,University,2605.0
+6,5: East Suburban,University,1384.0
+6,6: North County West,University,1344.0
+6,8: East County,University,7.0
+7,1: Downtown,University,48.0
+7,2: Central,University,2455.0
+7,3: North City,University,3202.0
+7,5: East Suburban,University,1191.0
+7,6: North County West,University,1207.0
+7,8: East County,University,
+8,1: Downtown,University,90.0
+8,2: Central,University,2503.0
+8,3: North City,University,2716.0
+8,5: East Suburban,University,1428.0
+8,8: East County,University,1.0
+9,1: Downtown,University,32.0
+9,2: Central,University,2174.0
+9,3: North City,University,2545.0
+9,5: East Suburban,University,1398.0
+9,6: North County West,University,763.0
+9,8: East County,University,3.0
+10,1: Downtown,University,114.0
+10,2: Central,University,2350.0
+10,3: North City,University,2262.0
+10,5: East Suburban,University,1181.0
+10,6: North County West,University,775.0
+10,8: East County,University,3.0
+11,1: Downtown,University,26.0
+11,2: Central,University,2171.0
+11,3: North City,University,1915.0
+11,5: East Suburban,University,1168.0
+11,6: North County West,University,844.0
+11,8: East County,University,7.0
+12,1: Downtown,University,31.0
+12,2: Central,University,2012.0
+12,3: North City,University,1599.0
+12,4: South Suburban,University,682.0
+12,5: East Suburban,University,855.0
+12,6: North County West,University,746.0
+12,8: East County,University,49.0
+13,1: Downtown,University,14.0
+13,3: North City,University,1713.0
+13,4: South Suburban,University,1056.0
+13,6: North County West,University,671.0
+13,8: East County,University,3.0
+14,1: Downtown,University,36.0
+14,3: North City,University,1390.0
+14,4: South Suburban,University,960.0
+14,5: East Suburban,University,734.0
+14,6: North County West,University,526.0
+14,8: East County,University,3.0
+15,1: Downtown,University,33.0
+15,3: North City,University,1154.0
+15,4: South Suburban,University,1031.0
+15,5: East Suburban,University,751.0
+15,8: East County,University,15.0
+16,1: Downtown,University,17.0
+16,3: North City,University,1101.0
+16,4: South Suburban,University,970.0
+16,5: East Suburban,University,614.0
+16,8: East County,University,14.0
+17,2: Central,University,357.0
+17,3: North City,University,884.0
+17,4: South Suburban,University,1073.0
+17,5: East Suburban,University,543.0
+17,8: East County,University,11.0
+18,1: Downtown,University,5.0
+18,3: North City,University,747.0
+18,4: South Suburban,University,1256.0
+18,5: East Suburban,University,501.0
+18,8: East County,University,7.0
+19,3: North City,University,624.0
+19,4: South Suburban,University,860.0
+19,5: East Suburban,University,403.0
+19,8: East County,University,8.0
+20,1: Downtown,University,5.0
+20,3: North City,University,524.0
+20,4: South Suburban,University,1088.0
+20,5: East Suburban,University,394.0
+20,8: East County,University,10.0
+21,1: Downtown,University,2.0
+21,2: Central,University,97.0
+21,3: North City,University,424.0
+21,4: South Suburban,University,747.0
+21,8: East County,University,17.0
+22,1: Downtown,University,1.0
+22,3: North City,University,338.0
+22,4: South Suburban,University,631.0
+22,5: East Suburban,University,375.0
+22,8: East County,University,2.0
+23,1: Downtown,University,
+23,2: Central,University,59.0
+23,4: South Suburban,University,388.0
+23,5: East Suburban,University,241.0
+23,8: East County,University,10.0
+24,1: Downtown,University,1.0
+24,2: Central,University,38.0
+24,4: South Suburban,University,200.0
+24,8: East County,University,17.0
+25,1: Downtown,University,
+25,2: Central,University,31.0
+25,4: South Suburban,University,149.0
+25,5: East Suburban,University,154.0
+25,8: East County,University,27.0
+26,1: Downtown,University,
+26,2: Central,University,56.0
+26,3: North City,University,111.0
+26,4: South Suburban,University,132.0
+26,5: East Suburban,University,190.0
+26,8: East County,University,13.0
+27,1: Downtown,University,
+27,2: Central,University,28.0
+27,3: North City,University,90.0
+27,4: South Suburban,University,72.0
+27,5: East Suburban,University,176.0
+27,8: East County,University,19.0
+28,1: Downtown,University,1.0
+28,2: Central,University,19.0
+28,3: North City,University,79.0
+28,4: South Suburban,University,37.0
+28,5: East Suburban,University,115.0
+28,8: East County,University,12.0
+29,1: Downtown,University,
+29,2: Central,University,18.0
+29,4: South Suburban,University,14.0
+29,8: East County,University,21.0
+30,1: Downtown,University,
+30,2: Central,University,28.0
+30,4: South Suburban,University,7.0
+30,5: East Suburban,University,101.0
+30,8: East County,University,33.0
+31,1: Downtown,University,
+31,2: Central,University,57.0
+31,4: South Suburban,University,3.0
+31,5: East Suburban,University,75.0
+31,8: East County,University,14.0
+32,2: Central,University,55.0
+32,4: South Suburban,University,5.0
+32,5: East Suburban,University,81.0
+32,8: East County,University,23.0
+33,1: Downtown,University,3.0
+33,2: Central,University,42.0
+33,4: South Suburban,University,2.0
+33,8: East County,University,12.0
+34,1: Downtown,University,
+34,2: Central,University,32.0
+34,4: South Suburban,University,2.0
+34,5: East Suburban,University,27.0
+34,8: East County,University,19.0
+35,1: Downtown,University,1.0
+35,2: Central,University,24.0
+35,4: South Suburban,University,3.0
+35,5: East Suburban,University,35.0
+35,8: East County,University,13.0
+36,1: Downtown,University,
+36,2: Central,University,21.0
+36,4: South Suburban,University,6.0
+36,5: East Suburban,University,20.0
+36,8: East County,University,13.0
+37,1: Downtown,University,
+37,2: Central,University,23.0
+37,4: South Suburban,University,7.0
+37,8: East County,University,27.0
+38,1: Downtown,University,
+38,2: Central,University,11.0
+38,4: South Suburban,University,5.0
+38,8: East County,University,10.0
+39,1: Downtown,University,1.0
+39,2: Central,University,12.0
+39,4: South Suburban,University,12.0
+39,5: East Suburban,University,7.0
+39,8: East County,University,12.0
+40,2: Central,University,13.0
+40,4: South Suburban,University,12.0
+40,5: East Suburban,University,3.0
+40,8: East County,University,4.0
+41,1: Downtown,University,
+41,2: Central,University,16.0
+41,4: South Suburban,University,6.0
+41,5: East Suburban,University,4.0
+41,8: East County,University,7.0
+42,2: Central,University,26.0
+42,4: South Suburban,University,32.0
+42,5: East Suburban,University,6.0
+42,8: East County,University,8.0
+43,2: Central,University,23.0
+43,4: South Suburban,University,20.0
+43,8: East County,University,5.0
+44,1: Downtown,University,
+44,2: Central,University,15.0
+44,4: South Suburban,University,12.0
+44,8: East County,University,12.0
+45,1: Downtown,University,1.0
+45,2: Central,University,7.0
+45,4: South Suburban,University,8.0
+45,8: East County,University,11.0
+46,2: Central,University,5.0
+46,4: South Suburban,University,14.0
+47,1: Downtown,University,
+47,2: Central,University,7.0
+47,4: South Suburban,University,5.0
+47,8: East County,University,4.0
+48,1: Downtown,University,
+48,2: Central,University,1.0
+48,4: South Suburban,University,4.0
+48,8: East County,University,7.0
+49,2: Central,University,3.0
+49,4: South Suburban,University,
+49,8: East County,University,3.0
+50,4: South Suburban,University,2.0
+50,8: East County,University,3.0
+42,1: Downtown,University,3.0

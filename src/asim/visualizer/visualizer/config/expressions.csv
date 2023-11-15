@@ -1,9 +1,9 @@
 Description,Out Table,Out Col,In Table,Filter,In Col,Func,Group
 #,,,,,,,
-Auto Ownership,autoOwnership,freq,final_households,unittype == 0,finalweights,sum,HHVEH
+Auto Ownership,autoOwnership,freq,final_households,,finalweights,sum,HHVEH
 #,,,,,,,
 Household locations for workers in District 1,districtFlows,freq,final_persons,work_from_home==False and workplace_zone_id > 0,finalweights,sum,"HDISTRICT,WDISTRICT"
-Total number of workers by residence district,wfh_summary,Workers,final_persons,workplace_zone_id > 0,finalweights,sum,HDISTRICT
+Total number of workers by residence district,wfh_summary,Workers,final_persons,is_worker,finalweights,sum,HDISTRICT
 Total number workers working from home in each district,wfh_summary,WFH,final_persons,work_from_home==True,finalweights,sum,HDISTRICT
 #,,,,,,,
 Daily Activity Pattern by Person Type,dapSummary_vis,freq,final_persons,,finalweights,sum,"PERTYPE,activity_pattern"
@@ -92,8 +92,8 @@ Transit subsidy,ownership_subsidies,transit_subsidy,final_persons,is_worker or i
 #,,,,,,,
 Telecommute frequency,telecommute_frequency,freq,final_persons,is_out_of_home_worker,finalweights,sum,telecommute_frequency
 "Share of households with a joint tour (0,1+) by household size ",hh_joint_tours,share,final_households,,has_joint_tour_weight,sum,HHSIZE
-AV Ownership,autoOwnership_AV_ebike,av_ownership,final_households,unittype == 0,av_ownership_weight,sum,
-Ebike Ownership,autoOwnership_AV_ebike,ebike_ownership,final_households,unittype == 0,ebike_owner_weight,sum,
+AV Ownership,autoOwnership_AV_ebike,av_ownership,final_households,,av_ownership_weight,sum,
+Ebike Ownership,autoOwnership_AV_ebike,ebike_ownership,final_households,,ebike_owner_weight,sum,
 Transponder Ownership,transponder_ownership,share,final_households,,transponder_ownership_weight,sum,
 #,,,,,,,
 Vehicle Types,vehicle_types,freq,final_vehicles,,finalweights,sum,"body_type,age,fuel_type"

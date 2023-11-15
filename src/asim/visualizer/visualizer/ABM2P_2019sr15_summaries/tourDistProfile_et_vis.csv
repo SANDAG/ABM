@@ -1,0 +1,209 @@
+distbin,purpose,freq
+1,4: Escort,1.0
+1,5: Individual Maintenance,1.0
+1,6: Individual Discretionary,3.0
+2,4: Escort,18.0
+2,5: Individual Maintenance,50.0
+2,6: Individual Discretionary,42.0
+2,7: Joint Maintenance,7.0
+2,8: Joint Discretionary,28.0
+3,4: Escort,257.0
+3,5: Individual Maintenance,438.0
+3,6: Individual Discretionary,269.0
+3,7: Joint Maintenance,131.0
+3,8: Joint Discretionary,273.0
+4,4: Escort,44.0
+4,5: Individual Maintenance,111.0
+4,6: Individual Discretionary,46.0
+4,7: Joint Maintenance,38.0
+4,8: Joint Discretionary,26.0
+5,4: Escort,106.0
+5,5: Individual Maintenance,228.0
+5,6: Individual Discretionary,124.0
+5,7: Joint Maintenance,126.0
+5,8: Joint Discretionary,107.0
+6,4: Escort,105.0
+6,5: Individual Maintenance,329.0
+6,6: Individual Discretionary,156.0
+6,7: Joint Maintenance,202.0
+6,8: Joint Discretionary,184.0
+7,4: Escort,144.0
+7,5: Individual Maintenance,435.0
+7,6: Individual Discretionary,221.0
+7,7: Joint Maintenance,181.0
+7,8: Joint Discretionary,230.0
+8,4: Escort,156.0
+8,5: Individual Maintenance,439.0
+8,6: Individual Discretionary,241.0
+8,7: Joint Maintenance,198.0
+8,8: Joint Discretionary,264.0
+9,4: Escort,151.0
+9,5: Individual Maintenance,454.0
+9,6: Individual Discretionary,280.0
+9,7: Joint Maintenance,105.0
+9,8: Joint Discretionary,245.0
+10,4: Escort,185.0
+10,5: Individual Maintenance,569.0
+10,6: Individual Discretionary,317.0
+10,7: Joint Maintenance,237.0
+10,8: Joint Discretionary,303.0
+11,4: Escort,149.0
+11,5: Individual Maintenance,448.0
+11,6: Individual Discretionary,280.0
+11,7: Joint Maintenance,183.0
+11,8: Joint Discretionary,213.0
+12,4: Escort,112.0
+12,5: Individual Maintenance,254.0
+12,6: Individual Discretionary,162.0
+12,7: Joint Maintenance,157.0
+12,8: Joint Discretionary,127.0
+13,4: Escort,113.0
+13,5: Individual Maintenance,313.0
+13,6: Individual Discretionary,181.0
+13,7: Joint Maintenance,142.0
+13,8: Joint Discretionary,163.0
+14,4: Escort,82.0
+14,5: Individual Maintenance,225.0
+14,6: Individual Discretionary,132.0
+14,7: Joint Maintenance,72.0
+14,8: Joint Discretionary,149.0
+15,4: Escort,106.0
+15,5: Individual Maintenance,240.0
+15,6: Individual Discretionary,161.0
+15,7: Joint Maintenance,106.0
+15,8: Joint Discretionary,166.0
+16,4: Escort,66.0
+16,5: Individual Maintenance,170.0
+16,6: Individual Discretionary,77.0
+16,7: Joint Maintenance,58.0
+16,8: Joint Discretionary,58.0
+17,4: Escort,48.0
+17,5: Individual Maintenance,186.0
+17,6: Individual Discretionary,101.0
+17,7: Joint Maintenance,93.0
+17,8: Joint Discretionary,85.0
+18,4: Escort,33.0
+18,5: Individual Maintenance,113.0
+18,6: Individual Discretionary,77.0
+18,7: Joint Maintenance,52.0
+18,8: Joint Discretionary,52.0
+19,4: Escort,51.0
+19,5: Individual Maintenance,206.0
+19,6: Individual Discretionary,121.0
+19,7: Joint Maintenance,72.0
+19,8: Joint Discretionary,89.0
+20,4: Escort,70.0
+20,5: Individual Maintenance,244.0
+20,6: Individual Discretionary,128.0
+20,7: Joint Maintenance,88.0
+20,8: Joint Discretionary,64.0
+21,4: Escort,60.0
+21,5: Individual Maintenance,235.0
+21,6: Individual Discretionary,104.0
+21,7: Joint Maintenance,89.0
+21,8: Joint Discretionary,108.0
+22,4: Escort,82.0
+22,5: Individual Maintenance,290.0
+22,6: Individual Discretionary,141.0
+22,7: Joint Maintenance,99.0
+22,8: Joint Discretionary,136.0
+23,4: Escort,92.0
+23,5: Individual Maintenance,306.0
+23,6: Individual Discretionary,162.0
+23,7: Joint Maintenance,95.0
+23,8: Joint Discretionary,99.0
+24,4: Escort,80.0
+24,5: Individual Maintenance,357.0
+24,6: Individual Discretionary,150.0
+24,7: Joint Maintenance,137.0
+24,8: Joint Discretionary,113.0
+25,4: Escort,95.0
+25,5: Individual Maintenance,405.0
+25,6: Individual Discretionary,183.0
+25,7: Joint Maintenance,110.0
+25,8: Joint Discretionary,155.0
+26,4: Escort,88.0
+26,5: Individual Maintenance,406.0
+26,6: Individual Discretionary,195.0
+26,7: Joint Maintenance,198.0
+26,8: Joint Discretionary,184.0
+27,4: Escort,88.0
+27,5: Individual Maintenance,329.0
+27,6: Individual Discretionary,135.0
+27,7: Joint Maintenance,84.0
+27,8: Joint Discretionary,113.0
+28,4: Escort,47.0
+28,5: Individual Maintenance,186.0
+28,6: Individual Discretionary,101.0
+28,7: Joint Maintenance,73.0
+28,8: Joint Discretionary,63.0
+29,4: Escort,31.0
+29,5: Individual Maintenance,131.0
+29,6: Individual Discretionary,69.0
+29,7: Joint Maintenance,84.0
+29,8: Joint Discretionary,53.0
+30,4: Escort,56.0
+30,5: Individual Maintenance,188.0
+30,6: Individual Discretionary,100.0
+30,7: Joint Maintenance,77.0
+30,8: Joint Discretionary,69.0
+31,4: Escort,53.0
+31,5: Individual Maintenance,198.0
+31,6: Individual Discretionary,94.0
+31,7: Joint Maintenance,64.0
+31,8: Joint Discretionary,82.0
+32,4: Escort,56.0
+32,5: Individual Maintenance,218.0
+32,6: Individual Discretionary,113.0
+32,7: Joint Maintenance,89.0
+32,8: Joint Discretionary,70.0
+33,4: Escort,53.0
+33,5: Individual Maintenance,183.0
+33,6: Individual Discretionary,71.0
+33,7: Joint Maintenance,66.0
+33,8: Joint Discretionary,80.0
+34,4: Escort,44.0
+34,5: Individual Maintenance,193.0
+34,6: Individual Discretionary,82.0
+34,7: Joint Maintenance,56.0
+34,8: Joint Discretionary,59.0
+35,4: Escort,55.0
+35,5: Individual Maintenance,178.0
+35,6: Individual Discretionary,82.0
+35,7: Joint Maintenance,64.0
+35,8: Joint Discretionary,89.0
+36,4: Escort,44.0
+36,5: Individual Maintenance,139.0
+36,6: Individual Discretionary,62.0
+36,7: Joint Maintenance,25.0
+36,8: Joint Discretionary,56.0
+37,4: Escort,43.0
+37,5: Individual Maintenance,172.0
+37,6: Individual Discretionary,63.0
+37,7: Joint Maintenance,39.0
+37,8: Joint Discretionary,58.0
+38,4: Escort,34.0
+38,5: Individual Maintenance,122.0
+38,6: Individual Discretionary,52.0
+38,7: Joint Maintenance,20.0
+38,8: Joint Discretionary,75.0
+39,4: Escort,30.0
+39,5: Individual Maintenance,101.0
+39,6: Individual Discretionary,60.0
+39,7: Joint Maintenance,39.0
+39,8: Joint Discretionary,65.0
+40,4: Escort,56.0
+40,5: Individual Maintenance,211.0
+40,6: Individual Discretionary,97.0
+40,7: Joint Maintenance,67.0
+40,8: Joint Discretionary,104.0
+41,4: Escort,44.0
+41,5: Individual Maintenance,218.0
+41,6: Individual Discretionary,104.0
+41,7: Joint Maintenance,76.0
+41,8: Joint Discretionary,89.0
+99999,4: Escort,1293.0
+99999,5: Individual Maintenance,5908.0
+99999,6: Individual Discretionary,2798.0
+99999,7: Joint Maintenance,1791.0
+99999,8: Joint Discretionary,1979.0
