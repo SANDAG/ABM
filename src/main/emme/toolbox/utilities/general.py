@@ -562,13 +562,12 @@ class DataLakeExporter(object):
         self.guid = metadata["scenario_guid"]
         self.username = metadata["username"]
         self.scenario_title = metadata["scenario_title"]
-        self.iteration = metadata["current_iteration"]
 
     def export_data(self, output_table_dict):
         timestamp_str = self.timestamp.strftime("%Y%m%d_%H%M%S")
         for tablename,table in output_table_dict.items():
             parent_dir_name = str(self.scenario_title) + "__" + str(self.username) + "__" + str(self.guid[:5])
-            model_output_file = "_".join([tablename, timestamp_str, str(self.iteration)])+".csv"
+            model_output_file = "_".join([tablename, timestamp_str])+".csv"
             lake_file_name = "/".join(["abm_15_0_0",parent_dir_name,"report",model_output_file])
 
             if isinstance(table, str):
