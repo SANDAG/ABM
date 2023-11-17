@@ -1,4 +1,4 @@
-pertype,tour_purp,tour_rate
+PERTYPE,tour_purp,tour_rate
 1: Full-Time Worker,Escorting,0.999080321
 2: Part-Time Worker,Escorting,0.092422781
 3: University Student,Escorting,0.168317182
