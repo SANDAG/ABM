@@ -1,0 +1,801 @@
+distbin,District,purpose,value
+1,1: Downtown,Work,0
+2,1: Downtown,Work,0
+3,1: Downtown,Work,0
+4,1: Downtown,Work,0
+5,1: Downtown,Work,0
+6,1: Downtown,Work,0
+7,1: Downtown,Work,0
+8,1: Downtown,Work,0
+9,1: Downtown,Work,0
+10,1: Downtown,Work,0
+11,1: Downtown,Work,0
+12,1: Downtown,Work,0
+13,1: Downtown,Work,0
+14,1: Downtown,Work,0
+15,1: Downtown,Work,0
+16,1: Downtown,Work,0
+17,1: Downtown,Work,0
+18,1: Downtown,Work,0
+19,1: Downtown,Work,0
+20,1: Downtown,Work,0
+21,1: Downtown,Work,0
+22,1: Downtown,Work,0
+23,1: Downtown,Work,0
+24,1: Downtown,Work,14
+25,1: Downtown,Work,0
+26,1: Downtown,Work,0
+27,1: Downtown,Work,0
+28,1: Downtown,Work,0
+29,1: Downtown,Work,0
+30,1: Downtown,Work,0
+31,1: Downtown,Work,0
+32,1: Downtown,Work,0
+33,1: Downtown,Work,0
+34,1: Downtown,Work,0
+35,1: Downtown,Work,0
+36,1: Downtown,Work,0
+37,1: Downtown,Work,0
+38,1: Downtown,Work,0
+39,1: Downtown,Work,0
+40,1: Downtown,Work,0
+41,1: Downtown,Work,0
+42,1: Downtown,Work,0
+43,1: Downtown,Work,0
+44,1: Downtown,Work,0
+45,1: Downtown,Work,0
+46,1: Downtown,Work,0
+47,1: Downtown,Work,0
+48,1: Downtown,Work,0
+49,1: Downtown,Work,0
+50,1: Downtown,Work,0
+51,1: Downtown,Work,0
+52,1: Downtown,Work,0
+53,1: Downtown,Work,0
+54,1: Downtown,Work,0
+55,1: Downtown,Work,0
+56,1: Downtown,Work,0
+57,1: Downtown,Work,0
+58,1: Downtown,Work,0
+59,1: Downtown,Work,0
+60,1: Downtown,Work,0
+61,1: Downtown,Work,0
+62,1: Downtown,Work,0
+63,1: Downtown,Work,0
+64,1: Downtown,Work,0
+65,1: Downtown,Work,0
+66,1: Downtown,Work,0
+67,1: Downtown,Work,0
+68,1: Downtown,Work,0
+69,1: Downtown,Work,0
+70,1: Downtown,Work,0
+71,1: Downtown,Work,0
+72,1: Downtown,Work,0
+73,1: Downtown,Work,0
+74,1: Downtown,Work,0
+75,1: Downtown,Work,0
+76,1: Downtown,Work,0
+77,1: Downtown,Work,0
+78,1: Downtown,Work,0
+79,1: Downtown,Work,0
+80,1: Downtown,Work,0
+81,1: Downtown,Work,0
+82,1: Downtown,Work,0
+83,1: Downtown,Work,0
+84,1: Downtown,Work,19
+85,1: Downtown,Work,0
+86,1: Downtown,Work,0
+87,1: Downtown,Work,0
+88,1: Downtown,Work,7
+89,1: Downtown,Work,0
+90,1: Downtown,Work,0
+91,1: Downtown,Work,0
+92,1: Downtown,Work,0
+93,1: Downtown,Work,0
+94,1: Downtown,Work,0
+95,1: Downtown,Work,0
+96,1: Downtown,Work,0
+97,1: Downtown,Work,0
+98,1: Downtown,Work,0
+99,1: Downtown,Work,0
+100,1: Downtown,Work,0
+1,2: Central,Work,0
+2,2: Central,Work,0
+3,2: Central,Work,0
+4,2: Central,Work,0
+5,2: Central,Work,0
+6,2: Central,Work,0
+7,2: Central,Work,0
+8,2: Central,Work,0
+9,2: Central,Work,0
+10,2: Central,Work,0
+11,2: Central,Work,0
+12,2: Central,Work,0
+13,2: Central,Work,0
+14,2: Central,Work,0
+15,2: Central,Work,0
+16,2: Central,Work,0
+17,2: Central,Work,0
+18,2: Central,Work,0
+19,2: Central,Work,0
+20,2: Central,Work,0
+21,2: Central,Work,0
+22,2: Central,Work,1
+23,2: Central,Work,0
+24,2: Central,Work,0
+25,2: Central,Work,7
+26,2: Central,Work,0
+27,2: Central,Work,0
+28,2: Central,Work,0
+29,2: Central,Work,0
+30,2: Central,Work,0
+31,2: Central,Work,0
+32,2: Central,Work,0
+33,2: Central,Work,0
+34,2: Central,Work,0
+35,2: Central,Work,0
+36,2: Central,Work,0
+37,2: Central,Work,0
+38,2: Central,Work,0
+39,2: Central,Work,1
+40,2: Central,Work,0
+41,2: Central,Work,0
+42,2: Central,Work,0
+43,2: Central,Work,0
+44,2: Central,Work,0
+45,2: Central,Work,0
+46,2: Central,Work,0
+47,2: Central,Work,0
+48,2: Central,Work,0
+49,2: Central,Work,0
+50,2: Central,Work,0
+51,2: Central,Work,0
+52,2: Central,Work,0
+53,2: Central,Work,0
+54,2: Central,Work,0
+55,2: Central,Work,0
+56,2: Central,Work,0
+57,2: Central,Work,0
+58,2: Central,Work,0
+59,2: Central,Work,0
+60,2: Central,Work,0
+61,2: Central,Work,0
+62,2: Central,Work,0
+63,2: Central,Work,0
+64,2: Central,Work,0
+65,2: Central,Work,0
+66,2: Central,Work,0
+67,2: Central,Work,0
+68,2: Central,Work,0
+69,2: Central,Work,0
+70,2: Central,Work,0
+71,2: Central,Work,0
+72,2: Central,Work,0
+73,2: Central,Work,0
+74,2: Central,Work,0
+75,2: Central,Work,0
+76,2: Central,Work,0
+77,2: Central,Work,0
+78,2: Central,Work,0
+79,2: Central,Work,0
+80,2: Central,Work,4
+81,2: Central,Work,7
+82,2: Central,Work,9
+83,2: Central,Work,7
+84,2: Central,Work,4
+85,2: Central,Work,0
+86,2: Central,Work,1
+87,2: Central,Work,1
+88,2: Central,Work,0
+89,2: Central,Work,0
+90,2: Central,Work,0
+91,2: Central,Work,7
+92,2: Central,Work,0
+93,2: Central,Work,0
+94,2: Central,Work,0
+95,2: Central,Work,0
+96,2: Central,Work,0
+97,2: Central,Work,0
+98,2: Central,Work,0
+99,2: Central,Work,0
+100,2: Central,Work,0
+1,3: North City,Work,0
+2,3: North City,Work,0
+3,3: North City,Work,0
+4,3: North City,Work,0
+5,3: North City,Work,0
+6,3: North City,Work,0
+7,3: North City,Work,0
+8,3: North City,Work,0
+9,3: North City,Work,0
+10,3: North City,Work,0
+11,3: North City,Work,0
+12,3: North City,Work,0
+13,3: North City,Work,0
+14,3: North City,Work,0
+15,3: North City,Work,0
+16,3: North City,Work,0
+17,3: North City,Work,0
+18,3: North City,Work,0
+19,3: North City,Work,0
+20,3: North City,Work,0
+21,3: North City,Work,0
+22,3: North City,Work,0
+23,3: North City,Work,0
+24,3: North City,Work,0
+25,3: North City,Work,0
+26,3: North City,Work,0
+27,3: North City,Work,0
+28,3: North City,Work,0
+29,3: North City,Work,0
+30,3: North City,Work,0
+31,3: North City,Work,0
+32,3: North City,Work,0
+33,3: North City,Work,0
+34,3: North City,Work,0
+35,3: North City,Work,0
+36,3: North City,Work,0
+37,3: North City,Work,0
+38,3: North City,Work,0
+39,3: North City,Work,0
+40,3: North City,Work,0
+41,3: North City,Work,7
+42,3: North City,Work,0
+43,3: North City,Work,0
+44,3: North City,Work,0
+45,3: North City,Work,0
+46,3: North City,Work,0
+47,3: North City,Work,0
+48,3: North City,Work,0
+49,3: North City,Work,0
+50,3: North City,Work,0
+51,3: North City,Work,0
+52,3: North City,Work,0
+53,3: North City,Work,0
+54,3: North City,Work,0
+55,3: North City,Work,0
+56,3: North City,Work,0
+57,3: North City,Work,0
+58,3: North City,Work,0
+59,3: North City,Work,0
+60,3: North City,Work,0
+61,3: North City,Work,0
+62,3: North City,Work,0
+63,3: North City,Work,7
+64,3: North City,Work,0
+65,3: North City,Work,0
+66,3: North City,Work,7
+67,3: North City,Work,7
+68,3: North City,Work,7
+69,3: North City,Work,7
+70,3: North City,Work,1
+71,3: North City,Work,0
+72,3: North City,Work,0
+73,3: North City,Work,7
+74,3: North City,Work,8
+75,3: North City,Work,7
+76,3: North City,Work,18
+77,3: North City,Work,0
+78,3: North City,Work,15
+79,3: North City,Work,1
+80,3: North City,Work,7
+81,3: North City,Work,0
+82,3: North City,Work,7
+83,3: North City,Work,0
+84,3: North City,Work,2
+85,3: North City,Work,10
+86,3: North City,Work,0
+87,3: North City,Work,8
+88,3: North City,Work,0
+89,3: North City,Work,0
+90,3: North City,Work,0
+91,3: North City,Work,4
+92,3: North City,Work,0
+93,3: North City,Work,0
+94,3: North City,Work,0
+95,3: North City,Work,0
+96,3: North City,Work,0
+97,3: North City,Work,0
+98,3: North City,Work,0
+99,3: North City,Work,0
+100,3: North City,Work,0
+1,4: South Suburban,Work,0
+2,4: South Suburban,Work,0
+3,4: South Suburban,Work,0
+4,4: South Suburban,Work,0
+5,4: South Suburban,Work,0
+6,4: South Suburban,Work,0
+7,4: South Suburban,Work,0
+8,4: South Suburban,Work,0
+9,4: South Suburban,Work,0
+10,4: South Suburban,Work,0
+11,4: South Suburban,Work,0
+12,4: South Suburban,Work,0
+13,4: South Suburban,Work,0
+14,4: South Suburban,Work,0
+15,4: South Suburban,Work,0
+16,4: South Suburban,Work,0
+17,4: South Suburban,Work,0
+18,4: South Suburban,Work,0
+19,4: South Suburban,Work,0
+20,4: South Suburban,Work,0
+21,4: South Suburban,Work,0
+22,4: South Suburban,Work,0
+23,4: South Suburban,Work,0
+24,4: South Suburban,Work,0
+25,4: South Suburban,Work,0
+26,4: South Suburban,Work,0
+27,4: South Suburban,Work,0
+28,4: South Suburban,Work,0
+29,4: South Suburban,Work,0
+30,4: South Suburban,Work,0
+31,4: South Suburban,Work,0
+32,4: South Suburban,Work,0
+33,4: South Suburban,Work,0
+34,4: South Suburban,Work,0
+35,4: South Suburban,Work,0
+36,4: South Suburban,Work,0
+37,4: South Suburban,Work,0
+38,4: South Suburban,Work,0
+39,4: South Suburban,Work,0
+40,4: South Suburban,Work,0
+41,4: South Suburban,Work,0
+42,4: South Suburban,Work,0
+43,4: South Suburban,Work,0
+44,4: South Suburban,Work,0
+45,4: South Suburban,Work,0
+46,4: South Suburban,Work,0
+47,4: South Suburban,Work,0
+48,4: South Suburban,Work,0
+49,4: South Suburban,Work,0
+50,4: South Suburban,Work,0
+51,4: South Suburban,Work,0
+52,4: South Suburban,Work,0
+53,4: South Suburban,Work,0
+54,4: South Suburban,Work,0
+55,4: South Suburban,Work,0
+56,4: South Suburban,Work,0
+57,4: South Suburban,Work,0
+58,4: South Suburban,Work,0
+59,4: South Suburban,Work,0
+60,4: South Suburban,Work,0
+61,4: South Suburban,Work,0
+62,4: South Suburban,Work,0
+63,4: South Suburban,Work,0
+64,4: South Suburban,Work,0
+65,4: South Suburban,Work,0
+66,4: South Suburban,Work,0
+67,4: South Suburban,Work,7
+68,4: South Suburban,Work,0
+69,4: South Suburban,Work,0
+70,4: South Suburban,Work,0
+71,4: South Suburban,Work,7
+72,4: South Suburban,Work,0
+73,4: South Suburban,Work,0
+74,4: South Suburban,Work,0
+75,4: South Suburban,Work,0
+76,4: South Suburban,Work,0
+77,4: South Suburban,Work,0
+78,4: South Suburban,Work,0
+79,4: South Suburban,Work,0
+80,4: South Suburban,Work,0
+81,4: South Suburban,Work,0
+82,4: South Suburban,Work,0
+83,4: South Suburban,Work,0
+84,4: South Suburban,Work,0
+85,4: South Suburban,Work,0
+86,4: South Suburban,Work,0
+87,4: South Suburban,Work,0
+88,4: South Suburban,Work,7
+89,4: South Suburban,Work,0
+90,4: South Suburban,Work,7
+91,4: South Suburban,Work,0
+92,4: South Suburban,Work,0
+93,4: South Suburban,Work,0
+94,4: South Suburban,Work,4
+95,4: South Suburban,Work,0
+96,4: South Suburban,Work,0
+97,4: South Suburban,Work,0
+98,4: South Suburban,Work,0
+99,4: South Suburban,Work,0
+100,4: South Suburban,Work,0
+1,5: East Suburban,Work,0
+2,5: East Suburban,Work,0
+3,5: East Suburban,Work,0
+4,5: East Suburban,Work,0
+5,5: East Suburban,Work,0
+6,5: East Suburban,Work,0
+7,5: East Suburban,Work,0
+8,5: East Suburban,Work,0
+9,5: East Suburban,Work,0
+10,5: East Suburban,Work,0
+11,5: East Suburban,Work,0
+12,5: East Suburban,Work,0
+13,5: East Suburban,Work,0
+14,5: East Suburban,Work,0
+15,5: East Suburban,Work,0
+16,5: East Suburban,Work,0
+17,5: East Suburban,Work,0
+18,5: East Suburban,Work,0
+19,5: East Suburban,Work,0
+20,5: East Suburban,Work,0
+21,5: East Suburban,Work,0
+22,5: East Suburban,Work,0
+23,5: East Suburban,Work,0
+24,5: East Suburban,Work,0
+25,5: East Suburban,Work,0
+26,5: East Suburban,Work,0
+27,5: East Suburban,Work,0
+28,5: East Suburban,Work,0
+29,5: East Suburban,Work,0
+30,5: East Suburban,Work,0
+31,5: East Suburban,Work,0
+32,5: East Suburban,Work,0
+33,5: East Suburban,Work,0
+34,5: East Suburban,Work,0
+35,5: East Suburban,Work,0
+36,5: East Suburban,Work,0
+37,5: East Suburban,Work,0
+38,5: East Suburban,Work,0
+39,5: East Suburban,Work,7
+40,5: East Suburban,Work,1
+41,5: East Suburban,Work,0
+42,5: East Suburban,Work,0
+43,5: East Suburban,Work,0
+44,5: East Suburban,Work,0
+45,5: East Suburban,Work,0
+46,5: East Suburban,Work,0
+47,5: East Suburban,Work,0
+48,5: East Suburban,Work,0
+49,5: East Suburban,Work,0
+50,5: East Suburban,Work,0
+51,5: East Suburban,Work,0
+52,5: East Suburban,Work,0
+53,5: East Suburban,Work,0
+54,5: East Suburban,Work,0
+55,5: East Suburban,Work,0
+56,5: East Suburban,Work,0
+57,5: East Suburban,Work,0
+58,5: East Suburban,Work,0
+59,5: East Suburban,Work,0
+60,5: East Suburban,Work,0
+61,5: East Suburban,Work,0
+62,5: East Suburban,Work,0
+63,5: East Suburban,Work,0
+64,5: East Suburban,Work,0
+65,5: East Suburban,Work,0
+66,5: East Suburban,Work,0
+67,5: East Suburban,Work,7
+68,5: East Suburban,Work,0
+69,5: East Suburban,Work,0
+70,5: East Suburban,Work,0
+71,5: East Suburban,Work,0
+72,5: East Suburban,Work,7
+73,5: East Suburban,Work,2
+74,5: East Suburban,Work,0
+75,5: East Suburban,Work,0
+76,5: East Suburban,Work,0
+77,5: East Suburban,Work,0
+78,5: East Suburban,Work,0
+79,5: East Suburban,Work,7
+80,5: East Suburban,Work,7
+81,5: East Suburban,Work,0
+82,5: East Suburban,Work,0
+83,5: East Suburban,Work,0
+84,5: East Suburban,Work,0
+85,5: East Suburban,Work,0
+86,5: East Suburban,Work,0
+87,5: East Suburban,Work,0
+88,5: East Suburban,Work,0
+89,5: East Suburban,Work,0
+90,5: East Suburban,Work,0
+91,5: East Suburban,Work,0
+92,5: East Suburban,Work,0
+93,5: East Suburban,Work,0
+94,5: East Suburban,Work,0
+95,5: East Suburban,Work,0
+96,5: East Suburban,Work,0
+97,5: East Suburban,Work,0
+98,5: East Suburban,Work,0
+99,5: East Suburban,Work,0
+100,5: East Suburban,Work,0
+1,6: North County West,Work,0
+2,6: North County West,Work,0
+3,6: North County West,Work,0
+4,6: North County West,Work,0
+5,6: North County West,Work,0
+6,6: North County West,Work,0
+7,6: North County West,Work,0
+8,6: North County West,Work,0
+9,6: North County West,Work,0
+10,6: North County West,Work,0
+11,6: North County West,Work,0
+12,6: North County West,Work,0
+13,6: North County West,Work,0
+14,6: North County West,Work,0
+15,6: North County West,Work,0
+16,6: North County West,Work,0
+17,6: North County West,Work,0
+18,6: North County West,Work,0
+19,6: North County West,Work,0
+20,6: North County West,Work,0
+21,6: North County West,Work,0
+22,6: North County West,Work,0
+23,6: North County West,Work,0
+24,6: North County West,Work,0
+25,6: North County West,Work,0
+26,6: North County West,Work,0
+27,6: North County West,Work,0
+28,6: North County West,Work,0
+29,6: North County West,Work,0
+30,6: North County West,Work,0
+31,6: North County West,Work,0
+32,6: North County West,Work,0
+33,6: North County West,Work,0
+34,6: North County West,Work,0
+35,6: North County West,Work,0
+36,6: North County West,Work,0
+37,6: North County West,Work,0
+38,6: North County West,Work,0
+39,6: North County West,Work,0
+40,6: North County West,Work,0
+41,6: North County West,Work,0
+42,6: North County West,Work,0
+43,6: North County West,Work,0
+44,6: North County West,Work,0
+45,6: North County West,Work,0
+46,6: North County West,Work,0
+47,6: North County West,Work,0
+48,6: North County West,Work,0
+49,6: North County West,Work,0
+50,6: North County West,Work,0
+51,6: North County West,Work,0
+52,6: North County West,Work,0
+53,6: North County West,Work,0
+54,6: North County West,Work,0
+55,6: North County West,Work,0
+56,6: North County West,Work,0
+57,6: North County West,Work,0
+58,6: North County West,Work,0
+59,6: North County West,Work,0
+60,6: North County West,Work,0
+61,6: North County West,Work,0
+62,6: North County West,Work,0
+63,6: North County West,Work,0
+64,6: North County West,Work,0
+65,6: North County West,Work,0
+66,6: North County West,Work,0
+67,6: North County West,Work,0
+68,6: North County West,Work,1
+69,6: North County West,Work,0
+70,6: North County West,Work,0
+71,6: North County West,Work,0
+72,6: North County West,Work,1
+73,6: North County West,Work,36
+74,6: North County West,Work,16
+75,6: North County West,Work,16
+76,6: North County West,Work,2
+77,6: North County West,Work,0
+78,6: North County West,Work,30
+79,6: North County West,Work,28
+80,6: North County West,Work,22
+81,6: North County West,Work,14
+82,6: North County West,Work,7
+83,6: North County West,Work,7
+84,6: North County West,Work,0
+85,6: North County West,Work,0
+86,6: North County West,Work,0
+87,6: North County West,Work,0
+88,6: North County West,Work,0
+89,6: North County West,Work,0
+90,6: North County West,Work,7
+91,6: North County West,Work,0
+92,6: North County West,Work,15
+93,6: North County West,Work,8
+94,6: North County West,Work,0
+95,6: North County West,Work,2
+96,6: North County West,Work,0
+97,6: North County West,Work,4
+98,6: North County West,Work,7
+99,6: North County West,Work,0
+100,6: North County West,Work,0
+1,7: North County East,Work,0
+2,7: North County East,Work,0
+3,7: North County East,Work,0
+4,7: North County East,Work,0
+5,7: North County East,Work,0
+6,7: North County East,Work,0
+7,7: North County East,Work,0
+8,7: North County East,Work,0
+9,7: North County East,Work,0
+10,7: North County East,Work,0
+11,7: North County East,Work,0
+12,7: North County East,Work,0
+13,7: North County East,Work,0
+14,7: North County East,Work,0
+15,7: North County East,Work,0
+16,7: North County East,Work,0
+17,7: North County East,Work,0
+18,7: North County East,Work,0
+19,7: North County East,Work,0
+20,7: North County East,Work,0
+21,7: North County East,Work,0
+22,7: North County East,Work,0
+23,7: North County East,Work,0
+24,7: North County East,Work,0
+25,7: North County East,Work,0
+26,7: North County East,Work,0
+27,7: North County East,Work,0
+28,7: North County East,Work,0
+29,7: North County East,Work,0
+30,7: North County East,Work,0
+31,7: North County East,Work,0
+32,7: North County East,Work,0
+33,7: North County East,Work,0
+34,7: North County East,Work,0
+35,7: North County East,Work,0
+36,7: North County East,Work,0
+37,7: North County East,Work,0
+38,7: North County East,Work,0
+39,7: North County East,Work,0
+40,7: North County East,Work,0
+41,7: North County East,Work,0
+42,7: North County East,Work,0
+43,7: North County East,Work,0
+44,7: North County East,Work,0
+45,7: North County East,Work,0
+46,7: North County East,Work,0
+47,7: North County East,Work,0
+48,7: North County East,Work,0
+49,7: North County East,Work,0
+50,7: North County East,Work,0
+51,7: North County East,Work,0
+52,7: North County East,Work,0
+53,7: North County East,Work,0
+54,7: North County East,Work,0
+55,7: North County East,Work,0
+56,7: North County East,Work,0
+57,7: North County East,Work,0
+58,7: North County East,Work,0
+59,7: North County East,Work,0
+60,7: North County East,Work,0
+61,7: North County East,Work,5
+62,7: North County East,Work,0
+63,7: North County East,Work,8
+64,7: North County East,Work,14
+65,7: North County East,Work,4
+66,7: North County East,Work,7
+67,7: North County East,Work,5
+68,7: North County East,Work,11
+69,7: North County East,Work,7
+70,7: North County East,Work,7
+71,7: North County East,Work,4
+72,7: North County East,Work,14
+73,7: North County East,Work,15
+74,7: North County East,Work,17
+75,7: North County East,Work,23
+76,7: North County East,Work,7
+77,7: North County East,Work,0
+78,7: North County East,Work,0
+79,7: North County East,Work,0
+80,7: North County East,Work,0
+81,7: North County East,Work,0
+82,7: North County East,Work,8
+83,7: North County East,Work,0
+84,7: North County East,Work,7
+85,7: North County East,Work,0
+86,7: North County East,Work,0
+87,7: North County East,Work,0
+88,7: North County East,Work,1
+89,7: North County East,Work,4
+90,7: North County East,Work,10
+91,7: North County East,Work,2
+92,7: North County East,Work,0
+93,7: North County East,Work,0
+94,7: North County East,Work,0
+95,7: North County East,Work,0
+96,7: North County East,Work,0
+97,7: North County East,Work,0
+98,7: North County East,Work,0
+99,7: North County East,Work,0
+100,7: North County East,Work,0
+1,8: East County,Work,0
+2,8: East County,Work,0
+3,8: East County,Work,0
+4,8: East County,Work,0
+5,8: East County,Work,0
+6,8: East County,Work,0
+7,8: East County,Work,0
+8,8: East County,Work,0
+9,8: East County,Work,0
+10,8: East County,Work,0
+11,8: East County,Work,0
+12,8: East County,Work,0
+13,8: East County,Work,0
+14,8: East County,Work,0
+15,8: East County,Work,0
+16,8: East County,Work,0
+17,8: East County,Work,0
+18,8: East County,Work,0
+19,8: East County,Work,0
+20,8: East County,Work,0
+21,8: East County,Work,0
+22,8: East County,Work,0
+23,8: East County,Work,0
+24,8: East County,Work,0
+25,8: East County,Work,0
+26,8: East County,Work,0
+27,8: East County,Work,0
+28,8: East County,Work,0
+29,8: East County,Work,0
+30,8: East County,Work,0
+31,8: East County,Work,0
+32,8: East County,Work,0
+33,8: East County,Work,0
+34,8: East County,Work,0
+35,8: East County,Work,0
+36,8: East County,Work,0
+37,8: East County,Work,0
+38,8: East County,Work,0
+39,8: East County,Work,0
+40,8: East County,Work,0
+41,8: East County,Work,0
+42,8: East County,Work,0
+43,8: East County,Work,0
+44,8: East County,Work,0
+45,8: East County,Work,0
+46,8: East County,Work,0
+47,8: East County,Work,0
+48,8: East County,Work,0
+49,8: East County,Work,0
+50,8: East County,Work,0
+51,8: East County,Work,0
+52,8: East County,Work,0
+53,8: East County,Work,0
+54,8: East County,Work,0
+55,8: East County,Work,0
+56,8: East County,Work,0
+57,8: East County,Work,0
+58,8: East County,Work,0
+59,8: East County,Work,0
+60,8: East County,Work,1
+61,8: East County,Work,0
+62,8: East County,Work,0
+63,8: East County,Work,0
+64,8: East County,Work,0
+65,8: East County,Work,0
+66,8: East County,Work,0
+67,8: East County,Work,0
+68,8: East County,Work,0
+69,8: East County,Work,0
+70,8: East County,Work,0
+71,8: East County,Work,0
+72,8: East County,Work,0
+73,8: East County,Work,0
+74,8: East County,Work,0
+75,8: East County,Work,0
+76,8: East County,Work,0
+77,8: East County,Work,0
+78,8: East County,Work,0
+79,8: East County,Work,0
+80,8: East County,Work,0
+81,8: East County,Work,0
+82,8: East County,Work,0
+83,8: East County,Work,0
+84,8: East County,Work,0
+85,8: East County,Work,0
+86,8: East County,Work,0
+87,8: East County,Work,0
+88,8: East County,Work,0
+89,8: East County,Work,0
+90,8: East County,Work,0
+91,8: East County,Work,0
+92,8: East County,Work,0
+93,8: East County,Work,0
+94,8: East County,Work,0
+95,8: East County,Work,0
+96,8: East County,Work,0
+97,8: East County,Work,0
+98,8: East County,Work,0
+99,8: East County,Work,0
+100,8: East County,Work,0

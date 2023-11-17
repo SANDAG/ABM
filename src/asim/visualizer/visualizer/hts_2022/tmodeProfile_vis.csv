@@ -39,6 +39,22 @@ OwnershipCategory,tour_mode,purpose,freq
 0: No Vehicles,05: Bike,7: Joint Maintenance,0
 0: No Vehicles,05: Bike,8: Joint Discretionary,0
 0: No Vehicles,05: Bike,9: Work-based,0
+0: No Vehicles,06: E-Bike,1: Work,
+0: No Vehicles,06: E-Bike,2: University,
+0: No Vehicles,06: E-Bike,3: School,
+0: No Vehicles,06: E-Bike,5: Individual Maintenance,
+0: No Vehicles,06: E-Bike,6: Individual Discretionary,
+0: No Vehicles,06: E-Bike,7: Joint Maintenance,
+0: No Vehicles,06: E-Bike,8: Joint Discretionary,
+0: No Vehicles,06: E-Bike,9: Work-based,
+0: No Vehicles,07: E-Scooter,1: Work,
+0: No Vehicles,07: E-Scooter,2: University,
+0: No Vehicles,07: E-Scooter,3: School,
+0: No Vehicles,07: E-Scooter,5: Individual Maintenance,
+0: No Vehicles,07: E-Scooter,6: Individual Discretionary,
+0: No Vehicles,07: E-Scooter,7: Joint Maintenance,
+0: No Vehicles,07: E-Scooter,8: Joint Discretionary,
+0: No Vehicles,07: E-Scooter,9: Work-based,
 0: No Vehicles,08: Walk to Transit,1: Work,4132.865574
 0: No Vehicles,08: Walk to Transit,2: University,8551.797047
 0: No Vehicles,08: Walk to Transit,3: School,30.89239738
@@ -143,6 +159,22 @@ OwnershipCategory,tour_mode,purpose,freq
 1: 1+ Veh/Adults > Veh,05: Bike,7: Joint Maintenance,299.8888256
 1: 1+ Veh/Adults > Veh,05: Bike,8: Joint Discretionary,97.61060498
 1: 1+ Veh/Adults > Veh,05: Bike,9: Work-based,10.52454462
+1: 1+ Veh/Adults > Veh,06: E-Bike,1: Work,
+1: 1+ Veh/Adults > Veh,06: E-Bike,2: University,
+1: 1+ Veh/Adults > Veh,06: E-Bike,3: School,
+1: 1+ Veh/Adults > Veh,06: E-Bike,5: Individual Maintenance,
+1: 1+ Veh/Adults > Veh,06: E-Bike,6: Individual Discretionary,
+1: 1+ Veh/Adults > Veh,06: E-Bike,7: Joint Maintenance,
+1: 1+ Veh/Adults > Veh,06: E-Bike,8: Joint Discretionary,
+1: 1+ Veh/Adults > Veh,06: E-Bike,9: Work-based,
+1: 1+ Veh/Adults > Veh,07: E-Scooter,1: Work,
+1: 1+ Veh/Adults > Veh,07: E-Scooter,2: University,
+1: 1+ Veh/Adults > Veh,07: E-Scooter,3: School,
+1: 1+ Veh/Adults > Veh,07: E-Scooter,5: Individual Maintenance,
+1: 1+ Veh/Adults > Veh,07: E-Scooter,6: Individual Discretionary,
+1: 1+ Veh/Adults > Veh,07: E-Scooter,7: Joint Maintenance,
+1: 1+ Veh/Adults > Veh,07: E-Scooter,8: Joint Discretionary,
+1: 1+ Veh/Adults > Veh,07: E-Scooter,9: Work-based,
 1: 1+ Veh/Adults > Veh,08: Walk to Transit,1: Work,7735.749402
 1: 1+ Veh/Adults > Veh,08: Walk to Transit,2: University,5640.513396
 1: 1+ Veh/Adults > Veh,08: Walk to Transit,3: School,22.06436496
@@ -247,6 +279,22 @@ OwnershipCategory,tour_mode,purpose,freq
 2: Vehicles >= Adults,05: Bike,7: Joint Maintenance,0
 2: Vehicles >= Adults,05: Bike,8: Joint Discretionary,144.6182266
 2: Vehicles >= Adults,05: Bike,9: Work-based,6767.177599
+2: Vehicles >= Adults,06: E-Bike,1: Work,
+2: Vehicles >= Adults,06: E-Bike,2: University,
+2: Vehicles >= Adults,06: E-Bike,3: School,
+2: Vehicles >= Adults,06: E-Bike,5: Individual Maintenance,
+2: Vehicles >= Adults,06: E-Bike,6: Individual Discretionary,
+2: Vehicles >= Adults,06: E-Bike,7: Joint Maintenance,
+2: Vehicles >= Adults,06: E-Bike,8: Joint Discretionary,
+2: Vehicles >= Adults,06: E-Bike,9: Work-based,
+2: Vehicles >= Adults,07: E-Scooter,1: Work,
+2: Vehicles >= Adults,07: E-Scooter,2: University,
+2: Vehicles >= Adults,07: E-Scooter,3: School,
+2: Vehicles >= Adults,07: E-Scooter,5: Individual Maintenance,
+2: Vehicles >= Adults,07: E-Scooter,6: Individual Discretionary,
+2: Vehicles >= Adults,07: E-Scooter,7: Joint Maintenance,
+2: Vehicles >= Adults,07: E-Scooter,8: Joint Discretionary,
+2: Vehicles >= Adults,07: E-Scooter,9: Work-based,
 2: Vehicles >= Adults,08: Walk to Transit,1: Work,625.4100694
 2: Vehicles >= Adults,08: Walk to Transit,2: University,38.48082317
 2: Vehicles >= Adults,08: Walk to Transit,3: School,1213.37782
