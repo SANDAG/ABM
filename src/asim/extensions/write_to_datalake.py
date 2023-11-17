@@ -82,39 +82,39 @@ def get_commit_info(repo_path):
     return {"short_commit_hash": commit_hash, "branch_name": branch_name}
 
 
-def calc_execute_time(resume_after):
-    """
-    Calculates the total time from timing log file.
+# def calc_execute_time(resume_after):
+#     """
+#     Calculates the total time from timing log file.
 
-    Args:
-        resume_after (string): model step to resume after or None.
+#     Args:
+#         resume_after (string): model step to resume after or None.
 
-    Returns:
-        float: The total time in minutes.
+#     Returns:
+#         float: The total time in minutes.
 
-    """
-    with config.open_log_file("timing_log.csv", "r") as log_file:
-        time_in_min = 0
-        model_step_found = False
-        time_trace = {}
-        for line in log_file:
-            timing_log_row = line.strip().split(",")
-            if resume_after is not None and timing_log_row[1] == resume_after:
-                model_step_found = True
-                continue  # skip this line and move on to the next one
-            if resume_after is not None and not model_step_found:
-                continue  # skip all lines until the keyword is found
-            try:
-                model_step = timing_log_row[1]
-                time_in_min = float(timing_log_row[3])
-            except ValueError:
-                continue  # skip this line if last value is not a float
-            time_trace[model_step] = time_in_min
+#     """
+#     with config.open_log_file("timing_log.csv", "r") as log_file:
+#         time_in_min = 0
+#         model_step_found = False
+#         time_trace = {}
+#         for line in log_file:
+#             timing_log_row = line.strip().split(",")
+#             if resume_after is not None and timing_log_row[1] == resume_after:
+#                 model_step_found = True
+#                 continue  # skip this line and move on to the next one
+#             if resume_after is not None and not model_step_found:
+#                 continue  # skip all lines until the keyword is found
+#             try:
+#                 model_step = timing_log_row[1]
+#                 time_in_min = float(timing_log_row[3])
+#             except ValueError:
+#                 continue  # skip this line if last value is not a float
+#             time_trace[model_step] = time_in_min
 
-    # Sum the values in the dictionary
-    total_time = sum(mins for mins in time_trace.values())
+#     # Sum the values in the dictionary
+#     total_time = sum(mins for mins in time_trace.values())
 
-    return total_time
+#     return total_time
 
 
 # def drop_duplicate_column(table_df, table_name, column_name):
@@ -185,7 +185,7 @@ def create_metadata_df(input_dir, ts, time_to_write, EMME_metadata):
             value = default_value  # None, if not in settings
         metadata_settings[key] = value
 
-    total_time = calc_execute_time(settings["resume_after"]) + time_to_write
+    # total_time = calc_execute_time(settings["resume_after"]) + time_to_write
 
     metadata = {
         "scenario_name": [EMME_metadata["scenario_title"]],
@@ -197,7 +197,6 @@ def create_metadata_df(input_dir, ts, time_to_write, EMME_metadata):
         "asim_commit_hash": [asim_commit_info["short_commit_hash"]],
         "abm_branch_name": [abm_commit_info["branch_name"]],
         "abm_commit_hash": [abm_commit_info["short_commit_hash"]],
-        "time_to_execute": [total_time],
         "scenario_guid": [EMME_metadata["scenario_guid"]],
         "main_directory" : [EMME_metadata["main_directory"]],
         "select_link" : [EMME_metadata["select_link"]]
