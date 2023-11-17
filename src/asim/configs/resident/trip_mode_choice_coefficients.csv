@@ -462,7 +462,7 @@ coef_calib_tours3lastofmultiple_WALK_TRANSIT_univ,-999.0,F
 coef_calib_tours3lastofmultiple_PNR_TRANSIT_univ,-999.0,F
 coef_calib_tours3lastofmultiple_KNR_TRANSIT_univ,-999.0,F
 coef_calib_tours3lastofmultiple_TNC_TRANSIT_univ,-999.0,F
-coef_calib_tourwtran_DRIVEALONE_univ,-999.0,F
+coef_calib_tourwtran_DRIVEALONE_univ,-10.0,F
 coef_calib_tourwtran_SHARED2_univ,-10.827945381362577,F
 coef_calib_tourwtran_SHARED3_univ,-8.6986395443612,F
 coef_calib_tourwtran_WALK_univ,-0.05337083089293941,F

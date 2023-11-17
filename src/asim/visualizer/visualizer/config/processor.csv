@@ -59,8 +59,8 @@ Add unique tour ids to individual trip file,step_1,raw,,,,"indivTripData_3['to_s
 Add unique tour ids to individual trip file,step_1,raw,,,,"for i in range(maxtrips): indivTripData_3['to_subtract'] = np.where(indivTripData_3['to_subtract'] == 0, np.hstack(([0], indivTripData_3['to_subtract'].iloc[:-1])), indivTripData_3['to_subtract'])"
 Add unique tour ids to individual trip file,step_1,raw,,,,indivTripData_3['tour_id2'] = indivTripData_3['cummulative_tours'] - indivTripData_3['to_subtract']
 #,,,,,,
-Individual Tour distance,step_1,skim,indivTourData_3,tour_distance,"originTAZ,destinationTAZ",traffic_skims_MD['SOV_TR_H_DIST__MD']
-Joint tour distance,step_1,skim,jointTourData_3,tour_distance,"originTAZ,destinationTAZ",traffic_skims_MD['SOV_TR_H_DIST__MD']
+Individual Tour distance,step_1,skim,indivTourData_3,tour_distance,"originTAZ,destinationTAZ",traffic_skims_MD['SOV_NT_M_DIST__MD']
+Joint tour distance,step_1,skim,jointTourData_3,tour_distance,"originTAZ,destinationTAZ",traffic_skims_MD['SOV_NT_M_DIST__MD']
 #Add tour distance to individual tour table,step_1,raw,indivTourData_3,,,"indivTourData_3 = indivTourData_3.merge(indivTripData_3[['tour_id','tour_distance']], on = 'tour_id')"
 #Add tour distance to joint tour table,step_1,raw,jointTourData_3,,,"jointTourData_3 = jointTourData_3.merge(jointTripData_3[['tour_id','tour_distance']], on = 'tour_id')"
 #,,,,,,
@@ -325,7 +325,7 @@ Get total number of households by household size,step_3,raw,,,,"_total_hh_by_siz
 Create attribute showing total number of households of that household's size,step_3,replace,final_households,total_hh_by_size,HHSIZE,_total_hh_by_size
 Add weight for counting percentage of households with at least one joint tour,step_3,column,final_households,has_joint_tour_weight,,JOINT * finalweights / total_hh_by_size
 #,,,,,,
-Add work location parking cost to person file,step_3,raw,,,,final_persons['workloc_parkcost'] = final_persons['workplace_zone_id'].map(land_use.set_index('MAZ')['dparkcost'])
+Add work location parking cost to person file,step_3,raw,,,,final_persons['workloc_parkcost'] = final_persons['workplace_zone_id'].map(land_use.set_index('MAZ')['exp_daily'])
 ,step_3,raw,,,,_free_parking_weights_by_ptype = dict(final_persons.query('workloc_parkcost > 0').groupby('PERTYPE').sum()['finalweights'])
 ,step_3,replace,final_persons,free_parking_ptype_weight_sum,PERTYPE,_free_parking_weights_by_ptype
 Create weight to average for getting parking reimbursement,step_3,column,final_persons,free_parking_weight,,free_parking_at_work * finalweights / free_parking_ptype_weight_sum
