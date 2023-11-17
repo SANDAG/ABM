@@ -11,8 +11,9 @@ Description,Target,Expression
 ,vot3,trips.vot3
 ,distance,od_skims['DIST']
 ,costOperatingDrive,"np.where(trips.trip_mode.isin(['DRIVEALONE', 'SHARED2', 'SHARED3']), costPerMile * distance/100, np.NaN)"
-,weightTrip,"np.where(trips.trip_num ==2, 0, 1)"
-,weightPersonTrip,"np.where(trips.trip_num ==2, 0, party)"
+,_sample_rate,trips.household_id.map(households.sample_rate)
+,weight_trip,"np.where(trips.trip_num ==2, 0, 1)/_sample_rate"
+,weight_person_trip,"np.where(trips.trip_num ==2, 0, party)/_sample_rate"
 # code time periods,,
 ,is_ea,"trips.depart.between(time_periods['EA']['first_hour'], time_periods['EA']['last_hour'])"
 ,is_am,"trips.depart.between(time_periods['AM']['first_hour'], time_periods['AM']['last_hour'])"

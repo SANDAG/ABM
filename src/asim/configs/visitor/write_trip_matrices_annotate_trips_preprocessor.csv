@@ -3,8 +3,9 @@ Description,Target,Expression
 ,tour_participants,trips.tour_id.map(tours.number_of_participants)
 ,distance,od_skims['DIST']
 ,costOperatingDrive,"np.where(trips.trip_mode.isin(['DRIVEALONE','SHARED2','SHARED3']), costPerMile*distance/100, np.NaN)"
-,weight_trip,"np.where(trips.trip_mode == 'SHARED2', tour_participants/OCC_SHARED2, np.where(trips.trip_mode == 'SHARED3', tour_participants/OCC_SHARED3, np.where(trips.trip_mode == 'TAXI', tour_participants/OCC_TAXI, np.where(trips.trip_mode == 'TNC_SINGLE', tour_participants/OCC_TNC_SINGLE, np.where(trips.trip_mode == 'TNC_SHARED', tour_participants/OCC_TNC_SHARED,1)))))"
-,weightPerson_trip,tour_participants
+,_sample_rate,trips.household_id.map(households.sample_rate)
+,weight_trip,"np.where(trips.trip_mode == 'SHARED2', tour_participants/OCC_SHARED2, np.where(trips.trip_mode == 'SHARED3', tour_participants/OCC_SHARED3, np.where(trips.trip_mode == 'TAXI', tour_participants/OCC_TAXI, np.where(trips.trip_mode == 'TNC_SINGLE', tour_participants/OCC_TNC_SINGLE, np.where(trips.trip_mode == 'TNC_SHARED', tour_participants/OCC_TNC_SHARED,1)))))/_sample_rate"
+,weight_person_trip,tour_participants/_sample_rate
 # code time periods,,
 ,is_ea,"trips.depart.between(time_periods['EA']['first_hour'], time_periods['EA']['last_hour'])"
 ,is_am,"trips.depart.between(time_periods['AM']['first_hour'], time_periods['AM']['last_hour'])"
