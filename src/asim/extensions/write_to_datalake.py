@@ -117,22 +117,22 @@ def calc_execute_time(resume_after):
     return total_time
 
 
-def drop_duplicate_column(table_df, table_name, column_name):
-    """
-    Drops a column from table if it exists.
+# def drop_duplicate_column(table_df, table_name, column_name):
+#     """
+#     Drops a column from table if it exists.
 
-    Args:
-        table_df (pandas.DataFrame): The DataFrame from which the column should be dropped.
-        table_name (str): The name of the table or DataFrame.
-        column_name (str): The name of the column to be dropped.
+#     Args:
+#         table_df (pandas.DataFrame): The DataFrame from which the column should be dropped.
+#         table_name (str): The name of the table or DataFrame.
+#         column_name (str): The name of the column to be dropped.
 
-    Returns:
-        None
+#     Returns:
+#         None
 
-    """
-    if column_name in table_df.columns:
-        table_df.drop(column_name, axis=1, inplace=True)
-        logger.info(f"Dropped duplicate column {column_name} in {table_name}")
+#     """
+#     if column_name in table_df.columns:
+#         table_df.drop(column_name, axis=1, inplace=True)
+#         logger.info(f"Dropped duplicate column {column_name} in {table_name}")
 
 
 def create_metadata_df(input_dir, ts, time_to_write, EMME_metadata):
@@ -520,7 +520,7 @@ def write_model_output_to_datalake(
     # base_filename, ext = os.path.splitext(os.path.basename(file_name))
 
     # remove duplicate column
-    drop_duplicate_column(output_table, output_table.name, "taz")
+    # drop_duplicate_column(output_table, output_table.name, "taz")
 
     # add model name: resident, visitor, etc.
     settings = inject.get_injectable("settings")

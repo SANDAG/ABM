@@ -435,6 +435,7 @@ REMOVE_COLUMNS_TRIPS:
   - is_drive_mix
 
 REMOVE_COLUMNS_HOUSEHOLDS:
+  - taz
   - dudenbin
   - othercollege_All_Graduate
   - PopEmpDenPerMi
@@ -548,3 +549,6 @@ REMOVE_COLUMNS_HOUSEHOLDS:
   - emp_non_ws_oth
   - budgetroom
   - economyroom
+
+REMOVE_COLUMNS_LAND_USE:
+  - taz
