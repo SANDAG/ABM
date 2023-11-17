@@ -1,0 +1,31 @@
+PERTYPE,imf_choice,freq
+1: Full-Time Worker,1 Work,464208.9536
+2: Part-Time Worker,1 Work,73296.24527
+3: University Student,1 Work,9245.466988
+6: Driving Aged Student,1 Work,0
+7: Non-Driving Aged Student,1 Work,0
+8: Child To Young for School,1 Work,0
+1: Full-Time Worker,2+ Work,25529.61513
+2: Part-Time Worker,2+ Work,2881.06447
+3: University Student,2+ Work,364.6894965
+6: Driving Aged Student,2+ Work,0
+7: Non-Driving Aged Student,2+ Work,0
+8: Child To Young for School,2+ Work,0
+1: Full-Time Worker,1 School,0
+2: Part-Time Worker,1 School,0
+3: University Student,1 School,41500.29891
+6: Driving Aged Student,1 School,23652.80645
+7: Non-Driving Aged Student,1 School,231017.7147
+8: Child To Young for School,1 School,41702.01498
+1: Full-Time Worker,2+ School,0
+2: Part-Time Worker,2+ School,0
+3: University Student,2+ School,478.4456979
+6: Driving Aged Student,2+ School,44.24394675
+7: Non-Driving Aged Student,2+ School,6171.129268
+8: Child To Young for School,2+ School,1627.339311
+1: Full-Time Worker,1 Work & 1 School,0
+2: Part-Time Worker,1 Work & 1 School,0
+3: University Student,1 Work & 1 School,7352.449618
+6: Driving Aged Student,1 Work & 1 School,107.2920052
+7: Non-Driving Aged Student,1 Work & 1 School,0
+8: Child To Young for School,1 Work & 1 School,0

@@ -1,0 +1,49 @@
+PERTYPE,tour_purp,tour_rate
+1: Full-Time Worker,Escorting,0.999080321
+2: Part-Time Worker,Escorting,0.092422781
+3: University Student,Escorting,0.168317182
+4: Non-Worker,Escorting,0.841080954
+5: Retiree,Escorting,0.146427361
+6: Driving Aged Student,Escorting,0.036831825
+7: Non-Driving Aged Student,Escorting,1.028882065
+8: Child To Young for School,Escorting,0.070233285
+1: Full-Time Worker,Shopping,0.054368087
+2: Part-Time Worker,Shopping,0.119938638
+3: University Student,Shopping,0.019151844
+4: Non-Worker,Shopping,0.336622386
+5: Retiree,Shopping,0.669870634
+6: Driving Aged Student,Shopping,0
+7: Non-Driving Aged Student,Shopping,0.029345495
+8: Child To Young for School,Shopping,0.06686542
+1: Full-Time Worker,Maintenance,1.674023105
+2: Part-Time Worker,Maintenance,0.010798348
+3: University Student,Maintenance,0.116319754
+4: Non-Worker,Maintenance,0.06312461
+5: Retiree,Maintenance,0.296391971
+6: Driving Aged Student,Maintenance,0.004652787
+7: Non-Driving Aged Student,Maintenance,0.019660257
+8: Child To Young for School,Maintenance,0.012839948
+1: Full-Time Worker,EatingOut,0.36119613
+2: Part-Time Worker,EatingOut,0.074499597
+3: University Student,EatingOut,0.004315149
+4: Non-Worker,EatingOut,0.11931695
+5: Retiree,EatingOut,0.039707749
+6: Driving Aged Student,EatingOut,0.012133464
+7: Non-Driving Aged Student,EatingOut,0.070983038
+8: Child To Young for School,EatingOut,0.010177348
+1: Full-Time Worker,Visiting,2.119181916
+2: Part-Time Worker,Visiting,0.036397104
+3: University Student,Visiting,0.202168807
+4: Non-Worker,Visiting,0.031809642
+5: Retiree,Visiting,0.202086633
+6: Driving Aged Student,Visiting,0.004140905
+7: Non-Driving Aged Student,Visiting,0.213388404
+8: Child To Young for School,Visiting,0.121960677
+1: Full-Time Worker,Discretionary,0.126367458
+2: Part-Time Worker,Discretionary,0.180012342
+3: University Student,Discretionary,0.008396369
+4: Non-Worker,Discretionary,0.177907876
+5: Retiree,Discretionary,0.012420928
+6: Driving Aged Student,Discretionary,0.035778293
+7: Non-Driving Aged Student,Discretionary,0.005390737
+8: Child To Young for School,Discretionary,0

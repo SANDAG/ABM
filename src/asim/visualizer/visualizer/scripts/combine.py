@@ -13,6 +13,7 @@ if not os.path.isdir(config['outpath']):
     os.mkdir(config['outpath'])
 
 for table in config['tables']:
+    print("Combining " + table)
     merge_cols = config['tables'][table]['merge']
 
     for run in config['runs']:
