@@ -80,8 +80,12 @@ Recode distance bin to maximum,step_1,apply,final_persons,workdistbin,workdistbi
 Recode distance bin to maximum,step_1,apply,final_persons,schooldistbin,schooldistbin,"(lambda x: int(float(str(x).split(', ')[1].split(']')[0])))"
 Bin tour distance,step_1,bin,indivTourData_3,tourdistbin,tour_distance,[-99999] + list(range(42)) + [99999]
 Bin tour distance,step_1,bin,jointTourData_3,tourdistbin,tour_distance,[-99999] + list(range(42)) + [99999]
+Bin tour distance,step_1,bin,indivTourData_3,tourdistbin_ext,tour_distance,[-99999] + list(range(116)) + [99999]
+Bin tour distance,step_1,bin,jointTourData_3,tourdistbin_ext,tour_distance,[-99999] + list(range(116)) + [99999]
 Recode distance bin to maximum,step_1,apply,indivTourData_3,tourdistbin,tourdistbin,"(lambda x: int(float(str(x).split(', ')[1].split(']')[0])))"
 Recode distance bin to maximum,step_1,apply,jointTourData_3,tourdistbin,tourdistbin,"(lambda x: int(float(str(x).split(', ')[1].split(']')[0])))"
+Recode distance bin to maximum,step_1,apply,indivTourData_3,tourdistbin_ext,tourdistbin_ext,"(lambda x: int(float(str(x).split(', ')[1].split(']')[0])))"
+Recode distance bin to maximum,step_1,apply,jointTourData_3,tourdistbin_ext,tourdistbin_ext,"(lambda x: int(float(str(x).split(', ')[1].split(']')[0])))"
 Reset persons index,step_1,raw,final_persons,,,final_persons = final_persons.reset_index()
 Classify Person Type,step_1,rename,final_persons,,,{'ptype' : 'PERTYPE'}
 Classify individual mandatory tour frequency,step_1,replace,final_persons,imf_choice,mandatory_tour_frequency,"{'work1': 1, 'work2': 2, 'school1': 3, 'school2': 4, 'work_and_school': 5}"
@@ -404,7 +408,7 @@ Rename AGGPURP,step_6,rename,stopDC_vis,,,"{'AGGPURP': 'purpose', 'out_dir_distb
 Rename AGGPURP,step_6,rename,avgStopOutofDirectionDist_vis,,,{'AGGPURP': 'purpose'}
 Rename AGGPURP,step_6,rename,tmodeProfile_vis,,,{'AGGPURP': 'purpose'}
 Rename AGGPURP,step_6,rename,tourDistProfile_vis,,,"{'AGGPURP': 'purpose', 'tourdistbin': 'distbin'}"
-Rename AGGPURP,step_6,rename,tourDistProfile_et_vis,,,"{'AGGPURP': 'purpose', 'tourdistbin': 'distbin'}"
+Rename AGGPURP,step_6,rename,tourDistProfile_et_vis,,,{'tourdistbin_ext': 'distbin'}
 Rename AGGPURP,step_6,rename,tripmodeProfile_vis,,,{'AGGPURP': 'purpose'}
 Rename AGGPURP,step_6,rename,nonMandTripLengths,,,{'AGGPURP': 'purpose'}
 Rename AGGPURP,step_6,rename,nonMandTripLengths_et,,,{'AGGPURP': 'purpose'}

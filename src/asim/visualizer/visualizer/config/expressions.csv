@@ -34,7 +34,7 @@ Trips by stop departure period,tripDeparture_vis,freq,trips,,finalweights,sum,"d
 Tour mode by vehicle ownership category,tmodeProfile_vis,freq,hh_tours,,finalweights_x,sum,"AUTOSUFF,tour_mode,AGGPURP"
 Trip mode by tour mode,tripmodeProfile_vis,value,trips,,finalweights,sum,"trip_mode,tour_mode,AGGPURP"
 Tour Distance Distribution,tourDistProfile_vis,freq,tours,TOURPURP >= 4 and is_internal_tour!=False,finalweights,sum,"tourdistbin,AGGPURP"
-Tour Distance Distribution,tourDistProfile_et_vis,freq,tours,TOURPURP >= 4 and is_external_tour==True,finalweights,sum,"tourdistbin,AGGPURP"
+Tour Distance Distribution,tourDistProfile_et_vis,freq,tours,TOURPURP >= 4 and is_external_tour==True,finalweights,sum,tourdistbin_ext
 #,,,,,,,
 Distance to work distribution,mandTLFD,Work,final_persons,work_from_home==False and workplace_zone_id > 0 and WorkLocationDistance > 0 and is_internal_worker==True and WTAZ > 12,finalweights,sum,"workdistbin,HDISTRICT"
 Distance to university distribution,mandTLFD,University,final_persons,PERTYPE == 3 and school_zone_id > 0 and SchoolLocationDistance > 0,finalweights,sum,"schooldistbin,HDISTRICT"
