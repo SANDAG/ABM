@@ -22,7 +22,7 @@ import numpy as np
 import pandas as pd
 
 from activitysim.abm.tables.util import simple_table_join
-from activitysim.core import workflow
+from activitysim.core import workflow, tracing
 
 from .cvm_enum import BusinessTypes
 from .cvm_enum_tools import as_int_enum
@@ -37,6 +37,9 @@ _business_type_offset = int(10 ** np.ceil(np.log10(max(BusinessTypes))))
 def route_generation(
     state: State,
     establishments: pd.DataFrame,
+    model_settings: None = None,
+    model_settings_file_name: str = "route_generation.yaml",
+    trace_label: str = "route_generation",
 ) -> None:
     """
     Generate routes from (pseudo-)establishments.
@@ -56,28 +59,80 @@ def route_generation(
     state : State
     establishments : pandas.DataFrame
     """
-    max_n_routes_per_business_type = 10000
+
+    if model_settings is None:
+        model_settings = state.filesystem.read_settings_file(
+            model_settings_file_name
+        )
+    
+    trace_label = "cvm_establishment_attractor"
+
+    logger.info("Running %s with synthetic establishments", trace_label)
+
+    max_n_routes_per_business_type = model_settings.get("MAX_N_ROUTES_PER_ESTABLISHMENT")
 
     # TODO: interface with ActivitySim repro-random
     rng = np.random.default_rng(seed=42)
 
-    ## WHOLESALE ## Some kind of parameterization p and r based on data....
-    x_mean = np.clip(establishments["employees"], 1, 200)
-    x_variance = x_mean * 1.2
-    p = np.clip(x_mean / x_variance, 0.05, 0.95)
-    r = np.square(x_mean) / np.clip(x_variance - x_mean, 0.05, np.inf)
-    x = rng.negative_binomial(r, p)
-    establishments["n_routes_wholesale"] = x
-    n_routes_total = x
+    establishments_df = establishments.copy()
+    establishments_df["n_routes"] = 0
 
-    ## GIG WORKERS ## Some kind of parameterization p and r based on data....
-    x_mean = np.clip(establishments["employees"], 1, 200)
-    x_variance = x_mean * 1.2
-    p = np.clip(x_mean / x_variance, 0.05, 0.95)
-    r = np.square(x_mean) / np.clip(x_variance - x_mean, 0.05, np.inf)
-    x = rng.negative_binomial(r, p)
-    establishments["n_routes_gigwork"] = x
-    n_routes_total += x
+    # step 1 Binary logit model that predicts whether an establishment has at least one route.
+    # Necessary because there are many which have none in the survey.
+    logger.info("Running %s step 1 binary logit model", trace_label)
+    # get the industry dictionary from model spec
+    industry_dict = model_settings.get("industries")
+    establishments_df["industry_group"] = establishments_df["industry_number"].map(industry_dict)
+    establishments_df["industry_group"] = establishments_df["industry_group"].apply(lambda x: x.get("industry_group") if x is not None else 0)
+    # get the industry group specific beta from model spec
+    industry_group_dict = model_settings.get("industry_groups")
+    _industry_group = establishments_df["industry_group"].map(industry_group_dict)
+    establishments_df["beta_industry_group"] = _industry_group.apply(lambda x: x.get("beta_employment") if x is not None else 0)
+    establishments_df["constant"] = _industry_group.apply(lambda x: x.get("constant") if x is not None else 0)
+
+    # calculate the probability of generating at least one route
+    establishments_df["has_generation_probability"] = (
+        1 / (1+np.exp(-establishments_df["beta_industry_group"] * establishments_df["employees"]-establishments_df["constant"]))
+    )
+    # get random numbers for the binary logit model
+    establishments_df["random"] = state.get_rn_generator().random_for_df(establishments)
+    # calculate whether the establishment generates a route
+    establishments_df["has_generation"] = establishments_df["has_generation_probability"] > establishments_df["random"]
+
+    establishments["has_generation"] = establishments_df["has_generation"]
+
+    tracing.print_summary(
+        "has_generation",
+        establishments["has_generation"],
+        value_counts=True,
+    )
+
+    # step 2 preliminary estimated # routes for establishments generating at least one route
+    # takes the form of sqrt()
+    logger.info("Running %s step 2 preliminary estimated # routes", trace_label)
+    beta_generation = model_settings.get("CONSTANTS").get("beta_employment")
+    establishments_df["n_routes"] = np.where(
+        establishments_df["has_generation"],
+        np.sqrt(establishments_df["employees"]) * beta_generation,
+        0
+    )
+
+    # step 3 Industry factors.
+    # These are estimated industry specific factors 
+    # which modify the predictions from the second step to produce the final set of outputs.
+    logger.info("Running %s step 3 apply industry factors", trace_label)
+    # get the industry dictionary from model spec
+    industry_dict = model_settings.get("industries")
+    industry_factor = {}
+    for industry_number, industry_info in industry_dict.items():
+        industry_factor[industry_number] = industry_info.get("industry_factor")
+    # apply the industry effect to the number of routes
+    establishments_df["n_routes"] *= establishments_df["industry_number"].map(industry_factor)
+    establishments_df["n_routes"] = establishments_df["n_routes"].fillna(0)
+    # round the number of routes to integer
+    establishments_df["n_routes"] = establishments_df["n_routes"].round().astype(int)
+    
+    establishments["n_routes"] = establishments_df["n_routes"]
 
     # write establishments table back to state
     state.add_table("establishments", establishments)
@@ -86,9 +141,10 @@ def route_generation(
     route_estab_id = []
     route_btype = []
     for b in BusinessTypes:
-        n_routes_btype = establishments[f"n_routes_{b.name}"].sum()
+        establishments_sub_df = establishments_df[establishments_df["industry_name"]==b.name].copy()
+        n_routes_btype = establishments_sub_df["n_routes"].sum()
         route_estab_id.append(
-            np.repeat(establishments.index, establishments[f"n_routes_{b.name}"])
+            np.repeat(establishments_sub_df.index, establishments_sub_df["n_routes"])
         )
         route_btype.append(np.full(n_routes_btype, fill_value=b.value, dtype=np.int8))
     routes = pd.DataFrame(

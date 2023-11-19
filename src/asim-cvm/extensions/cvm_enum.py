@@ -2,8 +2,17 @@ import enum
 
 
 class BusinessTypes(enum.IntEnum):
-    wholesale = 1
-    gigwork = 2
+    AGM = 1
+    MFG = 2
+    IUT = 3
+    RET = 4
+    WHL = 5
+    CON = 6
+    TRN = 7
+    IFR = 8
+    EPO = 9
+    MHS = 10
+    LAF = 11
 
 
 class RoutePurposes(enum.IntFlag):
