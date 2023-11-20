@@ -1,24 +1,25 @@
-PERTYPE,activity_pattern,freq
-1,H,167197.7934
-2,H,34299.48781
-3,H,56320.98195
-4,H,130075.3169
-5,H,140451.4949
-6,H,28054.77168
-7,H,84546.34853
-8,H,61898.19885
-1,M,489738.5688
-2,M,76177.30974
-3,M,58941.35071
-6,M,0
-7,M,23804.3424
-8,M,237188.844
-1,N,43329.35429
-2,N,495004.8104
-3,N,110616.3319
-4,N,71630.16713
-5,N,232623.969
-6,N,241830.2078
-7,N,45501.76131
-8,N,98985.98883
-,,68405.94365
+PERTYPE,DAP,freq
+1: Full-Time Worker,3: Home,167197.7934
+2: Part-Time Worker,3: Home,34299.48781
+3: University Student,3: Home,56320.98195
+4: Non-Worker,3: Home,130075.3169
+5: Retiree,3: Home,140451.4949
+6: Driving Aged Student,3: Home,28054.77168
+7: Non-Driving Aged Student,3: Home,84546.34853
+8: Child To Young for School,3: Home,61898.19885
+1: Full-Time Worker,1: Mandatory,489738.5688
+2: Part-Time Worker,1: Mandatory,76177.30974
+3: University Student,1: Mandatory,58941.35071
+4: Non-Worker,1: Mandatory,0
+5: Retiree,1: Mandatory,0
+6: Driving Aged Student,1: Mandatory,23804.3424
+7: Non-Driving Aged Student,1: Mandatory,237188.844
+8: Child To Young for School,1: Mandatory,43329.35429
+1: Full-Time Worker,2: Non-Mandatory,495004.8104
+2: Part-Time Worker,2: Non-Mandatory,110616.3319
+3: University Student,2: Non-Mandatory,71630.16713
+4: Non-Worker,2: Non-Mandatory,232623.969
+5: Retiree,2: Non-Mandatory,241830.2078
+6: Driving Aged Student,2: Non-Mandatory,45501.76131
+7: Non-Driving Aged Student,2: Non-Mandatory,98985.98883
+8: Child To Young for School,2: Non-Mandatory,68405.94365
