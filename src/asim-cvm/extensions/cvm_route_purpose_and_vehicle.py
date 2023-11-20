@@ -1,11 +1,13 @@
 from functools import reduce
+import logging
 from pathlib import Path
 
 import numba as nb
 import numpy as np
 import pandas as pd
 
-from activitysim.core import workflow
+from activitysim.core import config, estimation, simulate, workflow
+from activitysim.core.configuration.logit import LogitComponentSettings
 
 from .cvm_enum import BusinessTypes, CustomerTypes, RoutePurposes, VehicleTypes
 from .cvm_enum_tools import as_int_enum
@@ -80,74 +82,90 @@ def cross_choice_maker(pr, rn, out=None):
                     max_pr = pr[col]
     return out
 
+class RouteGenerationSettings(LogitComponentSettings, extra="forbid"):
+    """
+    Settings for the `route_generation` component.
+    """
+    ALTS: str
+    """The name of the file containing the alternatives."""
+
+logger = logging.getLogger(__name__)
 
 @workflow.step
 def route_purpose_and_vehicle(
     state: State,
     routes: pd.DataFrame,
-    probability_file: Path = "cvm_route_purpose_and_vehicle_probs.csv",
+    model_settings: RouteGenerationSettings | None = None,
+    model_settings_file_name: str = "route_vehicle_purpose_customer.yaml",
+    trace_label: str = "route_vehicle_purpose_customer",
 ) -> None:
     """
-    Simulate purpose and vehicle type for routes.
+    Simulate purpose, customer, and vehicle type for routes.
 
     Parameters
     ----------
     state : State
     routes : pandas.DataFrame
-    probability_file
+    model_settings : default None
+    model_settings_file_name : str, default "route_vehicle_purpose_customer.yaml"
+    trace_label : str, default "route_vehicle_purpose_customer"
 
     Returns
     -------
 
     """
-    probability_file_ = state.filesystem.get_config_file_path(probability_file)
-    probs = pd.read_csv(probability_file_, header=1)
-
-    probs["route_purpose"] = as_int_enum(
-        probs["route_purpose"], RoutePurposes, categorical=True
-    )
-    probs["vehicle_type"] = as_int_enum(
-        probs["vehicle_type"], VehicleTypes, categorical=True
-    )
-    probs["customer_type"] = as_int_enum(
-        probs["customer_type"], CustomerTypes, categorical=True
-    )
-
-    # rescale probs to ensure they total 1.0
-    probs_float_cols = probs.select_dtypes(include=float).columns
-    probs[probs_float_cols] = probs[probs_float_cols].div(
-        probs[probs_float_cols].sum(), axis=1
-    )
-
-    purposes = []
-    vehicles = []
-    customers = []
-    for c in probs_float_cols:
-        routes_c = routes.query(f"business_type == '{c}'")
-
-        # TODO: repro random
-        r = np.random.default_rng().random(size=len(routes_c))
-
-        routes_c_choices = cross_choice_maker(probs[c].values, r)
-        purposes.append(
-            pd.Series(
-                probs["route_purpose"].values[routes_c_choices], index=routes_c.index
-            )
-        )
-        vehicles.append(
-            pd.Series(
-                probs["vehicle_type"].values[routes_c_choices], index=routes_c.index
-            )
-        )
-        customers.append(
-            pd.Series(
-                probs["customer_type"].values[routes_c_choices], index=routes_c.index
-            )
+    
+    if model_settings is None:
+        model_settings = RouteGenerationSettings.read_settings_file(
+            state.filesystem,
+            model_settings_file_name,
         )
 
-    routes = routes.assign(
-        route_purpose=pd.concat(purposes),
-        vehicle_type=pd.concat(vehicles),
-        customer_type=pd.concat(customers),
+    trace_label = "route_vehicle_purpose_customer"
+
+    logger.info("Running %s", trace_label)
+
+    estimator = estimation.manager.begin_estimation(state, trace_label)
+
+    model_spec = state.filesystem.read_model_spec(file_name=model_settings.SPEC)
+    coefficients_df = state.filesystem.read_model_coefficients(model_settings)
+    model_spec = simulate.eval_coefficients(
+        state, model_spec, coefficients_df, estimator
     )
+
+    nest_spec = config.get_logit_model_settings(model_settings)
+
+    choices = simulate.simple_simulate(
+        state,
+        choosers=routes,
+        spec=model_spec,
+        nest_spec=nest_spec,
+        trace_label=trace_label,
+        estimator=estimator,
+    )
+
+    # convert indexes to alternative names
+    choices = pd.Series(model_spec.columns[choices.values], index=choices.index)
+
+    # get the alternatives file
+    alternatives_df = simulate.read_model_alts(
+        state, model_settings.ALTS, set_index="alt"
+    )
+    alternatives_df["route_purpose"] = as_int_enum(
+        alternatives_df["route_purpose"], RoutePurposes, categorical=True
+    )
+    alternatives_df["customer_type"] = as_int_enum(
+        alternatives_df["customer_type"], CustomerTypes, categorical=True
+    )
+    alternatives_df["vehicle_type"] = as_int_enum(
+        alternatives_df["vehicle_type"], VehicleTypes, categorical=True
+    )
+    # join the choices with alternatives
+    choices = choices.to_frame("choice").merge(alternatives_df, left_on="choice", right_index=True)
+
+    # assign the choices to the routes
+    routes["route_purpose"] = choices["route_purpose"]
+    routes["customer_type"] = choices["customer_type"]
+    routes["vehicle_type"] = choices["vehicle_type"]
+
     state.add_table("routes", routes)

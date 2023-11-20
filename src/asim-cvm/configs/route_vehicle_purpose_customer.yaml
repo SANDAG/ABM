@@ -1,0 +1,5 @@
+LOGIT_TYPE: MNL
+
+SPEC: route_vehicle_purpose_customer.csv
+COEFFICIENTS: route_vehicle_purpose_customer_coefficients.csv
+ALTS: route_vehicle_purpose_customer_alternatives.csv

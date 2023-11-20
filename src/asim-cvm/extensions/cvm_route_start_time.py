@@ -38,9 +38,6 @@ def route_start_time(
     probs["vehicle_type"] = as_int_enum(
         probs["vehicle_type"], VehicleTypes, categorical=True
     )
-    probs["customer_type"] = as_int_enum(
-        probs["customer_type"], CustomerTypes, categorical=True
-    )
     probs["business_type"] = as_int_enum(
         probs["business_type"], BusinessTypes, categorical=True
     )
@@ -51,7 +48,7 @@ def route_start_time(
         probs[probs_float_cols].sum(axis=1), axis=0
     )
 
-    i_keys = ["route_purpose", "vehicle_type", "customer_type", "business_type"]
+    i_keys = ["route_purpose", "vehicle_type", "business_type"]
     probs = probs.set_index(i_keys)
 
     start_times = []

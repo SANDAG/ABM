@@ -2,28 +2,36 @@ import enum
 
 
 class BusinessTypes(enum.IntEnum):
-    wholesale = 1
-    gigwork = 2
+    AGM = 1
+    MFG = 2
+    IUT = 3
+    RET = 4
+    WHL = 5
+    CON = 6
+    TRN = 7
+    IFR = 8
+    EPO = 9
+    MHS = 10
+    LAF = 11
 
 
-class RoutePurposes(enum.IntFlag):
+class RoutePurposes(enum.IntEnum):
     goods = 1
-    services = 2
-    other = 4
+    service = 2
+    maintenance = 3
 
 
 class VehicleTypes(enum.IntEnum):
-    car = 1
-    light_truck = 2
-    med_truck = 3
-    heavy_truck = 4
-    sidewalk_drone = 5
+    LCV = 1
+    MUT = 2
+    SUT = 3
 
 
-class CustomerTypes(enum.IntFlag):
+class CustomerTypes(enum.IntEnum):
     residential = 1
     nonresidential = 2
     mixed = 3
+    na = 0
 
 
 class StopPurposes(enum.IntEnum):
