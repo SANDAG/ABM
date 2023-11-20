@@ -1,0 +1,23 @@
+#,alt file for route vehicle purpose customer choice,,
+alt,route_purpose,customer_type,vehicle_type
+Alt1_GML,goods,mixed,LCV
+Alt2_GMM,goods,mixed,MUT
+Alt3_GMS,goods,mixed,SUT
+Alt4_GNL,goods,nonresidential,LCV
+Alt5_GNM,goods,nonresidential,MUT
+Alt6_GNS,goods,nonresidential,SUT
+Alt7_GRL,goods,residential,LCV
+Alt8_GRM,goods,residential,MUT
+Alt9_GRS,goods,residential,SUT
+Alt10_ML,maintenance,na,LCV
+Alt11_MM,maintenance,na,MUT
+Alt12_MS,maintenance,na,SUT
+Alt13_SML,service,mixed,LCV
+Alt14_SMM,service,mixed,MUT
+Alt15_SMS,service,mixed,SUT
+Alt16_SNL,service,nonresidential,LCV
+Alt17_SNM,service,nonresidential,MUT
+Alt18_SNS,service,nonresidential,SUT
+Alt19_SRL,service,residential,LCV
+Alt20_SRM,service,residential,MUT
+Alt21_SRS,service,residential,SUT

@@ -15,24 +15,23 @@ class BusinessTypes(enum.IntEnum):
     LAF = 11
 
 
-class RoutePurposes(enum.IntFlag):
+class RoutePurposes(enum.IntEnum):
     goods = 1
-    services = 2
-    other = 4
+    service = 2
+    maintenance = 3
 
 
 class VehicleTypes(enum.IntEnum):
-    car = 1
-    light_truck = 2
-    med_truck = 3
-    heavy_truck = 4
-    sidewalk_drone = 5
+    LCV = 1
+    MUT = 2
+    SUT = 3
 
 
-class CustomerTypes(enum.IntFlag):
+class CustomerTypes(enum.IntEnum):
     residential = 1
     nonresidential = 2
     mixed = 3
+    na = 0
 
 
 class StopPurposes(enum.IntEnum):
