@@ -41,12 +41,12 @@ stop_period,purpose,freq,stop_skim_period
 22.75,1: Work,1653.256804,5: EV
 23.25,1: Work,1615.74913,5: EV
 23.75,1: Work,346.1903004,5: EV
-0.25,1: Work,0,1: EA
-0.75,1: Work,0,1: EA
-1.25,1: Work,0,1: EA
-1.75,1: Work,0,1: EA
-2.25,1: Work,0,1: EA
-2.75,1: Work,0,1: EA
+0.25,1: Work,0,5: EV
+0.75,1: Work,0,5: EV
+1.25,1: Work,0,5: EV
+1.75,1: Work,0,5: EV
+2.25,1: Work,0,5: EV
+2.75,1: Work,0,5: EV
 3.25,2: University,0,1: EA
 3.75,2: University,0,1: EA
 4.25,2: University,0,1: EA
@@ -89,12 +89,12 @@ stop_period,purpose,freq,stop_skim_period
 22.75,2: University,0,5: EV
 23.25,2: University,0,5: EV
 23.75,2: University,0,5: EV
-0.25,2: University,0,1: EA
-0.75,2: University,0,1: EA
-1.25,2: University,0,1: EA
-1.75,2: University,0,1: EA
-2.25,2: University,0,1: EA
-2.75,2: University,0,1: EA
+0.25,2: University,0,5: EV
+0.75,2: University,0,5: EV
+1.25,2: University,0,5: EV
+1.75,2: University,0,5: EV
+2.25,2: University,0,5: EV
+2.75,2: University,0,5: EV
 3.25,3: School,0,1: EA
 3.75,3: School,0,1: EA
 4.25,3: School,0,1: EA
@@ -137,12 +137,12 @@ stop_period,purpose,freq,stop_skim_period
 22.75,3: School,0,5: EV
 23.25,3: School,0,5: EV
 23.75,3: School,0,5: EV
-0.25,3: School,0,1: EA
-0.75,3: School,0,1: EA
-1.25,3: School,0,1: EA
-1.75,3: School,0,1: EA
-2.25,3: School,0,1: EA
-2.75,3: School,0,1: EA
+0.25,3: School,0,5: EV
+0.75,3: School,0,5: EV
+1.25,3: School,0,5: EV
+1.75,3: School,0,5: EV
+2.25,3: School,0,5: EV
+2.75,3: School,0,5: EV
 3.25,4: Escort,0,1: EA
 3.75,4: Escort,0,1: EA
 4.25,4: Escort,0,1: EA
@@ -185,12 +185,12 @@ stop_period,purpose,freq,stop_skim_period
 22.75,4: Escort,186.3568202,5: EV
 23.25,4: Escort,0,5: EV
 23.75,4: Escort,306.279724,5: EV
-0.25,4: Escort,0,1: EA
-0.75,4: Escort,0,1: EA
-1.25,4: Escort,491.1076385,1: EA
-1.75,4: Escort,0,1: EA
-2.25,4: Escort,0,1: EA
-2.75,4: Escort,0,1: EA
+0.25,4: Escort,0,5: EV
+0.75,4: Escort,0,5: EV
+1.25,4: Escort,491.1076385,5: EV
+1.75,4: Escort,0,5: EV
+2.25,4: Escort,0,5: EV
+2.75,4: Escort,0,5: EV
 3.25,5: Individual Maintenance,0,1: EA
 3.75,5: Individual Maintenance,0,1: EA
 4.25,5: Individual Maintenance,478.5489305,1: EA
@@ -233,12 +233,12 @@ stop_period,purpose,freq,stop_skim_period
 22.75,5: Individual Maintenance,3136.550409,5: EV
 23.25,5: Individual Maintenance,10704.23372,5: EV
 23.75,5: Individual Maintenance,24.36894526,5: EV
-0.25,5: Individual Maintenance,0,1: EA
-0.75,5: Individual Maintenance,0,1: EA
-1.25,5: Individual Maintenance,55.58758168,1: EA
-1.75,5: Individual Maintenance,154.3637465,1: EA
-2.25,5: Individual Maintenance,0,1: EA
-2.75,5: Individual Maintenance,0,1: EA
+0.25,5: Individual Maintenance,0,5: EV
+0.75,5: Individual Maintenance,0,5: EV
+1.25,5: Individual Maintenance,55.58758168,5: EV
+1.75,5: Individual Maintenance,154.3637465,5: EV
+2.25,5: Individual Maintenance,0,5: EV
+2.75,5: Individual Maintenance,0,5: EV
 3.25,6: Individual Discretionary,0,1: EA
 3.75,6: Individual Discretionary,0,1: EA
 4.25,6: Individual Discretionary,0,1: EA
@@ -281,12 +281,12 @@ stop_period,purpose,freq,stop_skim_period
 22.75,6: Individual Discretionary,8730.8352,5: EV
 23.25,6: Individual Discretionary,3599.293493,5: EV
 23.75,6: Individual Discretionary,1309.888988,5: EV
-0.25,6: Individual Discretionary,0,1: EA
-0.75,6: Individual Discretionary,65.96519598,1: EA
-1.25,6: Individual Discretionary,65.96519598,1: EA
-1.75,6: Individual Discretionary,0,1: EA
-2.25,6: Individual Discretionary,21.58051553,1: EA
-2.75,6: Individual Discretionary,0,1: EA
+0.25,6: Individual Discretionary,0,5: EV
+0.75,6: Individual Discretionary,65.96519598,5: EV
+1.25,6: Individual Discretionary,65.96519598,5: EV
+1.75,6: Individual Discretionary,0,5: EV
+2.25,6: Individual Discretionary,21.58051553,5: EV
+2.75,6: Individual Discretionary,0,5: EV
 3.25,7: Joint Maintenance,0,1: EA
 3.75,7: Joint Maintenance,0,1: EA
 4.25,7: Joint Maintenance,0,1: EA
@@ -329,12 +329,12 @@ stop_period,purpose,freq,stop_skim_period
 22.75,7: Joint Maintenance,191.9984103,5: EV
 23.25,7: Joint Maintenance,0,5: EV
 23.75,7: Joint Maintenance,0,5: EV
-0.25,7: Joint Maintenance,0,1: EA
-0.75,7: Joint Maintenance,0,1: EA
-1.25,7: Joint Maintenance,0,1: EA
-1.75,7: Joint Maintenance,0,1: EA
-2.25,7: Joint Maintenance,0,1: EA
-2.75,7: Joint Maintenance,0,1: EA
+0.25,7: Joint Maintenance,0,5: EV
+0.75,7: Joint Maintenance,0,5: EV
+1.25,7: Joint Maintenance,0,5: EV
+1.75,7: Joint Maintenance,0,5: EV
+2.25,7: Joint Maintenance,0,5: EV
+2.75,7: Joint Maintenance,0,5: EV
 3.25,8: Joint Discretionary,0,1: EA
 3.75,8: Joint Discretionary,0,1: EA
 4.25,8: Joint Discretionary,0,1: EA
@@ -377,12 +377,12 @@ stop_period,purpose,freq,stop_skim_period
 22.75,8: Joint Discretionary,0,5: EV
 23.25,8: Joint Discretionary,22.06687024,5: EV
 23.75,8: Joint Discretionary,0,5: EV
-0.25,8: Joint Discretionary,0,1: EA
-0.75,8: Joint Discretionary,0,1: EA
-1.25,8: Joint Discretionary,0,1: EA
-1.75,8: Joint Discretionary,0,1: EA
-2.25,8: Joint Discretionary,0,1: EA
-2.75,8: Joint Discretionary,0,1: EA
+0.25,8: Joint Discretionary,0,5: EV
+0.75,8: Joint Discretionary,0,5: EV
+1.25,8: Joint Discretionary,0,5: EV
+1.75,8: Joint Discretionary,0,5: EV
+2.25,8: Joint Discretionary,0,5: EV
+2.75,8: Joint Discretionary,0,5: EV
 3.25,9: Work-based,0,1: EA
 3.75,9: Work-based,0,1: EA
 4.25,9: Work-based,0,1: EA
@@ -425,9 +425,9 @@ stop_period,purpose,freq,stop_skim_period
 22.75,9: Work-based,0,5: EV
 23.25,9: Work-based,0,5: EV
 23.75,9: Work-based,0,5: EV
-0.25,9: Work-based,0,1: EA
-0.75,9: Work-based,0,1: EA
-1.25,9: Work-based,0,1: EA
-1.75,9: Work-based,0,1: EA
-2.25,9: Work-based,0,1: EA
-2.75,9: Work-based,0,1: EA
+0.25,9: Work-based,0,5: EV
+0.75,9: Work-based,0,5: EV
+1.25,9: Work-based,0,5: EV
+1.75,9: Work-based,0,5: EV
+2.25,9: Work-based,0,5: EV
+2.75,9: Work-based,0,5: EV
