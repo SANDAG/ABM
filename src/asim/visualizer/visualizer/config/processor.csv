@@ -12,6 +12,7 @@ copy weight files,step_1,raw,final_persons,,,final_persons['finalweights'] = fin
 copy weight files,step_1,raw,final_tours,,,final_tours['finalweights'] = final_tours['household_id'].map(final_households.set_index('household_id')['finalweights']).fillna(0)
 copy weight files,step_1,raw,final_trips,,,final_trips['finalweights'] = final_trips['household_id'].map(final_households.set_index('household_id')['finalweights']).fillna(0)
 copy weight files,step_1,raw,final_vehicles,,,final_vehicles['finalweights'] = final_vehicles['household_id'].map(final_households.set_index('household_id')['finalweights']).fillna(0)
+copy weight files,step_1,raw,final_joint_tour_participants,,,final_joint_tour_participants['finalweights'] = final_joint_tour_participants['household_id'].map(final_households.set_index('household_id')['finalweights']).fillna(0)
 add origin purpose to final trip file,step_1,raw,,,,"final_trips = final_trips.assign(orig_purpose=final_trips.groupby(['person_id','tour_id']).purpose.shift(+1))"
 fill NaN origin purpose with the purpose of last trip,step_1,raw,,,,m = final_trips['orig_purpose'].isna()
 fill NaN origin purpose with the purpose of last trip,step_1,raw,,,,"final_trips.loc[m, 'orig_purpose'] = final_trips.groupby(['person_id','tour_id']).purpose.tail(1).values"
@@ -75,8 +76,10 @@ get school district,step_1,raw,,,,final_persons['SDISTRICT'] = final_persons['sc
 Get work location distances,step_1,skim,final_persons,WorkLocationDistance,"HHTAZ,WTAZ",traffic_skims_MD['SOV_TR_H_DIST__MD']
 Get school location distances,step_1,skim,final_persons,SchoolLocationDistance,"HHTAZ,STAZ",traffic_skims_MD['SOV_TR_H_DIST__MD']
 Bin distances to work,step_1,bin,final_persons,workdistbin,WorkLocationDistance,[-99999] + list(range(51)) + [99999]
+Bin distances to work (longer distance for external),step_1,bin,final_persons,workdistbin_ext,WorkLocationDistance,[-99999] + list(range(101)) + [99999]
 Bin distances to school,step_1,bin,final_persons,schooldistbin,SchoolLocationDistance,[-99999] + list(range(51)) + [99999]
 Recode distance bin to maximum,step_1,apply,final_persons,workdistbin,workdistbin,"(lambda x: int(float(str(x).split(', ')[1].split(']')[0])))"
+Recode distance bin to maximum,step_1,apply,final_persons,workdistbin_ext,workdistbin_ext,"(lambda x: int(float(str(x).split(', ')[1].split(']')[0])))"
 Recode distance bin to maximum,step_1,apply,final_persons,schooldistbin,schooldistbin,"(lambda x: int(float(str(x).split(', ')[1].split(']')[0])))"
 Bin tour distance,step_1,bin,indivTourData_3,tourdistbin,tour_distance,[-99999] + list(range(42)) + [99999]
 Bin tour distance,step_1,bin,jointTourData_3,tourdistbin,tour_distance,[-99999] + list(range(42)) + [99999]
@@ -94,7 +97,7 @@ Classify individual mandatory tour frequency,step_1,rename,final_persons,,,{'non
 Reclassify activity pattern,step_1,raw,final_persons,activity_pattern,,"final_persons['activity_pattern'] = np.where((final_persons['cdap_activity'] == 'M') & (final_persons['imf_choice'] == 0),  np.where(final_persons['inmf_choice'] > 0, 'N', 'H'), final_persons['cdap_activity'])"
 Calculate HH Size,step_1,raw,final_households,HHSIZ,,"final_households['HHSIZ'] = final_households['household_id'].map(final_persons[['household_id', 'person_id']].groupby('household_id').count()['person_id'])"
 Cap Household Size at 5,step_1,cap,final_households,HHSIZE,HHSIZ,5
-Identify households with joint tour present,step_1,raw,final_households,JOINT,,"final_households['JOINT'] = np.where(final_households['num_hh_joint_tours'] != 0, 1, 0)"
+Identify households with joint tour present,step_1,cap,final_households,JOINT,num_hh_joint_tours,2
 #,,,,,,
 Recode individual tour purposes,step_1,replace,indivTourData_3,TOURPURP,tour_purpose,"{'home': 0, 'work': 1, 'univ': 2,  'school': 3, 'escort': 4, 'shopping': 5, 'othmaint': 6, 'eatout': 7, 'social': 8, 'othdiscr': 9, 'atwork': 10}"
 Recode joint tour purposes,step_1,replace,jointTourData_3,TOURPURP,tour_purpose,"{'home': 0, 'work': 1, 'univ': 2,  'school': 3, 'escort': 4, 'shopping': 5, 'othmaint': 6, 'eatout': 7, 'social': 8, 'othdiscr': 9, 'atwork': 10}"
@@ -161,6 +164,11 @@ Get person type for joint tour participant 5,step_1,raw,,,,jointTourData_3['PTYP
 Get person type for joint tour participant 6,step_1,raw,,,,jointTourData_3['PTYPE6'] = (jointTourData_3['household_id'].astype(str) + '-' + jointTourData_3['PER6'].astype(str)).map(final_persons.set_index('hhper_id')['PERTYPE']).fillna(0)
 Get person type for joint tour participant 7,step_1,raw,,,,jointTourData_3['PTYPE7'] = (jointTourData_3['household_id'].astype(str) + '-' + jointTourData_3['PER7'].astype(str)).map(final_persons.set_index('hhper_id')['PERTYPE']).fillna(0)
 Get person type for joint tour participant 8,step_1,raw,,,,jointTourData_3['PTYPE8'] = (jointTourData_3['household_id'].astype(str) + '-' + jointTourData_3['PER8'].astype(str)).map(final_persons.set_index('hhper_id')['PERTYPE']).fillna(0)
+#,,,,,,
+Isolate individual tours for rate calculation,step_1,raw,,,,"itours_for_rates = final_tours.query('tour_category != ""joint""')[['person_id', 'finalweights']]"
+Get joint tour fields for rate calculation,step_1,raw,,,,"jtours_for_rates = final_joint_tour_participants[['person_id', 'finalweights']]"
+Add person type to individual tours for rate calculation,step_1,raw,,,,itours_for_rates['PERTYPE'] = itours_for_rates['person_id'].map(final_persons.set_index('person_id')['PERTYPE']).fillna(0)
+Add person type to joint tours for rate calculation,step_1,raw,,,,jtours_for_rates['PERTYPE'] = jtours_for_rates['person_id'].map(final_persons.set_index('person_id')['PERTYPE']).fillna(0)
 #,,,,,,
 ,step_1,raw,,,,toursPertypeDistbn = pd.DataFrame({'freq': indivTourData_3.query('PERTYPE > 0 and TOURPURP != 10')['PERTYPE'].value_counts().sort_index()})
 Melt joint tours into tours by person type,step_1,raw,,,,"temp_joint = pd.melt(jointTourData_3, ['household_id', 'tour_id','finalweights'], ['PTYPE1', 'PTYPE2', 'PTYPE3', 'PTYPE4', 'PTYPE5', 'PTYPE6', 'PTYPE7', 'PTYPE8'], value_name = 'PERTYPE').query('PERTYPE > 0')"
@@ -369,7 +377,7 @@ Add totals to average mandatory trip length,step_6,raw,,,,mandTripLengthsTotal['
 Add totals to average mandatory trip length,step_6,raw,,,,"mandTripLengths = pd.concat((mandTripLengths, mandTripLengthsTotal))"
 Add totals to average mandatory trip length,step_6,raw,,,,mandTripLengthsTotal_et['HDISTRICT'] = 'Total'
 Add totals to average mandatory trip length,step_6,raw,,,,"mandTripLengths_et = pd.concat((mandTripLengths_et, mandTripLengthsTotal_et))"
-Add totals to results by person type,step_6,raw,,,,resultsByPTypeTotal['index'] = 'Total'
+Add totals to results by person type,step_6,raw,,,,resultsByPTypeTotal['PERTYPE'] = 'Total'
 Add totals to results by person type,step_6,raw,,,,"resultsByPType = pd.concat((resultsByPType, resultsByPTypeTotal))"
 Add total non mandatory trip length,step_6,raw,,,,"nonMandTripLengths.loc[nonMandTripLengths.index.max()+1] = ['Total', nonMandTripLengthsTotal.loc[0, 'avgDist']]"
 Add total non mandatory trip length,step_6,raw,,,,"nonMandTripLengths_et.loc[nonMandTripLengths_et.index.max()+1] = ['Total', nonMandTripLengthsTotal_et.loc[0, 'avgDist']]"
@@ -475,7 +483,7 @@ Recode person type,step_6,replace,esctype_by_childtype,esc_type,esc_type,"{'ride
 Recode person type,step_6,replace,esctype_by_chauffeurtype,esc_type,esc_type,"{'ride_share': 'Ride Share', 'pure_escort': 'Pure Escort'}"
 Recode in escort type,step_6,replace,worker_school_escorting,inb_escort_type,inb_escort_type,"{0: 'No Escort', 1: 'Ride Share', 2: 'Pure Escort', 3: 'No Escort'}"
 Recode out escort type,step_6,replace,worker_school_escorting,out_escort_type,out_escort_type,"{0: 'No Escort', 1: 'Ride Share', 2: 'Pure Escort', 3: 'No Escort'}"
-Recode number of joint tours in households,step_6,replace,hhsizeJoint,JOINT,JOINT,"{0: '0', 1: '1+'}"
+Recode number of joint tours in households,step_6,replace,hhsizeJoint,JOINT,JOINT,"{0: '0', 1: '1', 2: '2+'}"
 #,,,,,,
 Reset autoOwnership_AV index,step_6,raw,,,,autoOwnership_AV_ebike = autoOwnership_AV_ebike.reset_index()
 Reset transponder_ownership index,step_6,raw,,,,transponder_ownership = transponder_ownership.reset_index()
