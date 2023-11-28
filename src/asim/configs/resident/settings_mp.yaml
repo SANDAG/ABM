@@ -1,22 +1,17 @@
+# Configs File with Sample Rate set by Model Runner 
 inherit_settings: settings.yaml
-
 multiprocess: True
-households_sample_size: 0
-num_processes: 20
-trace_hh_id:
+households_sample_size: 1276883
+num_processes: 40
+trace_hh_id: 
 chunk_training_mode: disabled
 # chunk_size: 240_000_000_000
-
 use_shadow_pricing: True
-
 memory_profile: False
-
 # raise error if any sub-process fails without waiting for others to complete
 # (Shadow pricing requires fail_fast setting in multiprocessing mode)
 fail_fast: True
-
-resume_after: atwork_subtour_mode_choice
-
+resume_after:
 models:
   ### mp_init_proto_pop (single process)
   - initialize_proto_population # Separate step so proto tables can be split for multiprocess.
@@ -63,25 +58,23 @@ models:
   - atwork_subtour_scheduling
   - atwork_subtour_mode_choice
   - stop_frequency
-  # - trip_purpose
-  # - trip_destination
-  # - trip_purpose_and_destination
-  # - trip_scheduling
-  # - trip_mode_choice
-  # - parking_location
+  - trip_purpose
+  - trip_destination
+  - trip_purpose_and_destination
+  - trip_scheduling
+  - trip_mode_choice
+  - parking_location
   ### mp_summarize (single process)
   - write_data_dictionary
   - track_skim_usage
-  # - write_trip_matrices
-  # - write_to_datalake
-  - write_tables
-
-
+  - write_trip_matrices
+  - write_to_datalake
+  # - write_tables
 multiprocess_steps:
   - name: mp_init_proto_pop
     begin: initialize_proto_population
   - name: mp_disaggregate_accessibility
-    num_processes: 10
+    num_processes: 20
     begin: compute_disaggregate_accessibility
     slice:
       tables:

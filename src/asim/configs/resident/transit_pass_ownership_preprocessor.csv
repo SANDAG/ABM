@@ -2,5 +2,5 @@ Description,Target,Expression
 # transit pass cost converted to cost per trip and multiplied by trip mode choice cost coefficient in model,,
 # assumes 22 working days per month and 2 trips per work day. reduced fare for children and seniors half price.,,
 ,income_exponent,0.6
-,_transit_pass_cost_per_trip,monthly_transit_pass_cost / (22 * 2)
-,transit_pass_cost_per_trip,"np.where((df.age >= 65) | (df.age <= 18), _transit_pass_cost_per_trip / 2, _transit_pass_cost_per_trip)"
+,transit_pass_cost_per_trip,monthly_transit_pass_cost / (22 * 2)
+,transit_pass_cost_per_trip,"np.where((df.age >= 65) | (df.age <= 18), transit_pass_cost_per_trip / 2, transit_pass_cost_per_trip)"

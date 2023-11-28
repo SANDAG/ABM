@@ -34,6 +34,7 @@ SIMULATE_CHOOSER_COLUMNS:
   - age
   - tour_type_count
   - tour_type_num
+  - tour_category
 
 
 LOGSUM_SETTINGS: tour_mode_choice.yaml
