@@ -497,13 +497,9 @@ CONSTANTS:
   OCC_SHARED3: 3.33
   vot_threshold_low: 8.81
   vot_threshold_med: 18.00
-  # add TNC and Taxi Occupancies
-  OCC_TAXI: 1.1
-  OCC_TNC_SINGLE: 1.2
-  OCC_TNC_SHARED: 2.0
 
 FINAL_TRIP_COLUMNS:
-  # - trip_id #not used bc the index of the dataframe is the trip_id
+  # - trip_id #not used bc the index of the dataframe is converted into the trip_id
   - person_id
   - household_id
   - primary_purpose
@@ -533,6 +529,7 @@ FINAL_TRIP_COLUMNS:
   - is_md
   - is_pm
   - is_ev
+  - ownTrp
   - vot1
   - vot2
   - vot3
@@ -551,9 +548,3 @@ FINAL_TRIP_COLUMNS:
   - sample_rate
   - otaz
   - dtaz
-  - model
-  - arrival_mode
-  - num_participants
-  - weightTrip
-  - weightPersonTrip
-  - costOperatingDrive
