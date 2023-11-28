@@ -66,23 +66,23 @@ Description,Target,Expression
 ,WALK_SET_set1_EA, (is_ea & is_walk_LOC_transit) * tour_participants
 ,WALK_SET_set2_EA, (is_ea & is_walk_PRM_transit) * tour_participants
 ,WALK_SET_set3_EA, (is_ea & is_walk_MIX_transit) * tour_participants
-,PNROUT_SET_set1_EA,(is_ea & is_pnr_loc & outbound) * tour_participants 
-,PNROUT_SET_set2_EA,(is_ea & is_pnr_prm & outbound) * tour_participants 
-,PNROUT_SET_set3_EA,(is_ea & is_pnr_mix & outbound) * tour_participants 
-,KNROUT_SET_set1_EA,(is_ea & is_knr_loc & outbound) * tour_participants 
-,KNROUT_SET_set2_EA,(is_ea & is_knr_prm & outbound) * tour_participants 
-,KNROUT_SET_set3_EA,(is_ea & is_knr_mix & outbound) * tour_participants 
-,TNCOUT_SET_set1_EA,(is_ea & is_tnc_loc & outbound) * tour_participants 
-,TNCOUT_SET_set2_EA,(is_ea & is_tnc_prm & outbound) * tour_participants 
+,PNROUT_SET_set1_EA,(is_ea & is_pnr_loc & outbound) * tour_participants
+,PNROUT_SET_set2_EA,(is_ea & is_pnr_prm & outbound) * tour_participants
+,PNROUT_SET_set3_EA,(is_ea & is_pnr_mix & outbound) * tour_participants
+,KNROUT_SET_set1_EA,(is_ea & is_knr_loc & outbound) * tour_participants
+,KNROUT_SET_set2_EA,(is_ea & is_knr_prm & outbound) * tour_participants
+,KNROUT_SET_set3_EA,(is_ea & is_knr_mix & outbound) * tour_participants
+,TNCOUT_SET_set1_EA,(is_ea & is_tnc_loc & outbound) * tour_participants
+,TNCOUT_SET_set2_EA,(is_ea & is_tnc_prm & outbound) * tour_participants
 ,TNCOUT_SET_set3_EA,(is_ea & is_tnc_mix & outbound) * tour_participants
-,PNRIN_SET_set1_EA,(is_ea & is_pnr_loc & inbound) * tour_participants 
-,PNRIN_SET_set2_EA,(is_ea & is_pnr_prm & inbound) * tour_participants 
-,PNRIN_SET_set3_EA,(is_ea & is_pnr_mix & inbound) * tour_participants 
-,KNRIN_SET_set1_EA,(is_ea & is_knr_loc & inbound) * tour_participants 
-,KNRIN_SET_set2_EA,(is_ea & is_knr_prm & inbound) * tour_participants 
-,KNRIN_SET_set3_EA,(is_ea & is_knr_mix & inbound) * tour_participants 
-,TNCIN_SET_set1_EA,(is_ea & is_tnc_loc & inbound) * tour_participants 
-,TNCIN_SET_set2_EA,(is_ea & is_tnc_prm & inbound) * tour_participants 
+,PNRIN_SET_set1_EA,(is_ea & is_pnr_loc & inbound) * tour_participants
+,PNRIN_SET_set2_EA,(is_ea & is_pnr_prm & inbound) * tour_participants
+,PNRIN_SET_set3_EA,(is_ea & is_pnr_mix & inbound) * tour_participants
+,KNRIN_SET_set1_EA,(is_ea & is_knr_loc & inbound) * tour_participants
+,KNRIN_SET_set2_EA,(is_ea & is_knr_prm & inbound) * tour_participants
+,KNRIN_SET_set3_EA,(is_ea & is_knr_mix & inbound) * tour_participants
+,TNCIN_SET_set1_EA,(is_ea & is_tnc_loc & inbound) * tour_participants
+,TNCIN_SET_set2_EA,(is_ea & is_tnc_prm & inbound) * tour_participants
 ,TNCIN_SET_set3_EA,(is_ea & is_tnc_mix & inbound) * tour_participants
 ,TAXI_EA,((trips.trip_mode == 'TAXI') & is_ea) * tour_participants
 ,TNC_SINGLE_EA,((trips.trip_mode == 'TNC_SINGLE') & is_ea) * tour_participants
@@ -105,23 +105,23 @@ Description,Target,Expression
 ,WALK_SET_set1_AM,(is_am & is_walk_LOC_transit) * tour_participants
 ,WALK_SET_set2_AM,(is_am & is_walk_PRM_transit) * tour_participants
 ,WALK_SET_set3_AM,(is_am & is_walk_MIX_transit) * tour_participants
-,PNROUT_SET_set1_AM,(is_am & is_pnr_loc & outbound) * tour_participants 
-,PNROUT_SET_set2_AM,(is_am & is_pnr_prm & outbound) * tour_participants 
-,PNROUT_SET_set3_AM,(is_am & is_pnr_mix & outbound) * tour_participants 
-,KNROUT_SET_set1_AM,(is_am & is_knr_loc & outbound) * tour_participants 
-,KNROUT_SET_set2_AM,(is_am & is_knr_prm & outbound) * tour_participants 
-,KNROUT_SET_set3_AM,(is_am & is_knr_mix & outbound) * tour_participants 
-,TNCOUT_SET_set1_AM,(is_am & is_tnc_loc & outbound) * tour_participants 
-,TNCOUT_SET_set2_AM,(is_am & is_tnc_prm & outbound) * tour_participants 
+,PNROUT_SET_set1_AM,(is_am & is_pnr_loc & outbound) * tour_participants
+,PNROUT_SET_set2_AM,(is_am & is_pnr_prm & outbound) * tour_participants
+,PNROUT_SET_set3_AM,(is_am & is_pnr_mix & outbound) * tour_participants
+,KNROUT_SET_set1_AM,(is_am & is_knr_loc & outbound) * tour_participants
+,KNROUT_SET_set2_AM,(is_am & is_knr_prm & outbound) * tour_participants
+,KNROUT_SET_set3_AM,(is_am & is_knr_mix & outbound) * tour_participants
+,TNCOUT_SET_set1_AM,(is_am & is_tnc_loc & outbound) * tour_participants
+,TNCOUT_SET_set2_AM,(is_am & is_tnc_prm & outbound) * tour_participants
 ,TNCOUT_SET_set3_AM,(is_am & is_tnc_mix & outbound) * tour_participants
-,PNRIN_SET_set1_AM,(is_am & is_pnr_loc & inbound) * tour_participants 
-,PNRIN_SET_set2_AM,(is_am & is_pnr_prm & inbound) * tour_participants 
-,PNRIN_SET_set3_AM,(is_am & is_pnr_mix & inbound) * tour_participants 
-,KNRIN_SET_set1_AM,(is_am & is_knr_loc & inbound) * tour_participants 
-,KNRIN_SET_set2_AM,(is_am & is_knr_prm & inbound) * tour_participants 
-,KNRIN_SET_set3_AM,(is_am & is_knr_mix & inbound) * tour_participants 
-,TNCIN_SET_set1_AM,(is_am & is_tnc_loc & inbound) * tour_participants 
-,TNCIN_SET_set2_AM,(is_am & is_tnc_prm & inbound) * tour_participants 
+,PNRIN_SET_set1_AM,(is_am & is_pnr_loc & inbound) * tour_participants
+,PNRIN_SET_set2_AM,(is_am & is_pnr_prm & inbound) * tour_participants
+,PNRIN_SET_set3_AM,(is_am & is_pnr_mix & inbound) * tour_participants
+,KNRIN_SET_set1_AM,(is_am & is_knr_loc & inbound) * tour_participants
+,KNRIN_SET_set2_AM,(is_am & is_knr_prm & inbound) * tour_participants
+,KNRIN_SET_set3_AM,(is_am & is_knr_mix & inbound) * tour_participants
+,TNCIN_SET_set1_AM,(is_am & is_tnc_loc & inbound) * tour_participants
+,TNCIN_SET_set2_AM,(is_am & is_tnc_prm & inbound) * tour_participants
 ,TNCIN_SET_set3_AM,(is_am & is_tnc_mix & inbound) * tour_participants
 ,TAXI_AM,((trips.trip_mode == 'TAXI') & is_am) * tour_participants
 ,TNC_SINGLE_AM,((trips.trip_mode == 'TNC_SINGLE') & is_am) * tour_participants
@@ -144,23 +144,23 @@ Description,Target,Expression
 ,WALK_SET_set1_MD,(is_md & is_walk_LOC_transit) * tour_participants
 ,WALK_SET_set2_MD,(is_md & is_walk_PRM_transit) * tour_participants
 ,WALK_SET_set3_MD,(is_md & is_walk_MIX_transit) * tour_participants
-,PNROUT_SET_set1_MD,(is_md & is_pnr_loc & outbound) * tour_participants 
-,PNROUT_SET_set2_MD,(is_md & is_pnr_prm & outbound) * tour_participants 
-,PNROUT_SET_set3_MD,(is_md & is_pnr_mix & outbound) * tour_participants 
-,KNROUT_SET_set1_MD,(is_md & is_knr_loc & outbound) * tour_participants 
-,KNROUT_SET_set2_MD,(is_md & is_knr_prm & outbound) * tour_participants 
-,KNROUT_SET_set3_MD,(is_md & is_knr_mix & outbound) * tour_participants 
-,TNCOUT_SET_set1_MD,(is_md & is_tnc_loc & outbound) * tour_participants 
-,TNCOUT_SET_set2_MD,(is_md & is_tnc_prm & outbound) * tour_participants 
+,PNROUT_SET_set1_MD,(is_md & is_pnr_loc & outbound) * tour_participants
+,PNROUT_SET_set2_MD,(is_md & is_pnr_prm & outbound) * tour_participants
+,PNROUT_SET_set3_MD,(is_md & is_pnr_mix & outbound) * tour_participants
+,KNROUT_SET_set1_MD,(is_md & is_knr_loc & outbound) * tour_participants
+,KNROUT_SET_set2_MD,(is_md & is_knr_prm & outbound) * tour_participants
+,KNROUT_SET_set3_MD,(is_md & is_knr_mix & outbound) * tour_participants
+,TNCOUT_SET_set1_MD,(is_md & is_tnc_loc & outbound) * tour_participants
+,TNCOUT_SET_set2_MD,(is_md & is_tnc_prm & outbound) * tour_participants
 ,TNCOUT_SET_set3_MD,(is_md & is_tnc_mix & outbound) * tour_participants
-,PNRIN_SET_set1_MD,(is_md & is_pnr_loc & inbound) * tour_participants 
-,PNRIN_SET_set2_MD,(is_md & is_pnr_prm & inbound) * tour_participants 
-,PNRIN_SET_set3_MD,(is_md & is_pnr_mix & inbound) * tour_participants 
-,KNRIN_SET_set1_MD,(is_md & is_knr_loc & inbound) * tour_participants 
-,KNRIN_SET_set2_MD,(is_md & is_knr_prm & inbound) * tour_participants 
-,KNRIN_SET_set3_MD,(is_md & is_knr_mix & inbound) * tour_participants 
-,TNCIN_SET_set1_MD,(is_md & is_tnc_loc & inbound) * tour_participants 
-,TNCIN_SET_set2_MD,(is_md & is_tnc_prm & inbound) * tour_participants 
+,PNRIN_SET_set1_MD,(is_md & is_pnr_loc & inbound) * tour_participants
+,PNRIN_SET_set2_MD,(is_md & is_pnr_prm & inbound) * tour_participants
+,PNRIN_SET_set3_MD,(is_md & is_pnr_mix & inbound) * tour_participants
+,KNRIN_SET_set1_MD,(is_md & is_knr_loc & inbound) * tour_participants
+,KNRIN_SET_set2_MD,(is_md & is_knr_prm & inbound) * tour_participants
+,KNRIN_SET_set3_MD,(is_md & is_knr_mix & inbound) * tour_participants
+,TNCIN_SET_set1_MD,(is_md & is_tnc_loc & inbound) * tour_participants
+,TNCIN_SET_set2_MD,(is_md & is_tnc_prm & inbound) * tour_participants
 ,TNCIN_SET_set3_MD,(is_md & is_tnc_mix & inbound) * tour_participants
 ,TAXI_MD,((trips.trip_mode == 'TAXI') & is_md) * tour_participants
 ,TNC_SINGLE_MD,((trips.trip_mode == 'TNC_SINGLE') & is_md) * tour_participants
@@ -183,23 +183,23 @@ Description,Target,Expression
 ,WALK_SET_set1_PM,(is_pm & is_walk_LOC_transit) * tour_participants
 ,WALK_SET_set2_PM,(is_pm & is_walk_PRM_transit) * tour_participants
 ,WALK_SET_set3_PM,(is_pm & is_walk_MIX_transit) * tour_participants
-,PNROUT_SET_set1_PM,(is_pm & is_pnr_loc & outbound) * tour_participants 
-,PNROUT_SET_set2_PM,(is_pm & is_pnr_prm & outbound) * tour_participants 
-,PNROUT_SET_set3_PM,(is_pm & is_pnr_mix & outbound) * tour_participants 
-,KNROUT_SET_set1_PM,(is_pm & is_knr_loc & outbound) * tour_participants 
-,KNROUT_SET_set2_PM,(is_pm & is_knr_prm & outbound) * tour_participants 
-,KNROUT_SET_set3_PM,(is_pm & is_knr_mix & outbound) * tour_participants 
-,TNCOUT_SET_set1_PM,(is_pm & is_tnc_loc & outbound) * tour_participants 
-,TNCOUT_SET_set2_PM,(is_pm & is_tnc_prm & outbound) * tour_participants 
+,PNROUT_SET_set1_PM,(is_pm & is_pnr_loc & outbound) * tour_participants
+,PNROUT_SET_set2_PM,(is_pm & is_pnr_prm & outbound) * tour_participants
+,PNROUT_SET_set3_PM,(is_pm & is_pnr_mix & outbound) * tour_participants
+,KNROUT_SET_set1_PM,(is_pm & is_knr_loc & outbound) * tour_participants
+,KNROUT_SET_set2_PM,(is_pm & is_knr_prm & outbound) * tour_participants
+,KNROUT_SET_set3_PM,(is_pm & is_knr_mix & outbound) * tour_participants
+,TNCOUT_SET_set1_PM,(is_pm & is_tnc_loc & outbound) * tour_participants
+,TNCOUT_SET_set2_PM,(is_pm & is_tnc_prm & outbound) * tour_participants
 ,TNCOUT_SET_set3_PM,(is_pm & is_tnc_mix & outbound) * tour_participants
-,PNRIN_SET_set1_PM,(is_pm & is_pnr_loc & inbound) * tour_participants 
-,PNRIN_SET_set2_PM,(is_pm & is_pnr_prm & inbound) * tour_participants 
-,PNRIN_SET_set3_PM,(is_pm & is_pnr_mix & inbound) * tour_participants 
-,KNRIN_SET_set1_PM,(is_pm & is_knr_loc & inbound) * tour_participants 
-,KNRIN_SET_set2_PM,(is_pm & is_knr_prm & inbound) * tour_participants 
-,KNRIN_SET_set3_PM,(is_pm & is_knr_mix & inbound) * tour_participants 
-,TNCIN_SET_set1_PM,(is_pm & is_tnc_loc & inbound) * tour_participants 
-,TNCIN_SET_set2_PM,(is_pm & is_tnc_prm & inbound) * tour_participants 
+,PNRIN_SET_set1_PM,(is_pm & is_pnr_loc & inbound) * tour_participants
+,PNRIN_SET_set2_PM,(is_pm & is_pnr_prm & inbound) * tour_participants
+,PNRIN_SET_set3_PM,(is_pm & is_pnr_mix & inbound) * tour_participants
+,KNRIN_SET_set1_PM,(is_pm & is_knr_loc & inbound) * tour_participants
+,KNRIN_SET_set2_PM,(is_pm & is_knr_prm & inbound) * tour_participants
+,KNRIN_SET_set3_PM,(is_pm & is_knr_mix & inbound) * tour_participants
+,TNCIN_SET_set1_PM,(is_pm & is_tnc_loc & inbound) * tour_participants
+,TNCIN_SET_set2_PM,(is_pm & is_tnc_prm & inbound) * tour_participants
 ,TNCIN_SET_set3_PM,(is_pm & is_tnc_mix & inbound) * tour_participants
 ,TAXI_PM,((trips.trip_mode == 'TAXI') & is_pm) * tour_participants
 ,TNC_SINGLE_PM,((trips.trip_mode == 'TNC_SINGLE') & is_pm) * tour_participants
@@ -222,23 +222,23 @@ Description,Target,Expression
 ,WALK_SET_set1_EV,(is_ev & is_walk_LOC_transit) * tour_participants
 ,WALK_SET_set2_EV,(is_ev & is_walk_PRM_transit) * tour_participants
 ,WALK_SET_set3_EV,(is_ev & is_walk_MIX_transit) * tour_participants
-,PNROUT_SET_set1_EV,(is_ev & is_pnr_loc & outbound) * tour_participants 
-,PNROUT_SET_set2_EV,(is_ev & is_pnr_prm & outbound) * tour_participants 
-,PNROUT_SET_set3_EV,(is_ev & is_pnr_mix & outbound) * tour_participants 
-,KNROUT_SET_set1_EV,(is_ev & is_knr_loc & outbound) * tour_participants 
-,KNROUT_SET_set2_EV,(is_ev & is_knr_prm & outbound) * tour_participants 
-,KNROUT_SET_set3_EV,(is_ev & is_knr_mix & outbound) * tour_participants 
-,TNCOUT_SET_set1_EV,(is_ev & is_tnc_loc & outbound) * tour_participants 
-,TNCOUT_SET_set2_EV,(is_ev & is_tnc_prm & outbound) * tour_participants 
+,PNROUT_SET_set1_EV,(is_ev & is_pnr_loc & outbound) * tour_participants
+,PNROUT_SET_set2_EV,(is_ev & is_pnr_prm & outbound) * tour_participants
+,PNROUT_SET_set3_EV,(is_ev & is_pnr_mix & outbound) * tour_participants
+,KNROUT_SET_set1_EV,(is_ev & is_knr_loc & outbound) * tour_participants
+,KNROUT_SET_set2_EV,(is_ev & is_knr_prm & outbound) * tour_participants
+,KNROUT_SET_set3_EV,(is_ev & is_knr_mix & outbound) * tour_participants
+,TNCOUT_SET_set1_EV,(is_ev & is_tnc_loc & outbound) * tour_participants
+,TNCOUT_SET_set2_EV,(is_ev & is_tnc_prm & outbound) * tour_participants
 ,TNCOUT_SET_set3_EV,(is_ev & is_tnc_mix & outbound) * tour_participants
-,PNRIN_SET_set1_EV,(is_ev & is_pnr_loc & inbound) * tour_participants 
-,PNRIN_SET_set2_EV,(is_ev & is_pnr_prm & inbound) * tour_participants 
-,PNRIN_SET_set3_EV,(is_ev & is_pnr_mix & inbound) * tour_participants 
-,KNRIN_SET_set1_EV,(is_ev & is_knr_loc & inbound) * tour_participants 
-,KNRIN_SET_set2_EV,(is_ev & is_knr_prm & inbound) * tour_participants 
-,KNRIN_SET_set3_EV,(is_ev & is_knr_mix & inbound) * tour_participants 
-,TNCIN_SET_set1_EV,(is_ev & is_tnc_loc & inbound) * tour_participants 
-,TNCIN_SET_set2_EV,(is_ev & is_tnc_prm & inbound) * tour_participants 
+,PNRIN_SET_set1_EV,(is_ev & is_pnr_loc & inbound) * tour_participants
+,PNRIN_SET_set2_EV,(is_ev & is_pnr_prm & inbound) * tour_participants
+,PNRIN_SET_set3_EV,(is_ev & is_pnr_mix & inbound) * tour_participants
+,KNRIN_SET_set1_EV,(is_ev & is_knr_loc & inbound) * tour_participants
+,KNRIN_SET_set2_EV,(is_ev & is_knr_prm & inbound) * tour_participants
+,KNRIN_SET_set3_EV,(is_ev & is_knr_mix & inbound) * tour_participants
+,TNCIN_SET_set1_EV,(is_ev & is_tnc_loc & inbound) * tour_participants
+,TNCIN_SET_set2_EV,(is_ev & is_tnc_prm & inbound) * tour_participants
 ,TNCIN_SET_set3_EV,(is_ev & is_tnc_mix & inbound) * tour_participants
 ,TAXI_EV,((trips.trip_mode == 'TAXI') & is_ev) * tour_participants
 ,TNC_SINGLE_EV,((trips.trip_mode == 'TNC_SINGLE') & is_ev) * tour_participants
@@ -440,3 +440,7 @@ Description,Target,Expression
 #bikeskim,,
 ,timeBike,"od_skims['BIKE_TIME'] * np.where(trips.trip_mode == 'BIKE',1,0)"
 ,timeWalk,"od_skims['walkTime'] * np.where(trips.trip_mode == 'WALK',1,0)"
+
+# totals
+,cost_total, "costOperatingDrive + costTollDrive + costFareTransit"
+,time_total, "timeDrive + timeBike + timeWalk + timeTransitInitialWait + timeTransitInVehicle + transfersTransit"

@@ -1,11 +1,11 @@
-"purpose","avgDist"
-"work",3.12917169775253
-"univ",2.7411762766652
-"sch",3.14073808301181
-"esco",3.63444113446673
-"imain",3.0824479478392
-"idisc",2.68228227399382
-"jmain",2.27743044371576
-"jdisc",1.44256753717914
-"atwork",0.74144921189509
-"total",2.90775230897368
+purpose,avgDist
+1: Work,3.129171698
+2: University,2.741176277
+3: School,3.140738083
+4: Escort,3.634441134
+5: Individual Maintenance,3.082447948
+6: Individual Discretionary,2.682282274
+7: Joint Maintenance,2.277430444
+8: Joint Discretionary,1.442567537
+9: Work-based,0.741449212
+Total,2.907752309

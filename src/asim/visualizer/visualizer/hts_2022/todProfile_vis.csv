@@ -1,58 +1,58 @@
 period,purpose,freq_dep,freq_arr,skim_period
-0.25,9: Work-based,0,0,1: EA
-0.25,4: Escort,550.9995103,927.2887193,1: EA
-0.25,6: Individual Discretionary,1123.328892,478.3038639,1: EA
-0.25,5: Individual Maintenance,43.87152948,1724.333085,1: EA
-0.25,8: Joint Discretionary,0,0,1: EA
-0.25,7: Joint Maintenance,0,0,1: EA
-0.25,3: School,0,0,1: EA
-0.25,2: University,0,0,1: EA
-0.25,1: Work,0,572.1784686,1: EA
-0.75,9: Work-based,0,0,1: EA
-0.75,4: Escort,491.1076385,31.1678702,1: EA
-0.75,6: Individual Discretionary,9.146600738,6539.341376,1: EA
-0.75,5: Individual Maintenance,306.259551,108.989643,1: EA
-0.75,8: Joint Discretionary,0,0,1: EA
-0.75,7: Joint Maintenance,0,0,1: EA
-0.75,3: School,0,0,1: EA
-0.75,2: University,0,0,1: EA
-0.75,1: Work,0,6955.83945,1: EA
-1.25,9: Work-based,0,0,1: EA
-1.25,4: Escort,0,0,1: EA
-1.25,6: Individual Discretionary,544.107579,1963.064024,1: EA
-1.25,5: Individual Maintenance,87.32875595,233.3269472,1: EA
-1.25,8: Joint Discretionary,0,0,1: EA
-1.25,7: Joint Maintenance,0,0,1: EA
-1.25,3: School,0,0,1: EA
-1.25,2: University,0,0,1: EA
-1.25,1: Work,0,1553.83455,1: EA
-1.75,9: Work-based,0,0,1: EA
-1.75,4: Escort,0,16.12250685,1: EA
-1.75,6: Individual Discretionary,11.15392206,11.15392206,1: EA
-1.75,5: Individual Maintenance,0,64.63983905,1: EA
-1.75,8: Joint Discretionary,0,0,1: EA
-1.75,7: Joint Maintenance,0,0,1: EA
-1.75,3: School,0,0,1: EA
-1.75,2: University,0,0,1: EA
-1.75,1: Work,0,569.6930552,1: EA
-2.25,9: Work-based,0,0,1: EA
-2.25,4: Escort,0,0,1: EA
-2.25,6: Individual Discretionary,0,68.73622682,1: EA
-2.25,5: Individual Maintenance,120.7288628,154.3637465,1: EA
-2.25,8: Joint Discretionary,0,0,1: EA
-2.25,7: Joint Maintenance,0,0,1: EA
-2.25,3: School,0,0,1: EA
-2.25,2: University,0,0,1: EA
-2.25,1: Work,0,0,1: EA
-2.75,9: Work-based,0,0,1: EA
-2.75,4: Escort,0,10.47762183,1: EA
-2.75,6: Individual Discretionary,12.18926843,0,1: EA
-2.75,5: Individual Maintenance,45.56724929,2608.085071,1: EA
-2.75,8: Joint Discretionary,0,0,1: EA
-2.75,7: Joint Maintenance,0,0,1: EA
-2.75,3: School,0,0,1: EA
-2.75,2: University,0,0,1: EA
-2.75,1: Work,127.3138079,4169.583907,1: EA
+0.25,9: Work-based,0,0,5: EV
+0.25,4: Escort,550.9995103,927.2887193,5: EV
+0.25,6: Individual Discretionary,1123.328892,478.3038639,5: EV
+0.25,5: Individual Maintenance,43.87152948,1724.333085,5: EV
+0.25,8: Joint Discretionary,0,0,5: EV
+0.25,7: Joint Maintenance,0,0,5: EV
+0.25,3: School,0,0,5: EV
+0.25,2: University,0,0,5: EV
+0.25,1: Work,0,572.1784686,5: EV
+0.75,9: Work-based,0,0,5: EV
+0.75,4: Escort,491.1076385,31.1678702,5: EV
+0.75,6: Individual Discretionary,9.146600738,6539.341376,5: EV
+0.75,5: Individual Maintenance,306.259551,108.989643,5: EV
+0.75,8: Joint Discretionary,0,0,5: EV
+0.75,7: Joint Maintenance,0,0,5: EV
+0.75,3: School,0,0,5: EV
+0.75,2: University,0,0,5: EV
+0.75,1: Work,0,6955.83945,5: EV
+1.25,9: Work-based,0,0,5: EV
+1.25,4: Escort,0,0,5: EV
+1.25,6: Individual Discretionary,544.107579,1963.064024,5: EV
+1.25,5: Individual Maintenance,87.32875595,233.3269472,5: EV
+1.25,8: Joint Discretionary,0,0,5: EV
+1.25,7: Joint Maintenance,0,0,5: EV
+1.25,3: School,0,0,5: EV
+1.25,2: University,0,0,5: EV
+1.25,1: Work,0,1553.83455,5: EV
+1.75,9: Work-based,0,0,5: EV
+1.75,4: Escort,0,16.12250685,5: EV
+1.75,6: Individual Discretionary,11.15392206,11.15392206,5: EV
+1.75,5: Individual Maintenance,0,64.63983905,5: EV
+1.75,8: Joint Discretionary,0,0,5: EV
+1.75,7: Joint Maintenance,0,0,5: EV
+1.75,3: School,0,0,5: EV
+1.75,2: University,0,0,5: EV
+1.75,1: Work,0,569.6930552,5: EV
+2.25,9: Work-based,0,0,5: EV
+2.25,4: Escort,0,0,5: EV
+2.25,6: Individual Discretionary,0,68.73622682,5: EV
+2.25,5: Individual Maintenance,120.7288628,154.3637465,5: EV
+2.25,8: Joint Discretionary,0,0,5: EV
+2.25,7: Joint Maintenance,0,0,5: EV
+2.25,3: School,0,0,5: EV
+2.25,2: University,0,0,5: EV
+2.25,1: Work,0,0,5: EV
+2.75,9: Work-based,0,0,5: EV
+2.75,4: Escort,0,10.47762183,5: EV
+2.75,6: Individual Discretionary,12.18926843,0,5: EV
+2.75,5: Individual Maintenance,45.56724929,2608.085071,5: EV
+2.75,8: Joint Discretionary,0,0,5: EV
+2.75,7: Joint Maintenance,0,0,5: EV
+2.75,3: School,0,0,5: EV
+2.75,2: University,0,0,5: EV
+2.75,1: Work,127.3138079,4169.583907,5: EV
 3.25,9: Work-based,0,0,1: EA
 3.25,4: Escort,1807.312727,0,1: EA
 3.25,6: Individual Discretionary,0,0,1: EA

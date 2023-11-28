@@ -34,12 +34,12 @@ Trips by stop departure period,tripDeparture_vis,freq,trips,,finalweights,sum,"d
 Tour mode by vehicle ownership category,tmodeProfile_vis,freq,hh_tours,,finalweights_x,sum,"AUTOSUFF,tour_mode,AGGPURP"
 Trip mode by tour mode,tripmodeProfile_vis,value,trips,,finalweights,sum,"trip_mode,tour_mode,AGGPURP"
 Tour Distance Distribution,tourDistProfile_vis,freq,tours,TOURPURP >= 4 and is_internal_tour!=False,finalweights,sum,"tourdistbin,AGGPURP"
-Tour Distance Distribution,tourDistProfile_et_vis,freq,tours,TOURPURP >= 4 and is_external_tour==True,finalweights,sum,"tourdistbin,AGGPURP"
+Tour Distance Distribution,tourDistProfile_et_vis,freq,tours,TOURPURP >= 4 and is_external_tour==True,finalweights,sum,tourdistbin_ext
 #,,,,,,,
 Distance to work distribution,mandTLFD,Work,final_persons,work_from_home==False and workplace_zone_id > 0 and WorkLocationDistance > 0 and is_internal_worker==True and WTAZ > 12,finalweights,sum,"workdistbin,HDISTRICT"
 Distance to university distribution,mandTLFD,University,final_persons,PERTYPE == 3 and school_zone_id > 0 and SchoolLocationDistance > 0,finalweights,sum,"schooldistbin,HDISTRICT"
 Distance to school distribution,mandTLFD,School,final_persons,PERTYPE >=6 and school_zone_id > 0 and SchoolLocationDistance > 0,finalweights,sum,"schooldistbin,HDISTRICT"
-Distance to work distribution,mandTLFD_et,Work,final_persons,work_from_home==False and workplace_zone_id > 0 and WorkLocationDistance > 0 and is_external_worker==True,finalweights,sum,"workdistbin,HDISTRICT"
+Distance to work distribution,mandTLFD_et,Work,final_persons,work_from_home==False and workplace_zone_id > 0 and WorkLocationDistance > 0 and is_external_worker==True,finalweights,sum,"workdistbin_ext,HDISTRICT"
 Distance to school distribution,mandTLFD_et,School,final_persons,PERTYPE >=6 and school_zone_id > 0 and SchoolLocationDistance > 0,finalweights,sum,"schooldistbin,HDISTRICT"
 Distance to university distribution,mandTLFD_et,University,final_persons,PERTYPE == 3 and school_zone_id > 0 and SchoolLocationDistance > 0,finalweights,sum,"schooldistbin,HDISTRICT"
 #,,,,,,,
@@ -63,13 +63,13 @@ Average distance to work,mandTripLengthsTotal_et,Work,final_persons,workplace_zo
 Average distance to university,mandTripLengthsTotal_et,University,final_persons,PERTYPE == 3 and school_zone_id > 0,SchoolLocationDistance,mean,
 Average distance to school,mandTripLengthsTotal_et,School,final_persons,PERTYPE >=6 and school_zone_id > 0,SchoolLocationDistance,mean,
 #,,,,,,,
-Individual tours by person type,resultsByPType,itours,indivTourData_3,person_type > 0 and TOURPURP != 10,finalweights,sum,person_type
-Joint tours by person type,resultsByPType,jtours,temp_joint,PERTYPE > 0,finalweights,sum,PERTYPE
+Individual tours by person type,resultsByPType,itours,itours_for_rates,PERTYPE > 0,finalweights,sum,PERTYPE
+Joint tours by person type,resultsByPType,jtours,jtours_for_rates,PERTYPE > 0,finalweights,sum,PERTYPE
 Tours by purpose by person type,tours_pertype_purpose,freq,indivTourData_3,TOURPURP >= 4 and TOURPURP <= 9,finalweights,sum,"person_type,TOURPURP"
-Active people by person type,resultsByPType,active_persons,final_persons,activity_pattern != 'H',finalweights,sum,PERTYPE
-Individual tours by person type,resultsByPTypeTotal,itours,indivTourData_3,person_type > 0 and TOURPURP != 10,finalweights,sum,
-Joint tours by person type,resultsByPTypeTotal,jtours,temp_joint,,finalweights,sum,
-Active people by person type,resultsByPTypeTotal,active_persons,final_persons,activity_pattern != 'H',finalweights,sum,
+Active people by person type,resultsByPType,active_persons,final_persons,PERTYPE > 0 and activity_pattern != 'H',finalweights,sum,PERTYPE
+Individual tours by person type,resultsByPTypeTotal,itours,itours_for_rates,PERTYPE > 0,finalweights,sum,
+Joint tours by person type,resultsByPTypeTotal,jtours,jtours_for_rates,PERTYPE > 0,finalweights,sum,
+Active people by person type,resultsByPTypeTotal,active_persons,final_persons,PERTYPE > 0 and activity_pattern != 'H',finalweights,sum,
 #,,,,,,,
 People by person type,nm_tour_rates,TotalPersons,final_persons,,finalweights,sum,PERTYPE
 Escort Tours by Person Type,nm_tour_rates,Escorting,indivTourData_3,TOURPURP == 4,finalweights,sum,PERTYPE

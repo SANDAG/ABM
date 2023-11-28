@@ -195,7 +195,6 @@ tables:
   tourDistProfile_et_vis:
     merge:
       - distbin
-      - purpose
     #total:
     #  purpose: Total
   tourDuration:
