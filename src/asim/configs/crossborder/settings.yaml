@@ -110,7 +110,8 @@ models:
   - trip_mode_choice
   - write_trip_matrices
   # - write_to_datalake
-  # - write_tables
+  - update_tables
+  - write_tables
 
 multiprocess_steps:
   - name: mp_initialize

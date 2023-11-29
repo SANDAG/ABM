@@ -113,7 +113,8 @@ models:
   - airport_returns
   - write_trip_matrices
   # - write_to_datalake
-  # - write_tables
+  - update_tables
+  - write_tables
 
 multiprocess_steps:
   - name: mp_initialize

@@ -745,11 +745,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                           "HTML Visualizer", capture_output=True)
 
         if not skipDataExport:
-            self.write_metadata(main_directory, scenario_title, select_link, username, scenarioYear, end_iteration)
-            self.run_proc(
-                "runSandagAbm_WriteToDatalake.cmd",
-                [drive, drive + path_forward_slash],
-                "Writing ActivitySim model output to datalake", capture_output=True)
 
             # export network and matrix results from Emme directly to T if using local drive
             output_directory = _join(self._path, "output")
@@ -758,10 +753,16 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             # export core ABM data
             # Note: uses relative project structure, so cannot redirect to T drive
             # self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data",capture_output=True)
-            aggregate_models = {}
-            for agg_model in ['eetrip', 'eitrip', 'trucktrip']:#TODO ['commercialVehicleTrips','internalExternalTrips']:
-                aggregate_models[agg_model] = str(os.path.join(self._path,'report',agg_model+'.csv'))
-            gen_utils.DataLakeExporter(ScenarioPath=self._path).write_to_datalake(aggregate_models)
+            # aggregate_models = {}
+            # for agg_model in ['eetrip', 'eitrip', 'trucktrip']:#TODO ['commercialVehicleTrips','internalExternalTrips']:
+            #     aggregate_models[agg_model] = str(os.path.join(self._path,'report',agg_model+'.csv'))
+            # gen_utils.DataLakeExporter(ScenarioPath=self._path).write_to_datalake(aggregate_models)
+
+            self.write_metadata(main_directory, scenario_title, select_link, username, scenarioYear, end_iteration)
+            self.run_proc(
+                "write_to_datalake.cmd",
+                [drive, drive + path_forward_slash],
+                "Writing model output to datalake", capture_output=True)
 
         #Validation for 2022 scenario
         if scenarioYear == "2016":
