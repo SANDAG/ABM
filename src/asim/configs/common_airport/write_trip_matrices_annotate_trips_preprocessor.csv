@@ -400,7 +400,3 @@ Description,Target,Expression
 #bikeskim,,
 ,timeBike,"od_skims['BIKE_TIME'] * np.where(trip_mode == 'BIKE',1,0)"
 ,timeWalk,"od_skims['walkTime'] * np.where(trip_mode == 'WALK',1,0)"
-
-# totals
-,cost_total, "costOperatingDrive + costTollDrive + costFareTransit"
-,time_total, "timeDrive + timeBike + timeWalk + timeTransitInitialWait + timeTransitInVehicle + transfersTransit"
