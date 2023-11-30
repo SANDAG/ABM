@@ -14,7 +14,7 @@ HH_EXPANSION_WEIGHT_COL: sample_rate  # added when households read in
 SAVE_TRIPS_TABLE: True
 
 MATRICES:
-  - file_name: autoairporttrips.san_ea_low.omx
+  - file_name: autoairporttrips.cbx_ea_low.omx
     tables:
       - name: SOV_EA
         data_field: DRIVEALONE_EA_LOW
@@ -22,7 +22,7 @@ MATRICES:
         data_field: SHARED2_EA_LOW
       - name: SR3_EA
         data_field: SHARED3_EA_LOW
-  - file_name: autoairporttrips.san_ea_med.omx
+  - file_name: autoairporttrips.cbx_ea_med.omx
     tables:
       - name: SOV_EA
         data_field: DRIVEALONE_EA_MED
@@ -30,7 +30,7 @@ MATRICES:
         data_field: SHARED2_EA_MED
       - name: SR3_EA
         data_field: SHARED3_EA_MED
-  - file_name: autoairporttrips.san_ea_high.omx
+  - file_name: autoairporttrips.cbx_ea_high.omx
     tables:
       - name: SOV_EA
         data_field: DRIVEALONE_EA_HIGH
@@ -38,7 +38,7 @@ MATRICES:
         data_field: SHARED2_EA_HIGH
       - name: SR3_EA
         data_field: SHARED3_EA_HIGH
-  - file_name: tranairporttrips.san_ea.omx
+  - file_name: tranairporttrips.cbx_ea.omx
     tables:
       - name: WALK_SET_set1_EA
         data_field: WALK_SET_set1_EA
@@ -82,12 +82,12 @@ MATRICES:
         data_field: TNCIN_SET_set2_EA        
       - name: TNCIN_SET_set3_EA
         data_field: TNCIN_SET_set3_EA        
-  - file_name: nmotairporttrips.san_ea.omx
+  - file_name: nmotairporttrips.cbx_ea.omx
     tables:
       - name: WALK_EA
         data_field: WALK_EA
         
-  - file_name: autoairporttrips.san_am_low.omx
+  - file_name: autoairporttrips.cbx_am_low.omx
     tables:
       - name: SOV_AM
         data_field: DRIVEALONE_AM_LOW
@@ -95,7 +95,7 @@ MATRICES:
         data_field: SHARED2_AM_LOW
       - name: SR3_AM
         data_field: SHARED3_AM_LOW
-  - file_name: autoairporttrips.san_am_med.omx
+  - file_name: autoairporttrips.cbx_am_med.omx
     tables:
       - name: SOV_AM
         data_field: DRIVEALONE_AM_MED
@@ -103,7 +103,7 @@ MATRICES:
         data_field: SHARED2_AM_MED
       - name: SR3_AM
         data_field: SHARED3_AM_MED
-  - file_name: autoairporttrips.san_am_high.omx
+  - file_name: autoairporttrips.cbx_am_high.omx
     tables:
       - name: SOV_AM
         data_field: DRIVEALONE_AM_HIGH
@@ -111,7 +111,7 @@ MATRICES:
         data_field: SHARED2_AM_HIGH
       - name: SR3_AM
         data_field: SHARED3_AM_HIGH
-  - file_name: tranairporttrips.san_am.omx
+  - file_name: tranairporttrips.cbx_am.omx
     tables:
       - name: WALK_SET_set1_AM
         data_field: WALK_SET_set1_AM
@@ -155,12 +155,12 @@ MATRICES:
         data_field: TNCIN_SET_set2_AM        
       - name: TNCIN_SET_set3_AM
         data_field: TNCIN_SET_set3_AM        
-  - file_name: nmotairporttrips.san_am.omx
+  - file_name: nmotairporttrips.cbx_am.omx
     tables:
       - name: WALK_AM
         data_field: WALK_AM
 
-  - file_name: autoairporttrips.san_md_low.omx
+  - file_name: autoairporttrips.cbx_md_low.omx
     tables:
       - name: SOV_MD
         data_field: DRIVEALONE_MD_LOW
@@ -168,7 +168,7 @@ MATRICES:
         data_field: SHARED2_MD_LOW
       - name: SR3_MD
         data_field: SHARED3_MD_LOW
-  - file_name: autoairporttrips.san_md_med.omx
+  - file_name: autoairporttrips.cbx_md_med.omx
     tables:
       - name: SOV_MD
         data_field: DRIVEALONE_MD_MED
@@ -176,7 +176,7 @@ MATRICES:
         data_field: SHARED2_MD_MED
       - name: SR3_MD
         data_field: SHARED3_MD_MED
-  - file_name: autoairporttrips.san_md_high.omx
+  - file_name: autoairporttrips.cbx_md_high.omx
     tables:
       - name: SOV_MD
         data_field: DRIVEALONE_MD_HIGH
@@ -184,7 +184,7 @@ MATRICES:
         data_field: SHARED2_MD_HIGH
       - name: SR3_MD
         data_field: SHARED3_MD_HIGH
-  - file_name: tranairporttrips.san_md.omx
+  - file_name: tranairporttrips.cbx_md.omx
     tables:
       - name: WALK_SET_set1_MD
         data_field: WALK_SET_set1_MD
@@ -228,12 +228,12 @@ MATRICES:
         data_field: TNCIN_SET_set2_MD        
       - name: TNCIN_SET_set3_MD
         data_field: TNCIN_SET_set3_MD      
-  - file_name: nmotairporttrips.san_md.omx
+  - file_name: nmotairporttrips.cbx_md.omx
     tables:
       - name: WALK_MD
         data_field: WALK_MD
 
-  - file_name: autoairporttrips.san_pm_low.omx
+  - file_name: autoairporttrips.cbx_pm_low.omx
     tables:
       - name: SOV_PM
         data_field: DRIVEALONE_PM_LOW
@@ -241,7 +241,7 @@ MATRICES:
         data_field: SHARED2_PM_LOW
       - name: SR3_PM
         data_field: SHARED3_PM_LOW
-  - file_name: autoairporttrips.san_pm_med.omx
+  - file_name: autoairporttrips.cbx_pm_med.omx
     tables:
       - name: SOV_PM
         data_field: DRIVEALONE_PM_MED
@@ -249,7 +249,7 @@ MATRICES:
         data_field: SHARED2_PM_MED
       - name: SR3_PM
         data_field: SHARED3_PM_MED
-  - file_name: autoairporttrips.san_pm_high.omx
+  - file_name: autoairporttrips.cbx_pm_high.omx
     tables:
       - name: SOV_PM
         data_field: DRIVEALONE_PM_HIGH
@@ -257,7 +257,7 @@ MATRICES:
         data_field: SHARED2_PM_HIGH
       - name: SR3_PM
         data_field: SHARED3_PM_HIGH
-  - file_name: tranairporttrips.san_pm.omx
+  - file_name: tranairporttrips.cbx_pm.omx
     tables:
       - name: WALK_SET_set1_PM
         data_field: WALK_SET_set1_PM
@@ -301,13 +301,13 @@ MATRICES:
         data_field: TNCIN_SET_set2_PM        
       - name: TNCIN_SET_set3_PM
         data_field: TNCIN_SET_set3_PM        
-  - file_name: nmotairporttrips.san_pm.omx
+  - file_name: nmotairporttrips.cbx_pm.omx
     tables:
       - name: WALK_PM
         data_field: WALK_PM
 
 
-  - file_name: autoairporttrips.san_ev_low.omx
+  - file_name: autoairporttrips.cbx_ev_low.omx
     tables:
       - name: SOV_EV
         data_field: DRIVEALONE_EV_LOW
@@ -315,7 +315,7 @@ MATRICES:
         data_field: SHARED2_EV_LOW
       - name: SR3_EV
         data_field: SHARED3_EV_LOW
-  - file_name: autoairporttrips.san_ev_med.omx
+  - file_name: autoairporttrips.cbx_ev_med.omx
     tables:
       - name: SOV_EV
         data_field: DRIVEALONE_EV_MED
@@ -323,7 +323,7 @@ MATRICES:
         data_field: SHARED2_EV_MED
       - name: SR3_EV
         data_field: SHARED3_EV_MED
-  - file_name: autoairporttrips.san_ev_high.omx
+  - file_name: autoairporttrips.cbx_ev_high.omx
     tables:
       - name: SOV_EV
         data_field: DRIVEALONE_EV_HIGH
@@ -331,7 +331,7 @@ MATRICES:
         data_field: SHARED2_EV_HIGH
       - name: SR3_EV
         data_field: SHARED3_EV_HIGH
-  - file_name: tranairporttrips.san_ev.omx
+  - file_name: tranairporttrips.cbx_ev.omx
     tables:
       - name: WALK_SET_set1_EV
         data_field: WALK_SET_set1_EV
@@ -375,7 +375,7 @@ MATRICES:
         data_field: TNCIN_SET_set2_EV        
       - name: TNCIN_SET_set3_EV
         data_field: TNCIN_SET_set3_EV       
-  - file_name: nmotairporttrips.san_ev.omx
+  - file_name: nmotairporttrips.cbx_ev.omx
     tables:
       - name: WALK_EV
         data_field: WALK_EV

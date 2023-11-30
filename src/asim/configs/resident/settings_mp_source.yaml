@@ -3,7 +3,7 @@ inherit_settings: settings.yaml
 multiprocess: True
 households_sample_size: %sample_size%
 num_processes: 40
-trace_hh_id: 
+trace_hh_id:
 chunk_training_mode: disabled
 # chunk_size: 240_000_000_000
 
@@ -15,7 +15,7 @@ memory_profile: False
 # (Shadow pricing requires fail_fast setting in multiprocessing mode)
 fail_fast: True
 
-resume_after:
+resume_after: 
 
 models:
   ### mp_init_proto_pop (single process)
