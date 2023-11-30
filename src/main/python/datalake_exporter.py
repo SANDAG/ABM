@@ -52,11 +52,12 @@ def get_model_metadata(model, output_path):
             metadata = yaml.safe_load(stream)
     except FileNotFoundError:
         return {
-            "asim_branch_name": ["None"],
-            "asim_commit_hash": ["None"],
-            "abm_branch_name": ["None"],
-            "abm_commit_hash": ["None"],
-            "prefix": ["final_"]
+            "asim_branch_name": "None",
+            "asim_commit_hash": "None",
+            "abm_branch_name": "None",
+            "abm_commit_hash": "None",
+            "prefix": "final_",
+            "constants": {}
         }
     return metadata
 
