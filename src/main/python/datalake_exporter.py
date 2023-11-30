@@ -4,6 +4,7 @@ import os
 import socket
 import yaml
 import glob
+import git
 
 import pandas as pd
 
@@ -35,33 +36,103 @@ def connect_to_Azure():
             token likely malconfigured"""
         print(error_statement,"\n", file=sys.stderr)
         return False, None
+
+def find_git_folder(code_folder, path_level):
+    """
+    Returns the path to the .git folder
+
+    Parameters
+    ----------
+    code folder: str
+    path_level: str
+
+    Returns
+    -------
+    git_dir: str
+        The path to the .git folder.
+    """
+
+    git_dir = os.path.abspath(os.path.join(code_folder, path_level))
+    git_folder = os.path.join(git_dir, ".git")
+    return git_folder
+
+
+def get_commit_info(repo_path):
+    """
+    Returns a dictionary containing the short commit hash and branch name of the Git repository
+    at the specified path.
+
+    Parameters
+    ----------
+    repo_path (str): The path to the Git repository.
+
+    Returns
+    -------
+    dict: A dictionary with the following keys:
+            - short_commit_hash (str): The first 7 characters of the current commit hash.
+            - branch_name (str): The name of the current active branch.
+            If the repository path is not a Git repository, both values will be empty strings.
+    """
+
+    commit_hash = ""
+    branch_name = ""
+
+    if os.path.isdir(repo_path):
+        try:
+            repo = git.Repo(repo_path)
+            if repo.head.is_valid():
+                commit_hash = repo.head.commit.hexsha[:7]
+                if not repo.head.is_detached:
+                    branch_name = repo.active_branch.name
+            else:
+                branch_name = repo.active_branch.name
+                branch_file = open(repo_path + "\\refs\\heads\\" + branch_name, "r")
+                commit_hash = branch_file.read()[:7]
+                # commit_hash = branch_file.read(7)
+                branch_file.close()
+        except (git.InvalidGitRepositoryError, AttributeError, FileNotFoundError):
+            pass
+
+    return {"short_commit_hash": commit_hash, "branch_name": branch_name}
     
 def get_scenario_metadata(output_path):
     """
     get scenario's guid (globally unique identifier) and other metadata
     """
+    metadata = {
+        "main_directory" : ""
+        ,"scenario_title" : ""
+        ,"scenario_year": None
+        ,"select_link" : None
+        ,"username" : ""
+        ,"sample_rate" : ""
+    }
     datalake_metadata_path = os.path.join(output_path, "datalake_metadata.yaml")
-    with open(datalake_metadata_path, "r") as stream:
-        metadata = yaml.safe_load(stream)
+    try:
+        with open(datalake_metadata_path, "r") as stream:
+            metadata.update(yaml.safe_load(stream))
+    except FileNotFoundError:
+        pass
     return metadata
 
 def get_model_metadata(model, output_path):
+    metadata = {
+        "asim_branch_name": "",
+        "asim_commit_hash": "",
+        "abm_branch_name": "",
+        "abm_commit_hash": "",
+        "constants": {},
+        "prefix": "final_"
+    }
     model_metadata_path = os.path.join(output_path, model, "model_metadata.yaml")
     try:
         with open(model_metadata_path, "r") as stream:
-            metadata = yaml.safe_load(stream)
+            metadata.update(yaml.safe_load(stream))
     except FileNotFoundError:
-        return {
-            "asim_branch_name": "None",
-            "asim_commit_hash": "None",
-            "abm_branch_name": "None",
-            "abm_commit_hash": "None",
-            "prefix": "final_",
-            "constants": {}
-        }
+        pass
     return metadata
 
-def create_metadata_df(model, ts, EMME_metadata, model_metadata, parent_dir_name):
+def create_scenario_df(ts, EMME_metadata, parent_dir_name):
     """
     create a metadata dataframe containing the git commit, branch, model run timestamp, guid,
     and input data dir.
@@ -84,16 +155,17 @@ def create_metadata_df(model, ts, EMME_metadata, model_metadata, parent_dir_name
 
     machine_name = socket.gethostname()
 
+    # repo branch name and commit hash: abm3
+    abm_git_folder = find_git_folder(EMME_metadata["main_directory"], "src/asim")
+    abm_commit_info = get_commit_info(abm_git_folder)
+
     metadata = { 
         "scenario_name": [EMME_metadata["scenario_title"]],
         "scenario_yr": [EMME_metadata["scenario_year"]],
         "login_name": [EMME_metadata["username"]],
         "machine_name": [machine_name],
-        "model": [model],
-        "asim_branch_name": [model_metadata["asim_branch_name"]],
-        "asim_commit_hash": [model_metadata["asim_commit_hash"]],
-        "abm_branch_name": [model_metadata["abm_branch_name"]],
-        "abm_commit_hash": [model_metadata["abm_commit_hash"]],
+        "abm_branch_name": [abm_commit_info["branch_name"]],
+        "abm_commit_hash": [abm_commit_info["short_commit_hash"]],
         "scenario_guid": [EMME_metadata["scenario_guid"]],
         "main_directory" : [EMME_metadata["main_directory"]],
         "datalake_path" : ["/".join(["bronze/abm3dev/abm_15_0_0",parent_dir_name])],
@@ -108,9 +180,25 @@ def create_metadata_df(model, ts, EMME_metadata, model_metadata, parent_dir_name
 
     return meta_df
 
+def create_model_metadata_df(model, model_metadata):
+    metadata = {
+        "model": [model],
+        "asim_branch_name": [model_metadata["asim_branch_name"]],
+        "asim_commit_hash": [model_metadata["asim_commit_hash"]],
+        "abm_branch_name": [model_metadata["abm_branch_name"]],
+        "abm_commit_hash": [model_metadata["abm_commit_hash"]]
+    }
+
+    meta_df = pd.DataFrame(metadata)
+
+    return meta_df
+
 def export_data(table, name, model, timestamp_str, parent_dir_name, container):
     model_output_file = "__".join([name, timestamp_str])+".parquet"
-    lake_file_name = "/".join(["abm_15_0_0",parent_dir_name,model,model_output_file])
+    if model == '':
+        lake_file_name = "/".join(["abm_15_0_0",parent_dir_name,model_output_file])
+    else:
+        lake_file_name = "/".join(["abm_15_0_0",parent_dir_name,model,model_output_file])
 
     parquet_file = BytesIO()
     table.to_parquet(parquet_file, engine="pyarrow")
@@ -132,18 +220,21 @@ def write_to_datalake(output_path, models):
     EMME_metadata = get_scenario_metadata(output_path)
     parent_dir_name = str(EMME_metadata["scenario_title"]) + "__" + str(EMME_metadata["username"]) + "__" + str(EMME_metadata["scenario_guid"][:5])
 
-    for model, is_asim in models:
+    scenario_df = create_scenario_df(now, EMME_metadata, parent_dir_name)
+    export_data(scenario_df, 'scenario', '', timestamp_str, parent_dir_name, container)
+
+    for model, relpath, is_asim in models:
         if is_asim:
             model_metadata = get_model_metadata(model, output_path)
             prefix = model_metadata["prefix"]
-            metadata_df = create_metadata_df(model, now, model_metadata, parent_dir_name)
-            export_data(metadata_df, 'scenario', model, timestamp_str, parent_dir_name, container)
+            model_metadata_df = create_model_metadata_df(model, model_metadata)
+            export_data(model_metadata_df, 'model_metadata', model, timestamp_str, parent_dir_name, container)
             constants_df = pd.json_normalize(model_metadata["constants"])
             export_data(constants_df, 'constants', model, timestamp_str, parent_dir_name, container)
-
         else:
             prefix = ""
-        files = glob.glob(os.path.join(output_path, model, prefix + '*.csv'))
+        
+        files = glob.glob(os.path.join(output_path, relpath, model, prefix + '*.csv'))
         for file in files:
             name = os.path.splitext(os.path.basename(file))[0]
             if prefix != '':
@@ -158,18 +249,21 @@ def write_to_datalake(output_path, models):
 
             export_data(table, name, model, timestamp_str, parent_dir_name, container)
     
-    with open(EMME_metadata["properties_path"], "rb") as properties:
-        lake_file_name = "/".join(["abm_15_0_0",parent_dir_name,os.path.basename(EMME_metadata["properties_path"])])
-        container.upload_blob(name=lake_file_name, data=properties)
+    try:
+        with open(EMME_metadata["properties_path"], "rb") as properties:
+            lake_file_name = "/".join(["abm_15_0_0",parent_dir_name,os.path.basename(EMME_metadata["properties_path"])])
+            container.upload_blob(name=lake_file_name, data=properties)
+    except (FileNotFoundError, KeyError):
+        pass
         
 
 output_path = sys.argv[1]
 models = [
-    ('resident', True),
-    ('airport.CBX', True),
-    ('airport.SAN', True),
-    ('crossborder', True),
-    ('visitor', True),
-    ('report', False)
+    ('resident', '', True),
+    ('airport.CBX', '', True),
+    ('airport.SAN', '', True),
+    ('crossborder', '', True),
+    ('visitor', '', True),
+    ('report', '..', False)
 ]
 write_to_datalake(output_path, models)
