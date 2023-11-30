@@ -60,7 +60,7 @@ def get_model_metadata(model, output_path):
         }
     return metadata
 
-def create_metadata_df(model, ts, EMME_metadata, model_metadata):
+def create_metadata_df(model, ts, EMME_metadata, model_metadata, parent_dir_name):
     """
     create a metadata dataframe containing the git commit, branch, model run timestamp, guid,
     and input data dir.
@@ -95,7 +95,9 @@ def create_metadata_df(model, ts, EMME_metadata, model_metadata):
         "abm_commit_hash": [model_metadata["abm_commit_hash"]],
         "scenario_guid": [EMME_metadata["scenario_guid"]],
         "main_directory" : [EMME_metadata["main_directory"]],
-        "select_link" : [EMME_metadata["select_link"]]
+        "datalake_path" : ["/".join(["bronze/abm3dev/abm_15_0_0",parent_dir_name])],
+        "select_link" : [EMME_metadata["select_link"]],
+        "sample_rate" : [EMME_metadata["sample_rate"]]
     }
 
     meta_df = pd.DataFrame(metadata)
@@ -105,8 +107,7 @@ def create_metadata_df(model, ts, EMME_metadata, model_metadata):
 
     return meta_df
 
-def export_data(table, name, model, EMME_metadata, timestamp_str, container):
-    parent_dir_name = str(EMME_metadata["scenario_title"]) + "__" + str(EMME_metadata["username"]) + "__" + str(EMME_metadata["scenario_guid"][:5])
+def export_data(table, name, model, timestamp_str, parent_dir_name, container):
     model_output_file = "__".join([name, timestamp_str])+".parquet"
     lake_file_name = "/".join(["abm_15_0_0",parent_dir_name,model,model_output_file])
 
@@ -128,13 +129,17 @@ def write_to_datalake(output_path, models):
     now = datetime.datetime.now()
     timestamp_str = now.strftime("%Y%m%d_%H%M%S")
     EMME_metadata = get_scenario_metadata(output_path)
+    parent_dir_name = str(EMME_metadata["scenario_title"]) + "__" + str(EMME_metadata["username"]) + "__" + str(EMME_metadata["scenario_guid"][:5])
 
     for model, is_asim in models:
         if is_asim:
             model_metadata = get_model_metadata(model, output_path)
             prefix = model_metadata["prefix"]
-            metadata_df = create_metadata_df(model, now, EMME_metadata, model_metadata)
-            export_data(metadata_df, 'scenario', model, EMME_metadata, timestamp_str, container)
+            metadata_df = create_metadata_df(model, now, model_metadata, parent_dir_name)
+            export_data(metadata_df, 'scenario', model, timestamp_str, parent_dir_name, container)
+            constants_df = pd.json_normalize(model_metadata["constants"])
+            export_data(constants_df, 'constants', model, timestamp_str, parent_dir_name, container)
+
         else:
             prefix = ""
         files = glob.glob(os.path.join(output_path, model, prefix + '*.csv'))
@@ -150,7 +155,11 @@ def write_to_datalake(output_path, models):
                 table["model"] = model
             table.replace("", None, inplace=True) # replace empty strings with None - otherwise conversation error for boolean types
 
-            export_data(table, name, model, EMME_metadata, timestamp_str, container)
+            export_data(table, name, model, timestamp_str, parent_dir_name, container)
+    
+    with open(EMME_metadata["properties_path"], "rb") as properties:
+        lake_file_name = "/".join(["abm_15_0_0",parent_dir_name,os.path.basename(EMME_metadata["properties_path"])])
+        container.upload_blob(name=lake_file_name, data=properties)
         
 
 output_path = sys.argv[1]

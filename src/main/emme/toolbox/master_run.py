@@ -338,6 +338,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         skipFinalTransitAssignment = props["RunModel.skipFinalTransitAssignment"]
         skipVisualizer = props["RunModel.skipVisualizer"]
         skipDataExport = props["RunModel.skipDataExport"]
+        skipDatalake = props["RunModel.skipDatalake"]
         skipDataLoadRequest = props["RunModel.skipDataLoadRequest"]
         skipDeleteIntermediateFiles = props["RunModel.skipDeleteIntermediateFiles"]
         # skipTransitShed = props["RunModel.skipTransitShed"]
@@ -757,8 +758,9 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             # for agg_model in ['eetrip', 'eitrip', 'trucktrip']:#TODO ['commercialVehicleTrips','internalExternalTrips']:
             #     aggregate_models[agg_model] = str(os.path.join(self._path,'report',agg_model+'.csv'))
             # gen_utils.DataLakeExporter(ScenarioPath=self._path).write_to_datalake(aggregate_models)
-
-            self.write_metadata(main_directory, scenario_title, select_link, username, scenarioYear, end_iteration)
+        
+        if not skipDatalake:
+            self.write_metadata(main_directory, scenario_title, select_link, username, scenarioYear, sample_rate)
             self.run_proc(
                 "write_to_datalake.cmd",
                 [drive, drive + path_forward_slash],
@@ -1405,7 +1407,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         else:
             return "The data load request was not successfully made, please double check the [data_load].[load_request] table to confirm."
 
-    def write_metadata(self, main_directory, scenario_title, select_link, username, scenarioYear, end_iteration):
+    def write_metadata(self, main_directory, scenario_title, select_link, username, scenarioYear, sample_rate):
         '''Write YAML file containing scenario guid and other scenario info to output folder for writing to datalake'''
         datalake_metadata_dict = {
             "main_directory" : main_directory.encode('utf-8')
@@ -1415,6 +1417,8 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             ,"scenario_year": scenarioYear
             ,"select_link" : select_link.encode('utf-8')
             ,"username" : username.encode('utf-8')
+            ,"properties_path" : self.properties_path
+            ,"sample_rate" : ",".join(sample_rate)
         }
         datalake_metadata_path = os.path.join(main_directory,'output','datalake_metadata.yaml')
         with open(datalake_metadata_path, 'w') as file:

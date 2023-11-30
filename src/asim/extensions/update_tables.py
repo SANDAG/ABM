@@ -1,22 +1,14 @@
 # ActivitySim
 # See full license in LICENSE.txt.
-import datetime
 import git
 import logging
 import os
-import socket
-import uuid
 import yaml
 
 import numpy as np
-import pandas as pd
 
 from activitysim.core import config, inject, pipeline, tracing
 from activitysim.core.config import setting
-from azure.storage.blob import ContainerClient
-from azure.core.exceptions import ServiceRequestError
-from io import BytesIO
-from io import StringIO
 
 # from io import StringIO
 
@@ -100,12 +92,16 @@ def write_metadata(prefix):
             abm_path_level += "/.."
     abm_commit_info = get_commit_info(abm_git_folder)
 
+    trip_settings = config.read_model_settings("write_trip_matrices.yaml")
+    constants = trip_settings.get("CONSTANTS")
+
     model_metadata_dict = {
-        "asim_branch_name": [asim_commit_info["branch_name"]],
-        "asim_commit_hash": [asim_commit_info["short_commit_hash"]],
-        "abm_branch_name": [abm_commit_info["branch_name"]],
-        "abm_commit_hash": [abm_commit_info["short_commit_hash"]],
-        "prefix": [prefix]
+        "asim_branch_name": asim_commit_info["branch_name"],
+        "asim_commit_hash": asim_commit_info["short_commit_hash"],
+        "abm_branch_name": abm_commit_info["branch_name"],
+        "abm_commit_hash": abm_commit_info["short_commit_hash"],
+        "constants": constants,
+        "prefix": prefix
     }
     output_dir = inject.get_injectable("output_dir")
     model_metadata_path = os.path.join(output_dir,'model_metadata.yaml')
