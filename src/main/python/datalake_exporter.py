@@ -99,20 +99,9 @@ def get_scenario_metadata(output_path):
     """
     get scenario's guid (globally unique identifier) and other metadata
     """
-    metadata = {
-        "main_directory" : ""
-        ,"scenario_title" : ""
-        ,"scenario_year": None
-        ,"select_link" : None
-        ,"username" : ""
-        ,"sample_rate" : ""
-    }
     datalake_metadata_path = os.path.join(output_path, "datalake_metadata.yaml")
-    try:
-        with open(datalake_metadata_path, "r") as stream:
-            metadata.update(yaml.safe_load(stream))
-    except FileNotFoundError:
-        pass
+    with open(datalake_metadata_path, "r") as stream:
+        metadata = yaml.safe_load(stream)
     return metadata
 
 def get_model_metadata(model, output_path):
@@ -127,7 +116,8 @@ def get_model_metadata(model, output_path):
     model_metadata_path = os.path.join(output_path, model, "model_metadata.yaml")
     try:
         with open(model_metadata_path, "r") as stream:
-            metadata.update(yaml.safe_load(stream))
+            new_metadata = yaml.safe_load(stream)
+            metadata.update(new_metadata)
     except FileNotFoundError:
         pass
     return metadata
@@ -239,7 +229,7 @@ def write_to_datalake(output_path, models):
             name = os.path.splitext(os.path.basename(file))[0]
             if prefix != '':
                 name = name.split(prefix)[1]
-            table = pd.read_csv(file)
+            table = pd.read_csv(file, low_memory=False)
 
             table["scenario_ts"] = pd.to_datetime(now)
             table["scenario_guid"] = EMME_metadata["scenario_guid"]

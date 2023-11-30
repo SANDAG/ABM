@@ -1418,11 +1418,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             ,"select_link" : select_link.encode('utf-8')
             ,"username" : username.encode('utf-8')
             ,"properties_path" : self.properties_path
-            ,"sample_rate" : ",".join(sample_rate)
+            ,"sample_rate" : ",".join(map(str, sample_rate))
         }
         datalake_metadata_path = os.path.join(main_directory,'output','datalake_metadata.yaml')
         with open(datalake_metadata_path, 'w') as file:
-            yaml.dump(datalake_metadata_dict, file, default_flow_style=False)
+            yaml.safe_dump(datalake_metadata_dict, file, default_flow_style=False)
         _m.logbook_write("Created new scenario_guid: %s" % (datalake_metadata_dict['scenario_guid']))
 
 
