@@ -220,7 +220,7 @@ class PropertiesSetter(object):
             ("skipFinalTransitAssignment",  "Skip final transit assignments"),
             ("skipVisualizer",              "Skip running visualizer"),
             ("skipDataExport",              "Skip data export"),
-            ("skipDatalake",                "Skip write to datalake")
+            ("skipDatalake",                "Skip write to datalake"),
             ("skipDataLoadRequest",         "Skip data load request"),
             ("skipDeleteIntermediateFiles", "Skip delete intermediate files"),
         ]
