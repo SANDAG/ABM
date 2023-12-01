@@ -11,8 +11,9 @@ Description,Target,Expression
 ,vot3,trips.vot3
 ,distance,od_skims['DIST']
 ,costOperatingDrive,"np.where(trips.trip_mode.isin(['DRIVEALONE', 'SHARED2', 'SHARED3']), costPerMile * distance/100, np.NaN)"
-,weightTrip,"np.where(trips.trip_num ==2, 0, 1)"
-,weightPersonTrip,"np.where(trips.trip_num ==2, 0, party)"
+,add_driver," (trips.trip_mode.isin(['RIDEHAIL_LOC1','RIDEHAIL_LOC2','TAXI_LOC1','TAXI_LOC2','PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5', 'HOTEL_COURTESY', 'SHUTTLEVAN'])  & ( tour_participants == 1) & (trips['trip_num'] ==1)) | (trips.trip_mode.isin(['RIDEHAIL_LOC1','RIDEHAIL_LOC2','TAXI_LOC1','TAXI_LOC2','PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5', 'HOTEL_COURTESY', 'SHUTTLEVAN'])  & (tour_participants >=2) & (trips.trip_num == 1))"
+,weightTrip,1
+,weightPersonTrip,"np.where(add_driver, tour_participants + 1, tour_participants )"
 # code time periods,,
 ,is_ea,"trips.depart.between(time_periods['EA']['first_hour'], time_periods['EA']['last_hour'])"
 ,is_am,"trips.depart.between(time_periods['AM']['first_hour'], time_periods['AM']['last_hour'])"
@@ -400,7 +401,3 @@ Description,Target,Expression
 #bikeskim,,
 ,timeBike,"od_skims['BIKE_TIME'] * np.where(trip_mode == 'BIKE',1,0)"
 ,timeWalk,"od_skims['walkTime'] * np.where(trip_mode == 'WALK',1,0)"
-
-# totals
-,cost_total, "costOperatingDrive + costTollDrive + costFareTransit"
-,time_total, "timeDrive + timeBike + timeWalk + timeTransitInitialWait + timeTransitInVehicle + transfersTransit"
