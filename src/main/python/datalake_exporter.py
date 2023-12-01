@@ -184,7 +184,7 @@ def create_model_metadata_df(model, model_metadata):
     return meta_df
 
 def export_data(table, name, model, timestamp_str, parent_dir_name, container):
-    model_output_file = "__".join([name, timestamp_str])+".parquet"
+    model_output_file = name+".parquet"
     if model == '':
         lake_file_name = "/".join(["abm_15_0_0",parent_dir_name,model_output_file])
     else:
