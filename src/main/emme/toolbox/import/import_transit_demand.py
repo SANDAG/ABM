@@ -52,6 +52,7 @@ TOOLBOX_ORDER = 14
 
 
 import inro.modeller as _m
+import inro.emme.database.emmebank as _eb
 import inro.emme.matrix as _matrix
 import traceback as _traceback
 import os
@@ -107,8 +108,15 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
     def run(self):
         self.tool_run_msg = ""
         try:
-            scenario = _m.Modeller().scenario
-            self(self.output_dir, scenario)
+            base_scenario = _m.Modeller().scenario
+            transit_scenario_dict = {}
+            transit_emmebank_dict = {}
+            periods = ["EA", "AM", "MD", "PM", "EV"]
+            project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
+            for period in periods:
+                transit_emmebank_dict[period] = _eb.Emmebank(os.path.join(project_dir, "Database_transit_" + period, "emmebank"))
+                transit_scenario_dict[period] = transit_emmebank_dict[period].scenario(base_scenario.number)
+            self(self.output_dir, transit_scenario_dict)
             run_msg = "Tool completed"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg, escape=False)
         except Exception as error:

@@ -68,7 +68,6 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
 
     output_dir = _m.Attribute(str)
     base_scenario_id = _m.Attribute(int)
-    transit_scenario_id = _m.Attribute(int)
 
     tool_run_msg = ""
 
@@ -76,9 +75,8 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
         project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
         self.output_dir = os.path.join(os.path.dirname(project_dir), "output")
         self.base_scenario_id = 100
-        self.transit_scenario_id = 100
         self.periods = ["EA", "AM", "MD", "PM", "EV"]
-        self.attributes = ["main_directory", "base_scenario_id", "transit_scenario_id"]
+        self.attributes = ["main_directory", "base_scenario_id"]
 
     def page(self):
         pb = _m.ToolPageBuilder(self)
@@ -94,7 +92,6 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
                            title='Select output directory')
 
         pb.add_text_box('base_scenario_id', title="Base scenario ID:", size=10)
-        pb.add_text_box('transit_scenario_id', title="Transit scenario ID:", size=10)
         return pb.render()
 
     def run(self):
@@ -102,11 +99,9 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
         try:
             project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
             base_emmebank = _eb.Emmebank(os.path.join(project_dir, "Database", "emmebank"))
-            transit_emmebank = _eb.Emmebank(os.path.join(project_dir, "Database_transit", "emmebank"))
             base_scenario = base_emmebank.scenario(self.base_scenario_id)
-            transit_scenario = transit_emmebank.scenario(self.transit_scenario_id)
             
-            results = self(self.output_dir, base_scenario, transit_scenario)
+            results = self(self.output_dir, base_scenario)
             run_msg = "Export completed"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg)
         except Exception as error:
@@ -115,17 +110,15 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
             raise
             
     @_m.logbook_trace("Export matrices for Data Loader", save_arguments=True)
-    def __call__(self, output_dir, base_scenario, transit_scenario):
+    def __call__(self, output_dir, base_scenario):
         attrs = {
             "output_dir": output_dir,
             "base_scenario_id": base_scenario.id,
-            "transit_scenario_id": transit_scenario.id,
             "self": str(self)
         }
         gen_utils.log_snapshot("Export Matrices for Data Loader", str(self), attrs)
         self.output_dir = output_dir
         self.base_scenario = base_scenario
-        self.transit_scenario = transit_scenario
 
         self.truck_demand()
         self.external_demand()
