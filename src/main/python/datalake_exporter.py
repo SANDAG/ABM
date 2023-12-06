@@ -156,6 +156,7 @@ def create_scenario_df(ts, EMME_metadata, parent_dir_name):
         "machine_name": [machine_name],
         "abm_branch_name": [abm_commit_info["branch_name"]],
         "abm_commit_hash": [abm_commit_info["short_commit_hash"]],
+        "scenario_id": [EMME_metadata["scenario_id"]],
         "scenario_guid": [EMME_metadata["scenario_guid"]],
         "main_directory" : [EMME_metadata["main_directory"]],
         "datalake_path" : ["/".join(["bronze/abm3dev/abm_15_0_0",parent_dir_name])],
@@ -208,7 +209,9 @@ def write_to_datalake(output_path, models):
     now = datetime.datetime.now()
     timestamp_str = now.strftime("%Y%m%d_%H%M%S")
     EMME_metadata = get_scenario_metadata(output_path)
-    parent_dir_name = str(EMME_metadata["scenario_title"]) + "__" + str(EMME_metadata["username"]) + "__" + str(EMME_metadata["scenario_guid"][:5])
+    if "scenario_id" not in EMME_metadata:
+        return
+    parent_dir_name = str(EMME_metadata["scenario_title"]) + "__" + str(EMME_metadata["username"]) + "__" + str(EMME_metadata["scenario_id"])
 
     scenario_df = create_scenario_df(now, EMME_metadata, parent_dir_name)
     export_data(scenario_df, 'scenario', '', timestamp_str, parent_dir_name, container)
@@ -232,7 +235,7 @@ def write_to_datalake(output_path, models):
             table = pd.read_csv(file, low_memory=False)
 
             table["scenario_ts"] = pd.to_datetime(now)
-            table["scenario_guid"] = EMME_metadata["scenario_guid"]
+            table["scenario_id"] = EMME_metadata["scenario_id"]
             if is_asim:
                 table["model"] = model
             table.replace("", None, inplace=True) # replace empty strings with None - otherwise conversation error for boolean types

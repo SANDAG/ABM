@@ -1407,6 +1407,39 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         else:
             return "The data load request was not successfully made, please double check the [data_load].[load_request] table to confirm."
 
+    def get_scenario_id(self, scenario_guid, scenario_name):
+        path = _join(self._path, "bin", "GetScenarioId.bat")
+        err_file_ref, err_file_path = _tempfile.mkstemp(suffix='.log')
+        err_file = os.fdopen(err_file_ref, "w")
+        try:
+            output = _subprocess.check_output(" ".join([path, '"' + scenario_guid + '"', '"' + scenario_name + '"']), stderr=err_file, cwd=self._path, shell=True)
+            scenario_id = int(output.splitlines()[4])
+            _m.logbook_write("Got new scenario_id: %s" % (scenario_id))
+            err_file.close()
+            return True, scenario_id
+        except Exception as e:
+            report = _m.PageBuilder(title="Error getting new scenario_id")
+            self.add_html(report, 'Error:<br><br><div class="preformat">%s</div>' % e)
+            err_file.close()
+            with open(err_file_path, 'r') as f:
+                error_msg = f.read()
+            os.remove(err_file_path)
+            if error_msg:
+                self.add_html(report, 'Error message(s):<br><br><div class="preformat">%s</div>' % error_msg)
+            try:
+                # No raise on writing report error
+                # due to observed issue with runs generating reports which cause
+                # errors when logged
+                _m.logbook_write("Error getting new scenario_id", report.render())
+            except Exception as error:
+                print(_time.strftime("%Y-%M-%d %H:%m:%S"))
+                print("Error writing scenario_id report to logbook")
+                print(error)
+                print(_traceback.format_exc(error))
+                if self._log_level == "DISABLE_ON_ERROR":
+                    _m.logbook_level(_m.LogbookLevel.NONE)
+            return False, -1
+
     def write_metadata(self, main_directory, scenario_title, select_link, username, scenarioYear, sample_rate):
         '''Write YAML file containing scenario guid and other scenario info to output folder for writing to datalake'''
         datalake_metadata_dict = {
@@ -1420,10 +1453,13 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             ,"properties_path" : self.properties_path
             ,"sample_rate" : ",".join(map(str, sample_rate))
         }
+        _m.logbook_write("Created new scenario_guid: %s" % (datalake_metadata_dict['scenario_guid']))
+        got_id, scenario_id = self.get_scenario_id(datalake_metadata_dict['scenario_guid'], scenario_title)
+        if got_id:
+            datalake_metadata_dict['scenario_id'] = scenario_id
         datalake_metadata_path = os.path.join(main_directory,'output','datalake_metadata.yaml')
         with open(datalake_metadata_path, 'w') as file:
             yaml.safe_dump(datalake_metadata_dict, file, default_flow_style=False)
-        _m.logbook_write("Created new scenario_guid: %s" % (datalake_metadata_dict['scenario_guid']))
 
 
     # def update_metadata_iteration(self, main_directory, msa_iteration):
