@@ -4,7 +4,6 @@ import os
 import socket
 import yaml
 import glob
-import git
 
 import pandas as pd
 
@@ -36,64 +35,6 @@ def connect_to_Azure():
             token likely malconfigured"""
         print(error_statement,"\n", file=sys.stderr)
         return False, None
-
-def find_git_folder(code_folder, path_level):
-    """
-    Returns the path to the .git folder
-
-    Parameters
-    ----------
-    code folder: str
-    path_level: str
-
-    Returns
-    -------
-    git_dir: str
-        The path to the .git folder.
-    """
-
-    git_dir = os.path.abspath(os.path.join(code_folder, path_level))
-    git_folder = os.path.join(git_dir, ".git")
-    return git_folder
-
-
-def get_commit_info(repo_path):
-    """
-    Returns a dictionary containing the short commit hash and branch name of the Git repository
-    at the specified path.
-
-    Parameters
-    ----------
-    repo_path (str): The path to the Git repository.
-
-    Returns
-    -------
-    dict: A dictionary with the following keys:
-            - short_commit_hash (str): The first 7 characters of the current commit hash.
-            - branch_name (str): The name of the current active branch.
-            If the repository path is not a Git repository, both values will be empty strings.
-    """
-
-    commit_hash = ""
-    branch_name = ""
-
-    if os.path.isdir(repo_path):
-        try:
-            repo = git.Repo(repo_path)
-            if repo.head.is_valid():
-                commit_hash = repo.head.commit.hexsha[:7]
-                if not repo.head.is_detached:
-                    branch_name = repo.active_branch.name
-            else:
-                branch_name = repo.active_branch.name
-                branch_file = open(repo_path + "\\refs\\heads\\" + branch_name, "r")
-                commit_hash = branch_file.read()[:7]
-                # commit_hash = branch_file.read(7)
-                branch_file.close()
-        except (git.InvalidGitRepositoryError, AttributeError, FileNotFoundError):
-            pass
-
-    return {"short_commit_hash": commit_hash, "branch_name": branch_name}
     
 def get_scenario_metadata(output_path):
     """
@@ -146,16 +87,24 @@ def create_scenario_df(ts, EMME_metadata, parent_dir_name):
     machine_name = socket.gethostname()
 
     # repo branch name and commit hash: abm3
-    abm_git_folder = find_git_folder(EMME_metadata["main_directory"], "src/asim")
-    abm_commit_info = get_commit_info(abm_git_folder)
+    abm_git_path = os.path.abspath(os.path.join(EMME_metadata["main_directory"], 'git_info.yaml'))
+    if os.path.isfile(abm_git_path):
+        with open(abm_git_path, "r") as stream:
+            abm_git_info = yaml.safe_load(stream)
+            abm_git_info["commit"] = abm_git_info["commit"][:7]
+    else:
+        abm_git_info = {
+            "branch": "",
+            "commit": ""
+        }
 
     metadata = { 
         "scenario_name": [EMME_metadata["scenario_title"]],
         "scenario_yr": [EMME_metadata["scenario_year"]],
         "login_name": [EMME_metadata["username"]],
         "machine_name": [machine_name],
-        "abm_branch_name": [abm_commit_info["branch_name"]],
-        "abm_commit_hash": [abm_commit_info["short_commit_hash"]],
+        "abm_branch_name": [abm_git_info["branch"]],
+        "abm_commit_hash": [abm_git_info["commit"]],
         "scenario_guid": [EMME_metadata["scenario_guid"]],
         "main_directory" : [EMME_metadata["main_directory"]],
         "datalake_path" : ["/".join(["bronze/abm3dev/abm_15_0_0",parent_dir_name])],
