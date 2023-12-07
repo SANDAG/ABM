@@ -34,12 +34,12 @@
 #       - TNED_HwyNodes
 #       - TNED_RailNet
 #       - TNED_RailNodes
+#       - trrt
+#       - trlink
+#       - trstop
 #       - Turns
 #    The following files are also used (in the same directory as the *.gdb)
 #    
-#    trrt.csv: header data for the transit lines
-#    trlink.csv: sequence of links (routing) of transit lines
-#    trstop.csv: stop data for the transit lines
 #    mode5tod.csv: global (per-mode) transit cost and perception attributes
 #    timexfer_<period>.csv (optional): table of timed transfer pairs of lines, by period
 #    special_fares.txt (optional): table listing special fares in terms of boarding and incremental in-vehicle costs.
@@ -149,13 +149,13 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 <li>TNED_HwyNodes</li>
                 <li>TNED_RailNet</li>
                 <li>TNED_RailNodes</li>
+                <li>trrt</li>
+                <li>trlink</li>
+                <li>trstop</li>
                 <li>Turns</li>
             </ul>
             The following files are also used (in the same directory as the *.gdb):
             <ul>
-                <li>trrt.csv</li>
-                <li>trlink.csv</li>
-                <li>trstop.csv</li>
                 <li>mode5tod.csv</li>
                 <li>timexfer_<period>.csv (optional)</li>
                 <li>special_fares.txt (optional)</li>
@@ -311,32 +311,28 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 ("INTDIST_UP",      ("@intdist_up",     "DERIVED", "EXTRA",    "Upstream major intersection distance")),
                 ("INTDIST_DOWN",    ("@intdist_down",   "DERIVED", "EXTRA",    "Downstream major intersection distance")),
 
-                ("TMO",       ("@trtime",               "RAIL_TWO_WAY", "EXTRA", "link time in minutes")),
                 ("OSPD",      ("@speed_observed",       "RAIL_TWO_WAY", "EXTRA", "Observed speed")),
 
             ]),
             "TRANSIT_LINE": OrderedDict([
-                ("AM_Headway",     ("@headway_am",       "TRRT",     "EXTRA",    "AM Peak actual headway")),
-                ("PM_Headway",     ("@headway_pm",       "TRRT",     "EXTRA",    "PM Peak actual headway")),
-                ("Midday_Headway", ("@headway_md",       "TRRT",     "EXTRA",    "Midday actual headway")),
-                ("Evening_Headway",("@headway_ev",       "TRRT",     "EXTRA",    "Evening actual headway")),
-                ("EarlyAM_Headway",("@headway_ea",       "TRRT",     "EXTRA",    "Early AM actual headway")),
-                ("AM_Headway_rev", ("@headway_rev_am",   "DERIVED",  "EXTRA",    "AM Peak revised headway")),
-                ("PM_Headway_rev", ("@headway_rev_pm",   "DERIVED",  "EXTRA",    "PM Peak revised headway")),
-                ("MD_Headway_rev", ("@headway_rev_md",   "DERIVED",  "EXTRA",    "Midday revised headway")),
-                ("EV_Headway_rev", ("@headway_rev_ev",   "DERIVED",  "EXTRA",    "Evening revised headway")),
-                ("EA_Headway_rev", ("@headway_rev_ea",   "DERIVED",  "EXTRA",    "Early AM revised headway")),
-                ("WT_IVTPK",       ("@vehicle_per_pk",   "MODE5TOD", "EXTRA",    "Peak in-vehicle perception factor")),
-                ("WT_IVTOP",       ("@vehicle_per_op",   "MODE5TOD", "EXTRA",    "Off-Peak in-vehicle perception factor")),
-                ("WT_FAREPK",      ("@fare_per_pk",      "MODE5TOD", "EXTRA",    "Peak fare perception factor")),
-                ("WT_FAREOP",      ("@fare_per_op",      "MODE5TOD", "EXTRA",    "Off-Peak fare perception factor")),
+                ("AM_Headway",     ("@headway_am",        "TRRT",     "EXTRA",    "AM Peak actual headway")),
+                ("PM_Headway",     ("@headway_pm",        "TRRT",     "EXTRA",    "PM Peak actual headway")),
+                ("Midday_Headway",  ("@headway_md",        "TRRT",     "EXTRA",    "Midday actual headway")),
+                ("Evening_Headway", ("@headway_ev",       "TRRT",     "EXTRA",    "Evening actual headway")),
+                ("EarlyAM_Headway", ("@headway_ea",       "TRRT",     "EXTRA",    "Early AM actual headway")),
+                ("AM_Headway_rev", ("@headway_rev_am",    "DERIVED",  "EXTRA",    "AM Peak revised headway")),
+                ("PM_Headway_rev", ("@headway_rev_pm",    "DERIVED",  "EXTRA",    "PM Peak revised headway")),
+                ("WT_IVTPK",       ("@vehicle_per_pk",    "MODE5TOD", "EXTRA",    "Peak in-vehicle perception factor")),
+                ("WT_IVTOP",       ("@vehicle_per_op",    "MODE5TOD", "EXTRA",    "Off-Peak in-vehicle perception factor")),
+                ("WT_FAREPK",      ("@fare_per_pk",       "MODE5TOD", "EXTRA",    "Peak fare perception factor")),
+                ("WT_FAREOP",      ("@fare_per_op",       "MODE5TOD", "EXTRA",    "Off-Peak fare perception factor")),
                 ("DWELLTIME",      ("default_dwell_time", "MODE5TOD", "INTERNAL", "")),
-                ("Fare",           ("@fare",             "TRRT",     "EXTRA",    "Boarding fare ($)")),
-                ("@transfer_penalty",("@transfer_penalty","DERIVED", "EXTRA",    "Transfer penalty (min)")),
-                ("Route_ID",       ("@route_id",         "TRRT",     "EXTRA",    "Transit line internal ID")),
-                ("EarlyAM_Hours",  ("@hours_ea",         "TRRT",     "EXTRA",    "Early AM hours")),
-                ("Evening_Hours",  ("@hours_ev",         "TRRT",     "EXTRA",    "Evening hours")),
-                ("Config",         ("@config",           "TRRT",     "EXTRA",    "Config ID (same as route name)")),
+                ("Fare",           ("@fare",              "TRRT",     "EXTRA",    "Boarding fare ($)")),
+                ("@transfer_penalty",("@transfer_penalty","DERIVED",  "EXTRA",    "Transfer penalty (min)")),
+                ("Route_ID",       ("@route_id",          "TRRT",     "EXTRA",    "Transit line internal ID")),
+                ("EarlyAM_Hours",  ("@hours_ea",        "TRRT",     "EXTRA",    "Early AM hours")),
+                ("Evening_Hours",  ("@hours_ev",        "TRRT",     "EXTRA",    "Evening hours")),
+                ("Config",         ("@config",          "TRRT",     "EXTRA",    "Config ID (same as route name)")),
             ]),
             "TRANSIT_SEGMENT": OrderedDict([
                 ("Stop_ID",       ("@stop_id",       "TRSTOP", "EXTRA", "Stop ID from trcov")),
@@ -475,18 +471,18 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         mode_table = {
             "AUTO": [("d", "dummy auto")],
             "AUX_AUTO": [
-                ("s", "SOV"),
-                ("h", "HOV2"),
+                ("h", "SOV"),
+                ("H", "HOV2"),
                 ("i", "HOV3+"),
-                ("t", "TRKL"),
-                ("m", "TRKM"),
-                ("v", "TRKH"),
-                ("S", "SOV TOLL"),
-                ("H", "HOV2 TOLL"),
-                ("I", "HOV3+ TOLL"),
-                ("T", "TRKL TOLL"),
-                ("M", "TRKM TOLL"),
-                ("V", "TRKH TOLL"),
+                ("I", "TRKL"),
+                ("s", "TRKM"),
+                ("S", "TRKH"),
+                ("v", "SOV TOLL"),
+                ("V", "HOV2 TOLL"),
+                ("m", "HOV3+ TOLL"),
+                ("M", "TRKL TOLL"),
+                ("t", "TRKM TOLL"),
+                ("T", "TRKH TOLL"),
             ],
             "TRANSIT": [
                 ("b", "BUS" ),         # (vehicle type 100, PCE=3.0)
@@ -541,20 +537,20 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         }
         modes_gp_lanes = {
             0: set([]),
-            1: set([network.mode(m_id) for m_id in "dvmtshiVMTSHI"]),  # all modes
-            2: set([network.mode(m_id) for m_id in "dmtshiMTSHI"]),    # no heavy truck
-            3: set([network.mode(m_id) for m_id in "dtshiTSHI"]),      # no heavy or medium truck
-            4: set([network.mode(m_id) for m_id in "dshiSHI"]),        # no truck
-            5: set([network.mode(m_id) for m_id in "dvV"]),            # only heavy trucks
-            6: set([network.mode(m_id) for m_id in "dvmVM"]),          # heavy and medium trucks 
-            7: set([network.mode(m_id) for m_id in "dvmtVMT"]),        # all trucks only (no passenger cars)
+            1: set([network.mode(m_id) for m_id in "dhHiIsSvVmMtT"]),  # all modes
+            2: set([network.mode(m_id) for m_id in "dhHiIsvVmMt"]),    # no heavy truck
+            3: set([network.mode(m_id) for m_id in "dhHiIvVmM"]),      # no heavy or medium truck
+            4: set([network.mode(m_id) for m_id in "dhHivVm"]),        # no truck
+            5: set([network.mode(m_id) for m_id in "dST"]),            # only heavy trucks
+            6: set([network.mode(m_id) for m_id in "dsStT"]),          # heavy and medium trucks 
+            7: set([network.mode(m_id) for m_id in "dIsSMtT"]),        # all trucks only
         }
-        non_toll_modes = set([network.mode(m_id) for m_id in "vmtshi"])
+        non_toll_modes = set([network.mode(m_id) for m_id in "hHiIsS"])
         self._auto_mode_lookup = {
             "GP": modes_gp_lanes, 
             "TOLL": dict((k, v - non_toll_modes) for k, v in modes_gp_lanes.iteritems()),
-            "HOV2": set([network.mode(m_id) for m_id in "dhiHI"]),
-            "HOV3": set([network.mode(m_id) for m_id in "diI"]),
+            "HOV2": set([network.mode(m_id) for m_id in "dHiVm"]),
+            "HOV3": set([network.mode(m_id) for m_id in "dim"]),
         }
 
     def set_auto_modes(self, network, period):
@@ -562,7 +558,6 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         # need to update the modes from the XTRUCK for their time of day
         # Note: only truck types 1, 3, 4, and 7 found in 2012 base network
         truck = "@truck_%s" % period.lower()
-        toll = "@toll_%s" % period.lower()
         lookup = self._auto_mode_lookup
         for link in network.links():
             auto_modes = set([])
@@ -574,7 +569,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 auto_modes = lookup["GP"][link[truck]]
             elif link["@hov"] in [2, 3]:
                 # managed lanes, free for HOV2 and HOV3+, tolls for SOV
-                if link[toll] > 0:
+                if link["@toll_ea"] + link["@toll_am"] + link["@toll_md"] + link["@toll_pm"] + link["@toll_ev"] > 0:
                     auto_modes =  lookup["TOLL"][link[truck]]
                 # special case of I-15 managed lanes base year and 2020, no build
                 elif link.type == 1 and link["@project_code"] in [41, 42, 486, 373, 711]:
@@ -734,11 +729,9 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         self._log.append({"type": "header", "content": "Import transit lines"})
         fatal_errors = 0
         # Route_ID,Route_Name,Mode,AM_Headway,PM_Headway,Midday_Headway,Evening_Headway,EarlyAM_Headway,Night_Headway,Night_Hours,Config,Fare
-        #transit_line_data = gen_utils.DataTableProc("trrt", self.source)
-        transit_line_data = gen_utils.DataTableProc("trrt", _join(_dir(self.source), "trrt.csv"))
+        transit_line_data = gen_utils.DataTableProc("trrt", self.source)
         # Route_ID,Link_ID,Link_GUID,Direction
-        #transit_link_data = gen_utils.DataTableProc("trlink", self.source)
-        transit_link_data = gen_utils.DataTableProc("trlink", _join(_dir(self.source), "trlink.csv"))
+        transit_link_data = gen_utils.DataTableProc("trlink", self.source)
         # Stop_ID,Route_ID,Link_ID,Pass_Count,Milepost,Longitude, Latitude,HwyNode,TrnNode,StopName
         #transit_stop_data = gen_utils.DataTableProc("trstop", self.source)
         transit_stop_data = gen_utils.DataTableProc("trstop", _join(_dir(self.source), "trstop.csv"))
@@ -917,7 +910,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                         # segments on links with auto mode are ft1 = timau
                         segment.transit_time_func = 1
                     else:
-                        # ft2 = ul2 -> copied @trtime (fixed speed)
+                        # ft2 = ul2 -> copied @trtime_link_XX (fixed speed)
                         segment.transit_time_func = 2
             except Exception as error:
                 msg = "Transit line %s: %s %s" % (record["Route_Name"], type(error), error)
@@ -961,39 +954,31 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 if "DUMMY" in stop["StopName"]:
                     continue
                 stop_link_id = stop['Link_GUID']
-                stop_node_id = int(stop['Node'])
+                node_id = int(stop['Node'])
                 while segment.link and segment.link["#hwyseg_guid"].lstrip("-") != stop_link_id:
                     segment = itinerary.next()
 
                 if stop_node_id == segment.i_node.number:
                     pass
-                elif segment.j_node and stop_node_id == segment.j_node.number:
+                elif segment.j_node and node_id == segment.j_node.number:
                     # if matches the J-node then the stop is on the next segment
                     segment = itinerary.next()
                 else:
-                    next_segment = None
-                    if segment.j_node:
-                        next_segment = itinerary.next()
-                    if next_segment and next_segment.link["#hwyseg_guid"].lstrip("-") == stop_link_id and \
-                            stop_node_id == next_segment.j_node.number:
-                        # split link case, where stop is at the end of the next segment
-                        segment = next_segment
+                    if segment.link and segment.link["#hwyseg_guid"].lstrip("-") == stop_link_id:
+                        msg = "Transit line %s (index %s): found GUID %s (segment %s) but node ID %s does not match I or J node" % (
+                            line_name, stop["Route_ID"], segment, stop_link_id, node_id)
                     else:
-                        if segment.link and segment.link["#hwyseg_guid"].lstrip("-") == stop_link_id:
-                            msg = "Transit line %s (index %s): found GUID %s (segment %s) but node ID %s does not match I or J node" % (
-                                line_name, stop["Route_ID"], segment, stop_link_id, stop_node_id)
-                        else:
-                            msg = "Transit line %s (index %s): did not found GUID %s for stop node ID %s" % (
-                                line_name, stop["Route_ID"], stop_link_id, stop_node_id)
-                        self._log.append({"type": "text", "content": msg})
-                        self._error.append(msg)
-                        fatal_errors += 1
-                        # reset iterator to start back from previous segment
-                        itinerary = tline.segments(include_hidden=True)
+                        msg = "Transit line %s (index %s): did not found GUID %s for stop node ID %s" % (
+                            line_name, stop["Route_ID"], stop_link_id, node_id)
+                    self._log.append({"type": "text", "content": msg})
+                    self._error.append(msg)
+                    fatal_errors += 1
+                    # reset iterator to start back from previous segment
+                    itinerary = tline.segments(include_hidden=True)
+                    segment = itinerary.next()
+                    while segment.id != prev_segment.id:
                         segment = itinerary.next()
-                        while segment.id != prev_segment.id:
-                            segment = itinerary.next()
-                        continue
+                    continue
                 segment.allow_boardings = True
                 segment.allow_alightings = True
                 segment.dwell_time = min(tline.default_dwell_time, 99.99)
@@ -1045,18 +1030,13 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         self._log.append({"type": "text", "content": "Import transit lines complete"})
 
     def calc_transit_attributes(self, network):
-        self._log.append({"type": "header", "content": "Calculate derived transit line attributes"})
-        # ON TRANSIT LINES
-        # Set 3-period headway based on revised headway calculation
-        for line in network.transit_lines():
-            for period in ["ea", "am", "md", "pm", "ev"]:
-                line["@headway_rev_" + period] = revised_headway(line["@headway_" + period])
-        self._log.append({"type": "text", "content": "Revised headway calculation complete"})
+        # for link in network.links():
+        #     if link.type == 0:  # walk only links have FC ==0
+        #         link.type = 99
 
         fares_file_name = FILE_NAMES["FARES"]
         special_fare_path = _join(self.source, fares_file_name)
         if not os.path.isfile(special_fare_path):
-            self._log.append({"type": "text", "content": "Special fares file %s not found" % fares_file_name})
             return
 
         def get_line(line_id):
@@ -1123,7 +1103,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         self._log.append({"type": "text", "content": "Apply special_fares to transit lines complete"})
 
     def renumber_base_nodes(self, network):
-        tracker = gen_utils.AvailableNodeIDTracker(network)
+        # TODO: log node renumberings
+        tracker = AvailableNodeIDTracker(network)
         nodes = [n for n in network.nodes() if n.number > 999999]
         nodes = sorted(nodes, key=lambda x: x.number, reverse=True)
         if nodes:
@@ -1707,7 +1688,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 error_msg.append("</ul>")
                 report.add_html("".join(error_msg))
             else:
-                report.add_html("<br><br><nbsp><nbsp>No errors detected during import :-)")
+                report.add_html("<br><br>No errors detected during import :-)")
 
             for item in self._log:
                 if item["type"] == "text":
@@ -1791,6 +1772,17 @@ def find_path(orig_link, dest_link, mode):
         route.append(prev_link)
         prev_link = back_links[prev_link]
     return list(reversed(route))
+
+
+class AvailableNodeIDTracker(object):
+    def __init__(self, network, start=999999):
+        self._network = network
+        self._node_id = start
+
+    def get_id(self):
+        while self._network.node(self._node_id):
+            self._node_id -= 1
+        return self._node_id
 
 
 class NoPathException(Exception):
