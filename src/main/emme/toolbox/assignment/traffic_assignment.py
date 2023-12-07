@@ -565,7 +565,7 @@ Assignment matrices and resulting network flows are always in PCE.
                 # create_attribute("LINK", "@cost_hov2_%s" % p, "toll (non-mngd) + cost for HOV2",
                 #                  0, overwrite=True, scenario=scenario)
                 # net_calc("@cost_hov2_%s" % p, "@cost_hov_%s" % p, "modes=d")
-                # net_calc("@cost_hov2_%s" % p, "@cost_auto_%s" % p, "@lane_restriction=3")
+                # net_calc("@cost_hov2_%s" % p, "@cost_auto_%s" % p, "@hov=3")
 
             with _m.logbook_trace("Transit line headway and background traffic"):
                 # set headway for the period
@@ -734,7 +734,7 @@ Assignment matrices and resulting network flows are always in PCE.
                 # create_attribute("LINK", "@cost_hov2_%s" % p, "toll (non-mngd) + cost for HOV2",
                 #                  0, overwrite=True, scenario=scenario)
                 # net_calc("@cost_hov2_%s" % p, "@cost_hov_%s" % p, "modes=d")
-                # net_calc("@cost_hov2_%s" % p, "@cost_auto_%s" % p, "@lane_restriction=3")
+                # net_calc("@cost_hov2_%s" % p, "@cost_auto_%s" % p, "@hov=3")
 
             with _m.logbook_trace("Transit line headway and background traffic"):
                 # set headway for the period: format is (attribute_name, period duration in hours) 
@@ -829,17 +829,17 @@ Assignment matrices and resulting network flows are always in PCE.
             create_attribute("TURN", "@auto_time_turn", "traffic turn time (ptimau)", 
                              overwrite=True, scenario=scenario)
 
-            net_calc("@hovdist", "length", {"link": "@lane_restriction=2,3"})
+            net_calc("@hovdist", "length", {"link": "@hov=2,3"})
             net_calc("@tollcost", "@cost_auto_%s - @cost_operating" % p)
-            net_calc("@h2tollcost", "@cost_hov2_%s - @cost_operating" % p, {"link": "@lane_restriction=3,4"})
-            net_calc("@h3tollcost", "@cost_hov3_%s - @cost_operating" % p, {"link": "@lane_restriction=4"})
+            net_calc("@h2tollcost", "@cost_hov2_%s - @cost_operating" % p, {"link": "@hov=3,4"})
+            net_calc("@h3tollcost", "@cost_hov3_%s - @cost_operating" % p, {"link": "@hov=4"})
             net_calc("@trk_ltollcost", "@cost_lgt_truck_%s - @cost_operating" % p)
             net_calc("@trk_mtollcost", "@cost_med_truck_%s - @cost_operating" % p)
             net_calc("@trk_htollcost", "@cost_hvy_truck_%s - @cost_operating" % p)
-            net_calc("@mlcost", "@toll_%s" % p, {"link": "not @lane_restriction=4"})
-            net_calc("@tolldist", "length", {"link": "@lane_restriction=2,4"})
-            net_calc("@h2tolldist", "length", {"link": "@lane_restriction=3,4"})
-            net_calc("@h3tolldist", "length", {"link": "@lane_restriction=4"})
+            net_calc("@mlcost", "@toll_%s" % p, {"link": "not @hov=4"})
+            net_calc("@tolldist", "length", {"link": "@hov=2,4"})
+            net_calc("@h2tolldist", "length", {"link": "@hov=3,4"})
+            net_calc("@h3tolldist", "length", {"link": "@hov=4"})
             net_calc("@auto_volume", "volau", {"link": "modes=d"})
             net_calc("ul2", "volau+volad", {"link": "modes=d"})
             vdfs = [f for f in emmebank.functions() if f.type == "VOLUME_DELAY"]
@@ -1026,7 +1026,7 @@ Assignment matrices and resulting network flows are always in PCE.
             gen_sov_mode = 's'
             sov_mode = scenario.mode(gen_sov_mode)
             change_link_modes(modes=[sov_mode], action="ADD",
-                              selection="@lane_restriction=4", scenario=scenario)            
+                              selection="@hov=4", scenario=scenario)            
 
     def report(self, period, scenario, classes):
         emmebank = scenario.emmebank

@@ -122,7 +122,7 @@ class ExportForTransponder(_m.Tool(), gen_utils.Snapshot):
         ml_link_coords = []
         ml_links = []
         for link in network.links():
-            if link["type"] == 1 and link["@lane_restriction"] in (2,3) and (
+            if link["type"] == 1 and link["@hov"] in (2,3) and (
                     link["@toll_am"] + link["@toll_md"] + link["@toll_pm"]) > 0:
                 ml_link_coords.append(LineString(link.shape))
                 ml_links.append(link)
@@ -201,7 +201,7 @@ class ExportForTransponder(_m.Tool(), gen_utils.Snapshot):
         ml_link_coords = []
         freeway_links = []
         for link in network.links():
-            if link["@lane_restriction"] in [2, 3] and link["type"] == 1 and (
+            if link["@hov"] in [2, 3] and link["type"] == 1 and (
                     link["@toll_am"] + link["@toll_md"] + link["@toll_pm"]) > 0:
                 ml_link_coords.append(LineString(link.shape))
             if sov_non_toll_mode in link.modes:
