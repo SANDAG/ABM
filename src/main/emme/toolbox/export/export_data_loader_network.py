@@ -88,13 +88,12 @@ class ExportDataLoaderNetwork(_m.Tool(), gen_utils.Snapshot):
         self.base_scenario_id = 100
         self.traffic_emmebank = os.path.join(project_dir, "Database", "emmebank")
         # self.transit_emmebank = os.path.join(project_dir, "Database_transit", "emmebank")
-        self.transit_emmebank_dict = {}
         self.num_processors = "MAX-1"
         self.attributes = ["main_directory", "base_scenario_id", "traffic_emmebank", "num_processors"]
 
-        self.container = gen_utils.DataLakeExporter().get_datalake_connection()
-        self.util_DataLakeExporter = gen_utils.DataLakeExporter(ScenarioPath=self.main_directory
-                                                                ,container = self.container)
+        # self.container = gen_utils.DataLakeExporter().get_datalake_connection()
+        # self.util_DataLakeExporter = gen_utils.DataLakeExporter(ScenarioPath=self.main_directory
+        #                                                         ,container = self.container)
 
 
     def page(self):
@@ -122,8 +121,12 @@ Export network results to csv files for SQL data loader."""
     def run(self):
         self.tool_run_msg = ""
         try:
+            transit_emmebank_dict = {}
+            project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
+            for period in ["EA", "AM", "MD", "PM", "EV"]:
+                transit_emmebank_dict[period] = _eb.Emmebank(os.path.join(project_dir, "Database_transit_" + period, "emmebank"))
             results = self(self.main_directory, self.base_scenario_id,
-                           self.traffic_emmebank, self.transit_emmebank_dict,
+                           self.traffic_emmebank, transit_emmebank_dict,
                            self.num_processors)
             run_msg = "Export completed"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg)
@@ -491,8 +494,8 @@ Export network results to csv files for SQL data loader."""
                             values.append(format(link[att]))
                 fout.write(",".join(values))
                 fout.write("\n")
-        if self.container:
-            self.util_DataLakeExporter.write_to_datalake({os.path.basename(filename)[:-4]:str(filename)})
+        # if self.container:
+        #     self.util_DataLakeExporter.write_to_datalake({os.path.basename(filename)[:-4]:str(filename)})
 
     @_m.logbook_trace("Export transit results")
     def export_transit_results(self, export_path, input_path, transit_emmebank_dict, period_scenario_ids, num_processors):
@@ -509,8 +512,8 @@ Export network results to csv files for SQL data loader."""
         trrt_out = trrt[trrt_atts]
         trrt_outfile = os.path.join(export_path, "trrt.csv")
         trrt_out.to_csv(trrt_outfile, index=False)
-        if self.container:
-            self.util_DataLakeExporter.write_to_datalake({'trrt':trrt_out})
+        # if self.container:
+        #     self.util_DataLakeExporter.write_to_datalake({'trrt':trrt_out})
 
         #transit stop file
         trstop_infile = os.path.join(input_path, "trstop.csv")
@@ -520,8 +523,8 @@ Export network results to csv files for SQL data loader."""
         trstop_out = trstop[trstop_atts]
         trstop_outfile = os.path.join(export_path, "trstop.csv")
         trstop_out.to_csv(trstop_outfile, index=False)
-        if self.container:
-            self.util_DataLakeExporter.write_to_datalake({'trstop':trstop_out})
+        # if self.container:
+        #     self.util_DataLakeExporter.write_to_datalake({'trstop':trstop_out})
 
         use_node_analysis_to_get_transit_transfers = False
 
@@ -714,10 +717,10 @@ Export network results to csv files for SQL data loader."""
             fout_link.close()
             fout_seg.close()
 
-            if self.container:
-                self.util_DataLakeExporter.write_to_datalake({'transit_flow':str(transit_flow_file)
-                                                                ,'transit_aggregate_flow':str(transit_aggregate_flow_file)
-                                                                ,'transit_onoff':str(transit_onoff_file)})
+            # if self.container:
+            #     self.util_DataLakeExporter.write_to_datalake({'transit_flow':str(transit_flow_file)
+            #                                                     ,'transit_aggregate_flow':str(transit_aggregate_flow_file)
+            #                                                     ,'transit_onoff':str(transit_onoff_file)})
         return
 
     @_m.logbook_trace("Export geometries")
@@ -795,8 +798,8 @@ Export network results to csv files for SQL data loader."""
         df_routeFull = pd.read_csv(os.path.join(export_path, 'trrt.csv'))
         result = pd.merge(df_routeFull, df, how='left', on=['Route_Name'])
         result.to_csv(os.path.join(export_path, 'transitRoute.csv'), index=False)
-        if self.container:
-            self.util_DataLakeExporter.write_to_datalake({'transitRoute':result})
+        # if self.container:
+        #     self.util_DataLakeExporter.write_to_datalake({'transitRoute':result})
         os.remove(os.path.join(export_path, 'trrt.csv'))
 
         df = export_as_csv('TRANSIT_SEGMENT', transit_segment_attributes, None)
@@ -819,8 +822,8 @@ Export network results to csv files for SQL data loader."""
         df_stopFull = pd.read_csv(os.path.join(export_path, 'trstop.csv'))
         result = pd.merge(df_stopFull, df_stop, how='left', on=['Stop_ID'])
         result.to_csv(os.path.join(export_path, 'transitStop.csv'), index=False)
-        if self.container:
-            self.util_DataLakeExporter.write_to_datalake({'transitStop':result})
+        # if self.container:
+        #     self.util_DataLakeExporter.write_to_datalake({'transitStop':result})
         os.remove(os.path.join(export_path, 'trstop.csv'))
 
         df = export_as_csv('LINK', link_attributes, None)
@@ -829,8 +832,8 @@ Export network results to csv files for SQL data loader."""
         df_linkFull = pd.read_csv(os.path.join(export_path, 'hwy_tcad.csv'))
         result = pd.merge(df_linkFull, df_link, how='left', on=['hwycov-id:1'])
         result.to_csv(os.path.join(export_path, 'hwyTcad.csv'), index=False)
-        if self.container:
-            self.util_DataLakeExporter.write_to_datalake({'hwyTcad':result})
+        # if self.container:
+        #     self.util_DataLakeExporter.write_to_datalake({'hwyTcad':result})
         os.remove(os.path.join(export_path, 'hwy_tcad.csv'))
         ##mode_list = ['Y','b','c','e','l','p','r','y','a','x','w']##
         df_transit_link = df[df.modes.str.contains('|'.join(mode_list))]
@@ -841,8 +844,8 @@ Export network results to csv files for SQL data loader."""
         df_transit_link['trcovID'] = abs(df_transit_link['trcovID'])
         df_transit_link = df_transit_link[['trcovID', 'AB', 'geometry']]
         df_transit_link.to_csv(os.path.join(export_path, 'transitLink.csv'), index=False)
-        if self.container:
-            self.util_DataLakeExporter.write_to_datalake({'transitLink':df_transit_link})
+        # if self.container:
+        #     self.util_DataLakeExporter.write_to_datalake({'transitLink':df_transit_link})
         network_table.close()
         try:
             previous_active_database.open()

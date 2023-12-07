@@ -61,6 +61,7 @@ gen_utils = _m.Modeller().module("sandag.utilities.general")
 class InitializeTransitDatabase(_m.Tool(), gen_utils.Snapshot):
 
     base_scenario =  _m.Attribute(_m.InstanceType)
+    period = _m.Attribute(unicode)
 
     tool_run_msg = ""
 
@@ -70,7 +71,8 @@ class InitializeTransitDatabase(_m.Tool(), gen_utils.Snapshot):
 
     def __init__(self):
         self.base_scenario = _m.Modeller().scenario
-        self.attributes = ["base_scenario"]
+        self.period = _m.Attribute(unicode)
+        self.attributes = ["base_scenario", "period"]
 
     def from_snapshot(self, snapshot):
         super(InitializeTransitDatabase, self).from_snapshot(snapshot)
@@ -89,13 +91,21 @@ class InitializeTransitDatabase(_m.Tool(), gen_utils.Snapshot):
 
         pb.add_select_scenario("base_scenario", 
             title="Base scenario:", note="Base traffic and transit scenario with TAZs.")
+        
+        options = [("EA","Early AM"),
+                   ("AM","AM peak"),
+                   ("MD","Mid-day"),
+                   ("PM","PM peak"),
+                   ("EV","Evening")]
+
+        pb.add_select("period", options, title="Period:")
 
         return pb.render()
 
     def run(self):
         self.tool_run_msg = ""
         try:
-            self(self.base_scenario)
+            self(self.base_scenario, self.period)
             run_msg = "Tool complete"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg, escape=False)
         except Exception as error:
