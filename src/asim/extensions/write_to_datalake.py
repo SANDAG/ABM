@@ -82,57 +82,57 @@ def get_commit_info(repo_path):
     return {"short_commit_hash": commit_hash, "branch_name": branch_name}
 
 
-def calc_execute_time(resume_after):
-    """
-    Calculates the total time from timing log file.
+# def calc_execute_time(resume_after):
+#     """
+#     Calculates the total time from timing log file.
 
-    Args:
-        resume_after (string): model step to resume after or None.
+#     Args:
+#         resume_after (string): model step to resume after or None.
 
-    Returns:
-        float: The total time in minutes.
+#     Returns:
+#         float: The total time in minutes.
 
-    """
-    with config.open_log_file("timing_log.csv", "r") as log_file:
-        time_in_min = 0
-        model_step_found = False
-        time_trace = {}
-        for line in log_file:
-            timing_log_row = line.strip().split(",")
-            if resume_after is not None and timing_log_row[1] == resume_after:
-                model_step_found = True
-                continue  # skip this line and move on to the next one
-            if resume_after is not None and not model_step_found:
-                continue  # skip all lines until the keyword is found
-            try:
-                model_step = timing_log_row[1]
-                time_in_min = float(timing_log_row[3])
-            except ValueError:
-                continue  # skip this line if last value is not a float
-            time_trace[model_step] = time_in_min
+#     """
+#     with config.open_log_file("timing_log.csv", "r") as log_file:
+#         time_in_min = 0
+#         model_step_found = False
+#         time_trace = {}
+#         for line in log_file:
+#             timing_log_row = line.strip().split(",")
+#             if resume_after is not None and timing_log_row[1] == resume_after:
+#                 model_step_found = True
+#                 continue  # skip this line and move on to the next one
+#             if resume_after is not None and not model_step_found:
+#                 continue  # skip all lines until the keyword is found
+#             try:
+#                 model_step = timing_log_row[1]
+#                 time_in_min = float(timing_log_row[3])
+#             except ValueError:
+#                 continue  # skip this line if last value is not a float
+#             time_trace[model_step] = time_in_min
 
-    # Sum the values in the dictionary
-    total_time = sum(mins for mins in time_trace.values())
+#     # Sum the values in the dictionary
+#     total_time = sum(mins for mins in time_trace.values())
 
-    return total_time
+#     return total_time
 
 
-def drop_duplicate_column(table_df, table_name, column_name):
-    """
-    Drops a column from table if it exists.
+# def drop_duplicate_column(table_df, table_name, column_name):
+#     """
+#     Drops a column from table if it exists.
 
-    Args:
-        table_df (pandas.DataFrame): The DataFrame from which the column should be dropped.
-        table_name (str): The name of the table or DataFrame.
-        column_name (str): The name of the column to be dropped.
+#     Args:
+#         table_df (pandas.DataFrame): The DataFrame from which the column should be dropped.
+#         table_name (str): The name of the table or DataFrame.
+#         column_name (str): The name of the column to be dropped.
 
-    Returns:
-        None
+#     Returns:
+#         None
 
-    """
-    if column_name in table_df.columns:
-        table_df.drop(column_name, axis=1, inplace=True)
-        logger.info(f"Dropped duplicate column {column_name} in {table_name}")
+#     """
+#     if column_name in table_df.columns:
+#         table_df.drop(column_name, axis=1, inplace=True)
+#         logger.info(f"Dropped duplicate column {column_name} in {table_name}")
 
 
 def create_metadata_df(input_dir, ts, time_to_write, EMME_metadata):
@@ -173,10 +173,9 @@ def create_metadata_df(input_dir, ts, time_to_write, EMME_metadata):
     abm_commit_info = get_commit_info(abm_git_folder)
 
     machine_name = socket.gethostname()
-    inputdir, inputfile = os.path.split(input_dir)  # os.path.split(data_dir[0])
 
     settings = inject.get_injectable("settings")
-    settings_to_write = ["households_sample_size", "resume_after", "multiprocess", "model_name"]
+    settings_to_write = ["model_name"]
     default_value = "None"
     metadata_settings = {}
     for key in settings_to_write:
@@ -186,7 +185,7 @@ def create_metadata_df(input_dir, ts, time_to_write, EMME_metadata):
             value = default_value  # None, if not in settings
         metadata_settings[key] = value
 
-    total_time = calc_execute_time(metadata_settings["resume_after"]) + time_to_write
+    # total_time = calc_execute_time(settings["resume_after"]) + time_to_write
 
     metadata = {
         "scenario_name": [EMME_metadata["scenario_title"]],
@@ -198,14 +197,7 @@ def create_metadata_df(input_dir, ts, time_to_write, EMME_metadata):
         "asim_commit_hash": [asim_commit_info["short_commit_hash"]],
         "abm_branch_name": [abm_commit_info["branch_name"]],
         "abm_commit_hash": [abm_commit_info["short_commit_hash"]],
-        "input_file": [inputfile],
-        "hh_sample_size": metadata_settings["households_sample_size"],
-        "resume_after": metadata_settings["resume_after"],
-        "multiprocess": metadata_settings["multiprocess"],
-        "time_to_execute": [total_time],
         "scenario_guid": [EMME_metadata["scenario_guid"]],
-        "current_iteration" : [EMME_metadata["current_iteration"]],
-        "end_iteration" : [EMME_metadata["end_iteration"]],
         "main_directory" : [EMME_metadata["main_directory"]],
         "select_link" : [EMME_metadata["select_link"]]
     }
@@ -519,15 +511,15 @@ def write_model_output_to_datalake(
     month_folder = now.strftime("%m")
     day_folder = now.strftime("%d")
 
-    # Split the prefix in settings.yaml (final_, final_san, final_cbx, etc.)
-    split_prefix = prefix.split("_")
-    file_name = f"{split_prefix[0]}_{output_table.name}.csv"
+    # # Split the prefix in settings.yaml (final_, final_san, final_cbx, etc.)
+    # split_prefix = prefix.split("_")
+    # file_name = f"{split_prefix[0]}_{output_table.name}.csv"
 
-    # extract base filename and extension
-    base_filename, ext = os.path.splitext(os.path.basename(file_name))
+    # # extract base filename and extension
+    # base_filename, ext = os.path.splitext(os.path.basename(file_name))
 
     # remove duplicate column
-    drop_duplicate_column(output_table, base_filename, "taz")
+    # drop_duplicate_column(output_table, output_table.name, "taz")
 
     # add model name: resident, visitor, etc.
     settings = inject.get_injectable("settings")
@@ -538,19 +530,15 @@ def write_model_output_to_datalake(
 
     output_table["model"] = model_name
 
-    output_table["current_iteration"] = EMME_metadata["current_iteration"]
-    output_table["end_iteration"] = EMME_metadata["end_iteration"]
-
     # extract table name from base filename, e.g. households, trips, persons, etc.
-    tablename = base_filename.split("final_")[1]
+    tablename = output_table.name
     
     # Construct the model output filename w guid
     short_guid = str(guid)[:5]
-    iteration = EMME_metadata['current_iteration']
     scenario_title = EMME_metadata["scenario_title"]
     username  = EMME_metadata['username']
-    model_output_file = f"{tablename}__{timestamp_str}__{iteration}"
-    lake_file = f"abm_15_0_0/{scenario_title}__{username}__{short_guid}/{iteration}/{model_name}/{model_output_file}.parquet"
+    model_output_file = f"{tablename}__{timestamp_str}"
+    lake_file = f"abm_15_0_0/{scenario_title}__{username}__{short_guid}/{model_name}/{model_output_file}.parquet"
 
     # replace empty strings with None
     # otherwise conversation error for boolean types
@@ -609,10 +597,9 @@ def write_metadata_to_datalake(data_dir, t0, EMME_metadata, container, now):
     scenario_title = EMME_metadata["scenario_title"]
     username = EMME_metadata["username"]
     short_guid = EMME_metadata['scenario_guid'][:5]
-    iteration =  EMME_metadata["current_iteration"]
 
-    metadata_file = f"scenario__{timestamp_str}__{iteration}.parquet"
-    metadata_path = f"abm_15_0_0/{scenario_title}__{username}__{short_guid}/{iteration}/{model_name}/{metadata_file}"
+    metadata_file = f"scenario__{timestamp_str}.parquet"
+    metadata_path = f"abm_15_0_0/{scenario_title}__{username}__{short_guid}/{model_name}/{metadata_file}"
 
     # write metadata to data lake
     parquet_file = BytesIO()
@@ -628,19 +615,19 @@ def get_scenario_metadata(output_dir):
     if guid not in scenario's output directory (generated by EMME's master_run.py),
         then generate a model-specific guid
     """
-    not_iteration = 999
+    # not_iteration = 999
     datalake_metadata_path = os.path.abspath(os.path.join(output_dir, '../', "datalake_metadata.yaml"))
     if os.path.isfile(datalake_metadata_path):
         with open(datalake_metadata_path, "r") as stream:
             model_metadata_dict = yaml.safe_load(stream)
             logger.info(f"datalake_metadata.yaml file found at: {datalake_metadata_path}")
         # overwrite existing guid if running model from cmd so that model runs do not share guid
-        if model_metadata_dict["end_iteration"] == not_iteration:
-            model_metadata_dict['scenario_guid'] = uuid.uuid4().hex
-            model_metadata_dict['scenario_guid_created_at'] = datetime.datetime.now()
-            with open(datalake_metadata_path, "w") as file:
-                yaml.dump(model_metadata_dict, file, default_flow_style=False)
-            logger.info(f"overwriting guid in datalake_metadata.yaml file found at: {datalake_metadata_path}")
+        # if model_metadata_dict["end_iteration"] == not_iteration:
+        #     model_metadata_dict['scenario_guid'] = uuid.uuid4().hex
+        #     model_metadata_dict['scenario_guid_created_at'] = datetime.datetime.now()
+        #     with open(datalake_metadata_path, "w") as file:
+        #         yaml.dump(model_metadata_dict, file, default_flow_style=False)
+        #     logger.info(f"overwriting guid in datalake_metadata.yaml file found at: {datalake_metadata_path}")
     else:
         logger.info(f"datalake_metadata.yaml file NOT found at: {datalake_metadata_path}, using new guid")
         model_metadata_dict = {"main_directory" : None
@@ -649,12 +636,10 @@ def get_scenario_metadata(output_dir):
                                 ,"scenario_title" : "abm2022" #TODO change this to None when development ends
                                 ,"scenario_year": "2022" #TODO change this to None when development ends
                                 ,"select_link" : None
-                                ,"username" : os.getenv("USERNAME")
-                                ,"current_iteration" : not_iteration
-                                ,"end_iteration": not_iteration}
+                                ,"username" : os.getenv("USERNAME")}
         # write guid to file for DataExporter
-        with open(datalake_metadata_path, "w") as file:
-            yaml.dump(model_metadata_dict, file, default_flow_style=False)
+        # with open(datalake_metadata_path, "w") as file:
+        #     yaml.dump(model_metadata_dict, file, default_flow_style=False)
     return model_metadata_dict
 
 

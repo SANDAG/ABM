@@ -30,7 +30,6 @@ class PropertiesSetter(object):
 
     useLocalDrive = _m.Attribute(bool)
     skip4Ds = _m.Attribute(bool)
-    skipNewScenarioGUID = _m.Attribute(bool)
     skipBuildNetwork = _m.Attribute(bool)
     skipInputChecker = _m.Attribute(bool)
     skipInitialization = _m.Attribute(bool)
@@ -87,6 +86,7 @@ class PropertiesSetter(object):
     skipFinalTransitAssignment = _m.Attribute(bool)
     skipVisualizer = _m.Attribute(bool)
     skipDataExport = _m.Attribute(bool)
+    skipDatalake = _m.Attribute(bool)
     skipDataLoadRequest = _m.Attribute(bool)
     skipDeleteIntermediateFiles = _m.Attribute(bool)
 
@@ -146,12 +146,12 @@ class PropertiesSetter(object):
 
     def __init__(self):
         self._run_model_names = (
-            "useLocalDrive", "skip4Ds", "skipNewScenarioGUID", "skipInputChecker",
+            "useLocalDrive", "skip4Ds", "skipInputChecker",
             "startFromIteration", "skipInitialization", "deleteAllMatrices", "skipCopyWarmupTripTables",
             "skipCopyBikeLogsum", "skipCopyWalkImpedance", "skipWalkLogsums", "skipBikeLogsums", "skipBuildNetwork",
             "skipHighwayAssignment", "skipTransitSkimming", "skipTransitConnector", "skipTransponderExport", "skipABMPreprocessing", "skipABMResident", "skipABMAirport", "skipABMXborderWait", "skipABMXborder", "skipABMVisitor",
             "skipCTM", "skipTruck", "skipEI", "skipExternal", "skipTripTableCreation", "skipFinalHighwayAssignment",
-            "skipFinalTransitAssignment", "skipVisualizer", "skipDataExport", "skipDataLoadRequest",
+            "skipFinalTransitAssignment", "skipVisualizer", "skipDataExport", "skipDatalake", "skipDataLoadRequest",
             "skipDeleteIntermediateFiles")
         self._properties = None
 
@@ -188,7 +188,6 @@ class PropertiesSetter(object):
         skip_startup_items = [
             ("useLocalDrive",           "Use the local drive during the model run"),
             ("skip4Ds",                 "Skip running 4Ds"),
-            ("skipNewScenarioGUID",     "Skip creating new scenario guid"),
             ("skipBuildNetwork",        "Skip build of highway and transit network"),
             ("skipInputChecker",		"Skip running input checker"),
             ("skipInitialization",      "Skip matrix and transit database initialization"),
@@ -221,6 +220,7 @@ class PropertiesSetter(object):
             ("skipFinalTransitAssignment",  "Skip final transit assignments"),
             ("skipVisualizer",              "Skip running visualizer"),
             ("skipDataExport",              "Skip data export"),
+            ("skipDatalake",                "Skip write to datalake"),
             ("skipDataLoadRequest",         "Skip data load request"),
             ("skipDeleteIntermediateFiles", "Skip delete intermediate files"),
         ]
@@ -329,7 +329,6 @@ class PropertiesSetter(object):
 
         self.useLocalDrive = props.get("RunModel.useLocalDrive", True)
         self.skip4Ds = props.get("RunModel.skip4Ds", False)
-        self.skipNewScenarioGUID = props.get("RunModel.skipNewScenarioGUID", False)
         self.skipBuildNetwork = props.get("RunModel.skipBuildNetwork", False)
         self.skipInputChecker = props.get("RunModel.skipInputChecker", False)
         self.skipInitialization = props.get("RunModel.skipInitialization", False)
@@ -361,6 +360,7 @@ class PropertiesSetter(object):
         self.skipFinalTransitAssignment = props.get("RunModel.skipFinalTransitAssignment", False)
         self.skipVisualizer = props.get("RunModel.skipVisualizer", False)
         self.skipDataExport = props.get("RunModel.skipDataExport", False)
+        self.skipDatalake = props.get("RunModel.skipDatalake", False)
         self.skipDataLoadRequest = props.get("RunModel.skipDataLoadRequest", False)
         self.skipDeleteIntermediateFiles = props.get("RunModel.skipDeleteIntermediateFiles", False)
 
@@ -371,7 +371,6 @@ class PropertiesSetter(object):
 
         props["RunModel.useLocalDrive"] = self.useLocalDrive
         props["RunModel.skip4Ds"] = self.skip4Ds
-        props["RunModel.skipNewScenarioGUID"] = self.skipNewScenarioGUID
         props["RunModel.skipBuildNetwork"] = self.skipBuildNetwork
         props["RunModel.skipInputChecker"] = self.skipInputChecker
         props["RunModel.skipInitialization"] = self.skipInitialization
@@ -402,6 +401,7 @@ class PropertiesSetter(object):
         props["RunModel.skipFinalTransitAssignment"] = self.skipFinalTransitAssignment
         props["RunModel.skipVisualizer"] = self.skipVisualizer
         props["RunModel.skipDataExport"] = self.skipDataExport
+        props["RunModel.skipDatalake"] = self.skipDatalake
         props["RunModel.skipDataLoadRequest"] = self.skipDataLoadRequest
         props["RunModel.skipDeleteIntermediateFiles"] = self.skipDeleteIntermediateFiles
 

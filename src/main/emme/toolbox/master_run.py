@@ -303,7 +303,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         useLocalDrive = props["RunModel.useLocalDrive"]
 
         skip4Ds = props["RunModel.skip4Ds"]
-        skipNewScenarioGUID = props["RunModel.skipNewScenarioGUID"]
         skipInputChecker = props["RunModel.skipInputChecker"]
         skipInitialization = props["RunModel.skipInitialization"]
         deleteAllMatrices = props["RunModel.deleteAllMatrices"]
@@ -339,6 +338,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         skipFinalTransitAssignment = props["RunModel.skipFinalTransitAssignment"]
         skipVisualizer = props["RunModel.skipVisualizer"]
         skipDataExport = props["RunModel.skipDataExport"]
+        skipDatalake = props["RunModel.skipDatalake"]
         skipDataLoadRequest = props["RunModel.skipDataLoadRequest"]
         skipDeleteIntermediateFiles = props["RunModel.skipDeleteIntermediateFiles"]
         # skipTransitShed = props["RunModel.skipTransitShed"]
@@ -483,9 +483,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 if not skip4Ds:
                     run4Ds(path=self._path, int_radius=0.65, ref_path='visualizer_reference_path')
 
-                if not skipNewScenarioGUID:
-                    self.write_metadata(main_directory, scenario_title, select_link, username, scenarioYear, end_iteration)
-
                 mgraFile = 'mgra15_based_input' + str(scenarioYear) + '.csv'
                 self.complete_work(scenarioYear, input_dir, output_dir, mgraFile, "walkMgraEquivMinutes.csv")
 
@@ -588,7 +585,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         # Note: iteration indexes from 0, msa_iteration indexes from 1
         for iteration in range(startFromIteration - 1, end_iteration):
             msa_iteration = iteration + 1
-            self.update_metadata_iteration(main_directory, msa_iteration)
             with _m.logbook_trace("Iteration %s" % msa_iteration):
                 #create a folder to store skims
                 if not os.path.exists(_join(output_dir, "skims")):
@@ -750,6 +746,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                           "HTML Visualizer", capture_output=True)
 
         if not skipDataExport:
+
             # export network and matrix results from Emme directly to T if using local drive
             output_directory = _join(self._path, "output")
             export_network_data(self._path, scenario_id, main_emmebank, transit_emmebank_dict, num_processors)
@@ -757,10 +754,17 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             # export core ABM data
             # Note: uses relative project structure, so cannot redirect to T drive
             # self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data",capture_output=True)
-            aggregate_models = {}
-            for agg_model in ['eetrip', 'eitrip', 'trucktrip']:#TODO ['commercialVehicleTrips','internalExternalTrips']:
-                aggregate_models[agg_model] = str(os.path.join(self._path,'report',agg_model+'.csv'))
-            gen_utils.DataLakeExporter(ScenarioPath=self._path).write_to_datalake(aggregate_models)
+            # aggregate_models = {}
+            # for agg_model in ['eetrip', 'eitrip', 'trucktrip']:#TODO ['commercialVehicleTrips','internalExternalTrips']:
+            #     aggregate_models[agg_model] = str(os.path.join(self._path,'report',agg_model+'.csv'))
+            # gen_utils.DataLakeExporter(ScenarioPath=self._path).write_to_datalake(aggregate_models)
+        
+        if not skipDatalake:
+            self.write_metadata(main_directory, scenario_title, select_link, username, scenarioYear, sample_rate)
+            self.run_proc(
+                "write_to_datalake.cmd",
+                [drive, drive + path_forward_slash],
+                "Writing model output to datalake", capture_output=True)
 
         #Validation for 2022 scenario
         if scenarioYear == "2016":
@@ -1403,7 +1407,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         else:
             return "The data load request was not successfully made, please double check the [data_load].[load_request] table to confirm."
 
-    def write_metadata(self, main_directory, scenario_title, select_link, username, scenarioYear, end_iteration):
+    def write_metadata(self, main_directory, scenario_title, select_link, username, scenarioYear, sample_rate):
         '''Write YAML file containing scenario guid and other scenario info to output folder for writing to datalake'''
         datalake_metadata_dict = {
             "main_directory" : main_directory.encode('utf-8')
@@ -1413,24 +1417,24 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             ,"scenario_year": scenarioYear
             ,"select_link" : select_link.encode('utf-8')
             ,"username" : username.encode('utf-8')
-            ,"current_iteration" : None
-            ,"end_iteration" : end_iteration
+            ,"properties_path" : self.properties_path
+            ,"sample_rate" : ",".join(map(str, sample_rate))
         }
         datalake_metadata_path = os.path.join(main_directory,'output','datalake_metadata.yaml')
         with open(datalake_metadata_path, 'w') as file:
-            yaml.dump(datalake_metadata_dict, file, default_flow_style=False)
+            yaml.safe_dump(datalake_metadata_dict, file, default_flow_style=False)
         _m.logbook_write("Created new scenario_guid: %s" % (datalake_metadata_dict['scenario_guid']))
 
 
-    def update_metadata_iteration(self, main_directory, msa_iteration):
-        """update iteration value in metadata YAML"""
-        datalake_metadata_path = os.path.join(main_directory,'output','datalake_metadata.yaml')
-        with open(datalake_metadata_path, 'r') as file:
-            datalake_metadata_dict = yaml.safe_load(file)
-        datalake_metadata_dict['current_iteration'] = msa_iteration
-        with open(datalake_metadata_path, 'w') as file:
-            yaml.dump(datalake_metadata_dict, file, default_flow_style=False)
-        _m.logbook_write("Updated Iteration in datalake_metadata.yaml file")
+    # def update_metadata_iteration(self, main_directory, msa_iteration):
+    #     """update iteration value in metadata YAML"""
+    #     datalake_metadata_path = os.path.join(main_directory,'output','datalake_metadata.yaml')
+    #     with open(datalake_metadata_path, 'r') as file:
+    #         datalake_metadata_dict = yaml.safe_load(file)
+    #     datalake_metadata_dict['current_iteration'] = msa_iteration
+    #     with open(datalake_metadata_path, 'w') as file:
+    #         yaml.dump(datalake_metadata_dict, file, default_flow_style=False)
+    #     _m.logbook_write("Updated Iteration in datalake_metadata.yaml file")
 
     def add_html(self, report, html):
         try:
