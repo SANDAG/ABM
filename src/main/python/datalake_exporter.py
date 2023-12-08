@@ -103,8 +103,6 @@ def create_scenario_df(ts, EMME_metadata, parent_dir_name):
         "scenario_yr": [EMME_metadata["scenario_year"]],
         "login_name": [EMME_metadata["username"]],
         "machine_name": [machine_name],
-        "abm_branch_name": [abm_commit_info["branch_name"]],
-        "abm_commit_hash": [abm_commit_info["short_commit_hash"]],
         "abm_branch_name": [abm_git_info["branch"]],
         "abm_commit_hash": [abm_git_info["commit"]],
         "scenario_id": [EMME_metadata["scenario_id"]],
