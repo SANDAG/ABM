@@ -29,7 +29,7 @@ def connect_to_Azure():
         error_statment = f"{e}: datalake exporter could not find SAS_Token in environment\n"
         print(error_statement, "\n", file=sys.stderr)
         return False, None
-    except ServiceRequestError as e:
+    except Exception as e:
         error_statement = f"""
             {e}: datalake exporter had issue connecting to Azure container using SAS_Token in environment,
             token likely malconfigured"""
