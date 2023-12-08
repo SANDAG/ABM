@@ -41,12 +41,12 @@ stop_period,tour_purpose,freq,stop_skim_period
 22.75,1: Work,2197.03133,5: EV
 23.25,1: Work,17603.98904,5: EV
 23.75,1: Work,799.2339423,5: EV
-0.25,1: Work,534.8770034,1: EA
-0.75,1: Work,8509.674,1: EA
-1.25,1: Work,625.2806369,1: EA
-1.75,1: Work,0,1: EA
-2.25,1: Work,4110.217066,1: EA
-2.75,1: Work,186.6806489,1: EA
+0.25,1: Work,534.8770034,5: EV
+0.75,1: Work,8509.674,5: EV
+1.25,1: Work,625.2806369,5: EV
+1.75,1: Work,0,5: EV
+2.25,1: Work,4110.217066,5: EV
+2.75,1: Work,186.6806489,5: EV
 3.25,2: University,1387.29585,1: EA
 3.75,2: University,0,1: EA
 4.25,2: University,0,1: EA
@@ -89,12 +89,12 @@ stop_period,tour_purpose,freq,stop_skim_period
 22.75,2: University,301.3016108,5: EV
 23.25,2: University,0,5: EV
 23.75,2: University,0,5: EV
-0.25,2: University,0,1: EA
-0.75,2: University,0,1: EA
-1.25,2: University,0,1: EA
-1.75,2: University,0,1: EA
-2.25,2: University,0,1: EA
-2.75,2: University,0,1: EA
+0.25,2: University,0,5: EV
+0.75,2: University,0,5: EV
+1.25,2: University,0,5: EV
+1.75,2: University,0,5: EV
+2.25,2: University,0,5: EV
+2.75,2: University,0,5: EV
 3.25,3: School,0,1: EA
 3.75,3: School,0,1: EA
 4.25,3: School,1432.790668,1: EA
@@ -137,12 +137,12 @@ stop_period,tour_purpose,freq,stop_skim_period
 22.75,3: School,0,5: EV
 23.25,3: School,0,5: EV
 23.75,3: School,0,5: EV
-0.25,3: School,0,1: EA
-0.75,3: School,0,1: EA
-1.25,3: School,0,1: EA
-1.75,3: School,0,1: EA
-2.25,3: School,0,1: EA
-2.75,3: School,0,1: EA
+0.25,3: School,0,5: EV
+0.75,3: School,0,5: EV
+1.25,3: School,0,5: EV
+1.75,3: School,0,5: EV
+2.25,3: School,0,5: EV
+2.75,3: School,0,5: EV
 3.25,4: Escort,1807.312727,1: EA
 3.75,4: Escort,396.497779,1: EA
 4.25,4: Escort,55.58758168,1: EA
@@ -185,12 +185,12 @@ stop_period,tour_purpose,freq,stop_skim_period
 22.75,4: Escort,346.7052406,5: EV
 23.25,4: Escort,39.86972755,5: EV
 23.75,4: Escort,1031.088298,5: EV
-0.25,4: Escort,2978.337624,1: EA
-0.75,4: Escort,502.3406449,1: EA
-1.25,4: Escort,491.1076385,1: EA
-1.75,4: Escort,16.12250685,1: EA
-2.25,4: Escort,1093.089129,1: EA
-2.75,4: Escort,10.47762183,1: EA
+0.25,4: Escort,2978.337624,5: EV
+0.75,4: Escort,502.3406449,5: EV
+1.25,4: Escort,491.1076385,5: EV
+1.75,4: Escort,16.12250685,5: EV
+2.25,4: Escort,1093.089129,5: EV
+2.75,4: Escort,10.47762183,5: EV
 3.25,5: Individual Maintenance,4620.778141,1: EA
 3.75,5: Individual Maintenance,2947.058241,1: EA
 4.25,5: Individual Maintenance,4671.905684,1: EA
@@ -233,12 +233,12 @@ stop_period,tour_purpose,freq,stop_skim_period
 22.75,5: Individual Maintenance,3527.186015,5: EV
 23.25,5: Individual Maintenance,14331.35271,5: EV
 23.75,5: Individual Maintenance,1145.972028,5: EV
-0.25,5: Individual Maintenance,158.4217307,1: EA
-0.75,5: Individual Maintenance,455.1660035,1: EA
-1.25,5: Individual Maintenance,372.3577551,1: EA
-1.75,5: Individual Maintenance,208.0861571,1: EA
-2.25,5: Individual Maintenance,2728.813933,1: EA
-2.75,5: Individual Maintenance,45.56724929,1: EA
+0.25,5: Individual Maintenance,158.4217307,5: EV
+0.75,5: Individual Maintenance,455.1660035,5: EV
+1.25,5: Individual Maintenance,372.3577551,5: EV
+1.75,5: Individual Maintenance,208.0861571,5: EV
+2.25,5: Individual Maintenance,2728.813933,5: EV
+2.75,5: Individual Maintenance,45.56724929,5: EV
 3.25,6: Individual Discretionary,721.7779648,1: EA
 3.75,6: Individual Discretionary,120.5737729,1: EA
 4.25,6: Individual Discretionary,931.2648874,1: EA
@@ -281,12 +281,12 @@ stop_period,tour_purpose,freq,stop_skim_period
 22.75,6: Individual Discretionary,15789.93378,5: EV
 23.25,6: Individual Discretionary,8236.248573,5: EV
 23.75,6: Individual Discretionary,3322.49121,5: EV
-0.25,6: Individual Discretionary,1605.721924,1: EA
-0.75,6: Individual Discretionary,4545.307606,1: EA
-1.25,6: Individual Discretionary,1176.957528,1: EA
-1.75,6: Individual Discretionary,66.66553408,1: EA
-2.25,6: Individual Discretionary,186.1996297,1: EA
-2.75,6: Individual Discretionary,12.18926843,1: EA
+0.25,6: Individual Discretionary,1605.721924,5: EV
+0.75,6: Individual Discretionary,4545.307606,5: EV
+1.25,6: Individual Discretionary,1176.957528,5: EV
+1.75,6: Individual Discretionary,66.66553408,5: EV
+2.25,6: Individual Discretionary,186.1996297,5: EV
+2.75,6: Individual Discretionary,12.18926843,5: EV
 3.25,7: Joint Maintenance,0,1: EA
 3.75,7: Joint Maintenance,0,1: EA
 4.25,7: Joint Maintenance,0,1: EA
@@ -329,12 +329,12 @@ stop_period,tour_purpose,freq,stop_skim_period
 22.75,7: Joint Maintenance,889.5838665,5: EV
 23.25,7: Joint Maintenance,0,5: EV
 23.75,7: Joint Maintenance,0,5: EV
-0.25,7: Joint Maintenance,0,1: EA
-0.75,7: Joint Maintenance,0,1: EA
-1.25,7: Joint Maintenance,0,1: EA
-1.75,7: Joint Maintenance,0,1: EA
-2.25,7: Joint Maintenance,0,1: EA
-2.75,7: Joint Maintenance,0,1: EA
+0.25,7: Joint Maintenance,0,5: EV
+0.75,7: Joint Maintenance,0,5: EV
+1.25,7: Joint Maintenance,0,5: EV
+1.75,7: Joint Maintenance,0,5: EV
+2.25,7: Joint Maintenance,0,5: EV
+2.75,7: Joint Maintenance,0,5: EV
 3.25,8: Joint Discretionary,0,1: EA
 3.75,8: Joint Discretionary,0,1: EA
 4.25,8: Joint Discretionary,13.98187406,1: EA
@@ -377,12 +377,12 @@ stop_period,tour_purpose,freq,stop_skim_period
 22.75,8: Joint Discretionary,120.6641704,5: EV
 23.25,8: Joint Discretionary,37.25584098,5: EV
 23.75,8: Joint Discretionary,0,5: EV
-0.25,8: Joint Discretionary,0,1: EA
-0.75,8: Joint Discretionary,0,1: EA
-1.25,8: Joint Discretionary,0,1: EA
-1.75,8: Joint Discretionary,0,1: EA
-2.25,8: Joint Discretionary,0,1: EA
-2.75,8: Joint Discretionary,0,1: EA
+0.25,8: Joint Discretionary,0,5: EV
+0.75,8: Joint Discretionary,0,5: EV
+1.25,8: Joint Discretionary,0,5: EV
+1.75,8: Joint Discretionary,0,5: EV
+2.25,8: Joint Discretionary,0,5: EV
+2.75,8: Joint Discretionary,0,5: EV
 3.25,9: Work-based,0,1: EA
 3.75,9: Work-based,0,1: EA
 4.25,9: Work-based,0,1: EA
@@ -425,9 +425,9 @@ stop_period,tour_purpose,freq,stop_skim_period
 22.75,9: Work-based,0,5: EV
 23.25,9: Work-based,0,5: EV
 23.75,9: Work-based,0,5: EV
-0.25,9: Work-based,0,1: EA
-0.75,9: Work-based,0,1: EA
-1.25,9: Work-based,0,1: EA
-1.75,9: Work-based,0,1: EA
-2.25,9: Work-based,0,1: EA
-2.75,9: Work-based,0,1: EA
+0.25,9: Work-based,0,5: EV
+0.75,9: Work-based,0,5: EV
+1.25,9: Work-based,0,5: EV
+1.75,9: Work-based,0,5: EV
+2.25,9: Work-based,0,5: EV
+2.75,9: Work-based,0,5: EV

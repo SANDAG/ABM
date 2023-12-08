@@ -88,7 +88,6 @@ class ExportDataLoaderNetwork(_m.Tool(), gen_utils.Snapshot):
         self.base_scenario_id = 100
         self.traffic_emmebank = os.path.join(project_dir, "Database", "emmebank")
         # self.transit_emmebank = os.path.join(project_dir, "Database_transit", "emmebank")
-        self.transit_emmebank_dict = {}
         self.num_processors = "MAX-1"
         self.attributes = ["main_directory", "base_scenario_id", "traffic_emmebank", "num_processors"]
 
@@ -122,8 +121,12 @@ Export network results to csv files for SQL data loader."""
     def run(self):
         self.tool_run_msg = ""
         try:
+            transit_emmebank_dict = {}
+            project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
+            for period in ["EA", "AM", "MD", "PM", "EV"]:
+                transit_emmebank_dict[period] = _eb.Emmebank(os.path.join(project_dir, "Database_transit_" + period, "emmebank"))
             results = self(self.main_directory, self.base_scenario_id,
-                           self.traffic_emmebank, self.transit_emmebank_dict,
+                           self.traffic_emmebank, transit_emmebank_dict,
                            self.num_processors)
             run_msg = "Export completed"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg)

@@ -468,7 +468,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             #                      "AT and Transit network consistency checking failed! Open AtTransitCheck_event.log for details.")
 
             #get number of households to pass on sample size to activitysim
-            householdFile = pd.read_csv(_join(self._path, "input", "synthetic_households_2022_base.csv"))
+            householdFile = pd.read_csv(_join(self._path, "input", "synthetic_households_" + scenarioYear + "_base.csv"))
             hh_count = len(householdFile)
             del(householdFile)
 
@@ -483,7 +483,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 if not skip4Ds:
                     run4Ds(path=self._path, int_radius=0.65, ref_path='visualizer_reference_path')
 
-                mgraFile = 'mgra15_based_input' + str(scenarioYear) + '.csv'
+                mgraFile = 'mgra15_based_input_' + str(scenarioYear) + '_base.csv' # Should be read in from properties? -JJF
                 self.complete_work(scenarioYear, input_dir, output_dir, mgraFile, "walkMgraEquivMinutes.csv")
 
                 if not skipBuildNetwork:
@@ -750,7 +750,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             # export network and matrix results from Emme directly to T if using local drive
             output_directory = _join(self._path, "output")
             export_network_data(self._path, scenario_id, main_emmebank, transit_emmebank_dict, num_processors)
-            export_matrix_data(output_directory, base_scenario, transit_scenario_dict["EA"])
+            export_matrix_data(output_directory, base_scenario)
             # export core ABM data
             # Note: uses relative project structure, so cannot redirect to T drive
             # self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data",capture_output=True)

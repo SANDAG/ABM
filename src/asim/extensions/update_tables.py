@@ -76,21 +76,23 @@ def get_commit_info(repo_path):
 
 def write_metadata(prefix):
 
+    output_dir = inject.get_injectable("output_dir")
+
     # repo branch name and commit hash: activitysim
     asim_git_folder = find_git_folder(pipeline.__file__, "../../..")
     asim_commit_info = get_commit_info(asim_git_folder)
 
     # repo branch name and commit hash: abm3
-    abm_configs_dir = inject.get_injectable("configs_dir")[0]
-    abm_path_level = ".."
-    # check one to four levels up for git folder
-    for i in range(4):
-        abm_git_folder = find_git_folder(abm_configs_dir, abm_path_level)
-        if os.path.exists(abm_git_folder):
-            break
-        else:
-            abm_path_level += "/.."
-    abm_commit_info = get_commit_info(abm_git_folder)
+    abm_git_path = os.path.abspath(os.path.join(output_dir, '..', '..', 'git_info.yaml'))
+    if os.path.isfile(abm_git_path):
+        with open(abm_git_path, "r") as stream:
+            abm_git_info = yaml.safe_load(stream)
+            abm_git_info["commit"] = abm_git_info["commit"][:7]
+    else:
+        abm_git_info = {
+            "branch": "",
+            "commit": ""
+        }
 
     trip_settings = config.read_model_settings("write_trip_matrices.yaml")
     constants = trip_settings.get("CONSTANTS")
@@ -98,12 +100,11 @@ def write_metadata(prefix):
     model_metadata_dict = {
         "asim_branch_name": asim_commit_info["branch_name"],
         "asim_commit_hash": asim_commit_info["short_commit_hash"],
-        "abm_branch_name": abm_commit_info["branch_name"],
-        "abm_commit_hash": abm_commit_info["short_commit_hash"],
+        "abm_branch_name": abm_git_info["branch"],
+        "abm_commit_hash": abm_git_info["commit"],
         "constants": constants,
         "prefix": prefix
     }
-    output_dir = inject.get_injectable("output_dir")
     model_metadata_path = os.path.join(output_dir,'model_metadata.yaml')
     with open(model_metadata_path, 'w') as file:
         yaml.dump(model_metadata_dict, file, default_flow_style=False)
