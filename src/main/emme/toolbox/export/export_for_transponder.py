@@ -152,15 +152,21 @@ class ExportForTransponder(_m.Tool(), gen_utils.Snapshot):
         emmebank = scenario.emmebank
         year = int(props['scenarioYear'])
         mgra = _pd.read_csv(
-            _join(input_directory, 'mgra15_based_input%s.csv' % year))
-        taz = mgra[['taz', 'emp_total']].groupby('taz').sum()
+            _join(input_directory, 'mgra15_based_input_%s_base.csv' % year))
+        try:
+            taz = mgra[['taz', 'emp_total']].groupby('taz').sum()
+        except KeyError:
+            taz = mgra[['taz', 'emp_tot']].groupby('taz').sum()
         taz.reset_index(inplace=True)
         taz = dem_utils.add_missing_zones(taz, scenario)
         taz.reset_index(inplace=True)
 
         with setup_for_tt_savings_calc(emmebank):
             employment_matrix = emmebank.matrix("mdemployment")
-            employment_matrix.set_numpy_data(taz["emp_total"].values, scenario.id)
+            try:
+                employment_matrix.set_numpy_data(taz["emp_total"].values, scenario.id)
+            except KeyError:
+                employment_matrix.set_numpy_data(taz["emp_tot"].values, scenario.id)
             matrix_calc = dem_utils.MatrixCalculator(scenario, num_processors)
             matrix_calc.add("NTTime",    "SOV_NT_M_TIME__AM + SOV_NT_M_TIME__PM'")
             matrix_calc.add("TRTime",    "SOV_TR_M_TIME__AM + SOV_TR_M_TIME__PM'")
