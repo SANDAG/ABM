@@ -558,6 +558,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         # need to update the modes from the XTRUCK for their time of day
         # Note: only truck types 1, 3, 4, and 7 found in 2012 base network
         truck = "@truck_%s" % period.lower()
+        toll = "@toll_%s" % period.lower()
         lookup = self._auto_mode_lookup
         for link in network.links():
             auto_modes = set([])
@@ -569,7 +570,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 auto_modes = lookup["GP"][link[truck]]
             elif link["@hov"] in [2, 3]:
                 # managed lanes, free for HOV2 and HOV3+, tolls for SOV
-                if link["@toll_ea"] + link["@toll_am"] + link["@toll_md"] + link["@toll_pm"] + link["@toll_ev"] > 0:
+                if link[toll] > 0:
                     auto_modes =  lookup["TOLL"][link[truck]]
                 # special case of I-15 managed lanes base year and 2020, no build
                 elif link.type == 1 and link["@project_code"] in [41, 42, 486, 373, 711]:
