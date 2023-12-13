@@ -28,35 +28,50 @@ import inro.emme.database.emmebank as _eb
 import argparse
 import os
 
+from collections import OrderedDict
+
 WKT_PROJECTION = 'PROJCS["NAD_1983_NSRS2007_StatePlane_California_VI_FIPS_0406_Ft_US",GEOGCS["GCS_NAD_1983_NSRS2007",DATUM["D_NAD_1983_NSRS2007",SPHEROID["GRS_1980",6378137.0,298.257222101]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Lambert_Conformal_Conic"],PARAMETER["False_Easting",6561666.666666666],PARAMETER["False_Northing",1640416.666666667],PARAMETER["Central_Meridian",-116.25],PARAMETER["Standard_Parallel_1",32.78333333333333],PARAMETER["Standard_Parallel_2",33.88333333333333],PARAMETER["Latitude_Of_Origin",32.16666666666666],UNIT["Foot_US",0.3048006096012192]];-118608900 -91259500 3048.00609601219;-100000 10000;-100000 10000;3.28083333333333E-03;0.001;0.001;IsHighPrecision'
 
 def init_emme_project(root, title, emmeversion):
     project_path = _app.create_project(root, "emme_project")
-    desktop = _app.start_dedicated(
-        project=project_path, user_initials="WS", visible=False)
+    project_root = os.path.dirname(project_path)
+    desktop = _app.start_dedicated(project=project_path, user_initials="WS", visible=False)
     project = desktop.project
     project.name = "SANDAG Emme project"
-    prj_file_path = os.path.join(os.path.dirname(project_path), 'NAD 1983 NSRS2007 StatePlane California VI FIPS 0406 (US Feet).prj')
+    prj_file_path = os.path.join(project_root, 'NAD 1983 NSRS2007 StatePlane California VI FIPS 0406 (US Feet).prj')
     with open(prj_file_path, 'w') as f:
         f.write(WKT_PROJECTION)
     project.spatial_reference_file = prj_file_path
     project.initial_view = _ws_types.Box(6.18187e+06, 1.75917e+06, 6.42519e+06, 1.89371e+06)
-    project_root = os.path.dirname(project_path)
+
+    property_path = os.path.join(root, "conf", "sandag_abm.properties")
+    properties = load_properties(property_path)
+    sla_limit = properties.get('traffic.sla_limit', 3)
+
+    num_links = 160000
+    num_turn_entries = 13000
+    num_traffic_classes = 15
+    if sla_limit > 3:
+        # extra_attribute_values = 18000000 + 90000 * (sla_limit - 3)
+        extra_attribute_values = 30000000 + (sla_limit - 3) * ((num_links + 1) * (num_traffic_classes + 1) + (num_turn_entries + 1) * (num_traffic_classes))
+    else:
+        extra_attribute_values = 30000000
+    
     dimensions = {
         'scalar_matrices': 9999,
         'destination_matrices': 999,
         'origin_matrices': 999,
-        'full_matrices': 1600,
+        'full_matrices': 9999,
 
         'scenarios': 10,
         'centroids': 5000,
         'regular_nodes': 29999,
-        'links': 90000,
-        'turn_entries': 13000,
+        'links': num_links,
+        'turn_entries': num_turn_entries,
         'transit_vehicles': 200,
         'transit_lines': 450,
         'transit_segments': 40000,
-        'extra_attribute_values': 18000000,
+        'extra_attribute_values': extra_attribute_values,
 
         'functions': 99,
         'operators': 5000
@@ -81,8 +96,48 @@ def init_emme_project(root, title, emmeversion):
 
     desktop.data_explorer().add_database(emmebank.path)
     desktop.add_modeller_toolbox("%<$ProjectPath>%/scripts/sandag_toolbox.mtbx")
+    desktop.add_modeller_toolbox("%<$ProjectPath>%/scripts/solutions.mtbx")
     project.save()
 
+def load_properties(path):
+    prop = OrderedDict()
+    comments = {}
+    with open(path, 'r') as properties:
+        comment = []
+        for line in properties:
+            line = line.strip()
+            if not line or line.startswith('#'):
+                comment.append(line)
+                continue
+            key, value = line.split('=')
+            key = key.strip()
+            tokens = value.split(',')
+            if len(tokens) > 1:
+                value = _parse_list(tokens)
+            else:
+                value = _parse(value)
+            prop[key] = value
+            comments[key], comment = comment, []
+    return prop
+
+def _parse_list(values):
+    converted_values = []
+    for v in values:
+        converted_values.append(_parse(v))
+    return converted_values
+
+def _parse(value):
+    value = str(value).strip()
+    if value == 'true':
+        return True
+    elif value == 'false':
+        return False
+    for caster in int, float:
+        try:
+            return caster(value)
+        except ValueError:
+            pass
+    return value
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Create a new empty Emme project and database with Sandag defaults.")
