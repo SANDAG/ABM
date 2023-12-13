@@ -30,7 +30,7 @@ SET CONDA2_ACT=%ANACONDA2_DIR%\Scripts\activate.bat
 SET CONDA3=%ANACONDA3_DIR%\Scripts\conda.exe
 SET CONDA2=%ANACONDA2_DIR%\Scripts\conda.exe
 
-SET PYTHON3=C:\Users\%USERNAME%\.conda\envs\asim_baydag\python.exe
+SET PYTHON3=%ANACONDA3_DIR%\envs\asim_baydag\python.exe
 :: FIX PATH AND ENV HERE LATER
 SET PYTHON2=%ANACONDA2_DIR%\python.exe
 
