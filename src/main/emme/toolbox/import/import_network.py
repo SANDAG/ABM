@@ -311,6 +311,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 ("INTDIST_UP",      ("@intdist_up",     "DERIVED", "EXTRA",    "Upstream major intersection distance")),
                 ("INTDIST_DOWN",    ("@intdist_down",   "DERIVED", "EXTRA",    "Downstream major intersection distance")),
 
+                ("TMO",       ("@trtime",               "RAIL_TWO_WAY", "EXTRA", "link time in minutes",)),
                 ("OSPD",      ("@speed_observed",       "RAIL_TWO_WAY", "EXTRA", "Observed speed")),
 
             ]),
@@ -911,7 +912,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                         # segments on links with auto mode are ft1 = timau
                         segment.transit_time_func = 1
                     else:
-                        # ft2 = ul2 -> copied @trtime_link_XX (fixed speed)
+                        # ft2 = ul2 -> copied @trtime (fixed speed)
                         segment.transit_time_func = 2
             except Exception as error:
                 msg = "Transit line %s: %s %s" % (record["Route_Name"], type(error), error)
