@@ -322,7 +322,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             self.timed_transfers(network, timed_transfers_with_walk, period)
             #self.connect_circle_lines(network)
             #self.duplicate_tap_adajcent_stops(network)
-            # The fixed guideway travel times are stored in "@trtime_link_xx"
+            # The fixed guideway travel times are stored in "@trtime"
             # and copied to data2 (ul2) for the ttf
             # The congested auto times for mixed traffic are in "@auto_time"
             # (output from traffic assignment) which needs to be copied to auto_time (a.k.a. timau)
@@ -449,13 +449,11 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             if near_side_stop:
                 in_link.length = length
                 out_link.length = 0
-                for p in ["ea", "am", "md", "pm", "ev"]:
-                    out_link["@trtime_link_" + p] = 0
+                out_link["@trtime"] = 0
             else:
                 out_link.length = length
                 in_link.length = 0
-                for p in ["ea", "am", "md", "pm", "ev"]:
-                    in_link["@trtime_link_" + p] = 0
+                in_link["@trtime"] = 0
 
             for seg in in_link.segments():
                 if not near_side_stop:

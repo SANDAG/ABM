@@ -970,8 +970,7 @@ Export network results to csv files for SQL data loader."""
         link_result_attrs = link_results.values() + ["aux_transit_volume"]
         link_attrs = network.attributes("LINK")
         link_modified_attrs = [
-            "length", "@trtime_link_ea", "@trtime_link_am", "@trtime_link_md",
-            "@trtime_link_pm", "@trtime_link_ev", link_results["link_transit_flow"]]
+            "length", "@trtime", link_results["link_transit_flow"]]
         seg_attrs = network.attributes("TRANSIT_SEGMENT")
         line_attrs = network.attributes("TRANSIT_LINE")
 
