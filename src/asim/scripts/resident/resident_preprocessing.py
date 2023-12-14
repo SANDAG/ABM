@@ -26,7 +26,7 @@ class Series15_Processor:
         assert os.path.isdir(self.input_dir), f"Cannot find input directory {self.input_dir}"
         assert os.path.isdir(self.output_dir), f"Cannot find output directory {self.output_dir}"
 
-        self.ext_data_file = os.path.join(self.input_dir, 'externalInternalControlTotalsByYear.csv')
+        self.ext_data_file = os.path.join(self.input_dir, 'resident_ie_size_term.csv')
         self.landuse_file = os.path.join(self.input_dir, f'mgra15_based_input{self.scenario_year}.csv')
         self.trans_access_file = os.path.join(self.output_dir, 'transponderModelAccessibilities.csv')
         self.terminal_time_file = os.path.join(self.input_dir, 'zone_term.csv')
@@ -40,6 +40,8 @@ class Series15_Processor:
         self.parking_costs_file = os.path.join(self.output_dir, 'parking', 'expected_parking_costs.csv')
 
         self.walk_speed = 3  # mph
+
+        self.ext_station_to_internal_mapping = {1:9279, 2:9387, 4:22324}
 
         # skims are copied from input dir to output dir before operating on them
         self.traffic_skim_list = [
@@ -211,12 +213,11 @@ class Series15_Processor:
     def add_external_counts_to_landuse(self):
         print("Adding external counts to landuse file.")
         ext_data = pd.read_csv(self.ext_data_file)
-        ext_data = ext_data[ext_data.year == int(self.scenario_year)].reset_index(drop=True)
         # dummy for other external taz's that are not yet active
         # (all TAZs need to be listed in the landuse file or the output trip omx trip matrices aren't the right shape!)
-        ext_data.loc[len(ext_data)] = [self.scenario_year, 3, 0, 0]
-        ext_data.loc[len(ext_data)] = [self.scenario_year, 5, 0, 0]
-        ext_data.loc[len(ext_data)] = [self.scenario_year, 11, 0, 0]
+        ext_data.loc[len(ext_data)] = [3, 0, 0]
+        ext_data.loc[len(ext_data)] = [5, 0, 0]
+        ext_data.loc[len(ext_data)] = [11, 0, 0]
         
         ext_data.sort_values(by='taz')
 
@@ -257,6 +258,10 @@ class Series15_Processor:
 
         self.landuse['walk_dist_local_bus'].fillna(999, inplace=True)
         self.landuse['walk_dist_premium_transit'].fillna(999, inplace=True)
+        #adding access/egress skims to mexico-side extenral stations
+        for ext_taz, int_maz in self.ext_station_to_internal_mapping.items():
+            self.landuse.loc[self.landuse.TAZ == ext_taz, 'walk_dist_local_bus'] = self.landuse.loc[int_maz, 'walk_dist_local_bus']
+            self.landuse.loc[self.landuse.TAZ == ext_taz, 'walk_dist_premium_transit'] = self.landuse.loc[int_maz, 'walk_dist_premium_transit']
 
     def add_transponder_accessibility_to_landuse(self):
         print("Adding transponder accessibility variables to landuse file.")
