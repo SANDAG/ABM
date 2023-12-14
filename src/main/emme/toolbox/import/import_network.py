@@ -36,10 +36,10 @@
 #       - TNED_RailNodes
 #       - trrt
 #       - trlink
-#       - trstop
 #       - Turns
 #    The following files are also used (in the same directory as the *.gdb)
 #    
+#    trstop.csv: stop data for the transit lines
 #    mode5tod.csv: global (per-mode) transit cost and perception attributes
 #    timexfer_<period>.csv (optional): table of timed transfer pairs of lines, by period
 #    special_fares.txt (optional): table listing special fares in terms of boarding and incremental in-vehicle costs.
@@ -151,11 +151,11 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 <li>TNED_RailNodes</li>
                 <li>trrt</li>
                 <li>trlink</li>
-                <li>trstop</li>
                 <li>Turns</li>
             </ul>
             The following files are also used (in the same directory as the *.gdb):
             <ul>
+                <li>trstop.csv</li>
                 <li>mode5tod.csv</li>
                 <li>timexfer_<period>.csv (optional)</li>
                 <li>special_fares.txt (optional)</li>
