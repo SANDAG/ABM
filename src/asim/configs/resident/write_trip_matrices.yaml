@@ -6,6 +6,7 @@ preprocessor:
   DF: trips
   TABLES:
     - tours
+    - households
 
 # divide trip counts by household expansion factor
 HH_EXPANSION_WEIGHT_COL: sample_rate  # added when households read in

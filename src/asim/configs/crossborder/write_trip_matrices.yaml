@@ -7,6 +7,7 @@ preprocessor:
   TABLES:
     - tours
     - persons
+    - households
 TOURS_MERGED_CHOOSER_COLUMNS:
   - work_time_factor
   - non_work_time_factor

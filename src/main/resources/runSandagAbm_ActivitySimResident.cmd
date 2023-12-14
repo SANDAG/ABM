@@ -17,14 +17,20 @@ SET SAMPLE=%SAMPLERATE%
 ECHO CURRENT DIRECTORY: %cd%
 CD src\asim\configs\resident
 :: Set sample_rate in configs file dynamically
-ECHO # Configs File with Sample Rate set by Model Runner > settings_mp.yaml
-FOR /F "delims=*" %%i IN (settings_mp_source.yaml) DO (
-    SET LINE=%%i
+FOR /F "USEBACKQ delims=" %%i IN (`type "settings_mp.yaml" ^| find /V /N ""`) DO (
     SETLOCAL EnableDelayedExpansion
-    SET LINE=!LINE:%%sample_size%%=%SAMPLE%!
-    ECHO !LINE!>>settings_mp.yaml
+    SET LINE=%%i
+    set LINE=!LINE:*]=!
+    SET SUBSTR=!LINE:~0,23!
+    IF !SUBSTR! == households_sample_size: (
+        ECHO households_sample_size: %SAMPLE% >> settings_mp_temp.yaml
+    ) ELSE (
+        ECHO:!LINE! >> settings_mp_temp.yaml
+    )
     ENDLOCAL
 )
+del settings_mp.yaml
+move settings_mp_temp.yaml settings_mp.yaml
 :: -------------------------------------------------------------------------------------------------
 :: Run ActivitySim
 :: ---------------------------------------------------------------------
@@ -47,7 +53,7 @@ SET CONDA2_DEA=%ANACONDA2_DIR%\Scripts\deactivate.bat
 SET CONDA3=%ANACONDA3_DIR%\Scripts\conda.exe
 SET CONDA2=%ANACONDA2_DIR%\Scripts\conda.exe
 
-SET PYTHON3=C:\Users\%USERNAME%\.conda\envs\asim_baydag\python.exe
+SET PYTHON3=%ANACONDA3_DIR%\envs\asim_baydag\python.exe
 :: FIX PATH AND ENV HERE LATER
 SET PYTHON2=%ANACONDA2_DIR%\python.exe
 

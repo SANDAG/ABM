@@ -43,7 +43,7 @@ CALL %CONDA3_ACT% asim_baydag
 
 :end
 
-SET PYTHON3=C:\Users\%USERNAME%\.conda\envs\asim_baydag\python.exe
+SET PYTHON3=%ANACONDA3_DIR%\envs\asim_baydag\python.exe
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -70,7 +70,7 @@ if %ITERATION% equ 1 (
     %PYTHON3% src/asim/scripts/resident/2zoneSkim.py %PROJECT_DIRECTORY%
 
     CD src\asim\scripts\parking
-    %PYTHON3% run.py
+    %PYTHON3% run.py %SCENYEAR%
     cd /d %PROJECT_DIRECTORY%
 
     %PYTHON3% src/asim/scripts/resident/resident_preprocessing.py input output %SCENYEAR%
@@ -78,7 +78,7 @@ if %ITERATION% equ 1 (
     ECHO Running Airport models pre-processing
     %PYTHON3% src/asim/scripts/airport/airport_model.py -p -c src/asim/configs/airport.CBX -d input -o output/airport.CBX
     %PYTHON3% src/asim/scripts/airport/airport_model.py -p -c src/asim/configs/airport.SAN -d input -o output/airport.SAN
-    %PYTHON3% src/asim/scripts/airport/createPOIomx.py %PROJECT_DIRECTORY%
+    %PYTHON3% src/asim/scripts/airport/createPOIomx.py %PROJECT_DIRECTORY% %SCENYEAR%
 
     ECHO Running xborder model pre-processing
     %PYTHON3% src/asim/scripts/xborder/cross_border_model.py -p -c src/asim/configs/crossborder -d input -o output/crossborder
