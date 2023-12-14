@@ -490,7 +490,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 self.complete_work(scenarioYear, input_dir, output_dir, mgraFile, "walkMgraEquivMinutes.csv")
 
                 if not skipBuildNetwork:
-                    source_gdb = _glog.glob(os.path.join(input_dir, "*.gdb"))
+                    source_gdb = _glob.glob(os.path.join(input_dir, "*.gdb"))
                     if len(source_gdb) > 1:
                         raise Exception("Multiple *.gdb files found in input directory")
                     if len(source_gdb) < 1:
