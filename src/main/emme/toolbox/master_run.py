@@ -703,6 +703,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 self.run_traffic_assignments(
                     base_scenario, period_ids, final_iteration, relative_gap, max_assign_iterations,
                     num_processors, select_link, makeFinalHighwayAssignmentStochastic, input_dir)
+                self.run_proc(
+                        "runSandagAbm_Preprocessing.cmd",
+                        [drive, drive + path_forward_slash, final_iteration, scenarioYear],
+                        "Adding DIST skim", capture_output=True)
 
         if not skipFinalTransitAssignment:
             import_transit_demand(output_dir + '/assignment', transit_scenario_dict)
