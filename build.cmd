@@ -1,4 +1,5 @@
 @echo off
+setlocal enableDelayedExpansion
 
 if "%1"=="" goto usage
 if "%2"=="" goto usage
@@ -10,9 +11,16 @@ set ROOT=%RELEASE_FOLDER%\%VERSION%
 
 if not exist %RELEASE_FOLDER% goto notexist
 
-if exist %ROOT% ???
+if exist %ROOT% (
+    set /p "UPDATE=%ROOT% already exists. Do you want to update it? (Y/N) "
+    if "!UPDATE!" == "y" goto build
+    if "!UPDATE!" == "Y" goto build
+    goto done
+) else (
+    mkdir %ROOT%
+)
 
-if not exist %ROOT% mkdir %ROOT%
+:build
 
 @REM Copy scenario creation scripts
 for /f "tokens=*" %%i in (build_create_scenario_scripts.txt) DO (
