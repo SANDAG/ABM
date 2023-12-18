@@ -55,7 +55,7 @@ class CreateScenarioGUI(tkinter.Frame):
 
             #Define land use options
             self.lu_options = {"DS41": {"name": "Baseline",
-                                        "years": ["2020", "2025nb", "2030nb", "2035nb", "2040nb", "2050nb"]},
+                                        "years": ["2022", "2025nb", "2030nb", "2035nb", "2040nb", "2050nb"]},
                                "DS42": {"name": "Sustainable Community Strategy",
                                         "years": ["2016", "2023", "2025", "2026", "2029", "2030", "2032", "2035", "2040", "2050"]}}
 
@@ -84,8 +84,8 @@ class CreateScenarioGUI(tkinter.Frame):
 
             #divider line
             divider=u"_"*200
-            self.releaseDir='T:\\ABM\\release\\ABM'
-            self.defaultScenarioDir="T:\\projects\\sr14"
+            self.releaseDir=os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..'))
+            self.defaultScenarioDir="T:\\projects\\sr15"
             self.defaultNetworkDir="T:\\RTP\\2021RP\\2021rp_final\\network_build"
 
             current_row = 0
@@ -140,7 +140,7 @@ class CreateScenarioGUI(tkinter.Frame):
 
             #tkinter.Label(body, text=u"Version", font=("Helvetica", 8, 'bold')).grid(row=8)
             #var = StringVar(root)
-            self.version="version_14_3_0"
+            self.version=os.path.basename(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
             #optionList=["version_14_2_2"]
             #option=tkinter.OptionMenu(body,var,*optionList,command=self.setversion)
             #option.config(width=50)
