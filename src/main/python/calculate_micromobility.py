@@ -134,7 +134,7 @@ class Config():
         self.init_cli_args()
         self.init_properties()
         self.init_micro_access_time()
-        self.init_tap_mgra_lists()
+        self.init_mgra_lists()
 
     def init_cli_args(self):
         """Use argparse to set command-line args
@@ -191,13 +191,10 @@ class Config():
 
         self.mgra_file =                   parse('mgra.socec.file')
         self.walk_mgra_output_file =       parse('active.logsum.matrix.file.walk.mgra')
-        self.walk_mgra_tap_output_file =   parse('active.logsum.matrix.file.walk.mgratap')
-        self.mt_tap_file =                 parse('active.microtransit.tap.file')
         self.mt_mgra_file =                parse('active.microtransit.mgra.file')
 
         self.walk_coef =                   float(parse('active.walk.minutes.per.mile'))
         self.walk_max_dist_mgra =          float(parse('active.maxdist.walk.mgra'))
-        self.walk_max_dist_tap =           float(parse('active.maxdist.walk.tap'))
 
         self.vot =                         float(parse('active.micromobility.vot'))
 
@@ -207,7 +204,6 @@ class Config():
         self.mm_variable_cost =            float(parse('active.micromobility.variableCost'))
         self.mm_fixed_cost =               float(parse('active.micromobility.fixedCost'))
         self.mm_max_dist_mgra =            float(parse('active.maxdist.micromobility.mgra'))
-        self.mm_max_dist_tap =             float(parse('active.maxdist.micromobility.tap'))
 
         self.mt_speed =                    float(parse('active.microtransit.speed'))
         self.mt_wait_time =                float(parse('active.microtransit.waitTime'))
@@ -217,7 +213,6 @@ class Config():
         self.mt_fixed_cost =               float(parse('active.microtransit.fixedCost'))
         self.mt_not_avail =                float(parse('active.microtransit.notAvailable'))
         self.mt_max_dist_mgra =            float(parse('active.maxdist.microtransit.mgra'))
-        self.mt_max_dist_tap =             float(parse('active.maxdist.microtransit.tap'))
 
     def init_micro_access_time(self):
         """Reads the MicroAccessTime for each origin MGRA from
@@ -244,19 +239,12 @@ class Config():
 
         self.mat = mat
 
-    def init_tap_mgra_lists(self):
-        """Reads in lists of ids that identify micro-transit accessibility TAPs/MGRAs
+    def init_mgra_lists(self):
+        """Reads in lists of ids that identify micro-transit accessibility MGRAs
 
         """
-        # mt_tap_file_path = os.path.join(self.cli.inputs_parent_directory, self.mt_tap_file)
         mt_mgra_file_path = os.path.join(self.cli.inputs_parent_directory, self.mt_mgra_file)
-        # self.validate_file(mt_tap_file_path)
         self.validate_file(mt_mgra_file_path)
-
-        # self.mt_taps = \
-        #     pd.read_csv(mt_tap_file_path,
-        #                 usecols=lambda x: x.strip().lower() == 'tap',
-        #                 squeeze=True).values
 
         self.mt_mgras = \
             pd.read_csv(mt_mgra_file_path,
@@ -267,7 +255,6 @@ class Config():
 if __name__ == '__main__':
 
     config = Config()
-    # process_file(config, zone='tap')
     process_file(config, zone='mgra')
 
     print('Finished!')
