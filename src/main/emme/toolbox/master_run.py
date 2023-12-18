@@ -128,6 +128,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             "num_processors", "select_link"
         ]
         self._log_level = "ENABLED"
+        self.LOCAL_ROOT = "C:\\abm_runs"
 
     def page(self):
         self.load_properties()
@@ -624,7 +625,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         # Run transit assignment in separate process
                         # Running in same process slows OMX skim export for unknown reason
                         # transit_emmebank need to be closed and re-opened to be accessed by separate process
-                        transit_emmebank_dict = self.run_transit_assignments(transit_emmebank_dict, scenarioYear, output_dir, ((not skipTransitConnector) and (msa_iteration == 1)))
+                        transit_emmebank_dict = self.run_transit_assignments(transit_emmebank_dict, scenarioYear, output_dir, ((not skipTransitConnector) and (msa_iteration == 1)), main_directory)
                         for period in periods:
                             transit_scenario_dict[period] = transit_emmebank_dict[period].scenario(base_scenario.number)
                         # _m.Modeller().desktop.refresh_data()
@@ -723,7 +724,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 # Run transit assignment in separate process
                 # Running in same process slows OMX skim export for unknown reason
                 # transit_emmebank need to be closed and re-opened to be accessed by separate process
-                transit_emmebank_dict = self.run_transit_assignments(transit_emmebank_dict, scenarioYear, output_dir, False)
+                transit_emmebank_dict = self.run_transit_assignments(transit_emmebank_dict, scenarioYear, output_dir, False, main_directory)
                 for period in periods:
                     transit_scenario_dict[period] = transit_emmebank_dict[period].scenario(base_scenario.number)
                 # _m.Modeller().desktop.refresh_data()
@@ -869,7 +870,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         except KeyError:
             raise Exception("properties.RunModel.LogLevel: value must be one of %s" % ",".join(log_states.keys()))
 
-    def run_transit_assignments(self, transit_emmebank_dict, scenarioYear, output_dir, create_connector_flag):
+    def run_transit_assignments(self, transit_emmebank_dict, scenarioYear, output_dir, create_connector_flag, main_directory_original):
 
         scenario_id = 100
         periods = ["EA", "AM", "MD", "PM", "EV"]
@@ -892,7 +893,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     shutil.rmtree(_join(emme_project_dir, "transit_assign_dummy_project_" + period))
                 project_path = _app.create_project(emme_project_dir, "transit_assign_dummy_project_" + period)
                 dummy_desktop = _app.start_dedicated(visible=False, user_initials="SD", project=project_path)
-                dummy_desktop.add_modeller_toolbox(_join(main_directory, "emme_project", "Scripts", "sandag_toolbox.mtbx"))
+                dummy_desktop.add_modeller_toolbox(_join(main_directory_original, "emme_project", "Scripts", "sandag_toolbox.mtbx"))
                 data_explorer = dummy_desktop.data_explorer()
                 db = data_explorer.add_database(transit_emmebank_dict[period].path)
                 db.open()
@@ -1457,7 +1458,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         got_id, scenario_id = self.get_scenario_id(datalake_metadata_dict['scenario_guid'], scenario_title)
         if got_id:
             datalake_metadata_dict['scenario_id'] = scenario_id
-        datalake_metadata_path = os.path.join(main_directory,'output','datalake_metadata.yaml')
+        datalake_metadata_path = os.path.join(self._path,'output','datalake_metadata.yaml')
         with open(datalake_metadata_path, 'w') as file:
             yaml.safe_dump(datalake_metadata_dict, file, default_flow_style=False)
 
