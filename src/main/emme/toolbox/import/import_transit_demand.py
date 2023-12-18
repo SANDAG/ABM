@@ -187,7 +187,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                 # else:
                 person_demand = omx_manager.lookup(("", period), omx_key % "SET")
                 visitor_demand = omx_manager.lookup(("Visitor", period), omx_key % "SET")
-                # cross_border_demand = omx_manager.lookup(("CrossBorder", period), omx_key % "SET" )
+                cross_border_demand = omx_manager.lookup(("CrossBorder", period), omx_key % "SET" )
                 airport_demand = omx_manager.lookup(("Airport", ".SAN" + period), omx_key % "SET")
                 if omx_manager.file_exists(("Airport", ".CBX" + period)):
                     airport_demand += omx_manager.lookup(("Airport", ".CBX" + period), omx_key % "SET")
@@ -197,7 +197,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                 total_asim_demand = person_demand #for testing only
                 total_asim_demand = (
                     visitor_demand  + airport_demand 
-                    + person_demand) #+ cross_border_demand
+                    + person_demand + cross_border_demand)
 
                 # Check the OMX zones are the same Emme database, assume all files have the same zones
                 # omx_zones = omx_manager.zone_list("tranTrips%s.omx" % period)
@@ -232,8 +232,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                 # else:
                 dem_utils.demand_report([
                     ("person_demand", person_demand), 
-                    # ("internal_external_demand", internal_external_demand), 
-                    # ("cross_border_demand", cross_border_demand),
+                    ("cross_border_demand", cross_border_demand),
                     ("airport_demand", airport_demand), 
                     ("visitor_demand", visitor_demand), 
                     ("total_asim_demand", total_asim_demand)
