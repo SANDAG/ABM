@@ -46,9 +46,11 @@ xcopy /Y .\src\main\resources\"*.properties" %ROOT%\common\conf
 xcopy /Y .\src\main\resources\"*.xml" %ROOT%\common\conf
 xcopy /Y .\src\main\resources\"*.csv" %ROOT%\common\conf
 
-@REM Copy input files
-if not exist %ROOT%\common\input mkdir %ROOT%\common\input
-xcopy /Y/S/E .\input %ROOT%\common\input
+@REM Skip copy of input for now, input directory in repo is currently out of date
+
+@REM @REM Copy input files
+@REM if not exist %ROOT%\common\input mkdir %ROOT%\common\input
+@REM xcopy /Y/S/E .\input %ROOT%\common\input
 
 @REM Copy python files
 if not exist %ROOT%\common\python mkdir %ROOT%\common\python
