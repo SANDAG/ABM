@@ -763,6 +763,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             # for agg_model in ['eetrip', 'eitrip', 'trucktrip']:#TODO ['commercialVehicleTrips','internalExternalTrips']:
             #     aggregate_models[agg_model] = str(os.path.join(self._path,'report',agg_model+'.csv'))
             # gen_utils.DataLakeExporter(ScenarioPath=self._path).write_to_datalake(aggregate_models)
+            self.run_proc(
+                "export_hwy_shape.cmd",
+                [drive, drive + path_forward_slash],
+                "Exporting highway shapefile", capture_output=True)
         
         if not skipDatalake:
             self.write_metadata(main_directory, scenario_title, select_link, username, scenarioYear, sample_rate)
