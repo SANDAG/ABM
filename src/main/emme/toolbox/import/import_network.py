@@ -316,24 +316,27 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
             ]),
             "TRANSIT_LINE": OrderedDict([
-                ("AM_Headway",     ("@headway_am",        "TRRT",     "EXTRA",    "AM Peak actual headway")),
-                ("PM_Headway",     ("@headway_pm",        "TRRT",     "EXTRA",    "PM Peak actual headway")),
-                ("Midday_Headway",  ("@headway_md",        "TRRT",     "EXTRA",    "Midday actual headway")),
-                ("Evening_Headway", ("@headway_ev",       "TRRT",     "EXTRA",    "Evening actual headway")),
-                ("EarlyAM_Headway", ("@headway_ea",       "TRRT",     "EXTRA",    "Early AM actual headway")),
-                ("AM_Headway_rev", ("@headway_rev_am",    "DERIVED",  "EXTRA",    "AM Peak revised headway")),
-                ("PM_Headway_rev", ("@headway_rev_pm",    "DERIVED",  "EXTRA",    "PM Peak revised headway")),
-                ("WT_IVTPK",       ("@vehicle_per_pk",    "MODE5TOD", "EXTRA",    "Peak in-vehicle perception factor")),
-                ("WT_IVTOP",       ("@vehicle_per_op",    "MODE5TOD", "EXTRA",    "Off-Peak in-vehicle perception factor")),
-                ("WT_FAREPK",      ("@fare_per_pk",       "MODE5TOD", "EXTRA",    "Peak fare perception factor")),
-                ("WT_FAREOP",      ("@fare_per_op",       "MODE5TOD", "EXTRA",    "Off-Peak fare perception factor")),
-                ("DWELLTIME",      ("default_dwell_time", "MODE5TOD", "INTERNAL", "")),
-                ("Fare",           ("@fare",              "TRRT",     "EXTRA",    "Boarding fare ($)")),
-                ("@transfer_penalty",("@transfer_penalty","DERIVED",  "EXTRA",    "Transfer penalty (min)")),
-                ("Route_ID",       ("@route_id",          "TRRT",     "EXTRA",    "Transit line internal ID")),
-                ("EarlyAM_Hours",  ("@hours_ea",        "TRRT",     "EXTRA",    "Early AM hours")),
-                ("Evening_Hours",  ("@hours_ev",        "TRRT",     "EXTRA",    "Evening hours")),
-                ("Config",         ("@config",          "TRRT",     "EXTRA",    "Config ID (same as route name)")),
+                ("AM_Headway",     ("@headway_am",       "TRRT",     "EXTRA",    "AM Peak actual headway")),
+                ("PM_Headway",     ("@headway_pm",       "TRRT",     "EXTRA",    "PM Peak actual headway")),
+                ("Midday_Headway", ("@headway_md",       "TRRT",     "EXTRA",    "Midday actual headway")),
+                ("Evening_Headway",("@headway_ev",       "TRRT",     "EXTRA",    "Evening actual headway")),
+                ("EarlyAM_Headway",("@headway_ea",       "TRRT",     "EXTRA",    "Early AM actual headway")),
+                ("AM_Headway_rev", ("@headway_rev_am",   "DERIVED",  "EXTRA",    "AM Peak revised headway")),
+                ("PM_Headway_rev", ("@headway_rev_pm",   "DERIVED",  "EXTRA",    "PM Peak revised headway")),
+                ("MD_Headway_rev", ("@headway_rev_md",   "DERIVED",  "EXTRA",    "Midday revised headway")),
+                ("EV_Headway_rev", ("@headway_rev_ev",   "DERIVED",  "EXTRA",    "Evening revised headway")),
+                ("EA_Headway_rev", ("@headway_rev_ea",   "DERIVED",  "EXTRA",    "Early AM revised headway")),
+                ("WT_IVTPK",       ("@vehicle_per_pk",   "MODE5TOD", "EXTRA",    "Peak in-vehicle perception factor")),
+                ("WT_IVTOP",       ("@vehicle_per_op",   "MODE5TOD", "EXTRA",    "Off-Peak in-vehicle perception factor")),
+                ("WT_FAREPK",      ("@fare_per_pk",      "MODE5TOD", "EXTRA",    "Peak fare perception factor")),
+                ("WT_FAREOP",      ("@fare_per_op",      "MODE5TOD", "EXTRA",    "Off-Peak fare perception factor")),
+                ("DWELLTIME",      ("default_dwell_time" "MODE5TOD", "INTERNAL", "")),
+                ("Fare",           ("@fare",             "TRRT",     "EXTRA",    "Boarding fare ($)")),
+                ("@transfer_penalty",("@transfer_penalty","DERIVED", "EXTRA",    "Transfer penalty (min)")),
+                ("Route_ID",       ("@route_id",         "TRRT",     "EXTRA",    "Transit line internal ID")),
+                ("EarlyAM_Hours",  ("@hours_ea",         "TRRT",     "EXTRA",    "Early AM hours")),
+                ("Evening_Hours",  ("@hours_ev",         "TRRT",     "EXTRA",    "Evening hours")),
+                ("Config",         ("@config",           "TRRT",     "EXTRA",    "Config ID (same as route name)")),
             ]),
             "TRANSIT_SEGMENT": OrderedDict([
                 ("Stop_ID",       ("@stop_id",       "TRSTOP", "EXTRA", "Stop ID from trcov")),
@@ -1040,6 +1043,12 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         special_fare_path = _join(self.source, fares_file_name)
         if not os.path.isfile(special_fare_path):
             return
+
+        # ON TRANSIT LINES
+        # Set 3-period headway based on revised headway calculation
+        for line in network.transit_lines():
+            for period in ["ea", "am", "md", "pm", "ev"]:
+                line["@headway_rev_" + period] = revised_headway(line["@headway_" + period])
 
         def get_line(line_id):
             line = network.transit_line(line_id)
