@@ -11,6 +11,6 @@ IF NOT EXIST python_virtualenv (
     mkdir python_virtualenv
 )
 python -m virtualenv python_virtualenv\abm14_2_0
-python_virtualenv\abm_14_2_0\Scripts\activate
+python_virtualenv\abm14_2_0\Scripts\activate
 pip install -r requirements.txt
 deactivate
