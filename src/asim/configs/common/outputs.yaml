@@ -434,6 +434,30 @@ trips:
     - is_drive_loc
     - is_drive_prm
     - is_drive_mix
+  rename_columns:
+    distance: distance_total
+    weightTrip: weight_trip
+    weightPersonTrip: weight_person_trip 
+    weightPerson_trip: weight_person_trip
+    timeDrive: time_drive
+    ownsTransponder: owns_transponder
+    distanceDrive: distance_drive
+    distanceDriveTransit: distance_drive_transit
+    timeTransitInVehicle: time_transit_in_vehicle
+    timeRapidTransitInVehicle: time_rapid_transit_in_vehicle
+    timeExpressBusTransitInVehicle: time_express_bus_transit_in_vehicle
+    timeLightRailTransitInVehicle: time_light_rail_transit_in_vehicle
+    timeCommuterRailTransitInVehicle: time_commuter_rail_transit_in_vehicle
+    timeTransitInitialWait: time_transit_initial_wait
+    timeBike: time_bike
+    timeLocalBusTransitInVehicle: time_local_bus_transit_in_vehicle
+    timeWalk: time_walk
+    timeTotal: time_total
+    costTollDrive: cost_toll_drive
+    costOperatingDrive: cost_operating_drive
+    costFareTransit: cost_fare_transit
+    costTotal: cost_total
+    transfersTransit: transfers_transit
 
 households:
   remove_columns:

@@ -147,6 +147,17 @@ def reorder_columns(table_settings, df):
     
     return df_reorder
 
+def rename_columns(table_settings, df):
+    # rename columns in a final table
+    setting = "rename_columns"
+    if setting not in table_settings:
+        return df
+    rename_cols = table_settings[setting]
+
+    df_rename = df.rename(columns=rename_cols)
+
+    return df_rename
+
 def get_output_table_names(output_tables_settings, output_tables_settings_name):
     """ """
     action = output_tables_settings.get("action")
@@ -206,6 +217,7 @@ def update_tables():
             table_settings = common_settings[table_name]
             output_table = remove_columns(table_settings, output_table)
             output_table = reorder_columns(table_settings, output_table)
+            output_table = rename_columns(table_settings, output_table)
         
         pipeline.replace_table(table_name, output_table)
 
