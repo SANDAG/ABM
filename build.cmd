@@ -30,7 +30,7 @@ for /f "tokens=*" %%i in (build_create_scenario_scripts.txt) DO (
 @REM Copy application files
 if not exist %ROOT%\common\application mkdir %ROOT%\common\application
 xcopy /Y .\src\main\resources\"*.dll" %ROOT%\common\application
-xcopy /Y .\src\main\resources\"*.jar" %ROOT%\common\application
+xcopy /Y .\src\main\resources\application\"*.jar" %ROOT%\common\application
 
 @REM Copy bin files
 if not exist %ROOT%\common\bin mkdir %ROOT%\common\bin
