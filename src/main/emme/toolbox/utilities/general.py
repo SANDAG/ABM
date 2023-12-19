@@ -77,6 +77,17 @@ class NetworkCalculator(object):
         return self._network_calc(spec, self._scenario)
 
 
+class AvailableNodeIDTracker(object):
+    def __init__(self, network, start=999999):
+        self._network = network
+        self._node_id = start
+
+    def get_id(self):
+        while self._network.node(self._node_id):
+            self._node_id -= 1
+        return self._node_id
+
+
 @_context
 def temp_matrices(emmebank, mat_type, total=1, default_value=0.0):
     matrices = []

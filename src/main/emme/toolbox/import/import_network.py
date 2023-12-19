@@ -1105,8 +1105,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         self._log.append({"type": "text", "content": "Apply special_fares to transit lines complete"})
 
     def renumber_base_nodes(self, network):
-        # TODO: log node renumberings
-        tracker = AvailableNodeIDTracker(network)
+        tracker = gen_utils.AvailableNodeIDTracker(network)
         nodes = [n for n in network.nodes() if n.number > 999999]
         nodes = sorted(nodes, key=lambda x: x.number, reverse=True)
         if nodes:
@@ -1774,17 +1773,6 @@ def find_path(orig_link, dest_link, mode):
         route.append(prev_link)
         prev_link = back_links[prev_link]
     return list(reversed(route))
-
-
-class AvailableNodeIDTracker(object):
-    def __init__(self, network, start=999999):
-        self._network = network
-        self._node_id = start
-
-    def get_id(self):
-        while self._network.node(self._node_id):
-            self._node_id -= 1
-        return self._node_id
 
 
 class NoPathException(Exception):
