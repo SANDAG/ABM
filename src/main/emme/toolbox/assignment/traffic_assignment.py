@@ -569,11 +569,11 @@ Assignment matrices and resulting network flows are always in PCE.
 
             with _m.logbook_trace("Transit line headway and background traffic"):
                 # set headway for the period
-                hdw = {"ea": "@headway_op",
+                hdw = {"ea": "@headway_ea",
                        "am": "@headway_am",
-                       "md": "@headway_op",
+                       "md": "@headway_md",
                        "pm": "@headway_pm",
-                       "ev": "@headway_op"}
+                       "ev": "@headway_ev"}
                 net_calc("hdw", hdw[p], {"transit_line": "all"})
 
                 # transit vehicle as background flow with periods
@@ -738,11 +738,11 @@ Assignment matrices and resulting network flows are always in PCE.
 
             with _m.logbook_trace("Transit line headway and background traffic"):
                 # set headway for the period: format is (attribute_name, period duration in hours) 
-                hdw = {"ea": ("@headway_op", 3),
+                hdw = {"ea": ("@headway_ea", 3),
                        "am": ("@headway_am", 3),
-                       "md": ("@headway_op", 6.5),
+                       "md": ("@headway_md", 6.5),
                        "pm": ("@headway_pm", 3.5),
-                       "ev": ("@headway_op", 5)}
+                       "ev": ("@headway_ev", 5)}
                 net_calc('ul2', '0', {'link': 'all'})
                 net_calc('hdw', '9999.99', {'transit_line': 'all'})
                 net_calc(
@@ -789,11 +789,11 @@ Assignment matrices and resulting network flows are always in PCE.
         
         with _m.logbook_trace("Reset transit line headways"):
                 # set headway for the period
-                hdw = {"ea": "@headway_op",
+                hdw = {"ea": "@headway_ea",
                        "am": "@headway_am",
-                       "md": "@headway_op",
+                       "md": "@headway_md",
                        "pm": "@headway_pm",
-                       "ev": "@headway_op"}
+                       "ev": "@headway_ev"}
                 net_calc("hdw", hdw[p], {"transit_line": "all"})
         return
 
