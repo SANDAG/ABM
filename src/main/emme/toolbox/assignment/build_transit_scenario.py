@@ -340,14 +340,6 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
 
             scenario.publish_network(network)
             self._node_id_tracker = None
-            
-            ##copying auto_time to ul1, so it does not get wiped when transit connectors are created. 
-            if scenario.has_traffic_results and "@auto_time" in scenario.attributes("LINK"):
-                copy_att(from_attribute_name='timau',
-                to_attribute_name='ul1',
-                from_scenario=scenario,
-                to_scenario=scenario)
-
             return scenario 
 
     @_m.logbook_trace("Add timed-transfer links", save_arguments=True)
