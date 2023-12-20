@@ -311,7 +311,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 ("INTDIST_UP",      ("@intdist_up",     "DERIVED", "EXTRA",    "Upstream major intersection distance")),
                 ("INTDIST_DOWN",    ("@intdist_down",   "DERIVED", "EXTRA",    "Downstream major intersection distance")),
 
-                ("TMO",       ("@trtime",               "RAIL_TWO_WAY", "EXTRA", "link time in minutes")),
+                ("TMO",       ("@trtime",               "RAIL_TWO_WAY", "EXTRA", "link time in minutes",)),
                 ("OSPD",      ("@speed_observed",       "RAIL_TWO_WAY", "EXTRA", "Observed speed")),
 
             ]),
@@ -330,7 +330,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 ("WT_IVTOP",       ("@vehicle_per_op",   "MODE5TOD", "EXTRA",    "Off-Peak in-vehicle perception factor")),
                 ("WT_FAREPK",      ("@fare_per_pk",      "MODE5TOD", "EXTRA",    "Peak fare perception factor")),
                 ("WT_FAREOP",      ("@fare_per_op",      "MODE5TOD", "EXTRA",    "Off-Peak fare perception factor")),
-                ("DWELLTIME",      ("default_dwell_time", "MODE5TOD", "INTERNAL", "")),
+                ("DWELLTIME",      ("default_dwell_time" "MODE5TOD", "INTERNAL", "")),
                 ("Fare",           ("@fare",             "TRRT",     "EXTRA",    "Boarding fare ($)")),
                 ("@transfer_penalty",("@transfer_penalty","DERIVED", "EXTRA",    "Transfer penalty (min)")),
                 ("Route_ID",       ("@route_id",         "TRRT",     "EXTRA",    "Transit line internal ID")),
