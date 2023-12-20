@@ -43,9 +43,9 @@ Description,Target,Expression
 ,vot_da,c_ivt / trip_c_cost * 0.6
 ,vot_s2,vot_da * cost_share_s2
 ,vot_s3,vot_da * cost_share_s3
-,vot_bin_da,"np.where(vot_da < vot_threshold_low, 1, np.where(vot_da < vot_threshold_med, 2, 3))"
-,vot_bin_s2,"np.where(vot_s2 < vot_threshold_low, 1, np.where(vot_s2 < vot_threshold_med, 2, 3))"
-,vot_bin_s3,"np.where(vot_s3 < vot_threshold_low, 1, np.where(vot_s3 < vot_threshold_med, 2, 3))"
+,vot_bin_da,"np.where(trips.trip_mode.isin(['DRIVEALONE']),np.where(trips.vot_da < vot_threshold_low, 1,np.where(trips.vot_da < vot_threshold_med, 2, 3)),0)"
+,vot_bin_s2,"np.where(trips.trip_mode.isin(['SHARED2','TAXI','TNC_SINGLE']),np.where(trips.vot_s2 < vot_threshold_low,1,np.where(trips.vot_s2 < vot_threshold_med, 2, 3)),0)"
+,vot_bin_s3,"np.where(trips.trip_mode.isin(['SHARED3','TNC_SHARED']),np.where(trips.vot_s3 < vot_threshold_low,1,np.where(trips.vot_s3 < vot_threshold_med, 2, 3)),0)"
 ,vot_1,"np.where((vot_bin_da ==1) | (vot_bin_s2 ==1) | (vot_bin_s3 == 1), True, False)"
 ,vot_2,"np.where((vot_bin_da ==2) | (vot_bin_s2 ==2) | (vot_bin_s3 == 1), True, False)"
 ,vot_3,"np.where((vot_bin_da ==3) | (vot_bin_s2 ==3) | (vot_bin_s3 == 1), True, False)"
