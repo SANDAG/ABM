@@ -328,24 +328,18 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             # The congested auto times for mixed traffic are in "@auto_time"
             # (output from traffic assignment) which needs to be copied to auto_time (a.k.a. timau)
             # (The auto_time attribute is generated from the VDF values which include reliability factor)
+            ## also copying auto_time to ul1, so it does not get wiped when transit connectors are created. 
+            
             src_attrs = [params["fixed_link_time"]]
             dst_attrs = ["data2"]
             if scenario.has_traffic_results and "@auto_time" in scenario.attributes("LINK"):
-                src_attrs.append("@auto_time")
-                dst_attrs.append("auto_time")
+                src_attrs.extend(["@auto_time", "@auto_time"])
+                dst_attrs.extend(["auto_time", "data1"])
             values = network.get_attribute_values("LINK", src_attrs)
             network.set_attribute_values("LINK", dst_attrs, values)
 
             scenario.publish_network(network)
             self._node_id_tracker = None
-            
-            ##copying auto_time to ul1, so it does not get wiped when transit connectors are created. 
-            if scenario.has_traffic_results and "@auto_time" in scenario.attributes("LINK"):
-                copy_att(from_attribute_name='timau',
-                to_attribute_name='ul1',
-                from_scenario=scenario,
-                to_scenario=scenario)
-
             return scenario 
 
     @_m.logbook_trace("Add timed-transfer links", save_arguments=True)

@@ -1035,20 +1035,19 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         self._log.append({"type": "text", "content": "Import transit lines complete"})
 
     def calc_transit_attributes(self, network):
-        # for link in network.links():
-        #     if link.type == 0:  # walk only links have FC ==0
-        #         link.type = 99
-
-        fares_file_name = FILE_NAMES["FARES"]
-        special_fare_path = _join(self.source, fares_file_name)
-        if not os.path.isfile(special_fare_path):
-            return
-
+        self._log.append({"type": "header", "content": "Calculate derived transit line attributes"})
         # ON TRANSIT LINES
         # Set 3-period headway based on revised headway calculation
         for line in network.transit_lines():
             for period in ["ea", "am", "md", "pm", "ev"]:
                 line["@headway_rev_" + period] = revised_headway(line["@headway_" + period])
+        self._log.append({"type": "text", "content": "Revised headway calculation complete"})
+
+        fares_file_name = FILE_NAMES["FARES"]
+        special_fare_path = _join(self.source, fares_file_name)
+        if not os.path.isfile(special_fare_path):
+            self._log.append({"type": "text", "content": "Special fares file %s not found" % fares_file_name})
+            return
 
         def get_line(line_id):
             line = network.transit_line(line_id)
@@ -1698,7 +1697,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 error_msg.append("</ul>")
                 report.add_html("".join(error_msg))
             else:
-                report.add_html("<br><br>No errors detected during import :-)")
+                report.add_html("<br><br><nbsp><nbsp>No errors detected during import :-)")
 
             for item in self._log:
                 if item["type"] == "text":
