@@ -202,7 +202,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                 delete_existing=True,
                                 selection={
                                     "centroid":"all",
-                                    "node": "@ipark=1,9 and %s" % self.line_haul_mode_specs[i],
+                                    "node": "@park=1,9 and %s" % self.line_haul_mode_specs[i],
                                     "link":"none",
                                     "exclude_split_links":False,
                                     "only_midblock_nodes": False},
@@ -284,7 +284,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                 delete_existing=True,
                                 selection={
                                     "centroid":"all",
-                                    "node": "@ipark=1,9 and %s" % self.line_haul_mode_specs[i],
+                                    "node": "@park=1,9 and %s" % self.line_haul_mode_specs[i],
                                     "link":"none",
                                     "exclude_split_links":False,
                                     "only_midblock_nodes": False},
@@ -318,7 +318,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                 delete_existing=True,
                                 selection={
                                     "centroid":"all",
-                                    "node": "@ipark=1,9 and %s" % self.line_haul_mode_specs[i],
+                                    "node": "@park=1,9 and %s" % self.line_haul_mode_specs[i],
                                     "link":"none",
                                     "exclude_split_links":False,
                                     "only_midblock_nodes": False},
@@ -331,7 +331,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                 delete_existing=True,
                                 selection={
                                     "centroid":"i=1,4",
-                                    "node": "@ipark=1,9 and %s" % self.line_haul_mode_specs[i],
+                                    "node": "@park=1,9 and %s" % self.line_haul_mode_specs[i],
                                     "link":"none",
                                     "exclude_split_links":False,
                                     "only_midblock_nodes": False},
