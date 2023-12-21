@@ -1,5 +1,5 @@
 Label,Description,Expression,No Pass,Pass
-util_auto_ownership,auto_ownership zero would result in unavailability,@(df.auto_ownership==0) * (df.everyone_owns==0),,-999
+util_auto_ownership,auto_ownership zero would result in unavailability,@(df.auto_ownership==0) * (df.everyone_owns==0) * (df.av_ownership==0),,-999
 util_ml_dist,Distance to nearest ML,@df.ml_dist,,coef_distance_to_ML
 util_Constant,Constant,1,,coef_Constant
 util_total_hh_toll_dist,Sum of toll distance for all workers in hh,total_hh_toll_dist,,coef_total_hh_toll_dist
