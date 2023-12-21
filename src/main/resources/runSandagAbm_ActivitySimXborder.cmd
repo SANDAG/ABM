@@ -2,6 +2,7 @@ rem @echo off
 
 set PROJECT_DRIVE=%1
 set PROJECT_DIRECTORY=%2
+set SAMPLERATE=%3
 
 %PROJECT_DRIVE%
 cd /d %PROJECT_DIRECTORY%
@@ -9,7 +10,19 @@ cd /d %PROJECT_DIRECTORY%
 :: -------------------------------------------------------------------------------------------------
 :: Loop
 :: -------------------------------------------------------------------------------------------------
-ECHO ****MODEL ITERATION %ITERATION%
+SET SAMPLE=%SAMPLERATE%
+
+ECHO CURRENT DIRECTORY: %cd%
+CD src\asim\configs\crossborder
+:: Set sample_rate in configs file dynamically
+ECHO # Configs File with Sample Rate set by Model Runner > settings.yaml
+FOR /F "delims=*" %%i IN (settings_source.yaml) DO (
+    SET LINE=%%i
+    SETLOCAL EnableDelayedExpansion
+    SET LINE=!LINE:%%sample_size%%=%SAMPLE%!
+    ECHO !LINE!>>settings.yaml
+    ENDLOCAL
+)
 
 :: -------------------------------------------------------------------------------------------------
 :: Run ActivitySim

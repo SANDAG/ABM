@@ -654,22 +654,22 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 if not skipABMAirport[iteration]:
                     self.run_proc(
                         "runSandagAbm_ActivitySimAirport.cmd",
-                        [drive, drive + path_forward_slash, sample_rate[iteration], msa_iteration],
+                        [drive, drive + path_forward_slash, int(sample_rate[iteration] * hh_count), msa_iteration],
                         "Running ActivitySim airport models", capture_output=True)
                 if (not skipABMXborderWait) and (iteration == 0):
                     self.run_proc(
                         "runSandagAbm_ActivitySimXborderWaitModel.cmd",
-                        [drive, drive + path_forward_slash, sample_rate[iteration], msa_iteration],
+                        [drive, drive + path_forward_slash, int(sample_rate[iteration] * hh_count), msa_iteration],
                         "Running ActivitySim wait time models", capture_output=True)
                 if not skipABMXborder[iteration]:
                     self.run_proc(
                         "runSandagAbm_ActivitySimXborder.cmd",
-                        [drive, drive + path_forward_slash, sample_rate[iteration], msa_iteration],
+                        [drive, drive + path_forward_slash, int(sample_rate[iteration] * hh_count), msa_iteration],
                         "Running ActivitySim crossborder model", capture_output=True)
                 if not skipABMVisitor[iteration]:
                     self.run_proc(
                         "runSandagAbm_ActivitySimVisitor.cmd",
-                        [drive, drive + path_forward_slash, sample_rate[iteration], msa_iteration],
+                        [drive, drive + path_forward_slash, int(sample_rate[iteration] * hh_count), msa_iteration],
                         "Running ActivitySim visitor model", capture_output=True)
 
                 if not skipCTM[iteration]:
