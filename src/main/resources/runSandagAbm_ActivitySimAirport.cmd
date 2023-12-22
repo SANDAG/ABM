@@ -2,7 +2,8 @@ ECHO OFF
 
 set PROJECT_DRIVE=%1
 set PROJECT_DIRECTORY=%2
-set SAMPLERATE=%3
+set SAMPLERATE_SAN=%3
+set SAMPLERATE_CBX=%4
 
 %PROJECT_DRIVE%
 cd /d %PROJECT_DIRECTORY%
@@ -10,7 +11,8 @@ cd /d %PROJECT_DIRECTORY%
 :: -------------------------------------------------------------------------------------------------
 :: Loop
 :: -------------------------------------------------------------------------------------------------
-SET SAMPLE=%SAMPLERATE%
+SET SAN_SAMPLE=%SAMPLERATE_SAN%
+SET CBX_SAMPLE=%SAMPLERATE_CBX%
 
 CD src\asim\configs\airport.CBX
 :: Set sample_rate in configs file dynamically
@@ -18,7 +20,7 @@ ECHO # Configs File with Sample Rate set by Model Runner > settings.yaml
 FOR /F "delims=*" %%i IN (settings_source.yaml) DO (
     SET LINE=%%i
     SETLOCAL EnableDelayedExpansion
-    SET LINE=!LINE:%%sample_size%%=%SAMPLE%!
+    SET LINE=!LINE:%%sample_size%%=%CBX_SAMPLE%!
     ECHO !LINE!>>settings.yaml
     ENDLOCAL
 )
@@ -29,7 +31,7 @@ ECHO # Configs File with Sample Rate set by Model Runner > settings.yaml
 FOR /F "delims=*" %%i IN (settings_source.yaml) DO (
     SET LINE=%%i
     SETLOCAL EnableDelayedExpansion
-    SET LINE=!LINE:%%sample_size%%=%SAMPLE%!
+    SET LINE=!LINE:%%sample_size%%=%SAN_SAMPLE%!
     ECHO !LINE!>>settings.yaml
     ENDLOCAL
 )
