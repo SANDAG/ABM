@@ -6,6 +6,7 @@ import os
 import yaml
 
 import numpy as np
+import pandas as pd
 
 from activitysim.core import config, inject, pipeline, tracing
 from activitysim.core.config import setting
@@ -177,8 +178,10 @@ def get_output_table_names(output_tables_settings, output_tables_settings_name):
 
 @inject.step()
 def update_tables():
-    
     # get list of model outputs to update
+    output_dir = inject.get_injectable("output_dir")
+    input_dir = os.path.abspath(os.path.join(output_dir, "..", "..", "input"))
+    # input_dir = inject.get_injectable("data_dir")
     output_tables_settings_name = "output_tables"
     output_tables_settings = setting(output_tables_settings_name)
     if output_tables_settings is None:
@@ -197,7 +200,8 @@ def update_tables():
 
         if not (table_name in common_settings
                 or table_name == "households"
-                or table_name == "vehicles"):
+                or table_name == "vehicles"
+                or table_name == "persons"):
             continue
         
         output_table = pipeline.get_table(table_name)
@@ -205,6 +209,14 @@ def update_tables():
         # set sample rate to float
         if table_name == "households":
             output_table["sample_rate"] = output_table["sample_rate"].astype(float)
+            input_households = pd.read_csv(os.path.join(input_dir,"households.csv"),
+            usecols=[
+            "hhid",
+            "poverty"],
+            dtype={
+            "hhid":"int32",
+            "poverty": "float"})
+            output_table = output_table.merge(input_households,how="inner",left_on="household_id",right_on="hhid")
 
         # split vehicle_type column
         if table_name == "vehicles":
@@ -212,6 +224,26 @@ def update_tables():
                 "vehicle_type"
             ].str.split(pat="_", expand=True)
             # output_table.drop(columns={'vehicle_type'}, inplace=True) ## TODO decide whether to drop column here or in bronze -> silver filter
+        # add missing columns from input persons file
+        if table_name == "persons":
+            input_persons = pd.read_csv(os.path.join(input_dir,"persons.csv"),
+            usecols=[
+            "perid",
+            "miltary",
+            "grade",
+            "weeks",
+            "hours",
+            "rac1p",
+            "hisp"],
+            dtype={
+            "perid": "int32",
+            "miltary": "int8",
+            "grade": "int8",
+            "weeks": "int8",
+            "hours": "int8",
+            "rac1p": "int8",
+            "hisp": "int8"})
+            output_table = output_table.merge(input_persons,how="inner",left_on="person_id",right_on="perid")
         
         if table_name in common_settings:
             table_settings = common_settings[table_name]

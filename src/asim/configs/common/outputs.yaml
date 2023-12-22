@@ -575,7 +575,17 @@ households:
     - emp_non_ws_oth
     - budgetroom
     - economyroom
+    - hhid
+  rename_columns:
+    bldgsz: buildingCategory
 
 land_use:
   remove_columns:
     - taz
+
+persons:
+  remove_columns:
+    - perid
+  rename_columns:
+    rac1p: race
+    hisp: hispanic
