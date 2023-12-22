@@ -654,7 +654,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 if not skipABMAirport[iteration]:
                     hh_airport_size = {}
                     for airport in ["san", "cbx"]:
-                        householdFile = pd.read_csv(_join(self._path, "input", f"households_airport.{airport}.csv"))
+                        householdFile = pd.read_csv(_join(self._path, "input", "households_airport.{}.csv".format(airport)))
                         hh_airport_size[airport] = len(householdFile)
                         del(householdFile)
                     self.run_proc(
