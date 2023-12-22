@@ -1,3 +1,5 @@
+model_name: crossborder
+
 inherit_settings: False
 
 # number of households to simulate
@@ -16,7 +18,7 @@ fail_fast: True
 
 # chooser chunk size in gigabytes
 # target top memory usage during activitysim run (including shared memory, loaded tables, and transient memory usage)
-chunk_size: 0
+chunk_size: 400_000_000_000
 #chunk_size: 0
 
 # minimum fraction of total chunk_size to reserve for adaptive chunking
@@ -43,7 +45,7 @@ keep_mem_logs: True
 
 ##############
 
-trace_hh_id: 95093
+# trace_hh_id: 49318
 
 # input tables
 input_table_list:
@@ -107,6 +109,8 @@ models:
   - trip_destination
   - trip_mode_choice
   - write_trip_matrices
+  # - write_to_datalake
+  - update_tables
   - write_tables
 
 multiprocess_steps:
@@ -135,7 +139,6 @@ output_tables:
     - persons
     - tours
     - trips
-    - attribute_combinations
 
 output_summaries:
   tours:

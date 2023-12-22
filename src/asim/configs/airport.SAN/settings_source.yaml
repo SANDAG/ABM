@@ -1,3 +1,5 @@
+model_name: airport.SAN
+
 inherit_settings: False
 
 # number of households to simulate
@@ -110,6 +112,8 @@ models:
   - trip_mode_choice
   - airport_returns
   - write_trip_matrices
+  # - write_to_datalake
+  - update_tables
   - write_tables
 
 multiprocess_steps:
@@ -137,7 +141,6 @@ output_tables:
     - persons
     - tours
     - trips
-    - attribute_combinations
 
 output_summaries:
   tours:
