@@ -61,9 +61,25 @@ xcopy /Y/S/E .\src\main\emme %ROOT%\common\python\emme
 if not exist %ROOT%\common\src\asim mkdir %ROOT%\common\src\asim
 xcopy /Y/S/E .\src\asim %ROOT%\common\src\asim
 
-@REM Copy git folder
-@REM TODO: Create git yaml here instead of scenario creation
-xcopy /Y/S/E/H/I .\.git %ROOT%\common\src\asim\.git
+@REM get git info
+@echo get git info
+set GIT_FOLDER=.\.git
+set GIT_FILE=%ROOT%\common\git_info.yaml
+type nul>%GIT_FILE%
+WHERE git
+IF NOT ERRORLEVEL 0 GOTO NOGIT
+echo|set /p="branch: " >> %GIT_FILE%
+git --git-dir=%GIT_FOLDER% branch --show-current >> %GIT_FILE%
+echo|set /p="commit: " >> %GIT_FILE%
+git --git-dir=%GIT_FOLDER% rev-parse HEAD >> %GIT_FILE%
+GOTO GITDONE
+:NOGIT
+set /p GIT_HEAD=< %GIT_FOLDER%\HEAD
+for %%A in (%GIT_HEAD%) do set GIT_BRANCH=%%~nxA
+set /p GIT_COMMIT=< %GIT_FOLDER%\refs\heads\%GIT_BRANCH%
+echo branch: %GIT_BRANCH% >> %GIT_FILE%
+echo commit: %GIT_COMMIT% >> %GIT_FILE%
+:GITDONE
 
 goto done
 

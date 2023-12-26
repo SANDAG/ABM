@@ -83,25 +83,8 @@ if %YEAR%==2018 (xcopy /Y/S   .\common\input\template\validation\2018\"*.*" %SCE
 if %YEAR%==2022 (xcopy /Y/S   .\common\input\template\validation\2022\"*.*" %SCENARIO_FOLDER%\analysis\validation\) 
 xcopy /Y/S   .\common\input\template\summary\"*.*" %SCENARIO_FOLDER%\analysis\summary\     
 
-rem get git info
-@echo get git info
-set GIT_FOLDER=.\common\src\asim\.git
-set GIT_FILE=%SCENARIO_FOLDER%\git_info.yaml
-type nul>%GIT_FILE%
-WHERE git
-IF NOT ERRORLEVEL 0 GOTO NOGIT
-echo|set /p="branch: " >> %GIT_FILE%
-git --git-dir=%GIT_FOLDER% branch --show-current >> %GIT_FILE%
-echo|set /p="commit: " >> %GIT_FILE%
-git --git-dir=%GIT_FOLDER% rev-parse HEAD >> %GIT_FILE%
-GOTO GITDONE
-:NOGIT
-set /p GIT_HEAD=< %GIT_FOLDER%\HEAD
-for %%A in (%GIT_HEAD%) do set GIT_BRANCH=%%~nxA
-set /p GIT_COMMIT=< %GIT_FOLDER%\refs\heads\%GIT_BRANCH%
-echo branch: %GIT_BRANCH% >> %GIT_FILE%
-echo commit: %GIT_COMMIT% >> %GIT_FILE%
-:GITDONE
+rem copy git info
+xcopy /Y .\common\git_info.yaml %SCENARIO_FOLDER%
 
 rem populate scenario year into sandag_abm.properties
 set PROP_FILE=%SCENARIO_FOLDER%\conf\sandag_abm.properties
