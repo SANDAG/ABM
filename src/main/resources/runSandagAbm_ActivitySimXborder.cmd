@@ -15,14 +15,20 @@ SET SAMPLE=%SAMPLERATE%
 ECHO CURRENT DIRECTORY: %cd%
 CD src\asim\configs\crossborder
 :: Set sample_rate in configs file dynamically
-ECHO # Configs File with Sample Rate set by Model Runner > settings.yaml
-FOR /F "delims=*" %%i IN (settings_source.yaml) DO (
-    SET LINE=%%i
+FOR /F "USEBACKQ delims=" %%i IN (`type "settings.yaml" ^| find /V /N ""`) DO (
     SETLOCAL EnableDelayedExpansion
-    SET LINE=!LINE:%%sample_size%%=%SAMPLE%!
-    ECHO !LINE!>>settings.yaml
+    SET LINE=%%i
+    set LINE=!LINE:*]=!
+    SET SUBSTR=!LINE:~0,23!
+    IF !SUBSTR! == households_sample_size: (
+        ECHO households_sample_size: %SAMPLE% >> settings_temp.yaml
+    ) ELSE (
+        ECHO:!LINE! >> settings_temp.yaml
+    )
     ENDLOCAL
 )
+del settings.yaml
+move settings_temp.yaml settings.yaml
 
 :: -------------------------------------------------------------------------------------------------
 :: Run ActivitySim

@@ -150,7 +150,7 @@ def export_table(table, name, model, parent_dir_name, container):
     container.upload_blob(name=lake_file_name, data=parquet_file)
     print("Write to Data Lake: %s/%s took %s to write to Azure" % (model, name, str(datetime.datetime.now()-t0)))
 
-def write_to_datalake(output_path, models):
+def write_to_datalake(output_path, models, exclude):
     cloud_bool, container = connect_to_Azure()
     if not cloud_bool:
         return
@@ -177,6 +177,8 @@ def write_to_datalake(output_path, models):
         
         files = glob.glob(os.path.join(output_path, relpath, model, prefix + '*'))
         for file in files:
+            if os.path.basename(file) in exclude:
+                continue
             name, ext = os.path.splitext(os.path.basename(file))
             if prefix != '':
                 name = name.split(prefix)[1]
@@ -216,4 +218,7 @@ models = [
     ('visitor', '', True),
     ('report', '..', False)
 ]
-write_to_datalake(output_path, models)
+exclude = [
+    'final_pipeline.h5'
+]
+write_to_datalake(output_path, models, exclude)
