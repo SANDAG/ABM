@@ -125,6 +125,8 @@ multiprocess_steps:
   - name: mp_summarize
     begin: write_trip_matrices
 
+cleanup_pipeline_after_run: True
+
 output_tables:
   h5_store: False
   action: include
