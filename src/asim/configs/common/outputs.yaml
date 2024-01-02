@@ -434,6 +434,14 @@ trips:
     - is_drive_loc
     - is_drive_prm
     - is_drive_mix
+    - parkLocation1Cost
+    - parkLocation2Cost
+    - parkLocation3Cost
+    - parkLocation4Cost
+    - parkLocation5Cost
+    - partySizeRideHailLocation1AutoDist
+    - partySizeRideHailLocation2AutoDist
+
   rename_columns:
     distance: distance_total
     weightTrip: weight_trip
