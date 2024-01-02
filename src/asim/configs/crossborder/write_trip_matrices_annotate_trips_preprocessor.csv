@@ -13,8 +13,8 @@ Description,Target,Expression
 ,is_pm,trips.trip_period == 'PM'
 ,is_ev,trips.trip_period == 'EV'
 ,is_walk_LOC_transit,trips.trip_mode == 'WALK_LOC'
-,is_walk_PRM_transit,trips.trip_mode.isin == 'WALK_PRM'
-,is_walk_MIX_transit,trips.trip_mode.isin == 'WALK_MIX'
+,is_walk_PRM_transit,trips.trip_mode == 'WALK_PRM'
+,is_walk_MIX_transit,trips.trip_mode == 'WALK_MIX'
 ,is_knr_loc,trips.trip_mode.isin(['KNR_LOC'])
 ,is_knr_prm,trips.trip_mode.isin(['KNR_PRM'])
 ,is_knr_mix,trips.trip_mode.isin(['KNR_MIX'])
@@ -444,3 +444,5 @@ Description,Target,Expression
 # totals,,
 ,cost_total,costOperatingDrive + costTollDrive + costFareTransit
 ,time_total,timeDrive + timeBike + timeWalk + timeTransitInitialWait + timeTransitInVehicle + transfersTransit
+#,,
+,value_of_time_category_id,"np.where(vot_1,1,np.where(vot_2,2,3))"
