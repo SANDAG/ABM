@@ -441,6 +441,9 @@ trips:
     - parkLocation5Cost
     - partySizeRideHailLocation1AutoDist
     - partySizeRideHailLocation2AutoDist
+    - tnc_single_wait_time
+    - tnc_shared_wait_time
+    - taxi_wait_time
 
   rename_columns:
     distance: distance_total

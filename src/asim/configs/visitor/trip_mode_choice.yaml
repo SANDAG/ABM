@@ -126,6 +126,13 @@ preprocessor:
     - land_use
     - tours
 
+annotate_trips:
+  SPEC: trip_mode_choice_annotate_trips
+  DF: trips_merged
+  TABLES:
+    - tours
+    - land_use
+
 # to reduce memory needs filter chooser table to these fields
 TOURS_MERGED_CHOOSER_COLUMNS:
   - tour_type
@@ -144,3 +151,10 @@ CHOOSER_COLS_TO_KEEP:
   - vot_da
   - vot_s2
   - vot_s3
+  - parking_cost
+  - tnc_single_wait_time
+  - tnc_shared_wait_time
+  - taxi_wait_time
+  - s2_dist_skims
+  - s2_time_skims
+  - s2_cost_skims
