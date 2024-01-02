@@ -8,7 +8,7 @@ households_sample_size: 0
 multiprocess: True
 strict: False
 mem_tick: 30
-num_processes: 20
+num_processes: 10
 fail_fast: True
 
 ##############

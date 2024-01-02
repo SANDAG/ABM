@@ -94,7 +94,7 @@ use_shadow_pricing: False
 want_dest_choice_sample_tables: False
 want_dest_choice_presampling: True
 
-# trace_hh_id: 12801
+# trace_hh_id: 262
 resume_after: 
 
 models:
@@ -141,6 +141,7 @@ output_tables:
     - persons
     - tours
     - trips
+    # - attribute_combinations
 
 output_summaries:
   tours:
