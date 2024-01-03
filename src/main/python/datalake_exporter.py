@@ -63,7 +63,7 @@ def get_model_metadata(model, output_path):
         pass
     return metadata
 
-def create_scenario_df(ts, EMME_metadata, parent_dir_name):
+def create_scenario_df(ts, EMME_metadata, parent_dir_name, output_path):
     """
     create a metadata dataframe containing the git commit, branch, model run timestamp, guid,
     and input data dir.
@@ -87,7 +87,7 @@ def create_scenario_df(ts, EMME_metadata, parent_dir_name):
     machine_name = socket.gethostname()
 
     # repo branch name and commit hash: abm3
-    abm_git_path = os.path.abspath(os.path.join(EMME_metadata["main_directory"], 'git_info.yaml'))
+    abm_git_path = os.path.abspath(os.path.join(output_path, '..', 'git_info.yaml'))
     if os.path.isfile(abm_git_path):
         with open(abm_git_path, "r") as stream:
             abm_git_info = yaml.safe_load(stream)
@@ -133,7 +133,7 @@ def create_model_metadata_df(model, model_metadata):
 
     return meta_df
 
-def export_data(table, name, model, timestamp_str, parent_dir_name, container):
+def export_table(table, name, model, parent_dir_name, container):
     model_output_file = name+".parquet"
     if model == '':
         lake_file_name = "/".join(["abm_15_0_0",parent_dir_name,model_output_file])
@@ -150,46 +150,56 @@ def export_data(table, name, model, timestamp_str, parent_dir_name, container):
     container.upload_blob(name=lake_file_name, data=parquet_file)
     print("Write to Data Lake: %s/%s took %s to write to Azure" % (model, name, str(datetime.datetime.now()-t0)))
 
-def write_to_datalake(output_path, models):
+def write_to_datalake(output_path, models, exclude):
     cloud_bool, container = connect_to_Azure()
     if not cloud_bool:
         return
     
     now = datetime.datetime.now()
-    timestamp_str = now.strftime("%Y%m%d_%H%M%S")
     EMME_metadata = get_scenario_metadata(output_path)
     if "scenario_id" not in EMME_metadata:
         return
     parent_dir_name = str(EMME_metadata["scenario_title"]) + "__" + str(EMME_metadata["username"]) + "__" + str(EMME_metadata["scenario_id"])
 
-    scenario_df = create_scenario_df(now, EMME_metadata, parent_dir_name)
-    export_data(scenario_df, 'scenario', '', timestamp_str, parent_dir_name, container)
+    scenario_df = create_scenario_df(now, EMME_metadata, parent_dir_name, output_path)
+    export_table(scenario_df, 'scenario', '', parent_dir_name, container)
 
     for model, relpath, is_asim in models:
         if is_asim:
             model_metadata = get_model_metadata(model, output_path)
             prefix = model_metadata["prefix"]
             model_metadata_df = create_model_metadata_df(model, model_metadata)
-            export_data(model_metadata_df, 'model_metadata', model, timestamp_str, parent_dir_name, container)
+            export_table(model_metadata_df, 'model_metadata', model, parent_dir_name, container)
             constants_df = pd.json_normalize(model_metadata["constants"])
-            export_data(constants_df, 'constants', model, timestamp_str, parent_dir_name, container)
+            export_table(constants_df, 'constants', model, parent_dir_name, container)
         else:
             prefix = ""
         
-        files = glob.glob(os.path.join(output_path, relpath, model, prefix + '*.csv'))
+        files = glob.glob(os.path.join(output_path, relpath, model, prefix + '*'))
         for file in files:
-            name = os.path.splitext(os.path.basename(file))[0]
+            if os.path.basename(file) in exclude:
+                continue
+            name, ext = os.path.splitext(os.path.basename(file))
             if prefix != '':
                 name = name.split(prefix)[1]
-            table = pd.read_csv(file, low_memory=False)
 
-            table["scenario_ts"] = pd.to_datetime(now)
-            table["scenario_id"] = EMME_metadata["scenario_id"]
-            if is_asim:
-                table["model"] = model
-            table.replace("", None, inplace=True) # replace empty strings with None - otherwise conversation error for boolean types
+            if ext == '.csv':
+                table = pd.read_csv(file, low_memory=False)
 
-            export_data(table, name, model, timestamp_str, parent_dir_name, container)
+                table["scenario_ts"] = pd.to_datetime(now)
+                table["scenario_id"] = EMME_metadata["scenario_id"]
+                if is_asim:
+                    table["model"] = model
+                table.replace("", None, inplace=True) # replace empty strings with None - otherwise conversation error for boolean types
+
+                export_table(table, name, model, parent_dir_name, container)
+            else:
+                with open(file, "rb") as data:
+                    if model == '':
+                        lake_file_name = "/".join(["abm_15_0_0",parent_dir_name,name+ext])
+                    else:
+                        lake_file_name = "/".join(["abm_15_0_0",parent_dir_name,model,name+ext])
+                    container.upload_blob(name=lake_file_name, data=data)
     
     try:
         with open(EMME_metadata["properties_path"], "rb") as properties:
@@ -208,4 +218,7 @@ models = [
     ('visitor', '', True),
     ('report', '..', False)
 ]
-write_to_datalake(output_path, models)
+exclude = [
+    'final_pipeline.h5'
+]
+write_to_datalake(output_path, models, exclude)

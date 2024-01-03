@@ -48,6 +48,7 @@ CONSTANTS:
     2: M
     3: H
   max_walk_time: 60
+  walkSpeed: 3.0
   taxi_base_fare: 2.20
   taxi_cost_per_mile: 2.30
   taxi_cost_per_minute: 0.10
@@ -129,6 +130,13 @@ preprocessor:
   TABLES:
     - land_use
     - tours
+  
+annotate_trips:
+  SPEC: trip_mode_choice_annotate_trips
+  DF: trips_merged
+  TABLES:
+    - tours
+    - land_use
 
 # to reduce memory needs filter chooser table to these fields
 TOURS_MERGED_CHOOSER_COLUMNS:
@@ -143,3 +151,12 @@ TOURS_MERGED_CHOOSER_COLUMNS:
 
 
 MODE_CHOICE_LOGSUM_COLUMN_NAME: trip_mode_choice_logsum
+
+CHOOSER_COLS_TO_KEEP:
+  - parking_cost
+  - tnc_single_wait_time
+  - tnc_shared_wait_time
+  - taxi_wait_time
+  - s2_dist_skims
+  - s2_time_skims
+  - s2_cost_skims

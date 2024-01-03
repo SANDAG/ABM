@@ -43,6 +43,8 @@ input_data:
     outbound: visitor_outboundStopDuration.csv
     inbound: visitor_inboundStopDuration.csv
 
+cleanup_pipeline_after_run: True
+
 # output data
 output_fname:
   households: households_visitor.csv

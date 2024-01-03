@@ -1,6 +1,7 @@
 Description,Target,Expression
 # add additional fields,,
 ,tour_participants,trips.tour_id.map(tours.number_of_participants)
+,num_participants,tour_participants
 ,distance,od_skims['DIST']
 ,costOperatingDrive,"np.where(trips.trip_mode.isin(['DRIVEALONE','SHARED2','SHARED3']), costPerMile*distance/100, np.NaN)"
 ,_sample_rate,trips.household_id.map(households.sample_rate)
@@ -13,8 +14,8 @@ Description,Target,Expression
 ,is_pm,"trips.depart.between(time_periods['PM']['first_hour'], time_periods['PM']['last_hour'])"
 ,is_ev,"trips.depart.between(time_periods['EV']['first_hour'], time_periods['EV']['last_hour'])"
 ,is_walk_LOC_transit,trips.trip_mode == 'WALK_LOC'
-,is_walk_PRM_transit,trips.trip_mode.isin == 'WALK_PRM'
-,is_walk_MIX_transit,trips.trip_mode.isin == 'WALK_MIX'
+,is_walk_PRM_transit,trips.trip_mode == 'WALK_PRM'
+,is_walk_MIX_transit,trips.trip_mode == 'WALK_MIX'
 ,is_knr_loc,trips.trip_mode.isin(['KNR_LOC'])
 ,is_knr_prm,trips.trip_mode.isin(['KNR_PRM'])
 ,is_knr_mix,trips.trip_mode.isin(['KNR_MIX'])
@@ -24,9 +25,9 @@ Description,Target,Expression
 ,is_pnr_loc,trips.trip_mode.isin(['PNR_LOC'])
 ,is_pnr_prm,trips.trip_mode.isin(['PNR_PRM'])
 ,is_pnr_mix,trips.trip_mode.isin(['PNR_MIX'])
-,_vot_bin_da,"np.where(trips.vot_da < vot_threshold_low, 1, np.where(trips.vot_da < vot_threshold_med, 2, 3))"
-,_vot_bin_s2,"np.where(trips.vot_s2 < vot_threshold_low, 1, np.where(trips.vot_s2 < vot_threshold_med, 2, 3))"
-,_vot_bin_s3,"np.where(trips.vot_s3 < vot_threshold_low, 1, np.where(trips.vot_s3 < vot_threshold_med, 2, 3))"
+,_vot_bin_da,"np.where(trips.trip_mode.isin(['DRIVEALONE']),np.where(trips.vot_da < vot_threshold_low, 1,np.where(trips.vot_da < vot_threshold_med, 2, 3)),0)"
+,_vot_bin_s2,"np.where(trips.trip_mode.isin(['SHARED2','TAXI','TNC_SINGLE']),np.where(trips.vot_s2 < vot_threshold_low,1,np.where(trips.vot_s2 < vot_threshold_med, 2, 3)),0)"
+,_vot_bin_s3,"np.where(trips.trip_mode.isin(['SHARED3','TNC_SHARED']),np.where(trips.vot_s3 < vot_threshold_low,1,np.where(trips.vot_s3 < vot_threshold_med, 2, 3)),0)"
 ,vot1,"np.where((_vot_bin_da == 1) |( _vot_bin_s2 == 1) |( _vot_bin_s3 ==1),1,0)"
 ,vot2,"np.where((_vot_bin_da == 2 )|( _vot_bin_s2 == 2) |( _vot_bin_s3 ==2),1,0)"
 ,vot3,"np.where((_vot_bin_da == 3) | (_vot_bin_s2 == 3) | (_vot_bin_s3 ==3),1,0)"
@@ -408,3 +409,5 @@ Description,Target,Expression
 # totals,,
 ,cost_total,costOperatingDrive + costTollDrive + costFareTransit
 ,time_total,timeDrive + timeBike + timeWalk + timeTransitInitialWait + timeTransitInVehicle + transfersTransit
+#,,
+,value_of_time_category_id,"np.where(vot1,1,np.where(vot2,2,3))"

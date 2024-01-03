@@ -14,3 +14,4 @@ util_inc_250plus,Income 250k plus,"@np.where(df['income']>=250000,1,0)",coef_inc
 util_autos_0,0 auto household,"@np.where(df.auto_ownership==0,1,0)",coef_autos_0,
 util_global_switch,Global switch to have everything internal,@NO_EXTERNAL,-999,
 util_dist_lt_2p5,Distance less than 2.5 miles,"@np.where(df.dist_to_external_zone<2.5,1,0)",coef_dist_lt_2p5,
+util_calibration,,1,0.43,

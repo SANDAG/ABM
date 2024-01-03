@@ -2,9 +2,52 @@ ECHO OFF
 
 set PROJECT_DRIVE=%1
 set PROJECT_DIRECTORY=%2
+set SAMPLERATE_SAN=%3
+set SAMPLERATE_CBX=%4
 
 %PROJECT_DRIVE%
 cd /d %PROJECT_DIRECTORY%
+
+:: -------------------------------------------------------------------------------------------------
+:: Loop
+:: -------------------------------------------------------------------------------------------------
+SET SAN_SAMPLE=%SAMPLERATE_SAN%
+SET CBX_SAMPLE=%SAMPLERATE_CBX%
+
+CD src\asim\configs\airport.CBX
+:: Set sample_rate in configs file dynamically
+FOR /F "USEBACKQ delims=" %%i IN (`type "settings.yaml" ^| find /V /N ""`) DO (
+    SETLOCAL EnableDelayedExpansion
+    SET LINE=%%i
+    set LINE=!LINE:*]=!
+    SET SUBSTR=!LINE:~0,23!
+    IF !SUBSTR! == households_sample_size: (
+        ECHO households_sample_size: %CBX_SAMPLE% >> settings_temp.yaml
+    ) ELSE (
+        ECHO:!LINE! >> settings_temp.yaml
+    )
+    ENDLOCAL
+)
+del settings.yaml
+move settings_temp.yaml settings.yaml
+
+cd /d %PROJECT_DIRECTORY%
+CD src\asim\configs\airport.SAN
+:: Set sample_rate in configs file dynamically
+FOR /F "USEBACKQ delims=" %%i IN (`type "settings.yaml" ^| find /V /N ""`) DO (
+    SETLOCAL EnableDelayedExpansion
+    SET LINE=%%i
+    set LINE=!LINE:*]=!
+    SET SUBSTR=!LINE:~0,23!
+    IF !SUBSTR! == households_sample_size: (
+        ECHO households_sample_size: %SAN_SAMPLE% >> settings_temp.yaml
+    ) ELSE (
+        ECHO:!LINE! >> settings_temp.yaml
+    )
+    ENDLOCAL
+)
+del settings.yaml
+move settings_temp.yaml settings.yaml
 
 :: -------------------------------------------------------------------------------------------------
 :: Run ActivitySim

@@ -470,7 +470,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
             #get number of households to pass on sample size to activitysim
             householdFile = pd.read_csv(_join(self._path, "input", "synthetic_households_" + scenarioYear + "_base.csv"))
-            hh_count = len(householdFile)
+            hh_resident_size = len(householdFile)
             del(householdFile)
 
             if startFromIteration == 1:  # only run the setup / init steps if starting from iteration 1
@@ -640,6 +640,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     am_scenario = main_emmebank.scenario(base_scenario.number + 2)
                     export_for_transponder(output_dir, num_processors, am_scenario)
 
+                if msa_iteration==1:
+                    self.run_proc("runSandag_ScenManagement.cmd",
+                            [main_directory, str(props["scenarioYear"])],
+                            "Running Scenario Management", capture_output=True) 
 
                 if not skipABMPreprocessing[iteration]:
                     self.run_proc(
@@ -649,27 +653,38 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 if not skipABMResident[iteration]:
                     self.run_proc(
                         "runSandagAbm_ActivitySimResident.cmd",
-                        [drive, drive + path_forward_slash, int(sample_rate[iteration] * hh_count), msa_iteration],
+                        [drive, drive + path_forward_slash, int(sample_rate[iteration] * hh_resident_size), msa_iteration],
                         "Running ActivitySim resident model", capture_output=True)
                 if not skipABMAirport[iteration]:
+                    hh_airport_size = {}
+                    for airport in ["san", "cbx"]:
+                        householdFile = pd.read_csv(_join(self._path, "input", "households_airport.{}.csv".format(airport)))
+                        hh_airport_size[airport] = len(householdFile)
+                        del(householdFile)
                     self.run_proc(
                         "runSandagAbm_ActivitySimAirport.cmd",
-                        [drive, drive + path_forward_slash, sample_rate[iteration], msa_iteration],
+                        [drive, drive + path_forward_slash, int(sample_rate[iteration] * hh_airport_size["san"]), int(sample_rate[iteration] * hh_airport_size["cbx"])],
                         "Running ActivitySim airport models", capture_output=True)
                 if (not skipABMXborderWait) and (iteration == 0):
                     self.run_proc(
                         "runSandagAbm_ActivitySimXborderWaitModel.cmd",
-                        [drive, drive + path_forward_slash, sample_rate[iteration], msa_iteration],
+                        [drive, drive + path_forward_slash],
                         "Running ActivitySim wait time models", capture_output=True)
                 if not skipABMXborder[iteration]:
+                    householdFile = pd.read_csv(_join(self._path, "input", "households_xborder.csv"))
+                    hh_xborder_size = len(householdFile)
+                    del(householdFile)
                     self.run_proc(
                         "runSandagAbm_ActivitySimXborder.cmd",
-                        [drive, drive + path_forward_slash, sample_rate[iteration], msa_iteration],
+                        [drive, drive + path_forward_slash, int(sample_rate[iteration] * hh_xborder_size)],
                         "Running ActivitySim crossborder model", capture_output=True)
                 if not skipABMVisitor[iteration]:
+                    householdFile = pd.read_csv(_join(self._path, "input", "households_visitor.csv"))
+                    hh_visitor_size = len(householdFile)
+                    del(householdFile)
                     self.run_proc(
                         "runSandagAbm_ActivitySimVisitor.cmd",
-                        [drive, drive + path_forward_slash, sample_rate[iteration], msa_iteration],
+                        [drive, drive + path_forward_slash, int(sample_rate[iteration] * hh_visitor_size)],
                         "Running ActivitySim visitor model", capture_output=True)
 
                 if not skipCTM[iteration]:
@@ -763,6 +778,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             # for agg_model in ['eetrip', 'eitrip', 'trucktrip']:#TODO ['commercialVehicleTrips','internalExternalTrips']:
             #     aggregate_models[agg_model] = str(os.path.join(self._path,'report',agg_model+'.csv'))
             # gen_utils.DataLakeExporter(ScenarioPath=self._path).write_to_datalake(aggregate_models)
+            self.run_proc(
+                "export_hwy_shape.cmd",
+                [drive, drive + path_forward_slash],
+                "Exporting highway shapefile", capture_output=True)
         
         if not skipDatalake:
             self.write_metadata(main_directory, scenario_title, select_link, username, scenarioYear, sample_rate)

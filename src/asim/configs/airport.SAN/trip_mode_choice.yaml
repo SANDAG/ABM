@@ -297,7 +297,6 @@ CONSTANTS:
     5: 4.1
   min_waitTime: 0
   max_waitTime: 50
-  ivt_cost_multiplier: 0.6
   topology_bike_multiplier: 20
   topology_trn_multiplier: 2.20
   topology_walk_multiplier: 15
@@ -318,7 +317,6 @@ CONSTANTS:
   vot_threshold_low: 8.81
   vot_threshold_med: 18.00
   max_walk_time: 60
-  costPerMile: 0.50
   eaperiod: 11
   amperiod: 17
   mdperiod: 30
@@ -344,10 +342,20 @@ CHOOSER_COLS_TO_KEEP:
   - vot1
   - vot2
   - vot3
-#  - SPEC: trip_mode_choice_annotate_trips_preprocessor2
-#    DF: df
-#    TABLES:
-#      - land_use
+  - parkLocation1Cost
+  - parkLocation2Cost
+  - parkLocation3Cost
+  - parkLocation4Cost
+  - parkLocation5Cost
+  - partySizeRideHailLocation1AutoDist
+  - partySizeRideHailLocation2AutoDist
+
+annotate_trips:
+  SPEC: trip_mode_choice_annotate_trips
+  DF: trips_merged
+  TABLES:
+    - tours
+    - land_use
 
 # to reduce memory needs filter chooser table to these fields
 TOURS_MERGED_CHOOSER_COLUMNS:
