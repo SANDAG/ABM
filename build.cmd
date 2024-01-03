@@ -81,6 +81,12 @@ echo branch: %GIT_BRANCH% >> %GIT_FILE%
 echo commit: %GIT_COMMIT% >> %GIT_FILE%
 :GITDONE
 
+@REM create build info
+set LOG_FILE=%ROOT%\build_info.txt
+type nul>%LOG_FILE%
+echo Last updated: %date% >> %LOG_FILE%
+echo User: %USERNAME% >> %LOG_FILE%
+
 goto done
 
 :usage
