@@ -596,7 +596,7 @@ households:
     - budgetroom
     - economyroom
   rename_columns:
-    bldgsz: buildingCategory
+    bldgsz: building_category
     hhid: household_id
 
 land_use:
