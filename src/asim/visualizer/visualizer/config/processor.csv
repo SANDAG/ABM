@@ -1,6 +1,6 @@
 Description,Step,Type,Table,Out Col,In Col,Func
 Switch to determine whether or not to exclude group quarters,step_1,raw,,,,__exclude_gq = True
-Determine list of GQ households,step_1,raw,,,,excluded_hh = households[households['unittype'] == 1].index.values if __exclude_gq else []
+Determine list of GQ households,step_1,raw,,,,excluded_hh = households[households['unittype'] == 1]['hhid'].values if __exclude_gq else []
 Remove GQ from households,step_1,raw,,,,final_households = final_households.query('household_id not in @excluded_hh')
 Remove GQ from persons,step_1,raw,,,,final_persons = final_persons.query('household_id not in @excluded_hh')
 Remove GQ from tours,step_1,raw,,,,final_tours = final_tours.query('household_id not in @excluded_hh')
