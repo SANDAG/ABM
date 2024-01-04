@@ -170,7 +170,7 @@ def write_to_datalake(output_path, models, exclude):
             prefix = model_metadata["prefix"]
             model_metadata_df = create_model_metadata_df(model, model_metadata)
             export_table(model_metadata_df, 'model_metadata', model, parent_dir_name, container)
-            constants_df = pd.json_normalize(model_metadata["constants"])
+            constants_df = pd.json_normalize(model_metadata["constants"], sep='__')
             export_table(constants_df, 'constants', model, parent_dir_name, container)
         else:
             prefix = ""
