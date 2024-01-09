@@ -221,13 +221,13 @@ min_waitTime: 0
 max_waitTime: 50
 
 ivt_lrt_multiplier: 0.65
-ivt_brt_multiplier: 0.90
+ivt_brt_multiplier: 0.95
 ivt_cmr_multiplier: 0.65
 ivt_ltd_multiplier: 1.0
 ivt_cost_multiplier: 0.6
 # line-haul mode constants; note commuter rail is based on CMRIVTT. Also currently hyperloop is not applied because we do not skim hyperloop IVTT
 eb_equiv_asc: 10
-brt_equiv_asc: -10
+brt_equiv_asc: -5
 lrt_equiv_asc: -20
 hyp_equiv_asc: -20
 pnr_lrt_equiv_asc: -20
