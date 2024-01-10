@@ -37,8 +37,8 @@
 #       - Turns
 #    The following files are also used (in the same directory as the *.gdb)
 #    
-#    trrt: header data for the transit lines
-#    trlink: sequence of links (routing) of transit lines
+#    trrt.csv: header data for the transit lines
+#    trlink.csv: sequence of links (routing) of transit lines
 #    trstop.csv: stop data for the transit lines
 #    mode5tod.csv: global (per-mode) transit cost and perception attributes
 #    timexfer_<period>.csv (optional): table of timed transfer pairs of lines, by period
@@ -961,31 +961,39 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 if "DUMMY" in stop["StopName"]:
                     continue
                 stop_link_id = stop['Link_GUID']
-                node_id = int(stop['Node'])
+                stop_node_id = int(stop['Node'])
                 while segment.link and segment.link["#hwyseg_guid"].lstrip("-") != stop_link_id:
                     segment = itinerary.next()
 
-                if node_id == segment.i_node.number:
+                if stop_node_id == segment.i_node.number:
                     pass
-                elif segment.j_node and node_id == segment.j_node.number:
+                elif segment.j_node and stop_node_id == segment.j_node.number:
                     # if matches the J-node then the stop is on the next segment
                     segment = itinerary.next()
                 else:
-                    if segment.link and segment.link["#hwyseg_guid"].lstrip("-") == stop_link_id:
-                        msg = "Transit line %s (index %s): found GUID %s (segment %s) but node ID %s does not match I or J node" % (
-                            line_name, stop["Route_ID"], segment, stop_link_id, node_id)
+                    next_segment = None
+                    if segment.j_node:
+                        next_segment = itinerary.next()
+                    if next_segment and next_segment.link["#hwyseg_guid"].lstrip("-") == stop_link_id and \
+                            stop_node_id == next_segment.j_node.number:
+                        # split link case, where stop is at the end of the next segment
+                        segment = next_segment
                     else:
-                        msg = "Transit line %s (index %s): did not found GUID %s for stop node ID %s" % (
-                            line_name, stop["Route_ID"], stop_link_id, node_id)
-                    self._log.append({"type": "text", "content": msg})
-                    self._error.append(msg)
-                    fatal_errors += 1
-                    # reset iterator to start back from previous segment
-                    itinerary = tline.segments(include_hidden=True)
-                    segment = itinerary.next()
-                    while segment.id != prev_segment.id:
+                        if segment.link and segment.link["#hwyseg_guid"].lstrip("-") == stop_link_id:
+                            msg = "Transit line %s (index %s): found GUID %s (segment %s) but node ID %s does not match I or J node" % (
+                                line_name, stop["Route_ID"], segment, stop_link_id, stop_node_id)
+                        else:
+                            msg = "Transit line %s (index %s): did not found GUID %s for stop node ID %s" % (
+                                line_name, stop["Route_ID"], stop_link_id, stop_node_id)
+                        self._log.append({"type": "text", "content": msg})
+                        self._error.append(msg)
+                        fatal_errors += 1
+                        # reset iterator to start back from previous segment
+                        itinerary = tline.segments(include_hidden=True)
                         segment = itinerary.next()
-                    continue
+                        while segment.id != prev_segment.id:
+                            segment = itinerary.next()
+                        continue
                 segment.allow_boardings = True
                 segment.allow_alightings = True
                 segment.dwell_time = min(tline.default_dwell_time, 99.99)
