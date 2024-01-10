@@ -61,17 +61,8 @@ MD assignment
 CD ..
 
 if %ITERATION% equ 1 (
-    ECHO Running resident model pre-processing
-    ::starting with 2022, we need to run synthetic data processing
-    if %SCENYEAR% geq 2022 (
-        %PYTHON3% src/asim/scripts/syntheticDataProcessing.py input %SCENYEAR%
-    )
-    
+    ECHO Running resident model pre-processing   
     %PYTHON3% src/asim/scripts/resident/2zoneSkim.py %PROJECT_DIRECTORY%
-
-    CD src\asim\scripts\parking
-    %PYTHON3% run.py %SCENYEAR%
-    cd /d %PROJECT_DIRECTORY%
 
     %PYTHON3% src/asim/scripts/resident/resident_preprocessing.py input output %SCENYEAR%
 
