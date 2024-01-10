@@ -34,11 +34,11 @@
 #       - TNED_HwyNodes
 #       - TNED_RailNet
 #       - TNED_RailNodes
-#       - trrt
-#       - trlink
 #       - Turns
 #    The following files are also used (in the same directory as the *.gdb)
 #    
+#    trrt: header data for the transit lines
+#    trlink: sequence of links (routing) of transit lines
 #    trstop.csv: stop data for the transit lines
 #    mode5tod.csv: global (per-mode) transit cost and perception attributes
 #    timexfer_<period>.csv (optional): table of timed transfer pairs of lines, by period
@@ -149,12 +149,12 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 <li>TNED_HwyNodes</li>
                 <li>TNED_RailNet</li>
                 <li>TNED_RailNodes</li>
-                <li>trrt</li>
-                <li>trlink</li>
                 <li>Turns</li>
             </ul>
             The following files are also used (in the same directory as the *.gdb):
             <ul>
+                <li>trrt.csv</li>
+                <li>trlink.csv</li>
                 <li>trstop.csv</li>
                 <li>mode5tod.csv</li>
                 <li>timexfer_<period>.csv (optional)</li>
@@ -734,9 +734,11 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         self._log.append({"type": "header", "content": "Import transit lines"})
         fatal_errors = 0
         # Route_ID,Route_Name,Mode,AM_Headway,PM_Headway,Midday_Headway,Evening_Headway,EarlyAM_Headway,Night_Headway,Night_Hours,Config,Fare
-        transit_line_data = gen_utils.DataTableProc("trrt", self.source)
+        #transit_line_data = gen_utils.DataTableProc("trrt", self.source)
+        transit_line_data = gen_utils.DataTableProc("trrt", _join(_dir(self.source), "trrt.csv"))
         # Route_ID,Link_ID,Link_GUID,Direction
-        transit_link_data = gen_utils.DataTableProc("trlink", self.source)
+        #transit_link_data = gen_utils.DataTableProc("trlink", self.source)
+        transit_link_data = gen_utils.DataTableProc("trlink", _join(_dir(self.source), "trlink.csv"))
         # Stop_ID,Route_ID,Link_ID,Pass_Count,Milepost,Longitude, Latitude,HwyNode,TrnNode,StopName
         #transit_stop_data = gen_utils.DataTableProc("trstop", self.source)
         transit_stop_data = gen_utils.DataTableProc("trstop", _join(_dir(self.source), "trstop.csv"))
