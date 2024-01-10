@@ -9,6 +9,7 @@ from tkinter import filedialog
 #from tkMessageBox import showerror
 # from PIL import Image,ImageTk
 import popupMsg
+import sys
 
 class SelectStudyYears(tkinter.Frame):
     def __init__(self, root, parent):
@@ -84,7 +85,10 @@ class CreateScenarioGUI(tkinter.Frame):
 
             #divider line
             divider=u"_"*200
-            self.releaseDir=os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..'))
+            if getattr(sys, 'frozen', False):
+                self.releaseDir=os.path.abspath(os.path.join(os.path.dirname(sys.executable), '..', '..'))
+            else:
+                self.releaseDir=os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..'))
             self.defaultScenarioDir="T:\\projects\\sr15"
             self.defaultNetworkDir="T:\\RTP\\2021RP\\2021rp_final\\network_build"
 
@@ -140,7 +144,10 @@ class CreateScenarioGUI(tkinter.Frame):
 
             #tkinter.Label(body, text=u"Version", font=("Helvetica", 8, 'bold')).grid(row=8)
             #var = StringVar(root)
-            self.version=os.path.basename(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
+            if getattr(sys, 'frozen', False):
+                self.version=os.path.basename(os.path.abspath(os.path.join(os.path.dirname(sys.executable), '..')))
+            else:
+                self.version=os.path.basename(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
             #optionList=["version_14_2_2"]
             #option=tkinter.OptionMenu(body,var,*optionList,command=self.setversion)
             #option.config(width=50)
