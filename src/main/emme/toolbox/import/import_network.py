@@ -475,18 +475,18 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         mode_table = {
             "AUTO": [("d", "dummy auto")],
             "AUX_AUTO": [
-                ("h", "SOV"),
-                ("H", "HOV2"),
+                ("s", "SOV"),
+                ("h", "HOV2"),
                 ("i", "HOV3+"),
-                ("I", "TRKL"),
-                ("s", "TRKM"),
-                ("S", "TRKH"),
-                ("v", "SOV TOLL"),
-                ("V", "HOV2 TOLL"),
-                ("m", "HOV3+ TOLL"),
-                ("M", "TRKL TOLL"),
-                ("t", "TRKM TOLL"),
-                ("T", "TRKH TOLL"),
+                ("t", "TRKL"),
+                ("m", "TRKM"),
+                ("v", "TRKH"),
+                ("S", "SOV TOLL"),
+                ("H", "HOV2 TOLL"),
+                ("I", "HOV3+ TOLL"),
+                ("T", "TRKL TOLL"),
+                ("M", "TRKM TOLL"),
+                ("V", "TRKH TOLL"),
             ],
             "TRANSIT": [
                 ("b", "BUS" ),         # (vehicle type 100, PCE=3.0)
@@ -541,20 +541,20 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         }
         modes_gp_lanes = {
             0: set([]),
-            1: set([network.mode(m_id) for m_id in "dhHiIsSvVmMtT"]),  # all modes
-            2: set([network.mode(m_id) for m_id in "dhHiIsvVmMt"]),    # no heavy truck
-            3: set([network.mode(m_id) for m_id in "dhHiIvVmM"]),      # no heavy or medium truck
-            4: set([network.mode(m_id) for m_id in "dhHivVm"]),        # no truck
-            5: set([network.mode(m_id) for m_id in "dST"]),            # only heavy trucks
-            6: set([network.mode(m_id) for m_id in "dsStT"]),          # heavy and medium trucks 
-            7: set([network.mode(m_id) for m_id in "dIsSMtT"]),        # all trucks only
+            1: set([network.mode(m_id) for m_id in "dvmtshiVMTSHI"]),  # all modes
+            2: set([network.mode(m_id) for m_id in "dmtshiMTSHI"]),    # no heavy truck
+            3: set([network.mode(m_id) for m_id in "dtshiTSHI"]),      # no heavy or medium truck
+            4: set([network.mode(m_id) for m_id in "dshiSHI"]),        # no truck
+            5: set([network.mode(m_id) for m_id in "dvV"]),            # only heavy trucks
+            6: set([network.mode(m_id) for m_id in "dvmVM"]),          # heavy and medium trucks 
+            7: set([network.mode(m_id) for m_id in "dvmtVMT"]),        # all trucks only (no passenger cars)
         }
-        non_toll_modes = set([network.mode(m_id) for m_id in "hHiIsS"])
+        non_toll_modes = set([network.mode(m_id) for m_id in "vmtshi"])
         self._auto_mode_lookup = {
             "GP": modes_gp_lanes, 
             "TOLL": dict((k, v - non_toll_modes) for k, v in modes_gp_lanes.iteritems()),
-            "HOV2": set([network.mode(m_id) for m_id in "dHiVm"]),
-            "HOV3": set([network.mode(m_id) for m_id in "dim"]),
+            "HOV2": set([network.mode(m_id) for m_id in "dhiHI"]),
+            "HOV3": set([network.mode(m_id) for m_id in "diI"]),
         }
 
     def set_auto_modes(self, network, period):
