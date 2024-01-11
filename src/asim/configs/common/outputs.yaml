@@ -800,3 +800,7 @@ persons:
     rac1p: race
     hisp: hispanic
     perid: person_id
+
+tours:
+  rename_columns:
+    vehicle_occup_3.5: vehicle_occup_3_5
