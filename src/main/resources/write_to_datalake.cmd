@@ -2,7 +2,7 @@ ECHO ON
 
 set PROJECT_DRIVE=%1
 set PROJECT_DIRECTORY=%2
-set FILE_NAME=%3
+set ENV=%3
 
 %PROJECT_DRIVE%
 cd /d %PROJECT_DIRECTORY%
@@ -30,4 +30,4 @@ set MKL=1
 
 cd /d %PROJECT_DIRECTORY%
 
-%PYTHON3% python/datalake_exporter.py %PROJECT_DIRECTORY%/output
+%PYTHON3% python/datalake_exporter.py %PROJECT_DIRECTORY%/output %ENV%

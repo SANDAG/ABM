@@ -186,6 +186,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             });
             $("#startFromIteration").prop('value', tool.startFromIteration);
             $("#sample_rates").prop('value', tool.sample_rates);
+            $("#env").prop('value', tool.env);
         });
    });
 </script>""" % {"tool_proxy_tag": tool_proxy_tag})
@@ -287,6 +288,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         scenarioYear = str(props["scenarioYear"])
         # geographyID = str(props["geographyID"])
+        prod_env = props["RunModel.env"]
         startFromIteration = props["RunModel.startFromIteration"]
         # precision = props["RunModel.MatrixPrecision"]
         minSpaceOnC = props["RunModel.minSpaceOnC"]
@@ -784,10 +786,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 "Exporting highway shapefile", capture_output=True)
         
         if not skipDatalake:
-            self.write_metadata(main_directory, scenario_title, select_link, username, scenarioYear, sample_rate)
+            self.write_metadata(main_directory, scenario_title, select_link, username, scenarioYear, sample_rate, prod_env)
             self.run_proc(
                 "write_to_datalake.cmd",
-                [drive, drive + path_forward_slash],
+                [drive, drive + path_forward_slash, prod_env],
                 "Writing model output to datalake", capture_output=True)
 
         #Validation for 2022 scenario
@@ -1431,12 +1433,12 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         else:
             return "The data load request was not successfully made, please double check the [data_load].[load_request] table to confirm."
 
-    def get_scenario_id(self, scenario_guid, scenario_name):
+    def get_scenario_id(self, scenario_guid, scenario_name, prod_env):
         path = _join(self._path, "bin", "GetScenarioId.bat")
         err_file_ref, err_file_path = _tempfile.mkstemp(suffix='.log')
         err_file = os.fdopen(err_file_ref, "w")
         try:
-            output = _subprocess.check_output(" ".join([path, '"' + scenario_guid + '"', '"' + scenario_name + '"']), stderr=err_file, cwd=self._path, shell=True)
+            output = _subprocess.check_output(" ".join([path, '"' + scenario_guid + '"', '"' + scenario_name + '"', '"' + prod_env + '"']), stderr=err_file, cwd=self._path, shell=True)
             scenario_id = int(output.splitlines()[4])
             _m.logbook_write("Got new scenario_id: %s" % (scenario_id))
             err_file.close()
@@ -1464,7 +1466,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     _m.logbook_level(_m.LogbookLevel.NONE)
             return False, -1
 
-    def write_metadata(self, main_directory, scenario_title, select_link, username, scenarioYear, sample_rate):
+    def write_metadata(self, main_directory, scenario_title, select_link, username, scenarioYear, sample_rate, prod_env):
         '''Write YAML file containing scenario guid and other scenario info to output folder for writing to datalake'''
         datalake_metadata_dict = {
             "main_directory" : main_directory.encode('utf-8')
@@ -1476,9 +1478,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             ,"username" : username.encode('utf-8')
             ,"properties_path" : self.properties_path
             ,"sample_rate" : ",".join(map(str, sample_rate))
+            ,"environment" : prod_env
         }
         _m.logbook_write("Created new scenario_guid: %s" % (datalake_metadata_dict['scenario_guid']))
-        got_id, scenario_id = self.get_scenario_id(datalake_metadata_dict['scenario_guid'], scenario_title)
+        got_id, scenario_id = self.get_scenario_id(datalake_metadata_dict['scenario_guid'], scenario_title, prod_env)
         if got_id:
             datalake_metadata_dict['scenario_id'] = scenario_id
         datalake_metadata_path = os.path.join(self._path,'output','datalake_metadata.yaml')
