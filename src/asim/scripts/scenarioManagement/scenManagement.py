@@ -94,7 +94,7 @@ write_yaml(_join(configs_dir, 'crossborder', 'trip_mode_choice.yaml'), doc)
 #resident model parameters
 doc = open_yaml(_join(configs_dir, 'common', 'constants.yaml'))
 doc['scenarioYear'] = int(scenYear)
-doc['c_auto_operating_cost_per_mile'] = float(paramByYear.loc[paramByYear.year==scenYear, 'aoc.fuel'].values[0]) + float(paramByYear.loc[paramByYear.year==scenYear, 'aoc.maintenance'].values[0])
+doc['costPerMile'] = float(paramByYear.loc[paramByYear.year==scenYear, 'aoc.fuel'].values[0]) + float(paramByYear.loc[paramByYear.year==scenYear, 'aoc.maintenance'].values[0])
 doc['Taxi_baseFare'] = float(paramByYear.loc[paramByYear.year==scenYear, 'taxi.baseFare'].values[0])
 doc['Taxi_perMileFare'] = float(paramByYear.loc[paramByYear.year==scenYear, 'taxi.costPerMile'].values[0])
 doc['Taxi_perMinuteFare'] = float(paramByYear.loc[paramByYear.year==scenYear, 'taxi.costPerMinute'].values[0])
