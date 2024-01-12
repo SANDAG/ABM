@@ -46,6 +46,11 @@ xcopy /Y .\src\main\resources\"*.properties" %ROOT%\common\conf
 xcopy /Y .\src\main\resources\"*.xml" %ROOT%\common\conf
 xcopy /Y .\src\main\resources\"*.csv" %ROOT%\common\conf
 
+@REM Copy UEC files
+if not exist %ROOT%\common\uec mkdir %ROOT%\common\uec
+xcopy /Y .\src\main\uec\"*.xls" %ROOT%\common\uec
+xcopy /Y .\src\main\uec\"*.csv" %ROOT%\common\uec
+
 @REM Skip copy of input for now, input directory in repo is currently out of date
 
 @REM @REM Copy input files
