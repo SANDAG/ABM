@@ -469,7 +469,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             #                      "AT and Transit network consistency checking failed! Open AtTransitCheck_event.log for details.")
 
             #get number of households to pass on sample size to activitysim
-            householdFile = pd.read_csv(_join(self._path, "input", "synthetic_households_" + scenarioYear + "_base.csv"))
+            householdFile = pd.read_csv(_join(self._path, "input", "households.csv"))
             hh_resident_size = len(householdFile)
             del(householdFile)
 
@@ -484,7 +484,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 if not skip4Ds:
                     run4Ds(path=self._path, int_radius=0.65, ref_path='visualizer_reference_path')
 
-                mgraFile = 'mgra15_based_input_' + str(scenarioYear) + '_base.csv' # Should be read in from properties? -JJF
+                mgraFile = 'mgra15_based_input' + str(scenarioYear) + '.csv' # Should be read in from properties? -JJF
                 self.complete_work(scenarioYear, input_dir, output_dir, mgraFile, "walkMgraEquivMinutes.csv")
 
                 if not skipBuildNetwork:

@@ -151,7 +151,7 @@ class FourDs(_m.Tool()):
         props = load_properties(_join(self.path, "conf", "sandag_abm.properties"))
 
 		
-        self.mgradata_file = props["mgra.socec.base.file"] #input/filename
+        self.mgradata_file = props["mgra.socec.file"] #input/filename
         self.syn_households_file = props["PopulationSynthesizer.InputToCTRAMP.HouseholdFile"] #input/filename
         self.equivmins_file = props["active.logsum.matrix.file.walk.mgra"] #filename
         self.inNet = os.path.basename(props["active.edge.file"])  #filename
@@ -269,7 +269,7 @@ class FourDs(_m.Tool()):
             totRet = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['emp_ret'].sum()
             totHH = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['hh'].sum()
             totPop = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['persons'].sum()
-            totAcres = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['landacre'].sum()
+            totAcres = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['land_acres'].sum()
             totInt = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_int)]['icnt'].sum()
             if(totAcres>0):
                 empDen = totEmp/totAcres
