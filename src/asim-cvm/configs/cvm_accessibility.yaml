@@ -1,0 +1,11 @@
+
+SPEC: cvm_accessibility.csv
+
+# columns from land_use table to add to df
+land_use_columns: ['emp_retail', 'emp_total', 'num_hh_food_delivery', 'num_hh_package_delivery', 'num_hh_service', 'establishment_attraction']
+
+CONSTANTS:
+  dispersion_parameter_automobile: -0.05
+  automobile_am_weight: 0.5
+  automobile_md_weight: 0.3
+  automobile_pm_weight: 0.2

@@ -1,0 +1,3 @@
+Label,Description,Expression,base,warehouse,intermodal,residential,commercial
+,,"@1.0",0.0,coef_asc_warehouse,coef_asc_intermodal,coef_asc_residential,coef_asc_commercial
+,,"next_stop_purpose=='base'",0.0,-999,-999,-999,-999

@@ -1,0 +1,76 @@
+industries:
+  1: 
+    description: agriculture_mining
+    name: AGM
+    industry_factor: 0.8095
+    industry_group: 1
+  2: 
+    description: manufacturing
+    name: MFG
+    industry_factor: 0.7096
+    industry_group: 1
+  3: 
+    description: industry_utilities
+    name: IUT
+    industry_factor: 1.4678
+    industry_group: 2
+  4: 
+    description: retail
+    name: RET
+    industry_factor: 0.7001
+    industry_group: 2
+  5: 
+    description: wholesale
+    name: WHL
+    industry_factor: 1.1138
+    industry_group: 1
+  6: 
+    description: construction
+    name: CON
+    industry_factor: 1.237
+    industry_group: 2
+  7: 
+    description: transportation
+    name: TRN
+    industry_factor: 1.6202
+    industry_group: 2
+  8: 
+    description: info_finance_insurance_realestate_professional
+    name: IFR
+    industry_factor: 0.8706
+    industry_group: 3
+  9: 
+    description: education_publicservices
+    name: EPO
+    industry_factor: 1.1584
+    industry_group: 4
+  10: 
+    description: medical_health
+    name: MHS
+    industry_factor: 0.7661
+    industry_group: 4
+  11: 
+    description: leisure_accommondation_food
+    name: LAF
+    industry_factor: 0.588
+    industry_group: 3
+
+# these are the parameters for the first step in the establishment attraction model
+industry_groups:
+  1:
+    beta_employment: 0.0104
+    constant: 0.2114
+  2:
+    beta_employment: 0.0063
+    constant: 0
+  3:
+    beta_employment: 0.005
+    constant: -0.211
+  4:
+    beta_employment: 0.0064
+    constant: -0.835
+
+CONSTANTS:
+  beta_employment: 0.9583 # used in the second step of the establishment attraction model
+
+MAX_N_ROUTES_PER_ESTABLISHMENT: 1000
