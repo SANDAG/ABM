@@ -146,7 +146,7 @@ public class SandagWalkPathChoiceLogsumMatrixApplication
         {
             throw new RuntimeException(e);
         }
-
+/*
         logger.info("Generating mgra->tap walk skims");
         // mgra->tap
         configuration = new SandagWalkMgraTapPathAlternativeListGenerationConfiguration(
@@ -227,6 +227,7 @@ public class SandagWalkPathChoiceLogsumMatrixApplication
         } catch (IOException e)
         {
             throw new RuntimeException(e);
-        }
-    }
+        }*/
+    } 
 }
+

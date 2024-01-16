@@ -245,9 +245,9 @@ Get vehicle fuel type for drive alone,step_1,apply,final_tours,vehicle_fuel_type
 Get vehicle body type for shared ride 2,step_1,apply,final_tours,vehicle_body_type_2,vehicle_occup_2,get_vehicle_body_type
 Get vehicle age for shared ride 2,step_1,apply,final_tours,vehicle_age_2,vehicle_occup_2,get_vehicle_age
 Get vehicle fuel type for shared ride 2,step_1,apply,final_tours,vehicle_fuel_type_2,vehicle_occup_2,get_vehicle_fuel_type
-Get vehicle body type for shared ride 3+,step_1,apply,final_tours,vehicle_body_type_3.5,vehicle_occup_3.5,get_vehicle_body_type
-Get vehicle age for shared ride 3+,step_1,apply,final_tours,vehicle_age_3.5,vehicle_occup_3.5,get_vehicle_age
-Get vehicle fuel type for shared ride 3+,step_1,apply,final_tours,vehicle_fuel_type_3.5,vehicle_occup_3.5,get_vehicle_fuel_type
+Get vehicle body type for shared ride 3+,step_1,apply,final_tours,vehicle_body_type_3.5,vehicle_occup_3_5,get_vehicle_body_type
+Get vehicle age for shared ride 3+,step_1,apply,final_tours,vehicle_age_3.5,vehicle_occup_3_5,get_vehicle_age
+Get vehicle fuel type for shared ride 3+,step_1,apply,final_tours,vehicle_fuel_type_3.5,vehicle_occup_3_5,get_vehicle_fuel_type
 Get vehicle body type for chosen mode,step_1,apply,final_tours,vehicle_body_type_selected,selected_vehicle,get_vehicle_body_type
 Get vehicle age for chosen mode,step_1,apply,final_tours,vehicle_age_selected,selected_vehicle,get_vehicle_age
 Get vehicle fuel type for chosen mode,step_1,apply,final_tours,vehicle_fuel_type_selected,selected_vehicle,get_vehicle_fuel_type
