@@ -61,7 +61,7 @@ class Constant:
 
 class Header:
     """ Represents header for output files """
-    temptazdatafile = ['taz','pop','hh','i1','i2','i3','i4','i5','i6','i7','i8','i9','i10','emp_total','emp_fed_mil','sqmile','land_sqmile','Emp_IN','Emp_RE','Emp_SV','Emp_TU','Emp_WH','Emp_OFF',
+    temptazdatafile = ['taz','pop','hh','i1','i2','i3','i4','i5','i6','i7','i8','i9','i10','emp_total','emp_mil','sqmile','land_sqmile','Emp_IN','Emp_RE','Emp_SV','Emp_TU','Emp_WH','Emp_OFF',
                       'HHIncome','EmpDens','PopDens','Per/Emp','Emp_ServRet_Pct','Ret_ServRet','Emp_Office','Low Density','Residential','Commercial','Industrial','Employment Node',
                       'Industrial_pct','TU_pct','Wholesale_pct','Retail_pct','Service_pct','Office_pct','E500_Industrial','E500_TU','E500_Wholesale','E500_Retail','E500_Service',
                       'E500_Office','RetailZone','ZoneType']
@@ -176,29 +176,25 @@ def read_mgra_input(mgrafile):
             row['sqmile'] = float(row['acres'])*Constant.ACRES_TO_SQMILE
             row['land_sqmile'] = float(row['land_acres'])*Constant.ACRES_TO_SQMILE
 
-            row['CVM_IN'] = float(row['emp_ag']) + float(row['emp_const_non_bldg_prod']) + float(row['emp_const_non_bldg_office']) + \
-                            float(row['emp_const_bldg_prod']) + float(row['emp_const_bldg_office']) + float(row['emp_mfg_prod']) + float(row['emp_mfg_office'])
+            row['CVM_IN'] = float(row['emp_ag_min']) + float(row['emp_con']) + float(row['emp_mnf'])
 
-            row['CVM_RE'] = float(row['emp_retail'])
+            row['CVM_RE'] = float(row['emp_ret'])
 
-            row['CVM_SV'] = float(row['emp_pvt_ed_k12']) + float(row['emp_pvt_ed_post_k12_oth']) + float(row['emp_health']) + \
-                            float(row['emp_personal_svcs_office']) + float(row['emp_amusement']) + float(row['emp_hotel']) + \
-                            float(row['emp_restaurant_bar']) + float(row['emp_personal_svcs_retail']) + float(row['emp_religious']) + \
-                            float(row['emp_pvt_hh']) + float(row['emp_public_ed'])
+            row['CVM_SV'] = float(row['emp_educ']) + float(row['emp_hlth']) + float(row['emp_ent']) + \
+                            float(row['emp_accm']) + float(row['emp_food']) + float(row['emp_oth'])
 
-            row['CVM_TH'] = float(row['emp_utilities_prod']) + float(row['emp_utilities_office']) + float(row['emp_trans'])
+            row['CVM_TH'] = float(row['emp_utl']) + float(row['emp_trn_wrh'])
 
-            row['CVM_WH'] = float(row['emp_whsle_whs'])
+            row['CVM_WH'] = float(row['emp_whl'])
 
             
-            row['CVM_OFF'] = float(row['emp_prof_bus_svcs']) + float(row['emp_prof_bus_svcs_bldg_maint']) + \
-                             float(row['emp_state_local_gov_ent']) + float(row['emp_fed_non_mil']) + float(row['emp_state_local_gov_blue']) + \
-                             float(row['emp_state_local_gov_white']) + float(row['emp_own_occ_dwell_mgmt'])
+            row['CVM_OFF'] = float(row['emp_bus_svcs']) + float(row['emp_fin_res_mgm']) + \
+                             float(row['emp_gov'])
 
             # aggregate data by TAZ
             if row['taz'] not in data:
                 data[row['taz']] = [int(row['taz']),int(row['pop']), int(row['hh']), float(row['i1']), float(row['i2']), float(row['i3']), float(row['i4']), float(row['i5']), float(row['i6']), float(row['i7']),
-                                        float(row['i8']), float(row['i9']), float(row['i10']), float(row['emp_total']), float(row['emp_fed_mil']), float(row['sqmile']),
+                                        float(row['i8']), float(row['i9']), float(row['i10']), float(row['emp_total']), float(row['emp_mil']), float(row['sqmile']),
                                         float(row['land_sqmile']), float(row['CVM_IN']), float(row['CVM_RE']), float(row['CVM_SV']), float(row['CVM_TH']), float(row['CVM_WH']), float(row['CVM_OFF'])]
             
             else:
@@ -216,7 +212,7 @@ def read_mgra_input(mgrafile):
                 data[row['taz']][11] += float(row['i9'])
                 data[row['taz']][12] += float(row['i10'])
                 data[row['taz']][13] += float(row['emp_total'])
-                data[row['taz']][14] += float(row['emp_fed_mil'])
+                data[row['taz']][14] += float(row['emp_mil'])
                 data[row['taz']][15] += float(row['sqmile'])
                 data[row['taz']][16] += float(row['land_sqmile'])
                 data[row['taz']][17] += float(row['CVM_IN'])
@@ -256,11 +252,11 @@ def calculate_taz_variables(data, coords, taz_ids, outfile):
                 cvm_lu_low, cvm_lu_res, cvm_lu_ret, cvm_lu_ind, cvm_lu_emp=(0,)*5
 
                 # get data
-                [taz_id,pop,hh,inc1,inc2,inc3,inc4,inc5,inc6,inc7,inc8,inc9,inc10,emp_total,emp_fed_mil,sqmile,land_sqmile,cvm_in,cvm_re,cvm_sv,cvm_th,cvm_wh,cvm_off]=data[str(taz)]
+                [taz_id,pop,hh,inc1,inc2,inc3,inc4,inc5,inc6,inc7,inc8,inc9,inc10,emp_total,emp_mil,sqmile,land_sqmile,cvm_in,cvm_re,cvm_sv,cvm_th,cvm_wh,cvm_off]=data[str(taz)]
 
                 # average hh income
                 if (hh>0):
-                    hh_income = (inc1*7500+inc2*22500+inc3*37500+inc4*52500+inc5*67500+inc6*87500+inc7*112500+inc8*137500+inc9*175000+inc10*225)/hh
+                    hh_income = (inc1*7500+inc2*22500+inc3*37500+inc4*52500+inc5*67500+inc6*87500+inc7*112500+inc8*137500+inc9*175000+inc10*225000)/hh
                 else:
                     hh_income=64678
 
@@ -380,7 +376,7 @@ def calculate_taz_variables(data, coords, taz_ids, outfile):
 
                 # store calculated variables
                 data_calc[str(taz)]=[taz_id,pop,hh_income,land_sqmile,taz_x_meters,taz_y_meters,cvm_emp_dens,pop_dens,emp_cvm_total,
-                                         emp_fed_mil,cvm_in,cvm_re,cvm_sv,cvm_th,cvm_wh,cvm_off,zone_type,sqrt_area,
+                                         emp_mil,cvm_in,cvm_re,cvm_sv,cvm_th,cvm_wh,cvm_off,zone_type,sqrt_area,
                                          cvm_lu_low,cvm_lu_res,cvm_lu_ret,cvm_lu_ind,cvm_lu_emp,
                                          emp_lu_low,emp_lu_res,emp_lu_ret,emp_lu_ind,emp_lu_emp]
     return data_calc

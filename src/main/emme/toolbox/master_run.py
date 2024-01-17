@@ -775,7 +775,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             export_matrix_data(output_directory, base_scenario)
             # export core ABM data
             # Note: uses relative project structure, so cannot redirect to T drive
-            # self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data",capture_output=True)
+            self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export CVM data",capture_output=True)
             # aggregate_models = {}
             # for agg_model in ['eetrip', 'eitrip', 'trucktrip']:#TODO ['commercialVehicleTrips','internalExternalTrips']:
             #     aggregate_models[agg_model] = str(os.path.join(self._path,'report',agg_model+'.csv'))

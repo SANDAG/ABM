@@ -352,7 +352,7 @@ class SkimAppender(object):
         #   valueOfTimeCategory
         # nonSOV - departTimeFiveTod + tripMode + valueOfTimeCategory
         skim_map = {"SOV": {"values": [[1, 2, 3, 4, 5],
-                                       ["DRIVEALONE"],
+                                       ["Drive Alone"],
                                        [False, True],
                                        ["Low", "Medium", "High"]],
                             "labels": [["EA", "AM", "MD", "PM", "EV"],
@@ -367,9 +367,9 @@ class SkimAppender(object):
                     "Non-SOV": {"values": [[1, 2, 3, 4, 5],
                                            ["SHARED2",
                                             "SHARED3",
-                                            # "Light Heavy Duty Truck",
-                                            # "Medium Heavy Duty Truck",
-                                            # "Heavy Heavy Duty Truck",
+                                            "Light Heavy Duty Truck",
+                                            "Medium Heavy Duty Truck",
+                                            "Heavy Heavy Duty Truck",
                                             "Taxi",
                                             "TNC_SINGLE",
                                             "TNC_SHARED",
