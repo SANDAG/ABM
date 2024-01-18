@@ -25,6 +25,7 @@ def adjust_auto_operating_cost(vehicles):
     vehicles = vehicles.to_frame()
 
     adjustment_factor = target_auto_operating_cost / vehicles["auto_operating_cost"].mean()
+    logger.info("Adjusting auto operating costs in vehicles table by a factor of {}".format(adjustment_factor))
     vehicles["auto_operating_cost"] *= adjustment_factor
 
     pipeline.replace_table("vehicles", vehicles)
