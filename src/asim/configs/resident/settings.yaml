@@ -150,6 +150,7 @@ models:
   - transit_pass_subsidy
   - transit_pass_ownership
   - vehicle_type_choice
+  - adjust_auto_operating_cost
   - transponder_ownership
   - free_parking
   - telecommute_frequency
