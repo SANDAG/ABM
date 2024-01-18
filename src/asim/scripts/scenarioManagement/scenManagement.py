@@ -112,3 +112,7 @@ write_yaml(_join(configs_dir, 'common', 'constants.yaml'), doc)
 doc = open_yaml(_join(configs_dir, 'resident', 'av_ownership.yaml'))
 doc['AV_OWNERSHIP_TARGET_PERCENT'] = float(paramByYear.loc[paramByYear.year==scenYear, 'Mobility.AV.Share'].values[0])
 write_yaml(_join(configs_dir, 'resident', 'av_ownership.yaml'), doc)
+
+doc = open_yaml(_join(configs_dir, 'resident', 'vehicle_type_choice.yaml'))
+doc['FLEET_YEAR'] = int(scenYear) + 1
+write_yaml(_join(configs_dir, 'resident', 'vehicle_type_choice.yaml'), doc)
