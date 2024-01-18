@@ -85,7 +85,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
     def run(self):
         self.tool_run_msg = ""
         try:
-            results = self(self.period, self.scenario, self.create_connector_flag)
+            results = self(self.period, self.scenario, self.create_connector_flag, "../..")
             run_msg = "Transit connectors created"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg)
         except Exception as error:
@@ -93,7 +93,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                 error, _traceback.format_exc(error))
             raise
 
-    def __call__(self, period, scenario, create_connector_flag):
+    def __call__(self, period, scenario, create_connector_flag, main_directory):
 
         attrs = {
             "period": period,
@@ -103,10 +103,10 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
         }
         
         self.scenario = scenario
-        self.create_tr_connectors(period, create_connector_flag)
+        self.create_tr_connectors(period, create_connector_flag, main_directory)
 
     @_m.logbook_trace("Transit connector creator", save_arguments=True)
-    def create_tr_connectors(self, period, create_connector_flag):
+    def create_tr_connectors(self, period, create_connector_flag, main_directory):
 
         create_connectors = _m.Modeller().tool("inro.emme.data.network.base.create_connectors")
         create_extra = _m.Modeller().tool("inro.emme.data.extra_attribute.create_extra_attribute")
@@ -352,7 +352,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
             # export all connectors
             export_basenet(selection = {"link": 'i=1,4947 or j=1,4947',
                                         "node": 'none'},
-                        export_file = "../../input/transit_connectors/connectors_%s.out"%period,
+                        export_file = "%s/input/transit_connectors/connectors_%s.out"%(main_directory,period),
                         field_separator = " ", scenario=self.scenario)
             #delete individial connector files by transit mode and access mode
             for line_haul in self.line_haul_modes:
@@ -362,7 +362,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                     except:
                         pass
 
-            import_basenet(transaction_file = "../../input/transit_connectors/connectors_%s.out"%period, revert_on_error = False, scenario=self.scenario)
+            import_basenet(transaction_file = "%s/input/transit_connectors/connectors_%s.out"%(main_directory,period), revert_on_error = False, scenario=self.scenario)
             print("Finished adding access and egress links")
 
         else:
@@ -370,4 +370,4 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
             delete_links(selection = 'i=1,4947 or j=1,4947',
                         scenario=self.scenario)
             #import transit connectors
-            import_basenet(transaction_file = "../../input/transit_connectors/connectors_%s.out"%period, revert_on_error = False, scenario=self.scenario)
+            import_basenet(transaction_file = "%s/input/transit_connectors/connectors_%s.out"%(main_directory,period), revert_on_error = False, scenario=self.scenario)
