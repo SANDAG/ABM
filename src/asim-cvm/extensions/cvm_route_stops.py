@@ -23,6 +23,7 @@ from activitysim.core.configuration.logit import (
 )
 from activitysim.core.interaction_sample import interaction_sample
 from activitysim.core.util import assign_in_place
+import scipy
 
 from .cvm_enum import LocationTypes, StopPurposes
 from .cvm_enum_tools import as_int_enum, int_enum_to_categorical_dtype
@@ -48,6 +49,9 @@ class StopLoopPurposeSettings(LogitComponentSettings, extra="forbid"):
     available inside the stop loop but will be dropped from the route table when
     the stop loop exits.
     """
+
+    preprocessor: PreprocessorSettings | None = None
+    """Preprocessor settings for this model."""
 
 
 class StopLoopLocationSettings(SimpleLocationComponentSettings, extra="forbid"):
@@ -101,10 +105,9 @@ class DwellTimeSettings(PydanticReadable, extra="forbid"):
     """The column in the cv_trips table that has the resulting dwell time."""
 
     purpose_column: str = "next_stop_purpose"
-    purpose_adjustments: dict[StopPurposes, GammaParameterAdjustments] = {}
     location_type_column: str = "next_stop_location_type"
-    location_adjustments: dict[LocationTypes, GammaParameterAdjustments] = {}
-    default_gamma: GammaParameters
+    vehicle_type_column: str = "vehicle_type"
+    before_noon_column: str = "before_noon"
     min_dwell_time: float = 1
     """Minimum dwell time for any stop.
 
@@ -118,26 +121,6 @@ class DwellTimeSettings(PydanticReadable, extra="forbid"):
     If the random number generator selects a time greater than this, it is 
     truncated to this value.
     """
-
-    @validator("purpose_adjustments", pre=True)
-    def decipher_purposes(cls, value):
-        new_value = {}
-        for k, v in value.items():
-            if isinstance(k, str) and k in StopPurposes.__members__:
-                new_value[StopPurposes[k]] = v
-            else:
-                new_value[k] = v
-        return new_value
-
-    @validator("location_adjustments", pre=True)
-    def decipher_locationtypes(cls, value):
-        new_value = {}
-        for k, v in value.items():
-            if isinstance(k, str) and k in LocationTypes.__members__:
-                new_value[LocationTypes[k]] = v
-            else:
-                new_value[k] = v
-        return new_value
 
 
 class StopLoopComponentSettings(PydanticReadable, extra="forbid"):
@@ -236,6 +219,11 @@ def _stop_purpose(
 
     nest_spec = config.get_logit_model_settings(model_settings)
 
+    # this needs to happen before we choose the next purpose
+    nonterminated_routes[model_settings.PRIOR_PURP_COL] = nonterminated_routes[
+        model_settings.NEXT_PURP_COL
+    ]
+
     # if estimator:
     #     estimator.write_model_settings(model_settings, model_settings_file_name)
     #     estimator.write_spec(file_name=model_settings.SPEC)
@@ -269,9 +257,6 @@ def _stop_purpose(
     #     estimator.write_override_choices(choices)
     #     estimator.end_estimation()
 
-    nonterminated_routes[model_settings.PRIOR_PURP_COL] = nonterminated_routes[
-        model_settings.NEXT_PURP_COL
-    ]
     nonterminated_routes[model_settings.NEXT_PURP_COL] = (
         choices.reindex(nonterminated_routes.index)
         .fillna(model_spec.columns[0])
@@ -436,20 +421,28 @@ def _dwell_time(
     nonterminated_routes: pd.DataFrame,
     model_settings: DwellTimeSettings,
     trace_label: str = "cv_stop_purpose",
+    distribution_file: str = "route_stop_duration.csv",
 ) -> pd.DataFrame:
     # TODO: interface with ActivitySim repro-random
-    rng = np.random.default_rng(seed=42)
+    # rng = np.random.default_rng(seed=42)
+    distribution_dict = {}
+
+    distribution_file_ = state.filesystem.get_config_file_path(
+        distribution_file
+    )
+    distributions_df = pd.read_csv(distribution_file_)
+    distribution_dict = distributions_df.set_index(
+        ["purpose", "vehicle_type", "before_noon"]
+    ).to_dict(orient="index")
 
     result_list = []
 
-    for (purpose, locationtype), df in nonterminated_routes.groupby(
-        [model_settings.purpose_column, model_settings.location_type_column]
-    ):
-        shape = model_settings.default_gamma.shape
-        scale = model_settings.default_gamma.scale
-        shape_add = 0
-        scale_add = 0
+    # 12:00 pm is the 18th time period in the skim time periods
+    nonterminated_routes["before_noon"] = nonterminated_routes["trip_start_time"] < 18
 
+    for (purpose, vehicle_type, before_noon), df in nonterminated_routes.groupby(
+        [model_settings.purpose_column, model_settings.vehicle_type_column, model_settings.before_noon_column]
+    ):
         try:
             purpose_ = StopPurposes[purpose]
         except KeyError:
@@ -460,31 +453,17 @@ def _dwell_time(
                 pd.Series(0, index=df.index, name=model_settings.RESULT_COL_NAME)
             )
             continue
-        if purpose_ in model_settings.purpose_adjustments:
-            adj = model_settings.purpose_adjustments[purpose_]
-            shape *= adj.shape
-            scale *= adj.scale
-            shape_add += adj.shape_add
-            scale_add += adj.scale_add
+        
+        alpha = distribution_dict[(purpose, vehicle_type, before_noon)]['alpha']
+        beta = distribution_dict[(purpose, vehicle_type, before_noon)]['beta']
+        max_duration = distribution_dict[(purpose, vehicle_type, before_noon)]['max_duration']
 
-        try:
-            locationtype_ = LocationTypes[locationtype]
-        except KeyError:
-            locationtype_ = locationtype
-        if locationtype_ in model_settings.location_adjustments:
-            adj = model_settings.location_adjustments[locationtype_]
-            shape *= adj.shape
-            scale *= adj.scale
-            shape_add += adj.shape_add
-            scale_add += adj.scale_add
-
-        shape += shape_add
-        scale += scale_add
-
-        random_dwell_times = np.clip(
-            rng.gamma(shape, scale, size=len(df)),
-            a_min=model_settings.min_dwell_time,
-            a_max=model_settings.max_dwell_time,
+        random_dwell_times = scipy.stats.beta.rvs(
+            a=alpha, 
+            b=beta, 
+            loc=model_settings.min_dwell_time, 
+            scale=max_duration, 
+            size=len(df)
         )
 
         result_list.append(
@@ -612,6 +591,8 @@ def route_stops(
             model_settings.location_settings.RESULT_COL_NAME
         ][routes_continuing]
 
+        np.random.seed(seed=42)
+        
         # Choose dwell time
         nonterminated_routes = _dwell_time(
             state,
