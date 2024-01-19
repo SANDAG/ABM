@@ -2,7 +2,6 @@ households_sample_size: 0
 establishments_sample_size: 50
 trace_establishment_id:
 trace_hh_id: 479044
-resume_after:
 
 inherit_settings: True
 chunk_size: 0
