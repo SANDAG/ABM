@@ -38,9 +38,11 @@ class StopPurposes(enum.IntEnum):
     originate = 1
     terminate = 2
     base = 3
-    goods = 4
-    service = 5
-    other = 6
+    goods_pickup = 4
+    goods_delivery = 5
+    service = 6
+    maintenance = 7
+    home = 8
 
 
 class LocationTypes(enum.IntEnum):

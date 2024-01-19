@@ -1,3 +1,34 @@
-Label,Description,Expression,terminate,base,goods,service,other
-
-,,"@1.0",coef_asc_terminate,coef_asc_base,coef_asc_goods,coef_asc_service,coef_asc_other
+Label,Description,Expression,base,goods_pickup,goods_delivery,service,maintenance,home,terminate
+# ASC,,,,,,,,,
+,,1,coef_asc_base,coef_asc_goods_pickup,coef_asc_goods_delivery,coef_asc_service,coef_asc_maintenance,coef_asc_home,coef_asc_terminal
+# industry,,,,,,,,,
+construction,,business_type=='CON',,,coef_construction_goods_delivery,coef_construction_service,,,
+education,,business_type=='EPO',,,coef_education_goods_delivery,,,,
+medical,,business_type=='MHS',,,,coef_medical_service,,coef_medical_home,
+information,,business_type=='IFR',,,coef_information_goods_delivery,,coef_information_maintenance,,coef_information_terminal
+wholesale,,business_type=='WHL',,,,,coef_wholesale_maintenance,,coef_wholesale_terminal
+retail,,business_type=='RET',,,coef_retail_goods_delivery,coef_retail_service,,,
+industrial,,business_type=='IUT',,,,,coef_industrial_maintenance,coef_industrial_home,
+agirculture,,business_type=='AGM',,,,coef_agriculture_service,coef_agriculture_maintenance,,coef_agriculture_terminal
+# vehicle type,,,,,,,,,
+SUT,,vehicle_type=='SUT',,,coef_sut_goods_delivery,,,,
+MUT,,vehicle_type=='MUT',,coef_mut_goods_pickup,,,,,
+# route purpose,,,,,,,,,
+goods,,route_purpose=='goods',,,,coef_goods_service,coef_goods_maintenance,coef_goods_home,coef_goods_terminal
+# customer type,,,,,,,,,
+non-residential,,,,,coef_nonresidential_goods_delivery,coef_nonresidential_service,,,
+residential,,,,,coef_residential_goods_delivery,,,,coef_residential_terminal
+mixed,,,,,coef_mixed_goods_delivery,coef_mixed_service,,coef_mixed_home,coef_mixed_terminal
+# elapsed time,,,,,,,,,
+elapsed time mins,,route_elapsed_time,,,,coef_elapsed_service,coef_elapsed_maintenance,coef_elapsed_home,coef_elapsed_terminal
+# time period of day,,,,,,,,,
+am,,_time_period_=='AM',,,,,,,coef_am_terminal
+md,,_time_period_=='MD',,coef_md_goods_pickup,,,,,coef_md_terminal
+pm,,_time_period_=='PM',,coef_pm_goods_pickup,coef_pm_goods_delivery,,,coef_pm_home,
+ev,,_time_period_=='EV',,coef_ev_goods_pickup,,coef_ev_service,coef_ev_maintenance,coef_ev_home,coef_ev_terminal
+# origin trip purpose,,,,,,,,,
+goods_pickup,,prior_stop_purpose=='goods_pickup',,,,coef_prior_goods_pickup_next_service,coef_prior_goods_pickup_next_maint,,
+goods_delivery,,prior_stop_purpose=='goods_delivery',,coef_prior_goods_delivery_next_pickup,,coef_prior_goods_delivery_next_service,coef_prior_goods_delivery_next_maint,,
+service,,prior_stop_purpose=='service',,coef_prior_service_next_pickup,coef_prior_service_next_delivery,coef_prior_service_next_service,coef_prior_service_next_maint,,
+maintenance,,prior_stop_purpose=='maintenance',,coef_prior_maint_next_pickup,coef_prior_maint_next_delivery,coef_prior_maint_next_service,coef_prior_maint_next_maint,,
+home,,prior_stop_purpose=='home',,coef_prior_home_next_pickup,coef_prior_home_next_delivery,coef_prior_home_next_service,coef_prior_home_next_maint,,coef_prior_home_next_terminal
