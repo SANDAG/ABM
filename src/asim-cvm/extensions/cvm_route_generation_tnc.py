@@ -29,7 +29,7 @@ def route_generation_tnc(
     """
     Generate tnc routes from employments in land use zones.
 
-    group the employments of each land use zones into three business types: tnc resturant, tnc retail, tnc non-rr.
+    group the employments of each land use zones into three business types: tnc restaurant, tnc retail, tnc non-rr.
     for each business type, generate routes from the total employments in the land use zone by applying a routes per job rate.
 
     The result of running this component is the creation of the tnc routes table, appended to the routes table.
@@ -66,20 +66,22 @@ def route_generation_tnc(
             industry.get("employment_categories")
         ].sum(axis=1)
 
-    # create required columns for fake establishments
-    # industry_number, industry_name, zone_id, employees, establishment_id, sample_rate
-    tnc_establishments_df = land_use_df[
+    # groupby luz and get sum
+    luz_column = model_settings.get("LUZ_COLUMN")
+    luz_df = land_use_df.groupby(by=[luz_column])[
         [industry.get("name") for industry_id, industry in tnc_industry.items()]
-    ].copy()
+    ].sum()
+
+    # create required columns for fake establishments
+    # industry_number, industry_name, zone_id, luz_id, employees, establishment_id, sample_rate
+    tnc_establishments_df = luz_df.copy()
     tnc_establishments_df = tnc_establishments_df.melt(
         var_name="industry_name", value_name="employees", ignore_index=False
     ).reset_index()
 
     # the establishment id starts from the maximum establishment id in the establishments table
     tnc_establishments_df["establishment_id"] = (
-        tnc_establishments_df.index
-        + all_establishments_df["establishment_id"].max()
-        + 1
+        tnc_establishments_df.index + all_establishments_df.index.max() + 1
     )
     # set index
     tnc_establishments_df.set_index("establishment_id", inplace=True)
@@ -123,14 +125,11 @@ def route_generation_tnc(
     tnc_establishments_df["n_routes"] = np.where(
         tnc_establishments_df["n_routes"] > max_n_routes_per_lu_zone,
         max_n_routes_per_lu_zone,
-        establishments_df["n_routes"],
+        tnc_establishments_df["n_routes"],
     )
 
-    # append the tnc establishments to the establishments table
-    establishments_df = establishments_df.append(tnc_establishments_df)
-
     # register the new establishments table
-    state.add_table("establishments", establishments_df)
+    establishments = state.extend_table("establishments", tnc_establishments_df)
 
     # step 2: generate routes from the tnc establishments
     # generate routes table
@@ -140,6 +139,8 @@ def route_generation_tnc(
         establishments_sub_df = tnc_establishments_df[
             tnc_establishments_df["industry_name"] == b.name
         ].copy()
+        if establishments_sub_df.empty:
+            continue
         n_routes_btype = establishments_sub_df["n_routes"].sum()
         route_estab_id.append(
             np.repeat(establishments_sub_df.index, establishments_sub_df["n_routes"])
@@ -160,10 +161,6 @@ def route_generation_tnc(
     ) * max_n_routes_per_lu_zone
     tnc_routes = tnc_routes.set_index(pd.Index(route_id, name="route_id"))
 
-    # append the tnc routes to the routes table
-    routes = state.get_table("routes")
-    routes = routes.append(tnc_routes)
-
     # register the new routes table
-    state.add_table("routes", routes)
-    state.get_rn_generator().add_channel("routes", routes)
+    routes = state.extend_table("routes", tnc_routes)
+    state.get_rn_generator().add_channel("routes", tnc_routes)
