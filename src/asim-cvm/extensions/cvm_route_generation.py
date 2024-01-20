@@ -63,7 +63,7 @@ def route_generation(
     if model_settings is None:
         model_settings = state.filesystem.read_settings_file(model_settings_file_name)
 
-    trace_label = "cvm_establishment_attractor"
+    trace_label = "cvm_route_generation"
 
     logger.info("Running %s with synthetic establishments", trace_label)
 
@@ -147,6 +147,13 @@ def route_generation(
     establishments_df["n_routes"] = establishments_df["n_routes"].fillna(0)
     # round the number of routes to integer
     establishments_df["n_routes"] = establishments_df["n_routes"].round().astype(int)
+
+    # cap the number of routes to the maximum number of routes per establishment
+    establishments_df["n_routes"] = np.where(
+        establishments_df["n_routes"] > max_n_routes_per_business_type,
+        max_n_routes_per_business_type,
+        establishments_df["n_routes"],
+    )
 
     establishments["n_routes"] = establishments_df["n_routes"]
 
