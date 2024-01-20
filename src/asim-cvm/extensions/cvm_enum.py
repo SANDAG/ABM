@@ -13,6 +13,9 @@ class BusinessTypes(enum.IntEnum):
     EPO = 9
     MHS = 10
     LAF = 11
+    TNCNRR = 12
+    TNCRES = 13
+    TNCRET = 14
 
 
 class RoutePurposes(enum.IntEnum):
@@ -25,6 +28,13 @@ class VehicleTypes(enum.IntEnum):
     LCV = 1
     MUT = 2
     SUT = 3
+
+
+class VehicleTypes_ABM3(enum.IntEnum):
+    passenger_car = 1
+    LHDT = 2
+    MHDT = 3
+    HHDT = 4
 
 
 class CustomerTypes(enum.IntEnum):
