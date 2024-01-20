@@ -52,6 +52,10 @@ def test_cvm():
     state.run.route_generation()
     print(state.dataset.establishments)
 
+    print("### route gen tnc ###")
+    state.run.route_generation_tnc()
+    print(state.dataset.establishments)
+
     print("### route purp and veh ###")
     state.run.route_purpose_and_vehicle()
 
