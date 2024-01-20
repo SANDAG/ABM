@@ -427,9 +427,7 @@ def _dwell_time(
     # rng = np.random.default_rng(seed=42)
     distribution_dict = {}
 
-    distribution_file_ = state.filesystem.get_config_file_path(
-        distribution_file
-    )
+    distribution_file_ = state.filesystem.get_config_file_path(distribution_file)
     distributions_df = pd.read_csv(distribution_file_)
     distribution_dict = distributions_df.set_index(
         ["purpose", "vehicle_type", "before_noon"]
@@ -441,7 +439,11 @@ def _dwell_time(
     nonterminated_routes["before_noon"] = nonterminated_routes["trip_start_time"] < 18
 
     for (purpose, vehicle_type, before_noon), df in nonterminated_routes.groupby(
-        [model_settings.purpose_column, model_settings.vehicle_type_column, model_settings.before_noon_column]
+        [
+            model_settings.purpose_column,
+            model_settings.vehicle_type_column,
+            model_settings.before_noon_column,
+        ]
     ):
         try:
             purpose_ = StopPurposes[purpose]
@@ -453,17 +455,19 @@ def _dwell_time(
                 pd.Series(0, index=df.index, name=model_settings.RESULT_COL_NAME)
             )
             continue
-        
-        alpha = distribution_dict[(purpose, vehicle_type, before_noon)]['alpha']
-        beta = distribution_dict[(purpose, vehicle_type, before_noon)]['beta']
-        max_duration = distribution_dict[(purpose, vehicle_type, before_noon)]['max_duration']
+
+        alpha = distribution_dict[(purpose, vehicle_type, before_noon)]["alpha"]
+        beta = distribution_dict[(purpose, vehicle_type, before_noon)]["beta"]
+        max_duration = distribution_dict[(purpose, vehicle_type, before_noon)][
+            "max_duration"
+        ]
 
         random_dwell_times = scipy.stats.beta.rvs(
-            a=alpha, 
-            b=beta, 
-            loc=model_settings.min_dwell_time, 
-            scale=max_duration, 
-            size=len(df)
+            a=alpha,
+            b=beta,
+            loc=model_settings.min_dwell_time,
+            scale=max_duration,
+            size=len(df),
         )
 
         result_list.append(
@@ -592,7 +596,7 @@ def route_stops(
         ][routes_continuing]
 
         np.random.seed(seed=42)
-        
+
         # Choose dwell time
         nonterminated_routes = _dwell_time(
             state,

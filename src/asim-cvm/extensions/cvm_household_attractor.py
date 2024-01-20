@@ -20,6 +20,7 @@ from activitysim.core.input import read_input_table
 from activitysim.core.configuration.base import PreprocessorSettings, PydanticReadable
 from activitysim.core.configuration.logit import LogitComponentSettings
 
+
 class HouseholdAttractorSettings(LogitComponentSettings, extra="forbid"):
     """
     Settings for the `household_attractor` component.
@@ -42,6 +43,7 @@ class HouseholdAttractorSettings(LogitComponentSettings, extra="forbid"):
 
 
 logger = logging.getLogger(__name__)
+
 
 @workflow.step
 def household_attractor(
@@ -105,7 +107,7 @@ def household_attractor(
         locals_d = {}
         if constants is not None:
             locals_d.update(constants)
-        
+
         expressions.assign_columns(
             state,
             df=households_merged,
@@ -120,9 +122,11 @@ def household_attractor(
             coefficients_df, file_name=model_settings.COEFFICIENTS
         )
         estimator.write_choosers(households)
-    
+
     for segment in model_settings.segments:
-        households_merged["segment"] = pd.Series(segment, index=households_merged.index, dtype=segment_dtype)
+        households_merged["segment"] = pd.Series(
+            segment, index=households_merged.index, dtype=segment_dtype
+        )
 
         choices = simulate.simple_simulate(
             state,
@@ -158,21 +162,38 @@ def household_attractor(
         )
 
         if trace_hh_id:
-            state.tracing.trace_df(households, label=f"household_attactor_{segment}", warn_if_empty=True)
-    
+            state.tracing.trace_df(
+                households, label=f"household_attactor_{segment}", warn_if_empty=True
+            )
+
     state.add_table("households", households)
-    
+
     # summarize total household attractions by zone
-    land_use['num_hh_food_delivery'] = households.groupby('home_zone_id')[model_settings.RESULT_COL_NAME + '_food'].sum()
-    land_use['num_hh_food_delivery'] = land_use['num_hh_food_delivery'].fillna(0)
-    land_use['num_hh_package_delivery'] = households.groupby('home_zone_id')[model_settings.RESULT_COL_NAME + '_package'].sum()
-    land_use['num_hh_package_delivery'] = land_use['num_hh_package_delivery'].fillna(0)
-    land_use['num_hh_service'] = households.groupby('home_zone_id')[model_settings.RESULT_COL_NAME + '_service'].sum()
-    land_use['num_hh_service'] = land_use['num_hh_service'].fillna(0)
+    land_use["num_hh_food_delivery"] = households.groupby("home_zone_id")[
+        model_settings.RESULT_COL_NAME + "_food"
+    ].sum()
+    land_use["num_hh_food_delivery"] = land_use["num_hh_food_delivery"].fillna(0)
+    land_use["num_hh_package_delivery"] = households.groupby("home_zone_id")[
+        model_settings.RESULT_COL_NAME + "_package"
+    ].sum()
+    land_use["num_hh_package_delivery"] = land_use["num_hh_package_delivery"].fillna(0)
+    land_use["num_hh_service"] = households.groupby("home_zone_id")[
+        model_settings.RESULT_COL_NAME + "_service"
+    ].sum()
+    land_use["num_hh_service"] = land_use["num_hh_service"].fillna(0)
 
     # scale household attraction by input household sample rate
-    land_use['num_hh_food_delivery'] = land_use['num_hh_food_delivery'] / households[model_settings.HOUSEHOLD_SAMPLE_RATE_COLUMN].iloc[0]
-    land_use['num_hh_package_delivery'] = land_use['num_hh_package_delivery'] / households[model_settings.HOUSEHOLD_SAMPLE_RATE_COLUMN].iloc[0]
-    land_use['num_hh_service'] = land_use['num_hh_service'] / households[model_settings.HOUSEHOLD_SAMPLE_RATE_COLUMN].iloc[0]
+    land_use["num_hh_food_delivery"] = (
+        land_use["num_hh_food_delivery"]
+        / households[model_settings.HOUSEHOLD_SAMPLE_RATE_COLUMN].iloc[0]
+    )
+    land_use["num_hh_package_delivery"] = (
+        land_use["num_hh_package_delivery"]
+        / households[model_settings.HOUSEHOLD_SAMPLE_RATE_COLUMN].iloc[0]
+    )
+    land_use["num_hh_service"] = (
+        land_use["num_hh_service"]
+        / households[model_settings.HOUSEHOLD_SAMPLE_RATE_COLUMN].iloc[0]
+    )
 
     state.add_table("land_use", land_use)

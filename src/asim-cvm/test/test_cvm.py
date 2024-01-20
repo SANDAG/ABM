@@ -1,4 +1,3 @@
-
 import sys
 import importlib
 from pathlib import Path
@@ -26,7 +25,9 @@ EXPECTED_MODELS = [
 
 def test_cvm():
 
-    state = extensions.cvm_state.State.make_default(__file__, configs_dir=("configs", "../configs"))
+    state = extensions.cvm_state.State.make_default(
+        __file__, configs_dir=("configs", "../configs")
+    )
     assert state.settings.models == EXPECTED_MODELS
     assert state.settings.chunk_size == 0
     assert not state.settings.sharrow

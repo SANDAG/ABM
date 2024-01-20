@@ -1,4 +1,3 @@
-
 import sys
 import importlib
 from pathlib import Path
@@ -17,7 +16,9 @@ data_dir = tuple(arguments[1].split(","))
 configs_dir = tuple(arguments[2].split(","))
 output_dir = arguments[3]
 
-state = extensions.cvm_state.State.make_default(__file__, configs_dir=configs_dir, data_dir=data_dir, output_dir=output_dir)
+state = extensions.cvm_state.State.make_default(
+    __file__, configs_dir=configs_dir, data_dir=data_dir, output_dir=output_dir
+)
 
 state.logging.config_logger()
 

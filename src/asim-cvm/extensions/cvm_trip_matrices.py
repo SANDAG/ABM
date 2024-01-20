@@ -55,9 +55,9 @@ def write_cvm_trip_matrices(
     # write matrices by zone system type
     if network_los.zone_system == los.ONE_ZONE:  # taz trips written to taz matrices
         logger.info("aggregating trips one zone...")
-        aggregate_trips = cv_trips_df.groupby(["trip_origin", "trip_destination"], sort=False).sum(
-            numeric_only=True
-        )
+        aggregate_trips = cv_trips_df.groupby(
+            ["trip_origin", "trip_destination"], sort=False
+        ).sum(numeric_only=True)
 
         # use the average household weight for all trips in the origin destination pair
         est_weight_col = model_settings.get("EST_EXPANSION_WEIGHT_COL")
@@ -92,7 +92,9 @@ def write_cvm_trip_matrices(
     elif network_los.zone_system == los.TWO_ZONE:  # maz trips written to taz matrices
         logger.info("aggregating trips two zone...")
         cv_trips_df["otaz"] = (
-            state.get_dataframe("land_use").reindex(cv_trips_df["trip_origin"]).TAZ.tolist()
+            state.get_dataframe("land_use")
+            .reindex(cv_trips_df["trip_origin"])
+            .TAZ.tolist()
         )
         cv_trips_df["dtaz"] = (
             state.get_dataframe("land_use")
@@ -159,7 +161,9 @@ def annotate_trips(
 
     # setup skim keys
     if "trip_period" not in cv_trips_df:
-        cv_trips_df["trip_period"] = network_los.skim_time_period_label(cv_trips_df.trip_start_time)
+        cv_trips_df["trip_period"] = network_los.skim_time_period_label(
+            cv_trips_df.trip_start_time
+        )
     od_skim_wrapper = skim_dict.wrap("trip_origin", "trip_destination")
     odt_skim_stack_wrapper = skim_dict.wrap_3d(
         orig_key="trip_origin", dest_key="trip_destination", dim3_key="trip_period"

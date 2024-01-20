@@ -61,15 +61,15 @@ def route_generation(
     """
 
     if model_settings is None:
-        model_settings = state.filesystem.read_settings_file(
-            model_settings_file_name
-        )
-    
+        model_settings = state.filesystem.read_settings_file(model_settings_file_name)
+
     trace_label = "cvm_establishment_attractor"
 
     logger.info("Running %s with synthetic establishments", trace_label)
 
-    max_n_routes_per_business_type = model_settings.get("MAX_N_ROUTES_PER_ESTABLISHMENT")
+    max_n_routes_per_business_type = model_settings.get(
+        "MAX_N_ROUTES_PER_ESTABLISHMENT"
+    )
 
     # TODO: interface with ActivitySim repro-random
     rng = np.random.default_rng(seed=42)
@@ -82,22 +82,36 @@ def route_generation(
     logger.info("Running %s step 1 binary logit model", trace_label)
     # get the industry dictionary from model spec
     industry_dict = model_settings.get("industries")
-    establishments_df["industry_group"] = establishments_df["industry_number"].map(industry_dict)
-    establishments_df["industry_group"] = establishments_df["industry_group"].apply(lambda x: x.get("industry_group") if x is not None else 0)
+    establishments_df["industry_group"] = establishments_df["industry_number"].map(
+        industry_dict
+    )
+    establishments_df["industry_group"] = establishments_df["industry_group"].apply(
+        lambda x: x.get("industry_group") if x is not None else 0
+    )
     # get the industry group specific beta from model spec
     industry_group_dict = model_settings.get("industry_groups")
     _industry_group = establishments_df["industry_group"].map(industry_group_dict)
-    establishments_df["beta_industry_group"] = _industry_group.apply(lambda x: x.get("beta_employment") if x is not None else 0)
-    establishments_df["constant"] = _industry_group.apply(lambda x: x.get("constant") if x is not None else 0)
+    establishments_df["beta_industry_group"] = _industry_group.apply(
+        lambda x: x.get("beta_employment") if x is not None else 0
+    )
+    establishments_df["constant"] = _industry_group.apply(
+        lambda x: x.get("constant") if x is not None else 0
+    )
 
     # calculate the probability of generating at least one route
-    establishments_df["has_generation_probability"] = (
-        1 / (1+np.exp(-establishments_df["beta_industry_group"] * establishments_df["employees"]-establishments_df["constant"]))
+    establishments_df["has_generation_probability"] = 1 / (
+        1
+        + np.exp(
+            -establishments_df["beta_industry_group"] * establishments_df["employees"]
+            - establishments_df["constant"]
+        )
     )
     # get random numbers for the binary logit model
     establishments_df["random"] = state.get_rn_generator().random_for_df(establishments)
     # calculate whether the establishment generates a route
-    establishments_df["has_generation"] = establishments_df["has_generation_probability"] > establishments_df["random"]
+    establishments_df["has_generation"] = (
+        establishments_df["has_generation_probability"] > establishments_df["random"]
+    )
 
     establishments["has_generation"] = establishments_df["has_generation"]
 
@@ -114,11 +128,11 @@ def route_generation(
     establishments_df["n_routes"] = np.where(
         establishments_df["has_generation"],
         np.sqrt(establishments_df["employees"]) * beta_generation,
-        0
+        0,
     )
 
     # step 3 Industry factors.
-    # These are estimated industry specific factors 
+    # These are estimated industry specific factors
     # which modify the predictions from the second step to produce the final set of outputs.
     logger.info("Running %s step 3 apply industry factors", trace_label)
     # get the industry dictionary from model spec
@@ -127,11 +141,13 @@ def route_generation(
     for industry_number, industry_info in industry_dict.items():
         industry_factor[industry_number] = industry_info.get("industry_factor")
     # apply the industry effect to the number of routes
-    establishments_df["n_routes"] *= establishments_df["industry_number"].map(industry_factor)
+    establishments_df["n_routes"] *= establishments_df["industry_number"].map(
+        industry_factor
+    )
     establishments_df["n_routes"] = establishments_df["n_routes"].fillna(0)
     # round the number of routes to integer
     establishments_df["n_routes"] = establishments_df["n_routes"].round().astype(int)
-    
+
     establishments["n_routes"] = establishments_df["n_routes"]
 
     # write establishments table back to state
@@ -141,7 +157,9 @@ def route_generation(
     route_estab_id = []
     route_btype = []
     for b in BusinessTypes:
-        establishments_sub_df = establishments_df[establishments_df["industry_name"]==b.name].copy()
+        establishments_sub_df = establishments_df[
+            establishments_df["industry_name"] == b.name
+        ].copy()
         n_routes_btype = establishments_sub_df["n_routes"].sum()
         route_estab_id.append(
             np.repeat(establishments_sub_df.index, establishments_sub_df["n_routes"])

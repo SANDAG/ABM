@@ -9,7 +9,13 @@ import pandas as pd
 from activitysim.core import config, estimation, simulate, workflow, logit
 from activitysim.core.configuration.logit import LogitComponentSettings
 
-from .cvm_enum import BusinessTypes, CustomerTypes, RoutePurposes, VehicleTypes, VehicleTypes_ABM3
+from .cvm_enum import (
+    BusinessTypes,
+    CustomerTypes,
+    RoutePurposes,
+    VehicleTypes,
+    VehicleTypes_ABM3,
+)
 from .cvm_enum_tools import as_int_enum
 from .cvm_state import State
 
@@ -82,17 +88,21 @@ def cross_choice_maker(pr, rn, out=None):
                     max_pr = pr[col]
     return out
 
+
 class RouteGenerationSettings(LogitComponentSettings, extra="forbid"):
     """
     Settings for the `route_generation` component.
     """
+
     ALTS: str
     """The name of the file containing the alternatives."""
 
     CVM_ABM3_VEHICLE_DISTRIBUTION_FILE: str
     """The name of the file containing the vehicle distribution."""
 
+
 logger = logging.getLogger(__name__)
+
 
 @workflow.step
 def route_purpose_and_vehicle(
@@ -117,7 +127,7 @@ def route_purpose_and_vehicle(
     -------
 
     """
-    
+
     if model_settings is None:
         model_settings = RouteGenerationSettings.read_settings_file(
             state.filesystem,
@@ -164,7 +174,9 @@ def route_purpose_and_vehicle(
         alternatives_df["vehicle_type"], VehicleTypes, categorical=True
     )
     # join the choices with alternatives
-    choices = choices.to_frame("choice").merge(alternatives_df, left_on="choice", right_index=True)
+    choices = choices.to_frame("choice").merge(
+        alternatives_df, left_on="choice", right_index=True
+    )
 
     # assign the choices to the routes
     routes["route_purpose"] = choices["route_purpose"]
@@ -176,27 +188,31 @@ def route_purpose_and_vehicle(
     distribution_file_ = state.filesystem.get_config_file_path(
         model_settings.CVM_ABM3_VEHICLE_DISTRIBUTION_FILE
     )
-    vehicle_distribution_df = pd.read_csv(
-        distribution_file_
-    )
+    vehicle_distribution_df = pd.read_csv(distribution_file_)
     vehicle_distribution_df["vehicle_type"] = as_int_enum(
         vehicle_distribution_df["vehicle_type"], VehicleTypes, categorical=True
     )
-    vehicle_distribution_df = vehicle_distribution_df.set_index(["is_tnc","vehicle_type"])
+    vehicle_distribution_df = vehicle_distribution_df.set_index(
+        ["is_tnc", "vehicle_type"]
+    )
     # create is_tnc column
-    routes["is_tnc"] = routes["business_type"].isin([BusinessTypes.TNCNRR, BusinessTypes.TNCRES, BusinessTypes.TNCRET])
+    routes["is_tnc"] = routes["business_type"].isin(
+        [BusinessTypes.TNCNRR, BusinessTypes.TNCRES, BusinessTypes.TNCRET]
+    )
     # join the vehicle type distribution to the routes on is_tnc and vehicle_type
-    _routes = routes.merge(vehicle_distribution_df, left_on=["is_tnc", "vehicle_type"], right_index=True)
+    _routes = routes.merge(
+        vehicle_distribution_df, left_on=["is_tnc", "vehicle_type"], right_index=True
+    )
     # this is the probability of each vehicle type for each route
     _probs = _routes[vehicle_distribution_df.columns]
     # make choices
     _choices, _rands = logit.make_choices(state, _probs, trace_label=trace_label)
 
     # assign the choices to the routes
-    _choices = pd.Series(vehicle_distribution_df.columns[_choices.values], index=_choices.index)
-    _choices = as_int_enum(
-        _choices, VehicleTypes_ABM3, categorical=True
+    _choices = pd.Series(
+        vehicle_distribution_df.columns[_choices.values], index=_choices.index
     )
+    _choices = as_int_enum(_choices, VehicleTypes_ABM3, categorical=True)
     routes["vehicle_type_abm3"] = _choices
 
     state.add_table("routes", routes)
