@@ -1,34 +1,43 @@
 industries:
   12: 
-    description: tnc_non_resturant_retail
+    description: tnc_non_restaurant_retail
     name: TNCNRR
     tnc_rate: 0.0002768
     employment_categories:
-      - emp_gov
-      - emp_ag_min
-      - emp_bus_svcs
-      - emp_fin_res_mgm
-      - emp_educ
-      - emp_hlth
-      - emp_trn_wrh
-      - emp_con
-      - emp_utl
-      - emp_mnf
-      - emp_whl
-      - emp_ent
-      - emp_accm
-      - emp_oth
+      # - emp_gov
+      # - emp_ag_min
+      # - emp_bus_svcs
+      # - emp_fin_res_mgm
+      # - emp_educ
+      # - emp_hlth
+      # - emp_trn_wrh
+      # - emp_con
+      # - emp_utl
+      # - emp_mnf
+      # - emp_whl
+      # - emp_ent
+      # - emp_accm
+      # - emp_oth
+      - emp_prof_bus_svcs
+      - emp_prof_bus_svcs_bldg_maint
+      - emp_health
+      - emp_amusement
+      - emp_hotel
   13: 
-    description: tnc_resturant
+    description: tnc_restaurant
     name: TNCRES
     tnc_rate: 0.0202639
     employment_categories:
-      - emp_food
+      # - emp_food
+      - emp_restaurant_bar
   14: 
     description: tnc_retail
     name: TNCRET
     tnc_rate: 0.0124840
     employment_categories:
-      - emp_ret
+      # - emp_ret
+      - emp_retail
 
 MAX_N_ROUTES_PER_LU_ZONE: 1000
+
+LUZ_COLUMN: luz_id
