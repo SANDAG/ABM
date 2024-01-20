@@ -22,7 +22,7 @@ coef_asc_SRM,-4.414974049,F
 coef_asc_SRS,-1.737818813,F
 coef_trn_service,-0.255,F
 coef_trn_mut,1.821,F
-coef_whl_nr,0.610,F
+coef_whl_nr,0.61,F
 coef_whl_service,-0.441,F
 coef_con_nr,-1.076,F
 coef_con_mixed,-0.783,F
@@ -37,7 +37,7 @@ coef_ifr_service,0.519,F
 coef_ifr_maint,0.625,F
 coef_ifr_sut,-1.076,F
 coef_ifr_mut,-1.918,F
-coef_laf_nr,0.850,F
+coef_laf_nr,0.85,F
 coef_laf_mixed,-1.017,F
 coef_laf_maint,1.105,F
 coef_laf_sut,-2.933,F
@@ -46,3 +46,4 @@ coef_mhs_mixed,0.882,F
 coef_mhs_service,-1.075,F
 coef_ret_nr,0.675,F
 coef_ret_service,-0.498,F
+coef_unavail,-999,T

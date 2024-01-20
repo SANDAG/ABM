@@ -27,3 +27,5 @@ util_mhs_mixed,mhs_mixed,"business_type==""MHS""",coef_mhs_mixed,coef_mhs_mixed,
 util_mhs_service,mhs_service,"business_type==""MHS""",,,,,,,,,,,,,coef_mhs_service,coef_mhs_service,coef_mhs_service,coef_mhs_service,coef_mhs_service,coef_mhs_service,coef_mhs_service,coef_mhs_service,coef_mhs_service
 util_ret_nonres,ret_nonres,"business_type==""RET""",,,,coef_ret_nr,coef_ret_nr,coef_ret_nr,,,,,,,,,,coef_ret_nr,coef_ret_nr,coef_ret_nr,,,
 util_ret_service,ret_service,"business_type==""RET""",,,,,,,,,,,,,coef_ret_service,coef_ret_service,coef_ret_service,coef_ret_service,coef_ret_service,coef_ret_service,coef_ret_service,coef_ret_service,coef_ret_service
+# tnc,,,,,,,,,,,,,,,,,,,,,,,
+util_tnc,tnc,"business_type.isin(['TNCNRR','TNCRET','TNCRES'])",,coef_unavail,coef_unavail,coef_unavail,coef_unavail,coef_unavail,coef_unavail,coef_unavail,coef_unavail,coef_unavail,coef_unavail,coef_unavail,coef_unavail,coef_unavail,coef_unavail,coef_unavail,coef_unavail,coef_unavail,coef_unavail,coef_unavail,coef_unavail
