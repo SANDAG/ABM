@@ -1,9 +1,13 @@
 Description,Target,Expression
 #####
-md light truck trip distance,_trkGenTime_light,"skim_od[('TRK_L_TIME','MD')] + skim_od[('TRK_L_TOLLCOST','MD')] / vot_light * 60"
-md medium truck trip distance,_trkGenTime_medium,"skim_od[('TRK_M_TIME','MD')] + skim_od[('TRK_M_TOLLCOST','MD')] / vot_medium * 60"
-md heavy truck trip distance,_trkGenTime_heavy,"skim_od[('TRK_H_TIME','MD')] + skim_od[('TRK_H_TOLLCOST','MD')] / vot_heavy * 60"
-am light truck trip distance,_trkGenTime_tnc,"skim_od[('SOV_TR_H_TIME','AM')] + skim_od[('SOV_TR_H_TOLLCOST','AM')] / vot_tnc * 60"
+#md light truck trip distance,_trkGenTime_light,"skim_od[('TRK_L_TIME','MD')] + skim_od[('TRK_L_TOLLCOST','MD')] / vot_light * 60"
+#md medium truck trip distance,_trkGenTime_medium,"skim_od[('TRK_M_TIME','MD')] + skim_od[('TRK_M_TOLLCOST','MD')] / vot_medium * 60"
+#md heavy truck trip distance,_trkGenTime_heavy,"skim_od[('TRK_H_TIME','MD')] + skim_od[('TRK_H_TOLLCOST','MD')] / vot_heavy * 60"
+#md light truck trip distance,_trkGenTime_tnc,"skim_od[('SOV_TR_H_TIME','MD')] + skim_od[('SOV_TR_H_TOLLCOST','MD')] / vot_tnc * 60"
+md light truck trip distance,_trkGenTime_light,"skim_od[('TRK_M_TIME','MD')] + skim_od[('TRK_M_TIME','MD')] / vot_light * 60"
+md medium truck trip distance,_trkGenTime_medium,"skim_od[('TRK_M_TIME','MD')] + skim_od[('TRK_M_TIME','MD')] / vot_medium * 60"
+md heavy truck trip distance,_trkGenTime_heavy,"skim_od[('TRK_M_TIME','MD')] + skim_od[('TRK_M_TIME','MD')] / vot_heavy * 60"
+md light truck trip distance,_trkGenTime_tnc,"skim_od[('TRK_M_TIME','MD')] + skim_od[('TRK_M_TIME','MD')] / vot_tnc * 60"
 #####
 agriculture gen travel time,_gentime_agm,_trkGenTime_light * prop_light_agm + _trkGenTime_medium * prop_medium_agm + _trkGenTime_heavy * prop_heavy_agm
 Construction gen travel time,_gentime_con,_trkGenTime_light * prop_light_con + _trkGenTime_medium * prop_medium_con + _trkGenTime_heavy * prop_heavy_con
