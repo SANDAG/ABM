@@ -56,6 +56,8 @@ def route_start_time(
     for routes_keys, routes_chunk in routes.groupby(i_keys):
         r = np.random.default_rng().random(size=len(routes_chunk))
         routes_c_choices = cross_choice_maker(probs.loc[routes_keys].values, r)
+        # convert from 0-bsaed to 1-based
+        routes_c_choices = routes_c_choices + 1
         start_times.append(pd.Series(routes_c_choices, index=routes_chunk.index))
 
     routes = routes.assign(
