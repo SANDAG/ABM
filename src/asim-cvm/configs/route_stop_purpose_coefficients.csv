@@ -1,5 +1,5 @@
 coefficient_name,value,constrain
-coef_asc_base,0,F
+coef_asc_base,0,T
 coef_asc_goods_pickup,0.697552885,F
 coef_asc_goods_delivery,2.874205415,F
 coef_asc_service,3.21096211,F
@@ -70,3 +70,20 @@ coef_prior_home_next_delivery,-2.642199597,F
 coef_prior_home_next_service,-3.161758214,F
 coef_prior_home_next_maint,-2.598467436,F
 coef_prior_home_next_terminal,-1.866117741,F
+coef_asc_base_tnc,0,T
+coef_asc_goods_pickup_tnc,2.894198668,F
+coef_asc_goods_delivery_tnc,1.967761361,F
+coef_asc_service_tnc,0.318440777,F
+coef_asc_maintenance_tnc,2.906187968,F
+coef_asc_home_tnc,0.20194983,F
+coef_asc_terminal_tnc,1.53213412,F
+coef_tncnrr_goods_delivery,1.154100766,F
+coef_mixed_terminal_tnc,-0.700711599,F
+coef_elapsed_terminal_tnc,0.003300743,F
+coef_prior_goods_pickup_next_delivery_tnc,2.72998641,F
+coef_prior_goods_pickup_next_service_tnc,-1.497527937,F
+coef_prior_goods_pickup_next_maint_tnc,-0.886582319,F
+coef_prior_goods_delivery_next_delivery_tnc,1.885656185,F
+coef_prior_service_next_service_tnc,1.729240743,F
+coef_prior_service_next_maint_tnc,-0.441174348,F
+coef_prior_maint_next_delivery_tnc,-0.651682006,F

@@ -32,3 +32,16 @@ goods_delivery,,(prior_stop_purpose=='goods_delivery')&(~is_tnc),,coef_prior_goo
 service,,(prior_stop_purpose=='service')&(~is_tnc),,coef_prior_service_next_pickup,coef_prior_service_next_delivery,coef_prior_service_next_service,coef_prior_service_next_maint,,
 maintenance,,(prior_stop_purpose=='maintenance')&(~is_tnc),,coef_prior_maint_next_pickup,coef_prior_maint_next_delivery,coef_prior_maint_next_service,coef_prior_maint_next_maint,,
 home,,(prior_stop_purpose=='home')&(~is_tnc),,coef_prior_home_next_pickup,coef_prior_home_next_delivery,coef_prior_home_next_service,coef_prior_home_next_maint,,coef_prior_home_next_terminal
+# ASC TNC,,,,,,,,,
+,,is_tnc,coef_asc_base_tnc,coef_asc_goods_pickup_tnc,coef_asc_goods_delivery_tnc,coef_asc_service_tnc,coef_asc_maintenance_tnc,coef_asc_home_tnc,coef_asc_terminal_tnc
+# industry TNC,,,,,,,,,
+industry group NonRestRetl,,(business_type=='TNCNRR')&(is_tnc),,,coef_tncnrr_goods_delivery,,,,
+# customer type TNC,,,,,,,,,
+mixed,,(customer_type=='mixed')&(is_tnc),,,,,,,coef_mixed_terminal_tnc
+# elapsed time TNC,,,,,,,,,
+elapsed_time (min),,route_elapsed_time * (is_tnc),,,,,,,coef_elapsed_terminal_tnc
+# origin trip purpose TNC,,,,,,,,,
+origin_goods_pickup,,(prior_stop_purpose=='goods_pickup')&(is_tnc),,,coef_prior_goods_pickup_next_delivery_tnc,coef_prior_goods_pickup_next_service_tnc,coef_prior_goods_pickup_next_maint_tnc,,
+origin_goods_delivery,,(prior_stop_purpose=='goods_delivery')&(is_tnc),,,coef_prior_goods_delivery_next_delivery_tnc,,,,
+origin service,,(prior_stop_purpose=='service')&(is_tnc),,,,coef_prior_service_next_service_tnc,coef_prior_service_next_maint_tnc,,
+origin maint,,(prior_stop_purpose=='maintenance')&(is_tnc),,,coef_prior_maint_next_delivery_tnc,,,,
