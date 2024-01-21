@@ -25,7 +25,7 @@ from activitysim.core.interaction_sample import interaction_sample
 from activitysim.core.util import assign_in_place
 import scipy
 
-from .cvm_enum import LocationTypes, StopPurposes
+from .cvm_enum import LocationTypes, StopPurposes, BusinessTypes
 from .cvm_enum_tools import as_int_enum, int_enum_to_categorical_dtype
 from .cvm_route_terminal_type import RouteStopTypeSettings, route_endpoint_type
 from .cvm_terminal_choice import SimpleLocationComponentSettings
@@ -500,6 +500,11 @@ def route_stops(
     # Collect all non-terminated routes
 
     nonterminated_routes = routes_merged
+
+    # create is_tnc column
+    nonterminated_routes["is_tnc"] = nonterminated_routes["business_type"].isin(
+        [BusinessTypes.TNCNRR.name, BusinessTypes.TNCRES.name, BusinessTypes.TNCRET.name]
+    )
 
     if "route_elapsed_time" not in nonterminated_routes:
         nonterminated_routes["route_elapsed_time"] = 0.0
