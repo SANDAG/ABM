@@ -128,6 +128,13 @@ def route_generation_tnc(
         tnc_establishments_df["n_routes"],
     )
 
+    # TEMPORARY: this part will be replaced by tnc original model
+    # for now, assign all tnc to the first zone in the lu zone
+    one_zone_lu_df = land_use_df.reset_index().groupby(by=[luz_column]).zone_id.min()
+    tnc_establishments_df["zone_id"] = one_zone_lu_df.loc[
+        tnc_establishments_df.luz_id
+    ].values
+
     # register the new establishments table
     establishments = state.extend_table("establishments", tnc_establishments_df)
 
