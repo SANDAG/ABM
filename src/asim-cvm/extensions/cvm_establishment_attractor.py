@@ -120,6 +120,9 @@ def establishment_attractor(
         0,
     )
 
+    # round to 4 decimal places
+    establishments_df["attractions"] = establishments_df["attractions"].round(4)
+
     # step 3 Industry factors.
     # These are estimated industry specific factors
     # which modify the predictions from the second step to produce the final set of outputs.
@@ -145,6 +148,22 @@ def establishment_attractor(
     land_use[model_settings.get("RESULT_COL_NAME")] = establishments_df.groupby(
         "zone_id"
     )["attractions"].sum()
+
+    # aggregate the number of attractions by industry by zone
+    # agrregate by zone and business type, then unstack to get a column for each business type
+    # then rename the columns to be the business type
+    # then fill na with 0
+    logger.info("Running %s step 4 aggregate by zone and industry", trace_label)
+    agg_df = establishments_df.groupby(["zone_id", "industry_name"])[
+        "attractions"
+    ].sum()
+    agg_df = agg_df.unstack("industry_name")#.drop("industry_name")
+    agg_df.columns = agg_df.columns.map(
+        lambda x: "establishment_attraction_" + x.lower()
+    )
+    
+    land_use = pd.concat([land_use, agg_df], axis=1)
+    land_use[agg_df.columns] = land_use[agg_df.columns].fillna(0)
 
     # scale the number of attractions by the establishment sample rate
     logger.info(
