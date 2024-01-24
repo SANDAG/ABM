@@ -7,11 +7,7 @@ read_skim_cache: False
 write_skim_cache: False
 
 taz_skims:
- - traffic_skims_EA.omx
- - traffic_skims_AM.omx
  - traffic_skims_MD.omx
- - traffic_skims_PM.omx
- - traffic_skims_EV.omx
 
 maz: maz.csv
 
