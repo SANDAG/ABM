@@ -56,6 +56,11 @@ industries:
     name: LAF
     industry_factor: 0.9338
     industry_group: 2
+  12: 
+    description: military
+    name: MIL
+    industry_factor: 0
+    industry_group: 5
 
 # these are the parameters for the first step in the establishment attraction model
 industry_groups:
@@ -71,6 +76,9 @@ industry_groups:
   4:
     beta_employment: 0.027
     constant: 0.5917
+  5:
+    beta_employment: 0
+    constant: 99
 
 CONSTANTS:
   beta_employment: 0.7051 # used in the second step of the establishment attraction model

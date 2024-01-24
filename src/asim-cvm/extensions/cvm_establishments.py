@@ -97,3 +97,14 @@ def establishments(state: State) -> pd.DataFrame:
         state.tracing.trace_df(df, "raw.establishments", warn_if_empty=True)
 
     return df
+
+
+@workflow.table
+def establishments_all(state: State) -> pd.DataFrame:
+    df_full = read_input_table(state, "establishments")
+
+    state.get_rn_generator().add_channel("establishments_all", df_full)
+
+    state.tracing.register_traceable_table("establishments_all", df_full)
+
+    return df_full

@@ -13,9 +13,10 @@ class BusinessTypes(enum.IntEnum):
     EPO = 9
     MHS = 10
     LAF = 11
-    TNCNRR = 12
-    TNCRES = 13
-    TNCRET = 14
+    MIL = 12
+    TNCNRR = 13
+    TNCRES = 14
+    TNCRET = 15
 
 
 class RoutePurposes(enum.IntEnum):
