@@ -87,6 +87,7 @@ models:
   - establishment_attractor
   - cvm_accessibility
   - route_generation
+  - route_generation_tnc
   - route_purpose_and_vehicle
   - route_origination_type
   - route_origination
