@@ -1227,8 +1227,7 @@ public class HouseholdAVAllocationManager {
         	int income = (int) householdDataSet.getValueAt(row,"income");
         	int autos = (int) householdDataSet.getValueAt(row,"auto_ownership");
         	
-        	//todo fix
-        	int AVs = 1;
+        	int AVs = (int) householdDataSet.getValueAt(row,"numAVowned");
         	int HVs = autos - AVs;
         	
         	//create household object
@@ -1324,12 +1323,10 @@ public class HouseholdAVAllocationManager {
         //get the household table and fill up the householdMap with households.
         TableDataSet tripDataSet = readTableData(filename);
 
-        //TODO: this is a temporary fix and wont be right if the trip list is out of order
         int last_hh_id=0;
         int last_person_id=0;
         int last_tour_id=0;
-    	String orig_purpose = "home";
-
+    	
         for(int row=1;row<=tripDataSet.getRowCount();++row) {
 
 	
@@ -1354,7 +1351,8 @@ public class HouseholdAVAllocationManager {
         	int inbound = inboundString.equalsIgnoreCase("TRUE") ? 1 : 0 ;
         	String tour_purpose =  tripDataSet.getStringValueAt(row,"primary_purpose");
         	
-        	//TODO: fix once origin purpose is appended to trip list
+
+        	String orig_purpose = tripDataSet.getStringValueAt(row,"origin_purpose");
         	if(hh_id!=last_hh_id || person_id!=last_person_id || tour_id!=last_tour_id ) 
         		orig_purpose = tour_purpose.equalsIgnoreCase("atwork") ? "work" : "home";
         	        	
@@ -1362,14 +1360,13 @@ public class HouseholdAVAllocationManager {
         	int orig_maz= (int) tripDataSet.getValueAt(row,"origin");
         	int dest_maz= (int) tripDataSet.getValueAt(row,"destination");
         
-        	//TODO: Change when parking location model implemented
-        	int parking_maz = (int) tripDataSet.getValueAt(row,"destination");
+        	int parking_maz = (int) tripDataSet.getValueAt(row,"parking_zone");
         	
           	int stop_period =  (int) tripDataSet.getValueAt(row,"depart");
         	String trip_mode =  tripDataSet.getStringValueAt(row,"trip_mode");
         	
-        	//TODO:fix
-        	int av_avail = 1;
+			String trip_veh_body = tripDataSet.getStringValueAt(row,"trip_veh_body");
+        	int av_avail = trip_veh_body.indexOf("-AV") > -1 ? 1 : 0;
         	
         	//int tour_mode = (int) tripDataSet.getValueAt(row,"tour_mode");
         	float valueOfTime = tripDataSet.getValueAt(row,"vot_da");
