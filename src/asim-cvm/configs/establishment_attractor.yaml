@@ -4,57 +4,57 @@ industries:
   1: 
     description: agriculture_mining
     name: AGM
-    industry_factor: 1.1401
+    industry_factor: 1.4058
     industry_group: 3
   2: 
     description: manufacturing
     name: MFG
-    industry_factor: 0.95
+    industry_factor: 1.0667
     industry_group: 1
   3: 
     description: industry_utilities
     name: IUT
-    industry_factor: 1.0558
+    industry_factor: 1.0965
     industry_group: 2
   4: 
     description: retail
     name: RET
-    industry_factor: 1.0553
+    industry_factor: 2.0747
     industry_group: 1
   5: 
     description: wholesale
     name: WHL
-    industry_factor: 1.3698
+    industry_factor: 1.9158
     industry_group: 1
   6: 
     description: construction
     name: CON
-    industry_factor: 0.8188
+    industry_factor: 1.7496
     industry_group: 3
   7: 
     description: transportation
     name: TRN
-    industry_factor: 1.6334
+    industry_factor: 1.5830
     industry_group: 3
   8: 
     description: info_finance_insurance_realestate_professional
     name: IFR
-    industry_factor: 0.9801
+    industry_factor: 1.4600
     industry_group: 4
   9: 
     description: education_publicservices
     name: EPO
-    industry_factor: 0.8264
+    industry_factor: 1.3284
     industry_group: 3
   10: 
     description: medical_health
     name: MHS
-    industry_factor: 1.0256
+    industry_factor: 1.8163
     industry_group: 3
   11: 
     description: leisure_accommondation_food
     name: LAF
-    industry_factor: 0.9338
+    industry_factor: 1.2448
     industry_group: 2
 
 # these are the parameters for the first step in the establishment attraction model

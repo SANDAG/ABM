@@ -75,16 +75,16 @@ def establishment_attractor(
         industry_dict
     )
     establishments_df["industry_group"] = establishments_df["industry_group"].apply(
-        lambda x: x.get("industry_group") if x is not None else 0
+        lambda x: x.get("industry_group") if isinstance(x, dict) and "industry_group" in x else 0
     )
     # get the industry group specific beta from model spec
     industry_group_dict = model_settings.get("industry_groups")
     _industry_group = establishments_df["industry_group"].map(industry_group_dict)
     establishments_df["beta_industry_group"] = _industry_group.apply(
-        lambda x: x.get("beta_employment") if x is not None else 0
+        lambda x: x.get("beta_employment") if isinstance(x, dict) and "beta_employment" in x else 0
     )
     establishments_df["constant"] = _industry_group.apply(
-        lambda x: x.get("constant") if x is not None else 0
+        lambda x: x.get("constant") if isinstance(x, dict) and "constant" in x else 0
     )
 
     # calculate the probability of having an attraction
