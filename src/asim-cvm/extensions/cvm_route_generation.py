@@ -82,6 +82,13 @@ def route_generation(
     logger.info("Running %s step 1 binary logit model", trace_label)
     # get the industry dictionary from model spec
     industry_dict = model_settings.get("industries")
+
+    # check industry number is in the industry dictionary
+    if establishments_df["industry_number"].isin(industry_dict.keys()).all() == False:
+        raise ValueError(
+            "Industry number in establishment not in the industry dictionary. Check input establishments and route generation settings!"
+        )
+    
     establishments_df["industry_group"] = establishments_df["industry_number"].map(
         industry_dict
     )

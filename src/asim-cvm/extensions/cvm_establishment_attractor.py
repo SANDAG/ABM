@@ -8,6 +8,7 @@ import numpy as np
 from pydantic import validator
 
 from activitysim.core import workflow, tracing
+from activitysim.core.input import read_input_table
 from activitysim.core.configuration.logit import LogitComponentSettings
 
 logger = logging.getLogger(__name__)
@@ -36,12 +37,15 @@ def establishment_attractor(
     state: workflow.State,
     land_use: pd.DataFrame,
     establishments: pd.DataFrame,
+    establishments_all: pd.DataFrame,
     model_settings: None = None,
     model_settings_file_name: str = "establishment_attractor.yaml",
     trace_label: str = "establishment_attractor",
 ) -> None:
     """
     Calculates establishment attractor for commercial vehicle model.
+
+    Establishment attractions should be calculated using 100% of the establishments.
 
     Parameters
     ----------
@@ -64,6 +68,20 @@ def establishment_attractor(
     land_use[model_settings.get("RESULT_COL_NAME")] = 0
 
     establishments_df = establishments.copy()
+
+    # all_establishments_df = read_input_table(state, "establishments")
+
+    # establishment attractor should be run on all establishments
+    if (state.settings.establishments_sample_size != 0) | (
+        establishments.shape[0] != establishments_all.shape[0]
+    ):
+        logger.info(
+            "WARNING: cvm is running %s percent establishments. The %s will be run with 100 percent synthetic establishments",
+            establishments["sample_rate"].iloc[0] * 100,
+            trace_label,
+        )
+        establishments_df = establishments_all.copy()
+
     establishments_df["attractions"] = 0
 
     # step 1 Binary logit model that predicts whether an establishment has at least one attraction.
@@ -71,6 +89,13 @@ def establishment_attractor(
     logger.info("Running %s step 1 binary logit model", trace_label)
     # get the industry dictionary from model spec
     industry_dict = model_settings.get("industries")
+
+    # check industry number is in the industry dictionary
+    if establishments_all["industry_number"].isin(industry_dict.keys()).all() == False:
+        raise ValueError(
+            "Industry number in establishment not in the industry dictionary. Check input establishments and attractor settings!"
+        )
+
     establishments_df["industry_group"] = establishments_df["industry_number"].map(
         industry_dict
     )
@@ -96,7 +121,9 @@ def establishment_attractor(
         )
     )
     # get random numbers for the binary logit model
-    establishments_df["random"] = state.get_rn_generator().random_for_df(establishments)
+    establishments_df["random"] = state.get_rn_generator().random_for_df(
+        establishments_all
+    )
     # calculate whether the establishment has an attraction
     establishments_df["has_attraction"] = (
         establishments_df["has_attraction_probability"] > establishments_df["random"]
@@ -106,7 +133,7 @@ def establishment_attractor(
 
     tracing.print_summary(
         "has_attraction",
-        establishments["has_attraction"],
+        establishments_df["has_attraction"],
         value_counts=True,
     )
 
@@ -142,6 +169,7 @@ def establishment_attractor(
 
     # write establishments table back to state
     state.add_table("establishments", establishments)
+    state.add_table("establishments_all", establishments_df)
 
     # aggregate the number of attractions by zone
     logger.info("Running %s step 4 aggregate by zone", trace_label)
@@ -157,23 +185,13 @@ def establishment_attractor(
     agg_df = establishments_df.groupby(["zone_id", "industry_name"])[
         "attractions"
     ].sum()
-    agg_df = agg_df.unstack("industry_name")#.drop("industry_name")
+    agg_df = agg_df.unstack("industry_name")
     agg_df.columns = agg_df.columns.map(
         lambda x: "establishment_attraction_" + x.lower()
     )
-    
+
     land_use = pd.concat([land_use, agg_df], axis=1)
     land_use[agg_df.columns] = land_use[agg_df.columns].fillna(0)
-
-    # scale the number of attractions by the establishment sample rate
-    logger.info(
-        "Running %s step 5 scale by sample rate %s",
-        trace_label,
-        establishments_df["sample_rate"].iloc[0],
-    )
-    land_use[model_settings.get("RESULT_COL_NAME")] *= (
-        1 / establishments_df["sample_rate"].iloc[0]
-    )
 
     # fill na with 0
     land_use[model_settings.get("RESULT_COL_NAME")] = land_use[

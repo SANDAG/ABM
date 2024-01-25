@@ -197,7 +197,11 @@ def route_purpose_and_vehicle(
     )
     # create is_tnc column
     routes["is_tnc"] = routes["business_type"].isin(
-        [BusinessTypes.TNCNRR.name, BusinessTypes.TNCRES.name, BusinessTypes.TNCRET.name]
+        [
+            BusinessTypes.TNCNRR.name,
+            BusinessTypes.TNCRES.name,
+            BusinessTypes.TNCRET.name,
+        ]
     )
     # join the vehicle type distribution to the routes on is_tnc and vehicle_type
     _routes = routes.merge(

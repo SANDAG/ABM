@@ -503,7 +503,11 @@ def route_stops(
 
     # create is_tnc column
     nonterminated_routes["is_tnc"] = nonterminated_routes["business_type"].isin(
-        [BusinessTypes.TNCNRR.name, BusinessTypes.TNCRES.name, BusinessTypes.TNCRET.name]
+        [
+            BusinessTypes.TNCNRR.name,
+            BusinessTypes.TNCRES.name,
+            BusinessTypes.TNCRET.name,
+        ]
     )
 
     if "route_elapsed_time" not in nonterminated_routes:

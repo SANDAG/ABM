@@ -25,16 +25,20 @@ input_table_list:
     filename: SynthEstablishments_BaseYr_2024-01-04.csv
     index_col: establishment_id
     rename_columns:
+      Establishment_ID: establishment_id
       Industry_No: industry_number
       Industry_Name: industry_name
+      LUZ: luz_id
       MGRA: zone_id
       Employees: employees
       Size_Class: size_class
   - tablename: land_use
-    filename: final_land_use.csv
+    filename: mgra15_based_input2022.csv
     index_col: zone_id
     rename_columns:
-      MAZ: zone_id
+      mgra: zone_id
+      luz_id: luz_id
+      taz: TAZ
     drop_columns:
       - i1
       - i2
@@ -53,6 +57,8 @@ input_table_list:
       - hh_mf
       - hh_mh
       - zip09
+  - tablename: land_use_taz
+    filename: taz.csv
   - tablename: tours
     filename: final_tours.csv
     index_col: tour_id
@@ -80,6 +86,7 @@ output_tables:
    - routes
    - cv_trips
    - establishments
+   - establishments_all
 
 
 models:
@@ -87,6 +94,7 @@ models:
   - establishment_attractor
   - cvm_accessibility
   - route_generation
+  - route_generation_tnc
   - route_purpose_and_vehicle
   - route_origination_type
   - route_origination
