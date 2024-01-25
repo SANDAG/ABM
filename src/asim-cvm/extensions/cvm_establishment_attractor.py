@@ -133,7 +133,7 @@ def establishment_attractor(
 
     tracing.print_summary(
         "has_attraction",
-        establishments["has_attraction"],
+        establishments_df["has_attraction"],
         value_counts=True,
     )
 
