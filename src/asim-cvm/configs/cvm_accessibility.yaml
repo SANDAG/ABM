@@ -17,6 +17,7 @@ land_use_columns:
   - 'establishment_attraction_ret'
   - 'establishment_attraction_trn'
   - 'establishment_attraction_whl'
+  - 'establishment_attraction'
 
 CONSTANTS:
   vot_light: 67 # dollar per hour

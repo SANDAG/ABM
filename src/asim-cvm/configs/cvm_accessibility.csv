@@ -1,13 +1,9 @@
 Description,Target,Expression
 #####
-#md light truck trip distance,_trkGenTime_light,"skim_od[('TRK_L_TIME','MD')] + skim_od[('TRK_L_TOLLCOST','MD')] / vot_light * 60"
-#md medium truck trip distance,_trkGenTime_medium,"skim_od[('TRK_M_TIME','MD')] + skim_od[('TRK_M_TOLLCOST','MD')] / vot_medium * 60"
-#md heavy truck trip distance,_trkGenTime_heavy,"skim_od[('TRK_H_TIME','MD')] + skim_od[('TRK_H_TOLLCOST','MD')] / vot_heavy * 60"
-#md light truck trip distance,_trkGenTime_tnc,"skim_od[('SOV_TR_H_TIME','MD')] + skim_od[('SOV_TR_H_TOLLCOST','MD')] / vot_tnc * 60"
-md light truck trip distance,_trkGenTime_light,"skim_od[('TRK_M_TIME','MD')] + skim_od[('TRK_M_TIME','MD')] / vot_light * 60"
-md medium truck trip distance,_trkGenTime_medium,"skim_od[('TRK_M_TIME','MD')] + skim_od[('TRK_M_TIME','MD')] / vot_medium * 60"
-md heavy truck trip distance,_trkGenTime_heavy,"skim_od[('TRK_M_TIME','MD')] + skim_od[('TRK_M_TIME','MD')] / vot_heavy * 60"
-md light truck trip distance,_trkGenTime_tnc,"skim_od[('TRK_M_TIME','MD')] + skim_od[('TRK_M_TIME','MD')] / vot_tnc * 60"
+md light truck trip distance,_trkGenTime_light,"skim_od[('TRK_L_TIME','MD')] + skim_od[('TRK_L_TOLLCOST','MD')] / vot_light * 0.6"
+md medium truck trip distance,_trkGenTime_medium,"skim_od[('TRK_M_TIME','MD')] + skim_od[('TRK_M_TOLLCOST','MD')] / vot_medium * 0.6"
+md heavy truck trip distance,_trkGenTime_heavy,"skim_od[('TRK_H_TIME','MD')] + skim_od[('TRK_H_TOLLCOST','MD')] / vot_heavy * 0.6"
+md light truck trip distance,_trkGenTime_tnc,"skim_od[('SOV_TR_H_TIME','MD')] + skim_od[('SOV_TR_H_TOLLCOST','MD')] / vot_tnc * 0.6"
 #####
 agriculture gen travel time,_gentime_agm,_trkGenTime_light * prop_light_agm + _trkGenTime_medium * prop_medium_agm + _trkGenTime_heavy * prop_heavy_agm
 Construction gen travel time,_gentime_con,_trkGenTime_light * prop_light_con + _trkGenTime_medium * prop_medium_con + _trkGenTime_heavy * prop_heavy_con
@@ -167,67 +163,33 @@ Wholesale business type and Transportation establishment attraction,whl_trn_esta
 Wholesale business type and Wholesale establishment attraction,whl_whl_establishment,"df.establishment_attraction_whl * _whl_est_decay"
 ##TNC Non restaurant retail
 ,_tncnrr_est_decay,"exp((_gentime_tnc-decay_tncnrr_est).clip(0) * dispersion_parameter_tncnrr_est)"
-TNC Non rest ret business type and agriculture establishment attraction,tncnrr_agm_establishment,"df.establishment_attraction_agm * _tncnrr_est_decay"
-TNC Non rest ret business type and Construction establishment attraction,tncnrr_con_establishment,"df.establishment_attraction_con * _tncnrr_est_decay"
-TNC Non rest ret business type and Education/Other public services establishment attraction,tncnrr_epo_establishment,"df.establishment_attraction_epo * _tncnrr_est_decay"
-TNC Non rest ret business type and Industrial/Utilities establishment attraction,tncnrr_iut_establishment,"df.establishment_attraction_iut * _tncnrr_est_decay"
-TNC Non rest ret business type and Info/Finance/Insurance/Real Estate/Professional services establishment attraction,tncnrr_ifr_establishment,"df.establishment_attraction_ifr * _tncnrr_est_decay"
-TNC Non rest ret business type and Leisure/Accommodations and Food establishment attraction,tncnrr_laf_establishment,"df.establishment_attraction_laf * _tncnrr_est_decay"
-TNC Non rest ret business type and Manufacturing establishment attraction,tncnrr_mfg_establishment,"df.establishment_attraction_mfg * _tncnrr_est_decay"
-TNC Non rest ret business type and Medical/Health Services establishment attraction,tncnrr_mhs_establishment,"df.establishment_attraction_mhs * _tncnrr_est_decay"
-TNC Non rest ret business type and Retail establishment attraction,tncnrr_ret_establishment,"df.establishment_attraction_ret * _tncnrr_est_decay"
-TNC Non rest ret business type and Transportation establishment attraction,tncnrr_trn_establishment,"df.establishment_attraction_trn * _tncnrr_est_decay"
-TNC Non rest ret business type and Wholesale establishment attraction,tncnrr_whl_establishment,"df.establishment_attraction_whl * _tncnrr_est_decay"
+,_non_food_retail_attraction,"df.establishment_attraction-df.establishment_attraction_laf-df.establishment_attraction_ret"
+TNC Non rest ret business type and non food and retail attraction,tncnrr_nonfoodret_establishment,"_non_food_retail_attraction * _tncnrr_est_decay"
 ##TNC restaurant
 ,_tncres_est_decay,"exp((_gentime_tnc-decay_tncres_est).clip(0) * dispersion_parameter_tncres_est)"
-TNC restaurant business type and agriculture establishment attraction,tncres_agm_establishment,"df.establishment_attraction_agm * _tncres_est_decay"
-TNC restaurant business type and Construction establishment attraction,tncres_con_establishment,"df.establishment_attraction_con * _tncres_est_decay"
-TNC restaurant business type and Education/Other public services establishment attraction,tncres_epo_establishment,"df.establishment_attraction_epo * _tncres_est_decay"
-TNC restaurant business type and Industrial/Utilities establishment attraction,tncres_iut_establishment,"df.establishment_attraction_iut * _tncres_est_decay"
-TNC restaurant business type and Info/Finance/Insurance/Real Estate/Professional services establishment attraction,tncres_ifr_establishment,"df.establishment_attraction_ifr * _tncres_est_decay"
 TNC restaurant business type and Leisure/Accommodations and Food establishment attraction,tncres_laf_establishment,"df.establishment_attraction_laf * _tncres_est_decay"
-TNC restaurant business type and Manufacturing establishment attraction,tncres_mfg_establishment,"df.establishment_attraction_mfg * _tncres_est_decay"
-TNC restaurant business type and Medical/Health Services establishment attraction,tncres_mhs_establishment,"df.establishment_attraction_mhs * _tncres_est_decay"
-TNC restaurant business type and Retail establishment attraction,tncres_ret_establishment,"df.establishment_attraction_ret * _tncres_est_decay"
-TNC restaurant business type and Transportation establishment attraction,tncres_trn_establishment,"df.establishment_attraction_trn * _tncres_est_decay"
-TNC restaurant business type and Wholesale establishment attraction,tncres_whl_establishment,"df.establishment_attraction_whl * _tncres_est_decay"
 ##TNC retail
 ,_tncret_est_decay,"exp((_gentime_tnc-decay_tncret_est).clip(0) * dispersion_parameter_tncret_est)"
-TNC retail business type and agriculture establishment attraction,tncret_agm_establishment,"df.establishment_attraction_agm * _tncret_est_decay"
-TNC retail business type and Construction establishment attraction,tncret_con_establishment,"df.establishment_attraction_con * _tncret_est_decay"
-TNC retail business type and Education/Other public services establishment attraction,tncret_epo_establishment,"df.establishment_attraction_epo * _tncret_est_decay"
-TNC retail business type and Industrial/Utilities establishment attraction,tncret_iut_establishment,"df.establishment_attraction_iut * _tncret_est_decay"
-TNC retail business type and Info/Finance/Insurance/Real Estate/Professional services establishment attraction,tncret_ifr_establishment,"df.establishment_attraction_ifr * _tncret_est_decay"
-TNC retail business type and Leisure/Accommodations and Food establishment attraction,tncret_laf_establishment,"df.establishment_attraction_laf * _tncret_est_decay"
-TNC retail business type and Manufacturing establishment attraction,tncret_mfg_establishment,"df.establishment_attraction_mfg * _tncret_est_decay"
-TNC retail business type and Medical/Health Services establishment attraction,tncret_mhs_establishment,"df.establishment_attraction_mhs * _tncret_est_decay"
 TNC retail business type and Retail establishment attraction,tncret_ret_establishment,"df.establishment_attraction_ret * _tncret_est_decay"
-TNC retail business type and Transportation establishment attraction,tncret_trn_establishment,"df.establishment_attraction_trn * _tncret_est_decay"
-TNC retail business type and Wholesale establishment attraction,tncret_whl_establishment,"df.establishment_attraction_whl * _tncret_est_decay"
 ##### household attractors by business type
 ##agriculture
 ,_agm_hh_decay,"exp((_gentime_agm-decay_agm_hh).clip(0) * dispersion_parameter_agm_hh)"
-agriculture business type and household food attraction,agm_household_food,"df.num_hh_food_delivery * _agm_hh_decay"
 agriculture business type and household package attraction,agm_household_package,"df.num_hh_package_delivery * _agm_hh_decay"
 agriculture business type and household service attraction,agm_household_service,"df.num_hh_service * _agm_hh_decay"
 ##Construction
 ,_con_hh_decay,"exp((_gentime_con-decay_con_hh).clip(0) * dispersion_parameter_con_hh)"
-Construction business type and household food attraction,con_household_food,"df.num_hh_food_delivery * _con_hh_decay"
 Construction business type and household package attraction,con_household_package,"df.num_hh_package_delivery * _con_hh_decay"
 Construction business type and household service attraction,con_household_service,"df.num_hh_service * _con_hh_decay"
 ##Education/Other public services
 ,_epo_hh_decay,"exp((_gentime_epo-decay_epo_hh).clip(0) * dispersion_parameter_epo_hh)"
-Education/Other public services business type and household food attraction,epo_household_food,"df.num_hh_food_delivery * _epo_hh_decay"
 Education/Other public services business type and household package attraction,epo_household_package,"df.num_hh_package_delivery * _epo_hh_decay"
 Education/Other public services business type and household service attraction,epo_household_service,"df.num_hh_service * _epo_hh_decay"
 ##Industrial/Utilities
 ,_iut_hh_decay,"exp((_gentime_iut-decay_iut_hh).clip(0) * dispersion_parameter_iut_hh)"
-Industrial/Utilities business type and household food attraction,iut_household_food,"df.num_hh_food_delivery * _iut_hh_decay"
 Industrial/Utilities business type and household package attraction,iut_household_package,"df.num_hh_package_delivery * _iut_hh_decay"
 Industrial/Utilities business type and household service attraction,iut_household_service,"df.num_hh_service * _iut_hh_decay"
 ##Info/Finance/Insurance/Real Estate/Professional services
 ,_ifr_hh_decay,"exp((_gentime_ifr-decay_ifr_hh).clip(0) * dispersion_parameter_ifr_hh)"
-Info/Finance/Insurance/Real Estate/Professional services business type and household food attraction,ifr_household_food,"df.num_hh_food_delivery * _ifr_hh_decay"
 Info/Finance/Insurance/Real Estate/Professional services business type and household package attraction,ifr_household_package,"df.num_hh_package_delivery * _ifr_hh_decay"
 Info/Finance/Insurance/Real Estate/Professional services business type and household service attraction,ifr_household_service,"df.num_hh_service * _ifr_hh_decay"
 ##Leisure/Accommodations and Food
@@ -237,12 +199,10 @@ Leisure/Accommodations and Food business type and household package attraction,l
 Leisure/Accommodations and Food business type and household service attraction,laf_household_service,"df.num_hh_service * _laf_hh_decay"
 ##Manufacturing
 ,_mfg_hh_decay,"exp((_gentime_mfg-decay_mfg_hh).clip(0) * dispersion_parameter_mfg_hh)"
-Manufacturing business type and household food attraction,mfg_household_food,"df.num_hh_food_delivery * _mfg_hh_decay"
 Manufacturing business type and household package attraction,mfg_household_package,"df.num_hh_package_delivery * _mfg_hh_decay"
 Manufacturing business type and household service attraction,mfg_household_service,"df.num_hh_service * _mfg_hh_decay"
 ##Medical/Health Services
 ,_mhs_hh_decay,"exp((_gentime_mhs-decay_mhs_hh).clip(0) * dispersion_parameter_mhs_hh)"
-Medical/Health Services business type and household food attraction,mhs_household_food,"df.num_hh_food_delivery * _mhs_hh_decay"
 Medical/Health Services business type and household package attraction,mhs_household_package,"df.num_hh_package_delivery * _mhs_hh_decay"
 Medical/Health Services business type and household service attraction,mhs_household_service,"df.num_hh_service * _mhs_hh_decay"
 ##Retail
@@ -252,12 +212,10 @@ Retail business type and household package attraction,ret_household_package,"df.
 Retail business type and household service attraction,ret_household_service,"df.num_hh_service * _ret_hh_decay"
 ##Transportation
 ,_trn_hh_decay,"exp((_gentime_trn-decay_trn_hh).clip(0) * dispersion_parameter_trn_hh)"
-Transportation business type and household food attraction,trn_household_food,"df.num_hh_food_delivery * _trn_hh_decay"
 Transportation business type and household package attraction,trn_household_package,"df.num_hh_package_delivery * _trn_hh_decay"
 Transportation business type and household service attraction,trn_household_service,"df.num_hh_service * _trn_hh_decay"
 ##Wholesale
 ,_whl_hh_decay,"exp((_gentime_whl-decay_whl_hh).clip(0) * dispersion_parameter_whl_hh)"
-Wholesale business type and household food attraction,whl_household_food,"df.num_hh_food_delivery * _whl_hh_decay"
 Wholesale business type and household package attraction,whl_household_package,"df.num_hh_package_delivery * _whl_hh_decay"
 Wholesale business type and household service attraction,whl_household_service,"df.num_hh_service * _whl_hh_decay"
 ##TNC Non restaurant retail
