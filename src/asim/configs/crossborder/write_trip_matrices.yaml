@@ -507,33 +507,3 @@ CONSTANTS:
   OCC_TAXI: 1.1
   OCC_TNC_SINGLE: 1.2
   OCC_TNC_SHARED: 2.0
-
-FINAL_TRIP_COLUMNS:
-  # - trip_id #not used bc the index of the dataframe is converted into the trip_id
-  - person_id
-  - household_id
-  - primary_purpose
-  - trip_num
-  - outbound
-  - trip_count
-  - destination
-  - origin
-  - tour_id
-  - purpose
-  - depart
-  - trip_mode
-  - timeDrive
-  - distanceDrive
-  - costTollDrive
-  - timeTransitInVehicle
-  - timeRapidTransitInVehicle
-  - timeExpressBusTransitInVehicle
-  - timeLightRailTransitInVehicle
-  - timeCommuterRailTransitInVehicle
-  - timeTransitInitialWait
-  - costFareTransit
-  - transfersTransit
-  - distance
-  - costOperatingDrive
-  - weightTrip
-  - weightPersonTrip
