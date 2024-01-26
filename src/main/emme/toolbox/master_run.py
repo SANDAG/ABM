@@ -644,7 +644,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
                 if msa_iteration==1:
                     self.run_proc("runSandag_ScenManagement.cmd",
-                            [main_directory, str(props["scenarioYear"])],
+                            [drive, drive + path_forward_slash, str(props["scenarioYear"])],
                             "Running Scenario Management", capture_output=True) 
 
                 if not skipABMPreprocessing[iteration]:
