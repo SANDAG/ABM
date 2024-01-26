@@ -66,9 +66,6 @@ vot-indexed skims,da_dist_skims,((odt_skims['SOV_NT_L_DIST'] * (_vot_bin_da == 1
 ,s3_time_skims,((odt_skims['HOV3_L_TIME'] * (_vot_bin_s3 == 1)) + (odt_skims['HOV3_M_TIME'] * (_vot_bin_s3 == 2)) + (odt_skims['HOV3_H_TIME'] * (_vot_bin_s3 == 3)))
 ,walk_time,od_skims['walkTime']
 ,walk_available,((walk_time < max_walk_time) & (walk_time > 0))
-,walk_local_available,odt_skims['WALK_LOC_TOTALIVTT']>0
-,walk_premium_available,odt_skims['WALK_PRM_TOTALIVTT']>0
-,walk_mix_available,odt_skims['WALK_MIX_TOTALIVTT']>0
 #,,
 ,origin,df.origin if 'origin' in df.columns else df.home_zone_id
 ,destination,df.destination if 'destination' in df.columns else df.alt_dest
@@ -86,6 +83,10 @@ vot-indexed skims,da_dist_skims,((odt_skims['SOV_NT_L_DIST'] * (_vot_bin_da == 1
 ,dest_local_time,dest_local_dist * 60/walk_speed
 ,dest_prm_time,dest_prm_dist * 60/walk_speed
 ,dest_mix_time,dest_mix_dist * 60/walk_speed
+#,,
+,walk_local_available,(origin_local_time<=1)&(dest_local_dist<=1)&(odt_skims['WALK_LOC_TOTALIVTT']>0)
+,walk_premium_available,(origin_prm_time<=1.2)&(dest_prm_dist<=1.2)&(odt_skims['WALK_PRM_TOTALIVTT']>0)
+,walk_mix_available,(origin_mix_time<=1.2)&(dest_mix_dist<=1.2)&(odt_skims['WALK_MIX_TOTALIVTT']>0)&(odt_skims['WALK_MIX_XFERS']>0)
 # defined in network_los: exp_asc,,
 ,density_measure,"reindex(land_use.PopEmpDenPerMi, df[ORIGIN])"
 ,density_bin,"pd.cut(density_measure, bins=[-np.inf] + wait_time_distribution_by_density_breaks + [np.inf], labels=[1,2,3,4,5]).astype(int)"

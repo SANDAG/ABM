@@ -1,6 +1,6 @@
 coefficient_name,value,constrain
-asc_pass,-4.10,F
-coef_age_19_to_34_pass,0.520,F
+asc_pass,-4.1,F
+coef_age_19_to_34_pass,0.52,F
 coef_age_35_to_44_pass,0.346,F
 coef_age_55_to_64_pass,0.384,F
 coef_age_65_to_79_pass,0.315,F
@@ -18,3 +18,10 @@ coef_subs_pass,1.49,F
 coef_total_transit_acc_pass,0.0692,F
 coef_tripmc_cost_coef,-1.25,T
 coef_zero_autos_pass,3.32,F
+coef_ft_asc,1.0096123256948104,F
+coef_pt_asc,0.8647470943730247,F
+coef_un_asc,0.19506021138107174,F
+coef_na_asc,2.1641860568701383,F
+coef_da_asc,-2.0,F
+coef_nd_asc,-2.0,F
+coef_ps_asc,-2.0,F
