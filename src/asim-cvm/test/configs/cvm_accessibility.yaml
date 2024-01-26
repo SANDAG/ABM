@@ -2,13 +2,7 @@
 SPEC: cvm_accessibility.csv
 
 # columns from land_use table to add to df
-land_use_columns: 
-  - 'num_hh_food_delivery'
-  - 'num_hh_package_delivery'
-  - 'num_hh_service'
-  - 'establishment_attraction'
-  - 'establishment_attraction_ret'
-  - 'establishment_attraction_laf'
+land_use_columns: ['num_hh_food_delivery', 'num_hh_package_delivery', 'num_hh_service', 'establishment_attraction']
 
 CONSTANTS:
   vot_light: 67 # dollar per hour
