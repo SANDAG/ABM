@@ -365,6 +365,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 ("PM_Headway",     ("@headway_pm",        "TRRT",     "EXTRA",    "PM Peak actual headway")),
                 ("OP_Headway",     ("@headway_op",        "TRRT",     "EXTRA",    "Off-Peak actual headway")),
                 ("Night_Headway",  ("@headway_night",     "TRRT",     "EXTRA",    "Night actual headway")),
+                ("Night_Headway_rev", ("@headway_rev_night",    "DERIVED",  "EXTRA",    "Night Peak revised headway")),
                 ("AM_Headway_rev", ("@headway_rev_am",    "DERIVED",  "EXTRA",    "AM Peak revised headway")),
                 ("PM_Headway_rev", ("@headway_rev_pm",    "DERIVED",  "EXTRA",    "PM Peak revised headway")),
                 ("OP_Headway_rev", ("@headway_rev_op",    "DERIVED",  "EXTRA",    "Off-Peak revised headway")),
@@ -1181,9 +1182,9 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 link.type = 99
 
         # ON TRANSIT LINES
-        # Set 3-period headway based on revised headway calculation
+        # Set 4-period headway based on revised headway calculation
         for line in network.transit_lines():
-            for period in ["am", "pm", "op"]:
+            for period in ["am", "pm", "op", "night"]:
                 line["@headway_rev_" + period] = revised_headway(line["@headway_" + period])
 
         # Special incremental boarding and in-vehicle fares
