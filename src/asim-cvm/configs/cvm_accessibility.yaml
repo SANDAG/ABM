@@ -6,18 +6,9 @@ land_use_columns:
   - 'num_hh_food_delivery'
   - 'num_hh_package_delivery'
   - 'num_hh_service'
-  - 'establishment_attraction_agm'
-  - 'establishment_attraction_con'
-  - 'establishment_attraction_epo'
-  - 'establishment_attraction_iut'
-  - 'establishment_attraction_ifr'
-  - 'establishment_attraction_laf'
-  - 'establishment_attraction_mfg'
-  - 'establishment_attraction_mhs'
-  - 'establishment_attraction_ret'
-  - 'establishment_attraction_trn'
-  - 'establishment_attraction_whl'
   - 'establishment_attraction'
+  - 'establishment_attraction_ret'
+  - 'establishment_attraction_laf'
 
 CONSTANTS:
   vot_light: 67 # dollar per hour
