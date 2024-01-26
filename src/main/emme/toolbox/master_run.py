@@ -644,13 +644,13 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
                 if msa_iteration==1:
                     self.run_proc("runSandag_ScenManagement.cmd",
-                            [drive, drive + path_forward_slash, str(props["scenarioYear"])],
+                            [drive + path_forward_slash, str(props["scenarioYear"])],
                             "Running Scenario Management", capture_output=True) 
 
                 if not skipABMPreprocessing[iteration]:
                     self.run_proc(
                         "runSandagAbm_Preprocessing.cmd",
-                        [drive + path_forward_slash, msa_iteration, scenarioYear],
+                        [drive, drive + path_forward_slash, msa_iteration, scenarioYear],
                         "Creating all the required files to run the ActivitySim models", capture_output=True)
                 if not skipABMResident[iteration]:
                     self.run_proc(
