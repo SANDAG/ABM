@@ -38,7 +38,7 @@ FOR /F "delims=*" %%i IN (settings_mp_source.yaml) DO (
 :: Run SEMCOG ActivitySim
 :: Anaconda installation directory is set in the Paremters tab in transcAD Add-In
 :: ---------------------------------------------------------------------
-SET ANACONDA_DIR=C:\ProgramData\Anaconda3
+SET ANACONDA_DIR=%CONDA_PREFIX%
 
 
 SET PATH=%ANACONDA_DIR%\Library\bin;%PATH%

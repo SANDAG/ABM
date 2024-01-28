@@ -7,7 +7,7 @@ set PROJECT_DIRECTORY=%2
 cd /d %PROJECT_DIRECTORY%
 
 :: ---------------------------------------------------------------------
-SET ANACONDA_DIR=C:\ProgramData\Anaconda3
+SET ANACONDA_DIR=%CONDA_PREFIX%
 
 
 SET PATH=%ANACONDA_DIR%\Library\bin;%PATH%
