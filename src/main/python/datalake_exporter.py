@@ -158,6 +158,17 @@ def write_to_datalake(output_path, models, exclude, env):
     if not cloud_bool:
         return
     
+    for model, relpath, is_asim in models:
+        if is_asim:
+            model_metadata = get_model_metadata(model, output_path)
+            prefix = model_metadata["prefix"]
+        else:
+            prefix = ""
+        files = glob.glob(os.path.join(output_path, relpath, model, prefix + '*'))
+        if not files:
+            return
+
+    
     now = datetime.datetime.now()
     EMME_metadata = get_scenario_metadata(output_path)
     if "scenario_id" not in EMME_metadata:
