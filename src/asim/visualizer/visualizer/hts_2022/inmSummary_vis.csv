@@ -1,33 +1,33 @@
 PERTYPE,nmtours,freq
-1: Full-Time Worker,0,592938.9769
-2: Part-Time Worker,0,86575.79154
-3: University Student,0,113958.7962
-4: Non-Worker,0,152240.6058
-5: Retiree,0,158710.3529
-6: Driving Aged Student,0,60217.45606
-7: Non-Driving Aged Student,0,323765.9782
-8: Child To Young for School,0,119614.3926
-1: Full-Time Worker,1,382423.7423
-2: Part-Time Worker,1,90505.6185
-3: University Student,1,52781.57291
-4: Non-Worker,1,132864.4208
-5: Retiree,1,155912.9777
-6: Driving Aged Student,1,36644.64218
-7: Non-Driving Aged Student,1,88833.47676
-8: Child To Young for School,1,47549.02383
-1: Full-Time Worker,2,124721.6592
-2: Part-Time Worker,2,34321.92657
-3: University Student,2,15587.62341
-4: Non-Worker,2,45802.40219
-5: Retiree,2,45716.70334
-6: Driving Aged Student,2,498.7771541
-7: Non-Driving Aged Student,2,7897.236759
-8: Child To Young for School,2,5637.780289
-1: Full-Time Worker,3+,51856.79425
-2: Part-Time Worker,3+,9689.792838
-3: University Student,3+,4564.507288
-4: Non-Worker,3+,31791.85713
-5: Retiree,3+,21941.66875
+1: Full-Time Worker,0,674369.5058
+2: Part-Time Worker,0,77248.17563
+3: University Student,0,153326.3591
+4: Non-Worker,0,144974.1789
+5: Retiree,0,204978.6292
+6: Driving Aged Student,0,44023.7273
+7: Non-Driving Aged Student,0,290914.5674
+8: Child To Young for School,0,114298.0315
+1: Full-Time Worker,1,449627.2326
+2: Part-Time Worker,1,69901.31424
+3: University Student,1,55304.35032
+4: Non-Worker,1,114647.0232
+5: Retiree,1,231225.4679
+6: Driving Aged Student,1,46850.33325
+7: Non-Driving Aged Student,1,112728.8481
+8: Child To Young for School,1,46991.07232
+1: Full-Time Worker,2,127847.1886
+2: Part-Time Worker,2,23575.84353
+3: University Student,2,12428.70502
+4: Non-Worker,2,33802.33762
+5: Retiree,2,61020.82308
+6: Driving Aged Student,2,5200.265657
+7: Non-Driving Aged Student,2,18350.49997
+8: Child To Young for School,2,8259.994724
+1: Full-Time Worker,3+,73078.10317
+2: Part-Time Worker,3+,14792.93753
+3: University Student,3+,3365.805273
+4: Non-Worker,3+,16338.03963
+5: Retiree,3+,24461.40098
 6: Driving Aged Student,3+,0
-7: Non-Driving Aged Student,3+,224.4895954
-8: Child To Young for School,3+,832.3000384
+7: Non-Driving Aged Student,3+,3269.968013
+8: Child To Young for School,3+,5006.286762

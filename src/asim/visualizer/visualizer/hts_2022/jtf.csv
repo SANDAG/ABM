@@ -1,22 +1,22 @@
 jtf,alt_name,freq
-1,No Joint Tours,1067538.769
-2,1 Shopping,30794.51496
-3,1 Maintenance,21313.65896
-4,1 Eating Out,28307.57152
-5,1 Visiting,21298.4161
-6,1 Other Discretionary,6446.026482
-7,2 Shopping,1594.530411
-8,1 Shopping / 1 Maintenance,68.28589372
-9,1 Shopping / 1 Eating Out,25.23465274
-10,1 Shopping / 1 Visiting,1280.843884
+1,No Joint Tours,975306.66474619
+2,1 Shopping,34335.8799571987
+3,1 Maintenance,28855.3639752128
+4,1 Eating Out,45950.9996249341
+5,1 Visiting,39456.4558994163
+6,1 Other Discretionary,27110.5210192902
+7,2 Shopping,4474.37683374072
+8,1 Shopping / 1 Maintenance,642.101873825128
+9,1 Shopping / 1 Eating Out,396.965805007015
+10,1 Shopping / 1 Visiting,3358.99519851814
 11,1 Shopping / 1 Other Discretionary,0
-12,2 Maintenance,2402.045615
-13,1 Maintenance / 1 Eating Out,3323.855544
-14,1 Maintenance / 1 Visiting,684.0457524
-15,1 Maintenance / 1 Other Discretionary,255.5115865
-16,2 Eating Out,1064.737019
-17,1 Eating Out / 1 Visiting,946.2707918
-18,1 Eating Out / 1 Other Discretionary,76.43759189
-19,2 Visiting,1774.389001
-20,1 Visiting / 1 Other Discretionary,0
+12,2 Maintenance,506.595988548513
+13,1 Maintenance / 1 Eating Out,4126.74182186494
+14,1 Maintenance / 1 Visiting,3246.65101023398
+15,1 Maintenance / 1 Other Discretionary,244.335388014005
+16,2 Eating Out,3490.5454879919
+17,1 Eating Out / 1 Visiting,204.103692181992
+18,1 Eating Out / 1 Other Discretionary,166.481324863978
+19,2 Visiting,2685.70454335741
+20,1 Visiting / 1 Other Discretionary,1172.81547065701
 21,2 Other Discretionary,0

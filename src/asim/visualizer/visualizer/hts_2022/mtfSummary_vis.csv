@@ -1,31 +1,31 @@
-PERTYPE,imf_choice,freq
-1: Full-Time Worker,1 Work,464208.9536
-2: Part-Time Worker,1 Work,73296.24527
-3: University Student,1 Work,9245.466988
+PERTYPE,MTF,freq
+1: Full-Time Worker,1 Work,509076.6556
+2: Part-Time Worker,1 Work,65599.70411
+3: University Student,1 Work,8820.559281
 6: Driving Aged Student,1 Work,0
 7: Non-Driving Aged Student,1 Work,0
 8: Child To Young for School,1 Work,0
-1: Full-Time Worker,2+ Work,25529.61513
-2: Part-Time Worker,2+ Work,2881.06447
-3: University Student,2+ Work,364.6894965
+1: Full-Time Worker,2+ Work,22482.71535
+2: Part-Time Worker,2+ Work,775.9481698
+3: University Student,2+ Work,3968.667512
 6: Driving Aged Student,2+ Work,0
 7: Non-Driving Aged Student,2+ Work,0
 8: Child To Young for School,2+ Work,0
 1: Full-Time Worker,1 School,0
 2: Part-Time Worker,1 School,0
-3: University Student,1 School,41500.29891
-6: Driving Aged Student,1 School,23652.80645
-7: Non-Driving Aged Student,1 School,231017.7147
-8: Child To Young for School,1 School,41702.01498
+3: University Student,1 School,53256.94246
+6: Driving Aged Student,1 School,26210.24453
+7: Non-Driving Aged Student,1 School,198437.591
+8: Child To Young for School,1 School,47521.71541
 1: Full-Time Worker,2+ School,0
 2: Part-Time Worker,2+ School,0
-3: University Student,2+ School,478.4456979
-6: Driving Aged Student,2+ School,44.24394675
-7: Non-Driving Aged Student,2+ School,6171.129268
-8: Child To Young for School,2+ School,1627.339311
+3: University Student,2+ School,1527.511865
+6: Driving Aged Student,2+ School,2284.450585
+7: Non-Driving Aged Student,2+ School,36392.72976
+8: Child To Young for School,2+ School,10336.53437
 1: Full-Time Worker,1 Work & 1 School,0
 2: Part-Time Worker,1 Work & 1 School,0
-3: University Student,1 Work & 1 School,7352.449618
-6: Driving Aged Student,1 Work & 1 School,107.2920052
+3: University Student,1 Work & 1 School,5770.725043
+6: Driving Aged Student,1 Work & 1 School,118.514821
 7: Non-Driving Aged Student,1 Work & 1 School,0
 8: Child To Young for School,1 Work & 1 School,0
