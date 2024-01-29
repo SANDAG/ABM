@@ -2,8 +2,8 @@ PERTYPE,free_parking_at_work,transit_pass_ownership,transit_subsidy
 1: Full-Time Worker,0.568084951,0.2125265,0.050783434
 2: Part-Time Worker,0.540768055,0.197971421,0.019646343
 3: University Student,0.529710252,0.391725754,0.007740974
-,0,0.202747058,0
-,0,0.176712824,0
+4: Non-Worker,0,0.202747058,0
+5: Retiree,0,0.176712824,0
 6: Driving Aged Student,0.528850978,0,0
-7: Non-Driving Aged Student,,0,0
-8: Child To Young for School,,0,0
+7: Non-Driving Aged Student,0,0,0
+8: Child To Young for School,0,0,0
