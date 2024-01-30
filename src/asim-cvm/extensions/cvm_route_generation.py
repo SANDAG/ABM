@@ -147,11 +147,55 @@ def route_generation(
     industry_factor = {}
     for industry_number, industry_info in industry_dict.items():
         industry_factor[industry_number] = industry_info.get("industry_factor")
+    
+    # get accessibility
+    accessibility_df = state.get_table("commercial_accessibility")
+    # for route gen, use the sum of establishment attractor and household attractor for each industry
+    establistment_list = []
+    for btype in BusinessTypes:
+        establishments_sub_df = establishments_df[
+            establishments_df["industry_name"] == btype.name
+        ].copy()
+
+        if len(establishments_sub_df) == 0:
+            continue
+
+        # get columns in accessibility_df that starts ith btype
+        accessibility_cols = [
+            col
+            for col in accessibility_df.columns
+            if col.startswith(btype.name.lower())
+        ]
+        if len(accessibility_cols) == 0:
+            establistment_list.append(establishments_sub_df)
+            continue
+
+        # sum the columns
+        accessibility_df["accessibility"] = accessibility_df[
+            accessibility_cols
+        ].sum(axis=1)
+
+        # get the accessibility column for the industry
+        join_df = establishments_sub_df.merge(
+            accessibility_df[['accessibility']],
+            left_on="zone_id",
+            right_index=True,
+        )
+
+        assert len(join_df) == len(establishments_sub_df)
+
+        establistment_list.append(join_df)
+    
+    establishments_df = pd.concat(establistment_list)
+
     # apply the industry effect to the number of routes
     establishments_df["n_routes"] *= establishments_df["industry_number"].map(
         industry_factor
     )
+    # for each industry, time the n_route by the industry specific accessibility
+    establishments_df["n_routes"] *= establishments_df["accessibility"]
     establishments_df["n_routes"] = establishments_df["n_routes"].fillna(0)
+
     # round the number of routes to integer
     establishments_df["n_routes"] = establishments_df["n_routes"].round().astype(int)
 
@@ -163,6 +207,7 @@ def route_generation(
     )
 
     establishments["n_routes"] = establishments_df["n_routes"]
+    establishments["accessibility"] = establishments_df["accessibility"]
 
     # write establishments table back to state
     state.add_table("establishments", establishments)
