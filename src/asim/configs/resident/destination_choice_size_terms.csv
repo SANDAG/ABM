@@ -1,4 +1,4 @@
-model_selector,segment,hh,pop,emp_accm,emp_ag_min,emp_bus_svcs,emp_con,emp_educ,emp_ent,emp_fin_res_mgm,emp_food,emp_gov,emp_hlth,emp_mil,emp_mnf,emp_oth,emp_ret,emp_trn_wrh,emp_utl,emp_whl,emp_total,enrollgradekto8,enrollgrade9to12,othercollegeenroll,collegeenroll,parkactive,beachactive,external_work,external_nonwork
+model_selector,segment,hh,pop,emp_accm,emp_ag_min,emp_bus_svcs,emp_con,emp_educ,emp_ent,emp_fin_res_mgm,emp_food,emp_gov,emp_hlth,emp_mil,emp_mnf,emp_oth,emp_ret,emp_trn_wrh,emp_utl,emp_whl,total_emp_revised,enrollgradekto8,enrollgrade9to12,othercollegeenroll,collegeenroll,parkactive,beachactive,external_work,external_nonwork
 workplace,constr_maint,0,0,0.007723607,0.114467809,0.149701138,1,0.014673052,0.021406453,0.053921216,0.001836382,0.137710644,0.007849633,0,0.078208267,0.160935475,0.057720006,0.042038744,0.021622497,0.019444044,0,0,0,0,0,0,0,0,0
 workplace,health,0,0,0.001161773,0,0.064585993,0.000229486,0.019735804,0.006167439,0.028269818,8.61E-05,0.181566529,1,0,0.003012005,0.078627673,0.056869523,0,0.001247831,0.000272515,0,0,0,0,0,0,0,0,0
 workplace,military,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

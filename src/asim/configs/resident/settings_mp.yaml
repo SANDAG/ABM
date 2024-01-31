@@ -23,6 +23,7 @@ models:
   ### mp_disaggregate_accessibility
   - compute_disaggregate_accessibility
   ### mp_initialize_hhs (single process)
+  - initialize_landuse
   - initialize_households
   ### mp_accessibility
   - compute_accessibility
@@ -90,7 +91,7 @@ multiprocess_steps:
         - proto_persons
         - proto_tours
   - name: mp_initialize_hhs
-    begin: initialize_households
+    begin: initialize_landuse
   - name: mp_accessibility
     begin: compute_accessibility
     num_processes: 10
