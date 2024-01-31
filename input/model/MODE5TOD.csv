@@ -1,0 +1,12 @@
+MODE_NAME,MODE_ID,PREMODE,EXPBSMODE,LOCMODE,OP_TRNTIME,AM_TRNTIME,PM_TRNTIME,MODE_ACCES,MODE_EGRES,WT_IVTPK,WT_FWTPK,WT_XWTPK,WT_FAREPK,WT_IVTOP,WT_FWTOP,WT_XWTOP,WT_FAREOP,FARE,DWELLTIME,FARETYPE,FAREFIELD,CRMODE,LRMODE,XFERPENTM,WTXFERTM,TRNTIME_EA,TRNTIME_AM,TRNTIME_MD,TRNTIME_PM,TRNTIME_EV
+Transfer,1,1,1,1,*oploctime,*amloctime,*pmloctime,1,1,1.8,1,1,1,1.6,1,1,1,0,0,,,1,1,,,*TM,*TM,*TM,*TM,*TM
+Center City Walk,2,1,1,1,*oploctime,*amloctime,*pmloctime,1,1,1.8,1,1,1,1.6,1,1,1,0,0,,,1,1,,,*TM,*TM,*TM,*TM,*TM
+Walk Access,3,1,1,1,*oploctime,*amloctime,*pmloctime,1,1,1.8,1,1,1,1.6,1,1,1,0,0,,,1,1,,,*TM,*TM,*TM,*TM,*TM
+Commuter Rail,4,1,0,0,*oploctime,*amloctime,*pmloctime,1,1,1,1.5,3,0.63,1,1.6,2.5,0.52,3,0,2,coaster fare,1,0,0.01,1,*TM,*TM,*TM,*TM,*TM
+Light Rail,5,1,0,0,*oploctime,*amloctime,*pmloctime,1,1,1,1.5,3,0.65,1,1.6,2.5,0.54,1.25,0,1,,0,1,0.1,1,*TM,*TM,*TM,*TM,*TM
+Regional BRT (Yello,6,1,1,0,*oppretime,*ampretime,*pmpretime,1,1,1,1.5,3,0.46,1,1.6,2.5,0.23,3.5,0.5,1,,0,0,0.1,1,*TM,*TM,*TM,*TM,*TM
+Regional BRT (Red),7,1,1,0,*oppretime,*ampretime,*pmpretime,1,1,1,1.5,3,0.46,1,1.6,2.5,0.23,3,0.5,1,,0,0,0.1,1,*TM,*TM,*TM,*TM,*TM
+Limited Express,8,1,1,0,*oppretime,*ampretime,*pmpretime,1,1,1,1.5,3,0.46,1,1.6,2.5,0.23,2.5,0.5,1,,0,0,1,1,*TM,*TM,*TM,*TM,*TM
+Express,9,1,1,0,*oploctime,*amloctime,*pmloctime,1,1,1,1.5,3,0.6,1,1.6,2.5,0.51,1.5,0.5,1,,0,0,10,0.1,*TM,*TM,*TM,*TM,*TM
+Local,10,1,1,1,*oploctime,*amloctime,*pmloctime,1,1,1.5,1.5,3,0.67,1.5,1.6,2.5,0.58,0,0.3,1,,0,0,100,0.01,*TM,*TM,*TM,*TM,*TM
+Tier1,11,1,0,0,*oploctime,*amloctime,*pmloctime,1,1,1,1.5,3,0.65,1,1.6,2.5,0.54,1.25,0,1,,0,1,0.1,1,*TM,*TM,*TM,*TM,*TM
