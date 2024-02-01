@@ -11,6 +11,7 @@ from activitysim.core import (
     config,
     estimation,
     expressions,
+    los,
     simulate,
     tracing,
     workflow,
@@ -167,10 +168,18 @@ def route_terminal_type(
 def route_origination_type(
     state: workflow.State,
     routes: pd.DataFrame,
+    network_los: los.Network_LOS,
     model_settings: RouteStopTypeSettings | None = None,
     model_settings_file_name: str = "route_origination_type.yaml",
     trace_label: str = "route_origination_type",
 ) -> None:
+    
+    # get time_period of route start time
+    assert "start_time" in routes, "missing start_time in routes table, check if route_start_time has been run"
+    routes["_route_start_time_period_"] = network_los.skim_time_period_label(
+        routes["start_time"]
+    )
+
     routes = route_endpoint_type(
         state,
         routes,

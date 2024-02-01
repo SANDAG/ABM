@@ -96,11 +96,11 @@ models:
   - route_generation
   - route_generation_tnc
   - route_purpose_and_vehicle
+  - route_start_time
   - route_origination_type
   - route_origination
   - route_terminal_type
   - route_terminal
-  - route_start_time
   - route_stops
   - write_cvm_trip_matrices
   - write_tables

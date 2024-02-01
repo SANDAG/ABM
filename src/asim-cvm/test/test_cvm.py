@@ -58,6 +58,9 @@ def test_cvm():
 
     print("### route purp and veh ###")
     state.run.route_purpose_and_vehicle()
+    
+    print("### route start time ###")
+    state.run.route_start_time()
 
     print("### route origination ###")
     state.run.route_origination_type()
@@ -66,9 +69,6 @@ def test_cvm():
     print("### route terminal ###")
     state.run.route_terminal_type()
     state.run.route_terminal()
-
-    print("### route start time ###")
-    state.run.route_start_time()
 
     print("### route stops ###")
     state.run.route_stops()
