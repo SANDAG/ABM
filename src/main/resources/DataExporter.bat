@@ -7,7 +7,7 @@ call bin\CTRampEnv.bat
 set JAR_LOCATION=%PROJECT_DIRECTORY%/application
 
 rem ### Connecting to Anaconda3 Environment
-SET ANACONDA3_DIR=C:\Anaconda3
+SET ANACONDA3_DIR=%CONDA_PREFIX%
 SET PATH=%ANACONDA3_DIR%\Library\bin;%PATH%
 SET PATH=%ANACONDA3_DIR%\Scripts;%ANACONDA3_DIR%\bin;%PATH%
 SET CONDA3_ACT=%ANACONDA3_DIR%\Scripts\activate.bat
