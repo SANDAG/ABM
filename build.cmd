@@ -51,11 +51,9 @@ if not exist %ROOT%\common\uec mkdir %ROOT%\common\uec
 xcopy /Y .\uec\"*.xls" %ROOT%\common\uec
 xcopy /Y .\uec\"*.csv" %ROOT%\common\uec
 
-@REM Skip copy of input for now, input directory in repo is currently out of date
-
-@REM @REM Copy input files
-@REM if not exist %ROOT%\common\input mkdir %ROOT%\common\input
-@REM xcopy /Y/S/E .\input %ROOT%\common\input
+@REM Copy input files
+if not exist %ROOT%\common\input mkdir %ROOT%\common\input
+xcopy /Y/S/E .\input %ROOT%\common\input
 
 @REM Copy python files
 if not exist %ROOT%\common\python mkdir %ROOT%\common\python
