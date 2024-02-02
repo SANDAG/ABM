@@ -28,7 +28,7 @@ REQUIRE_DATA_FOR_ALL_ALTS: False
 
 # age is computed as (1 + FLEET_YEAR - vehicle_year)
 # FLEET_YEAR: 2017
-FLEET_YEAR: 2023
+FLEET_YEAR: 2022
 
 # if PROBS_SPEC is supplied, auto operating cost will not be
 #  merged until after a fuel type is selected
