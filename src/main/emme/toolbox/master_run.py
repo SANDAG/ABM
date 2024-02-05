@@ -292,12 +292,15 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         minSpaceOnC = props["RunModel.minSpaceOnC"]
         sample_rate = props["sample_rates"]
         end_iteration = len(sample_rate)
-        scale_factor = props["cvm.scale_factor"]
+        #scale_factor = props["cvm.scale_factor"]
         # visualizer_reference_path = props["visualizer.reference.path"]
         # visualizer_output_file = props["visualizer.output"]
         # visualizer_reference_label = props["visualizer.reference.label"]
         # visualizer_build_label = props["visualizer.build.label"]
-        # mgraInputFile = props["mgra.socec.file"]
+        mgraInputFile = props["mgra.socec.file"]
+        fafInputFile = props["faf.file"]
+        aoc = props["aoc.fuel"] + props["aoc.maintenance"]
+        truck_scenario_year = props["truck.FFyear"]
 
         period_ids = list(enumerate(periods, start=int(scenario_id) + 1))
 
@@ -688,7 +691,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         "Running ActivitySim visitor model", capture_output=True)
 
                 if not skipCTM[iteration]:
-                    export_for_commercial_vehicle(output_dir + '/skims', base_scenario)
+                    #export_for_commercial_vehicle(output_dir + '/skims', base_scenario)
                     self.run_proc(
                         "cvm.bat",
                         [drive, path_no_drive],
@@ -697,8 +700,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     external_zones = "1-12"
                     if not skipTruck[iteration]:
                         # run truck model (generate truck trips)
-                        run_truck(True, input_dir, input_truck_dir, num_processors, base_scenario)
-                        # run EI model "US to SD External Trip Model"
+                        self.run_proc(
+                            "htm.bat",
+                            [drive, path_no_drive, fafInputFile, mgraInputFile, "PM", truck_scenario_year, aoc],
+                            "Heavy truck model", capture_output=True)
+                    # run EI model "US to SD External Trip Model"
                     if not skipEI[iteration]:
                         external_internal(input_dir, base_scenario)
                     # run EE model

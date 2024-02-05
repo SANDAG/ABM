@@ -1,16 +1,34 @@
-SPEC: route_terminal.csv
-COEFFICIENTS: route_terminal_coefficients.csv
+SPEC: route_origination.csv
+COEFFICIENTS: route_origination_coefficients.csv
 
-SIZE_TERM_SELECTOR: commerce
+SIZE_TERM_SELECTOR: route_origination
 
 CHOOSER_SEGMENT_COLUMN_NAME: origination_stop_type
 
 SEGMENTS:
-  - base
-  - warehouse
-  - intermodal
-  - residential
-  - commercial
+  - name: base
+  - name: warehouse
+    size_terms:
+      - warehouse_emp_trn_wrh
+      - warehouse_acc_establishment_trn
+      - warehouse_acc_establishment_whl
+    eligibility_term: warehouse_emp_trn_wrh
+  - name: intermodal
+    size_terms:
+      - is_port
+    eligibility_term: is_port
+  - name: residential
+    size_terms:
+      - residence_hh
+      - residence_con_household_package_service
+      - residence_emp_non_ws_wfh
+    eligibility_term: residence_hh
+  - name: commercial
+    size_terms:
+      - commerce_emp_non_trn_wrh
+      - commerce_acc_con_establishment
+      - commerce_acc_agm_establishment
+    eligibility_term: commerce_emp_non_trn_wrh
 
 SIMULATE_CHOOSER_COLUMNS:
   - route_type
@@ -19,7 +37,38 @@ SIMULATE_CHOOSER_COLUMNS:
 
 RESULT_COL_NAME: origination_zone
 
+REQUIRE_ACCESSIBILITY: True
+ACCESSIBILITY_TERMS:
+  - trn_establishment
+  - whl_establishment
+  - con_establishment
+  - agm_establishment
+  - con_household_package_service
+  - laf_household_food
+  - ret_establishment
+  - mfg_establishment
+
+port_taz:
+  - 1154
+  - 2497
+  - 1294
+  - 1338
+  - 1457
+  - 1476
+  - 1485
+  - 1520
+  - 4435
+  - 4582
+  - 4853
+  - 2050
+  - 3742
+
 ## model-specific logsum-related settings
 #CHOOSER_ORIG_COL_NAME: home_zone_id
 #ALT_DEST_COL_NAME: alt_dest
 #OUT_PERIOD: 1
+
+CONSTANTS:
+  vot_light: 67 # dollar per hour
+  vot_medium: 68
+  vot_heavy: 89

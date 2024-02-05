@@ -4,6 +4,7 @@ import logging
 from pathlib import Path
 from typing import Literal
 
+import numpy as np
 import pandas as pd
 
 from activitysim.abm.models.util import annotate, tour_destination
@@ -39,7 +40,7 @@ class SimpleLocationComponentSettings(BaseLogitComponentSettings, extra="forbid"
     # OUT_PERIOD: int | dict[str, int] | None = None
     RESULT_COL_NAME: str
 
-    SEGMENTS: list[str] | None = None
+    SEGMENTS: list[str] | list[dict] | None = None
     SIZE_TERM_SELECTOR: str | None = None
 
     CHOOSER_FILTER_COLUMN_NAME: str | None = None
@@ -63,6 +64,14 @@ class SimpleLocationComponentSettings(BaseLogitComponentSettings, extra="forbid"
     annotate_routes: PreprocessorSettings | None = None
     annotate_establishments: PreprocessorSettings | None = None
 
+    REQUIRE_ACCESSIBILITY: bool = False
+    """If True, require that the accessibility table is present in the pipeline."""
+    ACCESSIBILITY_TERMS: list[str] | None = None
+    """List of accessibility terms to be used in the model."""
+
+    port_taz: list[int] | None = None
+
+    CONSTANTS: dict = {}
 
 def annotate_routes(
     state: workflow.State,
@@ -253,6 +262,36 @@ def route_endpoint(
 
     from activitysim.abm.models.util.tour_destination import SizeTermCalculator
 
+    # check if need to join accessibility terms to the land use table
+    if model_settings.REQUIRE_ACCESSIBILITY:
+        if model_settings.ACCESSIBILITY_TERMS is None:
+            raise RuntimeError(
+                "REQUIRE_ACCESSIBILITY is True, but ACCESSIBILITY_TERMS is not set"
+            )
+        if "commercial_accessibility" not in state._LOADABLE_TABLES:
+            raise RuntimeError(
+                "REQUIRE_ACCESSIBILITY is True, but accessibility table not found in pipeline"
+            )
+        accessibility_terms = model_settings.ACCESSIBILITY_TERMS
+        assert isinstance(accessibility_terms, list)
+        land_use = state.get_table("land_use")
+        # add accessibility terms that are not in land use table
+        add_accessibility_terms = list(
+            set(accessibility_terms) - set(land_use.columns)
+        )
+        if len(add_accessibility_terms) > 0:
+            accessibility = state.get_table("commercial_accessibility")
+            land_use = land_use.join(accessibility[add_accessibility_terms], how="left")
+            state.add_table("land_use", land_use)
+    
+    land_use = state.get_table("land_use")
+    assert "TAZ" in land_use.columns
+    land_use["is_port"] = 0
+    if model_settings.port_taz:
+        land_use["is_port"] = land_use["TAZ"].isin(model_settings.port_taz)
+    
+    state.add_table("land_use", land_use)
+
     size_term_calculator = SizeTermCalculator(state, model_settings.SIZE_TERM_SELECTOR)
 
     # maps segment names to compact (integer) ids
@@ -261,7 +300,11 @@ def route_endpoint(
     chooser_segment_column = model_settings.CHOOSER_SEGMENT_COLUMN_NAME
 
     choices_list = []
-    for segment_name in segments:
+    for segment in segments:
+        if isinstance(segment, dict):
+            segment_name = segment["name"]
+        else:
+            segment_name = segment
         segment_trace_label = tracing.extend_trace_label(trace_label, segment_name)
 
         if chooser_segment_column is not None:
@@ -282,11 +325,34 @@ def route_endpoint(
             )
             continue
 
-        # Note: size_term_calculator omits zones with impossible alternatives
-        # (where dest size term is zero)
-        segment_destination_size_terms = size_term_calculator.dest_size_terms_df(
-            segment_name, segment_trace_label
-        )
+        # there are multiple size terms for each segment, defined in the setting
+        segment_destination_size_terms = []
+        segment_size_terms = None
+        eligibility_term = None
+
+        if isinstance(segment, dict):
+            eligibility_term = segment.get("eligibility_term", None)
+            # eligibility_term should be a string or None
+            assert eligibility_term is None or isinstance(
+                eligibility_term, str
+            ), f"eligibility_term should be a string or None, not {eligibility_term}"
+
+        for size_term in size_term_calculator.destination_size_terms.columns:
+            # Note: size_term_calculator omits zones with impossible alternatives
+            # (where dest size term is zero)
+            size_term_df = size_term_calculator.dest_size_terms_df(
+                size_term, segment_trace_label
+            )
+            size_term_df.columns = [size_term]
+            segment_destination_size_terms.append(size_term_df)
+        segment_destination_size_terms = pd.concat(segment_destination_size_terms, axis=1)
+       
+        # drop the alternatives that do not have non-zero size term in the eligibility term
+        if eligibility_term is not None:
+            segment_destination_size_terms = segment_destination_size_terms[
+                segment_destination_size_terms[eligibility_term] > 0
+            ]
+
         spec = simulate.spec_for_segment(
             state,
             None,
@@ -307,9 +373,18 @@ def route_endpoint(
         )
 
         skim_dict = network_los.get_default_skim_dict()
-        skims = skim_dict.wrap("zone_id", "zone_id")
+        skims = {
+            "skims": skim_dict.wrap_3d(
+                orig_key="zone_id_chooser",
+                dest_key="zone_id",
+                dim3_key="_route_start_time_period_",
+            ),
+        }
 
-        locals_dict.update({"skims": skims})
+        locals_dict.update(skims)
+
+        constants = model_settings.CONSTANTS or {}
+        locals_dict.update(constants)
 
         choices = interaction_sample(
             state,
