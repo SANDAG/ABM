@@ -7,103 +7,44 @@ land_use_columns:
   - 'num_hh_package_delivery'
   - 'num_hh_service'
   - 'establishment_attraction'
-  - 'establishment_attraction_ret'
-  - 'establishment_attraction_laf'
+  - 'establishment_attraction_group1'
+  - 'establishment_attraction_group2'
+  - 'establishment_attraction_group3'
+  - 'establishment_attraction_group4'
+
+establishment_acc_agg_groups:
+  - name: establishment_attraction_group1
+    columns:
+      - establishment_attraction_ret
+      - establishment_attraction_whl
+      - establishment_attraction_mfg
+  - name: establishment_attraction_group2
+    columns:
+      - establishment_attraction_iut
+      - establishment_attraction_laf
+  - name: establishment_attraction_group3
+    columns:
+      - establishment_attraction_con
+      - establishment_attraction_agm
+      - establishment_attraction_epo
+      - establishment_attraction_mhs
+      - establishment_attraction_trn
+  - name: establishment_attraction_group4
+    columns:
+      - establishment_attraction_ifr
 
 CONSTANTS:
   vot_light: 67 # dollar per hour
   vot_medium: 68
   vot_heavy: 89
   vot_tnc: 85
-  prop_light_agm: 0.189
-  prop_medium_agm: 0.766
-  prop_heavy_agm: 0.045
-  prop_light_con: 0.493
-  prop_medium_con: 0.347
-  prop_heavy_con: 0.16
-  prop_light_epo: 0.687
-  prop_medium_epo: 0
-  prop_heavy_epo: 0.313
-  prop_light_iut: 0.279
-  prop_medium_iut: 0.66
-  prop_heavy_iut: 0.061
-  prop_light_ifr: 0.726
-  prop_medium_ifr: 0.025
-  prop_heavy_ifr: 0.25
-  prop_light_laf: 0.95
-  prop_medium_laf: 0
-  prop_heavy_laf: 0.051
-  prop_light_mfg: 0.297
-  prop_medium_mfg: 0.536
-  prop_heavy_mfg: 0.167
-  prop_light_mhs: 0.597
-  prop_medium_mhs: 0
-  prop_heavy_mhs: 0.403
-  prop_light_ret: 0.426
-  prop_medium_ret: 0.122
-  prop_heavy_ret: 0.452
-  prop_light_trn: 0.541
-  prop_medium_trn: 0.296
-  prop_heavy_trn: 0.163
-  prop_light_whl: 0.559
-  prop_medium_whl: 0.222
-  prop_heavy_whl: 0.219
+  prop_light: 0.544
+  prop_medium: 0.341
+  prop_heavy: 0.115
   prop_light_tnc: 1
   prop_medium_tnc: 0
   prop_heavy_tnc: 0
-  decay_agm_est: 5
-  dispersion_parameter_agm_est: 0.0402
-  decay_con_est: 4
-  dispersion_parameter_con_est: 0.0452
-  decay_epo_est: 4
-  dispersion_parameter_epo_est: 0.0505
-  decay_iut_est: 3
-  dispersion_parameter_iut_est: 0.0599
-  decay_ifr_est: 4
-  dispersion_parameter_ifr_est: 0.0543
-  decay_laf_est: 3
-  dispersion_parameter_laf_est: 0.069
-  decay_mfg_est: 5
-  dispersion_parameter_mfg_est: 0.0433
-  decay_mhs_est: 3
-  dispersion_parameter_mhs_est: 0.0625
-  decay_ret_est: 4
-  dispersion_parameter_ret_est: 0.048
-  decay_trn_est: 4
-  dispersion_parameter_trn_est: 0.052
-  decay_whl_est: 4
-  dispersion_parameter_whl_est: 0.0475
-  decay_tncnrr_est: 4
-  dispersion_parameter_tncnrr_est: 0.0523
-  decay_tncres_est: 3
-  dispersion_parameter_tncres_est: 0.0594
-  decay_tncret_est: 3
-  dispersion_parameter_tncret_est: 0.0637
-  decay_agm_hh: 5
-  dispersion_parameter_agm_hh: 0.0382
-  decay_con_hh: 4
-  dispersion_parameter_con_hh: 0.0483
-  decay_epo_hh: 3
-  dispersion_parameter_epo_hh: 0.061
-  decay_iut_hh: 3
-  dispersion_parameter_iut_hh: 0.0736
-  decay_ifr_hh: 4
-  dispersion_parameter_ifr_hh: 0.0464
-  decay_laf_hh: 5
-  dispersion_parameter_laf_hh: 0.0411
-  decay_mfg_hh: 4
-  dispersion_parameter_mfg_hh: 0.0475
-  decay_mhs_hh: 3
-  dispersion_parameter_mhs_hh: 0.0639
-  decay_ret_hh: 3
-  dispersion_parameter_ret_hh: 0.0611
-  decay_trn_hh: 5
-  dispersion_parameter_trn_hh: 0.0444
-  decay_whl_hh: 4
-  dispersion_parameter_whl_hh: 0.0507
-  decay_tncnrr_hh: 5
-  dispersion_parameter_tncnrr_hh: 0.0434
-  decay_tncres_hh: 4
-  dispersion_parameter_tncres_hh: 0.0513
-  decay_tncret_hh: 4
-  dispersion_parameter_tncret_hh: 0.0455
+  decay_est: 4
+  dispersion_parameter_est: 0.0543
+  decay_tnc_est: 4
+  dispersion_parameter_tnc_est: 0.0515

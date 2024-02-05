@@ -13,6 +13,13 @@ from activitysim.core.input import read_input_table
 
 logger = logging.getLogger(__name__)
 
+class CVMAccessibilitySettings(AccessibilitySettings, extra="forbid"):
+    """
+    Accessibility settings for commercial vehicle model.
+    """
+
+    establishment_acc_agg_groups: list[dict] = None
+
 
 @workflow.step
 def cvm_accessibility(
@@ -20,7 +27,7 @@ def cvm_accessibility(
     land_use: pd.DataFrame,
     commercial_accessibility: pd.DataFrame,
     network_los: los.Network_LOS,
-    model_settings: AccessibilitySettings | None = None,
+    model_settings: CVMAccessibilitySettings | None = None,
     model_settings_file_name: str = "cvm_accessibility.yaml",
     trace_label: str = "cvm_accessibility",
     output_table_name: str = "commercial_accessibility",
@@ -39,6 +46,18 @@ def cvm_accessibility(
     trace_label : str, default "cvm_accessibility"
     output_table_name : str, default "commercial_accessibility"
     """
+
+    if model_settings is None:
+        model_settings = CVMAccessibilitySettings.read_settings_file(
+            state.filesystem,
+            model_settings_file_name,
+        )
+    
+    establishment_acc_agg_groups = model_settings.establishment_acc_agg_groups
+    if establishment_acc_agg_groups is not None:
+        for group in establishment_acc_agg_groups:
+            land_use[group.get("name")] = land_use[group.get("columns")].sum(axis=1)
+
     return compute_accessibility(
         state=state,
         land_use=land_use,
