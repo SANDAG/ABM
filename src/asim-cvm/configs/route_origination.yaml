@@ -44,6 +44,9 @@ ACCESSIBILITY_TERMS:
   - con_establishment
   - agm_establishment
   - con_household_package_service
+  - laf_household_food
+  - ret_establishment
+  - mfg_establishment
 
 port_taz:
   - 1154

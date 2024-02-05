@@ -8,5 +8,5 @@ distance,"_DIST@skims[('TRK_M_DIST','MD')]",1,1,1,1
 "Distance, piecewise linear from 2 to 5 miles","@(_DIST-2)",coef_dist_2_5,coef_dist_2_5,coef_dist_2_5,coef_dist_2_5
 "Distance, piecewise linear from 5 to 15 miles","@(_DIST-5).clip(0,10)",coef_warehouse_dist_5_plus,coef_goods_dist_5_plus,coef_goods_dist_5_plus,coef_goods_dist_5_plus
 "Distance, piecewise linear for 15+ miles","@(_DIST-15.0).clip(0)",coef_warehouse_dist_5_plus,coef_goods_dist_5_plus,coef_goods_dist_5_plus,coef_goods_dist_5_plus
-Size variable,@df['size_term'].apply(np.log1p),1,1,1,1
+Size variable,@np.log(df['size_term'].astype(np.float64)),1,1,1,1
 No attractions,@df['size_term']==0,-999,-999,-999,-999
