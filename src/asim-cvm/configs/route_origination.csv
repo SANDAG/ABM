@@ -6,4 +6,6 @@ generalized travel time CON,@_GEN_TT*(df.business_type=='CON'),coef_gen_tt_con_w
 generalized travel time EPO,@_GEN_TT*(df.business_type=='EPO'),coef_gen_tt_epo_warehouse,coef_gen_tt_epo_intermodal,coef_gen_tt_epo_residential,coef_gen_tt_epo_commercial
 generalized travel time IUT,@_GEN_TT*(df.business_type=='IUT'),coef_gen_tt_iut_warehouse,coef_gen_tt_iut_intermodal,coef_gen_tt_iut_residential,coef_gen_tt_iut_commercial
 #size terms,,,,,
-size term,size_term,coef_theta_warehouse,coef_theta_intermodal,coef_theta_residential,coef_theta_commercial
+,@np.log(np.exp((df.residence_con_household_package_service*(df.business_type=='CON')*(df.route_purpose!='maintenance')).astype(np.float64))+np.exp(df.residence_emp_non_ws_wfh.astype(np.float64))),,,coef_theta_residential,
+,@np.log(np.exp((df.warehouse_acc_establishment_trn*(df.business_type=='TRN')*(df.route_purpose!='maintenance')).astype(np.float64))+np.exp((df.warehouse_acc_establishment_whl*(df.business_type=='WHL')*(df.route_purpose!='maintenance')).astype(np.float64))),coef_theta_warehouse,,,
+,@np.log(np.exp((df.commerce_acc_agm_establishment*(df.business_type=='AGM')*(df.route_purpose!='maintenance')).astype(np.float64))+np.exp((df.commerce_acc_con_establishment*(df.business_type=='CON')*(df.route_purpose!='maintenance')).astype(np.float64))),,,,coef_theta_commercial

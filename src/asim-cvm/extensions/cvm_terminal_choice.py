@@ -71,7 +71,7 @@ class SimpleLocationComponentSettings(BaseLogitComponentSettings, extra="forbid"
 
     port_taz: list[int] | None = None
 
-    CONSTANTS: dict | None = None
+    CONSTANTS: dict = {}
 
 def annotate_routes(
     state: workflow.State,
@@ -275,9 +275,14 @@ def route_endpoint(
         accessibility_terms = model_settings.ACCESSIBILITY_TERMS
         assert isinstance(accessibility_terms, list)
         land_use = state.get_table("land_use")
-        accessibility = state.get_table("commercial_accessibility")
-        land_use = land_use.join(accessibility[accessibility_terms], how="left")
-        state.add_table("land_use", land_use)
+        # add accessibility terms that are not in land use table
+        add_accessibility_terms = list(
+            set(accessibility_terms) - set(land_use.columns)
+        )
+        if len(add_accessibility_terms) > 0:
+            accessibility = state.get_table("commercial_accessibility")
+            land_use = land_use.join(accessibility[add_accessibility_terms], how="left")
+            state.add_table("land_use", land_use)
     
     land_use = state.get_table("land_use")
     assert "TAZ" in land_use.columns
@@ -326,26 +331,20 @@ def route_endpoint(
         eligibility_term = None
 
         if isinstance(segment, dict):
-            segment_size_terms = segment.get("size_terms", None)
-            # segment_size_term should either be a list of size terms or None
-            assert segment_size_terms is None or isinstance(
-                segment_size_terms, list
-            ), f"segment_size_terms should be a list or None, not {segment_size_terms}"
             eligibility_term = segment.get("eligibility_term", None)
             # eligibility_term should be a string or None
             assert eligibility_term is None or isinstance(
                 eligibility_term, str
             ), f"eligibility_term should be a string or None, not {eligibility_term}"
 
-        if segment_size_terms is not None:
-            for size_term in segment_size_terms:
-                # Note: size_term_calculator omits zones with impossible alternatives
-                # (where dest size term is zero)
-                size_term_df = size_term_calculator.dest_size_terms_df(
-                    size_term, segment_trace_label
-                )
-                size_term_df.columns = [size_term]
-                segment_destination_size_terms.append(size_term_df)
+        for size_term in size_term_calculator.destination_size_terms.columns:
+            # Note: size_term_calculator omits zones with impossible alternatives
+            # (where dest size term is zero)
+            size_term_df = size_term_calculator.dest_size_terms_df(
+                size_term, segment_trace_label
+            )
+            size_term_df.columns = [size_term]
+            segment_destination_size_terms.append(size_term_df)
         segment_destination_size_terms = pd.concat(segment_destination_size_terms, axis=1)
        
         # drop the alternatives that do not have non-zero size term in the eligibility term
@@ -353,20 +352,6 @@ def route_endpoint(
             segment_destination_size_terms = segment_destination_size_terms[
                 segment_destination_size_terms[eligibility_term] > 0
             ]
-
-        # calcualte the size term for the segment,
-        # which is the log sum of the exponential of the size terms, excluding the eligibility term
-        if (segment_size_terms is not None) & (eligibility_term is not None) & (len(segment_size_terms) > 1):
-            segment_size_term = pd.DataFrame(
-                np.exp(segment_destination_size_terms.drop(columns=eligibility_term).astype(np.float64))
-            )
-            segment_size_term = pd.DataFrame(segment_size_term.sum(axis=1).apply(np.log))
-            segment_size_term.columns = ["size_term"]
-        else:
-            segment_size_term = pd.DataFrame(
-                np.zeros(len(segment_destination_size_terms)), index=segment_destination_size_terms.index
-            )
-            segment_size_term.columns = ["size_term"]
 
         spec = simulate.spec_for_segment(
             state,
@@ -404,7 +389,7 @@ def route_endpoint(
         choices = interaction_sample(
             state,
             choosers,
-            segment_size_term,
+            segment_destination_size_terms,
             spec,
             sample_size,
             alt_col_name=model_settings.RESULT_COL_NAME,
