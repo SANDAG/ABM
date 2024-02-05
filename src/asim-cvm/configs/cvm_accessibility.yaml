@@ -45,6 +45,6 @@ CONSTANTS:
   prop_medium_tnc: 0
   prop_heavy_tnc: 0
   decay_est: 4
-  dispersion_parameter_est: 0.0543
+  dispersion_parameter_est: -0.0543
   decay_tnc_est: 4
-  dispersion_parameter_tnc_est: 0.0515
+  dispersion_parameter_tnc_est: -0.0515
