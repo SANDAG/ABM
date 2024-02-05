@@ -41,6 +41,7 @@ Education/Other public services household attraction,epo_household,"_hh_attracti
 Industrial/Utilities household attraction,iut_household,"_hh_attraction * exp((_gentime_iut-decay_iut_hh).clip(0) * dispersion_parameter_iut_hh)"
 Info/Finance/Insurance/Real Estate/Professional services household attraction,ifr_household,"_hh_attraction * exp((_gentime_ifr-decay_ifr_hh).clip(0) * dispersion_parameter_ifr_hh)"
 Leisure/Accommodations and Food household attraction,laf_household,"_hh_attraction * exp((_gentime_laf-decay_laf_hh).clip(0) * dispersion_parameter_laf_hh)"
+Leisure/Accommodations and Food household attraction,laf_household_food,"_hh_attraction * exp((_gentime_laf-decay_laf_hh).clip(0) * dispersion_parameter_laf_hh)"
 Manufacturing household attraction,mfg_household,"_hh_attraction * exp((_gentime_mfg-decay_mfg_hh).clip(0) * dispersion_parameter_mfg_hh)"
 Medical/Health Services household attraction,mhs_household,"_hh_attraction * exp((_gentime_mhs-decay_mhs_hh).clip(0) * dispersion_parameter_mhs_hh)"
 Retail household attraction,ret_household,"_hh_attraction * exp((_gentime_ret-decay_ret_hh).clip(0) * dispersion_parameter_ret_hh)"
