@@ -224,6 +224,7 @@ def update_tables():
                 "vehicle_type"
             ].str.split(pat="_", expand=True)
             # output_table.drop(columns={'vehicle_type'}, inplace=True) ## TODO decide whether to drop column here or in bronze -> silver filter
+        
         # add missing columns from input persons file
         if table_name == "persons":
             input_persons = pd.read_csv(os.path.join(input_dir,"persons.csv"),
@@ -244,6 +245,31 @@ def update_tables():
             "rac1p": "int8",
             "hisp": "int8"})
             output_table = output_table.merge(input_persons,how="inner",left_on="person_id",right_on="perid")
+        
+        # add missing columns from input land use file
+        if table_name == "land_use" and setting("model_name") == "resident":
+            input_land_use = pd.read_csv(os.path.join(input_dir,"land_use.csv"),
+            usecols=[
+            "mgra",
+            "i1",
+            "i2",
+            "i3",
+            "i4",
+            "i5",
+            "i6",
+            "i7",
+            "i8",
+            "i9",
+            "hs",
+            "hs_sf",
+            "hs_mf",
+            "hs_mh",
+            "hh_sf",
+            "hh_mf",
+            "hh_mh",
+            "zip09",
+            "luz_id"])
+            output_table = output_table.merge(input_land_use,how="left",left_on="mgra",right_on="mgra")
         
         if table_name in common_settings:
             table_settings = common_settings[table_name]
