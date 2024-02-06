@@ -402,7 +402,7 @@ Melt nm_tour_rates,step_6,raw,,,,"nm_tour_rates = pd.melt(nm_tour_rates, ['PERTY
 Rename person type column,step_6,rename,resultsByPType,,,{'index': 'PERTYPE'}
 Rename person type column,step_6,rename,tours_pertype_purpose,,,{'person_type': 'PERTYPE'}
 #,,,,,,
-Define dictionary for recoding person type,step_6,raw,,,,"_ptype_map = {1: '1: Full-Time Worker', 2: '2: Part-Time Worker', 3: '3: University Student', 4: '4: Non-Worker', 5: '5: Retiree', 6: '6: Driving Aged Student', 7: '7: Non-Driving Aged Student', 8: '8: Child To Young for School'}"
+Define dictionary for recoding person type,step_6,raw,,,,"_ptype_map = {1: '1: Full-Time Worker', 2: '2: Part-Time Worker', 3: '3: University Student', 4: '4: Non-Worker', 5: '5: Retiree', 6: '6: Driving Aged Student', 7: '7: Non-Driving Aged Student', 8: '8: Child too young for School'}"
 Recode person type,step_6,replace,inmSummary_vis,PERTYPE,PERTYPE,_ptype_map
 Recode person type,step_6,replace,tours_pertype_purpose,PERTYPE,PERTYPE,_ptype_map
 Recode person type,step_6,replace,resultsByPType,PERTYPE,PERTYPE,_ptype_map
@@ -476,8 +476,8 @@ Remove column depart from tripDeparture_vis,step_6,raw,,,,del tripDeparture_vis[
 #,,,,,,
 Rename escort type column,step_6,rename,esctype_by_childtype,,,"{'level_0': 'esc_type', 'person_type': 'child_type'}"
 Rename escort type column,step_6,rename,esctype_by_chauffeurtype,,,"{'level_0': 'esc_type', 'level_1': 'chauffeur'}"
-Recode person type,step_6,replace,esctype_by_chauffeurtype,chauffeur,chauffeur,"{1: '1: Full-Time Worker', 2: '2: Part-Time Worker', 3: '3: University Student', 4: '4: Non-Worker', 5: '5: Retiree', 6: '6: Driving Aged Student', 7: '7: Non-Driving Aged Student', 8: '8: Child To Young for School'}"
-Recode person type,step_6,replace,esctype_by_childtype,child_type,child_type,"{1: '1: Full-Time Worker', 2: '2: Part-Time Worker', 3: '3: University Student', 4: '4: Non-Worker', 5: '5: Retiree', 6: '6: Driving Aged Student', 7: '7: Non-Driving Aged Student', 8: '8: Child To Young for School'}"
+Recode person type,step_6,replace,esctype_by_chauffeurtype,chauffeur,chauffeur,"{1: '1: Full-Time Worker', 2: '2: Part-Time Worker', 3: '3: University Student', 4: '4: Non-Worker', 5: '5: Retiree', 6: '6: Driving Aged Student', 7: '7: Non-Driving Aged Student', 8: '8: Child too young for School'}"
+Recode person type,step_6,replace,esctype_by_childtype,child_type,child_type,"{1: '1: Full-Time Worker', 2: '2: Part-Time Worker', 3: '3: University Student', 4: '4: Non-Worker', 5: '5: Retiree', 6: '6: Driving Aged Student', 7: '7: Non-Driving Aged Student', 8: '8: Child too young for School'}"
 #,,,,,,
 Recode person type,step_6,replace,esctype_by_childtype,esc_type,esc_type,"{'ride_share': 'Ride Share', 'pure_escort': 'Pure Escort'}"
 Recode person type,step_6,replace,esctype_by_chauffeurtype,esc_type,esc_type,"{'ride_share': 'Ride Share', 'pure_escort': 'Pure Escort'}"
