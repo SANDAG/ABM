@@ -257,4 +257,3 @@ Micromobility access time outbound,micro_access_out,"reindex(land_use.MicroAcces
 Micromobility access time inbound,micro_access_inb,"reindex(land_use.MicroAccessTime,destination)",
 ebike max distance availability,ebikeMaxDistance,(od_skims['DIST'] > ebikeMaxDist),
 escooter max distance availability,escooterMaxDistance,(od_skims['DIST'] > escooterMaxDist),
-,ebike_owner,0,
