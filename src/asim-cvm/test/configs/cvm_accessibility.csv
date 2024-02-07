@@ -5,48 +5,15 @@ md medium truck trip distance,_trkGenTime_medium,"skim_od[('TRK_M_TIME','MD')] +
 md heavy truck trip distance,_trkGenTime_heavy,"skim_od[('TRK_M_TIME','MD')] + skim_od[('TRK_M_TIME','MD')] / vot_heavy * 0.6"
 md light truck trip distance,_trkGenTime_tnc,"skim_od[('TRK_M_TIME','MD')] + skim_od[('TRK_M_TIME','MD')] / vot_tnc * 0.6"
 #####
-agriculture gen travel time,_gentime_agm,_trkGenTime_light * prop_light_agm + _trkGenTime_medium * prop_medium_agm + _trkGenTime_heavy * prop_heavy_agm
-Construction gen travel time,_gentime_con,_trkGenTime_light * prop_light_con + _trkGenTime_medium * prop_medium_con + _trkGenTime_heavy * prop_heavy_con
-Education/Other public services gen travel time,_gentime_epo,_trkGenTime_light * prop_light_epo + _trkGenTime_medium * prop_medium_epo + _trkGenTime_heavy * prop_heavy_epo
-Industrial/Utilities gen travel time,_gentime_iut,_trkGenTime_light * prop_light_iut + _trkGenTime_medium * prop_medium_iut + _trkGenTime_heavy * prop_heavy_iut
-Info/Finance/Insurance/Real Estate/Professional services gen travel time,_gentime_ifr,_trkGenTime_light * prop_light_ifr + _trkGenTime_medium * prop_medium_ifr + _trkGenTime_heavy * prop_heavy_ifr
-Leisure/Accommodations and Food gen travel time,_gentime_laf,_trkGenTime_light * prop_light_laf + _trkGenTime_medium * prop_medium_laf + _trkGenTime_heavy * prop_heavy_laf
-Manufacturing gen travel time,_gentime_mfg,_trkGenTime_light * prop_light_mfg + _trkGenTime_medium * prop_medium_mfg + _trkGenTime_heavy * prop_heavy_mfg
-Medical/Health Services gen travel time,_gentime_mhs,_trkGenTime_light * prop_light_mhs + _trkGenTime_medium * prop_medium_mhs + _trkGenTime_heavy * prop_heavy_mhs
-Retail gen travel time,_gentime_ret,_trkGenTime_light * prop_light_ret + _trkGenTime_medium * prop_medium_ret + _trkGenTime_heavy * prop_heavy_ret
-Transportation gen travel time,_gentime_trn,_trkGenTime_light * prop_light_trn + _trkGenTime_medium * prop_medium_trn + _trkGenTime_heavy * prop_heavy_trn
-Wholesale gen travel time,_gentime_whl,_trkGenTime_light * prop_light_whl + _trkGenTime_medium * prop_medium_whl + _trkGenTime_heavy * prop_heavy_whl
-TNCs gen travel time,_gentime_tnc,_trkGenTime_tnc * prop_light_tnc + _trkGenTime_tnc * prop_medium_tnc + _trkGenTime_tnc * prop_heavy_tnc
-#####
-agriculture establishment attraction,agm_establishment,"df.establishment_attraction * exp((_gentime_agm-decay_agm_est).clip(0) * dispersion_parameter_agm_est)"
-Construction establishment attraction,con_establishment,"df.establishment_attraction * exp((_gentime_con-decay_con_est).clip(0) * dispersion_parameter_con_est)"
-Education/Other public services establishment attraction,epo_establishment,"df.establishment_attraction * exp((_gentime_epo-decay_epo_est).clip(0) * dispersion_parameter_epo_est)"
-Industrial/Utilities establishment attraction,iut_establishment,"df.establishment_attraction * exp((_gentime_iut-decay_iut_est).clip(0) * dispersion_parameter_iut_est)"
-Info/Finance/Insurance/Real Estate/Professional services establishment attraction,ifr_establishment,"df.establishment_attraction * exp((_gentime_ifr-decay_ifr_est).clip(0) * dispersion_parameter_ifr_est)"
-Leisure/Accommodations and Food establishment attraction,laf_establishment,"df.establishment_attraction * exp((_gentime_laf-decay_laf_est).clip(0) * dispersion_parameter_laf_est)"
-Manufacturing establishment attraction,mfg_establishment,"df.establishment_attraction * exp((_gentime_mfg-decay_mfg_est).clip(0) * dispersion_parameter_mfg_est)"
-Medical/Health Services establishment attraction,mhs_establishment,"df.establishment_attraction * exp((_gentime_mhs-decay_mhs_est).clip(0) * dispersion_parameter_mhs_est)"
-Retail establishment attraction,ret_establishment,"df.establishment_attraction * exp((_gentime_ret-decay_ret_est).clip(0) * dispersion_parameter_ret_est)"
-Transportation establishment attraction,trn_establishment,"df.establishment_attraction * exp((_gentime_trn-decay_trn_est).clip(0) * dispersion_parameter_trn_est)"
-Wholesale establishment attraction,whl_establishment,"df.establishment_attraction * exp((_gentime_whl-decay_whl_est).clip(0) * dispersion_parameter_whl_est)"
-TNC Non rest ret establishment attraction,tncnrr_establishment,"df.establishment_attraction * exp((_gentime_tnc-decay_tncnrr_est).clip(0) * dispersion_parameter_tncnrr_est)"
-TNC restaurant establishment attraction,tncres_establishment,"df.establishment_attraction * exp((_gentime_tnc-decay_tncres_est).clip(0) * dispersion_parameter_tncres_est)"
-TNC retail establishment attraction,tncret_establishment,"df.establishment_attraction * exp((_gentime_tnc-decay_tncret_est).clip(0) * dispersion_parameter_tncret_est)"
-#####
-total household attractions,_hh_attraction,df.num_hh_food_delivery+df.num_hh_package_delivery+df.num_hh_service
-agriculture household attraction,agm_household,"_hh_attraction * exp((_gentime_agm-decay_agm_hh).clip(0) * dispersion_parameter_agm_hh)"
-Construction household attraction,con_household,"_hh_attraction * exp((_gentime_con-decay_con_hh).clip(0) * dispersion_parameter_con_hh)"
-Construction business type and household package and service attraction,con_household_package_service,"_hh_attraction * exp((_gentime_con-decay_con_hh).clip(0) * dispersion_parameter_con_hh)"
-Education/Other public services household attraction,epo_household,"_hh_attraction * exp((_gentime_epo-decay_epo_hh).clip(0) * dispersion_parameter_epo_hh)"
-Industrial/Utilities household attraction,iut_household,"_hh_attraction * exp((_gentime_iut-decay_iut_hh).clip(0) * dispersion_parameter_iut_hh)"
-Info/Finance/Insurance/Real Estate/Professional services household attraction,ifr_household,"_hh_attraction * exp((_gentime_ifr-decay_ifr_hh).clip(0) * dispersion_parameter_ifr_hh)"
-Leisure/Accommodations and Food household attraction,laf_household,"_hh_attraction * exp((_gentime_laf-decay_laf_hh).clip(0) * dispersion_parameter_laf_hh)"
-Leisure/Accommodations and Food household attraction,laf_household_food,"_hh_attraction * exp((_gentime_laf-decay_laf_hh).clip(0) * dispersion_parameter_laf_hh)"
-Manufacturing household attraction,mfg_household,"_hh_attraction * exp((_gentime_mfg-decay_mfg_hh).clip(0) * dispersion_parameter_mfg_hh)"
-Medical/Health Services household attraction,mhs_household,"_hh_attraction * exp((_gentime_mhs-decay_mhs_hh).clip(0) * dispersion_parameter_mhs_hh)"
-Retail household attraction,ret_household,"_hh_attraction * exp((_gentime_ret-decay_ret_hh).clip(0) * dispersion_parameter_ret_hh)"
-Transportation household attraction,trn_household,"_hh_attraction * exp((_gentime_trn-decay_trn_hh).clip(0) * dispersion_parameter_trn_hh)"
-Wholesale household attraction,whl_household,"_hh_attraction * exp((_gentime_whl-decay_whl_hh).clip(0) * dispersion_parameter_whl_hh)"
-TNC Non rest ret household attraction,tncnrr_household,"_hh_attraction * exp((_gentime_tnc-decay_tncnrr_hh).clip(0) * dispersion_parameter_tncnrr_hh)"
-TNC restaurant household attraction,tncres_household,"_hh_attraction * exp((_gentime_tnc-decay_tncres_hh).clip(0) * dispersion_parameter_tncres_hh)"
-TNC retail household attraction,tncret_household,"_hh_attraction * exp((_gentime_tnc-decay_tncret_hh).clip(0) * dispersion_parameter_tncret_hh)"
+#####establishment attractors by business type
+establishment business establishment attraction group1,estab_acc_estab_group1,"df.establishment_attraction_group1 * exp(((_trkGenTime_light * prop_light + _trkGenTime_medium * prop_medium + _trkGenTime_heavy * prop_heavy)-decay_est).clip(0) * dispersion_parameter_est)"
+establishment business establishment attraction group2,estab_acc_estab_group2,"df.establishment_attraction_group2 * exp(((_trkGenTime_light * prop_light + _trkGenTime_medium * prop_medium + _trkGenTime_heavy * prop_heavy)-decay_est).clip(0) * dispersion_parameter_est)"
+establishment business establishment attraction group3,estab_acc_estab_group3,"df.establishment_attraction_group3 * exp(((_trkGenTime_light * prop_light + _trkGenTime_medium * prop_medium + _trkGenTime_heavy * prop_heavy)-decay_est).clip(0) * dispersion_parameter_est)"
+establishment business establishment attraction group4,estab_acc_estab_group4,"df.establishment_attraction_group4 * exp(((_trkGenTime_light * prop_light + _trkGenTime_medium * prop_medium + _trkGenTime_heavy * prop_heavy)-decay_est).clip(0) * dispersion_parameter_est)"
+tnc business establishment attraction,tnc_acc_estab_all,"df.establishment_attraction * exp(((_trkGenTime_light * prop_light_tnc + _trkGenTime_medium * prop_medium_tnc + _trkGenTime_heavy * prop_heavy_tnc)-decay_tnc_est).clip(0) * dispersion_parameter_tnc_est)"
+##### household attractors by business type
+establishment business household food attraction,estab_acc_hh_food,"df.num_hh_food_delivery * exp(((_trkGenTime_light * prop_light + _trkGenTime_medium * prop_medium + _trkGenTime_heavy * prop_heavy)-decay_est).clip(0) * dispersion_parameter_est)"
+establishment business household package attraction,estab_acc_hh_package,"df.num_hh_package_delivery * exp(((_trkGenTime_light * prop_light + _trkGenTime_medium * prop_medium + _trkGenTime_heavy * prop_heavy)-decay_est).clip(0) * dispersion_parameter_est)"
+establishment business household service attraction,estab_acc_hh_service,"df.num_hh_service * exp(((_trkGenTime_light * prop_light + _trkGenTime_medium * prop_medium + _trkGenTime_heavy * prop_heavy)-decay_est).clip(0) * dispersion_parameter_est)"
+tnc business household food attraction,tnc_acc_hh_food,"df.num_hh_food_delivery * exp(((_trkGenTime_light * prop_light_tnc + _trkGenTime_medium * prop_medium_tnc + _trkGenTime_heavy * prop_heavy_tnc)-decay_tnc_est).clip(0) * dispersion_parameter_tnc_est)"
+tnc business household package attraction,tnc_acc_hh_package,"df.num_hh_package_delivery * exp(((_trkGenTime_light * prop_light_tnc + _trkGenTime_medium * prop_medium_tnc + _trkGenTime_heavy * prop_heavy_tnc)-decay_tnc_est).clip(0) * dispersion_parameter_tnc_est)"
