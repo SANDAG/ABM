@@ -10,10 +10,7 @@ SEGMENTS:
   - name: warehouse
     size_terms:
       - warehouse_emp_trn_wrh
-      - warehouse_acc_establishment_trn
-      - warehouse_acc_establishment_whl
-      - warehouse_acc_establishment_mfg
-      - warehouse_acc_establishment_ret
+      - warehouse_emp_whl
     eligibility_term: warehouse_emp_trn_wrh
   - name: intermodal
     size_terms:
@@ -22,15 +19,18 @@ SEGMENTS:
   - name: residential
     size_terms:
       - residence_hh
-      - residence_con_household_package_service
-      - residence_laf_household_food
       - residence_emp_non_ws_wfh
     eligibility_term: residence_hh
   - name: commercial
     size_terms:
       - commerce_emp_non_trn_wrh
-      - commerce_acc_agm_establishment
       - commerce_emp_oth
+      - commerce_emp_con
+      - commerce_emp_gov
+      - commerce_emp_mnf
+      - commerce_emp_hlth
+      - commerce_emp_whl
+      - commerce_emp_trn_wrh
     eligibility_term: commerce_emp_non_trn_wrh
 
 SIMULATE_CHOOSER_COLUMNS:
@@ -45,16 +45,8 @@ RESULT_COL_NAME: terminal_zone
 #ALT_DEST_COL_NAME: alt_dest
 #OUT_PERIOD: 1
 
-REQUIRE_ACCESSIBILITY: True
+REQUIRE_ACCESSIBILITY: False
 ACCESSIBILITY_TERMS:
-  - trn_establishment
-  - whl_establishment
-  - con_establishment
-  - agm_establishment
-  - con_household_package_service
-  - laf_household_food
-  - ret_establishment
-  - mfg_establishment
 
 port_taz:
   - 1154
