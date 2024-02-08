@@ -5,7 +5,7 @@ coef_constant_for_maintenance_tour,-1.477,F
 coef_constant_for_eating_out_tour,0.5796,F
 coef_constant_for_visiting_tour,-1.0037,F
 coef_constant_for_discretionary_tour,-1.1195,F
-coef_constant_for_2_shopping_tour,-13.70946409,F
+coef_constant_for_2_shopping_tour,-12.009,F
 coef_1_shopping_and_1_maintenance_tour,-12.13684801,F
 coef_1_shopping_and_1_eating_out_tour,-12.79892713,F
 coef_1_shopping_and_1_visiting_tour,-12.22077221,F
@@ -20,6 +20,9 @@ coef_1_eating_out_and_1_discretionary_tour,-12.56102569,F
 coef_constant_for_2_visiting_tour,-13.15388273,F
 coef_1_visiting_and_1_discretionary_tour,-12.37222202,F
 coef_constant_for_2_discretionary_tour,-13.23532342,F
+coef_constant_for_1_discretionary_tour,-1.200,F
+coef_constant_for_1_eating_out_tour,0.460,F
+coef_constant_for_1_visiting_tour,1.720,F
 coef_number_of_active_full_time_workers_shopping,0.09864381,F
 coef_number_of_active_nonworkers_shopping,0.393630718,F
 coef_number_of_active_pre_driving_age_school_children_shopping,-0.313021042,F
@@ -91,7 +94,9 @@ coef_adjustment_for_maintenance_tour,0.06575155,F
 coef_adjustment_for_eating_out_tour,0.0643679,F
 coef_adjustment_for_visiting_tour,0.00785518,F
 coef_adjustment_for_discretionary_tour,0.076075677,F
-coef_adjustment_for_share_of_2_joint_tours,-1.214059893,F
-coef_tm2_adjustment_for_children_party,0,F
-coef_tm2_adjustment_for_mixed_party,0,F
-coef_tm2_adjustment_for_share_of_2_joint_tours,-0.5,F
+coef_adjustment_for_share_of_2_joint_tours,-1.000,F
+coef_tm2_adjustment_for_children_party,-4.0,F
+coef_tm2_adjustment_for_mixed_party,-1.800,F
+coef_tm2_adjustment_for_share_of_2_joint_tours,0.00,F
+coef_tm2_adjustment_for_share_of_1_joint_tours,1.50,F
+coef_tm2_adjustment_for_share_of_0_joint_tours,-1.00,F
