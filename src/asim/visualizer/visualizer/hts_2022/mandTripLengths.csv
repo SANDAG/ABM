@@ -1,28 +1,28 @@
 District,purpose,value
-1: Downtown,Work,13.3008667
-2: Central,Work,9.536733831
-3: North City,Work,8.908437715
-4: South Suburban,Work,12.26174472
-5: East Suburban,Work,11.80685471
-6: North County West,Work,12.54422185
-7: North County East,Work,9.950244978
-8: East County,Work,54.60480406
-Total,Work,10.78995401
-1: Downtown,University,9.655532081
-2: Central,University,8.018627759
-3: North City,University,4.952049129
-4: South Suburban,University,14.31052758
-5: East Suburban,University,11.65061099
-6: North County West,University,9.348736461
-7: North County East,University,10.87352232
+1: Downtown,Work,13.11254052
+2: Central,Work,10.06928482
+3: North City,Work,9.331370316
+4: South Suburban,Work,13.85197661
+5: East Suburban,Work,12.92419114
+6: North County West,Work,11.71258457
+7: North County East,Work,8.509117338
+8: East County,Work,54.64879773
+Total,Work,11.14883784
+1: Downtown,University,10.25623607
+2: Central,University,7.677707363
+3: North City,University,4.789778793
+4: South Suburban,University,7.759275194
+5: East Suburban,University,12.79718402
+6: North County West,University,11.46706738
+7: North County East,University,13.23399359
 8: East County,University,36.83964157
-Total,University,8.146078762
-1: Downtown,School,5.145598465
-2: Central,School,3.527790132
-3: North City,School,2.751073499
-4: South Suburban,School,3.616246526
-5: East Suburban,School,4.310500896
-6: North County West,School,3.535452001
-7: North County East,School,4.16261882
+Total,University,7.34778476
+1: Downtown,School,8.05913632
+2: Central,School,3.872478659
+3: North City,School,2.903273658
+4: South Suburban,School,3.460512785
+5: East Suburban,School,3.741237608
+6: North County West,School,3.233571615
+7: North County East,School,4.782431059
 8: East County,School,0
-Total,School,3.52989539
+Total,School,3.620543384

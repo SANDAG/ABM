@@ -22,6 +22,7 @@ python .\\common\\python\\emme\\init_emme_project.py -r %SCENARIO_FOLDER% -t emm
 
 rem create toolbox
 python .\\common\\python\\emme\\toolbox\\build_toolbox.py -s .\\common\\python\\emme\\toolbox -p %SCENARIO_FOLDER%\emme_project\Scripts\sandag_toolbox.mtbx
+copy ".\\common\\python\\emme\\solutions.mtbx" "%SCENARIO_FOLDER%\emme_project\Scripts\solutions.mtbx"
 
 rem create a batch script at startup
 (

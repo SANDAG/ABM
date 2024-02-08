@@ -25,6 +25,7 @@ import time
 
 class PropertiesSetter(object):
 
+    env = _m.Attribute(str)
     startFromIteration = _m.Attribute(int)
     sample_rates = _m.Attribute(str)
 
@@ -146,7 +147,7 @@ class PropertiesSetter(object):
 
     def __init__(self):
         self._run_model_names = (
-            "useLocalDrive", "skip4Ds", "skipInputChecker",
+            "env", "useLocalDrive", "skip4Ds", "skipInputChecker",
             "startFromIteration", "skipInitialization", "deleteAllMatrices", "skipCopyWarmupTripTables",
             "skipCopyBikeLogsum", "skipCopyWalkImpedance", "skipWalkLogsums", "skipBikeLogsums", "skipBuildNetwork",
             "skipHighwayAssignment", "skipTransitSkimming", "skipTransitConnector", "skipTransponderExport", "skipABMPreprocessing", "skipABMResident", "skipABMAirport", "skipABMXborderWait", "skipABMXborder", "skipABMVisitor",
@@ -158,6 +159,19 @@ class PropertiesSetter(object):
     def add_properties_interface(self, pb, disclosure=False):
         tool_proxy_tag = pb.tool_proxy_tag
         title = "Run model - skip steps"
+
+        pb.add_html("""
+            <div class="t_block t_element">
+                <label for="env">
+                    <strong>Datalake Environment:</strong></label>
+                &nbsp;
+                <select id="env"
+                    data-ref="parent.%(tool_proxy_tag)s.env"
+                    class="-inro-modeller  no_search">
+                    <option value="prod">Prod</option>
+                    <option value="dev">Dev</option>
+                </select>
+            </div>""" % {"tool_proxy_tag": tool_proxy_tag})
 
         pb.add_text_box('sample_rates', title="Sample rate by iteration:", size=20)
 
@@ -324,6 +338,7 @@ class PropertiesSetter(object):
         self._properties = props = Properties(self.properties_path)
         _m.logbook_write("SANDAG properties interface load")
 
+        self.env = props.get("RunModel.env", "prod")
         self.startFromIteration = props.get("RunModel.startFromIteration", 1)
         self.sample_rates = ",".join(str(x) for x in props.get("sample_rates"))
 
@@ -366,6 +381,7 @@ class PropertiesSetter(object):
 
     def save_properties(self):
         props = self._properties
+        props["RunModel.env"] = self.env
         props["RunModel.startFromIteration"] = self.startFromIteration
         props["sample_rates"] = [float(x) for x in self.sample_rates.split(",")]
 
@@ -460,6 +476,7 @@ class PropertiesTool(PropertiesSetter, _m.Tool()):
             });
             $("#startFromIteration").prop('value', tool.startFromIteration);
             $("#sample_rates").prop('value', tool.sample_rates);
+            $("#env").prop('value', tool.env);
         });
    });
 </script>""" % {"tool_proxy_tag": tool_proxy_tag})

@@ -8,7 +8,7 @@ cd /d %PROJECT_DIRECTORY%
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :: SET UP PATHS
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-SET ANACONDA3_DIR=C:\Anaconda3
+SET ANACONDA3_DIR=%CONDA_PREFIX%
 
 SET PATH=%ANACONDA3_DIR%\Library\bin;%PATH%
 SET PATH=%ANACONDA3_DIR%\Scripts;%ANACONDA3_DIR%\bin;%PATH%

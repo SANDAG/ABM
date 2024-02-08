@@ -186,6 +186,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             });
             $("#startFromIteration").prop('value', tool.startFromIteration);
             $("#sample_rates").prop('value', tool.sample_rates);
+            $("#env").prop('value', tool.env);
         });
    });
 </script>""" % {"tool_proxy_tag": tool_proxy_tag})
@@ -287,6 +288,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         scenarioYear = str(props["scenarioYear"])
         # geographyID = str(props["geographyID"])
+        prod_env = props["RunModel.env"]
         startFromIteration = props["RunModel.startFromIteration"]
         # precision = props["RunModel.MatrixPrecision"]
         minSpaceOnC = props["RunModel.minSpaceOnC"]
@@ -472,7 +474,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             #                      "AT and Transit network consistency checking failed! Open AtTransitCheck_event.log for details.")
 
             #get number of households to pass on sample size to activitysim
-            householdFile = pd.read_csv(_join(self._path, "input", "synthetic_households_" + scenarioYear + "_base.csv"))
+            householdFile = pd.read_csv(_join(self._path, "input", "households.csv"))
             hh_resident_size = len(householdFile)
             del(householdFile)
 
@@ -487,7 +489,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 if not skip4Ds:
                     run4Ds(path=self._path, int_radius=0.65, ref_path='visualizer_reference_path')
 
-                mgraFile = 'mgra15_based_input_' + str(scenarioYear) + '_base.csv' # Should be read in from properties? -JJF
+                mgraFile = 'mgra15_based_input' + str(scenarioYear) + '.csv' # Should be read in from properties? -JJF
                 self.complete_work(scenarioYear, input_dir, output_dir, mgraFile, "walkMgraEquivMinutes.csv")
 
                 if not skipBuildNetwork:
@@ -645,7 +647,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
                 if msa_iteration==1:
                     self.run_proc("runSandag_ScenManagement.cmd",
-                            [main_directory, str(props["scenarioYear"])],
+                            [drive + path_forward_slash, str(props["scenarioYear"])],
                             "Running Scenario Management", capture_output=True) 
 
                 if not skipABMPreprocessing[iteration]:
@@ -778,7 +780,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             export_matrix_data(output_directory, base_scenario)
             # export core ABM data
             # Note: uses relative project structure, so cannot redirect to T drive
-            # self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data",capture_output=True)
+            self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export CVM data",capture_output=True)
             # aggregate_models = {}
             # for agg_model in ['eetrip', 'eitrip', 'trucktrip']:#TODO ['commercialVehicleTrips','internalExternalTrips']:
             #     aggregate_models[agg_model] = str(os.path.join(self._path,'report',agg_model+'.csv'))
@@ -789,10 +791,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 "Exporting highway shapefile", capture_output=True)
         
         if not skipDatalake:
-            self.write_metadata(main_directory, scenario_title, select_link, username, scenarioYear, sample_rate)
+            self.write_metadata(main_directory, scenario_title, select_link, username, scenarioYear, sample_rate, prod_env)
             self.run_proc(
                 "write_to_datalake.cmd",
-                [drive, drive + path_forward_slash],
+                [drive, drive + path_forward_slash, prod_env],
                 "Writing model output to datalake", capture_output=True)
 
         #Validation for 2022 scenario
@@ -1436,12 +1438,12 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         else:
             return "The data load request was not successfully made, please double check the [data_load].[load_request] table to confirm."
 
-    def get_scenario_id(self, scenario_guid, scenario_name):
+    def get_scenario_id(self, scenario_guid, scenario_name, prod_env):
         path = _join(self._path, "bin", "GetScenarioId.bat")
         err_file_ref, err_file_path = _tempfile.mkstemp(suffix='.log')
         err_file = os.fdopen(err_file_ref, "w")
         try:
-            output = _subprocess.check_output(" ".join([path, '"' + scenario_guid + '"', '"' + scenario_name + '"']), stderr=err_file, cwd=self._path, shell=True)
+            output = _subprocess.check_output(" ".join([path, '"' + scenario_guid + '"', '"' + scenario_name + '"', '"' + prod_env + '"']), stderr=err_file, cwd=self._path, shell=True)
             scenario_id = int(output.splitlines()[4])
             _m.logbook_write("Got new scenario_id: %s" % (scenario_id))
             err_file.close()
@@ -1469,7 +1471,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     _m.logbook_level(_m.LogbookLevel.NONE)
             return False, -1
 
-    def write_metadata(self, main_directory, scenario_title, select_link, username, scenarioYear, sample_rate):
+    def write_metadata(self, main_directory, scenario_title, select_link, username, scenarioYear, sample_rate, prod_env):
         '''Write YAML file containing scenario guid and other scenario info to output folder for writing to datalake'''
         datalake_metadata_dict = {
             "main_directory" : main_directory.encode('utf-8')
@@ -1481,9 +1483,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             ,"username" : username.encode('utf-8')
             ,"properties_path" : self.properties_path
             ,"sample_rate" : ",".join(map(str, sample_rate))
+            ,"environment" : prod_env
         }
         _m.logbook_write("Created new scenario_guid: %s" % (datalake_metadata_dict['scenario_guid']))
-        got_id, scenario_id = self.get_scenario_id(datalake_metadata_dict['scenario_guid'], scenario_title)
+        got_id, scenario_id = self.get_scenario_id(datalake_metadata_dict['scenario_guid'], scenario_title, prod_env)
         if got_id:
             datalake_metadata_dict['scenario_id'] = scenario_id
         datalake_metadata_path = os.path.join(self._path,'output','datalake_metadata.yaml')

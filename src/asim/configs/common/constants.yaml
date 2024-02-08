@@ -101,7 +101,6 @@ distributed_time_factor_min: 0.1
 distributed_time_factor_max: 10
 
 c_drive: 1.5
-c_auto_operating_cost_per_mile: 18.29
 
 useAV: 0
 autoIVTFactorAV: 0.75

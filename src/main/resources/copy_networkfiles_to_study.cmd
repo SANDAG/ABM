@@ -10,8 +10,8 @@ set NETWORKDIR=%2
 md %STUDY_FOLDER%\network_build
 cacls %STUDY_FOLDER% /t /e /g Everyone:f
 
-@echo /Y/E %NETWORKDIR%\"*.*" %STUDY_FOLDER%\network_build
-xcopy /Y/E %NETWORKDIR%\"*.*" %STUDY_FOLDER%\network_build
+@echo /Y/E %NETWORKDIR%\"*.*" %STUDY_FOLDER%\network_build /EXCLUDE:%NETWORKDIR%\exclude.txt
+xcopy /Y/E %NETWORKDIR%\"*.*" %STUDY_FOLDER%\network_build /EXCLUDE:%NETWORKDIR%\exclude.txt
 
 :usage
 

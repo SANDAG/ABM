@@ -163,7 +163,7 @@ public class SandagBikePathChoiceLogsumMatrixApplication
         }
     }
 
-    public static void writeDerivedNetworkNodes(
+     public static void writeDerivedNetworkNodes(
             Network<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal> network, Path outputFile)
     {
         try (PrintWriter writer = new PrintWriter(outputFile.toFile()))
@@ -171,7 +171,7 @@ public class SandagBikePathChoiceLogsumMatrixApplication
             logger.info("Writing nodes with derived attributes to " + outputFile.toString());
             StringBuilder sb = new StringBuilder();
             sb.append("id").append(",").append("x").append(",").append("y").append(",")
-                    .append("mgra").append(",").append("taz").append(",").append("tap").append(",")
+                    .append("mgra").append(",").append("taz").append(",")
                     .append("signalized").append(",").append("centroid");
             writer.println(sb.toString());
             Iterator<SandagBikeNode> it = network.nodeIterator();
@@ -180,8 +180,7 @@ public class SandagBikePathChoiceLogsumMatrixApplication
                 SandagBikeNode node = it.next();
                 sb = new StringBuilder();
                 sb.append(node.getId()).append(",").append(node.x).append(",").append(node.y)
-                        .append(",").append(node.mgra).append(",").append(node.taz).append(",")
-                        .append(node.tap).append(",").append(node.signalized).append(",")
+                        .append(",").append(node.mgra).append(",").append(node.taz).append(",").append(node.signalized).append(",")
                         .append(node.centroid);
                 writer.println(sb.toString());
             }

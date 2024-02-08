@@ -1,20 +1,20 @@
 distbin,District,purpose,value
-1,1: Downtown,Work,784.1882958
-2,1: Downtown,Work,398.9196166
-3,1: Downtown,Work,107.8552408
-4,1: Downtown,Work,660.9268291
+1,1: Downtown,Work,262.9028591
+2,1: Downtown,Work,145.7311854
+3,1: Downtown,Work,75.653232
+4,1: Downtown,Work,195.9937508
 5,1: Downtown,Work,0
 6,1: Downtown,Work,0
-7,1: Downtown,Work,43.02658291
-8,1: Downtown,Work,208.5657331
-9,1: Downtown,Work,82.38356943
+7,1: Downtown,Work,33.14625288
+8,1: Downtown,Work,38.22200037
+9,1: Downtown,Work,33.07562323
 10,1: Downtown,Work,0
 11,1: Downtown,Work,0
 12,1: Downtown,Work,0
 13,1: Downtown,Work,0
 14,1: Downtown,Work,0
 15,1: Downtown,Work,0
-16,1: Downtown,Work,91.85240049
+16,1: Downtown,Work,2563.471581
 17,1: Downtown,Work,0
 18,1: Downtown,Work,0
 19,1: Downtown,Work,0
@@ -22,7 +22,7 @@ distbin,District,purpose,value
 21,1: Downtown,Work,0
 22,1: Downtown,Work,0
 23,1: Downtown,Work,0
-24,1: Downtown,Work,145.1481709
+24,1: Downtown,Work,66.79844197
 25,1: Downtown,Work,0
 26,1: Downtown,Work,0
 27,1: Downtown,Work,0
@@ -34,7 +34,7 @@ distbin,District,purpose,value
 33,1: Downtown,Work,0
 34,1: Downtown,Work,0
 35,1: Downtown,Work,0
-36,1: Downtown,Work,54.32157848
+36,1: Downtown,Work,37.83178924
 37,1: Downtown,Work,0
 38,1: Downtown,Work,0
 39,1: Downtown,Work,0
@@ -50,44 +50,44 @@ distbin,District,purpose,value
 49,1: Downtown,Work,0
 50,1: Downtown,Work,0
 51,1: Downtown,Work,0
-1,2: Central,Work,6090.518537
-2,2: Central,Work,8971.818754
-3,2: Central,Work,17860.34493
-4,2: Central,Work,8473.234827
-5,2: Central,Work,4323.866581
-6,2: Central,Work,5188.632931
-7,2: Central,Work,4910.783889
-8,2: Central,Work,7439.982562
-9,2: Central,Work,5307.055615
-10,2: Central,Work,9720.92477
-11,2: Central,Work,5694.3269
-12,2: Central,Work,3088.566418
-13,2: Central,Work,12338.56951
-14,2: Central,Work,4588.755507
-15,2: Central,Work,3503.566935
-16,2: Central,Work,3444.038588
-17,2: Central,Work,3214.131652
-18,2: Central,Work,2414.313227
-19,2: Central,Work,984.1023614
-20,2: Central,Work,2135.613551
-21,2: Central,Work,1231.828742
-22,2: Central,Work,576.7873112
-23,2: Central,Work,735.21087
-24,2: Central,Work,313.4170036
-25,2: Central,Work,30.15835459
+1,2: Central,Work,6842.163262
+2,2: Central,Work,11709.06772
+3,2: Central,Work,12935.99353
+4,2: Central,Work,7565.751464
+5,2: Central,Work,5553.753196
+6,2: Central,Work,6605.222364
+7,2: Central,Work,7234.487863
+8,2: Central,Work,16959.98369
+9,2: Central,Work,14671.1172
+10,2: Central,Work,23221.29908
+11,2: Central,Work,1195.934746
+12,2: Central,Work,4954.292178
+13,2: Central,Work,18154.3767
+14,2: Central,Work,11608.01134
+15,2: Central,Work,3527.304715
+16,2: Central,Work,645.0921835
+17,2: Central,Work,4513.263839
+18,2: Central,Work,2830.113642
+19,2: Central,Work,6369.58353
+20,2: Central,Work,2454.423309
+21,2: Central,Work,114.4543718
+22,2: Central,Work,3265.562755
+23,2: Central,Work,3796.074014
+24,2: Central,Work,5783.944281
+25,2: Central,Work,2035.683669
 26,2: Central,Work,0
 27,2: Central,Work,0
 28,2: Central,Work,0
 29,2: Central,Work,0
 30,2: Central,Work,0
-31,2: Central,Work,148.0958003
-32,2: Central,Work,1611.970151
+31,2: Central,Work,93.59836297
+32,2: Central,Work,2236.494771
 33,2: Central,Work,0
 34,2: Central,Work,0
-35,2: Central,Work,107.5589942
-36,2: Central,Work,15.11574393
+35,2: Central,Work,78.49514156
+36,2: Central,Work,83.97027154
 37,2: Central,Work,0
-38,2: Central,Work,195.4171023
+38,2: Central,Work,76.88916193
 39,2: Central,Work,0
 40,2: Central,Work,0
 41,2: Central,Work,0
@@ -101,38 +101,38 @@ distbin,District,purpose,value
 49,2: Central,Work,0
 50,2: Central,Work,0
 51,2: Central,Work,0
-1,3: North City,Work,13871.65985
-2,3: North City,Work,12549.04785
-3,3: North City,Work,17039.03072
-4,3: North City,Work,11056.71798
-5,3: North City,Work,10971.6724
-6,3: North City,Work,17692.36695
-7,3: North City,Work,9734.315831
-8,3: North City,Work,8124.519665
-9,3: North City,Work,7319.909389
-10,3: North City,Work,22470.05728
-11,3: North City,Work,8055.544407
-12,3: North City,Work,11128.18599
-13,3: North City,Work,4620.527936
-14,3: North City,Work,10208.25368
-15,3: North City,Work,4543.79649
-16,3: North City,Work,5743.066934
-17,3: North City,Work,2599.730315
-18,3: North City,Work,1641.785572
-19,3: North City,Work,3879.8742
-20,3: North City,Work,6059.071497
-21,3: North City,Work,4927.222248
-22,3: North City,Work,4017.710518
-23,3: North City,Work,335.2326412
-24,3: North City,Work,1124.973054
-25,3: North City,Work,1529.812294
-26,3: North City,Work,148.9343216
-27,3: North City,Work,201.7845411
-28,3: North City,Work,1078.515518
-29,3: North City,Work,1069.780962
-30,3: North City,Work,169.0150561
+1,3: North City,Work,10293.53831
+2,3: North City,Work,6148.74575
+3,3: North City,Work,7372.596309
+4,3: North City,Work,13868.40449
+5,3: North City,Work,16570.04701
+6,3: North City,Work,15031.56603
+7,3: North City,Work,25783.74836
+8,3: North City,Work,8578.778989
+9,3: North City,Work,10282.64425
+10,3: North City,Work,11553.73459
+11,3: North City,Work,5496.846545
+12,3: North City,Work,2573.98214
+13,3: North City,Work,6864.5692
+14,3: North City,Work,4252.261872
+15,3: North City,Work,6797.851553
+16,3: North City,Work,6439.57385
+17,3: North City,Work,5250.177478
+18,3: North City,Work,5469.569977
+19,3: North City,Work,8619.856075
+20,3: North City,Work,3132.894021
+21,3: North City,Work,4501.425387
+22,3: North City,Work,3437.230413
+23,3: North City,Work,206.02282
+24,3: North City,Work,781.8786081
+25,3: North City,Work,309.2174881
+26,3: North City,Work,93.04177724
+27,3: North City,Work,791.3967084
+28,3: North City,Work,385.2206418
+29,3: North City,Work,1692.073188
+30,3: North City,Work,152.4823572
 31,3: North City,Work,0
-32,3: North City,Work,1061.827323
+32,3: North City,Work,681.1473674
 33,3: North City,Work,0
 34,3: North City,Work,0
 35,3: North City,Work,0
@@ -152,41 +152,41 @@ distbin,District,purpose,value
 49,3: North City,Work,0
 50,3: North City,Work,0
 51,3: North City,Work,0
-1,4: South Suburban,Work,1137.162753
-2,4: South Suburban,Work,10221.69162
-3,4: South Suburban,Work,225.9962023
-4,4: South Suburban,Work,4048.39336
-5,4: South Suburban,Work,23284.93949
+1,4: South Suburban,Work,3487.722498
+2,4: South Suburban,Work,1551.622728
+3,4: South Suburban,Work,154.7531965
+4,4: South Suburban,Work,5353.085266
+5,4: South Suburban,Work,6193.897518
 6,4: South Suburban,Work,0
-7,4: South Suburban,Work,396.5420959
-8,4: South Suburban,Work,6435.09375
-9,4: South Suburban,Work,13545.24159
-10,4: South Suburban,Work,6575.175282
-11,4: South Suburban,Work,2579.642264
-12,4: South Suburban,Work,14.3825112
-13,4: South Suburban,Work,7357.608439
-14,4: South Suburban,Work,8026.236184
-15,4: South Suburban,Work,341.6976679
-16,4: South Suburban,Work,8955.884382
-17,4: South Suburban,Work,3078.724606
-18,4: South Suburban,Work,1662.534136
-19,4: South Suburban,Work,249.7569307
-20,4: South Suburban,Work,1716.512999
-21,4: South Suburban,Work,1094.807054
-22,4: South Suburban,Work,2758.465216
-23,4: South Suburban,Work,501.5636453
+7,4: South Suburban,Work,2930.871083
+8,4: South Suburban,Work,4184.41856
+9,4: South Suburban,Work,366.2124014
+10,4: South Suburban,Work,8609.784162
+11,4: South Suburban,Work,10961.83116
+12,4: South Suburban,Work,79.92108171
+13,4: South Suburban,Work,8841.096235
+14,4: South Suburban,Work,6286.383676
+15,4: South Suburban,Work,2332.843715
+16,4: South Suburban,Work,10382.99418
+17,4: South Suburban,Work,3374.047913
+18,4: South Suburban,Work,7950.587467
+19,4: South Suburban,Work,80.58682111
+20,4: South Suburban,Work,3325.918483
+21,4: South Suburban,Work,3136.216672
+22,4: South Suburban,Work,125.5103747
+23,4: South Suburban,Work,146.4301172
 24,4: South Suburban,Work,0
-25,4: South Suburban,Work,2151.905677
-26,4: South Suburban,Work,41.42271274
+25,4: South Suburban,Work,40.22546181
+26,4: South Suburban,Work,82.28622322
 27,4: South Suburban,Work,0
-28,4: South Suburban,Work,642.9078863
-29,4: South Suburban,Work,7.090324407
+28,4: South Suburban,Work,3765.068624
+29,4: South Suburban,Work,39.87614832
 30,4: South Suburban,Work,0
-31,4: South Suburban,Work,911.700314
+31,4: South Suburban,Work,6914.073219
 32,4: South Suburban,Work,0
 33,4: South Suburban,Work,0
 34,4: South Suburban,Work,0
-35,4: South Suburban,Work,247.0589075
+35,4: South Suburban,Work,2917.874054
 36,4: South Suburban,Work,0
 37,4: South Suburban,Work,0
 38,4: South Suburban,Work,0
@@ -198,51 +198,51 @@ distbin,District,purpose,value
 44,4: South Suburban,Work,0
 45,4: South Suburban,Work,0
 46,4: South Suburban,Work,0
-47,4: South Suburban,Work,12.84718076
+47,4: South Suburban,Work,72.12698888
 48,4: South Suburban,Work,0
 49,4: South Suburban,Work,0
 50,4: South Suburban,Work,0
 51,4: South Suburban,Work,0
-1,5: East Suburban,Work,4206.611923
-2,5: East Suburban,Work,6540.318462
-3,5: East Suburban,Work,4444.654946
-4,5: East Suburban,Work,1286.988183
-5,5: East Suburban,Work,1028.319362
-6,5: East Suburban,Work,107.1321154
-7,5: East Suburban,Work,11002.42065
-8,5: East Suburban,Work,2367.234776
-9,5: East Suburban,Work,947.8281691
-10,5: East Suburban,Work,1393.861356
-11,5: East Suburban,Work,2475.35337
-12,5: East Suburban,Work,1520.815745
-13,5: East Suburban,Work,17136.55194
-14,5: East Suburban,Work,2030.717804
-15,5: East Suburban,Work,4906.473791
-16,5: East Suburban,Work,19240.9351
-17,5: East Suburban,Work,532.0731804
-18,5: East Suburban,Work,11146.73822
-19,5: East Suburban,Work,1610.481552
-20,5: East Suburban,Work,1837.497046
-21,5: East Suburban,Work,5688.827604
-22,5: East Suburban,Work,9406.247378
-23,5: East Suburban,Work,3224.156542
-24,5: East Suburban,Work,1532.18642
-25,5: East Suburban,Work,475.2196897
-26,5: East Suburban,Work,1434.344092
-27,5: East Suburban,Work,551.3783463
+1,5: East Suburban,Work,1764.733699
+2,5: East Suburban,Work,15534.67295
+3,5: East Suburban,Work,3317.264323
+4,5: East Suburban,Work,10478.60183
+5,5: East Suburban,Work,567.4849139
+6,5: East Suburban,Work,206.838224
+7,5: East Suburban,Work,12904.2334
+8,5: East Suburban,Work,6222.859609
+9,5: East Suburban,Work,1355.34722
+10,5: East Suburban,Work,2925.884262
+11,5: East Suburban,Work,2209.7522
+12,5: East Suburban,Work,675.8116277
+13,5: East Suburban,Work,13452.80832
+14,5: East Suburban,Work,628.0027401
+15,5: East Suburban,Work,6874.783499
+16,5: East Suburban,Work,9210.728181
+17,5: East Suburban,Work,454.1749237
+18,5: East Suburban,Work,5711.765681
+19,5: East Suburban,Work,2787.072856
+20,5: East Suburban,Work,6546.310785
+21,5: East Suburban,Work,2493.464897
+22,5: East Suburban,Work,7503.424042
+23,5: East Suburban,Work,7278.793593
+24,5: East Suburban,Work,1990.93207
+25,5: East Suburban,Work,115.6252108
+26,5: East Suburban,Work,5632.376028
+27,5: East Suburban,Work,964.2642753
 28,5: East Suburban,Work,0
-29,5: East Suburban,Work,558.0547827
-30,5: East Suburban,Work,601.8840568
+29,5: East Suburban,Work,5726.713963
+30,5: East Suburban,Work,89.21246823
 31,5: East Suburban,Work,0
-32,5: East Suburban,Work,7333.582122
+32,5: East Suburban,Work,64.40980499
 33,5: East Suburban,Work,0
 34,5: East Suburban,Work,0
 35,5: East Suburban,Work,0
-36,5: East Suburban,Work,0
+36,5: East Suburban,Work,49.94031051
 37,5: East Suburban,Work,0
 38,5: East Suburban,Work,0
 39,5: East Suburban,Work,0
-40,5: East Suburban,Work,440.3610049
+40,5: East Suburban,Work,56.10986698
 41,5: East Suburban,Work,0
 42,5: East Suburban,Work,0
 43,5: East Suburban,Work,0
@@ -254,43 +254,43 @@ distbin,District,purpose,value
 49,5: East Suburban,Work,0
 50,5: East Suburban,Work,0
 51,5: East Suburban,Work,0
-1,6: North County West,Work,558.960824
-2,6: North County West,Work,7761.634143
-3,6: North County West,Work,5250.590417
-4,6: North County West,Work,2654.418113
-5,6: North County West,Work,4163.277421
-6,6: North County West,Work,10642.58154
-7,6: North County West,Work,3840.23623
-8,6: North County West,Work,2784.421465
-9,6: North County West,Work,4098.992733
-10,6: North County West,Work,830.0345715
-11,6: North County West,Work,3666.141832
-12,6: North County West,Work,13354.65133
-13,6: North County West,Work,2750.396147
-14,6: North County West,Work,1063.848177
-15,6: North County West,Work,10825.32704
-16,6: North County West,Work,930.8817831
-17,6: North County West,Work,555.1339192
-18,6: North County West,Work,4271.118887
-19,6: North County West,Work,429.4221545
-20,6: North County West,Work,690.7011438
-21,6: North County West,Work,43.27112287
-22,6: North County West,Work,7588.642509
+1,6: North County West,Work,275.3468885
+2,6: North County West,Work,17150.81587
+3,6: North County West,Work,3519.171402
+4,6: North County West,Work,1003.802991
+5,6: North County West,Work,3557.160262
+6,6: North County West,Work,6947.574791
+7,6: North County West,Work,4490.885065
+8,6: North County West,Work,585.336663
+9,6: North County West,Work,5801.817969
+10,6: North County West,Work,4522.514143
+11,6: North County West,Work,2212.940381
+12,6: North County West,Work,8633.175756
+13,6: North County West,Work,7826.733186
+14,6: North County West,Work,526.8254595
+15,6: North County West,Work,29684.94448
+16,6: North County West,Work,128.0957389
+17,6: North County West,Work,87.27342606
+18,6: North County West,Work,310.8177961
+19,6: North County West,Work,237.89837
+20,6: North County West,Work,484.2611996
+21,6: North County West,Work,46.70847526
+22,6: North County West,Work,4966.099199
 23,6: North County West,Work,0
 24,6: North County West,Work,0
-25,6: North County West,Work,526.2563648
-26,6: North County West,Work,158.725576
+25,6: North County West,Work,5579.05475
+26,6: North County West,Work,88.47332067
 27,6: North County West,Work,0
-28,6: North County West,Work,631.2576566
-29,6: North County West,Work,3706.072291
+28,6: North County West,Work,450.421085
+29,6: North County West,Work,5098.559308
 30,6: North County West,Work,0
-31,6: North County West,Work,521.6002064
+31,6: North County West,Work,2103.860957
 32,6: North County West,Work,0
 33,6: North County West,Work,0
-34,6: North County West,Work,3119.201285
+34,6: North County West,Work,49.42426068
 35,6: North County West,Work,0
-36,6: North County West,Work,172.2906044
-37,6: North County West,Work,40.69084011
+36,6: North County West,Work,87.86987623
+37,6: North County West,Work,87.07425424
 38,6: North County West,Work,0
 39,6: North County West,Work,0
 40,6: North County West,Work,0
@@ -298,50 +298,50 @@ distbin,District,purpose,value
 42,6: North County West,Work,0
 43,6: North County West,Work,0
 44,6: North County West,Work,0
-45,6: North County West,Work,1792.922995
+45,6: North County West,Work,46.47032589
 46,6: North County West,Work,0
 47,6: North County West,Work,0
 48,6: North County West,Work,0
 49,6: North County West,Work,0
 50,6: North County West,Work,0
 51,6: North County West,Work,0
-1,7: North County East,Work,2439.746909
-2,7: North County East,Work,5628.182761
-3,7: North County East,Work,23613.83093
-4,7: North County East,Work,103.221404
-5,7: North County East,Work,646.4503646
-6,7: North County East,Work,577.0105268
-7,7: North County East,Work,1525.864572
-8,7: North County East,Work,3153.742185
-9,7: North County East,Work,113.3300124
-10,7: North County East,Work,530.315655
-11,7: North County East,Work,1137.111271
-12,7: North County East,Work,2018.558146
-13,7: North County East,Work,44.95573648
-14,7: North County East,Work,211.7812088
-15,7: North County East,Work,545.900871
-16,7: North County East,Work,580.661367
-17,7: North County East,Work,798.7417517
-18,7: North County East,Work,15.57736905
-19,7: North County East,Work,72.39973022
-20,7: North County East,Work,465.690101
-21,7: North County East,Work,384.1959719
-22,7: North County East,Work,113.4999591
-23,7: North County East,Work,58.61330602
-24,7: North County East,Work,2404.176781
+1,7: North County East,Work,4993.920003
+2,7: North County East,Work,15506.05229
+3,7: North County East,Work,8100.485687
+4,7: North County East,Work,229.9742596
+5,7: North County East,Work,1008.698295
+6,7: North County East,Work,1161.472457
+7,7: North County East,Work,378.6389728
+8,7: North County East,Work,7592.487135
+9,7: North County East,Work,669.6011643
+10,7: North County East,Work,188.1536463
+11,7: North County East,Work,486.2708612
+12,7: North County East,Work,12120.27311
+13,7: North County East,Work,216.7745811
+14,7: North County East,Work,532.0829828
+15,7: North County East,Work,1957.117229
+16,7: North County East,Work,3347.33704
+17,7: North County East,Work,7524.638068
+18,7: North County East,Work,98.60870299
+19,7: North County East,Work,154.3150403
+20,7: North County East,Work,96.93338754
+21,7: North County East,Work,180.7591665
+22,7: North County East,Work,167.1628693
+23,7: North County East,Work,87.09435857
+24,7: North County East,Work,136.1632719
 25,7: North County East,Work,0
-26,7: North County East,Work,365.2015835
-27,7: North County East,Work,208.7678964
+26,7: North County East,Work,48.22693057
+27,7: North County East,Work,128.6318978
 28,7: North County East,Work,0
 29,7: North County East,Work,0
-30,7: North County East,Work,77.92511304
-31,7: North County East,Work,325.4367735
+30,7: North County East,Work,1893.803103
+31,7: North County East,Work,137.8877209
 32,7: North County East,Work,0
 33,7: North County East,Work,0
 34,7: North County East,Work,0
 35,7: North County East,Work,0
 36,7: North County East,Work,0
-37,7: North County East,Work,143.8552272
+37,7: North County East,Work,95.23835866
 38,7: North County East,Work,0
 39,7: North County East,Work,0
 40,7: North County East,Work,0
@@ -349,13 +349,13 @@ distbin,District,purpose,value
 42,7: North County East,Work,0
 43,7: North County East,Work,0
 44,7: North County East,Work,0
-45,7: North County East,Work,465.690101
+45,7: North County East,Work,96.93338754
 46,7: North County East,Work,0
-47,7: North County East,Work,59.14861177
+47,7: North County East,Work,136.0147385
 48,7: North County East,Work,0
 49,7: North County East,Work,0
 50,7: North County East,Work,0
-51,7: North County East,Work,302.3185724
+51,7: North County East,Work,138.480766
 1,8: East County,Work,0
 2,8: East County,Work,0
 3,8: East County,Work,0
@@ -384,12 +384,12 @@ distbin,District,purpose,value
 26,8: East County,Work,0
 27,8: East County,Work,0
 28,8: East County,Work,0
-29,8: East County,Work,75.39849821
+29,8: East County,Work,48.28563343
 30,8: East County,Work,0
 31,8: East County,Work,0
 32,8: East County,Work,0
-33,8: East County,Work,75.39849821
-34,8: East County,Work,75.39849821
+33,8: East County,Work,48.28563343
+34,8: East County,Work,48.28563343
 35,8: East County,Work,0
 36,8: East County,Work,0
 37,8: East County,Work,0
@@ -406,8 +406,8 @@ distbin,District,purpose,value
 48,8: East County,Work,0
 49,8: East County,Work,0
 50,8: East County,Work,0
-51,8: East County,Work,312.6247685
-1,1: Downtown,University,487.4332876
+51,8: East County,Work,3151.685351
+1,1: Downtown,University,40.45667196
 2,1: Downtown,University,0
 3,1: Downtown,University,0
 4,1: Downtown,University,0
@@ -420,9 +420,9 @@ distbin,District,purpose,value
 11,1: Downtown,University,0
 12,1: Downtown,University,0
 13,1: Downtown,University,0
-14,1: Downtown,University,146.3152148
-15,1: Downtown,University,353.3344874
-16,1: Downtown,University,27.16078924
+14,1: Downtown,University,33.46589979
+15,1: Downtown,University,50.6150564
+16,1: Downtown,University,18.91589462
 17,1: Downtown,University,0
 18,1: Downtown,University,0
 19,1: Downtown,University,0
@@ -458,24 +458,24 @@ distbin,District,purpose,value
 49,1: Downtown,University,0
 50,1: Downtown,University,0
 51,1: Downtown,University,0
-1,2: Central,University,1190.274738
-2,2: Central,University,2886.232101
-3,2: Central,University,73.88531014
-4,2: Central,University,882.0678066
-5,2: Central,University,42.5715504
-6,2: Central,University,384.2863069
-7,2: Central,University,3306.960071
-8,2: Central,University,384.7932826
-9,2: Central,University,258.4427796
-10,2: Central,University,4209.759814
-11,2: Central,University,5037.155694
-12,2: Central,University,302.5563408
-13,2: Central,University,260.9355685
+1,2: Central,University,592.2918637
+2,2: Central,University,4275.97212
+3,2: Central,University,38.21041016
+4,2: Central,University,3013.597481
+5,2: Central,University,38.25709596
+6,2: Central,University,3088.454966
+7,2: Central,University,5115.655244
+8,2: Central,University,843.1893062
+9,2: Central,University,39.09974848
+10,2: Central,University,2189.983236
+11,2: Central,University,1163.714216
+12,2: Central,University,2987.242165
+13,2: Central,University,82.11498405
 14,2: Central,University,0
 15,2: Central,University,0
 16,2: Central,University,0
-17,2: Central,University,904.4701543
-18,2: Central,University,595.2958483
+17,2: Central,University,777.327282
+18,2: Central,University,3090.426714
 19,2: Central,University,0
 20,2: Central,University,0
 21,2: Central,University,0
@@ -509,35 +509,35 @@ distbin,District,purpose,value
 49,2: Central,University,0
 50,2: Central,University,0
 51,2: Central,University,0
-1,3: North City,University,4331.93022
-2,3: North City,University,1423.207324
-3,3: North City,University,5086.185334
-4,3: North City,University,1356.012718
+1,3: North City,University,14629.95238
+2,3: North City,University,5560.923449
+3,3: North City,University,22073.22773
+4,3: North City,University,593.8291403
 5,3: North City,University,0
-6,3: North City,University,1974.773314
-7,3: North City,University,1508.022612
-8,3: North City,University,499.7602944
-9,3: North City,University,2755.332387
-10,3: North City,University,3320.82158
-11,3: North City,University,32.97963534
-12,3: North City,University,1167.092401
+6,3: North City,University,3682.43835
+7,3: North City,University,2636.182661
+8,3: North City,University,129.6379995
+9,3: North City,University,2043.752607
+10,3: North City,University,660.9562231
+11,3: North City,University,2127.371882
+12,3: North City,University,399.2137578
 13,3: North City,University,0
-14,3: North City,University,767.2638754
+14,3: North City,University,407.2769014
 15,3: North City,University,0
-16,3: North City,University,226.389578
+16,3: North City,University,3417.526711
 17,3: North City,University,0
 18,3: North City,University,0
-19,3: North City,University,1265.530155
+19,3: North City,University,2336.391148
 20,3: North City,University,0
-21,3: North City,University,1141.878705
-22,3: North City,University,71.69833951
+21,3: North City,University,114.5310782
+22,3: North City,University,281.4465248
 23,3: North City,University,0
 24,3: North City,University,0
-25,3: North City,University,9.122373311
-26,3: North City,University,1118.130838
+25,3: North City,University,40.3609438
+26,3: North City,University,154.5516517
 27,3: North City,University,0
 28,3: North City,University,0
-29,3: North City,University,6145.163537
+29,3: North City,University,816.9047946
 30,3: North City,University,0
 31,3: North City,University,0
 32,3: North City,University,0
@@ -560,36 +560,36 @@ distbin,District,purpose,value
 49,3: North City,University,0
 50,3: North City,University,0
 51,3: North City,University,0
-1,4: South Suburban,University,288.2659915
-2,4: South Suburban,University,1094.851572
-3,4: South Suburban,University,406.5044644
+1,4: South Suburban,University,3124.19649
+2,4: South Suburban,University,38.75032023
+3,4: South Suburban,University,3404.964853
 4,4: South Suburban,University,0
 5,4: South Suburban,University,0
-6,4: South Suburban,University,1206.085347
-7,4: South Suburban,University,12.05064302
+6,4: South Suburban,University,3165.341834
+7,4: South Suburban,University,2923.009452
 8,4: South Suburban,University,0
 9,4: South Suburban,University,0
 10,4: South Suburban,University,0
 11,4: South Suburban,University,0
 12,4: South Suburban,University,0
 13,4: South Suburban,University,0
-14,4: South Suburban,University,6651.91892
+14,4: South Suburban,University,40.45224085
 15,4: South Suburban,University,0
-16,4: South Suburban,University,6.901306279
-17,4: South Suburban,University,93.89728804
+16,4: South Suburban,University,38.68160678
+17,4: South Suburban,University,20.00299749
 18,4: South Suburban,University,0
-19,4: South Suburban,University,1396.72581
+19,4: South Suburban,University,85.85991108
 20,4: South Suburban,University,0
-21,4: South Suburban,University,7.34127337
-22,4: South Suburban,University,9349.476438
+21,4: South Suburban,University,40.89076644
+22,4: South Suburban,University,91.9108781
 23,4: South Suburban,University,0
-24,4: South Suburban,University,97.62855877
+24,4: South Suburban,University,119.4983654
 25,4: South Suburban,University,0
 26,4: South Suburban,University,0
 27,4: South Suburban,University,0
 28,4: South Suburban,University,0
-29,4: South Suburban,University,1057.265577
-30,4: South Suburban,University,2153.290188
+29,4: South Suburban,University,1583.109055
+30,4: South Suburban,University,695.0093996
 31,4: South Suburban,University,0
 32,4: South Suburban,University,0
 33,4: South Suburban,University,0
@@ -612,35 +612,35 @@ distbin,District,purpose,value
 50,4: South Suburban,University,0
 51,4: South Suburban,University,0
 1,5: East Suburban,University,0
-2,5: East Suburban,University,704.1327197
-3,5: East Suburban,University,29.40265665
-4,5: East Suburban,University,947.9589137
+2,5: East Suburban,University,290.3963283
+3,5: East Suburban,University,114.3157052
+4,5: East Suburban,University,247.3771324
 5,5: East Suburban,University,0
-6,5: East Suburban,University,8725.349641
-7,5: East Suburban,University,1939.069735
+6,5: East Suburban,University,2700.049523
+7,5: East Suburban,University,1669.64553
 8,5: East Suburban,University,0
-9,5: East Suburban,University,1562.928105
-10,5: East Suburban,University,528.2590496
-11,5: East Suburban,University,1052.658801
-12,5: East Suburban,University,256.6664101
+9,5: East Suburban,University,222.620384
+10,5: East Suburban,University,3095.483699
+11,5: East Suburban,University,417.6575926
+12,5: East Suburban,University,74.06070577
 13,5: East Suburban,University,0
 14,5: East Suburban,University,0
 15,5: East Suburban,University,0
-16,5: East Suburban,University,302.8346258
-17,5: East Suburban,University,14.53583378
+16,5: East Suburban,University,41.09907157
+17,5: East Suburban,University,66.88671423
 18,5: East Suburban,University,0
-19,5: East Suburban,University,7333.582122
+19,5: East Suburban,University,64.40980499
 20,5: East Suburban,University,0
 21,5: East Suburban,University,0
 22,5: East Suburban,University,0
 23,5: East Suburban,University,0
-24,5: East Suburban,University,506.5153338
+24,5: East Suburban,University,325.0979967
 25,5: East Suburban,University,0
 26,5: East Suburban,University,0
 27,5: East Suburban,University,0
 28,5: East Suburban,University,0
 29,5: East Suburban,University,0
-30,5: East Suburban,University,3535.882274
+30,5: East Suburban,University,2608.155354
 31,5: East Suburban,University,0
 32,5: East Suburban,University,0
 33,5: East Suburban,University,0
@@ -660,17 +660,17 @@ distbin,District,purpose,value
 47,5: East Suburban,University,0
 48,5: East Suburban,University,0
 49,5: East Suburban,University,0
-50,5: East Suburban,University,302.8346258
+50,5: East Suburban,University,41.09907157
 51,5: East Suburban,University,0
 1,6: North County West,University,0
-2,6: North County West,University,1462.932726
+2,6: North County West,University,690.0078795
 3,6: North County West,University,0
-4,6: North County West,University,1462.932726
-5,6: North County West,University,3656.561919
-6,6: North County West,University,546.9405473
+4,6: North County West,University,690.0078795
+5,6: North County West,University,87.03508996
+6,6: North County West,University,2163.51612
 7,6: North County West,University,0
 8,6: North County West,University,0
-9,6: North County West,University,772.587221
+9,6: North County West,University,1427.335868
 10,6: North County West,University,0
 11,6: North County West,University,0
 12,6: North County West,University,0
@@ -686,19 +686,19 @@ distbin,District,purpose,value
 22,6: North County West,University,0
 23,6: North County West,University,0
 24,6: North County West,University,0
-25,6: North County West,University,307.4062798
+25,6: North County West,University,50.30101711
 26,6: North County West,University,0
-27,6: North County West,University,2617.832778
+27,6: North County West,University,1697.638304
 28,6: North County West,University,0
 29,6: North County West,University,0
 30,6: North County West,University,0
 31,6: North County West,University,0
-32,6: North County West,University,157.5879642
+32,6: North County West,University,118.5537955
 33,6: North County West,University,0
 34,6: North County West,University,0
 35,6: North County West,University,0
 36,6: North County West,University,0
-37,6: North County West,University,307.4062798
+37,6: North County West,University,50.30101711
 38,6: North County West,University,0
 39,6: North County West,University,0
 40,6: North County West,University,0
@@ -714,20 +714,20 @@ distbin,District,purpose,value
 50,6: North County West,University,0
 51,6: North County West,University,0
 1,7: North County East,University,0
-2,7: North County East,University,489.952092
-3,7: North County East,University,13.69619578
+2,7: North County East,University,2257.952911
+3,7: North County East,University,47.93611163
 4,7: North County East,University,0
 5,7: North County East,University,0
 6,7: North County East,University,0
-7,7: North County East,University,215.2648165
-8,7: North County East,University,12.63661919
-9,7: North County East,University,491.7978
+7,7: North County East,University,87.54007082
+8,7: North County East,University,88.74445351
+9,7: North County East,University,764.9737305
 10,7: North County East,University,0
 11,7: North County East,University,0
 12,7: North County East,University,0
 13,7: North County East,University,0
 14,7: North County East,University,0
-15,7: North County East,University,73.37620582
+15,7: North County East,University,3169.309582
 16,7: North County East,University,0
 17,7: North County East,University,0
 18,7: North County East,University,0
@@ -744,7 +744,7 @@ distbin,District,purpose,value
 29,7: North County East,University,0
 30,7: North County East,University,0
 31,7: North County East,University,0
-32,7: North County East,University,24.0673693
+32,7: North County East,University,1441.563305
 33,7: North County East,University,0
 34,7: North County East,University,0
 35,7: North County East,University,0
@@ -800,7 +800,7 @@ distbin,District,purpose,value
 34,8: East County,University,0
 35,8: East County,University,0
 36,8: East County,University,0
-37,8: East County,University,150.7969964
+37,8: East County,University,96.57126686
 38,8: East County,University,0
 39,8: East County,University,0
 40,8: East County,University,0
@@ -817,13 +817,13 @@ distbin,District,purpose,value
 51,8: East County,University,0
 1,1: Downtown,School,0
 2,1: Downtown,School,0
-3,1: Downtown,School,540.8891354
-4,1: Downtown,School,540.8891354
+3,1: Downtown,School,33.86925568
+4,1: Downtown,School,33.86925568
 5,1: Downtown,School,0
 6,1: Downtown,School,0
 7,1: Downtown,School,0
 8,1: Downtown,School,0
-9,1: Downtown,School,347.661557
+9,1: Downtown,School,379.5903256
 10,1: Downtown,School,0
 11,1: Downtown,School,0
 12,1: Downtown,School,0
@@ -866,26 +866,26 @@ distbin,District,purpose,value
 49,1: Downtown,School,0
 50,1: Downtown,School,0
 51,1: Downtown,School,0
-1,2: Central,School,13905.60267
-2,2: Central,School,14728.3752
-3,2: Central,School,11767.10919
-4,2: Central,School,6765.92813
-5,2: Central,School,6233.284519
-6,2: Central,School,689.7904315
-7,2: Central,School,1143.816997
-8,2: Central,School,5848.199822
-9,2: Central,School,4048.096693
-10,2: Central,School,1322.325986
+1,2: Central,School,31964.46084
+2,2: Central,School,27311.33626
+3,2: Central,School,10527.85514
+4,2: Central,School,9305.574587
+5,2: Central,School,16842.00138
+6,2: Central,School,114.8576886
+7,2: Central,School,3196.973746
+8,2: Central,School,7976.317838
+9,2: Central,School,9041.606922
+10,2: Central,School,3216.003615
 11,2: Central,School,0
-12,2: Central,School,1517.479184
-13,2: Central,School,2344.283285
-14,2: Central,School,214.7832698
-15,2: Central,School,1328.074113
-16,2: Central,School,30.98120933
-17,2: Central,School,55.17254445
+12,2: Central,School,128.5710006
+13,2: Central,School,126.5307603
+14,2: Central,School,4549.730013
+15,2: Central,School,116.1752473
+16,2: Central,School,104.0317933
+17,2: Central,School,2959.073137
 18,2: Central,School,0
 19,2: Central,School,0
-20,2: Central,School,210.9649155
+20,2: Central,School,38.32119858
 21,2: Central,School,0
 22,2: Central,School,0
 23,2: Central,School,0
@@ -917,32 +917,32 @@ distbin,District,purpose,value
 49,2: Central,School,0
 50,2: Central,School,0
 51,2: Central,School,0
-1,3: North City,School,46388.9649
-2,3: North City,School,31712.57686
-3,3: North City,School,22632.09087
-4,3: North City,School,9704.370488
-5,3: North City,School,10598.68467
-6,3: North City,School,2681.313971
-7,3: North City,School,3405.684406
-8,3: North City,School,4951.740163
-9,3: North City,School,273.6580599
-10,3: North City,School,15690.28738
-11,3: North City,School,9245.148178
+1,3: North City,School,40277.32955
+2,3: North City,School,22663.9885
+3,3: North City,School,24588.12264
+4,3: North City,School,12574.03266
+5,3: North City,School,2518.929655
+6,3: North City,School,8945.697596
+7,3: North City,School,4238.812155
+8,3: North City,School,2129.397557
+9,3: North City,School,4948.032866
+10,3: North City,School,1321.456264
+11,3: North City,School,3806.146505
 12,3: North City,School,0
 13,3: North City,School,0
 14,3: North City,School,0
-15,3: North City,School,380.3453335
+15,3: North City,School,81.45371787
 16,3: North City,School,0
 17,3: North City,School,0
 18,3: North City,School,0
 19,3: North City,School,0
-20,3: North City,School,1982.872958
+20,3: North City,School,159.5049116
 21,3: North City,School,0
 22,3: North City,School,0
-23,3: North City,School,1982.681415
+23,3: North City,School,404.5566843
 24,3: North City,School,0
 25,3: North City,School,0
-26,3: North City,School,16.52644775
+26,3: North City,School,46.60053329
 27,3: North City,School,0
 28,3: North City,School,0
 29,3: North City,School,0
@@ -968,19 +968,19 @@ distbin,District,purpose,value
 49,3: North City,School,0
 50,3: North City,School,0
 51,3: North City,School,0
-1,4: South Suburban,School,50430.92426
-2,4: South Suburban,School,3718.109094
-3,4: South Suburban,School,46229.51733
-4,4: South Suburban,School,672.4197977
-5,4: South Suburban,School,51.68894312
-6,4: South Suburban,School,26920.52564
+1,4: South Suburban,School,30230.01223
+2,4: South Suburban,School,623.0407996
+3,4: South Suburban,School,4519.275076
+4,4: South Suburban,School,302.8061798
+5,4: South Suburban,School,73.47075661
+6,4: South Suburban,School,218.8515324
 7,4: South Suburban,School,0
-8,4: South Suburban,School,596.9513589
-9,4: South Suburban,School,4785.407798
+8,4: South Suburban,School,2381.751775
+9,4: South Suburban,School,5686.274794
 10,4: South Suburban,School,0
-11,4: South Suburban,School,22640.25785
-12,4: South Suburban,School,584.8027697
-13,4: South Suburban,School,8.226255105
+11,4: South Suburban,School,6008.139516
+12,4: South Suburban,School,1126.790798
+13,4: South Suburban,School,44.53802966
 14,4: South Suburban,School,0
 15,4: South Suburban,School,0
 16,4: South Suburban,School,0
@@ -1019,28 +1019,28 @@ distbin,District,purpose,value
 49,4: South Suburban,School,0
 50,4: South Suburban,School,0
 51,4: South Suburban,School,0
-1,5: East Suburban,School,3109.728038
-2,5: East Suburban,School,6774.932348
-3,5: East Suburban,School,33200.94967
-4,5: East Suburban,School,188.3207199
-5,5: East Suburban,School,4262.910903
-6,5: East Suburban,School,8920.239969
-7,5: East Suburban,School,447.1879401
-8,5: East Suburban,School,276.1019314
-9,5: East Suburban,School,3344.839294
-10,5: East Suburban,School,115.8817525
+1,5: East Suburban,School,27163.02236
+2,5: East Suburban,School,23438.8849
+3,5: East Suburban,School,8579.081587
+4,5: East Suburban,School,522.2489408
+5,5: East Suburban,School,7367.803709
+6,5: East Suburban,School,4143.658434
+7,5: East Suburban,School,1757.768653
+8,5: East Suburban,School,388.5553372
+9,5: East Suburban,School,5009.256622
+10,5: East Suburban,School,72.86032984
 11,5: East Suburban,School,0
 12,5: East Suburban,School,0
 13,5: East Suburban,School,0
-14,5: East Suburban,School,19703.76664
+14,5: East Suburban,School,5966.232327
 15,5: East Suburban,School,0
 16,5: East Suburban,School,0
-17,5: East Suburban,School,1199.955155
-18,5: East Suburban,School,2592.100361
+17,5: East Suburban,School,157.6335371
+18,5: East Suburban,School,3482.231926
 19,5: East Suburban,School,0
 20,5: East Suburban,School,0
 21,5: East Suburban,School,0
-22,5: East Suburban,School,243.5368853
+22,5: East Suburban,School,120.4499499
 23,5: East Suburban,School,0
 24,5: East Suburban,School,0
 25,5: East Suburban,School,0
@@ -1070,23 +1070,23 @@ distbin,District,purpose,value
 49,5: East Suburban,School,0
 50,5: East Suburban,School,0
 51,5: East Suburban,School,0
-1,6: North County West,School,4006.896045
-2,6: North County West,School,30530.92314
-3,6: North County West,School,2654.127676
-4,6: North County West,School,1914.646086
-5,6: North County West,School,6248.571687
-6,6: North County West,School,4669.921616
-7,6: North County West,School,934.8785951
+1,6: North County West,School,29116.29482
+2,6: North County West,School,21505.00225
+3,6: North County West,School,6727.645106
+4,6: North County West,School,2249.510772
+5,6: North County West,School,5598.091369
+6,6: North County West,School,7193.828523
+7,6: North County West,School,381.6903282
 8,6: North County West,School,0
-9,6: North County West,School,32.20482318
+9,6: North County West,School,87.8895995
 10,6: North County West,School,0
-11,6: North County West,School,4352.866422
+11,6: North County West,School,444.1234188
 12,6: North County West,School,0
 13,6: North County West,School,0
 14,6: North County West,School,0
 15,6: North County West,School,0
-16,6: North County West,School,2176.479025
-17,6: North County West,School,73.86476246
+16,6: North County West,School,6801.842007
+17,6: North County West,School,475.0513309
 18,6: North County West,School,0
 19,6: North County West,School,0
 20,6: North County West,School,0
@@ -1121,27 +1121,27 @@ distbin,District,purpose,value
 49,6: North County West,School,0
 50,6: North County West,School,0
 51,6: North County West,School,0
-1,7: North County East,School,1034.387943
-2,7: North County East,School,2060.350772
-3,7: North County East,School,9021.761338
-4,7: North County East,School,2045.915763
-5,7: North County East,School,13556.42134
-6,7: North County East,School,247.0918741
-7,7: North County East,School,579.687323
-8,7: North County East,School,394.7730682
-9,7: North County East,School,322.1845066
+1,7: North County East,School,15737.74428
+2,7: North County East,School,9686.797731
+3,7: North County East,School,17414.70616
+4,7: North County East,School,363.0393649
+5,7: North County East,School,9525.099719
+6,7: North County East,School,44.80119048
+7,7: North County East,School,98.9219265
+8,7: North County East,School,95.22883652
+9,7: North County East,School,5132.261289
 10,7: North County East,School,0
 11,7: North County East,School,0
-12,7: North County East,School,51.87812993
-13,7: North County East,School,1532.982898
+12,7: North County East,School,90.20528239
+13,7: North County East,School,15517.03639
 14,7: North County East,School,0
-15,7: North County East,School,7485.809349
+15,7: North County East,School,92.36923113
 16,7: North County East,School,0
 17,7: North County East,School,0
-18,7: North County East,School,702.1269276
+18,7: North County East,School,137.7591205
 19,7: North County East,School,0
 20,7: North County East,School,0
-21,7: North County East,School,14.45516345
+21,7: North County East,School,890.8182675
 22,7: North County East,School,0
 23,7: North County East,School,0
 24,7: North County East,School,0
