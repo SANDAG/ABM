@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 
+import numpy as np
 import pandas as pd
 from pydantic import validator
 
@@ -18,6 +19,10 @@ from activitysim.core import (
 )
 from activitysim.core.configuration.base import PreprocessorSettings, PydanticReadable
 from activitysim.core.configuration.logit import LogitComponentSettings
+
+from .cvm_enum import (
+    BusinessTypes,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -135,6 +140,19 @@ def route_endpoint_type(
 
     routes[model_settings.RESULT_COL_NAME] = (
         choices.reindex(routes.index).fillna(model_spec.columns[0]).astype(result_dtype)
+    )
+
+    # the origin & destination location type for tnc routes are always "base"
+    routes[model_settings.RESULT_COL_NAME] = np.where(
+        routes["business_type"].isin(
+            [
+                BusinessTypes.TNCNRR.name, 
+                BusinessTypes.TNCRES.name, 
+                BusinessTypes.TNCRET.name
+            ]
+        ),
+        "base",
+        routes[model_settings.RESULT_COL_NAME]
     )
 
     tracing.print_summary(
