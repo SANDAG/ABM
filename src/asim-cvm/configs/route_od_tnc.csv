@@ -1,0 +1,4 @@
+Description,Expression,all-tnc
+#size terms,,,,,
+,@np.log(df.tnc_size_term),coef_tnc_theta
+,df.luz_id_chooser!=df.luz_id,coef_unavail

@@ -101,6 +101,7 @@ models:
   - route_origination
   - route_terminal_type
   - route_terminal
+  - route_origin_destination_tnc
   - route_stops
   - write_cvm_trip_matrices
   - write_tables

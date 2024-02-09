@@ -14,3 +14,4 @@ from . import cvm_route_stops  # noqa: F401
 from . import cvm_household_attractor  # noqa: F401
 from . import cvm_establishment_attractor  # noqa: F401
 from . import cvm_trip_matrices  # noqa: F401
+from . import cvm_terminal_choice_tnc  # noqa: F401
