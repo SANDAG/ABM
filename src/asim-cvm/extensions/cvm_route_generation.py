@@ -150,43 +150,32 @@ def route_generation(
     
     # get accessibility
     accessibility_df = state.get_table("commercial_accessibility")
-    # for route gen, use the sum of establishment attractor and household attractor for each industry
-    establistment_list = []
-    for btype in BusinessTypes:
-        establishments_sub_df = establishments_df[
-            establishments_df["industry_name"] == btype.name
-        ].copy()
+    # for route gen, use the logsum of establishment attractor and household attractor for each industry
+    accessibility_df['estab_acc_logsum'] = np.log(
+        np.exp(accessibility_df['estab_acc_estab_group1']) +
+        np.exp(accessibility_df['estab_acc_estab_group2']) +
+        np.exp(accessibility_df['estab_acc_estab_group3']) +
+        np.exp(accessibility_df['estab_acc_estab_group4'])
+    )
+    accessibility_df['household_acc_logsum'] = np.log(
+        np.exp(accessibility_df['estab_acc_hh_food']) +
+        np.exp(accessibility_df['estab_acc_hh_package']) +
+        np.exp(accessibility_df['estab_acc_hh_service'])
+    )
 
-        if len(establishments_sub_df) == 0:
-            continue
+    # sum the two logsums to get the accessibility
+    accessibility_df["accessibility"] = accessibility_df['estab_acc_logsum'] + accessibility_df['household_acc_logsum']
 
-        # get columns in accessibility_df that starts ith btype
-        accessibility_cols = [
-            col
-            for col in accessibility_df.columns
-            if col.startswith(btype.name.lower())
-        ]
-        if len(accessibility_cols) == 0:
-            establistment_list.append(establishments_sub_df)
-            continue
+    # get the accessibility column for the industry
+    join_df = establishments_df.merge(
+        accessibility_df[['accessibility']],
+        left_on="zone_id",
+        right_index=True,
+    )
 
-        # sum the columns
-        accessibility_df["accessibility"] = accessibility_df[
-            accessibility_cols
-        ].sum(axis=1)
+    assert len(join_df) == len(establishments_df)
 
-        # get the accessibility column for the industry
-        join_df = establishments_sub_df.merge(
-            accessibility_df[['accessibility']],
-            left_on="zone_id",
-            right_index=True,
-        )
-
-        assert len(join_df) == len(establishments_sub_df)
-
-        establistment_list.append(join_df)
-    
-    establishments_df = pd.concat(establistment_list)
+    establishments_df["accessibility"] = join_df["accessibility"]
 
     # apply the industry effect to the number of routes
     establishments_df["n_routes"] *= establishments_df["industry_number"].map(
