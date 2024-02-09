@@ -32,9 +32,11 @@ SEGMENTS:
     eligibility_term: commerce_emp_non_trn_wrh
 
 SIMULATE_CHOOSER_COLUMNS:
-  - route_type
-  - establishment_zone_id
-  - route_id
+  - business_type
+  - route_purpose
+  - vehicle_type
+  - zone_id
+  - _route_start_time_period_
 
 RESULT_COL_NAME: origination_zone
 

@@ -386,6 +386,10 @@ def route_endpoint(
         constants = model_settings.CONSTANTS or {}
         locals_dict.update(constants)
 
+        # keep the choosers columns specified in the model settings
+        if model_settings.SIMULATE_CHOOSER_COLUMNS:
+            choosers = choosers[model_settings.SIMULATE_CHOOSER_COLUMNS]
+
         choices = interaction_sample(
             state,
             choosers,
