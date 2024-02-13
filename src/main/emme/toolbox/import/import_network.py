@@ -28,7 +28,7 @@
 #    create_time_periods: if True (default), also create per-time period scenarios (required to run assignments)
 #
 # Files referenced:
-#    
+#
 #    *.gdb: A Geodatabase file with the network data for both highway and transit. The following tables are used
 #       - TNED_HwyNet
 #       - TNED_HwyNodes
@@ -36,7 +36,7 @@
 #       - TNED_RailNodes
 #       - Turns
 #    The following files are also used (in the same directory as the *.gdb)
-#    
+#
 #    trrt.csv: header data for the transit lines
 #    trlink.csv: sequence of links (routing) of transit lines
 #    trstop.csv: stop data for the transit lines
@@ -272,7 +272,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 ("ELEV",        ("@elev",         "BOTH",    "EXTRA", "station/stop elevation in feet")),
                 ("interchange", ("@interchange",  "DERIVED", "EXTRA", "is interchange node")),
             ]),
-            "LINK": OrderedDict([   
+            "LINK": OrderedDict([
                 ("HWYCOV0_ID",("@tcov_id",             "TWO_WAY",     "EXTRA", "SANDAG-assigned link ID")),
                 ("SPHERE",    ("@sphere",              "HWY_TWO_WAY", "EXTRA", "Jurisdiction sphere of influence")),
                 ("HWYSegGUID",("#hwyseg_guid",         "TWO_WAY",     "STRING", "HWYSegGUID")),
@@ -396,7 +396,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             periods=["EA", "AM", "MD", "PM", "EV"]
             period_ids = list(enumerate(periods, start=int(self.scenario_id) + 1))
             for ident, period in period_ids:
-                scenarios.append(create_scenario(ident, "%s - %s assign" % (title, period), 
+                scenarios.append(create_scenario(ident, "%s - %s assign" % (title, period),
                                                  overwrite=self.overwrite, emmebank=self.emmebank))
         # create attributes in scenario
         for elem_type, mapping in attr_map.iteritems():
@@ -546,12 +546,12 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             3: set([network.mode(m_id) for m_id in "dtshiTSHI"]),      # no heavy or medium truck
             4: set([network.mode(m_id) for m_id in "dshiSHI"]),        # no truck
             5: set([network.mode(m_id) for m_id in "dvV"]),            # only heavy trucks
-            6: set([network.mode(m_id) for m_id in "dvmVM"]),          # heavy and medium trucks 
+            6: set([network.mode(m_id) for m_id in "dvmVM"]),          # heavy and medium trucks
             7: set([network.mode(m_id) for m_id in "dvmtVMT"]),        # all trucks only (no passenger cars)
         }
         non_toll_modes = set([network.mode(m_id) for m_id in "vmtshi"])
         self._auto_mode_lookup = {
-            "GP": modes_gp_lanes, 
+            "GP": modes_gp_lanes,
             "TOLL": dict((k, v - non_toll_modes) for k, v in modes_gp_lanes.iteritems()),
             "HOV2": set([network.mode(m_id) for m_id in "dhiHI"]),
             "HOV3": set([network.mode(m_id) for m_id in "diI"]),
@@ -598,7 +598,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
         if self.save_data_tables:
             hwy_data.save("%s_TNED_HwyNet" % self.data_table_name, self.overwrite)
-        
+
         is_centroid = lambda arc, node : (arc["FC"] == 10)  and (node == "AN")
         link_attr_map = {}
         for field, (name, tcoved_type, emme_type, desc) in attr_map["LINK"].iteritems():
@@ -616,7 +616,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             hwy_data, network, mode_callback=define_modes, centroid_callback=is_centroid, link_attr_map=link_attr_map)
 
         hwy_node_data = gen_utils.DataTableProc("TNED_HwyNodes", self.source)
-        node_attrs = [(k, v[0]) for k, v in attr_map["NODE"].iteritems() 
+        node_attrs = [(k, v[0]) for k, v in attr_map["NODE"].iteritems()
                       if v[1] in ("BOTH", "HWY")]
         for record in hwy_node_data:
             node = network.node(record["HNODE"])
@@ -654,7 +654,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
         transit_node_data = gen_utils.DataTableProc("TNED_RailNodes", self.source)
         # Load PARK, elevation, stop type data onto transit nodes
-        node_attrs = [(k, v[0]) for k, v in attr_map["NODE"].iteritems() 
+        node_attrs = [(k, v[0]) for k, v in attr_map["NODE"].iteritems()
                       if v[1] in ("BOTH", "RAIL")]
         for record in transit_node_data:
             node = network.node(record["HNODE"])
@@ -720,7 +720,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 link[attr] = arc[field]
             if arc["WAY"] == 2 or arc["WAY"] == 0:
                 reverse_link = network.link(j_node, i_node)
-                if not reverse_link:   
+                if not reverse_link:
                     reverse_link = network.create_link(j_node, i_node, modes)
                     reverse_link.length = link.length
                     reverse_link.vertices = list(reversed(link.vertices))
@@ -810,7 +810,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         transit_routes = _defaultdict(lambda: [])
         for record in transit_link_data:
             line_ref = line_names.get(int(record["Route_ID"]), record["Route_ID"])
-            link_id = record["Link_GUID"] 
+            link_id = record["Link_GUID"]
             if "-" in record["Direction"]:
                 link_id = "-" + link_id
             link = links.get(link_id)
@@ -1054,7 +1054,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         self._log.append({"type": "text", "content": "Revised headway calculation complete"})
 
         fares_file_name = FILE_NAMES["FARES"]
-        special_fare_path = _join(self.source, fares_file_name)
+        special_fare_path = _join(_dir(self.source), fares_file_name)
         if not os.path.isfile(special_fare_path):
             self._log.append({"type": "text", "content": "Special fares file %s not found" % fares_file_name})
             return
@@ -1066,7 +1066,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             return line
 
         # Special incremental boarding and in-vehicle fares
-        # to recreate the coaster zone fares            
+        # to recreate the coaster zone fares
         self._log.append({"type": "header", "content": "Apply special_fares to transit lines"})
         with open(special_fare_path) as fare_file:
             self._log.append({"type": "text", "content": "Using fare details (for coaster) from %s" % fares_file_name})
@@ -1155,7 +1155,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     self._error.append(text)
                     continue
             turn = network.turn(from_node_id, at_node_id, to_node_id)
-            if at_node is None: 
+            if at_node is None:
                 text = ("record %s turn from %s, at %s, to %s: at node does not exist" %
                         (i, from_node_id, at_node_id, to_node_id))
                 self._log.append({"type": "text", "content": text})
@@ -1365,7 +1365,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             self._log.append({"type": "text2", "content": msg})
 
         self._log.append({
-            "type": "text", 
+            "type": "text",
             "content": "Calculation and time period expansion of costs, tolls, capacities and times complete"})
 
         # calculate static reliability
