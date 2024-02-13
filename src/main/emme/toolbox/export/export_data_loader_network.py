@@ -210,9 +210,14 @@ Export network results to csv files for SQL data loader."""
             ("PROJ", "@project_code"),
             ("FC", "type"),
             ("HOV", "@hov"),
+            ("EATRUCK", "@truck_ea"),
+            ("AMTRUCK", "@truck_am"),
+            ("MDTRUCK", "@truck_md"),
+            ("PMTRUCK", "@truck_pm"),
+            ("EVTRUCK", "@truck_ev"),
             ("SPD", "@speed_posted"),
             ("TSPD", "zero"),
-            ("WAY", "iway"),
+            ("WAY", "way"),
             ("MED", "@median"),
             ("COST", "@cost_operating"),
         ]
@@ -322,7 +327,7 @@ Export network results to csv files for SQL data loader."""
             network.set_attribute_values("LINK", dst_attrs, values)
         # add in and calculate additional columns
         new_attrs = [
-            ("zero", 0), ("is_one_way", 0), ("iway", 2), ("length_feet", 0),
+            ("zero", 0), ("is_one_way", 0), ("way", 2), ("length_feet", 0),
             ("toll_hov", 0), ("per_lane_capacity", 1900),
             ("progression_factor", 1.0), ("alpha1", 0.8), ("beta1", 4.0),
             ("alpha2", 4.5), ("beta2", 2.0), ("relifac", 1.0),
@@ -336,7 +341,7 @@ Export network results to csv files for SQL data loader."""
             network.create_attribute("LINK", "hov3_total_gencost" + period, 0)
         for link in network.links():
             link.is_one_way = 1 if link.reverse_link else 0
-            link.iway = 2 if link.reverse_link else 1
+            link.way = 2 if link.reverse_link else 1
             link.length_feet = link.length * 5280
             for period in periods:
                 link["toll_hov"  + period] = link["@cost_hov2" + period] - link["@cost_operating"]
@@ -492,7 +497,7 @@ Export network results to csv files for SQL data loader."""
 
         trrt_atts = ["Route_ID","Route_Name","Mode","AM_Headway","PM_Headway","Midday_Headway","Evening_Headway","EarlyAM_Headway",
                      "Evening_Hours", "EarlyAM_Hours", "Config","Fare"]
-        trstop_atts = ["Stop_ID","Route_ID","Link_ID","Link_GUID","Pass_Count","Milepost","Longitude","Latitude","StopName"]
+        trstop_atts = ["Stop_ID","Route_ID","Link_ID","Link_GUID","Pass_Count","Milepost","Longitude","Latitude","NearNode","StopName"]
 
         #transit route file
         trrt_infile = os.path.join(input_path, "trrt.csv")
@@ -507,7 +512,7 @@ Export network results to csv files for SQL data loader."""
         #transit stop file
         trstop_infile = os.path.join(input_path, "trstop.csv")
         trstop = pd.read_csv(trstop_infile)
-        trstop = trstop.rename(columns={"HwyNode":"NearNode"})
+        trstop = trstop.rename(columns={"Node":"NearNode"})
         trstop = trstop.rename(columns=lambda x:x.strip())
         trstop_out = trstop[trstop_atts]
         trstop_outfile = os.path.join(export_path, "trstop.csv")
