@@ -70,6 +70,9 @@ def test_cvm():
     state.run.route_terminal_type()
     state.run.route_terminal()
 
+    print("### route terminal tnc ###")
+    state.run.route_origin_destination_tnc()
+
     print("### route stops ###")
     state.run.route_stops()
 

@@ -152,7 +152,7 @@ class ExportForTransponder(_m.Tool(), gen_utils.Snapshot):
         emmebank = scenario.emmebank
         year = int(props['scenarioYear'])
         mgra = _pd.read_csv(
-            _join(input_directory, 'mgra15_based_input_%s_base.csv' % year))
+            _join(input_directory, 'mgra15_based_input%s.csv' % year))
         try:
             taz = mgra[['taz', 'emp_total']].groupby('taz').sum()
         except KeyError:

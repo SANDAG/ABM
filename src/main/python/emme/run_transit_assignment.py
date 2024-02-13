@@ -52,7 +52,7 @@ if __name__ == "__main__":
 
         transit_assign_scen = transit_emmebank.scenario(number)
 
-        create_transit_connector(period, transit_assign_scen, create_connector_flag)
+        create_transit_connector(period, transit_assign_scen, create_connector_flag, main_directory)
 
         # for number, period in period_ids:
         transit_assign(period, transit_assign_scen, data_table_name=scenarioYear,

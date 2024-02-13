@@ -273,14 +273,14 @@ class ScenarioData(object):
                 "line": "sample_rates=",
                 "type": "float",
                 "value": None},
-            "valueOfTimeLow": {
-                "line": "valueOfTime.threshold.low=",
-                "type": "float",
-                "value": None},
-            "valueOfTimeMedium": {
-                "line": "valueOfTime.threshold.med=",
-                "type": "float",
-                "value": None},
+            #"valueOfTimeLow": {
+            #    "line": "valueOfTime.threshold.low=",
+            #    "type": "float",
+            #    "value": None},
+            #"valueOfTimeMedium": {
+            #    "line": "valueOfTime.threshold.med=",
+            #    "type": "float",
+            #    "value": None},
             "year": {
                 "line": "scenarioYear=",
                 "type": "int",
@@ -1156,7 +1156,7 @@ class TourLists(ScenarioData):
 
         # read all trip list files into a Pandas DataFrame
         trips = pd.concat((
-            pd.read_csv(os.path.join(self.scenario_path, "output", file),
+            pd.read_csv(os.path.join(self.scenario_path, "output", "cvm", file),
                         usecols=["SerialNo",
                                  "Trip",
                                  "ActorType",
@@ -2285,7 +2285,7 @@ class TripLists(ScenarioData):
 
         # read all trip list files into a Pandas DataFrame
         trips = pd.concat((
-            pd.read_csv(os.path.join(self.scenario_path, "output", file),
+            pd.read_csv(os.path.join(self.scenario_path, "output", "cvm", file),
                         usecols=["SerialNo",
                                  "Trip",
                                  "HomeZone",
@@ -2435,7 +2435,7 @@ class TripLists(ScenarioData):
                               "DPurp": "tripPurposeDestination",
                               "I": "originTAZ",
                               "J": "destinationTAZ",
-                              "Mode": "trip_mode",
+                              "Mode": "tripMode",
                               "StopDuration": "stopDuration"},
                      inplace=True)
 
@@ -2452,7 +2452,7 @@ class TripLists(ScenarioData):
                       "originTAZ",
                       "destinationTAZ",
                       "parkingTAZ",
-                      "trip_mode",
+                      "tripMode",
                       "valueOfTimeCategory",
                       "transponderAvailable",
                       "avUsed",

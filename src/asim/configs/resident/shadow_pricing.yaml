@@ -41,11 +41,11 @@ school_segmentation_targets:
 # if target names are the same, they will be combined together
 workplace_segmentation_targets:
   # FIXME: need to use employment with removed external workers
-  constr_maint: emp_total
-  health: emp_total
-  military: emp_total
-  mngt_busi_scic_arts: emp_total
-  prod_trans_move: emp_total
-  sales_office: emp_total
-  services: emp_total
+  constr_maint: total_emp_revised
+  health: total_emp_revised
+  military: total_emp_revised
+  mngt_busi_scic_arts: total_emp_revised
+  prod_trans_move: total_emp_revised
+  sales_office: total_emp_revised
+  services: total_emp_revised
 

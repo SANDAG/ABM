@@ -365,6 +365,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 ("PM_Headway",     ("@headway_pm",        "TRRT",     "EXTRA",    "PM Peak actual headway")),
                 ("OP_Headway",     ("@headway_op",        "TRRT",     "EXTRA",    "Off-Peak actual headway")),
                 ("Night_Headway",  ("@headway_night",     "TRRT",     "EXTRA",    "Night actual headway")),
+                ("Night_Headway_rev", ("@headway_rev_night",    "DERIVED",  "EXTRA",    "Night Peak revised headway")),
                 ("AM_Headway_rev", ("@headway_rev_am",    "DERIVED",  "EXTRA",    "AM Peak revised headway")),
                 ("PM_Headway_rev", ("@headway_rev_pm",    "DERIVED",  "EXTRA",    "PM Peak revised headway")),
                 ("OP_Headway_rev", ("@headway_rev_op",    "DERIVED",  "EXTRA",    "Off-Peak revised headway")),
@@ -484,22 +485,22 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                         "title": "Transit %s attributes" % elem_type.lower().replace("_", " "),
                         "disclosure": True
                     })
-                # try:
-                self.create_transit_base(transit_network, transit_attr_map)
-                self.create_transit_lines(transit_network, transit_attr_map)
-                self.calc_transit_attributes(transit_network)
-                new_node_id = max(
-                    max(n.number for n in traffic_network.nodes()),
-                    max(n.number for n in transit_network.nodes())
-                )
-                new_node_id = int(_ceiling(new_node_id / 10000.0) * 10000)
-                new_node_id = self.renumber_transit_nodes(transit_network, new_node_id)
-                # finally:
-                if transit_scenario:
-                    for link in transit_network.links():
-                        if link.type <= 0:
-                            link.type = 99
-                    transit_scenario.publish_network(transit_network, resolve_attributes=True)
+                try:
+                    self.create_transit_base(transit_network, transit_attr_map)
+                    self.create_transit_lines(transit_network, transit_attr_map)
+                    self.calc_transit_attributes(transit_network)
+                    new_node_id = max(
+                        max(n.number for n in traffic_network.nodes()),
+                        max(n.number for n in transit_network.nodes())
+                    )
+                    new_node_id = int(_ceiling(new_node_id / 10000.0) * 10000)
+                    new_node_id = self.renumber_transit_nodes(transit_network, new_node_id)
+                finally:
+                    if transit_scenario:
+                        for link in transit_network.links():
+                            if link.type <= 0:
+                                link.type = 99
+                        transit_scenario.publish_network(transit_network, resolve_attributes=True)
                 if self.merged_scenario_id:
                     self.add_transit_to_traffic(traffic_network, transit_network, new_node_id)
         finally:
@@ -1081,7 +1082,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             if not tline:
                 continue
             itinerary = tline.segments(include_hidden=True)
-            segment = itinerary.next()
+            segment = prev_segment = itinerary.next()
             tcov_id = abs(segment.link["@tcov_id"])
             for stop in stops:
                 if "DUMMY" in stop["StopName"]:
@@ -1099,11 +1100,24 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 elif segment.j_node and node_id == segment.j_node.number:
                     segment = itinerary.next()  # its the next segment
                 else:
-                    msg = "Transit line %s: could not find stop on link ID %s at node ID %s" % (line_name, link_id, node_id)
-                    self._log.append({"type": "text", "content": msg})
-                    self._error.append(msg)
-                    fatal_errors += 1
-                    continue
+                    next_segment = None
+                    if segment.j_node:
+                        next_segment = itinerary.next()
+                    if next_segment and abs(next_segment.link["@tcov_id"]) == link_id and \
+                            node_id == next_segment.j_node.number:
+                        # split link case, where stop is at the end of the next segment
+                        segment = next_segment
+                    else:
+                        msg = "Transit line %s: could not find stop on link ID %s at node ID %s" % (line_name, link_id, node_id)
+                        self._log.append({"type": "text", "content": msg})
+                        self._error.append(msg)
+                        fatal_errors += 1
+                        # reset iterator to start back from previous segment
+                        itinerary = tline.segments(include_hidden=True)
+                        segment = itinerary.next()
+                        while segment.id != prev_segment.id:
+                            segment = itinerary.next()
+                        continue
                 segment.allow_boardings = True
                 segment.allow_alightings = True
                 segment.dwell_time = min(tline.default_dwell_time, 99.99)
@@ -1111,6 +1125,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     segment[attr] = stop[field]
                 for field, attr in seg_float_attr_map:
                     segment[attr] = float(stop[field])
+                prev_segment = segment
 
         def lookup_line(ident):
             line = network.transit_line(ident)
@@ -1167,9 +1182,9 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 link.type = 99
 
         # ON TRANSIT LINES
-        # Set 3-period headway based on revised headway calculation
+        # Set 4-period headway based on revised headway calculation
         for line in network.transit_lines():
-            for period in ["am", "pm", "op"]:
+            for period in ["am", "pm", "op", "night"]:
                 line["@headway_rev_" + period] = revised_headway(line["@headway_" + period])
 
         # Special incremental boarding and in-vehicle fares

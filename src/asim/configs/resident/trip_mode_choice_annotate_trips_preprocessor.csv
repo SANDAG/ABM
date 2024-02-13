@@ -205,16 +205,16 @@ no long walks,walkAvailable,"np.where((walk_time_skims < max_walk_time),1,0) * n
 #,,
 ,walk_local_available,(odt_skims['WALK_LOC_TOTALIVTT']>0)&(tourWTran)
 ,walk_premium_available,(odt_skims['WALK_PRM_TOTALIVTT']>0)&(tourWTran)
-,walk_mix_available,(odt_skims['WALK_MIX_TOTALIVTT']>0)&(tourWTran)
+,walk_mix_available,(odt_skims['WALK_MIX_TOTALIVTT']>0)&(odt_skims['WALK_MIX_XFERS']>0)&(tourWTran)
 ,pnr_local_available,((df.outbound & (odt_skims['PNROUT_LOC_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['PNRIN_LOC_TOTALIVTT']>0)))&(tourPNR)
 ,pnr_premium_available,((df.outbound & (odt_skims['PNROUT_PRM_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['PNRIN_PRM_TOTALIVTT']>0)))&(tourPNR)
-,pnr_mix_available,((df.outbound & (odt_skims['PNROUT_MIX_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['PNRIN_MIX_TOTALIVTT']>0)))&(tourPNR)
+,pnr_mix_available,((df.outbound & (odt_skims['PNROUT_MIX_TOTALIVTT']>0)&(odt_skims['PNROUT_MIX_XFERS']>0)) | (~df.outbound & (odt_skims['PNRIN_MIX_TOTALIVTT']>0)&(odt_skims['PNRIN_MIX_XFERS']>0)))&(tourPNR)
 ,knr_local_available,((df.outbound & (odt_skims['KNROUT_LOC_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['KNRIN_LOC_TOTALIVTT']>0)))&(tourKNR)
 ,knr_premium_available,((df.outbound & (odt_skims['KNROUT_PRM_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['KNRIN_PRM_TOTALIVTT']>0)))&(tourKNR)
-,knr_mix_available,((df.outbound & (odt_skims['KNROUT_MIX_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['KNRIN_MIX_TOTALIVTT']>0)))&(tourKNR)
+,knr_mix_available,((df.outbound & (odt_skims['KNROUT_MIX_TOTALIVTT']>0)&(odt_skims['KNROUT_MIX_XFERS']>0)) | (~df.outbound & (odt_skims['KNRIN_MIX_TOTALIVTT']>0)&(odt_skims['KNRIN_MIX_XFERS']>0)))&(tourKNR)
 ,tnc_local_available,((df.outbound & (odt_skims['TNCOUT_LOC_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['TNCIN_LOC_TOTALIVTT']>0)))&(tourTNR)
 ,tnc_premium_available,((df.outbound & (odt_skims['TNCOUT_PRM_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['TNCIN_PRM_TOTALIVTT']>0)))&(tourTNR)
-,tnc_mix_available,((df.outbound & (odt_skims['TNCOUT_MIX_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['TNCIN_MIX_TOTALIVTT']>0)))&(tourTNR)
+,tnc_mix_available,((df.outbound & (odt_skims['TNCOUT_MIX_TOTALIVTT']>0)&(odt_skims['TNCOUT_MIX_XFERS']>0)) | (~df.outbound & (odt_skims['TNCIN_MIX_TOTALIVTT']>0)&(odt_skims['TNCIN_MIX_XFERS']>0)))&(tourTNR)
 #access egress distances,,
 ,origin_local_dist,"reindex(land_use.walk_dist_local_bus, origin)"
 ,origin_prm_dist,"reindex(land_use.walk_dist_premium_transit, origin)"

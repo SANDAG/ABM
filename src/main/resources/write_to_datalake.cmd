@@ -2,12 +2,12 @@ ECHO ON
 
 set PROJECT_DRIVE=%1
 set PROJECT_DIRECTORY=%2
-set FILE_NAME=%3
+set ENV=%3
 
 %PROJECT_DRIVE%
 cd /d %PROJECT_DIRECTORY%
 
-SET ANACONDA3_DIR=C:\Anaconda3
+SET ANACONDA3_DIR=%CONDA_PREFIX%
 
 SET PATH=%ANACONDA3_DIR%\Library\bin;%PATH%
 SET PATH=%ANACONDA3_DIR%\Scripts;%ANACONDA3_DIR%\bin;%PATH%
@@ -30,4 +30,4 @@ set MKL=1
 
 cd /d %PROJECT_DIRECTORY%
 
-%PYTHON3% python/datalake_exporter.py %PROJECT_DIRECTORY%/output
+%PYTHON3% python/datalake_exporter.py %PROJECT_DIRECTORY%/output %ENV%

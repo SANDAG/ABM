@@ -120,10 +120,10 @@ distbin,District,purpose,value
 19,2: Central,Work,0
 20,2: Central,Work,0
 21,2: Central,Work,0
-22,2: Central,Work,1
+22,2: Central,Work,0
 23,2: Central,Work,0
 24,2: Central,Work,0
-25,2: Central,Work,7
+25,2: Central,Work,0
 26,2: Central,Work,0
 27,2: Central,Work,0
 28,2: Central,Work,0
@@ -137,7 +137,7 @@ distbin,District,purpose,value
 36,2: Central,Work,0
 37,2: Central,Work,0
 38,2: Central,Work,0
-39,2: Central,Work,1
+39,2: Central,Work,0
 40,2: Central,Work,0
 41,2: Central,Work,0
 42,2: Central,Work,0
@@ -153,14 +153,14 @@ distbin,District,purpose,value
 52,2: Central,Work,0
 53,2: Central,Work,0
 54,2: Central,Work,0
-55,2: Central,Work,0
-56,2: Central,Work,0
-57,2: Central,Work,0
-58,2: Central,Work,0
-59,2: Central,Work,0
+55,2: Central,Work,5
+56,2: Central,Work,1
+57,2: Central,Work,5
+58,2: Central,Work,3
+59,2: Central,Work,1
 60,2: Central,Work,0
 61,2: Central,Work,0
-62,2: Central,Work,0
+62,2: Central,Work,1
 63,2: Central,Work,0
 64,2: Central,Work,0
 65,2: Central,Work,0
@@ -178,19 +178,19 @@ distbin,District,purpose,value
 77,2: Central,Work,0
 78,2: Central,Work,0
 79,2: Central,Work,0
-80,2: Central,Work,4
-81,2: Central,Work,7
-82,2: Central,Work,9
-83,2: Central,Work,7
-84,2: Central,Work,4
+80,2: Central,Work,0
+81,2: Central,Work,1
+82,2: Central,Work,0
+83,2: Central,Work,0
+84,2: Central,Work,0
 85,2: Central,Work,0
-86,2: Central,Work,1
-87,2: Central,Work,1
+86,2: Central,Work,0
+87,2: Central,Work,0
 88,2: Central,Work,0
-89,2: Central,Work,0
+89,2: Central,Work,1
 90,2: Central,Work,0
-91,2: Central,Work,7
-92,2: Central,Work,0
+91,2: Central,Work,0
+92,2: Central,Work,1
 93,2: Central,Work,0
 94,2: Central,Work,0
 95,2: Central,Work,0
@@ -230,29 +230,29 @@ distbin,District,purpose,value
 29,3: North City,Work,0
 30,3: North City,Work,0
 31,3: North City,Work,0
-32,3: North City,Work,0
+32,3: North City,Work,1
 33,3: North City,Work,0
-34,3: North City,Work,0
+34,3: North City,Work,2
 35,3: North City,Work,0
 36,3: North City,Work,0
 37,3: North City,Work,0
-38,3: North City,Work,0
+38,3: North City,Work,2
 39,3: North City,Work,0
-40,3: North City,Work,0
-41,3: North City,Work,7
-42,3: North City,Work,0
-43,3: North City,Work,0
+40,3: North City,Work,3
+41,3: North City,Work,0
+42,3: North City,Work,1
+43,3: North City,Work,1
 44,3: North City,Work,0
-45,3: North City,Work,0
-46,3: North City,Work,0
-47,3: North City,Work,0
-48,3: North City,Work,0
-49,3: North City,Work,0
-50,3: North City,Work,0
-51,3: North City,Work,0
-52,3: North City,Work,0
-53,3: North City,Work,0
-54,3: North City,Work,0
+45,3: North City,Work,1
+46,3: North City,Work,1
+47,3: North City,Work,2
+48,3: North City,Work,1
+49,3: North City,Work,2
+50,3: North City,Work,3
+51,3: North City,Work,1
+52,3: North City,Work,3
+53,3: North City,Work,1
+54,3: North City,Work,1
 55,3: North City,Work,0
 56,3: North City,Work,0
 57,3: North City,Work,0
@@ -261,35 +261,35 @@ distbin,District,purpose,value
 60,3: North City,Work,0
 61,3: North City,Work,0
 62,3: North City,Work,0
-63,3: North City,Work,7
+63,3: North City,Work,0
 64,3: North City,Work,0
 65,3: North City,Work,0
-66,3: North City,Work,7
-67,3: North City,Work,7
-68,3: North City,Work,7
-69,3: North City,Work,7
-70,3: North City,Work,1
+66,3: North City,Work,0
+67,3: North City,Work,0
+68,3: North City,Work,0
+69,3: North City,Work,0
+70,3: North City,Work,0
 71,3: North City,Work,0
 72,3: North City,Work,0
-73,3: North City,Work,7
-74,3: North City,Work,8
-75,3: North City,Work,7
-76,3: North City,Work,18
+73,3: North City,Work,0
+74,3: North City,Work,0
+75,3: North City,Work,0
+76,3: North City,Work,0
 77,3: North City,Work,0
-78,3: North City,Work,15
-79,3: North City,Work,1
-80,3: North City,Work,7
+78,3: North City,Work,0
+79,3: North City,Work,0
+80,3: North City,Work,0
 81,3: North City,Work,0
-82,3: North City,Work,7
+82,3: North City,Work,0
 83,3: North City,Work,0
-84,3: North City,Work,2
-85,3: North City,Work,10
+84,3: North City,Work,0
+85,3: North City,Work,1
 86,3: North City,Work,0
-87,3: North City,Work,8
+87,3: North City,Work,0
 88,3: North City,Work,0
 89,3: North City,Work,0
 90,3: North City,Work,0
-91,3: North City,Work,4
+91,3: North City,Work,0
 92,3: North City,Work,0
 93,3: North City,Work,0
 94,3: North City,Work,0
@@ -303,9 +303,9 @@ distbin,District,purpose,value
 2,4: South Suburban,Work,0
 3,4: South Suburban,Work,0
 4,4: South Suburban,Work,0
-5,4: South Suburban,Work,0
+5,4: South Suburban,Work,1
 6,4: South Suburban,Work,0
-7,4: South Suburban,Work,0
+7,4: South Suburban,Work,1
 8,4: South Suburban,Work,0
 9,4: South Suburban,Work,0
 10,4: South Suburban,Work,0
@@ -365,12 +365,12 @@ distbin,District,purpose,value
 64,4: South Suburban,Work,0
 65,4: South Suburban,Work,0
 66,4: South Suburban,Work,0
-67,4: South Suburban,Work,7
-68,4: South Suburban,Work,0
+67,4: South Suburban,Work,1
+68,4: South Suburban,Work,1
 69,4: South Suburban,Work,0
 70,4: South Suburban,Work,0
-71,4: South Suburban,Work,7
-72,4: South Suburban,Work,0
+71,4: South Suburban,Work,0
+72,4: South Suburban,Work,1
 73,4: South Suburban,Work,0
 74,4: South Suburban,Work,0
 75,4: South Suburban,Work,0
@@ -386,13 +386,13 @@ distbin,District,purpose,value
 85,4: South Suburban,Work,0
 86,4: South Suburban,Work,0
 87,4: South Suburban,Work,0
-88,4: South Suburban,Work,7
+88,4: South Suburban,Work,0
 89,4: South Suburban,Work,0
-90,4: South Suburban,Work,7
+90,4: South Suburban,Work,0
 91,4: South Suburban,Work,0
 92,4: South Suburban,Work,0
 93,4: South Suburban,Work,0
-94,4: South Suburban,Work,4
+94,4: South Suburban,Work,0
 95,4: South Suburban,Work,0
 96,4: South Suburban,Work,0
 97,4: South Suburban,Work,0
@@ -437,17 +437,17 @@ distbin,District,purpose,value
 36,5: East Suburban,Work,0
 37,5: East Suburban,Work,0
 38,5: East Suburban,Work,0
-39,5: East Suburban,Work,7
-40,5: East Suburban,Work,1
+39,5: East Suburban,Work,0
+40,5: East Suburban,Work,0
 41,5: East Suburban,Work,0
 42,5: East Suburban,Work,0
 43,5: East Suburban,Work,0
 44,5: East Suburban,Work,0
 45,5: East Suburban,Work,0
 46,5: East Suburban,Work,0
-47,5: East Suburban,Work,0
+47,5: East Suburban,Work,1
 48,5: East Suburban,Work,0
-49,5: East Suburban,Work,0
+49,5: East Suburban,Work,1
 50,5: East Suburban,Work,0
 51,5: East Suburban,Work,0
 52,5: East Suburban,Work,0
@@ -458,27 +458,27 @@ distbin,District,purpose,value
 57,5: East Suburban,Work,0
 58,5: East Suburban,Work,0
 59,5: East Suburban,Work,0
-60,5: East Suburban,Work,0
+60,5: East Suburban,Work,1
 61,5: East Suburban,Work,0
-62,5: East Suburban,Work,0
-63,5: East Suburban,Work,0
-64,5: East Suburban,Work,0
+62,5: East Suburban,Work,1
+63,5: East Suburban,Work,1
+64,5: East Suburban,Work,2
 65,5: East Suburban,Work,0
 66,5: East Suburban,Work,0
-67,5: East Suburban,Work,7
-68,5: East Suburban,Work,0
+67,5: East Suburban,Work,0
+68,5: East Suburban,Work,1
 69,5: East Suburban,Work,0
 70,5: East Suburban,Work,0
 71,5: East Suburban,Work,0
-72,5: East Suburban,Work,7
-73,5: East Suburban,Work,2
+72,5: East Suburban,Work,0
+73,5: East Suburban,Work,0
 74,5: East Suburban,Work,0
 75,5: East Suburban,Work,0
 76,5: East Suburban,Work,0
 77,5: East Suburban,Work,0
 78,5: East Suburban,Work,0
-79,5: East Suburban,Work,7
-80,5: East Suburban,Work,7
+79,5: East Suburban,Work,0
+80,5: East Suburban,Work,0
 81,5: East Suburban,Work,0
 82,5: East Suburban,Work,0
 83,5: East Suburban,Work,0
@@ -501,7 +501,7 @@ distbin,District,purpose,value
 100,5: East Suburban,Work,0
 1,6: North County West,Work,0
 2,6: North County West,Work,0
-3,6: North County West,Work,0
+3,6: North County West,Work,1
 4,6: North County West,Work,0
 5,6: North County West,Work,0
 6,6: North County West,Work,0
@@ -517,24 +517,24 @@ distbin,District,purpose,value
 16,6: North County West,Work,0
 17,6: North County West,Work,0
 18,6: North County West,Work,0
-19,6: North County West,Work,0
-20,6: North County West,Work,0
-21,6: North County West,Work,0
-22,6: North County West,Work,0
-23,6: North County West,Work,0
-24,6: North County West,Work,0
-25,6: North County West,Work,0
-26,6: North County West,Work,0
-27,6: North County West,Work,0
-28,6: North County West,Work,0
+19,6: North County West,Work,1
+20,6: North County West,Work,6
+21,6: North County West,Work,2
+22,6: North County West,Work,2
+23,6: North County West,Work,1
+24,6: North County West,Work,6
+25,6: North County West,Work,4
+26,6: North County West,Work,10
+27,6: North County West,Work,4
+28,6: North County West,Work,2
 29,6: North County West,Work,0
 30,6: North County West,Work,0
-31,6: North County West,Work,0
-32,6: North County West,Work,0
-33,6: North County West,Work,0
-34,6: North County West,Work,0
-35,6: North County West,Work,0
-36,6: North County West,Work,0
+31,6: North County West,Work,1
+32,6: North County West,Work,2
+33,6: North County West,Work,1
+34,6: North County West,Work,1
+35,6: North County West,Work,1
+36,6: North County West,Work,2
 37,6: North County West,Work,0
 38,6: North County West,Work,0
 39,6: North County West,Work,0
@@ -566,37 +566,37 @@ distbin,District,purpose,value
 65,6: North County West,Work,0
 66,6: North County West,Work,0
 67,6: North County West,Work,0
-68,6: North County West,Work,1
+68,6: North County West,Work,0
 69,6: North County West,Work,0
 70,6: North County West,Work,0
 71,6: North County West,Work,0
-72,6: North County West,Work,1
-73,6: North County West,Work,36
-74,6: North County West,Work,16
-75,6: North County West,Work,16
-76,6: North County West,Work,2
+72,6: North County West,Work,0
+73,6: North County West,Work,0
+74,6: North County West,Work,0
+75,6: North County West,Work,0
+76,6: North County West,Work,0
 77,6: North County West,Work,0
-78,6: North County West,Work,30
-79,6: North County West,Work,28
-80,6: North County West,Work,22
-81,6: North County West,Work,14
-82,6: North County West,Work,7
-83,6: North County West,Work,7
+78,6: North County West,Work,1
+79,6: North County West,Work,0
+80,6: North County West,Work,0
+81,6: North County West,Work,0
+82,6: North County West,Work,0
+83,6: North County West,Work,0
 84,6: North County West,Work,0
 85,6: North County West,Work,0
 86,6: North County West,Work,0
 87,6: North County West,Work,0
 88,6: North County West,Work,0
 89,6: North County West,Work,0
-90,6: North County West,Work,7
+90,6: North County West,Work,0
 91,6: North County West,Work,0
-92,6: North County West,Work,15
-93,6: North County West,Work,8
+92,6: North County West,Work,0
+93,6: North County West,Work,0
 94,6: North County West,Work,0
-95,6: North County West,Work,2
+95,6: North County West,Work,0
 96,6: North County West,Work,0
-97,6: North County West,Work,4
-98,6: North County West,Work,7
+97,6: North County West,Work,0
+98,6: North County West,Work,0
 99,6: North County West,Work,0
 100,6: North County West,Work,0
 1,7: North County East,Work,0
@@ -608,8 +608,8 @@ distbin,District,purpose,value
 7,7: North County East,Work,0
 8,7: North County East,Work,0
 9,7: North County East,Work,0
-10,7: North County East,Work,0
-11,7: North County East,Work,0
+10,7: North County East,Work,5
+11,7: North County East,Work,1
 12,7: North County East,Work,0
 13,7: North County East,Work,0
 14,7: North County East,Work,0
@@ -623,29 +623,29 @@ distbin,District,purpose,value
 22,7: North County East,Work,0
 23,7: North County East,Work,0
 24,7: North County East,Work,0
-25,7: North County East,Work,0
-26,7: North County East,Work,0
-27,7: North County East,Work,0
-28,7: North County East,Work,0
-29,7: North County East,Work,0
+25,7: North County East,Work,1
+26,7: North County East,Work,1
+27,7: North County East,Work,3
+28,7: North County East,Work,4
+29,7: North County East,Work,4
 30,7: North County East,Work,0
-31,7: North County East,Work,0
-32,7: North County East,Work,0
+31,7: North County East,Work,1
+32,7: North County East,Work,1
 33,7: North County East,Work,0
-34,7: North County East,Work,0
-35,7: North County East,Work,0
-36,7: North County East,Work,0
-37,7: North County East,Work,0
-38,7: North County East,Work,0
-39,7: North County East,Work,0
-40,7: North County East,Work,0
+34,7: North County East,Work,2
+35,7: North County East,Work,2
+36,7: North County East,Work,1
+37,7: North County East,Work,1
+38,7: North County East,Work,2
+39,7: North County East,Work,1
+40,7: North County East,Work,3
 41,7: North County East,Work,0
-42,7: North County East,Work,0
+42,7: North County East,Work,1
 43,7: North County East,Work,0
 44,7: North County East,Work,0
 45,7: North County East,Work,0
 46,7: North County East,Work,0
-47,7: North County East,Work,0
+47,7: North County East,Work,1
 48,7: North County East,Work,0
 49,7: North County East,Work,0
 50,7: North County East,Work,0
@@ -659,37 +659,37 @@ distbin,District,purpose,value
 58,7: North County East,Work,0
 59,7: North County East,Work,0
 60,7: North County East,Work,0
-61,7: North County East,Work,5
+61,7: North County East,Work,0
 62,7: North County East,Work,0
-63,7: North County East,Work,8
-64,7: North County East,Work,14
-65,7: North County East,Work,4
-66,7: North County East,Work,7
-67,7: North County East,Work,5
-68,7: North County East,Work,11
-69,7: North County East,Work,7
-70,7: North County East,Work,7
-71,7: North County East,Work,4
-72,7: North County East,Work,14
-73,7: North County East,Work,15
-74,7: North County East,Work,17
-75,7: North County East,Work,23
-76,7: North County East,Work,7
+63,7: North County East,Work,0
+64,7: North County East,Work,0
+65,7: North County East,Work,0
+66,7: North County East,Work,0
+67,7: North County East,Work,0
+68,7: North County East,Work,0
+69,7: North County East,Work,0
+70,7: North County East,Work,0
+71,7: North County East,Work,0
+72,7: North County East,Work,1
+73,7: North County East,Work,0
+74,7: North County East,Work,0
+75,7: North County East,Work,1
+76,7: North County East,Work,0
 77,7: North County East,Work,0
 78,7: North County East,Work,0
 79,7: North County East,Work,0
 80,7: North County East,Work,0
 81,7: North County East,Work,0
-82,7: North County East,Work,8
+82,7: North County East,Work,0
 83,7: North County East,Work,0
-84,7: North County East,Work,7
+84,7: North County East,Work,0
 85,7: North County East,Work,0
 86,7: North County East,Work,0
 87,7: North County East,Work,0
-88,7: North County East,Work,1
-89,7: North County East,Work,4
-90,7: North County East,Work,10
-91,7: North County East,Work,2
+88,7: North County East,Work,0
+89,7: North County East,Work,0
+90,7: North County East,Work,0
+91,7: North County East,Work,0
 92,7: North County East,Work,0
 93,7: North County East,Work,0
 94,7: North County East,Work,0
@@ -758,12 +758,12 @@ distbin,District,purpose,value
 57,8: East County,Work,0
 58,8: East County,Work,0
 59,8: East County,Work,0
-60,8: East County,Work,1
+60,8: East County,Work,0
 61,8: East County,Work,0
 62,8: East County,Work,0
 63,8: East County,Work,0
 64,8: East County,Work,0
-65,8: East County,Work,0
+65,8: East County,Work,1
 66,8: East County,Work,0
 67,8: East County,Work,0
 68,8: East County,Work,0
@@ -799,3 +799,103 @@ distbin,District,purpose,value
 98,8: East County,Work,0
 99,8: East County,Work,0
 100,8: East County,Work,0
+1,Total,Work,0
+2,Total,Work,0
+3,Total,Work,1
+4,Total,Work,0
+5,Total,Work,1
+6,Total,Work,0
+7,Total,Work,1
+8,Total,Work,0
+9,Total,Work,0
+10,Total,Work,5
+11,Total,Work,1
+12,Total,Work,0
+13,Total,Work,0
+14,Total,Work,0
+15,Total,Work,0
+16,Total,Work,0
+17,Total,Work,0
+18,Total,Work,0
+19,Total,Work,1
+20,Total,Work,6
+21,Total,Work,2
+22,Total,Work,2
+23,Total,Work,1
+24,Total,Work,6
+25,Total,Work,5
+26,Total,Work,11
+27,Total,Work,7
+28,Total,Work,6
+29,Total,Work,4
+30,Total,Work,0
+31,Total,Work,2
+32,Total,Work,4
+33,Total,Work,1
+34,Total,Work,5
+35,Total,Work,3
+36,Total,Work,3
+37,Total,Work,1
+38,Total,Work,4
+39,Total,Work,1
+40,Total,Work,6
+41,Total,Work,0
+42,Total,Work,2
+43,Total,Work,1
+44,Total,Work,0
+45,Total,Work,1
+46,Total,Work,1
+47,Total,Work,4
+48,Total,Work,1
+49,Total,Work,3
+50,Total,Work,3
+51,Total,Work,1
+52,Total,Work,3
+53,Total,Work,1
+54,Total,Work,1
+55,Total,Work,5
+56,Total,Work,1
+57,Total,Work,5
+58,Total,Work,3
+59,Total,Work,1
+60,Total,Work,1
+61,Total,Work,0
+62,Total,Work,2
+63,Total,Work,1
+64,Total,Work,2
+65,Total,Work,1
+66,Total,Work,0
+67,Total,Work,1
+68,Total,Work,2
+69,Total,Work,0
+70,Total,Work,0
+71,Total,Work,0
+72,Total,Work,2
+73,Total,Work,0
+74,Total,Work,0
+75,Total,Work,1
+76,Total,Work,0
+77,Total,Work,0
+78,Total,Work,1
+79,Total,Work,0
+80,Total,Work,0
+81,Total,Work,1
+82,Total,Work,0
+83,Total,Work,0
+84,Total,Work,0
+85,Total,Work,1
+86,Total,Work,0
+87,Total,Work,0
+88,Total,Work,0
+89,Total,Work,1
+90,Total,Work,0
+91,Total,Work,0
+92,Total,Work,1
+93,Total,Work,0
+94,Total,Work,0
+95,Total,Work,0
+96,Total,Work,0
+97,Total,Work,0
+98,Total,Work,0
+99,Total,Work,0
+100,Total,Work,0

@@ -11,7 +11,7 @@ from azure.storage.blob import ContainerClient
 from azure.core.exceptions import ServiceRequestError
 from io import BytesIO
 
-def connect_to_Azure():
+def connect_to_Azure(env):
     """
     Check if Azure Storage SAS Token is properly configured in local machine's environment.
         Return Azure ContainerClient and boolean indicating cloud connection was made successfully.
@@ -20,13 +20,16 @@ def connect_to_Azure():
     Include stand-in path_override parameter for future config options
     """
     try:
-        sas_url = os.environ["AZURE_STORAGE_SAS_TOKEN"]
+        if env == "dev":
+            sas_url = os.environ["AZURE_STORAGE_SAS_TOKEN_DEV"]
+        else:
+            sas_url = os.environ["AZURE_STORAGE_SAS_TOKEN_PROD"]
         container = ContainerClient.from_container_url(sas_url)
         container.get_account_information()
         print("datalake exporter connected to Azure container")
         return True, container
     except KeyError as e:
-        error_statment = f"{e}: datalake exporter could not find SAS_Token in environment\n"
+        error_statement = f"{e}: datalake exporter could not find SAS_Token in environment\n"
         print(error_statement, "\n", file=sys.stderr)
         return False, None
     except Exception as e:
@@ -150,10 +153,21 @@ def export_table(table, name, model, parent_dir_name, container):
     container.upload_blob(name=lake_file_name, data=parquet_file)
     print("Write to Data Lake: %s/%s took %s to write to Azure" % (model, name, str(datetime.datetime.now()-t0)))
 
-def write_to_datalake(output_path, models, exclude):
-    cloud_bool, container = connect_to_Azure()
+def write_to_datalake(output_path, models, exclude, env):
+    cloud_bool, container = connect_to_Azure(env)
     if not cloud_bool:
         return
+    
+    for model, relpath, is_asim in models:
+        if is_asim:
+            model_metadata = get_model_metadata(model, output_path)
+            prefix = model_metadata["prefix"]
+        else:
+            prefix = ""
+        files = glob.glob(os.path.join(output_path, relpath, model, prefix + '*'))
+        if not files:
+            return
+
     
     now = datetime.datetime.now()
     EMME_metadata = get_scenario_metadata(output_path)
@@ -210,6 +224,7 @@ def write_to_datalake(output_path, models, exclude):
         
 
 output_path = sys.argv[1]
+env = sys.argv[2]
 models = [
     ('resident', '', True),
     ('airport.CBX', '', True),
@@ -221,4 +236,4 @@ models = [
 exclude = [
     'final_pipeline.h5'
 ]
-write_to_datalake(output_path, models, exclude)
+write_to_datalake(output_path, models, exclude, env)

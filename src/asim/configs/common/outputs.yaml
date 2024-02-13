@@ -434,25 +434,6 @@ trips:
     - is_drive_loc
     - is_drive_prm
     - is_drive_mix
-    - parkLocation1Cost
-    - parkLocation2Cost
-    - parkLocation3Cost
-    - parkLocation4Cost
-    - parkLocation5Cost
-    - partySizeRideHailLocation1AutoDist
-    - partySizeRideHailLocation2AutoDist
-    - tnc_single_wait_time
-    - tnc_shared_wait_time
-    - taxi_wait_time
-    - c_ivt
-    - c_fwt
-    - c_xwt
-    - c_wacc
-    - c_wegr
-    - c_waux
-    - c_xfers
-    - c_walk_time
-    - c_xfers_pnr
 
   rename_columns:
     distance: distance_total
@@ -588,7 +569,6 @@ households:
     - beachactive
     - upscaleroom
     - hstallssam
-    - adultschenrl
     - external_MAZ
     - emp_hotel
     - ML_DIST
@@ -800,3 +780,7 @@ persons:
     rac1p: race
     hisp: hispanic
     perid: person_id
+
+tours:
+  rename_columns:
+    vehicle_occup_3.5: vehicle_occup_3_5

@@ -1,8 +1,8 @@
 Model,Alternative,Matrix,Index1,Index2,Value,Comment,Comment2,Comment3,Comment4,Comment5,End
-TravelTimeMatrix,L,traffic_skims_MD:MD_SOV_NT_M_TIME,default,,0,default travel time matrix for light vehicles, ,,TravelTimeMatrix,,End
-TravelTimeMatrix,I,traffic_skims_MD:MD_SOV_NT_M_TIME,default,,0,default travel time matrix for medim vehicles <9.6T, ,,TravelTimeMatrix,,End
-TravelTimeMatrix,M,traffic_skims_MD:MD_SOV_NT_M_TIME,default,,0,default travel time matrix for medium vehicles, ,,TravelTimeMatrix,,End
-TravelTimeMatrix,H,traffic_skims_MD:MD_SOV_NT_M_TIME,default,,0,default travel time matrix for heavy vehicles, ,,TravelTimeMatrix,,End
+TravelTimeMatrix,L,traffic_skims_MD:SOV_NT_M_TIME__MD,default,,0,default travel time matrix for light vehicles, ,,TravelTimeMatrix,,End
+TravelTimeMatrix,I,traffic_skims_MD:SOV_NT_M_TIME__MD,default,,0,default travel time matrix for medim vehicles <9.6T, ,,TravelTimeMatrix,,End
+TravelTimeMatrix,M,traffic_skims_MD:SOV_NT_M_TIME__MD,default,,0,default travel time matrix for medium vehicles, ,,TravelTimeMatrix,,End
+TravelTimeMatrix,H,traffic_skims_MD:SOV_NT_M_TIME__MD,default,,0,default travel time matrix for heavy vehicles, ,,TravelTimeMatrix,,End
 TripModeL,,,dispersion,,0.2572,,,,,,End
 TripModeL,,,portion,,-1.2099,,,,,,End
 TripModeI,,,dispersion,,0.2572,,,,,,End

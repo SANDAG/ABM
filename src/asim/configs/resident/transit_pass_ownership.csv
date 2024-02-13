@@ -18,3 +18,10 @@ util_inc_adj_transit_pass_cost,Income adjusted transit pass cost,"@df.transit_pa
 util_parking_cost_at_work,Parking cost at work,@df.exp_daily_work,0,coef_parking_cost_at_work_pass
 #util_total_acc_transit,Total accessibility (0.66*PK + 0.34*OP) by transit,@(0.66*df.trPkTotal+0.34*df.trOpTotal),0,coef_total_transit_acc_pass
 util_is_univ,University student,@df.is_university,0,coef_is_univ
+util_ft_ASC,ptype_ft calibration constant,@df.ptype == 1,0,coef_ft_asc
+util_pt_ASC,ptype_pt calibration constant,@df.ptype == 2,0,coef_pt_asc
+util_un_ASC,ptype_un calibration constant,@df.ptype == 3,0,coef_un_asc
+util_na_ASC,ptype_na calibration constant,@df.ptype == 4,0,coef_na_asc
+util_da_ASC,ptype_da calibration constant,@df.ptype == 5,0,coef_da_asc
+util_nd_ASC,ptype_nd calibration constant,@df.ptype == 6,0,coef_nd_asc
+util_ps_ASC,ptype_ps calibration constant,@df.ptype == 7,0,coef_ps_asc

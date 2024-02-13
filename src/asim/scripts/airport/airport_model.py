@@ -139,7 +139,7 @@ def create_tours(settings):
     emp_tours['purpose_id'] = 5
     emp_tours['party_size'] = 1
     emp_tours['nights'] = -99
-    emp_tours['income'] = 'emp_inc'
+    emp_tours['income'] = -99
     #choose employee park destination
     park_probs_sum = sum(employee_park['Employee Stalls']*employee_park['Share to Terminal'])
     employee_park = employee_park[employee_park['Share to Terminal'] > 0]

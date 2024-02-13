@@ -1,0 +1,23 @@
+SPEC: route_od_tnc.csv
+COEFFICIENTS: route_od_tnc_coefficients.csv
+
+SIZE_TERM_SELECTOR: route_od_tnc
+
+CHOOSER_SEGMENT_COLUMN_NAME: business_type
+
+SEGMENTS:
+  - name: all-tnc
+    size_terms:
+      - tnc_size_term
+      - tnc_eligibility
+      - luz_id
+    eligibility_term: tnc_eligibility
+
+SIMULATE_CHOOSER_COLUMNS:
+  - luz_id
+  - _route_start_time_period_
+
+RESULT_COL_NAME: origination_zone
+
+REQUIRE_ACCESSIBILITY: False
+ACCESSIBILITY_TERMS:

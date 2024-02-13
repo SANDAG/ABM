@@ -34,8 +34,8 @@ move settings_mp_temp.yaml settings_mp.yaml
 :: -------------------------------------------------------------------------------------------------
 :: Run ActivitySim
 :: ---------------------------------------------------------------------
-SET ANACONDA3_DIR=C:\Anaconda3
-SET ANACONDA2_DIR=C:\Anaconda2
+SET ANACONDA3_DIR=%CONDA_PREFIX%
+SET ANACONDA2_DIR=%CONDA_TWO_PREFIX%
 
 SET PATH=%ANACONDA3_DIR%\Library\bin;%PATH%
 SET PATH=%ANACONDA3_DIR%\Scripts;%ANACONDA3_DIR%\bin;%PATH%
