@@ -64,6 +64,10 @@ if %ITERATION% equ 1 (
     ECHO Running resident model pre-processing   
     %PYTHON3% src/asim/scripts/resident/2zoneSkim.py %PROJECT_DIRECTORY%
 
+    CD src\asim\scripts\parking
+    %PYTHON3% run.py
+    cd /d %PROJECT_DIRECTORY%
+
     %PYTHON3% src/asim/scripts/resident/resident_preprocessing.py input output %SCENYEAR%
 
     ECHO Running Airport models pre-processing

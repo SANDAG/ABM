@@ -1,0 +1,38 @@
+space_estimation_method: 'lm'
+cache_dir: "../../../../output/parking/cache"
+output_dir: "../../../../output/parking"
+plots_dir: "../../../../output/parking/plots"
+
+# Inputs
+inputs:
+  land_use: "../../../../input/mgra15_based_input2022.csv"
+  geometry: "../../../../input/mgra15.shp"
+  raw_parking_inventory: "../../../../input/mgra_parking_inventory.csv"
+
+outputs:
+  combined_df: '../../../../output/parking/final_parking_data.csv'           # Output from space estimation
+
+output_columns: 
+  combined_df: 
+    mgra:
+    exp_hourly:
+    exp_daily:
+    exp_monthly:
+    parking_type:
+    spaces: parking_spaces
+
+# Parameters
+walk_dist: 0.5
+walk_coef: -0.3
+
+# Which models to run, comment out any that you wish to not run. 
+# However, be sure that the input is ready for whatever the new first model is.
+# For example, if you have parking data cleaned up already, it can be fed into the 'create_districts' model.
+# Or if you manually estimated spaces, you can skip that model too.
+models:
+  - run_reduction
+  - run_imputation
+  - create_districts
+  - run_space_estimation
+  - run_expected_parking_cost
+  - write_output
