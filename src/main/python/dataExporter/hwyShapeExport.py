@@ -1,3 +1,4 @@
+import sys
 import geopandas
 import numpy as np
 import os
@@ -23,12 +24,16 @@ def export_highway_shape(scenario_path: str) -> geopandas.GeoDataFrame:
                                     "COJUR",  # count jurisdiction code
                                     "COSTAT",  # count station number
                                     "COLOC",  # count location code
-                                    "IFC",  # initial functional class
-                                    "IHOV",  # link operation type
-                                    "ITRUCK",  # truck restriction code
-                                    "ISPD",  # posted speed limit
-                                    "IWAY",  # one or two way operations
-                                    "IMED",  # median type
+                                    "FC",  # initial functional class
+                                    "HOV",  # link operation type
+                                    "EATRUCK",  # truck restriction code - Early AM
+                                    "AMTRUCK",  # truck restriction code - AM Peak
+                                    "MDTRUCK",  # truck restriction code - Midday
+                                    "PMTRUCK",  # truck restriction code - PM Peak
+                                    "EVTRUCK",  # truck restriction code - Evening
+                                    "SPD",  # posted speed limit
+                                    "WAY",  # one or two way operations
+                                    "MED",  # median type
                                     "AN",  # A node number
                                     "FXNM",  # cross street name at from end of link
                                     "BN",  # B node number
@@ -54,6 +59,11 @@ def export_highway_shape(scenario_path: str) -> geopandas.GeoDataFrame:
                                     "ABPRELOAD_EV",  # preloaded bus flow - to-from - Evening
                                     "BAPRELOAD_EV",  # preloaded bus flow - from-to - Evening
                                     "geometry"])  # WKT geometry
+    
+    # temporary so that the sensitivity summary on data lake works
+    # the sensitivity summary on data lake uses IFC (from TCOV) rather than FC (from TNED)
+    hwy_tcad['IFC'] = hwy_tcad['FC']
+    hwy_tcad.to_csv(os.path.join(scenario_path, "report", "hwyTcad.csv"), index=False)
 
     # read in loaded highway network for each time period
     for tod in ["EA", "AM", "MD", "PM", "EV"]:
@@ -200,17 +210,17 @@ def export_highway_shape(scenario_path: str) -> geopandas.GeoDataFrame:
                                   left_on="ID",
                                   right_on="ID1_" + tod)
 
-    # create string description of [IFC] field
-    conditions = [hwy_tcad["IFC"] == 1,
-                  hwy_tcad["IFC"] == 2,
-                  hwy_tcad["IFC"] == 3,
-                  hwy_tcad["IFC"] == 4,
-                  hwy_tcad["IFC"] == 5,
-                  hwy_tcad["IFC"] == 6,
-                  hwy_tcad["IFC"] == 7,
-                  hwy_tcad["IFC"] == 8,
-                  hwy_tcad["IFC"] == 9,
-                  hwy_tcad["IFC"] == 10]
+    # create string description of [FC] field
+    conditions = [hwy_tcad["FC"] == 1,
+                  hwy_tcad["FC"] == 2,
+                  hwy_tcad["FC"] == 3,
+                  hwy_tcad["FC"] == 4,
+                  hwy_tcad["FC"] == 5,
+                  hwy_tcad["FC"] == 6,
+                  hwy_tcad["FC"] == 7,
+                  hwy_tcad["FC"] == 8,
+                  hwy_tcad["FC"] == 9,
+                  hwy_tcad["FC"] == 10]
 
     choices = ["Freeway",
                "Prime Arterial",
@@ -223,7 +233,7 @@ def export_highway_shape(scenario_path: str) -> geopandas.GeoDataFrame:
                "Local Ramp",
                "Zone Connector"]
 
-    hwy_tcad["IFC_Desc"] = np.select(conditions, choices, default="")
+    hwy_tcad["FC_Desc"] = np.select(conditions, choices, default="")
 
     # calculate aggregate flows
     hwy_tcad["AB_Flow_SOV"] = hwy_tcad[["AB_Flow_SOV_EA",
@@ -336,13 +346,17 @@ def export_highway_shape(scenario_path: str) -> geopandas.GeoDataFrame:
                          "COJUR",
                          "COSTAT",
                          "COLOC",
-                         "IFC",
-                         "IFC_Desc",
-                         "IHOV",
-                         "ITRUCK",
-                         "ISPD",
-                         "IWAY",
-                         "IMED",
+                         "FC",
+                         "FC_Desc",
+                         "HOV",
+                         "EATRUCK",
+                         "AMTRUCK",
+                         "MDTRUCK",
+                         "PMTRUCK",
+                         "EVTRUCK",
+                         "SPD",
+                         "WAY",
+                         "MED",
                          "AN",
                          "FXNM",
                          "BN",
@@ -427,13 +441,17 @@ def export_highway_shape(scenario_path: str) -> geopandas.GeoDataFrame:
                              "COJUR": "count_jur",
                              "COSTAT": "count_stat",
                              "COLOC": "count_loc",
-                             "IFC": "ifc",
-                             "IFC_Desc": "ifc_desc",
-                             "IHOV": "ihov",
-                             "ITRUCK": "itruck",
-                             "ISPD": "post_speed",
-                             "IWAY": "iway",
-                             "IMED": "imed",
+                             "FC": "fc",
+                             "FC_Desc": "fc_desc",
+                             "HOV": "hov",
+                             "EATRUCK": "truck_ea",
+                             "AMTRUCK": "truck_am",
+                             "MDTRUCK": "truck_md",
+                             "PMTRUCK": "truck_pm",
+                             "EVTRUCK": "truck_ev",
+                             "SPD": "post_speed",
+                             "WAY": "way",
+                             "MED": "med",
                              "AN": "from_node",
                              "FXNM": "from_nm",
                              "BN": "to_node",
@@ -521,3 +539,6 @@ def export_highway_shape(scenario_path: str) -> geopandas.GeoDataFrame:
         crs=2230)
 
     return hwy_tcad
+
+scenario_path = sys.argv[1]
+export_highway_shape(scenario_path).to_file(os.path.join(scenario_path, "report", "hwyLoad.shp"))
