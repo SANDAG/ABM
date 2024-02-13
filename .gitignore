@@ -46,3 +46,6 @@ src/main/resources/pskill.exe
 
 # VS Code
 .vscode
+
+src/asim-cvm/data/
+src/asim-cvm/output/

@@ -2,57 +2,57 @@ industries:
   1: 
     description: agriculture_mining
     name: AGM
-    industry_factor: 0.0358
+    industry_factor: 0.1925
     industry_group: 1
   2: 
     description: manufacturing
     name: MFG
-    industry_factor: 0.0304
+    industry_factor: 0.057
     industry_group: 1
   3: 
     description: industry_utilities
     name: IUT
-    industry_factor: 0.0662
+    industry_factor: 0.47
     industry_group: 2
   4: 
     description: retail
     name: RET
-    industry_factor: 0.0302
+    industry_factor: 0.0347
     industry_group: 2
   5: 
     description: wholesale
     name: WHL
-    industry_factor: 0.0477
+    industry_factor: 0.0720
     industry_group: 1
   6: 
     description: construction
     name: CON
-    industry_factor: 0.0541
+    industry_factor: 0.1425
     industry_group: 2
   7: 
     description: transportation
     name: TRN
-    industry_factor: 0.0696
+    industry_factor: 0.1325
     industry_group: 2
   8: 
     description: info_finance_insurance_realestate_professional
     name: IFR
-    industry_factor: 0.0367
+    industry_factor: 0.056
     industry_group: 3
   9: 
     description: education_publicservices
     name: EPO
-    industry_factor: 0.0512
+    industry_factor: 0.1050
     industry_group: 4
   10: 
     description: medical_health
     name: MHS
-    industry_factor: 0.0327
+    industry_factor: 0.0530
     industry_group: 4
   11: 
     description: leisure_accommondation_food
     name: LAF
-    industry_factor: 0.0251
+    industry_factor: 0.0212
     industry_group: 3
   12:
     description: military
@@ -64,16 +64,16 @@ industries:
 industry_groups:
   1:
     beta_employment: 0.0104
-    constant: 0.2114
+    constant: 0.3684
   2:
     beta_employment: 0.0063
-    constant: 0
+    constant: 0.0733
   3:
     beta_employment: 0.005
-    constant: -0.211
+    constant: -0.2923
   4:
     beta_employment: 0.0064
-    constant: -0.835
+    constant: -0.0488
   5:
     beta_employment: 0
     constant: 99
