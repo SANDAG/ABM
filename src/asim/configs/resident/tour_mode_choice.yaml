@@ -54,6 +54,8 @@ NESTS:
           - TAXI
           - TNC_SINGLE
           - TNC_SHARED
+          - MICROTRANSIT
+          - NEV
       - name: SCHOOL_BUS
         coefficient: coef_nest_SCHOOL_BUS
         alternatives:
