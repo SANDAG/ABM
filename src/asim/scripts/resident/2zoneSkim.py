@@ -90,10 +90,10 @@ gpd_stops['Latitude'] = gpd_stops['geometry'].y
 stops["network_node_id"] = net.get_node_ids(gpd_stops['Longitude'], gpd_stops['Latitude'])
 stops["network_node_x"] = nodes["X"].loc[stops["network_node_id"]].tolist()
 stops["network_node_y"] = nodes["Y"].loc[stops["network_node_id"]].tolist()
-# B: Future BRT, E: regular express, premium express, sprinter\trolley, and coaster bus, L: Local bus, N: None. There should be no Ns
+# E: regular express, premium express, sprinter\trolley, and coaster bus, BRT L: Local bus, N: None. There should be no Ns
 stops['mode'] = np.where(stops['Mode']==10,'L',
-                np.where((stops['Mode']==4) | (stops['Mode']==5) | (stops['Mode']==8) | (stops['Mode']==9), 'E',
-                np.where((stops['Mode']==6) | (stops['Mode']==7),'B','N')))
+                np.where((stops['Mode']==4) | (stops['Mode']==5) | (stops['Mode']==8) | (stops['Mode']==9) | (stops['Mode']==6) | (stops['Mode']==7), 'E',
+                'N'))
 
 # %%
 # MAZ-to-MAZ Walk
@@ -175,7 +175,7 @@ maz_stop_walk0 = maz_stop_walk0.rename(columns = {'MAZ': 'maz'})
 maz_stop_walk0['maz'] = maz_stop_walk0['maz'].astype('int')
 maz_stop_walk0.sort_values(by=['maz'], inplace=True)
 
-modes = {"L": "local_bus", "E": "premium_transit"} #,, "B": "future_BRT"
+modes = {"L": "local_bus", "E": "premium_transit"}
 for mode, output in modes.items():
     max_walk_dist = parms['mmms']['max_maz_' + output + '_stop_walk_dist_feet'] / 5280.0
     maz_to_stop_walk_cost_out_mode = maz_to_stop_walk_cost_out[maz_to_stop_walk_cost_out['MODE'].str.contains(mode)].copy()
