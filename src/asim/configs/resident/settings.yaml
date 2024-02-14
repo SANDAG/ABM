@@ -99,6 +99,8 @@ input_table_list:
       - hh_mh
       - zip09
       - luz_id
+      - microtransit
+      - nev
 
 cleanup_pipeline_after_run: True
 
