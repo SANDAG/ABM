@@ -280,6 +280,16 @@ ebikeownership: 0.008
 ebikeMaxDist: 10.50
 escooterMaxDist: 2.00
 
+# Microtransit and NEV constants
+microtransitSpeed: 30
+microtransitCost: 125 #cents
+microtransitWaitTime: 12
+microtransitMaxDist: 4.5
+nevSpeed: 17
+nevCost: 125 #cents
+nevWaitTime: 12
+nevMaxDist: 3
+
 # cost of "average" monthly transit pass cost.  Used in transit pass ownership model.
 # cost of pass divided by 2 for age < 18 and 65+.
 monthly_transit_pass_cost: 100
