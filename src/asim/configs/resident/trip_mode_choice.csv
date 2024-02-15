@@ -374,7 +374,7 @@ util_TNC Single - Cost,TNC Single - Cost,"@(np.maximum(TNC_single_baseFare + df.
 #,TNC Shared,,,,,,,,,,,,,,,,,,,,,,,,
 util_TNC Shared_switch,TNC Shared - switch turn-off (depends on data availability),True,,,,,,,,,,,,,,,,,,,,-999,,,
 util_TNC Shared - In-vehicle time,TNC Shared - In-vehicle time,@df.s2_time_skims * TNC_shared_IVTFactor * df.time_factor,,,,,,,,,,,,,,,,,,,,coef_ivt,,,
-util_TNC Shared - Wait time,TNC Shared - Wait time,"@np.where(df.nev_available, nevWaitTime, np.where(df.microtransit_available, microtransitWaitTime, totalWaitSharedTNC)) * time_factor",,,,,,,,,,,,,,,,,,,,coef_wait,,,
+util_TNC Shared - Wait time,TNC Shared - Wait time,"@np.where(df.nev_available, nevWaitTime, np.where(df.microtransit_available, microtransitWaitTime, df.totalWaitSharedTNC)) * time_factor",,,,,,,,,,,,,,,,,,,,coef_wait,,,
 util_TNC Shared - Cost,TNC Shared - Cost,"@np.where(df.nev_available, nevCost, np.where(df.microtransit_available, microtransitCost, (np.maximum(TNC_shared_baseFare + df.s2_dist_skims * TNC_shared_costPerMile + df.s2_time_skims * TNC_shared_costPerMinute, TNC_shared_baseFare) * 100 + df.s2_cost_skims))) / (np.maximum(df.income,1000)**df.income_exponent)",,,,,,,,,,,,,,,,,,,,coef_income,,,
 #,School bus,,,,,,,,,,,,,,,,,,,,,,,,
 util_School Bus - Unavailable,School Bus - Unavailable,SCHBUS_available==0,,,,,,,,,,,,,,,,,,,,,-999,,
