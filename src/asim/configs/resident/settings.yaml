@@ -75,8 +75,6 @@ input_table_list:
       - educ
       - naics2_original_code
       - soc2
-      - microtransit
-      - nev
   - tablename: land_use
     filename: land_use.csv
     index_col: zone_id
