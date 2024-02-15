@@ -239,7 +239,7 @@ def _stop_purpose(
         nest_spec=nest_spec,
         locals_d=constants,
         trace_label=trace_label,
-        trace_choice_name="route_terminal_type",
+        trace_choice_name="route_next_stop_purpose",
         estimator=None,
     )
 
@@ -591,6 +591,19 @@ def route_stops(
             nonterminated_routes,
             model_settings=model_settings.location_type_settings,
             trace_label="stop_location_type",
+        )
+
+        # if next stop purpose is base, then the location type is base
+        nonterminated_routes[model_settings.location_type_settings.RESULT_COL_NAME] = np.where(
+            nonterminated_routes[model_settings.purpose_settings.NEXT_PURP_COL] == 'base',
+            "base",
+            nonterminated_routes[model_settings.location_type_settings.RESULT_COL_NAME]
+        )
+
+        tracing.print_summary(
+            model_settings.location_type_settings.RESULT_COL_NAME,
+            nonterminated_routes[model_settings.location_type_settings.RESULT_COL_NAME],
+            value_counts=True,
         )
 
         # Choose next stop location
