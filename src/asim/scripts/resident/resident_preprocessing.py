@@ -40,6 +40,7 @@ class Series15_Processor:
         self.parking_costs_file = os.path.join(self.output_dir, 'parking', 'expected_parking_costs.csv')
 
         self.walk_speed = 3  # mph
+        self.max_walk_transit_dist = 1 # miles
 
         self.ext_station_to_internal_mapping = {1:9279, 2:9387, 4:22324}
 
@@ -258,6 +259,21 @@ class Series15_Processor:
 
         self.landuse['walk_dist_local_bus'].fillna(999, inplace=True)
         self.landuse['walk_dist_premium_transit'].fillna(999, inplace=True)
+
+        # Setting microtransit distances to transit and cap walk distances at maximum value
+        self.landuse['micro_dist_local_bus'] = self.landuse['walk_dist_local_bus']
+        self.landuse['micro_dist_premium_transit'] = self.landuse['walk_dist_premium_transit']
+        self.landuse['walk_dist_local_bus'] = np.where(
+            self.landuse['walk_dist_local_bus'] > self.max_walk_transit_dist,
+            999,
+            self.landuse['walk_dist_local_bus']
+            )
+        self.landuse['walk_dist_premium_transit'] = np.where(
+            self.landuse['walk_dist_premium_transit'] > self.max_walk_transit_dist,
+            999,
+            self.landuse['walk_dist_premium_transit']
+            )
+
         #adding access/egress skims to mexico-side extenral stations
         for ext_taz, int_maz in self.ext_station_to_internal_mapping.items():
             self.landuse.loc[self.landuse.TAZ == ext_taz, 'walk_dist_local_bus'] = self.landuse.loc[int_maz, 'walk_dist_local_bus']
