@@ -285,10 +285,12 @@ microtransitSpeed: 30
 microtransitCost: 125 #cents
 microtransitWaitTime: 12
 microtransitMaxDist: 4.5
+microtransitDelayFactor: 2
 nevSpeed: 17
 nevCost: 125 #cents
 nevWaitTime: 12
 nevMaxDist: 3
+nevDelayFactor: 2
 
 # cost of "average" monthly transit pass cost.  Used in transit pass ownership model.
 # cost of pass divided by 2 for age < 18 and 65+.
