@@ -1,23 +1,101 @@
 purpose_settings:
   SPEC: route_stop_purpose.csv
   COEFFICIENTS: route_stop_purpose_coefficients.csv
+  ACCESSIBILITY_TERMS:
+    - estab_acc_hh_goods
 location_type_settings:
   RESULT_COL_NAME: next_stop_location_type
   SPEC: route_stop_location_type.csv
   COEFFICIENTS: route_stop_location_type_coefficients.csv
   LOGIT_TYPE: MNL
-location_settings:
+location_settings_estb:
   SPEC: route_stop_location.csv
   COEFFICIENTS: route_stop_location_coefficients.csv
   RESULT_COL_NAME: next_stop_location
   SEGMENTS:
-    - base
-    - warehouse
-    - intermodal
-    - residential
-    - commercial
-  SIZE_TERM_SELECTOR: commerce
+    - name: base
+    - name: warehouse
+      size_terms:
+        - warehouse_emp_trn_wrh
+        - warehouse_estb_attraction_ret_whl_trn
+      eligibility_term: warehouse_emp_trn_wrh
+    - name: intermodal
+      size_terms:
+        - is_port
+      eligibility_term: is_port
+    - name: residential
+      size_terms:
+        - residence_hh
+        - residence_hh_attraction_pkg
+        - residence_hh_attraction_service
+        - residence_emp_non_ws_wfh_oth
+      eligibility_term: residence_hh
+    - name: commercial
+      size_terms:
+        - commerce_emp_non_trn_wrh
+        - commerce_estb_attraction_ret_ifr_agm_whl_con_trn
+        - commerce_estb_attraction_mhs
+        - commerce_estb_attraction_ifr
+        - commerce_estb_attraction_epo
+        - commerce_estb_attraction_laf
+        - commerce_maint_emp_food_ret_oth
+      eligibility_term: commerce_emp_non_trn_wrh
+  SIZE_TERM_SELECTOR: stop_location
   CHOOSER_SEGMENT_COLUMN_NAME: next_stop_location_type
+  CONSTANTS:
+    vot_light: 67 # dollar per hour
+    vot_medium: 68
+    vot_heavy: 89
+  SIMULATE_CHOOSER_COLUMNS:
+    - business_type
+    - next_stop_purpose
+    - vehicle_type
+    - _prior_stop_location_
+    - _route_start_time_period_
+    - _time_period_
+location_settings_tnc:
+  SPEC: route_stop_location_tnc.csv
+  COEFFICIENTS: route_stop_location_coefficients_tnc.csv
+  RESULT_COL_NAME: next_stop_location
+  SEGMENTS:
+    - name: base
+    - name: warehouse
+      size_terms:
+        - warehouse_emp_trn_wrh
+        - warehouse_estb_attraction_ret_whl_trn
+      eligibility_term: warehouse_emp_trn_wrh
+    - name: intermodal
+      size_terms:
+        - is_port
+      eligibility_term: is_port
+    - name: residential
+      size_terms:
+        - residence_hh
+        - residence_hh_attraction_pkg
+        - residence_hh_attraction_service
+        - residence_emp_non_ws_wfh_oth
+      eligibility_term: residence_hh
+    - name: commercial
+      size_terms:
+        - commerce_emp_non_trn_wrh
+        - commerce_estb_attraction_ret_ifr_agm_whl_con_trn
+        - commerce_estb_attraction_mhs
+        - commerce_estb_attraction_ifr
+        - commerce_estb_attraction_epo
+        - commerce_estb_attraction_laf
+        - commerce_maint_emp_food_ret_oth
+      eligibility_term: commerce_emp_non_trn_wrh
+  SIZE_TERM_SELECTOR: stop_location_tnc
+  CHOOSER_SEGMENT_COLUMN_NAME: next_stop_location_type
+  CONSTANTS:
+    vot_tnc: 85
+  SIMULATE_CHOOSER_COLUMNS:
+    - business_type
+    - next_stop_purpose
+    - vehicle_type
+    - _prior_stop_location_
+    - _route_start_time_period_
+    - _time_period_
 dwell_settings:
   before_noon_column: before_noon
 travel_time_skim: TRK_M_TIME
