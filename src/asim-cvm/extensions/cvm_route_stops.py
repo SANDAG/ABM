@@ -53,6 +53,8 @@ class StopLoopPurposeSettings(LogitComponentSettings, extra="forbid"):
     preprocessor: PreprocessorSettings | None = None
     """Preprocessor settings for this model."""
 
+    ACCESSIBILITY_TERMS: list[str] | None = None
+
 
 class StopLoopLocationSettings(SimpleLocationComponentSettings, extra="forbid"):
     TERMINAL_ZONE_COL_NAME: str = "terminal_zone"

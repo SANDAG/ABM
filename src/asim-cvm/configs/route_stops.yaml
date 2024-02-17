@@ -53,6 +53,8 @@ location_settings_estb:
     - _prior_stop_location_
     - _route_start_time_period_
     - _time_period_
+    - terminal_zone
+    - route_elapsed_time
 location_settings_tnc:
   SPEC: route_stop_location_tnc.csv
   COEFFICIENTS: route_stop_location_coefficients_tnc.csv
@@ -62,7 +64,9 @@ location_settings_tnc:
     - name: warehouse
       size_terms:
         - warehouse_emp_trn_wrh
-        - warehouse_estb_attraction_ret_whl_trn
+        - warehouse_pickup_emp_ret
+        - warehouse_pickup_emp_whl
+        - warehouse_deliver_estb_attract_whl
       eligibility_term: warehouse_emp_trn_wrh
     - name: intermodal
       size_terms:
@@ -72,18 +76,16 @@ location_settings_tnc:
       size_terms:
         - residence_hh
         - residence_hh_attraction_pkg
-        - residence_hh_attraction_service
+        - residence_hh_attraction_food
         - residence_emp_non_ws_wfh_oth
       eligibility_term: residence_hh
     - name: commercial
       size_terms:
         - commerce_emp_non_trn_wrh
-        - commerce_estb_attraction_ret_ifr_agm_whl_con_trn
-        - commerce_estb_attraction_mhs
-        - commerce_estb_attraction_ifr
-        - commerce_estb_attraction_epo
-        - commerce_estb_attraction_laf
-        - commerce_maint_emp_food_ret_oth
+        - commerce_deliver_estb_attract
+        - commerce_pickup_emp_food
+        - commerce_pickup_emp_ret
+        - commerce_maint_emp_food_ret_bus
       eligibility_term: commerce_emp_non_trn_wrh
   SIZE_TERM_SELECTOR: stop_location_tnc
   CHOOSER_SEGMENT_COLUMN_NAME: next_stop_location_type
@@ -96,6 +98,8 @@ location_settings_tnc:
     - _prior_stop_location_
     - _route_start_time_period_
     - _time_period_
+    - terminal_zone
+    - route_elapsed_time
 dwell_settings:
   before_noon_column: before_noon
 travel_time_skim: TRK_M_TIME
