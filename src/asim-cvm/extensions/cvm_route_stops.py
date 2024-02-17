@@ -590,11 +590,15 @@ def route_stops(
         if "acc_hh_goods" in nonterminated_routes:
             nonterminated_routes.drop(["acc_hh_goods"], axis=1, inplace=True)
         
-        nonterminated_routes = nonterminated_routes.merge(
+        join_df = nonterminated_routes.merge(
             accessibility_df[['acc_hh_goods']],
             left_on="_prior_stop_location_",
             right_index=True,
         )
+
+        assert len(join_df) == len(nonterminated_routes)
+
+        nonterminated_routes["acc_hh_goods"] = join_df["acc_hh_goods"]
 
         # Choose next stop purpose
         nonterminated_routes = _stop_purpose(
@@ -642,23 +646,25 @@ def route_stops(
 
         # Choose next stop location
         # part 1 establishment routes
-        nonterminated_routes_estb = nonterminated_routes[nonterminated_routes["is_tnc"] == False]
+        nonterminated_routes_is_estb = (nonterminated_routes["is_tnc"] == False)
         nonterminated_routes_estb = _route_stop_location(
             state,
-            nonterminated_routes_estb,
+            nonterminated_routes[nonterminated_routes["is_tnc"] == False],
             network_los,
             model_settings.location_settings_estb,
         )
         # part 2 tnc routes
-        nonterminated_routes_tnc = nonterminated_routes[nonterminated_routes["is_tnc"] == True]
+        nonterminated_routes_is_tnc = (nonterminated_routes["is_tnc"] == True)
         nonterminated_routes_tnc = _route_stop_location(
             state,
-            nonterminated_routes_tnc,
+            nonterminated_routes[nonterminated_routes["is_tnc"] == True],
             network_los,
             model_settings.location_settings_tnc,
         )
         # combine the two parts
-        nonterminated_routes = pd.concat([nonterminated_routes_estb, nonterminated_routes_tnc])
+        nonterminated_routes[model_settings.location_settings_estb.RESULT_COL_NAME] = (
+            pd.concat([nonterminated_routes_estb, nonterminated_routes_tnc])[model_settings.location_settings_estb.RESULT_COL_NAME]
+        )
 
         next_stop_location[routes_continuing] = nonterminated_routes[
             model_settings.location_settings_estb.RESULT_COL_NAME
