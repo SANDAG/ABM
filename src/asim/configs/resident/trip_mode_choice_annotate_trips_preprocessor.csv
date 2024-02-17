@@ -280,9 +280,9 @@ microtransit available at origin,microtransit_orig,"reindex(land_use.microtransi
 microtransit available at destination,microtransit_dest,"reindex(land_use.microtransit, df[dest_col_name])"
 microtransit available,microtransit_available,(microtransit_orig > 0) & (microtransit_orig == microtransit_dest) & (od_skims['DIST'] < microtransitMaxDist)
 microtransit direct time,microtransit_direct_time,"np.maximum(microtransitSpeed/od_skims['DIST']*60, s2_time_skims)",
-microtransit total time,microtransit_time,"np.maximum(microtransit_direct_time + microtransitDiversionConstant, microtransitDiversonFactor*microtransit_direct_time)"
+microtransit total time,microtransit_time,"np.maximum(microtransit_direct_time + microtransitDiversionConstant, microtransitDiversionFactor*microtransit_direct_time)"
 nev available at origin,nev_orig,"reindex(land_use.nev, df[orig_col_name])"
 nev available at destination,nev_dest,"reindex(land_use.nev, df[dest_col_name])"
 nev available,nev_available,(nev_orig > 0) & (nev_orig == nev_dest) & (od_skims['DIST'] < nevMaxDist)
 nev direct time,nev_direct_time,"np.maximum(nevSpeed/od_skims['DIST']*60, s2_time_skims)",
-nev total time,microtransit_time,"np.maximum(nev_direct_time + nevDiversionConstant, nevDiversonFactor*nev_direct_time)"
+nev total time,microtransit_time,"np.maximum(nev_direct_time + nevDiversionConstant, nevDiversionFactor*nev_direct_time)"
