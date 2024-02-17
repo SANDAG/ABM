@@ -286,7 +286,7 @@ microtransitCost: 125 #cents
 microtransitWaitTime: 12
 microtransitMaxDist: 4.5
 microtransitDiversionConstant: 5
-microtranistDiversionFactor: 1.25
+microtransitDiversionFactor: 1.25
 nevSpeed: 17
 nevCost: 125 #cents
 nevWaitTime: 12
