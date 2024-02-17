@@ -22,7 +22,7 @@ input_table_list:
       - num_nonworker_adults
       - num_children
   - tablename: establishments
-    filename: SynthEstablishments_BaseYr_2024-01-04.csv
+    filename: SynthEstablishments_Year2022_v2024-02-14.csv
     index_col: establishment_id
     rename_columns:
       Establishment_ID: establishment_id
