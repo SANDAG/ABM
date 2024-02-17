@@ -1,12 +1,20 @@
 Description,Expression,warehouse,intermodal,residential,commercial
-distance,"_DIST@skims[('TRK_M_DIST','MD')]",1,1,1,1
-"Time Leg 1","@leg1_skims['TRK_M_TIME']",coef_dist_0_2,coef_dist_0_2,coef_dist_0_2,coef_dist_0_2
-"Time Leg 2","@leg2_skims['TRK_M_TIME']",coef_dist_0_2,coef_dist_0_2,coef_dist_0_2,coef_dist_0_2
-"Time Extra","@leg1_skims['TRK_M_TIME'] + leg2_skims['TRK_M_TIME'] - hypotenuse_skims['TRK_M_TIME']",coef_dist_0_2,coef_dist_0_2,coef_dist_0_2,coef_dist_0_2
-"Distance, piecewise linear from 0 to 1 miles","@_DIST.clip(0,1)",coef_dist_0_2,coef_dist_0_2,coef_dist_0_2,coef_dist_0_2
-"Distance, piecewise linear from 1 to 2 miles","@(_DIST-1).clip(0,1)",coef_dist_0_2,coef_dist_0_2,coef_dist_0_2,coef_dist_0_2
-"Distance, piecewise linear from 2 to 5 miles","@(_DIST-2)",coef_dist_2_5,coef_dist_2_5,coef_dist_2_5,coef_dist_2_5
-"Distance, piecewise linear from 5 to 15 miles","@(_DIST-5).clip(0,10)",coef_warehouse_dist_5_plus,coef_goods_dist_5_plus,coef_goods_dist_5_plus,coef_goods_dist_5_plus
-"Distance, piecewise linear for 15+ miles","@(_DIST-15.0).clip(0)",coef_warehouse_dist_5_plus,coef_goods_dist_5_plus,coef_goods_dist_5_plus,coef_goods_dist_5_plus
-Size variable,@np.log(df['size_term'].astype(np.float64)),1,1,1,1
-No attractions,@df['size_term']==0,-999,-999,-999,-999
+,_GEN_TT@((leg1_skims['TRK_L_TIME']+leg2_skims['TRK_L_TIME']+0.6*(leg1_skims['TRK_L_TOLLCOST']+leg2_skims['TRK_L_TOLLCOST'])/vot_light)*(df.vehicle_type=='LCV') + (leg1_skims['TRK_M_TIME']+leg2_skims['TRK_M_TIME']+0.6*(leg1_skims['TRK_M_TOLLCOST']+leg2_skims['TRK_M_TOLLCOST'])/vot_medium)*(df.vehicle_type=='SUT') + (leg1_skims['TRK_H_TIME']+leg2_skims['TRK_H_TIME']+0.6*(leg1_skims['TRK_H_TOLLCOST']+leg2_skims['TRK_H_TOLLCOST'])/vot_heavy)*(df.vehicle_type=='MUT')),1,1,1,1
+generalize travel time for both legs,@_GEN_TT,coef_gen_tt_warehouse,coef_gen_tt_intermodal,coef_gen_tt_residential,coef_gen_tt_commercial
+gen tt by elapse time,@_GEN_TT*df['route_elapsed_time']/1000,coef_gen_tt_elapsed_timed1000_warehouse,coef_gen_tt_elapsed_timed1000_intermodal,coef_gen_tt_elapsed_timed1000_residential,coef_gen_tt_elapsed_timed1000_commercial
+auto operating cost lcv,@leg1_skims['TRK_L_DIST']*0.227*(df.vehicle_type=='LCV'),coef_op_cost_lcv_warehouse,coef_op_cost_lcv_intermodal,coef_op_cost_lcv_residential,coef_op_cost_lcv_commercial
+auto operating cost sut,@leg1_skims['TRK_M_DIST']*0.237*(df.vehicle_type=='SUT'),coef_op_cost_sut_warehouse,coef_op_cost_sut_intermodal,coef_op_cost_sut_residential,coef_op_cost_sut_commercial
+auto operating cost mut,@leg1_skims['TRK_H_DIST']*0.282*(df.vehicle_type=='MUT'),coef_op_cost_mut_warehouse,coef_op_cost_mut_intermodal,coef_op_cost_mut_residential,coef_op_cost_mut_commercial
+gen tt stop is service,@_GEN_TT*(df['next_stop_purpose']=='service'),coef_gen_tt_stop_service_warehouse,coef_gen_tt_stop_service_intermodal,coef_gen_tt_stop_service_residential,coef_gen_tt_stop_service_commercial
+gen tt stop is maintenance,@_GEN_TT*(df['next_stop_purpose']=='maintenance'),coef_gen_tt_stop_maintenance_warehouse,coef_gen_tt_stop_maintenance_intermodal,coef_gen_tt_stop_maintenance_residential,coef_gen_tt_stop_maintenance_commercial
+gen tt stop is home,@_GEN_TT*(df['next_stop_purpose']=='home'),coef_gen_tt_stop_home_warehouse,coef_gen_tt_stop_home_intermodal,coef_gen_tt_stop_home_residential,coef_gen_tt_stop_home_commercial
+# size term,,,,,
+residence,"@np.log(df['residence_hh'].astype('float32')+df['residence_hh_attraction_pkg'].astype('float32')*(df['next_stop_purpose']=='goods_delivery')*(df['business_type'].isin(['TRN','RET']))+df['residence_hh_attraction_service'].astype('float32')*(df['next_stop_purpose']=='service')+df['residence_emp_non_ws_wfh_oth'].astype('float32')*(df['next_stop_purpose']=='home'))",,,coef_theta_residential,
+warehouse,"@np.log(df['warehouse_emp_trn_wrh'].astype('float32')+df['warehouse_estb_attraction_ret_whl_trn'].astype('float32')*(df['next_stop_purpose'].isin(['goods_delivery','service']))*(df['business_type'].isin(['RET','WHL','TRN'])))",coef_theta_warehouse,,,
+,"_COM_ESTB_RET_AGM_WHL_CON_TRN@(df['commerce_estb_attraction_ret_ifr_agm_whl_con_trn'].astype('float32')*(df['next_stop_purpose'].isin(['goods_delivery','service'])))",1,1,1,1
+,"_COM_ESTB_IFR@(df['commerce_estb_attraction_ifr'].astype('float32')*(df['next_stop_purpose'].isin(['goods_delivery','service']))*(df['business_type']=='IFR'))",1,1,1,1
+,"_COM_ESTB_MHS@(df['commerce_estb_attraction_mhs'].astype('float32')*(df['next_stop_purpose'].isin(['goods_delivery','service']))*(df['business_type']=='MHS'))",1,1,1,1
+,"_COM_ESTB_EPO@(df['commerce_estb_attraction_epo'].astype('float32')*(df['next_stop_purpose'].isin(['goods_delivery','service']))*(df['business_type']=='EPO'))",1,1,1,1
+,"_COM_ESTB_LAF@(df['commerce_estb_attraction_laf'].astype('float32')*(df['next_stop_purpose'].isin(['goods_delivery','service']))*(df['business_type'].isin(['WHL','TRN','LAF'])))",1,1,1,1
+,"_COM_MAINT_EMP@(df['commerce_maint_emp_food_ret_oth'].astype('float32')*(df['next_stop_purpose']=='maintenance'))",1,1,1,1
+commerce,@np.log(df['commerce_emp_non_trn_wrh'].astype('float32')+_COM_ESTB_RET_AGM_WHL_CON_TRN+_COM_ESTB_IFR+_COM_ESTB_MHS+_COM_ESTB_EPO+_COM_ESTB_LAF+_COM_MAINT_EMP),,,,coef_theta_commercial

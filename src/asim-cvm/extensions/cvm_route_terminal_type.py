@@ -143,17 +143,18 @@ def route_endpoint_type(
     )
 
     # the origin & destination location type for tnc routes are always "base"
-    routes[model_settings.RESULT_COL_NAME] = np.where(
-        routes["business_type"].isin(
-            [
-                BusinessTypes.TNCNRR.name, 
-                BusinessTypes.TNCRES.name, 
-                BusinessTypes.TNCRET.name
-            ]
-        ),
-        "base",
-        routes[model_settings.RESULT_COL_NAME]
-    )
+    if trace_label in ['route_origination_type', 'route_terminal_type']:
+        routes[model_settings.RESULT_COL_NAME] = np.where(
+            routes["business_type"].isin(
+                [
+                    BusinessTypes.TNCNRR.name, 
+                    BusinessTypes.TNCRES.name, 
+                    BusinessTypes.TNCRET.name
+                ]
+            ),
+            "base",
+            routes[model_settings.RESULT_COL_NAME]
+        )
 
     tracing.print_summary(
         model_settings.RESULT_COL_NAME,

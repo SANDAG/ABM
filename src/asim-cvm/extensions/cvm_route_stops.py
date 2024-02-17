@@ -53,6 +53,8 @@ class StopLoopPurposeSettings(LogitComponentSettings, extra="forbid"):
     preprocessor: PreprocessorSettings | None = None
     """Preprocessor settings for this model."""
 
+    ACCESSIBILITY_TERMS: list[str] | None = None
+
 
 class StopLoopLocationSettings(SimpleLocationComponentSettings, extra="forbid"):
     TERMINAL_ZONE_COL_NAME: str = "terminal_zone"
@@ -130,7 +132,8 @@ class StopLoopComponentSettings(PydanticReadable, extra="forbid"):
 
     purpose_settings: StopLoopPurposeSettings
     location_type_settings: RouteStopTypeSettings
-    location_settings: StopLoopLocationSettings
+    location_settings_estb: StopLoopLocationSettings
+    location_settings_tnc: StopLoopLocationSettings
     dwell_settings: DwellTimeSettings
     travel_time_skim: str
     """Name of the skim that contains the travel times.
@@ -239,7 +242,7 @@ def _stop_purpose(
         nest_spec=nest_spec,
         locals_d=constants,
         trace_label=trace_label,
-        trace_choice_name="route_terminal_type",
+        trace_choice_name="route_next_stop_purpose",
         estimator=None,
     )
 
@@ -285,17 +288,6 @@ def _route_stop_location(
         tracing.no_results(trace_label)
         return nonterminated_routes
 
-    # estimator = estimation.manager.begin_estimation(state, trace_label)
-    # if estimator:
-    #     estimator.write_coefficients(model_settings=model_settings)
-    #     estimator.write_spec(model_settings, tag="SPEC")
-    #     estimator.set_alt_id(model_settings.RESULT_COL_NAME)
-    #     estimator.write_table(
-    #         state.get_injectable("size_terms"), "size_terms", append=False
-    #     )
-    #     estimator.write_table(state.get_dataframe("land_use"), "landuse", append=False)
-    #     estimator.write_model_settings(model_settings, model_settings_file_name)
-
     from activitysim.abm.models.util.tour_destination import SizeTermCalculator
 
     size_term_calculator = SizeTermCalculator(state, model_settings.SIZE_TERM_SELECTOR)
@@ -306,7 +298,11 @@ def _route_stop_location(
     chooser_segment_column = model_settings.CHOOSER_SEGMENT_COLUMN_NAME
 
     choices_list = []
-    for segment_name in segments:
+    for segment in segments:
+        if isinstance(segment, dict):
+            segment_name = segment["name"]
+        else:
+            segment_name = segment
         segment_trace_label = tracing.extend_trace_label(trace_label, segment_name)
 
         if chooser_segment_column is not None:
@@ -330,11 +326,34 @@ def _route_stop_location(
             )
             continue
 
-        # Note: size_term_calculator omits zones with impossible alternatives
-        # (where dest size term is zero)
-        segment_destination_size_terms = size_term_calculator.dest_size_terms_df(
-            segment_name, segment_trace_label
-        )
+        # there are multiple size terms for each segment, defined in the setting
+        segment_destination_size_terms = []
+        segment_size_terms = None
+        eligibility_term = None
+
+        if isinstance(segment, dict):
+            eligibility_term = segment.get("eligibility_term", None)
+            # eligibility_term should be a string or None
+            assert eligibility_term is None or isinstance(
+                eligibility_term, str
+            ), f"eligibility_term should be a string or None, not {eligibility_term}"
+
+        for size_term in size_term_calculator.destination_size_terms.columns:
+            # Note: size_term_calculator omits zones with impossible alternatives
+            # (where dest size term is zero)
+            size_term_df = size_term_calculator.dest_size_terms_df(
+                size_term, segment_trace_label
+            )
+            size_term_df.columns = [size_term]
+            segment_destination_size_terms.append(size_term_df)
+        segment_destination_size_terms = pd.concat(segment_destination_size_terms, axis=1)
+       
+        # drop the alternatives that do not have non-zero size term in the eligibility term
+        if eligibility_term is not None:
+            segment_destination_size_terms = segment_destination_size_terms[
+                segment_destination_size_terms[eligibility_term] > 0
+            ]
+        
         spec = simulate.spec_for_segment(
             state,
             None,
@@ -376,6 +395,10 @@ def _route_stop_location(
 
         locals_dict.update(skims)
 
+        # keep the choosers columns specified in the model settings
+        if model_settings.SIMULATE_CHOOSER_COLUMNS:
+            choosers = choosers[model_settings.SIMULATE_CHOOSER_COLUMNS]
+
         choices = interaction_sample(
             state,
             choosers,
@@ -400,12 +423,6 @@ def _route_stop_location(
         # this will only happen with small samples (e.g. singleton) with no (e.g.) school segs
         logger.warning("%s no choices", trace_label)
         choices_df = pd.Series(name=model_settings.RESULT_COL_NAME)
-
-    # if estimator:
-    #     estimator.write_choices(choices_df)
-    #     choices_df = estimator.get_survey_values(choices_df, "tours", "destination")
-    #     estimator.write_override_choices(choices_df)
-    #     estimator.end_estimation()
 
     assign_in_place(nonterminated_routes, choices_df.to_frame())
 
@@ -529,6 +546,13 @@ def route_stops(
         categorical=True,
     )
 
+    # calculate additional accessibility variables - move these to preprocessor?
+    accessibility_df = state.get_table("commercial_accessibility")
+    accessibility_df['acc_hh_goods'] = np.log(
+        np.exp(accessibility_df['estab_acc_hh_food']) +
+        np.exp(accessibility_df['estab_acc_hh_package'])
+    )
+
     route_trip_num = 1
 
     cv_trips = []
@@ -562,6 +586,20 @@ def route_stops(
         # initialize next dwell time as 0
         dwell_time = pd.Series(0, index=nonterminated_routes.index, dtype=np.float32)
 
+        # get the accessibility at prior stop location
+        if "acc_hh_goods" in nonterminated_routes:
+            nonterminated_routes.drop(["acc_hh_goods"], axis=1, inplace=True)
+        
+        join_df = nonterminated_routes.merge(
+            accessibility_df[['acc_hh_goods']],
+            left_on="_prior_stop_location_",
+            right_index=True,
+        )
+
+        assert len(join_df) == len(nonterminated_routes)
+
+        nonterminated_routes["acc_hh_goods"] = join_df["acc_hh_goods"]
+
         # Choose next stop purpose
         nonterminated_routes = _stop_purpose(
             state, nonterminated_routes, model_settings.purpose_settings
@@ -582,7 +620,7 @@ def route_stops(
 
         # when terminating, set stop location to terminal zone location
         next_stop_location[~routes_continuing] = nonterminated_routes[
-            model_settings.location_settings.TERMINAL_ZONE_COL_NAME
+            model_settings.location_settings_estb.TERMINAL_ZONE_COL_NAME
         ][~routes_continuing]
 
         # when not terminating, choose next stop location type
@@ -593,15 +631,43 @@ def route_stops(
             trace_label="stop_location_type",
         )
 
-        # Choose next stop location
-        nonterminated_routes = _route_stop_location(
-            state,
-            nonterminated_routes,
-            network_los,
-            model_settings.location_settings,
+        # if next stop purpose is base, then the location type is base
+        nonterminated_routes[model_settings.location_type_settings.RESULT_COL_NAME] = np.where(
+            nonterminated_routes[model_settings.purpose_settings.NEXT_PURP_COL] == 'base',
+            "base",
+            nonterminated_routes[model_settings.location_type_settings.RESULT_COL_NAME]
         )
+
+        tracing.print_summary(
+            model_settings.location_type_settings.RESULT_COL_NAME,
+            nonterminated_routes[model_settings.location_type_settings.RESULT_COL_NAME],
+            value_counts=True,
+        )
+
+        # Choose next stop location
+        # part 1 establishment routes
+        nonterminated_routes_is_estb = (nonterminated_routes["is_tnc"] == False)
+        nonterminated_routes_estb = _route_stop_location(
+            state,
+            nonterminated_routes[nonterminated_routes["is_tnc"] == False],
+            network_los,
+            model_settings.location_settings_estb,
+        )
+        # part 2 tnc routes
+        nonterminated_routes_is_tnc = (nonterminated_routes["is_tnc"] == True)
+        nonterminated_routes_tnc = _route_stop_location(
+            state,
+            nonterminated_routes[nonterminated_routes["is_tnc"] == True],
+            network_los,
+            model_settings.location_settings_tnc,
+        )
+        # combine the two parts
+        nonterminated_routes[model_settings.location_settings_estb.RESULT_COL_NAME] = (
+            pd.concat([nonterminated_routes_estb, nonterminated_routes_tnc])[model_settings.location_settings_estb.RESULT_COL_NAME]
+        )
+
         next_stop_location[routes_continuing] = nonterminated_routes[
-            model_settings.location_settings.RESULT_COL_NAME
+            model_settings.location_settings_estb.RESULT_COL_NAME
         ][routes_continuing]
 
         np.random.seed(seed=42)
@@ -619,7 +685,7 @@ def route_stops(
         skim_dict = network_los.get_default_skim_dict()
         dskim = skim_dict.wrap_3d(
             orig_key="_prior_stop_location_",
-            dest_key=model_settings.location_settings.RESULT_COL_NAME,
+            dest_key=model_settings.location_settings_estb.RESULT_COL_NAME,
             dim3_key="_time_period_",
         )
         dskim.set_df(nonterminated_routes)

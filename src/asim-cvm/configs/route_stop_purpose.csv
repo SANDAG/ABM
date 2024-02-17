@@ -1,6 +1,8 @@
 Label,Description,Expression,base,goods_pickup,goods_delivery,service,maintenance,home,terminate
 # ASC,,,,,,,,,
 ,,~is_tnc,coef_asc_base,coef_asc_goods_pickup,coef_asc_goods_delivery,coef_asc_service,coef_asc_maintenance,coef_asc_home,coef_asc_terminal
+# accessibility,,,,,,,,,
+accessibility hh goods delivery,,acc_hh_goods,,,coef_acc_hh_goods_delivery,,,,
 # industry,,,,,,,,,
 construction,,(business_type=='CON')&(~is_tnc),,,coef_construction_goods_delivery,coef_construction_service,,,
 education,,(business_type=='EPO')&(~is_tnc),,,coef_education_goods_delivery,,,,
@@ -16,16 +18,15 @@ MUT,,(vehicle_type=='MUT')&(~is_tnc),,coef_mut_goods_pickup,,,,,
 # route purpose,,,,,,,,,
 goods,,(route_purpose=='goods')&(~is_tnc),,,,coef_goods_service,coef_goods_maintenance,coef_goods_home,coef_goods_terminal
 # customer type,,,,,,,,,
-non-residential,,(customer_type=='nonresidential')&(~is_tnc),,,coef_nonresidential_goods_delivery,coef_nonresidential_service,,,
-residential,,(customer_type=='residential')&(~is_tnc),,,coef_residential_goods_delivery,,,,coef_residential_terminal
-mixed,,(customer_type=='mixed')&(~is_tnc),,,coef_mixed_goods_delivery,coef_mixed_service,,coef_mixed_home,coef_mixed_terminal
+non-residential,,(customer_type=='nonresidential')&(~is_tnc),,,,coef_nonresidential_service,,,
+mixed,,(customer_type=='mixed')&(~is_tnc),,,,coef_mixed_service,,coef_mixed_home,coef_mixed_terminal
 # elapsed time,,,,,,,,,
 elapsed time mins,,route_elapsed_time * (~is_tnc),,,,coef_elapsed_service,coef_elapsed_maintenance,coef_elapsed_home,coef_elapsed_terminal
 # time period of day,,,,,,,,,
 am,,(_time_period_=='AM')&(~is_tnc),,,,,,,coef_am_terminal
 md,,(_time_period_=='MD')&(~is_tnc),,coef_md_goods_pickup,,,,,coef_md_terminal
 pm,,(_time_period_=='PM')&(~is_tnc),,coef_pm_goods_pickup,coef_pm_goods_delivery,,,coef_pm_home,
-ev,,(_time_period_=='EV')&(~is_tnc),,coef_ev_goods_pickup,,coef_ev_service,coef_ev_maintenance,coef_ev_home,coef_ev_terminal
+ev,,(_time_period_=='EV')&(~is_tnc),,coef_ev_goods_pickup,,,coef_ev_maintenance,coef_ev_home,coef_ev_terminal
 # origin trip purpose,,,,,,,,,
 goods_pickup,,(prior_stop_purpose=='goods_pickup')&(~is_tnc),,,,coef_prior_goods_pickup_next_service,coef_prior_goods_pickup_next_maint,,
 goods_delivery,,(prior_stop_purpose=='goods_delivery')&(~is_tnc),,coef_prior_goods_delivery_next_pickup,,coef_prior_goods_delivery_next_service,coef_prior_goods_delivery_next_maint,,
