@@ -6,7 +6,7 @@ import numba as nb
 import numpy as np
 import pandas as pd
 
-from activitysim.core import config, estimation, simulate, workflow, logit
+from activitysim.core import config, estimation, simulate, workflow, logit, tracing
 from activitysim.core.configuration.logit import LogitComponentSettings
 
 from .cvm_enum import (
@@ -159,6 +159,12 @@ def route_purpose_and_vehicle(
 
     # convert indexes to alternative names
     choices = pd.Series(model_spec.columns[choices.values], index=choices.index)
+
+    tracing.print_summary(
+        "purpuse_customer_vehicle choice",
+        choices,
+        value_counts=True,
+    )
 
     # get the alternatives file
     alternatives_df = simulate.read_model_alts(
