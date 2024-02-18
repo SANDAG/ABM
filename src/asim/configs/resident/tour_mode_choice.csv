@@ -268,7 +268,7 @@ util_TNC_LOC_In_vehicle_time,TNC_LOC - In-vehicle time,@(odt_skims['TNCOUT_LOC_T
 util_TNC_LOC_iwait_time,TNC_LOC - First iwait time,@(odt_skims['TNCOUT_LOC_FIRSTWAIT']) + (dot_skims['TNCIN_LOC_FIRSTWAIT'])*df.time_factor,,,,,,,,,,,,,,,coef_wait,,,,,,,,
 util_TNC_LOC_transfer_wait_time,TNC_LOC - transfer wait time,@(odt_skims['TNCOUT_LOC_XFERWAIT'] + dot_skims['TNCIN_LOC_XFERWAIT']) *df.time_factor,,,,,,,,,,,,,,,coef_xwait,,,,,,,,
 util_TNC_LOC_number_of_transfers,TNC_LOC - number of transfers,"@(-23+23*np.exp(0.414*np.clip(odt_skims['TNCOUT_LOC_XFERS'], a_min=None,a_max=4))) + (-23+23*np.exp(0.414*np.clip(dot_skims['TNCIN_MIX_XFERS'], a_min=None,a_max=4))) *df.time_factor",,,,,,,,,,,,,,,coef_xferdrive,,,,,,,,
-util_TNC_LOC_TNC_time,TNC_LOC - TNC time,@(odt_skims['TNCOUT_LOC_ACC'] + dot_skims['TNCIN_LOC_ACC']),,,,,,,,,,,,,,,coef_acctime,,,,,,,,
+util_TNC_LOC_TNC_time,TNC_LOC - TNC time,@(odt_skims['TNCOUT_LOC_ACC'] + dot_skims['TNCIN_LOC_ACC']) * df.time_factor,,,,,,,,,,,,,,,coef_acctime,,,,,,,,
 util_TNC_LOC_Walk_egress_time_(at_attraction_end),TNC_LOC - Walk egress time (at attraction end),@2 * df.dest_local_time * df.time_factor,,,,,,,,,,,,,,,coef_acctime,,,,,,,,
 util_TNC_LOC_Walk_other_time,TNC_LOC - Walk other time,@(odt_skims['TNCOUT_LOC_XFERWALK'] + dot_skims['TNCIN_LOC_XFERWALK']) *df.time_factor,,,,,,,,,,,,,,,coef_xwalk,,,,,,,,
 util_TNC_LOC_Fare_and_operating_cost,TNC_LOC - Fare ,@(odt_skims['TNCOUT_LOC_FARE'] + dot_skims['TNCIN_LOC_FARE'])*100/df.cost_sensitivity,,,,,,,,,,,,,,,coef_income,,,,,,,,
