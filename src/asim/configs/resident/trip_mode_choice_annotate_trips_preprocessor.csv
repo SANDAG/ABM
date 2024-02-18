@@ -287,7 +287,7 @@ nev available at origin,nev_orig,"reindex(land_use.nev, df[orig_col_name])"
 nev available at destination,nev_dest,"reindex(land_use.nev, df[dest_col_name])"
 nev available,nev_available,(nev_orig > 0) & (nev_orig == nev_dest) & (od_skims['DIST'] < nevMaxDist)
 nev direct time,nev_direct_time,"np.maximum(od_skims['DIST']/nevSpeed*60, s2_time_skims)"
-nev total time,microtransit_time,"np.maximum(nev_direct_time + nevDiversionConstant, nevDiversionFactor*nev_direct_time)"
+nev total time,nev_time,"np.maximum(nev_direct_time + nevDiversionConstant, nevDiversionFactor*nev_direct_time)"
 # Microtransit and NEV access to transit,,,
 outbound microtransit access available,microtransit_access_available_out,(microtransit_orig>0) & (origin_micro_prm_dist<microtransitMaxDist)
 outbound microtransit direct access time,microtransit_direct_access_time_out,"np.maximum(origin_micro_prm_dist/microtransitSpeed*60, odt_skims['TNCOUT_PRM_ACC'])"
