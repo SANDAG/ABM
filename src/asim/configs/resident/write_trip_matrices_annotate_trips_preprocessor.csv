@@ -467,3 +467,18 @@ Description,Target,Expression
 ,cost_total,costOperatingDrive+costTollDrive+costFareTransit+df.cost_parking+df.cost_fare_drive+df.cost_fare_mm
 #,,
 ,value_of_time_category_id,"np.where(vot1,1,np.where(vot2,2,3))"
+#,,
+microtransit available at origin,microtransit_orig,"reindex(land_use.microtransit, df[orig_col_name])"
+microtransit available at destination,microtransit_dest,"reindex(land_use.microtransit, df[dest_col_name])"
+microtransit available,microtransit_available,(microtransit_orig > 0) & (microtransit_orig == microtransit_dest) & (od_skims['DIST'] < microtransitMaxDist)
+nev available at origin,nev_orig,"reindex(land_use.nev, df[orig_col_name])"
+nev available at destination,nev_dest,"reindex(land_use.nev, df[dest_col_name])"
+nev available,nev_available,(nev_orig > 0) & (nev_orig == nev_dest) & (od_skims['DIST'] < nevMaxDist)
+outbound microtransit access available,microtransit_access_available_out,df.outbound & (microtransit_orig>0) & (origin_micro_prm_dist<microtransitMaxDist)
+outbound nev access available,nev_access_available_out,df.outbound & (nev_orig>0) & (origin_micro_prm_dist<nevMaxDist)
+outbound microtransit egress available,microtransit_egress_available_out,df.outbound & (microtransit_dest>0) & (dest_micro_prm_dist>maxWalkIfMTAccessAvailable) & (dest_micro_prm_dist<microtransitMaxDist)
+outbound nev egress available,nev_egress_available_out,df.outbound & (nev_dest>0) & (dest_micro_prm_dist>maxWalkIfMTAccessAvailable) & (dest_micro_prm_dist<nevMaxDist)
+inbound microtransit access available,microtransit_access_available_in,~df.outbound & (microtransit_orig>0) & (origin_micro_prm_dist>maxWalkIfMTAccessAvailable) & (origin_micro_prm_dist<microtransitMaxDist)
+inbound nev access available,nev_access_available_in,~df.outbound & (nev_orig>0) & (origin_micro_prm_dist>maxWalkIfMTAccessAvailable) & (origin_micro_prm_dist<nevMaxDist)
+inbound microtransit egress available,microtransit_egress_available_in,~df.outbound & (microtransit_dest>0) & (dest_micro_prm_dist<microtransitMaxDist)
+inbound nev egress available,nev_egress_available_in,~df.outbound & (nev_dest>0) & (dest_micro_prm_dist<nevMaxDist)
