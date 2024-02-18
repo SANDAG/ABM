@@ -468,6 +468,8 @@ Description,Target,Expression
 #,,
 ,value_of_time_category_id,"np.where(vot1,1,np.where(vot2,2,3))"
 #,,
+,origin_micro_prm_dist,"reindex(land_use.micro_dist_premium_transit, trips.origin)"
+,dest_micro_prm_dist,"reindex(land_use.micro_dist_premium_transit, trips.destination)"
 microtransit available at origin,microtransit_orig,"reindex(land_use.microtransit, trips.origin)"
 microtransit available at destination,microtransit_dest,"reindex(land_use.microtransit, trips.destination)"
 microtransit available,microtransit_available,(microtransit_orig > 0) & (microtransit_orig == microtransit_dest) & (od_skims['DIST'] < microtransitMaxDist)
