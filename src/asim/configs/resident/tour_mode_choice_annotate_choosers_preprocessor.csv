@@ -273,7 +273,7 @@ nev total time,nev_time,"np.maximum(nev_direct_time + nevDiversionConstant, nevD
 # Microtransit and NEV access to transit,,,
 microtransit access available,microtransit_access_available,(microtransit_orig>0) & (origin_micro_prm_dist<microtransitMaxDist),
 microtransit direct access time,microtransit_direct_access_time,"np.maximum(2*(origin_micro_prm_dist/microtransitSpeed*60), odt_skims['TNCOUT_PRM_ACC'] + dot_skims['TNCIN_PRM_ACC'])",
-microtransit access time,microtransit_access_time,"2*microtransitwaitTime + np.maximum(microtransit_direct_access_time + microtransitDiversionConstant, microtransitDiversionFactor*microtransit_direct_access_time)",
+microtransit access time,microtransit_access_time,"2*microtransitWaitTime + np.maximum(microtransit_direct_access_time + microtransitDiversionConstant, microtransitDiversionFactor*microtransit_direct_access_time)",
 nev access available,nev_access_available,(nev_orig>0) & (origin_micro_prm_dist<nevMaxDist),
 nev direct access time,nev_direct_access_time,"np.maximum(2*(origin_micro_prm_dist/nevSpeed*60), odt_skims['TNCOUT_PRM_ACC'] + dot_skims['TNCIN_PRM_ACC'])",
 nev access time,nev_access_time,"2*nevWaitTime + np.maximum(nev_direct_access_time + nevDiversionConstant, nevDiversionFactor*nev_direct_access_time)",
