@@ -346,6 +346,9 @@ def route_endpoint(
             size_term_df.columns = [size_term]
             segment_destination_size_terms.append(size_term_df)
         segment_destination_size_terms = pd.concat(segment_destination_size_terms, axis=1)
+
+        # size term fillna with 0
+        segment_destination_size_terms.fillna(0, inplace=True)
        
         # drop the alternatives that do not have non-zero size term in the eligibility term
         if eligibility_term is not None:
