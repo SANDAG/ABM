@@ -634,6 +634,13 @@ def route_stops(
             trace_label="stop_location_type",
         )
 
+        # when terminating, the next stop location type is terminal type
+        nonterminated_routes[model_settings.location_type_settings.RESULT_COL_NAME] = np.where(
+            ~routes_continuing,
+            nonterminated_routes["terminal_stop_type"],
+            nonterminated_routes[model_settings.location_type_settings.RESULT_COL_NAME],
+        )
+
         # if next stop purpose is base, then the location type is base
         nonterminated_routes[model_settings.location_type_settings.RESULT_COL_NAME] = np.where(
             nonterminated_routes[model_settings.purpose_settings.NEXT_PURP_COL] == 'base',
@@ -672,6 +679,8 @@ def route_stops(
         next_stop_location[routes_continuing] = nonterminated_routes[
             model_settings.location_settings_estb.RESULT_COL_NAME
         ][routes_continuing]
+
+        nonterminated_routes[model_settings.location_settings_estb.RESULT_COL_NAME] = next_stop_location
 
         np.random.seed(seed=42)
 
@@ -730,6 +739,7 @@ def route_stops(
         route_trip_num += 1
         nonterminated_routes = nonterminated_routes[routes_continuing]
         prior_stop_location = next_stop_location[routes_continuing]
+        nonterminated_routes["_prior_stop_location_"] = prior_stop_location
 
     logger.info(f"{trace_label}: all routes terminated")
     cv_trips_frame = pd.concat(cv_trips)
