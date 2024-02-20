@@ -1,9 +1,8 @@
 coefficient_name,value,constrain
 coef_asc_base,0,T
-coef_asc_warehouse,-2.172872233,F
-coef_asc_intermodal,-5.395348008,F
-coef_asc_residential,0.785458935,F
-coef_asc_commercial,0.06489594,F
+coef_asc_warehouse,-2.45505,F
+coef_asc_residential,0.75578,F
+coef_asc_commercial,0.22846,F
 coef_origin_base_warehouse,-1.273158452,F
 coef_origin_base_residential,-1.841172438,F
 coef_origin_base_commercial,-1.400331329,F
@@ -20,6 +19,5 @@ coef_leisure_commercial,-0.793908127,F
 coef_sut_residential,-0.76578341,F
 coef_mut_residential,-1.56547074,F
 coef_goods_warehouse,0.591828418,F
-coef_goods_intermodal,1.551167516,F
 coef_residential_commercial,-0.701729214,F
 coef_mixed_warehouse,0.534406046,F
