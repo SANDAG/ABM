@@ -53,8 +53,12 @@ def route_start_time(
 
     start_times = []
 
+    routes["random"] = state.get_rn_generator().random_for_df(
+        routes
+    )
+
     for routes_keys, routes_chunk in routes.groupby(i_keys):
-        r = np.random.default_rng().random(size=len(routes_chunk))
+        r = routes_chunk['random'].values
         routes_c_choices = cross_choice_maker(probs.loc[routes_keys].values, r)
         # convert from 0-bsaed to 1-based
         routes_c_choices = routes_c_choices + 1

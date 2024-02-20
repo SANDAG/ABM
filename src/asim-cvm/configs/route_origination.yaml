@@ -10,11 +10,12 @@ SEGMENTS:
   - name: warehouse
     size_terms:
       - warehouse_emp_trn_wrh
+      - warehouse_emp_whl      
     eligibility_term: warehouse_emp_trn_wrh
-  - name: intermodal
-    size_terms:
-      - is_port
-    eligibility_term: is_port
+##  - name: intermodal
+##    size_terms:
+##      - is_port
+##    eligibility_term: is_port
   - name: residential
     size_terms:
       - residence_hh

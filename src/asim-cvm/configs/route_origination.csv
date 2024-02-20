@@ -1,11 +1,11 @@
-Description,Expression,warehouse,intermodal,residential,commercial
-,_GEN_TT@((skims['TRK_L_TIME'] + skims['TRK_L_TOLLCOST'] / vot_light * 0.6)*(df.vehicle_type=='LCV') + (skims['TRK_M_TIME'] + skims['TRK_M_TOLLCOST'] / vot_medium * 0.6)*(df.vehicle_type=='SUT') + (skims['TRK_H_TIME'] + skims['TRK_H_TOLLCOST'] / vot_heavy * 0.6)*(df.vehicle_type=='MUT')),1,1,1,1
-generalized travel time,@_GEN_TT,coef_gen_tt_warehouse,coef_gen_tt_intermodal,coef_gen_tt_residential,coef_gen_tt_commercial
-generalized travel time AGM,@_GEN_TT*(df.business_type=='AGM'),coef_gen_tt_agm_warehouse,coef_gen_tt_agm_intermodal,coef_gen_tt_agm_residential,coef_gen_tt_agm_commercial
-generalized travel time CON,@_GEN_TT*(df.business_type=='CON'),coef_gen_tt_con_warehouse,coef_gen_tt_con_intermodal,coef_gen_tt_con_residential,coef_gen_tt_con_commercial
-generalized travel time EPO,@_GEN_TT*(df.business_type=='EPO'),coef_gen_tt_epo_warehouse,coef_gen_tt_epo_intermodal,coef_gen_tt_epo_residential,coef_gen_tt_epo_commercial
-generalized travel time IUT,@_GEN_TT*(df.business_type=='IUT'),coef_gen_tt_iut_warehouse,coef_gen_tt_iut_intermodal,coef_gen_tt_iut_residential,coef_gen_tt_iut_commercial
-#size terms,,,,,
-,@np.log(df.residence_hh.astype('float32')+df.residence_emp_non_ws_wfh.astype('float32')),,,coef_theta_residential,
-,@np.log(df.warehouse_emp_trn_wrh.astype('float32')),coef_theta_warehouse,,,
-,@np.log(df.commerce_emp_non_trn_wrh.astype('float32')+(df.commerce_emp_con.astype('float32')*(df.business_type=='CON')*(df.route_purpose!='maintenance'))+(df.commerce_emp_oth.astype('float32')*(df.business_type=='EPO')*(df.route_purpose!='maintenance'))+(df.commerce_emp_accm.astype('float32')*(df.business_type=='LAF')*(df.route_purpose!='maintenance'))+(df.commerce_emp_mnf.astype('float32')*(df.business_type=='MFG')*(df.route_purpose!='maintenance'))+(df.commerce_emp_hlth.astype('float32')*(df.business_type=='MHS')*(df.route_purpose!='maintenance'))+(df.commerce_emp_whl.astype('float32')*(df.business_type=='WHL')*(df.route_purpose!='maintenance'))),,,,coef_theta_commercial
+Description,Expression,warehouse,residential,commercial
+,_GEN_TT@((skims['TRK_L_TIME'] + skims['TRK_L_TOLLCOST'] / vot_light * 0.6)*(df.vehicle_type=='LCV') + (skims['TRK_M_TIME'] + skims['TRK_M_TOLLCOST'] / vot_medium * 0.6)*(df.vehicle_type=='SUT') + (skims['TRK_H_TIME'] + skims['TRK_H_TOLLCOST'] / vot_heavy * 0.6)*(df.vehicle_type=='MUT')),1,1,1
+generalized travel time,@_GEN_TT,coef_gen_tt_warehouse,coef_gen_tt_residential,coef_gen_tt_commercial
+generalized travel time AGM,@_GEN_TT*(df.business_type=='AGM'),coef_gen_tt_agm_warehouse,coef_gen_tt_agm_residential,coef_gen_tt_agm_commercial
+generalized travel time CON,@_GEN_TT*(df.business_type=='CON'),coef_gen_tt_con_warehouse,coef_gen_tt_con_residential,coef_gen_tt_con_commercial
+generalized travel time EPO,@_GEN_TT*(df.business_type=='EPO'),coef_gen_tt_epo_warehouse,coef_gen_tt_epo_residential,coef_gen_tt_epo_commercial
+generalized travel time IUT,@_GEN_TT*(df.business_type=='IUT'),coef_gen_tt_iut_warehouse,coef_gen_tt_iut_residential,coef_gen_tt_iut_commercial
+#size terms,,,,
+,@np.log(df.residence_hh.astype('float32')+df.residence_emp_non_ws_wfh.astype('float32')),,coef_theta_residential,
+,@np.log(df.warehouse_emp_trn_wrh.astype('float32')+df.warehouse_emp_whl.astype('float32')),coef_theta_warehouse,,
+,@np.log(df.commerce_emp_non_trn_wrh.astype('float32')+(df.commerce_emp_con.astype('float32')*(df.business_type=='CON')*(df.route_purpose!='maintenance'))+(df.commerce_emp_oth.astype('float32')*(df.business_type=='EPO')*(df.route_purpose!='maintenance'))+(df.commerce_emp_accm.astype('float32')*(df.business_type=='LAF')*(df.route_purpose!='maintenance'))+(df.commerce_emp_mnf.astype('float32')*(df.business_type=='MFG')*(df.route_purpose!='maintenance'))+(df.commerce_emp_hlth.astype('float32')*(df.business_type=='MHS')*(df.route_purpose!='maintenance'))+(df.commerce_emp_whl.astype('float32')*(df.business_type=='WHL')*(df.route_purpose!='maintenance'))),,,coef_theta_commercial

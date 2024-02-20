@@ -5,7 +5,6 @@ generalized travel time LAF,@_GEN_TT*(df.business_type=='LAF'),coef_gen_tt_laf_w
 generalized travel time TRN,@_GEN_TT*(df.business_type=='TRN'),coef_gen_tt_trn_warehouse,coef_gen_tt_trn_intermodal,coef_gen_tt_trn_residential,coef_gen_tt_trn_commercial
 generalized travel time EPO,@_GEN_TT*(df.business_type=='EPO'),coef_gen_tt_epo_warehouse,coef_gen_tt_epo_intermodal,coef_gen_tt_epo_residential,coef_gen_tt_epo_commercial
 generalized travel time mut,@_GEN_TT*(df.vehicle_type=='MUT'),coef_gen_tt_mut_warehouse,coef_gen_tt_mut_intermodal,coef_gen_tt_mut_residential,coef_gen_tt_mut_commercial
-generalized travel time residential terminal,@_GEN_TT*(df.terminal_stop_type=='residential'),,,coef_gen_tt_residential_terminal_residential,
 #size terms,,,,,
 ,@np.log(df.residence_hh.astype('float32')+df.residence_emp_non_ws_wfh.astype('float32')),,,coef_theta_residential,
 ,@np.log(df.warehouse_emp_trn_wrh.astype('float32')+df.warehouse_emp_whl.astype('float32')),coef_theta_warehouse,,,

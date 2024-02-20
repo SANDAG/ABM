@@ -1,9 +1,8 @@
 coefficient_name,value,constrain
 coef_asc_base,0,T
-coef_asc_warehouse,-4.267929551,F
-coef_asc_intermodal,-6.688034973,F
-coef_asc_residential,-2.31221706,F
-coef_asc_commercial,-1.541865651,F
+coef_asc_warehouse,-4.370674,F
+coef_asc_residential,-2.352644,F
+coef_asc_commercial,-1.540009,F
 coef_construction_warehouse,1.814542931,F
 coef_information_residential,0.688891167,F
 coef_wholesale_warehouse,1.732991287,F
