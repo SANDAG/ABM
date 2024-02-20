@@ -1,7 +1,7 @@
 coefficient_name,value,constrain
 coef_asc_base,0,T
-coef_asc_warehouse,-2.45505,F
-coef_asc_residential,0.75578,F
+coef_asc_warehouse,-2.43627,F
+coef_asc_residential,0.75323,F
 coef_asc_commercial,0.22846,F
 coef_origin_base_warehouse,-1.273158452,F
 coef_origin_base_residential,-1.841172438,F
