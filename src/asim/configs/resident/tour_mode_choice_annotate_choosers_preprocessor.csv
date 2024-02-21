@@ -284,3 +284,6 @@ microtransit egress time,microtransit_egress_time,"2*microtransitWaitTime + np.m
 nev egress available,nev_egress_available,(nev_dest>0) & (dest_micro_prm_dist>maxWalkIfMTAccessAvailable) & (dest_micro_prm_dist<nevMaxDist),
 nev direct egress time,nev_direct_egress_time,"np.maximum(dest_micro_prm_dist/nevSpeed*60, odt_skims['TNCOUT_PRM_EGR']) + np.maximum(dest_micro_prm_dist/nevSpeed*60, dot_skims['TNCIN_PRM_ACC'])",
 nev egress time,nev_egress_time,"2*microtransitWaitTime + np.maximum(nev_direct_egress_time + nevDiversionConstant, nevDiversionFactor*nev_direct_egress_time)",
+# Additional transfers from microtransit and NEV,,,
+microtransit/nev access transfer,mtnev_acc_xfer,int(microtransit_access_available | nev_access_available),
+microtransit/nev egress transfer,mtnev_egr_xfer,int(microtransit_egress_available | nev_egress_available),
