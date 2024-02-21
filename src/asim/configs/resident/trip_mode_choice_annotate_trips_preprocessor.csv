@@ -315,7 +315,7 @@ inbound nev access available,nev_access_available_in,~df.outbound & (nev_orig>0)
 inbound nev direct access time,nev_direct_access_time_in,"np.maximum(origin_micro_prm_dist/nevSpeed*60, odt_skims['TNCOUT_PRM_ACC'])"
 inbound nev access time,nev_access_time_in,"nevWaitTime + np.maximum(nev_direct_access_time_in + microtransitDiversionConstant, microtransitDiversionFactor*nev_direct_access_time_in)"
 # Additional transfers from microtransit and NEV,,
-microtransit/nev access transfer,mtnev_acc_xfer_out,int(microtransit_access_available_out | nev_access_available_out)
-microtransit/nev access transfer,mtnev_acc_xfer_in,int(microtransit_access_available_in | nev_access_available_in)
-microtransit/nev egress transfer,mtnev_egr_xfer_out,int(microtransit_egress_available_out | nev_egress_available_out)
-microtransit/nev egress transfer,mtnev_egr_xfer_in,int(microtransit_egress_available_in | nev_egress_available_in)
+microtransit/nev access transfer,mtnev_acc_xfer_out,microtransit_access_available_out | nev_access_available_out
+microtransit/nev access transfer,mtnev_acc_xfer_in,microtransit_access_available_in | nev_access_available_in
+microtransit/nev egress transfer,mtnev_egr_xfer_out,microtransit_egress_available_out | nev_egress_available_out
+microtransit/nev egress transfer,mtnev_egr_xfer_in,microtransit_egress_available_in | nev_egress_available_in
