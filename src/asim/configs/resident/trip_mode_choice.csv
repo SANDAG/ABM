@@ -325,7 +325,7 @@ util_TNCIN_PRM_transfer_wait_time,TNCIN_PRM - transfer wait time,@(odt_skims['TN
 util_TNCIN_PRM_number_of_transfers,TNCIN_PRM - number of transfers,"@(-23+23*np.exp(0.414*np.clip(odt_skims['TNCIN_PRM_XFERS'], a_min=None,a_max=4))) * df.time_factor * ~df.outbound",,,,,,,,,,,,,,,,coef_xferdrive,,,,,,,
 util_TNCIN_PRM_TNCIN_time,TNCIN_PRM - TNC time,@odt_skims['TNCIN_PRM_EGR'] * df.time_factor * ~df.outbound,,,,,,,,,,,,,,,,coef_acctime,,,,,,,
 util_TNCIN_PRM_Walk_access_time_(at_attraction_end),TNCIN_PRM - Walk access time (at attraction end),@(df.origin_prm_time) * df.time_factor * ~df.outbound,,,,,,,,,,,,,,,,coef_acctime,,,,,,,
-util_TNCIN_PRM_Walk_other_time,TNCIN_PRM - Walk other time,@(odt_skims['TNCOUT_PRM_XFERWALK']) * df.time_factor * ~df.outbound,,,,,,,,,,,,,,,,coef_xwalk,,,,,,,
+util_TNCIN_PRM_Walk_other_time,TNCIN_PRM - Walk other time,@(odt_skims['TNCIN_PRM_XFERWALK']) * df.time_factor * ~df.outbound,,,,,,,,,,,,,,,,coef_xwalk,,,,,,,
 util_TNCIN_PRM_Fare,TNCIN_PRM - Fare,"@(odt_skims['TNCIN_PRM_FARE'])*100/(np.maximum(df.income,1000)**df.income_exponent) * ~df.outbound",,,,,,,,,,,,,,,,coef_income,,,,,,,
 util_TNCIN_PRM_ASC,TNCIN_PRM - Alternative-specific constant,@df.tnc_prm_inb_asc * df.time_factor * ~df.outbound,,,,,,,,,,,,,,,,coef_ivt,,,,,,,
 util_TNC_PRM - Female,TNC_PRM - Female,@(df.female),,,,,,,,,,,,,,,,coef_female_tran,,,,,,,
