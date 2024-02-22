@@ -64,7 +64,7 @@ util_WalkTransit_In_vehicle_time_on_URB,WalkTransit - In-vehicle time on BRT,@(i
 util_WalkTransit_FIRST_wait_time,WalkTransit - First wait time,@(odt_skims['WALK_PRM_FIRSTWAIT'] + dot_skims['WALK_PRM_FIRSTWAIT']),,,,,,,coef_fwt,,,,
 util_WalkTransit_transfer_wait_time,WalkTransit - transfer wait time,@(odt_skims['WALK_PRM_XFERWAIT'] + dot_skims['WALK_PRM_XFERWAIT']),,,,,,,coef_xwt,,,,
 util_WALK_PRM_transfer_waLK_time,WALK_PRM - transfer walk time,@(odt_skims['WALK_PRM_XFERWALK'] + dot_skims['WALK_PRM_XFERWALK']),,,,,,,coef_waux,,,,
-util_WalkTransit_number_of_transfers,WalkTransit - number of transfers,@(odt_skims['WALK_PRM_XFERS'].clip(0) + dot_skims['WALK_PRM_XFERS'].clip(0)),,,,,,,coef_xfers,,,,
+util_WalkTransit_number_of_transfers,WalkTransit - number of transfers,@((odt_skims['WALK_PRM_XFERS'] + df.mtnev_egr_xfer).clip(0) + (dot_skims['WALK_PRM_XFERS'] + df.mtnev_egr_xfer).clip(0)),,,,,,,coef_xfers,,,,
 util_WalkTransit_Walk_access_time,WalkTransit - Walk access time,@2 * df.origin_prm_time,,,,,,,coef_wacc,,,,
 util_WalkTransit_Walk_egress_time,WalkTransit - Walk egress time,"@np.where(df.nev_egress_available, df.nev_egress_time, np.where(df.microtransit_egress_available, df.microtransit_egress_time, 2*df.dest_prm_time))",,,,,,,coef_wegr,,,,
 util_WalkTransit_Fare,WalkTransit - Fare,@(odt_skims['WALK_PRM_FARE'] + dot_skims['WALK_PRM_FARE']) * df.coef_cost,,,,,,,coef_one,,,,
