@@ -940,7 +940,7 @@ if __name__ == '__main__':
 
         print('RUNNING ACTIVITYSIM!')
         process = subprocess.Popen(
-            ['python', '-u', 'src/asim/simulation.py', '-c', config_dir, '-c', 'src/asim/configs/common' ,'-o', output_dir, '-d', data_dir, '-d', 'output/skims'],
+            ['python', '-u', 'src/asim/simulation.py', '-c', config_dir ,'-o', output_dir, '-d', data_dir, '-d', 'output/skims'],
             stdout=sys.stdout, stderr=subprocess.PIPE)
         _, stderr = process.communicate()
         if process.returncode != 0:
