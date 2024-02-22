@@ -29,7 +29,6 @@ max_maz_maz_walk_dist_feet = int(parms['mmms']['max_maz_maz_walk_dist_feet'])
 max_maz_maz_bike_dist_feet = int(parms['mmms']['max_maz_maz_bike_dist_feet'])
 max_maz_local_bus_stop_walk_dist_feet = int(parms['mmms']['max_maz_local_bus_stop_walk_dist_feet'])
 max_maz_premium_transit_stop_walk_dist_feet = int(parms['mmms']['max_maz_premium_transit_stop_walk_dist_feet'])
-max_maz_future_BRT_stop_walk_dist_feet = int(parms['mmms']['max_maz_future_BRT_stop_walk_dist_feet'])
 
 # %%
 walk_speed_mph  = float(parms['mmms']["walk_speed_mph"])
@@ -155,8 +154,7 @@ maz_to_stop_cost["DISTANCE"] = maz_to_stop_cost.eval("(((OMAZ_NODE_X-DSTOP_NODE_
 
 # B: Future BRT, E: regular express, premium express, sprinter\trolley, and coaster bus, L: Local bus, N: None. There should be no Ns
 maz_to_stop_walk_cost = maz_to_stop_cost[(maz_to_stop_cost["DISTANCE"] <= max_maz_local_bus_stop_walk_dist_feet / 5280.0) & (maz_to_stop_cost['MODE'] == 'L') | 
-                                            (maz_to_stop_cost["DISTANCE"] <= max_maz_premium_transit_stop_walk_dist_feet / 5280.0) & (maz_to_stop_cost['MODE'] == 'E') | 
-                                            (maz_to_stop_cost["DISTANCE"] <= max_maz_future_BRT_stop_walk_dist_feet / 5280.0) & (maz_to_stop_cost['MODE'] == 'B')].copy()
+                                            (maz_to_stop_cost["DISTANCE"] <= max_maz_premium_transit_stop_walk_dist_feet / 5280.0) & (maz_to_stop_cost['MODE'] == 'E')].copy()
 
 print(f"{datetime.now().strftime('%H:%M:%S')} Get Shortest Path Length...")
 
@@ -166,8 +164,7 @@ maz_to_stop_walk_cost["DISTWALK"] = net.shortest_path_lengths(maz_to_stop_walk_c
 print(f"{datetime.now().strftime('%H:%M:%S')} Remove Maz Stop Pairs Beyond Max Walk Distance...")
 
 maz_to_stop_walk_cost_out = maz_to_stop_walk_cost[(maz_to_stop_walk_cost["DISTANCE"] <= max_maz_local_bus_stop_walk_dist_feet / 5280.0) & (maz_to_stop_walk_cost['MODE'] == 'L') | 
-                                                    (maz_to_stop_walk_cost["DISTANCE"] <= max_maz_premium_transit_stop_walk_dist_feet / 5280.0) & (maz_to_stop_walk_cost['MODE'] == 'E') | 
-                                                    (maz_to_stop_walk_cost["DISTANCE"] <= max_maz_future_BRT_stop_walk_dist_feet / 5280.0) & (maz_to_stop_walk_cost['MODE'] == 'B')].copy()
+                                                    (maz_to_stop_walk_cost["DISTANCE"] <= max_maz_premium_transit_stop_walk_dist_feet / 5280.0) & (maz_to_stop_walk_cost['MODE'] == 'E')].copy()
 
 
 maz_stop_walk0 = pd.DataFrame(centroids['MAZ'])
