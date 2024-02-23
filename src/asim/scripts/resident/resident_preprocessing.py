@@ -41,6 +41,7 @@ class Series15_Processor:
         self.parking_costs_file = os.path.join(self.output_dir, 'parking', 'expected_parking_costs.csv')
 
         self.walk_speed = 3  # mph
+        self.max_walk_transit_dist = 1 # miles
 
         sandag_abm_prop_dir = os.path.join(project_dir, 'conf', 'sandag_abm.properties')
         sandag_abm_prop = util.load_properties(sandag_abm_prop_dir)
@@ -260,7 +261,6 @@ class Series15_Processor:
 
         self.landuse['walk_dist_local_bus'] = maz_stop_walk['walk_dist_local_bus'].reindex(self.landuse.index)
         self.landuse['walk_dist_premium_transit'] = maz_stop_walk['walk_dist_premium_transit'].reindex(self.landuse.index)
-
         self.landuse['walk_dist_local_bus'].fillna(999999, inplace=True)
         self.landuse['walk_dist_premium_transit'].fillna(999999, inplace=True)
 
