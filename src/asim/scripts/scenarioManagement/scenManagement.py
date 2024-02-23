@@ -110,6 +110,6 @@ util.write_yaml(_join(configs_dir, 'resident', 'vehicle_type_choice.yaml'), doc)
 
 sandag_abm_prop = util.load_properties(sandag_abm_prop_dir)
 doc = util.open_yaml(_join(scripts_dir, 'resident', '2zoneSkim_params.yaml'))
-doc['mmms']['max_maz_local_bus_stop_walk_dist_feet'] = float(sandag_abm_prop['walk.transit.connector.max.length'][0]) * 5280        # converting mile to feet
-doc['mmms']['max_maz_premium_transit_stop_walk_dist_feet'] = float(sandag_abm_prop['walk.transit.connector.max.length'][1]) * 5280  # converting mile to feet
+doc['mmms']['max_maz_local_bus_stop_walk_dist_feet'] = float(sandag_abm_prop['microtransit.transit.connector.max.length'][0]) * 5280        # converting mile to feet
+doc['mmms']['max_maz_premium_transit_stop_walk_dist_feet'] = float(sandag_abm_prop['microtransit.transit.connector.max.length'][1]) * 5280  # converting mile to feet
 util.write_yaml(_join(scripts_dir, 'resident', '2zoneSkim_params.yaml'), doc)
