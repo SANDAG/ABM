@@ -8,15 +8,7 @@ NO_EXTERNAL: 0
 # set below to be 1 for years before 2021, 0 otherwise
 PRE_COVID: 0
 
-max_local_walk_dist: 0.85
-max_prm_walk_dist: 1.2
-max_mix_walk_dist: 1.2
 walk_speed: 3 #mph
-
-max_local_walk_time: 17
-max_prm_walk_time: 24
-max_mix_walk_time: 24
-
 
 #HHT_NONE: 0
 #HHT_FAMILY_MARRIED: 1

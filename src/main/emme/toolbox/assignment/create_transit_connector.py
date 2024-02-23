@@ -8,6 +8,7 @@ desktop = modeller.desktop
 
 gen_utils = _m.Modeller().module("sandag.utilities.general")
 dem_utils = _m.Modeller().module("sandag.utilities.demand")
+load_properties = _m.Modeller().tool('sandag.utilities.properties')
 
 class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
 
@@ -26,6 +27,10 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
         self.create_connector_flag = _m.Attribute(bool)
         self.scenario = _m.Modeller().scenario
         self.period = _m.Attribute(unicode)
+
+        project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
+        main_directory = os.path.dirname(project_dir)
+        props = load_properties(os.path.join(main_directory, "conf", "sandag_abm.properties"))
       
         #self.scenario = scenario
         self.line_haul_modes_local = ["l"] # local
@@ -42,10 +47,10 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
         self.transit_modes = ["b","celpry"]
         self.line_haul_mode_specs = ["@num_stops_l=1,99 and not @network_adj=1,3","@num_stops_e=1,99 and not @network_adj=1,3"]
 
-        self.max_length_wlk = [1, 1.2] # length in miles
-        self.max_length_knr = [5, 5]
-        self.max_length_pnr = [10, 10]
-        self.max_length_tnc = [5, 5]
+        self.max_length_wlk = props['walk.transit.connector.max.length'] # length in miles
+        self.max_length_knr = props['knr.transit.connector.max.length']
+        self.max_length_pnr = props['pnr.transit.connector.max.length']
+        self.max_length_tnc = props['tnc.transit.connector.max.length']
 
         self.acc_modes = ["ufqQ", "uqQ", "fqQ", "qQ", "u", "f", "q", "Q"]
         

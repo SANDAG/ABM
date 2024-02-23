@@ -23,8 +23,9 @@ import traceback as _traceback
 import shutil as _shutil
 import time as _time
 import os
-from fnmatch import fnmatch as _fnmatch
+# from fnmatch import fnmatch as _fnmatch
 from math import log10
+import subprocess as _subprocess
 
 _join = os.path.join
 _dir = os.path.dirname
@@ -315,50 +316,79 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
         return emmebank_paths
 
     def _copy_dir(self, src, dst, file_masks, check_metadata=False):
-        for name in os.listdir(src):
-            src_path = _join(src, name)
-            skip_file = bool([1 for mask in file_masks if _fnmatch(src_path, mask)])
-            if skip_file:
-                continue
-            dst_path = _join(dst, name)
-            if os.path.isfile(src_path):
-                size = os.path.getsize(src_path)
-                if check_metadata and os.path.exists(dst_path):
-                    same_size = os.path.getsize(dst_path) == size
-                    same_time = os.path.getmtime(dst_path) == os.path.getmtime(src_path)
-                    if same_size and same_time:
-                        continue
-                self._report.append(_time.strftime("%c"))
-                self._report.append(dst_path + file_size(size))
-                self._stats["size"] += size
-                self._stats["count"] += 1
-                # shutil.copy2 performs 5-10 times faster on download, and ~20% faster on upload
-                # than os.system copy calls
-                src_time = os.path.getmtime(src_path)
-                if name == 'persons.csv':
-                    src_time = os.path.getmtime(src_path)
-                    if os.path.exists(dst_path):
-                        dest_time = os.path.getmtime(dst_path)
-                        if dest_time <= src_time:
-                            _shutil.copy2(src_path, dst_path)
-                            print "dest_time <= ori_time, copied, dst_path", dst_path
-                        else:
-                            print "dest_time > ori_time, not copied, dst_path", dst_path
-                    else:
-                        _shutil.copy2(src_path, dst_path)
-                        print "dest file not exist, copied"
-                else:
-                    _shutil.copy2(src_path, dst_path)
-                self._report.append(_time.strftime("%c"))
-            elif os.path.isdir(src_path):
-                if not os.path.exists(dst_path):
-                    os.mkdir(dst_path)
-                self._report.append(dst_path)
-                self._copy_dir(src_path, dst_path, file_masks, check_metadata)
+        
+        # windows xcopy is much faster than shutil
+        self._report.append(_time.strftime("%c"))
+        exclude_filename = "TEMP_file_manager_exclude.txt"
+        exclude_file = open(exclude_filename, "a+")
+        for x in file_masks + [exclude_filename, r"input\persons.csv"]:
+            exclude_file.write(x + '\n')
+        exclude_file.close()
+        output = _subprocess.check_output(['xcopy', '/Y/S/E', src, dst, "/exclude:" + exclude_filename])
+        self._report.append(output)
+        os.remove(exclude_filename)
+        self._report.append(_time.strftime("%c"))
+
+        # dont overwrite newer persons file
+        src_path = _join(src, r"input\persons.csv")
+        dst_path = _join(dst, r"input\persons.csv")
+        src_time = os.path.getmtime(src_path)
+        if os.path.exists(dst_path):
+            dest_time = os.path.getmtime(dst_path)
+            if dest_time <= src_time:
+                _shutil.copy2(src_path, dst_path)
+                print "dest_time <= ori_time, copied, dst_path", dst_path
+            else:
+                print "dest_time > ori_time, not copied, dst_path", dst_path
+        else:
+            _shutil.copy2(src_path, dst_path)
+            print "dest file not exist, copied"
+
+        # for name in os.listdir(src):
+        #     src_path = _join(src, name)
+        #     skip_file = bool([1 for mask in file_masks if _fnmatch(src_path, mask)])
+        #     if skip_file:
+        #         continue
+        #     dst_path = _join(dst, name)
+        #     if os.path.isfile(src_path):
+        #         size = os.path.getsize(src_path)
+        #         if check_metadata and os.path.exists(dst_path):
+        #             same_size = os.path.getsize(dst_path) == size
+        #             same_time = os.path.getmtime(dst_path) == os.path.getmtime(src_path)
+        #             if same_size and same_time:
+        #                 continue
+        #         self._report.append(_time.strftime("%c"))
+        #         self._report.append(dst_path + file_size(size))
+        #         self._stats["size"] += size
+        #         self._stats["count"] += 1
+        #         # shutil.copy2 performs 5-10 times faster on download, and ~20% faster on upload
+        #         # than os.system copy calls
+        #         src_time = os.path.getmtime(src_path)
+        #         if name == 'persons.csv':
+        #             src_time = os.path.getmtime(src_path)
+        #             if os.path.exists(dst_path):
+        #                 dest_time = os.path.getmtime(dst_path)
+        #                 if dest_time <= src_time:
+        #                     _shutil.copy2(src_path, dst_path)
+        #                     print "dest_time <= ori_time, copied, dst_path", dst_path
+        #                 else:
+        #                     print "dest_time > ori_time, not copied, dst_path", dst_path
+        #             else:
+        #                 _shutil.copy2(src_path, dst_path)
+        #                 print "dest file not exist, copied"
+        #         else:
+        #             _shutil.copy2(src_path, dst_path)
+        #         self._report.append(_time.strftime("%c"))
+        #     elif os.path.isdir(src_path):
+        #         if not os.path.exists(dst_path):
+        #             os.mkdir(dst_path)
+        #         self._report.append(dst_path)
+        #         self._copy_dir(src_path, dst_path, file_masks, check_metadata)
 
     def log_report(self):
-        size, count = file_size(self._stats["size"]), self._stats["count"]
-        name = "File copy report: copied {count} files {size}".format(count=count, size=size)
+        # size, count = file_size(self._stats["size"]), self._stats["count"]
+        # name = "File copy report: copied {count} files {size}".format(count=count, size=size)
+        name = "File copy report"
         report = _m.PageBuilder(title=name)
         report.add_html("<br>".join(self._report))
         _m.logbook_write(name, report.render())

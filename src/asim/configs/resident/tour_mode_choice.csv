@@ -247,7 +247,7 @@ util_KNR_MIX_In_vehicle_time_on_LTD_EXP,KNR_MIX - In-vehicle time on LTD and EXP
 util_KNR_MIX_In_vehicle_time_on_URB,KNR_MIX - In-vehicle time on BRT,@(ivt_brt_multiplier - 1) * (odt_skims['KNROUT_MIX_BRTIVTT'] + dot_skims['KNRIN_MIX_BRTIVTT']) *df.time_factor,,,,,,,,,,,,,,coef_ivt,,,,,,,,,
 util_KNR_MIX_FIRST_iwait_time,KNR_MIX - First iwait time,@(odt_skims['KNROUT_MIX_FIRSTWAIT'] + dot_skims['KNRIN_MIX_FIRSTWAIT'])*df.time_factor,,,,,,,,,,,,,,coef_wait,,,,,,,,,
 util_KNR_MIX_transfer_wait_time,KNR_MIX - transfer wait time,@(odt_skims['KNROUT_MIX_XFERWAIT'] + dot_skims['KNRIN_MIX_XFERWAIT'])*df.time_factor,,,,,,,,,,,,,,coef_xwait,,,,,,,,,
-util_KNR_MIX_number_of_transfers,KNR_MIX - number of transfers,"@(-23+23*np.exp(0.414*np.clip(odt_skims['PNROUT_MIX_XFERS'], a_min=None,a_max=4))) + (-23+23*np.exp(0.414*np.clip(dot_skims['PNRIN_MIX_XFERS'], a_min=None,a_max=4))) *df.time_factor",,,,,,,,,,,,,,coef_xferdrive,,,,,,,,,
+util_KNR_MIX_number_of_transfers,KNR_MIX - number of transfers,"@(-23+23*np.exp(0.414*np.clip(odt_skims['KNROUT_MIX_XFERS'], a_min=None,a_max=4))) + (-23+23*np.exp(0.414*np.clip(dot_skims['KNRIN_MIX_XFERS'], a_min=None,a_max=4))) *df.time_factor",,,,,,,,,,,,,,coef_xferdrive,,,,,,,,,
 util_KNR_MIX_KNR_time,KNR_MIX - KNR time,@(odt_skims['KNROUT_MIX_ACC'] + dot_skims['KNRIN_MIX_EGR'])*df.time_factor,,,,,,,,,,,,,,coef_acctime,,,,,,,,,
 util_KNR_MIX_KNR_cost,KNR_MIX - KNR cost,@(df.sr2_auto_op_cost * (odt_skims['KNROUT_MIX_ACC'] + dot_skims['KNRIN_MIX_EGR']) *driveSpeed )/df.cost_sensitivity,,,,,,,,,,,,,,coef_income,,,,,,,,,
 util_KNR_MIX_Walk_egress_time_(at_attraction_end),KNR_MIX - Walk egress time (at attraction end),@2 *df.dest_mix_time* df.time_factor,,,,,,,,,,,,,,coef_acctime,,,,,,,,,

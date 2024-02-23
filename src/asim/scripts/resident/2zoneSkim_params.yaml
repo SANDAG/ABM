@@ -1,14 +1,13 @@
 # Shapefiles and zonal setup - shapefile, expected to be in %INPUT_FOLDER%
 mazfile_name: "SANDAG_MGRA.shp" 
 maz_shape_maz_id: "MGRA"
-# maz_shape_taz_id: "zone17"
 
 # stop attributes CSV, expected to be in %INPUT_FOLDER%
 stop_attributes:
     file: "trstop.csv"
     id_field: "Stop_ID"
     x_field: "Longitude"
-    y_field: "Latitude" # make sure no indent before " L.."
+    y_field: "Latitude"
 
 # route attributes CSV, expected to be in %INPUT_FOLDER%
 route_attributes:
@@ -17,31 +16,21 @@ route_attributes:
     mode: "Mode"
     r_config: "Config"
 
-# land use CSV, expected to be in %ASIM_INPUTS%
-# land_use:
-#     file: "land_use.csv"
-# MAZ-MAZ and MAZ-stop
 mmms: 
-    # shapefile_name: "SANDAG_Bike_Net.shp" # changed
-    shapefile_name: "SANDAG_Bike_Net.shp" # changed
-    shapefile_node_name: "SANDAG_Bike_Node.shp" # added
+    shapefile_name: "SANDAG_Bike_Net.shp"
+    shapefile_node_name: "SANDAG_Bike_Node.shp"
     mmms_link_ref_id: "A" 
     mmms_link_nref_id: "B"
-    mmms_link_id: "ROADSEGID"  # changed
+    mmms_link_id: "ROADSEGID" 
     mmms_link_dirtravelAB: "AB_Lanes"
     mmms_link_dirtravelBA: "BA_Lanes"
-    mmms_link_fc: "Func_Class" # changed
-    mmms_link_len: "Shape_Leng" # changed
-    # mmms_node_fc: "FUNC_CLASS"
-    # mmms_node_ref_id: "REF_IN_ID"
-    # mmms_node_nref_id: "NREF_IN_ID"
-    # drive_stop_field: "canpnr"
-    # stop_parkcost_field: "dpark_cost"
+    mmms_link_fc: "Func_Class"
+    mmms_link_len: "Shape_Leng"
     max_maz_maz_walk_dist_feet: 15840
     max_maz_maz_bike_dist_feet: 26400
-    max_maz_local_bus_stop_walk_dist_feet: 23760     # 0.55 miles 
-    max_maz_premium_transit_stop_walk_dist_feet: 23760   # 
-    walk_speed_mph: 3.0 ## ask Nagendra for that
+    max_maz_local_bus_stop_walk_dist_feet: 5280     # 1 mile
+    max_maz_premium_transit_stop_walk_dist_feet: 6336   # 1.2 miles
+    walk_speed_mph: 3.0
     drive_speed_mph: 25.0
     maz_maz_walk_output: "maz_maz_walk.csv"
     maz_maz_bike_output: "maz_maz_bike.csv"

@@ -68,7 +68,7 @@ if %ITERATION% equ 1 (
     %PYTHON3% run.py
     cd /d %PROJECT_DIRECTORY%
 
-    %PYTHON3% src/asim/scripts/resident/resident_preprocessing.py input output %SCENYEAR%
+    %PYTHON3% src/asim/scripts/resident/resident_preprocessing.py input output %SCENYEAR% %PROJECT_DIRECTORY%
 
     ECHO Running Airport models pre-processing
     %PYTHON3% src/asim/scripts/airport/airport_model.py -p -c src/asim/configs/airport.CBX -d input -o output/airport.CBX
@@ -83,7 +83,7 @@ if %ITERATION% equ 1 (
     %PYTHON3% src/asim/scripts/visitor/visitor_model.py -t -c src/asim/configs/visitor -d input -o output/visitor
 ) else (
     ECHO Running resident model pre-processing
-    %PYTHON3% src/asim/scripts/resident/resident_preprocessing.py input output %SCENYEAR%
+    %PYTHON3% src/asim/scripts/resident/resident_preprocessing.py input output %SCENYEAR% %PROJECT_DIRECTORY%
 )
 
 

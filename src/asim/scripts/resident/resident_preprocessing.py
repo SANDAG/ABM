@@ -10,12 +10,13 @@ import openmatrix as omx
 import numpy as np
 import pandas as pd
 import os
-import shutil
 from sys import argv
+import utilities as util
 
 data_dir = argv[1]
 output_dir = argv[2]
 scenario_year = argv[3]
+project_dir = argv[4]
 
 class Series15_Processor:
     def __init__(self):
@@ -41,6 +42,10 @@ class Series15_Processor:
 
         self.walk_speed = 3  # mph
         self.max_walk_transit_dist = 1 # miles
+
+        sandag_abm_prop_dir = os.path.join(project_dir, 'conf', 'sandag_abm.properties')
+        sandag_abm_prop = util.load_properties(sandag_abm_prop_dir)
+        self.max_walk_transit_dist = sandag_abm_prop['walk.transit.connector.max.length']
 
         self.ext_station_to_internal_mapping = {1:9279, 2:9387, 4:22324}
 
@@ -256,24 +261,22 @@ class Series15_Processor:
 
         self.landuse['walk_dist_local_bus'] = maz_stop_walk['walk_dist_local_bus'].reindex(self.landuse.index)
         self.landuse['walk_dist_premium_transit'] = maz_stop_walk['walk_dist_premium_transit'].reindex(self.landuse.index)
-
-        self.landuse['walk_dist_local_bus'].fillna(999, inplace=True)
-        self.landuse['walk_dist_premium_transit'].fillna(999, inplace=True)
+        self.landuse['walk_dist_local_bus'].fillna(999999, inplace=True)
+        self.landuse['walk_dist_premium_transit'].fillna(999999, inplace=True)
 
         # Setting microtransit distances to transit and cap walk distances at maximum value
         self.landuse['micro_dist_local_bus'] = self.landuse['walk_dist_local_bus']
         self.landuse['micro_dist_premium_transit'] = self.landuse['walk_dist_premium_transit']
         self.landuse['walk_dist_local_bus'] = np.where(
-            self.landuse['walk_dist_local_bus'] > self.max_walk_transit_dist,
-            999,
+            self.landuse['walk_dist_local_bus'] > self.max_walk_transit_dist[0],
+            999999,
             self.landuse['walk_dist_local_bus']
             )
         self.landuse['walk_dist_premium_transit'] = np.where(
-            self.landuse['walk_dist_premium_transit'] > self.max_walk_transit_dist,
-            999,
+            self.landuse['walk_dist_premium_transit'] > self.max_walk_transit_dist[1],
+            999999,
             self.landuse['walk_dist_premium_transit']
             )
-
         #adding access/egress skims to mexico-side extenral stations
         for ext_taz, int_maz in self.ext_station_to_internal_mapping.items():
             self.landuse.loc[self.landuse.TAZ == ext_taz, 'walk_dist_local_bus'] = self.landuse.loc[int_maz, 'walk_dist_local_bus']
