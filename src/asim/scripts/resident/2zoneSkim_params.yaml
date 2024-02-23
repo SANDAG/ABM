@@ -41,7 +41,6 @@ mmms:
     max_maz_maz_bike_dist_feet: 26400
     max_maz_local_bus_stop_walk_dist_feet: 23760     # 0.55 miles 
     max_maz_premium_transit_stop_walk_dist_feet: 23760   # 
-    max_maz_future_BRT_stop_walk_dist_feet: 23760   # 
     walk_speed_mph: 3.0 ## ask Nagendra for that
     drive_speed_mph: 25.0
     maz_maz_walk_output: "maz_maz_walk.csv"
