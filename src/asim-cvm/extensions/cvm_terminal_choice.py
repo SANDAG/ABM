@@ -24,9 +24,18 @@ from activitysim.core.configuration.logit import (
     TourLocationComponentSettings,
 )
 from activitysim.core.util import assign_in_place, reindex
+from activitysim.abm.models.util.tour_destination import (
+    aggregate_size_terms,
+    choose_MAZ_for_TAZ,
+)
 
 logger = logging.getLogger(__name__)
 
+# temp column names for presampling
+DEST_MAZ = "dest_MAZ"
+DEST_TAZ = "dest_TAZ"
+ORIG_TAZ = "TAZ"
+ORIG_MAZ = "zone_id"
 
 class SimpleLocationComponentSettings(BaseLogitComponentSettings, extra="forbid"):
     """
@@ -72,6 +81,12 @@ class SimpleLocationComponentSettings(BaseLogitComponentSettings, extra="forbid"
     port_taz: list[int] | None = None
 
     CONSTANTS: dict = {}
+
+    SAMPLE_SPEC: str
+    """spec file for the pre-sampling step"""
+
+    SAMPLE_SIZE: int = 1
+    """number of alternatives to sample for each chooser"""
 
 def annotate_routes(
     state: workflow.State,
@@ -326,8 +341,8 @@ def route_endpoint(
             continue
 
         # there are multiple size terms for each segment, defined in the setting
-        segment_destination_size_terms = []
-        segment_size_terms = None
+        MAZ_size_terms = []
+        TAZ_size_terms = []
         eligibility_term = None
 
         if isinstance(segment, dict):
@@ -338,68 +353,95 @@ def route_endpoint(
             ), f"eligibility_term should be a string or None, not {eligibility_term}"
 
         for size_term in size_term_calculator.destination_size_terms.columns:
+            if size_term not in segment.get("size_terms", []):
+                continue
             # Note: size_term_calculator omits zones with impossible alternatives
             # (where dest size term is zero)
-            size_term_df = size_term_calculator.dest_size_terms_df(
+            MAZ_single_size_term_df = size_term_calculator.dest_size_terms_df(
                 size_term, segment_trace_label
             )
-            size_term_df.columns = [size_term]
-            segment_destination_size_terms.append(size_term_df)
-        segment_destination_size_terms = pd.concat(segment_destination_size_terms, axis=1)
+            # aggregate size terms to TAZ level
+            MAZ_single_size_term, TAZ_single_size_term = aggregate_size_terms(
+                MAZ_single_size_term_df, network_los
+            )
+            # CVM needs more than one single size term
+            # becuase there are size terms that are applied based on route/trip attributes
+            MAZ_single_size_term.rename(
+                columns={"size_term": size_term}, inplace=True
+            )
+            # index MAZ size terms by zone_id
+            MAZ_single_size_term.set_index("zone_id", inplace=True)
+            MAZ_single_size_term.drop("dest_TAZ", axis=1, inplace=True)
+
+            TAZ_single_size_term.rename(
+                columns={"size_term": size_term}, inplace=True
+            )
+            TAZ_single_size_term.drop("dest_TAZ", axis=1, inplace=True)
+
+            MAZ_size_terms.append(MAZ_single_size_term)
+            TAZ_size_terms.append(TAZ_single_size_term)
+
+        MAZ_size_terms = pd.concat(MAZ_size_terms, axis=1)
+        TAZ_size_terms = pd.concat(TAZ_size_terms, axis=1)
 
         # size term fillna with 0
-        segment_destination_size_terms.fillna(0, inplace=True)
+        MAZ_size_terms.fillna(0, inplace=True)
+        TAZ_size_terms.fillna(0, inplace=True)
        
         # drop the alternatives that do not have non-zero size term in the eligibility term
         if eligibility_term is not None:
-            segment_destination_size_terms = segment_destination_size_terms[
-                segment_destination_size_terms[eligibility_term] > 0
+            TAZ_size_terms = TAZ_size_terms[
+                TAZ_size_terms[eligibility_term] > 0
+            ]
+            MAZ_size_terms = MAZ_size_terms[
+                MAZ_size_terms[eligibility_term] > 0
             ]
 
-        spec = simulate.spec_for_segment(
-            state,
-            None,
-            spec_id="SPEC",
-            segment_name=segment_name,
-            estimator=estimator,
-            spec_file_name=model_settings.SPEC,
-            coefficients_file_name=model_settings.COEFFICIENTS,
-        )
-        sample_size = 1  # not really sampling, we are choosing
-        locals_dict = model_settings.CONSTANTS.copy()
-        locals_dict.update(
-            {
-                # "size_terms": size_term_matrix,
-                # "size_terms_array": size_term_matrix.df.to_numpy(),
-                "timeframe": "timeless",
-            }
-        )
+        logger.info(f"{trace_label} location_presample")
 
-        skim_dict = network_los.get_default_skim_dict()
+        alt_dest_col_name = model_settings.RESULT_COL_NAME
+        assert DEST_TAZ != alt_dest_col_name
+
+        assert ORIG_MAZ in choosers
+        choosers[ORIG_TAZ] = network_los.map_maz_to_taz(choosers[ORIG_MAZ])
+
+        skim_dict = network_los.get_skim_dict("taz")
         skims = {
             "skims": skim_dict.wrap_3d(
-                orig_key="zone_id_chooser",
-                dest_key="zone_id",
+                orig_key=ORIG_TAZ,
+                dest_key=DEST_TAZ,
                 dim3_key="_route_start_time_period_",
             ),
         }
 
+        locals_dict = model_settings.CONSTANTS.copy()
         locals_dict.update(skims)
-
-        constants = model_settings.CONSTANTS or {}
-        locals_dict.update(constants)
 
         # keep the choosers columns specified in the model settings
         if model_settings.SIMULATE_CHOOSER_COLUMNS:
             choosers = choosers[model_settings.SIMULATE_CHOOSER_COLUMNS]
 
-        choices = interaction_sample(
+        spec = simulate.spec_for_segment(
+            state,
+            None,
+            spec_id="SAMPLE_SPEC",
+            segment_name=segment_name,
+            estimator=None,
+            spec_file_name=model_settings.SAMPLE_SPEC,
+            coefficients_file_name=model_settings.COEFFICIENTS,
+        )
+        
+        logger.info("running %s with %d tours", trace_label, len(choosers))
+
+        sample_size = model_settings.SAMPLE_SIZE
+
+        taz_sample = interaction_sample(
             state,
             choosers,
-            segment_destination_size_terms,
+            TAZ_size_terms,
             spec,
             sample_size,
-            alt_col_name=model_settings.RESULT_COL_NAME,
+            alt_col_name=DEST_TAZ,
             allow_zero_probs=False,
             log_alt_losers=False,
             skims=skims,
@@ -409,7 +451,39 @@ def route_endpoint(
             trace_label=trace_label,
             zone_layer=None,
         )
-        choices_list.append(choices[model_settings.RESULT_COL_NAME])
+        
+        # check if file exists
+        # import os
+        # if not os.path.exists("taz_sample_{}_{}.csv".format(trace_label, segment_name)):
+        #     taz_sample.to_csv("taz_sample_{}_{}.csv".format(trace_label, segment_name))
+
+        # choose a MAZ for each DEST_TAZ choice, choice probability based on MAZ size_term fraction of TAZ total
+        if DEST_TAZ not in MAZ_size_terms:
+            MAZ_size_terms[DEST_TAZ] = network_los.map_maz_to_taz(MAZ_size_terms.index)
+        
+        if "zone_id" not in MAZ_size_terms:
+            MAZ_size_terms["zone_id"] = MAZ_size_terms.index
+        
+        # calculate explicit size term per MAZ per route
+        # join choosers with MAZ size terms, based on dest_TAZ
+        MAZ_size_terms['size_term'] = MAZ_size_terms[
+            eligibility_term
+        ]
+        
+        # if not os.path.exists("TAZ_size_terms_{}_{}.csv".format(trace_label, segment_name)):
+        #     TAZ_size_terms.to_csv("TAZ_size_terms_{}_{}.csv".format(trace_label, segment_name))
+        # if not os.path.exists("MAZ_size_terms_{}_{}.csv".format(trace_label, segment_name)):
+        #     MAZ_size_terms.to_csv("MAZ_size_terms_{}_{}.csv".format(trace_label, segment_name))
+
+        maz_choices = choose_MAZ_for_TAZ(state, taz_sample, MAZ_size_terms, trace_label)
+
+        # if not os.path.exists("maz_choices_{}_{}.csv".format(trace_label, segment_name)):
+        #     maz_choices.to_csv("maz_choices_{}_{}.csv".format(trace_label, segment_name))
+
+        assert DEST_MAZ in maz_choices
+        maz_choices = maz_choices.rename(columns={DEST_MAZ: alt_dest_col_name})
+
+        choices_list.append(maz_choices[alt_dest_col_name])
 
     if len(choices_list) > 0:
         choices_df = pd.concat(choices_list)

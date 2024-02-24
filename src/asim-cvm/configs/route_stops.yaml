@@ -10,6 +10,7 @@ location_type_settings:
   LOGIT_TYPE: MNL
 location_settings_estb:
   SPEC: route_stop_location.csv
+  SAMPLE_SPEC: route_stop_location.csv
   COEFFICIENTS: route_stop_location_coefficients.csv
   RESULT_COL_NAME: next_stop_location
   SEGMENTS:
@@ -50,13 +51,14 @@ location_settings_estb:
     - business_type
     - next_stop_purpose
     - vehicle_type
-    - _prior_stop_location_
     - _route_start_time_period_
     - _time_period_
-    - terminal_zone
     - route_elapsed_time
+    - TAZ
+    - terminal_TAZ
 location_settings_tnc:
   SPEC: route_stop_location_tnc.csv
+  SAMPLE_SPEC: route_stop_location_tnc.csv
   COEFFICIENTS: route_stop_location_coefficients_tnc.csv
   RESULT_COL_NAME: next_stop_location
   SEGMENTS:
@@ -95,11 +97,11 @@ location_settings_tnc:
     - business_type
     - next_stop_purpose
     - vehicle_type
-    - _prior_stop_location_
     - _route_start_time_period_
     - _time_period_
-    - terminal_zone
     - route_elapsed_time
+    - TAZ
+    - terminal_TAZ
 dwell_settings:
   before_noon_column: before_noon
 travel_time_skim: TRK_M_TIME

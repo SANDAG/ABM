@@ -1,4 +1,5 @@
 SPEC: route_terminal.csv
+SAMPLE_SPEC: route_terminal.csv
 COEFFICIENTS: route_terminal_coefficients.csv
 
 SIZE_TERM_SELECTOR: route_terminal
@@ -38,15 +39,10 @@ SIMULATE_CHOOSER_COLUMNS:
   - route_purpose
   - vehicle_type
   - terminal_stop_type
-  - zone_id
   - _route_start_time_period_
+  - TAZ
 
 RESULT_COL_NAME: terminal_zone
-
-## model-specific logsum-related settings
-#CHOOSER_ORIG_COL_NAME: home_zone_id
-#ALT_DEST_COL_NAME: alt_dest
-#OUT_PERIOD: 1
 
 REQUIRE_ACCESSIBILITY: False
 ACCESSIBILITY_TERMS:

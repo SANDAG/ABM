@@ -1,4 +1,5 @@
 SPEC: route_origination.csv
+SAMPLE_SPEC: route_origination.csv
 COEFFICIENTS: route_origination_coefficients.csv
 
 SIZE_TERM_SELECTOR: route_origination
@@ -36,8 +37,8 @@ SIMULATE_CHOOSER_COLUMNS:
   - business_type
   - route_purpose
   - vehicle_type
-  - zone_id
   - _route_start_time_period_
+  - TAZ
 
 RESULT_COL_NAME: origination_zone
 
@@ -58,11 +59,6 @@ port_taz:
   - 4853
   - 2050
   - 3742
-
-## model-specific logsum-related settings
-#CHOOSER_ORIG_COL_NAME: home_zone_id
-#ALT_DEST_COL_NAME: alt_dest
-#OUT_PERIOD: 1
 
 CONSTANTS:
   vot_light: 67 # dollar per hour

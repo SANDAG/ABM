@@ -11,10 +11,10 @@ gen tt stop is home,@_GEN_TT*(df['next_stop_purpose']=='home'),coef_gen_tt_stop_
 # size term,,,,,
 residence,"@np.log(df['residence_hh'].astype('float32')+df['residence_hh_attraction_pkg'].astype('float32')*(df['next_stop_purpose']=='goods_delivery')*(df['business_type'].isin(['TRN','RET']))+df['residence_hh_attraction_service'].astype('float32')*(df['next_stop_purpose']=='service')+df['residence_emp_non_ws_wfh_oth'].astype('float32')*(df['next_stop_purpose']=='home'))",,,coef_theta_residential,
 warehouse,"@np.log(df['warehouse_emp_trn_wrh'].astype('float32')+df['warehouse_estb_attraction_ret_whl_trn'].astype('float32')*(df['next_stop_purpose'].isin(['goods_delivery','service']))*(df['business_type'].isin(['RET','WHL','TRN'])))",coef_theta_warehouse,,,
-,"_COM_ESTB_RET_AGM_WHL_CON_TRN@(df['commerce_estb_attraction_ret_ifr_agm_whl_con_trn'].astype('float32')*(df['next_stop_purpose'].isin(['goods_delivery','service'])))",1,1,1,1
-,"_COM_ESTB_IFR@(df['commerce_estb_attraction_ifr'].astype('float32')*(df['next_stop_purpose'].isin(['goods_delivery','service']))*(df['business_type']=='IFR'))",1,1,1,1
-,"_COM_ESTB_MHS@(df['commerce_estb_attraction_mhs'].astype('float32')*(df['next_stop_purpose'].isin(['goods_delivery','service']))*(df['business_type']=='MHS'))",1,1,1,1
-,"_COM_ESTB_EPO@(df['commerce_estb_attraction_epo'].astype('float32')*(df['next_stop_purpose'].isin(['goods_delivery','service']))*(df['business_type']=='EPO'))",1,1,1,1
-,"_COM_ESTB_LAF@(df['commerce_estb_attraction_laf'].astype('float32')*(df['next_stop_purpose'].isin(['goods_delivery','service']))*(df['business_type'].isin(['WHL','TRN','LAF'])))",1,1,1,1
-,"_COM_MAINT_EMP@(df['commerce_maint_emp_food_ret_oth'].astype('float32')*(df['next_stop_purpose']=='maintenance'))",1,1,1,1
+,"_COM_ESTB_RET_AGM_WHL_CON_TRN@(df['commerce_estb_attraction_ret_ifr_agm_whl_con_trn'].astype('float32')*(df['next_stop_purpose'].isin(['goods_delivery','service'])))",,,,1
+,"_COM_ESTB_IFR@(df['commerce_estb_attraction_ifr'].astype('float32')*(df['next_stop_purpose'].isin(['goods_delivery','service']))*(df['business_type']=='IFR'))",,,,1
+,"_COM_ESTB_MHS@(df['commerce_estb_attraction_mhs'].astype('float32')*(df['next_stop_purpose'].isin(['goods_delivery','service']))*(df['business_type']=='MHS'))",,,,1
+,"_COM_ESTB_EPO@(df['commerce_estb_attraction_epo'].astype('float32')*(df['next_stop_purpose'].isin(['goods_delivery','service']))*(df['business_type']=='EPO'))",,,,1
+,"_COM_ESTB_LAF@(df['commerce_estb_attraction_laf'].astype('float32')*(df['next_stop_purpose'].isin(['goods_delivery','service']))*(df['business_type'].isin(['WHL','TRN','LAF'])))",,,,1
+,"_COM_MAINT_EMP@(df['commerce_maint_emp_food_ret_oth'].astype('float32')*(df['next_stop_purpose']=='maintenance'))",,,,1
 commerce,@np.log(df['commerce_emp_non_trn_wrh'].astype('float32')+_COM_ESTB_RET_AGM_WHL_CON_TRN+_COM_ESTB_IFR+_COM_ESTB_MHS+_COM_ESTB_EPO+_COM_ESTB_LAF+_COM_MAINT_EMP),,,,coef_theta_commercial
