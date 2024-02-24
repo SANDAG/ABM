@@ -451,11 +451,6 @@ def route_endpoint(
             trace_label=trace_label,
             zone_layer=None,
         )
-        
-        # check if file exists
-        # import os
-        # if not os.path.exists("taz_sample_{}_{}.csv".format(trace_label, segment_name)):
-        #     taz_sample.to_csv("taz_sample_{}_{}.csv".format(trace_label, segment_name))
 
         # choose a MAZ for each DEST_TAZ choice, choice probability based on MAZ size_term fraction of TAZ total
         if DEST_TAZ not in MAZ_size_terms:
@@ -469,16 +464,8 @@ def route_endpoint(
         MAZ_size_terms['size_term'] = MAZ_size_terms[
             eligibility_term
         ]
-        
-        # if not os.path.exists("TAZ_size_terms_{}_{}.csv".format(trace_label, segment_name)):
-        #     TAZ_size_terms.to_csv("TAZ_size_terms_{}_{}.csv".format(trace_label, segment_name))
-        # if not os.path.exists("MAZ_size_terms_{}_{}.csv".format(trace_label, segment_name)):
-        #     MAZ_size_terms.to_csv("MAZ_size_terms_{}_{}.csv".format(trace_label, segment_name))
 
         maz_choices = choose_MAZ_for_TAZ(state, taz_sample, MAZ_size_terms, trace_label)
-
-        # if not os.path.exists("maz_choices_{}_{}.csv".format(trace_label, segment_name)):
-        #     maz_choices.to_csv("maz_choices_{}_{}.csv".format(trace_label, segment_name))
 
         assert DEST_MAZ in maz_choices
         maz_choices = maz_choices.rename(columns={DEST_MAZ: alt_dest_col_name})
