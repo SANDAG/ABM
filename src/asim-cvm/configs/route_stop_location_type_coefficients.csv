@@ -1,8 +1,8 @@
 coefficient_name,value,constrain
-coef_asc_warehouse,-1.059964527,F
-coef_asc_intermodal,-2.936446264,F
-coef_asc_residential,0,T
-coef_asc_commercial,1.767,F
+coef_asc_warehouse,-1.61230715,F
+coef_asc_intermodal,-3.597602299,F
+coef_asc_residential,0.129544052,F
+coef_asc_commercial,1.525349698,F
 coef_construction_intermodal,-3.316,F
 coef_education_warehouse,-1.066,F
 coef_education_intermodal,-2.256,F
@@ -18,10 +18,10 @@ coef_manufacturing_commercial,0.533,F
 coef_retail_intermodal,-1.272,F
 coef_retail_commercial,0.391,F
 coef_industrial_warehouse,-1.721,F
-coef_leisure_warehouse,-1.230,F
+coef_leisure_warehouse,-1.23,F
 coef_leisure_commercial,0.747,F
 coef_agriculture_commercial,0.462,F
-coef_goods_pickup_intermodal,1.650,F
+coef_goods_pickup_intermodal,1.65,F
 coef_goods_delivery_intermodal,-1.821,F
 coef_maintenance_intermodal,-0.937,F
 coef_route_purpose_goods_warehouse,-0.277,F
@@ -31,7 +31,7 @@ coef_customer_type_residential_commercial,-2.477,F
 coef_customer_type_mixed_commercial,-1.378,F
 coef_vehicle_type_sut_warehouse,0.399,F
 coef_vehicle_type_mut_warehouse,1.901,F
-coef_vehicle_type_mut_intermodal,1.300,F
+coef_vehicle_type_mut_intermodal,1.3,F
 coef_vehicle_type_mut_commercial,0.885,F
 coef_elapsed_time_warehouse,-0.00201,F
 coef_elapsed_time_intermodal,-0.00102,F
@@ -41,10 +41,10 @@ coef_md_warehouse,0.364,F
 coef_md_intermodal,-0.685,F
 coef_pm_commercial,-0.395,F
 coef_ev_commercial,-0.706,F
-coef_asc_warehouse_tnc,-2.374,F
-coef_asc_intermodal_tnc,-7.284,F
-coef_asc_residential_tnc,0.000,T
-coef_asc_commercial_tnc,0.355,F
+coef_asc_warehouse_tnc,6.673113004,F
+coef_asc_intermodal_tnc,1.758956963,F
+coef_asc_residential_tnc,8.71909149,F
+coef_asc_commercial_tnc,8.984750786,F
 coef_retail_commercial_tnc,-0.574,F
 coef_non_restaurant_retail_warehouse_tnc,0.741,F
 coef_non_restaurant_retail_commercial_tnc,-0.734,F
@@ -55,6 +55,6 @@ coef_customer_type_mixed_warehouse_tnc,-1.414,F
 coef_elapsed_time_intermodal_tnc,0.00554,F
 coef_elapsed_time_commercial_tnc,-0.00053,F
 coef_am_warehouse_tnc,0.941,F
-coef_md_warehouse_tnc,0.860,F
+coef_md_warehouse_tnc,0.86,F
 coef_md_commercial_tnc,0.348,F
 coef_ev_warehouse_tnc,-0.711,F

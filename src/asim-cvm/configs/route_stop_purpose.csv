@@ -23,16 +23,19 @@ mixed,,(customer_type=='mixed')&(~is_tnc),,,,coef_mixed_service,,coef_mixed_home
 # elapsed time,,,,,,,,,
 elapsed time mins,,route_elapsed_time * (~is_tnc),,,,coef_elapsed_service,coef_elapsed_maintenance,coef_elapsed_home,coef_elapsed_terminal
 # time period of day,,,,,,,,,
-am,,(_time_period_=='AM')&(~is_tnc),,,,,,,coef_am_terminal
-md,,(_time_period_=='MD')&(~is_tnc),,coef_md_goods_pickup,,,,,coef_md_terminal
-pm,,(_time_period_=='PM')&(~is_tnc),,coef_pm_goods_pickup,coef_pm_goods_delivery,,,coef_pm_home,
-ev,,(_time_period_=='EV')&(~is_tnc),,coef_ev_goods_pickup,,,coef_ev_maintenance,coef_ev_home,coef_ev_terminal
+am,,(_time_period_=='AM')&(~is_tnc),coef_am_base,coef_am_goods_pickup,coef_am_goods_delivery,coef_am_service,coef_am_maintenance,coef_am_home,coef_am_terminal
+md,,(_time_period_=='MD')&(~is_tnc),coef_md_base,coef_md_goods_pickup,coef_md_goods_delivery,coef_md_service,coef_md_maintenance,coef_md_home,coef_md_terminal
+pm,,(_time_period_=='PM')&(~is_tnc),coef_pm_base,coef_pm_goods_pickup,coef_pm_goods_delivery,coef_pm_service,coef_pm_maintenance,coef_pm_home,coef_pm_terminal
+ev,,(_time_period_=='EV')&(~is_tnc),coef_ev_base,coef_ev_goods_pickup,coef_ev_goods_delivery,coef_ev_service,coef_ev_maintenance,coef_ev_home,coef_ev_terminal
 # origin trip purpose,,,,,,,,,
+originate_base,,(prior_stop_purpose=='originate')&(~is_tnc)&(origination_stop_type.isin(['base'])),coef_prior_base_next_base,,,coef_prior_base_next_service,coef_prior_base_next_maint,,
+originate_residential,,(prior_stop_purpose=='originate')&(~is_tnc)&(origination_stop_type.isin(['residential'])),,coef_prior_home_next_pickup,coef_prior_home_next_delivery,coef_prior_home_next_service,coef_prior_home_next_maint,coef_prior_home_next_home,coef_prior_home_next_terminal
+base,,(prior_stop_purpose=='base')&(~is_tnc),coef_prior_base_next_base,,,coef_prior_base_next_service,coef_prior_base_next_maint,,
 goods_pickup,,(prior_stop_purpose=='goods_pickup')&(~is_tnc),,,,coef_prior_goods_pickup_next_service,coef_prior_goods_pickup_next_maint,,
 goods_delivery,,(prior_stop_purpose=='goods_delivery')&(~is_tnc),,coef_prior_goods_delivery_next_pickup,,coef_prior_goods_delivery_next_service,coef_prior_goods_delivery_next_maint,,
 service,,(prior_stop_purpose=='service')&(~is_tnc),,coef_prior_service_next_pickup,coef_prior_service_next_delivery,coef_prior_service_next_service,coef_prior_service_next_maint,,
 maintenance,,(prior_stop_purpose=='maintenance')&(~is_tnc),,coef_prior_maint_next_pickup,coef_prior_maint_next_delivery,coef_prior_maint_next_service,coef_prior_maint_next_maint,,
-home,,(prior_stop_purpose=='home')&(~is_tnc),,coef_prior_home_next_pickup,coef_prior_home_next_delivery,coef_prior_home_next_service,coef_prior_home_next_maint,,coef_prior_home_next_terminal
+home,,(prior_stop_purpose=='home')&(~is_tnc),,coef_prior_home_next_pickup,coef_prior_home_next_delivery,coef_prior_home_next_service,coef_prior_home_next_maint,coef_prior_home_next_home,coef_prior_home_next_terminal
 # ASC TNC,,,,,,,,,
 ,,is_tnc,coef_asc_base_tnc,coef_asc_goods_pickup_tnc,coef_asc_goods_delivery_tnc,coef_asc_service_tnc,coef_asc_maintenance_tnc,coef_asc_home_tnc,coef_asc_terminal_tnc
 # industry TNC,,,,,,,,,
@@ -42,7 +45,11 @@ mixed,,(customer_type=='mixed')&(is_tnc),,,,,,,coef_mixed_terminal_tnc
 # elapsed time TNC,,,,,,,,,
 elapsed_time (min),,route_elapsed_time * (is_tnc),,,,,,,coef_elapsed_terminal_tnc
 # origin trip purpose TNC,,,,,,,,,
-origin_goods_pickup,,(prior_stop_purpose=='goods_pickup')&(is_tnc),,,coef_prior_goods_pickup_next_delivery_tnc,coef_prior_goods_pickup_next_service_tnc,coef_prior_goods_pickup_next_maint_tnc,,
-origin_goods_delivery,,(prior_stop_purpose=='goods_delivery')&(is_tnc),,,coef_prior_goods_delivery_next_delivery_tnc,,,,
-origin service,,(prior_stop_purpose=='service')&(is_tnc),,,,coef_prior_service_next_service_tnc,coef_prior_service_next_maint_tnc,,
-origin maint,,(prior_stop_purpose=='maintenance')&(is_tnc),,,coef_prior_maint_next_delivery_tnc,,,,
+originate_base,,(prior_stop_purpose=='originate')&(is_tnc)&(origination_stop_type.isin(['base'])),coef_prior_base_next_base_tnc,coef_prior_originate_next_pickup_tnc,coef_prior_originate_next_delivery_tnc,coef_prior_originate_next_service_tnc,coef_prior_originate_next_maint_tnc,coef_prior_originate_next_home_tnc,coef_prior_originate_next_terminal_tnc
+originate_residential,,(prior_stop_purpose=='originate')&(is_tnc)&(origination_stop_type.isin(['residential'])),coef_prior_originate_next_base_tnc,coef_prior_originate_next_pickup_tnc,coef_prior_originate_next_delivery_tnc,coef_prior_originate_next_service_tnc,coef_prior_originate_next_maint_tnc,coef_prior_home_next_home_tnc,coef_prior_originate_next_terminal_tnc
+base,,(prior_stop_purpose=='base')&(is_tnc),coef_prior_base_next_base_tnc,coef_prior_base_next_pickup_tnc,coef_prior_base_next_delivery_tnc,coef_prior_base_next_service_tnc,coef_prior_base_next_maint_tnc,coef_prior_base_next_home_tnc,coef_prior_base_next_terminal_tnc
+origin_goods_pickup,,(prior_stop_purpose=='goods_pickup')&(is_tnc),coef_prior_goods_pickup_next_base_tnc,coef_prior_goods_pickup_next_pickup_tnc,coef_prior_goods_pickup_next_delivery_tnc,coef_prior_goods_pickup_next_service_tnc,coef_prior_goods_pickup_next_maint_tnc,coef_prior_goods_pickup_next_home_tnc,coef_prior_goods_pickup_next_terminal_tnc
+origin_goods_delivery,,(prior_stop_purpose=='goods_delivery')&(is_tnc),coef_prior_goods_delivery_next_base_tnc,coef_prior_goods_delivery_next_pickup_tnc,coef_prior_goods_delivery_next_delivery_tnc,coef_prior_goods_delivery_next_service_tnc,coef_prior_goods_delivery_next_maint_tnc,coef_prior_goods_delivery_next_home_tnc,coef_prior_goods_delivery_next_terminal_tnc
+origin service,,(prior_stop_purpose=='service')&(is_tnc),coef_prior_service_next_base_tnc,coef_prior_service_next_pickup_tnc,coef_prior_service_next_delivery_tnc,coef_prior_service_next_service_tnc,coef_prior_service_next_maint_tnc,coef_prior_service_next_home_tnc,coef_prior_service_next_terminal_tnc
+origin maint,,(prior_stop_purpose=='maintenance')&(is_tnc),coef_prior_maint_next_base_tnc,coef_prior_maint_next_pickup_tnc,coef_prior_maint_next_delivery_tnc,coef_prior_maint_next_service_tnc,coef_prior_maint_next_maint_tnc,coef_prior_maint_next_home_tnc,coef_prior_maint_next_terminal_tnc
+home,,(prior_stop_purpose=='home')&(is_tnc),coef_prior_home_next_base_tnc,coef_prior_home_next_pickup_tnc,coef_prior_home_next_delivery_tnc,coef_prior_home_next_service_tnc,coef_prior_home_next_maint_tnc,coef_prior_home_next_home_tnc,coef_prior_home_next_terminal_tnc

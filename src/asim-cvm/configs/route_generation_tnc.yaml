@@ -2,7 +2,7 @@ industries:
   13: 
     description: tnc_non_restaurant_retail
     name: TNCNRR
-    tnc_rate: 0.0002768
+    tnc_rate: 0.0002799
     employment_categories:
       - emp_gov
       - emp_ag_min
@@ -21,13 +21,13 @@ industries:
   14: 
     description: tnc_restaurant
     name: TNCRES
-    tnc_rate: 0.0202639
+    tnc_rate: 0.0204895
     employment_categories:
       - emp_food
   15: 
     description: tnc_retail
     name: TNCRET
-    tnc_rate: 0.0124840
+    tnc_rate: 0.0126230
     employment_categories:
       - emp_ret
 
