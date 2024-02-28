@@ -14,7 +14,7 @@ EST_EXPANSION_WEIGHT_COL: sample_rate  # added when establishments rPMd in
 SAVE_TRIPS_TABLE: False
 
 MATRICES:
-  - file_name: trips_ea.omx
+  - file_name: cvmtrips_ea.omx
     tables:
       - name: CAR_EA
         data_field: CAR_EA
@@ -24,7 +24,7 @@ MATRICES:
         data_field: MEDIUM_TRUCK_EA
       - name: HEAVY_TRUCK_EA
         data_field: HEAVY_TRUCK_EA
-  - file_name: trips_am.omx
+  - file_name: cvmtrips_am.omx
     tables:
       - name: CAR_AM
         data_field: CAR_AM
@@ -34,7 +34,7 @@ MATRICES:
         data_field: MEDIUM_TRUCK_AM
       - name: HEAVY_TRUCK_AM
         data_field: HEAVY_TRUCK_AM
-  - file_name: trips_md.omx
+  - file_name: cvmtrips_md.omx
     tables:
       - name: CAR_MD
         data_field: CAR_MD
@@ -44,7 +44,7 @@ MATRICES:
         data_field: MEDIUM_TRUCK_MD
       - name: HEAVY_TRUCK_MD
         data_field: HEAVY_TRUCK_MD
-  - file_name: trips_pm.omx
+  - file_name: cvmtrips_pm.omx
     tables:
       - name: CAR_PM
         data_field: CAR_PM
@@ -54,7 +54,7 @@ MATRICES:
         data_field: MEDIUM_TRUCK_PM
       - name: HEAVY_TRUCK_PM
         data_field: HEAVY_TRUCK_PM
-  - file_name: trips_ev.omx
+  - file_name: cvmtrips_ev.omx
     tables:
       - name: CAR_EV
         data_field: CAR_EV
