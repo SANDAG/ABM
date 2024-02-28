@@ -2,7 +2,7 @@ Description,Expression,warehouse,intermodal,residential,commercial
 ,_GEN_TT@(leg1_skims['SOV_TR_H_TIME']+leg2_skims['SOV_TR_H_TIME']+0.6*(leg1_skims['SOV_TR_H_TOLLCOST']+leg2_skims['SOV_TR_H_TOLLCOST'])/vot_tnc),1,1,1,1
 generalize travel time for both legs,@_GEN_TT,coef_gen_tt_warehouse,coef_gen_tt_intermodal,coef_gen_tt_residential,coef_gen_tt_commercial
 gen tt by elapse time,@_GEN_TT*df['route_elapsed_time']/1000,coef_gen_tt_elapsed_timed1000_warehouse,coef_gen_tt_elapsed_timed1000_intermodal,coef_gen_tt_elapsed_timed1000_residential,coef_gen_tt_elapsed_timed1000_commercial
-auto operating cost lcv,@leg1_skims['SOV_TR_H_DIST']*0.188*(df.vehicle_type=='LCV'),coef_op_cost_lcv_warehouse,coef_op_cost_lcv_intermodal,coef_op_cost_lcv_residential,coef_op_cost_lcv_commercial
+auto operating cost lcv,@leg1_skims['SOV_TR_H_DIST']*0.192*(df.vehicle_type=='LCV'),coef_op_cost_lcv_warehouse,coef_op_cost_lcv_intermodal,coef_op_cost_lcv_residential,coef_op_cost_lcv_commercial
 gen tt stop is service,@_GEN_TT*(df['next_stop_purpose']=='service'),coef_gen_tt_stop_service_warehouse,coef_gen_tt_stop_service_intermodal,coef_gen_tt_stop_service_residential,coef_gen_tt_stop_service_commercial
 gen tt stop is maintenance,@_GEN_TT*(df['next_stop_purpose']=='maintenance'),coef_gen_tt_stop_maintenance_warehouse,coef_gen_tt_stop_maintenance_intermodal,coef_gen_tt_stop_maintenance_residential,coef_gen_tt_stop_maintenance_commercial
 gen tt stop is home,@_GEN_TT*(df['next_stop_purpose']=='home'),coef_gen_tt_stop_home_warehouse,coef_gen_tt_stop_home_intermodal,coef_gen_tt_stop_home_residential,coef_gen_tt_stop_home_commercial
