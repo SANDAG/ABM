@@ -2,8 +2,8 @@ ECHO ON
 set PROJECT_DRIVE=%1
 set PROJECT_DIRECTORY=%2
 
-SET ANACONDA3_DIR=C:\Anaconda3
-SET ANACONDA2_DIR=C:\Anaconda2
+SET ANACONDA3_DIR=%CONDA_PREFIX%
+SET ANACONDA2_DIR=%CONDA_TWO_PREFIX%
 
 :: setup paths to Python application, Conda script, etc.
 SET CONDA3_ACT=%ANACONDA3_DIR%\Scripts\activate.bat
