@@ -53,7 +53,7 @@ IF %ERRORLEVEL% NEQ 0 (GOTO :ERROR) else (GOTO :SUCCESS)
 :SUCCESS
     ECHO CVM complete!
     ECHO %DATE% %TIME%
-
+	
     CD /d %PROJECT_DRIVE%%PROJECT_DIRECTORY%
 
     ::::::::::::::::::::::
@@ -61,9 +61,9 @@ IF %ERRORLEVEL% NEQ 0 (GOTO :ERROR) else (GOTO :SUCCESS)
 
     :: sort TAZ zone index in omx
     %PYTHON3% src/asim-cvm/scripts/set_zoneMapping.py cvm output
-    :: append cvm omx to assignment omx
-    :: TODO Jielin to update the script to append omx
-    :: %PYTHON2% src/asim-cvm/scripts/convert_tripTables.py cvm output
+	
+	:: convert trip tables into Python2
+	%PYTHON2% src/asim-cvm/scripts/convert_tripTables.py cvm output
 
     :: finish and exit batch file
     EXIT /B 0
@@ -72,4 +72,4 @@ IF %ERRORLEVEL% NEQ 0 (GOTO :ERROR) else (GOTO :SUCCESS)
     CD /d %PROJECT_DRIVE%%PROJECT_DIRECTORY%
     ECHO ERROR: CVM failed!
     ECHO %DATE% %TIME%
-    PAUSE
+    EXIT /B
