@@ -6,7 +6,7 @@ Description,Target,Expression
 ,is_am,"cv_trips.trip_start_time.between(time_periods['AM']['first_hour'], time_periods['AM']['last_hour'])"
 ,is_md,"cv_trips.trip_start_time.between(time_periods['MD']['first_hour'], time_periods['MD']['last_hour'])"
 ,is_pm,"cv_trips.trip_start_time.between(time_periods['PM']['first_hour'], time_periods['PM']['last_hour'])"
-,is_ev,(cv_trips.trip_start_time >= time_periods['EV']['first_hour']) | (cv_trips.trip_start_time <=  time_periods['EV']['last_hour'])
+,is_ev,"cv_trips.trip_start_time.between(time_periods['EV']['first_hour'], time_periods['EV']['last_hour'])"
 # ea trips,,
 ,CAR_EA,((vehicle_type == 'passenger_car') & is_ea)
 ,LIGHT_TRUCK_EA,((vehicle_type == 'LHDT') & is_ea)
