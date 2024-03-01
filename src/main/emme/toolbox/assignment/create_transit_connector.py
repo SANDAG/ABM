@@ -8,6 +8,7 @@ desktop = modeller.desktop
 
 gen_utils = _m.Modeller().module("sandag.utilities.general")
 dem_utils = _m.Modeller().module("sandag.utilities.demand")
+load_properties = _m.Modeller().tool('sandag.utilities.properties')
 
 class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
 
@@ -41,11 +42,6 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
 
         self.transit_modes = ["b","celpry"]
         self.line_haul_mode_specs = ["@num_stops_l=1,99 and not @network_adj=1,3","@num_stops_e=1,99 and not @network_adj=1,3"]
-
-        self.max_length_wlk = [1, 1.2] # length in miles
-        self.max_length_knr = [5, 5]
-        self.max_length_pnr = [10, 10]
-        self.max_length_tnc = [5, 5]
 
         self.acc_modes = ["ufqQ", "uqQ", "fqQ", "qQ", "u", "f", "q", "Q"]
         
@@ -85,7 +81,9 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
     def run(self):
         self.tool_run_msg = ""
         try:
-            results = self(self.period, self.scenario, self.create_connector_flag, "../..")
+            project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
+            main_directory = os.path.dirname(project_dir)
+            results = self(self.period, self.scenario, self.create_connector_flag, main_directory)
             run_msg = "Transit connectors created"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg)
         except Exception as error:
@@ -114,6 +112,13 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
         export_basenet = _m.Modeller().tool("inro.emme.data.network.base.export_base_network")
         import_basenet = _m.Modeller().tool("inro.emme.data.network.base.base_network_transaction")
         delete_links = _m.Modeller().tool("inro.emme.data.network.base.delete_links")
+
+        props = load_properties(os.path.join(main_directory, "conf", "sandag_abm.properties"))
+        
+        self.max_length_wlk = props['walk.transit.connector.max.length'] # length in miles
+        self.max_length_knr = props['knr.transit.connector.max.length']
+        self.max_length_pnr = props['pnr.transit.connector.max.length']
+        self.max_length_tnc = props['tnc.transit.connector.max.length']
 
         if create_connector_flag:
             # scenario = desktop.data_explorer().active_database().scenario_by_number(s['periodNum'])

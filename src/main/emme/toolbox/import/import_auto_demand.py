@@ -237,9 +237,9 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
         cvm_vot_shares = [cvm_vot_low_share, cvm_vot_med_share, cvm_vot_high_share]
         
         
-        truck_pce_light = 1.3
-        truck_pce_medium = 1.5
-        truck_pce_heavy = 2.5
+        truck_pce_light = props["truck.pce.light"]
+        truck_pce_medium = props["truck.pce.medium"]
+        truck_pce_heavy = props["truck.pce.heavy"]
 
         with self.setup() as omx_manager:
             # SOV transponder "TRPDR" = "TR" and non-transponder "NOTRPDR" = "NT"            
@@ -334,13 +334,15 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     cvm_demand = (omx_manager.lookup(("cvm", period, ""), "LIGHT_TRUCK%s" % period) * truck_pce_light)
                     htm_ei_demand = (omx_manager.lookup(("htm", period, ""), "Lightei%s" % period) * truck_pce_light)
                     htm_ie_demand = (omx_manager.lookup(("htm", period, ""), "Lightie%s" % period) * truck_pce_light)
+                    htm_ee_demand = (omx_manager.lookup(("htm", period, ""), "Lightee%s" % period) * truck_pce_light)
                     
-                    total_asim_trips = (cvm_demand + htm_ei_demand + htm_ie_demand)
+                    total_asim_trips = (cvm_demand + htm_ei_demand + htm_ie_demand + htm_ee_demand)
 
                     dem_utils.demand_report([
                             ("cvm", cvm_demand),
                             ("htm_ei", htm_ei_demand),
                             ("htm_ie", htm_ie_demand),
+                            ("htm_ee", htm_ee_demand),
                             ("total", total_asim_trips)
                         ], 
                         logbook_label, self.scenario, report)
@@ -352,13 +354,15 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     cvm_demand = (omx_manager.lookup(("cvm", period, ""), "MEDIUM_TRUCK%s" % period) * truck_pce_medium)
                     htm_ei_demand = (omx_manager.lookup(("htm", period, ""), "Mediumei%s" % period) * truck_pce_medium)
                     htm_ie_demand = (omx_manager.lookup(("htm", period, ""), "Mediumie%s" % period) * truck_pce_medium)
+                    htm_ee_demand = (omx_manager.lookup(("htm", period, ""), "Mediumee%s" % period) * truck_pce_medium)
                
-                    total_asim_trips = (cvm_demand + htm_ei_demand + htm_ie_demand)
+                    total_asim_trips = (cvm_demand + htm_ei_demand + htm_ie_demand + htm_ee_demand)
 
                     dem_utils.demand_report([
                             ("cvm", cvm_demand),
                             ("htm_ei", htm_ei_demand),
                             ("htm_ie", htm_ie_demand),
+                            ("htm_ee", htm_ee_demand),
                             ("total", total_asim_trips)
                         ], 
                         logbook_label, self.scenario, report)
@@ -367,16 +371,20 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     # heavy-heavy truck
                     matrix_name = "mf%s_TRK_H" % (period[1:])
                     logbook_label = "Import heavy-heavy truck pce from OMX to matrix %s" % (matrix_name)
+                    cvm_demand = (omx_manager.lookup(("cvm", period, ""), "HEAVY_TRUCK%s" % period) * truck_pce_heavy)
                     htm_ei_demand = (omx_manager.lookup(("htm", period, ""), "Heavyei%s" % period) * truck_pce_heavy)
                     htm_ie_demand = (omx_manager.lookup(("htm", period, ""), "Heavyie%s" % period) * truck_pce_heavy)
+                    htm_ee_demand = (omx_manager.lookup(("htm", period, ""), "Heavyee%s" % period) * truck_pce_heavy)
                     
-                    total_asim_trips = (htm_ei_demand + htm_ie_demand)
+                    total_asim_trips = (cvm_demand + htm_ei_demand + htm_ie_demand + htm_ee_demand)
 
                     dem_utils.demand_report([
+                            ("cvm", cvm_demand),
                             ("htm_ei", htm_ei_demand),
                             ("htm_ie", htm_ie_demand),
+                            ("htm_ee", htm_ee_demand),
                             ("total", total_asim_trips)
-                        ], 
+                        ],  
                         logbook_label, self.scenario, report)
                     self.set_data(matrix_name, total_asim_trips)
 
