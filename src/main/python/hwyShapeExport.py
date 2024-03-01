@@ -185,7 +185,13 @@ def export_highway_shape(scenario_path: str) -> geopandas.GeoDataFrame:
                      "BA_Flow_SR2",
                      "AB_Flow_SR3",
                      "BA_Flow_SR3",
+                     "AB_Flow_lhd",
+                     "AB_Flow_mhd",
+                     "AB_Flow_hhd",
                      "AB_Flow_Truck",
+                     "BA_Flow_lhd",
+                     "BA_Flow_mhd",
+                     "BA_Flow_hhd",
                      "BA_Flow_Truck",
                      "AB_Flow_Bus",
                      "BA_Flow_Bus",
@@ -262,12 +268,48 @@ def export_highway_shape(scenario_path: str) -> geopandas.GeoDataFrame:
                                         "BA_Flow_SR3_MD",
                                         "BA_Flow_SR3_PM",
                                         "BA_Flow_SR3_EV"]].sum(axis=1)
+    
+    hwy_tcad["AB_Flow_lhd"] = hwy_tcad[["AB_Flow_lhd_EA",
+                                        "AB_Flow_lhd_AM",
+                                        "AB_Flow_lhd_MD",
+                                        "AB_Flow_lhd_PM",
+                                        "AB_Flow_lhd_EV"]].sum(axis=1)
+
+    hwy_tcad["AB_Flow_mhd"] = hwy_tcad[["AB_Flow_mhd_EA",
+                                        "AB_Flow_mhd_AM",
+                                        "AB_Flow_mhd_MD",
+                                        "AB_Flow_mhd_PM",
+                                        "AB_Flow_mhd_EV"]].sum(axis=1)
+
+    hwy_tcad["AB_Flow_hhd"] = hwy_tcad[["AB_Flow_hhd_EA",
+                                        "AB_Flow_hhd_AM",
+                                        "AB_Flow_hhd_MD",
+                                        "AB_Flow_hhd_PM",
+                                        "AB_Flow_hhd_EV"]].sum(axis=1)
 
     hwy_tcad["AB_Flow_Truck"] = hwy_tcad[["AB_Flow_Truck_EA",
                                           "AB_Flow_Truck_AM",
                                           "AB_Flow_Truck_MD",
                                           "AB_Flow_Truck_PM",
                                           "AB_Flow_Truck_EV"]].sum(axis=1)
+
+    hwy_tcad["BA_Flow_lhd"] = hwy_tcad[["BA_Flow_lhd_EA",
+                                        "BA_Flow_lhd_AM",
+                                        "BA_Flow_lhd_MD",
+                                        "BA_Flow_lhd_PM",
+                                        "BA_Flow_lhd_EV"]].sum(axis=1)
+
+    hwy_tcad["BA_Flow_mhd"] = hwy_tcad[["BA_Flow_mhd_EA",
+                                        "BA_Flow_mhd_AM",
+                                        "BA_Flow_mhd_MD",
+                                        "BA_Flow_mhd_PM",
+                                        "BA_Flow_mhd_EV"]].sum(axis=1)
+
+    hwy_tcad["BA_Flow_hhd"] = hwy_tcad[["BA_Flow_hhd_EA",
+                                        "BA_Flow_hhd_AM",
+                                        "BA_Flow_hhd_MD",
+                                        "BA_Flow_hhd_PM",
+                                        "BA_Flow_hhd_EV"]].sum(axis=1)
 
     hwy_tcad["BA_Flow_Truck"] = hwy_tcad[["BA_Flow_Truck_EA",
                                           "BA_Flow_Truck_AM",
@@ -375,7 +417,13 @@ def export_highway_shape(scenario_path: str) -> geopandas.GeoDataFrame:
                          "BA_Flow_SR2",
                          "AB_Flow_SR3",
                          "BA_Flow_SR3",
+                         "AB_Flow_lhd",
+                         "AB_Flow_mhd",
+                         "AB_Flow_hhd",
                          "AB_Flow_Truck",
+                         "BA_Flow_lhd",
+                         "BA_Flow_mhd",
+                         "BA_Flow_hhd",
                          "BA_Flow_Truck",
                          "AB_Flow_Bus",
                          "BA_Flow_Bus",
@@ -466,7 +514,13 @@ def export_highway_shape(scenario_path: str) -> geopandas.GeoDataFrame:
                              "BA_Flow_SR2": "baHov2Flow",
                              "AB_Flow_SR3": "abHov3Flow",
                              "BA_Flow_SR3": "baHov3Flow",
+                             "AB_Flow_lhd": "abLhdFlow",
+                             "AB_Flow_mhd": "abMhdFlow",
+                             "AB_Flow_hhd": "abHhdFlow",
                              "AB_Flow_Truck": "abTrucFlow",
+                             "BA_Flow_lhd": "baLhdFlow",
+                             "BA_Flow_mhd": "baMhdFlow",
+                             "BA_Flow_hhd": "baHhdFlow",
                              "BA_Flow_Truck": "baTrucFlow",
                              "AB_Flow_Bus": "abBusFlow",
                              "BA_Flow_Bus": "baBusFlow",

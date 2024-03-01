@@ -8,6 +8,7 @@ preprocessor:
     - tours
     - persons
     - households
+    - land_use
 TOURS_MERGED_CHOOSER_COLUMNS:
   - work_time_factor
   - non_work_time_factor

@@ -269,7 +269,8 @@ def update_tables():
             "hh_mh",
             "zip09",
             "luz_id"])
-            output_table = output_table.merge(input_land_use,how="left",left_on="mgra",right_on="mgra")
+            index_name = output_table.index.name
+            output_table = output_table.reset_index().merge(input_land_use,how="left",left_on="mgra",right_on="mgra").set_index(index_name)
         
         if table_name in common_settings:
             table_settings = common_settings[table_name]

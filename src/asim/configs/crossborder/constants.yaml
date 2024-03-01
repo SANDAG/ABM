@@ -81,3 +81,19 @@ ivt_brt_multiplier: 0.90
 ivt_cmr_multiplier: 0.65
 ivt_ltd_multiplier: 1.0
 ivt_cost_multiplier: 0.6
+
+# Microtransit and NEV constants
+microtransitSpeed: 30
+microtransitCost: 125 #cents
+microtransitWaitTime: 12
+microtransitMaxDist: 4.5
+microtransitDiversionConstant: 5
+microtransitDiversionFactor: 1.25
+nevSpeed: 17
+nevCost: 125 #cents
+nevWaitTime: 12
+nevMaxDist: 3
+nevDwellMinutesPerMile: 0.5
+nevDiversionConstant: 5
+nevDiversionFactor: 1.25
+maxWalkIfMTAccessAvailable: 0.5 # Maximum distance to walk to premium transit if microtransit access is available
