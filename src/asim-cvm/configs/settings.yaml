@@ -33,12 +33,10 @@ input_table_list:
       Employees: employees
       Size_Class: size_class
   - tablename: land_use
-    filename: mgra15_based_input2022.csv
+    filename: land_use.csv
     index_col: zone_id
     rename_columns:
-      mgra: zone_id
-      luz_id: luz_id
-      taz: TAZ
+      MAZ: zone_id
     drop_columns:
       - i1
       - i2
@@ -57,8 +55,6 @@ input_table_list:
       - hh_mf
       - hh_mh
       - zip09
-  - tablename: land_use_taz
-    filename: taz.csv
   - tablename: tours
     filename: final_tours.csv
     index_col: tour_id

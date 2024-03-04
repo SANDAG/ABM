@@ -13,7 +13,7 @@ taz_skims:
  - traffic_skims_PM.omx
  - traffic_skims_EV.omx
 
-maz: maz.csv
+maz: land_use.csv
 
 skim_time_periods:
     time_window: 1440
