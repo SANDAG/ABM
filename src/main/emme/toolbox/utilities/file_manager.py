@@ -321,28 +321,17 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
         self._report.append(_time.strftime("%c"))
         exclude_filename = "TEMP_file_manager_exclude.txt"
         exclude_file = open(exclude_filename, "a+")
-        for x in file_masks + [exclude_filename, r"input\persons.csv"]:
+        for x in file_masks + [exclude_filename]:
             exclude_file.write(x + '\n')
         exclude_file.close()
-        output = _subprocess.check_output(['xcopy', '/Y/S/E', src, dst, "/exclude:" + exclude_filename])
+        if check_metadata:
+            flags = '/Y/S/E/D'
+        else:
+            flags = '/Y/S/E'
+        output = _subprocess.check_output(['xcopy', flags, src, dst, "/exclude:" + exclude_filename])
         self._report.append(output)
         os.remove(exclude_filename)
         self._report.append(_time.strftime("%c"))
-
-        # dont overwrite newer persons file
-        src_path = _join(src, r"input\persons.csv")
-        dst_path = _join(dst, r"input\persons.csv")
-        src_time = os.path.getmtime(src_path)
-        if os.path.exists(dst_path):
-            dest_time = os.path.getmtime(dst_path)
-            if dest_time <= src_time:
-                _shutil.copy2(src_path, dst_path)
-                print "dest_time <= ori_time, copied, dst_path", dst_path
-            else:
-                print "dest_time > ori_time, not copied, dst_path", dst_path
-        else:
-            _shutil.copy2(src_path, dst_path)
-            print "dest file not exist, copied"
 
         # for name in os.listdir(src):
         #     src_path = _join(src, name)
