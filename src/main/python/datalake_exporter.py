@@ -162,6 +162,8 @@ def write_to_datalake(output_path, models, exclude, env):
         if is_asim:
             model_metadata = get_model_metadata(model, output_path)
             prefix = model_metadata["prefix"]
+        elif model == "CVM":
+            prefix = "cvm_"
         else:
             prefix = ""
         files = glob.glob(os.path.join(output_path, relpath, model, prefix + '*'))
@@ -186,6 +188,8 @@ def write_to_datalake(output_path, models, exclude, env):
             export_table(model_metadata_df, 'model_metadata', model, parent_dir_name, container)
             constants_df = pd.json_normalize(model_metadata["constants"], sep='__')
             export_table(constants_df, 'constants', model, parent_dir_name, container)
+        elif model == "CVM":
+            prefix = "cvm_"
         else:
             prefix = ""
         
@@ -202,7 +206,7 @@ def write_to_datalake(output_path, models, exclude, env):
 
                 table["scenario_ts"] = pd.to_datetime(now)
                 table["scenario_id"] = EMME_metadata["scenario_id"]
-                if is_asim:
+                if is_asim or model == "CVM":
                     table["model"] = model
                 table.replace("", None, inplace=True) # replace empty strings with None - otherwise conversation error for boolean types
 
@@ -231,6 +235,7 @@ models = [
     ('airport.SAN', '', True),
     ('crossborder', '', True),
     ('visitor', '', True),
+    ('CVM', '', False),
     ('report', '..', False)
 ]
 exclude = [
