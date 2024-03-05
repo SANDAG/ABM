@@ -319,6 +319,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         skipTransitSkimming = props["RunModel.skipTransitSkimming"]
         skipTransitConnector = props["RunModel.skipTransitConnector"]
         skipTransponderExport = props["RunModel.skipTransponderExport"]
+        skipScenManagement = props["RunModel.skipScenManagement"]
         skipABMPreprocessing = props["RunModel.skipABMPreprocessing"]
         skipABMResident = props["RunModel.skipABMResident"]
         skipABMAirport = props["RunModel.skipABMAirport"]
@@ -642,7 +643,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     am_scenario = main_emmebank.scenario(base_scenario.number + 2)
                     export_for_transponder(output_dir, num_processors, am_scenario)
 
-                if msa_iteration==1:
+                if (not skipScenManagement) and (msa_iteration==1):
                     self.run_proc("runSandag_ScenManagement.cmd",
                             [drive + path_forward_slash, str(props["scenarioYear"])],
                             "Running Scenario Management", capture_output=True) 
