@@ -72,7 +72,7 @@ MD crossborder
 CD ..
 
 :: Run Models
-%PYTHON3% src/asim/scripts/xborder/cross_border_model.py -a -c src/asim/configs/crossborder -d input -o output/crossborder
+%PYTHON3% src/asim/scripts/xborder/cross_border_model.py -a -c src/asim/configs/crossborder -d input -o output/crossborder || exit /b 2
 
 ::::::::::::::::::::::
 CD /d %ANACONDA2_DIR%\Scripts
@@ -80,9 +80,9 @@ ECHO %cd%
 CALL %CONDA2_ACT% base
 
 cd /d %PROJECT_DIRECTORY%
-%PYTHON3% src/asim/scripts/set_zoneMapping.py crossborder output
+%PYTHON3% src/asim/scripts/set_zoneMapping.py crossborder output || exit /b 2
 
-%PYTHON2% src/asim/scripts/convert_tripTables.py crossborder output
+%PYTHON2% src/asim/scripts/convert_tripTables.py crossborder output || exit /b 2
 
 ECHO ActivitySim Crossborder run complete!!
 ECHO %startTime%%Time%

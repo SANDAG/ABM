@@ -76,7 +76,7 @@ CD ..
 
 :: Run simulation.py
 
-%PYTHON3% src/asim/simulation.py -s settings_mp.yaml -c src/asim/configs/resident -c src/asim/configs/common -d input -d output/skims -o output/resident
+%PYTHON3% src/asim/simulation.py -s settings_mp.yaml -c src/asim/configs/resident -c src/asim/configs/common -d input -d output/skims -o output/resident || exit /b 2
 
 ::::::::::::::::::::::
 CD /d %ANACONDA2_DIR%\Scripts
@@ -84,9 +84,9 @@ ECHO %cd%
 CALL %CONDA2_ACT% base
 
 cd /d %PROJECT_DIRECTORY%
-%PYTHON3% src/asim/scripts/set_zoneMapping.py resident output
+%PYTHON3% src/asim/scripts/set_zoneMapping.py resident output || exit /b 2
 
-%PYTHON2% src/asim/scripts/convert_tripTables.py resident output
+%PYTHON2% src/asim/scripts/convert_tripTables.py resident output || exit /b 2
 
 ECHO ActivitySim run complete!!
 ECHO %startTime%%Time%

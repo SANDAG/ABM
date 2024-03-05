@@ -72,7 +72,7 @@ MD ActivitySim\log
 CD ..
 
 :: Run simulation.py
-%PYTHON% src/asim/simulation.py -s settings_mp.yaml -c src/asim/configs/resident -c src/asim/configs/common -d input -o output/ActivitySim
+%PYTHON% src/asim/simulation.py -s settings_mp.yaml -c src/asim/configs/resident -c src/asim/configs/common -d input -o output/ActivitySim || exit /b 2
 
 CD %BATCH_DIR%
 

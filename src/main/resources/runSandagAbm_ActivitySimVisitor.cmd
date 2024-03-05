@@ -71,7 +71,7 @@ MD visitor
 CD ..
 
 :: Run Models
-%PYTHON3% src/asim/scripts/visitor/visitor_model.py -a -c src/asim/configs/visitor -d input -o output/visitor
+%PYTHON3% src/asim/scripts/visitor/visitor_model.py -a -c src/asim/configs/visitor -d input -o output/visitor || exit /b 2
 
 ::::::::::::::::::::::
 CD /d %ANACONDA2_DIR%\Scripts
@@ -80,9 +80,9 @@ CALL %CONDA2_ACT% base
 
 cd /d %PROJECT_DIRECTORY%
 
-%PYTHON3% src/asim/scripts/set_zoneMapping.py visitor output
+%PYTHON3% src/asim/scripts/set_zoneMapping.py visitor output || exit /b 2
 
-%PYTHON2% src/asim/scripts/convert_tripTables.py visitor output
+%PYTHON2% src/asim/scripts/convert_tripTables.py visitor output || exit /b 2
 
 ECHO ActivitySim Visitor run complete!!
 ECHO %startTime%%Time%

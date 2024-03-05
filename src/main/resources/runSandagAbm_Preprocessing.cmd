@@ -62,31 +62,31 @@ CD ..
 
 if %ITERATION% equ 1 (
     ECHO Running resident model pre-processing   
-    %PYTHON3% src/asim/scripts/resident/2zoneSkim.py %PROJECT_DIRECTORY%
+    %PYTHON3% src/asim/scripts/resident/2zoneSkim.py %PROJECT_DIRECTORY% || goto error
 
     CD src\asim\scripts\parking
-    %PYTHON3% run.py
+    %PYTHON3% run.py || goto error
     cd /d %PROJECT_DIRECTORY%
 
-    %PYTHON3% src/asim/scripts/resident/resident_preprocessing.py input output %SCENYEAR% %PROJECT_DIRECTORY%
+    %PYTHON3% src/asim/scripts/resident/resident_preprocessing.py input output %SCENYEAR% %PROJECT_DIRECTORY% || goto error
 
     ECHO Running Airport models pre-processing
-    %PYTHON3% src/asim/scripts/airport/airport_model.py -p -c src/asim/configs/airport.CBX -d input -o output/airport.CBX
-    %PYTHON3% src/asim/scripts/airport/airport_model.py -p -c src/asim/configs/airport.SAN -d input -o output/airport.SAN
-    %PYTHON3% src/asim/scripts/airport/createPOIomx.py %PROJECT_DIRECTORY% %SCENYEAR%
+    %PYTHON3% src/asim/scripts/airport/airport_model.py -p -c src/asim/configs/airport.CBX -d input -o output/airport.CBX || goto error
+    %PYTHON3% src/asim/scripts/airport/airport_model.py -p -c src/asim/configs/airport.SAN -d input -o output/airport.SAN || goto error
+    %PYTHON3% src/asim/scripts/airport/createPOIomx.py %PROJECT_DIRECTORY% %SCENYEAR% || goto error
 
     ECHO Running xborder model pre-processing
-    %PYTHON3% src/asim/scripts/xborder/cross_border_model.py -p -c src/asim/configs/crossborder -d input -o output/crossborder
-    %PYTHON3% src/asim/scripts/xborder/createPMSAomx.py %PROJECT_DIRECTORY%
+    %PYTHON3% src/asim/scripts/xborder/cross_border_model.py -p -c src/asim/configs/crossborder -d input -o output/crossborder || goto error
+    %PYTHON3% src/asim/scripts/xborder/createPMSAomx.py %PROJECT_DIRECTORY% || goto error
 
     ECHO Running visitor model pre-processing
-    %PYTHON3% src/asim/scripts/visitor/visitor_model.py -t -c src/asim/configs/visitor -d input -o output/visitor
+    %PYTHON3% src/asim/scripts/visitor/visitor_model.py -t -c src/asim/configs/visitor -d input -o output/visitor || goto error
 ) else (
     ECHO Running resident model pre-processing
-    %PYTHON3% src/asim/scripts/resident/resident_preprocessing.py input output %SCENYEAR% %PROJECT_DIRECTORY%
+    %PYTHON3% src/asim/scripts/resident/resident_preprocessing.py input output %SCENYEAR% %PROJECT_DIRECTORY% || goto error
 )
 
+goto :EOF
 
-
-
-
+:error
+exit /b 2

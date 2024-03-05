@@ -959,7 +959,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     self.add_html(report, 'Error message(s):<br><br><div class="preformat">%s</div>' % err)
                 _m.logbook_write("Transit assignment process record for period " + p["period"], report.render()) 
                 if p["p"].returncode != 0:
-                    raise
+                    raise Exception("Error in transit assignment period %s, refer to logbook in dummy project" % p["period"])
 
 
         new_transit_emmebank_dict = {}
@@ -1066,7 +1066,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % output)
                 except _subprocess.CalledProcessError as error:
                     self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % error.output)
-                    raise
+                    raise Exception("Error in %s, refer to process run report in logbook" % name)
                 finally:
                     err_file.close()
                     with open(err_file_path, 'r') as f:

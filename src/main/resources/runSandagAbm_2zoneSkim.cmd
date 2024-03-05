@@ -31,7 +31,7 @@ CALL %CONDA_ACT% asim_baydag
 cd /d %PROJECT_DIRECTORY%
 
 :: Run skimming
-%PYTHON% src/main/python/2zoneSkim.py %PROJECT_DIRECTORY%
+%PYTHON% src/main/python/2zoneSkim.py %PROJECT_DIRECTORY% || exit /b 2
 
 ECHO %startTime%%Time%
 
