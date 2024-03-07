@@ -616,8 +616,8 @@ scenario_year = arguments[6]
 skim_name = 'TRK_H'
 
 # Mapping dictionary for conditions
-auto_path = f"{model_dir}\input\parametersByYears.csv"
-df_auto_cost = pd.read_csv(auto_path)
+#auto_path = f"{model_dir}\input\parametersByYears.csv"
+#df_auto_cost = pd.read_csv(auto_path)
 
 # Step 1: Load and preprocess data
 df, mgra, sra_taz, traffic_skims_Dist_filter, traffic_skims_Dist, traffic_skims_Time, traffic_skims_TollCost, df_dict = load_and_preprocess_data(model_dir, output_dir, htm_input_file_name, faf_file_name, skim_tod, skim_name)
