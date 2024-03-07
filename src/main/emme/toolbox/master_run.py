@@ -292,26 +292,15 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         minSpaceOnC = props["RunModel.minSpaceOnC"]
         sample_rate = props["sample_rates"]
         end_iteration = len(sample_rate)
-        #scale_factor = props["cvm.scale_factor"]
         # visualizer_reference_path = props["visualizer.reference.path"]
         # visualizer_output_file = props["visualizer.output"]
         # visualizer_reference_label = props["visualizer.reference.label"]
         # visualizer_build_label = props["visualizer.build.label"]
-        # mgraInputFile = props["mgra.socec.file"]
         fafInputFile = props["faf.file"]
         aoc = props["aoc.fuel"] + props["aoc.maintenance"]
         truck_scenario_year = props["truck.FFyear"]
-        # mgra_dbf_file = props["mgra.dbf.file"]
         htm_input_file = props["htm.input.file"]
-        
-        #aoc_truck_fuel_light = props["aoc.truck.fuel.light"]
-        #aoc_truck_fuel_medium = props["aoc.truck.fuel.medium"]
-        #aoc_truck_fuel_high = props["aoc.truck.fuel.high"]
-        #aoc_truck_maintenance_light = props["aoc.truck.maintenance.light"]
-        #aoc_truck_maintenance_medium = props["aoc.truck.maintenance.medium"]
-        #aoc_truck_maintenance_high = props["aoc.truck.maintenance.high"]
-        #truck_aoc = [aoc_truck_fuel_light+aoc_truck_maintenance_light,aoc_truck_fuel_medium+aoc_truck_maintenance_medium,aoc_truck_fuel_high+aoc_truck_maintenance_high]
-        # truck_aoc = [sum(i) for i in zip(aoc_truck_fuel, aoc_truck_maintenance)]
+        cvm_emp_input_file = props["cvm.emp.input.file"]
         
         period_ids = list(enumerate(periods, start=int(scenario_id) + 1))
 
@@ -337,6 +326,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         skipABMXborderWait = props["RunModel.skipABMXborderWait"]
         skipABMXborder = props["RunModel.skipABMXborder"]
         skipABMVisitor = props["RunModel.skipABMVisitor"]
+        skipCVMEstablishmentSyn = props["RunModel.skipCVMEstablishmentSyn"]
         skipCTM = props["RunModel.skipCTM"]
         skipEI = props["RunModel.skipEI"]
         skipExternal = props["RunModel.skipExternal"]
@@ -701,6 +691,9 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         [drive, drive + path_forward_slash, int(sample_rate[iteration] * hh_visitor_size)],
                         "Running ActivitySim visitor model", capture_output=True)
 
+                if (not skipCVMEstablishmentSyn) and (iteration == 0):
+                    self.run_proc("cvmEst.bat", [drive, path_no_drive, cvm_emp_input_file],
+                        "Commercial vehicle model establishment synthesis", capture_output=True)
                 if not skipCTM[iteration]:
                     #export_for_commercial_vehicle(output_dir + '/skims', base_scenario)
                     self.run_proc(

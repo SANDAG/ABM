@@ -67,6 +67,7 @@ class PropertiesSetter(object):
     skipABMVisitor_1 = _m.Attribute(bool)
     skipABMVisitor_2 = _m.Attribute(bool)
     skipABMVisitor_3 = _m.Attribute(bool)
+    skipCVMEstablishmentSyn = _m.Attribute(bool)
     skipCTM_1 = _m.Attribute(bool)
     skipCTM_2 = _m.Attribute(bool)
     skipCTM_3 = _m.Attribute(bool)
@@ -151,7 +152,7 @@ class PropertiesSetter(object):
             "startFromIteration", "skipInitialization", "deleteAllMatrices", "skipCopyWarmupTripTables",
             "skipCopyBikeLogsum", "skipCopyWalkImpedance", "skipWalkLogsums", "skipBikeLogsums", "skipBuildNetwork",
             "skipHighwayAssignment", "skipTransitSkimming", "skipTransitConnector", "skipTransponderExport", "skipABMPreprocessing", "skipABMResident", "skipABMAirport", "skipABMXborderWait", "skipABMXborder", "skipABMVisitor",
-            "skipCTM", "skipTruck", "skipEI", "skipExternal", "skipTripTableCreation", "skipFinalHighwayAssignment",
+            "skipCVMEstablishmentSyn", "skipCTM", "skipTruck", "skipEI", "skipExternal", "skipTripTableCreation", "skipFinalHighwayAssignment",
             "skipFinalTransitAssignment", "skipVisualizer", "skipDataExport", "skipDatalake", "skipDataLoadRequest",
             "skipDeleteIntermediateFiles")
         self._properties = None
@@ -224,6 +225,7 @@ class PropertiesSetter(object):
             ("skipABMXborderWait",      "&nbsp;&nbsp;&nbsp;&nbsp;Skip wait time model"),
             ("skipABMVisitor",          "Skip ActivitySim visitor model"),
             ("skipCTM",                 "Skip commercial vehicle sub-model"),
+            ("skipCVMEstablishmentSyn",        "&nbsp;&nbsp;&nbsp;&nbsp;Skip CVM establishment synthesis"),
             ("skipTruck",               "Skip truck sub-model"),
             ("skipEI",                  "Skip external-internal sub-model"),
             ("skipExternal",            "Skip external-external sub-model"),
@@ -257,7 +259,8 @@ class PropertiesSetter(object):
             contents.append(checkbox_no_data % {"name": "all" + "_" + str(i)})
         for name, label in skip_per_iteration_items:
             contents.append("</tr><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;%s</td>" % label)
-            if name not in  ["skipABMXborderWait", "skipTransitConnector"]:
+            if name not in  ["skipABMXborderWait", "skipTransitConnector",
+            "skipCVMEstablishmentSyn"]:
                 for i in range(1,4):
                     contents.append(checkbox % {"name": name + "_" + str(i), "tag": tool_proxy_tag})
             else:
@@ -365,6 +368,7 @@ class PropertiesSetter(object):
         self.skipABMXborderWait = props.get("RunModel.skipABMXborderWait", False)
         self.skipABMVisitor = props.get("RunModel.skipABMVisitor", [False, False, False])
 
+        self.skipCVMEstablishmentSyn = props.get("RunModel.skipCVMEstablishmentSyn", False)
         self.skipCTM = props.get("RunModel.skipCTM", [False, False, False])
         self.skipTruck = props.get("RunModel.skipTruck", [False, False, False])
         self.skipEI = props.get("RunModel.skipEI", [False, False, False])
@@ -407,6 +411,7 @@ class PropertiesSetter(object):
         props["RunModel.skipABMXborderWait"] = self.skipABMXborderWait
         props["RunModel.skipABMXborder"] = self.skipABMXborder
         props["RunModel.skipABMVisitor"] = self.skipABMVisitor
+        props["RunModel.skipCVMEstablishmentSyn"] = self.skipCVMEstablishmentSyn
         props["RunModel.skipCTM"] = self.skipCTM
         props["RunModel.skipTruck"] = self.skipTruck
         props["RunModel.skipEI"] = self.skipEI
