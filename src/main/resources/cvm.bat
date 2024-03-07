@@ -37,12 +37,13 @@ CD /d %PROJECT_DRIVE%%PROJECT_DIRECTORY%
 :: Create directory to store CVM outputs
 CD Output
 ECHO Create directory to store CVM outputs...
-MD CVM
+IF exist CVM ( echo CVM folder exists ) ELSE ( MD CVM && echo CVM folder created)
 CD ..
 
 SET CVM_INPUT_DIR=%PROJECT_DRIVE%%PROJECT_DIRECTORY%\input,%PROJECT_DRIVE%%PROJECT_DIRECTORY%\input\CVM,%PROJECT_DRIVE%%PROJECT_DIRECTORY%\Output\resident,%PROJECT_DRIVE%%PROJECT_DIRECTORY%\Output\skims
 SET CVM_CONFIGS_DIR=%PROJECT_DRIVE%%PROJECT_DIRECTORY%\src\asim-cvm\configs
 SET CVM_OUTPUT_DIR=%PROJECT_DRIVE%%PROJECT_DIRECTORY%\output\CVM
+SET MODEL_DIR=%PROJECT_DRIVE%%PROJECT_DIRECTORY%
 
 :: run run_cvm.py
 ECHO Run CVM...
@@ -58,7 +59,7 @@ IF %ERRORLEVEL% NEQ 0 (GOTO :ERROR) else (GOTO :SUCCESS)
 
     ::::::::::::::::::::::
     :: Post-process CVM outputs
-
+	%PYTHON3% src/asim-cvm/scripts/generate_summary.py %MODEL_DIR% %CVM_OUTPUT_DIR%
     :: sort TAZ zone index in omx
     %PYTHON3% src/asim-cvm/scripts/set_zoneMapping.py cvm output
 	
