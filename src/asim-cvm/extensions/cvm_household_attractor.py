@@ -74,6 +74,9 @@ def household_attractor(
     tours = read_input_table(state, "tours")
     state.add_table("tours", tours)
 
+    # drop the group quarter households from the household attractor model
+    households_no_gq = households_merged[households_merged["HHT"] > 0].copy()
+
     if model_settings is None:
         model_settings = HouseholdAttractorSettings.read_settings_file(
             state.filesystem,
@@ -83,7 +86,7 @@ def household_attractor(
     trace_label = "cvm_household_attractor"
     trace_hh_id = state.settings.trace_hh_id
 
-    logger.info("Running %s with %d households", trace_label, len(households))
+    logger.info("Running %s with %d households", trace_label, len(households_no_gq))
 
     estimator = estimation.manager.begin_estimation(state, trace_label)
 
@@ -110,7 +113,7 @@ def household_attractor(
 
         expressions.assign_columns(
             state,
-            df=households_merged,
+            df=households_no_gq,
             model_settings=preprocessor_settings,
             trace_label=trace_label,
         )
@@ -121,16 +124,16 @@ def household_attractor(
         estimator.write_coefficients(
             coefficients_df, file_name=model_settings.COEFFICIENTS
         )
-        estimator.write_choosers(households)
+        estimator.write_choosers(households_no_gq)
 
     for segment in model_settings.segments:
-        households_merged["segment"] = pd.Series(
-            segment, index=households_merged.index, dtype=segment_dtype
+        households_no_gq["segment"] = pd.Series(
+            segment, index=households_no_gq.index, dtype=segment_dtype
         )
 
         choices = simulate.simple_simulate(
             state,
-            choosers=households_merged,
+            choosers=households_no_gq,
             spec=model_spec,
             nest_spec=nest_spec,
             locals_d=constants,
