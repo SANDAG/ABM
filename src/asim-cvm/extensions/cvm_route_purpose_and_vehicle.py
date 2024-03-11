@@ -211,7 +211,10 @@ def route_purpose_and_vehicle(
     )
     # join the vehicle type distribution to the routes on is_tnc and vehicle_type
     _routes = routes.merge(
-        vehicle_distribution_df, left_on=["is_tnc", "vehicle_type"], right_index=True
+        vehicle_distribution_df, 
+        how="left",
+        left_on=["is_tnc", "vehicle_type"], 
+        right_index=True
     )
     # this is the probability of each vehicle type for each route
     _probs = _routes[vehicle_distribution_df.columns]
