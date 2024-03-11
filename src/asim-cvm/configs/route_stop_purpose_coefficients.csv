@@ -37,7 +37,7 @@ coef_mixed_terminal,-0.764,F
 coef_elapsed_service,0.001,F
 coef_elapsed_maintenance,0.002,F
 coef_elapsed_home,0.001,F
-coef_elapsed_terminal,0.0065,F
+coef_elapsed_terminal,0.007,F
 coef_am_base,0.641858765,F
 coef_am_goods_delivery,-0.110988664,F
 coef_am_goods_pickup,0.409661408,F
