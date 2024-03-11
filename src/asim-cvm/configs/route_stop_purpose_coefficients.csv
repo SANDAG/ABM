@@ -24,8 +24,8 @@ coef_industrial_home,-1.038,F
 coef_agriculture_service,0.764,F
 coef_agriculture_maintenance,0.633,F
 coef_agriculture_terminal,1.492,F
-coef_sut_goods_delivery,-0.216,F
-coef_mut_goods_pickup,0.25,F
+coef_sut_goods_delivery,-0.432,F
+coef_mut_goods_pickup,1.044,F
 coef_goods_service,-3.283,F
 coef_goods_maintenance,-2.176,F
 coef_goods_home,-2.242,F
