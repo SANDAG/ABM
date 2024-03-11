@@ -211,7 +211,9 @@ def route_purpose_and_vehicle(
     )
     # join the vehicle type distribution to the routes on is_tnc and vehicle_type
     _routes = routes.merge(
-        vehicle_distribution_df, left_on=["is_tnc", "vehicle_type"], right_index=True
+        vehicle_distribution_df,
+        left_on=["is_tnc", "vehicle_type"],
+        right_index=True
     )
     # this is the probability of each vehicle type for each route
     _probs = _routes[vehicle_distribution_df.columns]
@@ -222,7 +224,9 @@ def route_purpose_and_vehicle(
     _choices = pd.Series(
         vehicle_distribution_df.columns[_choices.values], index=_choices.index
     )
-    _choices = as_int_enum(_choices, VehicleTypes_ABM3, categorical=True)
     routes["vehicle_type_abm3"] = _choices
+    routes["vehicle_type_abm3"] = as_int_enum(
+        routes["vehicle_type_abm3"], VehicleTypes_ABM3, categorical=True
+    )
 
     state.add_table("routes", routes)
