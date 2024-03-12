@@ -24,8 +24,8 @@ coef_industrial_home,-1.038,F
 coef_agriculture_service,0.764,F
 coef_agriculture_maintenance,0.633,F
 coef_agriculture_terminal,1.492,F
-coef_sut_goods_delivery,-0.432,F
-coef_mut_goods_pickup,1.044,F
+coef_sut_goods_delivery,0,F
+coef_mut_goods_pickup,0.05,F
 coef_goods_service,-3.283,F
 coef_goods_maintenance,-2.176,F
 coef_goods_home,-2.242,F
@@ -37,7 +37,7 @@ coef_mixed_terminal,-0.764,F
 coef_elapsed_service,0.001,F
 coef_elapsed_maintenance,0.002,F
 coef_elapsed_home,0.001,F
-coef_elapsed_terminal,0.007,F
+coef_elapsed_terminal,0.00675,F
 coef_am_base,0.641858765,F
 coef_am_goods_delivery,-0.110988664,F
 coef_am_goods_pickup,0.409661408,F
