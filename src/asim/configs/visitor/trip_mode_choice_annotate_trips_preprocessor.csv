@@ -92,18 +92,6 @@ placeholder for missing autoTerminalTimeFactorAV,autoTermTimeFactor,1
 ,walk_local_available,(odt_skims['WALK_LOC_TOTALIVTT']>0)
 ,walk_premium_available,(odt_skims['WALK_PRM_TOTALIVTT']>0)
 ,walk_mix_available,(odt_skims['WALK_MIX_TOTALIVTT']>0)&(odt_skims['WALK_MIX_XFERS']>0)
-,knr_local_available,(odt_skims['KNROUT_LOC_TOTALIVTT']>0)
-,knr_local_available_inbound,(odt_skims['KNRIN_LOC_TOTALIVTT']>0)
-,knr_premium_available,(odt_skims['KNROUT_PRM_TOTALIVTT']>0)
-,knr_premium_available_inbound,(odt_skims['KNRIN_PRM_TOTALIVTT']>0)
-,knr_mix_available,(odt_skims['KNROUT_MIX_TOTALIVTT']>0)&(odt_skims['KNROUT_MIX_XFERS']>0)
-,knr_mix_available_inbound,(odt_skims['KNRIN_MIX_TOTALIVTT']>0)&(dot_skims['KNRIN_MIX_XFERS']>0)
-,tnc_local_available,(odt_skims['TNCOUT_LOC_TOTALIVTT']>0)
-,tnc_local_available_inbound,(odt_skims['TNCIN_LOC_TOTALIVTT']>0)
-,tnc_premium_available,(odt_skims['TNCOUT_PRM_TOTALIVTT']>0)
-,tnc_premium_available_inbound,(odt_skims['TNCIN_PRM_TOTALIVTT']>0)
-,tnc_mix_available,(odt_skims['TNCOUT_MIX_TOTALIVTT']>0)&(odt_skims['TNCOUT_MIX_XFERS']>0)
-,tnc_mix_available_inbound,(odt_skims['TNCIN_MIX_TOTALIVTT']>0)&(dot_skims['TNCIN_MIX_XFERS']>0)
 #,,,
 ,origin,df.origin if 'origin' in df.columns else df.home_zone_id
 ,destination,df.destination if 'destination' in df.columns else df.alt_dest
