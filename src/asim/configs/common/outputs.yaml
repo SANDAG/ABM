@@ -776,6 +776,8 @@ land_use:
     - ready_wait_48
 
 persons:
+  remove_columns:
+    - naics2_original_code
   rename_columns:
     rac1p: race
     hisp: hispanic
