@@ -326,6 +326,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         skipABMXborderWait = props["RunModel.skipABMXborderWait"]
         skipABMXborder = props["RunModel.skipABMXborder"]
         skipABMVisitor = props["RunModel.skipABMVisitor"]
+        skipMAASModel = props["RunModel.skipMAASModel"]
         skipCTM = props["RunModel.skipCTM"]
         skipEI = props["RunModel.skipEI"]
         skipExternal = props["RunModel.skipExternal"]
@@ -689,6 +690,13 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         "runSandagAbm_ActivitySimVisitor.cmd",
                         [drive, drive + path_forward_slash, int(sample_rate[iteration] * hh_visitor_size)],
                         "Running ActivitySim visitor model", capture_output=True)
+                           
+                if not skipMAASModel[iteration]:
+                    self.run_proc("runMtxMgr.cmd", [drive, drive + path_no_drive], "Start matrix manager")
+                    self.run_proc(
+                        "runSandagAbm_MAAS.cmd",
+                        [drive, drive + path_forward_slash, 1, 0],
+                        "Java-Run AV allocation model and TNC routing model", capture_output=True)
 
                 if not skipCTM[iteration]:
                     export_for_commercial_vehicle(output_dir + '/skims', base_scenario)

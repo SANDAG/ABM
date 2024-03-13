@@ -1,0 +1,2 @@
+Description,Target,Expression
+number of household AVs,numAVowned,"vehicles[vehicles['vehicle_type'].str.contains('-AV', na=False)].groupby('household_id').size().reindex(households.index).fillna(0)"

@@ -68,6 +68,9 @@ class PropertiesSetter(object):
     skipABMVisitor_1 = _m.Attribute(bool)
     skipABMVisitor_2 = _m.Attribute(bool)
     skipABMVisitor_3 = _m.Attribute(bool)
+    skipMAASModel_1 = _m.Attribute(bool)
+    skipMAASModel_2 = _m.Attribute(bool)
+    skipMAASModel_3 = _m.Attribute(bool)
     skipCTM_1 = _m.Attribute(bool)
     skipCTM_2 = _m.Attribute(bool)
     skipCTM_3 = _m.Attribute(bool)
@@ -130,6 +133,9 @@ class PropertiesSetter(object):
     skipABMVisitor = property(
         fget=lambda self: self._get_list_prop("skipABMVisitor"),
         fset=lambda self, value: self._set_list_prop("skipABMVisitor", value))
+    skipMAASModel = property(
+        fget=lambda self: self._get_list_prop("skipMAASModel"),
+        fset=lambda self, value: self._set_list_prop("skipMAASModel", value))
     skipCTM = property(
         fget=lambda self: self._get_list_prop("skipCTM"),
         fset=lambda self, value: self._set_list_prop("skipCTM", value))
@@ -151,7 +157,7 @@ class PropertiesSetter(object):
             "env", "useLocalDrive", "skip4Ds", "skipInputChecker",
             "startFromIteration", "skipInitialization", "deleteAllMatrices", "skipCopyWarmupTripTables",
             "skipCopyBikeLogsum", "skipCopyWalkImpedance", "skipWalkLogsums", "skipBikeLogsums", "skipBuildNetwork",
-            "skipHighwayAssignment", "skipTransitSkimming", "skipTransitConnector", "skipTransponderExport", "skipScenManagement", "skipABMPreprocessing", "skipABMResident", "skipABMAirport", "skipABMXborderWait", "skipABMXborder", "skipABMVisitor",
+            "skipHighwayAssignment", "skipTransitSkimming", "skipTransitConnector", "skipTransponderExport", "skipScenManagement", "skipABMPreprocessing", "skipABMResident", "skipABMAirport", "skipABMXborderWait", "skipABMXborder", "skipABMVisitor", "skipMAASModel",
             "skipCTM", "skipTruck", "skipEI", "skipExternal", "skipTripTableCreation", "skipFinalHighwayAssignment",
             "skipFinalTransitAssignment", "skipVisualizer", "skipDataExport", "skipDatalake", "skipDataLoadRequest",
             "skipDeleteIntermediateFiles")
@@ -225,6 +231,7 @@ class PropertiesSetter(object):
             ("skipABMXborder",          "Skip ActivitySim cross-border model"),
             ("skipABMXborderWait",      "&nbsp;&nbsp;&nbsp;&nbsp;Skip wait time model"),
             ("skipABMVisitor",          "Skip ActivitySim visitor model"),
+            ("skipMAASModel",           "Skip MAAS & AV models"),
             ("skipCTM",                 "Skip commercial vehicle sub-model"),
             ("skipTruck",               "Skip truck sub-model"),
             ("skipEI",                  "Skip external-internal sub-model"),
@@ -367,6 +374,7 @@ class PropertiesSetter(object):
         self.skipABMXborder = props.get("RunModel.skipABMXborder", [False, False, False])
         self.skipABMXborderWait = props.get("RunModel.skipABMXborderWait", False)
         self.skipABMVisitor = props.get("RunModel.skipABMVisitor", [False, False, False])
+        self.skipMAASModel = props.get("RunModel.skipMAASModel", [False, False, False])
 
         self.skipCTM = props.get("RunModel.skipCTM", [False, False, False])
         self.skipTruck = props.get("RunModel.skipTruck", [False, False, False])
@@ -411,6 +419,7 @@ class PropertiesSetter(object):
         props["RunModel.skipABMXborderWait"] = self.skipABMXborderWait
         props["RunModel.skipABMXborder"] = self.skipABMXborder
         props["RunModel.skipABMVisitor"] = self.skipABMVisitor
+        props["RunModel.skipMAASModel"] = self.skipMAASModel
         props["RunModel.skipCTM"] = self.skipCTM
         props["RunModel.skipTruck"] = self.skipTruck
         props["RunModel.skipEI"] = self.skipEI
