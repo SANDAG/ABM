@@ -239,7 +239,7 @@ class Series15_Processor:
                 self.landuse.loc[ext_maz_num] = 0
                 self.landuse.loc[ext_maz_num, 'poe_id'] = -1
             
-            self.land_use['poe_id'].fillna(0, inplace=True)
+            self.landuse['poe_id'].fillna(0, inplace=True)
 
             self.landuse.loc[ext_maz_num, 'taz'] = row['taz']
             self.landuse.loc[ext_maz_num, 'TAZ'] = row['taz']
@@ -249,8 +249,8 @@ class Series15_Processor:
             self.landuse.loc[ext_maz_num, 'external_MAZ'] = 1
             ext_maz_nums.append(ext_maz_num)
 
-            self.land_use['external_TAZ'].fillna(0, inplace=True)
-            self.land_use['external_MAZ'].fillna(0, inplace=True)
+            self.landuse['external_TAZ'].fillna(0, inplace=True)
+            self.landuse['external_MAZ'].fillna(0, inplace=True)
 
 
         self.landuse['mgra'] = self.landuse.index.values
