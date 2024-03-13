@@ -232,7 +232,7 @@ no long walks,walkAvailable,"np.where((walk_time_skims < max_walk_time),1,0) * n
 ,dest_prm_time,dest_prm_dist * 60/walk_speed
 ,dest_mix_time,dest_mix_dist * 60/walk_speed
 # added for school escorting model,,
-Number of school children in vehicle on trip,num_escortees,df.escort_participants.fillna('').apply(lambda x: len(x.split('_')))
+Number of school children in vehicle on trip,num_escortees,df.escort_participants.fillna('').apply(lambda x: len(x.split('_')) if len(x)>0 else 0)
 # commuter rail constants based on commuter rail IVTT,,
 ,wlk_prm_cr_asc,"(-1.0) * (np.minimum(odt_skims['WALK_PRM_CMRIVTT'],60) + np.where(odt_skims['WALK_PRM_CMRIVTT']>40,(np.minimum(odt_skims['WALK_PRM_CMRIVTT'],60)-40)*0.6,0))"
 ,wlk_mix_cr_asc,"(-1.0) * (np.minimum(odt_skims['WALK_MIX_CMRIVTT'],60) + np.where(odt_skims['WALK_MIX_CMRIVTT']>40,(np.minimum(odt_skims['WALK_MIX_CMRIVTT'],60)-40)*0.6,0))"
@@ -327,3 +327,5 @@ microtransit/nev access transfer,mtnev_acc_xfer_out,microtransit_access_availabl
 microtransit/nev access transfer,mtnev_acc_xfer_in,microtransit_access_available_in | nev_access_available_in
 microtransit/nev egress transfer,mtnev_egr_xfer_out,microtransit_egress_available_out | nev_egress_available_out
 microtransit/nev egress transfer,mtnev_egr_xfer_in,microtransit_egress_available_in | nev_egress_available_in
+#,,
+transit subsidi pass discount,transitSubsidyPassDiscount,"np.where(df.transit_pass_subsidy | df.transit_pass_ownership,0,1)"
