@@ -407,6 +407,8 @@ def create_land_use_file(
     # load maz/mgra + colonia data
     colonias = pd.read_csv(os.path.join(data_dir, colonia_input_fname))
     mazs = pd.read_csv(os.path.join(data_dir, maz_input_fname))
+    ext_mazs = mazs[mazs.external_TAZ == 1]
+    mazs = mazs[mazs.external_TAZ != 1]
     mazs[poe_id_field] = -1
     mazs['original_MAZ'] = -1
     mazs['external_TAZ'] = -1
@@ -451,6 +453,10 @@ def create_land_use_file(
     wide_wait_times = get_poe_wait_times(settings)
     mazs = pd.merge(
         mazs, wide_wait_times, left_on='poe_id', right_on='poe', how='left')
+    
+    #add back the other external mazs
+    ext_mazs = ext_mazs[~ext_mazs.TAZ.isin(mazs.TAZ)]
+    mazs = mazs.append(ext_mazs, ignore_index=True)
 
     return mazs
 
