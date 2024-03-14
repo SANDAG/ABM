@@ -892,7 +892,7 @@ def calculate_new_column(row):
 htmnew['costOperatingDrive'] = htmnew.apply(calculate_new_column, axis=1)
 
 file_name = 'final_trips.csv'
-htmnew.to_csv(output_dir + "\htm\htm" + file_name,index=False)
+htmnew.to_csv(output_dir + "/htm/" + file_name,index=False)
 print(f'{file_name} is saved')
 
 
