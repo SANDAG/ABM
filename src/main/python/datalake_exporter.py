@@ -168,12 +168,13 @@ def write_to_datalake(output_path, models, exclude, env):
             prefix = ""
         files = glob.glob(os.path.join(output_path, relpath, model, prefix + '*'))
         if not files:
-            return
+            print(f"WARNING: No outputs found for {model}", file=sys.stderr)
 
     
     now = datetime.datetime.now()
     EMME_metadata = get_scenario_metadata(output_path)
     if "scenario_id" not in EMME_metadata:
+        print("No scenario id found in metadata file", file=sys.stderr)
         return
     parent_dir_name = str(EMME_metadata["scenario_title"]) + "__" + str(EMME_metadata["username"]) + "__" + str(EMME_metadata["scenario_id"])
 
