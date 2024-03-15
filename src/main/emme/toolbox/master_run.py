@@ -492,22 +492,18 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 self.complete_work(scenarioYear, input_dir, output_dir, mgraFile, "walkMgraEquivMinutes.csv")
 
                 if not skipBuildNetwork:
+                    source_gdb = _glob.glob(os.path.join(input_dir, "*.gdb"))
+                    if len(source_gdb) > 1:
+                        raise Exception("Multiple *.gdb files found in input directory")
+                    if len(source_gdb) < 1:
+                        raise Exception("No *.gdb file found in input directory")
                     base_scenario = import_network(
-                        source=input_dir,
-                        merged_scenario_id=scenario_id,
+                        source=source_gdb[0],
+                        scenario_id=scenario_id,
                         title=scenario_title,
                         data_table_name=scenarioYear,
                         overwrite=True,
                         emmebank=main_emmebank)
-
-                    if "modify_network.py" in os.listdir(os.getcwd()):
-                        try:
-                            with _m.logbook_trace("Modify network script"):
-                                import modify_network
-                                reload(modify_network)
-                                modify_network.run(base_scenario)
-                        except ImportError as e:
-                            pass
 
                     if not skipInputChecker:
                         input_checker(path=self._path)
@@ -517,21 +513,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     availabilities = self.parse_availability_file(_join(input_dir, availability_file), periods)
                     # initialize per time-period scenarios
                     for number, period in period_ids:
-                        title = "%s - %s assign" % (base_scenario.title, period)
-                        # copy_scenario(base_scenario, number, title, overwrite=True)
-                        _m.logbook_write(
-                            name="Copy scenario %s to %s" % (base_scenario.number, number),
-                            attributes={
-                                'from_scenario': base_scenario.number,
-                                'scenario_id': number,
-                                'overwrite': True,
-                                'scenario_title': title
-                            }
-                        )
-                        if main_emmebank.scenario(number):
-                            main_emmebank.delete_scenario(number)
-                        scenario = main_emmebank.copy_scenario(base_scenario.number, number)
-                        scenario.title = title
+                        scenario = main_emmebank.scenario(number)
                         # Apply availabilities by facility and vehicle class to this time period
                         self.apply_availabilities(period, scenario, availabilities)
                 else:

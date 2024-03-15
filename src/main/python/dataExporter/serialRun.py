@@ -1,4 +1,4 @@
-from hwyShapeExport import export_highway_shape
+#from hwyShapeExport import export_highway_shape
 from skimAppender import SkimAppender
 from abmScenario import ScenarioData, LandUse, SyntheticPopulation, TourLists, TripLists
 import os
@@ -164,7 +164,7 @@ def export_data(fp):
     #print("Writing: Highway Load Shape File")
     #export_highway_shape(scenarioPath).to_file(
     #    os.path.join(reportPath, "hwyLoad.shp"))
-        
+
 if __name__ == '__main__':
     targets = sys.argv[1:]
     export_data(targets[0])

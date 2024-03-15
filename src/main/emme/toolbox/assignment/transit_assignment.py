@@ -263,11 +263,11 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "init_wait": 1.5,
                 "xfer_wait": 3.0,
                 "walk": 2.0,
-                "init_headway": "@headway_rev_op",
-                "xfer_headway": "@headway_op",
+                "init_headway": "@headway_rev_ea",
+                "xfer_headway": "@headway_ea",
                 "fare": "@fare_per_op",
                 "in_vehicle": "@vehicle_per_op",
-                "fixed_link_time": "@trtime_link_ea"
+                "fixed_link_time": "@trtime"
             },
             "AM": {
                 "access" : access,
@@ -280,7 +280,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "xfer_headway": "@headway_am",
                 "fare": "@fare_per_pk",
                 "in_vehicle": "@vehicle_per_pk",
-                "fixed_link_time": "@trtime_link_am"
+                "fixed_link_time": "@trtime"
             },
             "MD": {
                 "access" : access,
@@ -289,11 +289,11 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "init_wait": 1.5,
                 "xfer_wait": 3.0,
                 "walk": 2.0,
-                "init_headway": "@headway_rev_op",
-                "xfer_headway": "@headway_op",
+                "init_headway": "@headway_rev_md",
+                "xfer_headway": "@headway_md",
                 "fare": "@fare_per_op",
                 "in_vehicle": "@vehicle_per_op",
-                "fixed_link_time": "@trtime_link_md"
+                "fixed_link_time": "@trtime"
             },
             "PM": {
                 "access" : access,
@@ -306,7 +306,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "xfer_headway": "@headway_pm",
                 "fare": "@fare_per_pk",
                 "in_vehicle": "@vehicle_per_pk",
-                "fixed_link_time": "@trtime_link_pm"
+                "fixed_link_time": "@trtime"
             },
             "EV": {
                 "access" : access,
@@ -315,11 +315,11 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "init_wait": 1.5,
                 "xfer_wait": 3.0,
                 "walk": 2.0,
-                "init_headway": "@headway_rev_night",
-                "xfer_headway": "@headway_night",
+                "init_headway": "@headway_rev_ev",
+                "xfer_headway": "@headway_ev",
                 "fare": "@fare_per_op",
                 "in_vehicle": "@vehicle_per_op",
-                "fixed_link_time": "@trtime_link_ev"
+                "fixed_link_time": "@trtime"
             }
         }
         return perception_parameters[period]
