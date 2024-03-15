@@ -72,6 +72,7 @@ preprocessor:
     - tours
     - vehicles
     - households
+    - persons
 
 nontour_preprocessor:
   SPEC: tour_mode_choice_annotate_choosers_preprocessor
@@ -107,5 +108,7 @@ LOGSUM_CHOOSER_COLUMNS:
   - num_escortees
   - district27
   - ebike_owner
+  - transit_pass_subsidy
+  - transit_pass_ownership
 
 MODE_CHOICE_LOGSUM_COLUMN_NAME: mode_choice_logsum

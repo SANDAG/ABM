@@ -166,7 +166,7 @@ def write_to_datalake(output_path, models, exclude, env):
             prefix = ""
         files = glob.glob(os.path.join(output_path, relpath, model, prefix + '*'))
         if not files:
-            return
+            raise Exception("Error: %s has no output files" % model)
 
     
     now = datetime.datetime.now()

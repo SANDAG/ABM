@@ -29,7 +29,6 @@ max_maz_maz_walk_dist_feet = int(parms['mmms']['max_maz_maz_walk_dist_feet'])
 max_maz_maz_bike_dist_feet = int(parms['mmms']['max_maz_maz_bike_dist_feet'])
 max_maz_local_bus_stop_walk_dist_feet = int(parms['mmms']['max_maz_local_bus_stop_walk_dist_feet'])
 max_maz_premium_transit_stop_walk_dist_feet = int(parms['mmms']['max_maz_premium_transit_stop_walk_dist_feet'])
-max_maz_future_BRT_stop_walk_dist_feet = int(parms['mmms']['max_maz_future_BRT_stop_walk_dist_feet'])
 
 # %%
 walk_speed_mph  = float(parms['mmms']["walk_speed_mph"])
@@ -110,8 +109,8 @@ stops["network_node_x"] = nodes["X"].loc[stops["network_node_id"]].tolist()
 stops["network_node_y"] = nodes["Y"].loc[stops["network_node_id"]].tolist()
 # B: Future BRT, E: regular express, premium express, sprinter\trolley, and coaster bus, L: Local bus, N: None. There should be no Ns
 stops['mode'] = np.where(stops['Mode']==10,'L',
-                np.where((stops['Mode']==4) | (stops['Mode']==5) | (stops['Mode']==8) | (stops['Mode']==9), 'E',
-                np.where((stops['Mode']==6) | (stops['Mode']==7),'B','N')))
+                np.where((stops['Mode']==4) | (stops['Mode']==5) | (stops['Mode']==8) | (stops['Mode']==9) | (stops['Mode']==6) | (stops['Mode']==7), 'E',
+                'N'))
 
 # TEST: stops 4
 # stops.to_csv(r"C:/abm_runs/sar/2022_ABM3_tned/src/asim/scripts/resident/stops_4.csv")
@@ -175,9 +174,8 @@ maz_to_stop_cost = pd.DataFrame({"MAZ":o_m, "stop":d_t, "OMAZ_NODE":o_m_nn, "DST
 maz_to_stop_cost["DISTANCE"] = maz_to_stop_cost.eval("(((OMAZ_NODE_X-DSTOP_NODE_X)**2 + (OMAZ_NODE_Y-DSTOP_NODE_Y)**2)**0.5) / 5280.0")
 
 # B: Future BRT, E: regular express, premium express, sprinter\trolley, and coaster bus, L: Local bus, N: None. There should be no Ns
-maz_to_stop_walk_cost = maz_to_stop_cost[(maz_to_stop_cost["DISTANCE"] <= max_maz_local_bus_stop_walk_dist_feet / 5280.0) & (maz_to_stop_cost['MODE'] == 'L') |
-                                            (maz_to_stop_cost["DISTANCE"] <= max_maz_premium_transit_stop_walk_dist_feet / 5280.0) & (maz_to_stop_cost['MODE'] == 'E') |
-                                            (maz_to_stop_cost["DISTANCE"] <= max_maz_future_BRT_stop_walk_dist_feet / 5280.0) & (maz_to_stop_cost['MODE'] == 'B')].copy()
+maz_to_stop_walk_cost = maz_to_stop_cost[(maz_to_stop_cost["DISTANCE"] <= max_maz_local_bus_stop_walk_dist_feet / 5280.0) & (maz_to_stop_cost['MODE'] == 'L') | 
+                                            (maz_to_stop_cost["DISTANCE"] <= max_maz_premium_transit_stop_walk_dist_feet / 5280.0) & (maz_to_stop_cost['MODE'] == 'E')].copy()
 
 print(f"{datetime.now().strftime('%H:%M:%S')} Get Shortest Path Length...")
 
@@ -185,10 +183,8 @@ maz_to_stop_walk_cost["DISTWALK"] = net.shortest_path_lengths(maz_to_stop_walk_c
 
 
 print(f"{datetime.now().strftime('%H:%M:%S')} Remove Maz Stop Pairs Beyond Max Walk Distance...")
-
-maz_to_stop_walk_cost_out = maz_to_stop_walk_cost[(maz_to_stop_walk_cost["DISTANCE"] <= max_maz_local_bus_stop_walk_dist_feet / 5280.0) & (maz_to_stop_walk_cost['MODE'] == 'L') |
-                                                    (maz_to_stop_walk_cost["DISTANCE"] <= max_maz_premium_transit_stop_walk_dist_feet / 5280.0) & (maz_to_stop_walk_cost['MODE'] == 'E') |
-                                                    (maz_to_stop_walk_cost["DISTANCE"] <= max_maz_future_BRT_stop_walk_dist_feet / 5280.0) & (maz_to_stop_walk_cost['MODE'] == 'B')].copy()
+maz_to_stop_walk_cost_out = maz_to_stop_walk_cost[(maz_to_stop_walk_cost["DISTANCE"] <= max_maz_local_bus_stop_walk_dist_feet / 5280.0) & (maz_to_stop_walk_cost['MODE'] == 'L') | 
+                                                    (maz_to_stop_walk_cost["DISTANCE"] <= max_maz_premium_transit_stop_walk_dist_feet / 5280.0) & (maz_to_stop_walk_cost['MODE'] == 'E')].copy()
 
 
 maz_stop_walk0 = pd.DataFrame(centroids['MAZ'])
@@ -196,7 +192,7 @@ maz_stop_walk0 = maz_stop_walk0.rename(columns = {'MAZ': 'maz'})
 maz_stop_walk0['maz'] = maz_stop_walk0['maz'].astype('int')
 maz_stop_walk0.sort_values(by=['maz'], inplace=True)
 
-modes = {"L": "local_bus", "E": "premium_transit"} #,, "B": "future_BRT"
+modes = {"L": "local_bus", "E": "premium_transit"}
 for mode, output in modes.items():
     max_walk_dist = parms['mmms']['max_maz_' + output + '_stop_walk_dist_feet'] / 5280.0
     maz_to_stop_walk_cost_out_mode = maz_to_stop_walk_cost_out[maz_to_stop_walk_cost_out['MODE'].str.contains(mode)].copy()
@@ -210,7 +206,7 @@ for mode, output in modes.items():
     maz_stop_walk = maz_to_stop_walk_cost[maz_to_stop_walk_cost.MODE==mode].groupby('MAZ')['DISTWALK'].min().reset_index()
     maz_stop_walk.loc[maz_stop_walk['DISTWALK'] > max_walk_dist, 'DISTWALK'] = np.nan
     #maz_stop_walk["walk_time"] = maz_stop_walk["DISTWALK"].apply(lambda x: x / parms['mmms']['walk_speed_mph'] * 60.0)
-    maz_stop_walk['DISTWALK'].fillna(9999, inplace = True)
+    maz_stop_walk['DISTWALK'].fillna(999999, inplace = True)
     maz_stop_walk.rename({'MAZ': 'maz', 'DISTWALK': 'walk_dist_' + output}, axis='columns', inplace=True)
     maz_stop_walk0 = maz_stop_walk0.merge(maz_stop_walk, left_on='maz', right_on='maz')
 

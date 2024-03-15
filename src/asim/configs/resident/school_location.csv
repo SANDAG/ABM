@@ -1,15 +1,15 @@
 Label,Description,Expression,university,highschool,gradeschool,preschool
 local_dist,,_DIST@skims['DIST'],1,1,1,1
 util_mode_choice_logsum,Mode choice logsum,mode_choice_logsum,coef_mclogsum_univ,coef_mclogsum_hsch,coef_mclogsum_gs,coef_mclogsum_ps
-util_Distance,Distance,@_DIST,coef_dist_univ,coef_dist_hsch,coef_dist_gs,coef_dist_ps
-util_log_Distance,log_Distance,@np.log(_DIST+1),coef_lndist_univ,coef_zero,coef_zero,coef_lndist_ps
-util_Distance_squareroot,Squareroot of distance,@_DIST**0.5,coef_sqrtdist_univ,coef_sqrtdist_hsch,coef_sqrtdist_gs,coef_sqrtdist_ps
-util_Distance_squared,Distance_squared,@_DIST**2,coef_sqrddist_univ,coef_sqrddist_hsch,coef_sqrddist_gs,coef_sqrddist_ps
-util_Distance_cubed,Distance_cubed,@_DIST**3,coef_cubeddist_univ,coef_cubeddist_hsch,coef_cubeddist_gs,coef_cubeddist_ps
-util_Distance_worker_univ,Distance for a worker_university specific,"@np.where(df.ptype==1, _DIST, 0)",coef_workerdist_univ,coef_zero,coef_zero,coef_zero
-util_Distance_largeuniversity_univ,Distance for large university enrollment,"@np.where(df.collegeenroll>5000, _DIST, 0)",coef_univenrol_dist_univ,coef_zero,coef_zero,coef_zero
-util_Distance _lowincome_prek,Distance - low income,"@np.where(df.income<60000, _DIST, 0)",coef_zero,coef_zero,coef_zero,coef_lowincdist_ps
-util_Distance - age03_prek,Distance - age 0 to 3,"@np.where(df.age<3,_DIST,0)",coef_zero,coef_zero,coef_zero,coef_age03dist_ps
+util_Distance,Distance,@_DIST.clip(upper=50),coef_dist_univ,coef_dist_hsch,coef_dist_gs,coef_dist_ps
+util_log_Distance,log_Distance,@np.log(_DIST.clip(upper=50)+1),coef_lndist_univ,coef_zero,coef_zero,coef_lndist_ps
+util_Distance_squareroot,Squareroot of distance,@_DIST.clip(upper=50)**0.5,coef_sqrtdist_univ,coef_sqrtdist_hsch,coef_sqrtdist_gs,coef_sqrtdist_ps
+util_Distance_squared,Distance_squared,@_DIST.clip(upper=50)**2,coef_sqrddist_univ,coef_sqrddist_hsch,coef_sqrddist_gs,coef_sqrddist_ps
+util_Distance_cubed,Distance_cubed,@_DIST.clip(upper=50)**3,coef_cubeddist_univ,coef_cubeddist_hsch,coef_cubeddist_gs,coef_cubeddist_ps
+util_Distance_worker_univ,Distance for a worker_university specific,"@np.where(df.ptype==1, _DIST.clip(upper=50), 0)",coef_workerdist_univ,coef_zero,coef_zero,coef_zero
+util_Distance_largeuniversity_univ,Distance for large university enrollment,"@np.where(df.collegeenroll>5000, _DIST.clip(upper=50), 0)",coef_univenrol_dist_univ,coef_zero,coef_zero,coef_zero
+util_Distance _lowincome_prek,Distance - low income,"@np.where(df.income<60000, _DIST.clip(upper=50), 0)",coef_zero,coef_zero,coef_zero,coef_lowincdist_ps
+util_Distance - age03_prek,Distance - age 0 to 3,"@np.where(df.age<3,_DIST.clip(upper=50),0)",coef_zero,coef_zero,coef_zero,coef_age03dist_ps
 util_LoggedSize,Logged Size variable - University specific,@df['size_term'].apply(np.log1p),coef_lnSize,coef_lnSize,coef_lnSize,coef_lnSize
 util_no_attractions,no attractions if logged university size is zero,@df['size_term']==0,-999,-999,-999,-999
 util_sample_of_corrections_factor,Sample of alternatives correction factor,"@np.minimum(np.log(df.pick_count/df.prob), 60)",1,1,1,1
@@ -19,3 +19,11 @@ util_ABM2calibration_0-1miles,ABM2 calibration_0-1miles,@(_DIST<1),coef_zero,coe
 util_ABM2calibration_1-2miles,ABM2 calibration_1-2miles,@(_DIST<2) * (_DIST>=1),coef_zero,coef_abmcalib_12miles,coef_abmcalib_12miles,coef_abmcalib_12miles
 util_ABM2calibration_2-3miles,ABM2 calibration_2-3miles,@(_DIST<3) * (_DIST>=2),coef_zero,coef_abmcalib_23miles,coef_abmcalib_23miles,coef_abmcalib_23miles
 util_ABM2calibration_0-20miles,ABM2 calibration_0-20miles,@(_DIST<20) * (_DIST),coef_zero,coef_abmcalib_20miles,coef_abmcalib_20miles,coef_abmcalib_20miles
+#,,,,,,
+#calibration constants,,,
+util_Calibration 0-2 - miles,Calibration 0-2 - miles,@_DIST<=2,,coef_distance_0_2miles,coef_distance_2_5miles,coef_distance_5_10miles
+util_Calibration 2-5 - miles,Calibration 2-5 - miles,@(_DIST>2) * (_DIST<=5),,coef_distance_0_2miles,coef_distance_2_5miles,coef_distance_5_10miles
+util_Calibration 5-10 - miles,Calibration 5-10 - miles,@(_DIST>5) * (_DIST<=10),,coef_distance_0_2miles,coef_distance_2_5miles,coef_distance_5_10miles
+util_ABM2 calibration 10-20 - miles,ABM3 calibration 10-20 - miles,@(_DIST>10) * (_DIST<=20),,coef_distance_0_2miles,coef_distance_2_5miles,coef_distance_5_10miles
+util_ABM2 calibration 20-30 - miles,ABM3 calibration 20-30 - miles,@(_DIST>20) * (_DIST<=30),,coef_distance_0_2miles,coef_distance_2_5miles,coef_distance_5_10miles
+util_ABM2 calibration >30 - miles,ABM3 calibration >30 - miles,@(_DIST>30),,coef_distance_0_2miles,coef_distance_2_5miles,coef_distance_5_10miles

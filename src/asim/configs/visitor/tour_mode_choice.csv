@@ -43,8 +43,8 @@ util_WalkTransit_FIRST_wait_time,WalkTransit - First wait time,@(odt_skims['WALK
 util_WalkTransit_transfer_wait_time,WalkTransit - transfer wait time,@(odt_skims['WALK_LOC_XFERWAIT'] + dot_skims['WALK_LOC_XFERWAIT']),,,,,,coef_xwt,,,,,
 util_WALK_transfer_waLK_time,WALK_PRM - transfer walk time,@(odt_skims['WALK_LOC_XFERWALK'] + dot_skims['WALK_LOC_XFERWALK']),,,,,,coef_waux,,,,,
 util_WalkTransit_number_of_transfers,WalkTransit - number of transfers,@(odt_skims['WALK_LOC_XFERS'].clip(0) + dot_skims['WALK_LOC_XFERS'].clip(0)),,,,,,coef_xfers,,,,,
-util_WalkTransit_Walk_access_time,WalkTransit - Walk access time,@2 *(df.origin_loc_time + df.dest_loc_time),,,,,,coef_wacc,,,,,
-util_WalkTransit_Walk_egress_time,WalkTransit - Walk egress time,@2 *(df.origin_loc_time + df.dest_loc_time),,,,,,coef_wegr,,,,,
+util_WalkTransit_Walk_access_time,WalkTransit - Walk access time,@2 * df.origin_loc_time,,,,,,coef_wacc,,,,,
+util_WalkTransit_Walk_egress_time,WalkTransit - Walk egress time,@2 * df.dest_loc_time,,,,,,coef_wegr,,,,,
 util_WalkTransit_Fare,WalkTransit - Fare,@(odt_skims['WALK_LOC_FARE'] + dot_skims['WALK_LOC_FARE']) * df.coef_cost,,,,,,coef_one,,,,,
 #util_WalkTransit - Age 16 to 24,WalkTransit - Age 16 to 24,@(df.age > 15) * (df.age < 25),,,,,,coef_age1624_tran,,,,,
 #util_WalkTransit - Age 41 to 55,WalkTransit - Age 41 to 55,@(df.age > 40) * (df.age < 56),,,,,,coef_age4155_tran,,,,,
@@ -64,9 +64,9 @@ util_WalkTransit_In_vehicle_time_on_URB,WalkTransit - In-vehicle time on BRT,@(i
 util_WalkTransit_FIRST_wait_time,WalkTransit - First wait time,@(odt_skims['WALK_PRM_FIRSTWAIT'] + dot_skims['WALK_PRM_FIRSTWAIT']),,,,,,,coef_fwt,,,,
 util_WalkTransit_transfer_wait_time,WalkTransit - transfer wait time,@(odt_skims['WALK_PRM_XFERWAIT'] + dot_skims['WALK_PRM_XFERWAIT']),,,,,,,coef_xwt,,,,
 util_WALK_PRM_transfer_waLK_time,WALK_PRM - transfer walk time,@(odt_skims['WALK_PRM_XFERWALK'] + dot_skims['WALK_PRM_XFERWALK']),,,,,,,coef_waux,,,,
-util_WalkTransit_number_of_transfers,WalkTransit - number of transfers,@(odt_skims['WALK_PRM_XFERS'].clip(0) + dot_skims['WALK_PRM_XFERS'].clip(0)),,,,,,,coef_xfers,,,,
-util_WalkTransit_Walk_access_time,WalkTransit - Walk access time,@2 *(df.origin_prm_time + df.dest_prm_time),,,,,,,coef_wacc,,,,
-util_WalkTransit_Walk_egress_time,WalkTransit - Walk egress time,@2 *(df.origin_prm_time + df.dest_prm_time),,,,,,,coef_wegr,,,,
+util_WalkTransit_number_of_transfers,WalkTransit - number of transfers,@((odt_skims['WALK_PRM_XFERS'] + df.mtnev_egr_xfer).clip(0) + (dot_skims['WALK_PRM_XFERS'] + df.mtnev_egr_xfer).clip(0)),,,,,,,coef_xfers,,,,
+util_WalkTransit_Walk_access_time,WalkTransit - Walk access time,@2 * df.origin_prm_time,,,,,,,coef_wacc,,,,
+util_WalkTransit_Walk_egress_time,WalkTransit - Walk egress time,"@np.where(df.nev_egress_available, df.nev_egress_time, np.where(df.microtransit_egress_available, df.microtransit_egress_time, 2*df.dest_prm_time))",,,,,,,coef_wegr,,,,
 util_WalkTransit_Fare,WalkTransit - Fare,@(odt_skims['WALK_PRM_FARE'] + dot_skims['WALK_PRM_FARE']) * df.coef_cost,,,,,,,coef_one,,,,
 #util_WalkTransit - Age 16 to 24,WalkTransit - Age 16 to 24,@(df.age > 15) * (df.age < 25),,,,,,,coef_age1624_tran,,,,
 #util_WalkTransit - Age 41 to 55,WalkTransit - Age 41 to 55,@(df.age > 40) * (df.age < 56),,,,,,,coef_age4155_tran,,,,
@@ -86,8 +86,8 @@ util_WalkTransit_FIRST_wait_time,WalkTransit - First wait time,@(odt_skims['WALK
 util_WalkTransit_transfer_wait_time,WalkTransit - transfer wait time,@(odt_skims['WALK_MIX_XFERWAIT'] + dot_skims['WALK_MIX_XFERWAIT']),,,,,,,,coef_xwt,,,
 util_WALK_PRM_transfer_waLK_time,WALK_PRM - transfer walk time,@(odt_skims['WALK_MIX_XFERWALK'] + dot_skims['WALK_MIX_XFERWALK']),,,,,,,,coef_waux,,,
 util_WalkTransit_number_of_transfers,WalkTransit - number of transfers,@(odt_skims['WALK_MIX_XFERS'].clip(0) + dot_skims['WALK_MIX_XFERS'].clip(0)),,,,,,,,coef_xfers,,,
-util_WalkTransit_Walk_access_time,WalkTransit - Walk access time,@2 *(df.origin_mix_time + df.dest_mix_time),,,,,,,,coef_wacc,,,
-util_WalkTransit_Walk_egress_time,WalkTransit - Walk egress time,@2 *(df.origin_mix_time + df.dest_mix_time),,,,,,,,coef_wegr,,,
+util_WalkTransit_Walk_access_time,WalkTransit - Walk access time,@2 * df.origin_mix_time,,,,,,,,coef_wacc,,,
+util_WalkTransit_Walk_egress_time,WalkTransit - Walk egress time,@2 * df.dest_mix_time,,,,,,,,coef_wegr,,,
 util_WalkTransit_Fare,WalkTransit - Fare,@(odt_skims['WALK_MIX_FARE'] + dot_skims['WALK_MIX_FARE']) * df.coef_cost,,,,,,,,coef_one,,,
 #util_WalkTransit - Age 16 to 24,WalkTransit - Age 16 to 24,@(df.age > 15) * (df.age < 25),,,,,,,,coef_age1624_tran,,,
 #util_WalkTransit - Age 41 to 55,WalkTransit - Age 41 to 55,@(df.age > 40) * (df.age < 56),,,,,,,,coef_age4155_tran,,,
@@ -106,14 +106,14 @@ util_TNC Single - In-vehicle time,TNC Single - In-vehicle time,(s2_time_skims_ou
 util_TNC Single - Wait time,TNC Single - Wait time,1.5*totalWaitSingleTNC,,,,,,,,,,coef_ivt,
 util_TNC Single - Cost,TNC Single - Cost,"@((np.maximum(TNC_single_baseFare*2 + (df.s2_dist_skims_out + df.s2_dist_skims_inb) * TNC_single_costPerMile + (df.s2_time_skims_out + df.s2_time_skims_inb) * TNC_single_costPerMinute, TNC_shared_costMinimum*2)*100 + df.s2_cost_skims_out + df.s2_cost_skims_inb) * df.coef_cost)",,,,,,,,,,coef_one,
 #,TNC Shared,,,,,,,,,,,,
-util_TNC Shared - In-vehicle time,TNC Shared - In-vehicle time,@(df.s2_time_skims_out + df.s2_time_skims_inb) * TNC_shared_IVTFactor,,,,,,,,,,,coef_ivt
-util_TNC Shared - Wait time,TNC Shared - Wait time,1.5*totalWaitSharedTNC,,,,,,,,,,,coef_ivt
-util_TNC Shared - Cost,TNC Shared - Cost,"@((np.maximum(TNC_shared_baseFare*2 + (df.s2_dist_skims_out + df.s2_dist_skims_inb) * TNC_shared_costPerMile + (df.s2_time_skims_out + df.s2_time_skims_inb)* TNC_shared_costPerMinute, TNC_shared_costMinimum*2)*100 + df.s2_cost_skims_out + df.s2_cost_skims_inb) * df.coef_cost)",,,,,,,,,,,coef_one
+util_TNC Shared - In-vehicle time,TNC Shared - In-vehicle time,"@(np.where(df.nev_available, df.nev_time, np.where(df.microtransit_available, df.microtransit_time, (df.s2_time_skims_out + df.s2_time_skims_inb)))) * TNC_shared_IVTFactor",,,,,,,,,,,coef_ivt
+util_TNC Shared - Wait time,TNC Shared - Wait time,"@np.where(df.nev_available, 2*nevWaitTime, np.where(df.microtransit_available, 2*microtransitWaitTime, 1.5*df.totalWaitSharedTNC))",,,,,,,,,,,coef_ivt
+util_TNC Shared - Cost,TNC Shared - Cost,"@np.where(df.nev_available, 2*nevCost, np.where(df.microtransit_available, 2*microtransitCost, ((np.maximum(TNC_shared_baseFare*2 + (df.s2_dist_skims_out + df.s2_dist_skims_inb) * TNC_shared_costPerMile + (df.s2_time_skims_out + df.s2_time_skims_inb)* TNC_shared_costPerMinute, TNC_shared_costMinimum*2)))*100 + df.s2_cost_skims_out + df.s2_cost_skims_inb) * df.coef_cost)",,,,,,,,,,,coef_one
 Calibration work tour with auto,Work Tour with auto,is_work*autoAvailable,-0.4839,,0.8409,-0.0425,,-3,,,-0.191,-0.191,-999
 Calibration recreation tour with auto,Recreation Tour with auto,is_recreation*autoAvailable,1.8714,,0.0491,0.8952,,-1.5518,,,1.3906,1.3906,-999
 Calibration dining tour with auto,Dining Tour with auto,is_dining*autoAvailable,-0.0646,,6.496,9.7582,,0.7504,,,-5.8495,-5.8495,-999
 Calibration work tour without auto,Work Tour without auto,is_work*(1-autoAvailable),-1.6299,,-0.4656,1.7654,,-3,,,-0.5247,-0.5247,-999
 Calibration recreation tour without auto,Recreation Tour without auto,is_recreation*(1-autoAvailable),2.6609,,0.8791,3.1171,,-2.1633,,,4.9268,4.9268,-999
 Calibration dining tour withou auto,Dining Tour without auto,is_dining*(1-autoAvailable),1.9729,,0.9246,3.129,,-2.268,,,2.2652,2.2652,-999
-Calibration - transit,ABM2 Calibration - Transit,-1.8,,,,,,1,,,,,
-Calibration,ABM2+ Calibration,1,0.0512,0,-0.0313,-0.085,0,-0.0403,,,-0.4487,0.122,0
+Calibration - transit,ABM2 Calibration - Transit,-1.8,,,,,,1,1,1,,,
+Calibration,ABM2+ Calibration,1,0.0512,0,-0.0313,-0.085,0,-0.803,-0.903,-0.903,-0.4487,0.122,0

@@ -319,12 +319,14 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         skipTransitSkimming = props["RunModel.skipTransitSkimming"]
         skipTransitConnector = props["RunModel.skipTransitConnector"]
         skipTransponderExport = props["RunModel.skipTransponderExport"]
+        skipScenManagement = props["RunModel.skipScenManagement"]
         skipABMPreprocessing = props["RunModel.skipABMPreprocessing"]
         skipABMResident = props["RunModel.skipABMResident"]
         skipABMAirport = props["RunModel.skipABMAirport"]
         skipABMXborderWait = props["RunModel.skipABMXborderWait"]
         skipABMXborder = props["RunModel.skipABMXborder"]
         skipABMVisitor = props["RunModel.skipABMVisitor"]
+        skipMAASModel = props["RunModel.skipMAASModel"]
         skipCTM = props["RunModel.skipCTM"]
         skipEI = props["RunModel.skipEI"]
         skipExternal = props["RunModel.skipExternal"]
@@ -624,7 +626,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     am_scenario = main_emmebank.scenario(base_scenario.number + 2)
                     export_for_transponder(output_dir, num_processors, am_scenario)
 
-                if msa_iteration==1:
+                if (not skipScenManagement) and (msa_iteration==1):
                     self.run_proc("runSandag_ScenManagement.cmd",
                             [drive + path_forward_slash, str(props["scenarioYear"])],
                             "Running Scenario Management", capture_output=True) 
@@ -670,6 +672,13 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         "runSandagAbm_ActivitySimVisitor.cmd",
                         [drive, drive + path_forward_slash, int(sample_rate[iteration] * hh_visitor_size)],
                         "Running ActivitySim visitor model", capture_output=True)
+                           
+                if not skipMAASModel[iteration]:
+                    self.run_proc("runMtxMgr.cmd", [drive, drive + path_no_drive], "Start matrix manager")
+                    self.run_proc(
+                        "runSandagAbm_MAAS.cmd",
+                        [drive, drive + path_forward_slash, 1, 0],
+                        "Java-Run AV allocation model and TNC routing model", capture_output=True)
 
                 if not skipCTM[iteration]:
                     export_for_commercial_vehicle(output_dir + '/skims', base_scenario)
@@ -941,7 +950,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     self.add_html(report, 'Error message(s):<br><br><div class="preformat">%s</div>' % err)
                 _m.logbook_write("Transit assignment process record for period " + p["period"], report.render()) 
                 if p["p"].returncode != 0:
-                    raise
+                    raise Exception("Error in transit assignment period %s, refer to logbook in dummy project" % p["period"])
 
 
         new_transit_emmebank_dict = {}
@@ -1048,7 +1057,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % output)
                 except _subprocess.CalledProcessError as error:
                     self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % error.output)
-                    raise
+                    raise Exception("Error in %s, refer to process run report in logbook" % name)
                 finally:
                     err_file.close()
                     with open(err_file_path, 'r') as f:

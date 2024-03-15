@@ -35,3 +35,9 @@ coef_sqrddist_ps,0.0125,F
 coef_cubeddist_ps,-0.0004,F
 coef_lowincdist_ps,-0.0956,F
 coef_age03dist_ps,-0.007,F
+#,,
+coef_distance_0_2miles,0.170,F
+coef_distance_2_5miles,0.120,F
+coef_distance_5_10miles,0.250,F
+coef_distance_10_20miles,-0.400,F
+coef_distance_20_30miles,-2.900,F
