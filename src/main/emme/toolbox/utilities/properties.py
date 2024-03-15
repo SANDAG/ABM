@@ -68,13 +68,10 @@ class PropertiesSetter(object):
     skipABMVisitor_1 = _m.Attribute(bool)
     skipABMVisitor_2 = _m.Attribute(bool)
     skipABMVisitor_3 = _m.Attribute(bool)
-<<<<<<< HEAD
     skipCVMEstablishmentSyn = _m.Attribute(bool)
-=======
     skipMAASModel_1 = _m.Attribute(bool)
     skipMAASModel_2 = _m.Attribute(bool)
     skipMAASModel_3 = _m.Attribute(bool)
->>>>>>> ABM3_develop
     skipCTM_1 = _m.Attribute(bool)
     skipCTM_2 = _m.Attribute(bool)
     skipCTM_3 = _m.Attribute(bool)
