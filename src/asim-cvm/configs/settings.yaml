@@ -73,7 +73,7 @@ input_table_list:
 output_tables:
  h5_store: False
  action: include
- prefix: cvm_
+ prefix: final_
  sort: True
  tables:
    - commercial_accessibility

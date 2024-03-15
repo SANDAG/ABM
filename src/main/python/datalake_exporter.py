@@ -163,7 +163,7 @@ def write_to_datalake(output_path, models, exclude, env):
             model_metadata = get_model_metadata(model, output_path)
             prefix = model_metadata["prefix"]
         elif model == "CVM":
-            prefix = "cvm_"
+            prefix = "final_"
         elif model == "HTM":
             prefix = "htmfinal"
         else:
@@ -192,7 +192,7 @@ def write_to_datalake(output_path, models, exclude, env):
             constants_df = pd.json_normalize(model_metadata["constants"], sep='__')
             export_table(constants_df, 'constants', model, parent_dir_name, container)
         elif model == "CVM":
-            prefix = "cvm_"
+            prefix = "final_"
         elif model == "HTM":
             prefix = "htmfinal"
         else:
