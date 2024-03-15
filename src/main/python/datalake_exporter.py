@@ -38,7 +38,7 @@ def connect_to_Azure(env):
             token likely malconfigured"""
         print(error_statement,"\n", file=sys.stderr)
         return False, None
-    
+
 def get_scenario_metadata(output_path):
     """
     get scenario's guid (globally unique identifier) and other metadata
@@ -101,7 +101,7 @@ def create_scenario_df(ts, EMME_metadata, parent_dir_name, output_path):
             "commit": ""
         }
 
-    metadata = { 
+    metadata = {
         "scenario_name": [EMME_metadata["scenario_title"]],
         "scenario_yr": [EMME_metadata["scenario_year"]],
         "login_name": [EMME_metadata["username"]],
@@ -157,7 +157,7 @@ def write_to_datalake(output_path, models, exclude, env):
     cloud_bool, container = connect_to_Azure(env)
     if not cloud_bool:
         return
-    
+
     for model, relpath, is_asim in models:
         if is_asim:
             model_metadata = get_model_metadata(model, output_path)
@@ -170,9 +170,9 @@ def write_to_datalake(output_path, models, exclude, env):
             prefix = ""
         files = glob.glob(os.path.join(output_path, relpath, model, prefix + '*'))
         if not files:
-            print(f"WARNING: No outputs found for {model}", file=sys.stderr)
+            raise Exception("Error: %s has no output files" % model)
 
-    
+
     now = datetime.datetime.now()
     EMME_metadata = get_scenario_metadata(output_path)
     if "scenario_id" not in EMME_metadata:
@@ -197,7 +197,7 @@ def write_to_datalake(output_path, models, exclude, env):
             prefix = "htmfinal"
         else:
             prefix = ""
-        
+
         files = glob.glob(os.path.join(output_path, relpath, model, prefix + '*'))
         for file in files:
             if os.path.basename(file) in exclude:
@@ -223,14 +223,14 @@ def write_to_datalake(output_path, models, exclude, env):
                     else:
                         lake_file_name = "/".join(["abm_15_0_0",parent_dir_name,model,name+ext])
                     container.upload_blob(name=lake_file_name, data=data)
-    
+
     try:
         with open(EMME_metadata["properties_path"], "rb") as properties:
             lake_file_name = "/".join(["abm_15_0_0",parent_dir_name,os.path.basename(EMME_metadata["properties_path"])])
             container.upload_blob(name=lake_file_name, data=properties)
     except (FileNotFoundError, KeyError):
         pass
-        
+
 
 output_path = sys.argv[1]
 env = sys.argv[2]

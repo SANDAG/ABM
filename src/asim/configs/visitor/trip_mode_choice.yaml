@@ -28,12 +28,6 @@ NESTS:
             - WALK_LOC
             - WALK_PRM
             - WALK_MIX
-            - KNR_LOC
-            - KNR_PRM
-            - KNR_MIX
-            - TNC_LOC
-            - TNC_PRM
-            - TNC_MIX
       - name: RIDEHAIL
         coefficient: 0.50
         alternatives:

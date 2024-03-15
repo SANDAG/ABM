@@ -484,3 +484,15 @@ inbound microtransit access available,microtransit_access_available_in,~trips.ou
 inbound nev access available,nev_access_available_in,~trips.outbound & (nev_orig>0) & (origin_micro_prm_dist>maxWalkIfMTAccessAvailable) & (origin_micro_prm_dist<nevMaxDist)
 inbound microtransit egress available,microtransit_egress_available_in,~trips.outbound & (microtransit_dest>0) & (dest_micro_prm_dist<microtransitMaxDist)
 inbound nev egress available,nev_egress_available_in,~trips.outbound & (nev_dest>0) & (dest_micro_prm_dist<nevMaxDist)
+#,,
+,trip_veh_body,"reindex(tours.selected_vehicle.str.split('_').str[0], trips.tour_id)"
+,_trip_veh_age,"reindex(tours.selected_vehicle.str.split('_').str[1], trips.tour_id)"
+,_trip_veh_age,"_trip_veh_age.replace('hh', -9)"
+,trip_veh_age,"_trip_veh_age.fillna(-9)"
+,trip_veh_fueltype,"reindex(tours.selected_vehicle.str.split('_').str[2], trips.tour_id)"
+#,,
+,origin_purpose," ""null"""
+,origin_purpose,"np.where(trips.trip_count == 1, 'home', origin_purpose)"
+,origin_purpose,"np.where(trips.trip_count == 1 & (trips.primary_purpose == 'atwork'), 'work', origin_purpose)"
+,origin_purpose,"np.where((trips.trip_count > 1) & (trips.trip_num==1) & (trips.outbound), 'home', origin_purpose)"
+,origin_purpose,"np.where(((trips.trip_count > 1) & (trips.trip_num>1)) | ((trips.trip_count > 1) & (trips.trip_num==1) & ~(trips.outbound)), trips['purpose'].shift(1), origin_purpose)"

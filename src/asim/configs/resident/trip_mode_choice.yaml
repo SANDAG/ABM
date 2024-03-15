@@ -76,6 +76,7 @@ preprocessor:
     - tours
     - vehicles
     - households
+    - persons
 
 annotate_trips:
   SPEC: trip_mode_choice_annotate_trips
@@ -107,6 +108,8 @@ TOURS_MERGED_CHOOSER_COLUMNS:
   - ebike_owner
   - start
   - end
+  - transit_pass_subsidy
+  - transit_pass_ownership
 
 MODE_CHOICE_LOGSUM_COLUMN_NAME: mode_choice_logsum
 

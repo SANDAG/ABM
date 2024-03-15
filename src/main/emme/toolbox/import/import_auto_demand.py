@@ -338,6 +338,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     
                     total_asim_trips = (cvm_demand + htm_ei_demand + htm_ie_demand + htm_ee_demand)
 
+<<<<<<< HEAD
                     dem_utils.demand_report([
                             ("cvm", cvm_demand),
                             ("htm_ei", htm_ei_demand),
@@ -449,6 +450,47 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                 #         logbook_label, self.scenario, report)
                 #     self.set_data(matrix_name, total_asim_trips)
                     
+=======
+
+                for matrix_name_tmplt, share in mode_shares:
+
+                    matrix_name = matrix_name_tmplt % period[1:]
+                    logbook_label = "Import empty AV, and TNC fleet to matrix %s" % (matrix_name)
+
+                    # AV routing models and TNC fleet model demand
+                    empty_av_demand = omx_manager.lookup(("EmptyAV","",""), "EmptyAV%s" % period)
+                    tnc_demand_0 = omx_manager.lookup(("TNCVehicle","",period), "TNC%s_0" % period)
+                    tnc_demand_1 = omx_manager.lookup(("TNCVehicle","",period), "TNC%s_1" % period)
+                    tnc_demand_2 = omx_manager.lookup(("TNCVehicle","",period), "TNC%s_2" % period)
+                    tnc_demand_3 = omx_manager.lookup(("TNCVehicle","",period), "TNC%s_3" % period)
+                    
+                    # AVs: no driver. No AVs: driver
+                    # AVs: 0 and 1 passenger would be SOV. there will be empty vehicles as well. No AVs: 0 passanger would be SOV                    
+                    # AVs: 2 passenger would be HOV2. No AVs: 1 passenger would be HOV2
+                    # AVs: 3 passenger would be HOV3. No AVs: 2 and 3 passengers would be HOV3
+                    if (av_share>0):
+                        if (matrix_name_tmplt[5:-2] == "SOV_TR"):
+                            av_demand = empty_av_demand + tnc_demand_0 + tnc_demand_1
+                        elif (matrix_name_tmplt[5:-2] == "HOV2"): 
+                            av_demand = tnc_demand_2
+                        else:
+                            av_demand = tnc_demand_3
+                    else:
+                        if (matrix_name_tmplt[5:-2] == "SOV_TR"):
+                            av_demand = tnc_demand_0
+                        elif (matrix_name_tmplt[5:-2] == "HOV2"): 
+                            av_demand = tnc_demand_1
+                        else:
+                            av_demand = tnc_demand_2 + tnc_demand_3
+
+                    total_asim_trips = av_demand
+                    dem_utils.demand_report([
+                            ("av_fleet", av_demand),
+                            ("total", total_asim_trips)
+                        ],
+                        logbook_label, self.scenario, report)
+                    self.set_data(matrix_name, total_asim_trips)
+>>>>>>> ABM3_develop
         _m.logbook_write(title, report.render())
 
     # @_m.logbook_trace('Import commercial vehicle demand')

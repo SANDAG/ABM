@@ -71,13 +71,13 @@ is dining tour,is_dining,"np.where(purpose_id==2,1,0)"
 ,da_available,"np.where(df.auto_available & (df.number_of_participants == 1), 1, 0)"
 ,s2_available,"np.where(df.auto_available & (df.number_of_participants == 2), 1, 0)"
 ,s3_available,"np.where(df.auto_available & (df.number_of_participants >= 3), 1, 0)"
-,tourDA,"np.where(df.tour_mode=='DA',1,0)"
+,tourDA,"np.where(df.tour_mode=='DRIVEALONE',1,0)"
 ,tourS2,"np.where(df.tour_mode=='SHARED2',1,0)"
 ,tourS3,"np.where(df.tour_mode=='SHARED3',1,0)"
 ,tourWalk,"np.where(df.tour_mode=='WALK',1,0)"
 ,tourBike,"np.where(df.tour_mode=='BIKE',1,0)"
 ,tourWalkTransit,"np.where(df.tour_mode.isin(['WALK_LOC', 'WALK_PRM', 'WALK_MIX']),1,0)"
-,tourMaaS,"np.where(df.tour_mode.isin(['TNC_SINGLE','TNC_SHARED']),1,0)"
+,tourMaaS,"np.where(df.tour_mode.isin(['TAXI','TNC_SINGLE','TNC_SHARED']),1,0)"
 #Use AV coefficients for tour,useAV,df.useOwnedAV
 #Auto IVT Factor,autoIVTFactor,"np.where(useAV==0,1.0,autoIVTFactorAV)"
 placeholder Auto IVT Factor,autoIVTFactor,1
@@ -92,18 +92,6 @@ placeholder for missing autoTerminalTimeFactorAV,autoTermTimeFactor,1
 ,walk_local_available,(odt_skims['WALK_LOC_TOTALIVTT']>0)
 ,walk_premium_available,(odt_skims['WALK_PRM_TOTALIVTT']>0)
 ,walk_mix_available,(odt_skims['WALK_MIX_TOTALIVTT']>0)&(odt_skims['WALK_MIX_XFERS']>0)
-,knr_local_available,(odt_skims['KNROUT_LOC_TOTALIVTT']>0)
-,knr_local_available_inbound,(odt_skims['KNRIN_LOC_TOTALIVTT']>0)
-,knr_premium_available,(odt_skims['KNROUT_PRM_TOTALIVTT']>0)
-,knr_premium_available_inbound,(odt_skims['KNRIN_PRM_TOTALIVTT']>0)
-,knr_mix_available,(odt_skims['KNROUT_MIX_TOTALIVTT']>0)&(odt_skims['KNROUT_MIX_XFERS']>0)
-,knr_mix_available_inbound,(odt_skims['KNRIN_MIX_TOTALIVTT']>0)&(dot_skims['KNRIN_MIX_XFERS']>0)
-,tnc_local_available,(odt_skims['TNCOUT_LOC_TOTALIVTT']>0)
-,tnc_local_available_inbound,(odt_skims['TNCIN_LOC_TOTALIVTT']>0)
-,tnc_premium_available,(odt_skims['TNCOUT_PRM_TOTALIVTT']>0)
-,tnc_premium_available_inbound,(odt_skims['TNCIN_PRM_TOTALIVTT']>0)
-,tnc_mix_available,(odt_skims['TNCOUT_MIX_TOTALIVTT']>0)&(odt_skims['TNCOUT_MIX_XFERS']>0)
-,tnc_mix_available_inbound,(odt_skims['TNCIN_MIX_TOTALIVTT']>0)&(dot_skims['TNCIN_MIX_XFERS']>0)
 #,,,
 ,origin,df.origin if 'origin' in df.columns else df.home_zone_id
 ,destination,df.destination if 'destination' in df.columns else df.alt_dest

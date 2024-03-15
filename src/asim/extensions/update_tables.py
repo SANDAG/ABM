@@ -159,6 +159,27 @@ def rename_columns(table_settings, df):
 
     return df_rename
 
+def replace_missing_values(df):
+    """
+    The AV allocation and TNC routing Java programs downstream of ActivitySim expect missing values or empty cells to be represented as -9 for numeric columns, 
+    and 'null' for object columns. This function replaces missing values in a final table
+
+    """
+    # Define the replacements for each data type, currently only two types used by ActivitySim. Need to add more, like Categorical if necessary.
+    replacements = {np.number: -9, object: 'null'}
+
+    # Loop over the data types
+    for dtype, replacement in replacements.items():
+        # Find columns of this data type with missing or empty values
+        cols = df.select_dtypes(include=[dtype]).columns
+        cols_with_missing = [col for col in cols if df[col].isnull().any() or (df[col] == '').any()]
+
+        # Replace missing values and empty strings in those columns
+        df[cols_with_missing] = df[cols_with_missing].fillna(replacement)
+        df[cols_with_missing] = df[cols_with_missing].replace("", replacement)
+
+    return df
+    
 def get_output_table_names(output_tables_settings, output_tables_settings_name):
     """ """
     action = output_tables_settings.get("action")
@@ -277,6 +298,7 @@ def update_tables():
             output_table = remove_columns(table_settings, output_table)
             output_table = reorder_columns(table_settings, output_table)
             output_table = rename_columns(table_settings, output_table)
+            output_table = replace_missing_values(output_table)
         
         pipeline.replace_table(table_name, output_table)
 

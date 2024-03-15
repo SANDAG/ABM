@@ -24,7 +24,7 @@ Get trip origin TAZ,step_1,raw,final_trips,,,final_trips['originTAZ'] =final_tri
 Get trip destination TAZ,step_1,raw,final_trips,,,final_trips['destinationTAZ'] = final_trips['dest_mgra'].map(land_use.set_index('MAZ')['TAZ']).fillna(0)
 Add tour origin to final_trips,step_1,raw,,,,final_trips['tour_origin'] = final_trips['tour_id'].map(final_tours.set_index('tour_id')['originTAZ'])
 Add tour destination to final trips,step_1,raw,,,,final_trips['tour_destination'] = final_trips['tour_id'].map(final_tours.set_index('tour_id')['destinationTAZ'])
-Trip OD raw distance,step_1,skim,final_trips,od_distance,"originTAZ,destinationTAZ",traffic_skims_MD['SOV_TR_H_DIST__MD']
+Trip OD raw distance,step_1,skim,final_trips,od_distance,"originTAZ,destinationTAZ",traffic_skims_MD['SOV_NT_M_DIST__MD']
 adjust tour duration (no 0),step_1,raw,,,,final_tours['tourdur'] = final_tours['tourdur'] + 1
 get person number to final tour file,step_1,raw,,,,final_tours['person_num'] = final_tours['person_id'].map(final_persons.set_index('person_id')['PNUM']).fillna(0)
 get person number to final trip  file,step_1,raw,,,,final_trips['person_num'] = final_trips['person_id'].map(final_persons.set_index('person_id')['PNUM']).fillna(0)
@@ -73,8 +73,8 @@ get work taz,step_1,raw,,,,final_persons['WTAZ'] = final_persons['workplace_zone
 get work district,step_1,raw,,,,final_persons['WDISTRICT'] = final_persons['workplace_zone_id'].map(land_use.set_index('MAZ')['pseudomsa']).fillna(0)
 get school taz,step_1,raw,,,,final_persons['STAZ'] = final_persons['school_zone_id'].map(land_use.set_index('MAZ')['TAZ']).fillna(0)
 get school district,step_1,raw,,,,final_persons['SDISTRICT'] = final_persons['school_zone_id'].map(land_use.set_index('MAZ')['pseudomsa']).fillna(0)
-Get work location distances,step_1,skim,final_persons,WorkLocationDistance,"HHTAZ,WTAZ",traffic_skims_MD['SOV_TR_H_DIST__MD']
-Get school location distances,step_1,skim,final_persons,SchoolLocationDistance,"HHTAZ,STAZ",traffic_skims_MD['SOV_TR_H_DIST__MD']
+Get work location distances,step_1,skim,final_persons,WorkLocationDistance,"HHTAZ,WTAZ",traffic_skims_MD['SOV_NT_M_DIST__MD']
+Get school location distances,step_1,skim,final_persons,SchoolLocationDistance,"HHTAZ,STAZ",traffic_skims_MD['SOV_NT_M_DIST__MD']
 Bin distances to work,step_1,bin,final_persons,workdistbin,WorkLocationDistance,[-99999] + list(range(51)) + [99999]
 Bin distances to work (longer distance for external),step_1,bin,final_persons,workdistbin_ext,WorkLocationDistance,[-99999] + list(range(101)) + [99999]
 Bin distances to school,step_1,bin,final_persons,schooldistbin,SchoolLocationDistance,[-99999] + list(range(51)) + [99999]
@@ -125,8 +125,8 @@ Add column for grouping all tours,step_1,raw,,,,jointTourData_3['label'] = 'purp
 Get tour destination TAZ for individual trips,step_1,raw,,,,indivTripData_3['TOURDTAZ'] = indivTripData_3['lookup'].map(indivTourData_3.drop_duplicates('lookup').set_index('lookup')['destinationTAZ'])
 Get tour origin TAZ for individual trips,step_1,raw,,,,indivTripData_3['TOUROTAZ'] = indivTripData_3['lookup'].map(indivTourData_3.drop_duplicates('lookup').set_index('lookup')['originTAZ'])
 Get tour final destination TAZ for individual trips,step_1,raw,,,,"indivTripData_3['finaldestTAZ'] = np.where(indivTripData_3['outbound'] == True, indivTripData_3['TOURDTAZ'], indivTripData_3['TOUROTAZ'])"
-Get distance from trip origin to tour final destination,step_1,skim,indivTripData_3,od_dist,"originTAZ,finaldestTAZ",traffic_skims_MD['SOV_TR_H_DIST__MD']
-Get distance from trip destination to tour final destination,step_1,skim,indivTripData_3,sd_dist,"destinationTAZ,finaldestTAZ",traffic_skims_MD['SOV_TR_H_DIST__MD']
+Get distance from trip origin to tour final destination,step_1,skim,indivTripData_3,od_dist,"originTAZ,finaldestTAZ",traffic_skims_MD['SOV_NT_M_DIST__MD']
+Get distance from trip destination to tour final destination,step_1,skim,indivTripData_3,sd_dist,"destinationTAZ,finaldestTAZ",traffic_skims_MD['SOV_NT_M_DIST__MD']
 Get out of direction distance,step_1,raw,,,,indivTripData_3['out_dir_dist'] = indivTripData_3['od_distance'] + indivTripData_3['sd_dist'] - indivTripData_3['od_dist']
 Add avgDist variable for grouping,step_1,raw,,,,indivTripData_3['avgDist'] = 'avgDist'
 Bin out of direction distance,step_1,bin,indivTripData_3,out_dir_distbin,out_dir_dist,[-99999] + list(range(43)) + [99999]
@@ -135,8 +135,8 @@ Recode distance bin to maximum,step_1,apply,indivTripData_3,out_dir_distbin,out_
 Get tour origin TAZ for joint trips,step_1,raw,,,,jointTripData_3['TOUROTAZ'] = jointTripData_3['lookup'].map(jointTourData_3.drop_duplicates('lookup').set_index('lookup')['originTAZ'])
 Get tour destination TAZ for joint trips,step_1,raw,,,,jointTripData_3['TOURDTAZ'] = jointTripData_3['lookup'].map(jointTourData_3.drop_duplicates('lookup').set_index('lookup')['destinationTAZ'])
 Get tour final destination TAZ for joint trips,step_1,raw,,,,"jointTripData_3['finaldestTAZ'] = np.where(jointTripData_3['outbound'] == True, jointTripData_3['TOURDTAZ'], jointTripData_3['TOUROTAZ'])"
-,step_1,skim,jointTripData_3,od_dist,"originTAZ,finaldestTAZ",traffic_skims_MD['SOV_TR_H_DIST__MD']
-,step_1,skim,jointTripData_3,sd_dist,"destinationTAZ,finaldestTAZ",traffic_skims_MD['SOV_TR_H_DIST__MD']
+,step_1,skim,jointTripData_3,od_dist,"originTAZ,finaldestTAZ",traffic_skims_MD['SOV_NT_M_DIST__MD']
+,step_1,skim,jointTripData_3,sd_dist,"destinationTAZ,finaldestTAZ",traffic_skims_MD['SOV_NT_M_DIST__MD']
 ,step_1,raw,,,,jointTripData_3['out_dir_dist'] = jointTripData_3['od_distance'] + jointTripData_3['sd_dist'] - jointTripData_3['od_dist']
 Add avgDist variable for grouping,step_1,raw,,,,jointTripData_3['avgDist'] = 'avgDist'
 Bin out of direction distance,step_1,bin,jointTripData_3,out_dir_distbin,out_dir_dist,[-99999] + list(range(43)) + [99999]

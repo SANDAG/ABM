@@ -3,9 +3,7 @@ rem @echo off
 set PROJECT_DRIVE=%1
 set PROJECT_DIRECTORY=%2
 set SAMPLERATE=%3
-
-rem iteration number not appended to output files, so setting it to 0
-set ITERATION=0
+set ITERATION=%4
 
 %PROJECT_DRIVE%
 cd %PROJECT_DRIVE%%PROJECT_DIRECTORY%
@@ -48,7 +46,6 @@ rem TNC Fleet Model
 
 rem Household AV Allocation Model
 %JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp "%CLASSPATH%" -Djxl.nowarnings=true -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.maas.HouseholdAVAllocationModelRunner %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE%
-
 rem ### restore saved environment variable values, and change back to original current directory
 set JAVA_PATH=%OLDJAVAPATH%
 set PATH=%OLDPATH%

@@ -288,7 +288,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         scenarioYear = str(props["scenarioYear"])
         # geographyID = str(props["geographyID"])
-        prod_env = props["RunModel.env"]                                
+        prod_env = props["RunModel.env"]
         startFromIteration = props["RunModel.startFromIteration"]
         # precision = props["RunModel.MatrixPrecision"]
         minSpaceOnC = props["RunModel.minSpaceOnC"]
@@ -303,7 +303,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         truck_scenario_year = props["truck.FFyear"]
         htm_input_file = props["htm.input.file"]
         cvm_emp_input_file = props["cvm.emp.input.file"]
-        
+
         period_ids = list(enumerate(periods, start=int(scenario_id) + 1))
 
         useLocalDrive = props["RunModel.useLocalDrive"]
@@ -322,6 +322,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         skipTransitSkimming = props["RunModel.skipTransitSkimming"]
         skipTransitConnector = props["RunModel.skipTransitConnector"]
         skipTransponderExport = props["RunModel.skipTransponderExport"]
+        skipScenManagement = props["RunModel.skipScenManagement"]
         skipABMPreprocessing = props["RunModel.skipABMPreprocessing"]
         skipABMResident = props["RunModel.skipABMResident"]
         skipABMAirport = props["RunModel.skipABMAirport"]
@@ -329,6 +330,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         skipABMXborder = props["RunModel.skipABMXborder"]
         skipABMVisitor = props["RunModel.skipABMVisitor"]
         skipCVMEstablishmentSyn = props["RunModel.skipCVMEstablishmentSyn"]
+        skipMAASModel = props["RunModel.skipMAASModel"]
         skipCTM = props["RunModel.skipCTM"]
         skipEI = props["RunModel.skipEI"]
         skipExternal = props["RunModel.skipExternal"]
@@ -443,19 +445,19 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     num_transit_lines = transit_db_dims['transit_lines']
                     num_transit_segments = transit_db_dims['transit_segments']
                     num_traffic_classes = 15
-                    
-                    extra_attribute_values = 18000000 
+
+                    extra_attribute_values = 18000000
                     extra_attribute_values += (num_nodes + 1) * additional_node_extra_attributes
                     extra_attribute_values += (num_links + 1) * additional_link_extra_attributes
-                    extra_attribute_values += (num_transit_lines + 1)* additional_line_extra_attributes 
+                    extra_attribute_values += (num_transit_lines + 1)* additional_line_extra_attributes
                     extra_attribute_values += (num_transit_segments + 1) * additional_segment_extra_attributes
-                    
+
                     if num_select_links > 3:
                         extra_attribute_values += 18000000 + (num_select_links - 3) * ((num_links + 1) * (num_traffic_classes + 1) + (num_turn_entries + 1) * (num_traffic_classes))
-                        
+
                     if extra_attribute_values > transit_db_dims["extra_attribute_values"] or transit_db_dims["full_matrices"] < 9999:
                         transit_db_dims["extra_attribute_values"] = extra_attribute_values
-                        transit_db_dims["full_matrices"] = 9999 
+                        transit_db_dims["full_matrices"] = 9999
                         #change_dimensions(emmebank_dimensions=transit_db_dims, emmebank=transit_db, keep_backup=False)
                         #replaced the above line with the below lines - suggested by Antoine, Bentley (2022-06-02)
                         if transit_db.scenario(1) is None:
@@ -646,10 +648,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     am_scenario = main_emmebank.scenario(base_scenario.number + 2)
                     export_for_transponder(output_dir, num_processors, am_scenario)
 
-                if msa_iteration==1:
+                if (not skipScenManagement) and (msa_iteration==1):
                     self.run_proc("runSandag_ScenManagement.cmd",
                             [drive + path_forward_slash, str(props["scenarioYear"])],
-                            "Running Scenario Management", capture_output=True) 
+                            "Running Scenario Management", capture_output=True)
 
                 if not skipABMPreprocessing[iteration]:
                     self.run_proc(
@@ -692,6 +694,13 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         "runSandagAbm_ActivitySimVisitor.cmd",
                         [drive, drive + path_forward_slash, int(sample_rate[iteration] * hh_visitor_size)],
                         "Running ActivitySim visitor model", capture_output=True)
+
+                if not skipMAASModel[iteration]:
+                    self.run_proc("runMtxMgr.cmd", [drive, drive + path_no_drive], "Start matrix manager")
+                    self.run_proc(
+                        "runSandagAbm_MAAS.cmd",
+                        [drive, drive + path_forward_slash, 1, 0],
+                        "Java-Run AV allocation model and TNC routing model", capture_output=True)
 
                 if (not skipCVMEstablishmentSyn) and (iteration == 0):
                     self.run_proc("cvmEst.bat", [drive, path_no_drive, cvm_emp_input_file],
@@ -793,7 +802,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 "export_hwy_shape.cmd",
                 [drive, drive + path_forward_slash],
                 "Exporting highway shapefile", capture_output=True)
-        
+
         if not skipDatalake:
             self.write_metadata(main_directory, scenario_title, select_link, username, scenarioYear, sample_rate, prod_env)
             self.run_proc(
@@ -942,10 +951,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 transit_emmebank_dict[period].dispose()
 
                 _time.sleep(2)
-                
+
                 script = _join(main_directory, "python", "emme", "run_transit_assignment.py")
                 args = [sys.executable, script, "--root_dir", '"%s"' % main_directory, "--project_path", '"%s"' % project_path,
-                    "--period", '"%s"' % period, "--number", '"%s"' % number, "--proc", '"%s"' % transit_processors, 
+                    "--period", '"%s"' % period, "--number", '"%s"' % number, "--proc", '"%s"' % transit_processors,
                     "--output_dir", '"%s"' % output_dir]
                 if create_connector_flag:
                     args.append("--create_connector_flag")
@@ -966,16 +975,16 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % out)
                 if err:
                     self.add_html(report, 'Error message(s):<br><br><div class="preformat">%s</div>' % err)
-                _m.logbook_write("Transit assignment process record for period " + p["period"], report.render()) 
+                _m.logbook_write("Transit assignment process record for period " + p["period"], report.render())
                 if p["p"].returncode != 0:
-                    raise
+                    raise Exception("Error in transit assignment period %s, refer to logbook in dummy project" % p["period"])
 
 
         new_transit_emmebank_dict = {}
         for number, period in period_ids:
             new_transit_emmebank_dict[period] = _eb.Emmebank(transit_emmebank_path_dict[period])
         _m.Modeller().desktop.refresh_data()
-        
+
         return new_transit_emmebank_dict
 
     def run_traffic_assignments(self, base_scenario, period_ids, msa_iteration, relative_gap,
@@ -1075,7 +1084,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % output)
                 except _subprocess.CalledProcessError as error:
                     self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % error.output)
-                    raise
+                    raise Exception("Error in %s, refer to process run report in logbook" % name)
                 finally:
                     err_file.close()
                     with open(err_file_path, 'r') as f:

@@ -296,3 +296,7 @@ nev egress time,nev_egress_time,"2*microtransitWaitTime + np.maximum(nev_direct_
 # Additional transfers from microtransit and NEV,,,
 microtransit/nev access transfer,mtnev_acc_xfer,microtransit_access_available | nev_access_available,
 microtransit/nev egress transfer,mtnev_egr_xfer,microtransit_egress_available | nev_egress_available,
+# transit subsidi pass discount
+transit pas subsidy,transit_pass_subsidy,"df.get('transit_pass_subsidy', False)"
+transit pass ownership,transit_pass_ownership,"df.get('transit_pass_ownership', False)"
+transit subsidi pass discount, transitSubsidyPassDiscount,"np.where(transit_pass_subsidy | transit_pass_ownership,0,1)",

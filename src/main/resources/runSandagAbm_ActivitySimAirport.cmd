@@ -93,9 +93,9 @@ CD ..
 
 :: Run Models
 ECHO Run ActivitySim AirportCBX Model
-%PYTHON3% src/asim/scripts/airport/airport_model.py -a -c src/asim/configs/airport.CBX -d input -o output/airport.CBX
+%PYTHON3% src/asim/scripts/airport/airport_model.py -a -c src/asim/configs/airport.CBX -d input -o output/airport.CBX || exit /b 2
 ECHO Run ActivitySim AirportSAN Model
-%PYTHON3% src/asim/scripts/airport/airport_model.py -a -c src/asim/configs/airport.SAN -d input -o output/airport.SAN
+%PYTHON3% src/asim/scripts/airport/airport_model.py -a -c src/asim/configs/airport.SAN -d input -o output/airport.SAN || exit /b 2
 
 ::::::::::::::::::::::
 CD /d %ANACONDA2_DIR%\Scripts
@@ -104,11 +104,11 @@ CALL %CONDA2_ACT% base
 
 cd /d %PROJECT_DIRECTORY%
 
-%PYTHON3% src/asim/scripts/set_zoneMapping.py airport.CBX output
-%PYTHON3% src/asim/scripts/set_zoneMapping.py airport.SAN output
+%PYTHON3% src/asim/scripts/set_zoneMapping.py airport.CBX output || exit /b 2
+%PYTHON3% src/asim/scripts/set_zoneMapping.py airport.SAN output || exit /b 2
 
-%PYTHON2% src/asim/scripts/convert_tripTables.py airport.CBX output
-%PYTHON2% src/asim/scripts/convert_tripTables.py airport.SAN output
+%PYTHON2% src/asim/scripts/convert_tripTables.py airport.CBX output || exit /b 2
+%PYTHON2% src/asim/scripts/convert_tripTables.py airport.SAN output || exit /b 2
 
 ECHO ActivitySim Airport model runs complete!!
 ECHO %startTime%%Time%

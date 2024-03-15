@@ -89,7 +89,7 @@ gpd_stops['Latitude'] = gpd_stops['geometry'].y
 stops["network_node_id"] = net.get_node_ids(gpd_stops['Longitude'], gpd_stops['Latitude'])
 stops["network_node_x"] = nodes["X"].loc[stops["network_node_id"]].tolist()
 stops["network_node_y"] = nodes["Y"].loc[stops["network_node_id"]].tolist()
-# E: regular express, premium express, sprinter\trolley, and coaster bus, BRT L: Local bus, N: None. There should be no Ns
+# B: Future BRT, E: regular express, premium express, sprinter\trolley, and coaster bus, L: Local bus, N: None. There should be no Ns
 stops['mode'] = np.where(stops['Mode']==10,'L',
                 np.where((stops['Mode']==4) | (stops['Mode']==5) | (stops['Mode']==8) | (stops['Mode']==9) | (stops['Mode']==6) | (stops['Mode']==7), 'E',
                 'N'))
@@ -186,7 +186,7 @@ for mode, output in modes.items():
     maz_stop_walk = maz_to_stop_walk_cost[maz_to_stop_walk_cost.MODE==mode].groupby('MAZ')['DISTWALK'].min().reset_index()
     maz_stop_walk.loc[maz_stop_walk['DISTWALK'] > max_walk_dist, 'DISTWALK'] = np.nan
     #maz_stop_walk["walk_time"] = maz_stop_walk["DISTWALK"].apply(lambda x: x / parms['mmms']['walk_speed_mph'] * 60.0)
-    maz_stop_walk['DISTWALK'].fillna(9999, inplace = True)
+    maz_stop_walk['DISTWALK'].fillna(999999, inplace = True)
     maz_stop_walk.rename({'MAZ': 'maz', 'DISTWALK': 'walk_dist_' + output}, axis='columns', inplace=True)
     maz_stop_walk0 = maz_stop_walk0.merge(maz_stop_walk, left_on='maz', right_on='maz')
     
