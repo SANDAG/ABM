@@ -165,7 +165,7 @@ def write_to_datalake(output_path, models, exclude, env):
         elif model == "CVM":
             prefix = "final_"
         elif model == "HTM":
-            prefix = "htmfinal"
+            prefix = "final_"
         else:
             prefix = ""
         files = glob.glob(os.path.join(output_path, relpath, model, prefix + '*'))
@@ -194,7 +194,7 @@ def write_to_datalake(output_path, models, exclude, env):
         elif model == "CVM":
             prefix = "final_"
         elif model == "HTM":
-            prefix = "htmfinal"
+            prefix = "final_"
         else:
             prefix = ""
 
