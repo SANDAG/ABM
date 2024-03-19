@@ -9,7 +9,7 @@ scenario_year = 2022
 
 # File Path
 cvm_trip_path = f"{output_dir}\\final_cv_trips.csv"
-cvm_route_path = f"{output_dir}\\cvm_routes.csv"
+cvm_route_path = f"{output_dir}\\final_routes.csv"
 full_skim_path = f"{model_dir}\\Output\\skims\\traffic_skims_MD.omx"
 MGRA_TAZ_ref_path = f"{model_dir}\\input\\land_use.csv"
 auto_path = f"{model_dir}\\input\parametersByYears.csv"
