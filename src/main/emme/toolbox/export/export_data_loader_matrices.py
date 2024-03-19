@@ -148,30 +148,30 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
         except ValueError:
             raise Exception("Error during float conversion for aoc.fuel or aoc.maintenance from sandag_abm.properties file")		
 
-        with open(truck_trip_path, 'w') as f:
-            f.write("OTAZ,DTAZ,TOD,MODE,TRIPS,TIME,DIST,AOC,TOLLCOST\n")
-            for period in self.periods:
-                for key, name, pce in name_mapping:
-                    matrix_data = emmebank.matrix(period + "_" + name + "_VEH").get_data(scenario)
-                    matrix_data_time = emmebank.matrix(name + "_TIME__" + period).get_data(scenario)
-                    matrix_data_dist = emmebank.matrix(name + "_DIST__"+ period).get_data(scenario)
-                    matrix_data_tollcost = emmebank.matrix(name + "_TOLLCOST__" + period).get_data(scenario)
-                    rounded_demand = 0
-                    for orig in zones:
-                        for dest in zones:
-                            value = matrix_data.get(orig, dest)
-                            # skip trips less than 0.00001 to avoid 0 trips records in database
-                            if value < 0.00001: 
-                                rounded_demand += value
-                                continue
-                            time = matrix_data_time.get(orig, dest)
-                            distance = matrix_data_dist.get(orig, dest)
-                            tollcost = matrix_data_tollcost.get(orig, dest)
-                            od_aoc = distance * aoc
-                            f.write(",".join([str(orig), str(dest), period, key, formater(value), formater(time), formater(distance), formater(od_aoc), formater(tollcost)]))
-                            f.write("\n")
-                    if rounded_demand > 0:
-                        print period + "_" + name + "_VEH", "rounded_demand", rounded_demand
+        # with open(truck_trip_path, 'w') as f:
+            # f.write("OTAZ,DTAZ,TOD,MODE,TRIPS,TIME,DIST,AOC,TOLLCOST\n")
+            # for period in self.periods:
+                # for key, name, pce in name_mapping:
+                    # matrix_data = emmebank.matrix(period + "_" + name + "_VEH").get_data(scenario)
+                    # matrix_data_time = emmebank.matrix(name + "_TIME__" + period).get_data(scenario)
+                    # matrix_data_dist = emmebank.matrix(name + "_DIST__"+ period).get_data(scenario)
+                    # matrix_data_tollcost = emmebank.matrix(name + "_TOLLCOST__" + period).get_data(scenario)
+                    # rounded_demand = 0
+                    # for orig in zones:
+                        # for dest in zones:
+                            # value = matrix_data.get(orig, dest)
+                            # # skip trips less than 0.00001 to avoid 0 trips records in database
+                            # if value < 0.00001: 
+                                # rounded_demand += value
+                                # continue
+                            # time = matrix_data_time.get(orig, dest)
+                            # distance = matrix_data_dist.get(orig, dest)
+                            # tollcost = matrix_data_tollcost.get(orig, dest)
+                            # od_aoc = distance * aoc
+                            # f.write(",".join([str(orig), str(dest), period, key, formater(value), formater(time), formater(distance), formater(od_aoc), formater(tollcost)]))
+                            # f.write("\n")
+                    # if rounded_demand > 0:
+                        # print period + "_" + name + "_VEH", "rounded_demand", rounded_demand
 
     def external_demand(self):
         #get auto operating cost
