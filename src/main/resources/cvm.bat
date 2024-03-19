@@ -1,6 +1,7 @@
 ECHO ON
 set PROJECT_DRIVE=%1
 set PROJECT_DIRECTORY=%2
+set SCENARIO_YEAR=%3
 
 SET ANACONDA3_DIR=%CONDA_PREFIX%
 SET ANACONDA2_DIR=%CONDA_TWO_PREFIX%
@@ -54,15 +55,15 @@ IF %ERRORLEVEL% NEQ 0 (GOTO :ERROR) else (GOTO :SUCCESS)
 :SUCCESS
     ECHO CVM complete!
     ECHO %DATE% %TIME%
-	
+
     CD /d %PROJECT_DRIVE%%PROJECT_DIRECTORY%
 
     ::::::::::::::::::::::
     :: Post-process CVM outputs
-	%PYTHON3% src/asim-cvm/scripts/generate_summary.py %MODEL_DIR% %CVM_OUTPUT_DIR%
+	%PYTHON3% src/asim-cvm/scripts/generate_summary.py %MODEL_DIR% %CVM_OUTPUT_DIR% %SCENARIO_YEAR%
     :: sort TAZ zone index in omx
     %PYTHON3% src/asim-cvm/scripts/set_zoneMapping.py cvm output
-	
+
 	:: convert trip tables into Python2
 	%PYTHON2% src/asim-cvm/scripts/convert_tripTables.py cvm output
 

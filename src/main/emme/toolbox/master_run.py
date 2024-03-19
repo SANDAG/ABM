@@ -709,7 +709,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     #export_for_commercial_vehicle(output_dir + '/skims', base_scenario)
                     self.run_proc(
                         "cvm.bat",
-                        [drive, path_no_drive],
+                        [drive, path_no_drive, scenarioYear],
                         "Commercial vehicle model", capture_output=True)
                 if msa_iteration == startFromIteration:
                     external_zones = "1-12"

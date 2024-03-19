@@ -5,7 +5,7 @@ import openmatrix as omx
 
 model_dir = sys.argv[1]
 output_dir = sys.argv[2]
-scenario_year = 2022
+scenario_year = sys.argv[3]
 
 # File Path
 cvm_trip_path = f"{output_dir}\\final_cv_trips.csv"
