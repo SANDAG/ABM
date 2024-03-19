@@ -1,0 +1,11 @@
+Description,Target,Expression
+##### CARS use SOV_TR_M_TIME ######
+peak round trip distance,_trkTime,"skim_od[('SOV_TR_M_TIME', 'AM')] * automobile_am_weight + skim_od[('SOV_TR_M_TIME', 'MD')] * automobile_md_weight + skim_od[('SOV_TR_M_TIME', 'PM')] * automobile_pm_weight"
+decay function,_decay, exp(_trkTime * dispersion_parameter_automobile)
+trk to home food delivery attraction,trkHomeFood,df.num_hh_food_delivery * _decay
+trk to home package delivery attraction,trkHomePackage,df.num_hh_package_delivery * _decay
+trk to home service attraction,trkHomeService,df.num_hh_service * _decay
+trk to establishment attraction,trkEstablishment,df.establishment_attraction * _decay
+trk to retail,trkRetail,df.emp_retail * _decay
+trk to total,trkTotal,df.emp_total * _decay
+#####

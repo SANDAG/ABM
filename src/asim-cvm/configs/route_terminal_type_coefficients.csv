@@ -1,0 +1,5 @@
+coefficient_name,value,constrain
+coef_asc_warehouse,-0.006403,F
+coef_asc_intermodal,-0.006403,F
+coef_asc_residential,-0.006403,F
+coef_asc_commercial,-0.006403,F
