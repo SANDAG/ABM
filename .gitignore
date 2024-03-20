@@ -34,6 +34,7 @@ src/main/python/reporting/abm_reports*/*
 *.pyc
 src/main/resources/create_scenario.cmd.txt
 src/main/resources/init_emme.cmd.txt
+!**/GnuWin32/**/*
 
 # Mac
 .DS_Store
