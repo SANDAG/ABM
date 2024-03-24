@@ -326,8 +326,8 @@ nev egress from mixed available,nev_mix_egress_available,(nev_dest>0) & (dest_mi
 nev direct egress from mixed time,nev_mix_direct_egress_time,"np.maximum(dest_micro_mix_dist/nevSpeed*60, odt_skims['TNCOUT_MIX_EGR']) + np.maximum(dest_micro_mix_dist/nevSpeed*60, dot_skims['TNCIN_MIX_ACC'])",
 nev egress from mixed time,nev_mix_egress_time,"2*microtransitWaitTime + np.maximum(nev_mix_direct_egress_time + nevDiversionConstant, nevDiversionFactor*nev_mix_direct_egress_time)",
 # Additional transfers from microtransit and NEV,,,
-microtransit/nev access transfer,mtnev_acc_xfer,microtransit_access_available | nev_access_available,
-microtransit/nev egress transfer,mtnev_egr_xfer,microtransit_egress_available | nev_egress_available,
+microtransit/nev access transfer,mtnev_acc_xfer,microtransit_local_access_available | microtransit_prm_access_available | microtransit_mix_access_available | nev_local_access_available | nev_prm_access_available | nev_mix_access_available,
+microtransit/nev egress transfer,mtnev_egr_xfer,microtransit_local_egress_available | microtransit_prm_egress_available | microtransit_mix_egress_available | nev_local_egress_available | nev_prm_egress_available | nev_mix_egress_available,
 # transit subsidi pass discount
 transit pas subsidy,transit_pass_subsidy,"df.get('transit_pass_subsidy', False)"
 transit pass ownership,transit_pass_ownership,"df.get('transit_pass_ownership', False)"
