@@ -69,8 +69,8 @@ util_WALK_PRM_wait_time,WALK_PRM - wait time,@(odt_skims['WALK_PRM_FIRSTWAIT']) 
 util_WALK_PRM_transfer_wait_time,WALK_PRM - transfer wait time,@(odt_skims['WALK_PRM_XFERWAIT']) * df.time_factor,,,,,,,,,,coef_xwt,
 util_WALK_PRM_transfer_waLK_time,WALK_PRM - transfer walk time,@(odt_skims['WALK_PRM_XFERWALK']) * df.time_factor,,,,,,,,,,coef_waux,
 util_WALK_PRM_transfers_penalty,WALK_PRM - number of transfers,"@(-23+23*np.exp(0.414*np.clip((odt_skims['WALK_PRM_XFERS'] + df.outbound*df.mtnev_egr_xfer_out + ~df.outbound*df.mtnev_acc_xfer_in), a_min=None,a_max=4)))  * df.time_factor",,,,,,,,,,coef_xfers,
-util_WALK_PRM_Walk_access_time,WALK_PRM - Walk access time,"@np.where(df.nev_access_available_in & ~df.outbound, df.nev_access_time_in, np.where(df.microtransit_access_available_in & ~df.outbound, df.microtransit_access_time_in, df.origin_prm_time)) * df.time_factor",,,,,,,,,,coef_wacc,
-util_WALK_PRM_Walk_egress_time,WALK_PRM - Walk egress time,"@np.where(df.nev_egress_available_out & df.outbound, df.nev_egress_time_out, np.where(df.microtransit_egress_available_out & df.outbound, df.microtransit_egress_time_out, df.dest_prm_time)) * df.time_factor",,,,,,,,,,coef_wegr,
+util_WALK_PRM_Walk_access_time,WALK_PRM - Walk access time,"@np.where(df.nev_prm_access_available_in & ~df.outbound, df.nev_prm_access_time_in, np.where(df.microtransit_prm_access_available_in & ~df.outbound, df.microtransit_prm_access_time_in, df.origin_prm_time)) * df.time_factor",,,,,,,,,,coef_wacc,
+util_WALK_PRM_Walk_egress_time,WALK_PRM - Walk egress time,"@np.where(df.nev_prm_egress_available_out & df.outbound, df.nev_prm_egress_time_out, np.where(df.microtransit_prm_egress_available_out & df.outbound, df.microtransit_prm_egress_time_out, df.dest_prm_time)) * df.time_factor",,,,,,,,,,coef_wegr,
 ##,,,,,,,,,,,,,
 util_WALK_MIX_Unavailable,WALK_MIX - Unavailable,walk_mix_available ==False ,,,,,,,,,,,-999
 util_WALK_MIX_In_vehicle_time,WALK_MIX - In-vehicle time,@(odt_skims['WALK_MIX_TOTALIVTT']) * df.time_factor,,,,,,,,,,,coef_ivt
