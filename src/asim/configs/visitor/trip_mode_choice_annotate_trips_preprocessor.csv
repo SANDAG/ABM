@@ -179,7 +179,4 @@ inbound nev access to mixed available,nev_mix_access_available_in,~df.outbound &
 inbound nev direct access to mixed time,nev_direct_mix_access_time_in,"np.maximum(origin_micro_mix_dist/nevSpeed*60, odt_skims['TNCOUT_MIX_ACC'])"
 inbound nev access to mixed time,nev_mix_access_time_in,"nevWaitTime + np.maximum(nev_direct_mix_access_time_in + microtransitDiversionConstant, microtransitDiversionFactor*nev_direct_mix_access_time_in)"
 # Additional transfers from microtransit and NEV,,
-microtransit/nev access transfer,mtnev_acc_xfer_out,microtransit_local_access_available_out | microtransit_prm_access_available_out | microtransit_mix_access_available_out | nev_local_access_available_out | nev_prm_access_available_out | nev_mix_access_available_out
 microtransit/nev access transfer,mtnev_acc_xfer_in,microtransit_local_access_available_in | microtransit_prm_access_available_in | microtransit_mix_access_available_in | nev_local_access_available_in | nev_prm_access_available_in | nev_mix_access_available_in
-microtransit/nev egress transfer,mtnev_egr_xfer_out,microtransit_local_egress_available_out | microtransit_prm_egress_available_out | microtransit_mix_egress_available_out | nev_local_egress_available_out | nev_prm_egress_available_out | nev_mix_egress_available_out
-microtransit/nev egress transfer,mtnev_egr_xfer_in,microtransit_local_egress_available_in | microtransit_prm_egress_available_in | microtransit_mix_egress_available_in | nev_local_egress_available_in | nev_prm_egress_available_in | nev_mix_egress_available_in
