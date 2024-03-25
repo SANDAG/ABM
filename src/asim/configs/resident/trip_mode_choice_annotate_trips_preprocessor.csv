@@ -309,7 +309,7 @@ inbound microtransit direct egress from local time,microtransit_local_direct_egr
 inbound microtransit egress from local time,microtransit_local_egress_time_in,"microtransitWaitTime + np.maximum(microtransit_local_direct_egress_time_in + microtransitDiversionConstant, microtransitDiversionFactor*microtransit_local_direct_egress_time_in)"
 outbound nev access to local available,nev_local_access_available_out,df.outbound & (nev_orig>0) & (origin_micro_local_dist<nevMaxDist)
 outbound nev direct access to local time,nev_local_direct_access_time_out,"np.maximum(origin_micro_local_dist/nevSpeed*60, odt_skims['TNCOUT_LOC_ACC'])"
-outbound nev access to local time,nev_local_access_time_out,"nevWaitTime + np.maximum(nev_direct_local_access_time_out + nevDiversionConstant, nevDiversionFactor*nev_local_direct_access_time_out)"
+outbound nev access to local time,nev_local_access_time_out,"nevWaitTime + np.maximum(nev_local_direct_access_time_out + nevDiversionConstant, nevDiversionFactor*nev_local_direct_access_time_out)"
 inbound nev egress from local available,nev_local_egress_available_in,~df.outbound & (nev_dest>0) & (dest_micro_local_dist<nevMaxDist)
 inbound nev direct egress from local time,nev_local_direct_egress_time_in,"np.maximum(dest_micro_local_dist/nevSpeed*60, odt_skims['TNCIN_LOC_EGR'])"
 inbound nev egress from local time,nev_local_egress_time_in,"nevWaitTime + np.maximum(nev_local_direct_egress_time_in + nevDiversionConstant, nevDiversionFactor*nev_local_direct_egress_time_in)"
@@ -322,7 +322,7 @@ inbound microtransit direct egress from premium time,microtransit_prm_direct_egr
 inbound microtransit egress from premium time,microtransit_prm_egress_time_in,"microtransitWaitTime + np.maximum(microtransit_prm_direct_egress_time_in + microtransitDiversionConstant, microtransitDiversionFactor*microtransit_prm_direct_egress_time_in)"
 outbound nev access to premium available,nev_prm_access_available_out,df.outbound & (nev_orig>0) & (origin_micro_prm_dist<nevMaxDist)
 outbound nev direct access to premium time,nev_prm_direct_access_time_out,"np.maximum(origin_micro_prm_dist/nevSpeed*60, odt_skims['TNCOUT_PRM_ACC'])"
-outbound nev access to premium time,nev_prm_access_time_out,"nevWaitTime + np.maximum(nev_direct_prm_access_time_out + nevDiversionConstant, nevDiversionFactor*nev_prm_direct_access_time_out)"
+outbound nev access to premium time,nev_prm_access_time_out,"nevWaitTime + np.maximum(nev_prm_direct_access_time_out + nevDiversionConstant, nevDiversionFactor*nev_prm_direct_access_time_out)"
 inbound nev egress from premium available,nev_prm_egress_available_in,~df.outbound & (nev_dest>0) & (dest_micro_prm_dist<nevMaxDist)
 inbound nev direct egress from premium time,nev_prm_direct_egress_time_in,"np.maximum(dest_micro_prm_dist/nevSpeed*60, odt_skims['TNCIN_PRM_EGR'])"
 inbound nev egress from premium time,nev_prm_egress_time_in,"nevWaitTime + np.maximum(nev_prm_direct_egress_time_in + nevDiversionConstant, nevDiversionFactor*nev_prm_direct_egress_time_in)"
@@ -335,7 +335,7 @@ inbound microtransit direct egress from mixed time,microtransit_mix_direct_egres
 inbound microtransit egress from mixed time,microtransit_mix_egress_time_in,"microtransitWaitTime + np.maximum(microtransit_mix_direct_egress_time_in + microtransitDiversionConstant, microtransitDiversionFactor*microtransit_mix_direct_egress_time_in)"
 outbound nev access to mixed available,nev_mix_access_available_out,df.outbound & (nev_orig>0) & (origin_micro_mix_dist<nevMaxDist)
 outbound nev direct access to mixed time,nev_mix_direct_access_time_out,"np.maximum(origin_micro_mix_dist/nevSpeed*60, odt_skims['TNCOUT_MIX_ACC'])"
-outbound nev access to mixed time,nev_mix_access_time_out,"nevWaitTime + np.maximum(nev_direct_mix_access_time_out + nevDiversionConstant, nevDiversionFactor*nev_mix_direct_access_time_out)"
+outbound nev access to mixed time,nev_mix_access_time_out,"nevWaitTime + np.maximum(nev_mix_direct_access_time_out + nevDiversionConstant, nevDiversionFactor*nev_mix_direct_access_time_out)"
 inbound nev egress from mixed available,nev_mix_egress_available_in,~df.outbound & (nev_dest>0) & (dest_micro_mix_dist<nevMaxDist)
 inbound nev direct egress from mixed time,nev_mix_direct_egress_time_in,"np.maximum(dest_micro_mix_dist/nevSpeed*60, odt_skims['TNCIN_MIX_EGR'])"
 inbound nev egress from mixed time,nev_mix_egress_time_in,"nevWaitTime + np.maximum(nev_mix_direct_egress_time_in + nevDiversionConstant, nevDiversionFactor*nev_mix_direct_egress_time_in)"
