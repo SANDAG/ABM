@@ -73,11 +73,15 @@ vot-indexed skims,da_dist_skims,((odt_skims['SOV_NT_L_DIST'] * (_vot_bin_da == 1
 ,origin_local_dist,"reindex(land_use.walk_dist_local_bus, origin)"
 ,origin_prm_dist,"reindex(land_use.walk_dist_premium_transit, origin)"
 ,origin_mix_dist,"np.minimum(origin_local_dist, origin_prm_dist)"
+,origin_micro_local_dist,"reindex(land_use.micro_dist_local_bus, origin)"
 ,origin_micro_prm_dist,"reindex(land_use.micro_dist_premium_transit, origin)"
+,origin_micro_mix_dist,"np.minimum(origin_micro_local_dist, origin_micro_prm_dist)"
 ,dest_local_dist,"reindex(land_use.walk_dist_local_bus, destination)"
 ,dest_prm_dist,"reindex(land_use.walk_dist_premium_transit, destination)"
 ,dest_mix_dist,"np.minimum(dest_local_dist, dest_prm_dist)"
+,dest_micro_local_dist,"reindex(land_use.micro_dist_local_bus, destination)"
 ,dest_micro_prm_dist,"reindex(land_use.micro_dist_premium_transit, destination)"
+,dest_micro_mix_dist,"np.minimum(dest_micro_local_dist, dest_micro_prm_dist)"
 #access egress times,,
 ,origin_local_time,origin_local_dist * 60/walk_speed
 ,origin_prm_time,origin_prm_dist * 60/walk_speed
