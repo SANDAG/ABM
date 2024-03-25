@@ -290,7 +290,7 @@ microtransit access to local time,microtransit_local_access_time,"2*microtransit
 nev access to local available,nev_local_access_available,(nev_orig>0) & (origin_micro_local_dist<nevMaxDist),
 nev direct access to local time,nev_local_direct_access_time,"np.maximum(origin_micro_local_dist/nevSpeed*60, odt_skims['TNCOUT_LOC_ACC']) + np.maximum(origin_micro_local_dist/nevSpeed*60, dot_skims['TNCIN_LOC_EGR'])",
 nev access to local time,nev_local_access_time,"2*nevWaitTime + np.maximum(nev_local_direct_access_time + nevDiversionConstant, nevDiversionFactor*nev_local_direct_access_time)",
-3,,,
+#,,,
 microtransit access to premium available,microtransit_prm_access_available,(microtransit_orig>0) & (origin_micro_prm_dist<microtransitMaxDist),
 microtransit direct access to premium time,microtransit_prm_direct_access_time,"np.maximum(origin_micro_prm_dist/microtransitSpeed*60, odt_skims['TNCOUT_PRM_ACC']) + np.maximum(origin_micro_prm_dist/microtransitSpeed*60, dot_skims['TNCIN_PRM_EGR'])",
 microtransit access to premium time,microtransit_prm_access_time,"2*microtransitWaitTime + np.maximum(microtransit_prm_direct_access_time + microtransitDiversionConstant, microtransitDiversionFactor*microtransit_prm_direct_access_time)",
