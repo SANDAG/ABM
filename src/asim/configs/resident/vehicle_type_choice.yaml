@@ -91,6 +91,38 @@ preprocessor:
     - persons
     - households
 
+alts_preprocessor:
+  SPEC: vehicle_type_choice_annotate_alts_preprocessor
+  DF: alts_wide
+
+COLS_TO_INCLUDE_IN_CHOOSER_TABLE:
+  - avg_hh_dist_to_work
+  - income
+  - hh_per_mi
+  - auto_ownership
+  - hh_veh_gt_drivers
+  - total_hh_dist_to_work_cap
+  - num_children
+  - num_hh_veh_owned
+  - num_hh_Van
+  - num_hh_SUV
+  - num_hh_Pickup
+  - num_hh_Motorcycle
+  - num_hh_Hybrid
+  - num_hh_BEV
+  - num_hh_PEV
+  - num_hh_EV
+  - home_is_rural
+
+COLS_TO_INCLUDE_IN_ALTERNATIVES_TABLE:
+  - age
+  - fuel_type_num_coded
+  - body_type_num_coded
+  - Range
+  - MPG
+  - NumMakes
+  - NumModels
+
 # annotate_persons:
 #   SPEC: annotate_persons_vehicle_type
 #   DF: persons
