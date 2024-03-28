@@ -60,6 +60,9 @@ doc['CONSTANTS']['TNC_shared_costMinimum'] = float(paramByYear.loc[paramByYear.y
 util.write_yaml(_join(configs_dir, 'airport.SAN', 'trip_mode_choice.yaml'), doc)
 
 #update crossborder parameters
+doc = util.open_yaml(_join(configs_dir, 'crossborder', 'constants.yaml'))
+doc['scenarioYear'] = int(scenYear)
+util.write_yaml(_join(configs_dir, 'crossborder', 'constants.yaml'), doc)
 doc = util.open_yaml(_join(configs_dir, 'crossborder', 'preprocessing.yaml'))
 doc['tours']['num_tours'] = int(paramByYear.loc[paramByYear.year==scenYear, 'crossBorder.tours'].values[0])
 doc['tours']['pass_shares']['sentri'] = float(paramByYear.loc[paramByYear.year==scenYear, 'crossBorder.sentriShare'].values[0])
