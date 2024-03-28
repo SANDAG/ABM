@@ -143,10 +143,10 @@ util_smsa_hyb,MSA population less than 1 million - Hybrid,"@(MSA_POP < 1000000) 
 util_smsa_ev,MSA population less than 1 million - Electric,"@(MSA_POP < 1000000) & ((df.fuel_type_num_coded==5) | (df.fuel_type_num_coded==1))",coef_smsa_ev
 util_smsa_age,MSA population less than 1 million - Age,"@(MSA_POP < 1000000) * df.age",coef_smsa_age
 #,Region Specific Constants,,
-util_san_van,San Diego - Van,"@(CBSA == 'SAN') & (df.body_type_num_coded==5)",coef_san_van
-util_san_suv,San Diego - SUV,"@(CBSA == 'SAN') & (df.body_type_num_coded==4)",coef_san_suv
-util_san_pu,San Diego - Pickup,"@(CBSA == 'SAN') & (df.body_type_num_coded==3)",coef_san_pu
-util_san_mc,San Diego - Motorcycle,"@(CBSA == 'SAN') & (df.body_type_num_coded==2)",coef_san_mc
-util_san_hyb,San Diego - Hybrid,"@(CBSA == 'SAN') & (df.fuel_type_num_coded==4)",coef_san_hyb
-util_san_ev,San Diego - Electric,"@(CBSA == 'SAN') & ((df.fuel_type_num_coded==5) | (df.fuel_type_num_coded==1))",coef_san_ev
-util_san_age,San Diego - Age,"@(CBSA == 'SAN') * df.age",coef_san_age
+util_san_van,San Diego - Van,"@(df.SAN) & (df.body_type_num_coded==5)",coef_san_van
+util_san_suv,San Diego - SUV,"@(df.SAN) & (df.body_type_num_coded==4)",coef_san_suv
+util_san_pu,San Diego - Pickup,"@(df.SAN) & (df.body_type_num_coded==3)",coef_san_pu
+util_san_mc,San Diego - Motorcycle,"@(df.SAN) & (df.body_type_num_coded==2)",coef_san_mc
+util_san_hyb,San Diego - Hybrid,"@(df.SAN) & (df.fuel_type_num_coded==4)",coef_san_hyb
+util_san_ev,San Diego - Electric,"@(df.SAN) & ((df.fuel_type_num_coded==5) | (df.fuel_type_num_coded==1))",coef_san_ev
+util_san_age,San Diego - Age,"@(df.SAN) * df.age",coef_san_age
