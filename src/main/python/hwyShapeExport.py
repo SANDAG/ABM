@@ -16,6 +16,13 @@ def export_highway_shape(scenario_path: str) -> geopandas.GeoDataFrame:
 
     Returns:
         A GeoPandas GeoDataFrame of the loaded highway network """
+        
+    # temporary so that the sensitivity summary on data lake works
+    # the sensitivity summary on data lake uses IFC (from TCOV) rather than FC (from TNED)
+    hwy_tcad = pd.read_csv(os.path.join(scenario_path, "report", "hwyTcad.csv"))
+    hwy_tcad['IFC'] = hwy_tcad['FC']
+    hwy_tcad.to_csv(os.path.join(scenario_path, "report", "hwyTcad.csv"), index=False)    
+    
     # read in input highway network
     hwy_tcad = pd.read_csv(os.path.join(scenario_path, "report", "hwyTcad.csv"),
                            usecols=["ID",  # highway coverage id
@@ -59,11 +66,6 @@ def export_highway_shape(scenario_path: str) -> geopandas.GeoDataFrame:
                                     "ABPRELOAD_EV",  # preloaded bus flow - to-from - Evening
                                     "BAPRELOAD_EV",  # preloaded bus flow - from-to - Evening
                                     "geometry"])  # WKT geometry
-    
-    # temporary so that the sensitivity summary on data lake works
-    # the sensitivity summary on data lake uses IFC (from TCOV) rather than FC (from TNED)
-    hwy_tcad['IFC'] = hwy_tcad['FC']
-    hwy_tcad.to_csv(os.path.join(scenario_path, "report", "hwyTcad.csv"), index=False)
 
     # read in loaded highway network for each time period
     for tod in ["EA", "AM", "MD", "PM", "EV"]:
