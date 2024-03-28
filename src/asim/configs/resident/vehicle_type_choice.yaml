@@ -120,8 +120,10 @@ COLS_TO_INCLUDE_IN_ALTERNATIVES_TABLE:
   - body_type_num_coded
   - Range
   - MPG
-  - NumMakes
-  - NumModels
+  - is_av
+  - logged_models
+  - logged_makes
+  - logged_chargers_per_capita
 
 # annotate_persons:
 #   SPEC: annotate_persons_vehicle_type
