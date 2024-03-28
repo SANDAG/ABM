@@ -124,6 +124,7 @@ COLS_TO_INCLUDE_IN_ALTERNATIVES_TABLE:
   - logged_models
   - logged_makes
   - logged_chargers_per_capita
+  - SAN
 
 # annotate_persons:
 #   SPEC: annotate_persons_vehicle_type
