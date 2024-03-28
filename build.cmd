@@ -31,6 +31,8 @@ for /f "tokens=*" %%i in (build_create_scenario_scripts.txt) DO (
 if not exist %ROOT%\common\application mkdir %ROOT%\common\application
 xcopy /Y .\src\main\resources\"*.dll" %ROOT%\common\application
 xcopy /Y .\src\main\resources\application\"*.jar" %ROOT%\common\application
+if not exist %ROOT%\common\application\GnuWin32 mkdir %ROOT%\common\application\GnuWin32
+xcopy /Y/S/E .\src\main\resources\application\GnuWin32 %ROOT%\common\application\GnuWin32
 
 @REM Copy bin files
 if not exist %ROOT%\common\bin mkdir %ROOT%\common\bin
