@@ -1,0 +1,50 @@
+
+SPEC: cvm_accessibility.csv
+
+# columns from land_use table to add to df
+land_use_columns: 
+  - 'num_hh_food_delivery'
+  - 'num_hh_package_delivery'
+  - 'num_hh_service'
+  - 'establishment_attraction'
+  - 'establishment_attraction_group1'
+  - 'establishment_attraction_group2'
+  - 'establishment_attraction_group3'
+  - 'establishment_attraction_group4'
+
+establishment_acc_agg_groups:
+  - name: establishment_attraction_group1
+    columns:
+      - establishment_attraction_ret
+      - establishment_attraction_whl
+      - establishment_attraction_mfg
+  - name: establishment_attraction_group2
+    columns:
+      - establishment_attraction_iut
+      - establishment_attraction_laf
+  - name: establishment_attraction_group3
+    columns:
+      - establishment_attraction_con
+      - establishment_attraction_agm
+      - establishment_attraction_epo
+      - establishment_attraction_mhs
+      - establishment_attraction_trn
+  - name: establishment_attraction_group4
+    columns:
+      - establishment_attraction_ifr
+
+CONSTANTS:
+  vot_light: 67 # dollar per hour
+  vot_medium: 68
+  vot_heavy: 89
+  vot_tnc: 85
+  prop_light: 0.544
+  prop_medium: 0.341
+  prop_heavy: 0.115
+  prop_light_tnc: 1
+  prop_medium_tnc: 0
+  prop_heavy_tnc: 0
+  decay_est: 4
+  dispersion_parameter_est: -0.0543
+  decay_tnc_est: 4
+  dispersion_parameter_tnc_est: -0.0515

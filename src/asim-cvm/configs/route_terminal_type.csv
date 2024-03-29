@@ -1,0 +1,15 @@
+Label,Description,Expression,base,warehouse,residential,commercial
+,,@1.0,coef_asc_base,coef_asc_warehouse,coef_asc_residential,coef_asc_commercial
+route origin type base,,origination_stop_type=='base',,coef_origin_base_warehouse,coef_origin_base_residential,coef_origin_base_commercial
+route origin type commercial,,origination_stop_type=='commercial',,,coef_origin_commercial_residential,coef_origin_commercial_commercial
+construction industry,,business_type=='CON',,,coef_construction_residential,coef_construction_commercial
+medical industry,,business_type=='MHS',,,,coef_medical_commercial
+info industry,,business_type=='IFR',,coef_information_warehouse,coef_information_residential,
+manufacturing industry,,business_type=='MFG',,coef_manufacturing_warehouse,,
+retail industry,,business_type=='RET',,,,coef_retail_commercial
+leisure industry,,business_type=='LAF',,,,coef_leisure_commercial
+vehicle SUT,,vehicle_type=='SUT',,,coef_sut_residential,
+vehicle MUT,,vehicle_type=='MUT',,,coef_mut_residential,
+route purpose goods,,route_purpose=='goods',,coef_goods_warehouse,,
+customer type residential,,customer_type=='residential',,,,coef_residential_commercial
+customer type mixed,,customer_type=='mixed',,coef_mixed_warehouse,,

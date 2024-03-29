@@ -13,7 +13,7 @@ set NETWORKDIR=%3
 set EMME_VERSION=%4
 
 @echo creating scenario folders
-set FOLDERS=input application bin conf input_truck logFiles output python report sql uec analysis visualizer visualizer\outputs\summaries input_checker src src\asim
+set FOLDERS=input application bin conf input_truck logFiles output python report sql uec analysis visualizer visualizer\outputs\summaries input_checker src src\asim src\asim-cvm
 for %%i in (%FOLDERS%) do (
 md %SCENARIO_FOLDER%\%%i)
 
@@ -38,6 +38,7 @@ xcopy /s/Y .\common\visualizer %SCENARIO_FOLDER%\visualizer
 xcopy /s/Y .\dependencies.* %SCENARIO_FOLDER%\visualizer
 xcopy /Y/s/E .\common\input\input_checker\"*.*" %SCENARIO_FOLDER%\input_checker
 xcopy /Y/s/E .\common\src\asim\"*.*" %SCENARIO_FOLDER%\src\asim
+xcopy /Y/s/E .\common\src\asim-cvm\"*.*" %SCENARIO_FOLDER%\src\asim-cvm
 
 @echo assemble inputs
 del %SCENARIO_FOLDER%\input /q

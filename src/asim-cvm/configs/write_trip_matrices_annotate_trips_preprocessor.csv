@@ -1,0 +1,34 @@
+Description,Target,Expression
+# add vehicle type,,
+,vehicle_type,cv_trips.route_id.map(routes.vehicle_type_abm3)
+# code time periods,,
+,is_ea,"cv_trips.trip_start_time.between(time_periods['EA']['first_hour'], time_periods['EA']['last_hour'])"
+,is_am,"cv_trips.trip_start_time.between(time_periods['AM']['first_hour'], time_periods['AM']['last_hour'])"
+,is_md,"cv_trips.trip_start_time.between(time_periods['MD']['first_hour'], time_periods['MD']['last_hour'])"
+,is_pm,"cv_trips.trip_start_time.between(time_periods['PM']['first_hour'], time_periods['PM']['last_hour'])"
+,is_ev,"cv_trips.trip_start_time.between(time_periods['EV']['first_hour'], time_periods['EV']['last_hour'])"
+# ea trips,,
+,CAR_EA,((vehicle_type == 'passenger_car') & is_ea)
+,LIGHT_TRUCK_EA,((vehicle_type == 'LHDT') & is_ea)
+,MEDIUM_TRUCK_EA,((vehicle_type == 'MHDT') & is_ea)
+,HEAVY_TRUCK_EA,((vehicle_type == 'HHDT') & is_ea)
+# am trips,,
+,CAR_AM,((vehicle_type == 'passenger_car') & is_am)
+,LIGHT_TRUCK_AM,((vehicle_type == 'LHDT') & is_am)
+,MEDIUM_TRUCK_AM,((vehicle_type == 'MHDT') & is_am)
+,HEAVY_TRUCK_AM,((vehicle_type == 'HHDT') & is_am)
+# md trips,,
+,CAR_MD,((vehicle_type == 'passenger_car') & is_md)
+,LIGHT_TRUCK_MD,((vehicle_type == 'LHDT') & is_md)
+,MEDIUM_TRUCK_MD,((vehicle_type == 'MHDT') & is_md)
+,HEAVY_TRUCK_MD,((vehicle_type == 'HHDT') & is_md)
+# pm trips,,
+,CAR_PM,((vehicle_type == 'passenger_car') & is_pm)
+,LIGHT_TRUCK_PM,((vehicle_type == 'LHDT') & is_pm)
+,MEDIUM_TRUCK_PM,((vehicle_type == 'MHDT') & is_pm)
+,HEAVY_TRUCK_PM,((vehicle_type == 'HHDT') & is_pm)
+# ev trips,,
+,CAR_EV,((vehicle_type == 'passenger_car') & is_ev)
+,LIGHT_TRUCK_EV,((vehicle_type == 'LHDT') & is_ev)
+,MEDIUM_TRUCK_EV,((vehicle_type == 'MHDT') & is_ev)
+,HEAVY_TRUCK_EV,((vehicle_type == 'HHDT') & is_ev)

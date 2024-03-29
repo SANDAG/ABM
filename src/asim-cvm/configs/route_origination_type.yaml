@@ -1,0 +1,4 @@
+SPEC: route_origination_type.csv
+COEFFICIENTS: route_origination_type_coefficients.csv
+LOGIT_TYPE: MNL
+RESULT_COL_NAME: origination_stop_type
