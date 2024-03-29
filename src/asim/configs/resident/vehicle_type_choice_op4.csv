@@ -46,10 +46,10 @@ util_den6_mc,4000-9999 HH / sq mi Motorcycle,"((household_density < 10000) & (ho
 util_den7_mc,10000-24999 HH / sq mi Motorcycle,"((household_density < 25000) & (household_density >= 10000)) & (body_type_num_coded==2)",coef_den7_mc
 util_den8_mc,25000+ HH / sq mi Motorcycle,"(household_density >= 25000) & (body_type_num_coded==2)",coef_den8_mc
 util_den3_hyb,500-999 HH / sq mi Hybrid,"((household_density < 1000) & (household_density >= 500)) & (fuel_type_num_coded==4)",coef_den3_hyb
-util_den4_hyb,1000-1999 HH / sq mi Hybrid,"((household_density < 2000) & (household_density >= 1000)) & (fuel_type_num_coded==4')",coef_den4_hyb
-util_den5_hyb,2000-3999 HH / sq mi Hybrid,"((household_density < 4000) & (household_density >= 2000)) & (fuel_type_num_coded==4')",coef_den5_hyb
-util_den6_hyb,4000-9999 HH / sq mi Hybrid,"((household_density < 10000) & (household_density >= 4000)) & (fuel_type_num_coded==4')",coef_den6_hyb
-util_den7_hyb,10000-24999 HH / sq mi Hybrid,"((household_density < 25000) & (household_density >= 10000)) & (fuel_type_num_coded==4')",coef_den7_hyb
+util_den4_hyb,1000-1999 HH / sq mi Hybrid,"((household_density < 2000) & (household_density >= 1000)) & (fuel_type_num_coded==4)",coef_den4_hyb
+util_den5_hyb,2000-3999 HH / sq mi Hybrid,"((household_density < 4000) & (household_density >= 2000)) & (fuel_type_num_coded==4)",coef_den5_hyb
+util_den6_hyb,4000-9999 HH / sq mi Hybrid,"((household_density < 10000) & (household_density >= 4000)) & (fuel_type_num_coded==4)",coef_den6_hyb
+util_den7_hyb,10000-24999 HH / sq mi Hybrid,"((household_density < 25000) & (household_density >= 10000)) & (fuel_type_num_coded==4)",coef_den7_hyb
 util_den8_hyb,25000+ HH / sq mi Hybrid,"(household_density >= 25000) & (fuel_type_num_coded==4)",coef_den8_hyb
 util_den34_ev,500-1999 HH / sq mi Electric,"((household_density < 2000) & (household_density >= 500)) & ((fuel_type_num_coded==5) | (fuel_type_num_coded==1))",coef_den34_ev
 util_den5_ev,2000-3999 HH / sq mi Electric,"((household_density < 4000) & (household_density >= 2000)) & ((fuel_type_num_coded==5) | (fuel_type_num_coded==1))",coef_den5_ev
