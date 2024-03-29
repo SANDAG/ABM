@@ -174,8 +174,6 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
         self.external_zones = external_zones
         self.num_processors = num_processors
         self.import_traffic_trips(props)
-        #self.import_commercial_vehicle_demand(props)
-        # self.convert_light_trucks_to_pce()
         self.add_aggregate_demand()
 
     @_context
@@ -427,110 +425,6 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                         logbook_label, self.scenario, report)
                     self.set_data(matrix_name, total_asim_trips)
         _m.logbook_write(title, report.render())
-
-    # @_m.logbook_trace('Import commercial vehicle demand')
-    # def import_commercial_vehicle_demand(self, props):
-    #     scale_factor = props["cvm.scale_factor"]
-    #     scale_light = props["cvm.scale_light"]
-    #     scale_medium = props["cvm.scale_medium"]
-    #     scale_heavy = props["cvm.scale_heavy"]
-    #     share_light = props["cvm.share.light"]
-    #     share_medium = props["cvm.share.medium"]
-    #     share_heavy = props["cvm.share.heavy"]
-
-    #     scenario = self.scenario
-    #     emmebank = scenario.emmebank
-
-    #     mapping = {}
-    #     periods = ["EA", "AM", "MD", "PM", "EV"]
-    #     # The SOV demand is modified in-place, which was imported
-    #     # prior from the CT-RAMP demand
-    #     # The truck demand in vehicles is copied from separate matrices
-    #     for index, period in enumerate(periods):
-    #         mapping["CVM_%s:LNT" % period] = {
-    #             "orig": "%s_SOV_TR_H" % period,
-    #             "dest": "%s_SOV_TR_H" % period,
-    #             "pce": 1.0,
-    #             "scale": scale_light[index],
-    #             "share": share_light,
-    #             "period": period
-    #         }
-    #         mapping["CVM_%s:INT" % period] = {
-    #             "orig": "%s_TRK_L_VEH" % period,
-    #             "dest": "%s_TRK_L" % period,
-    #             "pce": 1.3,
-    #             "scale": scale_medium[index],
-    #             "share": share_medium,
-    #             "period": period
-    #         }
-    #         mapping["CVM_%s:MNT" % period] = {
-    #             "orig": "%s_TRK_M_VEH" % period,
-    #             "dest": "%s_TRK_M" % period,
-    #             "pce": 1.5,
-    #             "scale": scale_medium[index],
-    #             "share": share_medium,
-    #             "period": period
-    #         }
-    #         mapping["CVM_%s:HNT" % period] = {
-    #             "orig": "%s_TRK_H_VEH" % period,
-    #             "dest": "%s_TRK_H" % period,
-    #             "pce": 2.5,
-    #             "scale": scale_heavy[index],
-    #             "share": share_heavy,
-    #             "period": period
-    #         }
-    #     with _m.logbook_trace('Load starting SOV and truck matrices'):
-    #         for key, value in mapping.iteritems():
-    #             value["array"] = emmebank.matrix(value["orig"]).get_numpy_data(scenario)
-
-    #     with _m.logbook_trace('Processing CVM from TripMatrices.csv'):
-    #         path = os.path.join(self.output_dir, "TripMatrices.csv")
-    #         table = _pandas.read_csv(path)
-    #         for key, value in mapping.iteritems():
-    #             cvm_array = table[key].values.reshape((4947, 4947))     # reshape method deprecated since v 0.19.0, yma, 2/12/2019
-    #             #factor in cvm demand by the scale factor used in trip generation
-    #             cvm_array = cvm_array/scale_factor
-    #             #scale trips to take care of underestimation
-    #             cvm_array = cvm_array * value["scale"]
-
-    #             #add remaining share to the correspnding truck matrix
-    #             value["array"] = value["array"] + (cvm_array * (1-value["share"]))
-
-    #         #add cvm truck vehicles to light-heavy trucks
-    #         for key, value in mapping.iteritems():
-    #             period = value["period"]
-    #             cvm_vehs = ['L','M','H']
-    #             if key == "CVM_%s:INT" % period:
-    #                 for veh in cvm_vehs:
-    #                     key_new = "CVM_%s:%sNT" % (period, veh)
-    #                     value_new = mapping[key_new]
-    #                     if value_new["share"] != 0.0:
-    #                         cvm_array = table[key_new].values.reshape((4947, 4947))
-    #                         cvm_array = cvm_array/scale_factor
-    #                         cvm_array = cvm_array * value_new["scale"]
-    #                         value["array"] = value["array"] + (cvm_array * value_new["share"])
-    #     matrix_unique = {}
-    #     with _m.logbook_trace('Save SOV matrix and convert CV and truck vehicle demand to PCEs for assignment'):
-    #         for key, value in mapping.iteritems():
-    #             matrix = emmebank.matrix(value["dest"])
-    #             array = value["array"] * value["pce"]
-    #             if (matrix in matrix_unique.keys()):
-    #                 array = array + emmebank.matrix(value["dest"]).get_numpy_data(scenario)
-    #             matrix.set_numpy_data(array, scenario)
-    #             matrix_unique[matrix] = 1
-
-    # @_m.logbook_trace('Convert light truck vehicle demand to PCEs for assignment')
-    # def convert_light_trucks_to_pce(self):
-    #     matrix_calc = dem_utils.MatrixCalculator(self.scenario, self.num_processors)
-    #     # Calculate PCEs for trucks
-    #     periods = ["EA", "AM", "MD", "PM", "EV"]
-    #     mat_trucks = ['TRK_L']
-    #     pce_values = [1.3]
-    #     for period in periods:
-    #         with matrix_calc.trace_run("Period %s" % period):
-    #             for name, pce in zip(mat_trucks, pce_values):
-    #                 demand_name = 'mf%s_%s' % (period, name)
-    #                 matrix_calc.add(demand_name, '(%s_VEH * %s).max.0' % (demand_name, pce))
 
     @_m.logbook_trace('Add aggregate demand')
     def add_aggregate_demand(self):
