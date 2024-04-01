@@ -655,9 +655,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         [drive, drive + path_forward_slash, msa_iteration, scenarioYear],
                         "Creating all the required files to run the ActivitySim models", capture_output=True)
                 if not skipABMResident[iteration]:
+                    self.set_sample_rate(_join(self._path, r"src\asim\configs\resident\settings_mp.yaml"), int(sample_rate[iteration] * hh_resident_size))
                     self.run_proc(
                         "runSandagAbm_ActivitySimResident.cmd",
-                        [drive, drive + path_forward_slash, int(sample_rate[iteration] * hh_resident_size), msa_iteration],
+                        [drive, drive + path_forward_slash],
                         "Running ActivitySim resident model", capture_output=True)
                 if not skipABMAirport[iteration]:
                     hh_airport_size = {}
@@ -665,9 +666,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         householdFile = pd.read_csv(_join(self._path, "input", "households_airport.{}.csv".format(airport)))
                         hh_airport_size[airport] = len(householdFile)
                         del(householdFile)
+                    self.set_sample_rate(_join(self._path, r"src\asim\configs\airport.CBX\settings.yaml"), int(sample_rate[iteration] * hh_airport_size["cbx"]))
+                    self.set_sample_rate(_join(self._path, r"src\asim\configs\airport.SAN\settings.yaml"), int(sample_rate[iteration] * hh_airport_size["san"]))
                     self.run_proc(
                         "runSandagAbm_ActivitySimAirport.cmd",
-                        [drive, drive + path_forward_slash, int(sample_rate[iteration] * hh_airport_size["san"]), int(sample_rate[iteration] * hh_airport_size["cbx"])],
+                        [drive, drive + path_forward_slash],
                         "Running ActivitySim airport models", capture_output=True)
                 if (not skipABMXborderWait) and (iteration == 0):
                     self.run_proc(
@@ -678,17 +681,19 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     householdFile = pd.read_csv(_join(self._path, "input", "households_xborder.csv"))
                     hh_xborder_size = len(householdFile)
                     del(householdFile)
+                    self.set_sample_rate(_join(self._path, r"src\asim\configs\crossborder\settings.yaml"), int(sample_rate[iteration] * hh_xborder_size))
                     self.run_proc(
                         "runSandagAbm_ActivitySimXborder.cmd",
-                        [drive, drive + path_forward_slash, int(sample_rate[iteration] * hh_xborder_size)],
+                        [drive, drive + path_forward_slash],
                         "Running ActivitySim crossborder model", capture_output=True)
                 if not skipABMVisitor[iteration]:
                     householdFile = pd.read_csv(_join(self._path, "input", "households_visitor.csv"))
                     hh_visitor_size = len(householdFile)
                     del(householdFile)
+                    self.set_sample_rate(_join(self._path, r"src\asim\configs\visitor\settings.yaml"), int(sample_rate[iteration] * hh_visitor_size))
                     self.run_proc(
                         "runSandagAbm_ActivitySimVisitor.cmd",
-                        [drive, drive + path_forward_slash, int(sample_rate[iteration] * hh_visitor_size)],
+                        [drive, drive + path_forward_slash],
                         "Running ActivitySim visitor model", capture_output=True)
                            
                 if not skipMAASModel[iteration]:
@@ -1496,6 +1501,16 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         datalake_metadata_path = os.path.join(self._path,'output','datalake_metadata.yaml')
         with open(datalake_metadata_path, 'w') as file:
             yaml.safe_dump(datalake_metadata_dict, file, default_flow_style=False)
+    
+    def set_sample_rate(self, settings_path, sample):
+        with open(settings_path, 'r') as file:
+            settings = file.readlines()
+        for index, line in enumerate(settings):
+            pos = line.find("households_sample_size:")
+            if pos != -1:
+                settings[index] = line[:pos] + "households_sample_size: " + str(sample) + "\n"
+        with open(settings_path, 'w') as file:
+            file.writelines(settings)
 
 
     # def update_metadata_iteration(self, main_directory, msa_iteration):
