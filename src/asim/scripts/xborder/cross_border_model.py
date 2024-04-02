@@ -72,7 +72,7 @@ def create_tours(settings):
     purpose_probs_by_pass_type = tour_settings['purpose_shares_by_pass_type']
     
     tours = pd.DataFrame(
-        index=range(num_tours), columns=[
+        index=range(1,num_tours+1), columns=[
             'pass_type', 'tour_type',
             'purpose_id'])
     tours.index.name = 'tour_id'
@@ -125,7 +125,7 @@ def create_households(settings):
     num_tours = tour_settings['num_tours']
 
     # one household per tour
-    households = pd.DataFrame({'household_id': range(num_tours)})
+    households = pd.DataFrame({'household_id': range(1,num_tours+1)})
 
     return households
 
@@ -134,9 +134,10 @@ def create_persons(settings, num_households):
 
     print("Creating persons")
     # one person per household
-    persons = pd.DataFrame({'person_id': range(num_households)})
+    persons = pd.DataFrame({'person_id': range(1,num_households+1)})
     persons['household_id'] = np.random.choice(
         num_households, num_households, replace=False)
+    persons['household_id'] = persons['household_id'] +1
 
     return persons
 
@@ -747,8 +748,8 @@ if __name__ == '__main__':
         tours = assign_hh_p_to_tours(tours, persons)
 
         # # store input files to disk
-        mazs.to_csv(os.path.join(
-            data_dir, settings['mazs_output_fname']), index=False)
+        # mazs.to_csv(os.path.join(
+        #     data_dir, settings['mazs_output_fname']), index=False)
         tours.to_csv(os.path.join(
             data_dir, settings['tours_output_fname']))
         households.to_csv(os.path.join(
