@@ -747,9 +747,9 @@ if __name__ == '__main__':
         persons = create_persons(settings, num_households=len(households))
         tours = assign_hh_p_to_tours(tours, persons)
 
-        # # store input files to disk
-        # mazs.to_csv(os.path.join(
-        #     data_dir, settings['mazs_output_fname']), index=False)
+        # store input files to disk
+        mazs.to_csv(os.path.join(
+            data_dir, settings['mazs_output_fname']), index=False)
         tours.to_csv(os.path.join(
             data_dir, settings['tours_output_fname']))
         households.to_csv(os.path.join(
