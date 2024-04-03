@@ -604,13 +604,18 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         for field, (name, tcoved_type, emme_type, desc) in attr_map["LINK"].iteritems():
             if tcoved_type in ("TWO_WAY", "HWY_TWO_WAY", "ONE_WAY", "HWY_ONE_WAY"):
                 link_attr_map[field] = (name, tcoved_type.replace("HWY_", ""), emme_type, desc)
-
+        
+        auto_mode = network.mode("d")
+        
         def define_modes(arc):
-            if arc["FC"] in [11, 12]  or arc["ABLNA"] == 0: #or ((arc["HOV"] < 1 or arc["HOV"] > 4) and arc["FC"] != 10):
-                vehicle_index = int(arc["MINMODE"] / 100)*100
-                aux_index = int(arc["MINMODE"] % 100)
-                return self._transit_mode_lookup[vehicle_index] | self._transit_mode_lookup[aux_index]
-            return [network.mode('d')]
+            vehicle_index = int(arc["MINMODE"] / 100)*100
+            aux_index = int(arc["MINMODE"] % 100)
+            veh_modes = self._transit_mode_lookup.get(vehicle_index, set([]))
+            aux_modes = self._transit_mode_lookup.get(aux_index, set([]))
+            modes = veh_modes | aux_modes
+            if arc["FC"] not in [11, 12, 99] and arc["HOV"] != 0:
+                modes |= set([auto_mode])
+            return modes
 
         self._create_base_net(
             hwy_data, network, mode_callback=define_modes, centroid_callback=is_centroid, link_attr_map=link_attr_map)
