@@ -88,21 +88,22 @@ xcopy /Y .\common\git_info.yaml %SCENARIO_FOLDER%
 
 rem populate scenario year into sandag_abm.properties
 set PROP_FILE=%SCENARIO_FOLDER%\conf\sandag_abm.properties
-set TEMP_FILE=%SCENARIO_FOLDER%\conf\temp.properties
-set RAW_YEAR=%YEAR:nb=%
-type nul>%TEMP_FILE%
-echo %PROP_FILE% %A
-for /f "USEBACKQ delims=" %%A in (`type "%PROP_FILE%" ^| find /V /N ""`) do (
-  set ln=%%A
-  setlocal enableDelayedExpansion
-  set ln=!ln:${year}=%RAW_YEAR%!
-  set ln=!ln:${year_build}=%YEAR%!
-  set ln=!ln:*]=!
-  echo(!ln!>>%TEMP_FILE%
-  endlocal
-)
-del %PROP_FILE%
-move %TEMP_FILE% %PROP_FILE%
+@REM set TEMP_FILE=%SCENARIO_FOLDER%\conf\temp.properties
+@REM set RAW_YEAR=%YEAR:nb=%
+@REM type nul>%TEMP_FILE%
+echo %PROP_FILE%
+@REM for /f "USEBACKQ delims=" %%A in (`type "%PROP_FILE%" ^| find /V /N ""`) do (
+@REM   set ln=%%A
+@REM   setlocal enableDelayedExpansion
+@REM   set ln=!ln:${year}=%RAW_YEAR%!
+@REM   set ln=!ln:${year_build}=%YEAR%!
+@REM   set ln=!ln:*]=!
+@REM   echo(!ln!>>%TEMP_FILE%
+@REM   endlocal
+@REM )
+@REM del %PROP_FILE%
+@REM move %TEMP_FILE% %PROP_FILE%
+python .\common\python\update_properties.py %PROP_FILE% %YEAR%
 
 @echo init emme folder
 call init_emme.cmd %SCENARIO_FOLDER% %EMME_VERSION%
