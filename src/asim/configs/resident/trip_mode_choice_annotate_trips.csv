@@ -51,4 +51,4 @@ Description,Target,Expression
 ,_distance_bike,0
 ,distance_bike,"_distance_bike + df.trip_mode.isin(['BIKE'])*od_skims['BIKE_TIME']/60 * bikeSpeed"
 #,,
-,time_wait_drive,df.totalWaitSingleTNC+df.totalWaitSharedTNC
+,time_wait_drive,"np.where(df.trip_mode.isin(['TAXI','TNC_SINGLE','TNC_SHARED']),df.origSingleTNCWaitTime+df.origSharedTNCWaitTime,0)"

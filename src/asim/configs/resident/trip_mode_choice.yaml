@@ -119,8 +119,8 @@ CHOOSER_COLS_TO_KEEP:
   - vot_s3
   - ownsTransponder
   - parkingCost
-  - totalWaitSingleTNC
-  - totalWaitSharedTNC
+  - origSingleTNCWaitTime
+  - origSharedTNCWaitTime
   - s2_time_skims
   - s2_dist_skims
   - s2_cost_skims
