@@ -46,9 +46,9 @@ plugins:
 
 nav:
   - Home: index.md
-  - Development: development.md
-  - User Guide: userguide.md
-  - Visualizer: visualizer.md
+  - Model Design: design.md
+  - Installing and Running: running.md
+  - Model Inputs and Outputs: inputsandoutputs.md
 
 extra:
   version:
