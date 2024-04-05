@@ -1,0 +1,81 @@
+site_name: "SANDAG ABM3"
+site_url: https://sandag.github.io/abm
+repo_url: https://github.com/SANDAG/ABM
+
+use_directory_urls: false
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - content.code.annotate
+    - content.tabs.link
+    - navigation.indexes
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: deep purple
+      accent: deep orange
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep purple
+      accent: grey
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+
+plugins:
+  - autorefs
+  - mike
+  - mkdocs-jupyter:
+      include_source: True
+  - mkdocstrings:
+      default_handler: python
+      enable_inventory: true
+      handlers:
+          rendering:
+            show_root_heading: false
+            show_source: true
+            heading_level: 3
+      custom_templates: templates
+  - search
+  - table-reader
+
+nav:
+  - Home: index.md
+  - Development: development.md
+  - User Guide: userguide.md
+  - Visualizer: visualizer.md
+
+extra:
+  version:
+    provider: mike
+    default: latest
+
+extra_css:
+  - https://use.fontawesome.com/releases/v5.13.0/css/all.css
+
+markdown_extensions:
+  - admonition
+  - codehilite:
+      linenums: true
+  - meta
+  - pymdownx.inlinehilite
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.smartsymbols
+  - smarty
+  - tables
+  - toc:
+      # insert a blank space before the character
+      permalink: " ¶"
+  - pymdownx.critic
+  - pymdownx.caret
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.tilde
