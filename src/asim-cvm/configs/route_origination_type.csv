@@ -1,0 +1,15 @@
+Label,Description,Expression,base,warehouse,residential,commercial
+,,@1.0,coef_asc_base,coef_asc_warehouse,coef_asc_residential,coef_asc_commercial
+construction industry,,business_type=='CON',,coef_construction_warehouse,,
+info industry,,business_type=='IFR',,,coef_information_residential,
+wholesale industry,,business_type=='WHL',,coef_wholesale_warehouse,,
+retail industry,,business_type=='RET',,,,coef_retail_commercial
+industrial industry,,business_type=='IUT',,,,coef_industrial_commercial
+vehicle SUT,,vehicle_type=='SUT',,,coef_sut_residential,coef_sut_commercial
+vehicle MUT,,vehicle_type=='MUT',,,coef_mut_residential,
+route purpose goods,,route_purpose=='goods',,coef_goods_warehouse,coef_goods_residential,coef_goods_commercial
+route purpose maintenance,,route_purpose=='maintenance',,,coef_maint_residential,
+customer type residential,,customer_type=='residential',,coef_residential_warehouse,,
+customer type mixed,,customer_type=='mixed',,,,coef_mixed_commercial
+route start time am,,_route_start_time_period_=='AM',,,coef_route_start_am_residential,coef_route_start_am_commercial
+route start time pm,,_route_start_time_period_=='PM',,,coef_route_start_pm_residential,

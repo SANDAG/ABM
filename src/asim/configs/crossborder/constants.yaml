@@ -5,6 +5,8 @@ SanYsidro_maz_id: 9279
 OtayMesa_maz_id: 9387
 Tecate_maz_id: 22324
 
+scenarioYear: 2022
+
 walk_speed: 3.00
 
 #HHT_NONE: 0
@@ -53,14 +55,14 @@ PTYPE_PRESCHOOL:  &ptype_preschool 8
 
 # these appear as column headers in non_mandatory_tour_frequency.csv
 PTYPE_NAME:
-  *ptype_full: PTYPE_FULL
-  *ptype_part: PTYPE_PART
-  *ptype_university: PTYPE_UNIVERSITY
-  *ptype_nonwork: PTYPE_NONWORK
-  *ptype_retired: PTYPE_RETIRED
-  *ptype_driving: PTYPE_DRIVING
-  *ptype_school: PTYPE_SCHOOL
-  *ptype_preschool: PTYPE_PRESCHOOL
+  *ptype_full : PTYPE_FULL
+  *ptype_part : PTYPE_PART
+  *ptype_university : PTYPE_UNIVERSITY
+  *ptype_nonwork : PTYPE_NONWORK
+  *ptype_retired : PTYPE_RETIRED
+  *ptype_driving : PTYPE_DRIVING
+  *ptype_school : PTYPE_SCHOOL
+  *ptype_preschool : PTYPE_PRESCHOOL
 
 
 CDAP_ACTIVITY_MANDATORY: M

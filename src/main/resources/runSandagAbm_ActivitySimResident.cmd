@@ -2,35 +2,10 @@ ECHO ON
 
 set PROJECT_DRIVE=%1
 set PROJECT_DIRECTORY=%2
-set SAMPLERATE=%3
-set ITERATION=%4
 
 %PROJECT_DRIVE%
 cd /d %PROJECT_DIRECTORY%
 
-:: -------------------------------------------------------------------------------------------------
-:: Loop
-:: -------------------------------------------------------------------------------------------------
-
-SET SAMPLE=%SAMPLERATE%
-
-ECHO CURRENT DIRECTORY: %cd%
-CD src\asim\configs\resident
-:: Set sample_rate in configs file dynamically
-FOR /F "USEBACKQ delims=" %%i IN (`type "settings_mp.yaml" ^| find /V /N ""`) DO (
-    SETLOCAL EnableDelayedExpansion
-    SET LINE=%%i
-    set LINE=!LINE:*]=!
-    SET SUBSTR=!LINE:~0,23!
-    IF !SUBSTR! == households_sample_size: (
-        ECHO households_sample_size: %SAMPLE% >> settings_mp_temp.yaml
-    ) ELSE (
-        ECHO:!LINE! >> settings_mp_temp.yaml
-    )
-    ENDLOCAL
-)
-del settings_mp.yaml
-move settings_mp_temp.yaml settings_mp.yaml
 :: -------------------------------------------------------------------------------------------------
 :: Run ActivitySim
 :: ---------------------------------------------------------------------

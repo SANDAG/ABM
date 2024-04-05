@@ -12,9 +12,9 @@
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
 #
-# Exports the matrix results to OMX and csv files for use by the Java Data 
+# Exports the matrix results to OMX and csv files for use by the Java Data
 # export process and the Data loader to the reporting database.
-# 
+#
 #
 # Inputs:
 #    output_dir: the output directory for the created files
@@ -26,7 +26,7 @@
 #       ../report/trucktrip.csv
 #       ../report/eetrip.csv
 #       ../report/eitrip.csv
-#   OMX format files 
+#   OMX format files
 #        trip_pp.omx
 #
 #
@@ -82,7 +82,7 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
         pb = _m.ToolPageBuilder(self)
         pb.title = "Export matrices for Data Loader"
         pb.description = """
-            Export model results to OMX files for export by Data Exporter 
+            Export model results to OMX files for export by Data Exporter
             to CSV format for load in SQL Data loader."""
         pb.branding_text = "- SANDAG - Export"
         if self.tool_run_msg != "":
@@ -100,7 +100,7 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
             project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
             base_emmebank = _eb.Emmebank(os.path.join(project_dir, "Database", "emmebank"))
             base_scenario = base_emmebank.scenario(self.base_scenario_id)
-            
+
             results = self(self.output_dir, base_scenario)
             run_msg = "Export completed"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg)
@@ -108,7 +108,7 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
             self.tool_run_msg = _m.PageBuilder.format_exception(
                 error, _traceback.format_exc(error))
             raise
-            
+
     @_m.logbook_trace("Export matrices for Data Loader", save_arguments=True)
     def __call__(self, output_dir, base_scenario):
         attrs = {
@@ -119,59 +119,9 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
         gen_utils.log_snapshot("Export Matrices for Data Loader", str(self), attrs)
         self.output_dir = output_dir
         self.base_scenario = base_scenario
-
-        self.truck_demand()
         self.external_demand()
         self.total_demand()
 
-    @_m.logbook_trace("Export truck demand")
-    def truck_demand(self):
-        name_mapping = [
-            # ("lhdn", "TRKLGP", 1.3),
-            # ("mhdn", "TRKMGP", 1.5),
-            # ("hhdn", "TRKHGP", 2.5),
-            ("lhdt", "TRK_L", 1.3),
-            ("mhdt", "TRK_M", 1.5),
-            ("hhdt", "TRK_H", 2.5),
-        ]
-        scenario = self.base_scenario
-        emmebank = scenario.emmebank
-        zones = scenario.zone_numbers
-        formater = lambda x: ("%.5f" % x).rstrip('0').rstrip(".")
-        truck_trip_path = os.path.join(os.path.dirname(self.output_dir), "report", "trucktrip.csv")
-        
-        # get auto operating cost	
-        load_properties = _m.Modeller().tool('sandag.utilities.properties')
-        props = load_properties(_join(_dir(self.output_dir), "conf", "sandag_abm.properties"))
-        try:
-            aoc = float(props["aoc.fuel"]) + float(props["aoc.maintenance"])
-        except ValueError:
-            raise Exception("Error during float conversion for aoc.fuel or aoc.maintenance from sandag_abm.properties file")		
-
-        with open(truck_trip_path, 'w') as f:
-            f.write("OTAZ,DTAZ,TOD,MODE,TRIPS,TIME,DIST,AOC,TOLLCOST\n")
-            for period in self.periods:
-                for key, name, pce in name_mapping:
-                    matrix_data = emmebank.matrix(period + "_" + name + "_VEH").get_data(scenario)
-                    matrix_data_time = emmebank.matrix(name + "_TIME__" + period).get_data(scenario)
-                    matrix_data_dist = emmebank.matrix(name + "_DIST__"+ period).get_data(scenario)
-                    matrix_data_tollcost = emmebank.matrix(name + "_TOLLCOST__" + period).get_data(scenario)
-                    rounded_demand = 0
-                    for orig in zones:
-                        for dest in zones:
-                            value = matrix_data.get(orig, dest)
-                            # skip trips less than 0.00001 to avoid 0 trips records in database
-                            if value < 0.00001: 
-                                rounded_demand += value
-                                continue
-                            time = matrix_data_time.get(orig, dest)
-                            distance = matrix_data_dist.get(orig, dest)
-                            tollcost = matrix_data_tollcost.get(orig, dest)
-                            od_aoc = distance * aoc
-                            f.write(",".join([str(orig), str(dest), period, key, formater(value), formater(time), formater(distance), formater(od_aoc), formater(tollcost)]))
-                            f.write("\n")
-                    if rounded_demand > 0:
-                        print period + "_" + name + "_VEH", "rounded_demand", rounded_demand
 
     def external_demand(self):
         #get auto operating cost
@@ -180,7 +130,7 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
         try:
             aoc = float(props["aoc.fuel"]) + float(props["aoc.maintenance"])
         except ValueError:
-            raise Exception("Error during float conversion for aoc.fuel or aoc.maintenance from sandag_abm.properties file")	
+            raise Exception("Error during float conversion for aoc.fuel or aoc.maintenance from sandag_abm.properties file")
 
         # EXTERNAL-EXTERNAL TRIP TABLE (toll-eligible)
         name_mapping = [
@@ -190,7 +140,7 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
         ]
         scenario = self.base_scenario
         emmebank = scenario.emmebank
-        zones = scenario.zone_numbers	
+        zones = scenario.zone_numbers
         formater = lambda x: ("%.5f" % x).rstrip('0').rstrip(".")
         ee_trip_path = os.path.join(os.path.dirname(self.output_dir), "report", "eetrip.csv")
         with _m.logbook_trace("Export external-external demand"):
@@ -199,7 +149,7 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
                 for period in self.periods:
                     matrix_data_time = emmebank.matrix("SOV_NT_M_TIME__" + period).get_data(scenario)
                     matrix_data_dist = emmebank.matrix("SOV_NT_M_DIST__" + period).get_data(scenario)
-                    matrix_data_tollcost = emmebank.matrix("SOV_NT_M_TOLLCOST__" + period).get_data(scenario)				
+                    matrix_data_tollcost = emmebank.matrix("SOV_NT_M_TOLLCOST__" + period).get_data(scenario)
                     for key, name in name_mapping:
                         matrix_data = emmebank.matrix(period + "_" + name + "_EETRIPS").get_data(scenario)
                         rounded_demand = 0
@@ -207,7 +157,7 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
                             for dest in zones:
                                 value = matrix_data.get(orig, dest)
                                 # skip trips less than 0.00001 to avoid 0 trips records in database
-                                if value < 0.00001: 
+                                if value < 0.00001:
                                     rounded_demand += value
                                     continue
                                 time = matrix_data_time.get(orig, dest)
@@ -216,7 +166,7 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
                                 tollcost = matrix_data_tollcost.get(orig, dest)
                                 od_aoc = distance * aoc
                                 f.write(",".join(
-                                    [str(orig), str(dest), period, key, formater(value), formater(time), 
+                                    [str(orig), str(dest), period, key, formater(value), formater(time),
                                      formater(distance), formater(od_aoc), formater(tollcost)]))
                                 f.write("\n")
                         if rounded_demand > 0:
@@ -251,15 +201,15 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
                                     # skip trips less than 0.00001 to avoid 0 trips records in database
                                     if value < 0.00001:
                                         rounded_demand += value
-                                        continue                                    
+                                        continue
                                     time = matrix_data_time.get(orig, dest)
                                     distance = matrix_data_dist.get(orig, dest)
                                     tollcost = 0
                                     if "TOLL" in name:
-                                        tollcost = matrix_data_tollcost.get(orig, dest)                                        
+                                        tollcost = matrix_data_tollcost.get(orig, dest)
                                     od_aoc = distance * aoc
                                     f.write(",".join(
-                                        [str(orig), str(dest), period, key, purpose, formater(value), formater(time), 
+                                        [str(orig), str(dest), period, key, purpose, formater(value), formater(time),
                                          formater(distance), formater(od_aoc), formater(tollcost)]))
                                     f.write("\n")
                             if rounded_demand > 0:

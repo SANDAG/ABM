@@ -66,6 +66,10 @@ xcopy /Y/S/E .\src\main\emme %ROOT%\common\python\emme
 if not exist %ROOT%\common\src\asim mkdir %ROOT%\common\src\asim
 xcopy /Y/S/E .\src\asim %ROOT%\common\src\asim
 
+@REM Copy CVM files
+if not exist %ROOT%\common\src\asim-cvm mkdir %ROOT%\common\src\asim-cvm
+xcopy /Y/S/E .\src\asim-cvm %ROOT%\common\src\asim-cvm
+
 @REM get git info
 @echo get git info
 set GIT_FOLDER=.\.git

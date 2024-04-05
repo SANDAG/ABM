@@ -13,7 +13,7 @@ set NETWORKDIR=%3
 set EMME_VERSION=%4
 
 @echo creating scenario folders
-set FOLDERS=input application bin conf input_truck logFiles output python report sql uec analysis visualizer visualizer\outputs\summaries input_checker src src\asim
+set FOLDERS=input application bin conf input_truck logFiles output python report sql uec analysis visualizer visualizer\outputs\summaries input_checker src src\asim src\asim-cvm
 for %%i in (%FOLDERS%) do (
 md %SCENARIO_FOLDER%\%%i)
 
@@ -38,6 +38,7 @@ xcopy /s/Y .\common\visualizer %SCENARIO_FOLDER%\visualizer
 xcopy /s/Y .\dependencies.* %SCENARIO_FOLDER%\visualizer
 xcopy /Y/s/E .\common\input\input_checker\"*.*" %SCENARIO_FOLDER%\input_checker
 xcopy /Y/s/E .\common\src\asim\"*.*" %SCENARIO_FOLDER%\src\asim
+xcopy /Y/s/E .\common\src\asim-cvm\"*.*" %SCENARIO_FOLDER%\src\asim-cvm
 
 @echo assemble inputs
 del %SCENARIO_FOLDER%\input /q
@@ -88,21 +89,22 @@ xcopy /Y .\common\git_info.yaml %SCENARIO_FOLDER%
 
 rem populate scenario year into sandag_abm.properties
 set PROP_FILE=%SCENARIO_FOLDER%\conf\sandag_abm.properties
-set TEMP_FILE=%SCENARIO_FOLDER%\conf\temp.properties
-set RAW_YEAR=%YEAR:nb=%
-type nul>%TEMP_FILE%
-echo %PROP_FILE% %A
-for /f "USEBACKQ delims=" %%A in (`type "%PROP_FILE%" ^| find /V /N ""`) do (
-  set ln=%%A
-  setlocal enableDelayedExpansion
-  set ln=!ln:${year}=%RAW_YEAR%!
-  set ln=!ln:${year_build}=%YEAR%!
-  set ln=!ln:*]=!
-  echo(!ln!>>%TEMP_FILE%
-  endlocal
-)
-del %PROP_FILE%
-move %TEMP_FILE% %PROP_FILE%
+@REM set TEMP_FILE=%SCENARIO_FOLDER%\conf\temp.properties
+@REM set RAW_YEAR=%YEAR:nb=%
+@REM type nul>%TEMP_FILE%
+echo %PROP_FILE%
+@REM for /f "USEBACKQ delims=" %%A in (`type "%PROP_FILE%" ^| find /V /N ""`) do (
+@REM   set ln=%%A
+@REM   setlocal enableDelayedExpansion
+@REM   set ln=!ln:${year}=%RAW_YEAR%!
+@REM   set ln=!ln:${year_build}=%YEAR%!
+@REM   set ln=!ln:*]=!
+@REM   echo(!ln!>>%TEMP_FILE%
+@REM   endlocal
+@REM )
+@REM del %PROP_FILE%
+@REM move %TEMP_FILE% %PROP_FILE%
+python .\common\python\update_properties.py %PROP_FILE% %YEAR%
 
 @echo init emme folder
 call init_emme.cmd %SCENARIO_FOLDER% %EMME_VERSION%

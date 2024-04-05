@@ -254,7 +254,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         build_transit_scen = modeller.tool("sandag.assignment.build_transit_scenario")
         create_transit_connector = modeller.tool("sandag.assignment.create_transit_connector")
         transit_assign = modeller.tool("sandag.assignment.transit_assignment")
-        run_truck = modeller.tool("sandag.model.truck.run_truck_model")
+        #run_truck = modeller.tool("sandag.model.truck.run_truck_model")
         import_auto_demand = modeller.tool("sandag.import.import_auto_demand")
         import_transit_demand = modeller.tool("sandag.import.import_transit_demand")
         # export_transit_skims = modeller.tool("sandag.export.export_transit_skims")
@@ -294,12 +294,15 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         minSpaceOnC = props["RunModel.minSpaceOnC"]
         sample_rate = props["sample_rates"]
         end_iteration = len(sample_rate)
-        scale_factor = props["cvm.scale_factor"]
         # visualizer_reference_path = props["visualizer.reference.path"]
         # visualizer_output_file = props["visualizer.output"]
         # visualizer_reference_label = props["visualizer.reference.label"]
         # visualizer_build_label = props["visualizer.build.label"]
-        # mgraInputFile = props["mgra.socec.file"]
+        fafInputFile = props["faf.file"]
+        aoc = props["aoc.fuel"] + props["aoc.maintenance"]
+        truck_scenario_year = props["truck.FFyear"]
+        htm_input_file = props["htm.input.file"]
+        cvm_emp_input_file = props["cvm.emp.input.file"]
 
         period_ids = list(enumerate(periods, start=int(scenario_id) + 1))
 
@@ -326,6 +329,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         skipABMXborderWait = props["RunModel.skipABMXborderWait"]
         skipABMXborder = props["RunModel.skipABMXborder"]
         skipABMVisitor = props["RunModel.skipABMVisitor"]
+        skipCVMEstablishmentSyn = props["RunModel.skipCVMEstablishmentSyn"]
         skipMAASModel = props["RunModel.skipMAASModel"]
         skipCTM = props["RunModel.skipCTM"]
         skipEI = props["RunModel.skipEI"]
@@ -441,19 +445,19 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     num_transit_lines = transit_db_dims['transit_lines']
                     num_transit_segments = transit_db_dims['transit_segments']
                     num_traffic_classes = 15
-                    
-                    extra_attribute_values = 18000000 
+
+                    extra_attribute_values = 18000000
                     extra_attribute_values += (num_nodes + 1) * additional_node_extra_attributes
                     extra_attribute_values += (num_links + 1) * additional_link_extra_attributes
-                    extra_attribute_values += (num_transit_lines + 1)* additional_line_extra_attributes 
+                    extra_attribute_values += (num_transit_lines + 1)* additional_line_extra_attributes
                     extra_attribute_values += (num_transit_segments + 1) * additional_segment_extra_attributes
-                    
+
                     if num_select_links > 3:
                         extra_attribute_values += 18000000 + (num_select_links - 3) * ((num_links + 1) * (num_traffic_classes + 1) + (num_turn_entries + 1) * (num_traffic_classes))
-                        
+
                     if extra_attribute_values > transit_db_dims["extra_attribute_values"] or transit_db_dims["full_matrices"] < 9999:
                         transit_db_dims["extra_attribute_values"] = extra_attribute_values
-                        transit_db_dims["full_matrices"] = 9999 
+                        transit_db_dims["full_matrices"] = 9999
                         #change_dimensions(emmebank_dimensions=transit_db_dims, emmebank=transit_db, keep_backup=False)
                         #replaced the above line with the below lines - suggested by Antoine, Bentley (2022-06-02)
                         if transit_db.scenario(1) is None:
@@ -488,7 +492,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 if not skip4Ds:
                     run4Ds(path=self._path, int_radius=0.65, ref_path='visualizer_reference_path')
 
-                mgraFile = 'mgra15_based_input' + str(scenarioYear) + '.csv' # Should be read in from properties? -JJF
+                mgraFile = 'mgra15_based_input' + str(scenarioYear) + '.csv'  # Should be read in from properties? -JJF
                 self.complete_work(scenarioYear, input_dir, output_dir, mgraFile, "walkMgraEquivMinutes.csv")
 
                 if not skipBuildNetwork:
@@ -629,7 +633,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 if (not skipScenManagement) and (msa_iteration==1):
                     self.run_proc("runSandag_ScenManagement.cmd",
                             [drive + path_forward_slash, str(props["scenarioYear"])],
-                            "Running Scenario Management", capture_output=True) 
+                            "Running Scenario Management", capture_output=True)
 
                 if not skipABMPreprocessing[iteration]:
                     self.run_proc(
@@ -637,9 +641,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         [drive, drive + path_forward_slash, msa_iteration, scenarioYear],
                         "Creating all the required files to run the ActivitySim models", capture_output=True)
                 if not skipABMResident[iteration]:
+                    self.set_sample_rate(_join(self._path, r"src\asim\configs\resident\settings_mp.yaml"), int(sample_rate[iteration] * hh_resident_size))
                     self.run_proc(
                         "runSandagAbm_ActivitySimResident.cmd",
-                        [drive, drive + path_forward_slash, int(sample_rate[iteration] * hh_resident_size), msa_iteration],
+                        [drive, drive + path_forward_slash],
                         "Running ActivitySim resident model", capture_output=True)
                 if not skipABMAirport[iteration]:
                     hh_airport_size = {}
@@ -647,9 +652,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         householdFile = pd.read_csv(_join(self._path, "input", "households_airport.{}.csv".format(airport)))
                         hh_airport_size[airport] = len(householdFile)
                         del(householdFile)
+                    self.set_sample_rate(_join(self._path, r"src\asim\configs\airport.CBX\settings.yaml"), int(sample_rate[iteration] * hh_airport_size["cbx"]))
+                    self.set_sample_rate(_join(self._path, r"src\asim\configs\airport.SAN\settings.yaml"), int(sample_rate[iteration] * hh_airport_size["san"]))
                     self.run_proc(
                         "runSandagAbm_ActivitySimAirport.cmd",
-                        [drive, drive + path_forward_slash, int(sample_rate[iteration] * hh_airport_size["san"]), int(sample_rate[iteration] * hh_airport_size["cbx"])],
+                        [drive, drive + path_forward_slash],
                         "Running ActivitySim airport models", capture_output=True)
                 if (not skipABMXborderWait) and (iteration == 0):
                     self.run_proc(
@@ -660,19 +667,21 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     householdFile = pd.read_csv(_join(self._path, "input", "households_xborder.csv"))
                     hh_xborder_size = len(householdFile)
                     del(householdFile)
+                    self.set_sample_rate(_join(self._path, r"src\asim\configs\crossborder\settings.yaml"), int(sample_rate[iteration] * hh_xborder_size))
                     self.run_proc(
                         "runSandagAbm_ActivitySimXborder.cmd",
-                        [drive, drive + path_forward_slash, int(sample_rate[iteration] * hh_xborder_size)],
+                        [drive, drive + path_forward_slash],
                         "Running ActivitySim crossborder model", capture_output=True)
                 if not skipABMVisitor[iteration]:
                     householdFile = pd.read_csv(_join(self._path, "input", "households_visitor.csv"))
                     hh_visitor_size = len(householdFile)
                     del(householdFile)
+                    self.set_sample_rate(_join(self._path, r"src\asim\configs\visitor\settings.yaml"), int(sample_rate[iteration] * hh_visitor_size))
                     self.run_proc(
                         "runSandagAbm_ActivitySimVisitor.cmd",
-                        [drive, drive + path_forward_slash, int(sample_rate[iteration] * hh_visitor_size)],
+                        [drive, drive + path_forward_slash],
                         "Running ActivitySim visitor model", capture_output=True)
-                           
+
                 if not skipMAASModel[iteration]:
                     self.run_proc("runMtxMgr.cmd", [drive, drive + path_no_drive], "Start matrix manager")
                     self.run_proc(
@@ -680,19 +689,24 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         [drive, drive + path_forward_slash, 1, 0],
                         "Java-Run AV allocation model and TNC routing model", capture_output=True)
 
+                if (not skipCVMEstablishmentSyn) and (iteration == 0):
+                    self.run_proc("cvmEst.bat", [drive, path_no_drive, cvm_emp_input_file],
+                        "Commercial vehicle model establishment synthesis", capture_output=True)
                 if not skipCTM[iteration]:
-                    export_for_commercial_vehicle(output_dir + '/skims', base_scenario)
+                    #export_for_commercial_vehicle(output_dir + '/skims', base_scenario)
                     self.run_proc(
                         "cvm.bat",
-                        [drive, path_no_drive, path_forward_slash, scale_factor, mgra_lu_input_file,
-                         "tazcentroids_cvm.csv"],
+                        [drive, path_no_drive, scenarioYear],
                         "Commercial vehicle model", capture_output=True)
                 if msa_iteration == startFromIteration:
                     external_zones = "1-12"
                     if not skipTruck[iteration]:
                         # run truck model (generate truck trips)
-                        run_truck(True, input_dir, input_truck_dir, num_processors, base_scenario)
-                        # run EI model "US to SD External Trip Model"
+                        self.run_proc(
+                            "htm.bat",
+                            [drive, path_no_drive, fafInputFile, htm_input_file, "PM", truck_scenario_year],
+                            "Heavy truck model", capture_output=True)
+                    # run EI model "US to SD External Trip Model"
                     if not skipEI[iteration]:
                         external_internal(input_dir, base_scenario)
                     # run EE model
@@ -766,7 +780,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             export_matrix_data(output_directory, base_scenario)
             # export core ABM data
             # Note: uses relative project structure, so cannot redirect to T drive
-            self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export CVM data",capture_output=True)
+            # self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data",capture_output=True)
             # aggregate_models = {}
             # for agg_model in ['eetrip', 'eitrip', 'trucktrip']:#TODO ['commercialVehicleTrips','internalExternalTrips']:
             #     aggregate_models[agg_model] = str(os.path.join(self._path,'report',agg_model+'.csv'))
@@ -775,7 +789,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 "export_hwy_shape.cmd",
                 [drive, drive + path_forward_slash],
                 "Exporting highway shapefile", capture_output=True)
-        
+
         if not skipDatalake:
             self.write_metadata(main_directory, scenario_title, select_link, username, scenarioYear, sample_rate, prod_env)
             self.run_proc(
@@ -924,10 +938,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 transit_emmebank_dict[period].dispose()
 
                 _time.sleep(2)
-                
+
                 script = _join(main_directory, "python", "emme", "run_transit_assignment.py")
                 args = [sys.executable, script, "--root_dir", '"%s"' % main_directory, "--project_path", '"%s"' % project_path,
-                    "--period", '"%s"' % period, "--number", '"%s"' % number, "--proc", '"%s"' % transit_processors, 
+                    "--period", '"%s"' % period, "--number", '"%s"' % number, "--proc", '"%s"' % transit_processors,
                     "--output_dir", '"%s"' % output_dir]
                 if create_connector_flag:
                     args.append("--create_connector_flag")
@@ -948,7 +962,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % out)
                 if err:
                     self.add_html(report, 'Error message(s):<br><br><div class="preformat">%s</div>' % err)
-                _m.logbook_write("Transit assignment process record for period " + p["period"], report.render()) 
+                _m.logbook_write("Transit assignment process record for period " + p["period"], report.render())
                 if p["p"].returncode != 0:
                     raise Exception("Error in transit assignment period %s, refer to logbook in dummy project" % p["period"])
 
@@ -957,7 +971,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         for number, period in period_ids:
             new_transit_emmebank_dict[period] = _eb.Emmebank(transit_emmebank_path_dict[period])
         _m.Modeller().desktop.refresh_data()
-        
+
         return new_transit_emmebank_dict
 
     def run_traffic_assignments(self, base_scenario, period_ids, msa_iteration, relative_gap,
@@ -1478,6 +1492,16 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         datalake_metadata_path = os.path.join(self._path,'output','datalake_metadata.yaml')
         with open(datalake_metadata_path, 'w') as file:
             yaml.safe_dump(datalake_metadata_dict, file, default_flow_style=False)
+    
+    def set_sample_rate(self, settings_path, sample):
+        with open(settings_path, 'r') as file:
+            settings = file.readlines()
+        for index, line in enumerate(settings):
+            pos = line.find("households_sample_size:")
+            if pos != -1:
+                settings[index] = line[:pos] + "households_sample_size: " + str(sample) + "\n"
+        with open(settings_path, 'w') as file:
+            file.writelines(settings)
 
 
     # def update_metadata_iteration(self, main_directory, msa_iteration):

@@ -1,0 +1,9 @@
+Description,Target,Expression
+mapping fuel type to integers,fuel_type_num_coded,"df.fuel_type.map({'BEV': 1, 'Diesel': 2, 'Gas': 3, 'Hybrid': 4, 'PEV': 5}).astype(int)"
+mapping body type to integers,body_type_num_coded,"df.body_type.map({'Car': 1, 'Motorcycle': 2, 'Pickup': 3, 'SUV': 4, 'Van': 5, 'Car-AV': 1, 'Motorcycle-AV': 2, 'Pickup-AV': 3, 'SUV-AV': 4, 'Van-AV': 5}).astype(int)"
+flag indicating if vehicle is AV,is_av,"df.body_type.str.contains('AV')"
+flag for SAN-specific contants,SAN,True
+# moving log terms to preprocessor to avoid expensive log calculations,,
+log number of models available,logged_models,"np.log(1 + df.NumModels)"
+log number of makes available,logged_makes,"np.log(1 + df.NumMakes)"
+logged chargers per capita,logged_chargers_per_capita,"np.log(1 + CHARGERS_PER_CAP)"
