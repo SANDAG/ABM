@@ -36,9 +36,9 @@ Java is required in order to create bicycle logsums, run the taxi/TNC routing mo
 
 ## Installing ABM3 Model
 
-As noted above, Anaconda will need to be installed. Once one of those two package managers is installed, a specific computer environment must be created to run ActivitySim. The environment is a configuration of Python that is for ActivitySim - this environment allows ActivitySim to use specific software libraries without interfering with the server’s installed version of Python (if one exists, it is not required) and keeps other Python installations from interfering with ActivitySim. To create the environment, use the following commands from within the Anaconda PowerShell Prompt. 
+As noted above, Anaconda will need to be installed. Once one of those two package managers is installed, a specific computer environment must be created to run ActivitySim. The environment is a configuration of Python that is for ActivitySim - this environment allows ActivitySim to use specific software libraries without interfering with the server's installed version of Python (if one exists, it is not required) and keeps other Python installations from interfering with ActivitySim. To create the environment, use the following commands from within the Anaconda PowerShell Prompt. 
 
-First, change directories using cd /d to the model’s ActivitySim config folder, which is /source/configs/activitysim (e.g., cd /d e:\ABM3\source\configs\activitysim) prior to running the command below.
+First, change directories using cd /d to the model's ActivitySim config folder, which is /source/configs/activitysim (e.g., cd /d e:\ABM3\source\configs\activitysim) prior to running the command below.
 
 conda env create --file environment.yml 
 
