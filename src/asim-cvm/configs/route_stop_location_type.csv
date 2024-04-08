@@ -1,0 +1,37 @@
+Label,Description,Expression,warehouse,intermodal,residential,commercial
+,,~is_tnc,coef_asc_warehouse,coef_asc_intermodal,coef_asc_residential,coef_asc_commercial
+construction industry,,(business_type=='CON')&(~is_tnc),,coef_construction_intermodal,,
+education industry,,(business_type=='EPO')&(~is_tnc),coef_education_warehouse,coef_education_intermodal,,
+healthcare industry,,(business_type=='MHS')&(~is_tnc),coef_healthcare_warehouse,,,coef_healthcare_commercial
+information industry,,(business_type=='IFR')&(~is_tnc),coef_information_warehouse,coef_information_intermodal,,coef_information_commercial
+wholesale industry,,(business_type=='WHL')&(~is_tnc),,coef_wholesale_intermodal,,coef_wholesale_commercial
+manufacturing industry,,(business_type=='MFG')&(~is_tnc),coef_manufacturing_warehouse,,,coef_manufacturing_commercial
+retail industry,,(business_type=='RET')&(~is_tnc),,coef_retail_intermodal,,coef_retail_commercial
+industrial industry,,(business_type=='IUT')&(~is_tnc),coef_industrial_warehouse,,,
+leisure industry,,(business_type=='LAF')&(~is_tnc),coef_leisure_warehouse,,,coef_leisure_commercial
+agriculture industry,,(business_type=='AGM')&(~is_tnc),,,,coef_agriculture_commercial
+stop purpose is goods pickup,,(next_stop_purpose=='goods_pickup')&(~is_tnc),,coef_goods_pickup_intermodal,,
+stop purpose is goods delivery,,(next_stop_purpose=='goods_delivery')&(~is_tnc),,coef_goods_delivery_intermodal,,
+stop purpose is maintenance,,(next_stop_purpose=='maintenance')&(~is_tnc),,coef_maintenance_intermodal,,
+route purpose is goods,,(route_purpose=='goods')&(~is_tnc),coef_route_purpose_goods_warehouse,,,coef_route_purpose_goods_commercial
+route customer is non residential,,(customer_type=='nonresidential')&(~is_tnc),,coef_customer_type_nonresidential_intermodal,,
+route customer is residential,,(customer_type=='residential')&(~is_tnc),,,,coef_customer_type_residential_commercial
+route customer is mixed,,(customer_type=='mixed')&(~is_tnc),,,,coef_customer_type_mixed_commercial
+route vehicle type sut,,(vehicle_type=='SUT')&(~is_tnc),coef_vehicle_type_sut_warehouse,,,
+route vehicle type mut,,(vehicle_type=='MUT')&(~is_tnc),coef_vehicle_type_mut_warehouse,coef_vehicle_type_mut_intermodal,,coef_vehicle_type_mut_commercial
+elapsed time (min),,route_elapsed_time*(~is_tnc),coef_elapsed_time_warehouse,coef_elapsed_time_intermodal,,coef_elapsed_time_commercial
+am,,(_time_period_=='AM')&(~is_tnc),,coef_am_intermodal,,
+md,,(_time_period_=='MD')&(~is_tnc),coef_md_warehouse,coef_md_intermodal,,
+pm,,(_time_period_=='PM')&(~is_tnc),,,,coef_pm_commercial
+ev,,(_time_period_=='EV')&(~is_tnc),,,,coef_ev_commercial
+## TNC,,,,,,
+,,is_tnc,coef_asc_warehouse_tnc,coef_asc_intermodal_tnc,coef_asc_residential_tnc,coef_asc_commercial_tnc
+industry group retail,,(business_type=='TNCRET')&(is_tnc),,,,coef_retail_commercial_tnc
+industry group non restaurant retail,,(business_type=='TNCNRR')&(is_tnc),coef_non_restaurant_retail_warehouse_tnc,,,coef_non_restaurant_retail_commercial_tnc
+stop purpose service,,(next_stop_purpose=='service')&(is_tnc),,coef_service_intermodal_tnc,,
+route customer is residential,,(customer_type=='residential')&(is_tnc),coef_customer_type_residential_warehouse_tnc,,,coef_customer_type_residential_commercial_tnc
+route customer is mixed,,(customer_type=='mixed')&(is_tnc),coef_customer_type_mixed_warehouse_tnc,,,
+route elapsed time (min),,route_elapsed_time*(is_tnc),,coef_elapsed_time_intermodal_tnc,,coef_elapsed_time_commercial_tnc
+am,,(_time_period_=='AM')&(is_tnc),coef_am_warehouse_tnc,,,
+md,,(_time_period_=='MD')&(is_tnc),coef_md_warehouse_tnc,,,coef_md_commercial_tnc
+ev,,(_time_period_=='EV')&(is_tnc),coef_ev_warehouse_tnc,,,
