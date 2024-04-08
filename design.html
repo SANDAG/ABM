@@ -410,6 +410,27 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#crossborder-model" class="md-nav__link">
+    Crossborder Model
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#airport-ground-access-models" class="md-nav__link">
+    Airport Ground Access Models
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#overnight-visitor-models" class="md-nav__link">
+    Overnight VIsitor Models
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -489,6 +510,27 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#crossborder-model" class="md-nav__link">
+    Crossborder Model
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#airport-ground-access-models" class="md-nav__link">
+    Airport Ground Access Models
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#overnight-visitor-models" class="md-nav__link">
+    Overnight VIsitor Models
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -508,9 +550,12 @@
 
 
 <h1 id="model-design">Model Design<a class="headerlink" href="#model-design" title="Permanent link"> ¶</a></h1>
-<p>The ABM3 model system is primarily based on the <a href="https://research.ampo.org/activitysim/">ActivitySim</a> platform; ActivitySim is used to model resident travel, cross-border travel, overnight visitor travel, airport ground access travel, and commercial vehicle travel including light, medium, and heavy commercial vehicles. Aggregate models are used to model external-internal travel (from external stations other than the U.S./Mexico border crossing) and through travel.</p>
+<p>The ABM3 model system is primarily based on the <a href="https://research.ampo.org/activitysim/">ActivitySim</a> platform; ActivitySim is used to model resident travel, cross-border travel, overnight visitor travel, airport ground access travel, and commercial vehicle travel including light, medium, and heavy commercial vehicles. Aggregate models are used to model external-internal travel (from external stations other than the U.S./Mexico border crossing) and through travel. The model system relies on <a href="https://www.bentley.com/software/emme/">EMME</a> software for network processing, skimming, and assignment. Models are mostly implemented in <a href="https://www.python.org/">Python</a>, and some models are implemented in Java (https://www.java.com/en/).</p>
 <p>The overall design of the model is shown in the figure below.</p>
 <p><img alt="" src="images/design/overall_model_design.png" /></p>
+<p>The system starts by performing initial input processing in EMME. This includes building transport networks and scenarios for skimming and assignment. An initial set of skims are created based on input trip tables (e.g. warm start). Then disaggregate choice models in ActivitySIm are run, including the resident model, the crossborder travel model, two airport ground access models, the overnight visitor model, and the commercial vehicle model. Next auxiliary models are run; the taxi/TNC routing model and the autonomous vehicle intra-household allocation model are run in Java. Aggregate external-internal and through travel models are run in Python. After all models are run, trip tables are built from the result and assigned to transport networks. A check is made to determine whether the model has reached convergence (currently this is set to three feedback iterations). If convergence is reached, outputs are processed for export to the SANDAG Datalake for reporting summaries. If not, speeds from assignment are averaged using method of successive averages, and skims are rebuilt for the next iteration. The model system is then re-run with the updated skims.</p>
+<p>ActivitySim is used to represent all internal travel and internal-external made by residents of the SANDAG region (modeled area).  The decision-makers in the model system include both persons and households. These decision-makers are created (synthesized) for each simulation year and land-use scenario, based on Census data and forecasted distributions of households and persons by key socio-economic categories. A similar but simplified method is used to generate disaggregate populations for cross-border, airport ground access, and overnight visitor models. The decision-makers are used in the subsequent discrete-choice models in a microsimulation framework where a single alternative is selected from a list of available alternatives according to a probability distribution.  The probability distribution is generated from a logit model which considers the attributes of the decision-maker and the attributes of the various alternatives. The application paradigm is referred to as Monte Carlo simulation, since a random number draw is used to select an alternative from the probability distribution. The decision-making unit is an important element of model estimation and implementation and is explicitly identified for each model specified in the following sections.</p>
+<p>A key advantage of using the micro-simulation approach is that there are essentially no computational constraints on the number of explanatory variables that can be included in a model specification.  However, even with this flexibility, the model system will include some segmentation of decision-makers.  Segmentation is a useful tool to both structure models (for example, each person type segment could have their own model for certain choices) and to characterize person roles within a household.  Segments can be created for persons as well as households.</p>
 <h2 id="resident-model">Resident Model<a class="headerlink" href="#resident-model" title="Permanent link"> ¶</a></h2>
 <p>The resident model structure is based on the Coordinated Travel Regional Activity-based Modeling Platform (CT-RAMP). The figure below shows the resident model structure. In order to understand the flow chart, some definitions are required. These are described in more detail below.</p>
 <ul>
@@ -530,9 +575,10 @@
 <p>Next, we predict whether each household has access to a vehicle transponder which can be used for managed lane use. We assume that all vehicles built after a certain year (configurable by the user) are equipped with transponders. Next we predict whether each worker has subsidized parking available at work. Finally we predict the telecommute frequency of each worker, which affects downstream models including the daily activity pattern model, the non-mandatory tour frequency model, and stop frequency models.</p>
 <p>Next the daily and tour level models are run. The first daily model is the daily activity pattern model is run, which predicts the general activity pattern type for every household member. Then Mandatory tours are generated for workers and students, the tours are scheduled (their location is already predicted by the work/school location choice model), a vehicle availability model is run that predicts which household vehicle would be used for the tour, and the tour mode is chosen. After mandatory tours are generated, a school pickup/dropoff model forms half-tours where children are dropped off and/or picked up at school. The model assigns chaperones to drive or ride with children, groups children together into “bundles” for ride-sharing, and assigns the chaperone task to either a generated work tour or generates a new tour for the purpose of ridesharing. Fully joint tours – tours where two or more household members travel together for the entire tour - are generated at a household level, their composition is predicted (adults, children or both), the participants are determined, the vehicle availability model is run, and a tour mode is chosen. The primary destination of fully joint tours is predicted, the tours are scheduled, the vehicle availability model is run, and a tour mode is chosen. Next, non-mandatory tours are generated, their primary destination is chosen, they are scheduled, the vehicle availability model is run, and a tour mode is chosen for each. At-work subtours are tours that start and end at the workplace. These are generated, scheduled (with constraints that the start and end times must nest within the start and end time of the parent work tour), a primary destination is selected, the vehicle availability model is run, and a tour mode is chosen.</p>
 <p>At this point, all tours are generated, scheduled, have a primary destination, and a selected tour mode. The next set of models fills in details about the tours - number of intermediate stops, location of each stop, the departure time of each stop, and the mode of each trip on the tour. Finally, the parking location of each auto trip to the central business district (CBD) is determined.
-After the model is run, the output files listed above are created. The trip lists are then summarized into origin-destination matrices by time period and vehicle class or transit mode and assigned to the transport network. Skims are created based on congested times, and the model system is iterated multiple times until either some convergence threshold is attained, or a predetermined number of iterations is reached.</p>
-<p>ActivitySim is used to represent all internal travel and internal-external made by residents of the SANDAG region (modeled area).  The decision-makers in the model system include both persons and households. These decision-makers are created (synthesized) for each simulation year and land-use scenario, based on Census data and forecasted distributions of households and persons by key socio-economic categories.  The decision-makers are used in the subsequent discrete-choice models in a microsimulation framework where a single alternative is selected from a list of available alternatives according to a probability distribution.  The probability distribution is generated from a logit model which considers the attributes of the decision-maker and the attributes of the various alternatives. The application paradigm is referred to as Monte Carlo simulation, since a random number draw is used to select an alternative from the probability distribution. The decision-making unit is an important element of model estimation and implementation and is explicitly identified for each model specified in the following sections.</p>
-<p>A key advantage of using the micro-simulation approach is that there are essentially no computational constraints on the number of explanatory variables that can be included in a model specification.  However, even with this flexibility, the model system will include some segmentation of decision-makers.  Segmentation is a useful tool to both structure models (for example, each person type segment could have their own model for certain choices) and to characterize person roles within a household.  Segments can be created for persons as well as households.</p>
+After the model is run, the output files listed above are created. The trip lists are then summarized into origin-destination matrices by time period and vehicle class or transit mode and assigned to the transport network.</p>
+<h2 id="crossborder-model">Crossborder Model<a class="headerlink" href="#crossborder-model" title="Permanent link"> ¶</a></h2>
+<h2 id="airport-ground-access-models">Airport Ground Access Models<a class="headerlink" href="#airport-ground-access-models" title="Permanent link"> ¶</a></h2>
+<h2 id="overnight-visitor-models">Overnight VIsitor Models<a class="headerlink" href="#overnight-visitor-models" title="Permanent link"> ¶</a></h2>
 
 
 
