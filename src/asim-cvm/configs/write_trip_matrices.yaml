@@ -1,0 +1,84 @@
+# rPMd trips table post preprocessor and run expressions to code
+# additional data fields, with one data fields for PMch matrix specified below
+
+preprocessor:
+  SPEC: write_trip_matrices_annotate_trips_preprocessor
+  DF: cv_trips
+  TABLES:
+    - routes
+
+# divide trip counts by establishments expansion factor
+EST_EXPANSION_WEIGHT_COL: sample_rate  # added when establishments rPMd in
+
+# save preprocessed trips table to pipeline if desired
+SAVE_TRIPS_TABLE: False
+
+MATRICES:
+  - file_name: cvmtrips_ea.omx
+    tables:
+      - name: CAR_EA
+        data_field: CAR_EA
+      - name: LIGHT_TRUCK_EA
+        data_field:  LIGHT_TRUCK_EA
+      - name: MEDIUM_TRUCK_EA
+        data_field: MEDIUM_TRUCK_EA
+      - name: HEAVY_TRUCK_EA
+        data_field: HEAVY_TRUCK_EA
+  - file_name: cvmtrips_am.omx
+    tables:
+      - name: CAR_AM
+        data_field: CAR_AM
+      - name: LIGHT_TRUCK_AM
+        data_field:  LIGHT_TRUCK_AM
+      - name: MEDIUM_TRUCK_AM
+        data_field: MEDIUM_TRUCK_AM
+      - name: HEAVY_TRUCK_AM
+        data_field: HEAVY_TRUCK_AM
+  - file_name: cvmtrips_md.omx
+    tables:
+      - name: CAR_MD
+        data_field: CAR_MD
+      - name: LIGHT_TRUCK_MD
+        data_field:  LIGHT_TRUCK_MD
+      - name: MEDIUM_TRUCK_MD
+        data_field: MEDIUM_TRUCK_MD
+      - name: HEAVY_TRUCK_MD
+        data_field: HEAVY_TRUCK_MD
+  - file_name: cvmtrips_pm.omx
+    tables:
+      - name: CAR_PM
+        data_field: CAR_PM
+      - name: LIGHT_TRUCK_PM
+        data_field:  LIGHT_TRUCK_PM
+      - name: MEDIUM_TRUCK_PM
+        data_field: MEDIUM_TRUCK_PM
+      - name: HEAVY_TRUCK_PM
+        data_field: HEAVY_TRUCK_PM
+  - file_name: cvmtrips_ev.omx
+    tables:
+      - name: CAR_EV
+        data_field: CAR_EV
+      - name: LIGHT_TRUCK_EV
+        data_field:  LIGHT_TRUCK_EV
+      - name: MEDIUM_TRUCK_EV
+        data_field: MEDIUM_TRUCK_EV
+      - name: HEAVY_TRUCK_EV
+        data_field: HEAVY_TRUCK_EV
+
+CONSTANTS:
+  time_periods:
+    EA:
+      first_hour: 1
+      last_hour: 6
+    AM:
+      first_hour: 7
+      last_hour: 12
+    MD:
+      first_hour: 13
+      last_hour: 25
+    PM:
+      first_hour: 26
+      last_hour: 32
+    EV:
+      first_hour: 33
+      last_hour: 48

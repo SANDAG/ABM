@@ -1,0 +1,4 @@
+SPEC: route_terminal_type.csv
+COEFFICIENTS: route_terminal_type_coefficients.csv
+LOGIT_TYPE: MNL
+RESULT_COL_NAME: terminal_stop_type

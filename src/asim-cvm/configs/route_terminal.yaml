@@ -1,0 +1,68 @@
+SPEC: route_terminal.csv
+SAMPLE_SPEC: route_terminal.csv
+COEFFICIENTS: route_terminal_coefficients.csv
+
+SIZE_TERM_SELECTOR: route_terminal
+
+CHOOSER_SEGMENT_COLUMN_NAME: terminal_stop_type
+
+SEGMENTS:
+  - name: base
+  - name: warehouse
+    size_terms:
+      - warehouse_emp_trn_wrh
+      - warehouse_emp_whl
+    eligibility_term: warehouse_emp_trn_wrh
+##  - name: intermodal
+##    size_terms:
+##      - is_port
+##    eligibility_term: is_port
+  - name: residential
+    size_terms:
+      - residence_hh
+      - residence_emp_non_ws_wfh
+    eligibility_term: residence_hh
+  - name: commercial
+    size_terms:
+      - commerce_emp_non_trn_wrh
+      - commerce_emp_oth
+      - commerce_emp_con
+      - commerce_emp_gov
+      - commerce_emp_mnf
+      - commerce_emp_hlth
+      - commerce_emp_whl
+      - commerce_emp_trn_wrh
+    eligibility_term: commerce_emp_non_trn_wrh
+
+SIMULATE_CHOOSER_COLUMNS:
+  - business_type
+  - route_purpose
+  - vehicle_type
+  - terminal_stop_type
+  - _route_start_time_period_
+  - TAZ
+
+RESULT_COL_NAME: terminal_zone
+
+REQUIRE_ACCESSIBILITY: False
+ACCESSIBILITY_TERMS:
+
+port_taz:
+  - 1154
+  - 2497
+  - 1294
+  - 1338
+  - 1457
+  - 1476
+  - 1485
+  - 1520
+  - 4435
+  - 4582
+  - 4853
+  - 2050
+  - 3742
+
+CONSTANTS:
+  vot_light: 67 # dollar per hour
+  vot_medium: 68
+  vot_heavy: 89

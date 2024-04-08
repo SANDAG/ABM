@@ -1,0 +1,18 @@
+SPEC: household_attractor.csv
+COEFFICIENTS: household_attractor_coefficients.csv
+LOGIT_TYPE: MNL
+RESULT_COL_NAME: has_attraction
+HAS_ATTRACTION_ALT: 0
+HOUSEHOLD_SAMPLE_RATE_COLUMN: sample_rate
+
+segments:
+  - food
+  - package
+  - service
+
+preprocessor: 
+  SPEC: household_attractor_preprocessor.csv
+  DF: df
+  TABLES:
+    - tours
+    - persons

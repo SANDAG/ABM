@@ -1,9 +1,0 @@
-Model,Alternative,Matrix,Index1,Index2,Value,Comment
-TourStartTime,,,functionForm,cubic,0,"other options are ""power"" ""cubic"" and ""exponential"""
-TourStartTime,,,a,,0,y = dx3 +c2 + bx - a
-TourStartTime,,,b,,2.0429,
-TourStartTime,,,c,,-0.3593,
-TourStartTime,,,d,,1.5213,
-TourStartTime,,,e,,0,
-TourStartTime,,,f,,0,
-TourStartTime,,,periodStart,,15.5,Period starts at 3:30 PM
