@@ -54,7 +54,7 @@ Model outputs are stored in the .\outputs directory. The contents of the directo
 
 ### ActivitySim log files
 
-ActivitySim writes out various log files when it runs; these have standard names for each model component. Therefore we list them separately, but copies of these files may be in each model’s output directory depending upon the settings used to run ActivitySim for that model component.
+ActivitySim writes out various log files when it runs; these have standard names for each model component. Therefore we list them separately, but copies of these files may be in each model's output directory depending upon the settings used to run ActivitySim for that model component.
 
 | **File ** | **Description** | 
 | --- | --- |
