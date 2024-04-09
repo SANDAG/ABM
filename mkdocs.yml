@@ -49,6 +49,7 @@ nav:
   - Model Design: design.md
   - Installing and Running: running.md
   - Model Inputs and Outputs: inputsandoutputs.md
+  - Applying ABM3: applying.md
 
 extra:
   version:
