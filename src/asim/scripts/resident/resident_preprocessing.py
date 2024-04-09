@@ -76,13 +76,6 @@ class Series15_Processor:
 
         self.time_periods = ['EA', 'AM', 'MD', 'PM', 'EV']
 
-        # # synthetic population files
-        # self.households_file = os.path.join(self.input_dir, 'households.csv')
-        # self.persons_file = os.path.join(self.input_dir, 'persons.csv')
-
-        # self.households = pd.read_csv(self.households_file)
-        # self.persons = pd.read_csv(self.persons_file)
-
 
     def copy_skims_and_process_names(self):
         '''
@@ -348,8 +341,6 @@ class Series15_Processor:
     def write_output(self):
         print("Writing final outputs")
         self.landuse.to_csv(os.path.join(self.input_dir, 'land_use.csv'), index=True)
-        # self.persons.to_csv(os.path.join(self.input_dir, 'persons.csv'), index=True)
-        # self.households.to_csv(os.path.join(self.input_dir, 'households.csv'), index=True)
         self.maz_maz_walk.to_csv(os.path.join(self.output_dir, 'skims', 'maz_maz_walk.csv'), index=True)
         self.maz_maz_bike.to_csv(os.path.join(self.output_dir, 'skims', 'maz_maz_bike.csv'), index=True)
 
@@ -359,7 +350,6 @@ if __name__ == '__main__':
 
     # running the following processing steps:
     # processor.copy_skims_and_process_names()
-    # processor.process_synthetic_population()
     processor.process_landuse()
     processor.add_exernal_stations_to_maz_level_skims()
     processor.add_TAZ_level_skims()
