@@ -713,12 +713,13 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                             "Running ActivitySim visitor model", capture_output=True)
                 finally:
                     if not skip_asim:
-                        mem_manager.stdin.write(b"\n")
-                        _time.sleep(2) 
                         forced_stop = False
                         if mem_manager.poll() is None:
-                            mem_manager.send_signal(signal.CTRL_BREAK_EVENT)
-                            forced_stop = True
+                            mem_manager.stdin.write(b"\n")
+                            _time.sleep(5) 
+                            if mem_manager.poll() is None:
+                                mem_manager.send_signal(signal.CTRL_BREAK_EVENT)
+                                forced_stop = True
                         out, err = mem_manager.communicate()
                         report = _m.PageBuilder(title="Command report")
                         self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % out)
