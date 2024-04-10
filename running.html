@@ -467,6 +467,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#setting-up-your-machine-to-run-abm3" class="md-nav__link">
+    Setting up your machine to run ABM3
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -567,6 +574,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#setting-up-your-machine-to-run-abm3" class="md-nav__link">
+    Setting up your machine to run ABM3
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -616,11 +630,52 @@ The ABM3 model system is an integrated model that is controlled by and primarily
 <p>conda env create &ndash;file environment.yml </p>
 <p>After installing the environment, do a quick test of it by activating it, using:</p>
 <p>conda activate asim_baydag</p>
-<p>//TODO</p>
-<p>Describe how to set up the model on a new machine</p>
 <h2 id="the-abm3-gui">The ABM3 GUI<a class="headerlink" href="#the-abm3-gui" title="Permanent link"> ¶</a></h2>
 <p>//TODO</p>
 <p>Show the GUI and describe the options</p>
+<h2 id="setting-up-your-machine-to-run-abm3">Setting up your machine to run ABM3<a class="headerlink" href="#setting-up-your-machine-to-run-abm3" title="Permanent link"> ¶</a></h2>
+<ol>
+<li>
+<p>Add the following to System Properties &gt; Environment Variables</p>
+<ul>
+<li>Under System Variables<ul>
+<li>CONDA_PREFIX={path to Anaconda3}<ul>
+<li>e.g., CONDA_PREFIX=C:\Anaconda3</li>
+</ul>
+</li>
+<li>CONDA_PREFIX_TWO={path to Anaconda2}<ul>
+<li>e.g., CONDA_TWO_PREFIX=C:\ProgramData\Anaconda2</li>
+</ul>
+</li>
+<li>Add the following to <em>Path</em><ul>
+<li>{path to Anaconda2}</li>
+<li>{path to Anaconda2}\Scripts</li>
+<li>{path to Anaconda2}\Library\bin\</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Create a directory called <em>python_virtualenv</em> on your machine&rsquo;s C Drive and copy in the following files:</p>
+<ul>
+<li><a href="https://github.com/SANDAG/ABM/blob/ABM3_develop/add_python_virtualenv.bat">add_python_virtualenv.bat</a></li>
+<li><a href="https://github.com/SANDAG/ABM/blob/ABM3_develop/requirements.txt">requirements.txt</a></li>
+</ul>
+</li>
+<li>
+<p>Open up the Emme Shell as Administrator and launch <em>add_python_virtualenv.bat</em></p>
+<ul>
+<li>If you have a Power User account, you can input the following code into the Emme Shell to run as both Administrator and as a Power User:
+    <code>runas /netonly /user:YourUser cmd.exe</code></li>
+<li>Ensure all relevant libraries were created under e.g., <em>C:\python_virtualenv\abm14_2_0\Lib\site-packages</em></li>
+</ul>
+</li>
+<li>
+<p>Under e.g, <em>C:\Program Files\INRO\Emme\Emme 4\Emme-4.3.7\Python27\Lib\site-packages</em> copy in <a href="https://github.com/SANDAG/ABM/blob/ABM3_develop/src/main/emme/python_virtualenv.pth">python_virtualenv.pth</a></p>
+</li>
+</ol>
 
 
 

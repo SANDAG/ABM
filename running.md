@@ -46,10 +46,6 @@ After installing the environment, do a quick test of it by activating it, using:
 
 conda activate asim_baydag
 
-//TODO
-
-Describe how to set up the model on a new machine
-
 
 ## The ABM3 GUI
 
@@ -57,3 +53,26 @@ Describe how to set up the model on a new machine
 
 Show the GUI and describe the options
 
+## Setting up your machine to run ABM3
+
+1. Add the following to System Properties > Environment Variables
+    - Under System Variables
+        - CONDA_PREFIX={path to Anaconda3}
+            - e.g., CONDA_PREFIX=C:\Anaconda3
+        - CONDA_PREFIX_TWO={path to Anaconda2}
+            - e.g., CONDA_TWO_PREFIX=C:\ProgramData\Anaconda2
+        - Add the following to *Path*
+            - {path to Anaconda2}
+            - {path to Anaconda2}\Scripts
+            - {path to Anaconda2}\Library\bin\
+
+2. Create a directory called *python_virtualenv* on your machine's C Drive and copy in the following files:
+    - [add_python_virtualenv.bat](https://github.com/SANDAG/ABM/blob/ABM3_develop/add_python_virtualenv.bat)
+    - [requirements.txt](https://github.com/SANDAG/ABM/blob/ABM3_develop/requirements.txt)
+
+3. Open up the Emme Shell as Administrator and launch *add_python_virtualenv.bat*
+    - If you have a Power User account, you can input the following code into the Emme Shell to run as both Administrator and as a Power User:
+        <code>runas /netonly /user:YourUser cmd.exe</code>
+    - Ensure all relevant libraries were created under e.g., *C:\python_virtualenv\abm14_2_0\Lib\site-packages*
+
+4. Under e.g, *C:\Program Files\INRO\Emme\Emme 4\Emme-4.3.7\Python27\Lib\site-packages* copy in [python_virtualenv.pth](https://github.com/SANDAG/ABM/blob/ABM3_develop/src/main/emme/python_virtualenv.pth)
