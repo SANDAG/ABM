@@ -691,7 +691,7 @@ def assign_hh_p_to_tours(tours, persons):
 
     # assign persons and households to tours
     tours['household_id'] = np.random.choice(
-        num_tours, num_tours, replace=False)
+        num_tours, num_tours, replace=False)+1
     tours['person_id'] = persons.set_index('household_id').reindex(
         tours['household_id'])['person_id'].values
 

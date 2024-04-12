@@ -76,34 +76,6 @@ class Series15_Processor:
 
         self.time_periods = ['EA', 'AM', 'MD', 'PM', 'EV']
 
-        # synthetic population files
-        self.households_file = os.path.join(self.input_dir, 'households.csv')
-        self.persons_file = os.path.join(self.input_dir, 'persons.csv')
-
-        # series 15 names to previous ABM2+ column names
-        self.households_rename_dict = {
-            'household_id': 'hhid',
-            'TAZ': 'taz',
-            'HHADJINC': 'hinc',
-            'numWorkers': 'hworkers',
-            'VEH': 'veh',
-            'NP': 'persons',
-            'HHT': 'hht',
-            # '', 'bldgsz', # FIXME: bldgsz not in synthetic households
-        }
-        
-        self.persons_rename_dict = {
-            # '': 'perid',  # FIXME: unique perid not in synthetic persons
-            'household_id': 'hhid',
-            'AGEP': 'age',
-            # '': 'pnum',  # FIXME: generated here
-            'SEX': 'sex',
-            # FIXME: all below generated here
-            # '': 'pemploy',
-            # '': 'pstudent',
-            # '': 'ptype',
-            # '': 'educ',
-        }
 
     def copy_skims_and_process_names(self):
         '''
@@ -151,70 +123,6 @@ class Series15_Processor:
         # setting MAZ as index
         landuse.set_index('MAZ', inplace=True)
         self.landuse = landuse
-
-    def process_synthetic_population(self):
-        '''
-        Series15 synthetic population does not contain all of the same columns as ABM2+ syn pop.
-        This function will tranform the Series 15 to match what is expected.
-        
-        If these column names are changed, then the corresponding names need to be changed in the configs.
-        '''
-        households = pd.read_csv(self.households_file)
-        persons = pd.read_csv(self.persons_file)
-
-        # households = households.rename(columns=self.households_rename_dict)
-        # # FIXME: bldgsz currnetly only used in auto ownership model checking if its a detached single family home
-        # # using HHT to estimate: if married couple, or family with only male or female
-        # households['bldgsz'] = np.where(households.hht.isin([1,2,3]), 2, -1) # detacted single family home
-        # # FIXME: households have missing auto ownership & hht entries!
-        # households['veh'] = households['veh'].fillna(0).clip(upper=4).astype(int)
-        # households['hht'] = households['hht'].fillna(1).astype(int) # family household
-
-        # persons = persons.rename(columns=self.persons_rename_dict)
-        # persons['perid'] = persons.index.values + 1
-        # persons['pnum'] = persons.groupby('hhid').cumcount() + 1
-
-        # # inserting person type logic copied from SEMCOG annotate persons:
-        # PEMPLOY_FULL, PEMPLOY_PART, PEMPLOY_NOT, PEMPLOY_CHILD = 1, 2, 3, 4
-        # persons['pemploy'] = np.zeros(len(persons))
-        # persons['pemploy'] = np.where(persons.age < 16, PEMPLOY_CHILD, PEMPLOY_PART)
-        # persons['pemploy'] = np.where((persons.age >= 16) & ((persons.ESR == 3) | (persons.ESR == 6)), PEMPLOY_NOT, persons['pemploy'])
-        # persons['pemploy'] = np.where((persons.age>=16) & ((persons.ESR != 3) & (persons.ESR != 6)) & (persons.WKHP >= 35), PEMPLOY_FULL, persons['pemploy'])
-        # persons['pemploy'] = persons['pemploy'].astype(int)
-
-        # PSTUDENT_GRADE_OR_HIGH, PSTUDENT_UNIVERSITY, PSTUDENT_NOT = 1, 2, 3
-        # persons['pstudent'] = np.zeros(len(persons))
-        # persons['pstudent'] = np.where((persons.pemploy == 1) & (persons.age >= 16), PSTUDENT_NOT, persons.pstudent)
-        # persons['pstudent'] = np.where((persons.pemploy == 1) & (persons.age < 16), PSTUDENT_GRADE_OR_HIGH, persons.pstudent)
-        # persons['pstudent'] = np.where((persons.SCHG < 1) & (persons.age >= 16), PSTUDENT_NOT, persons.pstudent)
-        # persons['pstudent'] = np.where((persons.SCHG < 1) & (persons.age < 16), PSTUDENT_GRADE_OR_HIGH, persons.pstudent)
-        # persons['pstudent'] = np.where((persons.SCHG >= 15) & (persons.age >= 16) & (persons.pemploy != 1), PSTUDENT_UNIVERSITY, persons.pstudent)
-        # persons['pstudent'] = np.where((persons.SCHG >= 15) & (persons.age < 16) & (persons.pemploy != 1), PSTUDENT_GRADE_OR_HIGH, persons.pstudent)
-        # persons['pstudent'] = np.where((persons.age <= 19) & (persons.pemploy != 1) & (persons.SCHG >=1) & (persons.SCHG<=14), PSTUDENT_GRADE_OR_HIGH, persons.pstudent)
-        # persons['pstudent'] = np.where((persons.age > 19) & (persons.pemploy != 1) & (persons.SCHG >=1) & (persons.SCHG<=14),  PSTUDENT_UNIVERSITY, persons.pstudent)
-        # persons['pstudent'] = np.where(persons.pstudent == 0, 3, persons.pstudent)
-        # persons['pstudent'] = persons['pstudent'].astype(int)
-
-        # PTYPE_FULL, PTYPE_PART, PTYPE_UNIVERSITY, PTYPE_NONWORK, PTYPE_RETIRED, PTYPE_DRIVING, PTYPE_SCHOOL, PTYPE_PRESCHOOL = 1, 2, 3, 4, 5, 6, 7, 8
-        # persons['ptype'] = np.zeros(len(persons))
-        # persons['ptype'] = np.where((persons.pemploy == 1),  PTYPE_FULL, PTYPE_NONWORK)
-        # persons['ptype'] = np.where((persons.pstudent == 3) & (persons.pemploy == 2), PTYPE_PART, persons.ptype)
-        # persons['ptype'] = np.where((persons.pstudent == 3) & (persons.age >= 65) & ((persons.pemploy == 3) | (persons.pemploy == 4)), PTYPE_RETIRED, persons.ptype)
-        # persons['ptype'] = np.where((persons.pstudent == 3) & (persons.age < 6) & ((persons.pemploy == 3) | (persons.pemploy == 4)), PTYPE_PRESCHOOL, persons.ptype)
-        # persons['ptype'] = np.where((persons.pstudent == 3) & (persons.age >= 6) & (persons.age <= 64) & ((persons.pemploy == 3) | (persons.pemploy == 4)), PTYPE_NONWORK, persons.ptype)
-        # persons['ptype'] = np.where((persons.pstudent == 2)  & ((persons.pemploy == 2)  | (persons.pemploy == 3) | (persons.pemploy == 4)), PTYPE_UNIVERSITY, persons.ptype)
-        # persons['ptype'] = np.where((persons.pstudent == 1) & (persons.age < 6)  & ((persons.pemploy == 2)  | (persons.pemploy == 3) | (persons.pemploy == 4)), PTYPE_PRESCHOOL, persons.ptype)
-        # persons['ptype'] = np.where((persons.pstudent == 1) & (persons.age >= 16)  & ((persons.pemploy == 2)  | (persons.pemploy == 3) | (persons.pemploy == 4)), PTYPE_DRIVING, persons.ptype)
-        # persons['ptype'] = np.where((persons.pstudent == 1) & (persons.age >= 6) & (persons.age < 16)  & ((persons.pemploy == 2)  | (persons.pemploy == 3) | (persons.pemploy == 4)), PTYPE_SCHOOL, persons.ptype)
-        # persons['ptype'] = persons['ptype'].astype(int)
-
-        # # FIXME assuming everyone age 18+ has high school degree and 22+ has college
-        # # these are the two checks that are made in resident configs
-        # persons['educ'] = np.where(persons.age >= 18, 9, 0)
-        # persons['educ'] = np.where(persons.age >= 22, 13, persons.educ)
-
-        self.households = households
-        self.persons = persons
 
     def add_external_counts_to_landuse(self):
         print("Adding external counts to landuse file.")
@@ -433,8 +341,6 @@ class Series15_Processor:
     def write_output(self):
         print("Writing final outputs")
         self.landuse.to_csv(os.path.join(self.input_dir, 'land_use.csv'), index=True)
-        self.persons.to_csv(os.path.join(self.input_dir, 'persons.csv'), index=True)
-        self.households.to_csv(os.path.join(self.input_dir, 'households.csv'), index=True)
         self.maz_maz_walk.to_csv(os.path.join(self.output_dir, 'skims', 'maz_maz_walk.csv'), index=True)
         self.maz_maz_bike.to_csv(os.path.join(self.output_dir, 'skims', 'maz_maz_bike.csv'), index=True)
 
@@ -444,7 +350,6 @@ if __name__ == '__main__':
 
     # running the following processing steps:
     # processor.copy_skims_and_process_names()
-    processor.process_synthetic_population()
     processor.process_landuse()
     processor.add_exernal_stations_to_maz_level_skims()
     processor.add_TAZ_level_skims()

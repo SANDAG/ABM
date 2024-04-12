@@ -1,0 +1,15 @@
+fontawesome_markdown
+json5
+jsonschema
+Markdown
+markdown-it-py
+mike
+mkdocs
+mkdocs-autorefs
+mkdocs-awesome-pages-plugin
+mkdocs-jupyter
+mkdocs-material
+mkdocs-material-extensions
+mkdocstrings
+mkdocstrings-python
+mkdocs-table-reader-plugin
