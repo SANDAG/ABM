@@ -88,6 +88,7 @@ import win32com.client as win32
 import shutil
 
 import multiprocessing
+import signal
 
 _join = os.path.join
 _dir = os.path.dirname
@@ -658,47 +659,75 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         "runSandagAbm_Preprocessing.cmd",
                         [drive, drive + path_forward_slash, msa_iteration, scenarioYear],
                         "Creating all the required files to run the ActivitySim models", capture_output=True)
-                if not skipABMResident[iteration]:
-                    self.set_sample_rate(_join(self._path, r"src\asim\configs\resident\settings_mp.yaml"), int(sample_rate[iteration] * hh_resident_size))
-                    self.run_proc(
-                        "runSandagAbm_ActivitySimResident.cmd",
-                        [drive, drive + path_forward_slash],
-                        "Running ActivitySim resident model", capture_output=True)
-                if not skipABMAirport[iteration]:
-                    hh_airport_size = {}
-                    for airport in ["san", "cbx"]:
-                        householdFile = pd.read_csv(_join(self._path, "input", "households_airport.{}.csv".format(airport)))
-                        hh_airport_size[airport] = len(householdFile)
+
+                skip_asim = skipABMResident[iteration] and skipABMAirport[iteration] and skipABMXborder[iteration] and skipABMVisitor[iteration]
+
+                if not skip_asim:
+                    mem_manager = _subprocess.Popen(
+                        [_join(self._path, "bin", "manage_skim_mem.cmd"),
+                        drive, drive + path_forward_slash], 
+                        stdout=_subprocess.PIPE, stderr=_subprocess.PIPE,
+                        stdin=_subprocess.PIPE, creationflags=_subprocess.CREATE_NEW_PROCESS_GROUP
+                    )
+                try:
+                    if not skipABMResident[iteration]:
+                        self.set_sample_rate(_join(self._path, r"src\asim\configs\resident\settings_mp.yaml"), int(sample_rate[iteration] * hh_resident_size))
+                        self.run_proc(
+                            "runSandagAbm_ActivitySimResident.cmd",
+                            [drive, drive + path_forward_slash],
+                            "Running ActivitySim resident model", capture_output=True)
+                    if not skipABMAirport[iteration]:
+                        hh_airport_size = {}
+                        for airport in ["san", "cbx"]:
+                            householdFile = pd.read_csv(_join(self._path, "input", "households_airport.{}.csv".format(airport)))
+                            hh_airport_size[airport] = len(householdFile)
+                            del(householdFile)
+                        self.set_sample_rate(_join(self._path, r"src\asim\configs\airport.CBX\settings.yaml"), int(sample_rate[iteration] * hh_airport_size["cbx"]))
+                        self.set_sample_rate(_join(self._path, r"src\asim\configs\airport.SAN\settings.yaml"), int(sample_rate[iteration] * hh_airport_size["san"]))
+                        self.run_proc(
+                            "runSandagAbm_ActivitySimAirport.cmd",
+                            [drive, drive + path_forward_slash],
+                            "Running ActivitySim airport models", capture_output=True)
+                    if (not skipABMXborderWait) and (iteration == 0):
+                        self.run_proc(
+                            "runSandagAbm_ActivitySimXborderWaitModel.cmd",
+                            [drive, drive + path_forward_slash],
+                            "Running ActivitySim wait time models", capture_output=True)
+                    if not skipABMXborder[iteration]:
+                        householdFile = pd.read_csv(_join(self._path, "input", "households_xborder.csv"))
+                        hh_xborder_size = len(householdFile)
                         del(householdFile)
-                    self.set_sample_rate(_join(self._path, r"src\asim\configs\airport.CBX\settings.yaml"), int(sample_rate[iteration] * hh_airport_size["cbx"]))
-                    self.set_sample_rate(_join(self._path, r"src\asim\configs\airport.SAN\settings.yaml"), int(sample_rate[iteration] * hh_airport_size["san"]))
-                    self.run_proc(
-                        "runSandagAbm_ActivitySimAirport.cmd",
-                        [drive, drive + path_forward_slash],
-                        "Running ActivitySim airport models", capture_output=True)
-                if (not skipABMXborderWait) and (iteration == 0):
-                    self.run_proc(
-                        "runSandagAbm_ActivitySimXborderWaitModel.cmd",
-                        [drive, drive + path_forward_slash],
-                        "Running ActivitySim wait time models", capture_output=True)
-                if not skipABMXborder[iteration]:
-                    householdFile = pd.read_csv(_join(self._path, "input", "households_xborder.csv"))
-                    hh_xborder_size = len(householdFile)
-                    del(householdFile)
-                    self.set_sample_rate(_join(self._path, r"src\asim\configs\crossborder\settings.yaml"), int(sample_rate[iteration] * hh_xborder_size))
-                    self.run_proc(
-                        "runSandagAbm_ActivitySimXborder.cmd",
-                        [drive, drive + path_forward_slash],
-                        "Running ActivitySim crossborder model", capture_output=True)
-                if not skipABMVisitor[iteration]:
-                    householdFile = pd.read_csv(_join(self._path, "input", "households_visitor.csv"))
-                    hh_visitor_size = len(householdFile)
-                    del(householdFile)
-                    self.set_sample_rate(_join(self._path, r"src\asim\configs\visitor\settings.yaml"), int(sample_rate[iteration] * hh_visitor_size))
-                    self.run_proc(
-                        "runSandagAbm_ActivitySimVisitor.cmd",
-                        [drive, drive + path_forward_slash],
-                        "Running ActivitySim visitor model", capture_output=True)
+                        self.set_sample_rate(_join(self._path, r"src\asim\configs\crossborder\settings.yaml"), int(sample_rate[iteration] * hh_xborder_size))
+                        self.run_proc(
+                            "runSandagAbm_ActivitySimXborder.cmd",
+                            [drive, drive + path_forward_slash],
+                            "Running ActivitySim crossborder model", capture_output=True)
+                    if not skipABMVisitor[iteration]:
+                        householdFile = pd.read_csv(_join(self._path, "input", "households_visitor.csv"))
+                        hh_visitor_size = len(householdFile)
+                        del(householdFile)
+                        self.set_sample_rate(_join(self._path, r"src\asim\configs\visitor\settings.yaml"), int(sample_rate[iteration] * hh_visitor_size))
+                        self.run_proc(
+                            "runSandagAbm_ActivitySimVisitor.cmd",
+                            [drive, drive + path_forward_slash],
+                            "Running ActivitySim visitor model", capture_output=True)
+                finally:
+                    if not skip_asim:
+                        forced_stop = False
+                        if mem_manager.poll() is None:
+                            mem_manager.stdin.write(b"\n")
+                            _time.sleep(5) 
+                            if mem_manager.poll() is None:
+                                mem_manager.send_signal(signal.CTRL_BREAK_EVENT)
+                                forced_stop = True
+                        out, err = mem_manager.communicate()
+                        report = _m.PageBuilder(title="Command report")
+                        self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % out)
+                        if err:
+                            self.add_html(report, 'Error message(s):<br><br><div class="preformat">%s</div>' % err)
+                        _m.logbook_write("Skim shared memory manager process record", report.render()) 
+                        if mem_manager.returncode != 0 and not forced_stop:
+                            raise Exception("Error in skim shared memory manager, view logbook for details")
 
                 if not skipMAASModel[iteration]:
                     self.run_proc("runMtxMgr.cmd", [drive, drive + path_no_drive], "Start matrix manager")

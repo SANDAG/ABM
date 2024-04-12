@@ -5,7 +5,7 @@ inherit_settings: False
 # number of households to simulate
 
 households_sample_size: 0
-multiprocess: False
+multiprocess: True
 strict: False
 mem_tick: 1
 num_processes: 1
@@ -19,7 +19,7 @@ data_dir: data
 
 # chooser chunk size in gigabytes
 # target top memory usage during activitysim run (including shared memory, loaded tables, and transient memory usage)
-chunk_size: 50_000_000_000
+chunk_size: 400_000_000_000
 #chunk_size: 0
 
 # minimum fraction of total chunk_size to reserve for adaptive chunking
