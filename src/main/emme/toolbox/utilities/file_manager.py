@@ -328,7 +328,12 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
             flags = '/Y/S/E/D'
         else:
             flags = '/Y/S/E'
-        output = _subprocess.check_output(['xcopy', flags, src, dst, "/exclude:" + exclude_filename])
+        try:
+            output = _subprocess.check_output(['xcopy', flags, src, dst, "/exclude:" + exclude_filename])
+        except _subprocess.CalledProcessError as error:
+            self._report.append(error.output)
+            self.log_report()
+            raise
         self._report.append(output)
         os.remove(exclude_filename)
         self._report.append(_time.strftime("%c"))
