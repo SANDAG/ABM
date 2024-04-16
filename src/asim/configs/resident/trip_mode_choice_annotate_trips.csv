@@ -16,10 +16,10 @@ Description,Target,Expression
 ,cost_fare_drive,"_cost_fare_drive + df.trip_mode.isin(['TNC_LOC','TNC_PRM','TNC_MIX'])*~df.outbound*(TNC_single_baseFare + odt_skims['TNCIN_LOC_ACC']*25/60 * TNC_single_costPerMile + odt_skims['TNCIN_LOC_ACC'] * TNC_single_costPerMinute) * 100"
 #,,
 ,_distance_walk,0
-,_distance_walk,"_distance_walk + (df.trip_mode=='WALK') * od_skims['walkTime']/walkSpeed*60"
-,_distance_walk,"(_origin_local_dist+_dest_local_dist) * np.where(df.trip_mode == 'WALK_LOC',1,0)"
-,_distance_walk,"(_origin_prm_dist+_dest_prm_dist) * np.where(df.trip_mode == 'WALK_PRM',1,0)"
-,_distance_walk,"(_origin_mix_dist+_dest_mix_dist) * np.where(df.trip_mode == 'WALK_MIX',1,0)"
+,_distance_walk,"_distance_walk + (df.trip_mode=='WALK') * od_skims['walkTime']/60 * walkSpeed"
+,_distance_walk,"_distance_walk + (_origin_local_dist+_dest_local_dist) * np.where(df.trip_mode == 'WALK_LOC',1,0)"
+,_distance_walk,"_distance_walk + (_origin_prm_dist+_dest_prm_dist) * np.where(df.trip_mode == 'WALK_PRM',1,0)"
+,_distance_walk,"_distance_walk + (_origin_mix_dist+_dest_mix_dist) * np.where(df.trip_mode == 'WALK_MIX',1,0)"
 ,_distance_walk,"_distance_walk + _dest_local_dist * np.where(df.trip_mode == 'PNR_LOC',1,0) * np.where(df.outbound,1,0)"
 ,_distance_walk,"_distance_walk + _dest_prm_dist * np.where(df.trip_mode == 'PNR_PRM',1,0) * np.where(df.outbound,1,0)"
 ,_distance_walk,"_distance_walk + _dest_mix_dist * np.where(df.trip_mode == 'PNR_MIX',1,0) * np.where(df.outbound,1,0)"
@@ -32,7 +32,7 @@ Description,Target,Expression
 ,_distance_walk,"_distance_walk + _origin_local_dist * np.where(df.trip_mode == 'PNR_LOC',1,0) * np.where(~df.outbound,1,0)"
 ,_distance_walk,"_distance_walk + _origin_prm_dist * np.where(df.trip_mode == 'PNR_PRM',1,0) * np.where(~df.outbound,1,0)"
 ,_distance_walk,"_distance_walk + _origin_mix_dist * np.where(df.trip_mode == 'PNR_MIX',1,0) * np.where(~df.outbound,1,0)"
-,_distance_walk,"_distance_walk + _dest_local_dist * np.where(df.trip_mode == 'KNR_LOC',1,0) * np.where(~df.outbound,1,0)"
+,_distance_walk,"_distance_walk + _origin_local_dist * np.where(df.trip_mode == 'KNR_LOC',1,0) * np.where(~df.outbound,1,0)"
 ,_distance_walk,"_distance_walk + _origin_prm_dist * np.where(df.trip_mode == 'KNR_PRM',1,0) * np.where(~df.outbound,1,0)"
 ,_distance_walk,"_distance_walk + _origin_mix_dist * np.where(df.trip_mode == 'KNR_MIX',1,0) * np.where(~df.outbound,1,0)"
 ,_distance_walk,"_distance_walk + _origin_local_dist * np.where(df.trip_mode == 'TNC_LOC',1,0) * np.where(~df.outbound,1,0)"
