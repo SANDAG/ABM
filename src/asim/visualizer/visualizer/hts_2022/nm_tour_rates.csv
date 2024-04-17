@@ -6,7 +6,7 @@ PERTYPE,tour_purp,tour_rate
 5: Retiree,Escorting,0.313916785
 6: Driving Aged Student,Escorting,0.025701605
 7: Non-Driving Aged Student,Escorting,0.832214664
-8: Child To Young for School,Escorting,0.071136953
+8: Child too Young for School,Escorting,0.071136953
 1: Full-Time Worker,Shopping,0.048492
 2: Part-Time Worker,Shopping,Inf
 3: University Student,Shopping,0.008110081
@@ -14,7 +14,7 @@ PERTYPE,tour_purp,tour_rate
 5: Retiree,Shopping,0.745354672
 6: Driving Aged Student,Shopping,0.03331822
 7: Non-Driving Aged Student,Shopping,0.024557995
-8: Child To Young for School,Shopping,0.09617109
+8: Child too Young for School,Shopping,0.09617109
 1: Full-Time Worker,Maintenance,1.629185336
 2: Part-Time Worker,Maintenance,0.010545712
 3: University Student,Maintenance,Inf
@@ -22,7 +22,7 @@ PERTYPE,tour_purp,tour_rate
 5: Retiree,Maintenance,0.586958879
 6: Driving Aged Student,Maintenance,0.014028639
 7: Non-Driving Aged Student,Maintenance,0.012406223
-8: Child To Young for School,Maintenance,0.008997636
+8: Child too Young for School,Maintenance,0.008997636
 1: Full-Time Worker,EatingOut,0.269222732
 2: Part-Time Worker,EatingOut,0.069086078
 3: University Student,EatingOut,0.004114274
@@ -30,7 +30,7 @@ PERTYPE,tour_purp,tour_rate
 5: Retiree,EatingOut,0.034139334
 6: Driving Aged Student,EatingOut,0.015352717
 7: Non-Driving Aged Student,EatingOut,0.052745516
-8: Child To Young for School,EatingOut,0.01222657
+8: Child too Young for School,EatingOut,0.01222657
 1: Full-Time Worker,Visiting,2.201554006
 2: Part-Time Worker,Visiting,0.029815879
 3: University Student,Visiting,0.130926882
@@ -38,7 +38,7 @@ PERTYPE,tour_purp,tour_rate
 5: Retiree,Visiting,Inf
 6: Driving Aged Student,Visiting,0.006373068
 7: Non-Driving Aged Student,Visiting,0.240627156
-8: Child To Young for School,Visiting,0.041141236
+8: Child too Young for School,Visiting,0.041141236
 1: Full-Time Worker,Discretionary,0.203968559
 2: Part-Time Worker,Discretionary,0.232775326
 3: University Student,Discretionary,0.037558021
@@ -46,4 +46,4 @@ PERTYPE,tour_purp,tour_rate
 5: Retiree,Discretionary,0.036072062
 6: Driving Aged Student,Discretionary,Inf
 7: Non-Driving Aged Student,Discretionary,0.010847842
-8: Child To Young for School,Discretionary,0.063741051
+8: Child too Young for School,Discretionary,0.063741051
