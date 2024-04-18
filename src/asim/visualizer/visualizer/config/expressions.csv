@@ -97,10 +97,10 @@ Ebike Ownership,autoOwnership_AV_ebike,ebike_ownership,final_households,,ebike_o
 Transponder Ownership,transponder_ownership,share,final_households,,transponder_ownership_weight,sum,
 #,,,,,,,
 Vehicle Types,vehicle_types,freq,final_vehicles,,finalweights,sum,"body_type,age,fuel_type"
-Vehicle allocation for drive alone tours,vehicle_allocation,Drive Alone,final_tours,,finalweights,sum,"vehicle_body_type_1,vehicle_age_1,vehicle_fuel_type_1"
-Vehicle allocation for shared ride 2 tours,vehicle_allocation,Shared Ride 2,final_tours,,finalweights,sum,"vehicle_body_type_2,vehicle_age_2,vehicle_fuel_type_2"
-Vehicle allocation for shared ride 3+ tours,vehicle_allocation,Shared Ride 3+,final_tours,,finalweights,sum,"vehicle_body_type_3.5,vehicle_age_3.5,vehicle_fuel_type_3.5"
-Vehicle allocation for chosen mode on tours,vehicle_allocation,Selected Tour Mode,final_tours,,finalweights,sum,"vehicle_body_type_selected,vehicle_age_selected,vehicle_fuel_type_selected"
+Vehicle allocation for drive alone tours,vehicle_allocation,Drive Alone,final_tours,"tour_category != ""atwork""",finalweights,sum,"vehicle_body_type_1,vehicle_age_1,vehicle_fuel_type_1"
+Vehicle allocation for shared ride 2 tours,vehicle_allocation,Shared Ride 2,final_tours,"tour_category != ""atwork""",finalweights,sum,"vehicle_body_type_2,vehicle_age_2,vehicle_fuel_type_2"
+Vehicle allocation for shared ride 3+ tours,vehicle_allocation,Shared Ride 3+,final_tours,"tour_category != ""atwork""",finalweights,sum,"vehicle_body_type_3.5,vehicle_age_3.5,vehicle_fuel_type_3.5"
+Vehicle allocation for chosen mode on tours,vehicle_allocation,Selected Tour Mode,final_tours,"tour_category != ""atwork""",finalweights,sum,"vehicle_body_type_selected,vehicle_age_selected,vehicle_fuel_type_selected"
 #,,,,,,,
 External worker frequency,externalFrequency,workers,final_persons,is_worker,external_worker_weight,sum,
 External nonmandatory tour frequency,externalFrequency,nonmand_tours,final_tours,tour_category == 'non_mandatory',external_nonmandatory_tour_weight,sum,
