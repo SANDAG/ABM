@@ -447,19 +447,23 @@ Description,Target,Expression
 #,,
 ,value_of_time_category_id,"np.where(vot_1,1,np.where(vot_2,2,3))"
 #,,
-,origin_micro_prm_dist,"reindex(land_use.micro_dist_premium_transit, trips.origin)"
-,dest_micro_prm_dist,"reindex(land_use.micro_dist_premium_transit, trips.destination)"
+,origin_micro_local_dist,"reindex(land_use.micro_dist_local_bus, origin)"
+,origin_micro_prm_dist,"reindex(land_use.micro_dist_premium_transit, origin)"
+,origin_micro_mix_dist,"np.minimum(origin_micro_local_dist, origin_micro_prm_dist)"
+,dest_micro_local_dist,"reindex(land_use.micro_dist_local_bus, destination)"
+,dest_micro_prm_dist,"reindex(land_use.micro_dist_premium_transit, destination)"
+,dest_micro_mix_dist,"np.minimum(dest_micro_local_dist, dest_micro_prm_dist)"
 microtransit available at origin,microtransit_orig,"reindex(land_use.microtransit, trips.origin)"
 microtransit available at destination,microtransit_dest,"reindex(land_use.microtransit, trips.destination)"
 microtransit available,microtransit_available,(microtransit_orig > 0) & (microtransit_orig == microtransit_dest) & (od_skims['DIST'] < microtransitMaxDist)
 nev available at origin,nev_orig,"reindex(land_use.nev, trips.origin)"
 nev available at destination,nev_dest,"reindex(land_use.nev, trips.destination)"
 nev available,nev_available,(nev_orig > 0) & (nev_orig == nev_dest) & (od_skims['DIST'] < nevMaxDist)
-outbound microtransit access available,microtransit_access_available_out,trips.outbound & (microtransit_orig>0) & (origin_micro_prm_dist<microtransitMaxDist)
-outbound nev access available,nev_access_available_out,trips.outbound & (nev_orig>0) & (origin_micro_prm_dist<nevMaxDist)
-outbound microtransit egress available,microtransit_egress_available_out,trips.outbound & (microtransit_dest>0) & (dest_micro_prm_dist>maxWalkIfMTAccessAvailable) & (dest_micro_prm_dist<microtransitMaxDist)
-outbound nev egress available,nev_egress_available_out,trips.outbound & (nev_dest>0) & (dest_micro_prm_dist>maxWalkIfMTAccessAvailable) & (dest_micro_prm_dist<nevMaxDist)
-inbound microtransit access available,microtransit_access_available_in,~trips.outbound & (microtransit_orig>0) & (origin_micro_prm_dist>maxWalkIfMTAccessAvailable) & (origin_micro_prm_dist<microtransitMaxDist)
-inbound nev access available,nev_access_available_in,~trips.outbound & (nev_orig>0) & (origin_micro_prm_dist>maxWalkIfMTAccessAvailable) & (origin_micro_prm_dist<nevMaxDist)
-inbound microtransit egress available,microtransit_egress_available_in,~trips.outbound & (microtransit_dest>0) & (dest_micro_prm_dist<microtransitMaxDist)
-inbound nev egress available,nev_egress_available_in,~trips.outbound & (nev_dest>0) & (dest_micro_prm_dist<nevMaxDist)
+outbound microtransit access available,microtransit_access_available_out,trips.outbound & (microtransit_orig>0) & (origin_micro_mix_dist<microtransitMaxDist)
+outbound nev access available,nev_access_available_out,trips.outbound & (nev_orig>0) & (origin_micro_mix_dist<nevMaxDist)
+outbound microtransit egress available,microtransit_egress_available_out,trips.outbound & (microtransit_dest>0) & (dest_micro_mix_dist>maxWalkIfMTAccessAvailable) & (dest_micro_mix_dist<microtransitMaxDist)
+outbound nev egress available,nev_egress_available_out,trips.outbound & (nev_dest>0) & (dest_micro_mix_dist>maxWalkIfMTAccessAvailable) & (dest_micro_mix_dist<nevMaxDist)
+inbound microtransit access available,microtransit_access_available_in,~trips.outbound & (microtransit_orig>0) & (origin_micro_mix_dist>maxWalkIfMTAccessAvailable) & (origin_micro_mix_dist<microtransitMaxDist)
+inbound nev access available,nev_access_available_in,~trips.outbound & (nev_orig>0) & (origin_micro_mix_dist>maxWalkIfMTAccessAvailable) & (origin_micro_mix_dist<nevMaxDist)
+inbound microtransit egress available,microtransit_egress_available_in,~trips.outbound & (microtransit_dest>0) & (dest_micro_mix_dist<microtransitMaxDist)
+inbound nev egress available,nev_egress_available_in,~trips.outbound & (nev_dest>0) & (dest_micro_mix_dist<nevMaxDist)
