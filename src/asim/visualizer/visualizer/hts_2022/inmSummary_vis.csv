@@ -6,7 +6,7 @@ PERTYPE,nmtours,freq
 5: Retiree,0,204978.6292
 6: Driving Aged Student,0,44023.7273
 7: Non-Driving Aged Student,0,290914.5674
-8: Child too Young for School,0,114298.0315
+8: Child too young for School,0,114298.0315
 1: Full-Time Worker,1,449627.2326
 2: Part-Time Worker,1,69901.31424
 3: University Student,1,55304.35032
@@ -14,7 +14,7 @@ PERTYPE,nmtours,freq
 5: Retiree,1,231225.4679
 6: Driving Aged Student,1,46850.33325
 7: Non-Driving Aged Student,1,112728.8481
-8: Child too Young for School,1,46991.07232
+8: Child too young for School,1,46991.07232
 1: Full-Time Worker,2,127847.1886
 2: Part-Time Worker,2,23575.84353
 3: University Student,2,12428.70502
@@ -22,7 +22,7 @@ PERTYPE,nmtours,freq
 5: Retiree,2,61020.82308
 6: Driving Aged Student,2,5200.265657
 7: Non-Driving Aged Student,2,18350.49997
-8: Child too Young for School,2,8259.994724
+8: Child too young for School,2,8259.994724
 1: Full-Time Worker,3+,73078.10317
 2: Part-Time Worker,3+,14792.93753
 3: University Student,3+,3365.805273
@@ -30,4 +30,4 @@ PERTYPE,nmtours,freq
 5: Retiree,3+,24461.40098
 6: Driving Aged Student,3+,0
 7: Non-Driving Aged Student,3+,3269.968013
-8: Child too Young for School,3+,5006.286762
+8: Child too young for School,3+,5006.286762
