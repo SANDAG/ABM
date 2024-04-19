@@ -474,12 +474,14 @@ Description,Target,Expression
 ,dest_local_dist,"reindex(land_use.walk_dist_local_bus, destination)"
 ,dest_prm_dist,"reindex(land_use.walk_dist_premium_transit, destination)"
 ,dest_mix_dist,"np.minimum(dest_local_dist, dest_prm_dist)"
+,s3_dist_skims,(((odt_skims['HOV3_L_DIST']) * (_vot_bin_s2 == 1)) + ((odt_skims['HOV3_M_DIST']) * (_vot_bin_s2 == 2)) + ((odt_skims['HOV3_H_DIST']) * (_vot_bin_s2 == 3)))
+#,,
 microtransit available at origin,microtransit_orig,"reindex(land_use.microtransit, trips.origin)"
 microtransit available at destination,microtransit_dest,"reindex(land_use.microtransit, trips.destination)"
-microtransit available,microtransit_available,(microtransit_orig > 0) & (microtransit_orig == microtransit_dest) & (od_skims['DIST'] < microtransitMaxDist)
+microtransit available,microtransit_available,(microtransit_orig > 0) & (microtransit_orig == microtransit_dest) & (s3_dist_skims < microtransitMaxDist)
 nev available at origin,nev_orig,"reindex(land_use.nev, trips.origin)"
 nev available at destination,nev_dest,"reindex(land_use.nev, trips.destination)"
-nev available,nev_available,(nev_orig > 0) & (nev_orig == nev_dest) & (od_skims['DIST'] < nevMaxDist)
+nev available,nev_available,(nev_orig > 0) & (nev_orig == nev_dest) & (s3_dist_skims < nevMaxDist)
 outbound microtransit access available,microtransit_access_available_out,trips.outbound & (microtransit_orig>0) & (origin_micro_mix_dist<microtransitMaxDist)
 outbound nev access available,nev_access_available_out,trips.outbound & (nev_orig>0) & (origin_micro_mix_dist<nevMaxDist)
 outbound microtransit egress available,microtransit_egress_available_out,trips.outbound & (microtransit_dest>0) & (dest_micro_mix_dist>maxWalkIfMTAccessAvailable) & (dest_micro_mix_dist<microtransitMaxDist)
