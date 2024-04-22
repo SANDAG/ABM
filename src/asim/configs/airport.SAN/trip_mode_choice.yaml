@@ -95,8 +95,8 @@ CONSTANTS:
   curbLocation3Mgra: -999
   curbLocation4Mgra: -999
   curbLocation5Mgra: -999
-  shuttleVanLocation: terminal
-  hotelCourtesyLocation: terminal
+  shuttleVanLocation: terminalMgra
+  hotelCourtesyLocation: terminalMgra
   orig_col_name: origin
   dest_col_name: destination
   costPerMile: 16.3
