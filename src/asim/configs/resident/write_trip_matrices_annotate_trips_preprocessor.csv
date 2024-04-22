@@ -478,18 +478,20 @@ Description,Target,Expression
 #,,
 microtransit available at origin,microtransit_orig,"reindex(land_use.microtransit, trips.origin)"
 microtransit available at destination,microtransit_dest,"reindex(land_use.microtransit, trips.destination)"
-microtransit available,microtransit_available,(microtransit_orig > 0) & (microtransit_orig == microtransit_dest) & (s3_dist_skims < microtransitMaxDist)
+microtransit operating at time of trip,microtransit_operating,(depart >= microtransitStartPeriod) & (depart <= microtransitEndPeriod)
+microtransit available,microtransit_available,(microtransit_orig > 0) & (microtransit_orig == microtransit_dest) & (s3_dist_skims < microtransitMaxDist) & microtransit_operating
 nev available at origin,nev_orig,"reindex(land_use.nev, trips.origin)"
 nev available at destination,nev_dest,"reindex(land_use.nev, trips.destination)"
-nev available,nev_available,(nev_orig > 0) & (nev_orig == nev_dest) & (s3_dist_skims < nevMaxDist)
-outbound microtransit access available,microtransit_access_available_out,trips.outbound & (microtransit_orig>0) & (origin_micro_mix_dist<microtransitMaxDist)
-outbound nev access available,nev_access_available_out,trips.outbound & (nev_orig>0) & (origin_micro_mix_dist<nevMaxDist)
-outbound microtransit egress available,microtransit_egress_available_out,trips.outbound & (microtransit_dest>0) & (dest_micro_mix_dist>maxWalkIfMTAccessAvailable) & (dest_micro_mix_dist<microtransitMaxDist)
-outbound nev egress available,nev_egress_available_out,trips.outbound & (nev_dest>0) & (dest_micro_mix_dist>maxWalkIfMTAccessAvailable) & (dest_micro_mix_dist<nevMaxDist)
-inbound microtransit access available,microtransit_access_available_in,~trips.outbound & (microtransit_orig>0) & (origin_micro_mix_dist>maxWalkIfMTAccessAvailable) & (origin_micro_mix_dist<microtransitMaxDist)
-inbound nev access available,nev_access_available_in,~trips.outbound & (nev_orig>0) & (origin_micro_mix_dist>maxWalkIfMTAccessAvailable) & (origin_micro_mix_dist<nevMaxDist)
-inbound microtransit egress available,microtransit_egress_available_in,~trips.outbound & (microtransit_dest>0) & (dest_micro_mix_dist<microtransitMaxDist)
-inbound nev egress available,nev_egress_available_in,~trips.outbound & (nev_dest>0) & (dest_micro_mix_dist<nevMaxDist)
+nev operating at time of trip,microtransit_operating,(depart >= nevStartPeriod) & (depart <= nevEndPeriod)
+nev available,nev_available,(nev_orig > 0) & (nev_orig == nev_dest) & (s3_dist_skims < nevMaxDist) & nev_operating
+outbound microtransit access available,microtransit_access_available_out,trips.outbound & (microtransit_orig>0) & (origin_micro_mix_dist<microtransitMaxDist) & microtransit_operating
+outbound nev access available,nev_access_available_out,trips.outbound & (nev_orig>0) & (origin_micro_mix_dist<nevMaxDist) & nev_operating
+outbound microtransit egress available,microtransit_egress_available_out,trips.outbound & (microtransit_dest>0) & (dest_micro_mix_dist>maxWalkIfMTAccessAvailable) & (dest_micro_mix_dist<microtransitMaxDist) & microtransit_operating
+outbound nev egress available,nev_egress_available_out,trips.outbound & (nev_dest>0) & (dest_micro_mix_dist>maxWalkIfMTAccessAvailable) & (dest_micro_mix_dist<nevMaxDist) & nev_operating
+inbound microtransit access available,microtransit_access_available_in,~trips.outbound & (microtransit_orig>0) & (origin_micro_mix_dist>maxWalkIfMTAccessAvailable) & (origin_micro_mix_dist<microtransitMaxDist) & microtransit_operating
+inbound nev access available,nev_access_available_in,~trips.outbound & (nev_orig>0) & (origin_micro_mix_dist>maxWalkIfMTAccessAvailable) & (origin_micro_mix_dist<nevMaxDist) & nev_operating
+inbound microtransit egress available,microtransit_egress_available_in,~trips.outbound & (microtransit_dest>0) & (dest_micro_mix_dist<microtransitMaxDist) & microtransit_operating
+inbound nev egress available,nev_egress_available_in,~trips.outbound & (nev_dest>0) & (dest_micro_mix_dist<nevMaxDist) & nev_operating
 #,,
 ,trip_veh_body,"reindex(tours.selected_vehicle.str.split('_').str[0], trips.tour_id)"
 ,_trip_veh_age,"reindex(tours.selected_vehicle.str.split('_').str[1], trips.tour_id)"
