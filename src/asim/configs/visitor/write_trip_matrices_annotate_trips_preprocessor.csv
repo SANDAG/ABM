@@ -412,11 +412,11 @@ Description,Target,Expression
 #,,
 ,value_of_time_category_id,"np.where(vot1,1,np.where(vot2,2,3))"
 #,,
-,origin_micro_local_dist,"reindex(land_use.micro_dist_local_bus, origin)"
-,origin_micro_prm_dist,"reindex(land_use.micro_dist_premium_transit, origin)"
+,origin_micro_local_dist,"reindex(land_use.micro_dist_local_bus, trips.origin)"
+,origin_micro_prm_dist,"reindex(land_use.micro_dist_premium_transit, trips.origin)"
 ,origin_micro_mix_dist,"np.minimum(origin_micro_local_dist, origin_micro_prm_dist)"
-,dest_micro_local_dist,"reindex(land_use.micro_dist_local_bus, destination)"
-,dest_micro_prm_dist,"reindex(land_use.micro_dist_premium_transit, destination)"
+,dest_micro_local_dist,"reindex(land_use.micro_dist_local_bus, trips.destination)"
+,dest_micro_prm_dist,"reindex(land_use.micro_dist_premium_transit, trips.destination)"
 ,dest_micro_mix_dist,"np.minimum(dest_micro_local_dist, dest_micro_prm_dist)"
 ,s3_dist_skims,((odt_skims['HOV3_L_DIST'] * (_vot_bin_s3 == 1)) + (odt_skims['HOV3_M_DIST'] * (_vot_bin_s3 == 2)) + (odt_skims['HOV3_H_DIST'] * (_vot_bin_s3 == 3)))
 microtransit available at origin,microtransit_orig,"reindex(land_use.microtransit, trips.origin)"
