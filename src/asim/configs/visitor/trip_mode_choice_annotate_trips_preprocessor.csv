@@ -124,7 +124,7 @@ microtransit direct time,microtransit_direct_time,"np.maximum(s3_dist_skims/micr
 microtransit total time,microtransit_time,"np.maximum(microtransit_direct_time + microtransitDiversionConstant, microtransitDiversionFactor*microtransit_direct_time)"
 nev available at origin,nev_orig,"reindex(land_use.nev, df[orig_col_name])"
 nev available at destination,nev_dest,"reindex(land_use.nev, df[dest_col_name])"
-nev operating at time of trip,microtransit_operating,(depart >= nevStartPeriod) & (depart <= nevEndPeriod)
+nev operating at time of trip,nev_operating,(depart >= nevStartPeriod) & (depart <= nevEndPeriod)
 nev available,nev_available,(nev_orig > 0) & (nev_orig == nev_dest) & (s3_dist_skims < nevMaxDist) & nev_operating
 nev direct time,nev_direct_time,"np.maximum(s3_dist_skims/nevSpeed*60, s3_time_skims)"
 nev total time,nev_time,"np.maximum(nev_direct_time + nevDiversionConstant, nevDiversionFactor*nev_direct_time)"
