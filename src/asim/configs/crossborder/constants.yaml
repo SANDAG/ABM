@@ -79,6 +79,8 @@ microtransitWaitTime: 12
 microtransitMaxDist: 4.5
 microtransitDiversionConstant: 5
 microtransitDiversionFactor: 1.25
+microtransitStartPeriod: 9
+microtransitEndPeriod: 32
 nevSpeed: 17
 nevCost: 125 #cents
 nevWaitTime: 12
@@ -86,4 +88,6 @@ nevMaxDist: 3
 nevDwellMinutesPerMile: 0.5
 nevDiversionConstant: 5
 nevDiversionFactor: 1.25
+nevStartPeriod: 9
+nevEndPeriod: 38
 maxWalkIfMTAccessAvailable: 0.5 # Maximum distance to walk to premium transit if microtransit access is available
