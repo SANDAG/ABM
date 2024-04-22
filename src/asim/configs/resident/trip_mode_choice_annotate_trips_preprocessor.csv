@@ -49,11 +49,11 @@ DA skim based on Transponder ownership,da_dist_skims,"(np.where(ownsTransponder=
 ,s2_dist_skims,(((odt_skims['HOV2_L_DIST']) * (_vot_bin_s2 == 1)) + ((odt_skims['HOV2_M_DIST']) * (_vot_bin_s2 == 2)) + ((odt_skims['HOV2_H_DIST']) * (_vot_bin_s2 == 3)))
 ,s2_cost_skims,(((odt_skims['HOV2_L_TOLLCOST']) * (_vot_bin_s2 == 1)) + ((odt_skims['HOV2_M_TOLLCOST']) * (_vot_bin_s2 == 2)) + ((odt_skims['HOV2_H_TOLLCOST']) * (_vot_bin_s2 == 3)))
 ,s2_time_skims,(((odt_skims['HOV2_L_TIME']) * (_vot_bin_s2 == 1)) + ((odt_skims['HOV2_M_TIME']) * (_vot_bin_s2 == 2)) + ((odt_skims['HOV2_H_TIME']) * (_vot_bin_s2 == 3)))
-,s2_rel_skims,(((odt_skims['HOV2_L_REL']) * (_vot_bin_da == 1)) + ((odt_skims['HOV2_M_REL']) * (_vot_bin_da == 2)) + ((odt_skims['HOV2_H_REL']) * (_vot_bin_da == 3)))
-,s3_dist_skims,(((odt_skims['HOV3_L_DIST']) * (_vot_bin_s2 == 1)) + ((odt_skims['HOV3_M_DIST']) * (_vot_bin_s2 == 2)) + ((odt_skims['HOV3_H_DIST']) * (_vot_bin_s2 == 3)))
-,s3_cost_skims,(((odt_skims['HOV3_L_TOLLCOST']) * (_vot_bin_s2 == 1)) + ((odt_skims['HOV3_M_TOLLCOST']) * (_vot_bin_s2 == 2)) + ((odt_skims['HOV3_H_TOLLCOST']) * (_vot_bin_s2 == 3)))
-,s3_time_skims,(((odt_skims['HOV3_L_TIME']) * (_vot_bin_s2 == 1)) + ((odt_skims['HOV3_M_TIME']) * (_vot_bin_s2 == 2)) + ((odt_skims['HOV3_H_TIME']) * (_vot_bin_s2 == 3)))
-,s3_rel_skims,(((odt_skims['HOV3_L_REL']) * (_vot_bin_da == 1)) + ((odt_skims['HOV3_M_REL']) * (_vot_bin_da == 2)) + ((odt_skims['HOV3_H_REL']) * (_vot_bin_da == 3)))
+,s2_rel_skims,(((odt_skims['HOV2_L_REL']) * (_vot_bin_s2 == 1)) + ((odt_skims['HOV2_M_REL']) * (_vot_bin_s2 == 2)) + ((odt_skims['HOV2_H_REL']) * (_vot_bin_s2 == 3)))
+,s3_dist_skims,(((odt_skims['HOV3_L_DIST']) * (_vot_bin_s3 == 1)) + ((odt_skims['HOV3_M_DIST']) * (_vot_bin_s3 == 2)) + ((odt_skims['HOV3_H_DIST']) * (_vot_bin_s3 == 3)))
+,s3_cost_skims,(((odt_skims['HOV3_L_TOLLCOST']) * (_vot_bin_s3 == 1)) + ((odt_skims['HOV3_M_TOLLCOST']) * (_vot_bin_s3 == 2)) + ((odt_skims['HOV3_H_TOLLCOST']) * (_vot_bin_s3 == 3)))
+,s3_time_skims,(((odt_skims['HOV3_L_TIME']) * (_vot_bin_s3 == 1)) + ((odt_skims['HOV3_M_TIME']) * (_vot_bin_s3 == 2)) + ((odt_skims['HOV3_H_TIME']) * (_vot_bin_s3 == 3)))
+,s3_rel_skims,(((odt_skims['HOV3_L_REL']) * (_vot_bin_s3 == 1)) + ((odt_skims['HOV3_M_REL']) * (_vot_bin_s3 == 2)) + ((odt_skims['HOV3_H_REL']) * (_vot_bin_s3 == 3)))
 ,walk_time_skims,od_skims['walkTime']
 #,,
 ,inbound,~df.outbound
