@@ -170,7 +170,7 @@ def write_to_datalake(output_path, models, exclude, env):
             prefix = ""
         files = glob.glob(os.path.join(output_path, relpath, model, prefix + '*'))
         if not files:
-            raise Exception("Error: %s has no output files" % model)
+            print(("%s has no output files" % model), file=sys.stderr)
 
 
     now = datetime.datetime.now()
@@ -224,12 +224,21 @@ def write_to_datalake(output_path, models, exclude, env):
                         lake_file_name = "/".join(["abm_15_0_0",parent_dir_name,model,name+ext])
                     container.upload_blob(name=lake_file_name, data=data)
 
-    try:
-        with open(EMME_metadata["properties_path"], "rb") as properties:
-            lake_file_name = "/".join(["abm_15_0_0",parent_dir_name,os.path.basename(EMME_metadata["properties_path"])])
-            container.upload_blob(name=lake_file_name, data=properties)
-    except (FileNotFoundError, KeyError):
-        pass
+    other_files = [
+        EMME_metadata["properties_path"],
+        os.path.join(output_path, 'skims', 'traffic_skims_MD.omx'),
+        os.path.abspath(os.path.join(output_path, '..', 'input', 'zone_term.csv')),
+        os.path.join(output_path, 'bikeMgraLogsum.csv'),
+        os.path.join(output_path, 'microMgraEquivMinutes.csv')
+    ]
+    for file in other_files:
+        try:
+            with open(file, "rb") as data:
+                lake_file_name = "/".join(["abm_15_0_0",parent_dir_name,os.path.basename(file)])
+                container.upload_blob(name=lake_file_name, data=data)
+        except (FileNotFoundError, KeyError):
+            print(("%s not found" % file), file=sys.stderr)
+            pass
 
 
 output_path = sys.argv[1]
