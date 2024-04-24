@@ -110,5 +110,7 @@ LOGSUM_CHOOSER_COLUMNS:
   - ebike_owner
   - transit_pass_subsidy
   - transit_pass_ownership
+  - start
+  - end
 
 MODE_CHOICE_LOGSUM_COLUMN_NAME: mode_choice_logsum

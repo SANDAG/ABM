@@ -52,6 +52,8 @@ preprocessor:
 LOGSUM_CHOOSER_COLUMNS:
   - person_id  
   - demographic_segment
+  - start
+  - end
 
 CHOICE_COL_NAME: tour_mode
 MODE_CHOICE_LOGSUM_COLUMN_NAME: mode_choice_logsum
