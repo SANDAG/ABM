@@ -54,7 +54,7 @@ Model outputs are stored in the .\outputs directory. The contents of the directo
 
 ### ActivitySim log files
 
-ActivitySim writes out various log files when it runs; these have standard names for each model component. Therefore we list them separately, but copies of these files may be in each modelís output directory depending upon the settings used to run ActivitySim for that model component.
+ActivitySim writes out various log files when it runs; these have standard names for each model component. Therefore we list them separately, but copies of these files may be in each model‚Äôs output directory depending upon the settings used to run ActivitySim for that model component.
 
 | **File ** | **Description** | 
 | --- | --- |
@@ -260,7 +260,7 @@ This directory contains San Diego resident travel model outputs.
 | --- | --- |
 | household_id | Household ID | 
 | age | Person age in years | 
-| PNUM | Person number in household (1Ön where n is number of persons in household) | 
+| PNUM | Person number in household (1‚Ä¶n where n is number of persons in household) | 
 | sex | 1: Male
 2: Female | 
 | pemploy | Employment status of person:
@@ -366,7 +366,7 @@ Hispanic: 2 |
 | --- | --- |
 | vehicle_id | Vehicle ID | 
 | household_id | Household ID | 
-| vehicle_num | Vehicle number in household from 1Ön where n is total vehicles owned by household | 
+| vehicle_num | Vehicle number in household from 1‚Ä¶n where n is total vehicles owned by household | 
 | vehicle_type | String bodytype_age_fueltype | 
 | auto_operating_cost | Auto operating cost for vehicle ($2023 cents/mile) | 
 | Range | Range if electric vehicle, else 0 | 
@@ -384,7 +384,7 @@ Hispanic: 2 |
 | tour_id | Tour ID | 
 | household_id | Household ID | 
 | person_id | Person ID | 
-| participant_num | Sequent number of participant 1Ön where n is total number of participants in joint tour | 
+| participant_num | Sequent number of participant 1‚Ä¶n where n is total number of participants in joint tour | 
 
 #### Resident Model tour file (final_tours.csv)
 
@@ -392,12 +392,12 @@ Hispanic: 2 |
 | --- | --- |
 | tour_id | Tour ID | 
 | person_id | Person ID | 
-| tour_type | Purpose string of the primary activity on the tour: For home-based tours, the purposes are: ìworkî, ìschoolî, ìescortî, ìshoppingî, ìothmaintî, ìeatoutî, ìsocialî, and ìothdiscrî. For work-based subtours, the purposes are ìbusinessî, ìeatî, and ìmaintî. | 
+| tour_type | Purpose string of the primary activity on the tour: For home-based tours, the purposes are: ‚Äúwork‚Äù, ‚Äúschool‚Äù, ‚Äúescort‚Äù, ‚Äúshopping‚Äù, ‚Äúothmaint‚Äù, ‚Äúeatout‚Äù, ‚Äúsocial‚Äù, and ‚Äúothdiscr‚Äù. For work-based subtours, the purposes are ‚Äúbusiness‚Äù, ‚Äúeat‚Äù, and ‚Äúmaint‚Äù. | 
 | tour_type_count | The total number of tours within the tour_type | 
 | tour_type_num | The sequential number of the tour within the tour_category. In other words if a person has 3 tours; 1 work tour and 2 non-mandatory tours, the tour_type_num would be 1 for the work tour, 1 for the first non-mandatory tour and 2 for the second non-mandatory tour. | 
 | tour_num | ? | 
 | tour_count | ? | 
-| tour_category | The category string of the primary activity on the tour. ìmandatoryî, ìjointî, ìnon_mandatoryî, ìatworkî | 
+| tour_category | The category string of the primary activity on the tour. ‚Äúmandatory‚Äù, ‚Äújoint‚Äù, ‚Äúnon_mandatory‚Äù, ‚Äúatwork‚Äù | 
 | number_of_participants | Number of participants on the tour for fully joint tours, else 1 | 
 | destination | MGRA number of primary destination | 
 | origin | MGRA number of tour origin | 
@@ -405,11 +405,11 @@ Hispanic: 2 |
 | start | Half-hour time period of departure from tour origin. Periods are number 1 through 48 where period 1 starts at 3:00 AM. | 
 | end | Half-hour time period of arrival back at tour origin. Periods are number 1 through 48 where period 1 starts at 3:00 AM. | 
 | duration | Duration of the tour in number of half-hour periods, including all activity episodes and travel | 
-| school_esc_outbound | For school tours where the child is being escorted according to the school pickup/dropoff model, this string field indicates the type of escorting in the outbound direction: ìpure_escortî or ìrideshareî | 
-| school_esc_inbound | For school tours where the child is being escorted according to the school pickup/dropoff model, this string field indicates the type of escorting in the inbound direction: ìpure_escortî or ìrideshareî | 
+| school_esc_outbound | For school tours where the child is being escorted according to the school pickup/dropoff model, this string field indicates the type of escorting in the outbound direction: ‚Äúpure_escort‚Äù or ‚Äúrideshare‚Äù | 
+| school_esc_inbound | For school tours where the child is being escorted according to the school pickup/dropoff model, this string field indicates the type of escorting in the inbound direction: ‚Äúpure_escort‚Äù or ‚Äúrideshare‚Äù | 
 | num_escortees | Number of children being escorted on this tour (max of outbound and inbound direction) | 
 | tdd | Tour departure and duration. Index of the tour departure and durarion alterntive configs | 
-| composition | Composition of tour if joint ìadultsî, ìchildrenî | 
+| composition | Composition of tour if joint ‚Äúadults‚Äù, ‚Äúchildren‚Äù | 
 | is_external_tour | TRUE if primary destination activity is external to region, else FALSE | 
 | is_internal_tour | Whether tour is internal | 
 | destination_logsum | Logsum from tour destination choice model | 
@@ -418,11 +418,11 @@ Hispanic: 2 |
 | vehicle_occup_3_5 | Tour vehicle with occupancy of 3+ | 
 | tour_mode | Tour mode string | 
 | mode_choice_logsum | Logsum from tour mode choice model | 
-| selected_vehicle | Selected vehicle from vehicle type choice model; a string field consisting of [Body type][age][fuel type] and an optional extension ì_AVî if the vehicle is an autonomous vehicle | 
-| atwork_subtour_frequency | At-work subtour frequency choice model result; a string field with the following values: ìno_subtoursî, ìbusiness1î, ìbusiness2î, ìeatî, ìeat_businessî, ìmaintî, or blank for non-work tours. | 
+| selected_vehicle | Selected vehicle from vehicle type choice model; a string field consisting of [Body type][age][fuel type] and an optional extension ‚Äú_AV‚Äù if the vehicle is an autonomous vehicle | 
+| atwork_subtour_frequency | At-work subtour frequency choice model result; a string field with the following values: ‚Äúno_subtours‚Äù, ‚Äúbusiness1‚Äù, ‚Äúbusiness2‚Äù, ‚Äúeat‚Äù, ‚Äúeat_business‚Äù, ‚Äúmaint‚Äù, or blank for non-work tours. | 
 | parent_tour_id | Parent tour ID if this is a work-based subtour, else 0 | 
-| stop_frequency | Stop frequency choice model result; a string value of the form [0Ön]out_[0Ön]in where the first number is the number of outbound stops and the second number is the number of inbound stops | 
-| primary_purpose | Recoding of tour_type where all atwork subtours are identified as ìatworkî regardless of destination purpose | 
+| stop_frequency | Stop frequency choice model result; a string value of the form [0‚Ä¶n]out_[0‚Ä¶n]in where the first number is the number of outbound stops and the second number is the number of inbound stops | 
+| primary_purpose | Recoding of tour_type where all atwork subtours are identified as ‚Äúatwork‚Äù regardless of destination purpose | 
 
 #### Resident Model trip file (final_trips.csv)
 
