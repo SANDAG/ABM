@@ -118,13 +118,13 @@ placeholder for missing autoTerminalTimeFactorAV,autoTermTimeFactor,1
 # Microtransit and NEV,,
 microtransit available at origin,microtransit_orig,"reindex(land_use.microtransit, df[orig_col_name])"
 microtransit available at destination,microtransit_dest,"reindex(land_use.microtransit, df[dest_col_name])"
-microtransit operating at time of trip,microtransit_operating,(df.depart >= microtransitStartPeriod) & (df.depart <= microtransitEndPeriod)
+microtransit operating at time of trip,microtransit_operating,True
 microtransit available,microtransit_available,(microtransit_orig > 0) & (microtransit_orig == microtransit_dest) & (s3_dist_skims < microtransitMaxDist) & microtransit_operating
 microtransit direct time,microtransit_direct_time,"np.maximum(s3_dist_skims/microtransitSpeed*60, s3_time_skims)"
 microtransit total time,microtransit_time,"np.maximum(microtransit_direct_time + microtransitDiversionConstant, microtransitDiversionFactor*microtransit_direct_time)"
 nev available at origin,nev_orig,"reindex(land_use.nev, df[orig_col_name])"
 nev available at destination,nev_dest,"reindex(land_use.nev, df[dest_col_name])"
-nev operating at time of trip,nev_operating,(df.depart >= nevStartPeriod) & (df.depart <= nevEndPeriod)
+nev operating at time of trip,nev_operating,True
 nev available,nev_available,(nev_orig > 0) & (nev_orig == nev_dest) & (s3_dist_skims < nevMaxDist) & nev_operating
 nev direct time,nev_direct_time,"np.maximum(s3_dist_skims/nevSpeed*60, s3_time_skims)"
 nev total time,nev_time,"np.maximum(nev_direct_time + nevDiversionConstant, nevDiversionFactor*nev_direct_time)"

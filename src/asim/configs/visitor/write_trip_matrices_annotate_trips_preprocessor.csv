@@ -418,11 +418,11 @@ Description,Target,Expression
 ,s3_dist_skims,((odt_skims['HOV3_L_DIST'] * (_vot_bin_s3 == 1)) + (odt_skims['HOV3_M_DIST'] * (_vot_bin_s3 == 2)) + (odt_skims['HOV3_H_DIST'] * (_vot_bin_s3 == 3)))
 microtransit available at origin,microtransit_orig,"reindex(land_use.microtransit, trips.origin)"
 microtransit available at destination,microtransit_dest,"reindex(land_use.microtransit, trips.destination)"
-microtransit operating at time of trip,microtransit_operating,(df.depart >= microtransitStartPeriod) & (df.depart <= microtransitEndPeriod)
+microtransit operating at time of trip,microtransit_operating,True
 microtransit available,microtransit_available,(microtransit_orig > 0) & (microtransit_orig == microtransit_dest) & (s3_dist_skims < microtransitMaxDist) & microtransit_operating
 nev available at origin,nev_orig,"reindex(land_use.nev, trips.origin)"
 nev available at destination,nev_dest,"reindex(land_use.nev, trips.destination)"
-nev operating at time of trip,nev_operating,(df.depart >= nevStartPeriod) & (df.depart <= nevEndPeriod)
+nev operating at time of trip,nev_operating,True
 nev available,nev_available,(nev_orig > 0) & (nev_orig == nev_dest) & (s3_dist_skims < nevMaxDist) & nev_operating
 outbound microtransit access available,microtransit_access_available_out,trips.outbound & (microtransit_orig>0) & (origin_micro_mix_dist<microtransitMaxDist) & microtransit_operating
 outbound nev access available,nev_access_available_out,trips.outbound & (nev_orig>0) & (origin_micro_mix_dist<nevMaxDist) & nev_operating
