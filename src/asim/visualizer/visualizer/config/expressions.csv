@@ -2,7 +2,7 @@ Description,Out Table,Out Col,In Table,Filter,In Col,Func,Group
 #,,,,,,,
 Auto Ownership,autoOwnership,freq,final_households,,finalweights,sum,HHVEH
 #,,,,,,,
-Household locations for workers in District 1,districtFlows,freq,final_persons,work_from_home==False and workplace_zone_id > 0,finalweights,sum,"HDISTRICT,WDISTRICT"
+Household locations for workers in District 1,districtFlows,freq,final_persons,work_from_home==False and workplace_zone_id > 0 and is_external_worker==False,finalweights,sum,"HDISTRICT,WDISTRICT"
 Total number of workers by residence district,wfh_summary,Workers,final_persons,is_worker,finalweights,sum,HDISTRICT
 Total number workers working from home in each district,wfh_summary,WFH,final_persons,work_from_home==True,finalweights,sum,HDISTRICT
 #,,,,,,,
