@@ -46,14 +46,14 @@ Description,Target,Expression
 #,tnc_shared_wait_time,"rng.lognormal_for_df(df.set_index('tour_id'), mu=tnc_shared_wait_time_mean.values, sigma=tnc_shared_wait_time_sd.values, broadcast=True, scale=True).set_axis(df.index, axis='index')"
 # ea trips,,
 ,DRIVEALONE_EA_LOW,((trips.trip_mode == 'DRIVEALONE') & is_ea  & vot1) * tour_participants
-,SHARED2_EA_LOW,"(trips.trip_mode.isin(['SHARED2','TAXI','TNC_SINGLE']) & is_ea  & vot1) * tour_participants  / OCC_SHARED2"
-,SHARED3_EA_LOW,"(trips.trip_mode.isin(['SHARED3','TNC_SHARED']) & is_ea  & vot1) * tour_participants / OCC_SHARED3"
+,SHARED2_EA_LOW,"(trips.trip_mode.isin(['SHARED2']) & is_ea  & vot1) * tour_participants  / OCC_SHARED2"
+,SHARED3_EA_LOW,"(trips.trip_mode.isin(['SHARED3']) & is_ea  & vot1) * tour_participants / OCC_SHARED3"
 ,DRIVEALONE_EA_MED,((trips.trip_mode == 'DRIVEALONE') & is_ea  & vot2) * tour_participants
-,SHARED2_EA_MED,"(trips.trip_mode.isin(['SHARED2','TAXI','TNC_SINGLE']) & is_ea  & vot2) * tour_participants  / OCC_SHARED2"
-,SHARED3_EA_MED,"(trips.trip_mode.isin(['SHARED3','TNC_SHARED']) & is_ea  & vot2) * tour_participants / OCC_SHARED3"
+,SHARED2_EA_MED,"(trips.trip_mode.isin(['SHARED2']) & is_ea  & vot2) * tour_participants  / OCC_SHARED2"
+,SHARED3_EA_MED,"(trips.trip_mode.isin(['SHARED3']) & is_ea  & vot2) * tour_participants / OCC_SHARED3"
 ,DRIVEALONE_EA_HIGH,((trips.trip_mode == 'DRIVEALONE') & is_ea  & vot3) * tour_participants
-,SHARED2_EA_HIGH,"(trips.trip_mode.isin(['SHARED2','TAXI','TNC_SINGLE']) & is_ea  & vot3) * tour_participants  / OCC_SHARED2"
-,SHARED3_EA_HIGH,"(trips.trip_mode.isin(['SHARED3','TNC_SHARED']) & is_ea  & vot3) * tour_participants / OCC_SHARED3"
+,SHARED2_EA_HIGH,"(trips.trip_mode.isin(['SHARED2']) & is_ea  & vot3) * tour_participants  / OCC_SHARED2"
+,SHARED3_EA_HIGH,"(trips.trip_mode.isin(['SHARED3']) & is_ea  & vot3) * tour_participants / OCC_SHARED3"
 ,WALK_SET_set1_EA,(is_ea & is_walk_LOC_transit) * tour_participants
 ,WALK_SET_set2_EA,(is_ea & is_walk_PRM_transit) * tour_participants
 ,WALK_SET_set3_EA,(is_ea & is_walk_MIX_transit) * tour_participants
@@ -79,14 +79,14 @@ Description,Target,Expression
 ,WALK_EA,((trips.trip_mode == 'WALK') & is_ea) * tour_participants
 # am trips,,
 ,DRIVEALONE_AM_LOW,((trips.trip_mode == 'DRIVEALONE') & is_am  & vot1) * tour_participants
-,SHARED2_AM_LOW,"(trips.trip_mode.isin(['SHARED2','TAXI','TNC_SINGLE']) & is_am  & vot1) * tour_participants  / OCC_SHARED2"
-,SHARED3_AM_LOW,"(trips.trip_mode.isin(['SHARED3','TNC_SHARED']) & is_am  & vot1) * tour_participants / OCC_SHARED3"
+,SHARED2_AM_LOW,"(trips.trip_mode.isin(['SHARED2']) & is_am  & vot1) * tour_participants  / OCC_SHARED2"
+,SHARED3_AM_LOW,"(trips.trip_mode.isin(['SHARED3']) & is_am  & vot1) * tour_participants / OCC_SHARED3"
 ,DRIVEALONE_AM_MED,((trips.trip_mode == 'DRIVEALONE') & is_am  & vot2) * tour_participants
-,SHARED2_AM_MED,"(trips.trip_mode.isin(['SHARED2','TAXI','TNC_SINGLE']) & is_am  & vot2) * tour_participants  / OCC_SHARED2"
-,SHARED3_AM_MED,"(trips.trip_mode.isin(['SHARED3','TNC_SHARED']) & is_am  & vot2) * tour_participants / OCC_SHARED3"
+,SHARED2_AM_MED,"(trips.trip_mode.isin(['SHARED2']) & is_am  & vot2) * tour_participants  / OCC_SHARED2"
+,SHARED3_AM_MED,"(trips.trip_mode.isin(['SHARED3']) & is_am  & vot2) * tour_participants / OCC_SHARED3"
 ,DRIVEALONE_AM_HIGH,((trips.trip_mode == 'DRIVEALONE') & is_am  & vot3) * tour_participants
-,SHARED2_AM_HIGH,"(trips.trip_mode.isin(['SHARED2','TAXI','TNC_SINGLE']) & is_am  & vot3) * tour_participants  / OCC_SHARED2"
-,SHARED3_AM_HIGH,"(trips.trip_mode.isin(['SHARED3','TNC_SHARED']) & is_am  & vot3) * tour_participants / OCC_SHARED3"
+,SHARED2_AM_HIGH,"(trips.trip_mode.isin(['SHARED2']) & is_am  & vot3) * tour_participants  / OCC_SHARED2"
+,SHARED3_AM_HIGH,"(trips.trip_mode.isin(['SHARED3']) & is_am  & vot3) * tour_participants / OCC_SHARED3"
 ,WALK_SET_set1_AM,(is_am & is_walk_LOC_transit) * tour_participants
 ,WALK_SET_set2_AM,(is_am & is_walk_PRM_transit) * tour_participants
 ,WALK_SET_set3_AM,(is_am & is_walk_MIX_transit) * tour_participants
@@ -112,14 +112,14 @@ Description,Target,Expression
 ,WALK_AM,((trips.trip_mode == 'WALK') & is_am) * tour_participants
 # md trips,,
 ,DRIVEALONE_MD_LOW,((trips.trip_mode == 'DRIVEALONE') & is_md  & vot1) * tour_participants
-,SHARED2_MD_LOW,"(trips.trip_mode.isin(['SHARED2','TAXI','TNC_SINGLE']) & is_md  & vot1) * tour_participants  / OCC_SHARED2"
-,SHARED3_MD_LOW,"(trips.trip_mode.isin(['SHARED3','TNC_SHARED']) & is_md  & vot1) * tour_participants / OCC_SHARED3"
+,SHARED2_MD_LOW,"(trips.trip_mode.isin(['SHARED2']) & is_md  & vot1) * tour_participants  / OCC_SHARED2"
+,SHARED3_MD_LOW,"(trips.trip_mode.isin(['SHARED3']) & is_md  & vot1) * tour_participants / OCC_SHARED3"
 ,DRIVEALONE_MD_MED,((trips.trip_mode == 'DRIVEALONE') & is_md  & vot2) * tour_participants
-,SHARED2_MD_MED,"(trips.trip_mode.isin(['SHARED2','TAXI','TNC_SINGLE']) & is_md  & vot2) * tour_participants  / OCC_SHARED2"
-,SHARED3_MD_MED,"(trips.trip_mode.isin(['SHARED3','TNC_SHARED']) & is_md  & vot2) * tour_participants / OCC_SHARED3"
+,SHARED2_MD_MED,"(trips.trip_mode.isin(['SHARED2']) & is_md  & vot2) * tour_participants  / OCC_SHARED2"
+,SHARED3_MD_MED,"(trips.trip_mode.isin(['SHARED3']) & is_md  & vot2) * tour_participants / OCC_SHARED3"
 ,DRIVEALONE_MD_HIGH,((trips.trip_mode == 'DRIVEALONE') & is_md  & vot3) * tour_participants
-,SHARED2_MD_HIGH,"(trips.trip_mode.isin(['SHARED2','TAXI','TNC_SINGLE']) & is_md  & vot3) * tour_participants  / OCC_SHARED2"
-,SHARED3_MD_HIGH,"(trips.trip_mode.isin(['SHARED3','TNC_SHARED']) & is_md  & vot3) * tour_participants / OCC_SHARED3"
+,SHARED2_MD_HIGH,"(trips.trip_mode.isin(['SHARED2']) & is_md  & vot3) * tour_participants  / OCC_SHARED2"
+,SHARED3_MD_HIGH,"(trips.trip_mode.isin(['SHARED3']) & is_md  & vot3) * tour_participants / OCC_SHARED3"
 ,WALK_SET_set1_MD,(is_md & is_walk_LOC_transit) * tour_participants
 ,WALK_SET_set2_MD,(is_md & is_walk_PRM_transit) * tour_participants
 ,WALK_SET_set3_MD,(is_md & is_walk_MIX_transit) * tour_participants
@@ -145,14 +145,14 @@ Description,Target,Expression
 ,WALK_MD,((trips.trip_mode == 'WALK') & is_md) * tour_participants
 # pm trips,,
 ,DRIVEALONE_PM_LOW,((trips.trip_mode == 'DRIVEALONE') & is_pm  & vot1) * tour_participants
-,SHARED2_PM_LOW,"(trips.trip_mode.isin(['SHARED2','TAXI','TNC_SINGLE']) & is_pm  & vot1) * tour_participants  / OCC_SHARED2"
-,SHARED3_PM_LOW,"(trips.trip_mode.isin(['SHARED3','TNC_SHARED']) & is_pm  & vot1) * tour_participants / OCC_SHARED3"
+,SHARED2_PM_LOW,"(trips.trip_mode.isin(['SHARED2']) & is_pm  & vot1) * tour_participants  / OCC_SHARED2"
+,SHARED3_PM_LOW,"(trips.trip_mode.isin(['SHARED3']) & is_pm  & vot1) * tour_participants / OCC_SHARED3"
 ,DRIVEALONE_PM_MED,((trips.trip_mode == 'DRIVEALONE') & is_pm  & vot2) * tour_participants
-,SHARED2_PM_MED,"(trips.trip_mode.isin(['SHARED2','TAXI','TNC_SINGLE']) & is_pm  & vot2) * tour_participants  / OCC_SHARED2"
-,SHARED3_PM_MED,"(trips.trip_mode.isin(['SHARED3','TNC_SHARED']) & is_pm  & vot2) * tour_participants / OCC_SHARED3"
+,SHARED2_PM_MED,"(trips.trip_mode.isin(['SHARED2']) & is_pm  & vot2) * tour_participants  / OCC_SHARED2"
+,SHARED3_PM_MED,"(trips.trip_mode.isin(['SHARED3']) & is_pm  & vot2) * tour_participants / OCC_SHARED3"
 ,DRIVEALONE_PM_HIGH,((trips.trip_mode == 'DRIVEALONE') & is_pm  & vot3) * tour_participants
-,SHARED2_PM_HIGH,"(trips.trip_mode.isin(['SHARED2','TAXI','TNC_SINGLE']) & is_pm  & vot3) * tour_participants  / OCC_SHARED2"
-,SHARED3_PM_HIGH,"(trips.trip_mode.isin(['SHARED3','TNC_SHARED']) & is_pm  & vot3) * tour_participants / OCC_SHARED3"
+,SHARED2_PM_HIGH,"(trips.trip_mode.isin(['SHARED2']) & is_pm  & vot3) * tour_participants  / OCC_SHARED2"
+,SHARED3_PM_HIGH,"(trips.trip_mode.isin(['SHARED3']) & is_pm  & vot3) * tour_participants / OCC_SHARED3"
 ,WALK_SET_set1_PM,(is_pm & is_walk_LOC_transit) * tour_participants
 ,WALK_SET_set2_PM,(is_pm & is_walk_PRM_transit) * tour_participants
 ,WALK_SET_set3_PM,(is_pm & is_walk_MIX_transit) * tour_participants
@@ -178,14 +178,14 @@ Description,Target,Expression
 ,WALK_PM,((trips.trip_mode == 'WALK') & is_pm) * tour_participants
 # ev trips,,
 ,DRIVEALONE_EV_LOW,((trips.trip_mode == 'DRIVEALONE') & is_ev  & vot1) * tour_participants
-,SHARED2_EV_LOW,"(trips.trip_mode.isin(['SHARED2','TAXI','TNC_SINGLE']) & is_ev  & vot1) * tour_participants  / OCC_SHARED2"
-,SHARED3_EV_LOW,"(trips.trip_mode.isin(['SHARED3','TNC_SHARED']) & is_ev  & vot1) * tour_participants / OCC_SHARED3"
+,SHARED2_EV_LOW,"(trips.trip_mode.isin(['SHARED2']) & is_ev  & vot1) * tour_participants  / OCC_SHARED2"
+,SHARED3_EV_LOW,"(trips.trip_mode.isin(['SHARED3']) & is_ev  & vot1) * tour_participants / OCC_SHARED3"
 ,DRIVEALONE_EV_MED,((trips.trip_mode == 'DRIVEALONE') & is_ev  & vot2) * tour_participants
-,SHARED2_EV_MED,"(trips.trip_mode.isin(['SHARED2','TAXI','TNC_SINGLE']) & is_ev  & vot2) * tour_participants  / OCC_SHARED2"
-,SHARED3_EV_MED,"(trips.trip_mode.isin(['SHARED3','TNC_SHARED']) & is_ev  & vot2) * tour_participants / OCC_SHARED3"
+,SHARED2_EV_MED,"(trips.trip_mode.isin(['SHARED2']) & is_ev  & vot2) * tour_participants  / OCC_SHARED2"
+,SHARED3_EV_MED,"(trips.trip_mode.isin(['SHARED3']) & is_ev  & vot2) * tour_participants / OCC_SHARED3"
 ,DRIVEALONE_EV_HIGH,((trips.trip_mode == 'DRIVEALONE') & is_ev  & vot3) * tour_participants
-,SHARED2_EV_HIGH,"(trips.trip_mode.isin(['SHARED2','TAXI','TNC_SINGLE']) & is_ev  & vot3) * tour_participants  / OCC_SHARED2"
-,SHARED3_EV_HIGH,"(trips.trip_mode.isin(['SHARED3','TNC_SHARED']) & is_ev  & vot3) * tour_participants / OCC_SHARED3"
+,SHARED2_EV_HIGH,"(trips.trip_mode.isin(['SHARED2']) & is_ev  & vot3) * tour_participants  / OCC_SHARED2"
+,SHARED3_EV_HIGH,"(trips.trip_mode.isin(['SHARED3']) & is_ev  & vot3) * tour_participants / OCC_SHARED3"
 ,WALK_SET_set1_EV,(is_ev & is_walk_LOC_transit) * tour_participants
 ,WALK_SET_set2_EV,(is_ev & is_walk_PRM_transit) * tour_participants
 ,WALK_SET_set3_EV,(is_ev & is_walk_MIX_transit) * tour_participants
@@ -408,4 +408,3 @@ Description,Target,Expression
 ,time_total,timeDrive + timeBike + timeWalk + timeTransitInitialWait + timeTransitInVehicle + transfersTransit
 #,,
 ,value_of_time_category_id,"np.where(vot1,1,np.where(vot2,2,3))"
-#,,
