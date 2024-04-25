@@ -152,3 +152,22 @@ CHOOSER_COLS_TO_KEEP:
   - s2_dist_skims
   - s2_time_skims
   - s2_cost_skims
+  - s3_time_skims
+  - s3_dist_skims
+  - s3_cost_skims
+  - microtransit_orig
+  - microtransit_dest
+  - microtransit_operating
+  - microtransit_available
+  - nev_orig
+  - nev_dest
+  - nev_operating
+  - nev_available
+  # - microtransit_mix_access_available_out
+  # - nev_mix_access_available_out
+  - microtransit_mix_egress_available_out
+  - nev_mix_egress_available_out
+  - microtransit_mix_access_available_in
+  - nev_mix_access_available_in
+  # - microtransit_mix_egress_available_in
+  # - nev_mix_egress_available_in
