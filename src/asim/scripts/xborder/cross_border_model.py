@@ -70,7 +70,7 @@ def create_tours(settings):
     num_tours = tour_settings['num_tours']
     pass_shares = tour_settings['pass_shares']
     purpose_probs_by_pass_type = tour_settings['purpose_shares_by_pass_type']
-    
+
     tours = pd.DataFrame(
         index=range(1,num_tours+1), columns=[
             'pass_type', 'tour_type',
@@ -85,14 +85,14 @@ def create_tours(settings):
     pass_scaled_probs = np.subtract(
        pass_cum_probs, np.random.rand(num_tours, 1))
     pass_type_ids = np.argmax((pass_scaled_probs + 1.0).astype('i4'), axis=1)
-    
+
     tours['pass_type_id'] = pass_type_ids
     tours['pass_type'] = tours['pass_type_id'].map(pass_type_dict)
     for pass_type, group in tours.groupby('pass_type'):
-        
+
         num_pass_type_tours = len(group)
         purpose_probs = OrderedDict(purpose_probs_by_pass_type[pass_type])
-        
+
         # scale probs to so they sum to 1
         prob_sum = sum(purpose_probs.values())
         purpose_probs = {k: v / prob_sum for k,v in purpose_probs.items()}
@@ -110,7 +110,7 @@ def create_tours(settings):
     tours['tour_category'] = 'non_mandatory'
     tours.loc[tours['tour_type'].isin(
         ['work', 'school']), 'tour_category'] = 'mandatory'
-    
+
     # for xborder model, only 1 person per tour and 1 tour per person
     tours['number_of_participants'] = 1
     tours['tour_num'] = 1
@@ -148,7 +148,7 @@ def _update_sparse_skims(
     input_fname = settings['input_fname']
     output_fname = settings['output_fname']
     filter_col = settings.get('filter_col', filter_col)
-    
+
     df = pd.read_csv(os.path.join(data_dir, input_fname))
 
     # rename columns from spec
@@ -160,7 +160,7 @@ def _update_sparse_skims(
             raise ValueError("filter_list param needed to filter table.")
         df = df.loc[df[filter_col].isin(filter_list)]
 
-    # create new rows for new MAZs based on original MAZ counterparts 
+    # create new rows for new MAZs based on original MAZ counterparts
     cols_to_match = ['OMAZ', 'DMAZ', 'MAZ']
     if new_mazs is not None:
         for i, row in new_mazs.iterrows():
@@ -178,13 +178,13 @@ def _update_sparse_skims(
 
 
 def _rename_skims(settings, skim_type):
-    
+
     skims_settings = settings['skims'][skim_type]
     periods = skims_settings.get('periods', [None])
     walk_speed = settings['walk_speed']
 
     for period in periods:
-        
+
         if period:
             print('Processing {0} {1} skims.'.format(period, skim_type))
             input_base_fname = skims_settings['input_base_fname']
@@ -238,15 +238,15 @@ def create_skims_and_tap_files(settings, new_mazs=None):
     tap_lines.to_csv(
         os.path.join(data_dir, settings['tap_lines_output_fname']))
     transit_skims.close()
-    
-    
+
+
     # update skims/network data
     print('Updating maz-to-maz skims.')
     _update_sparse_skims(
         skims_settings['maz_to_maz']['walk'],
         data_dir=data_dir,
         new_mazs=new_mazs)
-    
+
 
 
 def create_stop_freq_specs(settings):
@@ -266,7 +266,7 @@ def create_stop_freq_specs(settings):
 
     # convert probs to utils
     probs_df['value'] = np.log(probs_df['Percent']).clip(lower=-999)
-    
+
     # write out alts table
     alts_df = probs_df.drop_duplicates(['out','in','alt'])[['alt','out','in']]
     alts_df.to_csv(os.path.join(
@@ -376,7 +376,7 @@ def create_trip_scheduling_duration_probs(settings, los_settings):
     inbound = inbound.melt(
         id_vars=['RemainingLow','RemainingHigh','Stop','outbound'],
         var_name='duration_offset', value_name='prob')
-    
+
     duration_probs = pd.concat((outbound, inbound), axis=0, ignore_index=True)
     duration_probs.rename(columns={
         'Stop': 'stop_num',
@@ -454,9 +454,12 @@ def create_land_use_file(
     wide_wait_times = get_poe_wait_times(settings)
     mazs = pd.merge(
         mazs, wide_wait_times, left_on='poe_id', right_on='poe', how='left')
-    
+
     #add back the other external mazs
     ext_mazs = ext_mazs[~ext_mazs.TAZ.isin(mazs.TAZ)]
+    new_index = range(mazs[maz_id_field].max() + 1, mazs[maz_id_field].max() + 1 + ext_mazs.shape[0])
+    ext_mazs[maz_id_field] = new_index
+    ext_mazs['mgra'] = new_index
     mazs = mazs.append(ext_mazs, ignore_index=True)
 
     return mazs
@@ -489,7 +492,7 @@ def create_scheduling_probs_and_alts(settings, los_settings):
     assert num_ctramp_periods == max_period
     num_purposes = int(scheduling_probs['purpose_id'].nunique())
 
-    # create tour scheduling alts 
+    # create tour scheduling alts
     period_settings = los_settings['skim_time_periods']
     num_periods = int(
         period_settings['time_window'] / period_settings['period_minutes'])
@@ -519,7 +522,7 @@ def create_scheduling_probs_and_alts(settings, los_settings):
     scheduling_probs['entry_period'].replace(
         num_ctramp_periods, 0, inplace=True)
     scheduling_probs['return_period'].replace(
-        num_ctramp_periods, 0, inplace=True) 
+        num_ctramp_periods, 0, inplace=True)
     scheduling_probs = scheduling_probs.groupby(
         ['purpose_id', 'entry_period', 'return_period'])[
         'prob'].sum().reset_index()
@@ -541,12 +544,12 @@ def create_scheduling_probs_and_alts(settings, los_settings):
     # will be used to convert 40-period probabilities to 48-period probs.
     scheduling_probs['half_hour_entry_periods'] = 1
     scheduling_probs.loc[
-        scheduling_probs['entry_period'] == 1, 'half_hour_entry_periods'] = 4 
+        scheduling_probs['entry_period'] == 1, 'half_hour_entry_periods'] = 4
     scheduling_probs.loc[
         scheduling_probs['entry_period'] == 0, 'half_hour_entry_periods'] = 6
     scheduling_probs['half_hour_return_periods'] = 1
     scheduling_probs.loc[
-        scheduling_probs['return_period'] == 1, 'half_hour_return_periods'] = 4 
+        scheduling_probs['return_period'] == 1, 'half_hour_return_periods'] = 4
     scheduling_probs.loc[
         scheduling_probs['return_period'] == 0, 'half_hour_return_periods'] = 6
 
@@ -556,8 +559,8 @@ def create_scheduling_probs_and_alts(settings, los_settings):
     # each tour purpose. However, we will also need to force probabilities to
     # zero wherever the entry period is later than the return period. These
     # zero prob. rows should not count towards the number of repeats used for
-    # dividing the probability, otherwise the probabilities will sum to a 
-    # number *less* than 1 for each tour purpose. To arrive at the correct 
+    # dividing the probability, otherwise the probabilities will sum to a
+    # number *less* than 1 for each tour purpose. To arrive at the correct
     # probability divisor, we must compute the number of return periods that
     # are earlier than their entry periods, and subtract this number from the
     # total number of repeats. Surely there must be a better way to do this :(
@@ -649,7 +652,7 @@ def create_scheduling_probs_and_alts(settings, los_settings):
         asim_scheduling_probs.loc[dif_9_mask, 'asim_entry_period'] - 9,
         check_names=False, check_dtype=False
     )
-    
+
     # sanity check return periods
     for asim_return_period in range(1, 7):
         return_mask = asim_scheduling_probs[
@@ -668,7 +671,7 @@ def create_scheduling_probs_and_alts(settings, los_settings):
         asim_scheduling_probs.loc[dif_9_mask, 'return_period'],
         asim_scheduling_probs.loc[dif_9_mask, 'asim_return_period'] - 9,
         check_names=False, check_dtype=False)
-    
+
     # pivot wide
     asim_scheduling_probs = asim_scheduling_probs.pivot(
         index='purpose_id',
@@ -720,7 +723,7 @@ if __name__ == '__main__':
     parser.add_argument(
          '-o', '--output',
          help = 'Output Directory')
-    
+
     args = parser.parse_args()
     run_preprocessor = args.preprocess
     run_asim = args.asim
@@ -789,15 +792,15 @@ if __name__ == '__main__':
         # coefficients
         coef_df = pd.DataFrame(wait_time_settings['coeffs']).T
         assert len(coef_df) == num_lanes
-        
+
         # load existing wait times from last iteration
         mazs = pd.read_csv(
             os.path.join(data_dir, settings['mazs_output_fname']))
         wait_times_wide = mazs.sort_values('poe_id').loc[mazs['MAZ'].isin(
             [poe['maz_id'] for poe_id, poe in settings['poes'].items()]),
-            [col for col in mazs.columns if 'wait' in col] + 
+            [col for col in mazs.columns if 'wait' in col] +
             ['poe_id']].set_index('poe_id')
-        
+
         # ctramp inputs didn't have ready lanes so we must
         # create them and mark them as unavailable.
         if not any(['ready' in col for col in wait_times_wide.columns]):
@@ -810,7 +813,7 @@ if __name__ == '__main__':
 
         all_wait_times = [wait_times_wide]
         all_vol_dfs = []
-        
+
         num_iters = wait_time_settings['iters'] + 1
         for i in range(1, num_iters):
 
@@ -822,7 +825,7 @@ if __name__ == '__main__':
             _, stderr = process.communicate()
             if process.returncode != 0:
                 raise subprocess.SubprocessError(stderr.decode())
-            
+
             # compute crossing volume from tour POEs
             tours = pd.read_csv(output_dir + '/wait_time_tours.csv')
             tours['lane_type'] = tours['pass_type'].copy()
@@ -834,8 +837,8 @@ if __name__ == '__main__':
             # get missing rows and set vol to 0 for them
             vol_df = pd.merge(x_df, vol_df, how='left').fillna(0)
             vol_df['iter'] = i
-            
-            # compute vol per lane  
+
+            # compute vol per lane
             lane_df = pd.DataFrame(settings['poes']).T[[
                 'name', 'veh_lanes', 'ped_lanes']]
             vol_df = vol_df.merge(
@@ -897,7 +900,7 @@ if __name__ == '__main__':
                 last_iter_wait_times != 999, wait_times_wide)
 
             # some wait times must be hard-coded as nulls (999) to indicate
-            # unavailable lane types. 
+            # unavailable lane types.
             # tecate has no sentri lane and no ready lane, and is only open
             # from 5am (period 11) to 11pm (period 47)
             unavail_tecate_cols = [
@@ -918,10 +921,10 @@ if __name__ == '__main__':
 
             if 2 in new_wait_times_wide.index.values:
                 new_wait_times_wide.loc[2, unavail_tecate_cols] = 999
-            
+
             if 3 in new_wait_times_wide.index.values:
                 new_wait_times_wide.loc[3, unavail_om_east_cols] = 999
-            
+
             if 4 in new_wait_times_wide.index.values:
                 new_wait_times_wide.loc[4, unavail_jacumba_cols] = 999
 
