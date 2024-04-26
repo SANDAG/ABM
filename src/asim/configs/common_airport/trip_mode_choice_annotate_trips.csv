@@ -18,11 +18,11 @@ Description,Target,Expression
 ,_trip_mode," np.where((_is_shared3) | (df.trip_mode.isin(['HOTEL_COURTESY', 'SHUTTLEVAN'])), 'SHARED3', _trip_mode)"
 ,trip_mode,_trip_mode
 #,,
-,_cost_parking,"(arrival_mode=='PARK_LOC1')*parkLocation1CostDay"
-,_cost_parking,"_cost_parking+(arrival_mode=='PARK_LOC2')*parkLocation2CostDay"
-,_cost_parking,"_cost_parking+(arrival_mode=='PARK_LOC3')*parkLocation3CostDay"
-,_cost_parking,"_cost_parking+(arrival_mode=='PARK_LOC4')*parkLocation4CostDay"
-,cost_parking,"_cost_parking+(arrival_mode=='PARK_LOC5')*parkLocation5CostDay"
+,_cost_parking,"(arrival_mode=='PARK_LOC1')*parkLocation1CostDay*df.nights"
+,_cost_parking,"_cost_parking+(arrival_mode=='PARK_LOC2')*parkLocation2CostDay*df.nights"
+,_cost_parking,"_cost_parking+(arrival_mode=='PARK_LOC3')*parkLocation3CostDay*df.nights"
+,_cost_parking,"_cost_parking+(arrival_mode=='PARK_LOC4')*parkLocation4CostDay*df.nights"
+,cost_parking,"_cost_parking+(arrival_mode=='PARK_LOC5')*parkLocation5CostDay*df.nights"
 #,,
 ,_cost_fare_drive,0
 ,_cost_fare_drive,"_cost_fare_drive + np.where(arrival_mode == 'RIDEHAIL_LOC1',1,0) * (df.partySizeRideHailLocation1AutoDist*ridehailCostPerMile)"

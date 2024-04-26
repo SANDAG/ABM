@@ -349,6 +349,7 @@ CHOOSER_COLS_TO_KEEP:
   - parkLocation5Cost
   - partySizeRideHailLocation1AutoDist
   - partySizeRideHailLocation2AutoDist
+  - nights
 
 annotate_trips:
   SPEC: trip_mode_choice_annotate_trips
