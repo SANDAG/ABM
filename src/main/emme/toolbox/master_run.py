@@ -394,7 +394,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         relative_gap = props["convergence"]
         max_assign_iterations = 100
-        mgra_lu_input_file = props["mgra.socec.file"]
 
         #change emme databank dimensions based on number of select links - SANDAG ABM2+ Enhancements (06-28-2021)
         num_select_links =  0
