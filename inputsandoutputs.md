@@ -87,13 +87,111 @@ There are two subdirectories containing outputs for each of the two airport mode
 | **Filename** |  | **Description** | 
 | --- | --- | --- |
 | final_(airport)accessibility.csv |  | Accessibility file for airport (cbx, san) (not used, created by default) | 
-| final_(airport)households.csv |  | Household file for airport (cbx, san) | 
+| [final_(airport)households.csv](#### Airport Model household file (final_(airport)households.csv)) |  | Household file for airport (cbx, san) | 
 | final_(airport)land_use.csv |  | Land-use file for airport (cbx, san) | 
-| final_(airport)persons.csv |  | Persons file for airport (cbx, san) | 
-| final_(airport)tours.csv |  | Tour file for airport (cbx, san) | 
-| final_(airport)trips.csv |  | Trip file for airport (cbx, san) | 
+| [final_(airport)persons.csv](#### Airport Model person file (final_(airport)persons.csv)) |  | Persons file for airport (cbx, san) | 
+| [final_(airport)tours.csv](#### Airport Model tour file (final_(airport)tours.csv)) |  | Tour file for airport (cbx, san) | 
+| [final_(airport)trips.csv](#### Airport Model trip file (final_(airport)trips.csv)) |  | Trip file for airport (cbx, san) | 
 | model_metadata.yaml |  | Datalake metadata file | 
 | nmotairporttrips.(airport)_(period).omx |  | Non-motorized trip table for airport (CBX, SAN) by period (EA, AM, MD, PM, EV) | 
+
+#### Airport Model household file (final_(airport)households.csv)
+
+| Field | Description | 
+| --- | --- |
+| home_zone_id | Airport MGRA | 
+| sample_rate | Sample rate | 
+| household_id | Household ID | 
+| poverty | Poverty indicator utilized for social equity reports. Percentage value where value <= 2 (200% of the Federal Poverty Level) indicates household is classified under poverty. | 
+
+#### Airport Model person file (final_(airport)persons.csv)
+
+| Field | Description | 
+| --- | --- |
+| household_id | Household ID | 
+| person_id | Person ID | 
+
+#### Airport Model tour file (final_(airport)tours.csv)
+
+| Field | Description | 
+| --- | --- |
+| tour_id | Tour ID | 
+| purpose_id | ? | 
+| party_size | Number of persons in airport travel party | 
+| nights | Number of nights away | 
+| income | Income group 0-7,  -99 if employee | 
+| direction | Direction of trip. String. outbound: airport to non-airport, inbound: non-airport to airport | 
+| household_id | Household ID | 
+| person_id | Person ID | 
+| tour_category | Tour category. String "non_mandatory" | 
+| tour_type | Type of tour. String. "Emp": Employee, "ext": External, "res_busn": Resident business where n is?, "res_pern": Resident personal where n is?, "vis_bus": Visitor business, "vis_per": Visitor personal | 
+| origin | Origin MGRA | 
+| destination | Destination MGRA | 
+| number_of_participants | Same as party_size | 
+| outbound | TRUE if outbound, else FALSE | 
+| start | Half-hour time period of departure from tour origin. Periods are number 1 through 48 where period 1 starts at 3:00 AM. | 
+| end | Half-hour time period of arrival back at tour origin. Periods are number 1 through 48 where period 1 starts at 3:00 AM. | 
+| duration | Duration of the tour in number of half-hour periods, including all activity episodes and travel | 
+| destination_logsum | Logsum from destination choice model? | 
+| stop_frequency | out_0in, 0out_in | 
+| primary_purpose | "busn", "emp", "extn", "pern" | 
+
+#### Airport Model trip file (final_(airport)trips.csv)
+
+| Field | Description | 
+| --- | --- |
+| trip_id | Trip ID | 
+| person_id | Person ID | 
+| household_id | Household ID | 
+| primary_purpose | Primary purpose of trip: "busn": Business, where n is..., "emp": Employee, "extn": External, where n is..., "pern": Personal, where n is... | 
+| trip_num | 1 | 
+| outbound | TRUE if outbound, else FALSE | 
+| trip_count | 1 | 
+| destination | Destination MGRA | 
+| origin | Origin MGRA | 
+| tour_id | Tour ID | 
+| depart | Departure time period (1…48) | 
+| trip_mode | Trip mode (see trip mode table) | 
+| mode_choice_logsum | Mode choice logsum for trip | 
+| vot | Value of time in dollars per hour ($2023) | 
+| arrival_mode | Arrival mode from airport trip mode choice model | 
+| cost_parking | Cost of parking ($2023) | 
+| cost_fare_drive | Ridehail/Taxi fare on a trip | 
+| distance_walk | Distance walked on a trip (including access/egress for transit modes) | 
+| time_mm | Micromobility time | 
+| distance_mm | Micromobility distance | 
+| cost_fare_mm | Micromobility cost ($2023) | 
+| distance_bike | Bike distance | 
+| time_wait_drive | Ridehail/Taxi wait times for a trip | 
+| trip_period | A string indicating the skim period for the trip (“EA”,”AM”,”MD”,”PM’,”EV”) | 
+| party | Party size | 
+| tour_participants | Number of joint tour participants if joint tour, else 1 | 
+| distance_total | Trip distance | 
+| add_driver | TRUE if trip requires a driver based on airport mode (for example, TNC, or pickup), else FALSE | 
+| weight_trip | 1 | 
+| weight_person_trip | weight_trip * tour_participants | 
+| cost_operating_drive | Auto operating cost ($2023)? | 
+| inbound | TRUE if trip is from (origin) airport to (destination) non-airport zone, else FALSE | 
+| time_drive | Auto time | 
+| distance_drive | Auto distance | 
+| cost_toll_drive | Auto toll cost ($2023)? | 
+| time_transit_in_vehicle | Transit in-vehicle time | 
+| time_rapid_transit_in_vehicle | Rapid transit in-vehicle time | 
+| time_express_bus_transit_in_vehicle | Express bus in-vehicle time | 
+| time_local_bus_transit_in_vehicle | Local bus in-vehicle time | 
+| time_light_rail_transit_in_vehicle | Light rail transit in-vehicle time | 
+| time_commuter_rail_transit_in_vehicle | Commuter rail in-vehicle time | 
+| time_transit_initial_wait | Transit initial-wait time | 
+| cost_fare_transit | Transit fare ($2023) | 
+| transfers_transit | Number of transfers | 
+| time_bike | Bike time | 
+| time_walk | Walk mode time | 
+| cost_total | Sum of all costs a trip might incur (auto operating, toll, transit fare) | 
+| time_total | Total time (sum of ?) | 
+| value_of_time_category_id | Value of time bin. 1: Low, 2: Medium, 3: High | 
+| sample_rate | Sample rate | 
+| otaz | Origin TAZ | 
+| dtaz | Destination TAZ | 
 
 ### Assignment model trip tables (.\assignment)
 
@@ -122,14 +220,134 @@ This directory contains outputs from the Crossborder model, which represents all
 | **File ** | **Description** | 
 | --- | --- |
 | final_accessibility.csv | Accessibility file for Crossborder Model (not used, created by default) | 
-| final_households.csv | Household file for Crossborder Model | 
+| [final_households.csv](#### Crossborder Model household file (final_households.csv)) | Household file for Crossborder Model | 
 | final_land_use.csv | Land-use file for Crossborder Model | 
-| final_persons.csv | Persons file for Crossborder Model | 
-| final_tours.csv | Tour file for Crossborder Model | 
-| final_trips.csv | Tour file for Crossborder Model | 
+| [final_persons.csv](#### Crossborder Model person file (final_persons.csv)) | Persons file for Crossborder Model | 
+| [final_tours.csv](#### Crossborder Model tour file (final_tours.csv)) | Tour file for Crossborder Model | 
+| [final_trips.csv](#### Crossborder Model trip file (final_trips.csv)) | Tour file for Crossborder Model | 
 | model_metadata.yaml | Model run meta data for use in Datalake storage and reporting | 
 | nmCrossborderTrips_AM.omx | Non-motorized trip table for Crossborder Model by period (EA, AM, MD, PM, EV) | 
 | othrCrossborderTrips_AM.omx | Other trip table for Crossborder Model by period (EA, AM, MD, PM, EV) | 
+
+#### Crossborder Model household file (final_households.csv)
+
+| Field | Description | 
+| --- | --- |
+| sample_rate | Sample Rate | 
+| num_persons | Number of persons in travel party | 
+| origin | Origin MGRA (Border crossing station) | 
+| home_zone_id | Home MGRA (Border crossing station) | 
+| household_id | Household ID | 
+| poverty | Poverty indicator utilized for social equity reports. Percentage value where value <= 2 (200% of the Federal Poverty Level) indicates household is classified under poverty. | 
+
+#### Crossborder Model person file (final_persons.csv)
+
+| Field | Description | 
+| --- | --- |
+| household_id | Household ID | 
+| work_time_factor | Travel time sensitivity factor for work tours | 
+| non_work_time_factor | Travel time sensitivity factor for non-work tours (Sampled in person preprocessor) | 
+| origin | Origin MGRA (Border crossing station) | 
+| home_zone_id | Home MGRA (Border crossing station) | 
+| person_id | Person ID | 
+
+#### Crossborder Model tour file (final_tours.csv)
+
+| Field | Description | 
+| --- | --- |
+| tour_id | Tour ID | 
+| pass_type | Type of border crossing pass. String. "no_pass": Does not own a pass, "sentri": SENTRI pass, or "ready": READY pass | 
+| tour_type | Tour purpose. String. "other", "school", "shop", "visit", or "work" | 
+| purpose_id | Tour purpose ID. 0: work, 1: school, 2: shop, 3: visit, 4: other | 
+| tour_category | Tour category. String. Mandatory: Work or school, Non-Mandatory: Shop, visit, other | 
+| number_of_participants | Number of participants in tour | 
+| household_id | Household ID | 
+| person_id | Person ID | 
+| start | Half-hour time period of departure from tour origin. Periods are number 1 through 48 where period 1 starts at 3:00 AM. | 
+| end | Half-hour time period of arrival back at tour origin. Periods are number 1 through 48 where period 1 starts at 3:00 AM. | 
+| duration | Duration of the tour in number of half-hour periods, including all activity episodes and travel | 
+| origin | Tour origin (Border Crossing) MGRA | 
+| destination | Tour primary destination MGRA | 
+| tour_od_logsum | Tour origin-crossing-destination logsum | 
+| poe_id | Number of border crossing station | 
+| tour_mode | Tour mode | 
+| mode_choice_logsum | Tour mode choice logsum | 
+| stop_frequency | Number of stops on tour by direction. String. xout_yin where x is number of stops in the outbound direction and y is the number of stops in the inbound direction | 
+| primary_purpose | will drop | 
+
+#### Crossborder Model trip file (final_trips.csv)
+
+| Field | Description | 
+| --- | --- |
+| trip_id | Trip ID | 
+| person_id | Person ID | 
+| household_id | Household ID | 
+| primary_purpose | Purpose at primary destination. String. "other", "school", "shop", "visit", or "work" | 
+| trip_num | Sequential number of trip on half-tour from 1 to 4 | 
+| outbound | TRUE if outbound, else FALSE | 
+| trip_count | number of trips per tour. Will drop | 
+| destination | Destination MGRA | 
+| origin | Origin MGRA | 
+| tour_id | Tour ID | 
+| purpose | Purpose at trip destination. String. "other", "school", "shop", "visit", or "work" | 
+| depart | Departure time period (1…48) | 
+| trip_mode | Trip mode (see trip mode table) | 
+| trip_mode_choice_logsum | Mode choice logsum for trip | 
+| parking_cost | Parking costs at trip origin and destination, calculated as one-half of the costs at each end, with subsidies considered. | 
+| tnc_single_wait_time | Wait time for single pay TNC | 
+| tnc_shared_wait_time | Wait time for shared\pooled TNC | 
+| taxi_wait_time | Wait time for taxi | 
+| cost_parking | Cost of parking ($2023) | 
+| cost_fare_drive | ? | 
+| distance_walk | Walk mode distance? | 
+| time_mm | Micromobility time | 
+| distance_mm | Micromobility distance | 
+| cost_fare_mm | Micromobility cost ($2023) | 
+| distance_bike | Bike distance | 
+| time_wait_drive | ? | 
+| trip_period | A string indicating the skim period for the trip (“EA”,”AM”,”MD”,”PM’,”EV”) | 
+| tour_participants | Number of joint tour participants if joint tour, else 1 | 
+| distance_total | ? | 
+| cost_operating_drive | Auto operating cost ($2023)? | 
+| weight_trip | Trip weight defined as the ratio of number of particpants on a  trip to the assumed occupancy rate of a mode (SHARED2,3) | 
+| weight_person_trip | Person trip weight defined as the ratio of the number of participants on a trip to sample rate of the model run | 
+| inbound | TRUE if trip is in outbound direction, else FALSE | 
+| time_drive | Auto time | 
+| distance_drive | Auto distance | 
+| cost_toll_drive | Auto toll cost ($2023)? | 
+| time_transit_in_vehicle | Transit in-vehicle time | 
+| time_rapid_transit_in_vehicle | Rapid transit in-vehicle time | 
+| time_express_bus_transit_in_vehicle | Express bus in-vehicle time | 
+| time_local_bus_transit_in_vehicle | Local bus in-vehicle time | 
+| time_light_rail_transit_in_vehicle | Light rail transit in-vehicle time | 
+| time_commuter_rail_transit_in_vehicle | Commuter rail in-vehicle time | 
+| time_transit_initial_wait | Transit initial-wait time | 
+| cost_fare_transit | Transit fare ($2023) | 
+| transfers_transit | Number of transfers | 
+| time_bike | Bike time | 
+| time_walk | Walk mode time | 
+| cost_total | Sum of all costs a trip might incur (auto operating, toll, transit fare) | 
+| time_total | Total time (sum of ?) | 
+| value_of_time_category_id | Value of time bin. 1: Low, 2: Medium, 3: High | 
+| origin_micro_prm_dist | Distance from trip origin MGRA to closest premium transit stop by microtransit | 
+| dest_micro_prm_dist | Distance from trip destination MGRA to closest premium transit stop by microtransit | 
+| microtransit_orig | Distance from trip origin MGRA to closest local transit stop by microtransit? | 
+| microtransit_dest | Distance from trip destination MGRA to closest local transit stop by microtransit? | 
+| microtransit_available | TRUE if microtransit is available for trip, else FALSE | 
+| nev_orig | True if Neighborhood Electric Vehicle is available at origin | 
+| nev_dest | True if Neighborhood Electric Vehicle is available at destination | 
+| nev_available | TRUE if Neighborhood Electric Vehicle is available, else FALSE | 
+| microtransit_access_available_out | TRUE if microtransit is available from the origin, else FALSE | 
+| nev_access_available_out | TRUE if neighborhood electric vehicle is available from the origin, else FALSE | 
+| microtransit_egress_available_out | Availability of microtransit egress in the outbound direction | 
+| nev_egress_available_out | Availability of NEV egress in the outbound direction | 
+| microtransit_access_available_in | Availability of microtransit access in the inbound direction | 
+| nev_access_available_in | Availability of NEV egress in the inbound direction | 
+| microtransit_egress_available_in | Availability of microtransit egress in the inbound direction | 
+| nev_egress_available_in | Availability of microtransit egress in the outbound direction | 
+| sample_rate | Sample rate | 
+| otaz | Origin TAZ | 
+| dtaz | Destination TAZ | 
 
 ### Commercial Vehicle Model (.\cvm)
 
@@ -162,14 +380,14 @@ This directory contains San Diego resident travel model outputs.
 | data_dict.txt | Data dictionary for resident model, text format | 
 | final_accessibility.csv | Resident model aggregate accessibility file | 
 | final_disaggregate_accessibility.csv | Resident model disaggregate accessibility file at MGRA level | 
-| [final_households.csv](Resident Model household file (final_households.csv)) | Resident model household file | 
-| [final_joint_tour_participants.csv](Resident Model joint tour participants file (final_joint_tour_participants.csv)) | Resident model joint tour participants file | 
+| [final_households.csv](#### Resident Model household file (final_households.csv)) | Resident model household file | 
+| [final_joint_tour_participants.csv](#### Resident Model joint tour participants file (final_joint_tour_participants.csv)) | Resident model joint tour participants file | 
 | final_land_use.csv | Resident model land-use file | 
-| [final_persons.csv](Resident Model vehicle file (final_vehicles.csv)) | Resident model persons file | 
+| [final_persons.csv](#### Resident Model vehicle file (final_vehicles.csv)) | Resident model persons file | 
 | final_proto_disaggregate_accessibility.csv | Resident model disaggregate accessibility file at person level | 
-| [final_tours.csv](Resident Model tour file (final_tours.csv)) | Resident model tour file | 
-| [final_trips.csv](Resident Model trips file (final_trips.csv)) | Resident model trip file | 
-| [final_vehicles.csv](Resident Model vehicle table (final_vehicles.csv)) | Resident model vehicle file | 
+| [final_tours.csv](#### Resident Model tour file (final_tours.csv)) | Resident model tour file | 
+| [final_trips.csv](#### Resident Model trips file (final_trips.csv)) | Resident model trip file | 
+| [final_vehicles.csv](#### Resident Model vehicle table (final_vehicles.csv)) | Resident model vehicle file | 
 | log (directory) | Directory for resident model logging output | 
 | model_metadata.yaml | Resident model Datalake metadata file | 
 | nmottrips_period.omx | Resident model non-motorized trip tables by period (EA, AM, MD, PM, EV) | 
@@ -183,31 +401,11 @@ This directory contains San Diego resident travel model outputs.
 | home_zone_id | Household MGRA - same as mgra | 
 | income | Household income in dollars ($2023) | 
 | hhsize | Number of persons in household | 
-| HHT | Household dwelling unit type 0: N/A (GQ/vacant)
-1: Married couple household
-2: Other family household: Male householder, no spouse present
-3: Other family household: Female householder, no spouse present
-4: Nonfamily household: Male householder: Living alone
-5: Nonfamily household: Male householder: Not living alone
-6: Nonfamily household: Female householder: Living alone
-7: Nonfamily household: Female householder: Not living alone | 
+| HHT | Household dwelling unit type. 0: N/A (GQ/vacant), 1: Married couple household, 2: Other family household: Male householder no spouse present, 3: Other family household: Female householder no spouse present, 4: Nonfamily household: Male householder living alone, 5: Nonfamily household: Male householder: Not living alone, 6: Nonfamily household: Female householder: Living alone, 7: Nonfamily household: Female householder: Not living alone | 
 | auto_ownership | (Model output) Auto ownership | 
 | num_workers | Number of workers in household | 
-| building_category | Units in structure
-0: N/A (GQ)
-1: Mobile home or trailer
-2: One-family house detached
-3: One-family house attached
-4: 2 Apartments
-5: 3-4 Apartments
-6: 5-9 Apartments
-7: 10-19 Apartments
-8: 20-49 Apartments
-9: 50 or more apartments
-10: Boat, RV, van, etc. | 
-| unittype | Household unit type:
-0 = Non-GQ Household
-1 = GQ Household (used in Visualizer) | 
+| building_category | Units in structure. 0: N/A (GQ), 1: Mobile home or trailer, 2: One-family house detached, 3: One-family house attached, 4: 2 Apartments, 5: 3-4 Apartments, 6: 5-9 Apartments, 7: 10-19 Apartments, 8: 20-49 Apartments, 9: 50 or more apartments, 10: Boat, RV, van, etc. | 
+| unittype | Household unit type. 0: Non-GQ Household, 1: GQ Household (used in Visualizer) | 
 | sample_rate | Sample rate for household | 
 | income_in_thousands | Household income in thousands of dollars ($2023) | 
 | income_segment | Household income segment (1-4) | 
@@ -254,31 +452,21 @@ This directory contains San Diego resident travel model outputs.
 | household_id | Household ID | 
 | poverty | Poverty indicator utilized for social equity reports. Percentage value where value <= 2 (200% of the Federal Poverty Level) indicates household is classified under poverty. | 
 
-### Resident Model person file (final_persons.csv)
+#### Resident Model person file (final_persons.csv)
 
 | **Field** | **Description** | 
 | --- | --- |
 | household_id | Household ID | 
 | age | Person age in years | 
 | PNUM | Person number in household (1…n where n is number of persons in household) | 
-| sex | 1: Male
-2: Female | 
-| pemploy | Employment status of person:
-1 = Employed Full-Time
-2 = Employed Part-Time
-3 = Unemployed or Not in Labor Force
-4 = Less than 16 Years Old | 
-| pstudent | Student status of person:
-1 = Pre K-12
-2 = College Undergrad+Grad and Prof. School
-3 = Not Attending School | 
+| sex | 1: Male, 2: Female | 
+| pemploy | Employment status of person. 1: Employed Full-Time, 2: Employed Part-Time, 3: Unemployed or Not in Labor Force, 4: Less than 16 Years Old | 
+| pstudent | Student status of person. 1: Pre K-12, 2: College Undergrad+Grad and Prof. School, 3: Not Attending School | 
 | ptype | Person type  1: Full-time worker 2: Part-time worker 3: College\University Student 4: Non-Working Adult 5: Retired 6: Driving-age student 7: Non-driving age student 8: Pre-school\Age <=5 | 
-| educ | Educational attainment:
-1 = No schooling completed
-9 = High school graduate
-13 = Bacehlor's degree | 
+| educ | Educational attainment. 1: No schooling completed, 9: High school graduate, 13: Bacehlor's degree | 
 | soc2 | Two-digit Standard Occupational Classification (SOC) codes (https://www.bls.gov/oes/current/oes_stru.htm) | 
 | is_student | Person is a K12 or college student | 
+| school_segment | School location choice model's segment a student belongs to (preschool, grade school, high school, university) | 
 | is_worker | Person is a full-time or part-time worker | 
 | is_internal_worker | TRUE if worker works internal to region, else FALSE (output from Internal-External Worker Identification Model) | 
 | is_external_worker | TRUE if worker works external to region, else FALSE (output from Internal-External Worker Identification Model) | 
@@ -286,6 +474,7 @@ This directory contains San Diego resident travel model outputs.
 | time_factor_work | Travel time sensitivity factor for work tours | 
 | time_factor_nonwork | Travel time sensitivity factor for non-work tours (Sampled in person preprocessor) | 
 | naics_code | Two-digit NAICS code (https://www.census.gov/naics/) | 
+| occupation | Occupation String | 
 | work_from_home | TRUE if worker and works from home, else FALSE (output from Work From Home Model) | 
 | is_out_of_home_worker | TRUE if worker has a usual out of home work location, else FALSE (output from Work From Home Model) | 
 | external_workplace_zone_id | MGRA number of external workplace if external worker, else -1 (output from External Workplace Location Choice Model) | 
@@ -329,36 +518,12 @@ This directory contains San Diego resident travel model outputs.
 | num_add_soc_discr_tours | Total number of additional social\visiting and other discretionary tours (Output from Non-Mandatory Tour Frequency Extension Model) | 
 | person_id | Person ID | 
 | miltary | 1 if serves in the military, else 0 | 
-| grade | School grade of person:
-0 = N/A (not attending school)
-2 = K to grade 8
-5 = Grade 9 to grade 12
-6 = College undergraduate | 
-| weeks | Weeks worked during past 12 months
-0: N/A (less than 16 years old/did not work during the past 12 .months)
-1: 50 to 52 weeks worked during past 12 months
-2: 48 to 49 weeks worked during past 12 months
-3: 40 to 47 weeks worked during past 12 months
-4: 27 to 39 weeks worked during past 12 month
-5: 14 to 26 weeks worked during past 12 months
-6: 13 weeks or less worked during past 12 months | 
+| grade | School grade of person: 0 = N/A (not attending school), 2 = K to grade 8, 5 = Grade 9 to grade 12, 6 = College undergraduate | 
+| weeks | Weeks worked during past 12 months 0: N/A (less than 16 years old/did not work during the past 12 .months) 1: 50 to 52 weeks worked during past 12 months 2: 48 to 49 weeks worked during past 12 months 3: 40 to 47 weeks worked during past 12 months 4: 27 to 39 weeks worked during past 12 month 5: 14 to 26 weeks worked during past 12 months 6: 13 weeks or less worked during past 12 months | 
 | hours | Usual hours worked per week past 12 months
-0: .N/A (less than 16 years old/did not work during the past .12 months)
-1..98 .1 to 98 usual hours
-99 .99 or more usual hours | 
-| race | Recoded detailed race code
-1: .White alone
-2: Black or African American alone
-3: American Indian alone
-4: Alaska Native alone
-5: American Indian and Alaska Native tribes specified; or .American Indian or Alaska Native, not specified and no other .races
-6: Asian alone
-7: Native Hawaiian and Other Pacific Islander alone
-8: Some Other Race alone
-9: Two or More Races | 
-| hispanic | Hispanic flag:
-Non-Hispanic: 1
-Hispanic: 2 | 
+0: .N/A (less than 16 years old/did not work during the past .12 months), 1..98 .1 to 98 usual hours, 99 .99 or more usual hours | 
+| race | Recoded detailed race code 1: .White alone, 2: Black or African American alone, 3: American Indian alone, 4: Alaska Native alone, 5: American Indian and Alaska Native tribes specified; or .American Indian or Alaska Native, not specified and no other races, 6: Asian alone, 7: Native Hawaiian and Other Pacific Islander alone, 8: Some Other Race alone, 9: Two or More Races | 
+| hispanic | Hispanic flag: 1: Non-Hispanic, 2: Hispanic | 
 
 #### Resident Model vehicle file (final_vehicles.csv)
 
@@ -426,6 +591,90 @@ Hispanic: 2 |
 
 #### Resident Model trip file (final_trips.csv)
 
+| Field | Description | 
+| --- | --- |
+| trip_id | Trip ID | 
+| person_id | Person ID | 
+| household_id | Household ID | 
+| primary_purpose | Primary purpose of tour (see tour table) | 
+| trip_num | Sequential number of trip by direction (1…n where n is maximum trips on half-tour, e.g. max stops + 1) | 
+| outbound | TRUE if trip is in the outbound direction, else FALSE | 
+| destination | MGRA of trip destination | 
+| origin | MGRA of trip origin | 
+| tour_id | Tour ID | 
+| escort_participants | Space delimited string field listing person IDs of other children escorted on this trip, else null | 
+| school_escort_direction | String field indicating whether child is being dropped off at school (“outbound”) or picked up from school (“inbound”). “null” if not a child being picked up or dropped off. | 
+| purpose | Purpose at destination? | 
+| destination_logsum | Logsum from trip destination choice model. -9 if destination is tour origin or primary destination. | 
+| depart | Departure time period (1…48) | 
+| trip_mode | Trip mode string | 
+| mode_choice_logsum | Logsum from trip mode choice model | 
+| vot | Value of time for trip in dollars per hour ($2023) | 
+| owns_transponder | True if household owns transponder. Same as ownTrp | 
+| totalWaitSingleTNC | Wait time for single pay TNC | 
+| totalWaitSharedTNC | Wait time for shared\pooled TNC | 
+| s2_time_skims | HOV2 travel time | 
+| s2_dist_skims | HOV3 travel distance | 
+| s2_cost_skims | HOV2 travel toll cost | 
+| cost_parking | Parking costs at trip origin and destination, calculated as one-half of the costs at each end, with subsidies considered. | 
+| cost_fare_drive | Taxi/TNC fare for any trip or trip portion taken on these modes | 
+| distance_walk | Walk mode distance? | 
+| time_mm | Micromobility time | 
+| distance_mm | Micromobility distance | 
+| cost_fare_mm | Micromobility cost ($2023) | 
+| distance_bike | Bike distance | 
+| time_wait_drive | Waiting time for a TNC/ Taxi modes | 
+| parking_zone | MGRA from parking location choice model at destination, else -1 | 
+| trip_period | A string indicating the skim period for the trip (“EA”,”AM”,”MD”,”PM’,”EV”) | 
+| tour_participants | Number of joint tour participants if joint tour, else 1 | 
+| distance_total | Trip distance in miles | 
+| cost_operating_drive | Auto operating cost ($2023)? | 
+| weight_trip | Trip weight defined as the ratio of number of particpants on a  trip to the assumed occupancy rate of a mode (SHARED2,3) | 
+| weight_person_trip | Person trip weigth defined as the ratio of the number of particpants on a trip to sample rate of the model run | 
+| inbound | TRUE if trip is in the inbound direction, else FALSE | 
+| time_drive | Auto time | 
+| distance_drive | Auto distance | 
+| cost_toll_drive | Auto toll cost ($2023)? | 
+| time_transit_in_vehicle | Transit in-vehicle time | 
+| time_rapid_transit_in_vehicle | Rapid transit in-vehicle time | 
+| time_express_bus_transit_in_vehicle | Express bus in-vehicle time | 
+| time_local_bus_transit_in_vehicle | Local bus in-vehicle time | 
+| time_light_rail_transit_in_vehicle | Light rail transit in-vehicle time | 
+| time_commuter_rail_transit_in_vehicle | Commuter rail in-vehicle time | 
+| time_transit_initial_wait | Transit initial-wait time | 
+| cost_fare_transit | Transit fare before subsidy ($2023) | 
+| transfers_transit | Number of transfers | 
+| time_bike | Bike time | 
+| time_walk | Walk mode time | 
+| cost_total | total cost of a trip (sum of auto operating, toll, transit fare) | 
+| time_total | Total time (sum of drive, bike, walk, initial transit wait, transit time, transit transfer)) | 
+| time_transit_wait | Transit total wait time? | 
+| value_of_time_category_id | Value of time bin. 1: Low, 2: Medium, 3: High | 
+| origin_micro_prm_dist | Distance from trip origin MGRA to closest premium transit stop by microtransit | 
+| dest_micro_prm_dist | Distance from trip destination MGRA to closest premium transit stop by microtransit | 
+| microtransit_orig | Distance from trip origin MGRA to closest local transit stop by microtransit? | 
+| microtransit_dest | Distance from trip destination MGRA to closest local transit stop by microtransit? | 
+| microtransit_available | TRUE if microtransit is available for trip, else FALSE | 
+| nev_orig | Availability of Neighborhood Electric vehicle at origin | 
+| nev_dest | Availability of Neighborhood Electric vehicle at destination | 
+| nev_available | TRUE if neighborhood electric vehicle is available, else FALSE | 
+| microtransit_access_available_out | TRUE if microtransit is available from the origin, else FALSE | 
+| nev_access_available_out | TRUE if neighborhood electric vehicle is available from the origin, else FALSE? | 
+| microtransit_egress_available_out | Availability of microtransit egress in the outbound direction | 
+| nev_egress_available_out | Availability of NEV egress in the outbound direction | 
+| microtransit_access_available_in | Availability of microtransit access in the inbound direction | 
+| nev_access_available_in | Availability of NEV egress in the inbound direction | 
+| microtransit_egress_available_in | Availability of microtransit egress in the inbound direction | 
+| nev_egress_available_in | Availability of microtransit egress in the outbound direction | 
+| trip_veh_body | Body type of vehicle used for trip, else “null” | 
+| trip_veh_age | Age of vehicle used for trip, else “null” | 
+| trip_veh_fueltype | Fuel type of vehicle used for trip, else “null” | 
+| origin_purpose | Purpose at origin | 
+| sample_rate | Sample rate | 
+| origin_parking_zone | MGRA from parking location choice model at trip origin, else -1 | 
+| otaz | Origin TAZ | 
+| dtaz | Destination TAZ | 
+
 ### Skims (.\skims)
 
 This directory contains auto, transit, and non-motorized level-of-service matrices, also known as skims. Each file is a collection of origin destination tables of times and costs, at the TAZ level.
@@ -449,10 +698,133 @@ This directory contains outputs from the overnight visitor model.
 
 | File | Description | 
 | --- | --- |
-| final_households.csv | Visitor model household file | 
+| [final_households.csv](#### Visitor Model household file (final_households.csv)) | Visitor model household file | 
 | final_land_use.csv | Visitor model land-use file | 
-| final_persons.csv | Visitor model person file | 
-| final_tours.csv | Visitor model tour file | 
-| final_trips.csv | Visitor model trip file | 
+| [final_persons.csv](#### Visitor Model person file (final_persons.csv)) | Visitor model person file | 
+| [final_tours.csv](#### Visitor Model tour file (final_tours.csv)) | Visitor model tour file | 
+| [final_trips.csv](#### Visitor Model trip file (final_trips.csv)) | Visitor model trip file | 
 | model_metadata.yaml | Visitor model Datalake metadata file | 
-| nmotVisitortrips_(period).omx | Visitor model non-motorized trips by period (EA, AM, MD, PM, EV) |
+| nmotVisitortrips_(period).omx | Visitor model non-motorized trips by period (EA, AM, MD, PM, EV) | 
+
+#### Visitor Model household file (final_households.csv)
+
+| Field | Description | 
+| --- | --- |
+| home_zone_id | Home MGRA | 
+| sample_rate | Sample rate | 
+| household_id | Household ID | 
+| poverty | Poverty indicator utilized for social equity reports. Percentage value where value <= 2 (200% of the Federal Poverty Level) indicates household is classified under poverty. | 
+
+#### Visitor Model person file (final_persons.csv)
+
+| Field | Description | 
+| --- | --- |
+| household_id | Household ID | 
+| home_zone_id | Home MGRA | 
+| person_id | Person ID | 
+
+#### Visitor Model tour file (final_tours.csv)
+
+| Field | Description | 
+| --- | --- |
+| tour_id | Tour ID | 
+| tour_type | Type of tour. String. "dining", "recreation", or "work" | 
+| purpose_id | Type of tour. 0: work, 1: "dining, 2: "recreation" | 
+| visitor_travel_type | Visitor purpose. String. "business" or "personal" | 
+| tour_category | Tour category. All tour categories in the visitor model are "non-mandatory" | 
+| number_of_participants | Number of participants on tour | 
+| auto_available | Auto availability indicator 0: not available, 1: available | 
+| income | Income 0 - 4 | 
+| origin | Tour origin MGRA | 
+| tour_num | Sequential number of tour 1 to n where n is total number of tours | 
+| tour_count | Number of tours per person | 
+| household_id | Household ID | 
+| person_id | Person ID | 
+| start | Half-hour time period of departure from tour origin. Periods are number 1 through 48 where period 1 starts at 3:00 AM. | 
+| end | Half-hour time period of arrival back at tour origin. Periods are number 1 through 48 where period 1 starts at 3:00 AM. | 
+| duration | Duration of the tour in number of half-hour periods, including all activity episodes and travel | 
+| destination | Tour primary destination MGRA | 
+| destination_logsum | Tour destination choice logsum | 
+| tour_mode | Tour mode | 
+| mode_choice_logsum | Tour mode choice logsum | 
+| stop_frequency | Number of stops on tour by direction. String. xout_yin where x is number of stops in the outbound direction and y is the number of stops in the inbound direction | 
+| primary_purpose | Primary purpose of a tour. String (recreation, dining, work) | 
+
+#### Visitor Model trip file ((final_trips.csv)
+
+| Field | Description | 
+| --- | --- |
+| trip_id | Trip ID | 
+| person_id | Person ID | 
+| household_id | Household ID | 
+| primary_purpose | Purpose at primary destination of tour. String. "dining", "recreation", or "work" | 
+| trip_num | Sequential number of trip on half-tour from 1 to 4 | 
+| outbound | TRUE if outbound, else FALSE | 
+| trip_count | Number of trips in a tour | 
+| destination | Destination MGRA | 
+| origin | Origin MGRA | 
+| tour_id | Tour ID | 
+| purpose | Destination purpose. String. "dining", "recreation", or "work" | 
+| destination_logsum | Destination choice logsum | 
+| depart | Departure time period (1…48) | 
+| trip_mode | Trip mode (see trip mode table) | 
+| trip_mode_choice_logsum | Mode choice logsum for trip | 
+| vot_da | will drop | 
+| vot_s2 | will drop | 
+| vot_s3 | will drop | 
+| parking_cost | Parking costs at trip origin and destination, calculated as one-half of the costs at each end, with subsidies considered. | 
+| tnc_single_wait_time | Wait time for single pay TNC | 
+| tnc_shared_wait_time | Wait time for shared\pooled TNC | 
+| taxi_wait_time | Wait time for taxi | 
+| cost_parking | Cost of parking ($2023) | 
+| cost_fare_drive | Taxi/TNC fare for any trip or trip portion taken on these modes | 
+| distance_walk | Walk mode distance? | 
+| time_mm | Micromobility time | 
+| distance_mm | Micromobility distance | 
+| cost_fare_mm | Micromobility cost ($2023) | 
+| distance_bike | Bike distance | 
+| time_wait_drive | Ridehail/Taxi wait times for a trip | 
+| trip_period | A string indicating the skim period for the trip (“EA”,”AM”,”MD”,”PM’,”EV”) | 
+| tour_participants | Number of tour participants | 
+| distance_total | Trip distance | 
+| cost_operating_drive | Auto operating cost ($2023)? | 
+| weight_trip | Trip weight defined as the ratio of number of particpants on a  trip to the assumed occupancy rate of a mode (SHARED2,3) | 
+| weight_person_trip | Person trip weigth defined as the ratio of the number of particpants on a trip to sample rate of the model run | 
+| vot | Value of time in dollars per hour ($2023) | 
+| inbound | TRUE if trip is in outbound direction, else FALSE | 
+| time_drive | Auto time | 
+| distance_drive | Auto distance | 
+| cost_toll_drive | Auto toll cost ($2023)? | 
+| time_transit_in_vehicle | Transit in-vehicle time | 
+| time_rapid_transit_in_vehicle | Rapid transit in-vehicle time | 
+| time_express_bus_transit_in_vehicle | Express bus in-vehicle time | 
+| time_local_bus_transit_in_vehicle | Local bus in-vehicle time | 
+| time_light_rail_transit_in_vehicle | Light rail transit in-vehicle time | 
+| time_commuter_rail_transit_in_vehicle | Commuter rail in-vehicle time | 
+| time_transit_initial_wait | Transit initial-wait time | 
+| cost_fare_transit | Transit fare ($2023) | 
+| transfers_transit | Number of transfers | 
+| time_bike | Bike time | 
+| time_walk | Walk mode time | 
+| cost_total | total cost of a trip (sum of auto operating, toll, transit fare) | 
+| time_total | Total time (sum of ?) | 
+| value_of_time_category_id | Value of time bin. 1: Low, 2: Medium, 3: High | 
+| origin_micro_prm_dist | Distance from trip origin MGRA to closest premium transit stop by microtransit | 
+| dest_micro_prm_dist | Distance from trip destination MGRA to closest premium transit stop by microtransit | 
+| microtransit_orig | Distance from trip origin MGRA to closest local transit stop by microtransit? | 
+| microtransit_dest | Distance from trip destination MGRA to closest local transit stop by microtransit? | 
+| microtransit_available | TRUE if microtransit is available for trip, else FALSE | 
+| nev_orig | True if Neghoborhood Electric Vehicle is available at origin | 
+| nev_dest | True if Neghoborhood Electric Vehicle is available at destination | 
+| nev_available | TRUE if neighborhood electric vehicle is available, else FALSE | 
+| microtransit_access_available_out | TRUE if microtransit is available from the origin, else FALSE | 
+| nev_access_available_out | TRUE if neighborhood electric vehicle is available from the origin, else FALSE | 
+| microtransit_egress_available_out | Availability of microtransit egress in the outbound direction | 
+| nev_egress_available_out | Availability of NEV egress in the outbound direction | 
+| microtransit_access_available_in | Availability of microtransit access in the inbound direction | 
+| nev_access_available_in | Availability of NEV egress in the inbound direction | 
+| microtransit_egress_available_in | Availability of microtransit egress in the inbound direction | 
+| nev_egress_available_in | Availability of microtransit egress in the outbound direction | 
+| sample_rate | Sample rate | 
+| otaz | Origin TAZ | 
+| dtaz | Destination TAZ |
