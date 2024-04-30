@@ -475,8 +475,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#overnight-visitor-models" class="md-nav__link">
-    Overnight VIsitor Models
+  <a href="#overnight-visitor-model" class="md-nav__link">
+    Overnight Visitor Model
   </a>
   
 </li>
@@ -627,8 +627,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#overnight-visitor-models" class="md-nav__link">
-    Overnight VIsitor Models
+  <a href="#overnight-visitor-model" class="md-nav__link">
+    Overnight Visitor Model
   </a>
   
 </li>
@@ -777,43 +777,55 @@ Employees are not fed into the trip mode choice model. Instead, if a transit sha
 <tbody>
 <tr>
 <td>Park Location 1</td>
-<td>Party drives personal vehicle to an on or off-site parking location.</td>
+<td>Party parks personal vehicle at parking location 1.</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td>Park Location 2</td>
-<td></td>
+<td>Party parks personal vehicle at parking location 2.</td>
 </tr>
 <tr>
 <td>Park Location 3</td>
-<td></td>
+<td>Party parks personal vehicle at parking location 3.</td>
 </tr>
 <tr>
 <td>Park Location 4</td>
-<td></td>
+<td>Party parks personal vehicle at parking location 4.</td>
 </tr>
 <tr>
 <td>Park Location 5</td>
+<td>Party parks personal vehicle at parking location 5.</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
 <td></td>
 </tr>
 <tr>
 <td>Curb Location 1</td>
-<td>Party is dropped off or picked up by another driver at designated curbside location.</td>
+<td>Party is dropped off or picked up by another driver at curbside location 1.</td>
 </tr>
 <tr>
 <td>Curb Location 2</td>
-<td></td>
+<td>Party is dropped off or picked up by another driver at curbside location 2.</td>
 </tr>
 <tr>
 <td>Curb Location 3</td>
-<td></td>
+<td>Party is dropped off or picked up by another driver at curbside location 3.</td>
 </tr>
 <tr>
 <td>Curb Location 4</td>
-<td></td>
+<td>Party is dropped off or picked up by another driver at curbside location 4.</td>
 </tr>
 <tr>
 <td>Curb Location 5</td>
-<td></td>
+<td>Party is dropped off or picked up by another driver at curbside location 5</td>
 </tr>
 <tr>
 <td>Park and Escort</td>
@@ -833,64 +845,98 @@ Employees are not fed into the trip mode choice model. Instead, if a transit sha
 </tr>
 <tr>
 <td>Ridehail Location 1</td>
-<td>Party takes ridehail to ridehail pick-up/drop-off location</td>
+<td>Party arrives\departs using ridehail at ridehail location 1</td>
 </tr>
 <tr>
 <td>Ridehail Location 2</td>
+<td>Party arrives\departs using ridehail at ridehail location 2</td>
+</tr>
+<tr>
+<td></td>
 <td></td>
 </tr>
 <tr>
 <td>Taxi Location 1</td>
-<td>Party takes taxi to taxi pick-up/drop-off location</td>
+<td>Party arrives\departs using taxi at taxi location 1</td>
 </tr>
 <tr>
 <td>Taxi Location 2</td>
-<td></td>
+<td>Party arrives\departs using taxi at taxi location 2</td>
 </tr>
 <tr>
 <td>Walk Local</td>
-<td>Party walks to transit access.</td>
+<td>Party arrives\departs using walk-local bus</td>
 </tr>
 <tr>
 <td>Walk Premium</td>
-<td></td>
+<td>Party arrives\departs using walk-premium transit</td>
 </tr>
 <tr>
 <td>Walk Mix</td>
-<td></td>
+<td>Party arrives\departs using walk-local plus premium transit</td>
 </tr>
 <tr>
 <td>KNR Local</td>
-<td>Party kiss and rides to transit access.</td>
+<td>Party arrives\departs using KNR-local bus</td>
 </tr>
 <tr>
 <td>KNR Premium</td>
-<td></td>
+<td>Party arrives\departs using KNR-premium transit</td>
 </tr>
 <tr>
 <td>KNR Mix</td>
-<td></td>
+<td>Party arrives\departs using KNR-local plus premium transit</td>
 </tr>
 <tr>
 <td>TNC Local</td>
-<td>Party takes TNC to transit access.</td>
+<td>Party arrives\departs using TNC-local bus</td>
 </tr>
 <tr>
 <td>TNC Premium</td>
-<td></td>
+<td>Party arrives\departs using TNC-premium transit</td>
 </tr>
 <tr>
 <td>TNC Mix</td>
-<td></td>
+<td>Party arrives\departs using TNC-local plus premium transit</td>
 </tr>
 <tr>
 <td>Walk</td>
-<td>Walk mode is available only to employees who walk from off-site parking to the airport terminal.</td>
+<td>Party arrives\departs using walk</td>
 </tr>
 </tbody>
 </table>
-<p>For more information on the Crossborder Travel Model see technical documentation.</p>
-<h2 id="overnight-visitor-models">Overnight VIsitor Models<a class="headerlink" href="#overnight-visitor-models" title="Permanent link"> ¶</a></h2>
+<p>For more information on the Air Ground Access Travel Model see technical documentation.</p>
+<h2 id="overnight-visitor-model">Overnight Visitor Model<a class="headerlink" href="#overnight-visitor-model" title="Permanent link"> ¶</a></h2>
+<p>The Overnight Visitor Model simulates trips of visitors staying overnight in hotels, motels, short-term vacation rentals, and with friends and family. The trips are modeled as part of tours that begin and end at the place of lodging. However, unlike the resident model, the Overnight Visitor Model does not utilize a 24-hour activity schedule. Therefore it can be thought of as a simpler, tour-based model. Once each tour is generated, it is scheduled independently. The model uses the same time periods and modes as the resident model.
+The overall design of the model is shown in the figure below.</p>
+<p><img alt="" src="images/design/visitor_model_design.png" /></p>
+<ol>
+<li>
+<p>Tour Enumeration: A list of visitor parties is generated from the input household data and hotel room inventory at the MGRA level. Visitor travel parties by segment (business versus personal) are calculated based on separate rates for hotels and for households. Visitor parties are generated by purpose based on tour rates by segment, then attributed with household income and party size based on input distributions. There are three purposes in the Overnight Visitor model:</p>
+</li>
+<li>
+<p>Work:  Business travel made by business visitors.</p>
+</li>
+<li>Dining: Travel to food establishments for both business and personal visitors.</li>
+<li>
+<p>Recreational: All other non-work non-food related activities.</p>
+</li>
+<li>
+<p>Tour Level Models
+2.1 Tour Scheduling Probabilistic: The tour scheduling model uses a probabilistic draw of the scheduling distribution. This model assigns start and end times to the tour. If there is only one trip per leg on the tour, the trip is assigned the tour start/end time.
+2.2 Tour Destination Choice: The destination choice model chooses the MGRA of the primary activity location on the tour.
+2.3 Tour Mode Choice: The tour mode choice model determines the primary mode of the tour.
+3 Stop Level Models
+3.1 Stop Frequency Choice: The stop frequency model predicts the number of stops by direction based on input distributions that vary by tour purpose.
+3.2 Stop Purpose: The stop purpose model chooses the activity purpose of each intermediate stop based on input distributions that vary according to tour purpose.
+3.3 Stop Location Choice: The location choice model chooses the MGRA for each intermediate stop on the tour.</p>
+</li>
+<li>Trip Level Models
+4.1 Trip Departure Choice: The trip scheduling model assigns depart times for each trip on a tour based on input distributions that vary by direction (inbound versus outbound), stop number, and number of periods remaining on the tour.
+4.2 Trip Mode Choice: Each trip is assigned a trip mode, consistent with the modes in the resident model.
+4.3 Trip Assignment: Trips are aggregated by time of day, mode occupancy, value-of-time, and origin-destination TAZ and assigned simultaneously with other trips.</li>
+</ol>
+<p>For more information on the Overnight Visitor Travel Model see technical documentation.</p>
 
 
 
