@@ -228,7 +228,7 @@ def update_tables():
         output_table = pipeline.get_table(table_name)
         
         # set sample rate to float
-        if table_name == "households":
+        if table_name == "households" and setting("model_name") == "resident":
             output_table["sample_rate"] = output_table["sample_rate"].astype(float)
             input_households = pd.read_csv(os.path.join(input_dir,"households.csv"),
             usecols=[
@@ -240,14 +240,14 @@ def update_tables():
             output_table = output_table.merge(input_households,how="inner",left_on="household_id",right_on="hhid")
 
         # split vehicle_type column
-        if table_name == "vehicles":
+        if table_name == "vehicles" and setting("model_name") == "resident":
             output_table[["vehicle_category", "num_occupants", "fuel_type"]] = output_table[
                 "vehicle_type"
             ].str.split(pat="_", expand=True)
             # output_table.drop(columns={'vehicle_type'}, inplace=True) ## TODO decide whether to drop column here or in bronze -> silver filter
         
         # add missing columns from input persons file
-        if table_name == "persons":
+        if table_name == "persons" and setting("model_name") == "resident":
             input_persons = pd.read_csv(os.path.join(input_dir,"persons.csv"),
             usecols=[
             "perid",
