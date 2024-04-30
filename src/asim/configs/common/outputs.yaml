@@ -434,6 +434,43 @@ trips:
     - is_drive_loc
     - is_drive_prm
     - is_drive_mix
+    - vot_da
+    - vot_s2
+    - vot_s3
+    - parkingCost
+    - is_ea
+    - is_am
+    - is_md
+    - is_pm
+    - is_ev
+    - ownTrp
+    - vot1
+    - vot2
+    - vot3
+    - vot_bin_da
+    - vot_bin_s2
+    - vot_bin_s3
+    - failed
+    - parkLocation1Cost
+    - parkLocation2Cost
+    - parkLocation3Cost
+    - parkLocation4Cost
+    - parkLocation5Cost
+    - partySizeRideHailLocation1AutoDist
+    - partySizeRideHailLocation2AutoDist
+    - s2_dist_skims
+    - s2_time_skims
+    - s2_cost_skims
+    - c_ivt
+    - c_fwt
+    - c_xwt
+    - c_wacc
+    - c_wegr
+    - c_waux
+    - c_xfers
+    - c_walk_time
+    - c_xfers_pnr
+    - cost_per_mile
 
   rename_columns:
     distance: distance_total
@@ -583,6 +620,33 @@ households:
     - emp_non_ws_oth
     - budgetroom
     - economyroom
+    - hh_work_auto_savings_ratio
+    - adultschenrl
+    - total_emp_revised
+    - num_children
+    - num_young_children
+    - num_children_6_to_12
+    - num_children_5_to_15
+    - num_children_16_to_17
+    - num_gradeschool
+    - num_highschool
+    - num_college_age
+    - num_young_adults
+    - num_predrive_child
+    - num_nonworker_adults
+    - num_university_students
+    - num_fullTime_workers
+    - num_partTime_workers
+    - num_retired_adults
+    - num_highschool_graduates
+    - num_children_6_to_15
+    - num_young_retirees
+    - num_old_retirees
+    - non_family
+    - family
+    - home_is_urban
+    - home_is_rural
+    - num_hh_in_zone
   rename_columns:
     bldgsz: building_category
     hhid: household_id
@@ -786,11 +850,65 @@ land_use:
 persons:
   remove_columns:
     - naics2_original_code
+    - age_16_to_19
+    - age_16_p
+    - adult
+    - male
+    - female
+    - has_non_worker
+    - has_retiree
+    - has_preschool_kid
+    - has_driving_kid
+    - has_school_kid
+    - has_full_time
+    - has_part_time
+    - has_university
+    - student_is_employed
+    - nonstudent_to_school
+    - is_preschool
+    - is_gradeschool
+    - is_highschool
+    - is_university
+    - is_fulltime_worker
+    - is_parttime_worker
+    - is_income_less25K
+    - is_income_25K_to_60K
+    - is_income_60K_to_120K
+    - is_income_greater60K
+    - is_income_greater120K
+    - is_non_worker_in_HH
+    - is_all_adults_full_time_workers
+    - is_pre_drive_child_in_HH
+    - workplace_in_cbd
+    - under16_not_at_school
+    - has_preschool_kid_at_home
+    - has_school_kid_at_home
+    - work_and_school_and_worker
+    - work_and_school_and_student
+    - has_pre_school_child_with_mandatory
+    - has_driving_age_child_with_mandatory
+    - num_non_escort_tours
+    - num_shop_maint_tours
+    - num_shop_maint_escort_tours
+    - num_soc_discr_tours
+    - demographic_segment
+    - time_distrib_mean_work
+    - time_distrib_stddev_nonwork
+    - time_distrib_mean_nonwork
+    - time_distrib_stddev_work
+   
   rename_columns:
     rac1p: race
     hisp: hispanic
     perid: person_id
 
 tours:
+  remove_columns:
+    - tour_id_temp
+    - purpose
+    - mode_segment
+    - parent_tour_id
+    - free_parking_at_work
+
   rename_columns:
     vehicle_occup_3.5: vehicle_occup_3_5

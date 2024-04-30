@@ -77,25 +77,25 @@ CONSTANTS:
   terminal: 1
   central_mobility_hub: 2
   nearest: 3
-  parkLocation1Mgra: 9350
+  terminalMgra: &terminalMgra 9350
+  parkLocation1Mgra: *terminalMgra
   parkLocation2Mgra: -999
   parkLocation3Mgra: -999
   parkLocation4Mgra: -999
   parkLocation5Mgra: -999
-  parkEscortLocationMgra: 9350
-  rentalLocationMgra: 9350
-  terminalMgra: 9350
+  parkEscortLocationMgra: *terminalMgra
+  rentalLocationMgra: *terminalMgra
   centralMobilityHubMgra: 0
-  ridehailLocation1Mgra: 9350
+  ridehailLocation1Mgra: *terminalMgra
   ridehailLocation2Mgra: -999
-  transitMgra: -999
-  curbLocation1Mgra: 9350
+  transitMgra: *terminalMgra
+  curbLocation1Mgra: *terminalMgra
   curbLocation2Mgra: -999
   curbLocation3Mgra: -999
   curbLocation4Mgra: -999
   curbLocation5Mgra: -999
-  shuttleVanLocation: terminalMgra
-  hotelCourtesyLocation: terminalMgra
+  shuttleVanLocation: *terminalMgra
+  hotelCourtesyLocation: *terminalMgra
   orig_col_name: origin
   dest_col_name: destination
   costPerMile: 16.3
