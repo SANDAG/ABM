@@ -475,7 +475,7 @@ trips:
   rename_columns:
     distance: distance_total
     weightTrip: weight_trip
-    weightPersonTrip: weight_person_trip 
+    weightPersonTrip: weight_person_trip
     weightPerson_trip: weight_person_trip
     timeDrive: time_drive
     ownsTransponder: owns_transponder
@@ -623,7 +623,7 @@ households:
     - hh_work_auto_savings_ratio
     - adultschenrl
     - total_emp_revised
-    - num_children
+    # - num_children
     - num_young_children
     - num_children_6_to_12
     - num_children_5_to_15
@@ -633,7 +633,7 @@ households:
     - num_college_age
     - num_young_adults
     - num_predrive_child
-    - num_nonworker_adults
+    # - num_nonworker_adults
     - num_university_students
     - num_fullTime_workers
     - num_partTime_workers
@@ -896,7 +896,7 @@ persons:
     - time_distrib_stddev_nonwork
     - time_distrib_mean_nonwork
     - time_distrib_stddev_work
-   
+
   rename_columns:
     rac1p: race
     hisp: hispanic
