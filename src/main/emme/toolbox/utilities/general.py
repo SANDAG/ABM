@@ -77,6 +77,17 @@ class NetworkCalculator(object):
         return self._network_calc(spec, self._scenario)
 
 
+class AvailableNodeIDTracker(object):
+    def __init__(self, network, start=999999):
+        self._network = network
+        self._node_id = start
+
+    def get_id(self):
+        while self._network.node(self._node_id):
+            self._node_id -= 1
+        return self._node_id
+
+
 @_context
 def temp_matrices(emmebank, mat_type, total=1, default_value=0.0):
     matrices = []
@@ -141,10 +152,10 @@ class DataTableProc(object):
         self._dt_db = dt_db = project.data_tables()
         self._convert_numeric = convert_numeric
         if path:
-            #try:
-            source = _dt.DataSource(path)
-            #except:
-            #    raise Exception("Cannot open file at %s" % path)
+            try:
+                source = _dt.DataSource(path)
+            except _dt.Error as error:
+                raise Exception("Cannot open file at %s" % path)
             layer = source.layer(table_name)
             self._data = layer.get_data()
         elif data:
@@ -179,7 +190,14 @@ class DataTableProc(object):
             attr = data.attribute("geometry")
             for record in attr.values:
                 geo_obj = _ogr.CreateGeometryFromWkt(record.text)
-                geo_coords.append(geo_obj.GetPoints())
+                if _ogr.GeometryTypeToName(geo_obj.GetGeometryType()) == 'Multi Line String':
+                    coords = []
+                    for line in geo_obj:
+                        coords.extend(line.GetPoints())
+                else:
+                    coords = geo_obj.GetPoints()
+                coords = [point[:2] for point in coords]
+                geo_coords.append(coords)
             self._values.append(geo_coords)
             self._attr_names.append("geo_coordinates")
 
