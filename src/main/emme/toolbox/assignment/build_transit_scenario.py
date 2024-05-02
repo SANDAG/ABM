@@ -118,6 +118,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
         self.attributes = [
             "period", "scenario_id", "base_scenario_id",
             "data_table_name", "scenario_title", "overwrite"]
+        self._node_id_tracker = None
 
     def page(self):
         if not self.data_table_name:
@@ -218,6 +219,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             for field in base_scenario.network_fields():
                 scenario.create_network_field(field.type, field.name, field.atype, field.description)
             network = base_scenario.get_network()
+            self._node_id_tracker = gen_utils.AvailableNodeIDTracker(network)
             new_attrs = [
                 ("TRANSIT_LINE", "@xfer_from_day", "Fare for xfer from daypass/trolley"),
                 ("TRANSIT_LINE", "@xfer_from_premium", "Fare for first xfer from premium"),
@@ -235,7 +237,6 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 attr.description = desc
                 network.create_attribute(elem, name)
             network.create_attribute("TRANSIT_LINE", "xfer_from_bus")
-            self._init_node_id(network)
 
             transit_passes = gen_utils.DataTableProc("%s_transit_passes" % data_table_name)
             transit_passes = {row["pass_type"]: row["cost"] for row in transit_passes}
@@ -322,28 +323,23 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             self.timed_transfers(network, timed_transfers_with_walk, period)
             #self.connect_circle_lines(network)
             #self.duplicate_tap_adajcent_stops(network)
-            # The fixed guideway travel times are stored in "@trtime_link_xx"
+            # The fixed guideway travel times are stored in "@trtime"
             # and copied to data2 (ul2) for the ttf
             # The congested auto times for mixed traffic are in "@auto_time"
             # (output from traffic assignment) which needs to be copied to auto_time (a.k.a. timau)
             # (The auto_time attribute is generated from the VDF values which include reliability factor)
+            ## also copying auto_time to ul1, so it does not get wiped when transit connectors are created. 
+            
             src_attrs = [params["fixed_link_time"]]
             dst_attrs = ["data2"]
             if scenario.has_traffic_results and "@auto_time" in scenario.attributes("LINK"):
-                src_attrs.append("@auto_time")
-                dst_attrs.append("auto_time")
+                src_attrs.extend(["@auto_time", "@auto_time"])
+                dst_attrs.extend(["auto_time", "data1"])
             values = network.get_attribute_values("LINK", src_attrs)
             network.set_attribute_values("LINK", dst_attrs, values)
 
             scenario.publish_network(network)
-            
-            ##copying auto_time to ul1, so it does not get wiped when transit connectors are created. 
-            if scenario.has_traffic_results and "@auto_time" in scenario.attributes("LINK"):
-                copy_att(from_attribute_name='timau',
-                to_attribute_name='ul1',
-                from_scenario=scenario,
-                to_scenario=scenario)
-
+            self._node_id_tracker = None
             return scenario 
 
     @_m.logbook_trace("Add timed-transfer links", save_arguments=True)
@@ -449,13 +445,11 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             if near_side_stop:
                 in_link.length = length
                 out_link.length = 0
-                for p in ["ea", "am", "md", "pm", "ev"]:
-                    out_link["@trtime_link_" + p] = 0
+                out_link["@trtime"] = 0
             else:
                 out_link.length = length
                 in_link.length = 0
-                for p in ["ea", "am", "md", "pm", "ev"]:
-                    in_link["@trtime_link_" + p] = 0
+                in_link["@trtime"] = 0
 
             for seg in in_link.segments():
                 if not near_side_stop:
@@ -476,10 +470,10 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
         split_links = {}
         for transfer in network_transfers:
             new_alight_node = split_link(
-                transfer["from_link"], self._get_node_id(), transfer["from_lines"],
+                transfer["from_link"], self._node_id_tracker.get_id(), transfer["from_lines"],
                 split_links, "allow_alightings")
             new_board_node = split_link(
-                transfer["to_link"], self._get_node_id(), transfer["to_lines"],
+                transfer["to_link"], self._node_id_tracker.get_id(), transfer["to_lines"],
                 split_links, "allow_boardings", waits=transfer["wait"])
             walk_link = transfer["walk_link"]
             transfer_link = network.create_link(
@@ -508,7 +502,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             if first_seg.i_node == last_seg.i_node:
                 # Add new node, offset from existing node
                 start_node = line.segment(0).i_node
-                xfer_node = network.create_node(self._get_node_id(), False)
+                xfer_node = network.create_node(self._node_id_tracker.get_id(), False)
                 xfer_node["@network_adj"] = 2
                 xfer_node.x, xfer_node.y = offset_coords(start_node)
                 network.create_link(start_node, xfer_node, [line.vehicle.mode])
@@ -556,11 +550,3 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                         seg[k] = v
 
         network.delete_attribute("NODE", "circle_lines")
-
-    def _init_node_id(self, network):
-        new_node_id = max(n.number for n in network.nodes())
-        self._new_node_id = math.ceil(new_node_id / 10000.0) * 10000
-
-    def _get_node_id(self):
-        self._new_node_id += 1
-        return self._new_node_id

@@ -172,6 +172,7 @@ Export network results to csv files for SQL data loader."""
         # items are ("column name", "attribute name") or ("column name", ("attribute name", default))
         hwylink_attrs = [
             ("ID", "@tcov_id"),
+            ("HWYSegGUID", "#hwyseg_guid"),
             ("Length", "length"),
             ("Dir", "is_one_way"),
             ("hwycov-id:1", "@tcov_id"),
@@ -205,20 +206,20 @@ Export network results to csv files for SQL data loader."""
             ("FFC", "type"),
             ("CLASS", "zero"),
             ("ASPD", "@speed_adjusted"),
-            ("IYR", "@year_open_traffic"),
-            ("IPROJ", "@project_code"),
-            ("IJUR", "@jurisdiction_type"),
-            ("IFC", "type"),
-            ("IHOV", "@lane_restriction"),
-            ("ITRUCK", "@truck_restriction"),
-            ("ISPD", "@speed_posted"),
-            ("ITSPD", "zero"),
-            ("IWAY", "iway"),
-            ("IMED", "@median"),
+            ("YR", "@year_open_traffic"),
+            ("PROJ", "@project_code"),
+            ("FC", "type"),
+            ("HOV", "@hov"),
+            ("EATRUCK", "@truck_ea"),
+            ("AMTRUCK", "@truck_am"),
+            ("MDTRUCK", "@truck_md"),
+            ("PMTRUCK", "@truck_pm"),
+            ("EVTRUCK", "@truck_ev"),
+            ("SPD", "@speed_posted"),
+            ("TSPD", "zero"),
+            ("WAY", "way"),
+            ("MED", "@median"),
             ("COST", "@cost_operating"),
-            ("ITOLLO", "@toll_md"),
-            ("ITOLLA", "@toll_am"),
-            ("ITOLLP", "@toll_pm"),
         ]
         directional_attrs = [
             ("ABLNO", "@lane_md", "0"),
@@ -236,15 +237,6 @@ Export network results to csv files for SQL data loader."""
             ("ABLLB", "zero", "0"),
             ("ABGC", "@green_to_cycle_init", "0"),
             ("ABPLC", "per_lane_capacity", "1900"),
-            ("ABCPO", "@capacity_link_md", "999999"),
-            ("ABCPA", "@capacity_link_am", "999999"),
-            ("ABCPP", "@capacity_link_pm", "999999"),
-            ("ABCXO", "@capacity_inter_md", "999999"),
-            ("ABCXA", "@capacity_inter_am", "999999"),
-            ("ABCXP", "@capacity_inter_pm", "999999"),
-            ("ABCHO", "@capacity_hourly_op", "0"),
-            ("ABCHA", "@capacity_hourly_am", "0"),
-            ("ABCHP", "@capacity_hourly_pm", "0"),
             ("ABTMO", "@time_link_md", "999"),
             ("ABTMA", "@time_link_am", "999"),
             ("ABTMP", "@time_link_pm", "999"),
@@ -263,13 +255,14 @@ Export network results to csv files for SQL data loader."""
         hwylink_attrs.append(("relifac", "relifac"))
 
         time_period_atts = [
-            ("ITOLL2",    "@toll"),
-            ("ITOLL3",    "@cost_auto"),
-            ("ITOLL4",    "@cost_med_truck"),
-            ("ITOLL5",    "@cost_hvy_truck"),
-            ("ITOLL",     "toll_hov"),
+            ("TOLL2",     "@toll"),
+            ("TOLL3",     "@cost_auto"),
+            ("TOLL4",     "@cost_med_truck"),
+            ("TOLL5",     "@cost_hvy_truck"),
+            ("TOLL",      "toll_hov"),
             ("ABCP",      "@capacity_link", "999999"),
             ("ABCX",      "@capacity_inter", "999999"),
+            ("ABCH",      "@capacity_hourly", "0"),
             ("ABTM",      "@time_link", "999"),
             ("ABTX",      "@time_inter", "0"),
             ("ABLN",      "@lane", "0"),
@@ -334,7 +327,7 @@ Export network results to csv files for SQL data loader."""
             network.set_attribute_values("LINK", dst_attrs, values)
         # add in and calculate additional columns
         new_attrs = [
-            ("zero", 0), ("is_one_way", 0), ("iway", 2), ("length_feet", 0),
+            ("zero", 0), ("is_one_way", 0), ("way", 2), ("length_feet", 0),
             ("toll_hov", 0), ("per_lane_capacity", 1900),
             ("progression_factor", 1.0), ("alpha1", 0.8), ("beta1", 4.0),
             ("alpha2", 4.5), ("beta2", 2.0), ("relifac", 1.0),
@@ -348,7 +341,7 @@ Export network results to csv files for SQL data loader."""
             network.create_attribute("LINK", "hov3_total_gencost" + period, 0)
         for link in network.links():
             link.is_one_way = 1 if link.reverse_link else 0
-            link.iway = 2 if link.reverse_link else 1
+            link.way = 2 if link.reverse_link else 1
             link.length_feet = link.length * 5280
             for period in periods:
                 link["toll_hov"  + period] = link["@cost_hov2" + period] - link["@cost_operating"]
@@ -502,8 +495,9 @@ Export network results to csv files for SQL data loader."""
         # Note: Node analysis for transfers is VERY time consuming
         #       this implementation will be replaced when new Emme version is available
 
-        trrt_atts = ["Route_ID","Route_Name","Mode","AM_Headway","PM_Headway","OP_Headway","Night_Headway","Night_Hours","Config","Fare"]
-        trstop_atts = ["Stop_ID","Route_ID","Link_ID","Pass_Count","Milepost","Longitude","Latitude","NearNode","FareZone","StopName"]
+        trrt_atts = ["Route_ID","Route_Name","Mode","AM_Headway","PM_Headway","Midday_Headway","Evening_Headway","EarlyAM_Headway",
+                     "Evening_Hours", "EarlyAM_Hours", "Config","Fare"]
+        trstop_atts = ["Stop_ID","Route_ID","Link_ID","Link_GUID","Pass_Count","Milepost","Longitude","Latitude","NearNode","StopName"]
 
         #transit route file
         trrt_infile = os.path.join(input_path, "trrt.csv")
@@ -518,7 +512,7 @@ Export network results to csv files for SQL data loader."""
         #transit stop file
         trstop_infile = os.path.join(input_path, "trstop.csv")
         trstop = pd.read_csv(trstop_infile)
-        trstop = trstop.rename(columns={"HwyNode":"NearNode"})
+        trstop = trstop.rename(columns={"Node":"NearNode"})
         trstop = trstop.rename(columns=lambda x:x.strip())
         trstop_out = trstop[trstop_atts]
         trstop_outfile = os.path.join(export_path, "trstop.csv")
@@ -970,8 +964,7 @@ Export network results to csv files for SQL data loader."""
         link_result_attrs = link_results.values() + ["aux_transit_volume"]
         link_attrs = network.attributes("LINK")
         link_modified_attrs = [
-            "length", "@trtime_link_ea", "@trtime_link_am", "@trtime_link_md",
-            "@trtime_link_pm", "@trtime_link_ev", link_results["link_transit_flow"]]
+            "length", "@trtime", link_results["link_transit_flow"]]
         seg_attrs = network.attributes("TRANSIT_SEGMENT")
         line_attrs = network.attributes("TRANSIT_LINE")
 
@@ -1018,8 +1011,8 @@ Export network results to csv files for SQL data loader."""
             elif node["@network_adj"] == 3:
                 orig_node = network.node(node["@network_adj_src"])
                 # Remove transfer walk links and copy data to source walk link
-                for link in node.outgoing_links():
-                    if xfer_mode in link.modes and link.j_node["@network_adj"] == 3:
+                for link in _chain(node.incoming_links(), node.outgoing_links()):
+                    if xfer_mode in link.modes and link.j_node["@network_adj"] == 3 and link.i_node["@network_adj"] == 3:
                         orig_xfer_link = get_xfer_link(orig_node, link)
                         for attr in link_result_attrs:
                             orig_xfer_link[attr] += link[attr]

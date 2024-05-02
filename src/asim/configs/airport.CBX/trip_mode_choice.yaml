@@ -88,7 +88,7 @@ CONSTANTS:
   centralMobilityHubMgra: 0
   ridehailLocation1Mgra: *terminalMgra
   ridehailLocation2Mgra: -999
-  transitMgra: &terminalMgra
+  transitMgra: *terminalMgra
   curbLocation1Mgra: *terminalMgra
   curbLocation2Mgra: -999
   curbLocation3Mgra: -999

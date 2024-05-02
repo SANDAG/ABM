@@ -142,37 +142,67 @@ Employees are not fed into the trip mode choice model. Instead, if a transit sha
 3.3 Airport Returns: Airport trips where the party is dropped of curbside or parked and escorted are assumed to also have the driver make a return trip to the non-airport location. This procedure is done as a post-processing step after mode choice and before trip tables are written out. An ‘airport_returns.yml’ file takes a user setting to determine which trip modes will include a return trip. These trips records are flagged and duplicated. The duplicated trips swap the origin and destination of the original trip and are assigned a unique trip id. These trips are tagged with ‘trip_num =2’ so they are easily sorted in any additional processing (such as for writing trip matrices).
 3.4 Write trip matrices: The write trip matrices step converts the trip lists into vehicle trip matrices. The matrices are segmented by trip mode and value of time bins. The vehicle trip modes in the matrices include SOV, HOV2, HOV3+, Taxi, and TNC-single. Value of time segmentation is either low, medium, or high bins based on the thresholds set in the model settings.
 #### Airport Ground Access Model Trip Arrival Modes
+
 | **Arrival Mode** | **Description** | 
 | --- | --- |
-| Park Location 1 | Party drives personal vehicle to an on or off-site parking location. | 
-| Park Location 2 |  | 
-| Park Location 3 |  | 
-| Park Location 4 |  | 
-| Park Location 5 |  | 
-| Curb Location 1 | Party is dropped off or picked up by another driver at designated curbside location. | 
-| Curb Location 2 |  | 
-| Curb Location 3 |  | 
-| Curb Location 4 |  | 
-| Curb Location 5 |  | 
+| Park Location 1 | Party parks personal vehicle at parking location 1. | 
+|  |  | 
+| Park Location 2 | Party parks personal vehicle at parking location 2. | 
+| Park Location 3 | Party parks personal vehicle at parking location 3. | 
+| Park Location 4 | Party parks personal vehicle at parking location 4. | 
+| Park Location 5 | Party parks personal vehicle at parking location 5. | 
+|  |  | 
+|  |  | 
+| Curb Location 1 | Party is dropped off or picked up by another driver at curbside location 1. | 
+| Curb Location 2 | Party is dropped off or picked up by another driver at curbside location 2. | 
+| Curb Location 3 | Party is dropped off or picked up by another driver at curbside location 3. | 
+| Curb Location 4 | Party is dropped off or picked up by another driver at curbside location 4. | 
+| Curb Location 5 | Party is dropped off or picked up by another driver at curbside location 5 | 
 | Park and Escort | Party is driven in personal vehicle, parks on-site at the airport and is escorted to/from airport. | 
 | Rental Car | Party arrives/departs by rental car. | 
 | Shuttle Van | Party takes shuttle van. | 
 | Hotel Courtesy | Party takes hotel courtesy transportation. | 
-| Ridehail Location 1 | Party takes ridehail to ridehail pick-up/drop-off location | 
-| Ridehail Location 2 |  | 
-| Taxi Location 1 | Party takes taxi to taxi pick-up/drop-off location | 
-| Taxi Location 2 |  | 
-| Walk Local | Party walks to transit access. | 
-| Walk Premium |  | 
-| Walk Mix |  | 
-| KNR Local | Party kiss and rides to transit access. | 
-| KNR Premium |  | 
-| KNR Mix |  | 
-| TNC Local | Party takes TNC to transit access. | 
-| TNC Premium |  | 
-| TNC Mix |  | 
-| Walk | Walk mode is available only to employees who walk from off-site parking to the airport terminal. | 
+| Ridehail Location 1 | Party arrives\departs using ridehail at ridehail location 1 | 
+| Ridehail Location 2 | Party arrives\departs using ridehail at ridehail location 2 | 
+|  |  | 
+| Taxi Location 1 | Party arrives\departs using taxi at taxi location 1 | 
+| Taxi Location 2 | Party arrives\departs using taxi at taxi location 2 | 
+| Walk Local | Party arrives\departs using walk-local bus | 
+| Walk Premium | Party arrives\departs using walk-premium transit | 
+| Walk Mix | Party arrives\departs using walk-local plus premium transit | 
+| KNR Local | Party arrives\departs using KNR-local bus | 
+| KNR Premium | Party arrives\departs using KNR-premium transit | 
+| KNR Mix | Party arrives\departs using KNR-local plus premium transit | 
+| TNC Local | Party arrives\departs using TNC-local bus | 
+| TNC Premium | Party arrives\departs using TNC-premium transit | 
+| TNC Mix | Party arrives\departs using TNC-local plus premium transit | 
+| Walk | Party arrives\departs using walk | 
 
-For more information on the Crossborder Travel Model see technical documentation.
+For more information on the Air Ground Access Travel Model see technical documentation.
 
-## Overnight VIsitor Models
+## Overnight Visitor Model
+The Overnight Visitor Model simulates trips of visitors staying overnight in hotels, motels, short-term vacation rentals, and with friends and family. The trips are modeled as part of tours that begin and end at the place of lodging. However, unlike the resident model, the Overnight Visitor Model does not utilize a 24-hour activity schedule. Therefore it can be thought of as a simpler, tour-based model. Once each tour is generated, it is scheduled independently. The model uses the same time periods and modes as the resident model.
+The overall design of the model is shown in the figure below.
+
+![](images/design/visitor_model_design.png)
+
+1. Tour Enumeration: A list of visitor parties is generated from the input household data and hotel room inventory at the MGRA level. Visitor travel parties by segment (business versus personal) are calculated based on separate rates for hotels and for households. Visitor parties are generated by purpose based on tour rates by segment, then attributed with household income and party size based on input distributions. There are three purposes in the Overnight Visitor model:
+
+* Work:  Business travel made by business visitors.
+* Dining: Travel to food establishments for both business and personal visitors.
+* Recreational: All other non-work non-food related activities.
+
+2. Tour Level Models
+2.1 Tour Scheduling Probabilistic: The tour scheduling model uses a probabilistic draw of the scheduling distribution. This model assigns start and end times to the tour. If there is only one trip per leg on the tour, the trip is assigned the tour start/end time.
+2.2 Tour Destination Choice: The destination choice model chooses the MGRA of the primary activity location on the tour.
+2.3 Tour Mode Choice: The tour mode choice model determines the primary mode of the tour.
+3 Stop Level Models
+3.1 Stop Frequency Choice: The stop frequency model predicts the number of stops by direction based on input distributions that vary by tour purpose.
+3.2 Stop Purpose: The stop purpose model chooses the activity purpose of each intermediate stop based on input distributions that vary according to tour purpose.
+3.3 Stop Location Choice: The location choice model chooses the MGRA for each intermediate stop on the tour.
+4. Trip Level Models
+4.1 Trip Departure Choice: The trip scheduling model assigns depart times for each trip on a tour based on input distributions that vary by direction (inbound versus outbound), stop number, and number of periods remaining on the tour.
+4.2 Trip Mode Choice: Each trip is assigned a trip mode, consistent with the modes in the resident model.
+4.3 Trip Assignment: Trips are aggregated by time of day, mode occupancy, value-of-time, and origin-destination TAZ and assigned simultaneously with other trips.
+
+For more information on the Overnight Visitor Travel Model see technical documentation.

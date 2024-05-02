@@ -41,6 +41,9 @@ nodes= nodes.set_index("NodeLev_ID")
 nodes['X'] = nodes.geometry.x
 nodes['Y'] = nodes.geometry.y
 
+# TEST: nodes
+# nodes.to_csv(r"C:/abm_runs/sar/2022_ABM3_tned/src/asim/scripts/resident/nodes.csv")
+
 links = gpd.read_file(sf)
 links = links.to_crs(epsg=2230)
 
@@ -58,11 +61,15 @@ centroids['X'] = nodes[nodes[parms['maz_shape_maz_id']]!=0].X
 centroids['Y'] = nodes[nodes[parms['maz_shape_maz_id']]!=0].Y
 centroids['MAZ'] = nodes[nodes[parms['maz_shape_maz_id']]!=0].MGRA
 centroids['MAZ_centroid_id'] = nodes[nodes[parms['maz_shape_maz_id']]!=0].index
+
 centroids = pd.merge(centroids, maz_closest_network_node_id, left_on='MAZ_centroid_id', right_on=parms['mmms']["mmms_link_ref_id"], how='left')
 centroids = centroids.rename(columns={parms['mmms']["mmms_link_nref_id"]:'network_node_id'})
 
 centroids["network_node_x"] = nodes["X"].loc[centroids["network_node_id"]].tolist()
 centroids["network_node_y"] = nodes["Y"].loc[centroids["network_node_id"]].tolist()
+
+# TEST: centroids
+# centroids.to_csv(r"C:/abm_runs/sar/2022_ABM3_tned/src/asim/scripts/resident/centroids.csv")
 
 # %%
 ## read transit stop and route file (KK) ============
@@ -70,21 +77,32 @@ stops = pd.read_csv(os.path.join(model_inputs, parms['stop_attributes']['file'])
 routes = pd.read_csv(os.path.join(model_inputs, parms['route_attributes']['file']))
 routes = routes.filter(['Route_ID','Route_Name', 'Mode'])
 
+# TEST: stops 1
+# stops.to_csv(r"C:/abm_runs/sar/2022_ABM3_tned/src/asim/scripts/resident/stops_1.csv")
+
 # add mode from route file & convert lat.long to stateplane(KK)=====
-stops = stops.merge(routes,  left_on='Route_ID', right_on='Route_ID') # 
+stops = stops.merge(routes,  left_on='Route_ID', right_on='Route_ID') #
 
-stops.rename(columns={' Latitude': 'Latitude'}, inplace=True)
-stops["Longitude1"] = stops["Longitude"]/1000000
-stops["Latitude1"] = stops["Latitude"]/1000000
+# TEST: stops 2
+# stops.to_csv(r"C:/abm_runs/sar/2022_ABM3_tned/src/asim/scripts/resident/stops_2.csv")
 
-gpd_stops = gpd.GeoDataFrame(stops, geometry = gpd.points_from_xy(stops.Longitude1, stops.Latitude1))
-gpd_stops = gpd_stops.set_crs('epsg:4326')
-gpd_stops = gpd_stops.to_crs(epsg=2230)
+# stops.rename(columns={' Latitude': 'Latitude'}, inplace=True)
+# stops["Longitude1"] = stops["Longitude"]/1000000
+# stops["Latitude1"] = stops["Latitude"]/1000000
+
+# TEST: stops 3
+# stops.to_csv(r"C:/abm_runs/sar/2022_ABM3_tned/src/asim/scripts/resident/stops_3.csv")
+
+gpd_stops = gpd.GeoDataFrame(stops, geometry = gpd.points_from_xy(stops.Longitude, stops.Latitude, crs='epsg:4326'))
+gpd_stops = gpd_stops.to_crs('epsg:2230')
+
+# TEST: stops 4
+# gpd_stops.to_file(r"C:/abm_runs/sar/2022_ABM3_tned/src/asim/scripts/resident/gpd_stops.shp")
 
 pd.set_option('display.float_format', lambda x: '%.9f' % x)
 
-gpd_stops['Longitude'] = gpd_stops['geometry'].x 
-gpd_stops['Latitude'] = gpd_stops['geometry'].y 
+gpd_stops['Longitude'] = gpd_stops['geometry'].x
+gpd_stops['Latitude'] = gpd_stops['geometry'].y
 
 stops["network_node_id"] = net.get_node_ids(gpd_stops['Longitude'], gpd_stops['Latitude'])
 stops["network_node_x"] = nodes["X"].loc[stops["network_node_id"]].tolist()
@@ -93,6 +111,9 @@ stops["network_node_y"] = nodes["Y"].loc[stops["network_node_id"]].tolist()
 stops['mode'] = np.where(stops['Mode']==10,'L',
                 np.where((stops['Mode']==4) | (stops['Mode']==5) | (stops['Mode']==8) | (stops['Mode']==9) | (stops['Mode']==6) | (stops['Mode']==7), 'E',
                 'N'))
+
+# TEST: stops 4
+# stops.to_csv(r"C:/abm_runs/sar/2022_ABM3_tned/src/asim/scripts/resident/stops_4.csv")
 
 # %%
 # MAZ-to-MAZ Walk
@@ -162,7 +183,6 @@ maz_to_stop_walk_cost["DISTWALK"] = net.shortest_path_lengths(maz_to_stop_walk_c
 
 
 print(f"{datetime.now().strftime('%H:%M:%S')} Remove Maz Stop Pairs Beyond Max Walk Distance...")
-
 maz_to_stop_walk_cost_out = maz_to_stop_walk_cost[(maz_to_stop_walk_cost["DISTANCE"] <= max_maz_local_bus_stop_walk_dist_feet / 5280.0) & (maz_to_stop_walk_cost['MODE'] == 'L') | 
                                                     (maz_to_stop_walk_cost["DISTANCE"] <= max_maz_premium_transit_stop_walk_dist_feet / 5280.0) & (maz_to_stop_walk_cost['MODE'] == 'E')].copy()
 
@@ -189,7 +209,7 @@ for mode, output in modes.items():
     maz_stop_walk['DISTWALK'].fillna(999999, inplace = True)
     maz_stop_walk.rename({'MAZ': 'maz', 'DISTWALK': 'walk_dist_' + output}, axis='columns', inplace=True)
     maz_stop_walk0 = maz_stop_walk0.merge(maz_stop_walk, left_on='maz', right_on='maz')
-    
+
 maz_stop_walk0.sort_values(by=['maz'], inplace=True)
 print(f"{datetime.now().strftime('%H:%M:%S')} Write Results...")
 maz_stop_walk0.to_csv(path + '/output/skims/' + "maz_stop_walk.csv", index=False)
