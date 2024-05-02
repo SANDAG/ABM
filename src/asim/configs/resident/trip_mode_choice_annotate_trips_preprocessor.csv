@@ -115,11 +115,11 @@ Person is female,female,(df.sex == 2)
 ,auto_op_cost,"np.where(pd.isna(auto_op_cost), costPerMile, auto_op_cost)"
 #,,
 Does tour use an AV,useAV,selected_tour_vehicle.str.contains('AV')
-Auto IVT Factor,autoIVTFactor,"np.where(useAV,1.0,autoIVTFactorAV)"
-Auto Parking Cost Factor,autoParkingCostFactor,"np.where(useAV,1.0,autoParkingCostFactorAV)"
-Auto CPM Factor,autoCPMFactor,"np.where(useAV,1.0,autoCostPerMileFactorAV)"
-Auto Terminal Time Factor,autoTermTimeFactor,"np.where(useAV,1.0,autoTerminalTimeFactorAV)"
-MinimumAgeDriveAlone,minimumAgeDA,"np.where(useAV,16,minAgeDriveAloneAV)"
+Auto IVT Factor,autoIVTFactor,"np.where(useAV,autoIVTFactorAV,1)"
+Auto Parking Cost Factor,autoParkingCostFactor,"np.where(useAV,autoParkingCostFactorAV,1)"
+Auto CPM Factor,autoCPMFactor,"np.where(useAV,autoCostPerMileFactorAV,1)"
+Auto Terminal Time Factor,autoTermTimeFactor,"np.where(useAV,autoTerminalTimeFactorAV,1)"
+MinimumAgeDriveAlone,minimumAgeDA,"np.where(useAV,minAgeDriveAloneAV,16)"
 #,,
 Zero auto households,zeroAutoHH,"np.where(autos==0,1,0)"
 Auto deficient household (more adults than autos),autoDeficientHH,"np.where(autos<adults,1,0) * (np.where(zeroAutoHH,0,1))"
