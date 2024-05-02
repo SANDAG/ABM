@@ -30,10 +30,20 @@ def get_poe_wait_times(settings):
 
     wait_times = pd.read_csv(
         os.path.join(data_dir, settings['poe_wait_times_input_fname']))
-    num_poes = wait_times.poe.nunique()
+    poes = list(settings['poes'].keys())
+    num_poes = len(poes)
     wait_times.rename(columns={
         'StandardWait': 'std_wait', 'SENTRIWait': 'sentri_wait',
         'PedestrianWait': 'ped_wait', 'ReadyWait': 'ready_wait'}, inplace=True)
+    
+    # add new poes if exist
+    if num_poes > len(wait_times.poe.unique()):
+        for i in [i for i in range(0,num_poes) if i not in wait_times.poe.unique()]:
+            wait_time_dummy = wait_times[wait_times.poe == wait_times.poe.unique()[0]].copy()
+            wait_time_dummy[['std_wait','sentri_wait','ped_wait','ready_wait']] = 0
+            wait_time_dummy['poe'] = i
+            wait_times = wait_times.append(wait_time_dummy, ignore_index = True)
+    
     start_hour_mask = wait_times['StartPeriod'] > 16
     wait_times.loc[start_hour_mask, 'StartHour'] = wait_times.loc[
         start_hour_mask, 'StartHour'] + 12
