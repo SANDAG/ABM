@@ -1055,7 +1055,17 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         # Set 3-period headway based on revised headway calculation
         for line in network.transit_lines():
             for period in ["ea", "am", "md", "pm", "ev"]:
+                # Update EA and EV headways based on hours
+                num_hours_period = 0
+                if period == "ea":
+                    num_hours_period = 3 # Caution hard-coded number of hours in period
+                elif period == "ev": 
+                    num_hours_period = 8 # Caution hard-coded number of hours in period
+                if period in ["ea", "ev"]:
+                    num_runs = line["@hours_" + period]*60/line["@headway_" + period]
+                    line["@headway_" + period] = floor(num_hours_period*60/num_runs)
                 line["@headway_rev_" + period] = revised_headway(line["@headway_" + period])
+                
         self._log.append({"type": "text", "content": "Revised headway calculation complete"})
 
         fares_file_name = FILE_NAMES["FARES"]
