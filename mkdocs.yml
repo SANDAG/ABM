@@ -50,6 +50,7 @@ nav:
   - Installing and Running: running.md
   - Model Inputs and Outputs: inputsandoutputs.md
   - Applying ABM3: applying.md
+  - Commercial Vehicle Model: cvm.md
 
 extra:
   version:
