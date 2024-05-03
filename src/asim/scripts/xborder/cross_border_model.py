@@ -868,8 +868,11 @@ if __name__ == '__main__':
                 lane_df, left_on='poe_id', right_index=True, how='left')
             vol_df['vol_per_lane'] = vol_df['vol'] / vol_df['veh_lanes']
             ped_mask = vol_df['lane_type'] == 'ped'
-            vol_df.loc[ped_mask, 'vol_per_lane'] = vol_df.loc[
-                ped_mask, 'vol'] / vol_df.loc[ped_mask, 'ped_lanes']
+            vol_df.loc[ped_mask, 'vol_per_lane'] = (vol_df.loc[ped_mask, 'vol']
+                                                    .div(vol_df.loc[ped_mask, 'ped_lanes']
+                                                            .replace(0, np.inf) #force vol_per_lane to be 0 if there are no ped_lanes for poe
+                                                        )
+                                                    )
 
             # compute dummies
             vol_df['otay'] = (vol_df['name'] == 'Otay Mesa').astype(int)
