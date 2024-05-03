@@ -35,7 +35,7 @@ def get_poe_wait_times(settings):
     wait_times.rename(columns={
         'StandardWait': 'std_wait', 'SENTRIWait': 'sentri_wait',
         'PedestrianWait': 'ped_wait', 'ReadyWait': 'ready_wait'}, inplace=True)
-    
+
     # add new poes if exist
     if num_poes > len(wait_times.poe.unique()):
         for i in [i for i in range(0,num_poes) if i not in wait_times.poe.unique()]:
@@ -43,7 +43,7 @@ def get_poe_wait_times(settings):
             wait_time_dummy[['std_wait','sentri_wait','ped_wait','ready_wait']] = 0
             wait_time_dummy['poe'] = i
             wait_times = wait_times.append(wait_time_dummy, ignore_index = True)
-    
+
     start_hour_mask = wait_times['StartPeriod'] > 16
     wait_times.loc[start_hour_mask, 'StartHour'] = wait_times.loc[
         start_hour_mask, 'StartHour'] + 12
@@ -745,6 +745,19 @@ if __name__ == '__main__':
     # load settings
     with open(os.path.join(config_dir,'preprocessing.yaml')) as f:
         settings = yaml.load(f, Loader=yaml.FullLoader)
+
+    with open(os.path.join(config_dir,'constants.yaml')) as f:
+        constants_settings = yaml.load(f, Loader=yaml.FullLoader)
+    settings['scenario_year'] = constants_settings['scenarioYear']
+
+    #skip poes that are not open yet
+    # #(NOTE can also be used to close poes or even alter veh_lanes or ped_lanes across yrs)
+    poe_to_delete = []
+    for poe_id, poe_attrs in settings['poes'].items():
+        if poe_attrs['start_year'] > settings['scenario_year']:
+            poe_to_delete.append(poe_id)
+    for poe_id in poe_to_delete:
+        del settings['poes'][poe_id]
 
     with open(os.path.join(config_dir, 'network_los.yaml')) as f:
         los_settings = yaml.load(f, Loader=yaml.FullLoader)
