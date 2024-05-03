@@ -11,6 +11,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://sandag.github.io/abm/cvm.html</loc>
+         <lastmod>2024-05-03</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://sandag.github.io/abm/design.html</loc>
          <lastmod>2024-05-03</lastmod>
          <changefreq>daily</changefreq>
