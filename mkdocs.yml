@@ -11,6 +11,7 @@ theme:
     - content.code.annotate
     - content.tabs.link
     - navigation.indexes
+    - navigation.top
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
