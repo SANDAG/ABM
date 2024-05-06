@@ -74,6 +74,7 @@ from contextlib import contextmanager as _context
 import fiona as _fiona
 
 from math import ceil as _ceiling
+from math import floor as _floor
 from copy import deepcopy as _copy
 import numpy as _np
 import heapq as _heapq
@@ -1062,8 +1063,9 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 elif period == "ev": 
                     num_hours_period = 8 # Caution hard-coded number of hours in period
                 if period in ["ea", "ev"]:
-                    num_runs = line["@hours_" + period]*60/line["@headway_" + period]
-                    line["@headway_" + period] = floor(num_hours_period*60/num_runs)
+                    if line["@headway_" + period] > 0:
+                        num_runs = line["@hours_" + period]*60/line["@headway_" + period]
+                        line["@headway_" + period] = _floor(num_hours_period*60/num_runs)
                 line["@headway_rev_" + period] = revised_headway(line["@headway_" + period])
                 
         self._log.append({"type": "text", "content": "Revised headway calculation complete"})
