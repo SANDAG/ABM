@@ -52,6 +52,9 @@ nav:
   - Model Inputs and Outputs: inputsandoutputs.md
   - Applying ABM3: applying.md
   - Commercial Vehicle Model: cvm.md
+  - About:
+    - Release Notes: release-notes.md
+    - FAQs: faq.md
 
 extra:
   version:
