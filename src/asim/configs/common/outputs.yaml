@@ -434,9 +434,6 @@ trips:
     - is_drive_loc
     - is_drive_prm
     - is_drive_mix
-    - vot_da
-    - vot_s2
-    - vot_s3
     - parkingCost
     - is_ea
     - is_am
