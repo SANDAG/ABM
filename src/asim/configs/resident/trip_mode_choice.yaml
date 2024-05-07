@@ -119,6 +119,11 @@ CHOOSER_COLS_TO_KEEP:
   - vot_s3
   - ownsTransponder
   - parkingCost
+  - auto_op_cost
+  - autoCPMFactor
+  - autoParkingCostFactor
+  - costFactorS2
+  - costFactorS3
   - origTaxiWaitTime
   - origSingleTNCWaitTime
   - destSingleTNCWaitTime
