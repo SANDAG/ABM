@@ -9,17 +9,17 @@ util_ln_chpc_ev,ln(1+number of chargers per capita in MSA/state),"logged_charger
 util_must_select_av,Must select autonomous vehicle if hh owns one,av_ownership & ~is_av & (num_hh_veh_owned == 0),coef_unavail
 util_must_select_av,Cannot select AV if hh does not own one,~av_ownership & is_av,coef_unavail
 #,income related variables,,
-util_cprice0,New Purchase Price (2017$) Segmented by Income,"((income < 25000) & (income > -1)) * NewPrice",coef_cprice0
-util_cprice25,New Purchase Price (2017$) Segmented by Income,"((income < 50000) & (income >= 25000)) * NewPrice",coef_cprice25
-util_cprice50,New Purchase Price (2017$) Segmented by Income,"((income < 100000) & (income >=50000)) * NewPrice",coef_cprice50
-util_cprice100,New Purchase Price (2017$) Segmented by Income,"((income < 150000) & (income >= 100000)) * NewPrice",coef_cprice100
-util_cprice150,New Purchase Price (2017$) Segmented by Income,"(income > 150000) * NewPrice",coef_cprice150
-util_cpricem,New Purchase Price (2017$) Missing Income,"((income < 0) | income.isna()) * NewPrice",coef_cpricem
-util_i025_age,Vehicle Age Segmented by Income,"((income < 25000) & (income > -1)) * age",coef_i025_age
-util_i2550_age,Vehicle Age Segmented by Income,"((income < 50000) & (income >= 25000)) * age",coef_i2550_age
-util_i100_age,Vehicle Age Segmented by Income,"((income < 150000) & (income >= 100000)) * age",coef_i100_age
-util_i150p_age,Vehicle Age Segmented by Income,"((income < 150000) & (income >= 100000)) * age",coef_i150p_age
-util_imiss_age,Vehicle Age Missing Income,"((income < 0) | income.isna()) * age",coef_imiss_age
+util_cprice0,New Purchase Price (2017$) Segmented by Income,"((income17 < 25000) & (income17 > -1)) * NewPrice",coef_cprice0
+util_cprice25,New Purchase Price (2017$) Segmented by Income,"((income17 < 50000) & (income17 >= 25000)) * NewPrice",coef_cprice25
+util_cprice50,New Purchase Price (2017$) Segmented by Income,"((income17 < 100000) & (income17 >=50000)) * NewPrice",coef_cprice50
+util_cprice100,New Purchase Price (2017$) Segmented by Income,"((income17 < 150000) & (income17 >= 100000)) * NewPrice",coef_cprice100
+util_cprice150,New Purchase Price (2017$) Segmented by Income,"(income17 > 150000) * NewPrice",coef_cprice150
+util_cpricem,New Purchase Price (2017$) Missing Income,"((income17 < 0) | income17.isna()) * NewPrice",coef_cpricem
+util_i025_age,Vehicle Age Segmented by Income,"((income17 < 25000) & (income17 > -1)) * age",coef_i025_age
+util_i2550_age,Vehicle Age Segmented by Income,"((income17 < 50000) & (income17 >= 25000)) * age",coef_i2550_age
+util_i100_age,Vehicle Age Segmented by Income,"((income17 < 150000) & (income17 >= 100000)) * age",coef_i100_age
+util_i150p_age,Vehicle Age Segmented by Income,"((income17 < 150000) & (income17 >= 100000)) * age",coef_i150p_age
+util_imiss_age,Vehicle Age Missing Income,"((income17 < 0) | income17.isna()) * age",coef_imiss_age
 #,household density variables,,
 util_den3_van,500-999 HH / sq mi Van,"((household_density < 1000) & (household_density >= 500)) & (body_type_num_coded==5)",coef_den3_van
 util_den4_van,1000-1999 HH / sq mi Van,"((household_density < 2000) & (household_density >= 1000)) & (body_type_num_coded==5)",coef_den4_van
