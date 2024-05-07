@@ -3,7 +3,6 @@ Description,Target,Expression
 ,tour_participants,trips.tour_id.map(tours.number_of_participants)
 ,num_participants,tour_participants
 ,distance,od_skims['DIST']
-,costOperatingDrive,"np.where(trips.trip_mode.isin(['DRIVEALONE','SHARED2','SHARED3']), costPerMile*distance/100, np.NaN)"
 ,_sample_rate,trips.household_id.map(households.sample_rate)
 ,weight_trip,"np.where(trips.trip_mode == 'SHARED2', tour_participants/OCC_SHARED2, np.where(trips.trip_mode == 'SHARED3',tour_participants/OCC_SHARED3, np.where(trips.trip_mode == 'TAXI', tour_participants/OCC_TAXI,  np.where(trips.trip_mode == 'TNC_SINGLE', tour_participants/OCC_TNC_SINGLE, np.where(trips.trip_mode == 'TNC_SHARED', tour_participants/OCC_TNC_SHARED, np.where(trips.trip_mode.isin(['WALK','BIKE','EBIKE','ESCOOTER']), tour_participants, 1))))))/_sample_rate"
 ,weightPerson_trip,tour_participants/_sample_rate
@@ -364,27 +363,9 @@ Description,Target,Expression
 ,_timeTransitInitialWait,"_timeTransitInitialWait + odt_skims['TNCIN_PRM_FIRSTWAIT'] * np.where(trips.trip_mode == 'TNC_PRM',1,0) * np.where(~trips.outbound,1,0)"
 ,_timeTransitInitialWait,"_timeTransitInitialWait + odt_skims['TNCIN_MIX_FIRSTWAIT'] * np.where(trips.trip_mode == 'TNC_MIX',1,0) * np.where(~trips.outbound,1,0)"
 #,,
-,_costFareTransit,"odt_skims['WALK_LOC_FARE'] * np.where(trips.trip_mode == 'WALK_LOC',1,0)"
-,_costFareTransit,"_costFareTransit + odt_skims['WALK_PRM_FARE'] * np.where(trips.trip_mode == 'WALK_PRM',1,0)"
-,_costFareTransit,"_costFareTransit + odt_skims['WALK_MIX_FARE'] * np.where(trips.trip_mode == 'WALK_MIX',1,0)"
-,_costFareTransit,"_costFareTransit + odt_skims['PNROUT_LOC_FARE'] * np.where(trips.trip_mode == 'PNR_LOC',1,0) * np.where(trips.outbound,1,0)"
-,_costFareTransit,"_costFareTransit + odt_skims['PNROUT_PRM_FARE'] * np.where(trips.trip_mode == 'PNR_PRM',1,0) * np.where(trips.outbound,1,0)"
-,_costFareTransit,"_costFareTransit + odt_skims['PNROUT_MIX_FARE'] * np.where(trips.trip_mode == 'PNR_MIX',1,0) * np.where(trips.outbound,1,0)"
-,_costFareTransit,"_costFareTransit + odt_skims['KNROUT_LOC_FARE'] * np.where(trips.trip_mode == 'KNR_LOC',1,0) * np.where(trips.outbound,1,0)"
-,_costFareTransit,"_costFareTransit + odt_skims['KNROUT_PRM_FARE'] * np.where(trips.trip_mode == 'KNR_PRM',1,0) * np.where(trips.outbound,1,0)"
-,_costFareTransit,"_costFareTransit + odt_skims['KNROUT_MIX_FARE'] * np.where(trips.trip_mode == 'KNR_MIX',1,0) * np.where(trips.outbound,1,0)"
-,_costFareTransit,"_costFareTransit + odt_skims['TNCOUT_LOC_FARE'] * np.where(trips.trip_mode == 'TNC_LOC',1,0) * np.where(trips.outbound,1,0)"
-,_costFareTransit,"_costFareTransit + odt_skims['TNCOUT_PRM_FARE'] * np.where(trips.trip_mode == 'TNC_PRM',1,0) * np.where(trips.outbound,1,0)"
-,_costFareTransit,"_costFareTransit + odt_skims['TNCOUT_MIX_FARE'] * np.where(trips.trip_mode == 'TNC_MIX',1,0) * np.where(trips.outbound,1,0)"
-,_costFareTransit,"_costFareTransit + odt_skims['PNRIN_LOC_FARE'] * np.where(trips.trip_mode == 'PNR_LOC',1,0) * np.where(~trips.outbound,1,0)"
-,_costFareTransit,"_costFareTransit + odt_skims['PNRIN_PRM_FARE'] * np.where(trips.trip_mode == 'PNR_PRM',1,0) * np.where(~trips.outbound,1,0)"
-,_costFareTransit,"_costFareTransit + odt_skims['PNRIN_MIX_FARE'] * np.where(trips.trip_mode == 'PNR_MIX',1,0) * np.where(~trips.outbound,1,0)"
-,_costFareTransit,"_costFareTransit + odt_skims['KNRIN_LOC_FARE'] * np.where(trips.trip_mode == 'KNR_LOC',1,0) * np.where(~trips.outbound,1,0)"
-,_costFareTransit,"_costFareTransit + odt_skims['KNRIN_PRM_FARE'] * np.where(trips.trip_mode == 'KNR_PRM',1,0) * np.where(~trips.outbound,1,0)"
-,_costFareTransit,"_costFareTransit + odt_skims['KNRIN_MIX_FARE'] * np.where(trips.trip_mode == 'KNR_MIX',1,0) * np.where(~trips.outbound,1,0)"
-,_costFareTransit,"_costFareTransit + odt_skims['TNCIN_LOC_FARE'] * np.where(trips.trip_mode == 'TNC_LOC',1,0) * np.where(~trips.outbound,1,0)"
-,_costFareTransit,"_costFareTransit + odt_skims['TNCIN_PRM_FARE'] * np.where(trips.trip_mode == 'TNC_PRM',1,0) * np.where(~trips.outbound,1,0)"
-,costFareTransit,"_costFareTransit + odt_skims['TNCIN_MIX_FARE'] * np.where(trips.trip_mode == 'TNC_MIX',1,0) * np.where(~trips.outbound,1,0)"
+,_costFareTransit,"odt_skims['WALK_LOC_FARE'] * 100 * np.where(trips.trip_mode == 'WALK_LOC',1,0)"
+,_costFareTransit,"_costFareTransit + odt_skims['WALK_PRM_FARE'] * 100 * np.where(trips.trip_mode == 'WALK_PRM',1,0)"
+,costFareTransit,"_costFareTransit + odt_skims['WALK_MIX_FARE'] * 100 * np.where(trips.trip_mode == 'WALK_MIX',1,0)"
 #,,
 ,_transfersTransit,"odt_skims['WALK_LOC_XFERS'] * np.where(trips.trip_mode == 'WALK_LOC',1,0)"
 ,_transfersTransit,"_transfersTransit + odt_skims['WALK_PRM_XFERS'] * np.where(trips.trip_mode == 'WALK_PRM',1,0)"
@@ -416,7 +397,7 @@ Description,Target,Expression
 ,_time_transit_wait,"_time_transit_wait + odt_skims['WALK_MIX_XFERWAIT'] * np.where(trips.trip_mode == 'WALK_MIX',1,0)"
 ,time_transit_wait,"_time_transit_wait + trips.time_nev_mt_wait"
 # totals,,
-,cost_total,costOperatingDrive + costTollDrive + costFareTransit
+,cost_total,df.costOperatingDrive + costTollDrive + costFareTransit + df.cost_parking + df.cost_fare_drive
 ,time_total,df.time_walk + timeBike + timeDrive + df.time_wait_drive + time_transit_wait + timeTransitInVehicle
 #,,
 ,value_of_time_category_id,"np.where(vot1,1,np.where(vot2,2,3))"

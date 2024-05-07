@@ -154,9 +154,11 @@ MODE_CHOICE_LOGSUM_COLUMN_NAME: trip_mode_choice_logsum
 
 CHOOSER_COLS_TO_KEEP:
   - parking_cost
+  - cost_per_mile
   - tnc_single_wait_time
   - tnc_shared_wait_time
   - taxi_wait_time
+  - da_dist_skims
   - s2_dist_skims
   - s2_time_skims
   - s2_cost_skims

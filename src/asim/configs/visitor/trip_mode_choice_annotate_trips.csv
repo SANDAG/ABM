@@ -12,12 +12,20 @@ Description,Target,Expression
 ,_dest_prm_time,_dest_prm_dist * 60/walk_speed
 ,_dest_mix_time,_dest_mix_dist * 60/walk_speed
 #
-,cost_parking,"np.where(df.trip_mode.isin(['DRIVEALONE','SHARED2','SHARED3']),df.parking_cost,0)"
+,_cost_parking,0
+,_cost_parking,"_cost_parking + df.trip_mode.isin(['DRIVEALONE']) * (df.parking_cost * df.autoParkingCostFactor)"
+,_cost_parking,"_cost_parking + df.trip_mode.isin(['SHARED2']) * (df.autoParkingCostFactor * df.parking_cost / cost_share_s2)"
+,cost_parking,"_cost_parking + df.trip_mode.isin(['SHARED3']) * (df.autoParkingCostFactor * df.parking_cost / cost_share_s3)"
+#,,
+,_costOperatingDrive,0
+,_costOperatingDrive,"_costOperatingDrive + df.trip_mode.isin(['DRIVEALONE']) * costPerMile * df.autoCPMFactor * df.da_dist_skims"
+,_costOperatingDrive,"_costOperatingDrive + df.trip_mode.isin(['SHARED2']) * costPerMile * df.autoCPMFactor * df.s2_dist_skims"
+,costOperatingDrive,"_costOperatingDrive + df.trip_mode.isin(['SHARED2']) * costPerMile * df.autoCPMFactor * df.s3_dist_skims"
 #,,
 ,_cost_fare_drive,0
 ,_cost_fare_drive,"_cost_fare_drive + np.where(df.trip_mode == 'TAXI',1,0) * ((Taxi_baseFare + (df.s2_dist_skims * Taxi_costPerMile) + (df.s2_time_skims * Taxi_costPerMinute)) * 100 + df.s2_cost_skims)"
 ,_cost_fare_drive,"_cost_fare_drive + np.where(df.trip_mode=='TNC_SINGLE',1,0)*(np.maximum(TNC_single_baseFare + (df.s2_dist_skims * TNC_single_costPerMile) + (df.s2_time_skims * TNC_single_costPerMinute), TNC_single_costMinimum) * 100 + df.s2_cost_skims)"
-,cost_fare_drive,"_cost_fare_drive + np.where(df.trip_mode=='TNC_SHARED',1,0)*np.where(df.nev_available, nevCost, np.where(df.microtransit_available, microtransitCost, (np.maximum(TNC_shared_baseFare + (df.s3_dist_skims * TNC_shared_costPerMile) + (df.s3_time_skims * TNC_shared_costPerMinute), TNC_shared_costMinimum))) * 100 + df.s3_cost_skims)"
+,cost_fare_drive,"_cost_fare_drive + np.where(df.trip_mode=='TNC_SHARED',1,0)*np.where(df.nev_available, 0, np.where(df.microtransit_available, 0, (np.maximum(TNC_shared_baseFare + (df.s3_dist_skims * TNC_shared_costPerMile) + (df.s3_time_skims * TNC_shared_costPerMinute), TNC_shared_costMinimum))) * 100 + df.s3_cost_skims)"
 #,,
 ,_time_nev_in_vehicle,0
 ,_time_nev_in_vehicle,"_time_nev_in_vehicle + (df.trip_mode=='TNC_SHARED') * df.nev_available * df.nev_time"
