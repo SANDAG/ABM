@@ -94,7 +94,7 @@ distributed_time_factor_max: 10
 
 c_drive: 1.5
 
-useAV: 0
+AV_OWNERSHIP_TARGET_PERCENT: 0.0
 autoIVTFactorAV: 0.75
 autoParkingCostFactorAV: 0.5
 autoCostPerMileFactorAV: 0.7

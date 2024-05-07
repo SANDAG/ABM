@@ -102,10 +102,8 @@ doc['TNC_shared_costPerMinute'] = float(paramByYear.loc[paramByYear.year==scenYe
 doc['TNC_shared_costMinimum'] = float(paramByYear.loc[paramByYear.year==scenYear, 'TNC.shared.costMinimum'].values[0])
 doc['microVarCost'] = float(paramByYear.loc[paramByYear.year==scenYear, 'active.micromobility.variableCost'].values[0]*100) #cents
 doc['microFixedCost'] = float(paramByYear.loc[paramByYear.year==scenYear, 'active.micromobility.fixedCost'].values[0]*100) #cents
-util.write_yaml(_join(configs_dir, 'common', 'constants.yaml'), doc)
-doc = util.open_yaml(_join(configs_dir, 'resident', 'av_ownership.yaml'))
 doc['AV_OWNERSHIP_TARGET_PERCENT'] = float(paramByYear.loc[paramByYear.year==scenYear, 'Mobility.AV.Share'].values[0])
-util.write_yaml(_join(configs_dir, 'resident', 'av_ownership.yaml'), doc)
+util.write_yaml(_join(configs_dir, 'common', 'constants.yaml'), doc)
 
 doc = util.open_yaml(_join(configs_dir, 'resident', 'vehicle_type_choice.yaml'))
 doc['FLEET_YEAR'] = int(scenYear)
