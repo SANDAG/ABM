@@ -1065,7 +1065,10 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 if period in ["ea", "ev"]:
                     if line["@headway_" + period] > 0:
                         num_runs = line["@hours_" + period]*60/line["@headway_" + period]
-                        line["@headway_" + period] = _floor(num_hours_period*60/num_runs)
+                        headway_adj = _floor(num_hours_period*60/num_runs)
+                        if headway_adj > 999:
+                            headway_adj = 999
+                        line["@headway_" + period] = headway_adj
                 line["@headway_rev_" + period] = revised_headway(line["@headway_" + period])
                 
         self._log.append({"type": "text", "content": "Revised headway calculation complete"})
