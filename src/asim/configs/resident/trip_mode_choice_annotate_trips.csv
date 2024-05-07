@@ -11,7 +11,7 @@ Description,Target,Expression
 ,_dest_local_time,_dest_local_dist * 60/walk_speed
 ,_dest_prm_time,_dest_prm_dist * 60/walk_speed
 ,_dest_mix_time,_dest_mix_dist * 60/walk_speed
-,_MicroAccessTime,"reindex(land_use.MicroAccessTime,origin)"
+,_MicroAccessTime,"reindex(land_use.MicroAccessTime,df.origin)"
 #,,
 ,_cost_parking,0
 ,_cost_parking,"_cost_parking + df.trip_mode.isin(['DRIVEALONE']) * (df.parkingCost * df.autoParkingCostFactor)"
