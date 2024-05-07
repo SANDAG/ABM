@@ -5,43 +5,79 @@ Description,Target,Expression
 ,_dest_local_dist,"reindex(land_use.walk_dist_local_bus, df.destination)"
 ,_dest_prm_dist,"reindex(land_use.walk_dist_premium_transit, df.destination)"
 ,_dest_mix_dist,"np.minimum(_dest_local_dist, _dest_prm_dist)"
+,_origin_local_time,_origin_local_dist * 60/walk_speed
+,_origin_prm_time,_origin_prm_dist * 60/walk_speed
+,_origin_mix_time,_origin_mix_dist * 60/walk_speed
+,_dest_local_time,_dest_local_dist * 60/walk_speed
+,_dest_prm_time,_dest_prm_dist * 60/walk_speed
+,_dest_mix_time,_dest_mix_dist * 60/walk_speed
 #
 ,cost_parking,"np.where(df.trip_mode.isin(['DRIVEALONE','SHARED2','SHARED3']),df.parking_cost,0)"
 #,,
 ,_cost_fare_drive,0
 ,_cost_fare_drive,"_cost_fare_drive + np.where(df.trip_mode == 'TAXI',1,0) * ((taxi_base_fare + df.s2_dist_skims * taxi_cost_per_mile + df.s2_time_skims * taxi_cost_per_minute) * 100 + df.s2_cost_skims)"
-,_cost_fare_drive,"_cost_fare_drive + np.where(df.trip_mode=='TNC_SINGLE',1,0)*((tnc_single_base_fare + df.s2_dist_skims * tnc_single_cost_per_mile + df.s2_time_skims * tnc_single_cost_per_minute) * 100 + df.s2_cost_skims)"
-,_cost_fare_drive,"_cost_fare_drive + np.where(df.trip_mode=='TNC_SHARED',1,0)*((tnc_shared_base_fare + df.s2_dist_skims * tnc_shared_cost_per_mile + df.s2_time_skims * tnc_shared_cost_per_minute) * 100 + df.s2_cost_skims)"
-,_cost_fare_drive,"_cost_fare_drive + df.trip_mode.isin(['TNC_LOC','TNC_PRM','TNC_MIX'])*df.outbound*(tnc_single_base_fare + odt_skims['TNCOUT_LOC_ACC']*25/60 * tnc_single_cost_per_mile + odt_skims['TNCOUT_LOC_ACC'] * tnc_single_cost_per_minute) * 100"
-,cost_fare_drive,"_cost_fare_drive + df.trip_mode.isin(['TNC_LOC','TNC_PRM','TNC_MIX'])*~df.outbound*(tnc_single_base_fare + odt_skims['TNCIN_LOC_ACC']*25/60 * tnc_single_cost_per_mile + odt_skims['TNCIN_LOC_ACC'] * tnc_single_cost_per_minute) * 100"
+,_cost_fare_drive,"_cost_fare_drive + np.where(df.trip_mode=='TNC_SINGLE',1,0)*((tnc_single_base_fare + (df.s2_dist_skims * tnc_single_cost_per_mile) + (df.s2_time_skims * tnc_single_cost_per_minute).clip(lower=tnc_single_cost_minimum)) * 100 + df.s2_cost_skims)"
+,cost_fare_drive,"_cost_fare_drive + np.where(df.trip_mode=='TNC_SHARED',1,0)*np.where(df.nev_available, nevCost, np.where(df.microtransit_available, microtransitCost, ((tnc_shared_base_fare + (df.s3_dist_skims * tnc_shared_cost_per_mile) + (df.s3_time_skims * tnc_shared_cost_per_minute).clip(lower=tnc_shared_cost_minimum)))) * 100 + df.s3_cost_skims)"
+#,,
+,_time_nev_in_vehicle,0
+,_time_nev_in_vehicle,"_time_nev_in_vehicle + (df.trip_mode=='TNC_SHARED') * df.nev_available * df.nev_time"
+,_time_nev_in_vehicle,"_time_nev_in_vehicle + (df.trip_mode.isin(['WALK_LOC'])) * df.nev_local_access_available_in * (df.nev_local_access_time_in - nevWaitTime)"
+,_time_nev_in_vehicle,"_time_nev_in_vehicle + (df.trip_mode.isin(['WALK_LOC'])) * df.nev_local_egress_available_out * (df.nev_local_egress_time_out - nevWaitTime)"
+,_time_nev_in_vehicle,"_time_nev_in_vehicle + (df.trip_mode.isin(['WALK_PRM'])) * df.nev_prm_access_available_in * (df.nev_prm_access_time_in - nevWaitTime)"
+,_time_nev_in_vehicle,"_time_nev_in_vehicle + (df.trip_mode.isin(['WALK_PRM'])) * df.nev_prm_egress_available_out * (df.nev_prm_egress_time_out - nevWaitTime)"
+,_time_nev_in_vehicle,"_time_nev_in_vehicle + (df.trip_mode.isin(['WALK_MIX'])) * df.nev_mix_access_available_in * (df.nev_mix_access_time_in - nevWaitTime)"
+,time_nev_in_vehicle,"_time_nev_in_vehicle + (df.trip_mode.isin(['WALK_MIX'])) * df.nev_mix_egress_available_out * (df.nev_mix_egress_time_out - nevWaitTime)"
+#,,
+,_time_microtransit_in_vehicle,0
+,_time_microtransit_in_vehicle,"_time_microtransit_in_vehicle + (df.trip_mode=='TNC_SHARED') * ~df.nev_available * df.microtransit_available * df.microtransit_time"
+,_time_microtransit_in_vehicle,"_time_microtransit_in_vehicle + (df.trip_mode.isin(['WALK_LOC'])) * ~df.nev_local_access_available_in * df.microtransit_local_access_available_in * (df.microtransit_local_access_time_in - microtransitWaitTime)"
+,_time_microtransit_in_vehicle,"_time_microtransit_in_vehicle + (df.trip_mode.isin(['WALK_LOC'])) * ~df.nev_local_egress_available_out * df.microtransit_local_egress_available_out * (df.microtransit_local_egress_time_out - microtransitWaitTime)"
+,_time_microtransit_in_vehicle,"_time_microtransit_in_vehicle + (df.trip_mode.isin(['WALK_PRM'])) * ~df.nev_prm_access_available_in * df.microtransit_prm_access_available_in * (df.microtransit_prm_access_time_in - microtransitWaitTime)"
+,_time_microtransit_in_vehicle,"_time_microtransit_in_vehicle + (df.trip_mode.isin(['WALK_PRM'])) * ~df.nev_prm_egress_available_out * df.microtransit_prm_egress_available_out * (df.microtransit_prm_egress_time_out - microtransitWaitTime)"
+,_time_microtransit_in_vehicle,"_time_microtransit_in_vehicle + (df.trip_mode.isin(['WALK_MIX'])) * ~df.nev_mix_access_available_in * df.microtransit_mix_access_available_in * (df.microtransit_mix_access_time_in - microtransitWaitTime)"
+,time_microtransit_in_vehicle,"_time_microtransit_in_vehicle + (df.trip_mode.isin(['WALK_MIX'])) * ~df.nev_mix_egress_available_out * df.microtransit_mix_egress_available_out * (df.microtransit_mix_egress_time_out - microtransitWaitTime)"
+#,,
+,_time_nev_mt_wait,0
+,_time_nev_mt_wait,"_time_nev_mt_wait + (df.trip_mode=='TNC_SHARED') * df.nev_available * nevWaitTime"
+,_time_nev_mt_wait,"_time_nev_mt_wait + (df.trip_mode.isin(['WALK_LOC'])) * df.nev_local_access_available_in * nevWaitTime"
+,_time_nev_mt_wait,"_time_nev_mt_wait + (df.trip_mode.isin(['WALK_LOC'])) * df.nev_local_egress_available_out * nevWaitTime"
+,_time_nev_mt_wait,"_time_nev_mt_wait + (df.trip_mode.isin(['WALK_PRM'])) * df.nev_prm_access_available_in * nevWaitTime"
+,_time_nev_mt_wait,"_time_nev_mt_wait + (df.trip_mode.isin(['WALK_PRM'])) * df.nev_prm_egress_available_out * nevWaitTime"
+,_time_nev_mt_wait,"_time_nev_mt_wait + (df.trip_mode.isin(['WALK_MIX'])) * df.nev_mix_access_available_in * nevWaitTime"
+,_time_nev_mt_wait,"_time_nev_mt_wait + (df.trip_mode.isin(['WALK_MIX'])) * df.nev_mix_egress_available_out * nevWaitTime"
+,_time_nev_mt_wait,"_time_nev_mt_wait + (df.trip_mode=='TNC_SHARED') * ~df.nev_available * df.microtransit_available * microtransitWaitTime"
+,_time_nev_mt_wait,"_time_nev_mt_wait + (df.trip_mode.isin(['WALK_LOC'])) * ~df.nev_local_access_available_in * df.microtransit_local_access_available_in * microtransitWaitTime"
+,_time_nev_mt_wait,"_time_nev_mt_wait + (df.trip_mode.isin(['WALK_LOC'])) * ~df.nev_local_egress_available_out * df.microtransit_local_egress_available_out * microtransitWaitTime"
+,_time_nev_mt_wait,"_time_nev_mt_wait + (df.trip_mode.isin(['WALK_PRM'])) * ~df.nev_prm_access_available_in * df.microtransit_prm_access_available_in * microtransitWaitTime"
+,_time_nev_mt_wait,"_time_nev_mt_wait + (df.trip_mode.isin(['WALK_PRM'])) * ~df.nev_prm_egress_available_out * df.microtransit_prm_egress_available_out * microtransitWaitTime"
+,_time_nev_mt_wait,"_time_nev_mt_wait + (df.trip_mode.isin(['WALK_MIX'])) * ~df.nev_mix_access_available_in * df.microtransit_mix_access_available_in * microtransitWaitTime"
+,time_nev_mt_wait,"_time_nev_mt_wait + (df.trip_mode.isin(['WALK_MIX'])) * ~df.nev_mix_egress_available_out * df.microtransit_mix_egress_available_out * microtransitWaitTime"
+#,,
+,_time_walk,0
+,_time_walk,"_time_walk + (df.trip_mode=='WALK') * od_skims['walkTime']"
+,_time_walk,"_time_walk + (df.trip_mode=='WALK_LOC') * ~df.nev_local_access_available_in * ~df.microtransit_local_access_available_in * _origin_local_time"
+,_time_walk,"_time_walk + (df.trip_mode=='WALK_LOC') * ~df.nev_local_egress_available_out * ~df.microtransit_local_egress_available_out * _dest_local_time"
+,_time_walk,"_time_walk + (df.trip_mode=='WALK_LOC') * odt_skims['WALK_LOC_XFERWALK']"
+,_time_walk,"_time_walk + (df.trip_mode=='WALK_PRM') * ~df.nev_prm_access_available_in * ~df.microtransit_prm_access_available_in * _origin_prm_time"
+,_time_walk,"_time_walk + (df.trip_mode=='WALK_PRM') * ~df.nev_prm_egress_available_out * ~df.microtransit_prm_egress_available_out * _dest_prm_time"
+,_time_walk,"_time_walk + (df.trip_mode=='WALK_PRM') * odt_skims['WALK_PRM_XFERWALK']"
+,_time_walk,"_time_walk + (df.trip_mode=='WALK_MIX') * ~df.nev_mix_access_available_in * ~df.microtransit_mix_access_available_in * _origin_mix_time"
+,_time_walk,"_time_walk + (df.trip_mode=='WALK_MIX') * ~df.nev_mix_egress_available_out * ~df.microtransit_mix_egress_available_out * _dest_mix_time"
+,time_walk,"_time_walk + (df.trip_mode=='WALK_MIX') * odt_skims['WALK_MIX_XFERWALK']"
 #,,
 ,_distance_walk,0
-,_distance_walk,"_distance_walk + (df.trip_mode=='WALK') * od_skims['walkTime']/walkSpeed*60"
-,_distance_walk,"_distance_walk + (_origin_local_dist+_dest_local_dist) * np.where(df.trip_mode == 'WALK_LOC',1,0)"
-,_distance_walk,"_distance_walk + (_origin_prm_dist+_dest_prm_dist) * np.where(df.trip_mode == 'WALK_PRM',1,0)"
-,_distance_walk,"_distance_walk + (_origin_mix_dist+_dest_mix_dist) * np.where(df.trip_mode == 'WALK_MIX',1,0)"
-,_distance_walk,"_distance_walk + _dest_local_dist * np.where(df.trip_mode == 'PNR_LOC',1,0) * np.where(df.outbound,1,0)"
-,_distance_walk,"_distance_walk + _dest_prm_dist * np.where(df.trip_mode == 'PNR_PRM',1,0) * np.where(df.outbound,1,0)"
-,_distance_walk,"_distance_walk + _dest_mix_dist * np.where(df.trip_mode == 'PNR_MIX',1,0) * np.where(df.outbound,1,0)"
-,_distance_walk,"_distance_walk + _dest_local_dist * np.where(df.trip_mode == 'KNR_LOC',1,0) * np.where(df.outbound,1,0)"
-,_distance_walk,"_distance_walk + _dest_prm_dist * np.where(df.trip_mode == 'KNR_PRM',1,0) * np.where(df.outbound,1,0)"
-,_distance_walk,"_distance_walk + _dest_mix_dist * np.where(df.trip_mode == 'KNR_MIX',1,0) * np.where(df.outbound,1,0)"
-,_distance_walk,"_distance_walk + _dest_local_dist * np.where(df.trip_mode == 'TNC_LOC',1,0) * np.where(df.outbound,1,0)"
-,_distance_walk,"_distance_walk + _dest_prm_dist * np.where(df.trip_mode == 'TNC_PRM',1,0) * np.where(df.outbound,1,0)"
-,_distance_walk,"_distance_walk + _dest_mix_dist * np.where(df.trip_mode == 'TNC_MIX',1,0) * np.where(df.outbound,1,0)"
-,_distance_walk,"_distance_walk + _origin_local_dist * np.where(df.trip_mode == 'PNR_LOC',1,0) * np.where(~df.outbound,1,0)"
-,_distance_walk,"_distance_walk + _origin_prm_dist * np.where(df.trip_mode == 'PNR_PRM',1,0) * np.where(~df.outbound,1,0)"
-,_distance_walk,"_distance_walk + _origin_mix_dist * np.where(df.trip_mode == 'PNR_MIX',1,0) * np.where(~df.outbound,1,0)"
-,_distance_walk,"_distance_walk + _dest_local_dist * np.where(df.trip_mode == 'KNR_LOC',1,0) * np.where(~df.outbound,1,0)"
-,_distance_walk,"_distance_walk + _origin_prm_dist * np.where(df.trip_mode == 'KNR_PRM',1,0) * np.where(~df.outbound,1,0)"
-,_distance_walk,"_distance_walk + _origin_mix_dist * np.where(df.trip_mode == 'KNR_MIX',1,0) * np.where(~df.outbound,1,0)"
-,_distance_walk,"_distance_walk + _origin_local_dist * np.where(df.trip_mode == 'TNC_LOC',1,0) * np.where(~df.outbound,1,0)"
-,_distance_walk,"_distance_walk + _origin_prm_dist * np.where(df.trip_mode == 'TNC_PRM',1,0) * np.where(~df.outbound,1,0)"
-,distance_walk,"_distance_walk + _origin_mix_dist * np.where(df.trip_mode == 'TNC_MIX',1,0) * np.where(~df.outbound,1,0)"
+,_distance_walk,"_distance_walk + (df.trip_mode=='WALK') * od_skims['walkTime']/60 * walk_speed"
+,_distance_walk,"_distance_walk + (df.trip_mode=='WALK_LOC') * ~df.nev_local_access_available_in * ~df.microtransit_local_access_available_in * _origin_local_dist"
+,_distance_walk,"_distance_walk + (df.trip_mode=='WALK_LOC') * ~df.nev_local_egress_available_out * ~df.microtransit_local_egress_available_out * _dest_local_dist"
+,_distance_walk,"_distance_walk + (df.trip_mode=='WALK_LOC') * odt_skims['WALK_LOC_XFERWALK']/60 * walk_speed"
+,_distance_walk,"_distance_walk + (df.trip_mode=='WALK_PRM') * ~df.nev_prm_access_available_in * ~df.microtransit_prm_access_available_in * _origin_prm_dist"
+,_distance_walk,"_distance_walk + (df.trip_mode=='WALK_PRM') * ~df.nev_prm_egress_available_out * ~df.microtransit_prm_egress_available_out * _dest_prm_dist"
+,_distance_walk,"_distance_walk + (df.trip_mode=='WALK_PRM') * odt_skims['WALK_PRM_XFERWALK']/60 * walk_speed"
+,_distance_walk,"_distance_walk + (df.trip_mode=='WALK_MIX') * ~df.nev_mix_access_available_in * ~df.microtransit_mix_access_available_in * _origin_mix_dist"
+,_distance_walk,"_distance_walk + (df.trip_mode=='WALK_MIX') * ~df.nev_mix_egress_available_out * ~df.microtransit_mix_egress_available_out * _dest_mix_dist"
+,distance_walk,"_distance_walk + (df.trip_mode=='WALK_MIX') * odt_skims['WALK_MIX_XFERWALK']/60 * walk_speed"
 #,,
-,time_mm,0
-,distance_mm,0
-,cost_fare_mm,0
-,distance_bike,0
-#,,
-,time_wait_drive,df.tnc_single_wait_time+df.tnc_shared_wait_time+df.taxi_wait_time
+,_time_wait_drive,0
+,_time_wait_drive,"_time_wait_drive + np.where(df.trip_mode.isin(['TAXI']),df.origTaxiWaitTime,0)"
+,_time_wait_drive,"_time_wait_drive + np.where(df.trip_mode.isin(['TNC_SINGLE']),df.origSingleTNCWaitTime,0)"
+,time_wait_drive,"_time_wait_drive + np.where(df.trip_mode.isin(['TNC_SHARED']),np.where(df.nev_available, 0, np.where(df.microtransit_available, 0, df.origSharedTNCWaitTime)),0)"

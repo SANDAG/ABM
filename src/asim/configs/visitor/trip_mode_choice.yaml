@@ -163,11 +163,27 @@ CHOOSER_COLS_TO_KEEP:
   - nev_dest
   - nev_operating
   - nev_available
-  # - microtransit_mix_access_available_out
-  # - nev_mix_access_available_out
+  - microtransit_local_egress_available_out
+  - microtransit_prm_egress_available_out
   - microtransit_mix_egress_available_out
+  - nev_local_egress_available_out
+  - nev_prm_egress_available_out
   - nev_mix_egress_available_out
+  - microtransit_local_access_available_in
+  - microtransit_prm_access_available_in
   - microtransit_mix_access_available_in
+  - nev_local_access_available_in
+  - nev_prm_access_available_in
   - nev_mix_access_available_in
-  # - microtransit_mix_egress_available_in
-  # - nev_mix_egress_available_in
+  - microtransit_local_egress_time_out
+  - microtransit_prm_egress_time_out
+  - microtransit_mix_egress_time_out
+  - nev_local_egress_time_out
+  - nev_prm_egress_time_out
+  - nev_mix_egress_time_out
+  - microtransit_local_access_time_in
+  - microtransit_prm_access_time_in
+  - microtransit_mix_access_time_in
+  - nev_local_access_time_in
+  - nev_prm_access_time_in
+  - nev_mix_access_time_in

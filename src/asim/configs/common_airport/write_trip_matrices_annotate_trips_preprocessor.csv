@@ -344,7 +344,7 @@ Description,Target,Expression
 ,_timeTransitInitialWait,"_timeTransitInitialWait + odt_skims['KNRIN_MIX_FIRSTWAIT'] * np.where(trips.trip_mode == 'KNR_MIX',1,0) * np.where(~trips.outbound,1,0)"
 ,_timeTransitInitialWait,"_timeTransitInitialWait + odt_skims['TNCIN_LOC_FIRSTWAIT'] * np.where(trips.trip_mode == 'TNC_LOC',1,0) * np.where(~trips.outbound,1,0)"
 ,_timeTransitInitialWait,"_timeTransitInitialWait + odt_skims['TNCIN_PRM_FIRSTWAIT'] * np.where(trips.trip_mode == 'TNC_PRM',1,0) * np.where(~trips.outbound,1,0)"
-,timeTransitInitialWait,"_timeTransitInitialWait + odt_skims['TNCIN_MIX_FIRSTWAIT'] * np.where(trips.trip_mode == 'TNC_MIX',1,0) * np.where(~trips.outbound,1,0)"
+,_timeTransitInitialWait,"_timeTransitInitialWait + odt_skims['TNCIN_MIX_FIRSTWAIT'] * np.where(trips.trip_mode == 'TNC_MIX',1,0) * np.where(~trips.outbound,1,0)"
 #,,
 ,_costFareTransit,"odt_skims['WALK_LOC_FARE'] * np.where(trips.trip_mode == 'WALK_LOC',1,0)"
 ,_costFareTransit,"_costFareTransit + odt_skims['WALK_PRM_FARE'] * np.where(trips.trip_mode == 'WALK_PRM',1,0)"
@@ -391,9 +391,31 @@ Description,Target,Expression
 ,transfersTransit,"_transfersTransit + odt_skims['TNCIN_MIX_XFERS'] * np.where(trips.trip_mode == 'TNC_MIX',1,0) * np.where(~trips.outbound,1,0)"
 #bikeskim,,
 ,timeBike,"od_skims['BIKE_TIME'] * np.where(trips.trip_mode == 'BIKE',1,0)"
-,timeWalk,"od_skims['walkTime'] * np.where(trips.trip_mode == 'WALK',1,0)"
+#,,
+,_time_transit_wait,"_timeTransitInitialWait"
+,_time_transit_wait,"_time_transit_wait + odt_skims['WALK_LOC_XFERWAIT'] * np.where(trips.trip_mode == 'WALK_LOC',1,0)"
+,_time_transit_wait,"_time_transit_wait + odt_skims['WALK_PRM_XFERWAIT'] * np.where(trips.trip_mode == 'WALK_PRM',1,0)"
+,_time_transit_wait,"_time_transit_wait + odt_skims['WALK_MIX_XFERWAIT'] * np.where(trips.trip_mode == 'WALK_MIX',1,0)"
+,_time_transit_wait,"_time_transit_wait + odt_skims['PNROUT_LOC_XFERWAIT'] * np.where(trips.trip_mode == 'PNR_LOC',1,0) * np.where(trips.outbound,1,0)"
+,_time_transit_wait,"_time_transit_wait + odt_skims['PNROUT_PRM_XFERWAIT'] * np.where(trips.trip_mode == 'PNR_PRM',1,0) * np.where(trips.outbound,1,0)"
+,_time_transit_wait,"_time_transit_wait + odt_skims['PNROUT_MIX_XFERWAIT'] * np.where(trips.trip_mode == 'PNR_MIX',1,0) * np.where(trips.outbound,1,0)"
+,_time_transit_wait,"_time_transit_wait + odt_skims['KNROUT_LOC_XFERWAIT'] * np.where(trips.trip_mode == 'KNR_LOC',1,0) * np.where(trips.outbound,1,0)"
+,_time_transit_wait,"_time_transit_wait + odt_skims['KNROUT_PRM_XFERWAIT'] * np.where(trips.trip_mode == 'KNR_PRM',1,0) * np.where(trips.outbound,1,0)"
+,_time_transit_wait,"_time_transit_wait + odt_skims['KNROUT_MIX_XFERWAIT'] * np.where(trips.trip_mode == 'KNR_MIX',1,0) * np.where(trips.outbound,1,0)"
+,_time_transit_wait,"_time_transit_wait + odt_skims['TNCOUT_LOC_XFERWAIT'] * np.where(trips.trip_mode == 'TNC_LOC',1,0) * np.where(trips.outbound,1,0)"
+,_time_transit_wait,"_time_transit_wait + odt_skims['TNCOUT_PRM_XFERWAIT'] * np.where(trips.trip_mode == 'TNC_PRM',1,0) * np.where(trips.outbound,1,0)"
+,_time_transit_wait,"_time_transit_wait + odt_skims['TNCOUT_MIX_XFERWAIT'] * np.where(trips.trip_mode == 'TNC_MIX',1,0) * np.where(trips.outbound,1,0)"
+,_time_transit_wait,"_time_transit_wait + odt_skims['PNRIN_LOC_XFERWAIT'] * np.where(trips.trip_mode == 'PNR_LOC',1,0) * np.where(~trips.outbound,1,0)"
+,_time_transit_wait,"_time_transit_wait + odt_skims['PNRIN_PRM_XFERWAIT'] * np.where(trips.trip_mode == 'PNR_PRM',1,0) * np.where(~trips.outbound,1,0)"
+,_time_transit_wait,"_time_transit_wait + odt_skims['PNRIN_MIX_XFERWAIT'] * np.where(trips.trip_mode == 'PNR_MIX',1,0) * np.where(~trips.outbound,1,0)"
+,_time_transit_wait,"_time_transit_wait + odt_skims['KNRIN_LOC_XFERWAIT'] * np.where(trips.trip_mode == 'KNR_LOC',1,0) * np.where(~trips.outbound,1,0)"
+,_time_transit_wait,"_time_transit_wait + odt_skims['KNRIN_PRM_XFERWAIT'] * np.where(trips.trip_mode == 'KNR_PRM',1,0) * np.where(~trips.outbound,1,0)"
+,_time_transit_wait,"_time_transit_wait + odt_skims['KNRIN_MIX_XFERWAIT'] * np.where(trips.trip_mode == 'KNR_MIX',1,0) * np.where(~trips.outbound,1,0)"
+,_time_transit_wait,"_time_transit_wait + odt_skims['TNCIN_LOC_XFERWAIT'] * np.where(trips.trip_mode == 'TNC_LOC',1,0) * np.where(~trips.outbound,1,0)"
+,_time_transit_wait,"_time_transit_wait + odt_skims['TNCIN_PRM_XFERWAIT'] * np.where(trips.trip_mode == 'TNC_PRM',1,0) * np.where(~trips.outbound,1,0)"
+,time_transit_wait,"_time_transit_wait + odt_skims['TNCIN_MIX_XFERWAIT'] * np.where(trips.trip_mode == 'TNC_MIX',1,0) * np.where(~trips.outbound,1,0)"
 # totals,,
 ,cost_total,costOperatingDrive + costTollDrive + costFareTransit
-,time_total,timeDrive + timeBike + timeWalk + timeTransitInitialWait + timeTransitInVehicle + transfersTransit
+,time_total,df.time_walk + timeBike + df.time_mm + timeDrive + df.time_wait_drive + df.time_transit_drive + time_transit_wait + timeTransitInVehicle + df.time_airport_ivt + df.time_airport_wait
 #,,
 ,value_of_time_category_id,"np.where(vot1,1,np.where(vot2,2,3))"
