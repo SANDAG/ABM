@@ -817,6 +817,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 "export_hwy_shape.cmd",
                 [drive, drive + path_forward_slash],
                 "Exporting highway shapefile", capture_output=True)
+            
+            self.run_proc(
+                "run_travel_time_calculator.cmd",
+                [drive, drive + path_forward_slash],
+                "Exporting MGRA-level travel times", capture_output=True)
 
         if not skipDatalake:
             self.write_metadata(main_directory, scenario_title, select_link, username, scenarioYear, sample_rate, prod_env)
