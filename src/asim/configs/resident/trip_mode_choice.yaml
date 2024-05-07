@@ -137,6 +137,8 @@ CHOOSER_COLS_TO_KEEP:
   - s3_time_skims
   - s3_dist_skims
   - s3_cost_skims
+  - ebike_time
+  - escooter_time
   - microtransit_orig
   - microtransit_dest
   - microtransit_operating
