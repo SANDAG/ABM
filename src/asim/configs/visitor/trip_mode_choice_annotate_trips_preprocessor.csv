@@ -8,11 +8,8 @@ cost coefficient by income segment,coef_cost,"np.select([df.income == 0, df.inco
 ,tour_mode_is_s3,df.tour_mode == 'SHARED3'
 ,tour_mode_is_walk,df.tour_mode == 'WALK'
 vot bins,vot_da,coef_ivt / coef_cost * 0.6
-#,vot_s2,vot_da * cost_share_s2
-#,vot_s3,vot_da * cost_share_s3
-# No shared cost in visitor model,,
-,vot_s2,vot_da
-,vot_s3,vot_da
+No shared cost in visitor model,vot_s2,vot_da
+No shared cost in visitor model,vot_s3,vot_da
 ,_vot_bin_da,"np.where(vot_da < vot_threshold_low, 1, np.where(vot_da < vot_threshold_med, 2, 3))"
 ,_vot_bin_s2,"np.where(vot_s2 < vot_threshold_low, 1, np.where(vot_s2 < vot_threshold_med, 2, 3))"
 ,_vot_bin_s3,"np.where(vot_s3 < vot_threshold_low, 1, np.where(vot_s3 < vot_threshold_med, 2, 3))"
@@ -36,9 +33,9 @@ last trip of tour,last_trip,(df.trip_num == df.trip_count) & (df.outbound == Fal
 ,last_of_multi_trips,(in_stops > 0) & last_trip
 ,trip_orig_is_tour_dest,df.origin == tour_dest
 ,trip_dest_is_tour_dest,df.destination == tour_dest
+#Parking Costs,,
 sandag costs need to be in cents,park_cost_day,"reindex(land_use.exp_daily, tour_dest) * 100"
 ,park_cost_hour,"reindex(land_use.exp_hourly, tour_dest) * 100"
-,park_cost_month,"reindex(land_use.exp_monthly, tour_dest) * 100"
 effective parking cost,park_cost_prim_dest,"pd.concat((park_cost_day, park_cost_hour * duration_hours), axis=1).min(axis=1)"
 ,park_cost_tour_dest_contrib,park_cost_prim_dest / tot_trips
 ,park_cost_trip_orig,"reindex(land_use.exp_hourly, df[ORIGIN]) * 100"
@@ -46,8 +43,6 @@ effective parking cost,park_cost_prim_dest,"pd.concat((park_cost_day, park_cost_
 ,park_cost_trip_orig_contrib,((1 - first_trip) * (1 - trip_orig_is_tour_dest)) * (park_cost_trip_orig / 2) + (trip_orig_is_tour_dest * (park_cost_tour_dest_contrib / (tot_trips + 2)))
 ,park_cost_trip_dest_contrib,((1 - last_trip) * (1 - trip_dest_is_tour_dest)) * (park_cost_trip_dest / 2) + (trip_dest_is_tour_dest * (park_cost_tour_dest_contrib / (tot_trips + 2)))
 ,parking_cost,park_cost_tour_dest_contrib + park_cost_trip_orig_contrib + park_cost_trip_dest_contrib
-#Divisor for cost sharing of SR2 trips,cost_share_s2,2
-#Divisor for cost sharing of SR3+ trips,cost_share_s3,3
 wait times,density_measure,"reindex(land_use.PopEmpDenPerMi, df[ORIGIN])"
 ,density_bin,"pd.cut(density_measure, bins=[-np.inf] + wait_time_distribution_by_density_breaks + [np.inf], labels=[1,2,3,4,5]).astype(int)"
 ,taxi_wait_time_mean,"density_bin.map({k: v for k,v in taxi_wait_time_mean_by_density.items()})"
@@ -78,16 +73,12 @@ is dining tour,is_dining,"np.where(purpose_id==2,1,0)"
 ,tourBike,"np.where(df.tour_mode=='BIKE',1,0)"
 ,tourWalkTransit,"np.where(df.tour_mode.isin(['WALK_LOC', 'WALK_PRM', 'WALK_MIX']),1,0)"
 ,tourMaaS,"np.where(df.tour_mode.isin(['TAXI','TNC_SINGLE','TNC_SHARED']),1,0)"
-#Use AV coefficients for tour,useAV,df.useOwnedAV
-#Auto IVT Factor,autoIVTFactor,"np.where(useAV==0,1.0,autoIVTFactorAV)"
-placeholder Auto IVT Factor,autoIVTFactor,1
-#Auto Parking Cost Factor,autoParkingCostFactor,"np.where(useAV==0,1.0,autoParkingCostFactorAV)"
-placeholder for missing autoParkingCostFactorAV,autoParkingCostFactor,1
-#Auto CPM Factor,autoCPMFactor,"np.where(useAV==0,1.0,autoCostPerMileFactorAV)"
-placeholder for missing autoCostPerMileFactorAV,autoCPMFactor,1
-#Auto Terminal Time Factor,autoTermTimeFactor,"np.where(useAV==0,1.0,autoTerminalTimeFactorAV)"
-placeholder for missing autoTerminalTimeFactorAV,autoTermTimeFactor,1
-# PLACEHOLDER,,
+Use AV coefficients for tour,useAV,AV_OWNERSHIP_TARGET_PERCENT>0
+Auto IVT Factor,autoIVTFactor,"np.where(useAV,autoIVTFactorAV,1)"
+Auto Parking Cost Factor,autoParkingCostFactor,"np.where(useAV,autoParkingCostFactorAV,1)"
+Auto CPM Factor,autoCPMFactor,"np.where(useAV,autoCostPerMileFactorAV,1)"
+Auto Terminal Time Factor,autoTermTimeFactor,"np.where(useAV,autoTerminalTimeFactorAV,1)"
+#,,
 ,time_factor,1
 ,walk_local_available,(odt_skims['WALK_LOC_TOTALIVTT']>0)
 ,walk_premium_available,(odt_skims['WALK_PRM_TOTALIVTT']>0)
@@ -183,3 +174,13 @@ inbound nev access to mixed time,nev_mix_access_time_in,"np.maximum(nev_direct_m
 # Additional transfers from microtransit and NEV,,
 microtransit/nev access transfer,mtnev_acc_xfer_in,microtransit_local_access_available_in | microtransit_prm_access_available_in | microtransit_mix_access_available_in | nev_local_access_available_in | nev_prm_access_available_in | nev_mix_access_available_in
 microtransit/nev egress transfer,mtnev_egr_xfer_out,microtransit_local_egress_available_out | microtransit_prm_egress_available_out | microtransit_mix_egress_available_out | nev_local_egress_available_out | nev_prm_egress_available_out | nev_mix_egress_available_out
+# commuter rail constants based on commuter rail IVTT,,
+,wlk_prm_cr_asc,"(-1.0) * (np.minimum(odt_skims['WALK_PRM_CMRIVTT'],60) + np.where(odt_skims['WALK_PRM_CMRIVTT']>40,(np.minimum(odt_skims['WALK_PRM_CMRIVTT'],60)-40)*0.6,0))"
+,wlk_mix_cr_asc,"(-1.0) * (np.minimum(odt_skims['WALK_MIX_CMRIVTT'],60) + np.where(odt_skims['WALK_MIX_CMRIVTT']>40,(np.minimum(odt_skims['WALK_MIX_CMRIVTT'],60)-40)*0.6,0))"
+# Note: Hyperloop not implemented in ASC calculations since we arent skimming hyperloop IVTT,,
+,wlk_prm_asc,"np.where(odt_skims['WALK_PRM_CMRIVTT'] > 10, wlk_prm_cr_asc,np.where(odt_skims['WALK_PRM_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['WALK_PRM_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['WALK_PRM_EXPIVTT']+odt_skims['WALK_PRM_LTDEXPIVTT'] > 0, eb_equiv_asc,0))))"
+,wlk_mix_max_asc,"np.where(odt_skims['WALK_MIX_CMRIVTT'] > 10, wlk_mix_cr_asc,np.where(odt_skims['WALK_MIX_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['WALK_MIX_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['WALK_PRM_EXPIVTT']+odt_skims['WALK_MIX_LTDEXPIVTT']> 0, eb_equiv_asc,0))))"
+# reduce by 50% if bus transfer and constant is positive,,
+,wlk_mix_asc,"np.where((wlk_mix_max_asc > 0) & (odt_skims['WALK_MIX_BUSIVTT'] > 0), 0.5 * wlk_mix_max_asc, wlk_mix_max_asc)"
+# reduce by 50% if transfers happen between cmr and other prm lines,,
+,wlk_prm_asc,"np.where((wlk_prm_asc > 0) & (odt_skims['WALK_PRM_XFERS'] > 0), 0.5 * wlk_prm_asc, wlk_prm_asc)"

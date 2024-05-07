@@ -57,36 +57,40 @@ util_WALK_LOC_iwait_time,WALK_LOC - wait time,@(odt_skims['WALK_LOC_FIRSTWAIT'])
 util_WALK_LOC_transfer_wait_time,WALK_LOC - transfer wait time,@(odt_skims['WALK_LOC_XFERWAIT']) * df.time_factor,,,,,,,,,coef_xwt,,
 util_WALK_LOC_transfer_waLK_time,WALK_LOC - transfer walk time,@(odt_skims['WALK_LOC_XFERWALK']) * df.time_factor,,,,,,,,,coef_waux,,
 util_WALK_LOC_transfers_penalty,WALK_LOC - number of transfers,"@(-23+23*np.exp(0.414*np.clip(odt_skims['WALK_LOC_XFERS'] + df.outbound*df.mtnev_egr_xfer_out + ~df.outbound*df.mtnev_acc_xfer_in, a_min=None,a_max=4)))  * df.time_factor",,,,,,,,,coef_xfers,,
+util_WALK_LOC_Fare,WALK_LOC - Fare,@(odt_skims['WALK_LOC_FARE'])* 100 * df.coef_cost,,,,,,,,,coef_one,,
 util_WALK_LOC_Walk_egress_time,WALK_LOC - Walk egress time,"@np.where(df.nev_local_egress_available_out & df.outbound, df.nev_local_egress_time_out, np.where(df.microtransit_local_egress_available_out & df.outbound, df.microtransit_local_egress_time_out, df.dest_local_time)) * df.time_factor",,,,,,,,,coef_wegr,,
 util_WALK_LOC_wait_egress_time,WALK_LOC - Egress mt/nev wait time,"@1.5 * np.where(df.nev_local_egress_available_out & df.outbound, nevWaitTime, np.where(df.microtransit_local_egress_available_out & df.outbound, microtransitWaitTime, 0)) * df.time_factor",,,,,,,,,coef_ivt,,
 ##,,,,,,,,,,,,,
 util_WalkTransit_Unavailable,WalkTransit_Available,walk_premium_available ==False ,,,,,,,,,,-999,
 util_WALK_PRM_In_vehicle_time,WALK_PRM - In-vehicle time,@(odt_skims['WALK_PRM_TOTALIVTT'])  * df.time_factor,,,,,,,,,,coef_ivt,
-#util_WALK_PRM_In_vehicle_time_on_Bus,WALK_PRM - In-vehicle time on Bus,@(odt_skims['WALK_PRM_BUSIVTT'])  * df.time_factor,,,,,,,,,,coef_ivt,
 util_WALK_PRM_In_vehicle_time_on_LRT,WALK_PRM - In-vehicle time on LRT,@(ivt_lrt_multiplier - 1) * (odt_skims['WALK_PRM_LRTIVTT'])  * df.time_factor,,,,,,,,,,coef_ivt,
 util_WALK_PRM_In_vehicle_time_on_CMR,WALK_PRM - In-vehicle time on CMR,@(ivt_cmr_multiplier - 1) * (odt_skims['WALK_PRM_CMRIVTT'])  * df.time_factor,,,,,,,,,,coef_ivt,
 util_WALK_PRM_In_vehicle_time_on_LTD_EXP,WALK_PRM - In-vehicle time on LTD and EXP,@(ivt_ltd_multiplier - 1) * (odt_skims['WALK_PRM_LTDEXPIVTT'] ) * df.time_factor,,,,,,,,,,coef_ivt,
-#util_WALK_PRM_In_vehicle_time_on_URB,WALK_PRM - In-vehicle time on BRT,@(ivt_brt_multiplier - 1) * (odt_skims['WALK_PRM_BRTREDIVTT'] + odt_skims['WALK_PRM_BRTYELIVTT'])  * df.time_factor,,,,,,,,,,coef_ivt,
+util_WALK_PRM_In_vehicle_time_on_URB,WALK_PRM - In-vehicle time on BRT,@(ivt_brt_multiplier - 1) * (odt_skims['WALK_PRM_BRTIVTT'])  * df.time_factor,,,,,,,,,,coef_ivt,
 util_WALK_PRM_wait_time,WALK_PRM - wait time,@(odt_skims['WALK_PRM_FIRSTWAIT'])  * df.time_factor,,,,,,,,,,coef_fwt,
 util_WALK_PRM_transfer_wait_time,WALK_PRM - transfer wait time,@(odt_skims['WALK_PRM_XFERWAIT']) * df.time_factor,,,,,,,,,,coef_xwt,
 util_WALK_PRM_transfer_waLK_time,WALK_PRM - transfer walk time,@(odt_skims['WALK_PRM_XFERWALK']) * df.time_factor,,,,,,,,,,coef_waux,
 util_WALK_PRM_transfers_penalty,WALK_PRM - number of transfers,"@(-23+23*np.exp(0.414*np.clip((odt_skims['WALK_PRM_XFERS'] + df.outbound*df.mtnev_egr_xfer_out + ~df.outbound*df.mtnev_acc_xfer_in), a_min=None,a_max=4)))  * df.time_factor",,,,,,,,,,coef_xfers,
+util_WALK_PRM_Fare,WALK_PRM - Fare,@(odt_skims['WALK_PRM_FARE'])* 100 * df.coef_cost,,,,,,,,,,coef_one,
 util_WALK_PRM_Walk_access_time,WALK_PRM - Walk access time,"@np.where(df.nev_prm_access_available_in & ~df.outbound, df.nev_prm_access_time_in, np.where(df.microtransit_prm_access_available_in & ~df.outbound, df.microtransit_prm_access_time_in, df.origin_prm_time)) * df.time_factor",,,,,,,,,,coef_wacc,
 util_WALK_PRM_wait_access_time,WALK_PRM - Access mt/nev wait time,"@1.5 * np.where(df.nev_prm_access_available_in & ~df.outbound, nevWaitTime, np.where(df.microtransit_prm_access_available_in & ~df.outbound, microtransitWaitTime, 0)) * df.time_factor",,,,,,,,,,coef_ivt,
 util_WALK_PRM_Walk_egress_time,WALK_PRM - Walk egress time,"@np.where(df.nev_prm_egress_available_out & df.outbound, df.nev_prm_egress_time_out, np.where(df.microtransit_prm_egress_available_out & df.outbound, df.microtransit_prm_egress_time_out, df.dest_prm_time)) * df.time_factor",,,,,,,,,,coef_wegr,
 util_WALK_PRM_wait_egress_time,WALK_PRM - Egress mt/nev wait time,"@1.5 * np.where(df.nev_prm_egress_available_out & df.outbound, nevWaitTime, np.where(df.microtransit_prm_egress_available_out & df.outbound, microtransitWaitTime, 0)) * df.time_factor",,,,,,,,,,coef_ivt,
+util_WALK_PRM_ASC,WALK_PRM - Alternative-specific constant,wlk_prm_asc,,,,,,,,,,coef_ivt,
 ##,,,,,,,,,,,,,
 util_WALK_MIX_Unavailable,WALK_MIX - Unavailable,walk_mix_available ==False ,,,,,,,,,,,-999
 util_WALK_MIX_In_vehicle_time,WALK_MIX - In-vehicle time,@(odt_skims['WALK_MIX_TOTALIVTT']) * df.time_factor,,,,,,,,,,,coef_ivt
-util_WALK_MIX_In_vehicle_time_on_Bus,WALK_MIX - In-vehicle time on Bus,@(odt_skims['WALK_MIX_BUSIVTT']) * df.time_factor,,,,,,,,,,,coef_ivt
 util_WALK_MIX_In_vehicle_time_on_LRT,WALK_MIX - In-vehicle time on LRT,@(ivt_lrt_multiplier - 1) * (odt_skims['WALK_MIX_LRTIVTT']) * df.time_factor,,,,,,,,,,,coef_ivt
 util_WALK_MIX_In_vehicle_time_on_CMR,WALK_MIX - In-vehicle time on CMR,@(ivt_cmr_multiplier - 1) * (odt_skims['WALK_MIX_CMRIVTT']) * df.time_factor,,,,,,,,,,,coef_ivt
 util_WALK_MIX_In_vehicle_time_on_LTD_EXP,WALK_MIX - In-vehicle time on LTD and EXP,@(ivt_ltd_multiplier - 1) * (odt_skims['WALK_MIX_LTDEXPIVTT']) * df.time_factor,,,,,,,,,,,coef_ivt
-#util_WALK_MIX_In_vehicle_time_on_URB,WALK_MIX - In-vehicle time on BRT,@(ivt_brt_multiplier - 1) * (odt_skims['WALK_MIX_BRTREDIVTT'] + odt_skims['WALK_MIX_BRTYELIVTT']) * df.time_factor,,,,,,,,,,,coef_ivt
+util_WALK_MIX_In_vehicle_time_on_URB,WALK_MIX - In-vehicle time on BRT,@(ivt_brt_multiplier - 1) * (odt_skims['WALK_MIX_BRTIVTT']) * df.time_factor,,,,,,,,,,,coef_ivt
 util_WALK_MIX_FIRST_wait_time,WALK_MIX - First wait time,@(odt_skims['WALK_MIX_FIRSTWAIT']) * df.time_factor,,,,,,,,,,,coef_fwt
 util_WALK_MIX_transfer_wait_time,WALK_MIX - transfer wait time,@(odt_skims['WALK_MIX_XFERWAIT']) * df.time_factor,,,,,,,,,,,coef_xwt
 util_WALK_MIX_number_of_transfers,WALK_MIX - number of transfers,"@(-23+23*np.exp(0.414*np.clip(odt_skims['WALK_MIX_XFERS'] + df.outbound*df.mtnev_egr_xfer_out + ~df.outbound*df.mtnev_acc_xfer_in, a_min=None,a_max=4)))  * df.time_factor",,,,,,,,,,,coef_xfers
+util_WALK_MIX_transfer_waLK_time,WALK_MIX - transfer walk time,@(odt_skims['WALK_MIX_XFERWALK']) * df.time_factor,,,,,,,,,,,coef_waux
+util_WALK_MIX_Fare,WALK_MIX - Fare,@(odt_skims['WALK_MIX_FARE'])* 100 * df.coef_cost,,,,,,,,,,,coef_one
 util_WALK_MIX_Walk_access_time,WALK_MIX - Walk access time,"@np.where(df.nev_mix_access_available_in & ~df.outbound, df.nev_mix_access_time_in, np.where(df.microtransit_mix_access_available_in & ~df.outbound, df.microtransit_mix_access_time_in, df.origin_mix_time)) * df.time_factor",,,,,,,,,,,coef_wacc
 util_WALK_MIX_wait_access_time,WALK_MIX - Access mt/nev wait time,"@1.5 * np.where(df.nev_mix_access_available_in & ~df.outbound, nevWaitTime, np.where(df.microtransit_mix_access_available_in & ~df.outbound, microtransitWaitTime, 0)) * df.time_factor",,,,,,,,,,,coef_ivt
 util_WALK_MIX_Walk_egress_time,WALK_MIX - Walk egress time,"@np.where(df.nev_mix_egress_available_out & df.outbound, df.nev_mix_egress_time_out, np.where(df.microtransit_mix_egress_available_out & df.outbound, df.microtransit_mix_egress_time_out, df.dest_mix_time)) * df.time_factor",,,,,,,,,,,coef_wegr
 util_WALK_MIX_wait_egress_time,WALK_MIX - Egress mt/nev wait time,"@1.5 * np.where(df.nev_mix_egress_available_out & df.outbound, nevWaitTime, np.where(df.microtransit_mix_egress_available_out & df.outbound, microtransitWaitTime, 0)) * df.time_factor",,,,,,,,,,,coef_ivt
+util_WALK_MIX_ASC,WALK_MIX - Alternative-specific constant,wlk_mix_asc,,,,,,,,,,,coef_ivt
