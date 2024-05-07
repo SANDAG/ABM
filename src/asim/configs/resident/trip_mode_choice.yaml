@@ -140,10 +140,12 @@ CHOOSER_COLS_TO_KEEP:
   - microtransit_dest
   - microtransit_operating
   - microtransit_available
+  - microtransit_time
   - nev_orig
   - nev_dest
   - nev_operating
   - nev_available
+  - nev_time
   - microtransit_local_access_available_out
   - microtransit_prm_access_available_out
   - microtransit_mix_access_available_out
