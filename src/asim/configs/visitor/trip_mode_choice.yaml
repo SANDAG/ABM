@@ -147,6 +147,7 @@ CHOOSER_COLS_TO_KEEP:
   - vot_s3
   - parking_cost
   - autoParkingCostFactor
+  - autoCPMFactor
   - tnc_single_wait_time
   - tnc_shared_wait_time
   - taxi_wait_time
