@@ -118,6 +118,7 @@ CHOOSER_COLS_TO_KEEP:
   - vot_s2
   - vot_s3
   - ownsTransponder
+  - ebike_owner
   - parkingCost
   - auto_op_cost
   - autoCPMFactor
