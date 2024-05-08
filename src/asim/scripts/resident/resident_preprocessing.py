@@ -39,8 +39,6 @@ class Series15_Processor:
         self.maz_maz_bike_file = os.path.join(self.output_dir, 'bikeMgraLogsum.csv')
         self.taz_taz_bike_file = os.path.join(self.output_dir, 'bikeTazLogsum.csv')
 
-        self.parking_costs_file = os.path.join(self.output_dir, 'parking', 'expected_parking_costs.csv')
-
         self.walk_speed = 3  # mph
 
         sandag_abm_prop_dir = os.path.join(project_dir, 'conf', 'sandag_abm.properties')
