@@ -86,6 +86,6 @@ Description,Target,Expression
 ,distance_walk,"_distance_walk + (df.trip_mode=='WALK_MIX') * odt_skims['WALK_MIX_XFERWALK']/60 * walk_speed"
 #,,
 ,_time_wait_drive,0
-,_time_wait_drive,"_time_wait_drive + np.where(df.trip_mode.isin(['TAXI']),df.origTaxiWaitTime,0)"
-,_time_wait_drive,"_time_wait_drive + np.where(df.trip_mode.isin(['TNC_SINGLE']),df.origSingleTNCWaitTime,0)"
-,time_wait_drive,"_time_wait_drive + np.where(df.trip_mode.isin(['TNC_SHARED']),np.where(df.nev_available, 0, np.where(df.microtransit_available, 0, df.origSharedTNCWaitTime)),0)"
+,_time_wait_drive,"_time_wait_drive + np.where(df.trip_mode.isin(['TAXI']),df.taxi_wait_time,0)"
+,_time_wait_drive,"_time_wait_drive + np.where(df.trip_mode.isin(['TNC_SINGLE']),df.tnc_single_wait_time,0)"
+,time_wait_drive,"_time_wait_drive + np.where(df.trip_mode.isin(['TNC_SHARED']),np.where(df.nev_available, 0, np.where(df.microtransit_available, 0, df.tnc_shared_wait_time)),0)"
