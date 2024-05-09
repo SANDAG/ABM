@@ -791,6 +791,8 @@ Export network results to csv files for SQL data loader."""
         df['Route_Name'] = df['Route_Name'].astype(int)
         df_routeFull = pd.read_csv(os.path.join(export_path, 'trrt.csv'))
         result = pd.merge(df_routeFull, df, how='left', on=['Route_Name'])
+        mode5tod = pd.read_csv(os.path.join(self.main_directory, 'input', 'MODE5TOD.csv')).set_index('MODE_ID')
+        result['Mode_Name'] = result['Mode'].map(mode5tod['MODE_NAME'])
         result.to_csv(os.path.join(export_path, 'transitRoute.csv'), index=False)
         # if self.container:
         #     self.util_DataLakeExporter.write_to_datalake({'transitRoute':result})

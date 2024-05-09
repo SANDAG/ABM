@@ -904,7 +904,6 @@ tours:
     - tour_id_temp
     - purpose
     - mode_segment
-    - parent_tour_id
     - free_parking_at_work
 
   rename_columns:

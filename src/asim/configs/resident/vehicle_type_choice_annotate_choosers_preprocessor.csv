@@ -12,3 +12,4 @@ number of household Hybrid,num_hh_Hybrid,"df[df['already_owned_veh'].str.contain
 number of household BEV,num_hh_BEV,"df[df['already_owned_veh'].str.contains('BEV', na=False)].groupby('household_id').size().reindex(df.household_id).fillna(0)"
 number of household PEV,num_hh_PEV,"df[df['already_owned_veh'].str.contains('PEV', na=False)].groupby('household_id').size().reindex(df.household_id).fillna(0)"
 number of household EVs,num_hh_EV,"num_hh_BEV + num_hh_PEV"
+household income adjusted to 2017$,income17,"@np.where(df.income < 0, df.income, df.income/1.217)"
