@@ -31,6 +31,7 @@ skims:
         j: DMAZ
 
 # maz_id below is overriden from constants.yaml
+# TODO: currently if this is changed, also update resident_is_size_terms.csv
 poes:
   0:
     name: San Ysidro
@@ -47,19 +48,19 @@ poes:
     ped_lanes: 6
     start_year: 0
   2:
-    name: Tecate
-    maz_id: 22324
-    ext_taz_id: 4
-    veh_lanes: 2
-    ped_lanes: 2
-    start_year: 0
-  3:
     name: Otay Mesa East
     maz_id: 7123
     ext_taz_id: 3
     veh_lanes: 7
     ped_lanes: 0
     start_year: 2026
+  3:
+    name: Tecate
+    maz_id: 22324
+    ext_taz_id: 4
+    veh_lanes: 2
+    ped_lanes: 2
+    start_year: 0
 tours:
   pass_shares:
     sentri: 0.219

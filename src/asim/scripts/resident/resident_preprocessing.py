@@ -103,7 +103,7 @@ class Series15_Processor:
                 new_name = '_'.join(name_elems[1:]) + '__' + name_elems[0]
                 output_skims[skims_name].rename(new_name)
             output_skims.close()
-            
+
     def pre_process_landuse(self):
         landuse = pd.read_csv(self.landuse_file)
         landuse['MAZ'] = landuse['mgra']
@@ -125,13 +125,11 @@ class Series15_Processor:
     def add_external_counts_to_landuse(self):
         print("Adding external counts to landuse file.")
         ext_data = pd.read_csv(self.ext_data_file)
-        # dummy for other external taz's that are not yet active
-        # (all TAZs need to be listed in the landuse file or the output trip omx trip matrices aren't the right shape!)
-        ext_data.loc[len(ext_data)] = [3, 0, 0]
-        ext_data.loc[len(ext_data)] = [5, 0, 0]
-        ext_data.loc[len(ext_data)] = [11, 0, 0]
-        
-        ext_data.sort_values(by='taz')
+        ext_data = (ext_data.loc[(ext_data['start_year']<=scenario_year)]
+                        .sort_values('start_year', ascending=False)
+                        .drop_duplicates('taz') #keep taz row w/ highest start_year
+                        .sort_values(by='taz')
+                        .reset_index(drop=True))
 
         # FIXME: landuse does not have crossborder poe_ids
 
@@ -144,8 +142,8 @@ class Series15_Processor:
                 ext_maz_num = self.landuse.index.max() + 1
                 self.landuse.loc[ext_maz_num] = 0
                 self.landuse.loc[ext_maz_num, 'poe_id'] = -1
-            
-            self.landuse['poe_id'].fillna(0, inplace=True)
+
+            self.landuse['poe_id'].fillna(-1, inplace=True)
 
             self.landuse.loc[ext_maz_num, 'taz'] = row['taz']
             self.landuse.loc[ext_maz_num, 'TAZ'] = row['taz']
@@ -162,7 +160,7 @@ class Series15_Processor:
         self.landuse['mgra'] = self.landuse.index.values
 
         print("\tAdded external mazs: ", ext_maz_nums)
-        
+
         self.landuse['external_work'] = self.landuse['external_work'].fillna(0)
         self.landuse['external_nonwork'] = self.landuse['external_nonwork'].fillna(0)
         self.landuse.loc[self.landuse.external_MAZ == 1, ['TAZ', 'external_MAZ', 'poe_id', 'external_work', 'external_nonwork']]
@@ -216,7 +214,7 @@ class Series15_Processor:
         assert external_zones.index.name == 'MAZ', 'landuse index not MAZ'
         assert maz_ext_taz_xwalk.index.name == 'external_taz', 'external zone crosswalk index not external_taz'
         skim_length = len(skim_df)
-        
+
         new_connections = []
 
         for ext_taz, ext_maz in zip(external_zones['TAZ'].values, external_zones.index):
@@ -228,7 +226,7 @@ class Series15_Processor:
                 print(f"\t origins with this internal maz {len(od_connections)}")
                 od_connections[origin_col] = ext_maz
                 new_connections.append(od_connections)
-                
+
                 if dest_col is not None:
                     do_connections = skim_df.loc[skim_df[dest_col] == closest_maz].copy()
                     do_connections[dest_col] = ext_maz
@@ -247,7 +245,7 @@ class Series15_Processor:
     def add_exernal_stations_to_maz_level_skims(self):
         maz_ext_taz_xwalk = pd.read_csv(self.maz_ext_taz_xwalk_file)
         maz_ext_taz_xwalk = maz_ext_taz_xwalk.set_index('external_taz')
-        
+
         # maz-maz walk
         print("Adding external stations to maz-maz walk")
         maz_maz_walk = pd.read_csv(self.maz_maz_walk_file)
@@ -290,7 +288,7 @@ class Series15_Processor:
         if 'walkTime' not in dist_file.list_matrices():
             dist_file['walkTime'] = np.array(sov_tr_dist_AM) / self.walk_speed * 60
 
-        
+
         # Adding TAZ to TAZ Bike Logsum
         print("Creating bikeLogsum skims")
         taz_taz_bike = pd.read_csv(self.taz_taz_bike_file)
