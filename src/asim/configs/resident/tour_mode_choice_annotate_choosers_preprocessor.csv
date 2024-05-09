@@ -1,21 +1,32 @@
 Description,Target,Expression,
 #,,,
-#placeholder for walk time skim,ownsTransponder,1,
-#Auto IVT Factor,autoIVTFactor,"np.where(useAV==0,1.0,autoIVTFactorAV)",
-placeholder Auto IVT Factor,autoIVTFactor,1,
-#Auto Parking Cost Factor,autoParkingCostFactor,"np.where(useAV==0,1.0,autoParkingCostFactorAV)",
-placeholder for missing autoParkingCostFactorAV,autoParkingCostFactor,1,
-#Auto CPM Factor,autoCPMFactor,"np.where(useAV==0,1.0,autoCostPerMileFactorAV)",
-placeholder for missing autoCostPerMileFactorAV,autoCPMFactor,1,
-#Auto Terminal Time Factor,autoTermTimeFactor,"np.where(useAV==0,1.0,autoTerminalTimeFactorAV)",
-placeholder for missing autoTerminalTimeFactorAV,autoTermTimeFactor,1,
-#MinimumAgeDriveAlone,minimumAgeDA,"np.where(useAV==0,16,minAgeDriveAloneAV)",
-placeholder for missing minAgeDriveAloneAV,minimumAgeDA,16,
-freeParkingEligibility placeholder,freeParkingEligibility,0,
+local,_DF_IS_TOUR,'tour_type' in df.columns,
+,is_atwork_subtour,(df.tour_category == 'atwork') if _DF_IS_TOUR else False,
+,_parent_tour_veh,"reindex(tours['selected_vehicle'], df['parent_tour_id']) if 'selected_vehicle' in df.columns else np.nan",
+,_parent_tour_mode,"reindex(tours['tour_mode'], df['parent_tour_id']) if 'tour_mode' in df.columns else np.nan",
+,sov_veh_option,"np.where(is_atwork_subtour, _parent_tour_veh, df.get('vehicle_occup_1', np.nan))",
+,sr2_veh_option,"np.where(is_atwork_subtour, _parent_tour_veh, df.get('vehicle_occup_2', np.nan))",
+,sr3p_veh_option,"np.where(is_atwork_subtour, _parent_tour_veh, df.get('vehicle_occup_3.5', np.nan))",
+#AV factors,,,
+SOV tour Vehicle is AV,sov_tour_uses_av,"np.where(pd.notna(df.get('vehicle_occup_1', np.nan)), pd.Series(sov_veh_option, dtype = 'str').str.contains('AV'), False)"
+SR2 tour Vehicle is AV,sr2_tour_uses_av,"np.where(pd.notna(df.get('vehicle_occup_2', np.nan)), pd.Series(sr2_veh_option, dtype = 'str').str.contains('AV'), False)"
+SR3 tour Vehicle is AV,sr3_tour_uses_av,"np.where(pd.notna(df.get('vehicle_occup_3.5', np.nan)), pd.Series(sr3p_veh_option, dtype = 'str').str.contains('AV'), False)"
+SOV AV IVT Factor Adjustment,autoIVTFactor_DA,"np.where(sov_tour_uses_av, autoIVTFactorAV, 1.0)"
+SR2 AV IVT Factor Adjustment,autoIVTFactor_SR2,"np.where(sr2_tour_uses_av, autoIVTFactorAV, 1.0)"
+SR3+ AV IVT Factor Adjustment,autoIVTFactor_SR3,"np.where(sr3_tour_uses_av, autoIVTFactorAV, 1.0)"
+SOV AV Parking Cost Factor Adjustment,autoParkingCostFactor_DA,"np.where(sov_tour_uses_av, autoParkingCostFactorAV, 1.0)"
+SR2 AV Parking Cost Factor Adjustment,autoParkingCostFactor_SR2,"np.where(sr2_tour_uses_av, autoParkingCostFactorAV, 1.0)"
+SR3+ AV Parking Cost Factor Adjustment,autoParkingCostFactor_SR3,"np.where(sr3_tour_uses_av, autoParkingCostFactorAV, 1.0)"
+SOV AV Auto Terminal Time Factor,autoTermTimeFactor_DA,"np.where(sov_tour_uses_av, autoTerminalTimeFactorAV, 1.0)"
+SR2 AV Auto Terminal Time Factor,autoTermTimeFactor_SR2,"np.where(sr2_tour_uses_av, autoTerminalTimeFactorAV, 1.0)"
+SR3+ AV Auto Terminal Time Factor,autoTermTimeFactor_SR3,"np.where(sr3_tour_uses_av, autoTerminalTimeFactorAV, 1.0)"
+SOV AV Auto Terminal Time Factor,autoCPMFactor_DA,"np.where(sov_tour_uses_av, autoCostPerMileFactorAV, 1.0)"
+SR2 AV Auto Terminal Time Factor,autoCPMFactor_SR2,"np.where(sr2_tour_uses_av, autoCostPerMileFactorAV, 1.0)"
+SR3+ AV Auto Terminal Time Factor,autoCPMFactor_SR3,"np.where(sr3_tour_uses_av, autoCostPerMileFactorAV, 1.0)"
+AV Min Age to Drive Alone,minimumAgeDA,"np.where(sov_tour_uses_av, minAgeDriveAloneAV, 16)"
 reimburseProportion placeholder,reimburseProportion,0,
 "Tour duration, in hours",tourDuration,df.duration/2,
 #,,,
-local,_DF_IS_TOUR,'tour_type' in df.columns,
 ,_num_participants,df.number_of_participants if _DF_IS_TOUR else 1,
 ,is_joint,(df.tour_category=='joint') if _DF_IS_TOUR else False,
 treat tours as work if tour_type not yet decided,tour_type,"df.get('tour_type', default='work')",
@@ -24,12 +35,6 @@ treat tours as work if tour_type not yet decided,tour_type,"df.get('tour_type', 
 ,is_indiv,~is_joint,
 ,is_escort,(tour_type == 'escort') if _DF_IS_TOUR else False,
 # Auto operating costs,,,
-,is_atwork_subtour,(df.tour_category == 'atwork') if _DF_IS_TOUR else False,
-,_parent_tour_veh,"reindex(tours['selected_vehicle'], df['parent_tour_id']) if 'selected_vehicle' in df.columns else np.nan",
-,_parent_tour_mode,"reindex(tours['tour_mode'], df['parent_tour_id']) if 'tour_mode' in df.columns else np.nan",
-,sov_veh_option,"np.where(is_atwork_subtour, _parent_tour_veh, df.get('vehicle_occup_1', np.nan))",
-,sr2_veh_option,"np.where(is_atwork_subtour, _parent_tour_veh, df.get('vehicle_occup_2', np.nan))",
-,sr3p_veh_option,"np.where(is_atwork_subtour, _parent_tour_veh, df.get('vehicle_occup_3.5', np.nan))",
 ,sov_auto_op_cost,"reindex(vehicles.groupby('vehicle_type')['auto_operating_cost'].mean(), pd.Series(sov_veh_option, df.index)) if 'vehicle_occup_1' in df.columns else np.nan",
 ,sov_auto_op_cost,"np.where(sov_auto_op_cost.isna() | (pd.Series(sov_veh_option, df.index) == 'non_hh_veh'), costPerMile, sov_auto_op_cost)",
 ,sr2_auto_op_cost,"reindex(vehicles.groupby('vehicle_type')['auto_operating_cost'].mean(), pd.Series(sr2_veh_option, df.index)) if 'vehicle_occup_2' in df.columns else np.nan",
@@ -64,13 +69,6 @@ employment_density calculated in annotate_landuse in acres and is converted to s
 ,totalWaitSingleTNC,origSingleTNCWaitTime + destSingleTNCWaitTime,
 ,totalWaitSharedTNC,origSharedTNCWaitTime + destSharedTNCWaitTime,
 #parking,,,
-#,_free_parking_available,(tour_type == 'work') & df.free_parking_at_work if _DF_IS_TOUR else False,
-#,_dest_hourly_peak_parking_cost,"reindex(land_use.exp_hourly, df[dest_col_name])",
-#,_dest_hourly_offpeak_parking_cost,"reindex(land_use.exp_hourly, df[dest_col_name])",
-#,_hourly_peak_parking_cost,"np.where(_free_parking_available, 0, _dest_hourly_peak_parking_cost)",
-#,_hourly_offpeak_parking_cost,"np.where(_free_parking_available, 0, _dest_hourly_offpeak_parking_cost)",
-#,daily_parking_cost,"np.where(is_mandatory, _hourly_peak_parking_cost * df.duration, _hourly_offpeak_parking_cost * df.duration)",
-# Result of employer parking provision and reimbursement model,freeParkingEligibility,"df.freeParkingEligibility*np.where(is_indiv,1,0)",
 ,free_parking_available,(tour_type == 'work') & df.free_parking_at_work if _DF_IS_TOUR else False,
 person has free on-site parking at workplace,freeOnsite,"(free_parking_available)*np.where(is_indiv,1,0)",
 # new reimbursement amount,reimburseProportion,"df.reimburseProportion*np.where(is_indiv,1,0)",

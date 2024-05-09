@@ -92,15 +92,11 @@ no cost sharing for visitors,vot_s3,vot_da,
 ,s3_rel_skims_out,(((odt_skims['HOV3_L_REL']) * (_vot_bin_s3 == 1)) + ((odt_skims['HOV3_M_REL']) * (_vot_bin_s3 == 2)) + ((odt_skims['HOV3_H_REL']) * (_vot_bin_s3 == 3))),
 ,s3_rel_skims_inb,(((dot_skims['HOV3_L_REL']) * (_vot_bin_s3 == 1)) + ((dot_skims['HOV3_M_REL']) * (_vot_bin_s3 == 2)) + ((dot_skims['HOV3_H_REL']) * (_vot_bin_s3 == 3))),
 #,,,
-#Use AV coefficients for tour,useAV,df.useOwnedAV,
-#Auto IVT Factor,autoIVTFactor,"np.where(useAV==0,1.0,autoIVTFactorAV)",
-placeholder Auto IVT Factor,autoIVTFactor,1,
-#Auto Parking Cost Factor,autoParkingCostFactor,"np.where(useAV==0,1.0,autoParkingCostFactorAV)",
-placeholder for missing autoParkingCostFactorAV,autoParkingCostFactor,1,
-#Auto CPM Factor,autoCPMFactor,"np.where(useAV==0,1.0,autoCostPerMileFactorAV)",
-placeholder for missing autoCostPerMileFactorAV,autoCPMFactor,1,
-#Auto Terminal Time Factor,autoTermTimeFactor,"np.where(useAV==0,1.0,autoTerminalTimeFactorAV)",
-placeholder for missing autoTerminalTimeFactorAV,autoTermTimeFactor,1,
+Use AV coefficients for tour,useAV,AV_OWNERSHIP_TARGET_PERCENT>0
+Auto IVT Factor,autoIVTFactor,"np.where(useAV,autoIVTFactorAV,1)"
+Auto Parking Cost Factor,autoParkingCostFactor,"np.where(useAV,autoParkingCostFactorAV,1)"
+Auto CPM Factor,autoCPMFactor,"np.where(useAV,autoCostPerMileFactorAV,1)"
+Auto Terminal Time Factor,autoTermTimeFactor,"np.where(useAV,autoTerminalTimeFactorAV,1)"
 #,,,
 Determining Tour Origin,origin,df.origin if 'origin' in df.columns else df.home_zone_id if 'home_zone_id' in df.columns else df.workplace_zone_id,
 Determining Tour Destination,destination,df.destination if 'destination' in df.columns else df.alt_dest,
