@@ -55,6 +55,7 @@ input_table_list:
       - num_workers
       - bldgsz
       - unittype
+      - poverty
   - tablename: persons
     filename: persons.csv
     index_col: person_id
