@@ -258,7 +258,6 @@ def create_skims_and_tap_files(settings, new_mazs=None):
         new_mazs=new_mazs)
 
 
-
 def create_stop_freq_specs(settings):
     print("Creating stop frequency alts and probability lookups.")
     probs_df = pd.read_csv(os.path.join(
@@ -415,41 +414,28 @@ def create_land_use_file(
     colonia_input_fname = settings['colonia_input_fname']
     distance_param = settings['distance_param']
 
-    # load maz/mgra + colonia data
+    # load maz/mgra, colonia, & poe data
     colonias = pd.read_csv(os.path.join(data_dir, colonia_input_fname))
     mazs = pd.read_csv(os.path.join(data_dir, maz_input_fname))
-    ext_mazs = mazs[mazs.external_TAZ == 1]
-    mazs = mazs[mazs.external_TAZ != 1]
-    mazs[poe_id_field] = -1
-    mazs['original_MAZ'] = -1
-    mazs['external_TAZ'] = -1
-    mazs['external_MAZ'] = -1
 
-    # update maz table
-    for poe_id, poe_attrs in settings['poes'].items():
+    poe_df = (pd.DataFrame.from_dict(settings['poes'], orient='index')
+                        .reset_index()
+                        .rename(columns={'index':'poe_id_new'}))
 
-        # get poe id for maz's that have one
-        maz_mask = mazs[maz_id_field] == poe_attrs['maz_id']
-        mazs.loc[maz_mask, poe_id_field] = poe_id
-        mazs.loc[maz_mask, 'external_TAZ'] = poe_attrs['ext_taz_id']
+    # merge poe info onto maz table
+    mazs = mazs.merge(poe_df[['ext_taz_id', 'maz_id', 'poe_id_new']]
+                        ,how='left'
+                        ,left_on = 'taz'
+                        ,right_on='ext_taz_id')
+    #coalesce old poe_id column onto new poe_id column to preserve non-poe values
+    mazs['poe_id'] = mazs[['poe_id_new', 'poe_id']].bfill(axis=1)['poe_id_new']
+    mazs.drop(columns=['ext_taz_id', 'poe_id_new'], inplace=True)
+    mazs.rename(columns={'maz_id':'original_MAZ'}, inplace=True)
+    mazs['original_MAZ'].fillna(value=-1, inplace=True)
 
-        # add poes as new mazs
-        row = mazs.loc[maz_mask].copy()
-        for col in row.columns:
-            if pd.api.types.is_float_dtype(row[col]):
-                row[col] = 0.0
-            elif pd.api.types.is_integer_dtype(row[col]):
-                row[col] = 0
-            else:
-                row[col] = None
-        row[maz_id_field] = mazs[maz_id_field].max() + 1
-        row['external_TAZ'] = -1
-        row['external_MAZ'] = -1
-        mazs.loc[maz_mask, 'external_MAZ'] = row[maz_id_field]
-        row['TAZ'] = poe_attrs['ext_taz_id']
-        row[poe_id_field] = poe_id
-        row['original_MAZ'] = mazs.loc[maz_mask, 'MAZ']
-        mazs = mazs.append(row, ignore_index=True)
+    # set dtypes of new columns
+    int_columns = ['external_TAZ', 'external_MAZ', 'poe_id', 'original_MAZ']
+    mazs[int_columns] = mazs[int_columns].astype(int)
 
     # compute colonia accessibility for poe mazs
     mazs[poe_access_field] = None
@@ -464,13 +450,6 @@ def create_land_use_file(
     wide_wait_times = get_poe_wait_times(settings)
     mazs = pd.merge(
         mazs, wide_wait_times, left_on='poe_id', right_on='poe', how='left')
-
-    #add back the other external mazs
-    ext_mazs = ext_mazs[~ext_mazs.TAZ.isin(mazs.TAZ)]
-    new_index = range(mazs[maz_id_field].max() + 1, mazs[maz_id_field].max() + 1 + ext_mazs.shape[0])
-    ext_mazs[maz_id_field] = new_index
-    ext_mazs['mgra'] = new_index
-    mazs = mazs.append(ext_mazs, ignore_index=True)
 
     return mazs
 

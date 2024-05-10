@@ -188,3 +188,7 @@ coef_ohio_mc,0.140,F
 coef_ohio_hyb,-0.142,F
 coef_ohio_ev,-1.590,F
 coef_ohio_age,-0.008,F
+coef_calib_pev_2035,0.0,F
+coef_calib_bev_2035,0.0,F
+coef_calib_pev_2050,0.0,F
+coef_calib_bev_2050,0.0,F

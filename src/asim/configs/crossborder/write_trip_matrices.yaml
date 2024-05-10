@@ -502,9 +502,4 @@ CONSTANTS:
     - 5000
     - 15000
   trip_c_cost: -0.0003
-  OCC_SHARED2: 2.0
-  OCC_SHARED3: 3.33
   costPerMile: 18.29
-  OCC_TAXI: 1.1
-  OCC_TNC_SINGLE: 1.2
-  OCC_TNC_SHARED: 2.0

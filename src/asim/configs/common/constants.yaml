@@ -298,3 +298,19 @@ monthly_transit_pass_cost: 100
 
 # year after which a vehicle (therefore its household) must have transponder
 hhTR_Vehyear: 2035
+
+# SHARED2 and SHARED3 Occupancies
+OCC_SHARED2: 2.0
+OCC_SHARED3: 3.33
+# add TNC and Taxi Occupancies
+OCC_TAXI: 1.1
+OCC_TNC_SINGLE: 1.2
+OCC_TNC_SHARED: 2.0
+
+# EV Rebate constants
+LowIncomeEVRebateCutoff: 3
+MedIncomeEVRebateCutoff: 4
+LowIncomeBEVRebate: 0
+LowIncomePEVRebate: 0
+MedIncomeBEVRebate: 0
+MedIncomePEVRebate: 0

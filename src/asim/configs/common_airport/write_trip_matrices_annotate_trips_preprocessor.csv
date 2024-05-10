@@ -7,7 +7,7 @@ Description,Target,Expression
 ,vot3,trips.vot3
 ,distance,od_skims['DIST']
 ,_sample_rate,trips.household_id.map(households.sample_rate)
-,add_driver," (trips.trip_mode.isin(['RIDEHAIL_LOC1','RIDEHAIL_LOC2','TAXI_LOC1','TAXI_LOC2','PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5', 'HOTEL_COURTESY', 'SHUTTLEVAN'])  & ( tour_participants == 1) & (trips['trip_num'] ==1)) | (trips.trip_mode.isin(['RIDEHAIL_LOC1','RIDEHAIL_LOC2','TAXI_LOC1','TAXI_LOC2','PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5', 'HOTEL_COURTESY', 'SHUTTLEVAN'])  & (tour_participants >=2) & (trips.trip_num == 1))"
+,add_driver," (trips.trip_mode.isin(['PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5'])  & ( tour_participants == 1) & (trips['trip_num'] ==1)) | (trips.trip_mode.isin(['PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5'])  & (tour_participants >=2) & (trips.trip_num == 1))"
 ,weightTrip,1/_sample_rate
 ,weightPersonTrip,"np.where(add_driver, tour_participants + 1, tour_participants )/_sample_rate"
 # code time periods,,

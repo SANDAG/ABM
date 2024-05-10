@@ -9,12 +9,12 @@ util_ln_chpc_ev,ln(1+number of chargers per capita in MSA/state),"logged_charger
 util_must_select_av,Must select autonomous vehicle if hh owns one,av_ownership & ~is_av & (num_hh_veh_owned == 0),coef_unavail
 util_must_select_av,Cannot select AV if hh does not own one,~av_ownership & is_av,coef_unavail
 #,income related variables,,
-util_cprice0,New Purchase Price (2017$) Segmented by Income,"((income17 < 25000) & (income17 > -1)) * NewPrice",coef_cprice0
-util_cprice25,New Purchase Price (2017$) Segmented by Income,"((income17 < 50000) & (income17 >= 25000)) * NewPrice",coef_cprice25
-util_cprice50,New Purchase Price (2017$) Segmented by Income,"((income17 < 100000) & (income17 >=50000)) * NewPrice",coef_cprice50
-util_cprice100,New Purchase Price (2017$) Segmented by Income,"((income17 < 150000) & (income17 >= 100000)) * NewPrice",coef_cprice100
-util_cprice150,New Purchase Price (2017$) Segmented by Income,"(income17 > 150000) * NewPrice",coef_cprice150
-util_cpricem,New Purchase Price (2017$) Missing Income,"((income17 < 0) | income17.isna()) * NewPrice",coef_cpricem
+util_cprice0,New Purchase Price (2017$) Segmented by Income,"((income17 < 25000) & (income17 > -1)) * (NewPrice - (fuel_type_num_coded==1)*PEV_rebate - (fuel_type_num_coded==5)*BEV_rebate)",coef_cprice0
+util_cprice25,New Purchase Price (2017$) Segmented by Income,"((income17 < 50000) & (income17 >= 25000)) * (NewPrice - (fuel_type_num_coded==1)*PEV_rebate - (fuel_type_num_coded==5)*BEV_rebate)",coef_cprice25
+util_cprice50,New Purchase Price (2017$) Segmented by Income,"((income17 < 100000) & (income17 >=50000)) * (NewPrice - (fuel_type_num_coded==1)*PEV_rebate - (fuel_type_num_coded==5)*BEV_rebate)",coef_cprice50
+util_cprice100,New Purchase Price (2017$) Segmented by Income,"((income17 < 150000) & (income17 >= 100000)) * (NewPrice - (fuel_type_num_coded==1)*PEV_rebate - (fuel_type_num_coded==5)*BEV_rebate)",coef_cprice100
+util_cprice150,New Purchase Price (2017$) Segmented by Income,"(income17 > 150000) * (NewPrice - (fuel_type_num_coded==1)*PEV_rebate - (fuel_type_num_coded==5)*BEV_rebate)",coef_cprice150
+util_cpricem,New Purchase Price (2017$) Missing Income,"((income17 < 0) | income17.isna()) * (NewPrice - (fuel_type_num_coded==1)*PEV_rebate - (fuel_type_num_coded==5)*BEV_rebate)",coef_cpricem
 util_i025_age,Vehicle Age Segmented by Income,"((income17 < 25000) & (income17 > -1)) * age",coef_i025_age
 util_i2550_age,Vehicle Age Segmented by Income,"((income17 < 50000) & (income17 >= 25000)) * age",coef_i2550_age
 util_i100_age,Vehicle Age Segmented by Income,"((income17 < 150000) & (income17 >= 100000)) * age",coef_i100_age
@@ -150,3 +150,8 @@ util_san_mc,San Diego - Motorcycle,"@(df.SAN) & (df.body_type_num_coded==2)",coe
 util_san_hyb,San Diego - Hybrid,"@(df.SAN) & (df.fuel_type_num_coded==4)",coef_san_hyb
 util_san_ev,San Diego - Electric,"@(df.SAN) & ((df.fuel_type_num_coded==5) | (df.fuel_type_num_coded==1))",coef_san_ev
 util_san_age,San Diego - Age,"@(df.SAN) * df.age",coef_san_age
+#,EV calibration constants,,
+util_calib_pev_2035,PEV and scenario year between 2035 and 2050,(fuel_type_num_coded==1) & (scenarioYear >= 2035) & (scenarioYear < 2050),coef_calib_pev_2035
+util_calib_bev_2035,BEV and scenario year between 2035 and 2050,(fuel_type_num_coded==5) & (scenarioYear >= 2035) & (scenarioYear < 2050),coef_calib_bev_2035
+util_calib_pev_2050,PEV and scenario year after 2050,(fuel_type_num_coded==1) & (scenarioYear >= 2050),coef_calib_pev_2050
+util_calib_bev_2050,BEV and scenario year after 2050,(fuel_type_num_coded==5) & (scenarioYear >= 2050),coef_calib_bev_2050

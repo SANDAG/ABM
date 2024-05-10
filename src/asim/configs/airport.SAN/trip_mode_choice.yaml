@@ -141,9 +141,9 @@ CONSTANTS:
   parkEscortWaitTime: 0.00
   rentalCarAccessCost: 0.00
   rentalCostPerDay: 60.99
-  rentalCarInVehicleTime: 0.00
-  rentalCarWalkTime: 0.00
-  rentalCarWaitTime: 0.00
+  rentalCarInVehicleTime: 7.50
+  rentalCarWalkTime: 3.00
+  rentalCarWaitTime: 7.50
   terminalAccessCost: 0.00
   terminalInVehicleTime: 0.00
   terminalWalkTime: 5.00
