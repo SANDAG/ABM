@@ -41,9 +41,6 @@ nodes= nodes.set_index("NodeLev_ID")
 nodes['X'] = nodes.geometry.x
 nodes['Y'] = nodes.geometry.y
 
-# TEST: nodes
-# nodes.to_csv(r"C:/abm_runs/sar/2022_ABM3_tned/src/asim/scripts/resident/nodes.csv")
-
 links = gpd.read_file(sf)
 links = links.to_crs(epsg=2230)
 
@@ -68,36 +65,17 @@ centroids = centroids.rename(columns={parms['mmms']["mmms_link_nref_id"]:'networ
 centroids["network_node_x"] = nodes["X"].loc[centroids["network_node_id"]].tolist()
 centroids["network_node_y"] = nodes["Y"].loc[centroids["network_node_id"]].tolist()
 
-# TEST: centroids
-# centroids.to_csv(r"C:/abm_runs/sar/2022_ABM3_tned/src/asim/scripts/resident/centroids.csv")
-
 # %%
 ## read transit stop and route file (KK) ============
 stops = pd.read_csv(os.path.join(model_inputs, parms['stop_attributes']['file']))
 routes = pd.read_csv(os.path.join(model_inputs, parms['route_attributes']['file']))
 routes = routes.filter(['Route_ID','Route_Name', 'Mode'])
 
-# TEST: stops 1
-# stops.to_csv(r"C:/abm_runs/sar/2022_ABM3_tned/src/asim/scripts/resident/stops_1.csv")
-
 # add mode from route file & convert lat.long to stateplane(KK)=====
 stops = stops.merge(routes,  left_on='Route_ID', right_on='Route_ID') #
 
-# TEST: stops 2
-# stops.to_csv(r"C:/abm_runs/sar/2022_ABM3_tned/src/asim/scripts/resident/stops_2.csv")
-
-# stops.rename(columns={' Latitude': 'Latitude'}, inplace=True)
-# stops["Longitude1"] = stops["Longitude"]/1000000
-# stops["Latitude1"] = stops["Latitude"]/1000000
-
-# TEST: stops 3
-# stops.to_csv(r"C:/abm_runs/sar/2022_ABM3_tned/src/asim/scripts/resident/stops_3.csv")
-
 gpd_stops = gpd.GeoDataFrame(stops, geometry = gpd.points_from_xy(stops.Longitude, stops.Latitude, crs='epsg:4326'))
 gpd_stops = gpd_stops.to_crs('epsg:2230')
-
-# TEST: stops 4
-# gpd_stops.to_file(r"C:/abm_runs/sar/2022_ABM3_tned/src/asim/scripts/resident/gpd_stops.shp")
 
 pd.set_option('display.float_format', lambda x: '%.9f' % x)
 
@@ -111,9 +89,6 @@ stops["network_node_y"] = nodes["Y"].loc[stops["network_node_id"]].tolist()
 stops['mode'] = np.where(stops['Mode']==10,'L',
                 np.where((stops['Mode']==4) | (stops['Mode']==5) | (stops['Mode']==8) | (stops['Mode']==9) | (stops['Mode']==6) | (stops['Mode']==7), 'E',
                 'N'))
-
-# TEST: stops 4
-# stops.to_csv(r"C:/abm_runs/sar/2022_ABM3_tned/src/asim/scripts/resident/stops_4.csv")
 
 # %%
 # MAZ-to-MAZ Walk
