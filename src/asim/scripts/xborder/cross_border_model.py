@@ -798,7 +798,7 @@ if __name__ == '__main__':
         # load existing wait times from last iteration
         mazs = pd.read_csv(
             os.path.join(data_dir, settings['mazs_output_fname']))
-        wait_times_wide = mazs.sort_values('poe_id').loc[mazs['MAZ'].isin(
+        wait_times_wide = mazs.sort_values('poe_id').loc[mazs['original_MAZ'].isin(
             [poe['maz_id'] for poe_id, poe in settings['poes'].items()]),
             [col for col in mazs.columns if 'wait' in col] +
             ['poe_id']].set_index('poe_id')
