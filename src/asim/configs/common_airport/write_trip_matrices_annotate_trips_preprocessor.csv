@@ -16,9 +16,9 @@ Description,Target,Expression
 ,is_md,"trips.depart.between(time_periods['MD']['first_hour'], time_periods['MD']['last_hour'])"
 ,is_pm,"trips.depart.between(time_periods['PM']['first_hour'], time_periods['PM']['last_hour'])"
 ,is_ev,"trips.depart.between(time_periods['EV']['first_hour'], time_periods['EV']['last_hour'])"
-,is_drivealone," (trips.trip_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','RENTAL']) &  (_tour_participants ==1)) | (trips.trip_mode.isin(['PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5']) & (trips.trip_num == 2))"
-,is_shared2," (trips.trip_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','RENTAL']) & ( _tour_participants ==2)) | (trips.trip_mode.isin(['RIDEHAIL_LOC1','RIDEHAIL_LOC2','TAXI_LOC1','TAXI_LOC2','PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5'])  & ( _tour_participants == 1) & (trips['trip_num'] ==1))"
-,is_shared3," (trips.trip_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','RENTAL', 'HOTEL_COURTESY', 'SHUTTLEVAN']) &  (_tour_participants >= 3)) | (trips.trip_mode.isin(['RIDEHAIL_LOC1','RIDEHAIL_LOC2','TAXI_LOC1','TAXI_LOC2','PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5', 'HOTEL_COURTESY', 'SHUTTLEVAN'])  & (_tour_participants >=2) & (trips.trip_num == 1))"
+,is_drivealone," (trips.trip_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','RENTAL']) &  (tour_participants ==1)) | (trips.trip_mode.isin(['PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5']) & (trips.trip_num == 2))"
+,is_shared2," (trips.trip_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','RENTAL']) & ( tour_participants ==2)) | (trips.trip_mode.isin(['RIDEHAIL_LOC1','RIDEHAIL_LOC2','TAXI_LOC1','TAXI_LOC2','PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5'])  & ( tour_participants == 1) & (trips['trip_num'] ==1))"
+,is_shared3," (trips.trip_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','RENTAL', 'HOTEL_COURTESY', 'SHUTTLEVAN']) &  (tour_participants >= 3)) | (trips.trip_mode.isin(['RIDEHAIL_LOC1','RIDEHAIL_LOC2','TAXI_LOC1','TAXI_LOC2','PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5', 'HOTEL_COURTESY', 'SHUTTLEVAN'])  & (tour_participants >=2) & (trips.trip_num == 1))"
 ,is_walk,trips.trip_mode == 'WALK'
 ,is_walk_LOC_transit,trips.trip_mode == 'WALK_LOC'
 ,is_walk_PRM_transit,trips.trip_mode == 'WALK_PRM'

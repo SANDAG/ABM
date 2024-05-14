@@ -58,6 +58,14 @@ CDAP_ACTIVITY_MANDATORY: M
 CDAP_ACTIVITY_NONMANDATORY: N
 CDAP_ACTIVITY_HOME: H
 
+# SHARED2 and SHARED3 Occupancies
+OCC_SHARED2: 2.0
+OCC_SHARED3: 3.33
+# add TNC and Taxi Occupancies
+OCC_TAXI: 1.1
+OCC_TNC_SINGLE: 1.2
+OCC_TNC_SHARED: 2.0
+
 # Trip Mode Choice
 cost_share_s2: 2
 cost_share_s3: 3

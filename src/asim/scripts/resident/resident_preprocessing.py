@@ -125,7 +125,7 @@ class Series15_Processor:
     def add_external_counts_to_landuse(self):
         print("Adding external counts to landuse file.")
         ext_data = pd.read_csv(self.ext_data_file)
-        ext_data = (ext_data.loc[(ext_data['start_year']<=scenario_year)]
+        ext_data = (ext_data.loc[(ext_data['start_year']<=int(scenario_year))]
                         .sort_values('start_year', ascending=False)
                         .drop_duplicates('taz') #keep taz row w/ highest start_year
                         .sort_values(by='taz')
