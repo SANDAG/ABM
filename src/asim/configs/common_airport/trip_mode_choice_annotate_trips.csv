@@ -60,15 +60,25 @@ Description,Target,Expression
 ,_origin,"np.where((df.trip_mode == 'WALK') & (df.outbound == True), terminalMgra, _origin)"
 ,origin,_origin
 #,,
-,_cost_parking,"(df.trip_mode=='PARK_LOC1')*parkLocation1CostDay*df.nights"
-,_cost_parking,"_cost_parking+(df.trip_mode=='PARK_LOC2')*parkLocation2CostDay*df.nights"
-,_cost_parking,"_cost_parking+(df.trip_mode=='PARK_LOC3')*parkLocation3CostDay*df.nights"
-,_cost_parking,"_cost_parking+(df.trip_mode=='PARK_LOC4')*parkLocation4CostDay*df.nights"
-,cost_parking,"_cost_parking+(df.trip_mode=='PARK_LOC5')*parkLocation5CostDay*df.nights"
+,_cost_parking,0
+,_cost_parking,"_cost_parking + df.trip_mode.isin(['PARK_LOC1']) * (((df['nights']*parkLocation1CostDay + parkLocation1CostDay)*100) / df.party_size)"
+,_cost_parking,"_cost_parking + df.trip_mode.isin(['PARK_LOC2']) * (((df['nights']*parkLocation2CostDay + parkLocation2CostDay)*100) / df.party_size)"
+,_cost_parking,"_cost_parking + df.trip_mode.isin(['PARK_LOC3']) * (((df['nights']*parkLocation3CostDay + parkLocation3CostDay)*100) / df.party_size)"
+,_cost_parking,"_cost_parking + df.trip_mode.isin(['PARK_LOC4']) * (((df['nights']*parkLocation4CostDay + parkLocation4CostDay)*100) / df.party_size)"
+,_cost_parking,"_cost_parking + df.trip_mode.isin(['PARK_LOC5']) * (((df['nights']*parkLocation5CostDay + parkLocation5CostDay)*100) / df.party_size)"
+,cost_parking,"_cost_parking + df.trip_mode.isin(['PARK_ESCORT']) * (parkEscortCostHour*100 / (df.party_size + 1))"
 #,,
 ,_cost_fare_drive,0
-,_cost_fare_drive,"_cost_fare_drive + np.where(df.trip_mode == 'RIDEHAIL_LOC1',1,0) * (df.partySizeRideHailLocation1AutoDist*ridehailCostPerMile)"
-,cost_fare_drive,"_cost_fare_drive + np.where(df.trip_mode == 'RIDEHAIL_LOC2',1,0) * (df.partySizeRideHailLocation2AutoDist*ridehailCostPerMile)"
+,_cost_fare_drive,"_cost_fare_drive + df.trip_mode.isin(['RIDEHAIL_LOC1']) * (np.minimum((df['partySizeRideHailLocation1AutoIVT']*ridehailCostPerMinute + df['partySizeRideHailLocation1AutoDist']*ridehailCostPerMile + ridehailCostInitial),ridehailCostMinimum) * 100) / df.party_size"
+,_cost_fare_drive,"_cost_fare_drive + df.trip_mode.isin(['RIDEHAIL_LOC2']) * (np.minimum((df['partySizeRideHailLocation2AutoIVT']*ridehailCostPerMinute + df['partySizeRideHailLocation2AutoDist']*ridehailCostPerMile + ridehailCostInitial),ridehailCostMinimum) * 100) / df.party_size"
+,_cost_fare_drive,"_cost_fare_drive + df.trip_mode.isin(['TAXI_LOC1']) * (np.minimum((df['partySizeRideHailLocation1AutoIVT']*taxiCostPerMinute + df['partySizeRideHailLocation1AutoDist']*taxiCostPerMile + taxiCostInitial),taxiCostMinimum) * 100) / df.party_size"
+,_cost_fare_drive,"_cost_fare_drive + df.trip_mode.isin(['TAXI_LOC2']) * (np.minimum((df['partySizeRideHailLocation2AutoIVT']*taxiCostPerMinute + df['partySizeRideHailLocation2AutoDist']*taxiCostPerMile + taxiCostInitial),taxiCostMinimum) * 100) / df.party_size"
+,_cost_fare_drive,"_cost_fare_drive + df.trip_mode.isin(['TNC_LOC']) * ~df.outbound * (np.minimum((odt_skims['TNCOUT_LOC_ACC']*ridehailCostPerMinute + (odt_skims['TNCOUT_LOC_ACC']/60 * driveSpeed)*ridehailCostPerMile + ridehailCostInitial),ridehailCostMinimum) * 100 / df.party_size)"
+,_cost_fare_drive,"_cost_fare_drive + df.trip_mode.isin(['TNC_LOC']) * df.outbound * (np.minimum((odt_skims['TNCIN_LOC_EGR']*ridehailCostPerMinute + (odt_skims['TNCIN_LOC_EGR']/60 * driveSpeed)*ridehailCostPerMile + ridehailCostInitial),ridehailCostMinimum) * 100 / df.party_size)"
+,_cost_fare_drive,"_cost_fare_drive + df.trip_mode.isin(['TNC_PRM']) * ~df.outbound * (np.minimum((odt_skims['TNCOUT_PRM_ACC']*ridehailCostPerMinute + (odt_skims['TNCOUT_PRM_ACC']/60 * driveSpeed)*ridehailCostPerMile + ridehailCostInitial),ridehailCostMinimum) * 100 / df.party_size)"
+,_cost_fare_drive,"_cost_fare_drive + df.trip_mode.isin(['TNC_PRM']) * df.outbound * (np.minimum((odt_skims['TNCIN_PRM_EGR']*ridehailCostPerMinute + (odt_skims['TNCIN_PRM_EGR']/60 * driveSpeed)*ridehailCostPerMile + ridehailCostInitial),ridehailCostMinimum) * 100 / df.party_size)"
+,_cost_fare_drive,"_cost_fare_drive + df.trip_mode.isin(['TNC_MIX']) * ~df.outbound * (np.minimum((odt_skims['TNCOUT_MIX_ACC']*ridehailCostPerMinute + (odt_skims['TNCOUT_MIX_ACC']/60 * driveSpeed)*ridehailCostPerMile + ridehailCostInitial),ridehailCostMinimum) * 100 / df.party_size)"
+,cost_fare_drive,"_cost_fare_drive + df.trip_mode.isin(['TNC_MIX']) * df.outbound * (np.minimum((odt_skims['TNCIN_MIX_EGR']*ridehailCostPerMinute + (odt_skims['TNCIN_MIX_EGR']/60 * driveSpeed)*ridehailCostPerMile + ridehailCostInitial),ridehailCostMinimum) * 100 / df.party_size)"
 #,,
 ,_time_transit_drive,0
 ,_time_transit_drive,"_time_transit_drive + (df.trip_mode.isin(['KNR_LOC'])) * (odt_skims['KNROUT_LOC_ACC'])*~df.outbound"

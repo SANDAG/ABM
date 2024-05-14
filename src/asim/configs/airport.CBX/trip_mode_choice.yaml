@@ -347,12 +347,14 @@ CHOOSER_COLS_TO_KEEP:
   - vot1
   - vot2
   - vot3
-  - parkLocation1Cost
-  - parkLocation2Cost
-  - parkLocation3Cost
-  - parkLocation4Cost
-  - parkLocation5Cost
+  - parkLocation1CostDay
+  - parkLocation2CostDay
+  - parkLocation3CostDay
+  - parkLocation4CostDay
+  - parkLocation5CostDay
+  - partySizeRideHailLocation1AutoIVT
   - partySizeRideHailLocation1AutoDist
+  - partySizeRideHailLocation2AutoIVT
   - partySizeRideHailLocation2AutoDist
   - nights
 
