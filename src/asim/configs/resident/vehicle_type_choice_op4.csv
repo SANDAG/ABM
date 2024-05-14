@@ -151,7 +151,9 @@ util_san_hyb,San Diego - Hybrid,"@(df.SAN) & (df.fuel_type_num_coded==4)",coef_s
 util_san_ev,San Diego - Electric,"@(df.SAN) & ((df.fuel_type_num_coded==5) | (df.fuel_type_num_coded==1))",coef_san_ev
 util_san_age,San Diego - Age,"@(df.SAN) * df.age",coef_san_age
 #,EV calibration constants,,
-util_calib_pev_2035,PEV and scenario year between 2035 and 2050,(fuel_type_num_coded==1) & (scenarioYear >= 2035) & (scenarioYear < 2050),coef_calib_pev_2035
-util_calib_bev_2035,BEV and scenario year between 2035 and 2050,(fuel_type_num_coded==5) & (scenarioYear >= 2035) & (scenarioYear < 2050),coef_calib_bev_2035
-util_calib_pev_2050,PEV and scenario year after 2050,(fuel_type_num_coded==1) & (scenarioYear >= 2050),coef_calib_pev_2050
-util_calib_bev_2050,BEV and scenario year after 2050,(fuel_type_num_coded==5) & (scenarioYear >= 2050),coef_calib_bev_2050
+util_calib_pev_2022,PEV calibration factor for 2022,"(fuel_type_num_coded==1)*np.maximum(1 + (2022-scenarioYear)/(2035-2022), 0)",coef_calib_pev_2022
+util_calib_bev_2022,BEV calibration factor for 2022,"(fuel_type_num_coded==5)*np.maximum(1 + (2022-scenarioYear)/(2035-2022), 0)",coef_calib_bev_2022
+util_calib_pev_2035,PEV calibration factor for 2035,"(fuel_type_num_coded==1)*np.minimum((scenarioYear-2022)/(2035-2022), 1 + (2035-scenarioYear)/(2050-2035))",coef_calib_pev_2035
+util_calib_bev_2035,BEV calibration factor for 2035,"(fuel_type_num_coded==5)*np.minimum((scenarioYear-2022)/(2035-2022), 1 + (2035-scenarioYear)/(2050-2035))",coef_calib_bev_2035
+util_calib_pev_2050,PEV calibration factor for 2050,"(fuel_type_num_coded==1)*np.maximum((scenarioYear-2035)/(2050-2035), 0)",coef_calib_pev_2050
+util_calib_bev_2050,BEV calibration factor for 2050,"(fuel_type_num_coded==5)*np.maximum((scenarioYear-2035)/(2050-2035), 0)",coef_calib_bev_2050
