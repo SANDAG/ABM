@@ -502,4 +502,4 @@ CONSTANTS:
     - 5000
     - 15000
   trip_c_cost: -0.0003
-  costPerMile: 18.29
+  costPerMile: 32.7
