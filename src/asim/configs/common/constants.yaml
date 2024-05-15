@@ -8,8 +8,6 @@ NO_EXTERNAL: 0
 # set below to be 1 for years before 2021, 0 otherwise
 PRE_COVID: 0
 
-walk_speed: 3 #mph
-
 # convenience for expression files
 HHT_NONFAMILY: [4, 5, 6, 7]
 HHT_FAMILY: [1, 2, 3]

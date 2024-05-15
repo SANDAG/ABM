@@ -8,7 +8,7 @@ OtayMesaEast_maz_id: 7123
 
 scenarioYear: 2022
 
-walk_speed: 3.00
+walkSpeed: 3.00
 
 # convenience for expression files
 HHT_NONFAMILY: [4, 5, 6, 7]
