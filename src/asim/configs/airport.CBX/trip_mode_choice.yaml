@@ -107,7 +107,6 @@ CONSTANTS:
   walkSpeed: 3.00
   bikeThresh: 6.00
   bikeSpeed: 12.00
-  driveSpeed: 25.00
   parkLocation1AccessCost: 0.00
   parkLocation1CostDay: 21.00
   parkLocation1InVehicleTime: 0.00

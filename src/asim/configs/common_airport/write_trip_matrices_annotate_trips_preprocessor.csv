@@ -37,7 +37,6 @@ Description,Target,Expression
 ,_trip_mode," np.where((is_shared3) | (trips.trip_mode.isin(['HOTEL_COURTESY', 'SHUTTLEVAN'])), 'SHARED3', _trip_mode)"
 ,trip_mode,_trip_mode
 #,,
-,costOperatingDrive,"np.where((is_drivealone) | (is_shared2) | (is_shared3), costPerMile * distance/100, np.NaN)"
 #trip legs are swapped since origin is airport and home end is destination,,
 ,outbound, ~trips.outbound
 ,inbound, trips.outbound
@@ -233,6 +232,10 @@ Description,Target,Expression
 ,_costTollDrive,"_costTollDrive + odt_skims['SOV_NT_H_TOLLCOST'] * np.where(((trip_mode == 'DRIVEALONE') & vot3),1,0)"
 ,_costTollDrive,"_costTollDrive + odt_skims['HOV2_H_TOLLCOST'] * np.where(((trip_mode == 'SHARED2') & vot3),1,0)"
 ,costTollDrive,"_costTollDrive + odt_skims['HOV3_H_TOLLCOST'] * np.where(((trip_mode == 'SHARED3') & vot3),1,0)"
+#,,
+,_costOperatingDrive,0
+,_costOperatingDrive,"_costOperatingDrive + arrival_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','PARK_ESCORT','SHUTTLEVAN','HOTEL_COURTESY','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','RENTAL']) * distanceDrive * costPerMile"
+,costOperatingDrive,"_costOperatingDrive + arrival_mode.isin(['KNR_LOC','KNR_PRM','KNR_MIX']) * (df.time_transit_drive/60) * driveSpeed * costPerMile"
 #,,
 ,cost_parking,"np.where(trips['trip_num'] == 1, cost_parking, 0)"
 #transit skims,,
