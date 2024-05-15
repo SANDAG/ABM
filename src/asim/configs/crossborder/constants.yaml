@@ -8,16 +8,7 @@ OtayMesaEast_maz_id: 7123
 
 scenarioYear: 2022
 
-walk_speed: 3.00
-
-#HHT_NONE: 0
-#HHT_FAMILY_MARRIED: 1
-#HHT_FAMILY_MALE: 2
-#HHT_FAMILY_FEMALE: 3
-#HHT_NONFAMILY_MALE_ALONE: 4
-#HHT_NONFAMILY_MALE_NOTALONE: 5
-#HHT_NONFAMILY_FEMALE_ALONE: 6
-#HHT_NONFAMILY_FEMALE_NOTALONE: 7
+walkSpeed: 3.00
 
 # convenience for expression files
 HHT_NONFAMILY: [4, 5, 6, 7]
@@ -34,11 +25,6 @@ SCHOOL_SEGMENT_NONE: 0
 SCHOOL_SEGMENT_GRADE: 1
 SCHOOL_SEGMENT_HIGH: 2
 SCHOOL_SEGMENT_UNIV: 3
-
-#INCOME_SEGMENT_LOW: 1
-#INCOME_SEGMENT_MED: 2
-#INCOME_SEGMENT_HIGH: 3
-#INCOME_SEGMENT_VERYHIGH: 4
 
 PEMPLOY_FULL: 1
 PEMPLOY_PART: 2
@@ -74,6 +60,20 @@ vot_threshold_med: 18.00
 trip_c_ivt_base: -0.021
 trip_c_cost: -0.0003
 trip_c_ivt: -0.03
+
+cost_per_mile_fuel: 22
+cost_per_mile_maint: 10.7
+taxi_base_fare: 3
+taxi_cost_per_mile: 3.3
+taxi_cost_per_minute: 0.46
+tnc_single_base_fare: 3.31
+tnc_single_cost_per_mile: 0.96
+tnc_single_cost_per_minute: 0.33
+tnc_single_cost_minimum: 9.19
+tnc_shared_base_fare: 1.66
+tnc_shared_cost_per_mile: 0.48
+tnc_shared_cost_per_minute: 0.16
+tnc_shared_cost_minimum: 4.6
 
 ivt_lrt_multiplier: 0.65
 ivt_brt_multiplier: 0.90

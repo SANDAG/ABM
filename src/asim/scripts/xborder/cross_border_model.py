@@ -191,7 +191,7 @@ def _rename_skims(settings, skim_type):
 
     skims_settings = settings['skims'][skim_type]
     periods = skims_settings.get('periods', [None])
-    walk_speed = settings['walk_speed']
+    walk_speed = settings['walkSpeed']
 
     for period in periods:
 

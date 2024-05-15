@@ -83,12 +83,12 @@ vot-indexed skims,da_dist_skims,((odt_skims['SOV_NT_L_DIST'] * (_vot_bin_da == 1
 ,dest_micro_prm_dist,"reindex(land_use.micro_dist_premium_transit, destination)"
 ,dest_micro_mix_dist,"np.minimum(dest_micro_local_dist, dest_micro_prm_dist)"
 #access egress times,,
-,origin_local_time,origin_local_dist * 60/walk_speed
-,origin_prm_time,origin_prm_dist * 60/walk_speed
-,origin_mix_time,origin_mix_dist * 60/walk_speed
-,dest_local_time,dest_local_dist * 60/walk_speed
-,dest_prm_time,dest_prm_dist * 60/walk_speed
-,dest_mix_time,dest_mix_dist * 60/walk_speed
+,origin_local_time,origin_local_dist * 60/walkSpeed
+,origin_prm_time,origin_prm_dist * 60/walkSpeed
+,origin_mix_time,origin_mix_dist * 60/walkSpeed
+,dest_local_time,dest_local_dist * 60/walkSpeed
+,dest_prm_time,dest_prm_dist * 60/walkSpeed
+,dest_mix_time,dest_mix_dist * 60/walkSpeed
 #,,
 ,walk_local_available,(origin_local_time<=1)&(dest_local_dist<=1)&(odt_skims['WALK_LOC_TOTALIVTT']>0)
 ,walk_premium_available,(origin_prm_time<=1.2)&(dest_prm_dist<=1.2)&(odt_skims['WALK_PRM_TOTALIVTT']>0)

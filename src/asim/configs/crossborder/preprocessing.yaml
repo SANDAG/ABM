@@ -1,6 +1,6 @@
 # misc settings
 distance_param: -0.19
-walk_speed: 3
+walkSpeed: 3
 maz_input_fname: land_use.csv
 colonia_input_fname: crossBorder_supercolonia.csv
 tour_scheduling_probs_input_fname: crossBorder_tourEntryAndReturn.csv

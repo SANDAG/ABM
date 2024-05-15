@@ -1,0 +1,9 @@
+costPerMile: 32.7
+taxiCostInitial:  3.00
+taxiCostPerMile:  3.3
+taxiCostPerMinute:  0.46
+taxiCostMinimum:  0
+ridehailCostInitial: 3.31
+ridehailCostPerMile: 0.96
+ridehailCostPerMinute: 0.33
+ridehailCostMinimum: 9.19

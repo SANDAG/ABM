@@ -100,12 +100,12 @@ Auto Terminal Time Factor,autoTermTimeFactor,"np.where(useAV,autoTerminalTimeFac
 ,dest_micro_prm_dist,"reindex(land_use.micro_dist_premium_transit, destination)"
 ,dest_micro_mix_dist,"np.minimum(dest_micro_local_dist, dest_micro_prm_dist)"
 #access egress times,,,
-,origin_local_time,origin_local_dist * 60/walk_speed
-,origin_prm_time,origin_prm_dist * 60/walk_speed
-,origin_mix_time,origin_mix_dist * 60/walk_speed
-,dest_local_time,dest_local_dist * 60/walk_speed
-,dest_prm_time,dest_prm_dist * 60/walk_speed
-,dest_mix_time,dest_mix_dist * 60/walk_speed
+,origin_local_time,origin_local_dist * 60/walkSpeed
+,origin_prm_time,origin_prm_dist * 60/walkSpeed
+,origin_mix_time,origin_mix_dist * 60/walkSpeed
+,dest_local_time,dest_local_dist * 60/walkSpeed
+,dest_prm_time,dest_prm_dist * 60/walkSpeed
+,dest_mix_time,dest_mix_dist * 60/walkSpeed
 # Microtransit and NEV,,
 microtransit available at origin,microtransit_orig,"reindex(land_use.microtransit, df[orig_col_name])"
 microtransit available at destination,microtransit_dest,"reindex(land_use.microtransit, df[dest_col_name])"

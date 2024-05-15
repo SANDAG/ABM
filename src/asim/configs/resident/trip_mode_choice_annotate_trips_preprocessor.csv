@@ -229,12 +229,12 @@ no long walks,walkAvailable,"np.where((walk_time_skims < max_walk_time),1,0) * n
 ,dest_micro_prm_dist,"reindex(land_use.micro_dist_premium_transit, destination)"
 ,dest_micro_mix_dist,"np.minimum(dest_micro_local_dist, dest_micro_prm_dist)"
 #access egress times,,
-,origin_local_time,origin_local_dist * 60/walk_speed
-,origin_prm_time,origin_prm_dist * 60/walk_speed
-,origin_mix_time,origin_mix_dist * 60/walk_speed
-,dest_local_time,dest_local_dist * 60/walk_speed
-,dest_prm_time,dest_prm_dist * 60/walk_speed
-,dest_mix_time,dest_mix_dist * 60/walk_speed
+,origin_local_time,origin_local_dist * 60/walkSpeed
+,origin_prm_time,origin_prm_dist * 60/walkSpeed
+,origin_mix_time,origin_mix_dist * 60/walkSpeed
+,dest_local_time,dest_local_dist * 60/walkSpeed
+,dest_prm_time,dest_prm_dist * 60/walkSpeed
+,dest_mix_time,dest_mix_dist * 60/walkSpeed
 # added for school escorting model,,
 Number of school children in vehicle on trip,num_escortees,df.escort_participants.fillna('').apply(lambda x: len(x.split('_')) if len(x)>0 else 0)
 # commuter rail constants based on commuter rail IVTT,,

@@ -1959,9 +1959,9 @@
 ,,dest_prm_dist,"reindex(land_use.walk_dist_premium_transit, destination)"
 ,,dest_mix_dist,"np.minimum(dest_local_dist, dest_prm_dist)"
 #access egress times,,,
-,,origin_local_time,origin_local_dist * 60/walk_speed
-,,origin_prm_time,origin_prm_dist * 60/walk_speed
-,,origin_mix_time,origin_mix_dist * 60/walk_speed
-,,dest_local_time,dest_local_dist * 60/walk_speed
-,,dest_prm_time,dest_prm_dist * 60/walk_speed
-,,dest_mix_time,dest_mix_dist * 60/walk_speed
+,,origin_local_time,origin_local_dist * 60/walkSpeed
+,,origin_prm_time,origin_prm_dist * 60/walkSpeed
+,,origin_mix_time,origin_mix_dist * 60/walkSpeed
+,,dest_local_time,dest_local_dist * 60/walkSpeed
+,,dest_prm_time,dest_prm_dist * 60/walkSpeed
+,,dest_mix_time,dest_mix_dist * 60/walkSpeed
