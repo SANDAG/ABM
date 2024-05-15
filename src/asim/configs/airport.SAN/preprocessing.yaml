@@ -78,9 +78,9 @@ skims:
 # airport.CBX.airportMgra = 7061
 # Tours
 tours:
-  num_enplanements: 13727381
+  num_enplanements: 14536000
   avg_party_size: 1.7
   annualization_factor: 365
-  connecting: 808619
+  connecting: 856170
   airport_mgra: 11249
 
