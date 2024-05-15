@@ -8,8 +8,9 @@ Description,Target,Expression
 ,distance,od_skims['DIST']
 ,_sample_rate,trips.household_id.map(households.sample_rate)
 ,add_driver," (trips.trip_mode.isin(['PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5'])  & ( tour_participants == 1) & (trips['trip_num'] ==1)) | (trips.trip_mode.isin(['PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5'])  & (tour_participants >=2) & (trips.trip_num == 1))"
+,_participants_add_driver,"np.where(add_driver, tour_participants + 1, tour_participants )"
 ,weightTrip,1/_sample_rate
-,weightPersonTrip,"np.where(add_driver, tour_participants + 1, tour_participants )/_sample_rate"
+,weightPersonTrip,"_participants_add_driver/_sample_rate"
 # code time periods,,
 ,is_ea,"trips.depart.between(time_periods['EA']['first_hour'], time_periods['EA']['last_hour'])"
 ,is_am,"trips.depart.between(time_periods['AM']['first_hour'], time_periods['AM']['last_hour'])"
@@ -223,19 +224,20 @@ Description,Target,Expression
 ,_distanceDrive,"_distanceDrive + odt_skims['SOV_NT_H_DIST'] * np.where(((trip_mode == 'DRIVEALONE') & vot3),1,0)"
 ,_distanceDrive,"_distanceDrive + odt_skims['HOV2_H_DIST'] * np.where(((trip_mode == 'SHARED2') & vot3),1,0)"
 ,distanceDrive,"_distanceDrive + odt_skims['HOV3_H_DIST'] * np.where(((trip_mode == 'SHARED3') & vot3),1,0)"
-,_costTollDrive,"odt_skims['SOV_NT_L_TOLLCOST'] * np.where(((trip_mode == 'DRIVEALONE') & vot1),1,0)"
-,_costTollDrive,"_costTollDrive + odt_skims['HOV2_L_TOLLCOST'] * np.where(((trip_mode == 'SHARED2') & vot1),1,0)"
-,_costTollDrive,"_costTollDrive + odt_skims['HOV3_L_TOLLCOST'] * np.where(((trip_mode == 'SHARED3') & vot1),1,0)"
-,_costTollDrive,"_costTollDrive + odt_skims['SOV_NT_M_TOLLCOST'] * np.where(((trip_mode == 'DRIVEALONE') & vot2),1,0)"
-,_costTollDrive,"_costTollDrive + odt_skims['HOV2_M_TOLLCOST'] * np.where(((trip_mode == 'SHARED2') & vot2),1,0)"
-,_costTollDrive,"_costTollDrive + odt_skims['HOV3_M_TOLLCOST'] * np.where(((trip_mode == 'SHARED3') & vot2),1,0)"
-,_costTollDrive,"_costTollDrive + odt_skims['SOV_NT_H_TOLLCOST'] * np.where(((trip_mode == 'DRIVEALONE') & vot3),1,0)"
-,_costTollDrive,"_costTollDrive + odt_skims['HOV2_H_TOLLCOST'] * np.where(((trip_mode == 'SHARED2') & vot3),1,0)"
-,costTollDrive,"_costTollDrive + odt_skims['HOV3_H_TOLLCOST'] * np.where(((trip_mode == 'SHARED3') & vot3),1,0)"
+,_costTollDrive,"odt_skims['SOV_NT_L_TOLLCOST'] * np.where(((trip_mode == 'DRIVEALONE') & vot1),1,0) / _participants_add_driver"
+,_costTollDrive,"_costTollDrive + odt_skims['HOV2_L_TOLLCOST'] * np.where(((trip_mode == 'SHARED2') & vot1),1,0) / _participants_add_driver"
+,_costTollDrive,"_costTollDrive + odt_skims['HOV3_L_TOLLCOST'] * np.where(((trip_mode == 'SHARED3') & vot1),1,0) / _participants_add_driver"
+,_costTollDrive,"_costTollDrive + odt_skims['SOV_NT_M_TOLLCOST'] * np.where(((trip_mode == 'DRIVEALONE') & vot2),1,0) / _participants_add_driver"
+,_costTollDrive,"_costTollDrive + odt_skims['HOV2_M_TOLLCOST'] * np.where(((trip_mode == 'SHARED2') & vot2),1,0) / _participants_add_driver"
+,_costTollDrive,"_costTollDrive + odt_skims['HOV3_M_TOLLCOST'] * np.where(((trip_mode == 'SHARED3') & vot2),1,0) / _participants_add_driver"
+,_costTollDrive,"_costTollDrive + odt_skims['SOV_NT_H_TOLLCOST'] * np.where(((trip_mode == 'DRIVEALONE') & vot3),1,0) / _participants_add_driver"
+,_costTollDrive,"_costTollDrive + odt_skims['HOV2_H_TOLLCOST'] * np.where(((trip_mode == 'SHARED2') & vot3),1,0) / _participants_add_driver"
+,_costTollDrive,"_costTollDrive + odt_skims['HOV3_H_TOLLCOST'] * np.where(((trip_mode == 'SHARED3') & vot3),1,0) / _participants_add_driver"
+,costTollDrive,"np.where(arrival_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','PARK_ESCORT','SHUTTLEVAN','HOTEL_COURTESY','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','RENTAL']),_costTollDrive,0)"
 #,,
 ,_costOperatingDrive,0
-,_costOperatingDrive,"_costOperatingDrive + arrival_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','PARK_ESCORT','SHUTTLEVAN','HOTEL_COURTESY','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','RENTAL']) * distanceDrive * costPerMile"
-,costOperatingDrive,"_costOperatingDrive + arrival_mode.isin(['KNR_LOC','KNR_PRM','KNR_MIX']) * (df.time_transit_drive/60) * driveSpeed * costPerMile"
+,_costOperatingDrive,"_costOperatingDrive + arrival_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','PARK_ESCORT','SHUTTLEVAN','HOTEL_COURTESY','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','RENTAL']) * distanceDrive * costPerMile / _participants_add_driver"
+,costOperatingDrive,"_costOperatingDrive + arrival_mode.isin(['KNR_LOC','KNR_PRM','KNR_MIX']) * (df.time_transit_drive/60) * driveSpeed * costPerMile / _participants_add_driver"
 #,,
 ,cost_parking,"np.where(trips['trip_num'] == 1, cost_parking, 0)"
 #transit skims,,
@@ -427,7 +429,7 @@ Description,Target,Expression
 ,_time_transit_wait,"_time_transit_wait + odt_skims['TNCIN_PRM_XFERWAIT'] * np.where(trip_mode == 'TNC_PRM',1,0) * np.where(~outbound,1,0)"
 ,time_transit_wait,"_time_transit_wait + odt_skims['TNCIN_MIX_XFERWAIT'] * np.where(trip_mode == 'TNC_MIX',1,0) * np.where(~outbound,1,0)"
 # totals,,
-,cost_total,costOperatingDrive + costTollDrive + costFareTransit
+,cost_total,costOperatingDrive+costTollDrive+costFareTransit+df.cost_parking+df.cost_fare_drive+df.cost_rental
 ,time_total,df.time_walk + timeBike + df.time_mm + timeDrive + df.time_wait_drive + df.time_transit_drive + time_transit_wait + timeTransitInVehicle + df.time_airport_ivt + df.time_airport_wait
 #,,
 ,value_of_time_category_id,"np.where(vot1,1,np.where(vot2,2,3))"

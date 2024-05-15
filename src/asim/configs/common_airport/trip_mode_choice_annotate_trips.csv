@@ -80,6 +80,8 @@ Description,Target,Expression
 ,_cost_fare_drive,"_cost_fare_drive + df.trip_mode.isin(['TNC_MIX']) * ~df.outbound * (np.minimum((odt_skims['TNCOUT_MIX_ACC']*ridehailCostPerMinute + (odt_skims['TNCOUT_MIX_ACC']/60 * driveSpeed)*ridehailCostPerMile + ridehailCostInitial),ridehailCostMinimum) * 100 / df.party_size)"
 ,cost_fare_drive,"_cost_fare_drive + df.trip_mode.isin(['TNC_MIX']) * df.outbound * (np.minimum((odt_skims['TNCIN_MIX_EGR']*ridehailCostPerMinute + (odt_skims['TNCIN_MIX_EGR']/60 * driveSpeed)*ridehailCostPerMile + ridehailCostInitial),ridehailCostMinimum) * 100 / df.party_size)"
 #,,
+,cost_rental,"df.trip_mode.isin(['RENTAL']) * ((df['nights']*rentalCostPerDay + rentalCarAccessCost + rentalCostPerDay)*100) / df.party_size"
+#,,
 ,_time_transit_drive,0
 ,_time_transit_drive,"_time_transit_drive + (df.trip_mode.isin(['KNR_LOC'])) * (odt_skims['KNROUT_LOC_ACC'])*~df.outbound"
 ,_time_transit_drive,"_time_transit_drive + (df.trip_mode.isin(['KNR_LOC'])) * odt_skims['KNRIN_LOC_EGR']*df.outbound"
