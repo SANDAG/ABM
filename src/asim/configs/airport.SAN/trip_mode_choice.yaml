@@ -291,6 +291,7 @@ CHOOSER_COLS_TO_KEEP:
   - partySizeRideHailLocation1AutoDist
   - partySizeRideHailLocation2AutoDist
   - nights
+  - number_of_participants
 
 annotate_trips:
   SPEC: trip_mode_choice_annotate_trips
