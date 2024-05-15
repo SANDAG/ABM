@@ -5,12 +5,12 @@ Description,Target,Expression
 ,_dest_local_dist,"reindex(land_use.walk_dist_local_bus, df.destination)"
 ,_dest_prm_dist,"reindex(land_use.walk_dist_premium_transit, df.destination)"
 ,_dest_mix_dist,"np.minimum(_dest_local_dist, _dest_prm_dist)"
-,_origin_local_time,_origin_local_dist * 60/walk_speed
-,_origin_prm_time,_origin_prm_dist * 60/walk_speed
-,_origin_mix_time,_origin_mix_dist * 60/walk_speed
-,_dest_local_time,_dest_local_dist * 60/walk_speed
-,_dest_prm_time,_dest_prm_dist * 60/walk_speed
-,_dest_mix_time,_dest_mix_dist * 60/walk_speed
+,_origin_local_time,_origin_local_dist * 60/walkSpeed
+,_origin_prm_time,_origin_prm_dist * 60/walkSpeed
+,_origin_mix_time,_origin_mix_dist * 60/walkSpeed
+,_dest_local_time,_dest_local_dist * 60/walkSpeed
+,_dest_prm_time,_dest_prm_dist * 60/walkSpeed
+,_dest_mix_time,_dest_mix_dist * 60/walkSpeed
 ,_party,df.tour_id.map(tours.number_of_participants)
 ,_tour_participants,"np.where(df.trip_num ==2, 1, _party)"
 # resetting trip origin and destination based on mode,,
@@ -172,52 +172,52 @@ Description,Target,Expression
 ,time_walk,"_time_walk + (df.trip_mode=='CURB_LOC5') * curbLocation5WalkTime"
 #,,
 ,_distance_walk,0
-,_distance_walk,"_distance_walk + (df.trip_mode=='WALK') * od_skims['walkTime']/60 * walk_speed"
+,_distance_walk,"_distance_walk + (df.trip_mode=='WALK') * od_skims['walkTime']/60 * walkSpeed"
 ,_distance_walk,"_distance_walk + (df.trip_mode=='WALK_LOC') * _origin_local_dist"
 ,_distance_walk,"_distance_walk + (df.trip_mode=='WALK_LOC') * _dest_local_dist"
-,_distance_walk,"_distance_walk + (df.trip_mode=='WALK_LOC') * odt_skims['WALK_LOC_XFERWALK']/60 * walk_speed"
+,_distance_walk,"_distance_walk + (df.trip_mode=='WALK_LOC') * odt_skims['WALK_LOC_XFERWALK']/60 * walkSpeed"
 ,_distance_walk,"_distance_walk + (df.trip_mode=='WALK_PRM') * _origin_prm_dist"
 ,_distance_walk,"_distance_walk + (df.trip_mode=='WALK_PRM') * _dest_prm_dist"
-,_distance_walk,"_distance_walk + (df.trip_mode=='WALK_PRM') * odt_skims['WALK_PRM_XFERWALK']/60 * walk_speed"
+,_distance_walk,"_distance_walk + (df.trip_mode=='WALK_PRM') * odt_skims['WALK_PRM_XFERWALK']/60 * walkSpeed"
 ,_distance_walk,"_distance_walk + (df.trip_mode=='WALK_MIX') * _origin_mix_dist"
 ,_distance_walk,"_distance_walk + (df.trip_mode=='WALK_MIX') * _dest_mix_dist"
-,_distance_walk,"_distance_walk + (df.trip_mode=='WALK_MIX') * odt_skims['WALK_MIX_XFERWALK']/60 * walk_speed"
+,_distance_walk,"_distance_walk + (df.trip_mode=='WALK_MIX') * odt_skims['WALK_MIX_XFERWALK']/60 * walkSpeed"
 ,_distance_walk,"_distance_walk + (df.trip_mode.isin(['KNR_LOC','TNC_LOC'])) * ~df.outbound * _dest_local_dist"
 ,_distance_walk,"_distance_walk + (df.trip_mode.isin(['KNR_LOC','TNC_LOC'])) * df.outbound * _origin_local_dist"
-,_distance_walk,"_distance_walk + (df.trip_mode=='KNR_LOC') * odt_skims['KNROUT_LOC_XFERWALK']/60 * walk_speed * ~df.outbound"
-,_distance_walk,"_distance_walk + (df.trip_mode=='KNR_LOC') * odt_skims['KNRIN_LOC_XFERWALK']/60 * walk_speed * df.outbound"
-,_distance_walk,"_distance_walk + (df.trip_mode=='TNC_LOC') * odt_skims['TNCOUT_LOC_XFERWALK']/60 * walk_speed * ~df.outbound"
-,_distance_walk,"_distance_walk + (df.trip_mode=='TNC_LOC') * odt_skims['TNCIN_LOC_XFERWALK']/60 * walk_speed * df.outbound"
+,_distance_walk,"_distance_walk + (df.trip_mode=='KNR_LOC') * odt_skims['KNROUT_LOC_XFERWALK']/60 * walkSpeed * ~df.outbound"
+,_distance_walk,"_distance_walk + (df.trip_mode=='KNR_LOC') * odt_skims['KNRIN_LOC_XFERWALK']/60 * walkSpeed * df.outbound"
+,_distance_walk,"_distance_walk + (df.trip_mode=='TNC_LOC') * odt_skims['TNCOUT_LOC_XFERWALK']/60 * walkSpeed * ~df.outbound"
+,_distance_walk,"_distance_walk + (df.trip_mode=='TNC_LOC') * odt_skims['TNCIN_LOC_XFERWALK']/60 * walkSpeed * df.outbound"
 ,_distance_walk,"_distance_walk + (df.trip_mode.isin(['KNR_PRM','TNC_PRM'])) * ~df.outbound * _dest_prm_dist"
 ,_distance_walk,"_distance_walk + (df.trip_mode.isin(['KNR_PRM','TNC_PRM'])) * df.outbound * _origin_prm_dist"
-,_distance_walk,"_distance_walk + (df.trip_mode=='KNR_PRM') * odt_skims['KNROUT_PRM_XFERWALK']/60 * walk_speed * ~df.outbound"
-,_distance_walk,"_distance_walk + (df.trip_mode=='KNR_PRM') * odt_skims['KNRIN_PRM_XFERWALK']/60 * walk_speed * df.outbound"
-,_distance_walk,"_distance_walk + (df.trip_mode=='TNC_PRM') * odt_skims['TNCOUT_PRM_XFERWALK']/60 * walk_speed * ~df.outbound"
-,_distance_walk,"_distance_walk + (df.trip_mode=='TNC_PRM') * odt_skims['TNCIN_PRM_XFERWALK']/60 * walk_speed * df.outbound"
+,_distance_walk,"_distance_walk + (df.trip_mode=='KNR_PRM') * odt_skims['KNROUT_PRM_XFERWALK']/60 * walkSpeed * ~df.outbound"
+,_distance_walk,"_distance_walk + (df.trip_mode=='KNR_PRM') * odt_skims['KNRIN_PRM_XFERWALK']/60 * walkSpeed * df.outbound"
+,_distance_walk,"_distance_walk + (df.trip_mode=='TNC_PRM') * odt_skims['TNCOUT_PRM_XFERWALK']/60 * walkSpeed * ~df.outbound"
+,_distance_walk,"_distance_walk + (df.trip_mode=='TNC_PRM') * odt_skims['TNCIN_PRM_XFERWALK']/60 * walkSpeed * df.outbound"
 ,_distance_walk,"_distance_walk + (df.trip_mode.isin(['KNR_MIX','TNC_MIX'])) * ~df.outbound * _dest_mix_dist"
 ,_distance_walk,"_distance_walk + (df.trip_mode.isin(['KNR_MIX','TNC_MIX'])) * df.outbound * _origin_mix_dist"
-,_distance_walk,"_distance_walk + (df.trip_mode=='KNR_MIX') * odt_skims['KNROUT_MIX_XFERWALK']/60 * walk_speed * ~df.outbound"
-,_distance_walk,"_distance_walk + (df.trip_mode=='KNR_MIX') * odt_skims['KNRIN_MIX_XFERWALK']/60 * walk_speed * df.outbound"
-,_distance_walk,"_distance_walk + (df.trip_mode=='TNC_MIX') * odt_skims['TNCOUT_MIX_XFERWALK']/60 * walk_speed * ~df.outbound"
-,_distance_walk,"_distance_walk + (df.trip_mode=='TNC_MIX') * odt_skims['TNCIN_MIX_XFERWALK']/60 * walk_speed * df.outbound"
-,_distance_walk,"_distance_walk + (df.trip_mode=='PARK_LOC1') * parkLocation1WalkTime/60 * walk_speed"
-,_distance_walk,"_distance_walk + (df.trip_mode=='PARK_LOC2') * parkLocation2WalkTime/60 * walk_speed"
-,_distance_walk,"_distance_walk + (df.trip_mode=='PARK_LOC3') * parkLocation3WalkTime/60 * walk_speed"
-,_distance_walk,"_distance_walk + (df.trip_mode=='PARK_LOC4') * parkLocation4WalkTime/60 * walk_speed"
-,_distance_walk,"_distance_walk + (df.trip_mode=='PARK_LOC5') * parkLocation5WalkTime/60 * walk_speed"
-,_distance_walk,"_distance_walk + (df.trip_mode=='PARK_ESCORT') * parkEscortWalkTime/60 * walk_speed"
-,_distance_walk,"_distance_walk + (df.trip_mode=='RENTAL') * rentalCarWalkTime/60 * walk_speed"
-,_distance_walk,"_distance_walk + (df.trip_mode=='SHUTTLEVAN') * (hotelCourtesyWalkTime + terminalWalkTime)/60 * walk_speed"
-,_distance_walk,"_distance_walk + (df.trip_mode=='HOTEL_COURTESY') * (hotelCourtesyWalkTime + terminalWalkTime)/60 * walk_speed"
-,_distance_walk,"_distance_walk + (df.trip_mode=='RIDEHAIL_LOC1') * ridehailLocation1AccessWalkTime/60 * walk_speed"
-,_distance_walk,"_distance_walk + (df.trip_mode=='RIDEHAIL_LOC2') * ridehailLocation2AccessWalkTime/60 * walk_speed"
-,_distance_walk,"_distance_walk + (df.trip_mode=='TAXI_LOC1') * taxiLocation1AccessWalkTime/60 * walk_speed"
-,_distance_walk,"_distance_walk + (df.trip_mode=='TAXI_LOC2') * taxiLocation2AccessWalkTime/60 * walk_speed"
-,_distance_walk,"_distance_walk + (df.trip_mode=='CURB_LOC1') * curbLocation1WalkTime/60 * walk_speed"
-,_distance_walk,"_distance_walk + (df.trip_mode=='CURB_LOC2') * curbLocation2WalkTime/60 * walk_speed"
-,_distance_walk,"_distance_walk + (df.trip_mode=='CURB_LOC3') * curbLocation3WalkTime/60 * walk_speed"
-,_distance_walk,"_distance_walk + (df.trip_mode=='CURB_LOC4') * curbLocation4WalkTime/60 * walk_speed"
-,distance_walk,"_distance_walk + (df.trip_mode=='CURB_LOC5') * curbLocation5WalkTime/60 * walk_speed"
+,_distance_walk,"_distance_walk + (df.trip_mode=='KNR_MIX') * odt_skims['KNROUT_MIX_XFERWALK']/60 * walkSpeed * ~df.outbound"
+,_distance_walk,"_distance_walk + (df.trip_mode=='KNR_MIX') * odt_skims['KNRIN_MIX_XFERWALK']/60 * walkSpeed * df.outbound"
+,_distance_walk,"_distance_walk + (df.trip_mode=='TNC_MIX') * odt_skims['TNCOUT_MIX_XFERWALK']/60 * walkSpeed * ~df.outbound"
+,_distance_walk,"_distance_walk + (df.trip_mode=='TNC_MIX') * odt_skims['TNCIN_MIX_XFERWALK']/60 * walkSpeed * df.outbound"
+,_distance_walk,"_distance_walk + (df.trip_mode=='PARK_LOC1') * parkLocation1WalkTime/60 * walkSpeed"
+,_distance_walk,"_distance_walk + (df.trip_mode=='PARK_LOC2') * parkLocation2WalkTime/60 * walkSpeed"
+,_distance_walk,"_distance_walk + (df.trip_mode=='PARK_LOC3') * parkLocation3WalkTime/60 * walkSpeed"
+,_distance_walk,"_distance_walk + (df.trip_mode=='PARK_LOC4') * parkLocation4WalkTime/60 * walkSpeed"
+,_distance_walk,"_distance_walk + (df.trip_mode=='PARK_LOC5') * parkLocation5WalkTime/60 * walkSpeed"
+,_distance_walk,"_distance_walk + (df.trip_mode=='PARK_ESCORT') * parkEscortWalkTime/60 * walkSpeed"
+,_distance_walk,"_distance_walk + (df.trip_mode=='RENTAL') * rentalCarWalkTime/60 * walkSpeed"
+,_distance_walk,"_distance_walk + (df.trip_mode=='SHUTTLEVAN') * (hotelCourtesyWalkTime + terminalWalkTime)/60 * walkSpeed"
+,_distance_walk,"_distance_walk + (df.trip_mode=='HOTEL_COURTESY') * (hotelCourtesyWalkTime + terminalWalkTime)/60 * walkSpeed"
+,_distance_walk,"_distance_walk + (df.trip_mode=='RIDEHAIL_LOC1') * ridehailLocation1AccessWalkTime/60 * walkSpeed"
+,_distance_walk,"_distance_walk + (df.trip_mode=='RIDEHAIL_LOC2') * ridehailLocation2AccessWalkTime/60 * walkSpeed"
+,_distance_walk,"_distance_walk + (df.trip_mode=='TAXI_LOC1') * taxiLocation1AccessWalkTime/60 * walkSpeed"
+,_distance_walk,"_distance_walk + (df.trip_mode=='TAXI_LOC2') * taxiLocation2AccessWalkTime/60 * walkSpeed"
+,_distance_walk,"_distance_walk + (df.trip_mode=='CURB_LOC1') * curbLocation1WalkTime/60 * walkSpeed"
+,_distance_walk,"_distance_walk + (df.trip_mode=='CURB_LOC2') * curbLocation2WalkTime/60 * walkSpeed"
+,_distance_walk,"_distance_walk + (df.trip_mode=='CURB_LOC3') * curbLocation3WalkTime/60 * walkSpeed"
+,_distance_walk,"_distance_walk + (df.trip_mode=='CURB_LOC4') * curbLocation4WalkTime/60 * walkSpeed"
+,distance_walk,"_distance_walk + (df.trip_mode=='CURB_LOC5') * curbLocation5WalkTime/60 * walkSpeed"
 #,,
 ,time_mm,0
 ,distance_mm,0
