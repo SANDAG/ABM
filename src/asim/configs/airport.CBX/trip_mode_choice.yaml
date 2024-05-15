@@ -231,12 +231,7 @@ CONSTANTS:
   curbsideLocation3ReadTransitLogsum: 0.00
   curbsideLocation4ReadTransitLogsum: 0.00
   curbsideLocation5ReadTransitLogsum: 0.00
-#    maxCbdAreaTypeThresh: 2
-#    indivTour: 1.00000
-#    upperEA: 5
-#    upperAM: 10
-#    upperMD: 15
-#    upperPM: 19
+  
   I_SOV_MODES: [1, 2]
   I_SR2_MODES: [3, 4]
   I_SR3P_MODES: [5, 6]

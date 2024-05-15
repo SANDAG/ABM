@@ -110,18 +110,6 @@ driveSpeed: 25.00
 maxCbdAreaTypeThresh: 2
 indivTour: 1.00000
 
-#### [NICK] WHAT ARE THESE? DO WE EVEN NEED THESE?
-upperEA: 5
-upperAM: 10
-upperMD: 15
-upperPM: 19
-
-# SHOULD IT BE THIS?
-# upperEA: 6
-# upperAM: 12
-# upperMD: 25
-# upperPM: 32
-
 ### Crosswalk between SOC codes and SANDAG occupation classification
 soc_occupation_xwalk:
   11: mngt_busi_scic_arts # 11 - Management Occupations
