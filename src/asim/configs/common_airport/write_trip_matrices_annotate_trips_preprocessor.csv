@@ -233,6 +233,8 @@ Description,Target,Expression
 ,_costTollDrive,"_costTollDrive + odt_skims['SOV_NT_H_TOLLCOST'] * np.where(((trip_mode == 'DRIVEALONE') & vot3),1,0)"
 ,_costTollDrive,"_costTollDrive + odt_skims['HOV2_H_TOLLCOST'] * np.where(((trip_mode == 'SHARED2') & vot3),1,0)"
 ,costTollDrive,"_costTollDrive + odt_skims['HOV3_H_TOLLCOST'] * np.where(((trip_mode == 'SHARED3') & vot3),1,0)"
+#,,
+,cost_parking,"np.where(trips['trip_num'] == 1, cost_parking, 0)"
 #transit skims,,
 ,_timeTransitInVehicle,"odt_skims['WALK_LOC_TOTALIVTT'] * np.where(trip_mode == 'WALK_LOC',1,0)"
 ,_timeTransitInVehicle,"_timeTransitInVehicle + odt_skims['WALK_PRM_TOTALIVTT'] * np.where(trip_mode == 'WALK_PRM',1,0)"
