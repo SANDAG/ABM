@@ -123,6 +123,7 @@ CHOOSER_COLS_TO_KEEP:
   - auto_op_cost
   - autoCPMFactor
   - autoParkingCostFactor
+  - autoTermTimeFactor
   - costFactorS2
   - costFactorS3
   - transitSubsidyPassDiscount

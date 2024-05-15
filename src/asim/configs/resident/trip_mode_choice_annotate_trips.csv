@@ -12,6 +12,11 @@ Description,Target,Expression
 ,_dest_prm_time,_dest_prm_dist * 60/walk_speed
 ,_dest_mix_time,_dest_mix_dist * 60/walk_speed
 ,_MicroAccessTime,"reindex(land_use.MicroAccessTime,df.origin)"
+Origin Terminal Time,_oTermTime,"reindex(land_use.terminal_time,df.origin)"
+Destination Terminal Time,_dTermTime,"reindex(land_use.terminal_time,df.destination)"
+#,,
+,_time_drive_terminal,0
+,time_drive_terminal,"_time_drive_terminal + df.trip_mode.isin(['DRIVEALONE','SHARED2','SHARED3']) * (_oTermTime + _dTermTime) * autoTermTimeFactor"
 #,,
 ,_cost_parking,0
 ,_cost_parking,"_cost_parking + df.trip_mode.isin(['DRIVEALONE']) * (df.parkingCost * df.autoParkingCostFactor)"

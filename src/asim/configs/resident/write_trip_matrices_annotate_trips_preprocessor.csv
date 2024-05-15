@@ -466,7 +466,7 @@ Description,Target,Expression
 ,_time_transit_wait,"_time_transit_wait + 10 * np.where(trips.trip_mode == 'SCH_BUS',1,0)"
 ,time_transit_wait,"_time_transit_wait + trips.time_nev_mt_wait"
 #,,
-,time_total,df.time_walk + timeBike + df.time_mm + timeDrive + df.time_wait_drive + df.time_transit_drive + time_transit_wait + timeTransitInVehicle
+,time_total,df.time_walk + timeBike + df.time_mm + timeDrive + df.time_wait_drive + df.time_transit_drive + time_transit_wait + timeTransitInVehicle + df.time_drive_terminal
 ,cost_total,df.costOperatingDrive+costTollDrive+costFareTransit+df.cost_parking+df.cost_fare_drive+df.cost_fare_mm
 #,,
 ,value_of_time_category_id,"np.where(vot1,1,np.where(vot2,2,3))"
