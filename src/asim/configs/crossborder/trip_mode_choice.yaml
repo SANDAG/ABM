@@ -39,8 +39,6 @@ CONSTANTS:
   time_distrib_stddev_work: 0.7
   time_distrib_mean_nonwork: 1.0
   time_distrib_stddev_nonwork: 0.6
-  cost_per_mile_fuel: 22  # from parametersByYear.csv, depends on simulation year
-  cost_per_mile_maint: 10.7  # from parametersByYear.csv, depends on simulation year
   work_dist_coef: -8.6
   other_dist_coef: -4.9
   vot_bin_idx_to_skim_label:
@@ -49,17 +47,6 @@ CONSTANTS:
     3: H
   max_walk_time: 60
   walkSpeed: 3.0
-  taxi_base_fare: 3
-  taxi_cost_per_mile: 3.3
-  taxi_cost_per_minute: 0.46
-  tnc_single_base_fare: 3.31
-  tnc_single_cost_per_mile: 0.96
-  tnc_single_cost_per_minute: 0.33
-  tnc_single_cost_minimum: 9.19
-  tnc_shared_base_fare: 1.66
-  tnc_shared_cost_per_mile: 0.48
-  tnc_shared_cost_per_minute: 0.16
-  tnc_shared_cost_minimum: 4.6
   tnc_shared_ivt_factor: 1.25
   tnc_single_wait_time_mean_by_density:
     1: 10.3
