@@ -1,6 +1,7 @@
 Description,Target,Expression
 # add additional fields,,
 ,tour_participants,trips.tour_id.map(tours.number_of_participants)
+,_is_joint,(tour_participants > 1)
 ,distance,od_skims['DIST']
 ,_sample_rate,trips.household_id.map(households.sample_rate)
 ,weightTrip,"np.where(trips.trip_mode == 'SHARED2', tour_participants/OCC_SHARED2, np.where(trips.trip_mode == 'SHARED3',tour_participants/OCC_SHARED3, np.where(trips.trip_mode == 'TAXI', tour_participants/OCC_TAXI,  np.where(trips.trip_mode == 'TNC_SINGLE', tour_participants/OCC_TNC_SINGLE, np.where(trips.trip_mode == 'TNC_SHARED', tour_participants/OCC_TNC_SHARED, np.where(trips.trip_mode.isin(['WALK','BIKE','EBIKE','ESCOOTER']), tour_participants, 1))))))/_sample_rate"
@@ -263,16 +264,16 @@ Description,Target,Expression
 ,distanceDrive,"_distanceDrive + odt_skims['HOV3_H_DIST'] * np.where(((trips.trip_mode == 'TNC_SHARED') & vot3 & ~trips.nev_available & ~trips.microtransit_available),1,0)"
 ,_costTollDrive,"odt_skims['SOV_NT_L_TOLLCOST'] * np.where(((trips.trip_mode == 'DRIVEALONE') & ~ownTrp & vot1),1,0)"
 ,_costTollDrive,"_costTollDrive + odt_skims['SOV_TR_L_TOLLCOST'] * np.where(((trips.trip_mode == 'DRIVEALONE') & ownTrp & vot1),1,0)"
-,_costTollDrive,"_costTollDrive + (odt_skims['HOV2_L_TOLLCOST'] / OCC_SHARED2) * np.where(((trips.trip_mode == 'SHARED2') & vot1),1,0)"
-,_costTollDrive,"_costTollDrive + (odt_skims['HOV3_L_TOLLCOST'] / OCC_SHARED3) * np.where(((trips.trip_mode == 'SHARED3') & vot1),1,0)"
+,_costTollDrive,"_costTollDrive + (odt_skims['HOV2_L_TOLLCOST'] / np.where(_is_joint,tour_participants,OCC_SHARED2)) * np.where(((trips.trip_mode == 'SHARED2') & vot1),1,0)"
+,_costTollDrive,"_costTollDrive + (odt_skims['HOV3_L_TOLLCOST'] / np.where(_is_joint,tour_participants,OCC_SHARED3)) * np.where(((trips.trip_mode == 'SHARED3') & vot1),1,0)"
 ,_costTollDrive,"_costTollDrive + odt_skims['SOV_NT_M_TOLLCOST'] * np.where(((trips.trip_mode == 'DRIVEALONE') & ~ownTrp & vot2),1,0)"
 ,_costTollDrive,"_costTollDrive + odt_skims['SOV_TR_M_TOLLCOST'] * np.where(((trips.trip_mode == 'DRIVEALONE') & ownTrp & vot2),1,0)"
-,_costTollDrive,"_costTollDrive + (odt_skims['HOV2_M_TOLLCOST'] / OCC_SHARED2) * np.where(((trips.trip_mode == 'SHARED2') & vot2),1,0)"
-,_costTollDrive,"_costTollDrive + (odt_skims['HOV3_M_TOLLCOST'] / OCC_SHARED3) * np.where(((trips.trip_mode == 'SHARED3') & vot2),1,0)"
+,_costTollDrive,"_costTollDrive + (odt_skims['HOV2_M_TOLLCOST'] / np.where(_is_joint,tour_participants,OCC_SHARED2)) * np.where(((trips.trip_mode == 'SHARED2') & vot2),1,0)"
+,_costTollDrive,"_costTollDrive + (odt_skims['HOV3_M_TOLLCOST'] / np.where(_is_joint,tour_participants,OCC_SHARED3)) * np.where(((trips.trip_mode == 'SHARED3') & vot2),1,0)"
 ,_costTollDrive,"_costTollDrive + odt_skims['SOV_NT_H_TOLLCOST'] * np.where(((trips.trip_mode == 'DRIVEALONE') & ~ownTrp & vot3),1,0)"
 ,_costTollDrive,"_costTollDrive + odt_skims['SOV_TR_H_TOLLCOST'] * np.where(((trips.trip_mode == 'DRIVEALONE') & ownTrp & vot3),1,0)"
-,_costTollDrive,"_costTollDrive + (odt_skims['HOV2_H_TOLLCOST'] / OCC_SHARED2) * np.where(((trips.trip_mode == 'SHARED2') & vot3),1,0)"
-,costTollDrive,"_costTollDrive + (odt_skims['HOV3_H_TOLLCOST'] / OCC_SHARED3) * np.where(((trips.trip_mode == 'SHARED3') & vot3),1,0)"
+,_costTollDrive,"_costTollDrive + (odt_skims['HOV2_H_TOLLCOST'] / np.where(_is_joint,tour_participants,OCC_SHARED2)) * np.where(((trips.trip_mode == 'SHARED2') & vot3),1,0)"
+,costTollDrive,"_costTollDrive + (odt_skims['HOV3_H_TOLLCOST'] / np.where(_is_joint,tour_participants,OCC_SHARED3)) * np.where(((trips.trip_mode == 'SHARED3') & vot3),1,0)"
 #transit skims,,
 ,_timeTransitInVehicle,"odt_skims['WALK_LOC_TOTALIVTT'] * np.where(trips.trip_mode == 'WALK_LOC',1,0)"
 ,_timeTransitInVehicle,"_timeTransitInVehicle + odt_skims['WALK_PRM_TOTALIVTT'] * np.where(trips.trip_mode == 'WALK_PRM',1,0)"
