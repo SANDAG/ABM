@@ -47,7 +47,7 @@ Dining Tour,,is_dining*autoAvailable,,,,,,,,,,,
 Work Tour,,is_work*(1-autoAvailable),,,,,,,,,,,
 Recreation Tour,,is_recreation*(1-autoAvailable),,,,,,,,,,,
 Dining Tour,,is_dining*(1-autoAvailable),,,,,,,,,,,
-Calibration,ABM2+ Calibration,,0.1356,0,0.0474,0.4619,0,-1.653630067,-1.343352214,0,-0.9328,-0.9328,-0.9328
+Calibration,ABM2+ Calibration,,0.1356,0,0.0474,0.4619,0,-1.6536,-1.343,0,1,1,1
 #,,,,,,,,,,,,,
 util_WALK_LOC_unavail,Walk-LOCtransit unavailable,walk_local_available==False,,,,,,,,,coef_unavail,,
 util_WALK_LOC_Walk_access_time,WALK_LOC - Walk access time,"@np.where(df.nev_local_access_available_in & ~df.outbound, df.nev_local_access_time_in, np.where(df.microtransit_local_access_available_in & ~df.outbound, df.microtransit_local_access_time_in, df.origin_local_time)) * df.time_factor",,,,,,,,,coef_wacc,,
