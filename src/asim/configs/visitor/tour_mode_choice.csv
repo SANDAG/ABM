@@ -82,11 +82,11 @@ util_WALK_MIX_ASC,WALK_MIX - Alternative-specific constant,(wlk_mix_out_asc + wl
 #,Taxi,,,,,,,,,,,,
 util_Taxi - In-vehicle time,Taxi - In-vehicle time,(s2_time_skims_inb + s2_time_skims_out),,,,,,,,,coef_ivt,,
 util_Taxi - Wait time,Taxi - Wait time,1.5*totalWaitTaxi,,,,,,,,,coef_ivt,,
-util_Taxi - Fare,Taxi - Fare,@((((Taxi_baseFare*2 + (df.s2_dist_skims_out + df.s2_dist_skims_inb) * Taxi_costPerMile + (df.s2_time_skims_out + df.s2_time_skims_inb) * Taxi_costPerMinute)*100 + df.s2_cost_skims_out + df.s2_cost_skims_inb) / OCC_TAXI) * df.coef_cost),,,,,,,,,coef_one,,
+util_Taxi - Fare,Taxi - Fare,@((((Taxi_baseFare*2 + (df.s2_dist_skims_out + df.s2_dist_skims_inb) * Taxi_costPerMile + (df.s2_time_skims_out + df.s2_time_skims_inb) * Taxi_costPerMinute)*100 + df.s2_cost_skims_out + df.s2_cost_skims_inb)) * df.coef_cost),,,,,,,,,coef_one,,
 #,TNC Single,,,,,,,,,,,,
 util_TNC Single - In-vehicle time,TNC Single - In-vehicle time,(s2_time_skims_out + s2_time_skims_inb),,,,,,,,,,coef_ivt,
 util_TNC Single - Wait time,TNC Single - Wait time,1.5*totalWaitSingleTNC,,,,,,,,,,coef_ivt,
-util_TNC Single - Cost,TNC Single - Cost,"@(((np.maximum(TNC_single_baseFare*2 + (df.s2_dist_skims_out + df.s2_dist_skims_inb) * TNC_single_costPerMile + (df.s2_time_skims_out + df.s2_time_skims_inb) * TNC_single_costPerMinute, TNC_shared_costMinimum*2)*100 + df.s2_cost_skims_out + df.s2_cost_skims_inb) / OCC_TNC_SINGLE) * df.coef_cost)",,,,,,,,,,coef_one,
+util_TNC Single - Cost,TNC Single - Cost,"@(((np.maximum(TNC_single_baseFare*2 + (df.s2_dist_skims_out + df.s2_dist_skims_inb) * TNC_single_costPerMile + (df.s2_time_skims_out + df.s2_time_skims_inb) * TNC_single_costPerMinute, TNC_shared_costMinimum*2)*100 + df.s2_cost_skims_out + df.s2_cost_skims_inb)) * df.coef_cost)",,,,,,,,,,coef_one,
 #,TNC Shared,,,,,,,,,,,,
 util_TNC Shared_switch,TNC Shared - switch turn-off (depends on data availability),@((~df.nev_available) & (~df.microtransit_available) & (scenarioYear==2022)),,,,,,,,,,,-999
 util_TNC Shared - In-vehicle time,TNC Shared - In-vehicle time,"@(np.where(df.nev_available, df.nev_time, np.where(df.microtransit_available, df.microtransit_time, (df.s3_time_skims_out + df.s3_time_skims_inb)))) * TNC_shared_IVTFactor",,,,,,,,,,,coef_ivt
