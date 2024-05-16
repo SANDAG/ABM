@@ -14,43 +14,44 @@ Description,Target,Expression
 ,_MicroAccessTime,"reindex(land_use.MicroAccessTime,df.origin)"
 Origin Terminal Time,_oTermTime,"reindex(land_use.terminal_time,df.origin)"
 Destination Terminal Time,_dTermTime,"reindex(land_use.terminal_time,df.destination)"
-,_is_joint,(df.number_of_participants > 1)
+,_tour_participants,df.tour_id.map(tours.number_of_participants)
+,_is_joint,(_tour_participants > 1)
 #,,
 ,_time_drive_terminal,0
 ,time_drive_terminal,"_time_drive_terminal + df.trip_mode.isin(['DRIVEALONE','SHARED2','SHARED3']) * (_oTermTime + _dTermTime) * autoTermTimeFactor"
 #,,
 ,_cost_parking,0
 ,_cost_parking,"_cost_parking + df.trip_mode.isin(['DRIVEALONE']) * (df.parkingCost * df.autoParkingCostFactor)"
-,_cost_parking,"_cost_parking + df.trip_mode.isin(['SHARED2']) * (df.parkingCost * df.autoParkingCostFactor)/np.where(_is_joint,df.number_of_participants,OCC_SHARED2)"
-,cost_parking,"_cost_parking + df.trip_mode.isin(['SHARED3']) * (df.parkingCost * df.autoParkingCostFactor)/np.where(_is_joint,df.number_of_participants,OCC_SHARED3)"
+,_cost_parking,"_cost_parking + df.trip_mode.isin(['SHARED2']) * (df.parkingCost * df.autoParkingCostFactor)/np.where(_is_joint,_tour_participants,OCC_SHARED2)"
+,cost_parking,"_cost_parking + df.trip_mode.isin(['SHARED3']) * (df.parkingCost * df.autoParkingCostFactor)/np.where(_is_joint,_tour_participants,OCC_SHARED3)"
 #,,
 ,_costOperatingDrive,0
 ,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['DRIVEALONE'])) * df.auto_op_cost * df.autoCPMFactor * df.da_dist_skims"
-,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['SHARED2'])) * (df.auto_op_cost * df.autoCPMFactor * df.s2_dist_skims)/np.where(_is_joint,df.number_of_participants,OCC_SHARED2)"
-,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['SHARED3'])) * (df.auto_op_cost * df.s3_dist_skims * df.autoCPMFactor)/np.where(_is_joint,df.number_of_participants,OCC_SHARED3)"
-,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['PNR_LOC'])) * (df.auto_op_cost * (odt_skims['PNROUT_LOC_ACC']/60) *driveSpeed)* df.outbound / df.number_of_participants"
-,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['PNR_LOC'])) * (df.auto_op_cost * (odt_skims['PNRIN_LOC_EGR']/60) *driveSpeed) * ~df.outbound / df.number_of_participants"
-,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['PNR_PRM'])) * (df.auto_op_cost * (odt_skims['PNROUT_PRM_ACC']/60) *driveSpeed) * df.outbound / df.number_of_participants"
-,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['PNR_PRM'])) * (df.auto_op_cost * (odt_skims['PNRIN_PRM_EGR']/60) *driveSpeed)*~df.outbound / df.number_of_participants"
-,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['PNR_MIX'])) * (df.auto_op_cost * (odt_skims['PNROUT_MIX_ACC']/60) *driveSpeed) * df.outbound / df.number_of_participants"
-,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['PNR_MIX'])) * (df.auto_op_cost * (odt_skims['PNRIN_MIX_EGR']/60) *driveSpeed)*~df.outbound / df.number_of_participants"
-,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['KNR_LOC'])) * (df.auto_op_cost * df.autoCPMFactor * (odt_skims['KNROUT_LOC_ACC']/60) *driveSpeed )*df.outbound / df.number_of_participants"
-,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['KNR_LOC'])) * (df.auto_op_cost * df.autoCPMFactor * (odt_skims['KNRIN_LOC_EGR']/60) *driveSpeed)*~df.outbound / df.number_of_participants"
-,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['KNR_PRM'])) * (df.auto_op_cost * df.autoCPMFactor * (odt_skims['KNROUT_PRM_ACC']/60) *driveSpeed)*df.outbound / df.number_of_participants"
-,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['KNR_PRM'])) * (df.auto_op_cost * df.autoCPMFactor * (odt_skims['KNRIN_PRM_EGR']/60) *driveSpeed)*~df.outbound / df.number_of_participants"
-,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['KNR_MIX'])) * (df.auto_op_cost * df.autoCPMFactor * (odt_skims['KNROUT_MIX_ACC']/60) *driveSpeed)*df.outbound / df.number_of_participants"
-,costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['KNR_MIX'])) * (df.auto_op_cost * df.autoCPMFactor * (odt_skims['KNRIN_MIX_EGR']/60) *driveSpeed)*~df.outbound / df.number_of_participants"
+,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['SHARED2'])) * (df.auto_op_cost * df.autoCPMFactor * df.s2_dist_skims)/np.where(_is_joint,_tour_participants,OCC_SHARED2)"
+,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['SHARED3'])) * (df.auto_op_cost * df.s3_dist_skims * df.autoCPMFactor)/np.where(_is_joint,_tour_participants,OCC_SHARED3)"
+,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['PNR_LOC'])) * (df.auto_op_cost * (odt_skims['PNROUT_LOC_ACC']/60) *driveSpeed)* df.outbound / _tour_participants"
+,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['PNR_LOC'])) * (df.auto_op_cost * (odt_skims['PNRIN_LOC_EGR']/60) *driveSpeed) * ~df.outbound / _tour_participants"
+,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['PNR_PRM'])) * (df.auto_op_cost * (odt_skims['PNROUT_PRM_ACC']/60) *driveSpeed) * df.outbound / _tour_participants"
+,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['PNR_PRM'])) * (df.auto_op_cost * (odt_skims['PNRIN_PRM_EGR']/60) *driveSpeed)*~df.outbound / _tour_participants"
+,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['PNR_MIX'])) * (df.auto_op_cost * (odt_skims['PNROUT_MIX_ACC']/60) *driveSpeed) * df.outbound / _tour_participants"
+,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['PNR_MIX'])) * (df.auto_op_cost * (odt_skims['PNRIN_MIX_EGR']/60) *driveSpeed)*~df.outbound / _tour_participants"
+,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['KNR_LOC'])) * (df.auto_op_cost * df.autoCPMFactor * (odt_skims['KNROUT_LOC_ACC']/60) *driveSpeed )*df.outbound / _tour_participants"
+,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['KNR_LOC'])) * (df.auto_op_cost * df.autoCPMFactor * (odt_skims['KNRIN_LOC_EGR']/60) *driveSpeed)*~df.outbound / _tour_participants"
+,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['KNR_PRM'])) * (df.auto_op_cost * df.autoCPMFactor * (odt_skims['KNROUT_PRM_ACC']/60) *driveSpeed)*df.outbound / _tour_participants"
+,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['KNR_PRM'])) * (df.auto_op_cost * df.autoCPMFactor * (odt_skims['KNRIN_PRM_EGR']/60) *driveSpeed)*~df.outbound / _tour_participants"
+,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['KNR_MIX'])) * (df.auto_op_cost * df.autoCPMFactor * (odt_skims['KNROUT_MIX_ACC']/60) *driveSpeed)*df.outbound / _tour_participants"
+,costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['KNR_MIX'])) * (df.auto_op_cost * df.autoCPMFactor * (odt_skims['KNRIN_MIX_EGR']/60) *driveSpeed)*~df.outbound / _tour_participants"
 #,,
 ,_cost_fare_drive,0
-,_cost_fare_drive,"_cost_fare_drive + np.where(df.trip_mode == 'TAXI',1,0) * ((Taxi_baseFare + df.s2_dist_skims * Taxi_costPerMile + df.s2_time_skims * Taxi_costPerMinute) * 100 + df.s2_cost_skims) / df.number_of_participants"
-,_cost_fare_drive,"_cost_fare_drive + np.where(df.trip_mode=='TNC_SINGLE',1,0)*(np.maximum(TNC_single_baseFare + df.s2_dist_skims * TNC_single_costPerMile + df.s2_time_skims * TNC_single_costPerMinute, TNC_single_costMinimum) * 100 + df.s2_cost_skims) / df.number_of_participants"
-,_cost_fare_drive,"_cost_fare_drive + np.where(df.trip_mode=='TNC_SHARED',1,0)*np.where(df.nev_available, 0, np.where(df.microtransit_available, 0, (np.maximum(TNC_shared_baseFare + df.s3_dist_skims * TNC_shared_costPerMile + df.s3_time_skims * TNC_shared_costPerMinute, TNC_shared_costMinimum) * 100 + df.s3_cost_skims))) / df.number_of_participants"
-,_cost_fare_drive,"_cost_fare_drive + df.trip_mode.isin(['TNC_LOC']) * (~df.nev_local_access_available_out) * (~df.microtransit_local_access_available_out) * (df.outbound) * ((np.maximum(TNC_single_baseFare + (odt_skims['TNCOUT_LOC_ACC']/60 * driveSpeed) * TNC_single_costPerMile + odt_skims['TNCOUT_LOC_ACC'] * TNC_single_costPerMinute, TNC_single_costMinimum) * 100)) / df.number_of_participants"
-,_cost_fare_drive,"_cost_fare_drive + df.trip_mode.isin(['TNC_PRM']) * (~df.nev_prm_access_available_out) * (~df.microtransit_prm_access_available_out) * (df.outbound) * ((np.maximum(TNC_single_baseFare + (odt_skims['TNCOUT_PRM_ACC']/60 * driveSpeed) * TNC_single_costPerMile + odt_skims['TNCOUT_PRM_ACC'] * TNC_single_costPerMinute, TNC_single_costMinimum) * 100)) / df.number_of_participants"
-,_cost_fare_drive,"_cost_fare_drive + df.trip_mode.isin(['TNC_MIX']) * (~df.nev_mix_access_available_out) * (~df.microtransit_mix_access_available_out) * (df.outbound) * ((np.maximum(TNC_single_baseFare + (odt_skims['TNCOUT_MIX_ACC']/60 * driveSpeed) * TNC_single_costPerMile + odt_skims['TNCOUT_MIX_ACC'] * TNC_single_costPerMinute, TNC_single_costMinimum) * 100)) / df.number_of_participants"
-,_cost_fare_drive,"_cost_fare_drive + df.trip_mode.isin(['TNC_LOC']) * (~df.nev_local_egress_available_in) * (~df.microtransit_local_egress_available_in) * (~df.outbound) * ((np.maximum(TNC_single_baseFare + (odt_skims['TNCIN_LOC_EGR']/60 * driveSpeed) * TNC_single_costPerMile + odt_skims['TNCIN_LOC_EGR'] * TNC_single_costPerMinute, TNC_single_costMinimum) * 100)) / df.number_of_participants"
-,_cost_fare_drive,"_cost_fare_drive + df.trip_mode.isin(['TNC_PRM']) * (~df.nev_prm_egress_available_in) * (~df.microtransit_prm_egress_available_in) * (~df.outbound) * ((np.maximum(TNC_single_baseFare + (odt_skims['TNCIN_PRM_EGR']/60 * driveSpeed) * TNC_single_costPerMile + odt_skims['TNCIN_PRM_EGR'] * TNC_single_costPerMinute, TNC_single_costMinimum) * 100)) / df.number_of_participants"
-,cost_fare_drive,"_cost_fare_drive + df.trip_mode.isin(['TNC_MIX']) * (~df.nev_mix_egress_available_in) * (~df.microtransit_mix_egress_available_in) * (~df.outbound) * ((np.maximum(TNC_single_baseFare + (odt_skims['TNCIN_MIX_EGR']/60 * driveSpeed) * TNC_single_costPerMile + odt_skims['TNCIN_MIX_EGR'] * TNC_single_costPerMinute, TNC_single_costMinimum) * 100)) / df.number_of_participants"
+,_cost_fare_drive,"_cost_fare_drive + np.where(df.trip_mode == 'TAXI',1,0) * ((Taxi_baseFare + df.s2_dist_skims * Taxi_costPerMile + df.s2_time_skims * Taxi_costPerMinute) * 100 + df.s2_cost_skims) / _tour_participants"
+,_cost_fare_drive,"_cost_fare_drive + np.where(df.trip_mode=='TNC_SINGLE',1,0)*(np.maximum(TNC_single_baseFare + df.s2_dist_skims * TNC_single_costPerMile + df.s2_time_skims * TNC_single_costPerMinute, TNC_single_costMinimum) * 100 + df.s2_cost_skims) / _tour_participants"
+,_cost_fare_drive,"_cost_fare_drive + np.where(df.trip_mode=='TNC_SHARED',1,0)*np.where(df.nev_available, 0, np.where(df.microtransit_available, 0, (np.maximum(TNC_shared_baseFare + df.s3_dist_skims * TNC_shared_costPerMile + df.s3_time_skims * TNC_shared_costPerMinute, TNC_shared_costMinimum) * 100 + df.s3_cost_skims))) / _tour_participants"
+,_cost_fare_drive,"_cost_fare_drive + df.trip_mode.isin(['TNC_LOC']) * (~df.nev_local_access_available_out) * (~df.microtransit_local_access_available_out) * (df.outbound) * ((np.maximum(TNC_single_baseFare + (odt_skims['TNCOUT_LOC_ACC']/60 * driveSpeed) * TNC_single_costPerMile + odt_skims['TNCOUT_LOC_ACC'] * TNC_single_costPerMinute, TNC_single_costMinimum) * 100)) / _tour_participants"
+,_cost_fare_drive,"_cost_fare_drive + df.trip_mode.isin(['TNC_PRM']) * (~df.nev_prm_access_available_out) * (~df.microtransit_prm_access_available_out) * (df.outbound) * ((np.maximum(TNC_single_baseFare + (odt_skims['TNCOUT_PRM_ACC']/60 * driveSpeed) * TNC_single_costPerMile + odt_skims['TNCOUT_PRM_ACC'] * TNC_single_costPerMinute, TNC_single_costMinimum) * 100)) / _tour_participants"
+,_cost_fare_drive,"_cost_fare_drive + df.trip_mode.isin(['TNC_MIX']) * (~df.nev_mix_access_available_out) * (~df.microtransit_mix_access_available_out) * (df.outbound) * ((np.maximum(TNC_single_baseFare + (odt_skims['TNCOUT_MIX_ACC']/60 * driveSpeed) * TNC_single_costPerMile + odt_skims['TNCOUT_MIX_ACC'] * TNC_single_costPerMinute, TNC_single_costMinimum) * 100)) / _tour_participants"
+,_cost_fare_drive,"_cost_fare_drive + df.trip_mode.isin(['TNC_LOC']) * (~df.nev_local_egress_available_in) * (~df.microtransit_local_egress_available_in) * (~df.outbound) * ((np.maximum(TNC_single_baseFare + (odt_skims['TNCIN_LOC_EGR']/60 * driveSpeed) * TNC_single_costPerMile + odt_skims['TNCIN_LOC_EGR'] * TNC_single_costPerMinute, TNC_single_costMinimum) * 100)) / _tour_participants"
+,_cost_fare_drive,"_cost_fare_drive + df.trip_mode.isin(['TNC_PRM']) * (~df.nev_prm_egress_available_in) * (~df.microtransit_prm_egress_available_in) * (~df.outbound) * ((np.maximum(TNC_single_baseFare + (odt_skims['TNCIN_PRM_EGR']/60 * driveSpeed) * TNC_single_costPerMile + odt_skims['TNCIN_PRM_EGR'] * TNC_single_costPerMinute, TNC_single_costMinimum) * 100)) / _tour_participants"
+,cost_fare_drive,"_cost_fare_drive + df.trip_mode.isin(['TNC_MIX']) * (~df.nev_mix_egress_available_in) * (~df.microtransit_mix_egress_available_in) * (~df.outbound) * ((np.maximum(TNC_single_baseFare + (odt_skims['TNCIN_MIX_EGR']/60 * driveSpeed) * TNC_single_costPerMile + odt_skims['TNCIN_MIX_EGR'] * TNC_single_costPerMinute, TNC_single_costMinimum) * 100)) / _tour_participants"
 #,,
 ,_time_transit_drive,0
 ,_time_transit_drive,"_time_transit_drive + (df.trip_mode.isin(['PNR_LOC'])) * odt_skims['PNROUT_LOC_ACC'] * df.outbound"
