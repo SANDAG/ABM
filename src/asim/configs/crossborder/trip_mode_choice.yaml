@@ -135,6 +135,7 @@ TOURS_MERGED_CHOOSER_COLUMNS:
   - pass_type
   - work_time_factor
   - non_work_time_factor
+  - number_of_participants
 
 
 MODE_CHOICE_LOGSUM_COLUMN_NAME: trip_mode_choice_logsum

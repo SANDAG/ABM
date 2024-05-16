@@ -318,6 +318,5 @@ TOURS_MERGED_CHOOSER_COLUMNS:
   - direction
   - emp_trip_mode
   - party_size
-  # - demographic_segment
 
 MODE_CHOICE_LOGSUM_COLUMN_NAME: mode_choice_logsum
