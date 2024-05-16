@@ -45,7 +45,10 @@ class Series15_Processor:
         sandag_abm_prop = util.load_properties(sandag_abm_prop_dir)
         self.max_walk_transit_dist = sandag_abm_prop['walk.transit.connector.max.length']
 
-        self.ext_station_to_internal_mapping = {1:9279, 2:9387, 4:22324}
+        if int(scenario_year) < 2026:
+            self.ext_station_to_internal_mapping = {1:9279, 2:9387, 4:22324}
+        else:
+            self.ext_station_to_internal_mapping = {1:9279, 2:9387, 3:7123, 4:22324}
 
         # skims are copied from input dir to output dir before operating on them
         self.traffic_skim_list = [
