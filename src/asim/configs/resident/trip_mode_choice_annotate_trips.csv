@@ -27,7 +27,7 @@ Destination Terminal Time,_dTermTime,"reindex(land_use.terminal_time,df.destinat
 ,_costOperatingDrive,0
 ,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['DRIVEALONE'])) * df.auto_op_cost * df.autoCPMFactor * df.da_dist_skims"
 ,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['SHARED2'])) * (df.auto_op_cost * df.autoCPMFactor * df.s2_dist_skims)/np.where(_is_joint,df.number_of_participants,OCC_SHARED2)"
-,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['SHARED3'])) * (df.auto_op_cost * df.s3_dist_skims * df.autoCPMFactor)/np.where(_is_joint,df.number_of_participants,OCC_SHARED2)"
+,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['SHARED3'])) * (df.auto_op_cost * df.s3_dist_skims * df.autoCPMFactor)/np.where(_is_joint,df.number_of_participants,OCC_SHARED3)"
 ,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['PNR_LOC'])) * (df.auto_op_cost * (odt_skims['PNROUT_LOC_ACC']/60) *driveSpeed)* df.outbound / df.number_of_participants"
 ,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['PNR_LOC'])) * (df.auto_op_cost * (odt_skims['PNRIN_LOC_EGR']/60) *driveSpeed) * ~df.outbound / df.number_of_participants"
 ,_costOperatingDrive,"_costOperatingDrive + (df.trip_mode.isin(['PNR_PRM'])) * (df.auto_op_cost * (odt_skims['PNROUT_PRM_ACC']/60) *driveSpeed) * df.outbound / df.number_of_participants"
