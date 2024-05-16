@@ -239,7 +239,7 @@ Description,Target,Expression
 ,_costOperatingDrive,"_costOperatingDrive + arrival_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','PARK_ESCORT','SHUTTLEVAN','HOTEL_COURTESY','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','RENTAL']) * distanceDrive * costPerMile / _participants_add_driver"
 ,costOperatingDrive,"_costOperatingDrive + arrival_mode.isin(['KNR_LOC','KNR_PRM','KNR_MIX']) * (df.time_transit_drive/60) * driveSpeed * costPerMile / _participants_add_driver"
 #,,
-,cost_parking,"np.where(trips['trip_num'] == 1, cost_parking, 0)"
+,cost_parking,"np.where(trips['trip_num'] == 1, trips.cost_parking, 0)"
 #transit skims,,
 ,_timeTransitInVehicle,"odt_skims['WALK_LOC_TOTALIVTT'] * np.where(trip_mode == 'WALK_LOC',1,0)"
 ,_timeTransitInVehicle,"_timeTransitInVehicle + odt_skims['WALK_PRM_TOTALIVTT'] * np.where(trip_mode == 'WALK_PRM',1,0)"
@@ -429,7 +429,7 @@ Description,Target,Expression
 ,_time_transit_wait,"_time_transit_wait + odt_skims['TNCIN_PRM_XFERWAIT'] * np.where(trip_mode == 'TNC_PRM',1,0) * np.where(~outbound,1,0)"
 ,time_transit_wait,"_time_transit_wait + odt_skims['TNCIN_MIX_XFERWAIT'] * np.where(trip_mode == 'TNC_MIX',1,0) * np.where(~outbound,1,0)"
 # totals,,
-,cost_total,costOperatingDrive+costTollDrive+costFareTransit+df.cost_parking+df.cost_fare_drive+df.cost_rental
+,cost_total,costOperatingDrive+costTollDrive+costFareTransit+cost_parking+df.cost_fare_drive+df.cost_rental
 ,time_total,df.time_walk + timeBike + df.time_mm + timeDrive + df.time_wait_drive + df.time_transit_drive + time_transit_wait + timeTransitInVehicle + df.time_airport_ivt + df.time_airport_wait
 #,,
 ,value_of_time_category_id,"np.where(vot1,1,np.where(vot2,2,3))"
