@@ -161,7 +161,7 @@ CONSTANTS:
   ridehailLocation2AccessWalkTime: -999.00
   ridehailLocation2AccessWaitTime: -999.00
   ridehailLocation2AccessTime: -999.00
-  taxi_available: 0
+  taxi_available: 1
   taxiWaitTime:  -999.00
   taxiLocation1AccessCost:  -999.00
   taxiLocation1AccessWalkTime:  -999.00
