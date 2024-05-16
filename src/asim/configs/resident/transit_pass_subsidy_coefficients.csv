@@ -18,10 +18,6 @@ coef_tr_emp_hh,0.0431,F
 coef_tr_hh_emp,0.0434,F
 coef_un,0.508,F
 coef_unavailable,-999.0,F
-coef_ft_asc,2.000,F
-coef_pt_asc,2.900,F
-coef_un_asc,-0.100,F
-coef_na_asc,-2.0,F
-coef_da_asc,-2.0,F
-coef_nd_asc,-2.0,F
-coef_ps_asc,-3.0,F
+coef_ft_asc,-0.240,F
+coef_pt_asc,-0.250,F
+coef_un_asc,0.30,F
