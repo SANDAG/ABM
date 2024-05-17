@@ -107,7 +107,7 @@ class CreateScenarioGUI(tkinter.Frame):
                 self.releaseDir=os.path.abspath(os.path.join(os.path.dirname(sys.executable), '..', '..'))
             else:
                 self.releaseDir=os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..'))
-            self.defaultScenarioDir="T:\\projects\\sr15"
+            self.defaultScenarioDir="T:\\projects\\sr15\\MyRun"
             self.defaultNetworkDir="T:\\RTP\\2021RP\\2021rp_final\\network_build"
 
             current_row = 0
@@ -398,7 +398,7 @@ class CreateScenarioGUI(tkinter.Frame):
         def executeBatch(self, type):
             self.popup.destroy()
             if type=="scenario":
-                if self.year == 2035:
+                if self.year == "2035":
                     lu_input_path = os.path.join(self.lu_options[self.lu]["location"], "abm_csv", "processed", "2035_baseline")
                 else:
                     lu_input_path = os.path.join(self.lu_options[self.lu]["location"], "abm_csv", "processed", str(self.year))
