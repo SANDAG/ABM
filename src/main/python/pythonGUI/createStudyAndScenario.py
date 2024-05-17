@@ -47,7 +47,7 @@ class SelectStudyYears(tkinter.Frame):
 
 
 class CreateScenarioGUI(tkinter.Frame):
-        def __init__(self, root, emme_version = "4.3.7", year = "2016", geo = "1", lu = "S0"):
+        def __init__(self, root, emme_version = "4.3.7", year = "2016", geo = "1", lu = "DS41"):
             tkinter.Frame.__init__(self, root, border=5)
             body = tkinter.Frame(self)
             body.pack(fill=constants.X, expand=1)
@@ -55,24 +55,10 @@ class CreateScenarioGUI(tkinter.Frame):
             body.grid_columnconfigure(1, weight=2)
 
             #Define land use options
-            self.lu_options = {
-                "S0": {
-                    "name": "Baseline",
-                    "years": ["2022", "2026", "2029", "2032", "2035", "2040", "2045", "2050"]
-                },
-                "S1": {
-                    "name": "Baseline + RHNA Adjustment",
-                    "years": ["2022", "2026", "2029", "2032", "2035", "2040", "2045", "2050"]
-                },
-                "S2": {
-                    "name": "Sustainable Community Strategy",
-                    "years": ["2022", "2026", "2029", "2032", "2035", "2040", "2045", "2050"]
-                },
-                "S3": {
-                    "name": "Sustainable Community Strategy",
-                    "years": ["2022", "2026", "2029", "2032", "2035", "2040", "2045", "2050"]
-                }
-            }
+            self.lu_options = {"DS41": {"name": "Baseline",
+                                        "years": ["2022", "2025nb", "2030nb", "2035nb", "2040nb", "2050nb"]},
+                               "DS42": {"name": "Sustainable Community Strategy",
+                                        "years": ["2016", "2023", "2025", "2026", "2029", "2030", "2032", "2035", "2040", "2050"]}}
 
             self.root = root
             self.emme_version = emme_version
@@ -80,11 +66,11 @@ class CreateScenarioGUI(tkinter.Frame):
             self.geo = geo            
             self.lu = lu
  
-            # if self.year not in self.lu_options[self.lu]["years"]:
-            #     if self.year in self.lu_options["DS41"]["years"]:
-            #         self.lu = "DS41"
-            #     else:
-            #         self.lu = "DS42"
+            if self.year not in self.lu_options[self.lu]["years"]:
+                if self.year in self.lu_options["DS41"]["years"]:
+                    self.lu = "DS41"
+                else:
+                    self.lu = "DS42"
 
             yearOptionList = []
             for lu in self.lu_options:
