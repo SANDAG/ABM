@@ -207,7 +207,7 @@ class CreateScenarioGUI(tkinter.Frame):
             for lu in self.lu_options:
                 if self.year in self.lu_options[lu]["years"]:
                     luOptionList.append(lu + '-' + self.lu_options[lu]["name"])
-            option=tkinter.OptionMenu(body,var,value=luOptionList,command=self.setLU)
+            option=tkinter.OptionMenu(body,var,*luOptionList,value=lu,command=self.setLU)
 
             option.config(width=50)
             option.grid(row=current_row, column=1)
