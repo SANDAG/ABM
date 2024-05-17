@@ -207,7 +207,6 @@ class CreateScenarioGUI(tkinter.Frame):
             for lu in self.lu_options:
                 if self.year in self.lu_options[lu]["years"]:
                     luOptionList.append(lu + '-' + self.lu_options[lu]["name"])
-            print(luOptionList)
             option=tkinter.OptionMenu(body,var,*luOptionList,command=self.setLU)
 
             option.config(width=50)
