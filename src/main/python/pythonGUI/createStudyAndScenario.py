@@ -58,22 +58,22 @@ class CreateScenarioGUI(tkinter.Frame):
             self.lu_options = {
                 "S0": {
                     "name": "Baseline",
-                    "location": "T:\socioec\Current_Projects\SR15\S0\version16",
+                    "location": r"T:\socioec\Current_Projects\SR15\S0\version16",
                     "years": ["2022", "2026", "2029", "2035", "2050"]
                 },
                 "S1": {
                     "name": "Baseline + RHNA Adjustment",
-                    "location": "T:\socioec\Current_Projects\SR15\S1\version12",
+                    "location": r"T:\socioec\Current_Projects\SR15\S1\version12",
                     "years": ["2022", "2035"]
                 },
                 "S2": {
                     "name": "Sustainable Community Strategy",
-                    "location": "T:\socioec\Current_Projects\SR15\S2\version17",
+                    "location": r"T:\socioec\Current_Projects\SR15\S2\version17",
                     "years": ["2022", "2035"]
                 },
                 "S3": {
                     "name": "SCS with Higher Density",
-                    "location": "T:\socioec\Current_Projects\SR15\S3\version18",
+                    "location": r"T:\socioec\Current_Projects\SR15\S3\version18",
                     "years": ["2035"]
                 }
             }
