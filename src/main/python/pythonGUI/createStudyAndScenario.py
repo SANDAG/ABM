@@ -207,10 +207,11 @@ class CreateScenarioGUI(tkinter.Frame):
             for lu in self.lu_options:
                 if self.year in self.lu_options[lu]["years"]:
                     luOptionList.append(lu + '-' + self.lu_options[lu]["name"])
-            #option=tkinter.OptionMenu(body,var,*luOptionList,command=self.setLU)
+            print(luOptionList)
+            option=tkinter.OptionMenu(body,var,*luOptionList,command=self.setLU)
 
-            #option.config(width=50)
-            #option.grid(row=current_row, column=1)
+            option.config(width=50)
+            option.grid(row=current_row, column=1)
             current_row += 1
 
             tkinter.Label(body, text=u"Geography ID", font=("Helvetica", 8, 'bold')).grid(row=current_row)
