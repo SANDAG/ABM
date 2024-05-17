@@ -108,7 +108,6 @@ CONSTANTS:
   walkSpeed: 3.00
   bikeThresh: 6.00
   bikeSpeed: 12.00
-  driveSpeed: 25.00
   parkLocation1AccessCost: 0.00
   parkLocation1CostDay: 39.04
   parkLocation1InVehicleTime: 0.00
@@ -283,12 +282,9 @@ CHOOSER_COLS_TO_KEEP:
   - vot1
   - vot2
   - vot3
-  - parkLocation1Cost
-  - parkLocation2Cost
-  - parkLocation3Cost
-  - parkLocation4Cost
-  - parkLocation5Cost
+  - partySizeRideHailLocation1AutoIVT
   - partySizeRideHailLocation1AutoDist
+  - partySizeRideHailLocation2AutoIVT
   - partySizeRideHailLocation2AutoDist
   - nights
   - number_of_participants
