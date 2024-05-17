@@ -80,11 +80,11 @@ class CreateScenarioGUI(tkinter.Frame):
             self.geo = geo            
             self.lu = lu
  
-            if self.year not in self.lu_options[self.lu]["years"]:
-                if self.year in self.lu_options["DS41"]["years"]:
-                    self.lu = "DS41"
-                else:
-                    self.lu = "DS42"
+            # if self.year not in self.lu_options[self.lu]["years"]:
+            #     if self.year in self.lu_options["DS41"]["years"]:
+            #         self.lu = "DS41"
+            #     else:
+            #         self.lu = "DS42"
 
             yearOptionList = []
             for lu in self.lu_options:
