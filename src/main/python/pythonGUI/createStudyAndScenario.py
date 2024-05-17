@@ -58,19 +58,23 @@ class CreateScenarioGUI(tkinter.Frame):
             self.lu_options = {
                 "S0": {
                     "name": "Baseline",
-                    "years": ["2022", "2026", "2029", "2032", "2035", "2040", "2045", "2050"]
+                    "location": "T:\socioec\Current_Projects\SR15\S0\version16",
+                    "years": ["2022", "2026", "2029", "2035", "2050"]
                 },
                 "S1": {
                     "name": "Baseline + RHNA Adjustment",
-                    "years": ["2022", "2026", "2029", "2032", "2035", "2040", "2045", "2050"]
+                    "location": "T:\socioec\Current_Projects\SR15\S1\version12",
+                    "years": ["2022", "2035"]
                 },
                 "S2": {
                     "name": "Sustainable Community Strategy",
-                    "years": ["2022", "2026", "2029", "2032", "2035", "2040", "2045", "2050"]
+                    "location": "T:\socioec\Current_Projects\SR15\S2\version17",
+                    "years": ["2022", "2035"]
                 },
                 "S3": {
                     "name": "SCS with Higher Density",
-                    "years": ["2022", "2026", "2029", "2032", "2035", "2040", "2045", "2050"]
+                    "location": "T:\socioec\Current_Projects\SR15\S3\version18",
+                    "years": ["2035"]
                 }
             }
 
@@ -394,16 +398,21 @@ class CreateScenarioGUI(tkinter.Frame):
         def executeBatch(self, type):
             self.popup.destroy()
             if type=="scenario":
-                commandstr = u"create_scenario.cmd %s %s %s %s" % (
+                if self.year == 2035:
+                    lu_input_path = os.path.join(self.lu_options[self.lu]["location"], "abm_csv", "processed", "2035_baseline")
+                else:
+                    lu_input_path = os.path.join(self.lu_options[self.lu]["location"], "abm_csv", "processed", str(self.year))
+                commandstr = u"create_scenario.cmd %s %s %s %s %s" % (
                     self.scenariopath.get(),
                     self.year,
                     self.networkpath.get(),
-                    self.emme_version
+                    self.emme_version,
+                    lu_input_path
                 )
                 os.chdir(self.releaseDir+"\\"+self.version+'\\')
                 os.system(commandstr)
                 #self.update_property("version=version_14_2_2", "version=version_14_2_2\nLU version=" + self.lu)
-                self.update_property("version=version_14_3_0", "version=version_14_3_0\nLU version=" + self.lu)
+                self.update_property("version=version_15_0_0", "version=version_15_0_0\nLU version=" + self.lu)
                 self.update_property("geographyID=1", "geographyID=" + self.geo.get())
             elif type=="study":
                 studyyears = self.studyyears.get().split(',')
