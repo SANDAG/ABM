@@ -47,7 +47,7 @@ class SelectStudyYears(tkinter.Frame):
 
 
 class CreateScenarioGUI(tkinter.Frame):
-        def __init__(self, root, emme_version = "4.3.7", year = "2016", geo = "1", lu = "DS41"):
+        def __init__(self, root, emme_version = "4.3.7", year = "2016", geo = "1", lu = "S0"):
             tkinter.Frame.__init__(self, root, border=5)
             body = tkinter.Frame(self)
             body.pack(fill=constants.X, expand=1)
@@ -56,19 +56,19 @@ class CreateScenarioGUI(tkinter.Frame):
 
             #Define land use options
             self.lu_options = {
-                "S0-v16": {
+                "S0": {
                     "name": "Baseline",
                     "years": ["2022", "2026", "2029", "2032", "2035", "2040", "2045", "2050"]
                 },
-                "S1-v12": {
+                "S1": {
                     "name": "Baseline + RHNA Adjustment",
                     "years": ["2022", "2026", "2029", "2032", "2035", "2040", "2045", "2050"]
                 },
-                "S2-v17": {
+                "S2": {
                     "name": "Sustainable Community Strategy",
                     "years": ["2022", "2026", "2029", "2032", "2035", "2040", "2045", "2050"]
                 },
-                "S3-v18": {
+                "S3": {
                     "name": "Sustainable Community Strategy",
                     "years": ["2022", "2026", "2029", "2032", "2035", "2040", "2045", "2050"]
                 }
