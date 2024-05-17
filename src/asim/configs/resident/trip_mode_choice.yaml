@@ -118,29 +118,83 @@ CHOOSER_COLS_TO_KEEP:
   - vot_s2
   - vot_s3
   - ownsTransponder
+  - ebike_owner
   - parkingCost
+  - auto_op_cost
+  - autoCPMFactor
+  - autoParkingCostFactor
+  - autoTermTimeFactor
+  - costFactorS2
+  - costFactorS3
+  - transitSubsidyPassDiscount
   - origTaxiWaitTime
   - origSingleTNCWaitTime
+  - destSingleTNCWaitTime
   - origSharedTNCWaitTime
+  - da_dist_skims
   - s2_time_skims
   - s2_dist_skims
   - s2_cost_skims
   - s3_time_skims
   - s3_dist_skims
   - s3_cost_skims
+  - ebike_time
+  - escooter_time
   - microtransit_orig
   - microtransit_dest
   - microtransit_operating
   - microtransit_available
+  - microtransit_time
   - nev_orig
   - nev_dest
   - nev_operating
   - nev_available
+  - nev_time
+  - microtransit_local_access_available_out
+  - microtransit_prm_access_available_out
   - microtransit_mix_access_available_out
+  - nev_local_access_available_out
+  - nev_prm_access_available_out
   - nev_mix_access_available_out
+  - microtransit_local_egress_available_out
+  - microtransit_prm_egress_available_out
   - microtransit_mix_egress_available_out
+  - nev_local_egress_available_out
+  - nev_prm_egress_available_out
   - nev_mix_egress_available_out
+  - microtransit_local_access_available_in
+  - microtransit_prm_access_available_in
   - microtransit_mix_access_available_in
+  - nev_local_access_available_in
+  - nev_prm_access_available_in
   - nev_mix_access_available_in
+  - microtransit_local_egress_available_in
+  - microtransit_prm_egress_available_in
   - microtransit_mix_egress_available_in
+  - nev_local_egress_available_in
+  - nev_prm_egress_available_in
   - nev_mix_egress_available_in
+  - microtransit_local_access_time_out
+  - microtransit_prm_access_time_out
+  - microtransit_mix_access_time_out
+  - nev_local_access_time_out
+  - nev_prm_access_time_out
+  - nev_mix_access_time_out
+  - microtransit_local_egress_time_out
+  - microtransit_prm_egress_time_out
+  - microtransit_mix_egress_time_out
+  - nev_local_egress_time_out
+  - nev_prm_egress_time_out
+  - nev_mix_egress_time_out
+  - microtransit_local_access_time_in
+  - microtransit_prm_access_time_in
+  - microtransit_mix_access_time_in
+  - nev_local_access_time_in
+  - nev_prm_access_time_in
+  - nev_mix_access_time_in
+  - microtransit_local_egress_time_in
+  - microtransit_prm_egress_time_in
+  - microtransit_mix_egress_time_in
+  - nev_local_egress_time_in
+  - nev_prm_egress_time_in
+  - nev_mix_egress_time_in
