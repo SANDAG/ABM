@@ -55,10 +55,24 @@ class CreateScenarioGUI(tkinter.Frame):
             body.grid_columnconfigure(1, weight=2)
 
             #Define land use options
-            self.lu_options = {"DS41": {"name": "Baseline",
-                                        "years": ["2022", "2025nb", "2030nb", "2035nb", "2040nb", "2050nb"]},
-                               "DS42": {"name": "Sustainable Community Strategy",
-                                        "years": ["2016", "2023", "2025", "2026", "2029", "2030", "2032", "2035", "2040", "2050"]}}
+            self.lu_options = {
+                "S0-v16": {
+                    "name": "Baseline",
+                    "years": ["2022", "2026", "2029", "2032", "2035", "2040", "2045", "2050"]
+                },
+                "S1-v12": {
+                    "name": "Baseline + RHNA Adjustment",
+                    "years": ["2022", "2026", "2029", "2032", "2035", "2040", "2045", "2050"]
+                },
+                "S2-v17": {
+                    "name": "Sustainable Community Strategy",
+                    "years": ["2022", "2026", "2029", "2032", "2035", "2040", "2045", "2050"]
+                },
+                "S3-v18": {
+                    "name": "Sustainable Community Strategy",
+                    "years": ["2022", "2026", "2029", "2032", "2035", "2040", "2045", "2050"]
+                }
+            }
 
             self.root = root
             self.emme_version = emme_version
