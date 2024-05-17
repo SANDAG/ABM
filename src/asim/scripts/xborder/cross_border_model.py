@@ -30,8 +30,7 @@ def get_poe_wait_times(settings):
 
     wait_times = pd.read_csv(
         os.path.join(data_dir, settings['poe_wait_times_input_fname']))
-    poes = list(settings['poes'].keys())
-    num_poes = len(poes)
+    num_poes = len(list(settings['poes'].keys()))
     wait_times.rename(columns={
         'StandardWait': 'std_wait', 'SENTRIWait': 'sentri_wait',
         'PedestrianWait': 'ped_wait', 'ReadyWait': 'ready_wait'}, inplace=True)
@@ -417,10 +416,9 @@ def create_land_use_file(
     # load maz/mgra, colonia, & poe data
     colonias = pd.read_csv(os.path.join(data_dir, colonia_input_fname))
     mazs = pd.read_csv(os.path.join(data_dir, maz_input_fname))
-
     poe_df = (pd.DataFrame.from_dict(settings['poes'], orient='index')
                         .reset_index()
-                        .rename(columns={'index':'poe_id_new'}))
+                        .rename(columns={'index':'name', 'poe_id': 'poe_id_new'}))
 
     # merge poe info onto maz table
     mazs = mazs.merge(poe_df[['ext_taz_id', 'maz_id', 'poe_id_new']]
@@ -729,14 +727,27 @@ if __name__ == '__main__':
         constants_settings = yaml.load(f, Loader=yaml.FullLoader)
     settings['scenario_year'] = constants_settings['scenarioYear']
 
-    #skip poes that are not open yet
-    # #(NOTE can also be used to close poes or even alter veh_lanes or ped_lanes across yrs)
+    #skip POEs that are not open yet & select POE version w/ start_yr closest to scenario_yr
     poe_to_delete = []
-    for poe_id, poe_attrs in settings['poes'].items():
+    for poe_name, poe_attrs in settings['poes'].items():
         if poe_attrs['start_year'] > settings['scenario_year']:
-            poe_to_delete.append(poe_id)
-    for poe_id in poe_to_delete:
-        del settings['poes'][poe_id]
+            poe_to_delete.append(poe_name)
+        else:
+            for poe_name_b, poe_attrs_b in settings['poes'].items():
+                # end loop when poe_name reached - only look back
+                if poe_name_b == poe_name:
+                    break
+                elif poe_name_b not in poe_to_delete:
+                    if poe_attrs['poe_id'] == poe_attrs_b['poe_id']:
+                        if (poe_attrs['start_year'] == poe_attrs_b['start_year']):
+                                raise Exception('duplicate entries for poe with same start_year and poe_id in xborder/preprocessing.yaml')
+                        # drop the qualifying poe with the lesser start_year
+                        delete_index = (poe_attrs['start_year'] > poe_attrs_b['start_year'])
+                        poe_to_delete.append([poe_name, poe_name_b][delete_index])
+                else:
+                    continue
+    for poe_name in poe_to_delete:
+        del settings['poes'][poe_name]
 
     with open(os.path.join(config_dir, 'network_los.yaml')) as f:
         los_settings = yaml.load(f, Loader=yaml.FullLoader)
@@ -779,7 +790,7 @@ if __name__ == '__main__':
         num_periods = int(
             period_settings['time_window'] / period_settings['period_minutes'])
         periods = list(range(1, num_periods + 1))
-        poes = list(settings['poes'].keys())
+        poes = [poe_attr['poe_id'] for poe_attr in settings['poes'].values()]
         num_poes = len(poes)
         lane_types = list(
             wait_time_settings['coeffs'].keys())
@@ -798,10 +809,14 @@ if __name__ == '__main__':
         # load existing wait times from last iteration
         mazs = pd.read_csv(
             os.path.join(data_dir, settings['mazs_output_fname']))
-        wait_times_wide = mazs.sort_values('poe_id').loc[mazs['original_MAZ'].isin(
-            [poe['maz_id'] for poe_id, poe in settings['poes'].items()]),
-            [col for col in mazs.columns if 'wait' in col] +
-            ['poe_id']].set_index('poe_id')
+        wait_times_wide = (
+                            mazs.sort_values('poe_id')
+                                .loc[
+                                    mazs['original_MAZ'].isin([poe['maz_id'] for poe_id, poe in settings['poes'].items()]),
+                                    [col for col in mazs.columns if 'wait' in col] +['poe_id']
+                                ]
+                                .set_index('poe_id')
+                        )
 
         # ctramp inputs didn't have ready lanes so we must
         # create them and mark them as unavailable.
@@ -841,10 +856,13 @@ if __name__ == '__main__':
             vol_df['iter'] = i
 
             # compute vol per lane
-            lane_df = pd.DataFrame(settings['poes']).T[[
-                'name', 'veh_lanes', 'ped_lanes']]
+            lane_df = (pd.DataFrame(settings['poes'])
+                        .T
+                        .reset_index(drop=False)
+                        .rename(columns={'index':'name'})
+                        .loc[:, ['poe_id', 'name', 'veh_lanes', 'ped_lanes']])
             vol_df = vol_df.merge(
-                lane_df, left_on='poe_id', right_index=True, how='left')
+                lane_df, left_on='poe_id', right_on='poe_id', how='left')
             vol_df['vol_per_lane'] = vol_df['vol'] / vol_df['veh_lanes']
             ped_mask = vol_df['lane_type'] == 'ped'
             vol_df.loc[ped_mask, 'vol_per_lane'] = (vol_df.loc[ped_mask, 'vol']
@@ -854,7 +872,8 @@ if __name__ == '__main__':
                                                     )
 
             # compute dummies
-            vol_df['otay'] = (vol_df['name'] == 'Otay Mesa').astype(int)
+            vol_df['otay'] = ((vol_df['name'].str.contains('Otay Mesa')).astype(int)*
+                                (~vol_df['name'].str.contains('East')).astype(int))
             vol_df['tecate'] = (vol_df['name'] == 'Tecate').astype(int)
             vol_df['EA'] = (vol_df['start'] <= 11).astype(int)
             vol_df['EV'] = (vol_df['start'] > 37).astype(int)
