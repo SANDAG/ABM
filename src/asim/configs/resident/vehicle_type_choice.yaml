@@ -137,3 +137,4 @@ CONSTANTS:
   CHARGERS_PER_CAP: 0.00034592
   # chargers per cap used in vehicle type model estimation
   # CHARGERS_PER_CAP: 0.000721205
+  scenarioYear: 2022

@@ -89,6 +89,7 @@ util.write_yaml(_join(configs_dir, 'common', 'constants.yaml'), doc)
 
 doc = util.open_yaml(_join(configs_dir, 'resident', 'vehicle_type_choice.yaml'))
 doc['FLEET_YEAR'] = int(scenYear)
+doc['CONSTANTS']['scenarioYear'] = int(scenYear)
 util.write_yaml(_join(configs_dir, 'resident', 'vehicle_type_choice.yaml'), doc)
 
 sandag_abm_prop = util.load_properties(sandag_abm_prop_dir)
