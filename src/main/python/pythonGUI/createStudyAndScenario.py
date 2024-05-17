@@ -47,7 +47,7 @@ class SelectStudyYears(tkinter.Frame):
 
 
 class CreateScenarioGUI(tkinter.Frame):
-        def __init__(self, root, emme_version = "4.3.7", year = "2016", geo = "1", lu = "S0"):
+        def __init__(self, root, emme_version = "4.3.7", year = "2022", geo = "1", lu = "S0"):
             tkinter.Frame.__init__(self, root, border=5)
             body = tkinter.Frame(self)
             body.pack(fill=constants.X, expand=1)
