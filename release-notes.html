@@ -730,8 +730,33 @@
 
 <h1 id="release-notes">Release Notes<a class="headerlink" href="#release-notes" title="Permanent link"> ¶</a></h1>
 <h2 id="version-1500-may-2024">Version 15.0.0 (May 2024)<a class="headerlink" href="#version-1500-may-2024" title="Permanent link"> ¶</a></h2>
-<p>Add description</p>
+<p>For use in the 2025 Region Plan (RP), SANDAG has developed a new activity-based travel model, known as ABM3. The biggest change from SANDAG’s previous ABM, ABM2+, is the transition from the Java-based CT-RAMP modeling platform to the open-source Python-based ActivitySim platform that has been developed by a consortium of public agencies (of which SANDAG is a founding member) for the past decade. ABM3 will be the first ActivitySim model to be used in production for planning purposes. While most of the model components from ABM3 were translated from ABM2+, there were several notable enhancements that were made, which are described below. Further, several models were either re-estimated and/or recalibrated to match 2022 data.</p>
 <h3 id="features">Features<a class="headerlink" href="#features" title="Permanent link"> ¶</a></h3>
+<ul>
+<li>The base year was updated from 2016 to 2022, allowing the behavioral models to reflect changes in travel behavior derived from the onset of the COVID-19 pandemic.</li>
+<li>The zone system was transitioned from a 3-zone system (TAZ, MAZ, TAP) to a 2-zone system (TAZ, MAZ)</li>
+<li>E-bike and E-scooter were added as travel modes.</li>
+<li>Flexible fleet services were added for full trips along with first-mile access to and last-mile egress from fixed-route transit.</li>
+<li>The airport model has been updated with new access options, including the proposed automated people-mover.</li>
+<li>A wait time model was added to the cross-border model.</li>
+<li>A new disaggregate accessibility calculation step was introduced to improve the precision of accessibilities used by modeling components.</li>
+<li>The auto ownership model has been moved before work and school location.</li>
+<li>The shadow pricing algorithm was updated to constrain mandatory tour locations to availability instead of traditional shadow pricing.</li>
+<li>Model results are automatically written to a database stored in the cloud via Microsoft Azure Services</li>
+<li>The following modeling components were added to the resident model:</li>
+<li>Autonomous Vehicle Ownership</li>
+<li>External Worker Identification</li>
+<li>External Workplace Location</li>
+<li>Transit Pass Subsidy</li>
+<li>Transit Pass Ownership</li>
+<li>Vehicle Type Choice</li>
+<li>Telecommute Frequency</li>
+<li>External Joint Tour Identification</li>
+<li>External Joint Tour Location</li>
+<li>External Nonmandatory Tour Identification</li>
+<li>External Nonmandatory Tour Destination</li>
+<li>Vehicle Allocation</li>
+</ul>
 <h3 id="bugs">Bugs<a class="headerlink" href="#bugs" title="Permanent link"> ¶</a></h3>
 
 
