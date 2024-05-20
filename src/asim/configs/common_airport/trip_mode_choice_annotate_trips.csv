@@ -61,11 +61,11 @@ Description,Target,Expression
 ,origin,_origin
 #,,
 ,_cost_parking,0
-,_cost_parking,"_cost_parking + df.trip_mode.isin(['PARK_LOC1']) * (((df['nights']*parkLocation1CostDay + parkLocation1CostDay)*100) / _tour_participants)"
-,_cost_parking,"_cost_parking + df.trip_mode.isin(['PARK_LOC2']) * (((df['nights']*parkLocation2CostDay + parkLocation2CostDay)*100) / _tour_participants)"
-,_cost_parking,"_cost_parking + df.trip_mode.isin(['PARK_LOC3']) * (((df['nights']*parkLocation3CostDay + parkLocation3CostDay)*100) / _tour_participants)"
-,_cost_parking,"_cost_parking + df.trip_mode.isin(['PARK_LOC4']) * (((df['nights']*parkLocation4CostDay + parkLocation4CostDay)*100) / _tour_participants)"
-,_cost_parking,"_cost_parking + df.trip_mode.isin(['PARK_LOC5']) * (((df['nights']*parkLocation5CostDay + parkLocation5CostDay)*100) / _tour_participants)"
+,_cost_parking,"_cost_parking + df.trip_mode.isin(['PARK_LOC1']) * (((np.maximum(df['nights'],0)*parkLocation1CostDay + parkLocation1CostDay)*100) / _tour_participants)"
+,_cost_parking,"_cost_parking + df.trip_mode.isin(['PARK_LOC2']) * (((np.maximum(df['nights'],0)*parkLocation2CostDay + parkLocation2CostDay)*100) / _tour_participants)"
+,_cost_parking,"_cost_parking + df.trip_mode.isin(['PARK_LOC3']) * (((np.maximum(df['nights'],0)*parkLocation3CostDay + parkLocation3CostDay)*100) / _tour_participants)"
+,_cost_parking,"_cost_parking + df.trip_mode.isin(['PARK_LOC4']) * (((np.maximum(df['nights'],0)*parkLocation4CostDay + parkLocation4CostDay)*100) / _tour_participants)"
+,_cost_parking,"_cost_parking + df.trip_mode.isin(['PARK_LOC5']) * (((np.maximum(df['nights'],0)*parkLocation5CostDay + parkLocation5CostDay)*100) / _tour_participants)"
 ,cost_parking,"_cost_parking + df.trip_mode.isin(['PARK_ESCORT']) * (parkEscortCostHour*100 / (_tour_participants + 1))"
 #,,
 ,_cost_fare_drive,0
@@ -80,7 +80,7 @@ Description,Target,Expression
 ,_cost_fare_drive,"_cost_fare_drive + df.trip_mode.isin(['TNC_MIX']) * ~df.outbound * (np.maximum((odt_skims['TNCOUT_MIX_ACC']*ridehailCostPerMinute + (odt_skims['TNCOUT_MIX_ACC']/60 * driveSpeed)*ridehailCostPerMile + ridehailCostInitial),ridehailCostMinimum) * 100 / _tour_participants)"
 ,cost_fare_drive,"_cost_fare_drive + df.trip_mode.isin(['TNC_MIX']) * df.outbound * (np.maximum((odt_skims['TNCIN_MIX_EGR']*ridehailCostPerMinute + (odt_skims['TNCIN_MIX_EGR']/60 * driveSpeed)*ridehailCostPerMile + ridehailCostInitial),ridehailCostMinimum) * 100 / _tour_participants)"
 #,,
-,cost_rental,"df.trip_mode.isin(['RENTAL']) * ((df['nights']*rentalCostPerDay + rentalCarAccessCost + rentalCostPerDay)*100) / _tour_participants"
+,cost_rental,"df.trip_mode.isin(['RENTAL']) * ((np.maximum(df['nights'],0)*rentalCostPerDay + rentalCarAccessCost + rentalCostPerDay)*100) / _tour_participants"
 #,,
 ,_time_transit_drive,0
 ,_time_transit_drive,"_time_transit_drive + (df.trip_mode.isin(['KNR_LOC'])) * (odt_skims['KNROUT_LOC_ACC'])*~df.outbound"
