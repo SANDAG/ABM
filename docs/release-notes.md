@@ -14,16 +14,16 @@ For use in the 2025 Region Plan (RP), SANDAG has developed a new activity-based 
 - The shadow pricing algorithm was updated to constrain mandatory tour locations to availability instead of traditional shadow pricing.
 - Model results are automatically written to a database stored in the cloud via Microsoft Azure Services
 - The following modeling components were added to the resident model:
-  - Autonomous Vehicle Ownership
-  - External Worker Identification
-  - External Workplace Location
-  - Transit Pass Subsidy
-  - Transit Pass Ownership
-  - Vehicle Type Choice
-  - Telecommute Frequency
-  - External Joint Tour Identification
-  - External Joint Tour Location
-  - External Nonmandatory Tour Identification
-  - External Nonmandatory Tour Destination
-  - Vehicle Allocation
+   - Autonomous Vehicle Ownership
+   - External Worker Identification
+   - External Workplace Location
+   - Transit Pass Subsidy
+   - Transit Pass Ownership
+   - Vehicle Type Choice
+   - Telecommute Frequency
+   - External Joint Tour Identification
+   - External Joint Tour Location
+   - External Nonmandatory Tour Identification
+   - External Nonmandatory Tour Destination
+   - Vehicle Allocation
 ### Bugs
