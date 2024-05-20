@@ -29,4 +29,3 @@ For use in the 2025 Region Plan (RP), SANDAG has developed a new activity-based 
 - External Nonmandatory Tour Identification
 - External Nonmandatory Tour Destination
 - Vehicle Allocation
-### Bugs
