@@ -64,7 +64,7 @@ class CreateScenarioGUI(tkinter.Frame):
                 "S1": {
                     "name": "Baseline + RHNA Adjustment",
                     "location": r"T:\socioec\Current_Projects\SR15\S1\version12",
-                    "years": ["2022", "2035"]
+                    "years": ["2022", "2026", "2029", "2035"]
                 },
                 "S2": {
                     "name": "Sustainable Community Strategy",
