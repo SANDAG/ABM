@@ -46,8 +46,8 @@ Description,Target,Expression
 ,vot_bin_s2,"np.where(trips.trip_mode.isin(['SHARED2','TAXI','TNC_SINGLE']),np.where(vot_s2 < vot_threshold_low,1,np.where(vot_s2 < vot_threshold_med, 2, 3)),0)"
 ,vot_bin_s3,"np.where(trips.trip_mode.isin(['SHARED3','TNC_SHARED']),np.where(vot_s3 < vot_threshold_low,1,np.where(vot_s3 < vot_threshold_med, 2, 3)),0)"
 ,vot_1,"np.where((vot_bin_da ==1) | (vot_bin_s2 ==1) | (vot_bin_s3 == 1), True, False)"
-,vot_2,"np.where((vot_bin_da ==2) | (vot_bin_s2 ==2) | (vot_bin_s3 == 1), True, False)"
-,vot_3,"np.where((vot_bin_da ==3) | (vot_bin_s2 ==3) | (vot_bin_s3 == 1), True, False)"
+,vot_2,"np.where((vot_bin_da ==2) | (vot_bin_s2 ==2) | (vot_bin_s3 == 2), True, False)"
+,vot_3,"np.where((vot_bin_da ==3) | (vot_bin_s2 ==3) | (vot_bin_s3 == 3), True, False)"
 # ea trips vehicle,,
 ,DRIVEALONE_EA_low,((trips.trip_mode == 'DRIVEALONE') & is_ea & vot_1) * tour_participants
 ,SHARED2_EA_low,((trips.trip_mode == 'SHARED2') & is_ea & vot_1) * tour_participants / OCC_SHARED2
