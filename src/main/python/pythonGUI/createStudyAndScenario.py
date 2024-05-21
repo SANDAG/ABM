@@ -47,7 +47,7 @@ class SelectStudyYears(tkinter.Frame):
 
 
 class CreateScenarioGUI(tkinter.Frame):
-        def __init__(self, root, emme_version = "4.3.7", year = "2016", geo = "1", lu = "DS41"):
+        def __init__(self, root, emme_version = "4.3.7", year = "2022", geo = "1", lu = "S0"):
             tkinter.Frame.__init__(self, root, border=5)
             body = tkinter.Frame(self)
             body.pack(fill=constants.X, expand=1)
@@ -55,10 +55,28 @@ class CreateScenarioGUI(tkinter.Frame):
             body.grid_columnconfigure(1, weight=2)
 
             #Define land use options
-            self.lu_options = {"DS41": {"name": "Baseline",
-                                        "years": ["2022", "2025nb", "2030nb", "2035nb", "2040nb", "2050nb"]},
-                               "DS42": {"name": "Sustainable Community Strategy",
-                                        "years": ["2016", "2023", "2025", "2026", "2029", "2030", "2032", "2035", "2040", "2050"]}}
+            self.lu_options = {
+                "S0": {
+                    "name": "Baseline",
+                    "location": r"T:\socioec\Current_Projects\SR15\S0\version16",
+                    "years": ["2022", "2026", "2029", "2035", "2050"]
+                },
+                "S1": {
+                    "name": "Baseline + RHNA Adjustment",
+                    "location": r"T:\socioec\Current_Projects\SR15\S1\version12",
+                    "years": ["2022", "2026", "2029", "2035"]
+                },
+                "S2": {
+                    "name": "Sustainable Community Strategy",
+                    "location": r"T:\socioec\Current_Projects\SR15\S2\version17",
+                    "years": ["2022", "2035"]
+                },
+                "S3": {
+                    "name": "SCS with Higher Density",
+                    "location": r"T:\socioec\Current_Projects\SR15\S3\version18",
+                    "years": ["2035"]
+                }
+            }
 
             self.root = root
             self.emme_version = emme_version
@@ -66,11 +84,11 @@ class CreateScenarioGUI(tkinter.Frame):
             self.geo = geo            
             self.lu = lu
  
-            if self.year not in self.lu_options[self.lu]["years"]:
-                if self.year in self.lu_options["DS41"]["years"]:
-                    self.lu = "DS41"
-                else:
-                    self.lu = "DS42"
+            # if self.year not in self.lu_options[self.lu]["years"]:
+            #     if self.year in self.lu_options["DS41"]["years"]:
+            #         self.lu = "DS41"
+            #     else:
+            #         self.lu = "DS42"
 
             yearOptionList = []
             for lu in self.lu_options:
@@ -89,7 +107,7 @@ class CreateScenarioGUI(tkinter.Frame):
                 self.releaseDir=os.path.abspath(os.path.join(os.path.dirname(sys.executable), '..', '..'))
             else:
                 self.releaseDir=os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..'))
-            self.defaultScenarioDir="T:\\projects\\sr15"
+            self.defaultScenarioDir="T:\\projects\\sr15\\MyRun"
             self.defaultNetworkDir="T:\\RTP\\2021RP\\2021rp_final\\network_build"
 
             current_row = 0
@@ -98,7 +116,7 @@ class CreateScenarioGUI(tkinter.Frame):
             self.buttonVar= tkinter.IntVar(root)
             self.yButton=tkinter.Radiobutton(body, text="Yes", variable=self.buttonVar, value=1, command=self.initStudy)
             self.nButton=tkinter.Radiobutton(body, text="No", variable=self.buttonVar, value=0,command=self.initStudy)
-            tkinter.Label(body, text=u"Release Version 14.3.0\n"+divider, font=("Helvetica", 11, 'bold'), width=50, fg='royal blue').grid(row=current_row,columnspan=5)
+            tkinter.Label(body, text=u"Release Version 15.0.0\n"+divider, font=("Helvetica", 11, 'bold'), width=50, fg='royal blue').grid(row=current_row,columnspan=5)
             current_row += 1
             tkinter.Label(body, text=u"Create an ABM Work Space", font=("Helvetica", 10, 'bold')).grid(row=current_row,columnspan=n_columns)
             current_row += 1
@@ -380,16 +398,21 @@ class CreateScenarioGUI(tkinter.Frame):
         def executeBatch(self, type):
             self.popup.destroy()
             if type=="scenario":
-                commandstr = u"create_scenario.cmd %s %s %s %s" % (
+                if self.year == "2035":
+                    lu_input_path = os.path.join(self.lu_options[self.lu]["location"], "abm_csv", "processed", "2035_baseline")
+                else:
+                    lu_input_path = os.path.join(self.lu_options[self.lu]["location"], "abm_csv", "processed", str(self.year))
+                commandstr = u"create_scenario.cmd %s %s %s %s %s" % (
                     self.scenariopath.get(),
                     self.year,
                     self.networkpath.get(),
-                    self.emme_version
+                    self.emme_version,
+                    lu_input_path
                 )
                 os.chdir(self.releaseDir+"\\"+self.version+'\\')
                 os.system(commandstr)
                 #self.update_property("version=version_14_2_2", "version=version_14_2_2\nLU version=" + self.lu)
-                self.update_property("version=version_14_3_0", "version=version_14_3_0\nLU version=" + self.lu)
+                self.update_property("version=version_15_0_0", "version=version_15_0_0\nLU version=" + self.lu)
                 self.update_property("geographyID=1", "geographyID=" + self.geo.get())
             elif type=="study":
                 studyyears = self.studyyears.get().split(',')

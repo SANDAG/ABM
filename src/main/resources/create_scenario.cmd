@@ -6,11 +6,13 @@ if "%1"=="" goto usage
 if "%2"=="" goto usage
 if "%3"=="" goto usage
 if "%4"=="" goto usage
+if "%5"=="" goto usage
 
 set SCENARIO_FOLDER=%1
 set YEAR=%2
 set NETWORKDIR=%3
 set EMME_VERSION=%4
+set LANDUSE_INPUT_PATH=%5
 
 @echo creating scenario folders
 set FOLDERS=input application bin conf input_truck logFiles output python report sql uec analysis visualizer visualizer\outputs\summaries input_checker src src\asim src\asim-cvm
@@ -76,6 +78,10 @@ xcopy /Y .\common\input\input_checker\"*.*" %SCENARIO_FOLDER%
 rem copy network inputs
 call copy_networks.cmd %NETWORKDIR% %SCENARIO_FOLDER%\input
 
+rem copying land use inputs
+xcopy /Y %LANDUSE_INPUT_PATH%\"households.csv" %SCENARIO_FOLDER%\input
+xcopy /Y %LANDUSE_INPUT_PATH%\"persons.csv" %SCENARIO_FOLDER%\input
+xcopy /Y %LANDUSE_INPUT_PATH%\"mgra15_based_input"%YEAR%".csv" %SCENARIO_FOLDER%\input
 
 rem copy analysis templates
 @echo copy analysis templates
