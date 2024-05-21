@@ -1275,8 +1275,8 @@ coef_calib_tourwtran_PNR_TRANSIT_disc,-999.0,F
 coef_calib_tourwtran_KNR_TRANSIT_disc,-999.0,F
 coef_calib_tourwtran_TNC_TRANSIT_disc,-999.0,F
 coef_calib_tourwtranjointtour0_DRIVEALONE_disc,-999.0,F
-coef_calib_tourwtranjointtour0_SHARED2_disc,-16.43181839756773,F
-coef_calib_tourwtranjointtour0_SHARED3_disc,-999.0,F
+coef_calib_tourwtranjointtour0_SHARED2_disc,-6.0,F
+coef_calib_tourwtranjointtour0_SHARED3_disc,-6.0,F
 coef_calib_tourwtranjointtour0_WALK_disc,-9.820499722690379,F
 coef_calib_tourwtranjointtour0_BIKE_disc,-999.0,F
 coef_calib_tourwtranjointtour0_WALK_TRANSIT_disc,-5.634512572937531,F
