@@ -134,14 +134,6 @@ util_rural_mc,Household is in Rural Area - Motorcycle,"home_is_rural & (body_typ
 util_rural_hyb,Household is in Rural Area - Hybrid,"home_is_rural & (fuel_type_num_coded==4)",coef_rural_hyb
 util_rural_ev,Household is in Rural Area - Electric,"home_is_rural & ((fuel_type_num_coded==5) | (fuel_type_num_coded==1))",coef_rural_ev
 util_rural_age,Household is in Rural Area - Age,"home_is_rural * age",coef_rural_age
-#,MSA population coefficients,,
-util_smsa_van,MSA population less than 1 million - Van,"@(MSA_POP < 1000000) & (df.body_type_num_coded==5)",coef_smsa_van
-util_smsa_suv,MSA population less than 1 million - SUV,"@(MSA_POP < 1000000) & (df.body_type_num_coded==4)",coef_smsa_suv
-util_smsa_pu,MSA population less than 1 million - Pickup,"@(MSA_POP < 1000000) & (df.body_type_num_coded==3)",coef_smsa_pu
-util_smsa_mc,MSA population less than 1 million - Motorcycle,"@(MSA_POP < 1000000) & (df.body_type_num_coded==2)",coef_smsa_mc
-util_smsa_hyb,MSA population less than 1 million - Hybrid,"@(MSA_POP < 1000000) & (df.fuel_type_num_coded==4)",coef_smsa_hyb
-util_smsa_ev,MSA population less than 1 million - Electric,"@(MSA_POP < 1000000) & ((df.fuel_type_num_coded==5) | (df.fuel_type_num_coded==1))",coef_smsa_ev
-util_smsa_age,MSA population less than 1 million - Age,"@(MSA_POP < 1000000) * df.age",coef_smsa_age
 #,Region Specific Constants,,
 util_san_van,San Diego - Van,"@(df.SAN) & (df.body_type_num_coded==5)",coef_san_van
 util_san_suv,San Diego - SUV,"@(df.SAN) & (df.body_type_num_coded==4)",coef_san_suv
