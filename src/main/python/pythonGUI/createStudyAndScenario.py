@@ -59,7 +59,7 @@ class CreateScenarioGUI(tkinter.Frame):
                 "S0": {
                     "name": "Baseline",
                     "location": r"T:\socioec\Current_Projects\SR15\S0\version16",
-                    "years": ["2022", "2035nb", "2050nb"]
+                    "years": ["2022", "2035", "2050"]
                 },
                 "S1": {
                     "name": "Baseline + RHNA Adjustment",
@@ -398,7 +398,10 @@ class CreateScenarioGUI(tkinter.Frame):
         def executeBatch(self, type):
             self.popup.destroy()
             if type=="scenario":
-                lu_input_path = os.path.join(self.lu_options[self.lu]["location"], "abm_csv", "processed", self.year)
+                if self.lu == "S0" and self.year in ["2035", "2050"]:
+                    lu_input_path = os.path.join(self.lu_options[self.lu]["location"], "abm_csv", "processed", self.year + "nb")
+                else:
+                    lu_input_path = os.path.join(self.lu_options[self.lu]["location"], "abm_csv", "processed", self.year)
                 commandstr = u"create_scenario.cmd %s %s %s %s %s" % (
                     self.scenariopath.get(),
                     self.year,
