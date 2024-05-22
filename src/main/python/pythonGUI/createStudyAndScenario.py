@@ -412,8 +412,8 @@ class CreateScenarioGUI(tkinter.Frame):
                 os.chdir(self.releaseDir+"\\"+self.version+'\\')
                 os.system(commandstr)
                 #self.update_property("version=version_14_2_2", "version=version_14_2_2\nLU version=" + self.lu)
-                self.update_property("version=version_15_0_0", "version=version_15_0_0\nLU version=" + self.lu)
-                self.update_property("geographyID=1", "geographyID=" + self.geo.get())
+                self.update_property("version = version_15_0_0", "version = version_15_0_0\nLU version = " + self.lu)
+                self.update_property("geographyID = 1", "geographyID = " + self.geo.get())
             elif type=="study":
                 studyyears = self.studyyears.get().split(',')
                 exclude_file = self.studynetworkpath.get() + '\\exclude.txt'
