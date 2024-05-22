@@ -411,7 +411,6 @@ class CreateScenarioGUI(tkinter.Frame):
                 )
                 os.chdir(self.releaseDir+"\\"+self.version+'\\')
                 os.system(commandstr)
-                #self.update_property("version=version_14_2_2", "version=version_14_2_2\nLU version=" + self.lu)
                 self.update_property("landuse.version = S0", "landuse.version = " + self.lu)
                 self.update_property("geographyID = 1", "geographyID = " + self.geo.get())
             elif type=="study":
