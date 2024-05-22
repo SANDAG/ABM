@@ -59,17 +59,17 @@ class CreateScenarioGUI(tkinter.Frame):
                 "S0": {
                     "name": "Baseline",
                     "location": r"T:\socioec\Current_Projects\SR15\S0\version16",
-                    "years": ["2022", "2026", "2029", "2035", "2050"]
+                    "years": ["2022", "2035nb", "2050nb"]
                 },
                 "S1": {
                     "name": "Baseline + RHNA Adjustment",
                     "location": r"T:\socioec\Current_Projects\SR15\S1\version12",
-                    "years": ["2022", "2026", "2029", "2035"]
+                    "years": ["2026", "2029", "2035"]
                 },
                 "S2": {
                     "name": "Sustainable Community Strategy",
                     "location": r"T:\socioec\Current_Projects\SR15\S2\version17",
-                    "years": ["2022", "2035"]
+                    "years": ["2026", "2029", "2035"]
                 },
                 "S3": {
                     "name": "SCS with Higher Density",
@@ -398,10 +398,7 @@ class CreateScenarioGUI(tkinter.Frame):
         def executeBatch(self, type):
             self.popup.destroy()
             if type=="scenario":
-                if self.year == "2035":
-                    lu_input_path = os.path.join(self.lu_options[self.lu]["location"], "abm_csv", "processed", "2035_baseline")
-                else:
-                    lu_input_path = os.path.join(self.lu_options[self.lu]["location"], "abm_csv", "processed", str(self.year))
+                lu_input_path = os.path.join(self.lu_options[self.lu]["location"], "abm_csv", "processed", self.year)
                 commandstr = u"create_scenario.cmd %s %s %s %s %s" % (
                     self.scenariopath.get(),
                     self.year,
