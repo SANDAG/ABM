@@ -62,7 +62,7 @@ trip_c_cost: -0.0003
 trip_c_ivt: -0.03
 
 cost_per_mile_fuel: 22
-cost_per_mile_maint: 10.7
+cost_per_mile_maint: 10.5
 taxi_base_fare: 3
 taxi_cost_per_mile: 3.3
 taxi_cost_per_minute: 0.46

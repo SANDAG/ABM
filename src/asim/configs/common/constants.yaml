@@ -92,7 +92,7 @@ minAgeDriveAloneAV: 13
 
 
 #valueOfTime: 8.00
-costPerMile: 32.7
+costPerMile: 32.5
 costShareSr2: 1.75
 costShareSr3: 2.50
 waitThresh: 10.00
