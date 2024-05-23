@@ -413,6 +413,7 @@ class CreateScenarioGUI(tkinter.Frame):
                 os.system(commandstr)
                 self.update_property("landuse.version = S0", "landuse.version = " + self.lu)
                 self.update_property("geographyID = 1", "geographyID = " + self.geo.get())
+                self.update_property("network = NETWORK", "network = " + self.networkpath.get())
             elif type=="study":
                 studyyears = self.studyyears.get().split(',')
                 exclude_file = self.studynetworkpath.get() + '\\exclude.txt'
