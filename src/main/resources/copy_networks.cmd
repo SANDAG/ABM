@@ -7,9 +7,7 @@ set FILE_LIST=EMMEOutputs.gdb trlink.csv trrt.csv trstop.csv tap.elev tap.ptype 
 
 @echo %FILE_LIST%
 
-for %%i in (%FILE_LIST%) do (
-@echo Copying and overwriting %1\%%i
-xcopy /Y %1\%%i %2)
+xcopy /s/Y %1\"*.*" %2
 
 goto :eof
 
