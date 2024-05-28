@@ -188,6 +188,9 @@ TNC_shared_waitTime_sd:
 min_waitTime: 0
 max_waitTime: 50
 
+# rapid bus wait time discount
+WAIT_TIME_DISC: 1.0
+
 ivt_lrt_multiplier: 0.65
 ivt_brt_multiplier: 0.95
 ivt_cmr_multiplier: 0.65
