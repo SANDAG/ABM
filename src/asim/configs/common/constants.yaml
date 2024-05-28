@@ -257,7 +257,7 @@ microtransitSpeed: 30
 microtransitCost: 125 #cents
 microtransitWaitTime: 12
 microtransitMaxDist: 4.5
-microtransitDiversionConstant: 5
+microtransitDiversionConstant: 6
 microtransitDiversionFactor: 1.25
 microtransitStartPeriod: 9
 microtransitEndPeriod: 32
@@ -266,7 +266,7 @@ nevCost: 125 #cents
 nevWaitTime: 12
 nevMaxDist: 3
 nevDwellMinutesPerMile: 0.5
-nevDiversionConstant: 5
+nevDiversionConstant: 6
 nevDiversionFactor: 1.25
 nevStartPeriod: 9
 nevEndPeriod: 38
