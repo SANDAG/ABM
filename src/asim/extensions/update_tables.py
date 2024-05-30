@@ -230,14 +230,6 @@ def update_tables():
         # set sample rate to float
         if table_name == "households" and setting("model_name") == "resident":
             output_table["sample_rate"] = output_table["sample_rate"].astype(float)
-            input_households = pd.read_csv(os.path.join(input_dir,"households.csv"),
-            usecols=[
-            "hhid",
-            "poverty"],
-            dtype={
-            "hhid":"int32",
-            "poverty": "float"})
-            output_table = output_table.merge(input_households,how="inner",left_on="household_id",right_on="hhid")
 
         # split vehicle_type column
         if table_name == "vehicles" and setting("model_name") == "resident":
