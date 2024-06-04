@@ -344,6 +344,15 @@ class RunTime(_m.Tool()):
 
         else:
             final_df = df_list[0]
+
+            # Remove unneeded entries
+            is_excluded = pd.Series(final_df.index).str.startswith(exclude)
+            final_df = final_df[~(is_excluded.values)]
+
+            # Remove appended iteration markers
+            final_df.index = (final_df.index.map(
+                                            lambda x: x.split('___')[0]))
+            
             result = (final_df, False)
 
         return result
