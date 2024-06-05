@@ -56,7 +56,7 @@ poes:
     start_year: 0
   3:
     name: Otay Mesa East
-    maz_id: 7123
+    maz_id: 9402
     ext_taz_id: 3
     veh_lanes: 7
     ped_lanes: 0
