@@ -676,7 +676,7 @@ coef_calib_autodeficienthhjoi_KNR_TRANSIT_maint,-56.88159968,F
 coef_calib_autodeficienthhjoi_TNC_TRANSIT_maint,-999.0,F
 coef_calib_autodeficienthhjoi_TAXI_maint,-54.97066616,F
 coef_calib_autodeficienthhjoi_TNC_SINGLE_maint,-56.97066616,F
-coef_calib_autodeficienthhjoi_TNC_SHARED_maint,-48.97066616,F
+coef_calib_autodeficienthhjoi_TNC_SHARED_maint,-56.97066616,F
 coef_calib_autodeficienthhjoi_EBIKE_maint,-52.4293596,F
 coef_calib_autodeficienthhjoi_ESCOOTER_maint,-50.0,F
 #coef_calib_autosufficienthhjo_SHARED2_maint,4.253195896,F
@@ -716,7 +716,7 @@ coef_calib_autodeficienthhjoi_KNR_TRANSIT_disc,-53.12678499,F
 coef_calib_autodeficienthhjoi_TNC_TRANSIT_disc,-999.0,F
 coef_calib_autodeficienthhjoi_TAXI_disc,-52.71598351,F
 coef_calib_autodeficienthhjoi_TNC_SINGLE_disc,-54.71598351,F
-coef_calib_autodeficienthhjoi_TNC_SHARED_disc,-46.71598351,F
+coef_calib_autodeficienthhjoi_TNC_SHARED_disc,-54.71598351,F
 coef_calib_autodeficienthhjoi_EBIKE_disc,-52.4293596,F
 coef_calib_autodeficienthhjoi_ESCOOTER_disc,-50.0,F
 #coef_calib_autosufficienthhjo_SHARED2_disc,4.253195896,F
