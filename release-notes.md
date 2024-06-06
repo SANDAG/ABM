@@ -1,5 +1,23 @@
 # Release Notes
 
+## Version 15.0.1 (June 5, 2024)
+During the initial testing of the 2025 Regional Plan initial concept, some critical model issues were identified and fixed.
+
+### Features
+- [PR 150](): 
+- [PR 149](): 
+- [PR 148](): 
+- [PR 147](): 
+- [PR 146](): 
+- [PR 145](): 
+- [Issue 143](): 
+- [Commit a825ae3](): Updated CBX inputs to use number of enplanements
+- [Commit 305cdcf](): Updated reporting of airport transit costs to be in dollars instead of cents
+- [Commit 363d05a](): Removed addition of "poverty" field when writing output tables as that had been added to reading of input table
+- [Commit 34e4a1d](): Set year after which vehicles must have transponders from 2035 to 2029
+- [Commit dc07cc9](): Increased default flexible fleet diversion constants
+- [Commit 726f98a](): Updated some future year signal factors and truck toll factors on SR-11
+
 ## Version 15.0.0 (May 23, 2024)
 For use in the 2025 Region Plan (RP), SANDAG has developed a new activity-based travel model, known as ABM3. The biggest change from SANDAG’s previous ABM, ABM2+, is the transition from the Java-based CT-RAMP modeling platform to the open-source Python-based [ActivitySim](https://research.ampo.org/activitysim/) platform that has been developed by a consortium of public agencies (of which SANDAG is a founding member) for the past decade. ABM3 will be the first ActivitySim model to be used in production for planning purposes. While most of the model components from ABM3 were translated from ABM2+, there were several notable enhancements that were made, which are described below. Further, several models were either re-estimated and/or recalibrated to match 2022 data.
 ### ActivitySim Version
