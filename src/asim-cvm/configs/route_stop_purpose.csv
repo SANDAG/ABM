@@ -13,8 +13,8 @@ retail,,(business_type=='RET')&(~is_tnc),,,coef_retail_goods_delivery,coef_retai
 industrial,,(business_type=='IUT')&(~is_tnc),,,,,coef_industrial_maintenance,coef_industrial_home,
 agirculture,,(business_type=='AGM')&(~is_tnc),,,,coef_agriculture_service,coef_agriculture_maintenance,,coef_agriculture_terminal
 # vehicle type,,,,,,,,,
-SUT,,(vehicle_type=='SUT')&(~is_tnc),,,coef_sut_goods_delivery,,,,
-MUT,,(vehicle_type=='MUT')&(~is_tnc),,coef_mut_goods_pickup,,,,,
+SUT,,(vehicle_type=='SUT')&(~is_tnc),,,coef_sut_goods_delivery,,,,coef_sut_terminal
+MUT,,(vehicle_type=='MUT')&(~is_tnc),,coef_mut_goods_pickup,,,,,coef_mut_terminal
 # route purpose,,,,,,,,,
 goods,,(route_purpose=='goods')&(~is_tnc),,,,coef_goods_service,coef_goods_maintenance,coef_goods_home,coef_goods_terminal
 # customer type,,,,,,,,,

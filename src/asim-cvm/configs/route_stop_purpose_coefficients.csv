@@ -24,7 +24,7 @@ coef_industrial_home,-1.038,F
 coef_agriculture_service,0.764,F
 coef_agriculture_maintenance,0.633,F
 coef_agriculture_terminal,1.492,F
-coef_sut_goods_delivery,0,F
+coef_sut_goods_delivery,0.0,F
 coef_mut_goods_pickup,0.05,F
 coef_goods_service,-3.283,F
 coef_goods_maintenance,-2.176,F
@@ -66,7 +66,7 @@ coef_ev_home,-6.74668695,F
 coef_ev_maintenance,-6.996113002,F
 coef_ev_service,-7.844726725,F
 coef_ev_terminal,-7.486137785,F
-coef_prior_base_next_base,-99,F
+coef_prior_base_next_base,-99.0,F
 coef_prior_base_next_service,7.855736296,F
 coef_prior_base_next_maint,6.105652835,F
 coef_prior_goods_pickup_next_service,-1.414,F
@@ -86,9 +86,9 @@ coef_prior_home_next_pickup,-3.509,F
 coef_prior_home_next_delivery,-3.087,F
 coef_prior_home_next_service,-3.283,F
 coef_prior_home_next_maint,-2.792,F
-coef_prior_home_next_home,-99,F
+coef_prior_home_next_home,-99.0,F
 coef_prior_home_next_terminal,-1.952,F
-coef_asc_base_tnc,0,T
+coef_asc_base_tnc,0.0,T
 coef_asc_goods_pickup_tnc,-0.5862,F
 coef_asc_goods_delivery_tnc,-6.1804,F
 coef_asc_service_tnc,-0.6621,F
@@ -117,7 +117,7 @@ coef_prior_service_next_maint_tnc,-5.9512,F
 coef_prior_service_next_home_tnc,-8.8014,F
 coef_prior_service_next_terminal_tnc,-4.983,F
 coef_prior_maint_next_pickup_tnc,-1.1264,F
-coef_prior_maint_next_delivery_tnc,-5,F
+coef_prior_maint_next_delivery_tnc,-5.0,F
 coef_prior_maint_next_service_tnc,-3.475,F
 coef_prior_maint_next_maint_tnc,-2.9016,F
 coef_prior_maint_next_home_tnc,-3.2764,F
@@ -128,18 +128,18 @@ coef_prior_base_next_service_tnc,-1.6358,F
 coef_prior_base_next_maint_tnc,-1.0572,F
 coef_prior_base_next_home_tnc,-6.9156,F
 coef_prior_base_next_terminal_tnc,-7.7659,F
-coef_prior_base_next_base_tnc,-99,F
+coef_prior_base_next_base_tnc,-99.0,F
 coef_prior_home_next_pickup_tnc,-0.4011,F
 coef_prior_home_next_delivery_tnc,-4.8853,F
 coef_prior_home_next_service_tnc,-3.3259,F
 coef_prior_home_next_maint_tnc,-2.2845,F
-coef_prior_home_next_home_tnc,-99,F
+coef_prior_home_next_home_tnc,-99.0,F
 coef_prior_home_next_terminal_tnc,-2.5963,F
 coef_prior_goods_pickup_next_base_tnc,-3.75,F
 coef_prior_goods_delivery_next_base_tnc,-5.1201,F
 coef_prior_service_next_base_tnc,-6.235,F
 coef_prior_maint_next_base_tnc,-4.0729,F
-coef_prior_home_next_base_tnc,-99,F
+coef_prior_home_next_base_tnc,-99.0,F
 coef_prior_originate_next_base_tnc,-7.9156,F
 coef_prior_originate_next_pickup_tnc,0.3747,F
 coef_prior_originate_next_delivery_tnc,-3.1372,F
@@ -147,3 +147,5 @@ coef_prior_originate_next_service_tnc,-1.8672,F
 coef_prior_originate_next_maint_tnc,-2.0787,F
 coef_prior_originate_next_home_tnc,-4.0041,F
 coef_prior_originate_next_terminal_tnc,-0.7975,F
+coef_sut_terminal,-0.4773579984832303,F
+coef_mut_terminal,0.8582408580709843,F
