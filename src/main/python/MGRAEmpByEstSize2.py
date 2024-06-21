@@ -71,7 +71,7 @@ emp_sectors = set([col[:-1] for col in cols])
 #                                      r"Land_Use\mgra15_based_input_2022_02_cvm.csv"))
 
 #df_MGRA = pd.read_csv(f"{root_dir}\\input\\mgra15_based_input2022.csv")
-df_MGRA = pd.read_csv(f"{root_dir}\\input\\land_use.csv")
+df_MGRA = pd.read_csv(f"{root_dir}\\input\\land_use_taz.csv")
 df_MGRA = df_MGRA.rename(columns={'luz_id': 'LUZ', 'emp_total': 'emp_tot'})
 df_MGRA = df_MGRA.loc[:, df_MGRA.columns != 'TAZ']
 

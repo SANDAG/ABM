@@ -42,10 +42,18 @@ SET MODEL_DIR=%PROJECT_DRIVE%%PROJECT_DIRECTORY%
 SET OUTPUT_DIR=%PROJECT_DRIVE%%PROJECT_DIRECTORY%\input\CVM
 SET luz_data=%PROJECT_DRIVE%%PROJECT_DIRECTORY%\%luz_data_file%
 
+:: Aggregate employment data to TAZ level
+ECHO Aggregate employment data to TAZ level
+CD /d %PROJECT_DRIVE%%PROJECT_DIRECTORY%\python\
+%PYTHON3% aggregateEmpData.py %PROJECT_DRIVE%%PROJECT_DIRECTORY%\input\land_use.csv %PROJECT_DRIVE%%PROJECT_DIRECTORY%\input\land_use_taz.csv
+
 :: run MGRAEmpByEstSize2.py
 ECHO Run CVMEstablishmentSynthesis
-CD /d %PROJECT_DRIVE%%PROJECT_DIRECTORY%\python\
 %PYTHON3% MGRAEmpByEstSize2.py %MODEL_DIR% %OUTPUT_DIR% %luz_data% 2>>%PROJECT_DRIVE%%PROJECT_DIRECTORY%\logFiles\event-cvmEmp.txt
+
+:: Recode establishment zone IDs from TAZ to MGRA
+ECHO Recode establishment zone IDs from TAZ to MGRA
+%PYTHON3% recodeSynthEstabToMGRA.py %PROJECT_DRIVE%%PROJECT_DIRECTORY%\input\CVM\SynthEstablishments.csv %PROJECT_DRIVE%%PROJECT_DIRECTORY%\input\land_use.csv
 IF %ERRORLEVEL% NEQ 0 (GOTO :ERROR) else (GOTO :SUCCESS)
 
 :SUCCESS
