@@ -622,7 +622,7 @@ regional_pass: 10.90
     <tr>
         <td>PREMODE</td>
         <td>
-            Premium Transit mode?<br>
+            Premium Transit mode<br>
             0 = No<br>
             1 = Yes
         </td>
@@ -630,7 +630,7 @@ regional_pass: 10.90
     <tr>
         <td>EXPBSMODE</td>
         <td>
-            Express bus mode?<br>
+            Express bus mode<br>
             0 = No<br>
             1 = Yes
         </td>
@@ -638,7 +638,7 @@ regional_pass: 10.90
     <tr>
         <td>LOCMODE</td>
         <td>
-            Local bus mode?<br>
+            Local bus mode<br>
             0 = No<br>
             1 = Yes
         </td>
@@ -815,9 +815,9 @@ regional_pass: 10.90
 | StopName     | Name of Stop |
 | MODE_NAME    | Line haul mode name:<br>Transfer<br>Center City Walk<br>Walk Access<br>Commuter Rail<br>Light Rail<br>Regional BRT (Yellow)<br>Regional BRT (Red)<br>Limited Express<br>Express<br>Local |
 | MODE_ID      | Mode ID<br>1 = Transfer<br>2 = Center City Walk<br>3 = Walk Access<br>4 = Commuter Rail<br>5 = Light Rail<br>6 = Regional BRT (Yellow)<br>7 = Regional BRT (Red)<br>8 = Limited Express<br>9 = Express<br>10 = Local |
-| PREMODE      | Premium Transit mode?<br>0 = No<br>1 = Yes |
-| EXPBSMODE    | Express bus mode?<br>0 = No<br>1 = Yes |
-| LOCMODE      | Local bus mode?<br>0 = No<br>1 = Yes |
+| PREMODE      | Premium Transit mode<br>0 = No<br>1 = Yes |
+| EXPBSMODE    | Express bus mode<br>0 = No<br>1 = Yes |
+| LOCMODE      | Local bus mode<br>0 = No<br>1 = Yes |
 | OP_TRNTIME   | Off peak transcad matrix used by mode:<br>*oploctime<br>*oppretime |
 | AM_TRNTIME   | AM peak transcad matrix used by mode:<br>*amloctime<br>*ampretime |
 | PM_TRNTIME   | PM peak transcad matrix used by mode:<br>*pmloctime<br>*pmpretime |
@@ -2209,10 +2209,9 @@ This directory contains auto, transit, and non-motorized level-of-service matric
 
 
 
-#### Auto skims by period
 <h4 id="auto-skims">Auto skims by period</h4>
 
-TRAFFIC_SKIMS_<TIME_PERIOD>.OMX
+TRAFFIC_SKIMS_&lt;time period>.OMX
 
 
 <table>
@@ -2282,7 +2281,7 @@ TRAFFIC_SKIMS_<TIME_PERIOD>.OMX
 
 <h4 id="transit-skims">Transit skims by period</h4>
 
-TRANSIT_SKIMS<time period>.OMX
+TRANSIT_SKIMS_&lt;time_period>.OMX
 
 
 <table>
@@ -4098,7 +4097,7 @@ This directory contains trip tables from auto and transit assignments.
   <tr>
    <td>originIsHome
    </td>
-   <td>Is origin home?
+   <td>Is origin home
    </td>
   </tr>
   <tr>
@@ -4116,7 +4115,7 @@ This directory contains trip tables from auto and transit assignments.
   <tr>
    <td>destinationIsHome
    </td>
-   <td>Is destination home?
+   <td>Is destination home
    </td>
   </tr>
   <tr>
@@ -4134,7 +4133,7 @@ This directory contains trip tables from auto and transit assignments.
   <tr>
    <td>originIsRemoteParking
    </td>
-   <td>Is origin remote parking?
+   <td>Is origin remote parking
    </td>
   </tr>
   <tr>
@@ -4152,7 +4151,7 @@ This directory contains trip tables from auto and transit assignments.
   <tr>
    <td>destinationIsRemoteParking
    </td>
-   <td>Is destination remote parking?
+   <td>Is destination remote parking
    </td>
   </tr>
   <tr>
@@ -4224,7 +4223,7 @@ This directory contains trip tables from auto and transit assignments.
   <tr>
    <td>inbound
    </td>
-   <td>Is trip inbound?
+   <td>Is trip inbound
    </td>
   </tr>
   <tr>
