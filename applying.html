@@ -542,6 +542,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#scenario-manager" class="md-nav__link">
+    Scenario manager
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -710,6 +717,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#scenario-manager" class="md-nav__link">
+    Scenario manager
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -739,7 +753,65 @@
 <p>Describe how to update parking costs, enrollment data.</p>
 <h2 id="micromobility">Micromobility<a class="headerlink" href="#micromobility" title="Permanent link"> ¶</a></h2>
 <p>//TODO: Describe how to run micromobility policy tests</p>
-<p>etc.</p>
+<h2 id="scenario-manager">Scenario manager<a class="headerlink" href="#scenario-manager" title="Permanent link"> ¶</a></h2>
+<p>ABM3 uses a python module as the scenario manager. The job of this scenario manager is updating the parameters used throughout the model to match a specific scenario’s definition and needs. A number of these parameters including auto operating cost, taxi and TNC fare, micromobility cost, and AV ownership penetration are usually assumed to change by forecast year or scenario.</p>
+<p>Manually changing these parameters requires the model user to know where each parameter is located, and individually changing them according to the scenario forecast values. A scenario manager, therefore, can be a convenient and efficient tool to automate this process.</p>
+<p>The ABM3 Scenario Manager reads in a CSV input file (located under <code>input/parametersByYears.csv</code>) containing the parameter values for each scenario, and updates the associated parameters in the ActivitySim config files. A snapshot of this input parameter CSV file is shown below, where each row is associated with a specific scenario year/name. The parameter names used here can either be identical to the parameter names used in ActivitySim, or different. In case the parameter names are different, a separate file is used to map the parameters names between the input CSV and ActivitySim config files.</p>
+<table>
+<thead>
+<tr>
+<th>Scenario Year</th>
+<th>AOC fuel</th>
+<th>AOC maintenance</th>
+<th>Taxi baseFare</th>
+<th>Taxi costPerMile</th>
+<th>Taxi costPerMinute</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2012</td>
+<td>13.5</td>
+<td>6.3</td>
+<td>1.78</td>
+<td>1.87</td>
+<td>0.08</td>
+</tr>
+<tr>
+<td>2014</td>
+<td>12.9</td>
+<td>6.3</td>
+<td>1.78</td>
+<td>1.87</td>
+<td>0.08</td>
+</tr>
+<tr>
+<td>2015</td>
+<td>19.5</td>
+<td>6.2</td>
+<td>1.78</td>
+<td>1.87</td>
+<td>0.08</td>
+</tr>
+<tr>
+<td>2016</td>
+<td>10.7</td>
+<td>5.6</td>
+<td>1.78</td>
+<td>1.87</td>
+<td>0.08</td>
+</tr>
+<tr>
+<td>2017</td>
+<td>10.8</td>
+<td>5.5</td>
+<td>1.78</td>
+<td>1.87</td>
+<td>0.08</td>
+</tr>
+</tbody>
+</table>
+<p>The scenario manager is run as part of the model setup in the Master Run tool before any ActivitySim model is run (usually only in the first iteration of the run). Model user can choose to run or skip this step, although it is highly recommended to run with each run to ensure correct parameters.</p>
 
 
 
