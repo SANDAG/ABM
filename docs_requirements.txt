@@ -13,3 +13,4 @@ mkdocs-material-extensions
 mkdocstrings
 mkdocstrings-python
 mkdocs-table-reader-plugin
+numpy==1.26.4
