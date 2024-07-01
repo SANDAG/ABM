@@ -143,7 +143,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
             ("mf%s_%s_MIX", "%s_%s_set3_%s")
         ]
         periods = ["EA", "AM", "MD", "PM", "EV"]
-        access_modes = ["WALK", "PNROUT", "PNRIN", "KNROUT", "KNRIN", "TNCIN", "TNCOUT"] #"WALK",
+        access_modes = ["WALK", "PNROUT", "PNRIN", "KNROUT", "KNRIN"] #"WALK",
         matrix_names = []
         for period in periods:
             for acc_mode in access_modes:
