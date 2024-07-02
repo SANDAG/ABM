@@ -1,5 +1,21 @@
 # Release Notes
 
+## Version 15.0.2 (July 3, 2024)
+Since the release of version 15.0.1 more updates were made, particularly regarding the new commercial vehicle model. More updates to the CVM will be forthcoming due to ongoing revision based on new data sources.
+
+### ActivitySim Version
+No changes made to ActivitySim version.
+
+### Features
+- [PR 155](https://github.com/SANDAG/ABM/pull/155) & [PR 159](https://github.com/SANDAG/ABM/pull/159): Updated the Wiki to reflect changes made for ABM3.
+- [PR 156](https://github.com/SANDAG/ABM/pull/156): Made changes to distribution of commercial vehicle type mapping to the categories used in assignment.
+- [PR 157](https://github.com/SANDAG/ABM/pull/157): Added calibration factors for determining the probability of a tour made by a single- or multi-unit truck terminating at a given stop.
+- [PR 158](https://github.com/SANDAG/ABM/pull/158): Changed firm synthesis to be done at the TAZ level instead of the MGRA level.
+
+### Bug Fixes
+- [PR 160](https://github.com/SANDAG/ABM/pull/160): Removed an input file no longer used by the updated heavy truck model.
+
+
 ## Version 15.0.1 (June 12, 2024)
 During the initial testing of the 2025 Regional Plan initial concept, some critical model issues were identified and fixed.
 
