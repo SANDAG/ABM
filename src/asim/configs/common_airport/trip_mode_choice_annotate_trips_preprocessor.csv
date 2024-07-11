@@ -1741,12 +1741,12 @@
 1725,,knr_premium_available_inbound,(odt_skims['KNRIN_PRM_TOTALIVTT']>0)
 1726,,knr_mix_available,(odt_skims['KNROUT_MIX_TOTALIVTT']>0)
 1727,,knr_mix_available_inbound,(odt_skims['KNRIN_MIX_TOTALIVTT']>0)
-1728,,tnc_local_available,(odt_skims['TNCOUT_LOC_TOTALIVTT']>0)
-1729,,tnc_local_available_inbound,(odt_skims['TNCIN_LOC_TOTALIVTT']>0)
-1730,,tnc_premium_available,(odt_skims['TNCOUT_PRM_TOTALIVTT']>0)
-1731,,tnc_premium_available_inbound,(odt_skims['TNCIN_PRM_TOTALIVTT']>0)
-1732,,tnc_mix_available,(odt_skims['TNCOUT_MIX_TOTALIVTT']>0)
-1733,,tnc_mix_available_inbound,(odt_skims['TNCIN_MIX_TOTALIVTT']>0)
+1728,,tnc_local_available,(odt_skims['KNROUT_LOC_TOTALIVTT']>0)
+1729,,tnc_local_available_inbound,(odt_skims['KNRIN_LOC_TOTALIVTT']>0)
+1730,,tnc_premium_available,(odt_skims['KNROUT_PRM_TOTALIVTT']>0)
+1731,,tnc_premium_available_inbound,(odt_skims['KNRIN_PRM_TOTALIVTT']>0)
+1732,,tnc_mix_available,(odt_skims['KNROUT_MIX_TOTALIVTT']>0)
+1733,,tnc_mix_available_inbound,(odt_skims['KNRIN_MIX_TOTALIVTT']>0)
 1734,shared2DistShuttleVanLocation,shared2DistShuttleVanLocation_hi_md,"skim_dict.lookup(df['origin'], shuttleloc1, ('HOV2_H_DIST', 'MD')) if shuttleloc1.any() > 0 else 0"
 1735,shared2DistShuttleVanLocation,shared2DistShuttleVanLocation_med_md,"skim_dict.lookup(df['origin'], shuttleloc1, ('HOV2_M_DIST', 'MD')) if shuttleloc1.any() > 0 else 0"
 1736,shared2DistShuttleVanLocation,shared2DistShuttleVanLocation_low_md,"skim_dict.lookup(df['origin'], shuttleloc1, ('HOV2_L_DIST', 'MD')) if shuttleloc1.any() > 0 else 0"
