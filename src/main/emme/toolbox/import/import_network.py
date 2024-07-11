@@ -508,7 +508,9 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 ("f", "ACCESS_PNR", 25),
                 ("g", "EGRESS_PNR", 25),
                 ("q", "ACCESS_KNR", 25),
-                ("j", "EGRESS_KNR", 25)
+                ("j", "EGRESS_KNR", 25),
+                ("Q", "ACCESS_TNC", 25),
+                ("J", "EGRESS_TNC", 25),
             ],
         }
         for mode_type, modes in mode_table.iteritems():
@@ -535,6 +537,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             14:   set([network.mode(m_id) for m_id in "g"]),      #    = egress PNR links
             15:   set([network.mode(m_id) for m_id in "q"]),      #    = access KNR links
             16:   set([network.mode(m_id) for m_id in "j"]),      #    = egress KNR links
+            17:   set([network.mode(m_id) for m_id in "Q"]),      #    = access TNC links
+            18:   set([network.mode(m_id) for m_id in "J"]),      #    = egress TNC links
         }
         modes_gp_lanes = {
             0: set([]),
