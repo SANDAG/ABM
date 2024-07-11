@@ -195,7 +195,7 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
             ("MIX",  "all modes xfer pen demand"),
         ]
         for period in self._all_periods:
-            for a_name in ["WALK", "PNROUT", "PNRIN", "KNROUT", "KNRIN"]:
+            for a_name in ["WALK", "PNROUT", "PNRIN", "KNROUT", "KNRIN", "TNCOUT", "TNCIN"]:
                 self.add_matrices("transit_demand", period,
                     [("mf", "%s_%s_%s" % (period, a_name, name), "%s %s access %s" % (period, a_name, desc))
                      for name, desc in tmplt_matrices])
@@ -357,7 +357,6 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
                         [("mf", amode + "_" + set_name + "_" + name + "__" + period,
                         period + " " + set_desc + ": " + desc)
                         for name, desc in tmplt_matrices_mix])
-
 
     def truck_model(self):
         tmplt_matrices = [
