@@ -213,7 +213,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
 
             if not assignment_only:
 
-                transit_modes = ['WALK_LOC', 'PNRIN_LOC', 'KNRIN_LOC', 'PNROUT_LOC', 'KNROUT_LOC', 
+                transit_modes = ['WALK_LOC', 'PNRIN_LOC', 'KNRIN_LOC', 'PNROUT_LOC', 'KNROUT_LOC',
                                   'WALK_PRM', 'PNRIN_PRM', 'KNRIN_PRM', 'PNROUT_PRM', 'KNROUT_PRM',
                                   'WALK_MIX', 'PNRIN_MIX', 'KNRIN_MIX', 'PNROUT_MIX', 'KNROUT_MIX']
 
@@ -488,6 +488,8 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
         PNRIN_modes = ["x", "u", "g"]
         KNROUT_modes = ["k", "x", "q"]
         KNRIN_modes = ["x", "u", "j"]
+        TNCOUT_modes = ["k", "x", "Q"]
+        TNCIN_modes = ["x", "u", "J"]
 
         local_bus_mode = ["b"]
         premium_modes = ["c", "l", "e", "p", "r", "y", "o"]
@@ -555,6 +557,14 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                         "modes": walkIN_modes + local_bus_mode + KNROUT_modes,
                         "journey_levels": local_bus_journey_levels
                     }),
+                    ("TNCIN_LOC", {
+                        "modes": walkOUT_modes + local_bus_mode + TNCIN_modes,
+                        "journey_levels": local_bus_journey_levels
+                    }),
+                    ("TNCOUT_LOC", {
+                        "modes": walkIN_modes + local_bus_mode + TNCOUT_modes,
+                        "journey_levels": local_bus_journey_levels
+                    }),
                     ("WALK_PRM", {
                         "modes": walk_modes + premium_modes,
                         "journey_levels": premium_modes_journey_levels
@@ -573,6 +583,14 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                     }),                
                     ("KNROUT_PRM", {
                         "modes": walkIN_modes + premium_modes + KNROUT_modes,
+                        "journey_levels": premium_modes_journey_levels
+                    }),
+                    ("TNCIN_PRM", {
+                        "modes": walkOUT_modes + premium_modes + TNCIN_modes,
+                        "journey_levels": premium_modes_journey_levels
+                    }),
+                    ("TNCOUT_PRM", {
+                        "modes": walkIN_modes + premium_modes + TNCOUT_modes,
                         "journey_levels": premium_modes_journey_levels
                     }),
                     ("WALK_MIX", {
@@ -594,14 +612,22 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                     ("KNROUT_MIX", {
                         "modes": walkIN_modes + premium_modes + local_bus_mode + KNROUT_modes,
                         "journey_levels": journey_levels
-                    })
+                    }),
+                    ("TNCIN_MIX", {
+                        "modes": walkOUT_modes + premium_modes + local_bus_mode + TNCIN_modes,
+                        "journey_levels": journey_levels
+                    }),
+                    ("TNCOUT_MIX", {
+                        "modes": walkIN_modes + premium_modes + local_bus_mode + TNCOUT_modes,
+                        "journey_levels": journey_levels
+                    }),
                     
                 ])
 
         if skims_only:
-            access_modes =  ["WLK", "PNR", "KNR"]
+            access_modes =  ["WLK", "PNR", "KNR", "TNC"]
         else:
-            access_modes = ["WLK", "PNR", "KNR"]
+            access_modes = ["WLK", "PNR", "KNR", "TNC"]
 
         add_volumes = False
 
