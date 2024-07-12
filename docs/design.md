@@ -40,36 +40,65 @@ Next the daily and tour level models are run. The first daily model is the daily
 
 The major tour modes are shown below:
 ```mermaid
-graph TD; 
-    A["`*Tour Mode*`"] --> B[DA];
-    A --> C[SR2];
-    A --> D[SR3+];
-    A --> E[Walk];
-    A --> F[Bike];
-    A --> G[EBike/EScooter];
-    A --> H1[Walk_Transit];
-    A --> H2[KNR_Transit];
-    A --> H3[PNR_Transit];
-    A --> H4[TNC_Transit];
-    A --> I[TNC];
-    A --> J[Taxi];
-    A --> K[School_Bus];
-    
+flowchart TD
+    subgraph four
+    direction LR
+    E[Ride-Hail] --> E1[Taxi]
+    E --> E2[Single-pay TNC]
+    E --> E3[Shared TNC];
+    end
+    subgraph three
+    direction LR
+    D[Transit] --> D1[Walk Access]
+    D --> D2[PNR Access]
+    D --> D3[KNR Access]
+    D --> D4[TNC Access]
 
-    style A fill:#ffcccc,stroke:#333,stroke-width:2px;
-    style B fill:#ccccff,stroke:#333,stroke-width:2px;
-    style C fill:#ccccff,stroke:#333,stroke-width:2px;
-    style D fill:#ccccff,stroke:#333,stroke-width:2px;
-    style E fill:#ccccff,stroke:#333,stroke-width:2px;
-    style F fill:#ccccff,stroke:#333,stroke-width:2px;
-    style G fill:#ccccff,stroke:#333,stroke-width:2px;
-    style H1 fill:#ccccff,stroke:#333,stroke-width:2px;
-    style H2 fill:#ccccff,stroke:#333,stroke-width:2px;
-    style H3 fill:#ccccff,stroke:#333,stroke-width:2px;
-    style H4 fill:#ccccff,stroke:#333,stroke-width:2px;
-    style J fill:#ccccff,stroke:#333,stroke-width:2px;
-    style I fill:#ccccff,stroke:#333,stroke-width:2px;
-    style K fill:#ccccff,stroke:#333,stroke-width:2px;
+    D1 --> D11[Local Only]
+    D1 --> D12[Premium Only]
+    D1 --> D13[Mixed]
+
+    D2 --> D21[Local Only]
+    D2 --> D22[Premium Only]
+    D2 --> D23[Mixed]
+
+    D3 --> D31[Local Only]
+    D3 --> D32[Premium Only]
+    D3 --> D33[Mixed]
+
+    D4 --> D41[Local Only]
+    D4 --> D42[Premium Only]
+    D4 --> D43[Mixed]
+    end
+    subgraph two
+    direction LR
+    C[Active] --> C1[Walk]
+    C --> C2[Bike]
+    C --> C3[E-Scooter]
+    C --> C4[E-Bike]
+    end
+
+    subgraph one
+    direction LR
+    B[Auto] --> B1[Drive-alone];
+    B --> B2[Shared 2];
+    B --> B3[Shared 3+];
+    end
+    A[Tour Mode] --> one;
+    A --> two;
+    A --> three;
+    A --> four;
+
+    classDef group1 fill:#f75f5f,stroke:#333,stroke-width:4px,font-size:26px,font-weight:bold;
+    classDef group2 fill:#ffd966,stroke:#333,stroke-width:2px,font-size:20px;
+    classDef group3 fill:#bdabf0,stroke:#333,stroke-width:2px,font-size:18px;
+
+    classDef hiddenTitle color:transparent;
+    class one,two,three,four hiddenTitle;
+
+    class A group1;
+    class B,C,D,E group2;
+    class B1,B2,B3,C1,C2,C3,C4,D1,D2,D3,D4,E1,E2,E3,D11,D12,D13,D21,D22,D23,D31,D32,D33,D41,D42,D43 group3;
 ```
 
 
@@ -108,17 +137,40 @@ Note that home activities are not listed, since we do not model activities south
 
 The major tour modes are shown below:
 ```mermaid
-graph TD;
-    A["`*Tour Mode/Border Crossing Mode*`"] --> B[DA];
-    A --> C[SR2];
-    A --> D[SR3+];
-    A --> E[Walk];
+flowchart TD
+    subgraph three
+    direction LR
+    D[Transit] --> D1[Walk Access]
 
-    style A fill:#ffcccc,stroke:#333,stroke-width:2px;
-    style B fill:#ccccff,stroke:#333,stroke-width:2px;
-    style C fill:#ccccff,stroke:#333,stroke-width:2px;
-    style D fill:#ccccff,stroke:#333,stroke-width:2px;
-    style E fill:#ccccff,stroke:#333,stroke-width:2px;
+    D1 --> D11[Local Only]
+    D1 --> D12[Premium Only]
+    D1 --> D13[Mixed]
+    end
+    subgraph two
+    direction LR
+    C[Active] --> C1[Walk]
+    end
+
+    subgraph one
+    direction LR
+    B[Auto] --> B1[Drive-alone];
+    B --> B2[Shared 2];
+    B --> B3[Shared 3+];
+    end
+    A[Tour Mode\Border Crossing Mode] --> one;
+    A --> two;
+    A --> three;
+
+    classDef group1 fill:#f75f5f,stroke:#333,stroke-width:4px,font-size:26px,font-weight:bold;
+    classDef group2 fill:#ffd966,stroke:#333,stroke-width:2px,font-size:20px;
+    classDef group3 fill:#bdabf0,stroke:#333,stroke-width:2px,font-size:18px;
+
+    classDef hiddenTitle color:transparent;
+    class one,two,three hiddenTitle;
+
+    class A group1;
+    class B,C,D,E group2;
+    class B1,B2,B3,C1,C2,C3,C4,D1,D11,D12,D13 group3;
 ```
 
 The model has the following mode types at the trip level:
@@ -207,25 +259,56 @@ The overall design of the model is shown in the figure below.
 
 The major tour modes are shown below:
 ```mermaid
-graph TD; 
-    A["`*Tour Mode*`"] --> B[DA];
-    A --> C[SR2];
-    A --> D[SR3+];
-    A --> E[Walk];
-    A --> H1[Walk_Transit];
-    A --> H2[KNR_Transit];
-    A --> H3[PNR_Transit];
-    A --> H4[TNC_Transit];
+flowchart TD
+    subgraph four
+    direction LR
+    E[Ride-Hail] --> E1[Taxi]
+    end
+    subgraph three
+    direction LR
+    D[Transit] --> D1[Walk Access]
+    %% D --> D2[PNR Access]
+    D --> D3[KNR Access]
+    D --> D4[TNC Access]
 
-    style A fill:#ffcccc,stroke:#333,stroke-width:2px;
-    style B fill:#ccccff,stroke:#333,stroke-width:2px;
-    style C fill:#ccccff,stroke:#333,stroke-width:2px;
-    style D fill:#ccccff,stroke:#333,stroke-width:2px;
-    style E fill:#ccccff,stroke:#333,stroke-width:2px;
-    style H1 fill:#ccccff,stroke:#333,stroke-width:2px;
-    style H2 fill:#ccccff,stroke:#333,stroke-width:2px;
-    style H3 fill:#ccccff,stroke:#333,stroke-width:2px;
-    style H4 fill:#ccccff,stroke:#333,stroke-width:2px;
+    D1 --> D11[Local Only]
+    D1 --> D12[Premium Only]
+    D1 --> D13[Mixed]
+
+    D3 --> D31[Local Only]
+    D3 --> D32[Premium Only]
+    D3 --> D33[Mixed]
+
+    D4 --> D41[Local Only]
+    D4 --> D42[Premium Only]
+    D4 --> D43[Mixed]
+    end
+    subgraph two
+    direction LR
+    C[Active] --> C1[Walk]
+    end
+
+    subgraph one
+    direction LR
+    B[Auto] --> B1[Drive-alone];
+    B --> B2[Shared 2];
+    B --> B3[Shared 3+];
+    end
+    A[Tour Mode] --> one;
+    A --> two;
+    A --> three;
+    A --> four;
+
+    classDef group1 fill:#f75f5f,stroke:#333,stroke-width:4px,font-size:26px,font-weight:bold;
+    classDef group2 fill:#ffd966,stroke:#333,stroke-width:2px,font-size:20px;
+    classDef group3 fill:#bdabf0,stroke:#333,stroke-width:2px,font-size:18px;
+
+    classDef hiddenTitle color:transparent;
+    class one,two,three,four hiddenTitle;
+
+    class A group1;
+    class B,C,D,E group2;
+    class B1,B2,B3,C1,C2,C3,C4,D1,D2,D3,D4,E1,E2,E3,D11,D12,D13,D21,D22,D23,D31,D32,D33,D41,D42,D43 group3;
 ```
 
 #### Airport Ground Access Model Trip Arrival Modes
@@ -305,24 +388,46 @@ The overall design of the model is shown in the figure below.
 
 The major tour modes are shown below:
 ```mermaid
-graph TD; 
-    A["`*Tour Mode*`"] --> B[DA];
-    A --> C[SR2];
-    A --> D[SR3+];
-    A --> E[Walk];
-    A --> H1[Walk_Transit];
-    A --> I[TNC];
-    A --> J[Taxi];
-    
+flowchart TD
+    subgraph four
+    direction LR
+    E[Ride-Hail] --> E1[Taxi]
+    E --> E2[Single-pay TNC];
+    end
+    subgraph three
+    direction LR
+    D[Transit] --> D1[Walk Access]
 
-    style A fill:#ffcccc,stroke:#333,stroke-width:2px;
-    style B fill:#ccccff,stroke:#333,stroke-width:2px;
-    style C fill:#ccccff,stroke:#333,stroke-width:2px;
-    style D fill:#ccccff,stroke:#333,stroke-width:2px;
-    style E fill:#ccccff,stroke:#333,stroke-width:2px;
-    style H1 fill:#ccccff,stroke:#333,stroke-width:2px;
-    style J fill:#ccccff,stroke:#333,stroke-width:2px;
-    style I fill:#ccccff,stroke:#333,stroke-width:2px;
+    D1 --> D11[Local Only]
+    D1 --> D12[Premium Only]
+    D1 --> D13[Mixed]
+    end
+    subgraph two
+    direction LR
+    C[Active] --> C1[Walk]
+    end
+
+    subgraph one
+    direction LR
+    B[Auto] --> B1[Drive-alone];
+    B --> B2[Shared 2];
+    B --> B3[Shared 3+];
+    end
+    A[Tour Mode] --> one;
+    A --> two;
+    A --> three;
+    A --> four;
+
+    classDef group1 fill:#f75f5f,stroke:#333,stroke-width:4px,font-size:26px,font-weight:bold;
+    classDef group2 fill:#ffd966,stroke:#333,stroke-width:2px,font-size:20px;
+    classDef group3 fill:#bdabf0,stroke:#333,stroke-width:2px,font-size:18px;
+
+    classDef hiddenTitle color:transparent;
+    class one,two,three,four hiddenTitle;
+
+    class A group1;
+    class B,C,D,E group2;
+    class B1,B2,B3,C1,C2,C3,C4,D1,D2,D3,D4,E1,E2,E3,D11,D12,D13,D21,D22,D23,D31,D32,D33,D41,D42,D43 group3;
 
 ```
 
