@@ -596,11 +596,11 @@ Export network results to csv files for SQL data loader."""
         fout_stop.write(",".join(['"%s"' % x for x in transit_onoff_atts]))
         fout_stop.write("\n")
         try:
-            access_modes = ["WALK", "PNROUT", "PNRIN", "KNROUT", "KNRIN"]
+            access_modes = ["WALK", "PNROUT", "PNRIN", "KNROUT", "KNRIN", "TNCOUT", "TNCIN"]
             main_modes = ["LOC", "PRM","MIX"]
-            all_modes = ["b", "c", "e", "l", "r", "p", "y", "o", "w", "x", "k", "u", "f", "g", "q", "j"]
-            local_bus_modes = ["b", "w", "x", "k", "u", "f", "g", "q", "j"]
-            premium_modes = ["c", "l", "e", "p", "r", "y", "o", "w", "x", "k", "u", "f", "g", "q", "j"]
+            all_modes = ["b", "c", "e", "l", "r", "p", "y", "o", "w", "x", "k", "u", "f", "g", "q", "j", "Q", "J"]
+            local_bus_modes = ["b", "w", "x", "k", "u", "f", "g", "q", "j", "Q", "J"]
+            premium_modes = ["c", "l", "e", "p", "r", "y", "o", "w", "x", "k", "u", "f", "g", "q", "j", "Q", "J"]
             for tod, scen_id in period_scenario_ids.iteritems():
                 with _m.logbook_trace("Processing period %s" % tod):
                     scenario = transit_emmebank_dict[tod].scenario(scen_id)
