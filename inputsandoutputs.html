@@ -3503,16 +3503,12 @@
 <h3 id="off_peak_toll_factorscsv"><code>off_peak_toll_factors.csv</code><a class="headerlink" href="#off_peak_toll_factorscsv" title="Permanent link"> ¶</a></h3>
 <p>Optional file. Used to specify different tolls in the off-peak time-of-day scenarios based on the single link ITOLLO field, together with the tolls by vehicle class from <a href="#hwy_link_vehicle_class_toll_factors">vehicle_class_toll_factors.csv</a>.
 Used by the Import network Modeller tool.</p>
-<p>Example:</p>
-<div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code>Facility_name, OP_EA_factor, OP_MD_factor, OP_EV_factor
+<p>Example:
+<div class="highlight"><pre><span></span><code>Facility_name, OP_EA_factor, OP_MD_factor, OP_EV_factor
 I-15,                  0.75,          1.0,         0.75
 SR-125,                1.0 ,          1.0,         1.0
 SR-52,                 0.8 ,          1.0,         0.8
-</code></pre></div></td></tr></table></div>
-
+</code></pre></div></p>
 <p>See note re: network link matching under <a href="#hwy_link_vehicle_class_toll_factors">vehicle_class_toll_factors.csv</a>. Note that all facilities need not be specified, links not matched will use a factor of 1.0.</p>
 <table>
     <tr>
@@ -3589,35 +3585,21 @@ SR-52,                 0.8 ,          1.0,         0.8
 
 <p><a href="#top">Go To Top</a></p>
 <h3 id="special_farestxt"><code>special_fares.txt</code><a class="headerlink" href="#special_farestxt" title="Permanent link"> ¶</a></h3>
-<div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">boarding_cost</span><span class="o">:</span>
-<span class="w">   </span><span class="n">base</span><span class="o">:</span><span class="w"> </span>
-<span class="w">       </span><span class="o">-</span><span class="w"> </span><span class="o">{</span><span class="n">line</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;398104&quot;</span><span class="o">,</span><span class="w"> </span><span class="n">cost</span><span class="o">:</span><span class="w"> </span><span class="mf">3.63</span><span class="o">}</span>
-<span class="w">       </span><span class="o">-</span><span class="w"> </span><span class="o">{</span><span class="n">line</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;398204&quot;</span><span class="o">,</span><span class="w"> </span><span class="n">cost</span><span class="o">:</span><span class="w"> </span><span class="mf">3.63</span><span class="o">}</span>
-<span class="w">   </span><span class="n">stop_increment</span><span class="o">:</span>
-<span class="w">       </span><span class="o">-</span><span class="w"> </span><span class="o">{</span><span class="n">line</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;398104&quot;</span><span class="o">,</span><span class="w"> </span><span class="n">stop</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;SORRENTO VALLEY&quot;</span><span class="o">,</span><span class="w"> </span><span class="n">cost</span><span class="o">:</span><span class="w"> </span><span class="mf">0.46</span><span class="o">}</span>
-<span class="w">       </span><span class="o">-</span><span class="w"> </span><span class="o">{</span><span class="n">line</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;398204&quot;</span><span class="o">,</span><span class="w"> </span><span class="n">stop</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;SORRENTO VALLEY&quot;</span><span class="o">,</span><span class="w"> </span><span class="n">cost</span><span class="o">:</span><span class="w"> </span><span class="mf">0.46</span><span class="o">}</span>
-<span class="n">in_vehicle_cost</span><span class="o">:</span><span class="w"> </span>
-<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="o">{</span><span class="n">line</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;398104&quot;</span><span class="o">,</span><span class="w"> </span><span class="n">from</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;SOLANA BEACH&quot;</span><span class="o">,</span><span class="w"> </span><span class="n">cost</span><span class="o">:</span><span class="w"> </span><span class="mf">0.45</span><span class="o">}</span>
-<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="o">{</span><span class="n">line</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;398104&quot;</span><span class="o">,</span><span class="w"> </span><span class="n">from</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;SORRENTO VALLEY&quot;</span><span class="o">,</span><span class="w"> </span><span class="n">cost</span><span class="o">:</span><span class="w"> </span><span class="mf">0.45</span><span class="o">}</span>
-<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="o">{</span><span class="n">line</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;398204&quot;</span><span class="o">,</span><span class="w"> </span><span class="n">from</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;OLD TOWN&quot;</span><span class="o">,</span><span class="w">  </span><span class="n">cost</span><span class="o">:</span><span class="w"> </span><span class="mf">0.45</span><span class="o">}</span>
-<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="o">{</span><span class="n">line</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;398204&quot;</span><span class="o">,</span><span class="w"> </span><span class="n">from</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;SORRENTO VALLEY&quot;</span><span class="o">,</span><span class="w"> </span><span class="n">cost</span><span class="o">:</span><span class="w"> </span><span class="mf">0.45</span><span class="o">}</span>
-<span class="n">day_pass</span><span class="o">:</span><span class="w"> </span><span class="mf">4.54</span>
-<span class="n">regional_pass</span><span class="o">:</span><span class="w"> </span><span class="mf">10.90</span>
-</code></pre></div></td></tr></table></div>
-
+<div class="highlight"><pre><span></span><code>boarding_cost:
+   base: 
+       - {line: &quot;398104&quot;, cost: 3.63}
+       - {line: &quot;398204&quot;, cost: 3.63}
+   stop_increment:
+       - {line: &quot;398104&quot;, stop: &quot;SORRENTO VALLEY&quot;, cost: 0.46}
+       - {line: &quot;398204&quot;, stop: &quot;SORRENTO VALLEY&quot;, cost: 0.46}
+in_vehicle_cost: 
+   - {line: &quot;398104&quot;, from: &quot;SOLANA BEACH&quot;, cost: 0.45}
+   - {line: &quot;398104&quot;, from: &quot;SORRENTO VALLEY&quot;, cost: 0.45}
+   - {line: &quot;398204&quot;, from: &quot;OLD TOWN&quot;,  cost: 0.45}
+   - {line: &quot;398204&quot;, from: &quot;SORRENTO VALLEY&quot;, cost: 0.45}
+day_pass: 4.54
+regional_pass: 10.90
+</code></pre></div>
 <p><a href="#top">Go To Top</a></p>
 <p><a id="transit_binary_stop"></a></p>
 <h3 id="transit-binary-stop-table">Transit Binary Stop Table<a class="headerlink" href="#transit-binary-stop-table" title="Permanent link"> ¶</a></h3>

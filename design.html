@@ -1,229 +1,121 @@
 
-<!doctype html>
-<html lang="en" class="no-js">
-  <head>
-    
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width,initial-scale=1">
-      
-      
-      
-        <link rel="canonical" href="https://sandag.github.io/abm/design.html">
-      
-      
-        <link rel="prev" href="index.html">
-      
-      
-        <link rel="next" href="running.html">
-      
-      
-      <link rel="icon" href="assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.0">
-    
-    
-      
-        <title>Model Design - SANDAG ABM3</title>
-      
-    
-    
-      <link rel="stylesheet" href="assets/stylesheets/main.9f615399.min.css">
-      
-        
-        <link rel="stylesheet" href="assets/stylesheets/palette.649f08f9.min.css">
-      
-      
+<!DOCTYPE html>
 
-
-    
-    
-      
-    
-    
-      
-        
-        
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
-        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
-      
-    
-    
-      <link rel="stylesheet" href="assets/_mkdocstrings.css">
-    
-      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css">
-    
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
-    
-      
-
-    
-    
-    
-  </head>
-  
-  
-    
-    
-      
-    
-    
-    
-    
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="deep-orange">
-  
-    
-    
-      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
-    
-    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
-    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
-    <label class="md-overlay" for="__drawer"></label>
-    <div data-md-component="skip">
-      
-        
-        <a href="#model-design" class="md-skip">
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<link href="https://sandag.github.io/abm/design.html" rel="canonical"/>
+<link href="index.html" rel="prev"/>
+<link href="running.html" rel="next"/>
+<link href="assets/images/favicon.png" rel="icon"/>
+<meta content="mkdocs-1.5.3, mkdocs-material-9.4.0" name="generator"/>
+<title>Model Design - SANDAG ABM3</title>
+<link href="assets/stylesheets/main.9f615399.min.css" rel="stylesheet"/>
+<link href="assets/stylesheets/palette.649f08f9.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<link href="assets/_mkdocstrings.css" rel="stylesheet"/>
+<link href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" rel="stylesheet"/>
+<script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+</head>
+<body data-md-color-accent="deep-orange" data-md-color-primary="deep-purple" data-md-color-scheme="default" dir="ltr">
+<script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#model-design">
           Skip to content
         </a>
-      
-    </div>
-    <div data-md-component="announce">
-      
-    </div>
-    
-      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
-        
-      </div>
-    
-    
-      
-
+</div>
+<div data-md-component="announce">
+</div>
+<div data-md-color-scheme="default" data-md-component="outdated" hidden="">
+</div>
 <header class="md-header" data-md-component="header">
-  <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="SANDAG ABM3" class="md-header__button md-logo" aria-label="SANDAG ABM3" data-md-component="logo">
-      
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
-
-    </a>
-    <label class="md-header__button md-icon" for="__drawer">
-      
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
-    </label>
-    <div class="md-header__title" data-md-component="header-title">
-      <div class="md-header__ellipsis">
-        <div class="md-header__topic">
-          <span class="md-ellipsis">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="SANDAG ABM3" class="md-header__button md-logo" data-md-component="logo" href="index.html" title="SANDAG ABM3">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"></path></svg>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
             SANDAG ABM3
           </span>
-        </div>
-        <div class="md-header__topic" data-md-component="header-topic">
-          <span class="md-ellipsis">
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
             
               Model Design
             
           </span>
-        </div>
-      </div>
-    </div>
-    
-      
-        <form class="md-header__option" data-md-component="palette">
-  
-    
-    
-    
-    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="deep-orange"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
-    
-      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6zm0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4zM7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-      </label>
-    
-  
-    
-    
-    
-    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="grey"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
-    
-      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3Z"/></svg>
-      </label>
-    
-  
+</div>
+</div>
+</div>
+<form class="md-header__option" data-md-component="palette">
+<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="deep-orange" data-md-color-media="(prefers-color-scheme: light)" data-md-color-primary="deep-purple" data-md-color-scheme="default" id="__palette_1" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_2" hidden="" title="Switch to dark mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6zm0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4zM7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"></path></svg>
+</label>
+<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="grey" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-primary="deep-purple" data-md-color-scheme="slate" id="__palette_2" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_1" hidden="" title="Switch to light mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3Z"></path></svg>
+</label>
 </form>
-      
-    
-    
-    
-      <label class="md-header__button md-icon" for="__search">
-        
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-      </label>
-      <div class="md-search" data-md-component="search" role="dialog">
-  <label class="md-search__overlay" for="__search"></label>
-  <div class="md-search__inner" role="search">
-    <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
-      <label class="md-search__icon md-icon" for="__search">
-        
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-        
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
-      </label>
-      <nav class="md-search__options" aria-label="Search">
-        
-        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
-          
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
-        </button>
-      </nav>
-      
-    </form>
-    <div class="md-search__output">
-      <div class="md-search__scrollwrap" data-md-scrollfix>
-        <div class="md-search-result" data-md-component="search-result">
-          <div class="md-search-result__meta">
+<label class="md-header__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
+</label>
+<nav aria-label="Search" class="md-search__options">
+<button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" title="Clear" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"></path></svg>
+</button>
+</nav>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
             Initializing search
           </div>
-          <ol class="md-search-result__list" role="presentation"></ol>
-        </div>
-      </div>
-    </div>
-  </div>
+<ol class="md-search-result__list" role="presentation"></ol>
 </div>
-    
-    
-      <div class="md-header__source">
-        <a href="https://github.com/SANDAG/ABM" title="Go to repository" class="md-source" data-md-component="source">
-  <div class="md-source__icon md-icon">
-    
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
-  </div>
-  <div class="md-source__repository">
+</div>
+</div>
+</div>
+</div>
+<div class="md-header__source">
+<a class="md-source" data-md-component="source" href="https://github.com/SANDAG/ABM" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
     GitHub
   </div>
 </a>
-      </div>
-    
-  </nav>
-  
+</div>
+</nav>
 </header>
-    
-    <div class="md-container" data-md-component="container">
-      
-      
-        
-          
-            
-<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
-  <div class="md-grid">
-    <ul class="md-tabs__list">
-      
-        
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="index.html" class="md-tabs__link">
+<div class="md-container" data-md-component="container">
+<nav aria-label="Tabs" class="md-tabs" data-md-component="tabs">
+<div class="md-grid">
+<ul class="md-tabs__list">
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="index.html">
         
   
     
@@ -231,18 +123,9 @@
   Home
 
       </a>
-    </li>
-  
-
-      
-        
-  
-  
-    
-  
-  
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="design.html" class="md-tabs__link">
+</li>
+<li class="md-tabs__item md-tabs__item--active">
+<a class="md-tabs__link" href="design.html">
         
   
     
@@ -250,16 +133,9 @@
   Model Design
 
       </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="running.html" class="md-tabs__link">
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="running.html">
         
   
     
@@ -267,16 +143,9 @@
   Installing and Running
 
       </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="inputsandoutputs.html" class="md-tabs__link">
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="inputsandoutputs.html">
         
   
     
@@ -284,16 +153,9 @@
   Model Inputs and Outputs
 
       </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="applying.html" class="md-tabs__link">
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="applying.html">
         
   
     
@@ -301,16 +163,9 @@
   Applying ABM3
 
       </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="cvm.html" class="md-tabs__link">
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="cvm.html">
         
   
     
@@ -318,18 +173,9 @@
   Commercial Vehicle Model
 
       </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="release-notes.html" class="md-tabs__link">
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="release-notes.html">
           
   
     
@@ -337,467 +183,232 @@
   About
 
         </a>
-      </li>
-    
-  
-
-      
-    </ul>
-  </div>
+</li>
+</ul>
+</div>
 </nav>
-          
-        
-      
-      <main class="md-main" data-md-component="main">
-        <div class="md-main__inner md-grid">
-          
-            
-              
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-
-
-  
-
-
-<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
-  <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="SANDAG ABM3" class="md-nav__button md-logo" aria-label="SANDAG ABM3" data-md-component="logo">
-      
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
-
-    </a>
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary md-nav--lifted" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="SANDAG ABM3" class="md-nav__button md-logo" data-md-component="logo" href="index.html" title="SANDAG ABM3">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"></path></svg>
+</a>
     SANDAG ABM3
   </label>
-  
-    <div class="md-nav__source">
-      <a href="https://github.com/SANDAG/ABM" title="Go to repository" class="md-source" data-md-component="source">
-  <div class="md-source__icon md-icon">
-    
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
-  </div>
-  <div class="md-source__repository">
+<div class="md-nav__source">
+<a class="md-source" data-md-component="source" href="https://github.com/SANDAG/ABM" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
     GitHub
   </div>
 </a>
-    </div>
-  
-  <ul class="md-nav__list" data-md-scrollfix>
-    
-      
-      
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="index.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="index.html">
+<span class="md-ellipsis">
     Home
   </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-    
-  
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+<span class="md-ellipsis">
     Model Design
   </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="design.html" class="md-nav__link md-nav__link--active">
-        
-  
-  <span class="md-ellipsis">
+<span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="design.html">
+<span class="md-ellipsis">
     Model Design
   </span>
-  
-
-      </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
+</a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
       Table of contents
     </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#resident-model" class="md-nav__link">
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#resident-model">
     Resident Model
   </a>
-  
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#crossborder-model" class="md-nav__link">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#crossborder-model">
     Crossborder Model
   </a>
-  
-    <nav class="md-nav" aria-label="Crossborder Model">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#crossborder-model-purpose-definitions" class="md-nav__link">
+<nav aria-label="Crossborder Model" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#crossborder-model-purpose-definitions">
     Crossborder Model Purpose Definitions
   </a>
-  
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#crossborder-model-mode-definitions" class="md-nav__link">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#crossborder-model-mode-definitions">
     Crossborder Model Mode Definitions
   </a>
-  
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#airport-ground-access-models" class="md-nav__link">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#airport-ground-access-models">
     Airport Ground Access Models
   </a>
-  
-    <nav class="md-nav" aria-label="Airport Ground Access Models">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#airport-ground-access-model-trip-arrival-modes" class="md-nav__link">
+<nav aria-label="Airport Ground Access Models" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#airport-ground-access-model-trip-arrival-modes">
     Airport Ground Access Model Trip Arrival Modes
   </a>
-  
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#overnight-visitor-model" class="md-nav__link">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#overnight-visitor-model">
     Overnight Visitor Model
   </a>
-  
 </li>
-      
-    </ul>
-  
+</ul>
 </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="running.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="running.html">
+<span class="md-ellipsis">
     Installing and Running
   </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="inputsandoutputs.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="inputsandoutputs.html">
+<span class="md-ellipsis">
     Model Inputs and Outputs
   </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="applying.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="applying.html">
+<span class="md-ellipsis">
     Applying ABM3
   </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="cvm.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="cvm.html">
+<span class="md-ellipsis">
     Commercial Vehicle Model
   </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
-        
-          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_7" type="checkbox"/>
+<label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+<span class="md-ellipsis">
     About
   </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_7">
-            <span class="md-nav__icon md-icon"></span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_7_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_7">
+<span class="md-nav__icon md-icon"></span>
             About
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="release-notes.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="release-notes.html">
+<span class="md-ellipsis">
     Release Notes
   </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="faq.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="faq.html">
+<span class="md-ellipsis">
     FAQs
   </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-  </ul>
+</a>
+</li>
+</ul>
 </nav>
-                  </div>
-                </div>
-              </div>
-            
-            
-              
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
       Table of contents
     </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#resident-model" class="md-nav__link">
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#resident-model">
     Resident Model
   </a>
-  
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#crossborder-model" class="md-nav__link">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#crossborder-model">
     Crossborder Model
   </a>
-  
-    <nav class="md-nav" aria-label="Crossborder Model">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#crossborder-model-purpose-definitions" class="md-nav__link">
+<nav aria-label="Crossborder Model" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#crossborder-model-purpose-definitions">
     Crossborder Model Purpose Definitions
   </a>
-  
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#crossborder-model-mode-definitions" class="md-nav__link">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#crossborder-model-mode-definitions">
     Crossborder Model Mode Definitions
   </a>
-  
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#airport-ground-access-models" class="md-nav__link">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#airport-ground-access-models">
     Airport Ground Access Models
   </a>
-  
-    <nav class="md-nav" aria-label="Airport Ground Access Models">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#airport-ground-access-model-trip-arrival-modes" class="md-nav__link">
+<nav aria-label="Airport Ground Access Models" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#airport-ground-access-model-trip-arrival-modes">
     Airport Ground Access Model Trip Arrival Modes
   </a>
-  
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#overnight-visitor-model" class="md-nav__link">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#overnight-visitor-model">
     Overnight Visitor Model
   </a>
-  
 </li>
-      
-    </ul>
-  
+</ul>
 </nav>
-                  </div>
-                </div>
-              </div>
-            
-          
-          
-            <div class="md-content" data-md-component="content">
-              <article class="md-content__inner md-typeset">
-                
-                  
-
-  
-  
-
-
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
 <h1 id="model-design">Model Design<a class="headerlink" href="#model-design" title="Permanent link"> ¶</a></h1>
 <p>The ABM3 model system is primarily based on the <a href="https://research.ampo.org/activitysim/">ActivitySim</a> platform; ActivitySim is used to model resident travel, cross-border travel, overnight visitor travel, airport ground access travel, and commercial vehicle travel including light, medium, and heavy commercial vehicles. Aggregate models are used to model external-internal travel (from external stations other than the U.S./Mexico border crossing) and through travel. The model system relies on <a href="https://www.bentley.com/software/emme/">EMME</a> software for network processing, skimming, and assignment. Models are mostly implemented in <a href="https://www.python.org/">Python</a>, and some models are implemented in [Java] (https://www.java.com/en/).</p>
 <p>The overall design of the model is shown in the figure below.</p>
-<p><img alt="" src="images/design/overall_model_design.png" /></p>
+<p><img alt="" src="images/design/overall_model_design.png"/></p>
 <p>The system starts by performing initial input processing in EMME. This includes building transport networks and scenarios for skimming and assignment. An initial set of skims are created based on input trip tables (e.g. warm start). Then disaggregate choice models in ActivitySIm are run, including the resident model, the crossborder travel model, two airport ground access models, the overnight visitor model, and the commercial vehicle model. Next auxiliary models are run; the taxi/TNC routing model and the autonomous vehicle intra-household allocation model are run in Java. Aggregate external-internal and through travel models are run in Python. After all models are run, trip tables are built from the result and assigned to transport networks. A check is made to determine whether the model has reached convergence (currently this is set to three feedback iterations). If convergence is reached, outputs are processed for export to the SANDAG Datalake for reporting summaries. If not, speeds from assignment are averaged using method of successive averages, and skims are rebuilt for the next iteration. The model system is then re-run with the updated skims.</p>
 <p>ActivitySim is used to represent all internal travel and internal-external made by residents of the SANDAG region (modeled area).  The decision-makers in the model system include both persons and households. These decision-makers are created (synthesized) for each simulation year and land-use scenario, based on Census data and forecasted distributions of households and persons by key socio-economic categories. A similar but simplified method is used to generate disaggregate populations for cross-border, airport ground access, and overnight visitor models. The decision-makers are used in the subsequent discrete-choice models in a microsimulation framework where a single alternative is selected from a list of available alternatives according to a probability distribution.  The probability distribution is generated from a logit model which considers the attributes of the decision-maker and the attributes of the various alternatives. The application paradigm is referred to as Monte Carlo simulation, since a random number draw is used to select an alternative from the probability distribution. The decision-making unit is an important element of model estimation and implementation and is explicitly identified for each model specified in the following sections.</p>
 <p>A key advantage of using the micro-simulation approach is that there are essentially no computational constraints on the number of explanatory variables that can be included in a model specification.  However, even with this flexibility, the model system will include some segmentation of decision-makers.  Segmentation is a useful tool to both structure models (for example, each person type segment could have their own model for certain choices) and to characterize person roles within a household.  Segments can be created for persons as well as households.</p>
@@ -805,7 +416,7 @@
 <p>The resident model structure is based on the Coordinated Travel Regional Activity-based Modeling Platform (CT-RAMP). The figure below shows the resident model structure. In order to understand the flow chart, some definitions are required. These are described in more detail below.</p>
 <ul>
 <li>Tour: A sequence of trips that start and end at an anchor location. In ActivitySim, anchors are home or work.</li>
-<li>Primary destination: The “main” activity of the tour; this activity determines the tour purpose. It also divides the tour into two &ldquo;legs&rdquo;; the sequence of trips from the anchor location to the primary destination is the outbound leg, and the sequence of trips from the primary destination back to the anchor location is the inbound or return leg.</li>
+<li>Primary destination: The “main” activity of the tour; this activity determines the tour purpose. It also divides the tour into two “legs”; the sequence of trips from the anchor location to the primary destination is the outbound leg, and the sequence of trips from the primary destination back to the anchor location is the inbound or return leg.</li>
 <li>Mandatory activity: Work or school</li>
 <li>Non-mandatory activity: Any out of home activity that is not work or school, including maintenance activities such as shopping as well as discretionary activities such as out-of-home recreation and eating out.</li>
 <li>Fully joint tour: A tour in which two or more household members travel together to all out-of-home activity locations and return home together. In other words, no household member is picked-up or dropped-off en route.</li>
@@ -813,132 +424,73 @@
 <li>Tour mode: The “main mode” or “preferred mode” of the tour. This is an abstract concept used categorize the tour with respect to accessibility and constrain the availability of modes for trips on the tour to ensure some consistency of modes used for each trip.</li>
 </ul>
 <p>The resident model design is shown below.</p>
-<p><img alt="" src="images/design/resident_model_design.png" /></p>
+<p><img alt="" src="images/design/resident_model_design.png"/></p>
 <p>The first model in the sequence is disaggregate accessibilities. This is a recent addition to ActivitySim in which the tour destination choice model is run for a prototypical sample population covering key market segments and destination choice logsums from the model are written out for each tour in the population. These destination choice logsums are then merged with the actual synthetic population and used as accessibility variables in downstream models such as auto ownership, coordinated daily activity patterns, and tour frequency. are mandatory location choice; this model is run for all workers and students regardless of whether they attend work or school on the simulated day.</p>
 <p>Next a set of long-term and mobility models are run. The first model in the sequence predicts whether an autonomous vehicle is owned by the household. This model conditions the next model, which predicts the number of autos owned. If an autonomous vehicle is owned, multiple cars are less likely. Next, the mandatory (work and school) location choice models are run. The work location choice models includes a model to predict whether the worker has a usual out-of-home work location or exclusively works from home. If the worker chooses to work from home, they will not generate a work tour. An external worker identification model determines whether each worker with an out-of-home workplace location works within the region or external to the region. If they work external to the region, the external station is identified. Any primary destination of any work tours generated by the worker will be the external station chosen by this model. A work location choice model predicts the internal work location of each internal worker, and a school location choice model predicts the school location of each student.</p>
 <p>Next, a set of models predicts whether workers and students have subsidized transit fares and if so, the percent of transit fare that is subsidized, and whether each person in the household owns a transit pass. A vehicle type choice model then runs, which predicts the body type, fuel type, and age of each vehicle owned by the household; this model was extended to predict whether each vehicle is autonomous, conditioned by the autonomous vehicle ownership model.</p>
 <p>Next, we predict whether each household has access to a vehicle transponder which can be used for managed lane use. We assume that all vehicles built after a certain year (configurable by the user) are equipped with transponders. Next we predict whether each worker has subsidized parking available at work. Finally we predict the telecommute frequency of each worker, which affects downstream models including the daily activity pattern model, the non-mandatory tour frequency model, and stop frequency models.</p>
 <p>Next the daily and tour level models are run. The first daily model is the daily activity pattern model is run, which predicts the general activity pattern type for every household member. Then Mandatory tours are generated for workers and students, the tours are scheduled (their location is already predicted by the work/school location choice model), a vehicle availability model is run that predicts which household vehicle would be used for the tour, and the tour mode is chosen. After mandatory tours are generated, a school pickup/dropoff model forms half-tours where children are dropped off and/or picked up at school. The model assigns chaperones to drive or ride with children, groups children together into “bundles” for ride-sharing, and assigns the chaperone task to either a generated work tour or generates a new tour for the purpose of ridesharing. Fully joint tours – tours where two or more household members travel together for the entire tour - are generated at a household level, their composition is predicted (adults, children or both), the participants are determined, the vehicle availability model is run, and a tour mode is chosen. The primary destination of fully joint tours is predicted, the tours are scheduled, the vehicle availability model is run, and a tour mode is chosen. Next, non-mandatory tours are generated, their primary destination is chosen, they are scheduled, the vehicle availability model is run, and a tour mode is chosen for each. At-work subtours are tours that start and end at the workplace. These are generated, scheduled (with constraints that the start and end times must nest within the start and end time of the parent work tour), a primary destination is selected, the vehicle availability model is run, and a tour mode is chosen.</p>
-<p>The major tour modes are shown below:</p>
-<div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span>
-<span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span>
-<span class="normal">48</span>
-<span class="normal">49</span>
-<span class="normal">50</span>
-<span class="normal">51</span>
-<span class="normal">52</span>
-<span class="normal">53</span>
-<span class="normal">54</span>
-<span class="normal">55</span>
-<span class="normal">56</span>
-<span class="normal">57</span>
-<span class="normal">58</span>
-<span class="normal">59</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">flowchart</span><span class="w"> </span><span class="n">TD</span>
-<span class="w">    </span><span class="n">subgraph</span><span class="w"> </span><span class="n">four</span>
-<span class="w">    </span><span class="n">direction</span><span class="w"> </span><span class="n">LR</span>
-<span class="w">    </span><span class="n">E</span><span class="p">[</span><span class="n">Ride</span><span class="o">-</span><span class="n">Hail</span><span class="p">]</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">E1</span><span class="p">[</span><span class="n">Taxi</span><span class="p">]</span>
-<span class="w">    </span><span class="n">E</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">E2</span><span class="p">[</span><span class="n">Single</span><span class="o">-</span><span class="n">pay</span><span class="w"> </span><span class="n">TNC</span><span class="p">]</span>
-<span class="w">    </span><span class="n">E</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">E3</span><span class="p">[</span><span class="n">Shared</span><span class="w"> </span><span class="n">TNC</span><span class="p">];</span>
-<span class="w">    </span><span class="n">end</span>
-<span class="w">    </span><span class="n">subgraph</span><span class="w"> </span><span class="n">three</span>
-<span class="w">    </span><span class="n">direction</span><span class="w"> </span><span class="n">LR</span>
-<span class="w">    </span><span class="n">D</span><span class="p">[</span><span class="n">Transit</span><span class="p">]</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D1</span><span class="p">[</span><span class="n">Walk</span><span class="w"> </span><span class="n">Access</span><span class="p">]</span>
-<span class="w">    </span><span class="n">D</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D2</span><span class="p">[</span><span class="n">PNR</span><span class="w"> </span><span class="n">Access</span><span class="p">]</span>
-<span class="w">    </span><span class="n">D</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D3</span><span class="p">[</span><span class="n">KNR</span><span class="w"> </span><span class="n">Access</span><span class="p">]</span>
-<span class="w">    </span><span class="n">D</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D4</span><span class="p">[</span><span class="n">TNC</span><span class="w"> </span><span class="n">Access</span><span class="p">]</span>
+<p>The major tour modes are shown below:
+<pre class="mermaid"><code>flowchart TD
+    subgraph four
+    direction LR
+    E[Ride-Hail] --&gt; E1[Taxi]
+    E --&gt; E2[Single-pay TNC]
+    E --&gt; E3[Shared TNC];
+    end
+    subgraph three
+    direction LR
+    D[Transit] --&gt; D1[Walk Access]
+    D --&gt; D2[PNR Access]
+    D --&gt; D3[KNR Access]
+    D --&gt; D4[TNC Access]
 
-<span class="w">    </span><span class="n">D1</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D11</span><span class="p">[</span><span class="n">Local</span><span class="w"> </span><span class="n">Only</span><span class="p">]</span>
-<span class="w">    </span><span class="n">D1</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D12</span><span class="p">[</span><span class="n">Premium</span><span class="w"> </span><span class="n">Only</span><span class="p">]</span>
-<span class="w">    </span><span class="n">D1</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D13</span><span class="p">[</span><span class="n">Mixed</span><span class="p">]</span>
+    D1 --&gt; D11[Local Only]
+    D1 --&gt; D12[Premium Only]
+    D1 --&gt; D13[Mixed]
 
-<span class="w">    </span><span class="n">D2</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D21</span><span class="p">[</span><span class="n">Local</span><span class="w"> </span><span class="n">Only</span><span class="p">]</span>
-<span class="w">    </span><span class="n">D2</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D22</span><span class="p">[</span><span class="n">Premium</span><span class="w"> </span><span class="n">Only</span><span class="p">]</span>
-<span class="w">    </span><span class="n">D2</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D23</span><span class="p">[</span><span class="n">Mixed</span><span class="p">]</span>
+    D2 --&gt; D21[Local Only]
+    D2 --&gt; D22[Premium Only]
+    D2 --&gt; D23[Mixed]
 
-<span class="w">    </span><span class="n">D3</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D31</span><span class="p">[</span><span class="n">Local</span><span class="w"> </span><span class="n">Only</span><span class="p">]</span>
-<span class="w">    </span><span class="n">D3</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D32</span><span class="p">[</span><span class="n">Premium</span><span class="w"> </span><span class="n">Only</span><span class="p">]</span>
-<span class="w">    </span><span class="n">D3</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D33</span><span class="p">[</span><span class="n">Mixed</span><span class="p">]</span>
+    D3 --&gt; D31[Local Only]
+    D3 --&gt; D32[Premium Only]
+    D3 --&gt; D33[Mixed]
 
-<span class="w">    </span><span class="n">D4</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D41</span><span class="p">[</span><span class="n">Local</span><span class="w"> </span><span class="n">Only</span><span class="p">]</span>
-<span class="w">    </span><span class="n">D4</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D42</span><span class="p">[</span><span class="n">Premium</span><span class="w"> </span><span class="n">Only</span><span class="p">]</span>
-<span class="w">    </span><span class="n">D4</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D43</span><span class="p">[</span><span class="n">Mixed</span><span class="p">]</span>
-<span class="w">    </span><span class="n">end</span>
-<span class="w">    </span><span class="n">subgraph</span><span class="w"> </span><span class="n">two</span>
-<span class="w">    </span><span class="n">direction</span><span class="w"> </span><span class="n">LR</span>
-<span class="w">    </span><span class="n">C</span><span class="p">[</span><span class="n">Active</span><span class="p">]</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">C1</span><span class="p">[</span><span class="n">Walk</span><span class="p">]</span>
-<span class="w">    </span><span class="n">C</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">C2</span><span class="p">[</span><span class="n">Bike</span><span class="p">]</span>
-<span class="w">    </span><span class="n">C</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">C3</span><span class="p">[</span><span class="n">E</span><span class="o">-</span><span class="n">Scooter</span><span class="p">]</span>
-<span class="w">    </span><span class="n">C</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">C4</span><span class="p">[</span><span class="n">E</span><span class="o">-</span><span class="n">Bike</span><span class="p">]</span>
-<span class="w">    </span><span class="n">end</span>
+    D4 --&gt; D41[Local Only]
+    D4 --&gt; D42[Premium Only]
+    D4 --&gt; D43[Mixed]
+    end
+    subgraph two
+    direction LR
+    C[Active] --&gt; C1[Walk]
+    C --&gt; C2[Bike]
+    C --&gt; C3[E-Scooter]
+    C --&gt; C4[E-Bike]
+    end
 
-<span class="w">    </span><span class="n">subgraph</span><span class="w"> </span><span class="n">one</span>
-<span class="w">    </span><span class="n">direction</span><span class="w"> </span><span class="n">LR</span>
-<span class="w">    </span><span class="n">B</span><span class="p">[</span><span class="n">Auto</span><span class="p">]</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">B1</span><span class="p">[</span><span class="n">Drive</span><span class="o">-</span><span class="n">alone</span><span class="p">];</span>
-<span class="w">    </span><span class="n">B</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">B2</span><span class="p">[</span><span class="n">Shared</span><span class="w"> </span><span class="mi">2</span><span class="p">];</span>
-<span class="w">    </span><span class="n">B</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">B3</span><span class="p">[</span><span class="n">Shared</span><span class="w"> </span><span class="mi">3</span><span class="o">+</span><span class="p">];</span>
-<span class="w">    </span><span class="n">end</span>
-<span class="w">    </span><span class="n">A</span><span class="p">[</span><span class="n">Tour</span><span class="w"> </span><span class="n">Mode</span><span class="p">]</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">one</span><span class="p">;</span>
-<span class="w">    </span><span class="n">A</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">two</span><span class="p">;</span>
-<span class="w">    </span><span class="n">A</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">three</span><span class="p">;</span>
-<span class="w">    </span><span class="n">A</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">four</span><span class="p">;</span>
+    subgraph one
+    direction LR
+    B[Auto] --&gt; B1[Drive-alone];
+    B --&gt; B2[Shared 2];
+    B --&gt; B3[Shared 3+];
+    end
+    A[Tour Mode] --&gt; one;
+    A --&gt; two;
+    A --&gt; three;
+    A --&gt; four;
 
-<span class="w">    </span><span class="n">classDef</span><span class="w"> </span><span class="n">group1</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="n">f75f5f</span><span class="p">,</span><span class="n">stroke</span><span class="o">:</span><span class="err">#</span><span class="mi">333</span><span class="p">,</span><span class="n">stroke</span><span class="o">-</span><span class="n">width</span><span class="o">:</span><span class="mi">4</span><span class="n">px</span><span class="p">,</span><span class="n">font</span><span class="o">-</span><span class="n">size</span><span class="o">:</span><span class="mi">26</span><span class="n">px</span><span class="p">,</span><span class="n">font</span><span class="o">-</span><span class="n">weight</span><span class="o">:</span><span class="n">bold</span><span class="p">;</span>
-<span class="w">    </span><span class="n">classDef</span><span class="w"> </span><span class="n">group2</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="n">ffd966</span><span class="p">,</span><span class="n">stroke</span><span class="o">:</span><span class="err">#</span><span class="mi">333</span><span class="p">,</span><span class="n">stroke</span><span class="o">-</span><span class="n">width</span><span class="o">:</span><span class="mi">2</span><span class="n">px</span><span class="p">,</span><span class="n">font</span><span class="o">-</span><span class="n">size</span><span class="o">:</span><span class="mi">20</span><span class="n">px</span><span class="p">;</span>
-<span class="w">    </span><span class="n">classDef</span><span class="w"> </span><span class="n">group3</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="n">bdabf0</span><span class="p">,</span><span class="n">stroke</span><span class="o">:</span><span class="err">#</span><span class="mi">333</span><span class="p">,</span><span class="n">stroke</span><span class="o">-</span><span class="n">width</span><span class="o">:</span><span class="mi">2</span><span class="n">px</span><span class="p">,</span><span class="n">font</span><span class="o">-</span><span class="n">size</span><span class="o">:</span><span class="mi">18</span><span class="n">px</span><span class="p">;</span>
+    classDef group1 fill:#f75f5f,stroke:#333,stroke-width:4px,font-size:26px,font-weight:bold;
+    classDef group2 fill:#ffd966,stroke:#333,stroke-width:2px,font-size:20px;
+    classDef group3 fill:#bdabf0,stroke:#333,stroke-width:2px,font-size:18px;
 
-<span class="w">    </span><span class="n">classDef</span><span class="w"> </span><span class="n">hiddenTitle</span><span class="w"> </span><span class="n">color</span><span class="o">:</span><span class="n">transparent</span><span class="p">;</span>
-<span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="n">one</span><span class="p">,</span><span class="n">two</span><span class="p">,</span><span class="n">three</span><span class="p">,</span><span class="n">four</span><span class="w"> </span><span class="n">hiddenTitle</span><span class="p">;</span>
+    classDef hiddenTitle color:transparent;
+    class one,two,three,four hiddenTitle;
 
-<span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="n">A</span><span class="w"> </span><span class="n">group1</span><span class="p">;</span>
-<span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="n">B</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="n">D</span><span class="p">,</span><span class="n">E</span><span class="w"> </span><span class="n">group2</span><span class="p">;</span>
-<span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="n">B1</span><span class="p">,</span><span class="n">B2</span><span class="p">,</span><span class="n">B3</span><span class="p">,</span><span class="n">C1</span><span class="p">,</span><span class="n">C2</span><span class="p">,</span><span class="n">C3</span><span class="p">,</span><span class="n">C4</span><span class="p">,</span><span class="n">D1</span><span class="p">,</span><span class="n">D2</span><span class="p">,</span><span class="n">D3</span><span class="p">,</span><span class="n">D4</span><span class="p">,</span><span class="n">E1</span><span class="p">,</span><span class="n">E2</span><span class="p">,</span><span class="n">E3</span><span class="p">,</span><span class="n">D11</span><span class="p">,</span><span class="n">D12</span><span class="p">,</span><span class="n">D13</span><span class="p">,</span><span class="n">D21</span><span class="p">,</span><span class="n">D22</span><span class="p">,</span><span class="n">D23</span><span class="p">,</span><span class="n">D31</span><span class="p">,</span><span class="n">D32</span><span class="p">,</span><span class="n">D33</span><span class="p">,</span><span class="n">D41</span><span class="p">,</span><span class="n">D42</span><span class="p">,</span><span class="n">D43</span><span class="w"> </span><span class="n">group3</span><span class="p">;</span>
-</code></pre></div></td></tr></table></div>
-
+    class A group1;
+    class B,C,D,E group2;
+    class B1,B2,B3,C1,C2,C3,C4,D1,D2,D3,D4,E1,E2,E3,D11,D12,D13,D21,D22,D23,D31,D32,D33,D41,D42,D43 group3;
+</code></pre></p>
 <p>At this point, all tours are generated, scheduled, have a primary destination, and a selected tour mode. The next set of models fills in details about the tours - number of intermediate stops, location of each stop, the departure time of each stop, and the mode of each trip on the tour. Finally, the parking location of each auto trip to the central business district (CBD) is determined.
 After the model is run, the output files listed above are created. The trip lists are then summarized into origin-destination matrices by time period and vehicle class or transit mode and assigned to the transport network.</p>
 <h2 id="crossborder-model">Crossborder Model<a class="headerlink" href="#crossborder-model" title="Permanent link"> ¶</a></h2>
@@ -955,7 +507,7 @@ travel is represented by the external-external travel model.</li>
 commercial vehicle model.</li>
 </ul>
 <p>The overall design of the model is shown in the figure below.</p>
-<p><img alt="" src="images/design/crossborder_model_design.png" /></p>
+<p><img alt="" src="images/design/crossborder_model_design.png"/></p>
 <h3 id="crossborder-model-purpose-definitions">Crossborder Model Purpose Definitions<a class="headerlink" href="#crossborder-model-purpose-definitions" title="Permanent link"> ¶</a></h3>
 <p>There are five activity purposes in the cross-border travel demand model:
   * Work: Any activity involving work for pay.
@@ -965,76 +517,42 @@ commercial vehicle model.</li>
   * Other: A broad category including eating out, medical appointments, recreational activities, etc.</p>
 <p>Note that home activities are not listed, since we do not model activities south of the border.</p>
 <h3 id="crossborder-model-mode-definitions">Crossborder Model Mode Definitions<a class="headerlink" href="#crossborder-model-mode-definitions" title="Permanent link"> ¶</a></h3>
-<p>The major tour modes are shown below:</p>
-<div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">flowchart</span><span class="w"> </span><span class="n">TD</span>
-<span class="w">    </span><span class="n">subgraph</span><span class="w"> </span><span class="n">three</span>
-<span class="w">    </span><span class="n">direction</span><span class="w"> </span><span class="n">LR</span>
-<span class="w">    </span><span class="n">D</span><span class="p">[</span><span class="n">Transit</span><span class="p">]</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D1</span><span class="p">[</span><span class="n">Walk</span><span class="w"> </span><span class="n">Access</span><span class="p">]</span>
+<p>The major tour modes are shown below:
+<pre class="mermaid"><code>flowchart TD
+    subgraph three
+    direction LR
+    D[Transit] --&gt; D1[Walk Access]
 
-<span class="w">    </span><span class="n">D1</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D11</span><span class="p">[</span><span class="n">Local</span><span class="w"> </span><span class="n">Only</span><span class="p">]</span>
-<span class="w">    </span><span class="n">D1</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D12</span><span class="p">[</span><span class="n">Premium</span><span class="w"> </span><span class="n">Only</span><span class="p">]</span>
-<span class="w">    </span><span class="n">D1</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D13</span><span class="p">[</span><span class="n">Mixed</span><span class="p">]</span>
-<span class="w">    </span><span class="n">end</span>
-<span class="w">    </span><span class="n">subgraph</span><span class="w"> </span><span class="n">two</span>
-<span class="w">    </span><span class="n">direction</span><span class="w"> </span><span class="n">LR</span>
-<span class="w">    </span><span class="n">C</span><span class="p">[</span><span class="n">Active</span><span class="p">]</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">C1</span><span class="p">[</span><span class="n">Walk</span><span class="p">]</span>
-<span class="w">    </span><span class="n">end</span>
+    D1 --&gt; D11[Local Only]
+    D1 --&gt; D12[Premium Only]
+    D1 --&gt; D13[Mixed]
+    end
+    subgraph two
+    direction LR
+    C[Active] --&gt; C1[Walk]
+    end
 
-<span class="w">    </span><span class="n">subgraph</span><span class="w"> </span><span class="n">one</span>
-<span class="w">    </span><span class="n">direction</span><span class="w"> </span><span class="n">LR</span>
-<span class="w">    </span><span class="n">B</span><span class="p">[</span><span class="n">Auto</span><span class="p">]</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">B1</span><span class="p">[</span><span class="n">Drive</span><span class="o">-</span><span class="n">alone</span><span class="p">];</span>
-<span class="w">    </span><span class="n">B</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">B2</span><span class="p">[</span><span class="n">Shared</span><span class="w"> </span><span class="mi">2</span><span class="p">];</span>
-<span class="w">    </span><span class="n">B</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">B3</span><span class="p">[</span><span class="n">Shared</span><span class="w"> </span><span class="mi">3</span><span class="o">+</span><span class="p">];</span>
-<span class="w">    </span><span class="n">end</span>
-<span class="w">    </span><span class="n">A</span><span class="p">[</span><span class="n">Tour</span><span class="w"> </span><span class="n">Mode</span><span class="err">\</span><span class="n">Border</span><span class="w"> </span><span class="n">Crossing</span><span class="w"> </span><span class="n">Mode</span><span class="p">]</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">one</span><span class="p">;</span>
-<span class="w">    </span><span class="n">A</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">two</span><span class="p">;</span>
-<span class="w">    </span><span class="n">A</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">three</span><span class="p">;</span>
+    subgraph one
+    direction LR
+    B[Auto] --&gt; B1[Drive-alone];
+    B --&gt; B2[Shared 2];
+    B --&gt; B3[Shared 3+];
+    end
+    A[Tour Mode\Border Crossing Mode] --&gt; one;
+    A --&gt; two;
+    A --&gt; three;
 
-<span class="w">    </span><span class="n">classDef</span><span class="w"> </span><span class="n">group1</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="n">f75f5f</span><span class="p">,</span><span class="n">stroke</span><span class="o">:</span><span class="err">#</span><span class="mi">333</span><span class="p">,</span><span class="n">stroke</span><span class="o">-</span><span class="n">width</span><span class="o">:</span><span class="mi">4</span><span class="n">px</span><span class="p">,</span><span class="n">font</span><span class="o">-</span><span class="n">size</span><span class="o">:</span><span class="mi">26</span><span class="n">px</span><span class="p">,</span><span class="n">font</span><span class="o">-</span><span class="n">weight</span><span class="o">:</span><span class="n">bold</span><span class="p">;</span>
-<span class="w">    </span><span class="n">classDef</span><span class="w"> </span><span class="n">group2</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="n">ffd966</span><span class="p">,</span><span class="n">stroke</span><span class="o">:</span><span class="err">#</span><span class="mi">333</span><span class="p">,</span><span class="n">stroke</span><span class="o">-</span><span class="n">width</span><span class="o">:</span><span class="mi">2</span><span class="n">px</span><span class="p">,</span><span class="n">font</span><span class="o">-</span><span class="n">size</span><span class="o">:</span><span class="mi">20</span><span class="n">px</span><span class="p">;</span>
-<span class="w">    </span><span class="n">classDef</span><span class="w"> </span><span class="n">group3</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="n">bdabf0</span><span class="p">,</span><span class="n">stroke</span><span class="o">:</span><span class="err">#</span><span class="mi">333</span><span class="p">,</span><span class="n">stroke</span><span class="o">-</span><span class="n">width</span><span class="o">:</span><span class="mi">2</span><span class="n">px</span><span class="p">,</span><span class="n">font</span><span class="o">-</span><span class="n">size</span><span class="o">:</span><span class="mi">18</span><span class="n">px</span><span class="p">;</span>
+    classDef group1 fill:#f75f5f,stroke:#333,stroke-width:4px,font-size:26px,font-weight:bold;
+    classDef group2 fill:#ffd966,stroke:#333,stroke-width:2px,font-size:20px;
+    classDef group3 fill:#bdabf0,stroke:#333,stroke-width:2px,font-size:18px;
 
-<span class="w">    </span><span class="n">classDef</span><span class="w"> </span><span class="n">hiddenTitle</span><span class="w"> </span><span class="n">color</span><span class="o">:</span><span class="n">transparent</span><span class="p">;</span>
-<span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="n">one</span><span class="p">,</span><span class="n">two</span><span class="p">,</span><span class="n">three</span><span class="w"> </span><span class="n">hiddenTitle</span><span class="p">;</span>
+    classDef hiddenTitle color:transparent;
+    class one,two,three hiddenTitle;
 
-<span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="n">A</span><span class="w"> </span><span class="n">group1</span><span class="p">;</span>
-<span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="n">B</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="n">D</span><span class="p">,</span><span class="n">E</span><span class="w"> </span><span class="n">group2</span><span class="p">;</span>
-<span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="n">B1</span><span class="p">,</span><span class="n">B2</span><span class="p">,</span><span class="n">B3</span><span class="p">,</span><span class="n">C1</span><span class="p">,</span><span class="n">C2</span><span class="p">,</span><span class="n">C3</span><span class="p">,</span><span class="n">C4</span><span class="p">,</span><span class="n">D1</span><span class="p">,</span><span class="n">D11</span><span class="p">,</span><span class="n">D12</span><span class="p">,</span><span class="n">D13</span><span class="w"> </span><span class="n">group3</span><span class="p">;</span>
-</code></pre></div></td></tr></table></div>
-
+    class A group1;
+    class B,C,D,E group2;
+    class B1,B2,B3,C1,C2,C3,C4,D1,D11,D12,D13 group3;
+</code></pre></p>
 <p>The model has the following mode types at the trip level:
   * Drive-alone: Single occupant private vehicle
   * Shared 2: A private vehicle with exactly two passengers
@@ -1083,9 +601,9 @@ primary destination MGRA and border crossing station.</p>
 <h2 id="airport-ground-access-models">Airport Ground Access Models<a class="headerlink" href="#airport-ground-access-models" title="Permanent link"> ¶</a></h2>
 <p>There are two airport ground access models - one for San Diego International Airport and one for the Crossborder Express terminal which provides access to Tijuana International Airport from the United States. Both models use the same structure and software code, though the parameters that control the total number of airport travel parties, off-airport destination, mode, arrival and departure times, and other characteristics, vary for each airport according to survey and airport-specific data.
 The airport ground access model simulates trips to and from the airport for residents, visitors, and external travelers. These trips are generated by arriving or departing passengers and are modeled as tours within the ActivitySim framework. A post processing script also generates trips to serve passengers who require a pickup or dropoff at the airport. For example, a passenger who is picked up at the airport generates two trips; one trip to the airport by the driver to pick up the air passenger(s), and another trip from the airport with the driver and the air passenger(s).
-It is important to note that, to work within the ActivitySim framework, the airport trips must be modeled as tours, rather than being generated directly as in the previous model. These tours are assigned an origin at the airport MGRA. During the stop frequency step of ActivitySim, a trip is assigned to the appropriate leg of the tour (either to or from the airport) while the opposite leg is not assigned any trips (referred to as the ‘dummy leg’). Passengers who are leaving on a departing flight and traveling to the airport are considered &ldquo;inbound,&rdquo; while arriving passengers are considered &ldquo;outbound&rdquo;.</p>
+It is important to note that, to work within the ActivitySim framework, the airport trips must be modeled as tours, rather than being generated directly as in the previous model. These tours are assigned an origin at the airport MGRA. During the stop frequency step of ActivitySim, a trip is assigned to the appropriate leg of the tour (either to or from the airport) while the opposite leg is not assigned any trips (referred to as the ‘dummy leg’). Passengers who are leaving on a departing flight and traveling to the airport are considered “inbound,” while arriving passengers are considered “outbound”.</p>
 <p>The overall design of the model is shown in the figure below.</p>
-<p><img alt="" src="images/design/airport_model_design.png" /></p>
+<p><img alt="" src="images/design/airport_model_design.png"/></p>
 <ol>
 <li>Tour Enumeration: A list of airport travel parties is generated from input enplanements and transferring passenger rates, as well as distributions that describe the share of travel parties by purpose (business versus personal), household income, and party size.</li>
 <li>
@@ -1101,108 +619,58 @@ Employees are not fed into the trip mode choice model. Instead, if a transit sha
 <p>3.4 Write trip matrices: The write trip matrices step converts the trip lists into vehicle trip matrices. The matrices are segmented by trip mode and value of time bins. The vehicle trip modes in the matrices include SOV, HOV2, HOV3+, Taxi, and TNC-single. Value of time segmentation is either low, medium, or high bins based on the thresholds set in the model settings.</p>
 </li>
 </ol>
-<p>The major tour modes are shown below:</p>
-<div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span>
-<span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span>
-<span class="normal">48</span>
-<span class="normal">49</span>
-<span class="normal">50</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">flowchart</span><span class="w"> </span><span class="n">TD</span>
-<span class="w">    </span><span class="n">subgraph</span><span class="w"> </span><span class="n">four</span>
-<span class="w">    </span><span class="n">direction</span><span class="w"> </span><span class="n">LR</span>
-<span class="w">    </span><span class="n">E</span><span class="p">[</span><span class="n">Ride</span><span class="o">-</span><span class="n">Hail</span><span class="p">]</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">E1</span><span class="p">[</span><span class="n">Taxi</span><span class="p">]</span>
-<span class="w">    </span><span class="n">end</span>
-<span class="w">    </span><span class="n">subgraph</span><span class="w"> </span><span class="n">three</span>
-<span class="w">    </span><span class="n">direction</span><span class="w"> </span><span class="n">LR</span>
-<span class="w">    </span><span class="n">D</span><span class="p">[</span><span class="n">Transit</span><span class="p">]</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D1</span><span class="p">[</span><span class="n">Walk</span><span class="w"> </span><span class="n">Access</span><span class="p">]</span>
-<span class="w">    </span><span class="o">%%</span><span class="w"> </span><span class="n">D</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D2</span><span class="p">[</span><span class="n">PNR</span><span class="w"> </span><span class="n">Access</span><span class="p">]</span>
-<span class="w">    </span><span class="n">D</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D3</span><span class="p">[</span><span class="n">KNR</span><span class="w"> </span><span class="n">Access</span><span class="p">]</span>
-<span class="w">    </span><span class="n">D</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D4</span><span class="p">[</span><span class="n">TNC</span><span class="w"> </span><span class="n">Access</span><span class="p">]</span>
+<p>The major tour modes are shown below:
+<pre class="mermaid"><code>flowchart TD
+    subgraph four
+    direction LR
+    E[Ride-Hail] --&gt; E1[Taxi]
+    end
+    subgraph three
+    direction LR
+    D[Transit] --&gt; D1[Walk Access]
+    %% D --&gt; D2[PNR Access]
+    D --&gt; D3[KNR Access]
+    D --&gt; D4[TNC Access]
 
-<span class="w">    </span><span class="n">D1</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D11</span><span class="p">[</span><span class="n">Local</span><span class="w"> </span><span class="n">Only</span><span class="p">]</span>
-<span class="w">    </span><span class="n">D1</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D12</span><span class="p">[</span><span class="n">Premium</span><span class="w"> </span><span class="n">Only</span><span class="p">]</span>
-<span class="w">    </span><span class="n">D1</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D13</span><span class="p">[</span><span class="n">Mixed</span><span class="p">]</span>
+    D1 --&gt; D11[Local Only]
+    D1 --&gt; D12[Premium Only]
+    D1 --&gt; D13[Mixed]
 
-<span class="w">    </span><span class="n">D3</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D31</span><span class="p">[</span><span class="n">Local</span><span class="w"> </span><span class="n">Only</span><span class="p">]</span>
-<span class="w">    </span><span class="n">D3</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D32</span><span class="p">[</span><span class="n">Premium</span><span class="w"> </span><span class="n">Only</span><span class="p">]</span>
-<span class="w">    </span><span class="n">D3</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D33</span><span class="p">[</span><span class="n">Mixed</span><span class="p">]</span>
+    D3 --&gt; D31[Local Only]
+    D3 --&gt; D32[Premium Only]
+    D3 --&gt; D33[Mixed]
 
-<span class="w">    </span><span class="n">D4</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D41</span><span class="p">[</span><span class="n">Local</span><span class="w"> </span><span class="n">Only</span><span class="p">]</span>
-<span class="w">    </span><span class="n">D4</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D42</span><span class="p">[</span><span class="n">Premium</span><span class="w"> </span><span class="n">Only</span><span class="p">]</span>
-<span class="w">    </span><span class="n">D4</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D43</span><span class="p">[</span><span class="n">Mixed</span><span class="p">]</span>
-<span class="w">    </span><span class="n">end</span>
-<span class="w">    </span><span class="n">subgraph</span><span class="w"> </span><span class="n">two</span>
-<span class="w">    </span><span class="n">direction</span><span class="w"> </span><span class="n">LR</span>
-<span class="w">    </span><span class="n">C</span><span class="p">[</span><span class="n">Active</span><span class="p">]</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">C1</span><span class="p">[</span><span class="n">Walk</span><span class="p">]</span>
-<span class="w">    </span><span class="n">end</span>
+    D4 --&gt; D41[Local Only]
+    D4 --&gt; D42[Premium Only]
+    D4 --&gt; D43[Mixed]
+    end
+    subgraph two
+    direction LR
+    C[Active] --&gt; C1[Walk]
+    end
 
-<span class="w">    </span><span class="n">subgraph</span><span class="w"> </span><span class="n">one</span>
-<span class="w">    </span><span class="n">direction</span><span class="w"> </span><span class="n">LR</span>
-<span class="w">    </span><span class="n">B</span><span class="p">[</span><span class="n">Auto</span><span class="p">]</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">B1</span><span class="p">[</span><span class="n">Drive</span><span class="o">-</span><span class="n">alone</span><span class="p">];</span>
-<span class="w">    </span><span class="n">B</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">B2</span><span class="p">[</span><span class="n">Shared</span><span class="w"> </span><span class="mi">2</span><span class="p">];</span>
-<span class="w">    </span><span class="n">B</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">B3</span><span class="p">[</span><span class="n">Shared</span><span class="w"> </span><span class="mi">3</span><span class="o">+</span><span class="p">];</span>
-<span class="w">    </span><span class="n">end</span>
-<span class="w">    </span><span class="n">A</span><span class="p">[</span><span class="n">Tour</span><span class="w"> </span><span class="n">Mode</span><span class="p">]</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">one</span><span class="p">;</span>
-<span class="w">    </span><span class="n">A</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">two</span><span class="p">;</span>
-<span class="w">    </span><span class="n">A</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">three</span><span class="p">;</span>
-<span class="w">    </span><span class="n">A</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">four</span><span class="p">;</span>
+    subgraph one
+    direction LR
+    B[Auto] --&gt; B1[Drive-alone];
+    B --&gt; B2[Shared 2];
+    B --&gt; B3[Shared 3+];
+    end
+    A[Tour Mode] --&gt; one;
+    A --&gt; two;
+    A --&gt; three;
+    A --&gt; four;
 
-<span class="w">    </span><span class="n">classDef</span><span class="w"> </span><span class="n">group1</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="n">f75f5f</span><span class="p">,</span><span class="n">stroke</span><span class="o">:</span><span class="err">#</span><span class="mi">333</span><span class="p">,</span><span class="n">stroke</span><span class="o">-</span><span class="n">width</span><span class="o">:</span><span class="mi">4</span><span class="n">px</span><span class="p">,</span><span class="n">font</span><span class="o">-</span><span class="n">size</span><span class="o">:</span><span class="mi">26</span><span class="n">px</span><span class="p">,</span><span class="n">font</span><span class="o">-</span><span class="n">weight</span><span class="o">:</span><span class="n">bold</span><span class="p">;</span>
-<span class="w">    </span><span class="n">classDef</span><span class="w"> </span><span class="n">group2</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="n">ffd966</span><span class="p">,</span><span class="n">stroke</span><span class="o">:</span><span class="err">#</span><span class="mi">333</span><span class="p">,</span><span class="n">stroke</span><span class="o">-</span><span class="n">width</span><span class="o">:</span><span class="mi">2</span><span class="n">px</span><span class="p">,</span><span class="n">font</span><span class="o">-</span><span class="n">size</span><span class="o">:</span><span class="mi">20</span><span class="n">px</span><span class="p">;</span>
-<span class="w">    </span><span class="n">classDef</span><span class="w"> </span><span class="n">group3</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="n">bdabf0</span><span class="p">,</span><span class="n">stroke</span><span class="o">:</span><span class="err">#</span><span class="mi">333</span><span class="p">,</span><span class="n">stroke</span><span class="o">-</span><span class="n">width</span><span class="o">:</span><span class="mi">2</span><span class="n">px</span><span class="p">,</span><span class="n">font</span><span class="o">-</span><span class="n">size</span><span class="o">:</span><span class="mi">18</span><span class="n">px</span><span class="p">;</span>
+    classDef group1 fill:#f75f5f,stroke:#333,stroke-width:4px,font-size:26px,font-weight:bold;
+    classDef group2 fill:#ffd966,stroke:#333,stroke-width:2px,font-size:20px;
+    classDef group3 fill:#bdabf0,stroke:#333,stroke-width:2px,font-size:18px;
 
-<span class="w">    </span><span class="n">classDef</span><span class="w"> </span><span class="n">hiddenTitle</span><span class="w"> </span><span class="n">color</span><span class="o">:</span><span class="n">transparent</span><span class="p">;</span>
-<span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="n">one</span><span class="p">,</span><span class="n">two</span><span class="p">,</span><span class="n">three</span><span class="p">,</span><span class="n">four</span><span class="w"> </span><span class="n">hiddenTitle</span><span class="p">;</span>
+    classDef hiddenTitle color:transparent;
+    class one,two,three,four hiddenTitle;
 
-<span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="n">A</span><span class="w"> </span><span class="n">group1</span><span class="p">;</span>
-<span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="n">B</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="n">D</span><span class="p">,</span><span class="n">E</span><span class="w"> </span><span class="n">group2</span><span class="p">;</span>
-<span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="n">B1</span><span class="p">,</span><span class="n">B2</span><span class="p">,</span><span class="n">B3</span><span class="p">,</span><span class="n">C1</span><span class="p">,</span><span class="n">C2</span><span class="p">,</span><span class="n">C3</span><span class="p">,</span><span class="n">C4</span><span class="p">,</span><span class="n">D1</span><span class="p">,</span><span class="n">D2</span><span class="p">,</span><span class="n">D3</span><span class="p">,</span><span class="n">D4</span><span class="p">,</span><span class="n">E1</span><span class="p">,</span><span class="n">E2</span><span class="p">,</span><span class="n">E3</span><span class="p">,</span><span class="n">D11</span><span class="p">,</span><span class="n">D12</span><span class="p">,</span><span class="n">D13</span><span class="p">,</span><span class="n">D21</span><span class="p">,</span><span class="n">D22</span><span class="p">,</span><span class="n">D23</span><span class="p">,</span><span class="n">D31</span><span class="p">,</span><span class="n">D32</span><span class="p">,</span><span class="n">D33</span><span class="p">,</span><span class="n">D41</span><span class="p">,</span><span class="n">D42</span><span class="p">,</span><span class="n">D43</span><span class="w"> </span><span class="n">group3</span><span class="p">;</span>
-</code></pre></div></td></tr></table></div>
-
+    class A group1;
+    class B,C,D,E group2;
+    class B1,B2,B3,C1,C2,C3,C4,D1,D2,D3,D4,E1,E2,E3,D11,D12,D13,D21,D22,D23,D31,D32,D33,D41,D42,D43 group3;
+</code></pre></p>
 <h4 id="airport-ground-access-model-trip-arrival-modes">Airport Ground Access Model Trip Arrival Modes<a class="headerlink" href="#airport-ground-access-model-trip-arrival-modes" title="Permanent link"> ¶</a></h4>
 <table>
 <thead>
@@ -1346,7 +814,7 @@ Employees are not fed into the trip mode choice model. Instead, if a transit sha
 <h2 id="overnight-visitor-model">Overnight Visitor Model<a class="headerlink" href="#overnight-visitor-model" title="Permanent link"> ¶</a></h2>
 <p>The Overnight Visitor Model simulates trips of visitors staying overnight in hotels, motels, short-term vacation rentals, and with friends and family. The trips are modeled as part of tours that begin and end at the place of lodging. However, unlike the resident model, the Overnight Visitor Model does not utilize a 24-hour activity schedule. Therefore it can be thought of as a simpler, tour-based model. Once each tour is generated, it is scheduled independently. The model uses the same time periods and modes as the resident model.
 The overall design of the model is shown in the figure below.</p>
-<p><img alt="" src="images/design/visitor_model_design.png" /></p>
+<p><img alt="" src="images/design/visitor_model_design.png"/></p>
 <ol>
 <li>
 <p>Tour Enumeration: A list of visitor parties is generated from the input household data and hotel room inventory at the MGRA level. Visitor travel parties by segment (business versus personal) are calculated based on separate rates for hotels and for households. Visitor parties are generated by purpose based on tour rates by segment, then attributed with household income and party size based on input distributions. There are three purposes in the Overnight Visitor model:</p>
@@ -1377,139 +845,81 @@ The overall design of the model is shown in the figure below.</p>
 <p>4.3 Trip Assignment: Trips are aggregated by time of day, mode occupancy, value-of-time, and origin-destination TAZ and assigned simultaneously with other trips.</p>
 </li>
 </ol>
-<p>The major tour modes are shown below:</p>
-<div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">flowchart</span><span class="w"> </span><span class="n">TD</span>
-<span class="w">    </span><span class="n">subgraph</span><span class="w"> </span><span class="n">four</span>
-<span class="w">    </span><span class="n">direction</span><span class="w"> </span><span class="n">LR</span>
-<span class="w">    </span><span class="n">E</span><span class="p">[</span><span class="n">Ride</span><span class="o">-</span><span class="n">Hail</span><span class="p">]</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">E1</span><span class="p">[</span><span class="n">Taxi</span><span class="p">]</span>
-<span class="w">    </span><span class="n">E</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">E2</span><span class="p">[</span><span class="n">Single</span><span class="o">-</span><span class="n">pay</span><span class="w"> </span><span class="n">TNC</span><span class="p">];</span>
-<span class="w">    </span><span class="n">end</span>
-<span class="w">    </span><span class="n">subgraph</span><span class="w"> </span><span class="n">three</span>
-<span class="w">    </span><span class="n">direction</span><span class="w"> </span><span class="n">LR</span>
-<span class="w">    </span><span class="n">D</span><span class="p">[</span><span class="n">Transit</span><span class="p">]</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D1</span><span class="p">[</span><span class="n">Walk</span><span class="w"> </span><span class="n">Access</span><span class="p">]</span>
+<p>The major tour modes are shown below:
+<pre class="mermaid"><code>flowchart TD
+    subgraph four
+    direction LR
+    E[Ride-Hail] --&gt; E1[Taxi]
+    E --&gt; E2[Single-pay TNC];
+    end
+    subgraph three
+    direction LR
+    D[Transit] --&gt; D1[Walk Access]
 
-<span class="w">    </span><span class="n">D1</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D11</span><span class="p">[</span><span class="n">Local</span><span class="w"> </span><span class="n">Only</span><span class="p">]</span>
-<span class="w">    </span><span class="n">D1</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D12</span><span class="p">[</span><span class="n">Premium</span><span class="w"> </span><span class="n">Only</span><span class="p">]</span>
-<span class="w">    </span><span class="n">D1</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">D13</span><span class="p">[</span><span class="n">Mixed</span><span class="p">]</span>
-<span class="w">    </span><span class="n">end</span>
-<span class="w">    </span><span class="n">subgraph</span><span class="w"> </span><span class="n">two</span>
-<span class="w">    </span><span class="n">direction</span><span class="w"> </span><span class="n">LR</span>
-<span class="w">    </span><span class="n">C</span><span class="p">[</span><span class="n">Active</span><span class="p">]</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">C1</span><span class="p">[</span><span class="n">Walk</span><span class="p">]</span>
-<span class="w">    </span><span class="n">end</span>
+    D1 --&gt; D11[Local Only]
+    D1 --&gt; D12[Premium Only]
+    D1 --&gt; D13[Mixed]
+    end
+    subgraph two
+    direction LR
+    C[Active] --&gt; C1[Walk]
+    end
 
-<span class="w">    </span><span class="n">subgraph</span><span class="w"> </span><span class="n">one</span>
-<span class="w">    </span><span class="n">direction</span><span class="w"> </span><span class="n">LR</span>
-<span class="w">    </span><span class="n">B</span><span class="p">[</span><span class="n">Auto</span><span class="p">]</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">B1</span><span class="p">[</span><span class="n">Drive</span><span class="o">-</span><span class="n">alone</span><span class="p">];</span>
-<span class="w">    </span><span class="n">B</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">B2</span><span class="p">[</span><span class="n">Shared</span><span class="w"> </span><span class="mi">2</span><span class="p">];</span>
-<span class="w">    </span><span class="n">B</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">B3</span><span class="p">[</span><span class="n">Shared</span><span class="w"> </span><span class="mi">3</span><span class="o">+</span><span class="p">];</span>
-<span class="w">    </span><span class="n">end</span>
-<span class="w">    </span><span class="n">A</span><span class="p">[</span><span class="n">Tour</span><span class="w"> </span><span class="n">Mode</span><span class="p">]</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">one</span><span class="p">;</span>
-<span class="w">    </span><span class="n">A</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">two</span><span class="p">;</span>
-<span class="w">    </span><span class="n">A</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">three</span><span class="p">;</span>
-<span class="w">    </span><span class="n">A</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">four</span><span class="p">;</span>
+    subgraph one
+    direction LR
+    B[Auto] --&gt; B1[Drive-alone];
+    B --&gt; B2[Shared 2];
+    B --&gt; B3[Shared 3+];
+    end
+    A[Tour Mode] --&gt; one;
+    A --&gt; two;
+    A --&gt; three;
+    A --&gt; four;
 
-<span class="w">    </span><span class="n">classDef</span><span class="w"> </span><span class="n">group1</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="n">f75f5f</span><span class="p">,</span><span class="n">stroke</span><span class="o">:</span><span class="err">#</span><span class="mi">333</span><span class="p">,</span><span class="n">stroke</span><span class="o">-</span><span class="n">width</span><span class="o">:</span><span class="mi">4</span><span class="n">px</span><span class="p">,</span><span class="n">font</span><span class="o">-</span><span class="n">size</span><span class="o">:</span><span class="mi">26</span><span class="n">px</span><span class="p">,</span><span class="n">font</span><span class="o">-</span><span class="n">weight</span><span class="o">:</span><span class="n">bold</span><span class="p">;</span>
-<span class="w">    </span><span class="n">classDef</span><span class="w"> </span><span class="n">group2</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="n">ffd966</span><span class="p">,</span><span class="n">stroke</span><span class="o">:</span><span class="err">#</span><span class="mi">333</span><span class="p">,</span><span class="n">stroke</span><span class="o">-</span><span class="n">width</span><span class="o">:</span><span class="mi">2</span><span class="n">px</span><span class="p">,</span><span class="n">font</span><span class="o">-</span><span class="n">size</span><span class="o">:</span><span class="mi">20</span><span class="n">px</span><span class="p">;</span>
-<span class="w">    </span><span class="n">classDef</span><span class="w"> </span><span class="n">group3</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="n">bdabf0</span><span class="p">,</span><span class="n">stroke</span><span class="o">:</span><span class="err">#</span><span class="mi">333</span><span class="p">,</span><span class="n">stroke</span><span class="o">-</span><span class="n">width</span><span class="o">:</span><span class="mi">2</span><span class="n">px</span><span class="p">,</span><span class="n">font</span><span class="o">-</span><span class="n">size</span><span class="o">:</span><span class="mi">18</span><span class="n">px</span><span class="p">;</span>
+    classDef group1 fill:#f75f5f,stroke:#333,stroke-width:4px,font-size:26px,font-weight:bold;
+    classDef group2 fill:#ffd966,stroke:#333,stroke-width:2px,font-size:20px;
+    classDef group3 fill:#bdabf0,stroke:#333,stroke-width:2px,font-size:18px;
 
-<span class="w">    </span><span class="n">classDef</span><span class="w"> </span><span class="n">hiddenTitle</span><span class="w"> </span><span class="n">color</span><span class="o">:</span><span class="n">transparent</span><span class="p">;</span>
-<span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="n">one</span><span class="p">,</span><span class="n">two</span><span class="p">,</span><span class="n">three</span><span class="p">,</span><span class="n">four</span><span class="w"> </span><span class="n">hiddenTitle</span><span class="p">;</span>
+    classDef hiddenTitle color:transparent;
+    class one,two,three,four hiddenTitle;
 
-<span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="n">A</span><span class="w"> </span><span class="n">group1</span><span class="p">;</span>
-<span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="n">B</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="n">D</span><span class="p">,</span><span class="n">E</span><span class="w"> </span><span class="n">group2</span><span class="p">;</span>
-<span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="n">B1</span><span class="p">,</span><span class="n">B2</span><span class="p">,</span><span class="n">B3</span><span class="p">,</span><span class="n">C1</span><span class="p">,</span><span class="n">C2</span><span class="p">,</span><span class="n">C3</span><span class="p">,</span><span class="n">C4</span><span class="p">,</span><span class="n">D1</span><span class="p">,</span><span class="n">D2</span><span class="p">,</span><span class="n">D3</span><span class="p">,</span><span class="n">D4</span><span class="p">,</span><span class="n">E1</span><span class="p">,</span><span class="n">E2</span><span class="p">,</span><span class="n">E3</span><span class="p">,</span><span class="n">D11</span><span class="p">,</span><span class="n">D12</span><span class="p">,</span><span class="n">D13</span><span class="p">,</span><span class="n">D21</span><span class="p">,</span><span class="n">D22</span><span class="p">,</span><span class="n">D23</span><span class="p">,</span><span class="n">D31</span><span class="p">,</span><span class="n">D32</span><span class="p">,</span><span class="n">D33</span><span class="p">,</span><span class="n">D41</span><span class="p">,</span><span class="n">D42</span><span class="p">,</span><span class="n">D43</span><span class="w"> </span><span class="n">group3</span><span class="p">;</span>
-</code></pre></div></td></tr></table></div>
+    class A group1;
+    class B,C,D,E group2;
+    class B1,B2,B3,C1,C2,C3,C4,D1,D2,D3,D4,E1,E2,E3,D11,D12,D13,D21,D22,D23,D31,D32,D33,D41,D42,D43 group3;
 
+</code></pre></p>
 <p>For more information on the Overnight Visitor Travel Model see technical documentation.</p>
-
-
-
-
-
-                
-              </article>
-            </div>
-          
-          
-  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var tab,labels=set.querySelector(".tabbed-labels");for(tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
-
-        </div>
-        
-          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
-            
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+</article>
+</div>
+<script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var tab,labels=set.querySelector(".tabbed-labels");for(tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+</div>
+<button class="md-top md-icon" data-md-component="top" hidden="" type="button">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"></path></svg>
             Back to top
           </button>
-        
-      </main>
-      
-        <footer class="md-footer">
-  
-  <div class="md-footer-meta md-typeset">
-    <div class="md-footer-meta__inner md-grid">
-      <div class="md-copyright">
+</main>
+<footer class="md-footer">
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
   
   
     Made with
-    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
       Material for MkDocs
     </a>
-  
 </div>
-      
-    </div>
-  </div>
+</div>
+</div>
 </footer>
-      
-    </div>
-    <div class="md-dialog" data-md-component="dialog">
-      <div class="md-dialog__inner md-typeset"></div>
-    </div>
-    
-    <script id="__config" type="application/json">{"base": ".", "features": ["navigation.tabs", "content.code.annotate", "content.tabs.link", "navigation.indexes", "navigation.top"], "search": "assets/javascripts/workers/search.a264c092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
-    
-    
-      <script src="assets/javascripts/bundle.4e0fa4ba.min.js"></script>
-      
-    
-  </body>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"base": ".", "features": ["navigation.tabs", "content.code.annotate", "content.tabs.link", "navigation.indexes", "navigation.top"], "search": "assets/javascripts/workers/search.a264c092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+<script src="assets/javascripts/bundle.4e0fa4ba.min.js"></script>
+<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
+window.mermaidConfig = {default: {
+    startOnLoad: false
+}};</script></body>
 </html>
