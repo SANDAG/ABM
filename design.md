@@ -38,6 +38,70 @@ Next, we predict whether each household has access to a vehicle transponder whic
 
 Next the daily and tour level models are run. The first daily model is the daily activity pattern model is run, which predicts the general activity pattern type for every household member. Then Mandatory tours are generated for workers and students, the tours are scheduled (their location is already predicted by the work/school location choice model), a vehicle availability model is run that predicts which household vehicle would be used for the tour, and the tour mode is chosen. After mandatory tours are generated, a school pickup/dropoff model forms half-tours where children are dropped off and/or picked up at school. The model assigns chaperones to drive or ride with children, groups children together into “bundles” for ride-sharing, and assigns the chaperone task to either a generated work tour or generates a new tour for the purpose of ridesharing. Fully joint tours – tours where two or more household members travel together for the entire tour - are generated at a household level, their composition is predicted (adults, children or both), the participants are determined, the vehicle availability model is run, and a tour mode is chosen. The primary destination of fully joint tours is predicted, the tours are scheduled, the vehicle availability model is run, and a tour mode is chosen. Next, non-mandatory tours are generated, their primary destination is chosen, they are scheduled, the vehicle availability model is run, and a tour mode is chosen for each. At-work subtours are tours that start and end at the workplace. These are generated, scheduled (with constraints that the start and end times must nest within the start and end time of the parent work tour), a primary destination is selected, the vehicle availability model is run, and a tour mode is chosen.
 
+The major tour modes are shown below:
+```mermaid
+flowchart TD
+    subgraph four
+    direction LR
+    E[Ride-Hail] --> E1[Taxi]
+    E --> E2[Single-pay TNC]
+    E --> E3[Shared TNC];
+    end
+    subgraph three
+    direction LR
+    D[Transit] --> D1[Walk Access]
+    D --> D2[PNR Access]
+    D --> D3[KNR Access]
+    D --> D4[TNC Access]
+
+    D1 --> D11[Local Only]
+    D1 --> D12[Premium Only]
+    D1 --> D13[Mixed]
+
+    D2 --> D21[Local Only]
+    D2 --> D22[Premium Only]
+    D2 --> D23[Mixed]
+
+    D3 --> D31[Local Only]
+    D3 --> D32[Premium Only]
+    D3 --> D33[Mixed]
+
+    D4 --> D41[Local Only]
+    D4 --> D42[Premium Only]
+    D4 --> D43[Mixed]
+    end
+    subgraph two
+    direction LR
+    C[Active] --> C1[Walk]
+    C --> C2[Bike]
+    C --> C3[E-Scooter]
+    C --> C4[E-Bike]
+    end
+
+    subgraph one
+    direction LR
+    B[Auto] --> B1[Drive-alone];
+    B --> B2[Shared 2];
+    B --> B3[Shared 3+];
+    end
+    A[Tour Mode] --> one;
+    A --> two;
+    A --> three;
+    A --> four;
+
+    classDef group1 fill:#f75f5f,stroke:#333,stroke-width:4px,font-size:26px,font-weight:bold;
+    classDef group2 fill:#ffd966,stroke:#333,stroke-width:2px,font-size:20px;
+    classDef group3 fill:#bdabf0,stroke:#333,stroke-width:2px,font-size:18px;
+
+    classDef hiddenTitle color:transparent;
+    class one,two,three,four hiddenTitle;
+
+    class A group1;
+    class B,C,D,E group2;
+    class B1,B2,B3,C1,C2,C3,C4,D1,D2,D3,D4,E1,E2,E3,D11,D12,D13,D21,D22,D23,D31,D32,D33,D41,D42,D43 group3;
+```
+
+
 At this point, all tours are generated, scheduled, have a primary destination, and a selected tour mode. The next set of models fills in details about the tours - number of intermediate stops, location of each stop, the departure time of each stop, and the mode of each trip on the tour. Finally, the parking location of each auto trip to the central business district (CBD) is determined.
 After the model is run, the output files listed above are created. The trip lists are then summarized into origin-destination matrices by time period and vehicle class or transit mode and assigned to the transport network.
 
@@ -60,29 +124,67 @@ The overall design of the model is shown in the figure below.
 ![](images/design/crossborder_model_design.png)
 
 ### Crossborder Model Purpose Definitions
-There are five activity purposes in the cross-border travel demand model.
-* Work: Any activity involving work for pay.
-* School: Pre-k school, K-12, college/university, or trade school.
-* Shop: Shopping at retail, wholesale, etc.
-* Visit: Visiting friends or family
-* Other: A broad category including eating out, medical appointments, recreational activities, etc.
+There are five activity purposes in the cross-border travel demand model:
+  * Work: Any activity involving work for pay.
+  * School: Pre-k school, K-12, college/university, or trade school.
+  * Shop: Shopping at retail, wholesale, etc.
+  * Visit: Visiting friends or family
+  * Other: A broad category including eating out, medical appointments, recreational activities, etc.
 
 Note that home activities are not listed, since we do not model activities south of the border.
 
 ### Crossborder Model Mode Definitions
 
+The major tour modes are shown below:
+```mermaid
+flowchart TD
+    subgraph three
+    direction LR
+    D[Transit] --> D1[Walk Access]
+
+    D1 --> D11[Local Only]
+    D1 --> D12[Premium Only]
+    D1 --> D13[Mixed]
+    end
+    subgraph two
+    direction LR
+    C[Active] --> C1[Walk]
+    end
+
+    subgraph one
+    direction LR
+    B[Auto] --> B1[Drive-alone];
+    B --> B2[Shared 2];
+    B --> B3[Shared 3+];
+    end
+    A[Tour Mode\Border Crossing Mode] --> one;
+    A --> two;
+    A --> three;
+
+    classDef group1 fill:#f75f5f,stroke:#333,stroke-width:4px,font-size:26px,font-weight:bold;
+    classDef group2 fill:#ffd966,stroke:#333,stroke-width:2px,font-size:20px;
+    classDef group3 fill:#bdabf0,stroke:#333,stroke-width:2px,font-size:18px;
+
+    classDef hiddenTitle color:transparent;
+    class one,two,three hiddenTitle;
+
+    class A group1;
+    class B,C,D,E group2;
+    class B1,B2,B3,C1,C2,C3,C4,D1,D11,D12,D13 group3;
+```
+
 The model has the following mode types at the trip level:
-* Drive-alone: Single occupant private vehicle
-* Shared 2: A private vehicle with exactly two passengers
-* Shared 3+: A private vehicle with three or more passengers
-* Walk: Walk mode
-* Bike: Bike mode
-* Walk-transit: Walk access to transit. There are three sub-types of transit: Local only,
-premium only, local + premium (which includes both local and premium services in the
-transit path)
-* Taxi: Door-to-door taxi trip
-* Single-pay TNC: Door-to-door TNC trip with a single payer (e.g. UberX)
-* Shared-pay TNC: Stop-to-stop TNC trip with potentially multiple payers (e.g. UberPool)
+  * Drive-alone: Single occupant private vehicle
+  * Shared 2: A private vehicle with exactly two passengers
+  * Shared 3+: A private vehicle with three or more passengers
+  * Walk: Walk mode
+  * Bike: Bike mode
+  * Walk-transit: Walk access to transit. There are three sub-types of transit: Local only,
+  premium only, local + premium (which includes both local and premium services in the
+  transit path)
+  * Taxi: Door-to-door taxi trip
+  * Single-pay TNC: Door-to-door TNC trip with a single payer (e.g. UberX)
+  * Shared-pay TNC: Stop-to-stop TNC trip with potentially multiple payers (e.g. UberPool)
 
 We also model tour mode, which is the mode used to cross the border. These modes include
 drive-alone, shared 2, shared 3+ and walk. We assume that anyone crossing by bus or taxi is
@@ -97,26 +199,32 @@ Below is a general description of the model structure.
 1. Tour Enumeration: A list of person-tours is created by first cross-multiplying the input total
 person tours with the share of tours by pass type, then expanding tours by pass type to tours
 by pass type and purpose.
-2. Tour Level Models
-2.1 Time-of-day Choice: Each person-tour is assigned an outbound and return half-hour
-period.
-2.2 Primary Destination and Station Choice: Each border crossing person-tour chooses a
-primary destination MGRA and border crossing station.
-2.3 Border Crossing Mode Choice: Each person-tour chooses a border crossing tour mode.
-3. Wait Time Model
-3.1. Wait time model: Calculate wait time based on demand at each POE from model 2.2
-3.2. Convergence check: If max iterations reached (currently 3), goto Stop and Trip level
-models, else goto Model 2.2
-4. Stop and Trip Level Models
-4.1 Stop Frequency Choice: Each person-tour is assigned number of stops by half-tour
-(outbound, return).
-4.2 Stop Purpose Choice: Each stop is assigned a stop purpose (consistent with the tour
-purposes).
-4.3 Trip Departure Choice: Each trip is assigned a half-hourly time period.
-4.4 Stop Location Choice: Each stop chooses an MGRA location.
-4.5 Trip Mode Choice: Each trip is assigned a trip mode.
-4.6 Trip Assignments: Trips are assigned to networks, along with resident and other special
-market trip tables, and skims are created for the next iteration of the model.
+1. Tour Level Models
+    2.1 Time-of-day Choice: Each person-tour is assigned an outbound and return half-hour 
+    period.
+
+    2.2 Primary Destination and Station Choice: Each border crossing person-tour chooses a 
+    primary destination MGRA and border crossing station.
+
+    2.3 Border Crossing Mode Choice: Each person-tour chooses a border crossing tour mode.
+
+2. Wait Time Model
+   
+    3.1. Wait time model: Calculate wait time based on demand at each POE from model 2.2
+
+    3.2. Convergence check: If max iterations reached (currently 3), goto Stop and Trip level models, else goto Model 2.2
+3. Stop and Trip Level Models
+    4.1 Stop Frequency Choice: Each person-tour is assigned number of stops by half-tour (outbound, return).
+
+    4.2 Stop Purpose Choice: Each stop is assigned a stop purpose (consistent with the tour purposes).
+
+    4.3 Trip Departure Choice: Each trip is assigned a half-hourly time period.
+
+    4.4 Stop Location Choice: Each stop chooses an MGRA location.
+
+    4.5 Trip Mode Choice: Each trip is assigned a trip mode.
+
+    4.6 Trip Assignments: Trips are assigned to networks, along with resident and other special market trip tables, and skims are created for the next iteration of the model.
 
 For more information on the Crossborder Travel Model see technical documentation.
 
@@ -132,15 +240,77 @@ The overall design of the model is shown in the figure below.
 
 1. Tour Enumeration: A list of airport travel parties is generated from input enplanements and transferring passenger rates, as well as distributions that describe the share of travel parties by purpose (business versus personal), household income, and party size.
 2. Tour Level Models
-2.1 Tour Scheduling Probabilistic: The tour scheduling model uses a probabilistic draw of the scheduling distribution. This model assigns start and end times to the tour. This is important because it will also serve as the schedule model for the final airport trips. In ActivitySim, trips are scheduled based on the tour schedule. If there is only one trip per leg on the tour (such as our case here) the trip is assigned the tour start/end time.
-2.2 Tour Destination Choice: The destination choice model chooses the non-airport end of the airport trips. Each tour is set with an origin at the airport MGRA. The tour destination model of ActivitySim is used to choose the non-airport end of the trip. The utility equation includes the travel distance, and the destination size terms. ActivitySim destination choice framework requires a mode choice log sum. A dummy tour mode choice log sum was created which generates a value of zero for every destination using the ‘tour_mode_choice.csv’ and ‘tour_mode_choice.yml’ file. This is a work around to prevent ActivitySim from crashing and not having to include the tour mode choice log sum in the destination choice model.
-2.3 Stop Frequency Choice: The stop frequency model is where the trip table is first created. The pre-processor tags each tour with a direction of ‘inbound’ or ‘outbound’ according to whether the tour is a departing or arriving passenger. For the Airport Ground Access model, inbound tours are tagged with zero outbound trips and -1 inbound trips (and the opposite is true for outbound tours: -1 outbound trips and 0 inbound trips). The 0 signifies that no intermediate stops are made; this leg of the tour will only have one trip. The -1 signifies that no trip is made at all on that leg. Using the -1 allows us to create ‘half-tours’ where only one leg of the tour is recorded as a trip.
+   
+    2.1 Tour Scheduling Probabilistic: The tour scheduling model uses a probabilistic draw of the scheduling distribution. This model assigns start and end times to the tour. This is important because it will also serve as the schedule model for the final airport trips. In ActivitySim, trips are scheduled based on the tour schedule. If there is only one trip per leg on the tour (such as our case here) the trip is assigned the tour start/end time.
+
+    2.2 Tour Destination Choice: The destination choice model chooses the non-airport end of the airport trips. Each tour is set with an origin at the airport MGRA. The tour destination model of ActivitySim is used to choose the non-airport end of the trip. The utility equation includes the travel distance, and the destination size terms. ActivitySim destination choice framework requires a mode choice log sum. A dummy tour mode choice log sum was created which generates a value of zero for every destination using the ‘tour_mode_choice.csv’ and ‘tour_mode_choice.yml’ file. This is a work around to prevent ActivitySim from crashing and not having to include the tour mode choice log sum in the destination choice model.
+
+    2.3 Stop Frequency Choice: The stop frequency model is where the trip table is first created. The pre-processor tags each tour with a direction of ‘inbound’ or ‘outbound’ according to whether the tour is a departing or arriving passenger. For the Airport Ground Access model, inbound tours are tagged with zero outbound trips and -1 inbound trips (and the opposite is true for outbound tours: -1 outbound trips and 0 inbound trips). The 0 signifies that no intermediate stops are made; this leg of the tour will only have one trip. The -1 signifies that no trip is made at all on that leg. Using the -1 allows us to create ‘half-tours’ where only one leg of the tour is recorded as a trip.
 3. Trip Level Models
-3.1 Trip Departure Choice: The trip scheduling model assigns depart times for each trip on a tour. ActivitySim requires trip scheduling probabilities; however, these are not used in this implementation since there is only one trip on any given tour leg. This means the trips will be assigned the tour scheduling times which were determined in the tour scheduling model. The trip scheduling probabilities file is just a dummy file.
-3.2 Trip Mode Choice: Each trip is assigned a trip mode; in the Airport Ground Access Model, trip mode refers to the airport arrival mode which simultaneously predicts the arrival mode and the location which the passenger uses to access that model. The arrival modes are shown in the table below.  The trip mode choice yaml file contains detailed variables associated with each trip mode. For example, each parking location is given an MGRA location, a walk time, a wait-time, and a cost. If a parking location MGRA is set to -999 it is assumed to be unavailable and will not be in the choice set. The pre-processor in this step stores all values of skims from the trip origin to each of the access modes destinations along with any associated costs. Costs include parking fees per day, access fees, fares, and rental car charges.
-Employees are not fed into the trip mode choice model. Instead, if a transit share is specified in the employee park file, that percentage of employees will be assigned ‘Walk Premium’ mode in the pre-processor. Otherwise, employees are all assigned ‘Walk’ mode from the employee parking lot to the terminal.
-3.3 Airport Returns: Airport trips where the party is dropped of curbside or parked and escorted are assumed to also have the driver make a return trip to the non-airport location. This procedure is done as a post-processing step after mode choice and before trip tables are written out. An ‘airport_returns.yml’ file takes a user setting to determine which trip modes will include a return trip. These trips records are flagged and duplicated. The duplicated trips swap the origin and destination of the original trip and are assigned a unique trip id. These trips are tagged with ‘trip_num =2’ so they are easily sorted in any additional processing (such as for writing trip matrices).
-3.4 Write trip matrices: The write trip matrices step converts the trip lists into vehicle trip matrices. The matrices are segmented by trip mode and value of time bins. The vehicle trip modes in the matrices include SOV, HOV2, HOV3+, Taxi, and TNC-single. Value of time segmentation is either low, medium, or high bins based on the thresholds set in the model settings.
+ 
+    3.1 Trip Departure Choice: The trip scheduling model assigns depart times for each trip on a tour. ActivitySim requires trip scheduling probabilities; however, these are not used in this implementation since there is only one trip on any given tour leg. This means the trips will be assigned the tour scheduling times which were determined in the tour scheduling model. The trip scheduling probabilities file is just a dummy file.
+
+    3.2 Trip Mode Choice: Each trip is assigned a trip mode; in the Airport Ground Access Model, trip mode refers to the airport arrival mode which simultaneously predicts the arrival mode and the location which the passenger uses to access that model. The arrival modes are shown in the table below.  The trip mode choice yaml file contains detailed variables associated with each trip mode. For example, each parking location is given an MGRA location, a walk time, a wait-time, and a cost. If a parking location MGRA is set to -999 it is assumed to be unavailable and will not be in the choice set. The pre-processor in this step stores all values of skims from the trip origin to each of the access modes destinations along with any associated costs. Costs include parking fees per day, access fees, fares, and rental car charges.
+    Employees are not fed into the trip mode choice model. Instead, if a transit share is specified in the employee park file, that percentage of employees will be assigned ‘Walk Premium’ mode in the pre-processor. Otherwise, employees are all assigned ‘Walk’ mode from the employee parking lot to the terminal.
+
+    3.3 Airport Returns: Airport trips where the party is dropped of curbside or parked and escorted are assumed to also have the driver make a return trip to the non-airport location. This procedure is done as a post-processing step after mode choice and before trip tables are written out. An ‘airport_returns.yml’ file takes a user setting to determine which trip modes will include a return trip. These trips records are flagged and duplicated. The duplicated trips swap the origin and destination of the original trip and are assigned a unique trip id. These trips are tagged with ‘trip_num =2’ so they are easily sorted in any additional processing (such as for writing trip matrices).
+
+    3.4 Write trip matrices: The write trip matrices step converts the trip lists into vehicle trip matrices. The matrices are segmented by trip mode and value of time bins. The vehicle trip modes in the matrices include SOV, HOV2, HOV3+, Taxi, and TNC-single. Value of time segmentation is either low, medium, or high bins based on the thresholds set in the model settings.
+
+The major tour modes are shown below:
+```mermaid
+flowchart TD
+    subgraph four
+    direction LR
+    E[Ride-Hail] --> E1[Taxi]
+    end
+    subgraph three
+    direction LR
+    D[Transit] --> D1[Walk Access]
+    %% D --> D2[PNR Access]
+    D --> D3[KNR Access]
+    D --> D4[TNC Access]
+
+    D1 --> D11[Local Only]
+    D1 --> D12[Premium Only]
+    D1 --> D13[Mixed]
+
+    D3 --> D31[Local Only]
+    D3 --> D32[Premium Only]
+    D3 --> D33[Mixed]
+
+    D4 --> D41[Local Only]
+    D4 --> D42[Premium Only]
+    D4 --> D43[Mixed]
+    end
+    subgraph two
+    direction LR
+    C[Active] --> C1[Walk]
+    end
+
+    subgraph one
+    direction LR
+    B[Auto] --> B1[Drive-alone];
+    B --> B2[Shared 2];
+    B --> B3[Shared 3+];
+    end
+    A[Tour Mode] --> one;
+    A --> two;
+    A --> three;
+    A --> four;
+
+    classDef group1 fill:#f75f5f,stroke:#333,stroke-width:4px,font-size:26px,font-weight:bold;
+    classDef group2 fill:#ffd966,stroke:#333,stroke-width:2px,font-size:20px;
+    classDef group3 fill:#bdabf0,stroke:#333,stroke-width:2px,font-size:18px;
+
+    classDef hiddenTitle color:transparent;
+    class one,two,three,four hiddenTitle;
+
+    class A group1;
+    class B,C,D,E group2;
+    class B1,B2,B3,C1,C2,C3,C4,D1,D2,D3,D4,E1,E2,E3,D11,D12,D13,D21,D22,D23,D31,D32,D33,D41,D42,D43 group3;
+```
+
 #### Airport Ground Access Model Trip Arrival Modes
 
 | **Arrival Mode** | **Description** | 
@@ -188,21 +358,77 @@ The overall design of the model is shown in the figure below.
 
 1. Tour Enumeration: A list of visitor parties is generated from the input household data and hotel room inventory at the MGRA level. Visitor travel parties by segment (business versus personal) are calculated based on separate rates for hotels and for households. Visitor parties are generated by purpose based on tour rates by segment, then attributed with household income and party size based on input distributions. There are three purposes in the Overnight Visitor model:
 
-* Work:  Business travel made by business visitors.
-* Dining: Travel to food establishments for both business and personal visitors.
-* Recreational: All other non-work non-food related activities.
+   * Work:  Business travel made by business visitors.
+   * Dining: Travel to food establishments for both business and personal visitors.
+   * Recreational: All other non-work non-food related activities.
 
 2. Tour Level Models
-2.1 Tour Scheduling Probabilistic: The tour scheduling model uses a probabilistic draw of the scheduling distribution. This model assigns start and end times to the tour. If there is only one trip per leg on the tour, the trip is assigned the tour start/end time.
-2.2 Tour Destination Choice: The destination choice model chooses the MGRA of the primary activity location on the tour.
-2.3 Tour Mode Choice: The tour mode choice model determines the primary mode of the tour.
-3 Stop Level Models
-3.1 Stop Frequency Choice: The stop frequency model predicts the number of stops by direction based on input distributions that vary by tour purpose.
-3.2 Stop Purpose: The stop purpose model chooses the activity purpose of each intermediate stop based on input distributions that vary according to tour purpose.
-3.3 Stop Location Choice: The location choice model chooses the MGRA for each intermediate stop on the tour.
+   
+    2.1 Tour Scheduling Probabilistic: The tour scheduling model uses a probabilistic draw of the scheduling distribution. This model assigns start and end times to the tour. If there is only one trip per leg on the tour, the trip is assigned the tour start/end time.
+
+    2.2 Tour Destination Choice: The destination choice model chooses the MGRA of the primary activity location on the tour.
+
+    2.3 Tour Mode Choice: The tour mode choice model determines the primary mode of the tour.
+
+3. Stop Level Models
+   
+    3.1 Stop Frequency Choice: The stop frequency model predicts the number of stops by direction based on input distributions that vary by tour purpose.
+
+    3.2 Stop Purpose: The stop purpose model chooses the activity purpose of each intermediate stop based on input distributions that vary according to tour purpose.
+
+    3.3 Stop Location Choice: The location choice model chooses the MGRA for each intermediate stop on the tour.
+
 4. Trip Level Models
-4.1 Trip Departure Choice: The trip scheduling model assigns depart times for each trip on a tour based on input distributions that vary by direction (inbound versus outbound), stop number, and number of periods remaining on the tour.
-4.2 Trip Mode Choice: Each trip is assigned a trip mode, consistent with the modes in the resident model.
-4.3 Trip Assignment: Trips are aggregated by time of day, mode occupancy, value-of-time, and origin-destination TAZ and assigned simultaneously with other trips.
+   
+    4.1 Trip Departure Choice: The trip scheduling model assigns depart times for each trip on a tour based on input distributions that vary by direction (inbound versus outbound), stop number, and number of periods remaining on the tour.
+
+    4.2 Trip Mode Choice: Each trip is assigned a trip mode, consistent with the modes in the resident model.
+    
+    4.3 Trip Assignment: Trips are aggregated by time of day, mode occupancy, value-of-time, and origin-destination TAZ and assigned simultaneously with other trips.
+
+The major tour modes are shown below:
+```mermaid
+flowchart TD
+    subgraph four
+    direction LR
+    E[Ride-Hail] --> E1[Taxi]
+    E --> E2[Single-pay TNC];
+    end
+    subgraph three
+    direction LR
+    D[Transit] --> D1[Walk Access]
+
+    D1 --> D11[Local Only]
+    D1 --> D12[Premium Only]
+    D1 --> D13[Mixed]
+    end
+    subgraph two
+    direction LR
+    C[Active] --> C1[Walk]
+    end
+
+    subgraph one
+    direction LR
+    B[Auto] --> B1[Drive-alone];
+    B --> B2[Shared 2];
+    B --> B3[Shared 3+];
+    end
+    A[Tour Mode] --> one;
+    A --> two;
+    A --> three;
+    A --> four;
+
+    classDef group1 fill:#f75f5f,stroke:#333,stroke-width:4px,font-size:26px,font-weight:bold;
+    classDef group2 fill:#ffd966,stroke:#333,stroke-width:2px,font-size:20px;
+    classDef group3 fill:#bdabf0,stroke:#333,stroke-width:2px,font-size:18px;
+
+    classDef hiddenTitle color:transparent;
+    class one,two,three,four hiddenTitle;
+
+    class A group1;
+    class B,C,D,E group2;
+    class B1,B2,B3,C1,C2,C3,C4,D1,D2,D3,D4,E1,E2,E3,D11,D12,D13,D21,D22,D23,D31,D32,D33,D41,D42,D43 group3;
+
+```
 
 For more information on the Overnight Visitor Travel Model see technical documentation.
