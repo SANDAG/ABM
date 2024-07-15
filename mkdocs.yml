@@ -44,6 +44,7 @@ plugins:
      # custom_templates: templates
   - search
   - table-reader
+  - mermaid2
 
 nav:
   - Home: index.md
@@ -85,3 +86,9 @@ markdown_extensions:
   - pymdownx.keys
   - pymdownx.mark
   - pymdownx.tilde
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:mermaid2.fence_mermaid_custom
+  
