@@ -393,3 +393,5 @@ util_escooter_ivt,escooter utility for in-vehicle time,@(df.escooter_time_inb + 
 util_escooter_access,escooter utility for in-vehicle time,@(microConstant + microRentTime + df.micro_access_inb + df.micro_access_out)*df.time_factor,,,,,,,,,,,,,,,,,,,,,,,coef_acctime
 util_escooter_cost_inb,escooter utility for inbound cost,@((microFixedCost + microVarCost*df.escooter_time_inb)/df.cost_sensitivity),,,,,,,,,,,,,,,,,,,,,,,coef_income
 util_escooter_cost_out,escooter utility for outbound cost,@((microFixedCost + microVarCost*df.escooter_time_out)/df.cost_sensitivity),,,,,,,,,,,,,,,,,,,,,,,coef_income
+#,Calibration from on-board survey
+util_calib_onboard,Calibration coefficient to match implied number of tours from on-board survey,1,,,,,,coef_calib_onboard,coef_calib_onboard,coef_calib_onboard,coef_calib_onboard,coef_calib_onboard,coef_calib_onboard,coef_calib_onboard,coef_calib_onboard,coef_calib_onboard,coef_calib_onboard,coef_calib_onboard,coef_calib_onboard,,,,,,
