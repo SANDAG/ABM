@@ -89,9 +89,9 @@ flowchart TD
     A --> three;
     A --> four;
 
-    classDef group1 fill:#f75f5f,stroke:#333,stroke-width:4px,font-size:26px,font-weight:bold;
-    classDef group2 fill:#ffd966,stroke:#333,stroke-width:2px,font-size:20px;
-    classDef group3 fill:#bdabf0,stroke:#333,stroke-width:2px,font-size:18px;
+    classDef group1 fill:#f75f5f,stroke:#333,stroke-width:4px,font-size:26px,font-weight:bold;wrap
+    classDef group2 fill:#ffd966,stroke:#333,stroke-width:2px,font-size:20px;wrap
+    classDef group3 fill:#bdabf0,stroke:#333,stroke-width:2px,font-size:18px;wrap
 
     classDef hiddenTitle color:transparent;
     class one,two,three,four hiddenTitle;
@@ -123,7 +123,7 @@ The overall design of the model is shown in the figure below.
 
 ![](images/design/crossborder_model_design.png)
 
-### Crossborder Model Purpose Definitions
+#### Crossborder Model Purpose Definitions
 There are five activity purposes in the cross-border travel demand model:
   * Work: Any activity involving work for pay.
   * School: Pre-k school, K-12, college/university, or trade school.
@@ -133,7 +133,7 @@ There are five activity purposes in the cross-border travel demand model:
 
 Note that home activities are not listed, since we do not model activities south of the border.
 
-### Crossborder Model Mode Definitions
+#### Crossborder Model Mode Definitions
 
 The major tour modes are shown below:
 ```mermaid
@@ -161,9 +161,9 @@ flowchart TD
     A --> two;
     A --> three;
 
-    classDef group1 fill:#f75f5f,stroke:#333,stroke-width:4px,font-size:26px,font-weight:bold;
-    classDef group2 fill:#ffd966,stroke:#333,stroke-width:2px,font-size:20px;
-    classDef group3 fill:#bdabf0,stroke:#333,stroke-width:2px,font-size:18px;
+    classDef group1 fill:#f75f5f,stroke:#333,stroke-width:4px,font-size:26px,font-weight:bold;wrap
+    classDef group2 fill:#ffd966,stroke:#333,stroke-width:2px,font-size:20px;wrap
+    classDef group3 fill:#bdabf0,stroke:#333,stroke-width:2px,font-size:18px;wrap
 
     classDef hiddenTitle color:transparent;
     class one,two,three hiddenTitle;
@@ -299,9 +299,9 @@ flowchart TD
     A --> three;
     A --> four;
 
-    classDef group1 fill:#f75f5f,stroke:#333,stroke-width:4px,font-size:26px,font-weight:bold;
-    classDef group2 fill:#ffd966,stroke:#333,stroke-width:2px,font-size:20px;
-    classDef group3 fill:#bdabf0,stroke:#333,stroke-width:2px,font-size:18px;
+    classDef group1 fill:#f75f5f,stroke:#333,stroke-width:4px,font-size:26px,font-weight:bold;wrap
+    classDef group2 fill:#ffd966,stroke:#333,stroke-width:2px,font-size:20px;wrap
+    classDef group3 fill:#bdabf0,stroke:#333,stroke-width:2px,font-size:18px;wrap
 
     classDef hiddenTitle color:transparent;
     class one,two,three,four hiddenTitle;
@@ -418,9 +418,9 @@ flowchart TD
     A --> three;
     A --> four;
 
-    classDef group1 fill:#f75f5f,stroke:#333,stroke-width:4px,font-size:26px,font-weight:bold;
-    classDef group2 fill:#ffd966,stroke:#333,stroke-width:2px,font-size:20px;
-    classDef group3 fill:#bdabf0,stroke:#333,stroke-width:2px,font-size:18px;
+    classDef group1 fill:#f75f5f,stroke:#333,stroke-width:4px,font-size:26px,font-weight:bold;wrap
+    classDef group2 fill:#ffd966,stroke:#333,stroke-width:2px,font-size:20px;wrap
+    classDef group3 fill:#bdabf0,stroke:#333,stroke-width:2px,font-size:18px;wrap
 
     classDef hiddenTitle color:transparent;
     class one,two,three,four hiddenTitle;
