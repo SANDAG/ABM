@@ -5,7 +5,7 @@ coef_asc_goods_delivery,-4.473732657,F
 coef_asc_service,3.245501257,F
 coef_asc_maintenance,3.71090104,F
 coef_asc_home,-1.370772741,F
-coef_asc_terminal,0.788039828,F
+coef_asc_terminal,1.007156032,F
 coef_acc_hh_goods_delivery,0.698,F
 coef_construction_goods_delivery,-1.22,F
 coef_construction_service,-0.301,F
@@ -147,5 +147,5 @@ coef_prior_originate_next_service_tnc,-1.8672,F
 coef_prior_originate_next_maint_tnc,-2.0787,F
 coef_prior_originate_next_home_tnc,-4.0041,F
 coef_prior_originate_next_terminal_tnc,-0.7975,F
-coef_sut_terminal,-0.4773579984832303,F
-coef_mut_terminal,0.8582408580709843,F
+coef_sut_terminal,-0.190345169,F
+coef_mut_terminal,0.946605565,F
