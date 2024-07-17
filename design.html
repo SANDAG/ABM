@@ -145,14 +145,14 @@
       </a>
 </li>
 <li class="md-tabs__item">
-<a class="md-tabs__link" href="inputsandoutputs.html">
-        
+<a class="md-tabs__link" href="inputs.html">
+          
   
     
   
   Model Inputs and Outputs
 
-      </a>
+        </a>
 </li>
 <li class="md-tabs__item">
 <a class="md-tabs__link" href="applying.html">
@@ -245,34 +245,11 @@
 <a class="md-nav__link" href="#crossborder-model">
     Crossborder Model
   </a>
-<nav aria-label="Crossborder Model" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#crossborder-model-purpose-definitions">
-    Crossborder Model Purpose Definitions
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#crossborder-model-mode-definitions">
-    Crossborder Model Mode Definitions
-  </a>
-</li>
-</ul>
-</nav>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="#airport-ground-access-models">
     Airport Ground Access Models
   </a>
-<nav aria-label="Airport Ground Access Models" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#airport-ground-access-model-trip-arrival-modes">
-    Airport Ground Access Model Trip Arrival Modes
-  </a>
-</li>
-</ul>
-</nav>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="#overnight-visitor-model">
@@ -289,12 +266,36 @@
   </span>
 </a>
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="inputsandoutputs.html">
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
 <span class="md-ellipsis">
     Model Inputs and Outputs
   </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_4_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_4">
+<span class="md-nav__icon md-icon"></span>
+            Model Inputs and Outputs
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="inputs.html">
+<span class="md-ellipsis">
+    Inputs
+  </span>
 </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="outputs.html">
+<span class="md-ellipsis">
+    Outputs
+  </span>
+</a>
+</li>
+</ul>
+</nav>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="applying.html">
@@ -364,34 +365,11 @@
 <a class="md-nav__link" href="#crossborder-model">
     Crossborder Model
   </a>
-<nav aria-label="Crossborder Model" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#crossborder-model-purpose-definitions">
-    Crossborder Model Purpose Definitions
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#crossborder-model-mode-definitions">
-    Crossborder Model Mode Definitions
-  </a>
-</li>
-</ul>
-</nav>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="#airport-ground-access-models">
     Airport Ground Access Models
   </a>
-<nav aria-label="Airport Ground Access Models" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#airport-ground-access-model-trip-arrival-modes">
-    Airport Ground Access Model Trip Arrival Modes
-  </a>
-</li>
-</ul>
-</nav>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="#overnight-visitor-model">
@@ -480,9 +458,9 @@
     A --&gt; three;
     A --&gt; four;
 
-    classDef group1 fill:#f75f5f,stroke:#333,stroke-width:4px,font-size:26px,font-weight:bold;
-    classDef group2 fill:#ffd966,stroke:#333,stroke-width:2px,font-size:20px;
-    classDef group3 fill:#bdabf0,stroke:#333,stroke-width:2px,font-size:18px;
+    classDef group1 fill:#f75f5f,stroke:#333,stroke-width:4px,font-size:26px,font-weight:bold;wrap
+    classDef group2 fill:#ffd966,stroke:#333,stroke-width:2px,font-size:20px;wrap
+    classDef group3 fill:#bdabf0,stroke:#333,stroke-width:2px,font-size:18px;wrap
 
     classDef hiddenTitle color:transparent;
     class one,two,three,four hiddenTitle;
@@ -508,7 +486,7 @@ commercial vehicle model.</li>
 </ul>
 <p>The overall design of the model is shown in the figure below.</p>
 <p><img alt="" src="images/design/crossborder_model_design.png"/></p>
-<h3 id="crossborder-model-purpose-definitions">Crossborder Model Purpose Definitions<a class="headerlink" href="#crossborder-model-purpose-definitions" title="Permanent link"> ¶</a></h3>
+<h4 id="crossborder-model-purpose-definitions">Crossborder Model Purpose Definitions<a class="headerlink" href="#crossborder-model-purpose-definitions" title="Permanent link"> ¶</a></h4>
 <p>There are five activity purposes in the cross-border travel demand model:
   * Work: Any activity involving work for pay.
   * School: Pre-k school, K-12, college/university, or trade school.
@@ -516,7 +494,7 @@ commercial vehicle model.</li>
   * Visit: Visiting friends or family
   * Other: A broad category including eating out, medical appointments, recreational activities, etc.</p>
 <p>Note that home activities are not listed, since we do not model activities south of the border.</p>
-<h3 id="crossborder-model-mode-definitions">Crossborder Model Mode Definitions<a class="headerlink" href="#crossborder-model-mode-definitions" title="Permanent link"> ¶</a></h3>
+<h4 id="crossborder-model-mode-definitions">Crossborder Model Mode Definitions<a class="headerlink" href="#crossborder-model-mode-definitions" title="Permanent link"> ¶</a></h4>
 <p>The major tour modes are shown below:
 <pre class="mermaid"><code>flowchart TD
     subgraph three
@@ -542,9 +520,9 @@ commercial vehicle model.</li>
     A --&gt; two;
     A --&gt; three;
 
-    classDef group1 fill:#f75f5f,stroke:#333,stroke-width:4px,font-size:26px,font-weight:bold;
-    classDef group2 fill:#ffd966,stroke:#333,stroke-width:2px,font-size:20px;
-    classDef group3 fill:#bdabf0,stroke:#333,stroke-width:2px,font-size:18px;
+    classDef group1 fill:#f75f5f,stroke:#333,stroke-width:4px,font-size:26px,font-weight:bold;wrap
+    classDef group2 fill:#ffd966,stroke:#333,stroke-width:2px,font-size:20px;wrap
+    classDef group3 fill:#bdabf0,stroke:#333,stroke-width:2px,font-size:18px;wrap
 
     classDef hiddenTitle color:transparent;
     class one,two,three hiddenTitle;
@@ -660,9 +638,9 @@ Employees are not fed into the trip mode choice model. Instead, if a transit sha
     A --&gt; three;
     A --&gt; four;
 
-    classDef group1 fill:#f75f5f,stroke:#333,stroke-width:4px,font-size:26px,font-weight:bold;
-    classDef group2 fill:#ffd966,stroke:#333,stroke-width:2px,font-size:20px;
-    classDef group3 fill:#bdabf0,stroke:#333,stroke-width:2px,font-size:18px;
+    classDef group1 fill:#f75f5f,stroke:#333,stroke-width:4px,font-size:26px,font-weight:bold;wrap
+    classDef group2 fill:#ffd966,stroke:#333,stroke-width:2px,font-size:20px;wrap
+    classDef group3 fill:#bdabf0,stroke:#333,stroke-width:2px,font-size:18px;wrap
 
     classDef hiddenTitle color:transparent;
     class one,two,three,four hiddenTitle;
@@ -876,9 +854,9 @@ The overall design of the model is shown in the figure below.</p>
     A --&gt; three;
     A --&gt; four;
 
-    classDef group1 fill:#f75f5f,stroke:#333,stroke-width:4px,font-size:26px,font-weight:bold;
-    classDef group2 fill:#ffd966,stroke:#333,stroke-width:2px,font-size:20px;
-    classDef group3 fill:#bdabf0,stroke:#333,stroke-width:2px,font-size:18px;
+    classDef group1 fill:#f75f5f,stroke:#333,stroke-width:4px,font-size:26px,font-weight:bold;wrap
+    classDef group2 fill:#ffd966,stroke:#333,stroke-width:2px,font-size:20px;wrap
+    classDef group3 fill:#bdabf0,stroke:#333,stroke-width:2px,font-size:18px;wrap
 
     classDef hiddenTitle color:transparent;
     class one,two,three,four hiddenTitle;
