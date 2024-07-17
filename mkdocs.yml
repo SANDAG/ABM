@@ -50,7 +50,9 @@ nav:
   - Home: index.md
   - Model Design: design.md
   - Installing and Running: running.md
-  - Model Inputs and Outputs: inputsandoutputs.md
+  - Model Inputs and Outputs: 
+    - Inputs: inputs.md
+    - Outputs: outputs.md
   - Applying ABM3: applying.md
   - Commercial Vehicle Model: cvm.md
   - About:
@@ -81,6 +83,7 @@ markdown_extensions:
   - toc:
       # insert a blank space before the character
       permalink: " ¶"
+      toc_depth: 3      
   - pymdownx.critic
   - pymdownx.caret
   - pymdownx.keys
