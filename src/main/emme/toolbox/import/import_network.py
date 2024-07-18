@@ -74,6 +74,7 @@ import heapq as _heapq
 
 import traceback as _traceback
 import os
+import yaml #for network editor yaml file
 
 _join = os.path.join
 _dir = os.path.dirname
@@ -85,7 +86,8 @@ dem_utils = _m.Modeller().module("sandag.utilities.demand")
 FILE_NAMES = {
     "FARES": "special_fares.txt",
     "OFF_PEAK": "off_peak_toll_factors.csv",
-    "VEHICLE_CLASS": "vehicle_class_toll_factors.csv"
+    "VEHICLE_CLASS": "vehicle_class_toll_factors.csv",
+    "NETWORK_EDITS": "network_edits.yaml" #prepare the network ymal file
 }
 
 
@@ -441,6 +443,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
         traffic_network = _network.Network()
         transit_network = _network.Network()
+
         try:
             if self.traffic_scenario_id or self.merged_scenario_id:
                 for elem_type, attrs in traffic_attr_map.iteritems():
@@ -595,7 +598,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 # managed lanes, free for HOV3+, tolls for SOV and HOV2
                 if arc["ITOLLO"] + arc["ITOLLA"] + arc["ITOLLP"]  > 0:
                     return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV3
-                # special case of I-15 managed lanes for base year and 2020, no build 
+                # special case of I-15 managed lanes for base year and 2020, no build
                 elif arc["IFC"] == 1 and arc["IPROJ"] in [41, 42, 486, 373, 711]:
                     return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV3
                 elif arc["IFC"] == 8 or arc["IFC"] == 9:
@@ -770,6 +773,20 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         if arc_filter is None:
             arc_filter = lambda arc : True
 
+        # Check if network editor file is in inputs
+        network_editor_yaml_file = FILE_NAMES["NETWORK_EDITS"]
+        network_editor_bool = False
+        network_editor_yaml_path = _join(self.source, network_editor_yaml_file)
+        self._log.append({"type": "header", "content": "__Network Edits"})
+        if os.path.exists(network_editor_yaml_path):
+            network_editor_bool = True
+            with open(network_editor_yaml_path, "r") as stream:
+                network_editor_data = yaml.safe_load(stream)
+                self._log.append({"type": "text", "content": "Successfully loaded Network Edits YAML"})
+                self._log.append({"type": "text", "content": "\tYAML Path: %s" % network_editor_yaml_path})
+        else:
+            self._log.append({"type": "text", "content": "NO Network Edits YAML to load"})
+
         # Create nodes and links
         for arc in data:
             if not arc_filter(arc):
@@ -790,6 +807,14 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 self._error.append(msg)
                 self._split_link(network, i_node, j_node, new_node_id)
                 new_node_id += 1
+
+            #arc edits to raw_network
+            if network_editor_bool:
+                if arc_id_name == "HWYCOV-ID":
+                    for link_edits in network_editor_data.get('raw_network',[]):
+                        if arc["HWYCOV-ID"] in link_edits.get("@tcov_id",[]):
+                            for attribute,value in link_edits["attributes_to_edit"].items():
+                                arc[attribute] = value
 
             modes = mode_callback(arc)
             link = network.create_link(i_node, j_node, modes)
@@ -1195,6 +1220,28 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         pass_values.add_attribute(_dt.Attribute("pass_type", _np.array(pass_cost_keys).astype("O")))
         pass_values.add_attribute(_dt.Attribute("cost", _np.array(pass_costs).astype("f8")))
         gen_utils.DataTableProc("%s_transit_passes" % self.data_table_name, data=pass_values)
+
+        # Check if network editor file is in inputs
+        network_editor_yaml_file = FILE_NAMES["NETWORK_EDITS"]
+        network_editor_bool = False
+        network_editor_yaml_path = _join(self.source, network_editor_yaml_file)
+        self._log.append({"type": "header", "content": "__Network Edits"})
+        if os.path.exists(network_editor_yaml_path):
+            network_editor_bool = True
+            with open(network_editor_yaml_path, "r") as stream:
+                network_editor_data = yaml.safe_load(stream)
+                self._log.append({"type": "text", "content": "Successfully loaded Network Edits YAML"})
+                self._log.append({"type": "text", "content": "\tYAML Path: %s" % network_editor_yaml_path})
+        else:
+            self._log.append({"type": "text", "content": "NO Network Edits YAML to load"})
+
+        if network_editor_bool:
+            for link_edits in network_editor_data.get('transit',[]):
+                for link in network.links():
+                    if link["@tcov_id"] in link_edits.get("@tcov_id",[]):
+                        for attribute,value in link_edits["attributes_to_edit"].items():
+                            link[attribute] = value
+
         self._log.append({"type": "text", "content": "Calculate derived transit attributes complete"})
         return
 
@@ -1273,6 +1320,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         self._log.append({"type": "text", "content": "Import turns and turn restrictions complete"})
 
     def calc_traffic_attributes(self, network):
+
         self._log.append({"type": "header", "content": "Calculate derived traffic attributes"})
         # "COST":       "@cost_operating"
         # "ITOLL":      "@toll_flag"       # ITOLL  - Toll + 100 *[0,1] if managed lane (I-15 tolls)
@@ -1356,6 +1404,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 4: 0.0127692,   # Other, Railway, etc.
             }
         }
+
         for link in network.links():
             # Change SR125 toll speed to 70MPH
             if link["@lane_restriction"] == 4 and link.type == 1:
@@ -1382,6 +1431,36 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
                 link["@time_inter" + time] = link["time_inter" + src_time]
                 link["@toll" + time] = link["toll" + src_time]
+
+        # Check if network editor file is in inputs
+        network_editor_yaml_file = FILE_NAMES["NETWORK_EDITS"]
+        network_editor_bool = False
+        network_editor_yaml_path = _join(self.source, network_editor_yaml_file)
+        self._log.append({"type": "header", "content": "__Network Edits"})
+        if os.path.exists(network_editor_yaml_path):
+            network_editor_bool = True
+            with open(network_editor_yaml_path, "r") as stream:
+                network_editor_data = yaml.safe_load(stream)
+                self._log.append({"type": "text", "content": "Successfully loaded Network Edits YAML"})
+                self._log.append({"type": "text", "content": "\tYAML Path: %s" % network_editor_yaml_path})
+        else:
+            self._log.append({"type": "text", "content": "NO Network Edits YAML to load"})
+
+        if network_editor_bool:
+            for link_edits in network_editor_data.get('traffic',[]):
+                for link in network.links():
+                    if link["@tcov_id"] in link_edits.get("@tcov_id",[]):
+                        for attribute,value in link_edits["attributes_to_edit"].items():
+                            link[attribute] = value
+
+        # if network_editor_bool:
+        #     for link_edits in network_editor_data.get('traffic',[]):
+        #         if link_edits.get('delete_link', False):
+        #             for ij in link_edits['i-j']:
+        #                 network.delete_link(ij[0], ij[1], cascade=True)
+        #         else:
+        #             for link in network.links():
+
 
         off_peak_factor_file = FILE_NAMES["OFF_PEAK"]
         if os.path.exists(_join(self.source, off_peak_factor_file)):
@@ -1411,7 +1490,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             factors = [(3.0/12.0), 1.0, (6.5/12.0), (3.5/3.0), (8.0/12.0)]
             for f, time, src_time in zip(factors, time_periods, src_time_periods):
                 if link["capacity_link" + src_time] != 999999:
-                    link["@capacity_link" + time] = f * link["capacity_link" + src_time]	
+                    link["@capacity_link" + time] = f * link["capacity_link" + src_time]
                 else:
                     link["@capacity_link" + time] = 999999
                 if link["capacity_inter" + src_time] != 999999:
