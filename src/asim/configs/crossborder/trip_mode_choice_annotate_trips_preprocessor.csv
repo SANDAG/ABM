@@ -21,7 +21,7 @@ light rail ASC,asc_lrt_prm,"np.where(asc_cr_prm==0, np.where(odt_skims['WALK_PRM
 bus rapid transit ASC,asc_brt_prm,"np.where(asc_lrt_prm==0, np.where(odt_skims['WALK_PRM_BRTIVTT'] > 0, brt_asc * c_ivt, 0), asc_lrt_prm)"
 express bus ASC,asc_eb_prm,"np.where(asc_brt_prm==0, np.where(odt_skims['WALK_PRM_LTDEXPIVTT'] + odt_skims['WALK_PRM_EXPIVTT'] > 0, exp_asc * c_ivt, 0), asc_brt_prm)"
 #,,
-,cost_per_mile,cost_per_mile_fuel + cost_per_mile_maint
+,cost_per_mile,costPerMile
 intermediate outbound stops on tour,out_stops,df['stop_frequency'].str[0].astype(int)
 intermediate inbound stops on tour,in_stops,df['stop_frequency'].str[5].astype(int)
 total intermediate stops,tot_stops,out_stops + in_stops

@@ -38,7 +38,7 @@ Description,Target,Expression
 ,c_xfers,c_ivt * 24
 ,c_walk_time,c_ivt * 1.8
 ,c_xfers_pnr,c_ivt * 15
-,cost_per_mile,cost_per_mile_fuel + cost_per_mile_maint
+,cost_per_mile,costPerMile
 ,vot_da,c_ivt / trip_c_cost * 0.6
 ,vot_s2,vot_da * cost_share_s2
 ,vot_s3,vot_da * cost_share_s3
