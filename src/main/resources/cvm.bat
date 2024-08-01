@@ -1,7 +1,7 @@
 ECHO ON
 set PROJECT_DRIVE=%1
 set PROJECT_DIRECTORY=%2
-set SCENARIO_YEAR=%3
+set SCENARIO_YEAR_WITH_SUFFIX=%3
 
 SET ANACONDA3_DIR=%CONDA_PREFIX%
 SET ANACONDA2_DIR=%CONDA_TWO_PREFIX%
@@ -60,7 +60,7 @@ IF %ERRORLEVEL% NEQ 0 (GOTO :ERROR) else (GOTO :SUCCESS)
 
     ::::::::::::::::::::::
     :: Post-process CVM outputs
-	%PYTHON3% src/asim-cvm/scripts/generate_summary.py %MODEL_DIR% %CVM_OUTPUT_DIR% %SCENARIO_YEAR%
+	%PYTHON3% src/asim-cvm/scripts/generate_summary.py %MODEL_DIR% %CVM_OUTPUT_DIR% %SCENARIO_YEAR_WITH_SUFFIX%
     :: sort TAZ zone index in omx
     %PYTHON3% src/asim-cvm/scripts/set_zoneMapping.py cvm output
 

@@ -5,7 +5,7 @@ import openmatrix as omx
 
 model_dir = sys.argv[1]
 output_dir = sys.argv[2]
-scenario_year = sys.argv[3]
+scenario_year_with_suffix = str(sys.argv[3])
 
 # File Path
 cvm_trip_path = f"{output_dir}\\final_cv_trips.csv"
@@ -79,10 +79,10 @@ df.rename(columns={'vehicle_type_abm3': 'vehicle_type'}, inplace=True)
 df['costOperatingDrive'] = None
 
 # Mapping dictionary for conditions
-mapping = {'passenger_car': df_auto_cost[df_auto_cost['year']==int(scenario_year)]['aoc.fuel'].iloc[0] + df_auto_cost[df_auto_cost['year']==int(scenario_year)]['aoc.maintenance'].iloc[0],
-            'LHDT': df_auto_cost[df_auto_cost['year']==int(scenario_year)]['aoc.truck.fuel.light'].iloc[0] + df_auto_cost[df_auto_cost['year']==int(scenario_year)]['aoc.truck.maintenance.light'].iloc[0],
-            'MHDT': df_auto_cost[df_auto_cost['year']==int(scenario_year)]['aoc.truck.fuel.medium'].iloc[0] + df_auto_cost[df_auto_cost['year']==int(scenario_year)]['aoc.truck.maintenance.medium'].iloc[0],
-            'HHDT': df_auto_cost[df_auto_cost['year']==int(scenario_year)]['aoc.truck.fuel.high'].iloc[0] + df_auto_cost[df_auto_cost['year']==int(scenario_year)]['aoc.truck.maintenance.high'].iloc[0]}
+mapping = {'passenger_car': df_auto_cost[df_auto_cost['year']==scenario_year_with_suffix]['aoc.fuel'].iloc[0] + df_auto_cost[df_auto_cost['year']==scenario_year_with_suffix]['aoc.maintenance'].iloc[0],
+            'LHDT': df_auto_cost[df_auto_cost['year']==scenario_year_with_suffix]['aoc.truck.fuel.light'].iloc[0] + df_auto_cost[df_auto_cost['year']==scenario_year_with_suffix]['aoc.truck.maintenance.light'].iloc[0],
+            'MHDT': df_auto_cost[df_auto_cost['year']==scenario_year_with_suffix]['aoc.truck.fuel.medium'].iloc[0] + df_auto_cost[df_auto_cost['year']==scenario_year_with_suffix]['aoc.truck.maintenance.medium'].iloc[0],
+            'HHDT': df_auto_cost[df_auto_cost['year']==scenario_year_with_suffix]['aoc.truck.fuel.high'].iloc[0] + df_auto_cost[df_auto_cost['year']==scenario_year_with_suffix]['aoc.truck.maintenance.high'].iloc[0]}
 
 
 def calculate_cost(row):
