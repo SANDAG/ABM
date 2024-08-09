@@ -76,7 +76,7 @@ tnc_shared_cost_per_minute: 0.16
 tnc_shared_cost_minimum: 4.6
 
 ivt_lrt_multiplier: 0.85
-ivt_brt_multiplier: 0.90
+ivt_brt_multiplier: 0.95
 ivt_cmr_multiplier: 0.85
 ivt_ltd_multiplier: 1.0
 ivt_cost_multiplier: 0.6

@@ -2,6 +2,7 @@ ECHO OFF
 
 set PROJECT_DIRECTORY=%1
 set SCENYEAR=%2
+set SCENYEARWITHSUFFIX=%3
 
 %PROJECT_DRIVE%
 cd /d %PROJECT_DIRECTORY%
@@ -29,7 +30,7 @@ SET PYTHON3=%ANACONDA3_DIR%\envs\asim_baydag\python.exe
 
 cd /d %PROJECT_DIRECTORY%
 
-%PYTHON3% src/asim/scripts/ScenarioManagement/scenManagement.py %PROJECT_DIRECTORY% %SCENYEAR%
+%PYTHON3% src/asim/scripts/ScenarioManagement/scenManagement.py %PROJECT_DIRECTORY% %SCENYEAR% %SCENYEARWITHSUFFIX%
 
 
 

@@ -47,7 +47,7 @@ class SelectStudyYears(tkinter.Frame):
 
 
 class CreateScenarioGUI(tkinter.Frame):
-        def __init__(self, root, emme_version = "4.3.7", year = "2022", geo = "1", lu = "S0"):
+        def __init__(self, root, emme_version = "4.3.7", year = "2022", geo = "1", lu = "S0", year_suffix = ""):
             tkinter.Frame.__init__(self, root, border=5)
             body = tkinter.Frame(self)
             body.pack(fill=constants.X, expand=1)
@@ -83,6 +83,7 @@ class CreateScenarioGUI(tkinter.Frame):
             self.year = year
             self.geo = geo            
             self.lu = lu
+            self.year_suffix = year_suffix
  
             # if self.year not in self.lu_options[self.lu]["years"]:
             #     if self.year in self.lu_options["DS41"]["years"]:
@@ -195,6 +196,22 @@ class CreateScenarioGUI(tkinter.Frame):
             option.grid(row=current_row, column=1)
             current_row += 1
             #option.pack(expand = True)
+
+            tkinter.Label(body, text=u"Build Status", font=("Helvetica", 8, 'bold')).grid(row=current_row)
+            var = tkinter.StringVar(root)
+            buildOptionList = ["Build", "No Build"]
+            if self.year == "2022":
+                self.year_suffix = ""
+                buildOptionList = ["Base"]
+                var.set("Base")
+            elif self.year_suffix == "nb":
+                var.set("No Build")
+            else:
+                var.set("Build")
+            option=tkinter.OptionMenu(body,var,*buildOptionList,command=self.setSuffix)
+            option.config(width=50)
+            option.grid(row=current_row, column=1)
+            current_row += 1
 			
             tkinter.Label(body, text=u"Land Use", font=("Helvetica", 8, 'bold')).grid(row=current_row)
             #self.lu="DS41"
@@ -226,14 +243,14 @@ class CreateScenarioGUI(tkinter.Frame):
             current_row += 1
             #option.pack(expand = True)
 			
-            tkinter.Label(body, text=u"Scenario Folder", font=("Helvetica", 8, 'bold')).grid(row=13)
+            tkinter.Label(body, text=u"Scenario Folder", font=("Helvetica", 8, 'bold')).grid(row=current_row)
             self.scenariopath = tkinter.Entry(body, width=40)
             self.scenariopath.grid(row=current_row, column=1, sticky=sticky)
             button = tkinter.Button(body, text=u"...",width=4,command=lambda: self.get_path("scenario"))
             button.grid(row=current_row, column=2)
             current_row += 1
 
-            tkinter.Label(body, text=u"Network Folder",font=("Helvetica", 8, 'bold')).grid(row=14)
+            tkinter.Label(body, text=u"Network Folder",font=("Helvetica", 8, 'bold')).grid(row=current_row)
             self.networkpath = tkinter.Entry(body, width=40)
             self.networkpath.grid(row=current_row, column=1, sticky=sticky)
             button = tkinter.Button(body, text=u"...",width=4,command=lambda: self.get_path("network"))
@@ -250,7 +267,7 @@ class CreateScenarioGUI(tkinter.Frame):
             button.pack(side=constants.RIGHT)
             #button.grid(row = 13, columns = 2)
 
-            self.defaultpath=self.releaseDir+"\\"+self.version+'\\input\\'+self.year
+            self.defaultpath=self.releaseDir+"\\"+self.version+'\\input\\'+self.year+self.year_suffix
             self.scenariopath.delete(0, constants.END)
             self.scenariopath.insert(0, self.defaultScenarioDir)
             self.networkpath.delete(0, constants.END)
@@ -293,7 +310,7 @@ class CreateScenarioGUI(tkinter.Frame):
             self.year=value
             #Refresh the GUI with inputs already entered
             self.destroy()
-            CreateScenarioGUI(self.root, self.emme_version, self.year, self.geo, self.lu).pack(fill=constants.X, expand=1)
+            CreateScenarioGUI(self.root, self.emme_version, self.year, self.geo, self.lu, self.year_suffix).pack(fill=constants.X, expand=1)
             return
 
         # set Geography Set ID
@@ -304,6 +321,17 @@ class CreateScenarioGUI(tkinter.Frame):
         # set land use
         def setLU(self,value):
             self.lu = value.split("-")[0]
+            return
+        
+        # set build/no-build
+        def setSuffix(self, value):
+            if value == "No Build":
+                self.year_suffix = "nb"
+            else:
+                self.year_suffix = ""
+            #Refresh the GUI with inputs already entered
+            self.destroy()
+            CreateScenarioGUI(self.root, self.emme_version, self.year, self.geo, self.lu, self.year_suffix).pack(fill=constants.X, expand=1)
             return
 
         #set cluster
@@ -402,12 +430,13 @@ class CreateScenarioGUI(tkinter.Frame):
                     lu_input_path = os.path.join(self.lu_options[self.lu]["location"], "abm_csv", "processed", self.year + "nb")
                 else:
                     lu_input_path = os.path.join(self.lu_options[self.lu]["location"], "abm_csv", "processed", self.year)
-                commandstr = u"create_scenario.cmd %s %s %s %s %s" % (
+                commandstr = u"create_scenario.cmd %s %s %s %s %s %s" % (
                     self.scenariopath.get(),
                     self.year,
                     self.networkpath.get(),
                     self.emme_version,
-                    lu_input_path
+                    lu_input_path,
+                    '"' + self.year_suffix + '"'
                 )
                 os.chdir(self.releaseDir+"\\"+self.version+'\\')
                 os.system(commandstr)
