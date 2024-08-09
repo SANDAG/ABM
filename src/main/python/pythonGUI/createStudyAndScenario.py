@@ -58,12 +58,12 @@ class CreateScenarioGUI(tkinter.Frame):
             self.lu_options = {
                 "S0": {
                     "name": "Baseline",
-                    "location": r"T:\socioec\Current_Projects\SR15\S0\version16",
+                    "location": r"T:\socioec\Current_Projects\SR15\S0\version19",
                     "years": ["2022", "2035", "2050"]
                 },
                 "S1": {
                     "name": "Baseline + RHNA Adjustment",
-                    "location": r"T:\socioec\Current_Projects\SR15\S1\version12",
+                    "location": r"T:\socioec\Current_Projects\SR15\S1\version20",
                     "years": ["2026", "2029", "2035"]
                 },
                 "S2": {
