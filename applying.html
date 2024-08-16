@@ -620,6 +620,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#electric-vehicle-rebates" class="md-nav__link">
+    Electric Vehicle Rebates
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -795,6 +802,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#electric-vehicle-rebates" class="md-nav__link">
+    Electric Vehicle Rebates
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -883,6 +897,42 @@
 </tbody>
 </table>
 <p>The scenario manager is run as part of the model setup in the Master Run tool before any ActivitySim model is run (usually only in the first iteration of the run). Model user can choose to run or skip this step, although it is highly recommended to run with each run to ensure correct parameters.</p>
+<h2 id="electric-vehicle-rebates">Electric Vehicle Rebates<a class="headerlink" href="#electric-vehicle-rebates" title="Permanent link"> ¶</a></h2>
+<p>One of the policies that SANDAG planners would like to test for the 2025 Regional Plan is providing rebates for low- and middle-income households to purchase electric vehicles. One of the variables in the vehicle type choice model is the <a href="https://github.com/SANDAG/ABM/blob/ABM3_develop/src/asim/configs/resident/vehicle_type_choice_op4.csv#L12-L17">new purchase price</a> for a vehicle of a given age, body type, and fuel type. The way the EV rebate is implemented in ABM3 is by deducting the appropriate rebate value for plugin and battery vehicles if a household meets the criteria (based on percentage of the federal poverty level). To configure the rebate values and poverty level thresholds, <a href="https://github.com/SANDAG/ABM/blob/ABM3_develop/src/asim/configs/common/constants.yaml#L290">new constants</a> were added to the common/constants.yaml configuration file. The constants fit into the policy as follows:</p>
+<table>
+<thead>
+<tr>
+<th>Fuel Type</th>
+<th><code>LowIncomeEVRebateCutoff</code> &lt; Household Poverty Level &lt;= <code>MedIncomeEVRebateCutoff</code></th>
+<th>Household Poverty Level &lt;= <code>LowIncomeEVRebateCutoff</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BEV</td>
+<td><code>MedIncomeBEVRebate</code></td>
+<td><code>LowIncomeBEVRebate</code></td>
+</tr>
+<tr>
+<td>PEV</td>
+<td><code>MedIncomePEVRebate</code></td>
+<td><code>LowIncomePEVRebate</code></td>
+</tr>
+</tbody>
+</table>
+<p>For example, if the following policy were to be tested&hellip;
+| Fuel Type | 300-400% Federal Poverty Limit | 300% Federal Poverty Limit or lower |
+| --------- | ------------------------------ | ----------------------------------- |
+| BEV       | $2,000                         | $6,750                              |
+| PEV       | $1,000                         | $3,375                              |</p>
+<p>&hellip;then the constants would need to be set as follows:
+<div class="highlight"><pre><span></span><code>LowIncomeEVRebateCutoff: 3
+MedIncomeEVRebateCutoff: 4
+LowIncomeBEVRebate: 6750
+LowIncomePEVRebate: 3375
+MedIncomeBEVRebate: 2000
+MedIncomePEVRebate: 1000
+</code></pre></div></p>
 
 
 
