@@ -97,6 +97,10 @@ doc['ebikeownership'] = float(paramByYear.loc[paramByYear.year==scenYearWithSuff
 doc['WAIT_TIME_DISC'] = float(paramByYear.loc[paramByYear.year==scenYearWithSuffix, 'rapid.factor.wait'].values[0])
 doc['ivt_brt_multiplier'] = float(paramByYear.loc[paramByYear.year==scenYearWithSuffix, 'rapid.factor.ivt'].values[0])
 doc['hhTR_Vehyear'] = int(paramByYear.loc[paramByYear.year==scenYearWithSuffix, 'tr.veh.year'].values[0])
+doc['LowIncomeBEVRebate'] = int(paramByYear.loc[paramByYear.year==scenYearWithSuffix, 'ev.rebate.lowinc.bev'].values[0])
+doc['LowIncomePEVRebate'] = int(paramByYear.loc[paramByYear.year==scenYearWithSuffix, 'ev.rebate.lowinc.pev'].values[0])
+doc['MedIncomeBEVRebate'] = int(paramByYear.loc[paramByYear.year==scenYearWithSuffix, 'ev.rebate.medinc.bev'].values[0])
+doc['MedIncomePEVRebate'] = int(paramByYear.loc[paramByYear.year==scenYearWithSuffix, 'ev.rebate.medinc.pev'].values[0])
 util.write_yaml(_join(configs_dir, 'common', 'constants.yaml'), doc)
 
 doc = util.open_yaml(_join(configs_dir, 'resident', 'vehicle_type_choice.yaml'))
