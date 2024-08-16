@@ -288,6 +288,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     raise Exception(error_text % name)
 
         scenarioYear = str(props["scenarioYear"])
+        scenarioYearSuffix = str(props["scenarioYearSuffix"])
         # geographyID = str(props["geographyID"])
         prod_env = props["RunModel.env"]
         startFromIteration = props["RunModel.startFromIteration"]
@@ -495,6 +496,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 mgraFile = 'mgra15_based_input' + str(scenarioYear) + '.csv'  # Should be read in from properties? -JJF
                 self.complete_work(scenarioYear, input_dir, output_dir, mgraFile, "walkMgraEquivMinutes.csv")
 
+                # Update rapid dwell time before importing network
+                mode5tod = pd.read_csv(_join(input_dir,'MODE5TOD.csv'))
+                mode5tod.loc[mode5tod['MODE_ID'].isin([6,7]), ['DWELLTIME']] = float(props['rapid.dwell'])
+                mode5tod.to_csv(_join(input_dir,'MODE5TOD.csv'))
+
                 if not skipBuildNetwork:
                     source_gdb = _glob.glob(os.path.join(input_dir, "*.gdb"))
                     if len(source_gdb) > 1:
@@ -632,7 +638,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
                 if (not skipScenManagement) and (msa_iteration==1):
                     self.run_proc("runSandag_ScenManagement.cmd",
-                            [drive + path_forward_slash, str(props["scenarioYear"])],
+                            [drive + path_forward_slash, str(props["scenarioYear"]), str(props["scenarioYear"]) + str(props["scenarioYearSuffix"])],
                             "Running Scenario Management", capture_output=True)
 
                 if not skipABMPreprocessing[iteration]:
@@ -724,7 +730,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     #export_for_commercial_vehicle(output_dir + '/skims', base_scenario)
                     self.run_proc(
                         "cvm.bat",
-                        [drive, path_no_drive, scenarioYear],
+                        [drive, path_no_drive, str(scenarioYear) + str(scenarioYearSuffix)],
                         "Commercial vehicle model", capture_output=True)
                 if msa_iteration == startFromIteration:
                     external_zones = "1-12"
@@ -732,7 +738,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         # run truck model (generate truck trips)
                         self.run_proc(
                             "htm.bat",
-                            [drive, path_no_drive, fafInputFile, htm_input_file, "PM", truck_scenario_year],
+                            [drive, path_no_drive, fafInputFile, htm_input_file, "PM", truck_scenario_year, str(scenarioYear) + str(scenarioYearSuffix)],
                             "Heavy truck model", capture_output=True)
                     # run EI model "US to SD External Trip Model"
                     if not skipEI[iteration]:

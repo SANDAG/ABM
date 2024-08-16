@@ -612,6 +612,7 @@ faf_file_name = arguments[3]
 htm_input_file_name = arguments[4]
 skim_tod = arguments[5]
 scenario_year = arguments[6]
+scenario_year_with_suffix = arguments[7]
 
 skim_name = 'TRK_H'
 
@@ -881,9 +882,9 @@ df_auto_cost = pd.read_csv(auto_path)
 
 # Mapping dictionary for conditions
 
-mapping = {'Light': df_auto_cost[df_auto_cost['year']==int(scenario_year)]['aoc.truck.fuel.light'].iloc[0] + df_auto_cost[df_auto_cost['year']==int(scenario_year)]['aoc.truck.maintenance.light'].iloc[0],
-           'Medium': df_auto_cost[df_auto_cost['year']==int(scenario_year)]['aoc.truck.fuel.medium'].iloc[0] + df_auto_cost[df_auto_cost['year']==int(scenario_year)]['aoc.truck.maintenance.medium'].iloc[0],
-           'Heavy': df_auto_cost[df_auto_cost['year']==int(scenario_year)]['aoc.truck.fuel.high'].iloc[0] + df_auto_cost[df_auto_cost['year']==int(scenario_year)]['aoc.truck.maintenance.high'].iloc[0]}
+mapping = {'Light': df_auto_cost[df_auto_cost['year']==scenario_year_with_suffix]['aoc.truck.fuel.light'].iloc[0] + df_auto_cost[df_auto_cost['year']==scenario_year_with_suffix]['aoc.truck.maintenance.light'].iloc[0],
+           'Medium': df_auto_cost[df_auto_cost['year']==scenario_year_with_suffix]['aoc.truck.fuel.medium'].iloc[0] + df_auto_cost[df_auto_cost['year']==scenario_year_with_suffix]['aoc.truck.maintenance.medium'].iloc[0],
+           'Heavy': df_auto_cost[df_auto_cost['year']==scenario_year_with_suffix]['aoc.truck.fuel.high'].iloc[0] + df_auto_cost[df_auto_cost['year']==scenario_year_with_suffix]['aoc.truck.maintenance.high'].iloc[0]}
 
 
 def calculate_new_column(row):

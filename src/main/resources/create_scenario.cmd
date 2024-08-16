@@ -7,12 +7,14 @@ if "%2"=="" goto usage
 if "%3"=="" goto usage
 if "%4"=="" goto usage
 if "%5"=="" goto usage
+if "%6"=="" goto usage
 
 set SCENARIO_FOLDER=%1
 set YEAR=%2
 set NETWORKDIR=%3
 set EMME_VERSION=%4
 set LANDUSE_INPUT_PATH=%5
+set SUFFIX=%6
 
 @echo creating scenario folders
 set FOLDERS=input application bin conf input_truck logFiles output python report sql uec analysis visualizer visualizer\outputs\summaries input_checker src src\asim src\asim-cvm
@@ -45,7 +47,7 @@ xcopy /Y/s/E .\common\src\asim-cvm\"*.*" %SCENARIO_FOLDER%\src\asim-cvm
 @echo assemble inputs
 del %SCENARIO_FOLDER%\input /q
 rem copy pop, hh, landuse, and other input files
-xcopy /s/Y .\input\%YEAR%\"*.*" %SCENARIO_FOLDER%\input
+xcopy /s/Y .\input\%YEAR%%SUFFIX%\"*.*" %SCENARIO_FOLDER%\input
 rem copy common geography files to input folder
 xcopy /Y .\common\input\geography\"*.*" %SCENARIO_FOLDER%\input
 xcopy /Y .\common\input\geography\mgra\"*.*" %SCENARIO_FOLDER%\input
@@ -110,14 +112,14 @@ echo %PROP_FILE%
 @REM )
 @REM del %PROP_FILE%
 @REM move %TEMP_FILE% %PROP_FILE%
-python .\common\python\update_properties.py %PROP_FILE% %YEAR%
+python .\common\python\update_properties.py %PROP_FILE% %YEAR% %SUFFIX%
 
 @echo init emme folder
 call init_emme.cmd %SCENARIO_FOLDER% %EMME_VERSION%
 
 :usage
 
-@echo Usage: %0 ^<scenario_folder^> ^<year^> ^<network^> ^<emme_version^>
+@echo Usage: %0 ^<scenario_folder^> ^<year^> ^<network^> ^<emme_version^> ^<landuse_input_path^> ^<year_suffix^>
 @echo If 3rd parameter is empty, default network inputs in standard release are used
 
 
