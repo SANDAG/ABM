@@ -15,6 +15,7 @@ paramByYear_dir = _join(project_dir, r'input\parametersByYears.csv')
 sandag_abm_prop_dir = _join(project_dir, r'conf\sandag_abm.properties')
 scripts_dir = _join(project_dir, r'src\asim\scripts')
 res_ie_size_term_file = _join(project_dir, r'input\resident_ie_size_term.csv')
+population = len(pd.read_csv(_join(project_dir, r'input\persons.csv')))
 
 # %%
 paramByYear = pd.read_csv(paramByYear_dir)
@@ -106,6 +107,7 @@ util.write_yaml(_join(configs_dir, 'common', 'constants.yaml'), doc)
 doc = util.open_yaml(_join(configs_dir, 'resident', 'vehicle_type_choice.yaml'))
 doc['FLEET_YEAR'] = int(scenYear)
 doc['CONSTANTS']['scenarioYear'] = int(scenYear)
+doc['CONSTANTS']['CHARGERS_PER_CAP'] = int(paramByYear.loc[paramByYear.year==scenYearWithSuffix, 'ev.chargers'].values[0]) / population
 util.write_yaml(_join(configs_dir, 'resident', 'vehicle_type_choice.yaml'), doc)
 
 sandag_abm_prop = util.load_properties(sandag_abm_prop_dir)
