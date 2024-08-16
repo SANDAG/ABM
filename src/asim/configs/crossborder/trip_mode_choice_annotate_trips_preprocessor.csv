@@ -21,7 +21,7 @@ light rail ASC,asc_lrt_prm,"np.where(asc_cr_prm==0, np.where(odt_skims['WALK_PRM
 bus rapid transit ASC,asc_brt_prm,"np.where(asc_lrt_prm==0, np.where(odt_skims['WALK_PRM_BRTIVTT'] > 0, brt_asc * c_ivt, 0), asc_lrt_prm)"
 express bus ASC,asc_eb_prm,"np.where(asc_brt_prm==0, np.where(odt_skims['WALK_PRM_LTDEXPIVTT'] + odt_skims['WALK_PRM_EXPIVTT'] > 0, exp_asc * c_ivt, 0), asc_brt_prm)"
 #,,
-,cost_per_mile,cost_per_mile_fuel + cost_per_mile_maint
+,cost_per_mile,costPerMile
 intermediate outbound stops on tour,out_stops,df['stop_frequency'].str[0].astype(int)
 intermediate inbound stops on tour,in_stops,df['stop_frequency'].str[5].astype(int)
 total intermediate stops,tot_stops,out_stops + in_stops
@@ -50,8 +50,8 @@ effective parking cost,park_cost_prim_dest,"pd.concat((park_cost_day, park_cost_
 ,park_cost_trip_dest_contrib,((1 - last_trip) * (1 - trip_dest_is_tour_dest)) * (park_cost_trip_dest / 2) + (trip_dest_is_tour_dest * (park_cost_tour_dest_contrib / (tot_trips + 2)))
 ,parking_cost,park_cost_tour_dest_contrib + park_cost_trip_orig_contrib + park_cost_trip_dest_contrib
 ,vot_da,c_ivt / c_cost * 0.6
-,vot_s2,vot_da * cost_share_s2
-,vot_s3,vot_da * cost_share_s3
+,vot_s2,vot_da / cost_share_s2
+,vot_s3,vot_da / cost_share_s3
 ,_vot_bin_da,"np.where(vot_da < vot_threshold_low, 1, np.where(vot_da < vot_threshold_med, 2, 3))"
 ,_vot_bin_s2,"np.where(vot_s2 < vot_threshold_low, 1, np.where(vot_s2 < vot_threshold_med, 2, 3))"
 ,_vot_bin_s3,"np.where(vot_s3 < vot_threshold_low, 1, np.where(vot_s3 < vot_threshold_med, 2, 3))"

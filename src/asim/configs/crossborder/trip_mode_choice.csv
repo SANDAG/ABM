@@ -61,14 +61,14 @@ util_cr_long_distance_prm,CR long distance bonus,"@(odt_skims['WALK_PRM_CMRIVTT'
 #,,,,,,,,,,,,
 util_TAXI_IVT,Taxi - In-vehicle time,c_ivt * s2_time_skims,,,,,,,,1,,
 util_TAXI_wait,Taxi - Wait time,c_ivt * 1.5 * taxi_wait_time,,,,,,,,1,,
-util_TAXI_cost,Taxi - Fare,@c_cost * ((taxi_base_fare + (df.s2_dist_skims * taxi_cost_per_mile) + (df.s2_time_skims * taxi_cost_per_minute)) * 100 + df.s2_cost_skims),,,,,,,,1,,
+util_TAXI_cost,Taxi - Fare,@c_cost * ((Taxi_baseFare + (df.s2_dist_skims * Taxi_costPerMile) + (df.s2_time_skims * Taxi_costPerMinute)) * 100 + df.s2_cost_skims),,,,,,,,1,,
 util_TNC_SINGLE_IVT,TNC Single - In-vehicle time,c_ivt * s2_time_skims,,,,,,,,,1,
 util_TNC_SINGLE_wait,TNC Single - Wait time,c_ivt * 1.5 * tnc_single_wait_time,,,,,,,,,1,
-util_TNC_SINGLE_cost,TNC Single - Cost,@c_cost * ((tnc_single_base_fare + (df.s2_dist_skims * tnc_single_cost_per_mile) + (df.s2_time_skims * tnc_single_cost_per_minute).clip(lower=tnc_single_cost_minimum)) * 100 + df.s2_cost_skims),,,,,,,,,1,
+util_TNC_SINGLE_cost,TNC Single - Cost,@c_cost * ((TNC_single_baseFare + (df.s2_dist_skims * TNC_single_costPerMile) + (df.s2_time_skims * TNC_single_costPerMinute).clip(lower=TNC_single_costMinimum)) * 100 + df.s2_cost_skims),,,,,,,,,1,
 util_TNC Shared_switch,TNC Shared - switch turn-off (depends on data availability),@((~df.nev_available) & (~df.microtransit_available) & (scenarioYear==2022)),,,,,,,,,,-999
 util_TNC_SHARED_IVT,TNC Shared - In-vehicle time,"@df.c_ivt * np.where(df.nev_available, df.nev_time, np.where(df.microtransit_available, df.microtransit_time, df.s3_time_skims)) * tnc_shared_ivt_factor",,,,,,,,,,1
 util_TNC_SHARED_wait,TNC Shared - Wait time,"@df.c_ivt * 1.5 * np.where(df.nev_available, nevWaitTime, np.where(df.microtransit_available, microtransitWaitTime, df.tnc_shared_wait_time))",,,,,,,,,,1
-util_TNC_SHARED_cost,TNC Shared - Cost,"@c_cost * np.where(df.nev_available, nevCost, np.where(df.microtransit_available, microtransitCost, ((tnc_shared_base_fare + (df.s3_dist_skims * tnc_shared_cost_per_mile) + (df.s3_time_skims * tnc_shared_cost_per_minute).clip(lower=tnc_shared_cost_minimum)))) * 100 + df.s3_cost_skims)",,,,,,,,,,1
+util_TNC_SHARED_cost,TNC Shared - Cost,"@c_cost * np.where(df.nev_available, nevCost, np.where(df.microtransit_available, microtransitCost, ((TNC_shared_baseFare + (df.s3_dist_skims * TNC_shared_costPerMile) + (df.s3_time_skims * TNC_shared_costPerMinute).clip(lower=TNC_shared_costMinimum)))) * 100 + df.s3_cost_skims)",,,,,,,,,,1
 #,,,,,,,,,,,,
 util_S2_ASC_tour_DA,s2 ASC - Tour Mode DA,@df.tour_mode_is_da * s2_ASC_tour_da,,1,,,,,,,,
 util_S3_ASC_tour_DA,s3 ASC - Tour Mode DA,@df.tour_mode_is_da * s3_ASC_tour_da,,,1,,,,,,,

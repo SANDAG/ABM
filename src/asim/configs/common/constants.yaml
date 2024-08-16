@@ -294,3 +294,9 @@ LowIncomeBEVRebate: 0
 LowIncomePEVRebate: 0
 MedIncomeBEVRebate: 0
 MedIncomePEVRebate: 0
+
+# MGRAs for Ports of Entry
+SanYsidro_maz_id: 9279
+OtayMesa_maz_id: 9387
+Tecate_maz_id: 22324
+OtayMesaEast_maz_id: 7123
