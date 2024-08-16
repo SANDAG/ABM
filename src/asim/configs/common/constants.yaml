@@ -2,28 +2,40 @@
 ## See full license in LICENSE.txt.
 
 scenarioYear: 2022
+# set below to 1 for everything to be internal, 0 otherwise
 NO_EXTERNAL: 0
+
+# set below to be 1 for years before 2021, 0 otherwise
 PRE_COVID: 0
+
+# convenience for expression files
 HHT_NONFAMILY: [4, 5, 6, 7]
 HHT_FAMILY: [1, 2, 3]
+
 PSTUDENT_GRADE_OR_HIGH: 1
 PSTUDENT_UNIVERSITY: 2
 PSTUDENT_NOT: 3
+
 GRADE_SCHOOL_MAX_AGE: 14
 GRADE_SCHOOL_MIN_AGE: 5
+
 SCHOOL_SEGMENT_NONE: 0
 SCHOOL_SEGMENT_PREK: 1
 SCHOOL_SEGMENT_GRADE: 2
 SCHOOL_SEGMENT_HIGH: 3
 SCHOOL_SEGMENT_UNIV: 4
+
+
 INCOME_SEGMENT_LOW: 1
 INCOME_SEGMENT_MED: 2
 INCOME_SEGMENT_HIGH: 3
 INCOME_SEGMENT_VERYHIGH: 4
+
 PEMPLOY_FULL: 1
 PEMPLOY_PART: 2
 PEMPLOY_NOT: 3
 PEMPLOY_CHILD: 4
+
 PTYPE_FULL: 1
 PTYPE_PART: 2
 PTYPE_UNIVERSITY: 3
@@ -32,6 +44,7 @@ PTYPE_RETIRED: 5
 PTYPE_DRIVING: 6
 PTYPE_SCHOOL: 7
 PTYPE_PRESCHOOL: 8
+
 PTYPE_NAME:
   PTYPE_FULL: 1
   PTYPE_PART: 2
@@ -50,25 +63,35 @@ PTYPE_VALUE:
   6: PTYPE_DRIVING
   7: PTYPE_SCHOOL
   8: PTYPE_PRESCHOOL
+
+
 CDAP_ACTIVITY_MANDATORY: M
 CDAP_ACTIVITY_NONMANDATORY: N
 CDAP_ACTIVITY_HOME: H
+
+# Defines cuts on psedomsa in landuse file.  Replacement for area_type
 cbd_threshold: 2
 urban_threshold: 5
 rural_threshold: 5
+
 distributed_time_factor_work_mean: 1.0
 distributed_time_factor_work_stddev: 0.7
 distributed_time_factor_nonwork_mean: 1.0
 distributed_time_factor_nonwork_stddev: 0.6
 distributed_time_factor_min: 0.1
 distributed_time_factor_max: 10
+
 c_drive: 1.5
+
 AV_OWNERSHIP_TARGET_PERCENT: 0.0
 autoIVTFactorAV: 0.75
 autoParkingCostFactorAV: 0.5
 autoCostPerMileFactorAV: 0.7
 autoTerminalTimeFactorAV: 0.65
 minAgeDriveAloneAV: 13
+
+
+#valueOfTime: 8.00
 costPerMile: 32.5
 costShareSr2: 1.75
 costShareSr3: 2.50
@@ -84,32 +107,36 @@ escooterSpeed: 6.70
 driveSpeed: 25.00
 maxCbdAreaTypeThresh: 2
 indivTour: 1.00000
+
+### Crosswalk between SOC codes and SANDAG occupation classification
 soc_occupation_xwalk:
-  11: mngt_busi_scic_arts
-  13: mngt_busi_scic_arts
-  15: mngt_busi_scic_arts
-  17: mngt_busi_scic_arts
-  19: mngt_busi_scic_arts
-  21: mngt_busi_scic_arts
-  23: mngt_busi_scic_arts
-  25: services
-  27: mngt_busi_scic_arts
-  29: health
-  31: health
-  33: services
-  35: services
-  37: services
-  39: services
-  41: sales_office
-  43: sales_office
-  45: constr_maint
-  47: constr_maint
-  49: constr_maint
-  51: prod_trans_move
-  53: prod_trans_move
-  55: military
-  99:
-Taxi_baseFare: 3.0
+  11: mngt_busi_scic_arts # 11 - Management Occupations
+  13: mngt_busi_scic_arts # 13 - Business and Financial Operations Occupations
+  15: mngt_busi_scic_arts # 15 - Computer and Mathematical Occupations
+  17: mngt_busi_scic_arts # 17 - Architecture and Engineering Occupations
+  19: mngt_busi_scic_arts # 19 - Life, Physical, and Social Science Occupations
+  21: mngt_busi_scic_arts # 21 - Community and Social Service Occupations
+  23: mngt_busi_scic_arts # 23 - Legal Occupations
+  25: services  # 25 - Educational Instruction and Library Occupations
+  27: mngt_busi_scic_arts # 27 - Arts, Design, Entertainment, Sports, and Media Occupations
+  29: health  # 29 - Healthcare Practitioners and Technical Occupations
+  31: health # 31 - Healthcare Support Occupations
+  33: services  # 33 - Protective Service Occupations
+  35: services # 35 - Food Preparation and Serving Related Occupations
+  37: services # 37 - Building and Grounds Cleaning and Maintenance Occupations
+  39: services # 39 - Personal Care and Service Occupations
+  41: sales_office  # 41 - Sales and Related Occupations
+  43: sales_office # 43 - Office and Administrative Support Occupations
+  45: constr_maint  # 45 - Farming, Fishing, and Forestry Occupations
+  47: constr_maint # 47 - Construction and Extraction Occupations
+  49: constr_maint # 49 - Installation, Maintenance, and Repair Occupations
+  51: prod_trans_move  # 51 - Production Occupations
+  53: prod_trans_move # 53 - Transportation and Material Moving Occupations
+  55: military  # 55 - Military Specific Occupations
+  99:  # 99 -  Non-workers, Code not part of SOC system
+
+# RIDEHAIL Settings
+Taxi_baseFare: 3.00
 Taxi_costPerMile: 3.3
 Taxi_costPerMinute: 0.46
 Taxi_waitTime_mean:
@@ -118,6 +145,7 @@ Taxi_waitTime_mean:
   3: 13.3
   4: 17.3
   5: 26.5
+#### [NICK] Updated all SD numbers from sandag_abm.properties. Were all 0 before
 Taxi_waitTime_sd:
   1: 6.4
   2: 6.4
@@ -159,17 +187,22 @@ TNC_shared_waitTime_sd:
   5: 4.1
 min_waitTime: 0
 max_waitTime: 50
+
+# rapid bus wait time discount
 WAIT_TIME_DISC: 1.0
+
 ivt_lrt_multiplier: 0.85
 ivt_brt_multiplier: 0.95
 ivt_cmr_multiplier: 0.85
 ivt_ltd_multiplier: 1.0
 ivt_cost_multiplier: 0.6
+# line-haul mode constants; note commuter rail is based on CMRIVTT. Also currently hyperloop is not applied because we do not skim hyperloop IVTT
 eb_equiv_asc: 10
 brt_equiv_asc: -5
 lrt_equiv_asc: -30
 hyp_equiv_asc: -20
 pnr_lrt_equiv_asc: -20
+#
 walktimeshort_multiplier: 2
 walktimelong_multiplier: 10
 biketimeshort_multiplier: 4
@@ -187,6 +220,10 @@ xfers_drv_multiplier: 20
 drvtrn_distpen_0_multiplier: 270
 drvtrn_distpen_max: 15
 density_index_multiplier: -0.2
+#    joint_sr2_ASC_no_auto: 0
+#    joint_sr2_ASC_auto_deficient: 0
+#    joint_sr2_ASC_auto_sufficient: 0
+#    joint_drive_transit_ASC_no_auto: 0
 cost_share_s2: 0.57
 cost_share_s3: 0.37
 vot_threshold_low: 8.81
@@ -195,6 +232,7 @@ max_walk_time: 60
 max_bike_time: 60
 max_walk_distance: 3
 max_bike_distance: 12
+# Location of attractions for associated special size terms
 cabrillo_maz: 23831
 seaworld_maz: 8127
 legoland_maz: 24245
@@ -202,17 +240,21 @@ safari_maz: 14345
 midway_maz: 10646
 zoo_maz: 10561
 torrypines_maz: 4093
+
+# Micromobility constants
 microSpeed: 12
-microVarCost: 39.0
-microFixedCost: 100.0
+microVarCost: 39 #cents
+microFixedCost: 100 #cents
 microRentTime: 1
 microConstant: 60
 microAccessThreshold: 100
 ebikeownership: 0.008
 ebikeMaxDist: 10.50
 escooterMaxDist: 2.00
+
+# Microtransit and NEV constants
 microtransitSpeed: 30
-microtransitCost: 125
+microtransitCost: 125 #cents
 microtransitWaitTime: 12
 microtransitMaxDist: 4.5
 microtransitDiversionConstant: 6
@@ -220,7 +262,7 @@ microtransitDiversionFactor: 1.25
 microtransitStartPeriod: 9
 microtransitEndPeriod: 32
 nevSpeed: 17
-nevCost: 125
+nevCost: 125 #cents
 nevWaitTime: 12
 nevMaxDist: 3
 nevDwellMinutesPerMile: 0.5
@@ -228,20 +270,32 @@ nevDiversionConstant: 6
 nevDiversionFactor: 1.25
 nevStartPeriod: 9
 nevEndPeriod: 38
-maxWalkIfMTAccessAvailable: 0.5
+maxWalkIfMTAccessAvailable: 0.5 # Maximum distance to walk to premium transit if microtransit access is available
+
+# cost of "average" monthly transit pass cost.  Used in transit pass ownership model.
+# cost of pass divided by 2 for age < 18 and 65+.
 monthly_transit_pass_cost: 100
+
+# year after which a vehicle (therefore its household) must have transponder
 hhTR_Vehyear: 2029
+
+# SHARED2 and SHARED3 Occupancies
 OCC_SHARED2: 2.0
 OCC_SHARED3: 3.33
+# add TNC and Taxi Occupancies
 OCC_TAXI: 1.1
 OCC_TNC_SINGLE: 1.2
 OCC_TNC_SHARED: 2.0
+
+# EV Rebate constants
 LowIncomeEVRebateCutoff: 3
 MedIncomeEVRebateCutoff: 4
 LowIncomeBEVRebate: 0
 LowIncomePEVRebate: 0
 MedIncomeBEVRebate: 0
 MedIncomePEVRebate: 0
+
+# MGRAs for Ports of Entry
 SanYsidro_maz_id: 9279
 OtayMesa_maz_id: 9387
 Tecate_maz_id: 22324
