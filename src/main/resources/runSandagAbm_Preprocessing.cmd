@@ -72,7 +72,7 @@ if %ITERATION% equ 1 (
     %PYTHON3% src/asim/scripts/airport/createPOIomx.py %PROJECT_DIRECTORY% %SCENYEAR% || goto error
 
     ECHO Running xborder model pre-processing
-    %PYTHON3% src/asim/scripts/xborder/cross_border_model.py -p -c src/asim/configs/crossborder -d input -o output/crossborder || goto error
+    %PYTHON3% src/asim/scripts/xborder/cross_border_model.py -p -c src/asim/configs/crossborder -c src/asim/configs/common -d input -o output/crossborder || goto error
     %PYTHON3% src/asim/scripts/xborder/createPMSAomx.py %PROJECT_DIRECTORY% || goto error
 
     ECHO Running visitor model pre-processing
