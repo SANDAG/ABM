@@ -825,7 +825,7 @@ if __name__ == '__main__':
             print('UPDATING POE WAIT TIMES: ITER {0}'.format(i))
             process = subprocess.Popen([
                     'python', '-u', 'src/asim/simulation.py', '-s',
-                    'wait_time_mode.yaml', '-c', config_dir ,'-o', output_dir, '-d', data_dir, '-d', 'output/skims'],
+                    'wait_time_mode.yaml', '-c', config_dir, '-c', common_config_dir,'-o', output_dir, '-d', data_dir, '-d', 'output/skims'],
                 stdout=sys.stdout, stderr=subprocess.PIPE)
             _, stderr = process.communicate()
             if process.returncode != 0:
