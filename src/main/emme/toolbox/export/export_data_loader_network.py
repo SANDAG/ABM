@@ -266,7 +266,7 @@ Export network results to csv files for SQL data loader."""
         network = base_scenario.get_partial_network(["LINK"], include_attributes=True)
 
         #copy assignment from period scenarios
-        for period, scenario_id in period_scenario_ids.iteritems():
+        for period, scenario_id in period_scenario_ids.items():
             from_scenario = traffic_emmebank.scenario(scenario_id)
             src_attrs = ["@auto_time", "additional_volume"]
             dst_attrs = ["auto_time_" + period.lower(),
@@ -346,7 +346,7 @@ Export network results to csv files for SQL data loader."""
         for key, attr in dir_atts:
             hwyload_attrs.append((key, attr))
             hwyload_attrs.append((key.replace("AB_", "BA_"), (attr, "")))  # default for BA on one-way links is blank
-        for p, scen_id in period_scenario_ids.iteritems():
+        for p, scen_id in period_scenario_ids.items():
             scenario = traffic_emmebank.scenario(scen_id)
             new_atts = [
                 ("@speed", "link travel speed", "length*60/@auto_time"),
@@ -405,7 +405,7 @@ Export network results to csv files for SQL data loader."""
                  (auto_mode in l.modes or (l.reverse_link and auto_mode in l.reverse_link.modes))
                 ]
         links.sort(key=lambda l: l["@tcov_id"])
-        with open(filename, 'w') as fout:
+        with open(filename, 'w', newline='') as fout:
             fout.write(",".join(['"%s"' % x[0] for x in att_list]))
             fout.write("\n")
             for link in links:
@@ -532,17 +532,17 @@ Export network results to csv files for SQL data loader."""
         ]
 
         transit_flow_file = os.path.join(export_path, "transit_flow.csv")
-        fout_seg = open(transit_flow_file, 'w')
+        fout_seg = open(transit_flow_file, 'w', newline='')
         fout_seg.write(",".join(['"%s"' % x for x in transit_flow_atts]))
         fout_seg.write("\n")
 
         transit_aggregate_flow_file = os.path.join(export_path, "transit_aggflow.csv")
-        fout_link = open(transit_aggregate_flow_file, 'w')
+        fout_link = open(transit_aggregate_flow_file, 'w', newline='')
         fout_link.write(",".join(['"%s"' % x for x in transit_aggregate_flow_atts]))
         fout_link.write("\n")
 
         transit_onoff_file = os.path.join(export_path, "transit_onoff.csv")
-        fout_stop = open(transit_onoff_file, 'w')
+        fout_stop = open(transit_onoff_file, 'w', newline='')
         fout_stop.write(",".join(['"%s"' % x for x in transit_onoff_atts]))
         fout_stop.write("\n")
         try:
@@ -551,7 +551,7 @@ Export network results to csv files for SQL data loader."""
             all_modes = ["b", "c", "e", "l", "r", "p", "y", "o", "w", "x", "k", "u", "f", "g", "q", "j", "Q", "J"]
             local_bus_modes = ["b", "w", "x", "k", "u", "f", "g", "q", "j", "Q", "J"]
             premium_modes = ["c", "l", "e", "p", "r", "y", "o", "w", "x", "k", "u", "f", "g", "q", "j", "Q", "J"]
-            for tod, scen_id in period_scenario_ids.iteritems():
+            for tod, scen_id in period_scenario_ids.items():
                 with _m.logbook_trace("Processing period %s" % tod):
                     scenario = transit_emmebank_dict[tod].scenario(scen_id)
                     with _m.logbook_trace("Scen %s" % (scenario)):
@@ -626,9 +626,9 @@ Export network results to csv files for SQL data loader."""
                                         access_walk_flow, xfer_walk_flow, egress_walk_flow)
                                     attributes = {
                                         "NODE": ["@network_adj", "@network_adj_src"],#, "initial_boardings", "final_alightings"],
-                                        "LINK": link_results.values() + ["@tcov_id", "length"],
+                                        "LINK": list(link_results.values()) + ["@tcov_id", "length"],
                                         "TRANSIT_LINE": ["@route_id"],
-                                        "TRANSIT_SEGMENT": segment_results.values() + [
+                                        "TRANSIT_SEGMENT": list(segment_results.values()) + [
                                             "transit_time", "dwell_time", "@stop_id", "allow_boardings", "allow_alightings"],
                                     }
                                     network = self.get_partial_network(scenario, attributes)
@@ -708,7 +708,7 @@ Export network results to csv files for SQL data loader."""
             desktop_traffic_database.open()
         except Exception as error:
             import traceback
-            print (traceback.format_exc())
+            print ((traceback.format_exc()))
         project = desktop.project
         scenario = _m.Modeller().emmebank.scenario(101)
         data_explorer.replace_primary_scenario(scenario)
@@ -800,9 +800,9 @@ Export network results to csv files for SQL data loader."""
             pass
 
     def get_partial_network(self, scenario, attributes):
-        domains = attributes.keys()
+        domains = list(attributes.keys())
         network = scenario.get_partial_network(domains, include_attributes=False)
-        for domain, attrs in attributes.iteritems():
+        for domain, attrs in attributes.items():
             if attrs:
                 values = scenario.get_attribute_values(domain, attrs)
                 network.set_attribute_values(domain, attrs, values)
@@ -816,7 +816,7 @@ Export network results to csv files for SQL data loader."""
             line_id = id_format(line["@route_id"])
             ivtt = from_mp = to_mp = 0
             segments = iter(line.segments(include_hidden=True))
-            seg = segments.next()
+            seg = next(segments)
             from_stop = id_format(seg["@stop_id"])
             for next_seg in segments:
                 to_mp += seg.link.length
@@ -890,13 +890,13 @@ Export network results to csv files for SQL data loader."""
                 walk_xfer_on = 0.0
                 direct_xfer_off = seg[xfer_alightings]
                 walk_xfer_off = 0.0
-                if stop_on.has_key(i_node):
-                    if stop_on[i_node].has_key(line.id):
+                if i_node in stop_on:
+                    if line.id in stop_on[i_node]:
                         if direct_xfer_on > 0:
                             walk_xfer_on = direct_xfer_on - stop_on[i_node][line.id]
                             direct_xfer_on = stop_on[i_node][line.id]
-                if stop_off.has_key(i_node):
-                    if stop_off[i_node].has_key(line.id):
+                if i_node in stop_off:
+                    if line.id in stop_off[i_node]:
                         if direct_xfer_off > 0:
                             walk_xfer_off = direct_xfer_off - stop_off[i_node][line.id]
                             direct_xfer_off = stop_off[i_node][line.id]
@@ -910,10 +910,10 @@ Export network results to csv files for SQL data loader."""
                 fout_stop.write("\n")
 
     def collapse_network_adjustments(self, network, segment_results, link_results):
-        segment_alights = [v for k, v in segment_results.items() if "alightings" in k]
-        segment_boards = [v for k, v in segment_results.items() if "boardings" in k] + ["transit_boardings"]
+        segment_alights = [v for k, v in list(segment_results.items()) if "alightings" in k]
+        segment_boards = [v for k, v in list(segment_results.items()) if "boardings" in k] + ["transit_boardings"]
         segment_result_attrs = segment_alights + segment_boards
-        link_result_attrs = link_results.values() + ["aux_transit_volume"]
+        link_result_attrs = list(link_results.values()) + ["aux_transit_volume"]
         link_attrs = network.attributes("LINK")
         link_modified_attrs = [
             "length", "@trtime", link_results["link_transit_flow"]]
@@ -971,11 +971,11 @@ Export network results to csv files for SQL data loader."""
                         network.delete_link(link.i_node, link.j_node)
                 # Sum link and segment results and merge links
                 mapping = network.merge_links_mapping(node)
-                for (link1, link2), attr_map in mapping['links'].iteritems():
+                for (link1, link2), attr_map in mapping['links'].items():
                     for attr in link_modified_attrs:
                         attr_map[attr] = max(link1[attr], link2[attr])
 
-                for (seg1, seg2), attr_map in mapping['transit_segments'].iteritems():
+                for (seg1, seg2), attr_map in mapping['transit_segments'].items():
                     if seg2.allow_alightings:
                         for attr in seg_attrs:
                             attr_map[attr] = seg1[attr]
@@ -1020,7 +1020,7 @@ Export network results to csv files for SQL data loader."""
             network.delete_node(node)
         for node in nodes_to_merge:
             mapping = network.merge_links_mapping(node)
-            for (link1, link2), attr_map in mapping["links"].iteritems():
+            for (link1, link2), attr_map in mapping["links"].items():
                 if link2.j_node.is_centroid:
                     link1, link2 = link2, link1
                 for attr in link_attrs:
@@ -1030,12 +1030,12 @@ Export network results to csv files for SQL data loader."""
         for line_data in lines:
             new_line = network.create_transit_line(
                 line_data["id"], line_data["vehicle"], line_data["itinerary"])
-            for k, v in line_data["attributes"].iteritems():
+            for k, v in line_data["attributes"].items():
                 new_line[k] = v
             seg_data = line_data["seg_attributes"]
             for seg in new_line.segments(include_hidden=True):
                 data = seg_data.get((seg.i_node, seg.j_node, seg.loop_index), {})
-                for k, v in data.iteritems():
+                for k, v in data.items():
                     seg[k] = v
 
     def calc_additional_results(self, scenario, class_name, num_processors,
@@ -1169,11 +1169,11 @@ Export network results to csv files for SQL data loader."""
                 for on_line in results[off_line]:
                     trip = float(results[off_line][on_line])
                     stop_off[stop][off_line] += trip
-                    if not stop_on[stop].has_key(on_line):
+                    if on_line not in stop_on[stop]:
                         stop_on[stop][on_line] = 0.0
                     stop_on[stop][on_line] += trip
         return stop_off, stop_on
 
-    @_m.method(return_type=unicode)
+    @_m.method(return_type=str)
     def tool_run_msg_status(self):
         return self.tool_run_msg

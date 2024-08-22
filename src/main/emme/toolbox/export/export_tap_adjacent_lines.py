@@ -58,7 +58,7 @@ gen_utils = _m.Modeller().module("sandag.utilities.general")
 
 class ExportLines(_m.Tool(), gen_utils.Snapshot):
 
-    file_path = _m.Attribute(unicode)
+    file_path = _m.Attribute(str)
 
     tool_run_msg = ""
 
@@ -68,7 +68,7 @@ class ExportLines(_m.Tool(), gen_utils.Snapshot):
         self.file_path = os.path.join(main_dir, "output", "tapLines.csv")
         self.attributes = ["file_path"]
 
-    @_m.method(return_type=_m.UnicodeType)
+    @_m.method(return_type=str)
     def tool_run_msg_status(self):
         return self.tool_run_msg
         
@@ -105,7 +105,7 @@ class ExportLines(_m.Tool(), gen_utils.Snapshot):
             ["NODE", "TRANSIT_LINE"], include_attributes=False)
         values = scenario.get_attribute_values("NODE", ["@tap_id"])
         network.set_attribute_values("NODE", ["@tap_id"], values)            
-        with open(file_path, 'w') as f:
+        with open(file_path, 'w', newline='') as f:
             f.write("TAP,LINES\n")
             for node in network.nodes():
                 if node["@tap_id"] == 0:
