@@ -20,7 +20,7 @@ import inro.emme.datatable as _dt
 import inro.emme.core.exception as _except
 from osgeo import ogr as _ogr
 from contextlib import contextmanager as _context
-from itertools import izip as _izip
+
 from math import ceil
 import traceback as _traceback
 import re as _re
@@ -69,7 +69,7 @@ class NetworkCalculator(object):
             "type": "NETWORK_CALCULATION"
         }
         if selections is not None:
-            if isinstance(selections, basestring):
+            if isinstance(selections, str):
                 selections = {"link": selections}
             spec["selections"] = selections
         else:
@@ -134,12 +134,12 @@ def temp_attrs(scenario, attr_type, idents, default_value=0.0):
 @_context
 def backup_and_restore(scenario, backup_attributes):
     backup = {}
-    for elem_type, attributes in backup_attributes.iteritems():
+    for elem_type, attributes in backup_attributes.items():
         backup[elem_type] = scenario.get_attribute_values(elem_type, attributes)
     try:
         yield
     finally:
-        for elem_type, attributes in backup_attributes.iteritems():
+        for elem_type, attributes in backup_attributes.items():
             scenario.set_attribute_values(elem_type, attributes, backup[elem_type])
 
 
@@ -203,8 +203,8 @@ class DataTableProc(object):
 
     def __iter__(self):
         values, attr_names = self._values, self._attr_names
-        return (dict(_izip(attr_names, record))
-                for record in _izip(*values))
+        return (dict(zip(attr_names, record))
+                for record in zip(*values))
 
     def save(self, name, overwrite=False):
         self._dt_db.create_table(name, self._data, overwrite=overwrite)
@@ -341,7 +341,7 @@ class Snapshot(object):
             attributes = getattr(self, "attributes", [])
             snapshot = {}
             for name in attributes:
-                snapshot[name] = unicode(self[name])
+                snapshot[name] = str(self[name])
             return _json.dumps(snapshot)
         except Exception:
             return "{}"
@@ -352,7 +352,7 @@ class Snapshot(object):
             attributes = getattr(self, "attributes", [])
             for name in attributes:
                 self[name] = snapshot[name]
-        except Exception, error:
+        except Exception as error:
             self.tool_run_msg = _m.PageBuilder.format_exception(
                 error, _traceback.format_exc(error), False)
         return self
@@ -363,8 +363,8 @@ class Snapshot(object):
         for name in attributes:
             try:
                 state[name] = self[name]
-            except _m.AttributeError, error:
-                state[name] = unicode(error)
+            except _m.AttributeError as error:
+                state[name] = str(error)
         return state
 
 
@@ -373,7 +373,7 @@ def log_snapshot(name, namespace, snapshot):
         _m.logbook_snapshot(name=name, comment="", namespace=namespace,
                             value=_json.dumps(snapshot))
     except Exception as error:
-        print error
+        print (error)
 
 
 class ExportOMX(object):
@@ -390,14 +390,13 @@ class ExportOMX(object):
     @omx_key.setter
     def omx_key(self, omx_key):
         self._omx_key = omx_key
-        text_encoding = self.emmebank.text_encoding
         if omx_key == "ID_NAME":
             self.generate_key = lambda m: "%s_%s" % (
-                m.id.encode(text_encoding), m.name.encode(text_encoding))
+                m.id, m.name)
         elif omx_key == "NAME":
-            self.generate_key = lambda m: m.name.encode(text_encoding)
+            self.generate_key = lambda m: m.name
         elif omx_key == "ID":
-            self.generate_key = lambda m: m.id.encode(text_encoding)
+            self.generate_key = lambda m: m.id
 
     def __enter__(self):
         self.trace = _m.logbook_trace(name="Export matrices to OMX",
@@ -418,14 +417,13 @@ class ExportOMX(object):
 
     def write_matrices(self, matrices):
         if isinstance(matrices, dict):
-            for key, matrix in matrices.iteritems():
+            for key, matrix in matrices.items():
                 self.write_matrix(matrix, key)
         else:
             for matrix in matrices:
                 self.write_matrix(matrix)
 
     def write_matrix(self, matrix, key=None):
-        text_encoding = self.emmebank.text_encoding
         matrix = self.emmebank.matrix(matrix)
         if key is None:
             key = self.generate_key(matrix)
@@ -436,7 +434,7 @@ class ExportOMX(object):
         elif matrix.type == "ORIGIN":
             n_zones = len(numpy_array)
             numpy_array = _numpy.resize(numpy_array, (n_zones, 1))
-        attrs = {"description": matrix.description.encode(text_encoding)}
+        attrs = {"description": matrix.description}
         self.write_array(numpy_array, key, attrs)
 
     def write_clipped_array(self, numpy_array, key, a_min, a_max=None, attrs={}):
@@ -484,7 +482,7 @@ class OMXManager(object):
         omx_file = self._omx_files[file_name]
         mapping_name = omx_file.list_mappings()[0]
         # with _m.logbook_trace("file_name and mapping name: %s and %s" % (file_name, mapping_name)):
-        zone_mapping = omx_file.mapping(mapping_name).items()
+        zone_mapping = list(omx_file.mapping(mapping_name).items())
         zone_mapping.sort(key=lambda x: x[1])
         omx_zones = [x[0] for x in zone_mapping]
         return omx_zones
@@ -493,7 +491,7 @@ class OMXManager(object):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        for omx_file in self._omx_files.values():
+        for omx_file in list(self._omx_files.values()):
             omx_file.close()
         self._omx_files = {}
 
@@ -506,7 +504,7 @@ class CSVReader(object):
 
     def __enter__(self):
         self._f = open(self._path)
-        header = self._f.next()
+        header = next(self._f)
         self._fields = [h.strip().upper() for h in header.split(",")]
         return self
 
@@ -522,10 +520,10 @@ class CSVReader(object):
     def fields(self):
         return list(self._fields)
 
-    def next(self):
-        line = self._f.next()
+    def __next__(self):
+        line = next(self._f)
         tokens = [t.strip() for t in line.split(",")]
-        return dict(zip(self._fields, tokens))
+        return dict(list(zip(self._fields, tokens)))
 
 # class DataLakeExporter(object):
 #     """
