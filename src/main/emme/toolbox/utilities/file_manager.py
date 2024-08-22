@@ -36,13 +36,13 @@ gen_utils = _m.Modeller().module("sandag.utilities.general")
 
 class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
 
-    operation = _m.Attribute(unicode)
-    remote_dir = _m.Attribute(unicode)
-    local_dir = _m.Attribute(unicode)
-    user_folder = _m.Attribute(unicode)
-    scenario_id = _m.Attribute(unicode)
-    initialize = _m.Attribute(_m.BooleanType)
-    delete_local_files = _m.Attribute(_m.BooleanType)
+    operation = _m.Attribute(str)
+    remote_dir = _m.Attribute(str)
+    local_dir = _m.Attribute(str)
+    user_folder = _m.Attribute(str)
+    scenario_id = _m.Attribute(str)
+    initialize = _m.Attribute(bool)
+    delete_local_files = _m.Attribute(bool)
 
     tool_run_msg = ""
     LOCAL_ROOT = "C:\\abm_runs"
