@@ -482,7 +482,7 @@ class OMXManager(object):
         omx_file = self._omx_files[file_name]
         mapping_name = omx_file.list_mappings()[0]
         # with _m.logbook_trace("file_name and mapping name: %s and %s" % (file_name, mapping_name)):
-        zone_mapping = omx_file.mapping(mapping_name).items()
+        zone_mapping = list(omx_file.mapping(mapping_name).items())
         zone_mapping.sort(key=lambda x: x[1])
         omx_zones = [x[0] for x in zone_mapping]
         return omx_zones
@@ -491,7 +491,7 @@ class OMXManager(object):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        for omx_file in self._omx_files.values():
+        for omx_file in list(self._omx_files.values()):
             omx_file.close()
         self._omx_files = {}
 
@@ -523,7 +523,7 @@ class CSVReader(object):
     def __next__(self):
         line = next(self._f)
         tokens = [t.strip() for t in line.split(",")]
-        return dict(zip(self._fields, tokens))
+        return dict(list(zip(self._fields, tokens)))
 
 # class DataLakeExporter(object):
 #     """

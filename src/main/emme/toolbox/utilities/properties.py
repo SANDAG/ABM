@@ -634,10 +634,10 @@ class Properties(object):
         return elf._prop.keys()
 
     def values(self):
-        return self._prop.values()
+        return list(self._prop.values())
 
     def items(self):
-        return self._prop.items()
+        return list(self._prop.items())
 
     def iteritems(self):
         return iter(self._prop.items())
