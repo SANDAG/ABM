@@ -64,11 +64,11 @@ gen_utils = _m.Modeller().module("sandag.utilities.general")
 
 class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
 
-    output_dir = _m.Attribute(unicode)
+    output_dir = _m.Attribute(str)
     
     tool_run_msg = ""
 
-    @_m.method(return_type=_m.UnicodeType)
+    @_m.method(return_type=str)
     def tool_run_msg_status(self):
         return self.tool_run_msg
 
