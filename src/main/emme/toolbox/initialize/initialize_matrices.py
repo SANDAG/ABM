@@ -63,8 +63,8 @@ gen_utils = _m.Modeller().module("sandag.utilities.general")
 
 class Initialize(_m.Tool(), gen_utils.Snapshot):
 
-    components = _m.Attribute(_m.ListType)
-    periods = _m.Attribute(_m.ListType)
+    components = _m.Attribute(list)
+    periods = _m.Attribute(list)
     delete_all_existing = _m.Attribute(bool)
 
     tool_run_msg = ""
@@ -488,6 +488,6 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
             matrices.extend([m[1] for m in self._matrices[component][period]])
         return matrices
 
-    @_m.method(return_type=unicode)
+    @_m.method(return_type=str)
     def tool_run_msg_status(self):
         return self.tool_run_msg
