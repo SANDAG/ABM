@@ -22,6 +22,9 @@ if exist %ROOT% (
 
 :build
 
+@REM Delete common directory first so deleted files are not preserved
+if exist %ROOT%\common rmdir /s /q %ROOT%\common
+
 @REM Copy scenario creation scripts
 for /f "tokens=*" %%i in (build_create_scenario_scripts.txt) DO (
     xcopy /Y .\src\main\resources\%%i %ROOT%
