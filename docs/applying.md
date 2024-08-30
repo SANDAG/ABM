@@ -73,6 +73,8 @@ The of the five big moves defined in SANDAG's 2021 regional plan was [Flexible F
 | Service Area    | Smaller | Larger       |
 | Operating Speed | Slower  | Faster       |
 
+### Incorporation into ABM3
+
 Rather than creating new modes for flexible fleet services, microtransit and NEV were incorporated into existing modes. How this was done was dependent on whether the trip was a full flexible fleet trip, first-mile access to fixed-route transit*, or last-mile egress from fixed-route transit*. A table explaining how each of these trip types was incorporated into ABM3 is shown below. Further, a heirarchy of services is enforced. ActivitySim first checks if NEV is available (based on a new land use attribute), and if it is, it's assumed that NEV is used. If not, ActivitySim checks if microtransit is available (based on a corresponding land use attribute), and if it is, it's assumed that microtransit is used. If neither are available, ActivitySim looks at the other services that are already available.
 
 **For trips on the return leg of a tour the access and egress attributes are swapped*
@@ -82,3 +84,5 @@ Rather than creating new modes for flexible fleet services, microtransit and NEV
 | Which mode is used?                                           | TNC Shared                                          | TNC to transit                                                                              | All transit modes                                                                                                                                                                                            |
 | How is the flexible fleet travel time factored into the trip? | The travel time is the full travel time of the trip | The travel time is added to the transit access time and a transfer is added                 | The travel time is added to the transit egress time and a transfer is added if the destination is further from the nearest transit stop than a user would be willing to walk (that distance is configurable) |
 | How is the flexible fleet cost factored into the trip?        | The cost is the full cost of the trip               | It is assumed that flexible fleet services are free when used to access fixed-route transit | It is assumed that flexible fleet services are free when egressing from fixed-route transit                                                                                                                  |
+
+### New Attributes
