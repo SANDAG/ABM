@@ -7,6 +7,7 @@ As mentioned in the notes for Version 15.0.2, several improvements to the Commer
 No changes made to ActivitySim version.
 
 ### Features
+- [PR 167](https://github.com/SANDAG/ABM/pull/167), [PR 172](https://github.com/SANDAG/ABM/pull/172), & [PR 173](https://github.com/SANDAG/ABM/pull/173): Recalibration of the Commercial Vehicle Model to reflect newly-calculated Commercial Vehicle Survey weights.
 - [PR 182](https://github.com/SANDAG/ABM/pull/182), [PR 186](https://github.com/SANDAG/ABM/pull/186), [PR 194](https://github.com/SANDAG/ABM/pull/194), & [PR 195](https://github.com/SANDAG/ABM/pull/195): Miscellaneous calibration, particularly to counter the decrease in freeway travel caused by the CVM update.
 - [PR 176](https://github.com/SANDAG/ABM/pull/176) & [PR 177](https://github.com/SANDAG/ABM/pull/177): A new database was created for Version 15.1.0 and necessary scripts were modified to point to the new database. Go [here](https://dev.azure.com/SANDAG-ADS/ORTAD/_wiki/wikis/ORTAD.wiki/3/Comparison-abm_15_1_0-and-abm_15_0_0) to see detailed changes in the database and [here](https://dev.azure.com/SANDAG-ADS/ORTAD/_wiki/wikis/ORTAD.wiki/2/Release-Notes-for-abm_15_1_0-and-abm_15_1_0_reporting) for changes in the reporting tool.
 - [PR 184](https://github.com/SANDAG/ABM/pull/184), [PR 186](https://github.com/SANDAG/ABM/pull/186), & [PR 193](https://github.com/SANDAG/ABM/pull/193): The number of EV chargers each year were updated using numbers given by planning, and recalibration was done to ensure that the EV ownership rates for no build scenarios matched the targets.
@@ -14,7 +15,6 @@ No changes made to ActivitySim version.
 - [PR 179](https://github.com/SANDAG/ABM/pull/179), [PR 181](https://github.com/SANDAG/ABM/pull/181), [PR 190](https://github.com/SANDAG/ABM/pull/190), [PR 191](https://github.com/SANDAG/ABM/pull/191), & [PR 192](https://github.com/SANDAG/ABM/pull/192): Miscellaneous updates to the scenario creation GUI and scenario build process.
 
 ### Bug Fixes
-- [PR 167](https://github.com/SANDAG/ABM/pull/167), [PR 172](https://github.com/SANDAG/ABM/pull/172), & [PR 173](https://github.com/SANDAG/ABM/pull/173): Recalibration of the Commercial Vehicle Model to reflect newly-calculated Commercial Vehicle Survey weights.
 - [PR 168](https://github.com/SANDAG/ABM/pull/168), [PR 170](https://github.com/SANDAG/ABM/pull/170), [PR 171](https://github.com/SANDAG/ABM/pull/171), [PR 175](https://github.com/SANDAG/ABM/pull/175), & [PR 185](https://github.com/SANDAG/ABM/pull/185): A bug in the transit network where connectors were being encoded with the wrong units was fixed. This resulted in a sharp increase in the number of transit boardings so some additional calibration was needed to get them back down to observed levels.
 - [PR 174](https://github.com/SANDAG/ABM/pull/174) & [PR 180](https://github.com/SANDAG/ABM/pull/180): Miscellaneous file cleanup and restoration.
 
