@@ -86,3 +86,15 @@ Rather than creating new modes for flexible fleet services, microtransit and NEV
 | How is the flexible fleet cost factored into the trip?        | The cost is the full cost of the trip               | It is assumed that flexible fleet services are free when used to access fixed-route transit | It is assumed that flexible fleet services are free when egressing from fixed-route transit                                                                                                                  |
 
 ### New Attributes
+Several new attributes were added to allow the user to configure how flexible fleet services are operated. These are all defined in the common [constants.yaml](https://github.com/SANDAG/ABM/blob/ABM3_develop/src/asim/configs/common/constants.yaml#L255-L273) file. Each attribute is defined as follow:
+
+| Attribute                  | Definition                                                                                                                                   | Default value   |
+| Speed                      | Assumed operating speed in miles per hour                                                                                                    | MT: 30, NEV: 17 |
+| Cost                       | Cost of using service in US Cents                                                                                                            | 125 for both    |
+| WaitTime                   | Assumed time passengers wait to wait to use service in minutes                                                                               | 12 for both     |
+| MaxDist                    | Maximum distance in miles that the service can be used                                                                                       | MT: 4.5, NEV: 3 |
+| DiversionConstant          | Additional travel time to divert for servicing other passengers                                                                              | 6 for both      |
+| DiversionFactor            | Time multiplier accounting for diversion to service other passengers                                                                         | 1.25 for both   |
+| StartPeriod                | Time period to start service (not yet implemented)                                                                                           | 9 for both      |
+| EndPeriod                  | Time period to end service (not yet implemented)                                                                                             | MT: 32, NEV: 38 |
+| maxWalkIfMTAccessAvailable | Maximum disatance someone is willing to walk at the destination end if flexible fleet services are available (same for microtransit and NEV) | 0.5             |
