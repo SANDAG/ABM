@@ -1,5 +1,24 @@
 # Release Notes
 
+## Version 15.1.0 (September 3, 2024)
+As mentioned in the notes for Version 15.0.2, several improvements to the Commercial Vehicle Model (CVM) were made, largely due to SANDAG staff realizing that the survey used to estimate the CVM had likely overestimated the amount of commercial vehicle travel that was made on a given day in the region. New weights were estimated, and then the CVM was recalibrated to match these new weights. After doing this, it was found that modeled highway volumes were lower than observed counts, so some further adjustments were made to get them back up. Some components of the resident model were recalibrated to better match the survey, a new database started being used, a bug in the transit network was fixed, and other miscelaneous improvements were made.
+
+### ActivitySim Version
+No changes made to ActivitySim version.
+
+### Features
+- [PR 167](https://github.com/SANDAG/ABM/pull/167), [PR 172](https://github.com/SANDAG/ABM/pull/172), & [PR 173](https://github.com/SANDAG/ABM/pull/173): Recalibration of the Commercial Vehicle Model to reflect newly-calculated Commercial Vehicle Survey weights.
+- [PR 182](https://github.com/SANDAG/ABM/pull/182), [PR 186](https://github.com/SANDAG/ABM/pull/186), [PR 194](https://github.com/SANDAG/ABM/pull/194), & [PR 195](https://github.com/SANDAG/ABM/pull/195): Miscellaneous calibration, particularly to counter the decrease in freeway travel caused by the CVM update.
+- [PR 176](https://github.com/SANDAG/ABM/pull/176) & [PR 177](https://github.com/SANDAG/ABM/pull/177): A new database was created for Version 15.1.0 and necessary scripts were modified to point to the new database. Go [here](https://dev.azure.com/SANDAG-ADS/ORTAD/_wiki/wikis/ORTAD.wiki/3/Comparison-abm_15_1_0-and-abm_15_0_0) to see detailed changes in the database and [here](https://dev.azure.com/SANDAG-ADS/ORTAD/_wiki/wikis/ORTAD.wiki/2/Release-Notes-for-abm_15_1_0-and-abm_15_1_0_reporting) for changes in the reporting tool.
+- [PR 184](https://github.com/SANDAG/ABM/pull/184), [PR 186](https://github.com/SANDAG/ABM/pull/186), & [PR 193](https://github.com/SANDAG/ABM/pull/193): The number of EV chargers each year were updated using numbers given by planning, and recalibration was done to ensure that the EV ownership rates for no build scenarios matched the targets.
+- [PR 178](https://github.com/SANDAG/ABM/pull/178), [PR 188](https://github.com/SANDAG/ABM/pull/188), & [PR 189](https://github.com/SANDAG/ABM/pull/189): In previous releases the crossborder model had its own constants.yaml file, which contained a lot of the same values in the common constants.yaml file, meaning that both files would need to be edited. The crossborder model now instead reads from the common constants.yaml file.
+- [PR 179](https://github.com/SANDAG/ABM/pull/179), [PR 181](https://github.com/SANDAG/ABM/pull/181), [PR 190](https://github.com/SANDAG/ABM/pull/190), [PR 191](https://github.com/SANDAG/ABM/pull/191), & [PR 192](https://github.com/SANDAG/ABM/pull/192): Miscellaneous updates to the scenario creation GUI and scenario build process.
+
+### Bug Fixes
+- [PR 168](https://github.com/SANDAG/ABM/pull/168), [PR 170](https://github.com/SANDAG/ABM/pull/170), [PR 171](https://github.com/SANDAG/ABM/pull/171), [PR 175](https://github.com/SANDAG/ABM/pull/175), & [PR 185](https://github.com/SANDAG/ABM/pull/185): A bug in the transit network where connectors were being encoded with the wrong units was fixed. This resulted in a sharp increase in the number of transit boardings so some additional calibration was needed to get them back down to observed levels.
+- [PR 174](https://github.com/SANDAG/ABM/pull/174) & [PR 180](https://github.com/SANDAG/ABM/pull/180): Miscellaneous file cleanup and restoration.
+
+
 ## Version 15.0.2 (July 3, 2024)
 Since the release of version 15.0.1 more updates were made, particularly regarding the new commercial vehicle model. More updates to the CVM will be forthcoming due to ongoing revision based on new data sources.
 
