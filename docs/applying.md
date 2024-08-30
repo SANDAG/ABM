@@ -89,6 +89,7 @@ Rather than creating new modes for flexible fleet services, microtransit and NEV
 Several new attributes were added to allow the user to configure how flexible fleet services are operated. These are all defined in the common [constants.yaml](https://github.com/SANDAG/ABM/blob/ABM3_develop/src/asim/configs/common/constants.yaml#L255-L273) file. Each attribute is defined as follow:
 
 | Attribute                  | Definition                                                                                                                                   | Default value   |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
 | Speed                      | Assumed operating speed in miles per hour                                                                                                    | MT: 30, NEV: 17 |
 | Cost                       | Cost of using service in US Cents                                                                                                            | 125 for both    |
 | WaitTime                   | Assumed time passengers wait to wait to use service in minutes                                                                               | 12 for both     |
