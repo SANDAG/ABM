@@ -63,3 +63,11 @@ LowIncomePEVRebate: 3375
 MedIncomeBEVRebate: 2000
 MedIncomePEVRebate: 1000
 ~~~
+
+## Flexible Fleets
+The of the five big moves defined in SANDAG's 2021 regional plan was [Flexible Fleets](https://www.sandag.org/projects-and-programs/innovative-mobility/flexible-fleets), which involves on-demand transit services. The [initial concept](https://www.sandag.org/-/media/SANDAG/Documents/PDF/regional-plan/2025-regional-plan/2025-rp-draft-initial-concept-2024-1-25.pdf) of the 2025 Regional Plan involves rapidly expanding these services, with many new services planned to be in operation by 2035. For this reason, it is important that these services be modeled by ABM3. There are two flavors of flexible fleets that were incorporated into ABM3, Neighborhood Electric Vehicles (NEV) and microtransit. A table contrasting these services is shown below.
+| Characteristic  | NEV     | Microtransit |
+| --------------- | ------- | ------------ |
+| Vehicle Size    | Smaller | Larger       |
+| Service Area    | Smaller | Larger       |
+| Operating Speed | Slower  | Faster       |
