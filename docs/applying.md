@@ -103,7 +103,7 @@ Several new attributes were added to allow the user to configure how flexible fl
 ### Travel time calculation
 The flexible fleet travel time calculation is a two-step process. The first step is to calculate the time that it would take to travel from the origin to the destination* directly without any diversion to pick up or drop off any passengers. This is done by taking the maximum of the time implied by the operating speed and the congested travel time:
 
-$t_{\textnormal{direct}}=\textnormal{max}(60\times\frac{s}{d}, t_{\textnormal{congested}})$
+$t_{\textnormal{direct}} = \textnormal{max}(60\times\frac{s}{d}, t_{\textnormal{congested}})$
 
 where:
 
@@ -113,3 +113,13 @@ $d = \textnormal{Distance from origin to destination (taken from distance skim)}
 $t_{\textnormal{congested}} = \textnormal{Congested travel time from origin to destination (taken from Shared Ride 3 time skim)}$
 
 **When used to access fixed-route transit, the destination is the nearest transit stop to the trip origin. When used to egress from fixed-route transit, the origin is the nearest transit stop to the trip destination.*
+
+The second step of the travel time calculation was to account for diversion to pick up other passengers. These were based on guidelines used in a NEV pilot. The formula to calculated the total flexible fleet travel time is as follows:
+
+$t_{\textnormal{total}} = \textnormal{max}(t_{\textnormal{direct}}+c, \alpha\times t_{\textnormal{direct}})$
+
+where:
+
+$t_{\textnormal{total}} = \textnormal{Total flexible fleet travel time}$\
+$c = \textnormal{DiversionConstant}$\
+$\alpha = \textnormal{DiversionFactor}$
