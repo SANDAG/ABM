@@ -100,7 +100,8 @@ Several new attributes were added to allow the user to configure how flexible fl
 | EndPeriod                  | Time period to end service (not yet implemented)                                                                                             | MT: 32, NEV: 38 |
 | maxWalkIfMTAccessAvailable | Maximum disatance someone is willing to walk at the destination end if flexible fleet services are available (same for microtransit and NEV) | 0.5             |
 
-### Travel time calculation
+### Travel Time Calculation
+#### Direct Time
 The flexible fleet travel time calculation is a two-step process. The first step is to calculate the time that it would take to travel from the origin to the destination* directly without any diversion to pick up or drop off any passengers. This is done by taking the maximum of the time implied by the operating speed and the congested travel time:
 
 $t_{\textnormal{direct}} = \textnormal{max}(60\times\frac{s}{d}, t_{\textnormal{congested}})$
@@ -114,6 +115,7 @@ $t_{\textnormal{congested}} = \textnormal{Congested travel time from origin to d
 
 **When used to access fixed-route transit, the destination is the nearest transit stop to the trip origin. When used to egress from fixed-route transit, the origin is the nearest transit stop to the trip destination.*
 
+#### Total Time
 The second step of the travel time calculation was to account for diversion to pick up other passengers. These were based on guidelines used in a NEV pilot. The formula to calculated the total flexible fleet travel time is as follows:
 
 $t_{\textnormal{total}} = \textnormal{max}(t_{\textnormal{direct}}+c, \alpha\times t_{\textnormal{direct}})$
