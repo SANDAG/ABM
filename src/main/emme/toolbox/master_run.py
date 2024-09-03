@@ -376,7 +376,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         drive, path_no_drive = os.path.splitdrive(self._path)
         path_forward_slash = path_no_drive.replace("\\", "/")
         input_dir = _join(self._path, "input")
-        input_truck_dir = _join(self._path, "input_truck")
         output_dir = _join(self._path, "output")
         validation_dir = _join(self._path, "analysis/validation")
         main_emmebank = _eb.Emmebank(_join(self._path, "emme_project", "Database", "emmebank"))

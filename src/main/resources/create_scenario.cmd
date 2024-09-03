@@ -17,7 +17,7 @@ set LANDUSE_INPUT_PATH=%5
 set SUFFIX=%6
 
 @echo creating scenario folders
-set FOLDERS=input application bin conf input_truck logFiles output python report sql uec analysis visualizer visualizer\outputs\summaries input_checker src src\asim src\asim-cvm
+set FOLDERS=input application bin conf logFiles output python report sql uec analysis input_checker src src\asim src\asim-cvm
 for %%i in (%FOLDERS%) do (
 md %SCENARIO_FOLDER%\%%i)
 
@@ -38,8 +38,6 @@ xcopy /Y .\common\bin\"*.*" %SCENARIO_FOLDER%\bin
 rem xcopy /Y .\conf\%YEAR%\"*.*" %SCENARIO_FOLDER%\conf
 xcopy /Y .\common\conf\"*.*" %SCENARIO_FOLDER%\conf
 xcopy /Y .\common\output\"*.*" %SCENARIO_FOLDER%\output
-xcopy /s/Y .\common\visualizer %SCENARIO_FOLDER%\visualizer
-xcopy /s/Y .\dependencies.* %SCENARIO_FOLDER%\visualizer
 xcopy /Y/s/E .\common\input\input_checker\"*.*" %SCENARIO_FOLDER%\input_checker
 xcopy /Y/s/E .\common\src\asim\"*.*" %SCENARIO_FOLDER%\src\asim
 xcopy /Y/s/E .\common\src\asim-cvm\"*.*" %SCENARIO_FOLDER%\src\asim-cvm
@@ -53,28 +51,18 @@ xcopy /Y .\common\input\geography\"*.*" %SCENARIO_FOLDER%\input
 xcopy /Y .\common\input\geography\mgra\"*.*" %SCENARIO_FOLDER%\input
 xcopy /Y .\common\input\geography\pmsa\"*.*" %SCENARIO_FOLDER%\input
 xcopy /Y .\common\input\geography\taz\"*.*" %SCENARIO_FOLDER%\input
-rem copy ctm paramter tables to input folder
-xcopy /Y .\common\input\ctm\"*.*" %SCENARIO_FOLDER%\input
 rem copy common model files to input folder
 xcopy /Y .\common\input\model\"*.*" %SCENARIO_FOLDER%\input
-rem copy common truck files to input_truck folder
-xcopy /Y .\common\input\truck\"*.*" %SCENARIO_FOLDER%\input_truck
-rem copy airport input files
-xcopy /Y .\common\input\airports\"*.*" %SCENARIO_FOLDER%\input
 rem copy ei input files
 xcopy /Y .\common\input\ei\"*.*" %SCENARIO_FOLDER%\input
 rem copy ie input files
 xcopy /Y .\common\input\ie\"*.*" %SCENARIO_FOLDER%\input
 rem copy ee input files
 xcopy /Y .\common\input\ee\"*.*" %SCENARIO_FOLDER%\input
-rem copy emfact input files
-xcopy /Y .\common\input\emfact\"*.*" %SCENARIO_FOLDER%\input
 rem copy special event input files
 xcopy /Y .\common\input\specialevent\"*.*" %SCENARIO_FOLDER%\input
 rem copy xborder input files
 xcopy /Y .\common\input\xborder\"*.*" %SCENARIO_FOLDER%\input
-rem copy visitor input files
-xcopy /Y .\common\input\visitor\"*.*" %SCENARIO_FOLDER%\input
 rem copy input checker config files
 xcopy /Y .\common\input\input_checker\"*.*" %SCENARIO_FOLDER%
 rem copy network inputs
