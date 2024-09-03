@@ -106,8 +106,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
     emmebank_title = _m.Attribute(unicode)
     num_processors = _m.Attribute(str)
     select_link = _m.Attribute(unicode)
-    username = _m.Attribute(unicode)
-    password = _m.Attribute(unicode)
 
     properties_path = _m.Attribute(unicode)
 
@@ -149,27 +147,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         pb.add_text_box('emmebank_title', title="Emmebank title:", size=60)
         dem_utils.add_select_processors("num_processors", pb, self)
 
-        # username and password input for distributed assignment
-        # username also used in the folder name for the local drive operation
-        pb.add_html('''
-<div class="t_element">
-    <div class="t_local_title">Credentials for remote run</div>
-    <div>
-        <strong>Username:</strong>
-        <input type="text" id="username" size="20" class="-inro-modeller"
-                data-ref="parent.%(tool_proxy_tag)s.username"></input>
-        <strong>Password:</strong>
-        <input type="password" size="20" id="password" class="-inro-modeller"
-                data-ref="parent.%(tool_proxy_tag)s.password"></input>
-    </div>
-    <div class="t_after_widget">
-    Note: required for running distributed traffic assignments using PsExec.
-    <br>
-    Distributed / single node modes are configured in "config/server-config.csv".
-    <br> The username is also used for the folder name when running on the local drive.
-    </div>
-</div>''' % {"tool_proxy_tag": tool_proxy_tag})
-
         # defined in properties utilities
         self.add_properties_interface(pb, disclosure=True)
         # redirect properties file after browse of main_directory
@@ -202,7 +179,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         try:
             self.save_properties()
             self(self.main_directory, self.scenario_id, self.scenario_title, self.emmebank_title,
-                 self.num_processors, self.select_link, username=self.username, password=self.password)
+                 self.num_processors, self.select_link, username=self.username)
             run_msg = "Model run complete"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg, escape=False)
         except Exception as error:
@@ -216,7 +193,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
     @_m.logbook_trace("Master run model", save_arguments=True)
     def __call__(self, main_directory, scenario_id, scenario_title, emmebank_title, num_processors,
-                 select_link=None, periods=["EA", "AM", "MD", "PM", "EV"], username=None, password=None):
+                 select_link=None, periods=["EA", "AM", "MD", "PM", "EV"], username=None):
         attributes = {
             "main_directory": main_directory,
             "scenario_id": scenario_id,
@@ -270,7 +247,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         run_summary = modeller.tool("sandag.utilities.run_summary")
 
         self.username = username
-        self.password = password
 
         props = load_properties(_join(main_directory, "conf", "sandag_abm.properties"))
         props.set_year_specific_properties(_join(main_directory, "input", "parametersByYears.csv"))
@@ -466,15 +442,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         with _m.logbook_trace("Setup and initialization"):
             self.set_global_logbook_level(props)
-
-            # Swap Server Configurations
-            # self.run_proc("serverswap.bat", [drive, path_no_drive, path_forward_slash], "Run ServerSwap")
-            # self.check_for_fatal(_join(self._path, "logFiles", "serverswap.log"),
-            #                      "ServerSwap failed! Open logFiles/serverswap.log for details.")
-            # self.run_proc("checkAtTransitNetworkConsistency.cmd", [drive, path_forward_slash],
-            #               "Checking if AT and Transit Networks are consistent")
-            # self.check_for_fatal(_join(self._path, "logFiles", "AtTransitCheck_event.log"),
-            #                      "AT and Transit network consistency checking failed! Open AtTransitCheck_event.log for details.")
 
             #get number of households to pass on sample size to activitysim
             householdFile = pd.read_csv(_join(self._path, "input", "households.csv"))
@@ -1021,75 +988,13 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         output_dir = _join(self._path, "output")
         main_emmebank = base_scenario.emmebank
 
-        machine_name = _socket.gethostname().lower()
-        with open(_join(self._path, "conf", "server-config.csv")) as f:
-            columns = f.next().split(",")
-            for line in f:
-                values = dict(zip(columns, line.split(",")))
-                name = values["ServerName"].lower()
-                if name == machine_name:
-                    server_config = values
-                    break
-            else:
-                _m.logbook_write("Warning: current machine name not found in "
-                                 "conf\\server-config.csv ServerName column")
-                server_config = {"SNODE": "yes"}
-        distributed = server_config["SNODE"] == "no"
-        if distributed and not makeFinalHighwayAssignmentStochastic:
-            scen_map = dict((p, main_emmebank.scenario(n)) for n, p in period_ids)
-            input_args = {
-                "msa_iteration": msa_iteration,
-                "relative_gap": relative_gap,
-                "max_assign_iterations": max_assign_iterations,
-                "select_link": select_link
-            }
-
-            periods_node1 = ["PM", "MD"]
-            input_args["num_processors"] = server_config["THREADN1"],
-            database_path1, skim_names1 = self.setup_remote_database(
-                [scen_map[p] for p in periods_node1], periods_node1, 1, msa_iteration)
-            self.start_assignments(
-                server_config["NODE1"], database_path1, periods_node1, scen_map, input_args)
-
-            periods_node2 = ["AM"]
-            input_args["num_processors"] = server_config["THREADN2"]
-            database_path2, skim_names2 = self.setup_remote_database(
-                [scen_map[p] for p in periods_node2], periods_node2, 2, msa_iteration)
-            self.start_assignments(
-                server_config["NODE2"], database_path2, periods_node2, scen_map, input_args)
-
-            try:
-                # run assignments locally
-                periods_local = ["EA", "EV"]
-                for period in periods_local:
-                    local_scenario = scen_map[period]
-                    traffic_assign(period, msa_iteration, relative_gap, max_assign_iterations,
-                                   num_processors, local_scenario, select_link)
-                    omx_file = _join(output_dir, "skims", "traffic_skims_%s.omx" % period)
-                    if msa_iteration <= 4:
-                        export_traffic_skims(period, omx_file, base_scenario)
-                scenarios = {
-                    database_path1: [scen_map[p] for p in periods_node1],
-                    database_path2: [scen_map[p] for p in periods_node2]
-                }
-                skim_names = {
-                    database_path1: skim_names1, database_path2: skim_names2
-                }
-                self.wait_and_copy([database_path1, database_path2], scenarios, skim_names)
-            except:
-                # Note: this will kill ALL python processes - not suitable if servers are being
-                # used for other tasks
-                _subprocess.call("taskkill /F /T /S \\\\%s /IM python.exe" % server_config["NODE1"])
-                _subprocess.call("taskkill /F /T /S \\\\%s /IM python.exe" % server_config["NODE2"])
-                raise
-        else:
-            for number, period in period_ids:
-                period_scenario = main_emmebank.scenario(number)
-                traffic_assign(period, msa_iteration, relative_gap, max_assign_iterations,
-                               num_processors, period_scenario, select_link, stochastic=makeFinalHighwayAssignmentStochastic, input_directory=input_dir)
-                omx_file = _join(output_dir, "skims", "traffic_skims_%s.omx" % period)
-                if msa_iteration <= 4:
-                    export_traffic_skims(period, omx_file, base_scenario)
+        for number, period in period_ids:
+            period_scenario = main_emmebank.scenario(number)
+            traffic_assign(period, msa_iteration, relative_gap, max_assign_iterations,
+                            num_processors, period_scenario, select_link, stochastic=makeFinalHighwayAssignmentStochastic, input_directory=input_dir)
+            omx_file = _join(output_dir, "skims", "traffic_skims_%s.omx" % period)
+            if msa_iteration <= 4:
+                export_traffic_skims(period, omx_file, base_scenario)
 
     def run_proc(self, name, arguments, log_message, capture_output=False):
         path = _join(self._path, "bin", name)
@@ -1286,138 +1191,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         for item in report:
             log_report.add_html(item)
         _m.logbook_write(title, log_report.render())
-
-    def setup_remote_database(self, src_scenarios, periods, remote_num, msa_iteration):
-        with _m.logbook_trace("Set up remote database #%s for %s" % (remote_num, ", ".join(periods))):
-            init_matrices = _m.Modeller().tool("sandag.initialize.initialize_matrices")
-            create_function = _m.Modeller().tool("inro.emme.data.function.create_function")
-            src_emmebank = src_scenarios[0].emmebank
-            remote_db_dir = _join(self._path, "emme_project", "Database_remote" + str(remote_num))
-            if msa_iteration == 1:
-                # Create and initialize database at first iteration, overwrite existing
-                if os.path.exists(remote_db_dir):
-                    _shutil.rmtree(remote_db_dir)
-                    _time.sleep(1)
-                os.mkdir(remote_db_dir)
-                dimensions = src_emmebank.dimensions
-                dimensions["scenarios"] = len(src_scenarios)
-                remote_emmebank = _eb.create(_join(remote_db_dir, "emmebank"), dimensions)
-                try:
-                    remote_emmebank.title = src_emmebank.title
-                    remote_emmebank.coord_unit_length = src_emmebank.coord_unit_length
-                    remote_emmebank.unit_of_length = src_emmebank.unit_of_length
-                    remote_emmebank.unit_of_cost = src_emmebank.unit_of_cost
-                    remote_emmebank.unit_of_energy = src_emmebank.unit_of_energy
-                    remote_emmebank.use_engineering_notation = src_emmebank.use_engineering_notation
-                    remote_emmebank.node_number_digits = src_emmebank.node_number_digits
-
-                    for src_scen in src_scenarios:
-                        remote_scen = remote_emmebank.create_scenario(src_scen.id)
-                        remote_scen.title = src_scen.title
-                        for attr in sorted(src_scen.extra_attributes(), key=lambda x: x._id):
-                            dst_attr = remote_scen.create_extra_attribute(
-                                attr.type, attr.name, attr.default_value)
-                            dst_attr.description = attr.description
-                        for field in src_scen.network_fields():
-                            remote_scen.create_network_field(
-                                field.type, field.name, field.atype, field.description)
-                        remote_scen.has_traffic_results = src_scen.has_traffic_results
-                        remote_scen.has_transit_results = src_scen.has_transit_results
-                        remote_scen.publish_network(src_scen.get_network())
-                    for function in src_emmebank.functions():
-                        create_function(function.id, function.expression, remote_emmebank)
-                    init_matrices(["traffic_skims", "traffic_demand"], periods, remote_scen)
-                finally:
-                    remote_emmebank.dispose()
-
-            src_scen = src_scenarios[0]
-            with _m.logbook_trace("Copy demand matrices to remote database"):
-                with _eb.Emmebank(_join(remote_db_dir, "emmebank")) as remote_emmebank:
-                    demand_matrices = init_matrices.get_matrix_names("traffic_demand", periods, src_scen)
-                    for matrix_name in demand_matrices:
-                        matrix = remote_emmebank.matrix(matrix_name)
-                        src_matrix = src_emmebank.matrix(matrix_name)
-                        if matrix.type == "SCALAR":
-                            matrix.data = src_matrix.data
-                        else:
-                            matrix.set_data(src_matrix.get_data(src_scen.id), src_scen.id)
-            skim_matrices = init_matrices.get_matrix_names("traffic_skims", periods, src_scen)
-            return remote_db_dir, skim_matrices
-
-    def start_assignments(self, machine, database_path, periods, scenarios, assign_args):
-        with _m.logbook_trace("Start remote process for traffic assignments %s" % (", ".join(periods))):
-            assign_args["database_path"] = database_path
-            end_path = _join(database_path, "finish")
-            if os.path.exists(end_path):
-                os.remove(end_path)
-            for period in periods:
-                assign_args["period_scenario"] = scenarios[period].id
-                assign_args["period"] = period
-                with open(_join(database_path, "start_%s.args" % period), 'w') as f:
-                    _json.dump(assign_args, f, indent=4)
-            script_dir = _join(self._path, "python")
-            bin_dir = _join(self._path, "bin")
-            args = [
-                'start %s\\PsExec.exe' % bin_dir,
-                '-c',
-                '-f',
-                '\\\\%s' % machine,
-                '-u \%s' % self.username,
-                '-p %s' % self.password,
-                "-d",
-                '%s\\emme_python.bat' % bin_dir,
-                "T:",
-                self._path,
-                '%s\\remote_run_traffic.py' % script_dir,
-                database_path,
-            ]
-            command = " ".join(args)
-            p = _subprocess.Popen(command, shell=True)
-
-    @_m.logbook_trace("Wait for remote assignments to complete and copy results")
-    def wait_and_copy(self, database_dirs, scenarios, matrices):
-        database_dirs = database_dirs[:]
-        wait = True
-        while wait:
-            _time.sleep(5)
-            for path in database_dirs:
-                end_path = _join(path, "finish")
-                if os.path.exists(end_path):
-                    database_dirs.remove(path)
-                    _time.sleep(2)
-                    self.check_for_fatal(
-                        end_path, "error during remote run of traffic assignment. "
-                                  "Check logFiles/traffic_assign_database_remote*.log")
-                    self.copy_results(path, scenarios[path], matrices[path])
-            if not database_dirs:
-                wait = False
-
-    @_m.logbook_trace("Copy skim results from remote database", save_arguments=True)
-    def copy_results(self, database_path, scenarios, matrices):
-        with _eb.Emmebank(_join(database_path, "emmebank")) as remote_emmebank:
-            for dst_scen in scenarios:
-                remote_scen = remote_emmebank.scenario(dst_scen.id)
-                # Create extra attributes and network fields which do not exist
-                for attr in sorted(remote_scen.extra_attributes(), key=lambda x: x._id):
-                    if not dst_scen.extra_attribute(attr.name):
-                        dst_attr = dst_scen.create_extra_attribute(
-                            attr.type, attr.name, attr.default_value)
-                        dst_attr.description = attr.description
-                for field in remote_scen.network_fields():
-                    if not dst_scen.network_field(field.type, field.name):
-                        dst_scen.create_network_field(
-                            field.type, field.name, field.atype, field.description)
-                dst_scen.has_traffic_results = remote_scen.has_traffic_results
-                dst_scen.has_transit_results = remote_scen.has_transit_results
-
-                dst_scen.publish_network(remote_scen.get_network())
-
-            dst_emmebank = dst_scen.emmebank
-            scen_id = dst_scen.id
-            for matrix_id in matrices:
-                src_matrix = remote_emmebank.matrix(matrix_id)
-                dst_matrix = dst_emmebank.matrix(matrix_id)
-                dst_matrix.set_data(src_matrix.get_data(scen_id), scen_id)
 
     @_m.method(return_type=unicode)
     def get_link_attributes(self):
