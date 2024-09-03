@@ -627,6 +627,40 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#flexible-fleets" class="md-nav__link">
+    Flexible Fleets
+  </a>
+  
+    <nav class="md-nav" aria-label="Flexible Fleets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#incorporation-into-abm3" class="md-nav__link">
+    Incorporation into ABM3
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#new-attributes" class="md-nav__link">
+    New Attributes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#travel-time-calculation" class="md-nav__link">
+    Travel Time Calculation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -809,6 +843,40 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#flexible-fleets" class="md-nav__link">
+    Flexible Fleets
+  </a>
+  
+    <nav class="md-nav" aria-label="Flexible Fleets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#incorporation-into-abm3" class="md-nav__link">
+    Incorporation into ABM3
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#new-attributes" class="md-nav__link">
+    New Attributes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#travel-time-calculation" class="md-nav__link">
+    Travel Time Calculation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -933,6 +1001,118 @@ LowIncomePEVRebate: 3375
 MedIncomeBEVRebate: 2000
 MedIncomePEVRebate: 1000
 </code></pre></div></p>
+<h2 id="flexible-fleets">Flexible Fleets<a class="headerlink" href="#flexible-fleets" title="Permanent link"> ¶</a></h2>
+<p>The of the five big moves defined in SANDAG&rsquo;s 2021 regional plan was <a href="https://www.sandag.org/projects-and-programs/innovative-mobility/flexible-fleets">Flexible Fleets</a>, which involves on-demand transit services. The <a href="https://www.sandag.org/-/media/SANDAG/Documents/PDF/regional-plan/2025-regional-plan/2025-rp-draft-initial-concept-2024-1-25.pdf">initial concept</a> of the 2025 Regional Plan involves rapidly expanding these services, with many new services planned to be in operation by 2035. For this reason, it is important that these services be modeled by ABM3. There are two flavors of flexible fleets that were incorporated into ABM3, Neighborhood Electric Vehicles (NEV) and microtransit. A table contrasting these services is shown below.</p>
+<table>
+<thead>
+<tr>
+<th>Characteristic</th>
+<th>NEV</th>
+<th>Microtransit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Vehicle Size</td>
+<td>Smaller</td>
+<td>Larger</td>
+</tr>
+<tr>
+<td>Service Area</td>
+<td>Smaller</td>
+<td>Larger</td>
+</tr>
+<tr>
+<td>Operating Speed</td>
+<td>Slower</td>
+<td>Faster</td>
+</tr>
+</tbody>
+</table>
+<h3 id="incorporation-into-abm3">Incorporation into ABM3<a class="headerlink" href="#incorporation-into-abm3" title="Permanent link"> ¶</a></h3>
+<p>Rather than creating new modes for flexible fleet services, microtransit and NEV were incorporated into existing modes. How this was done was dependent on whether the trip was a full flexible fleet trip, first-mile access to fixed-route transit<em>, or last-mile egress from fixed-route transit</em>. A table explaining how each of these trip types was incorporated into ABM3 is shown below. Further, a heirarchy of services is enforced. ActivitySim first checks if NEV is available (based on a new land use attribute), and if it is, it&rsquo;s assumed that NEV is used. If not, ActivitySim checks if microtransit is available (based on a corresponding land use attribute), and if it is, it&rsquo;s assumed that microtransit is used. If neither are available, ActivitySim looks at the other services that are already available.</p>
+<p>*<em>For trips on the return leg of a tour the access and egress attributes are swapped</em>
+|                                                               | Full microtransit trip                              | First-mile access to fixed-route transit                                                    | Last-mile egress from fixed-route transit                                                                                                                                                                    |
+| ------------------------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| What models allow for this type of trip?                      | Resident, Visitor, Crossborder                      | Resident                                                                                    | Resident, Visitor, Crossborder                                                                                                                                                                               |
+| Which mode is used?                                           | TNC Shared                                          | TNC to transit                                                                              | All transit modes                                                                                                                                                                                            |
+| How is the flexible fleet travel time factored into the trip? | The travel time is the full travel time of the trip | The travel time is added to the transit access time and a transfer is added                 | The travel time is added to the transit egress time and a transfer is added if the destination is further from the nearest transit stop than a user would be willing to walk (that distance is configurable) |
+| How is the flexible fleet cost factored into the trip?        | The cost is the full cost of the trip               | It is assumed that flexible fleet services are free when used to access fixed-route transit | It is assumed that flexible fleet services are free when egressing from fixed-route transit                                                                                                                  |</p>
+<h3 id="new-attributes">New Attributes<a class="headerlink" href="#new-attributes" title="Permanent link"> ¶</a></h3>
+<p>Several new attributes were added to allow the user to configure how flexible fleet services are operated. These are all defined in the common <a href="https://github.com/SANDAG/ABM/blob/ABM3_develop/src/asim/configs/common/constants.yaml#L255-L273">constants.yaml</a> file. Each attribute is defined as follow:</p>
+<table>
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Definition</th>
+<th>Default value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Speed</td>
+<td>Assumed operating speed in miles per hour</td>
+<td>MT: 30, NEV: 17</td>
+</tr>
+<tr>
+<td>Cost</td>
+<td>Cost of using service in US Cents</td>
+<td>125 for both</td>
+</tr>
+<tr>
+<td>WaitTime</td>
+<td>Assumed time passengers wait to wait to use service in minutes</td>
+<td>12 for both</td>
+</tr>
+<tr>
+<td>MaxDist</td>
+<td>Maximum distance in miles that the service can be used</td>
+<td>MT: 4.5, NEV: 3</td>
+</tr>
+<tr>
+<td>DiversionConstant</td>
+<td>Additional travel time to divert for servicing other passengers</td>
+<td>6 for both</td>
+</tr>
+<tr>
+<td>DiversionFactor</td>
+<td>Time multiplier accounting for diversion to service other passengers</td>
+<td>1.25 for both</td>
+</tr>
+<tr>
+<td>StartPeriod</td>
+<td>Time period to start service (not yet implemented)</td>
+<td>9 for both</td>
+</tr>
+<tr>
+<td>EndPeriod</td>
+<td>Time period to end service (not yet implemented)</td>
+<td>MT: 32, NEV: 38</td>
+</tr>
+<tr>
+<td>maxWalkIfMTAccessAvailable</td>
+<td>Maximum disatance someone is willing to walk at the destination end if flexible fleet services are available (same for microtransit and NEV)</td>
+<td>0.5</td>
+</tr>
+</tbody>
+</table>
+<h3 id="travel-time-calculation">Travel Time Calculation<a class="headerlink" href="#travel-time-calculation" title="Permanent link"> ¶</a></h3>
+<h4 id="direct-time">Direct Time<a class="headerlink" href="#direct-time" title="Permanent link"> ¶</a></h4>
+<p>The flexible fleet travel time calculation is a two-step process. The first step is to calculate the time that it would take to travel from the origin to the destination* directly without any diversion to pick up or drop off any passengers. This is done by taking the maximum of the time implied by the operating speed and the congested travel time:</p>
+<p>$t_{\textnormal{direct}} = \textnormal{max}(60\times\frac{s}{d}, t_{\textnormal{congested}})$</p>
+<p>where:</p>
+<p>$t_{\textnormal{direct}} = \textnormal{Direct flexible fleet travel time}$\
+$s = \textnormal{speed}$\
+$d = \textnormal{Distance from origin to destination (taken from distance skim)}$\
+$t_{\textnormal{congested}} = \textnormal{Congested travel time from origin to destination (taken from Shared Ride 3 time skim)}$</p>
+<p>*<em>When used to access fixed-route transit, the destination is the nearest transit stop to the trip origin. When used to egress from fixed-route transit, the origin is the nearest transit stop to the trip destination.</em></p>
+<h4 id="total-time">Total Time<a class="headerlink" href="#total-time" title="Permanent link"> ¶</a></h4>
+<p>The second step of the travel time calculation was to account for diversion to pick up other passengers. These were based on guidelines used in a NEV pilot. The formula to calculated the total flexible fleet travel time is as follows:</p>
+<p>$t_{\textnormal{total}} = \textnormal{max}(t_{\textnormal{direct}}+c, \alpha\times t_{\textnormal{direct}})$</p>
+<p>where:</p>
+<p>$t_{\textnormal{total}} = \textnormal{Total flexible fleet travel time}$\
+$c = \textnormal{DiversionConstant}$\
+$\alpha = \textnormal{DiversionFactor}$</p>
 
 
 
