@@ -1,70 +1,4 @@
-# Applying the model
-
-This page contains information needed to apply the model.
-
-## Network Coding
-
-//TODO: Describe network attributes, how to code network
-
-## Population Synthesis
-
-//TODO: Describe population synthesis procedure, how to modify inputs and construct new future-year synthetic population
-
-## Land-Use Data Preparation
-
-//TODO: Describe how to prepare land-use data.
-
-Describe how to update parking costs, enrollment data.
-
-## Micromobility
-
-//TODO: Describe how to run micromobility policy tests
-
-
-## Scenario manager
-
-ABM3 uses a python module as the scenario manager. The job of this scenario manager is updating the parameters used throughout the model to match a specific scenario’s definition and needs. A number of these parameters including auto operating cost, taxi and TNC fare, micromobility cost, and AV ownership penetration are usually assumed to change by forecast year or scenario.
-
-Manually changing these parameters requires the model user to know where each parameter is located, and individually changing them according to the scenario forecast values. A scenario manager, therefore, can be a convenient and efficient tool to automate this process.
-
-The ABM3 Scenario Manager reads in a CSV input file (located under ```input/parametersByYears.csv```) containing the parameter values for each scenario, and updates the associated parameters in the ActivitySim config files. A snapshot of this input parameter CSV file is shown below, where each row is associated with a specific scenario year/name. The parameter names used here can either be identical to the parameter names used in ActivitySim, or different. In case the parameter names are different, a separate file is used to map the parameters names between the input CSV and ActivitySim config files.
-
-
-| Scenario Year | AOC fuel | AOC maintenance | Taxi baseFare | Taxi costPerMile | Taxi costPerMinute |
-| ------------- | -------- | --------------- | ------------- | ---------------- | ----------------- |
-| 2012          | 13.5     | 6.3             | 1.78          | 1.87             | 0.08              |
-| 2014          | 12.9     | 6.3             | 1.78          | 1.87             | 0.08              |
-| 2015          | 19.5     | 6.2             | 1.78          | 1.87             | 0.08              |
-| 2016          | 10.7     | 5.6             | 1.78          | 1.87             | 0.08              |
-| 2017          | 10.8     | 5.5             | 1.78          | 1.87             | 0.08              |
-
-The scenario manager is run as part of the model setup in the Master Run tool before any ActivitySim model is run (usually only in the first iteration of the run). Model user can choose to run or skip this step, although it is highly recommended to run with each run to ensure correct parameters.
-
-## Electric Vehicle Rebates
-One of the policies that SANDAG planners would like to test for the 2025 Regional Plan is providing rebates for low- and middle-income households to purchase electric vehicles. One of the variables in the vehicle type choice model is the [new purchase price](https://github.com/SANDAG/ABM/blob/ABM3_develop/src/asim/configs/resident/vehicle_type_choice_op4.csv#L12-L17) for a vehicle of a given age, body type, and fuel type. The way the EV rebate is implemented in ABM3 is by deducting the appropriate rebate value for plugin and battery vehicles if a household meets the criteria (based on percentage of the federal poverty level). To configure the rebate values and poverty level thresholds, [new constants](https://github.com/SANDAG/ABM/blob/ABM3_develop/src/asim/configs/common/constants.yaml#L290) were added to the common/constants.yaml configuration file. The constants fit into the policy as follows:
-
-| Fuel Type | `LowIncomeEVRebateCutoff` < Household Poverty Level <= `MedIncomeEVRebateCutoff` | Household Poverty Level <= `LowIncomeEVRebateCutoff` |
-| --------- | -------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| BEV       | `MedIncomeBEVRebate`                                                             | `LowIncomeBEVRebate`                                 |
-| PEV       | `MedIncomePEVRebate`                                                             | `LowIncomePEVRebate`                                 |
-
-For example, if the following policy were to be tested...
-| Fuel Type | 300-400% Federal Poverty Limit | 300% Federal Poverty Limit or lower |
-| --------- | ------------------------------ | ----------------------------------- |
-| BEV       | $2,000                         | $6,750                              |
-| PEV       | $1,000                         | $3,375                              |
-
-...then the constants would need to be set as follows:
-~~~
-LowIncomeEVRebateCutoff: 3
-MedIncomeEVRebateCutoff: 4
-LowIncomeBEVRebate: 6750
-LowIncomePEVRebate: 3375
-MedIncomeBEVRebate: 2000
-MedIncomePEVRebate: 1000
-~~~
-
-## Flexible Fleets
+# Flexible Fleets
 The of the five big moves defined in SANDAG's 2021 regional plan was [Flexible Fleets](https://www.sandag.org/projects-and-programs/innovative-mobility/flexible-fleets), which involves on-demand transit services. The [initial concept](https://www.sandag.org/-/media/SANDAG/Documents/PDF/regional-plan/2025-regional-plan/2025-rp-draft-initial-concept-2024-1-25.pdf) of the 2025 Regional Plan involves rapidly expanding these services, with many new services planned to be in operation by 2035. For this reason, it is important that these services be modeled by ABM3. There are two flavors of flexible fleets that were incorporated into ABM3, Neighborhood Electric Vehicles (NEV) and microtransit. A table contrasting these services is shown below.
 
 | Characteristic  | NEV     | Microtransit |
@@ -73,11 +7,12 @@ The of the five big moves defined in SANDAG's 2021 regional plan was [Flexible F
 | Service Area    | Smaller | Larger       |
 | Operating Speed | Slower  | Faster       |
 
-### Incorporation into ABM3
+## Incorporation into ABM3
 
 Rather than creating new modes for flexible fleet services, microtransit and NEV were incorporated into existing modes. How this was done was dependent on whether the trip was a full flexible fleet trip, first-mile access to fixed-route transit*, or last-mile egress from fixed-route transit*. A table explaining how each of these trip types was incorporated into ABM3 is shown below. Further, a heirarchy of services is enforced. ActivitySim first checks if NEV is available (based on a new land use attribute), and if it is, it's assumed that NEV is used. If not, ActivitySim checks if microtransit is available (based on a corresponding land use attribute), and if it is, it's assumed that microtransit is used. If neither are available, ActivitySim looks at the other services that are already available.
 
 **For trips on the return leg of a tour the access and egress attributes are swapped*
+
 |                                                               | Full microtransit trip                              | First-mile access to fixed-route transit                                                    | Last-mile egress from fixed-route transit                                                                                                                                                                    |
 | ------------------------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | What models allow for this type of trip?                      | Resident, Visitor, Crossborder                      | Resident                                                                                    | Resident, Visitor, Crossborder                                                                                                                                                                               |
@@ -85,7 +20,7 @@ Rather than creating new modes for flexible fleet services, microtransit and NEV
 | How is the flexible fleet travel time factored into the trip? | The travel time is the full travel time of the trip | The travel time is added to the transit access time and a transfer is added                 | The travel time is added to the transit egress time and a transfer is added if the destination is further from the nearest transit stop than a user would be willing to walk (that distance is configurable) |
 | How is the flexible fleet cost factored into the trip?        | The cost is the full cost of the trip               | It is assumed that flexible fleet services are free when used to access fixed-route transit | It is assumed that flexible fleet services are free when egressing from fixed-route transit                                                                                                                  |
 
-### New Attributes
+## New Attributes
 Several new attributes were added to allow the user to configure how flexible fleet services are operated. These are all defined in the common [constants.yaml](https://github.com/SANDAG/ABM/blob/ABM3_develop/src/asim/configs/common/constants.yaml#L255-L273) file. Each attribute is defined as follow:
 
 | Attribute                  | Definition                                                                                                                                   | Default value   |
@@ -100,28 +35,33 @@ Several new attributes were added to allow the user to configure how flexible fl
 | EndPeriod                  | Time period to end service (not yet implemented)                                                                                             | MT: 32, NEV: 38 |
 | maxWalkIfMTAccessAvailable | Maximum disatance someone is willing to walk at the destination end if flexible fleet services are available (same for microtransit and NEV) | 0.5             |
 
-### Travel Time Calculation
-#### Direct Time
+## Travel Time Calculation
+### Direct Time
 The flexible fleet travel time calculation is a two-step process. The first step is to calculate the time that it would take to travel from the origin to the destination* directly without any diversion to pick up or drop off any passengers. This is done by taking the maximum of the time implied by the operating speed and the congested travel time:
 
 $t_{\textnormal{direct}} = \textnormal{max}(60\times\frac{s}{d}, t_{\textnormal{congested}})$
 
 where:
 
-$t_{\textnormal{direct}} = \textnormal{Direct flexible fleet travel time}$\
-$s = \textnormal{speed}$\
-$d = \textnormal{Distance from origin to destination (taken from distance skim)}$\
+$t_{\textnormal{direct}} = \textnormal{Direct flexible fleet travel time}$
+
+$s = \textnormal{speed}$
+
+$d = \textnormal{Distance from origin to destination (taken from distance skim)}$
+
 $t_{\textnormal{congested}} = \textnormal{Congested travel time from origin to destination (taken from Shared Ride 3 time skim)}$
 
 **When used to access fixed-route transit, the destination is the nearest transit stop to the trip origin. When used to egress from fixed-route transit, the origin is the nearest transit stop to the trip destination.*
 
-#### Total Time
+### Total Time
 The second step of the travel time calculation was to account for diversion to pick up other passengers. These were based on guidelines used in a NEV pilot. The formula to calculated the total flexible fleet travel time is as follows:
 
 $t_{\textnormal{total}} = \textnormal{max}(t_{\textnormal{direct}}+c, \alpha\times t_{\textnormal{direct}})$
 
 where:
 
-$t_{\textnormal{total}} = \textnormal{Total flexible fleet travel time}$\
-$c = \textnormal{DiversionConstant}$\
+$t_{\textnormal{total}} = \textnormal{Total flexible fleet travel time}$
+
+$c = \textnormal{DiversionConstant}$
+
 $\alpha = \textnormal{DiversionFactor}$
