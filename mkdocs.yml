@@ -48,7 +48,12 @@ plugins:
 
 nav:
   - Home: index.md
-  - Model Design: design.md
+  - Model Design: 
+    - Overall Design: design/design.md
+    - Resident: design/resident.md
+    - Crossborder: design/crossborder.md
+    - Airport Ground Access: design/airport.md
+    - Overnight Visitor: design/visitor.md
   - Installing and Running: running.md
   - Model Inputs and Outputs: 
     - Inputs: inputs.md
