@@ -58,7 +58,15 @@ nav:
   - Model Inputs and Outputs: 
     - Inputs: inputs.md
     - Outputs: outputs.md
-  - Applying ABM3: applying.md
+  - Applying ABM3: 
+    - Model Application: application/applying.md
+    - Population Synthesis: application/population-synthesis.md
+    - Land Use Data Preparation: application/landuse-prep.md
+    - Scenario Manager: application/scenario-manager.md
+    - EV Rebates: application/ev-rebates.md
+    - Flexible Fleets: application/flexible-fleets.md
+    - Micromobility: application/micromobility.md
+    - Network Coding: application/network-coding.md
   - Commercial Vehicle Model: cvm.md
   - About:
     - Release Notes: release-notes.md
