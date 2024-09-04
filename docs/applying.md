@@ -49,6 +49,7 @@ One of the policies that SANDAG planners would like to test for the 2025 Regiona
 | PEV       | `MedIncomePEVRebate`                                                             | `LowIncomePEVRebate`                                 |
 
 For example, if the following policy were to be tested...
+
 | Fuel Type | 300-400% Federal Poverty Limit | 300% Federal Poverty Limit or lower |
 | --------- | ------------------------------ | ----------------------------------- |
 | BEV       | $2,000                         | $6,750                              |
@@ -78,6 +79,7 @@ The of the five big moves defined in SANDAG's 2021 regional plan was [Flexible F
 Rather than creating new modes for flexible fleet services, microtransit and NEV were incorporated into existing modes. How this was done was dependent on whether the trip was a full flexible fleet trip, first-mile access to fixed-route transit*, or last-mile egress from fixed-route transit*. A table explaining how each of these trip types was incorporated into ABM3 is shown below. Further, a heirarchy of services is enforced. ActivitySim first checks if NEV is available (based on a new land use attribute), and if it is, it's assumed that NEV is used. If not, ActivitySim checks if microtransit is available (based on a corresponding land use attribute), and if it is, it's assumed that microtransit is used. If neither are available, ActivitySim looks at the other services that are already available.
 
 **For trips on the return leg of a tour the access and egress attributes are swapped*
+
 |                                                               | Full microtransit trip                              | First-mile access to fixed-route transit                                                    | Last-mile egress from fixed-route transit                                                                                                                                                                    |
 | ------------------------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | What models allow for this type of trip?                      | Resident, Visitor, Crossborder                      | Resident                                                                                    | Resident, Visitor, Crossborder                                                                                                                                                                               |
