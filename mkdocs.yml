@@ -48,12 +48,25 @@ plugins:
 
 nav:
   - Home: index.md
-  - Model Design: design.md
+  - Model Design: 
+    - Overall Design: design/design.md
+    - Resident: design/resident.md
+    - Crossborder: design/crossborder.md
+    - Airport Ground Access: design/airport.md
+    - Overnight Visitor: design/visitor.md
   - Installing and Running: running.md
   - Model Inputs and Outputs: 
     - Inputs: inputs.md
     - Outputs: outputs.md
-  - Applying ABM3: applying.md
+  - Applying ABM3: 
+    - Model Application: application/applying.md
+    - Population Synthesis: application/population-synthesis.md
+    - Land Use Data Preparation: application/landuse-prep.md
+    - Scenario Manager: application/scenario-manager.md
+    - EV Rebates: application/ev-rebates.md
+    - Flexible Fleets: application/flexible-fleets.md
+    - Micromobility: application/micromobility.md
+    - Network Coding: application/network-coding.md
   - Commercial Vehicle Model: cvm.md
   - About:
     - Release Notes: release-notes.md
@@ -94,4 +107,10 @@ markdown_extensions:
         - name: mermaid
           class: mermaid
           format: !!python/name:mermaid2.fence_mermaid_custom
+  - pymdownx.arithmatex:
+      generic: true
+  
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js  
   
