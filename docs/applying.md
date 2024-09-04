@@ -108,9 +108,12 @@ $t_{\textnormal{direct}} = \textnormal{max}(60\times\frac{s}{d}, t_{\textnormal{
 
 where:
 
-$t_{\textnormal{direct}} = \textnormal{Direct flexible fleet travel time}$\
-$s = \textnormal{speed}$\
-$d = \textnormal{Distance from origin to destination (taken from distance skim)}$\
+$t_{\textnormal{direct}} = \textnormal{Direct flexible fleet travel time}$
+
+$s = \textnormal{speed}$
+
+$d = \textnormal{Distance from origin to destination (taken from distance skim)}$
+
 $t_{\textnormal{congested}} = \textnormal{Congested travel time from origin to destination (taken from Shared Ride 3 time skim)}$
 
 **When used to access fixed-route transit, the destination is the nearest transit stop to the trip origin. When used to egress from fixed-route transit, the origin is the nearest transit stop to the trip destination.*
@@ -122,6 +125,8 @@ $t_{\textnormal{total}} = \textnormal{max}(t_{\textnormal{direct}}+c, \alpha\tim
 
 where:
 
-$t_{\textnormal{total}} = \textnormal{Total flexible fleet travel time}$\
-$c = \textnormal{DiversionConstant}$\
+$t_{\textnormal{total}} = \textnormal{Total flexible fleet travel time}$
+
+$c = \textnormal{DiversionConstant}$
+
 $\alpha = \textnormal{DiversionFactor}$
