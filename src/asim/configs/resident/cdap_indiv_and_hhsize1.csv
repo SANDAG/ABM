@@ -56,11 +56,11 @@ Retired weighted target ASC,ptype == 5,,-0.131,0.313
 Driving-age child who is in school weighted target ASC,ptype == 6,-0.134,0.314,0.026
 Pre-driving-age child who is in school weighted target ASC,ptype == 7,0.028,-0.084,0.010
 Preschool child weighted target ASC,ptype == 8,0.104,-0.223,0.116
-ABM3 calibration ASC ptype=1,ptype==1,0.5540,-0.218,-0.427
-ABM3 calibration ASC ptype=2,ptype==2,-0.107,0.0276,0.223
-ABM3 calibration ASC ptype=3,ptype==3,0.427,-0.198,-0.164
-ABM3 calibration ASC ptype=4,ptype==4,0.0,-0.029,0.0889
-ABM3 calibration ASC ptype=5,ptype==5,0.0,0.114,-0.227
-ABM3 calibration ASC ptype=6,ptype==6,3.650,-0.241,0.298
-ABM3 calibration ASC ptype=7,ptype==7,2.000,-0.171,0.096
-ABM3 calibration ASC ptype=8,ptype==8,0.436,0.454,-0.731
+ABM3 calibration ASC ptype=1,ptype==1,0.600,0.00,-0.527
+ABM3 calibration ASC ptype=2,ptype==2,-0.107,0.0276,0.190
+ABM3 calibration ASC ptype=3,ptype==3,0.427,-0.120,-0.200
+ABM3 calibration ASC ptype=4,ptype==4,0.0,0.00,0.0889
+ABM3 calibration ASC ptype=5,ptype==5,0.0,0.134,-0.227
+ABM3 calibration ASC ptype=6,ptype==6,3.750,-0.241,0.298
+ABM3 calibration ASC ptype=7,ptype==7,2.200,-0.171,0.096
+ABM3 calibration ASC ptype=8,ptype==8,0.536,0.454,-0.731

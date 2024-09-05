@@ -48,7 +48,7 @@ MD crossborder
 CD ..
 
 :: Run Models
-%PYTHON3% src/asim/scripts/xborder/cross_border_model.py -a -c src/asim/configs/crossborder -d input -o output/crossborder || exit /b 2
+%PYTHON3% src/asim/scripts/xborder/cross_border_model.py -a -c src/asim/configs/crossborder -c src/asim/configs/common -d input -o output/crossborder || exit /b 2
 
 ::::::::::::::::::::::
 CD /d %ANACONDA2_DIR%\Scripts

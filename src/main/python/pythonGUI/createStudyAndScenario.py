@@ -47,56 +47,19 @@ class SelectStudyYears(tkinter.Frame):
 
 
 class CreateScenarioGUI(tkinter.Frame):
-        def __init__(self, root, emme_version = "4.3.7", year = "2022", geo = "1", lu = "S0"):
+        def __init__(self, root, emme_version = "4.3.7", year = "2022", geo = "1", year_suffix = ""):
             tkinter.Frame.__init__(self, root, border=5)
             body = tkinter.Frame(self)
             body.pack(fill=constants.X, expand=1)
             sticky = constants.E + constants.W
             body.grid_columnconfigure(1, weight=2)
 
-            #Define land use options
-            self.lu_options = {
-                "S0": {
-                    "name": "Baseline",
-                    "location": r"T:\socioec\Current_Projects\SR15\S0\version16",
-                    "years": ["2022", "2035", "2050"]
-                },
-                "S1": {
-                    "name": "Baseline + RHNA Adjustment",
-                    "location": r"T:\socioec\Current_Projects\SR15\S1\version12",
-                    "years": ["2026", "2029", "2035"]
-                },
-                "S2": {
-                    "name": "Sustainable Community Strategy",
-                    "location": r"T:\socioec\Current_Projects\SR15\S2\version17",
-                    "years": ["2026", "2029", "2035"]
-                },
-                "S3": {
-                    "name": "SCS with Higher Density",
-                    "location": r"T:\socioec\Current_Projects\SR15\S3\version18",
-                    "years": ["2035"]
-                }
-            }
-
             self.root = root
             self.emme_version = emme_version
             self.year = year
             self.geo = geo            
-            self.lu = lu
- 
-            # if self.year not in self.lu_options[self.lu]["years"]:
-            #     if self.year in self.lu_options["DS41"]["years"]:
-            #         self.lu = "DS41"
-            #     else:
-            #         self.lu = "DS42"
+            self.year_suffix = year_suffix
 
-            yearOptionList = []
-            for lu in self.lu_options:
-                yearOptionList += self.lu_options[lu]["years"]
-            yearOptionList = list(set(yearOptionList)) #Remove duplicates
-            yearOptionList.sort()
-
-            self.yearOptionList = yearOptionList
             self.studyYearList = ["2016", "2020", "2023", "2025_Vision", "2025nb", "2026_Vision", "2029_Vision",
                                   "2030_Vision", "2030nb", "2032_Vision", "2035_Vision", "2035nb", "2040_Vision",
                                   "2040nb", "2050_Vision", "2050nb"]
@@ -107,8 +70,9 @@ class CreateScenarioGUI(tkinter.Frame):
                 self.releaseDir=os.path.abspath(os.path.join(os.path.dirname(sys.executable), '..', '..'))
             else:
                 self.releaseDir=os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..'))
-            self.defaultScenarioDir="T:\\projects\\sr15\\MyRun"
-            self.defaultNetworkDir="T:\\RTP\\2021RP\\2021rp_final\\network_build"
+            self.defaultScenarioDir="T:\\STORAGE-63T\\2025RP_init_concept\\"
+            self.defaultNetworkDir="T:\\projects\\sr15\\tned_etl\\2025RP_draft"
+            self.defaultLandUseDir="T:\\projects\\sr15\\land_use\\2025RP_draft"
 
             current_row = 0
             n_columns = 3
@@ -116,7 +80,7 @@ class CreateScenarioGUI(tkinter.Frame):
             self.buttonVar= tkinter.IntVar(root)
             self.yButton=tkinter.Radiobutton(body, text="Yes", variable=self.buttonVar, value=1, command=self.initStudy)
             self.nButton=tkinter.Radiobutton(body, text="No", variable=self.buttonVar, value=0,command=self.initStudy)
-            tkinter.Label(body, text=u"Release Version 15.0.0\n"+divider, font=("Helvetica", 11, 'bold'), width=50, fg='royal blue').grid(row=current_row,columnspan=5)
+            tkinter.Label(body, text=u"Release Version 15.1.0\n"+divider, font=("Helvetica", 11, 'bold'), width=50, fg='royal blue').grid(row=current_row,columnspan=5)
             current_row += 1
             tkinter.Label(body, text=u"Create an ABM Work Space", font=("Helvetica", 10, 'bold')).grid(row=current_row,columnspan=n_columns)
             current_row += 1
@@ -184,7 +148,7 @@ class CreateScenarioGUI(tkinter.Frame):
             tkinter.Label(body, text=u"Year", font=("Helvetica", 8, 'bold')).grid(row=current_row)
             var = tkinter.StringVar(root)
             #self.year="2016"
-            #yearOptionList = ["2016", "2020", "2023", "2025", "2025nb", "2026", "2029", "2030", "2030nb", "2032", "2035", "2035nb", "2040", "2040nb", "2050","2050nb"]
+            yearOptionList = ["2022","2026","2029","2035","2050"]
             #if self.select_lu:
             var.set(self.year)
             #else:
@@ -195,24 +159,19 @@ class CreateScenarioGUI(tkinter.Frame):
             option.grid(row=current_row, column=1)
             current_row += 1
             #option.pack(expand = True)
-			
-            tkinter.Label(body, text=u"Land Use", font=("Helvetica", 8, 'bold')).grid(row=current_row)
-            #self.lu="DS41"
-            #if self.select_lu:
-            var = tkinter.StringVar(root)
-            var.set(self.lu + '-' + self.lu_options[self.lu]["name"])
-            #if self.year in self.invalid_combos["DS42"]:
-            #    luOptionList = ["DS41-Baseline"]
-            #elif self.year in self.invalid_combos["DS41"]:
-            #    luOptionList = ["DS42-Sustainable Community Strategy"]
-            #else:
-            #    luOptionList = ["DS41-Baseline", "DS42"]
-            luOptionList = []
-            for lu in self.lu_options:
-                if self.year in self.lu_options[lu]["years"]:
-                    luOptionList.append(lu + '-' + self.lu_options[lu]["name"])
-            option=tkinter.OptionMenu(body,var,*luOptionList,command=self.setLU)
 
+            tkinter.Label(body, text=u"Build Status", font=("Helvetica", 8, 'bold')).grid(row=current_row)
+            var = tkinter.StringVar(root)
+            buildOptionList = ["Build", "No Build"]
+            if self.year == "2022":
+                self.year_suffix = ""
+                buildOptionList = ["Base"]
+                var.set("Base")
+            elif self.year_suffix == "nb":
+                var.set("No Build")
+            else:
+                var.set("Build")
+            option=tkinter.OptionMenu(body,var,*buildOptionList,command=self.setSuffix)
             option.config(width=50)
             option.grid(row=current_row, column=1)
             current_row += 1
@@ -226,17 +185,24 @@ class CreateScenarioGUI(tkinter.Frame):
             current_row += 1
             #option.pack(expand = True)
 			
-            tkinter.Label(body, text=u"Scenario Folder", font=("Helvetica", 8, 'bold')).grid(row=13)
+            tkinter.Label(body, text=u"Scenario Folder", font=("Helvetica", 8, 'bold')).grid(row=current_row)
             self.scenariopath = tkinter.Entry(body, width=40)
             self.scenariopath.grid(row=current_row, column=1, sticky=sticky)
             button = tkinter.Button(body, text=u"...",width=4,command=lambda: self.get_path("scenario"))
             button.grid(row=current_row, column=2)
             current_row += 1
 
-            tkinter.Label(body, text=u"Network Folder",font=("Helvetica", 8, 'bold')).grid(row=14)
+            tkinter.Label(body, text=u"Network Folder",font=("Helvetica", 8, 'bold')).grid(row=current_row)
             self.networkpath = tkinter.Entry(body, width=40)
             self.networkpath.grid(row=current_row, column=1, sticky=sticky)
             button = tkinter.Button(body, text=u"...",width=4,command=lambda: self.get_path("network"))
+            button.grid(row=current_row, column=2)
+            current_row += 1
+
+            tkinter.Label(body, text=u"Land Use Folder",font=("Helvetica", 8, 'bold')).grid(row=current_row)
+            self.lupath = tkinter.Entry(body, width=40)
+            self.lupath.grid(row=current_row, column=1, sticky=sticky)
+            button = tkinter.Button(body, text=u"...",width=4,command=lambda: self.get_path("lu"))
             button.grid(row=current_row, column=2)
             current_row += 1
 
@@ -250,11 +216,12 @@ class CreateScenarioGUI(tkinter.Frame):
             button.pack(side=constants.RIGHT)
             #button.grid(row = 13, columns = 2)
 
-            self.defaultpath=self.releaseDir+"\\"+self.version+'\\input\\'+self.year
             self.scenariopath.delete(0, constants.END)
             self.scenariopath.insert(0, self.defaultScenarioDir)
             self.networkpath.delete(0, constants.END)
-            self.networkpath.insert(0, self.defaultpath)
+            self.networkpath.insert(0, self.defaultNetworkDir+"\\"+self.year+self.year_suffix+"\\")
+            self.lupath.delete(0, constants.END)
+            self.lupath.insert(0, self.defaultLandUseDir+"\\")
 
             self.initStudy()
 
@@ -293,17 +260,23 @@ class CreateScenarioGUI(tkinter.Frame):
             self.year=value
             #Refresh the GUI with inputs already entered
             self.destroy()
-            CreateScenarioGUI(self.root, self.emme_version, self.year, self.geo, self.lu).pack(fill=constants.X, expand=1)
+            CreateScenarioGUI(self.root, self.emme_version, self.year, self.geo, self.year_suffix).pack(fill=constants.X, expand=1)
             return
 
         # set Geography Set ID
         def setgeo(self, value):
             self.geo = value
             return
-
-        # set land use
-        def setLU(self,value):
-            self.lu = value.split("-")[0]
+        
+        # set build/no-build
+        def setSuffix(self, value):
+            if value == "No Build":
+                self.year_suffix = "nb"
+            else:
+                self.year_suffix = ""
+            #Refresh the GUI with inputs already entered
+            self.destroy()
+            CreateScenarioGUI(self.root, self.emme_version, self.year, self.geo, self.year_suffix).pack(fill=constants.X, expand=1)
             return
 
         #set cluster
@@ -312,59 +285,52 @@ class CreateScenarioGUI(tkinter.Frame):
             return
 
         #set default options for folded browsers
-        def setPathOptions(self):
+        def setPathOptions(self, type):
             self.dir_opt = options = {}
-            options['initialdir'] = self.defaultScenarioDir
+            # options['initialdir'] = self.defaultScenarioDir
             options['mustexist'] = False
             options['parent'] = root
-            options['title'] = 'This is a title'
+            options['title'] = 'Select ' + type + ' directory:'
 
         #get a path after the browse button is clicked on
         def get_path(self,type):
-            self.setPathOptions()
-            path = filedialog.askdirectory(**self.dir_opt)
+            self.setPathOptions(type)
             if type=="scenario":
-                if path:
-                    spath = os.path.normpath(path)
-                    self.scenariopath.delete(0, constants.END)
-                    self.scenariopath.insert(0, spath)
+                setpath = self.scenariopath
             elif type=="network":
-                if path:
-                    npath = os.path.normpath(path)
-                    self.networkpath.delete(0, constants.END)
-                    self.networkpath.insert(0, npath)
+                setpath = self.networkpath
+            elif type== "lu":
+                setpath = self.lupath
             elif type=="study":
-                if path:
-                    studypath = os.path.normpath(path)
-                    self.studypath.delete(0, constants.END)
-                    self.studypath.insert(0, studypath)
+                setpath = self.studypath
             elif type=="studynetwork":
-                if path:
-                    studynetworkpath = os.path.normpath(path)
-                    self.studynetworkpath.delete(0, constants.END)
-                    self.studynetworkpath.insert(0, studynetworkpath)
+                setpath = self.studynetworkpath
+            self.dir_opt.update({'initialdir':setpath.get()})
+            path = filedialog.askdirectory(**self.dir_opt)
+            path = os.path.normpath(path)
+            setpath.delete(0, constants.END)
+            if type=="scenario":
+                setpath.insert(0, path + '\\')
+            else:
+                setpath.insert(0, path)
             return
 
         #check if a path already exisits or is empty
         def checkPath(self,type):
             self.popup=tkinter.Tk()
             if type=="scenario":
-                #Check if invalid year/land use combo and don't create scenario if that is the case
-                #if self.year not in self.lu_options[self.lu]["years"]: 
-                #    showerror("Error", "Invalid year/land use combination")
-                #    return
-                if os.path.exists(self.scenariopath.get()):
-                    if not self.networkpath.get():
-                        popupMsg.popupmsg(self,"Network folder is empty!",1,type)
-                    else:
-                        popupMsg.popupmsg(self,"Selected scenario folder already exists! Proceeding will overwrite existing files!",2,type)
+                if not self.scenariopath.get():
+                    popupMsg.popupmsg(self,"Scenario folder is empty!",1,type)
+                elif not os.path.exists(os.path.join(self.networkpath.get(),'trlink.csv')):
+                    # If trlink.csv is missing, network path is invalid
+                    popupMsg.popupmsg(self,"Invalid network path!",1,type)
+                elif not os.path.exists(os.path.join(self.lupath.get(),'persons.csv')):
+                    # If persons.csv is missing, land use path is invalid
+                    popupMsg.popupmsg(self,"Invalid land use path!",1,type)
+                elif os.path.exists(self.scenariopath.get()):
+                    popupMsg.popupmsg(self,"Selected scenario folder already exists! Proceeding will overwrite existing files!",2,type)
                 else:
-                    if not self.scenariopath.get():
-                        popupMsg.popupmsg(self,"Scenario folder is empty!",1,type)
-                    elif not self.networkpath.get():
-                        popupMsg.popupmsg(self,"Network folder is empty!",1,type)
-                    else:
-                        self.executeBatch(type)
+                    self.executeBatch(type)
             elif type=="study":
                 if os.path.exists(self.studypath.get()):
                     if not self.studynetworkpath.get():
@@ -398,22 +364,19 @@ class CreateScenarioGUI(tkinter.Frame):
         def executeBatch(self, type):
             self.popup.destroy()
             if type=="scenario":
-                if self.lu == "S0" and self.year in ["2035", "2050"]:
-                    lu_input_path = os.path.join(self.lu_options[self.lu]["location"], "abm_csv", "processed", self.year + "nb")
-                else:
-                    lu_input_path = os.path.join(self.lu_options[self.lu]["location"], "abm_csv", "processed", self.year)
-                commandstr = u"create_scenario.cmd %s %s %s %s %s" % (
+                commandstr = u"create_scenario.cmd %s %s %s %s %s %s" % (
                     self.scenariopath.get(),
                     self.year,
                     self.networkpath.get(),
                     self.emme_version,
-                    lu_input_path
+                    self.lupath.get(),
+                    '"' + self.year_suffix + '"'
                 )
                 os.chdir(self.releaseDir+"\\"+self.version+'\\')
                 os.system(commandstr)
-                self.update_property("landuse.version = S0", "landuse.version = " + self.lu)
                 self.update_property("geographyID = 1", "geographyID = " + self.geo.get())
                 self.update_property("network = NETWORK", "network = " + self.networkpath.get())
+                self.update_property("landuse = LANDUSE", "landuse = " + self.lupath.get())
             elif type=="study":
                 studyyears = self.studyyears.get().split(',')
                 exclude_file = self.studynetworkpath.get() + '\\exclude.txt'

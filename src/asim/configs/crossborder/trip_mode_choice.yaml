@@ -92,11 +92,6 @@ CONSTANTS:
   # From old tvpb - uncomment only as needed
   #c_ivt: -0.03
   #c_cost: -0.0003
-  # transit "factors" from SANDAG
-  eb_fac: 1.0
-  brt_fac: 0.9000
-  lrt_fac: 0.6500
-  cr_fac: 0.6500
   # coeffs used in maz_tap and tap_tap utility expressions
   c_walk: 1.7
   c_fwt: 1.5

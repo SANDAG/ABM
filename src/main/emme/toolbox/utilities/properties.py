@@ -600,11 +600,11 @@ class Properties(object):
             reader = csv.DictReader(f)
             properties_by_year = {}
             for row in reader:
-                year = int(row.pop("year"))
+                year = str(row.pop("year"))
                 properties_by_year[year] = row
-        year_properties = properties_by_year.get(self["scenarioYear"])
+        year_properties = properties_by_year.get(str(self["scenarioYear"]) + str(self["scenarioYearSuffix"]))
         if year_properties is None:
-            raise Exception("Row with year %s not found in %s" % (self["scenarioYear"], file_path))
+            raise Exception("Row with year %s not found in %s" % (str(self["scenarioYear"]) + str(self["scenarioYearSuffix"]), file_path))
         self.update(year_properties)
 
     def __setitem__(self, key, item):

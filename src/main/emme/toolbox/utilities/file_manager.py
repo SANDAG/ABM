@@ -156,7 +156,7 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
         if initialize:
             # make sure that all of the root directories are created
             root_dirs = [
-                "application", "bin", "conf", "emme_project", "input", "input_truck",
+                "application", "bin", "conf", "emme_project", "input",
                 "logFiles", "output", "python", "report", "sql", "uec"
             ]
             for name in root_dirs:
@@ -189,8 +189,6 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
         self._report = []
         self._stats = {"size": 0, "count": 0}
         if not file_masks:
-            # suggested defaults: "application", "bin", "input", "input_truck", "uec",
-            #                     "output\\iter*", "output\\*_1.csv", "output\\*_2.csv"
             file_masks = []
         # prepend the src dir to the project masks
         file_masks = [_join(local_dir, p) for p in file_masks]

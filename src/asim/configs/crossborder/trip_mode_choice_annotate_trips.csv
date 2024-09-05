@@ -24,9 +24,9 @@ Description,Target,Expression
 ,costOperatingDrive,"_costOperatingDrive + df.trip_mode.isin(['SHARED3']) * df.cost_per_mile * df.s3_dist_skims / _tour_participants"
 #,,
 ,_cost_fare_drive,0
-,_cost_fare_drive,"_cost_fare_drive + np.where(df.trip_mode == 'TAXI',1,0) * ((taxi_base_fare + (df.s2_dist_skims * taxi_cost_per_mile) + (df.s2_time_skims * taxi_cost_per_minute)) * 100 + df.s2_cost_skims) / _tour_participants"
-,_cost_fare_drive,"_cost_fare_drive + np.where(df.trip_mode=='TNC_SINGLE',1,0)*((tnc_single_base_fare + (df.s2_dist_skims * tnc_single_cost_per_mile) + (df.s2_time_skims * tnc_single_cost_per_minute).clip(lower=tnc_single_cost_minimum)) * 100 + df.s2_cost_skims) / _tour_participants"
-,cost_fare_drive,"_cost_fare_drive + np.where(df.trip_mode=='TNC_SHARED',1,0)*np.where(df.nev_available, 0, np.where(df.microtransit_available, 0, ((tnc_shared_base_fare + (df.s3_dist_skims * tnc_shared_cost_per_mile) + (df.s3_time_skims * tnc_shared_cost_per_minute).clip(lower=tnc_shared_cost_minimum)))) * 100 + df.s3_cost_skims) / _tour_participants"
+,_cost_fare_drive,"_cost_fare_drive + np.where(df.trip_mode == 'TAXI',1,0) * ((Taxi_baseFare + (df.s2_dist_skims * Taxi_costPerMile) + (df.s2_time_skims * Taxi_costPerMinute)) * 100 + df.s2_cost_skims) / _tour_participants"
+,_cost_fare_drive,"_cost_fare_drive + np.where(df.trip_mode=='TNC_SINGLE',1,0)*((TNC_single_baseFare + (df.s2_dist_skims * TNC_single_costPerMile) + (df.s2_time_skims * TNC_single_costPerMinute).clip(lower=TNC_single_costMinimum)) * 100 + df.s2_cost_skims) / _tour_participants"
+,cost_fare_drive,"_cost_fare_drive + np.where(df.trip_mode=='TNC_SHARED',1,0)*np.where(df.nev_available, 0, np.where(df.microtransit_available, 0, ((TNC_shared_baseFare + (df.s3_dist_skims * TNC_shared_costPerMile) + (df.s3_time_skims * TNC_shared_costPerMinute).clip(lower=TNC_shared_costMinimum)))) * 100 + df.s3_cost_skims) / _tour_participants"
 #,,
 ,_time_nev_in_vehicle,0
 ,_time_nev_in_vehicle,"_time_nev_in_vehicle + (df.trip_mode=='TNC_SHARED') * df.nev_available * df.nev_time"

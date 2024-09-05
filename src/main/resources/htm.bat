@@ -5,6 +5,7 @@ set faf_file_name=%3
 set htm_input_file_name=%4
 set skim_period=%5
 set scenario_year=%6
+set scenario_year_with_suffix=%7
 
 SET ANACONDA3_DIR=%CONDA_PREFIX%
 SET ANACONDA2_DIR=%CONDA_TWO_PREFIX%
@@ -48,7 +49,7 @@ SET OUTPUT_DIR=%PROJECT_DRIVE%%PROJECT_DIRECTORY%\output
 :: run run_htm.py
 ECHO Run HTM...
 CD /d %PROJECT_DRIVE%%PROJECT_DIRECTORY%\python\
-%PYTHON3% run_htm.py %MODEL_DIR% %OUTPUT_DIR% %faf_file_name% %htm_input_file_name% %skim_period% %scenario_year% 2>>%PROJECT_DRIVE%%PROJECT_DIRECTORY%\logFiles\event-htm.txt
+%PYTHON3% run_htm.py %MODEL_DIR% %OUTPUT_DIR% %faf_file_name% %htm_input_file_name% %skim_period% %scenario_year% %scenario_year_with_suffix% 2>>%PROJECT_DRIVE%%PROJECT_DIRECTORY%\logFiles\event-htm.txt
 IF %ERRORLEVEL% NEQ 0 (GOTO :ERROR) else (GOTO :SUCCESS)
 
 :SUCCESS

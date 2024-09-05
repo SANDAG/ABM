@@ -2,57 +2,57 @@ industries:
   1: 
     description: agriculture_mining
     name: AGM
-    industry_factor: 0.0565
+    industry_factor: 0.0390
     industry_group: 1
   2: 
     description: manufacturing
     name: MFG
-    industry_factor: 0.056
+    industry_factor: 0.0328
     industry_group: 1
   3: 
     description: industry_utilities
     name: IUT
-    industry_factor: 0.410
+    industry_factor: 0.2410
     industry_group: 2
   4: 
     description: retail
     name: RET
-    industry_factor: 0.0355
+    industry_factor: 0.0296
     industry_group: 2
   5: 
     description: wholesale
     name: WHL
-    industry_factor: 0.0720
+    industry_factor: 0.0662
     industry_group: 1
   6: 
     description: construction
     name: CON
-    industry_factor: 0.1425
+    industry_factor: 0.1288
     industry_group: 2
   7: 
     description: transportation
     name: TRN
-    industry_factor: 0.1395
+    industry_factor: 0.1176
     industry_group: 2
   8: 
     description: info_finance_insurance_realestate_professional
     name: IFR
-    industry_factor: 0.0578
+    industry_factor: 0.0510
     industry_group: 3
   9: 
     description: education_publicservices
     name: EPO
-    industry_factor: 0.108
+    industry_factor: 0.0589
     industry_group: 4
   10: 
     description: medical_health
     name: MHS
-    industry_factor: 0.0530
+    industry_factor: 0.0319
     industry_group: 4
   11: 
     description: leisure_accommondation_food
     name: LAF
-    industry_factor: 0.0207
+    industry_factor: 0.0208
     industry_group: 3
   12:
     description: military

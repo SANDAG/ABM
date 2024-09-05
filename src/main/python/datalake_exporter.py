@@ -111,7 +111,7 @@ def create_scenario_df(ts, EMME_metadata, parent_dir_name, output_path):
         "scenario_id": [EMME_metadata["scenario_id"]],
         "scenario_guid": [EMME_metadata["scenario_guid"]],
         "main_directory" : [EMME_metadata["main_directory"]],
-        "datalake_path" : ["/".join(["bronze/abm3dev/abm_15_0_0",parent_dir_name])],
+        "datalake_path" : ["/".join(["bronze/abm3dev",database,parent_dir_name])],
         "select_link" : [EMME_metadata["select_link"]],
         "sample_rate" : [EMME_metadata["sample_rate"]]
     }
@@ -139,9 +139,9 @@ def create_model_metadata_df(model, model_metadata):
 def export_table(table, name, model, parent_dir_name, container):
     model_output_file = name+".parquet"
     if model == '':
-        lake_file_name = "/".join(["abm_15_0_0",parent_dir_name,model_output_file])
+        lake_file_name = "/".join([database,parent_dir_name,model_output_file])
     else:
-        lake_file_name = "/".join(["abm_15_0_0",parent_dir_name,model,model_output_file])
+        lake_file_name = "/".join([database,parent_dir_name,model,model_output_file])
 
     parquet_file = BytesIO()
     table.to_parquet(parquet_file, engine="pyarrow")
@@ -219,9 +219,9 @@ def write_to_datalake(output_path, models, exclude, env):
             else:
                 with open(file, "rb") as data:
                     if model == '':
-                        lake_file_name = "/".join(["abm_15_0_0",parent_dir_name,name+ext])
+                        lake_file_name = "/".join([database,parent_dir_name,name+ext])
                     else:
-                        lake_file_name = "/".join(["abm_15_0_0",parent_dir_name,model,name+ext])
+                        lake_file_name = "/".join([database,parent_dir_name,model,name+ext])
                     container.upload_blob(name=lake_file_name, data=data)
 
     report_path = os.path.join(os.path.split(output_path)[0], 'report')
@@ -230,6 +230,7 @@ def write_to_datalake(output_path, models, exclude, env):
         EMME_metadata["properties_path"],
         os.path.join(output_path, 'skims', 'traffic_skims_MD.omx'),
         os.path.abspath(os.path.join(output_path, '..', 'input', 'zone_term.csv')),
+        os.path.abspath(os.path.join(output_path, '..', 'input', 'trlink.csv')),
         os.path.join(output_path, 'bikeMgraLogsum.csv'),
         os.path.join(output_path, 'microMgraEquivMinutes.csv'),
         os.path.join(report_path, 'walkMgrasWithin45Min_AM.csv'),
@@ -238,7 +239,7 @@ def write_to_datalake(output_path, models, exclude, env):
     for file in other_files:
         try:
             with open(file, "rb") as data:
-                lake_file_name = "/".join(["abm_15_0_0",parent_dir_name,os.path.basename(file)])
+                lake_file_name = "/".join([database,parent_dir_name,os.path.basename(file)])
                 container.upload_blob(name=lake_file_name, data=data)
         except (FileNotFoundError, KeyError):
             print(("%s not found" % file), file=sys.stderr)
@@ -260,4 +261,5 @@ models = [
 exclude = [
     'final_pipeline.h5'
 ]
+database = 'abm_15_1_0'
 write_to_datalake(output_path, models, exclude, env)

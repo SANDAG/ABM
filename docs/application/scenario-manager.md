@@ -1,27 +1,4 @@
-# Applying the model
-
-This page contains information needed to apply the model.
-
-## Network Coding
-
-//TODO: Describe network attributes, how to code network
-
-## Population Synthesis
-
-//TODO: Describe population synthesis procedure, how to modify inputs and construct new future-year synthetic population
-
-## Land-Use Data Preparation
-
-//TODO: Describe how to prepare land-use data.
-
-Describe how to update parking costs, enrollment data.
-
-## Micromobility
-
-//TODO: Describe how to run micromobility policy tests
-
-
-## Scenario manager
+# Scenario manager
 
 ABM3 uses a python module as the scenario manager. The job of this scenario manager is updating the parameters used throughout the model to match a specific scenario’s definition and needs. A number of these parameters including auto operating cost, taxi and TNC fare, micromobility cost, and AV ownership penetration are usually assumed to change by forecast year or scenario.
 

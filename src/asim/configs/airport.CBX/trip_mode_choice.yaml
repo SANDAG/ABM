@@ -263,11 +263,6 @@ CONSTANTS:
   c_fwt: 1.5
   c_xwt: 2
   c_waux: 2.5
-  ivt_lrt_multiplier: 0.65
-  ivt_brt_multiplier: 0.95
-  ivt_cmr_multiplier: 0.65
-  ivt_ltd_multiplier: 1.0
-  ivt_cost_multiplier: 0.6
   
 
 # so far, we can use the same spec as for non-joint tours
