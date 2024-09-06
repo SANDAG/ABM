@@ -384,7 +384,7 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
         # name = "File copy report: copied {count} files {size}".format(count=count, size=size)
         name = "File copy report"
         report = _m.PageBuilder(title=name)
-        report.add_html("<br>".join(self._report))
+        report.add_html(self._report)
         _m.logbook_write(name, report.render())
 
 
