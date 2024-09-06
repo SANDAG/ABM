@@ -57,7 +57,7 @@ master_run(main_directory, scenario_id, scenario_title, emmebank_title, num_proc
 """
 
 TOOLBOX_ORDER = 1
-VIRUTALENV_PATH = "C:\\python_virtualenv\\abm14_2_0"
+VIRUTALENV_PATH = "C:\\python_virtualenv\\abm15_1_0"
 
 import inro.modeller as _m
 import inro.emme.database.emmebank as _eb
@@ -68,6 +68,7 @@ import glob as _glob
 import subprocess as _subprocess
 import ctypes as _ctypes
 import json as _json
+import importlib
 import shutil as _shutil
 import tempfile as _tempfile
 from copy import deepcopy as _copy
@@ -100,16 +101,16 @@ props_utils = _m.Modeller().module("sandag.utilities.properties")
 
 
 class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
-    main_directory = _m.Attribute(unicode)
+    main_directory = _m.Attribute(str)
     scenario_id = _m.Attribute(int)
-    scenario_title = _m.Attribute(unicode)
-    emmebank_title = _m.Attribute(unicode)
+    scenario_title = _m.Attribute(str)
+    emmebank_title = _m.Attribute(str)
     num_processors = _m.Attribute(str)
-    select_link = _m.Attribute(unicode)
-    username = _m.Attribute(unicode)
-    password = _m.Attribute(unicode)
+    select_link = _m.Attribute(str)
+    username = _m.Attribute(str)
+    password = _m.Attribute(str)
 
-    properties_path = _m.Attribute(unicode)
+    properties_path = _m.Attribute(str)
 
     tool_run_msg = ""
 
@@ -210,7 +211,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
             raise
 
-    @_m.method(return_type=_m.UnicodeType)
+    @_m.method(return_type=str)
     def tool_run_msg_status(self):
         return self.tool_run_msg
 
@@ -937,7 +938,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         try:
             _m.logbook_level(log_states[self._log_level])
         except KeyError:
-            raise Exception("properties.RunModel.LogLevel: value must be one of %s" % ",".join(log_states.keys()))
+            raise Exception("properties.RunModel.LogLevel: value must be one of %s" % ",".join(list(log_states.keys())))
 
     def run_transit_assignments(self, transit_emmebank_dict, scenarioYear, output_dir, create_connector_flag, main_directory_original):
 
@@ -1023,11 +1024,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         main_emmebank = base_scenario.emmebank
 
         machine_name = _socket.gethostname().lower()
-        with open(_join(self._path, "conf", "server-config.csv")) as f:
-            columns = f.next().split(",")
+        with open(_join(self._path, "conf", "server-config.csv"), "r") as f:
+            columns = f.readline().split(",")
             for line in f:
                 values = dict(zip(columns, line.split(",")))
-                name = values["ServerName"].lower()
+                name = dict(list(zip(columns, line.split(","))))
                 if name == machine_name:
                     server_config = values
                     break
@@ -1124,10 +1125,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         # errors when logged
                         _m.logbook_write("Process run %s report" % name, report.render())
                     except Exception as error:
-                        print _time.strftime("%Y-%M-%d %H:%m:%S")
-                        print "Error writing report '%s' to logbook" % name
-                        print error
-                        print _traceback.format_exc(error)
+                        print (_time.strftime("%Y-%M-%d %H:%m:%S"))
+                        print ("Error writing report '%s' to logbook" % name)
+                        print (error)
+                        print (_traceback.format_exc(error))
                         if self._log_level == "DISABLE_ON_ERROR":
                             _m.logbook_level(_m.LogbookLevel.NONE)
             else:
@@ -1137,7 +1138,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
     def check_free_space(self, min_space):
         path = "c:\\"
         temp, total, free = _ctypes.c_ulonglong(), _ctypes.c_ulonglong(), _ctypes.c_ulonglong()
-        if sys.version_info >= (3,) or isinstance(path, unicode):
+        if sys.version_info >= (3,) or isinstance(path, str):
             fun = _ctypes.windll.kernel32.GetDiskFreeSpaceExW
         else:
             fun = _ctypes.windll.kernel32.GetDiskFreeSpaceExA
@@ -1172,7 +1173,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         if notMatch:
             out_file = _join(output_dir, output_file)
-            with open(out_file, 'ab') as csvfile:
+            with open(out_file, 'a') as csvfile:
                 spamwriter = csv.writer(csvfile)
                 # spamwriter.writerow([])
                 for item in notMatch:
@@ -1213,7 +1214,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         desktop = modeller.desktop
         data_explorer = desktop.data_explorer()
         for db in data_explorer.databases():
-            if _norm(db.path) == _norm(unicode(emmebank)):
+            if _norm(db.path) == _norm(str(emmebank)):
                 db.open()
                 return db
         return None
@@ -1263,12 +1264,12 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             "TRK_H": set([heavy_trk_trnpdr, heavy_trk]),
         }
         report = ["<div style='margin-left:5px'>Link mode changes</div>"]
-        for name, class_availabilities in availabilities[period].iteritems():
+        for name, class_availabilities in list(availabilities[period].items()):
             report.append("<div style='margin-left:10px'>%s</div>" % name)
             changes = _defaultdict(lambda: 0)
             for link in network.links():
                 if name in link["#name"]:
-                    for class_name, is_avail in class_availabilities.iteritems():
+                    for class_name, is_avail in list(class_availabilities.items()):
                         modes = class_mode_map[class_name]
                         if is_avail == 1 and not modes.issubset(link.modes):
                             link.modes |= modes
@@ -1277,7 +1278,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                             link.modes -= modes
                             changes["removed %s from" % class_name] += 1
             report.append("<div style='margin-left:20px'><ul>")
-            for x in changes.iteritems():
+            for x in list(changes.items()):
                 report.append("<li>%s %s links</li>" % x)
             report.append("</div></ul>")
         scenario.publish_network(network)
@@ -1354,7 +1355,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             for period in periods:
                 assign_args["period_scenario"] = scenarios[period].id
                 assign_args["period"] = period
-                with open(_join(database_path, "start_%s.args" % period), 'w') as f:
+                with open(_join(database_path, "start_%s.args" % period), 'w', newline='') as f:
                     _json.dump(assign_args, f, indent=4)
             script_dir = _join(self._path, "python")
             bin_dir = _join(self._path, "bin")
@@ -1420,7 +1421,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 dst_matrix = dst_emmebank.matrix(matrix_id)
                 dst_matrix.set_data(src_matrix.get_data(scen_id), scen_id)
 
-    @_m.method(return_type=unicode)
+    @_m.method(return_type=str)
     def get_link_attributes(self):
         export_utils = _m.Modeller().module("inro.emme.utility.export_utilities")
         return export_utils.get_link_attributes(_m.Modeller().scenario)
