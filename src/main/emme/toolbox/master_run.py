@@ -861,6 +861,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         # UPLOAD DATA AND SWITCH PATHS
         if useLocalDrive:
+            # # Uncomment to get disk usage at end of run
+            # # Note that max disk usage occurs in resident model, not at end of run
+            # disk_usage = win32.Dispatch('Scripting.FileSystemObject').GetFolder(self._path).Size
+            # _m.logbook_write("Disk space usage: %f GB" % (disk_usage / (1024 ** 3)))
             file_manager("UPLOAD", main_directory, username, scenario_id,
                          delete_local_files=not skipDeleteIntermediateFiles)
             self._path = main_directory
