@@ -5,7 +5,7 @@ coef_ln_nmakes,.247,F
 coef_mpg,0.007,F
 coef_crange,0.018,F
 coef_crangeltwk,-0.781,F
-coef_ln_chpc_ev,1686.871,F
+coef_ln_chpc_ev,354.347,F
 coef_cprice0,-0.00010,F
 coef_cprice25,-0.00009,F
 coef_cprice50,-0.00008,F
@@ -188,9 +188,9 @@ coef_ohio_mc,0.140,F
 coef_ohio_hyb,-0.142,F
 coef_ohio_ev,-1.590,F
 coef_ohio_age,-0.008,F
-coef_calib_pev_2022,-2.55829,F
-coef_calib_bev_2022,-1.70775,F
-coef_calib_pev_2035,-12.8722,F
-coef_calib_bev_2035,-12.75503,F
-coef_calib_pev_2050,-67.86506714368133,F
-coef_calib_bev_2050,-68.87800114333946,F
+coef_calib_pev_2022,0.56468,F
+coef_calib_bev_2022,1.42228,F
+coef_calib_pev_2035,0.86656,F
+coef_calib_bev_2035,0.98343,F
+coef_calib_pev_2050,0.36963,F
+coef_calib_bev_2050,-0.64752,F
