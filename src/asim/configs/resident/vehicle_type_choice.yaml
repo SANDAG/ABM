@@ -130,3 +130,4 @@ CONSTANTS:
   # chargers per cap used in vehicle type model estimation
   # CHARGERS_PER_CAP: 0.000721205
   scenarioYear: 2022
+  chargerSensitivityDecayFactor: -0.08245202
