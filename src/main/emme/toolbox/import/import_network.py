@@ -946,7 +946,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     {"type": "text",
                      "content": "Stop %s: could not find transit line by ID %s (link GUID %s)" % (
                         record["Stop_ID"], record["Route_ID"], record["Link_GUID"])})
-        for stops in line_stops.itervalues():
+        for stops in line_stops.values():
             stops.sort(key=lambda stop: float(stop["Milepost"]))
 
         seg_float_attr_map = []
@@ -1095,7 +1095,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             yaml_installed = True
             try:
                 import yaml
-                special_fares = yaml.load(fare_file)
+                special_fares = yaml.safe_load(fare_file)
                 self._log.append({"type": "text", "content": yaml.dump(special_fares).replace("\n", "<br>")})
             except ImportError:
                 yaml_installed = False
