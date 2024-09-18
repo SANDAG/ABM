@@ -190,7 +190,7 @@ class DataTableProc(object):
             attr = data.attribute("geometry")
             for record in attr.values:
                 geo_obj = _ogr.CreateGeometryFromWkt(record.text)
-                if _ogr.GeometryTypeToName(geo_obj.GetGeometryType()) == 'Multi Line String':
+                if geo_obj.GetGeometryName() == 'MULTILINESTRING':
                     coords = []
                     for line in geo_obj:
                         coords.extend(line.GetPoints())
