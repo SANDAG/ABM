@@ -212,9 +212,9 @@ no long walks,walkAvailable,"np.where((walk_time_skims < max_walk_time),1,0) * n
 ,knr_local_available,((df.outbound & (odt_skims['KNROUT_LOC_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['KNRIN_LOC_TOTALIVTT']>0)))&(tourKNR)
 ,knr_premium_available,((df.outbound & (odt_skims['KNROUT_PRM_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['KNRIN_PRM_TOTALIVTT']>0)))&(tourKNR)
 ,knr_mix_available,((df.outbound & (odt_skims['KNROUT_MIX_TOTALIVTT']>0)&(odt_skims['KNROUT_MIX_XFERS']>0)) | (~df.outbound & (odt_skims['KNRIN_MIX_TOTALIVTT']>0)&(odt_skims['KNRIN_MIX_XFERS']>0)))&(tourKNR)
-,tnc_local_available,((df.outbound & (odt_skims['TNCOUT_LOC_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['TNCIN_LOC_TOTALIVTT']>0)))&(tourTNR)
-,tnc_premium_available,((df.outbound & (odt_skims['TNCOUT_PRM_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['TNCIN_PRM_TOTALIVTT']>0)))&(tourTNR)
-,tnc_mix_available,((df.outbound & (odt_skims['TNCOUT_MIX_TOTALIVTT']>0)&(odt_skims['TNCOUT_MIX_XFERS']>0)) | (~df.outbound & (odt_skims['TNCIN_MIX_TOTALIVTT']>0)&(odt_skims['TNCIN_MIX_XFERS']>0)))&(tourTNR)
+,tnc_local_available,((df.outbound & (odt_skims['KNROUT_LOC_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['KNRIN_LOC_TOTALIVTT']>0)))&(tourTNR)
+,tnc_premium_available,((df.outbound & (odt_skims['KNROUT_PRM_TOTALIVTT']>0)) | (~df.outbound & (odt_skims['KNRIN_PRM_TOTALIVTT']>0)))&(tourTNR)
+,tnc_mix_available,((df.outbound & (odt_skims['KNROUT_MIX_TOTALIVTT']>0)&(odt_skims['KNROUT_MIX_XFERS']>0)) | (~df.outbound & (odt_skims['KNRIN_MIX_TOTALIVTT']>0)&(odt_skims['KNRIN_MIX_XFERS']>0)))&(tourTNR)
 #access egress distances,,
 ,origin_local_dist,"reindex(land_use.walk_dist_local_bus, origin)"
 ,origin_prm_dist,"reindex(land_use.walk_dist_premium_transit, origin)"
@@ -248,41 +248,41 @@ Number of school children in vehicle on trip,num_escortees,df.escort_participant
 ,knr_prm_inb_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['KNRIN_PRM_CMRIVTT']>20,(odt_skims['KNRIN_PRM_CMRIVTT']-20),0)+np.where(odt_skims['KNRIN_PRM_CMRIVTT']>40,(odt_skims['KNRIN_PRM_CMRIVTT']-40)*1.5,0)),65)"
 ,knr_mix_out_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['KNROUT_MIX_CMRIVTT']>20,(odt_skims['KNROUT_MIX_CMRIVTT']-20),0)+np.where(odt_skims['KNROUT_MIX_CMRIVTT']>40,(odt_skims['KNROUT_MIX_CMRIVTT']-40)*1.5,0)),65)"
 ,knr_mix_inb_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['KNRIN_MIX_CMRIVTT']>20,(odt_skims['KNRIN_MIX_CMRIVTT']-20),0)+np.where(odt_skims['KNRIN_MIX_CMRIVTT']>40,(odt_skims['KNRIN_MIX_CMRIVTT']-40)*1.5,0)),65)"
-,tnc_prm_out_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['TNCOUT_PRM_CMRIVTT']>20,(odt_skims['TNCOUT_PRM_CMRIVTT']-20),0)+np.where(odt_skims['TNCOUT_PRM_CMRIVTT']>40,(odt_skims['TNCOUT_PRM_CMRIVTT']-40)*1.5,0)),65)"
-,tnc_prm_inb_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['TNCIN_PRM_CMRIVTT']>20,(odt_skims['TNCIN_PRM_CMRIVTT']-20),0)+np.where(odt_skims['TNCIN_PRM_CMRIVTT']>40,(odt_skims['TNCIN_PRM_CMRIVTT']-40)*1.5,0)),65)"
-,tnc_mix_out_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['TNCOUT_MIX_CMRIVTT']>20,(odt_skims['TNCOUT_MIX_CMRIVTT']-20),0)+np.where(odt_skims['TNCOUT_MIX_CMRIVTT']>40,(odt_skims['TNCOUT_MIX_CMRIVTT']-40)*1.5,0)),65)"
-,tnc_mix_inb_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['TNCIN_MIX_CMRIVTT']>20,(odt_skims['TNCIN_MIX_CMRIVTT']-20),0)+np.where(odt_skims['TNCIN_MIX_CMRIVTT']>40,(odt_skims['TNCIN_MIX_CMRIVTT']-40)*1.5,0)),65)"
+,tnc_prm_out_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['KNROUT_PRM_CMRIVTT']>20,(odt_skims['KNROUT_PRM_CMRIVTT']-20),0)+np.where(odt_skims['KNROUT_PRM_CMRIVTT']>40,(odt_skims['KNROUT_PRM_CMRIVTT']-40)*1.5,0)),65)"
+,tnc_prm_inb_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['KNRIN_PRM_CMRIVTT']>20,(odt_skims['KNRIN_PRM_CMRIVTT']-20),0)+np.where(odt_skims['KNRIN_PRM_CMRIVTT']>40,(odt_skims['KNRIN_PRM_CMRIVTT']-40)*1.5,0)),65)"
+,tnc_mix_out_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['KNROUT_MIX_CMRIVTT']>20,(odt_skims['KNROUT_MIX_CMRIVTT']-20),0)+np.where(odt_skims['KNROUT_MIX_CMRIVTT']>40,(odt_skims['KNROUT_MIX_CMRIVTT']-40)*1.5,0)),65)"
+,tnc_mix_inb_cr_asc,"(-1.0) * np.minimum((45 + np.where(odt_skims['KNRIN_MIX_CMRIVTT']>20,(odt_skims['KNRIN_MIX_CMRIVTT']-20),0)+np.where(odt_skims['KNRIN_MIX_CMRIVTT']>40,(odt_skims['KNRIN_MIX_CMRIVTT']-40)*1.5,0)),65)"
 # Note: Hyperloop not implemented in ASC calculations since we arent skimming hyperloop IVTT,,
 ,wlk_prm_asc,"np.where(odt_skims['WALK_PRM_CMRIVTT'] > 10, wlk_prm_cr_asc,np.where(odt_skims['WALK_PRM_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['WALK_PRM_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['WALK_PRM_EXPIVTT']+odt_skims['WALK_PRM_LTDEXPIVTT'] > 0, eb_equiv_asc,0))))"
 ,pnr_prm_out_asc,"np.where(odt_skims['PNROUT_PRM_CMRIVTT'] > 10, pnr_prm_out_cr_asc,np.where(odt_skims['PNROUT_PRM_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['PNROUT_PRM_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['WALK_PRM_EXPIVTT']+odt_skims['PNROUT_PRM_LTDEXPIVTT'] > 0, eb_equiv_asc,0))))"
 ,pnr_prm_inb_asc,"np.where(odt_skims['PNRIN_PRM_CMRIVTT'] > 10, pnr_prm_inb_cr_asc,np.where(odt_skims['PNRIN_PRM_LRTIVTT']>0,pnr_lrt_equiv_asc,np.where(odt_skims['PNRIN_PRM_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['WALK_PRM_EXPIVTT']+odt_skims['PNRIN_PRM_LTDEXPIVTT'] > 0, eb_equiv_asc,0))))"
 ,knr_prm_out_asc,"np.where(odt_skims['KNROUT_PRM_CMRIVTT'] > 10, knr_prm_out_cr_asc,np.where(odt_skims['KNROUT_PRM_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['KNROUT_PRM_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['WALK_PRM_EXPIVTT']+odt_skims['KNROUT_PRM_LTDEXPIVTT'] > 0, eb_equiv_asc,0))))"
 ,knr_prm_inb_asc,"np.where(odt_skims['KNRIN_PRM_CMRIVTT'] > 10, knr_prm_inb_cr_asc,np.where(odt_skims['KNRIN_PRM_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['KNRIN_PRM_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['WALK_PRM_EXPIVTT']+odt_skims['KNRIN_PRM_LTDEXPIVTT'] > 0, eb_equiv_asc,0))))"
-,tnc_prm_out_asc,"np.where(odt_skims['TNCOUT_PRM_CMRIVTT'] > 10, tnc_prm_out_cr_asc,np.where(odt_skims['TNCOUT_PRM_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['TNCOUT_PRM_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['WALK_PRM_EXPIVTT']+odt_skims['TNCOUT_PRM_LTDEXPIVTT'] > 0, eb_equiv_asc,0))))"
-,tnc_prm_inb_asc,"np.where(odt_skims['TNCIN_PRM_CMRIVTT'] > 10, tnc_prm_inb_cr_asc,np.where(odt_skims['TNCIN_PRM_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['TNCIN_PRM_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['WALK_PRM_EXPIVTT']+odt_skims['TNCIN_PRM_LTDEXPIVTT'] > 0, eb_equiv_asc,0))))"
+,tnc_prm_out_asc,"np.where(odt_skims['KNROUT_PRM_CMRIVTT'] > 10, tnc_prm_out_cr_asc,np.where(odt_skims['KNROUT_PRM_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['KNROUT_PRM_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['WALK_PRM_EXPIVTT']+odt_skims['KNROUT_PRM_LTDEXPIVTT'] > 0, eb_equiv_asc,0))))"
+,tnc_prm_inb_asc,"np.where(odt_skims['KNRIN_PRM_CMRIVTT'] > 10, tnc_prm_inb_cr_asc,np.where(odt_skims['KNRIN_PRM_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['KNRIN_PRM_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['WALK_PRM_EXPIVTT']+odt_skims['KNRIN_PRM_LTDEXPIVTT'] > 0, eb_equiv_asc,0))))"
 ,wlk_mix_max_asc,"np.where(odt_skims['WALK_MIX_CMRIVTT'] > 10, wlk_mix_cr_asc,np.where(odt_skims['WALK_MIX_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['WALK_MIX_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['WALK_PRM_EXPIVTT']+odt_skims['WALK_MIX_LTDEXPIVTT']> 0, eb_equiv_asc,0))))"
 ,pnr_mix_out_max_asc,"np.where(odt_skims['PNROUT_MIX_CMRIVTT'] > 10, pnr_mix_out_cr_asc,np.where(odt_skims['PNROUT_MIX_LRTIVTT']>0,pnr_lrt_equiv_asc,np.where(odt_skims['PNROUT_MIX_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['WALK_PRM_EXPIVTT']+odt_skims['PNROUT_MIX_LTDEXPIVTT']> 0, eb_equiv_asc,0))))"
 ,pnr_mix_inb_max_asc,"np.where(odt_skims['PNRIN_MIX_CMRIVTT'] > 10, pnr_mix_inb_cr_asc,np.where(odt_skims['PNRIN_MIX_LRTIVTT']>0,pnr_lrt_equiv_asc,np.where(odt_skims['PNRIN_MIX_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['WALK_PRM_EXPIVTT']+odt_skims['PNRIN_MIX_LTDEXPIVTT']> 0, eb_equiv_asc,0))))"
 ,knr_mix_out_max_asc,"np.where(odt_skims['KNROUT_MIX_CMRIVTT'] > 10,knr_mix_out_cr_asc,np.where(odt_skims['KNROUT_MIX_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['KNROUT_MIX_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['WALK_PRM_EXPIVTT']+odt_skims['KNROUT_MIX_LTDEXPIVTT']> 0, eb_equiv_asc,0))))"
 ,knr_mix_inb_max_asc,"np.where(odt_skims['KNRIN_MIX_CMRIVTT'] > 10, knr_mix_inb_cr_asc,np.where(odt_skims['KNRIN_MIX_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['KNRIN_MIX_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['WALK_PRM_EXPIVTT']+odt_skims['KNRIN_MIX_LTDEXPIVTT']> 0, eb_equiv_asc,0))))"
-,tnc_mix_out_max_asc,"np.where(odt_skims['TNCOUT_MIX_CMRIVTT'] > 10, tnc_mix_out_cr_asc,np.where(odt_skims['TNCOUT_MIX_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['TNCOUT_MIX_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['WALK_PRM_EXPIVTT']+odt_skims['TNCOUT_MIX_LTDEXPIVTT']> 0, eb_equiv_asc,0))))"
-,tnc_mix_inb_max_asc,"np.where(odt_skims['TNCIN_MIX_CMRIVTT'] > 10, tnc_mix_inb_cr_asc,np.where(odt_skims['TNCIN_MIX_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['TNCIN_MIX_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['WALK_PRM_EXPIVTT']+odt_skims['TNCIN_MIX_LTDEXPIVTT']> 0, eb_equiv_asc,0))))"
+,tnc_mix_out_max_asc,"np.where(odt_skims['KNROUT_MIX_CMRIVTT'] > 10, tnc_mix_out_cr_asc,np.where(odt_skims['KNROUT_MIX_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['KNROUT_MIX_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['WALK_PRM_EXPIVTT']+odt_skims['KNROUT_MIX_LTDEXPIVTT']> 0, eb_equiv_asc,0))))"
+,tnc_mix_inb_max_asc,"np.where(odt_skims['KNRIN_MIX_CMRIVTT'] > 10, tnc_mix_inb_cr_asc,np.where(odt_skims['KNRIN_MIX_LRTIVTT']>0,lrt_equiv_asc,np.where(odt_skims['KNRIN_MIX_BRTIVTT']>0,brt_equiv_asc,np.where(odt_skims['WALK_PRM_EXPIVTT']+odt_skims['KNRIN_MIX_LTDEXPIVTT']> 0, eb_equiv_asc,0))))"
 # reduce by 50% if bus transfer and constant is positive,,
 ,wlk_mix_asc,"np.where((wlk_mix_max_asc > 0) & (odt_skims['WALK_MIX_BUSIVTT'] > 0), 0.5 * wlk_mix_max_asc, wlk_mix_max_asc)"
 ,pnr_mix_out_asc,"np.where((pnr_mix_out_max_asc > 0) & (odt_skims['PNROUT_MIX_BUSIVTT'] > 0), 0.5 * pnr_mix_out_max_asc, pnr_mix_out_max_asc)"
 ,pnr_mix_inb_asc,"np.where((pnr_mix_inb_max_asc > 0) & (odt_skims['PNRIN_MIX_BUSIVTT'] > 0), 0.5 * pnr_mix_inb_max_asc, pnr_mix_inb_max_asc)"
 ,knr_mix_out_asc,"np.where((knr_mix_out_max_asc > 0) & (odt_skims['KNROUT_MIX_BUSIVTT'] > 0), 0.5 * knr_mix_out_max_asc, knr_mix_out_max_asc)"
 ,knr_mix_inb_asc,"np.where((knr_mix_inb_max_asc > 0) & (odt_skims['KNRIN_MIX_BUSIVTT'] > 0), 0.5 * knr_mix_inb_max_asc, knr_mix_inb_max_asc)"
-,tnc_mix_out_asc,"np.where((tnc_mix_out_max_asc > 0) & (odt_skims['TNCOUT_MIX_BUSIVTT'] > 0), 0.5 * tnc_mix_out_max_asc, tnc_mix_out_max_asc)"
-,tnc_mix_inb_asc,"np.where((tnc_mix_inb_max_asc > 0) & (odt_skims['TNCIN_MIX_BUSIVTT'] > 0), 0.5 * tnc_mix_inb_max_asc, tnc_mix_inb_max_asc)"
+,tnc_mix_out_asc,"np.where((tnc_mix_out_max_asc > 0) & (odt_skims['KNROUT_MIX_BUSIVTT'] > 0), 0.5 * tnc_mix_out_max_asc, tnc_mix_out_max_asc)"
+,tnc_mix_inb_asc,"np.where((tnc_mix_inb_max_asc > 0) & (odt_skims['KNRIN_MIX_BUSIVTT'] > 0), 0.5 * tnc_mix_inb_max_asc, tnc_mix_inb_max_asc)"
 # reduce by 50% if transfers happen between cmr and other prm lines,,
 ,wlk_prm_asc,"np.where((wlk_prm_asc > 0) & (odt_skims['WALK_PRM_XFERS'] > 0), 0.5 * wlk_prm_asc, wlk_prm_asc)"
 ,pnr_prm_out_asc,"np.where((pnr_prm_out_asc > 0) & (odt_skims['PNROUT_PRM_XFERS'] > 0), 0.5 * pnr_prm_out_asc, pnr_prm_out_asc)"
 ,pnr_prm_inb_asc,"np.where((pnr_prm_inb_asc > 0) & (dot_skims['PNRIN_PRM_XFERS'] > 0), 0.5 * pnr_prm_inb_asc, pnr_prm_inb_asc)"
 ,knr_prm_out_asc,"np.where((knr_prm_out_asc > 0) & (odt_skims['KNROUT_PRM_XFERS'] > 0), 0.5 * knr_prm_out_asc, knr_prm_out_asc)"
 ,knr_prm_inb_asc,"np.where((knr_prm_inb_asc > 0) & (dot_skims['KNRIN_PRM_XFERS'] > 0), 0.5 * knr_prm_inb_asc, knr_prm_inb_asc)"
-,tnc_prm_out_asc,"np.where((tnc_prm_out_asc > 0) & (odt_skims['TNCOUT_PRM_XFERS'] > 0), 0.5 * tnc_prm_out_asc, tnc_prm_out_asc)"
-,tnc_prm_inb_asc,"np.where((tnc_prm_inb_asc > 0) & (dot_skims['TNCIN_PRM_XFERS'] > 0), 0.5 * tnc_prm_inb_asc, tnc_prm_inb_asc)"
+,tnc_prm_out_asc,"np.where((tnc_prm_out_asc > 0) & (odt_skims['KNROUT_PRM_XFERS'] > 0), 0.5 * tnc_prm_out_asc, tnc_prm_out_asc)"
+,tnc_prm_inb_asc,"np.where((tnc_prm_inb_asc > 0) & (dot_skims['KNRIN_PRM_XFERS'] > 0), 0.5 * tnc_prm_inb_asc, tnc_prm_inb_asc)"
 # Micromobility times,,
 ebike time,ebike_time,bike_time * bikeSpeed / ebikeSpeed
 escooter time,escooter_time,bike_time * bikeSpeed / escooterSpeed
