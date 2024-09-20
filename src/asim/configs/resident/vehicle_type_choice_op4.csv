@@ -4,7 +4,7 @@ util_ln_nmakes,number of makes available,"logged_makes",coef_ln_nmakes
 util_mpg,miles per gallon (or equivalent),"@df.MPG",coef_mpg
 util_crange,Range for BEV (mi),"@df.Range",coef_crange
 util_crangeltwk,range less than average round trip distance to work,"(Range < (avg_hh_dist_to_work * 2)) & (fuel_type_num_coded==1)",coef_crangeltwk
-util_ln_chpc_ev,ln(1+number of chargers per capita in MSA/state),"logged_chargers_per_capita * ((fuel_type_num_coded==5) | (fuel_type_num_coded==1))",coef_ln_chpc_ev
+util_ln_chpc_ev,ln(1+number of chargers per capita in MSA/state),"@df.logged_chargers_per_capita * ((df.fuel_type_num_coded==5) | (df.fuel_type_num_coded==1)) * np.exp(chargerSensitivityDecayFactor*(scenarioYear-2022))",coef_ln_chpc_ev
 #,autonomous vehicle related variables,,
 util_must_select_av,Must select autonomous vehicle if hh owns one,av_ownership & ~is_av & (num_hh_veh_owned == 0),coef_unavail
 util_must_select_av,Cannot select AV if hh does not own one,~av_ownership & is_av,coef_unavail
