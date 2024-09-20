@@ -215,7 +215,7 @@ class ExportForTransponder(_m.Tool(), gen_utils.Snapshot):
             link_shape = LineString(link.shape)
             distance = link_shape.distance(ml_link_collection)
             if distance < 100:
-                for ml_shape in ml_link_collection:
+                for ml_shape in ml_link_collection.geoms:
                     if ml_shape.distance(link_shape) and close_bearing(link_shape, ml_shape):
                         link.modes -= set([new_mode])
                         break
