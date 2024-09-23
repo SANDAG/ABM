@@ -17,7 +17,11 @@ util_ind_mil,Industry type is military,@df.naics_code==9000,0,coef_ind_mil
 util_ind_retail,Industry type is retail,@df.naics_code==721,0,coef_ind_retail
 util_is_student,Student status,@df.is_student,0,coef_is_student
 utils_sub_asc,Constant,1,0,coef_sub_asc
-util_availability,Availability of transit pass,transit_subsidy_available==False,0,coef_unavailable
+util_availability,Availability of transit pass,transit_subsidy_available,0,coef_unavailable
 util_ft_ASC,ptype_ft calibration constant,@df.ptype == 1,0,coef_ft_asc
 util_pt_ASC,ptype_pt calibration constant,@df.ptype == 2,0,coef_pt_asc
 util_un_ASC,ptype_un calibration constant,@df.ptype == 3,0,coef_un_asc
+util_na_ASC,ptype_na calibration constant,@df.ptype == 4,0,coef_na_asc
+util_da_ASC,ptype_da calibration constant,@df.ptype == 5,0,coef_da_asc
+util_nd_ASC,ptype_nd calibration constant,@df.ptype == 6,0,coef_nd_asc
+util_ps_ASC,ptype_ps calibration constant,@df.ptype == 7,0,coef_ps_asc

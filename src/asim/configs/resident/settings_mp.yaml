@@ -74,10 +74,7 @@ models:
   - write_data_dictionary
   - track_skim_usage
   - write_trip_matrices
-  # - write_to_datalake
-  - update_tables
   - write_tables
-  # - check_disk_usage # Uncomment to get max disk usage at end of iteration 3 resident model
 
 
 multiprocess_steps:
@@ -99,7 +96,7 @@ multiprocess_steps:
     slice:
       tables:
         - accessibility
-      except: True  # this is needed so landuse (i.e. destinations) doesn't get split
+      exclude: True  # this is needed so landuse (i.e. destinations) doesn't get split
   - name: mp_households
     begin: av_ownership
     slice:

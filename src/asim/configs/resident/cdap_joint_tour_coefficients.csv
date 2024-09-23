@@ -10,10 +10,10 @@ Label,description,Expression,dependency,coefficient
 ,person x is kid and DAP is N,ptype_px > 6,N_px,1.6898
 ,Accessibility to retail employment/Non-Mandatory Attractions,shopping_accessibility_p1,,0.055031985
 ,Income less than $30k,income_p1 < 30000,,-0.192506367
-,Income between $60k and $100k,(income_p1  >= 60000) & (income_p1 < =100000),,0.104325349
+,Income between $60k and $100k,(income_p1>=60000) & (income_p1<=100000),,0.104325349
 ,Income more than $100k,income_p1 > 100000,,0.104325349
 ,No Car Households,auto_ownership_p1 == 0,,0
 ,Cars Less than Workers,auto_ownership_p1 < num_workers_p1,,0.088402389
 ,Cars More than Workers,auto_ownership_p1 > num_workers_p1,,-0.005896499
-,WorkAccessForMandatoryDap,"@df.workplace_modechoice_logsum_px.fillna(0)",M_px,0.17217579
+,WorkAccessForMandatoryDap,"@np.nan_to_num(df.workplace_modechoice_logsum_px)",M_px,0.17217579
 ,If All Adults stay at Home/ None of the Adults have Dap 1 or 2,(ptype_pxprod < 7) | (ptype_pxprod > 6),H_px,-0.988838929

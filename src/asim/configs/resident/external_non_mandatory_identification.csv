@@ -1,6 +1,6 @@
 Label,Description,Expression,external_tour,internal_tour
 util_dist_to_nearest_ext_station,Distance to nearest external station,dist_to_external_zone,coef_dist_to_nearest_ext_station,
-util_log_size,Log size of nearest station,"@np.log1p(reindex(land_use.external_nonwork, df.closest_external_zone))",coef_log_size_of_nearest_ext_station,
+util_log_size,Log size of nearest station,@np.log1p(df.reindex_land_use_external_nonwork_zone_to_closest_external_zone),coef_log_size_of_nearest_ext_station,
 util_escort,escort tour ASC,"@np.where(df.tour_type == 'escort', 1, 0)",coef_escort,
 util_shopping,shopping tour ASC,"@np.where(df.tour_type == 'shopping', 1, 0)",coef_shopping,
 util_othmaint,othmaint tour ASC,"@np.where(df.tour_type == 'othmaint', 1, 0)",coef_othmaint,
@@ -12,7 +12,6 @@ util_inc_15_50,Income 15 to 50k,"@np.where((df['income']>=15000) * (df['income']
 util_inc_100_250,Income 100k to 250k,"@np.where((df['income']>=100000) * (df['income']<=249999),1,0)",coef_income_100_250,
 util_inc_250plus,Income 250k plus,"@np.where(df['income']>=250000,1,0)",coef_income_250_plus,
 util_autos_0,0 auto household,"@np.where(df.auto_ownership==0,1,0)",coef_autos_0,
-util_is_pure_escort,Pure escort tours cannot have an external destination,"@np.where((df.school_esc_outbound == 'pure_escort')|(df.school_esc_inbound == 'pure_escort'), 1, 0)",-999,
 util_global_switch,Global switch to have everything internal,@NO_EXTERNAL,-999,
 util_dist_lt_2p5,Distance less than 2.5 miles,"@np.where(df.dist_to_external_zone<2.5,1,0)",coef_dist_lt_2p5,
 util_calibration,,1,0.43,

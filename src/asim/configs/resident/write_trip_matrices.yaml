@@ -494,5 +494,12 @@ CONSTANTS:
     EV:
       first_hour: 33
       last_hour: 48
+  # SHARED2 and SHARED3 Occupancies
+  OCC_SHARED2: 2.0
+  OCC_SHARED3: 3.33
   vot_threshold_low: 8.81
   vot_threshold_med: 18.00
+  # add TNC and Taxi Occupancies
+  OCC_TAXI: 1.1
+  OCC_TNC_SINGLE: 1.2
+  OCC_TNC_SHARED: 2.0

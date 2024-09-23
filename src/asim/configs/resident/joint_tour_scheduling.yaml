@@ -11,3 +11,7 @@ preprocessor:
     - land_use
     - households
     - joint_tour_participants
+
+compute_settings:
+  use_numexpr: true
+  # require numexpr for legacy eval to prevent overflow when squaring start times

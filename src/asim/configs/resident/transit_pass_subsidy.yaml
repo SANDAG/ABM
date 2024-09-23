@@ -11,4 +11,4 @@ preprocessor:
     - accessibility
     - land_use
 
-CHOOSER_FILTER_COLUMN_NAME: transit_subsidy_available
+# CHOOSER_FILTER_COLUMN_NAME: transit_subsidy_available

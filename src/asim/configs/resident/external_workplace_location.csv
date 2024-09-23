@@ -3,4 +3,4 @@ local_dist,,_DIST@skims['DIST'],1
 util_dist,,"@np.minimum(_DIST,10)",coef_dist_capped
 util_size_variable,Size variable,@(df['size_term']).apply(np.log1p),coef_size
 util_no_attractions,No attractions,@df['size_term']==0,-999
-mode_choice_logsum,Mode choice logsum,@df.mode_choice_logsum if 'mode_choice_logsum' in df.columns else 0,coef_mode_logsum
+mode_choice_logsum,Mode choice logsum,"@df.get('mode_choice_logsum', 0)",coef_mode_logsum

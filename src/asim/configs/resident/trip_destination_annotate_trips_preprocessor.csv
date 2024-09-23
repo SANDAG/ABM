@@ -8,7 +8,7 @@ Description,Target,Expression
 ,_tod,"np.where(df.outbound,reindex_i(tours.start, df.tour_id),reindex_i(tours.end, df.tour_id))"
 ,trip_period,network_los.skim_time_period_label(_tod)
 #,,
-adding _trips to avoid conflict with the variables in the tours_merged,income_trips,"reindex(households.income, df.person_id)"
+adding _trips to avoid conflict with the variables in the tours_merged,income_trips,"reindex(households.income, df.household_id)"
 adding _trips to avoid conflict with the variables in the tours_merged,age_trips,"reindex(persons.age, df.person_id)"
 ,female,"reindex(persons.female, df.person_id)"
 #,age_55p,"reindex(persons.age_55_p, df.person_id)"
@@ -36,4 +36,5 @@ adding _trips to avoid conflict with the variables in the tours_merged,age_trips
 Micromobility access Time,o_MicroAccessTime,"reindex(land_use.MicroAccessTime,df.origin)"
 ,max_walk_distance,max_walk_distance
 ,max_bike_distance,max_bike_distance
-,microAccessThreshold,microAccessThreshold
+,microAccessThreshold_val,microAccessThreshold
+,purpose_index_num,"size_terms.get_cols(df.purpose)"
