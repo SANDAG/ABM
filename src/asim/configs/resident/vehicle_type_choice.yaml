@@ -95,7 +95,7 @@ alts_preprocessor:
   SPEC: vehicle_type_choice_annotate_alts_preprocessor
   DF: alts_wide
 
-COLS_TO_INCLUDE_IN_ALTERNATIVES_TABLE:
+COLS_TO_INCLUDE_IN_ALTS_TABLE:
   - age
   - fuel_type_num_coded
   - body_type_num_coded
@@ -106,6 +106,7 @@ COLS_TO_INCLUDE_IN_ALTERNATIVES_TABLE:
   - logged_makes
   - logged_chargers_per_capita
   - SAN
+  - NewPrice
 
 # annotate_persons:
 #   SPEC: annotate_persons_vehicle_type
