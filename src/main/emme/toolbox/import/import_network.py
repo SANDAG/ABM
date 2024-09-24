@@ -234,7 +234,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             ("create_time_periods", self.create_time_periods)
         ])
         self._log = [{
-            "content": attributes.items(),
+            "content": list(attributes.items()),
             "type": "table", "header": ["name", "value"],
             "title": "Tool input values"
         }]
