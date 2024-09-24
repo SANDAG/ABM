@@ -33,25 +33,6 @@ stop_frequency_expressions_output_formattable_fname: 'stop_frequency_{purpose}.c
 trip_purpose_probs_output_fname: trip_purpose_probs.csv
 trip_scheduling_probs_output_fname: trip_scheduling_probs.csv
 
-# skims
-skims:
-  maz_to_maz:
-    walk:
-      input_fname: microMgraEquivMinutes.csv
-      output_fname: maz_maz_walk.csv
-      rename_columns:
-        i: OMAZ
-        j: DMAZ
-  taz_to_taz:
-    periods:
-      - EA
-      - AM
-      - MD
-      - PM
-      - EV
-    input_base_fname: traffic_skims
-    output_base_fname: traffic_skims_processed
-
 # Tours
 tours:
   num_enplanements: 14536000

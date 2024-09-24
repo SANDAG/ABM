@@ -112,8 +112,12 @@ print(f"{datetime.now().strftime('%H:%M:%S')} Get Shortest Path Length...")
 maz_to_maz_walk_cost["DISTWALK"] = net.shortest_path_lengths(maz_to_maz_walk_cost["OMAZ_NODE"], maz_to_maz_walk_cost["DMAZ_NODE"])
 maz_to_maz_walk_cost_out = maz_to_maz_walk_cost[maz_to_maz_walk_cost["DISTWALK"] <= max_maz_maz_walk_dist_feet / 5280.0]
 missing_maz = pd.DataFrame(centroids[~centroids['MAZ'].isin(maz_to_maz_walk_cost_out['OMAZ'])]['MAZ']).rename(columns = {'MAZ': 'OMAZ'}).merge(maz_to_maz_cost[maz_to_maz_cost['OMAZ'] != maz_to_maz_cost['DMAZ']].sort_values('DISTWALK').groupby('OMAZ').agg({'DMAZ': 'first', 'DISTWALK': 'first'}).reset_index(), on = 'OMAZ', how = 'left')
+maz_maz_walk_output = maz_to_maz_walk_cost_out[["OMAZ","DMAZ","DISTWALK"]].append(missing_maz).sort_values(['OMAZ', 'DMAZ'])
+#creating fields as required by the TNC routing Java model. "actual" is walk time in minutes
+maz_maz_walk_output[['i', 'j']] = maz_maz_walk_output[['OMAZ', 'DMAZ']]
+maz_maz_walk_output['actual'] = maz_maz_walk_output['DISTWALK'] / walk_speed_mph * 60.0
 print(f"{datetime.now().strftime('%H:%M:%S')} Write Results...")
-maz_to_maz_walk_cost_out[["OMAZ","DMAZ","DISTWALK"]].append(missing_maz).sort_values(['OMAZ', 'DMAZ']).to_csv(path + '/output/skims/' + parms['mmms']["maz_maz_walk_output"], index=False)
+maz_maz_walk_output.to_csv(path + '/output/skims/' + parms['mmms']["maz_maz_walk_output"], index=False)
 del(missing_maz)
 
 

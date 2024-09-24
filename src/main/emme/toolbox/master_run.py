@@ -450,17 +450,17 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
             if startFromIteration == 1:  # only run the setup / init steps if starting from iteration 1
                 if not skipWalkLogsums:
-                    self.run_proc("runSandagWalkLogsums.cmd", [drive, path_forward_slash],
-                                  "Walk - create AT logsums and impedances", capture_output=True)
-                if not skipCopyWalkImpedance:
-                    self.copy_files(["walkMgraEquivMinutes.csv", "microMgraEquivMinutes.csv"],
-                                    input_dir, output_dir)
+                    self.run_proc("runSandagMGRASkims.cmd", [drive, path_forward_slash],
+                                  "Create MGRA-level skims", capture_output=True)
+                # if not skipCopyWalkImpedance:
+                #     self.copy_files(["walkMgraEquivMinutes.csv", "microMgraEquivMinutes.csv"],
+                #                     input_dir, output_dir)
 
                 if not skip4Ds:
                     run4Ds(path=self._path, int_radius=0.65, ref_path='visualizer_reference_path')
 
                 mgraFile = 'mgra15_based_input' + str(scenarioYear) + '.csv'  # Should be read in from properties? -JJF
-                self.complete_work(scenarioYear, input_dir, output_dir, mgraFile, "walkMgraEquivMinutes.csv")
+                self.complete_work(scenarioYear, input_dir, output_dir, mgraFile, "maz_maz_walk.csv")
 
                 # Update rapid dwell time before importing network
                 mode5tod = pd.read_csv(_join(input_dir,'MODE5TOD.csv'))
@@ -861,10 +861,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         # UPLOAD DATA AND SWITCH PATHS
         if useLocalDrive:
-            # # Uncomment to get disk usage at end of run
-            # # Note that max disk usage occurs in resident model, not at end of run
-            # disk_usage = win32.Dispatch('Scripting.FileSystemObject').GetFolder(self._path).Size
-            # _m.logbook_write("Disk space usage: %f GB" % (disk_usage / (1024 ** 3)))
             file_manager("UPLOAD", main_directory, username, scenario_id,
                          delete_local_files=not skipDeleteIntermediateFiles)
             self._path = main_directory
@@ -1072,7 +1068,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
     def complete_work(self, scenarioYear, input_dir, output_dir, input_file, output_file):
 
         fullList = np.array(pd.read_csv(_join(input_dir, input_file))['mgra'])
-        workList = np.array(pd.read_csv(_join(output_dir, output_file))['i'])
+        workList = np.array(pd.read_csv(_join(output_dir, "skims", output_file))['i'])
 
         list_set = set(workList)
         unique_list = (list(list_set))
