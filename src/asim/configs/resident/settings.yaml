@@ -26,8 +26,6 @@ want_dest_choice_sample_tables: False
 # households with all tour types
 trace_hh_id:
 
-chunk_training_mode: disabled
-
 # trace origin, destination in accessibility calculation; comment out or leave empty for no trace
 #trace_od:
 
@@ -46,6 +44,8 @@ input_table_list:
       mgra: home_zone_id
       hinc: income
       hht: HHT
+    recode_columns:
+      home_zone_id: land_use.zone_id
     keep_columns:
       - home_zone_id
       - income
@@ -59,8 +59,6 @@ input_table_list:
   - tablename: persons
     filename: persons.csv
     index_col: person_id
-    rename_columns:
-      PERID: person_id
     rename_columns:
       hhid: household_id
       perid: person_id
@@ -81,6 +79,9 @@ input_table_list:
     index_col: zone_id
     rename_columns:
       MAZ: zone_id
+    recode_columns:
+      zone_id: zero-based
+      TAZ: zero-based
     drop_columns:
       - i1
       - i2
@@ -110,15 +111,41 @@ output_tables:
   sort: True
   tables:
     - checkpoints
-    - accessibility
-    - land_use
-    - households
-    - persons
-    - tours
-    - trips
+    - tablename: accessibility
+      decode_columns:
+        zone_id: land_use.zone_id
+    - tablename: land_use
+      decode_columns:
+        zone_id: land_use.zone_id
+        TAZ: land_use_taz.TAZ
+    - tablename: households
+      decode_columns:
+        home_zone_id: land_use.zone_id
+        TAZ: land_use_taz.TAZ
+    - tablename: persons
+      decode_columns:
+        home_zone_id: land_use.zone_id
+        school_zone_id: nonnegative | land_use.zone_id
+        workplace_zone_id: nonnegative | land_use.zone_id
+    - tablename: trips
+      decode_columns:
+        origin: land_use.zone_id
+        destination: land_use.zone_id
+        origin_parking_zone: nonnegative | land_use.zone_id
+        parking_zone: nonnegative | land_use.zone_id
+        trip_period: time_period
+        otaz: land_use_taz.TAZ
+        dtaz: land_use_taz.TAZ
+    - tablename: tours
+      decode_columns:
+        origin: land_use.zone_id
+        destination: land_use.zone_id
     - joint_tour_participants
     - vehicles
-    - proto_disaggregate_accessibility
+    - tablename: proto_disaggregate_accessibility
+      decode_columns:
+        home_zone_id: land_use.zone_id
+        TAZ: land_use_taz.TAZ
     - disaggregate_accessibility
 
 distributed_time_factor_work_mean: 1.0
@@ -188,3 +215,13 @@ models:
   - track_skim_usage
   - write_trip_matrices
   - write_tables
+
+# These skim tables are included in the model as two sets, one as
+#   time-independent  (e.g. BIKE_TIME) and one as time-dependent
+#   (e.g. BIKE_TIME__AM), although the actual data is all time-independent.
+#   This prevents the (pseudo-) time-dependent tables from being loaded,
+#   which would be a waste of memory, and causes problems with the
+#   two-zone data backing these skims.
+omx_ignore_patterns:
+  - "BIKE_TIME__.+"
+  - "BIKE_LOGSUM__.+"
