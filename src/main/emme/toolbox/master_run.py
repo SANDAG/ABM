@@ -107,8 +107,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
     emmebank_title = _m.Attribute(str)
     num_processors = _m.Attribute(str)
     select_link = _m.Attribute(str)
-    username = _m.Attribute(str)
-    password = _m.Attribute(str)
 
     properties_path = _m.Attribute(str)
 
