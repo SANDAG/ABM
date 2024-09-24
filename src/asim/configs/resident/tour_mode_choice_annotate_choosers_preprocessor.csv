@@ -8,26 +8,27 @@ local,_DF_IS_TOUR,'tour_type' in df.columns,
 ,sr2_veh_option,"np.where(is_atwork_subtour, _parent_tour_veh, df.get('vehicle_occup_2', np.nan))",
 ,sr3p_veh_option,"np.where(is_atwork_subtour, _parent_tour_veh, df.get('vehicle_occup_3.5', np.nan))",
 #AV factors,,,
-SOV tour Vehicle is AV,sov_tour_uses_av,"np.where(pd.notna(df.get('vehicle_occup_1', np.nan)), pd.Series(sov_veh_option, dtype = 'str').str.contains('AV'), False)"
-SR2 tour Vehicle is AV,sr2_tour_uses_av,"np.where(pd.notna(df.get('vehicle_occup_2', np.nan)), pd.Series(sr2_veh_option, dtype = 'str').str.contains('AV'), False)"
-SR3 tour Vehicle is AV,sr3_tour_uses_av,"np.where(pd.notna(df.get('vehicle_occup_3.5', np.nan)), pd.Series(sr3p_veh_option, dtype = 'str').str.contains('AV'), False)"
-SOV AV IVT Factor Adjustment,autoIVTFactor_DA,"np.where(sov_tour_uses_av, autoIVTFactorAV, 1.0)"
-SR2 AV IVT Factor Adjustment,autoIVTFactor_SR2,"np.where(sr2_tour_uses_av, autoIVTFactorAV, 1.0)"
-SR3+ AV IVT Factor Adjustment,autoIVTFactor_SR3,"np.where(sr3_tour_uses_av, autoIVTFactorAV, 1.0)"
-SOV AV Parking Cost Factor Adjustment,autoParkingCostFactor_DA,"np.where(sov_tour_uses_av, autoParkingCostFactorAV, 1.0)"
-SR2 AV Parking Cost Factor Adjustment,autoParkingCostFactor_SR2,"np.where(sr2_tour_uses_av, autoParkingCostFactorAV, 1.0)"
-SR3+ AV Parking Cost Factor Adjustment,autoParkingCostFactor_SR3,"np.where(sr3_tour_uses_av, autoParkingCostFactorAV, 1.0)"
-SOV AV Auto Terminal Time Factor,autoTermTimeFactor_DA,"np.where(sov_tour_uses_av, autoTerminalTimeFactorAV, 1.0)"
-SR2 AV Auto Terminal Time Factor,autoTermTimeFactor_SR2,"np.where(sr2_tour_uses_av, autoTerminalTimeFactorAV, 1.0)"
-SR3+ AV Auto Terminal Time Factor,autoTermTimeFactor_SR3,"np.where(sr3_tour_uses_av, autoTerminalTimeFactorAV, 1.0)"
-SOV AV Auto Terminal Time Factor,autoCPMFactor_DA,"np.where(sov_tour_uses_av, autoCostPerMileFactorAV, 1.0)"
-SR2 AV Auto Terminal Time Factor,autoCPMFactor_SR2,"np.where(sr2_tour_uses_av, autoCostPerMileFactorAV, 1.0)"
-SR3+ AV Auto Terminal Time Factor,autoCPMFactor_SR3,"np.where(sr3_tour_uses_av, autoCostPerMileFactorAV, 1.0)"
-AV Min Age to Drive Alone,minimumAgeDA,"np.where(sov_tour_uses_av, minAgeDriveAloneAV, 16)"
+SOV tour Vehicle is AV,sov_tour_uses_av,"np.where(pd.notna(df.get('vehicle_occup_1', np.nan)), pd.Series(sov_veh_option, dtype = 'str').str.contains('AV'), False)",
+SR2 tour Vehicle is AV,sr2_tour_uses_av,"np.where(pd.notna(df.get('vehicle_occup_2', np.nan)), pd.Series(sr2_veh_option, dtype = 'str').str.contains('AV'), False)",
+SR3 tour Vehicle is AV,sr3_tour_uses_av,"np.where(pd.notna(df.get('vehicle_occup_3.5', np.nan)), pd.Series(sr3p_veh_option, dtype = 'str').str.contains('AV'), False)",
+SOV AV IVT Factor Adjustment,autoIVTFactor_DA,"np.where(sov_tour_uses_av, autoIVTFactorAV, 1.0)",
+SR2 AV IVT Factor Adjustment,autoIVTFactor_SR2,"np.where(sr2_tour_uses_av, autoIVTFactorAV, 1.0)",
+SR3+ AV IVT Factor Adjustment,autoIVTFactor_SR3,"np.where(sr3_tour_uses_av, autoIVTFactorAV, 1.0)",
+SOV AV Parking Cost Factor Adjustment,autoParkingCostFactor_DA,"np.where(sov_tour_uses_av, autoParkingCostFactorAV, 1.0)",
+SR2 AV Parking Cost Factor Adjustment,autoParkingCostFactor_SR2,"np.where(sr2_tour_uses_av, autoParkingCostFactorAV, 1.0)",
+SR3+ AV Parking Cost Factor Adjustment,autoParkingCostFactor_SR3,"np.where(sr3_tour_uses_av, autoParkingCostFactorAV, 1.0)",
+SOV AV Auto Terminal Time Factor,autoTermTimeFactor_DA,"np.where(sov_tour_uses_av, autoTerminalTimeFactorAV, 1.0)",
+SR2 AV Auto Terminal Time Factor,autoTermTimeFactor_SR2,"np.where(sr2_tour_uses_av, autoTerminalTimeFactorAV, 1.0)",
+SR3+ AV Auto Terminal Time Factor,autoTermTimeFactor_SR3,"np.where(sr3_tour_uses_av, autoTerminalTimeFactorAV, 1.0)",
+SOV AV Auto Terminal Time Factor,autoCPMFactor_DA,"np.where(sov_tour_uses_av, autoCostPerMileFactorAV, 1.0)",
+SR2 AV Auto Terminal Time Factor,autoCPMFactor_SR2,"np.where(sr2_tour_uses_av, autoCostPerMileFactorAV, 1.0)",
+SR3+ AV Auto Terminal Time Factor,autoCPMFactor_SR3,"np.where(sr3_tour_uses_av, autoCostPerMileFactorAV, 1.0)",
+AV Min Age to Drive Alone,minimumAgeDA,"np.where(sov_tour_uses_av, minAgeDriveAloneAV, 16)",
 reimburseProportion placeholder,reimburseProportion,0,
 "Tour duration, in hours",tourDuration,df.duration/2,
 #,,,
-,num_participants,df.number_of_participants if _DF_IS_TOUR else 1,
+local,_DF_IS_TOUR,'tour_type' in df.columns,
+,_num_participants,df.number_of_participants if _DF_IS_TOUR else 1,
 ,is_joint,(df.tour_category=='joint') if _DF_IS_TOUR else False,
 treat tours as work if tour_type not yet decided,tour_type,"df.get('tour_type', default='work')",
 #,,,
@@ -35,6 +36,12 @@ treat tours as work if tour_type not yet decided,tour_type,"df.get('tour_type', 
 ,is_indiv,~is_joint,
 ,is_escort,(tour_type == 'escort') if _DF_IS_TOUR else False,
 # Auto operating costs,,,
+,is_atwork_subtour,(df.tour_category == 'atwork') if _DF_IS_TOUR else False,
+,_parent_tour_veh,"reindex(tours['selected_vehicle'], df['parent_tour_id']) if 'selected_vehicle' in df.columns else np.nan",
+,_parent_tour_mode,"reindex(tours['tour_mode'], df['parent_tour_id']) if 'tour_mode' in df.columns else np.nan",
+,sov_veh_option,"np.where(is_atwork_subtour, _parent_tour_veh, df.get('vehicle_occup_1', np.nan))",
+,sr2_veh_option,"np.where(is_atwork_subtour, _parent_tour_veh, df.get('vehicle_occup_2', np.nan))",
+,sr3p_veh_option,"np.where(is_atwork_subtour, _parent_tour_veh, df.get('vehicle_occup_3.5', np.nan))",
 ,sov_auto_op_cost,"reindex(vehicles.groupby('vehicle_type')['auto_operating_cost'].mean(), pd.Series(sov_veh_option, df.index)) if 'vehicle_occup_1' in df.columns else np.nan",
 ,sov_auto_op_cost,"np.where(sov_auto_op_cost.isna() | (pd.Series(sov_veh_option, df.index) == 'non_hh_veh'), costPerMile, sov_auto_op_cost)",
 ,sr2_auto_op_cost,"reindex(vehicles.groupby('vehicle_type')['auto_operating_cost'].mean(), pd.Series(sr2_veh_option, df.index)) if 'vehicle_occup_2' in df.columns else np.nan",
@@ -161,16 +168,16 @@ Destination Terminal Time,dTermTime,"reindex(land_use.terminal_time,destination)
 #,,,
 # Below bike info is not defined and is turned off!!,,,
 Person is female,female,(df.sex == 2),
-bike logsum inbound,bikeLSI,odt_skims['BIKE_LOGSUM'],
-bike logsum outbound (same as inbound),bikeLSO,dot_skims['BIKE_LOGSUM'],
-bike availability,bikeAvailable,(bikeLSI > -300) & (bikeLSO > -300) & (od_skims['BIKE_TIME']>0),
-bike time inbound,bike_time_inb,dot_skims['BIKE_TIME'],
-bike time outbound,bike_time_out,odt_skims['BIKE_TIME'],
+bike logsum inbound,bikeLSI,od_skims.reverse('BIKE_LOGSUM'),
+bike logsum outbound (same as inbound),bikeLSO,od_skims['BIKE_LOGSUM'],
+bike availability,bikeAvailable,(bikeLSI > -300) & (bikeLSO > -300) & (od_skims['DIST'] < max_bike_distance),
+bike time inbound,bike_time_inb,od_skims.reverse('BIKE_TIME'),
+bike time outbound,bike_time_out,od_skims['BIKE_TIME'],
 #,,,
 "Cost factor for shared 2 tours, 1/(2^0.8)",costFactorS2,0.57,
 "Cost factor for shared 3+ tours, 1/(3.5^0.8)",costFactorS3,0.37,
 ,sov_available,"(age>=minimumAgeDA) * np.where(is_joint,0,1) * np.where(is_atwork_subtour==0,1,np.where(_parent_tour_mode=='DRIVEALONE',1,0))",
-,sr2_available,"np.where(is_joint==0,1,np.where(num_participants>=3,0,1))",
+,sr2_available,"np.where(is_joint==0,1,np.where(_num_participants>=3,0,1))",
 ,walkAvailable,"np.where(walk_time_skims_out < max_walk_time, 1,0) * np.where(walk_time_skims_inb < max_walk_time, 1,0)",
 ,SCHBUS_available,(tour_type =='school') & (personType!=3),
 #,,,
@@ -328,7 +335,10 @@ nev egress from mixed time,nev_mix_egress_time,"np.maximum(nev_mix_direct_egress
 # Additional transfers from microtransit and NEV,,,
 microtransit/nev access transfer,mtnev_acc_xfer,microtransit_local_access_available | microtransit_prm_access_available | microtransit_mix_access_available | nev_local_access_available | nev_prm_access_available | nev_mix_access_available,
 microtransit/nev egress transfer,mtnev_egr_xfer,microtransit_local_egress_available | microtransit_prm_egress_available | microtransit_mix_egress_available | nev_local_egress_available | nev_prm_egress_available | nev_mix_egress_available,
-# transit subsidi pass discount,,,
+# transit subsidy pass discount,,,
 transit pas subsidy,transit_pass_subsidy,"df.get('transit_pass_subsidy', False)",
 transit pass ownership,transit_pass_ownership,"df.get('transit_pass_ownership', False)",
-transit subsidi pass discount, transitSubsidyPassDiscount,"np.where(transit_pass_subsidy | transit_pass_ownership,0,1)",
+transit subsidy pass discount, transitSubsidyPassDiscount,"np.where(transit_pass_subsidy | transit_pass_ownership,0,1)",
+# number of escortees,,,
+num escortees,num_escortees,"df.get('num_escortees', 0)"
+num_escortees,num_escortees,"np.where(num_escortees.isnull() | (num_escortees==''), 0, num_escortees)"
