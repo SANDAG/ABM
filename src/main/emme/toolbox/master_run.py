@@ -858,7 +858,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         try:
             _m.logbook_level(log_states[self._log_level])
         except KeyError:
-            raise Exception("properties.RunModel.LogLevel: value must be one of %s" % ",".join(log_states.keys()))
+            raise Exception("properties.RunModel.LogLevel: value must be one of %s" % ",".join(list(log_states.keys())))
 
     def run_transit_assignments(self, transit_emmebank_dict, scenarioYear, output_dir, create_connector_flag, main_directory_original):
 
