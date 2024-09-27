@@ -21,3 +21,7 @@ coef_unavailable,-999.0,F
 coef_ft_asc,-0.240,F
 coef_pt_asc,-0.250,F
 coef_un_asc,0.30,F
+coef_na_asc,-2.0,F
+coef_da_asc,-2.0,F
+coef_nd_asc,-2.0,F
+coef_ps_asc,-3.0,F
