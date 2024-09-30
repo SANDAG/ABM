@@ -4,8 +4,6 @@ Description,Expression,work,univ,school,escort,shopping,eatout,othmaint,social,o
 ,_op_DIST@op_skims['DIST'],1,1,1,1,1,1,1,1,1,1
 ,_od_bikeL@od_skims['BIKE_LOGSUM'],1,1,1,1,1,1,1,1,1,1
 ,_dp_bikeL@dp_skims['BIKE_LOGSUM'],1,1,1,1,1,1,1,1,1,1
-# next line gets max MAZ micromobility access time in destination TAZ
-,"_d_microAccTime@land_use.sort_values(by='MicroAccessTime',ascending=False).drop_duplicates('TAZ',keep='first').set_index('TAZ')['MicroAccessTime'].reindex(df.alt_dest)",1,1,1,1,1,1,1,1,1,1
 #,,,,,,,,,,,
 size term,"@np.log1p(size_terms.get(df.alt_dest, df.purpose))",1,1,1,1,1,1,1,1,1,1
 no attractions,"@size_terms.get(df.alt_dest, df.purpose) == 0",-999,-999,-999,-999,-999,-999,-999,-999,-999,-999
