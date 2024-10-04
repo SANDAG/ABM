@@ -116,10 +116,26 @@ maz_maz_walk_output = maz_to_maz_walk_cost_out[["OMAZ","DMAZ","DISTWALK"]].appen
 #creating fields as required by the TNC routing Java model. "actual" is walk time in minutes
 maz_maz_walk_output[['i', 'j']] = maz_maz_walk_output[['OMAZ', 'DMAZ']]
 maz_maz_walk_output['actual'] = maz_maz_walk_output['DISTWALK'] / walk_speed_mph * 60.0
-print(f"{datetime.now().strftime('%H:%M:%S')} Write Results...")
-maz_maz_walk_output.to_csv(path + '/output/skims/' + parms['mmms']["maz_maz_walk_output"], index=False)
-del(missing_maz)
 
+# find intrazonal distance by averaging the closest 3 zones and then half it
+maz_maz_walk_output = maz_maz_walk_output.sort_values(['OMAZ', 'DISTWALK'])
+maz_maz_walk_output.set_index(['OMAZ', 'DMAZ'], inplace=True)
+unique_omaz = maz_maz_walk_output.index.get_level_values(0).unique()
+# find the average of the closest 3 zones
+means = maz_maz_walk_output.loc[(unique_omaz, slice(None)), 'DISTWALK'].groupby(level=0).head(3).groupby(level=0).mean()
+intra_skims = pd.DataFrame({
+    'OMAZ': unique_omaz,
+    'DMAZ': unique_omaz,
+    'DISTWALK': means.values/2,
+    'i': unique_omaz,
+    'j': unique_omaz,
+    'actual': means.values/2
+}).set_index(['OMAZ', 'DMAZ'])
+maz_maz_walk_output = pd.concat([maz_maz_walk_output, intra_skims], axis=0)
+# write output
+print(f"{datetime.now().strftime('%H:%M:%S')} Write Results...")
+maz_maz_walk_output.to_csv(path + '/output/skims/' + parms['mmms']["maz_maz_walk_output"])
+del(missing_maz)
 
 # %%
 # MAZ-to-MAZ Bike
