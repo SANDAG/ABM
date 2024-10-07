@@ -286,14 +286,13 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         useLocalDrive = props["RunModel.useLocalDrive"]
 
+        skipMGRASkims = props["RunModel.skipMGRASkims"]
         skip4Ds = props["RunModel.skip4Ds"]
         skipInputChecker = props["RunModel.skipInputChecker"]
         skipInitialization = props["RunModel.skipInitialization"]
         deleteAllMatrices = props["RunModel.deleteAllMatrices"]
         skipCopyWarmupTripTables = props["RunModel.skipCopyWarmupTripTables"]
         skipCopyBikeLogsum = props["RunModel.skipCopyBikeLogsum"]
-        skipCopyWalkImpedance = props["RunModel.skipCopyWalkImpedance"]
-        skipWalkLogsums = props["RunModel.skipWalkLogsums"]
         skipBikeLogsums = props["RunModel.skipBikeLogsums"]
         skipBuildNetwork = props["RunModel.skipBuildNetwork"]
         skipHighwayAssignment = props["RunModel.skipHighwayAssignment"]
@@ -449,12 +448,9 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             del(householdFile)
 
             if startFromIteration == 1:  # only run the setup / init steps if starting from iteration 1
-                if not skipWalkLogsums:
+                if not skipMGRASkims:
                     self.run_proc("runSandagMGRASkims.cmd", [drive, path_forward_slash],
                                   "Create MGRA-level skims", capture_output=True)
-                # if not skipCopyWalkImpedance:
-                #     self.copy_files(["walkMgraEquivMinutes.csv", "microMgraEquivMinutes.csv"],
-                #                     input_dir, output_dir)
 
                 if not skip4Ds:
                     run4Ds(path=self._path, int_radius=0.65, ref_path='visualizer_reference_path')
