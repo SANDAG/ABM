@@ -30,6 +30,9 @@ trace_hh_id:
 #trace_od:
 
 households_sample_size: 100
+sharrow: require
+recode_pipeline_columns: True
+sharrow_cache_dir: T:\ABM\user\jflo\projects\ABM3\asim_13upgrade\cache_test
 
 # input tables
 input_table_list:
