@@ -80,7 +80,7 @@ class CreateScenarioGUI(tkinter.Frame):
             self.buttonVar= tkinter.IntVar(root)
             self.yButton=tkinter.Radiobutton(body, text="Yes", variable=self.buttonVar, value=1, command=self.initStudy)
             self.nButton=tkinter.Radiobutton(body, text="No", variable=self.buttonVar, value=0,command=self.initStudy)
-            tkinter.Label(body, text=u"Release Version 15.1.0\n"+divider, font=("Helvetica", 11, 'bold'), width=50, fg='royal blue').grid(row=current_row,columnspan=5)
+            tkinter.Label(body, text=u"Release Version 15.2.0\n"+divider, font=("Helvetica", 11, 'bold'), width=50, fg='royal blue').grid(row=current_row,columnspan=5)
             current_row += 1
             tkinter.Label(body, text=u"Create an ABM Work Space", font=("Helvetica", 10, 'bold')).grid(row=current_row,columnspan=n_columns)
             current_row += 1

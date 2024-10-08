@@ -113,7 +113,9 @@ def create_scenario_df(ts, EMME_metadata, parent_dir_name, output_path):
         "main_directory" : [EMME_metadata["main_directory"]],
         "datalake_path" : ["/".join(["bronze/abm3dev",database,parent_dir_name])],
         "select_link" : [EMME_metadata["select_link"]],
-        "sample_rate" : [EMME_metadata["sample_rate"]]
+        "sample_rate" : [EMME_metadata["sample_rate"]],
+        "network_path" : [EMME_metadata["network_path"]],
+        "landuse_path" : [EMME_metadata["landuse_path"]]
     }
 
     meta_df = pd.DataFrame(metadata)
@@ -232,7 +234,6 @@ def write_to_datalake(output_path, models, exclude, env):
         os.path.abspath(os.path.join(output_path, '..', 'input', 'zone_term.csv')),
         os.path.abspath(os.path.join(output_path, '..', 'input', 'trlink.csv')),
         os.path.join(output_path, 'bikeMgraLogsum.csv'),
-        # os.path.join(output_path, 'microMgraEquivMinutes.csv'),
         os.path.join(report_path, 'walkMgrasWithin45Min_AM.csv'),
         os.path.join(report_path, 'walkMgrasWithin45Min_MD.csv')
     ]
