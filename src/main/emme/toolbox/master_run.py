@@ -1300,8 +1300,8 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             ,"properties_path" : self.properties_path
             ,"sample_rate" : ",".join(map(str, sample_rate))
             ,"environment" : prod_env
-            ,"network_path": props["network"]
-            ,"landuse_path": props["netowrk"]
+            ,"network_path" : props["network"]
+            ,"landuse_path" : props["landuse"]
         }
         _m.logbook_write("Created new scenario_guid: %s" % (datalake_metadata_dict['scenario_guid']))
         got_id, scenario_id = self.get_scenario_id(datalake_metadata_dict['scenario_guid'], scenario_title, prod_env)
