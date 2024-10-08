@@ -797,7 +797,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 "Exporting MGRA-level travel times", capture_output=True)
 
         if not skipDatalake:
-            self.write_metadata(main_directory, scenario_title, select_link, username, scenarioYear, sample_rate, prod_env)
+            self.write_metadata(main_directory, scenario_title, select_link, username, scenarioYear, sample_rate, prod_env, props)
             self.run_proc(
                 "write_to_datalake.cmd",
                 [drive, drive + path_forward_slash, prod_env],
@@ -1287,7 +1287,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     _m.logbook_level(_m.LogbookLevel.NONE)
             return False, -1
 
-    def write_metadata(self, main_directory, scenario_title, select_link, username, scenarioYear, sample_rate, prod_env):
+    def write_metadata(self, main_directory, scenario_title, select_link, username, scenarioYear, sample_rate, prod_env, props):
         '''Write YAML file containing scenario guid and other scenario info to output folder for writing to datalake'''
         datalake_metadata_dict = {
             "main_directory" : main_directory.encode('utf-8')
@@ -1300,6 +1300,8 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             ,"properties_path" : self.properties_path
             ,"sample_rate" : ",".join(map(str, sample_rate))
             ,"environment" : prod_env
+            ,"network_path": props["network"]
+            ,"landuse_path": props["netowrk"]
         }
         _m.logbook_write("Created new scenario_guid: %s" % (datalake_metadata_dict['scenario_guid']))
         got_id, scenario_id = self.get_scenario_id(datalake_metadata_dict['scenario_guid'], scenario_title, prod_env)
