@@ -44,7 +44,7 @@ import pickle
 
 
 def check_namespace(ns):
-    if not re.match("^[a-zA-Z][a-zA-Z0-9_]*$", ns):
+    if not re.match("^[a-zA-Z][a-zA-Z0-9_]*$", ns) and ns != '__pycache__':
         raise Exception("Namespace '%s' is invalid" % ns)
 
 
@@ -56,9 +56,9 @@ def get_emme_version():
 
 def usc_transform(value):
     try:
-        return unicode(value)
+        return str(value)
     except Exception:
-        return unicode(str(value), encoding="raw-unicode-escape")
+        return str(str(value), encoding="raw-unicode-escape")
 
 
 class BaseNode(object):
