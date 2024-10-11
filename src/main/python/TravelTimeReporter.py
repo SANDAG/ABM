@@ -410,15 +410,23 @@ class TravelTimeReporter:
         ).reset_index().fillna(self.settings["infinity"]).sort_values(
             ["i", "j"]
         )
+
+        _ebikeMaxTime = self.constants["ebikeMaxDistance"] / self.constants["ebikeSpped"] * 60
+        _escooterMaxTime = self.constants["escooterMaxDistance"] / self.constants["escooterSpped"] * 60
+
+        _ebikeTime = self.results["bike"] * self.constants["bikeSpeed"] / self.constants["ebikeSpeed"] + self.results["i"].map(self.land_use["MicroAccessTime"]) + self.constants["microConstant"] + self.constants["microRentTime"]
+        _escooterTime = self.results["bike"] * self.constants["bikeSpeed"] / self.constants["escooterSpeed"] + self.results["i"].map(self.land_use["MicroAccessTime"]) + self.constants["microConstant"] + self.constants["microRentTime"]
+
         self.results["ebike"] = np.where(
-            self.results["bike"] == self.settings["infinity"],
+            _ebikeTime > _ebikeMaxTime,
             self.settings["infinity"],
-            self.results["bike"] * self.constants["bikeSpeed"] / self.constants["ebikeSpeed"]
+            _ebikeTime
         )
+
         self.results["escooter"] = np.where(
-            self.results["bike"] == self.settings["infinity"],
+            _escooterTime > _escooterMaxTime,
             self.settings["infinity"],
-            self.results["bike"] * self.constants["bikeSpeed"] / self.constants["escooterSpeed"]
+            _escooterTime
         )
 
     def write_results(self):
