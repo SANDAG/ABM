@@ -411,8 +411,8 @@ class TravelTimeReporter:
             ["i", "j"]
         )
 
-        _ebikeMaxTime = self.constants["ebikeMaxDistance"] / self.constants["ebikeSpped"] * 60
-        _escooterMaxTime = self.constants["escooterMaxDistance"] / self.constants["escooterSpped"] * 60
+        _ebikeMaxTime = self.constants["ebikeMaxDist"] / self.constants["ebikeSpeed"] * 60
+        _escooterMaxTime = self.constants["escooterMaxDist"] / self.constants["escooterSpeed"] * 60
 
         _ebikeTime = self.results["bike"] * self.constants["bikeSpeed"] / self.constants["ebikeSpeed"] + self.results["i"].map(self.land_use["MicroAccessTime"]) + self.constants["microConstant"] + self.constants["microRentTime"]
         _escooterTime = self.results["bike"] * self.constants["bikeSpeed"] / self.constants["escooterSpeed"] + self.results["i"].map(self.land_use["MicroAccessTime"]) + self.constants["microConstant"] + self.constants["microRentTime"]
