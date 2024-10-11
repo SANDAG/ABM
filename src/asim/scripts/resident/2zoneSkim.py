@@ -129,7 +129,7 @@ intra_skims = pd.DataFrame({
     'DISTWALK': means.values/2,
     'i': unique_omaz,
     'j': unique_omaz,
-    'actual': means.values/2
+    'actual': (means.values/walk_speed_mph * 60.0) / 2
 }).set_index(['OMAZ', 'DMAZ'])
 maz_maz_walk_output = pd.concat([maz_maz_walk_output, intra_skims], axis=0)
 # write output
