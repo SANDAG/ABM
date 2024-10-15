@@ -414,8 +414,8 @@ class TravelTimeReporter:
         _ebikeMaxTime = self.constants["ebikeMaxDist"] / self.constants["ebikeSpeed"] * 60
         _escooterMaxTime = self.constants["escooterMaxDist"] / self.constants["escooterSpeed"] * 60
 
-        _ebikeTime = self.results["bike"] * self.constants["bikeSpeed"] / self.constants["ebikeSpeed"] + self.results["i"].map(self.land_use["MicroAccessTime"]) + self.constants["microConstant"] + self.constants["microRentTime"]
-        _escooterTime = self.results["bike"] * self.constants["bikeSpeed"] / self.constants["escooterSpeed"] + self.results["i"].map(self.land_use["MicroAccessTime"]) + self.constants["microConstant"] + self.constants["microRentTime"]
+        _ebikeTime = self.results["bike"] * self.constants["bikeSpeed"] / self.constants["ebikeSpeed"] + self.results["i"].map(self.land_use["MicroAccessTime"]) + self.constants["microRentTime"]
+        _escooterTime = self.results["bike"] * self.constants["bikeSpeed"] / self.constants["escooterSpeed"] + self.results["i"].map(self.land_use["MicroAccessTime"]) + self.constants["microRentTime"]
 
         self.results["ebike"] = np.where(
             _ebikeTime > _ebikeMaxTime,
