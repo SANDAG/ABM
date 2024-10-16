@@ -12,7 +12,7 @@ The resident model structure is based on the Coordinated Travel Regional Activit
 
 The resident model design is shown below.
 
-![](../images/design/resident_model_design.png)
+![](../../images/design/resident_model_design.png)
 
 The first model in the sequence is disaggregate accessibilities. This is a recent addition to ActivitySim in which the tour destination choice model is run for a prototypical sample population covering key market segments and destination choice logsums from the model are written out for each tour in the population. These destination choice logsums are then merged with the actual synthetic population and used as accessibility variables in downstream models such as auto ownership, coordinated daily activity patterns, and tour frequency. are mandatory location choice; this model is run for all workers and students regardless of whether they attend work or school on the simulated day.
 
