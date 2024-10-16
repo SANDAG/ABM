@@ -5,20 +5,20 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
-<link href="https://sandag.github.io/abm/design/airport.html" rel="canonical"/>
+<link href="https://sandag.github.io/abm/design/demand/airport.html" rel="canonical"/>
 <link href="crossborder.html" rel="prev"/>
 <link href="visitor.html" rel="next"/>
-<link href="../assets/images/favicon.png" rel="icon"/>
+<link href="../../assets/images/favicon.png" rel="icon"/>
 <meta content="mkdocs-1.5.3, mkdocs-material-9.4.0" name="generator"/>
-<title>Airport Ground Access - SANDAG ABM3</title>
-<link href="../assets/stylesheets/main.9f615399.min.css" rel="stylesheet"/>
-<link href="../assets/stylesheets/palette.649f08f9.min.css" rel="stylesheet"/>
+<title>Airport Ground Access Models - SANDAG ABM3</title>
+<link href="../../assets/stylesheets/main.9f615399.min.css" rel="stylesheet"/>
+<link href="../../assets/stylesheets/palette.649f08f9.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
 <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
-<link href="../assets/_mkdocstrings.css" rel="stylesheet"/>
+<link href="../../assets/_mkdocstrings.css" rel="stylesheet"/>
 <link href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" rel="stylesheet"/>
-<script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+<script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
 </head>
 <body data-md-color-accent="deep-orange" data-md-color-primary="deep-purple" data-md-color-scheme="default" dir="ltr">
 <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
@@ -36,7 +36,7 @@
 </div>
 <header class="md-header" data-md-component="header">
 <nav aria-label="Header" class="md-header__inner md-grid">
-<a aria-label="SANDAG ABM3" class="md-header__button md-logo" data-md-component="logo" href="../index.html" title="SANDAG ABM3">
+<a aria-label="SANDAG ABM3" class="md-header__button md-logo" data-md-component="logo" href="../../index.html" title="SANDAG ABM3">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"></path></svg>
 </a>
 <label class="md-header__button md-icon" for="__drawer">
@@ -52,7 +52,7 @@
 <div class="md-header__topic" data-md-component="header-topic">
 <span class="md-ellipsis">
             
-              Airport Ground Access
+              Airport Ground Access Models
             
           </span>
 </div>
@@ -115,7 +115,7 @@
 <div class="md-grid">
 <ul class="md-tabs__list">
 <li class="md-tabs__item">
-<a class="md-tabs__link" href="../index.html">
+<a class="md-tabs__link" href="../../index.html">
         
   
     
@@ -125,7 +125,7 @@
       </a>
 </li>
 <li class="md-tabs__item md-tabs__item--active">
-<a class="md-tabs__link" href="design.html">
+<a class="md-tabs__link" href="../design.html">
           
   
     
@@ -135,7 +135,7 @@
         </a>
 </li>
 <li class="md-tabs__item">
-<a class="md-tabs__link" href="../running.html">
+<a class="md-tabs__link" href="../../running.html">
         
   
     
@@ -145,7 +145,7 @@
       </a>
 </li>
 <li class="md-tabs__item">
-<a class="md-tabs__link" href="../inputs.html">
+<a class="md-tabs__link" href="../../inputs.html">
           
   
     
@@ -155,7 +155,7 @@
         </a>
 </li>
 <li class="md-tabs__item">
-<a class="md-tabs__link" href="../application/applying.html">
+<a class="md-tabs__link" href="../../application/applying.html">
           
   
     
@@ -165,7 +165,7 @@
         </a>
 </li>
 <li class="md-tabs__item">
-<a class="md-tabs__link" href="../cvm.html">
+<a class="md-tabs__link" href="../../cvm.html">
         
   
     
@@ -175,7 +175,7 @@
       </a>
 </li>
 <li class="md-tabs__item">
-<a class="md-tabs__link" href="../release-notes.html">
+<a class="md-tabs__link" href="../../release-notes.html">
           
   
     
@@ -194,7 +194,7 @@
 <div class="md-sidebar__inner">
 <nav aria-label="Navigation" class="md-nav md-nav--primary md-nav--lifted" data-md-level="0">
 <label class="md-nav__title" for="__drawer">
-<a aria-label="SANDAG ABM3" class="md-nav__button md-logo" data-md-component="logo" href="../index.html" title="SANDAG ABM3">
+<a aria-label="SANDAG ABM3" class="md-nav__button md-logo" data-md-component="logo" href="../../index.html" title="SANDAG ABM3">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"></path></svg>
 </a>
     SANDAG ABM3
@@ -211,7 +211,7 @@
 </div>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../index.html">
+<a class="md-nav__link" href="../../index.html">
 <span class="md-ellipsis">
     Home
   </span>
@@ -232,23 +232,48 @@
           </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="design.html">
+<a class="md-nav__link" href="../design.html">
 <span class="md-ellipsis">
     Overall Design
   </span>
 </a>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="../init/initialization.html">
+<span class="md-ellipsis">
+    Initialization
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_2_3" type="checkbox"/>
+<div class="md-nav__link md-nav__container">
+<a class="md-nav__link" href="index.html">
+<span class="md-ellipsis">
+    Demand
+  </span>
+</a>
+<label class="md-nav__link" for="__nav_2_3">
+<span class="md-nav__icon md-icon"></span>
+</label>
+</div>
+<nav aria-expanded="true" aria-labelledby="__nav_2_3_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_3">
+<span class="md-nav__icon md-icon"></span>
+            Demand
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
 <a class="md-nav__link" href="resident.html">
 <span class="md-ellipsis">
-    Resident
+    Resident Model
   </span>
 </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="crossborder.html">
 <span class="md-ellipsis">
-    Crossborder
+    Crossborder Model
   </span>
 </a>
 </li>
@@ -256,14 +281,77 @@
 <input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
 <a class="md-nav__link md-nav__link--active" href="airport.html">
 <span class="md-ellipsis">
-    Airport Ground Access
+    Airport Ground Access Models
   </span>
 </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="visitor.html">
 <span class="md-ellipsis">
-    Overnight Visitor
+    Overnight Visitor Model
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="external.html">
+<span class="md-ellipsis">
+    External Models
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_2_4" type="checkbox"/>
+<div class="md-nav__link md-nav__container">
+<a class="md-nav__link" href="../supply/index.html">
+<span class="md-ellipsis">
+    Supply
+  </span>
+</a>
+<label class="md-nav__link" for="__nav_2_4">
+<span class="md-nav__icon md-icon"></span>
+</label>
+</div>
+<nav aria-expanded="false" aria-labelledby="__nav_2_4_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_4">
+<span class="md-nav__icon md-icon"></span>
+            Supply
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../supply/bike-logsums.html">
+<span class="md-ellipsis">
+    Bike Logsums
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../supply/walk-skims.html">
+<span class="md-ellipsis">
+    Walk Skims
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../supply/network-import-tned.html">
+<span class="md-ellipsis">
+    Network Import from TNED
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../supply/highway-skims-assign.html">
+<span class="md-ellipsis">
+    Highway Skimming and Assignment
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../supply/transit-skims-assign.html">
+<span class="md-ellipsis">
+    Transit Skimming and Assignment
   </span>
 </a>
 </li>
@@ -271,14 +359,24 @@
 </nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../running.html">
+<a class="md-nav__link" href="../report/report.html">
+<span class="md-ellipsis">
+    Report
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../running.html">
 <span class="md-ellipsis">
     Installing and Running
   </span>
 </a>
 </li>
 <li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" id="__nav_4" type="checkbox"/>
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_4" type="checkbox"/>
 <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
 <span class="md-ellipsis">
     Model Inputs and Outputs
@@ -292,14 +390,14 @@
           </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../inputs.html">
+<a class="md-nav__link" href="../../inputs.html">
 <span class="md-ellipsis">
     Inputs
   </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../outputs.html">
+<a class="md-nav__link" href="../../outputs.html">
 <span class="md-ellipsis">
     Outputs
   </span>
@@ -309,7 +407,7 @@
 </nav>
 </li>
 <li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" id="__nav_5" type="checkbox"/>
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_5" type="checkbox"/>
 <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
 <span class="md-ellipsis">
     Applying ABM3
@@ -323,56 +421,56 @@
           </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../application/applying.html">
+<a class="md-nav__link" href="../../application/applying.html">
 <span class="md-ellipsis">
     Model Application
   </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../application/population-synthesis.html">
+<a class="md-nav__link" href="../../application/population-synthesis.html">
 <span class="md-ellipsis">
     Population Synthesis
   </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../application/landuse-prep.html">
+<a class="md-nav__link" href="../../application/landuse-prep.html">
 <span class="md-ellipsis">
     Land Use Data Preparation
   </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../application/scenario-manager.html">
+<a class="md-nav__link" href="../../application/scenario-manager.html">
 <span class="md-ellipsis">
     Scenario Manager
   </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../application/ev-rebates.html">
+<a class="md-nav__link" href="../../application/ev-rebates.html">
 <span class="md-ellipsis">
     EV Rebates
   </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../application/flexible-fleets.html">
+<a class="md-nav__link" href="../../application/flexible-fleets.html">
 <span class="md-ellipsis">
     Flexible Fleets
   </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../application/micromobility.html">
+<a class="md-nav__link" href="../../application/micromobility.html">
 <span class="md-ellipsis">
     Micromobility
   </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../application/network-coding.html">
+<a class="md-nav__link" href="../../application/network-coding.html">
 <span class="md-ellipsis">
     Network Coding
   </span>
@@ -382,14 +480,14 @@
 </nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../cvm.html">
+<a class="md-nav__link" href="../../cvm.html">
 <span class="md-ellipsis">
     Commercial Vehicle Model
   </span>
 </a>
 </li>
 <li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" id="__nav_7" type="checkbox"/>
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_7" type="checkbox"/>
 <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
 <span class="md-ellipsis">
     About
@@ -403,14 +501,14 @@
           </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../release-notes.html">
+<a class="md-nav__link" href="../../release-notes.html">
 <span class="md-ellipsis">
     Release Notes
   </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../faq.html">
+<a class="md-nav__link" href="../../faq.html">
 <span class="md-ellipsis">
     FAQs
   </span>
@@ -439,7 +537,7 @@
 The airport ground access model simulates trips to and from the airport for residents, visitors, and external travelers. These trips are generated by arriving or departing passengers and are modeled as tours within the ActivitySim framework. A post processing script also generates trips to serve passengers who require a pickup or dropoff at the airport. For example, a passenger who is picked up at the airport generates two trips; one trip to the airport by the driver to pick up the air passenger(s), and another trip from the airport with the driver and the air passenger(s).
 It is important to note that, to work within the ActivitySim framework, the airport trips must be modeled as tours, rather than being generated directly as in the previous model. These tours are assigned an origin at the airport MGRA. During the stop frequency step of ActivitySim, a trip is assigned to the appropriate leg of the tour (either to or from the airport) while the opposite leg is not assigned any trips (referred to as the ‘dummy leg’). Passengers who are leaving on a departing flight and traveling to the airport are considered “inbound,” while arriving passengers are considered “outbound”.</p>
 <p>The overall design of the model is shown in the figure below.</p>
-<p><img alt="" src="../images/design/airport_model_design.png"/></p>
+<p><img alt="" src="../../images/design/airport_model_design.png"/></p>
 <ol>
 <li>Tour Enumeration: A list of airport travel parties is generated from input enplanements and transferring passenger rates, as well as distributions that describe the share of travel parties by purpose (business versus personal), household income, and party size.</li>
 <li>
@@ -674,9 +772,9 @@ Employees are not fed into the trip mode choice model. Instead, if a transit sha
 <div class="md-dialog" data-md-component="dialog">
 <div class="md-dialog__inner md-typeset"></div>
 </div>
-<script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "content.code.annotate", "content.tabs.link", "navigation.indexes", "navigation.top"], "search": "../assets/javascripts/workers/search.a264c092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
-<script src="../assets/javascripts/bundle.4e0fa4ba.min.js"></script>
-<script src="../javascripts/mathjax.js"></script>
+<script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.indexes", "navigation.top", "navigation.expand", "content.code.annotate", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.a264c092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+<script src="../../assets/javascripts/bundle.4e0fa4ba.min.js"></script>
+<script src="../../javascripts/mathjax.js"></script>
 <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
 <script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
 window.mermaidConfig = {default: {

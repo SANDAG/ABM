@@ -8,28 +8,28 @@
       
       
       
-        <link rel="canonical" href="https://sandag.github.io/abm/application/applying.html">
+        <link rel="canonical" href="https://sandag.github.io/abm/design/demand/index.html">
       
       
-        <link rel="prev" href="../outputs.html">
+        <link rel="prev" href="../init/initialization.html">
       
       
-        <link rel="next" href="population-synthesis.html">
+        <link rel="next" href="resident.html">
       
       
-      <link rel="icon" href="../assets/images/favicon.png">
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.0">
     
     
       
-        <title>Model Application - SANDAG ABM3</title>
+        <title>Demand Design - SANDAG ABM3</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.9f615399.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.9f615399.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.649f08f9.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.649f08f9.min.css">
       
       
 
@@ -48,11 +48,11 @@
       
     
     
-      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
       <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css">
     
-    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -81,7 +81,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#applying-the-model" class="md-skip">
+        <a href="#demand-design" class="md-skip">
           Skip to content
         </a>
       
@@ -99,7 +99,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="SANDAG ABM3" class="md-header__button md-logo" aria-label="SANDAG ABM3" data-md-component="logo">
+    <a href="../../index.html" title="SANDAG ABM3" class="md-header__button md-logo" aria-label="SANDAG ABM3" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -119,7 +119,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Model Application
+              Demand Design
             
           </span>
         </div>
@@ -223,7 +223,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../index.html" class="md-tabs__link">
+      <a href="../../index.html" class="md-tabs__link">
         
   
     
@@ -238,11 +238,13 @@
         
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../design/design.html" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../design.html" class="md-tabs__link">
           
   
     
@@ -260,7 +262,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../running.html" class="md-tabs__link">
+      <a href="../../running.html" class="md-tabs__link">
         
   
     
@@ -279,7 +281,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../inputs.html" class="md-tabs__link">
+        <a href="../../inputs.html" class="md-tabs__link">
           
   
     
@@ -295,13 +297,11 @@
         
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="applying.html" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../application/applying.html" class="md-tabs__link">
           
   
     
@@ -319,7 +319,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../cvm.html" class="md-tabs__link">
+      <a href="../../cvm.html" class="md-tabs__link">
         
   
     
@@ -338,7 +338,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../release-notes.html" class="md-tabs__link">
+        <a href="../../release-notes.html" class="md-tabs__link">
           
   
     
@@ -373,7 +373,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="SANDAG ABM3" class="md-nav__button md-logo" aria-label="SANDAG ABM3" data-md-component="logo">
+    <a href="../../index.html" title="SANDAG ABM3" class="md-nav__button md-logo" aria-label="SANDAG ABM3" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -402,7 +402,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../index.html" class="md-nav__link">
+      <a href="../../index.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -419,6 +419,8 @@
       
   
   
+    
+  
   
     
     
@@ -435,15 +437,13 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
             
@@ -456,7 +456,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Model Design
@@ -469,7 +469,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../design/design.html" class="md-nav__link">
+      <a href="../design.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -489,7 +489,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../design/init/initialization.html" class="md-nav__link">
+      <a href="../init/initialization.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -507,6 +507,8 @@
                 
   
   
+    
+  
   
     
     
@@ -527,20 +529,18 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" checked>
         
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../design/demand/index.html" class="md-nav__link ">
+            <a href="index.html" class="md-nav__link md-nav__link--active">
               
   
   <span class="md-ellipsis">
@@ -550,13 +550,13 @@
 
             </a>
             
-              <label class="md-nav__link " for="__nav_2_3">
+              <label class="md-nav__link md-nav__link--active" for="__nav_2_3">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2_3">
             <span class="md-nav__icon md-icon"></span>
             Demand
@@ -571,7 +571,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../design/demand/resident.html" class="md-nav__link">
+      <a href="resident.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -591,7 +591,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../design/demand/crossborder.html" class="md-nav__link">
+      <a href="crossborder.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -611,7 +611,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../design/demand/airport.html" class="md-nav__link">
+      <a href="airport.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -631,7 +631,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../design/demand/visitor.html" class="md-nav__link">
+      <a href="visitor.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -651,7 +651,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../design/demand/external.html" class="md-nav__link">
+      <a href="external.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -710,7 +710,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../design/supply/index.html" class="md-nav__link ">
+            <a href="../supply/index.html" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -741,7 +741,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../design/supply/bike-logsums.html" class="md-nav__link">
+      <a href="../supply/bike-logsums.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -761,7 +761,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../design/supply/walk-skims.html" class="md-nav__link">
+      <a href="../supply/walk-skims.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -781,7 +781,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../design/supply/network-import-tned.html" class="md-nav__link">
+      <a href="../supply/network-import-tned.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -801,7 +801,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../design/supply/highway-skims-assign.html" class="md-nav__link">
+      <a href="../supply/highway-skims-assign.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -821,7 +821,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../design/supply/transit-skims-assign.html" class="md-nav__link">
+      <a href="../supply/transit-skims-assign.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -849,7 +849,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../design/report/report.html" class="md-nav__link">
+      <a href="../report/report.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -876,7 +876,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../running.html" class="md-nav__link">
+      <a href="../../running.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -937,7 +937,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../inputs.html" class="md-nav__link">
+      <a href="../../inputs.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -957,7 +957,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../outputs.html" class="md-nav__link">
+      <a href="../../outputs.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -982,8 +982,6 @@
       
   
   
-    
-  
   
     
     
@@ -1006,13 +1004,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
         
           <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
             
@@ -1025,7 +1025,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             Applying ABM3
@@ -1036,18 +1036,9 @@
                 
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="applying.html" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../application/applying.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1056,7 +1047,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -1068,7 +1058,7 @@
   
   
     <li class="md-nav__item">
-      <a href="population-synthesis.html" class="md-nav__link">
+      <a href="../../application/population-synthesis.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1088,7 +1078,7 @@
   
   
     <li class="md-nav__item">
-      <a href="landuse-prep.html" class="md-nav__link">
+      <a href="../../application/landuse-prep.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1108,7 +1098,7 @@
   
   
     <li class="md-nav__item">
-      <a href="scenario-manager.html" class="md-nav__link">
+      <a href="../../application/scenario-manager.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1128,7 +1118,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ev-rebates.html" class="md-nav__link">
+      <a href="../../application/ev-rebates.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1148,7 +1138,7 @@
   
   
     <li class="md-nav__item">
-      <a href="flexible-fleets.html" class="md-nav__link">
+      <a href="../../application/flexible-fleets.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1168,7 +1158,7 @@
   
   
     <li class="md-nav__item">
-      <a href="micromobility.html" class="md-nav__link">
+      <a href="../../application/micromobility.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1188,7 +1178,7 @@
   
   
     <li class="md-nav__item">
-      <a href="network-coding.html" class="md-nav__link">
+      <a href="../../application/network-coding.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1215,7 +1205,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../cvm.html" class="md-nav__link">
+      <a href="../../cvm.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1276,7 +1266,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../release-notes.html" class="md-nav__link">
+      <a href="../../release-notes.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1296,7 +1286,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../faq.html" class="md-nav__link">
+      <a href="../../faq.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1353,8 +1343,8 @@
   
 
 
-<h1 id="applying-the-model">Applying the model<a class="headerlink" href="#applying-the-model" title="Permanent link"> ¶</a></h1>
-<p>This page contains information needed to apply the model.</p>
+<h1 id="demand-design">Demand Design<a class="headerlink" href="#demand-design" title="Permanent link"> ¶</a></h1>
+<p>Details of demand components of the model.</p>
 
 
 
@@ -1400,12 +1390,12 @@
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "navigation.indexes", "navigation.top", "navigation.expand", "content.code.annotate", "content.tabs.link"], "search": "../assets/javascripts/workers/search.a264c092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.indexes", "navigation.top", "navigation.expand", "content.code.annotate", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.a264c092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.4e0fa4ba.min.js"></script>
+      <script src="../../assets/javascripts/bundle.4e0fa4ba.min.js"></script>
       
-        <script src="../javascripts/mathjax.js"></script>
+        <script src="../../javascripts/mathjax.js"></script>
       
         <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
       

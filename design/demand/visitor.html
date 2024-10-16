@@ -5,20 +5,20 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
-<link href="https://sandag.github.io/abm/design/crossborder.html" rel="canonical"/>
-<link href="resident.html" rel="prev"/>
-<link href="airport.html" rel="next"/>
-<link href="../assets/images/favicon.png" rel="icon"/>
+<link href="https://sandag.github.io/abm/design/demand/visitor.html" rel="canonical"/>
+<link href="airport.html" rel="prev"/>
+<link href="external.html" rel="next"/>
+<link href="../../assets/images/favicon.png" rel="icon"/>
 <meta content="mkdocs-1.5.3, mkdocs-material-9.4.0" name="generator"/>
-<title>Crossborder - SANDAG ABM3</title>
-<link href="../assets/stylesheets/main.9f615399.min.css" rel="stylesheet"/>
-<link href="../assets/stylesheets/palette.649f08f9.min.css" rel="stylesheet"/>
+<title>Overnight Visitor Model - SANDAG ABM3</title>
+<link href="../../assets/stylesheets/main.9f615399.min.css" rel="stylesheet"/>
+<link href="../../assets/stylesheets/palette.649f08f9.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
 <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
-<link href="../assets/_mkdocstrings.css" rel="stylesheet"/>
+<link href="../../assets/_mkdocstrings.css" rel="stylesheet"/>
 <link href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" rel="stylesheet"/>
-<script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+<script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
 </head>
 <body data-md-color-accent="deep-orange" data-md-color-primary="deep-purple" data-md-color-scheme="default" dir="ltr">
 <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
@@ -26,7 +26,7 @@
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
 <label class="md-overlay" for="__drawer"></label>
 <div data-md-component="skip">
-<a class="md-skip" href="#crossborder-model">
+<a class="md-skip" href="#overnight-visitor-model">
           Skip to content
         </a>
 </div>
@@ -36,7 +36,7 @@
 </div>
 <header class="md-header" data-md-component="header">
 <nav aria-label="Header" class="md-header__inner md-grid">
-<a aria-label="SANDAG ABM3" class="md-header__button md-logo" data-md-component="logo" href="../index.html" title="SANDAG ABM3">
+<a aria-label="SANDAG ABM3" class="md-header__button md-logo" data-md-component="logo" href="../../index.html" title="SANDAG ABM3">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"></path></svg>
 </a>
 <label class="md-header__button md-icon" for="__drawer">
@@ -52,7 +52,7 @@
 <div class="md-header__topic" data-md-component="header-topic">
 <span class="md-ellipsis">
             
-              Crossborder
+              Overnight Visitor Model
             
           </span>
 </div>
@@ -115,7 +115,7 @@
 <div class="md-grid">
 <ul class="md-tabs__list">
 <li class="md-tabs__item">
-<a class="md-tabs__link" href="../index.html">
+<a class="md-tabs__link" href="../../index.html">
         
   
     
@@ -125,7 +125,7 @@
       </a>
 </li>
 <li class="md-tabs__item md-tabs__item--active">
-<a class="md-tabs__link" href="design.html">
+<a class="md-tabs__link" href="../design.html">
           
   
     
@@ -135,7 +135,7 @@
         </a>
 </li>
 <li class="md-tabs__item">
-<a class="md-tabs__link" href="../running.html">
+<a class="md-tabs__link" href="../../running.html">
         
   
     
@@ -145,7 +145,7 @@
       </a>
 </li>
 <li class="md-tabs__item">
-<a class="md-tabs__link" href="../inputs.html">
+<a class="md-tabs__link" href="../../inputs.html">
           
   
     
@@ -155,7 +155,7 @@
         </a>
 </li>
 <li class="md-tabs__item">
-<a class="md-tabs__link" href="../application/applying.html">
+<a class="md-tabs__link" href="../../application/applying.html">
           
   
     
@@ -165,7 +165,7 @@
         </a>
 </li>
 <li class="md-tabs__item">
-<a class="md-tabs__link" href="../cvm.html">
+<a class="md-tabs__link" href="../../cvm.html">
         
   
     
@@ -175,7 +175,7 @@
       </a>
 </li>
 <li class="md-tabs__item">
-<a class="md-tabs__link" href="../release-notes.html">
+<a class="md-tabs__link" href="../../release-notes.html">
           
   
     
@@ -194,7 +194,7 @@
 <div class="md-sidebar__inner">
 <nav aria-label="Navigation" class="md-nav md-nav--primary md-nav--lifted" data-md-level="0">
 <label class="md-nav__title" for="__drawer">
-<a aria-label="SANDAG ABM3" class="md-nav__button md-logo" data-md-component="logo" href="../index.html" title="SANDAG ABM3">
+<a aria-label="SANDAG ABM3" class="md-nav__button md-logo" data-md-component="logo" href="../../index.html" title="SANDAG ABM3">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"></path></svg>
 </a>
     SANDAG ABM3
@@ -211,7 +211,7 @@
 </div>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../index.html">
+<a class="md-nav__link" href="../../index.html">
 <span class="md-ellipsis">
     Home
   </span>
@@ -232,38 +232,126 @@
           </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="design.html">
+<a class="md-nav__link" href="../design.html">
 <span class="md-ellipsis">
     Overall Design
   </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="resident.html">
+<a class="md-nav__link" href="../init/initialization.html">
 <span class="md-ellipsis">
-    Resident
+    Initialization
   </span>
 </a>
 </li>
-<li class="md-nav__item md-nav__item--active">
-<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
-<a class="md-nav__link md-nav__link--active" href="crossborder.html">
+<li class="md-nav__item md-nav__item--active md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_2_3" type="checkbox"/>
+<div class="md-nav__link md-nav__container">
+<a class="md-nav__link" href="index.html">
 <span class="md-ellipsis">
-    Crossborder
+    Demand
+  </span>
+</a>
+<label class="md-nav__link" for="__nav_2_3">
+<span class="md-nav__icon md-icon"></span>
+</label>
+</div>
+<nav aria-expanded="true" aria-labelledby="__nav_2_3_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_3">
+<span class="md-nav__icon md-icon"></span>
+            Demand
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="resident.html">
+<span class="md-ellipsis">
+    Resident Model
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="crossborder.html">
+<span class="md-ellipsis">
+    Crossborder Model
   </span>
 </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="airport.html">
 <span class="md-ellipsis">
-    Airport Ground Access
+    Airport Ground Access Models
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<a class="md-nav__link md-nav__link--active" href="visitor.html">
+<span class="md-ellipsis">
+    Overnight Visitor Model
   </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="visitor.html">
+<a class="md-nav__link" href="external.html">
 <span class="md-ellipsis">
-    Overnight Visitor
+    External Models
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_2_4" type="checkbox"/>
+<div class="md-nav__link md-nav__container">
+<a class="md-nav__link" href="../supply/index.html">
+<span class="md-ellipsis">
+    Supply
+  </span>
+</a>
+<label class="md-nav__link" for="__nav_2_4">
+<span class="md-nav__icon md-icon"></span>
+</label>
+</div>
+<nav aria-expanded="false" aria-labelledby="__nav_2_4_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_4">
+<span class="md-nav__icon md-icon"></span>
+            Supply
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../supply/bike-logsums.html">
+<span class="md-ellipsis">
+    Bike Logsums
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../supply/walk-skims.html">
+<span class="md-ellipsis">
+    Walk Skims
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../supply/network-import-tned.html">
+<span class="md-ellipsis">
+    Network Import from TNED
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../supply/highway-skims-assign.html">
+<span class="md-ellipsis">
+    Highway Skimming and Assignment
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../supply/transit-skims-assign.html">
+<span class="md-ellipsis">
+    Transit Skimming and Assignment
   </span>
 </a>
 </li>
@@ -271,14 +359,24 @@
 </nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../running.html">
+<a class="md-nav__link" href="../report/report.html">
+<span class="md-ellipsis">
+    Report
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../running.html">
 <span class="md-ellipsis">
     Installing and Running
   </span>
 </a>
 </li>
 <li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" id="__nav_4" type="checkbox"/>
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_4" type="checkbox"/>
 <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
 <span class="md-ellipsis">
     Model Inputs and Outputs
@@ -292,14 +390,14 @@
           </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../inputs.html">
+<a class="md-nav__link" href="../../inputs.html">
 <span class="md-ellipsis">
     Inputs
   </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../outputs.html">
+<a class="md-nav__link" href="../../outputs.html">
 <span class="md-ellipsis">
     Outputs
   </span>
@@ -309,7 +407,7 @@
 </nav>
 </li>
 <li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" id="__nav_5" type="checkbox"/>
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_5" type="checkbox"/>
 <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
 <span class="md-ellipsis">
     Applying ABM3
@@ -323,56 +421,56 @@
           </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../application/applying.html">
+<a class="md-nav__link" href="../../application/applying.html">
 <span class="md-ellipsis">
     Model Application
   </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../application/population-synthesis.html">
+<a class="md-nav__link" href="../../application/population-synthesis.html">
 <span class="md-ellipsis">
     Population Synthesis
   </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../application/landuse-prep.html">
+<a class="md-nav__link" href="../../application/landuse-prep.html">
 <span class="md-ellipsis">
     Land Use Data Preparation
   </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../application/scenario-manager.html">
+<a class="md-nav__link" href="../../application/scenario-manager.html">
 <span class="md-ellipsis">
     Scenario Manager
   </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../application/ev-rebates.html">
+<a class="md-nav__link" href="../../application/ev-rebates.html">
 <span class="md-ellipsis">
     EV Rebates
   </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../application/flexible-fleets.html">
+<a class="md-nav__link" href="../../application/flexible-fleets.html">
 <span class="md-ellipsis">
     Flexible Fleets
   </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../application/micromobility.html">
+<a class="md-nav__link" href="../../application/micromobility.html">
 <span class="md-ellipsis">
     Micromobility
   </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../application/network-coding.html">
+<a class="md-nav__link" href="../../application/network-coding.html">
 <span class="md-ellipsis">
     Network Coding
   </span>
@@ -382,14 +480,14 @@
 </nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../cvm.html">
+<a class="md-nav__link" href="../../cvm.html">
 <span class="md-ellipsis">
     Commercial Vehicle Model
   </span>
 </a>
 </li>
 <li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" id="__nav_7" type="checkbox"/>
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_7" type="checkbox"/>
 <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
 <span class="md-ellipsis">
     About
@@ -403,14 +501,14 @@
           </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../release-notes.html">
+<a class="md-nav__link" href="../../release-notes.html">
 <span class="md-ellipsis">
     Release Notes
   </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../faq.html">
+<a class="md-nav__link" href="../../faq.html">
 <span class="md-ellipsis">
     FAQs
   </span>
@@ -434,32 +532,47 @@
 </div>
 <div class="md-content" data-md-component="content">
 <article class="md-content__inner md-typeset">
-<h1 id="crossborder-model">Crossborder Model<a class="headerlink" href="#crossborder-model" title="Permanent link"> ¶</a></h1>
-<p>The Cross-Border Travel Model predicts travel made by residents of Mexico within San Diego County. It predicts the border crossing point of entry as well as all trips made within the county. The model is limited to simulating travel made by Mexican residents who return to Mexico within the simulation day. Cross-border travel not captured by the Cross-Border Model includes:</p>
-<ul>
-<li>Residents of San Diego County who travel to/from Mexico. This travel is represented
-by the resident travel model.</li>
-<li>Residents of Mexico (including U.S. citizens) who travel into San Diego County and who
-do not return to Mexico at the end of the day. This travel is represented in the overnight
-visitor travel model.</li>
-<li>Travel between points of entry through San Diego County to other U.S. destinations. This
-travel is represented by the external-external travel model.</li>
-<li>Commercial vehicle travel to/from points of entry. This travel is represented by the
-commercial vehicle model.</li>
-</ul>
-<p>The overall design of the model is shown in the figure below.</p>
-<p><img alt="" src="../images/design/crossborder_model_design.png"/></p>
-<h4 id="crossborder-model-purpose-definitions">Crossborder Model Purpose Definitions<a class="headerlink" href="#crossborder-model-purpose-definitions" title="Permanent link"> ¶</a></h4>
-<p>There are five activity purposes in the cross-border travel demand model:
-  * Work: Any activity involving work for pay.
-  * School: Pre-k school, K-12, college/university, or trade school.
-  * Shop: Shopping at retail, wholesale, etc.
-  * Visit: Visiting friends or family
-  * Other: A broad category including eating out, medical appointments, recreational activities, etc.</p>
-<p>Note that home activities are not listed, since we do not model activities south of the border.</p>
-<h4 id="crossborder-model-mode-definitions">Crossborder Model Mode Definitions<a class="headerlink" href="#crossborder-model-mode-definitions" title="Permanent link"> ¶</a></h4>
+<h1 id="overnight-visitor-model">Overnight Visitor Model<a class="headerlink" href="#overnight-visitor-model" title="Permanent link"> ¶</a></h1>
+<p>The Overnight Visitor Model simulates trips of visitors staying overnight in hotels, motels, short-term vacation rentals, and with friends and family. The trips are modeled as part of tours that begin and end at the place of lodging. However, unlike the resident model, the Overnight Visitor Model does not utilize a 24-hour activity schedule. Therefore it can be thought of as a simpler, tour-based model. Once each tour is generated, it is scheduled independently. The model uses the same time periods and modes as the resident model.
+The overall design of the model is shown in the figure below.</p>
+<p><img alt="" src="../../images/design/visitor_model_design.png"/></p>
+<ol>
+<li>
+<p>Tour Enumeration: A list of visitor parties is generated from the input household data and hotel room inventory at the MGRA level. Visitor travel parties by segment (business versus personal) are calculated based on separate rates for hotels and for households. Visitor parties are generated by purpose based on tour rates by segment, then attributed with household income and party size based on input distributions. There are three purposes in the Overnight Visitor model:</p>
+</li>
+<li>
+<p>Work:  Business travel made by business visitors.</p>
+</li>
+<li>Dining: Travel to food establishments for both business and personal visitors.</li>
+<li>
+<p>Recreational: All other non-work non-food related activities.</p>
+</li>
+<li>
+<p>Tour Level Models</p>
+<p>2.1 Tour Scheduling Probabilistic: The tour scheduling model uses a probabilistic draw of the scheduling distribution. This model assigns start and end times to the tour. If there is only one trip per leg on the tour, the trip is assigned the tour start/end time.</p>
+<p>2.2 Tour Destination Choice: The destination choice model chooses the MGRA of the primary activity location on the tour.</p>
+<p>2.3 Tour Mode Choice: The tour mode choice model determines the primary mode of the tour.</p>
+</li>
+<li>
+<p>Stop Level Models</p>
+<p>3.1 Stop Frequency Choice: The stop frequency model predicts the number of stops by direction based on input distributions that vary by tour purpose.</p>
+<p>3.2 Stop Purpose: The stop purpose model chooses the activity purpose of each intermediate stop based on input distributions that vary according to tour purpose.</p>
+<p>3.3 Stop Location Choice: The location choice model chooses the MGRA for each intermediate stop on the tour.</p>
+</li>
+<li>
+<p>Trip Level Models</p>
+<p>4.1 Trip Departure Choice: The trip scheduling model assigns depart times for each trip on a tour based on input distributions that vary by direction (inbound versus outbound), stop number, and number of periods remaining on the tour.</p>
+<p>4.2 Trip Mode Choice: Each trip is assigned a trip mode, consistent with the modes in the resident model.</p>
+<p>4.3 Trip Assignment: Trips are aggregated by time of day, mode occupancy, value-of-time, and origin-destination TAZ and assigned simultaneously with other trips.</p>
+</li>
+</ol>
 <p>The major tour modes are shown below:
 <pre class="mermaid"><code>flowchart TD
+    subgraph four
+    direction LR
+    E[Ride-Hail] --&gt; E1[Taxi]
+    E --&gt; E2[Single-pay TNC];
+    end
     subgraph three
     direction LR
     D[Transit] --&gt; D1[Walk Access]
@@ -479,66 +592,24 @@ commercial vehicle model.</li>
     B --&gt; B2[Shared 2];
     B --&gt; B3[Shared 3+];
     end
-    A[Tour Mode\Border Crossing Mode] --&gt; one;
+    A[Tour Mode] --&gt; one;
     A --&gt; two;
     A --&gt; three;
+    A --&gt; four;
 
     classDef group1 fill:#f75f5f,stroke:#333,stroke-width:4px,font-size:26px,font-weight:bold;wrap
     classDef group2 fill:#ffd966,stroke:#333,stroke-width:2px,font-size:20px;wrap
     classDef group3 fill:#bdabf0,stroke:#333,stroke-width:2px,font-size:18px;wrap
 
     classDef hiddenTitle color:transparent;
-    class one,two,three hiddenTitle;
+    class one,two,three,four hiddenTitle;
 
     class A group1;
     class B,C,D,E group2;
-    class B1,B2,B3,C1,C2,C3,C4,D1,D11,D12,D13 group3;
+    class B1,B2,B3,C1,C2,C3,C4,D1,D2,D3,D4,E1,E2,E3,D11,D12,D13,D21,D22,D23,D31,D32,D33,D41,D42,D43 group3;
+
 </code></pre></p>
-<p>The model has the following mode types at the trip level:
-  * Drive-alone: Single occupant private vehicle
-  * Shared 2: A private vehicle with exactly two passengers
-  * Shared 3+: A private vehicle with three or more passengers
-  * Walk: Walk mode
-  * Bike: Bike mode
-  * Walk-transit: Walk access to transit. There are three sub-types of transit: Local only,
-  premium only, local + premium (which includes both local and premium services in the
-  transit path)
-  * Taxi: Door-to-door taxi trip
-  * Single-pay TNC: Door-to-door TNC trip with a single payer (e.g. UberX)
-  * Shared-pay TNC: Stop-to-stop TNC trip with potentially multiple payers (e.g. UberPool)</p>
-<p>We also model tour mode, which is the mode used to cross the border. These modes include
-drive-alone, shared 2, shared 3+ and walk. We assume that anyone crossing by bus or taxi is
-similar to walk, since they do not have access to a personal vehicle for the rest of their travel in
-San Diego County.</p>
-<p>We also classify border crossings by lane type: general purpose, SENTRI, and Ready. We
-assume that the use of these lanes is related to the border crossing party; we attribute each party with SENTRI or Ready availability. The proportion of total border crossing parties with access to SENTRI and Ready lanes are based on observed survey data, pooled across all stations. This data is used to simulate the availability of the lane to the travel party. Each lane crossing type is related to the wait time that the travel party experiences at each border crossing station by mode.</p>
-<p>Below is a general description of the model structure.</p>
-<ol>
-<li>Tour Enumeration: A list of person-tours is created by first cross-multiplying the input total
-person tours with the share of tours by pass type, then expanding tours by pass type to tours
-by pass type and purpose.</li>
-<li>
-<p>Tour Level Models
-    2.1 Time-of-day Choice: Each person-tour is assigned an outbound and return half-hour 
-    period.</p>
-<p>2.2 Primary Destination and Station Choice: Each border crossing person-tour chooses a 
-primary destination MGRA and border crossing station.</p>
-<p>2.3 Border Crossing Mode Choice: Each person-tour chooses a border crossing tour mode.</p>
-</li>
-<li>
-<p>Wait Time Model</p>
-<p>3.1. Wait time model: Calculate wait time based on demand at each POE from model 2.2</p>
-<p>3.2. Convergence check: If max iterations reached (currently 3), goto Stop and Trip level models, else goto Model 2.2
-3. Stop and Trip Level Models
-4.1 Stop Frequency Choice: Each person-tour is assigned number of stops by half-tour (outbound, return).</p>
-<p>4.2 Stop Purpose Choice: Each stop is assigned a stop purpose (consistent with the tour purposes).</p>
-<p>4.3 Trip Departure Choice: Each trip is assigned a half-hourly time period.</p>
-<p>4.4 Stop Location Choice: Each stop chooses an MGRA location.</p>
-<p>4.5 Trip Mode Choice: Each trip is assigned a trip mode.</p>
-<p>4.6 Trip Assignments: Trips are assigned to networks, along with resident and other special market trip tables, and skims are created for the next iteration of the model.</p>
-</li>
-</ol>
-<p>For more information on the Crossborder Travel Model see technical documentation.</p>
+<p>For more information on the Overnight Visitor Travel Model see technical documentation.</p>
 </article>
 </div>
 <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var tab,labels=set.querySelector(".tabbed-labels");for(tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
@@ -566,9 +637,9 @@ primary destination MGRA and border crossing station.</p>
 <div class="md-dialog" data-md-component="dialog">
 <div class="md-dialog__inner md-typeset"></div>
 </div>
-<script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "content.code.annotate", "content.tabs.link", "navigation.indexes", "navigation.top"], "search": "../assets/javascripts/workers/search.a264c092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
-<script src="../assets/javascripts/bundle.4e0fa4ba.min.js"></script>
-<script src="../javascripts/mathjax.js"></script>
+<script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.indexes", "navigation.top", "navigation.expand", "content.code.annotate", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.a264c092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+<script src="../../assets/javascripts/bundle.4e0fa4ba.min.js"></script>
+<script src="../../javascripts/mathjax.js"></script>
 <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
 <script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
 window.mermaidConfig = {default: {
