@@ -66,6 +66,7 @@ nav:
         - design/supply/network-import-tned.md
         - design/supply/highway-skims-assign.md
         - design/supply/transit-skims-assign.md
+    - Report: design/report/report.md
   - Installing and Running: running.md
   - Model Inputs and Outputs: 
     - Inputs: inputs.md
