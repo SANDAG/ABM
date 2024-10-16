@@ -319,31 +319,33 @@ class TravelTimeReporter:
         """
         print("Calculating transit times")
 
-        _loc_time = self.expand_skim(
+        _loc_time = (
             self.skims["WALK_LOC_FIRSTWAIT__" + self.settings["time_period"]] +
             self.skims["WALK_LOC_XFERWALK__" + self.settings["time_period"]] +
             self.skims["WALK_LOC_XFERWAIT__" + self.settings["time_period"]] +
             self.skims["WALK_LOC_TOTALIVTT__" + self.settings["time_period"]]
         )
 
-        _prm_time = self.expand_skim(
+        _prm_time = (
             self.skims["WALK_PRM_FIRSTWAIT__" + self.settings["time_period"]] +
             self.skims["WALK_PRM_XFERWALK__" + self.settings["time_period"]] +
             self.skims["WALK_PRM_XFERWAIT__" + self.settings["time_period"]] +
             self.skims["WALK_PRM_TOTALIVTT__" + self.settings["time_period"]]
         )
 
-        _mix_time = self.expand_skim(
+        _mix_time = (
             self.skims["WALK_MIX_FIRSTWAIT__" + self.settings["time_period"]] +
             self.skims["WALK_MIX_XFERWALK__" + self.settings["time_period"]] +
             self.skims["WALK_MIX_XFERWAIT__" + self.settings["time_period"]] +
             self.skims["WALK_MIX_TOTALIVTT__" + self.settings["time_period"]]
         )
 
-        self.skims["transit_time"] = np.minimum(
-            _loc_time,
-            _prm_time,
-            _mix_time
+        self.skims["transit_time"] = self.expand_skim(
+                np.minimum(
+                _loc_time,
+                _prm_time,
+                _mix_time
+            )
         )
 
     def get_total_transit_time(self):
