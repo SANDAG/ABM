@@ -14,7 +14,7 @@ commercial vehicle model.
 
 The overall design of the model is shown in the figure below.
 
-![](../images/design/crossborder_model_design.png)
+![](../../images/design/crossborder_model_design.png)
 
 #### Crossborder Model Purpose Definitions
 There are five activity purposes in the cross-border travel demand model:
