@@ -154,7 +154,7 @@ class ToolNode():
     def consolidate(self):
         with open(self.script, 'r') as f:
             code = f.read()
-        self.code = usc_transform(base64.b64encode(pickle.dumps(code)))
+        self.code = base64.b64encode(pickle.dumps(code))
         self.script = ''
 
     def set_toolbox_order(self):
