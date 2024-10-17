@@ -56,14 +56,14 @@ gen_utils = _m.Modeller().module("sandag.utilities.general")
 
 class FourDs(_m.Tool()):
 
-    path = _m.Attribute(unicode)
-    ref_path = _m.Attribute(unicode)
+    path = _m.Attribute(str)
+    ref_path = _m.Attribute(str)
     int_radius = _m.Attribute(float)
     maps = _m.Attribute(bool)
 
     tool_run_msg = ""
 
-    @_m.method(return_type=_m.UnicodeType)
+    @_m.method(return_type=str)
     def tool_run_msg_status(self):
         return self.tool_run_msg    
     
@@ -288,7 +288,7 @@ class FourDs(_m.Tool()):
             return tot_icnt,duDen,empDen,popDen,retDen,popEmpDenPerMi
     
         #new_cols = [0-'totint',1-'duden',2-'empden',3-'popden',4-'retempden',5-'totintbin',6-'empdenbin',7-'dudenbin',8-'PopEmpDenPerMi']
-        mgra_landuse[self.new_cols[0]],mgra_landuse[self.new_cols[1]],mgra_landuse[self.new_cols[2]],mgra_landuse[self.new_cols[3]],mgra_landuse[self.new_cols[4]],mgra_landuse[self.new_cols[8]] = zip(*mgra_landuse['mgra'].map(density_function))
+        mgra_landuse[self.new_cols[0]],mgra_landuse[self.new_cols[1]],mgra_landuse[self.new_cols[2]],mgra_landuse[self.new_cols[3]],mgra_landuse[self.new_cols[4]],mgra_landuse[self.new_cols[8]] = list(zip(*mgra_landuse['mgra'].map(density_function)))
 
         mgra_landuse = mgra_landuse.fillna(0)
         mgra_landuse[self.new_cols[5]] = np.where(mgra_landuse[self.new_cols[0]] < 80, 1, np.where(mgra_landuse[self.new_cols[0]] < 130, 2, 3))
@@ -318,8 +318,8 @@ class FourDs(_m.Tool()):
             max = self.base[field].max() + self.base[field].max()%5
             div = max/5 if max/5 >= 10 else max/2
             bins = np.linspace(0,max,div)
-            plt.hist(self.base[field], bins, normed = True, alpha = 0.5, label = 'Base', color = rsg_marine)
-            plt.hist(self.build[field], bins, normed = True, alpha = 0.5, label = 'Build', color = rsg_orange)
+            plt.hist(self.base[field], bins, density = True, alpha = 0.5, label = 'Base', color = rsg_marine)
+            plt.hist(self.build[field], bins, density = True, alpha = 0.5, label = 'Build', color = rsg_orange)
             mean_base = self.base[field].mean()
             mean = self.build[field].mean()
             median_base = self.base[field].median()

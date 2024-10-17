@@ -97,16 +97,16 @@ dem_utils = _m.Modeller().module("sandag.utilities.demand")
 
 class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
 
-    period = _m.Attribute(unicode)
-    scenario =  _m.Attribute(_m.InstanceType)
-    data_table_name = _m.Attribute(unicode)
+    period = _m.Attribute(str)
+    scenario =  _m.Attribute(object)
+    data_table_name = _m.Attribute(str)
     assignment_only = _m.Attribute(bool)
     skims_only = _m.Attribute(bool)
     num_processors = _m.Attribute(str)
 
     tool_run_msg = ""
 
-    @_m.method(return_type=unicode)
+    @_m.method(return_type=str)
     def tool_run_msg_status(self):
         return self.tool_run_msg
 
@@ -338,7 +338,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
             "day_pass": [],  # boarding fare is the same as 1/2 day pass
             "premium": []    # special premium services not covered by day pass
         }
-        for mode_id, fares in fare_set.items():
+        for mode_id, fares in list(fare_set.items()):
             try:
                 max_fare = max(fares.keys())
             except ValueError:
@@ -363,7 +363,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
 
         def get_transition_rules(next_level):
             rules = []
-            for name, group in mode_groups.items():
+            for name, group in list(mode_groups.items()):
                 for mode_id, fares in group:
                     rules.append({"mode": mode_id, "next_journey_level": next_level[name]})
             rules.append({"mode": "c", "next_journey_level": next_level["coaster"]})

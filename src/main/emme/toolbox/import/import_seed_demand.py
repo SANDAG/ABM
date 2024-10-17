@@ -65,12 +65,12 @@ _omx = _m.Modeller().module("sandag.utilities.omxwrapper")
 
 class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
 
-    omx_file = _m.Attribute(unicode)
+    omx_file = _m.Attribute(str)
     demand_type = _m.Attribute(str)
     period = _m.Attribute(str)
     tool_run_msg = ""
 
-    @_m.method(return_type=_m.UnicodeType)
+    @_m.method(return_type=str)
     def tool_run_msg_status(self):
         return self.tool_run_msg
 
@@ -137,7 +137,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     '%s_SOV_TR_H':  'mf"%s_SOV_TR_H"',
                     '%s_HOV2_H':  'mf"%s_HOV2_H"',
                     '%s_HOV3_H':  'mf"%s_HOV3_H"'}
-                matrices = dict((k % period, v % period) for k, v in matrices.iteritems())
+                matrices = dict((k % period, v % period) for k, v in matrices.items())
                 self._import_from_omx(omx_file, matrices, scenario)
 
             if demand_type == "TRUCK":
@@ -146,7 +146,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     '%s_TRK_H':     'mf"%s_TRK_H"',
                     '%s_TRK_L':     'mf"%s_TRK_L"',
                     '%s_TRK_M':   'mf"%s_TRK_M"'}
-                matrices = dict((k % period, v % period) for k, v in matrices.iteritems())
+                matrices = dict((k % period, v % period) for k, v in matrices.items())
                 self._import_from_omx(omx_file, matrices, scenario)
 
             if demand_type == "TRANSIT":
@@ -154,7 +154,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     'SET1':  'mf"%s_WLKBUS"',
                     'SET2':  'mf"%s_WLKPREM"',
                     'SET3':  'mf"%s_WLKALLPEN"',}
-                matrices = dict((k, v % period) for k, v in matrices.iteritems())
+                matrices = dict((k, v % period) for k, v in matrices.items())
                 # special custom mapping from subset of TAPs to all TAPs
                 self._import_from_omx(omx_file, matrices, scenario)
 
@@ -164,10 +164,10 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
         emmebank = scenario.emmebank
         omx_file_obj = _omx.open_file(file_path, 'r')
         try:
-            zone_mapping = omx_file_obj.mapping(omx_file_obj.list_mappings()[0]).items()
+            zone_mapping = list(omx_file_obj.mapping(omx_file_obj.list_mappings()[0]).items())
             zone_mapping.sort(key=lambda x: x[1])
             omx_zones = [x[0] for x in zone_mapping]
-            for omx_name, emme_name in matrices.iteritems():
+            for omx_name, emme_name in matrices.items():
                 omx_data = omx_file_obj[omx_name].read()
                 if emme_name not in matrices_to_write:
                     matrices_to_write[emme_name] = omx_data
@@ -181,13 +181,13 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
 
         if omx_zones != emme_zones:
             # special custom mapping from subset of TAPs to all TAPs
-            for emme_name, omx_data in matrices_to_write.iteritems():
+            for emme_name, omx_data in matrices_to_write.items():
                 matrix_data = _matrix.MatrixData(type='f', indices=[omx_zones, omx_zones])
                 matrix_data.from_numpy(omx_data)
                 expanded_matrix_data = matrix_data.expand([emme_zones, emme_zones])
                 matrix = emmebank.matrix(emme_name)
                 matrix.set_data(expanded_matrix_data, scenario)
         else:
-            for emme_name, omx_data in matrices_to_write.iteritems():
+            for emme_name, omx_data in matrices_to_write.items():
                 matrix = emmebank.matrix(emme_name)
                 matrix.set_numpy_data(omx_data, scenario)
