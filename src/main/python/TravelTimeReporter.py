@@ -373,7 +373,7 @@ class TravelTimeReporter:
         
         # Create Boolean matrix that is True if the flexible fleets service is available for the OD pair and False if it is not
         available = pd.DataFrame(
-            (orig_service > 0) & (orig_service == dest_service) & (self.skims["HOV3_M_TIME__" + self.settings["time_period"]] < self.constants[flavor + "MaxDist"]),
+            (orig_service > 0) & (orig_service == dest_service) & (self.skims["HOV3_M_DIST__" + self.settings["time_period"]] < self.constants[flavor + "MaxDist"]),
             self.land_use.index,
             self.land_use.index
         )
