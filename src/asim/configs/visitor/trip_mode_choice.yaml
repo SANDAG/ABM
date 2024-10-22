@@ -39,36 +39,6 @@ CONSTANTS:
   orig_col_name: origin
   dest_col_name: destination
   PERIODS_PER_HOUR: 2
-  time_distrib_mean_work: 1.0
-  time_distrib_stddev_work: 0.7
-  time_distrib_mean_nonwork: 1.0
-  time_distrib_stddev_nonwork: 0.6
-  cost_per_mile_fuel: 12.3  # from parametersByYear.csv, depends on simulation year
-  cost_per_mile_maint: 7  # from parametersByYear.csv, depends on simulation year
-  cost_share_s2: 2
-  cost_share_s3: 3
-  work_dist_coef: -8.6
-  other_dist_coef: -4.9
-  vot_threshold_low: 8.81
-  vot_threshold_med: 18.00
-  vot_bin_idx_to_skim_label:
-    1: L
-    2: M
-    3: H
-  max_walk_time: 60
-  max_bike_time: 60
-  taxi_base_fare: 2.20
-  taxi_cost_per_mile: 2.30
-  taxi_cost_per_minute: 0.10
-  tnc_single_base_fare: 2.20
-  tnc_single_cost_per_mile: 1.33
-  tnc_single_cost_per_minute: 0.24
-  tnc_single_cost_minimum: 7.20
-  tnc_shared_base_fare: 2.20
-  tnc_shared_cost_per_mile: 0.44
-  tnc_shared_cost_per_minute: 0.08
-  tnc_shared_cost_minimum: 3.00
-  tnc_shared_ivt_factor: 1.25
   tnc_single_wait_time_mean_by_density:
     1: 10.3
     2: 8.5

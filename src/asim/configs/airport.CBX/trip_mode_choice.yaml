@@ -250,8 +250,6 @@ CONSTANTS:
   ivt_hvy_multiplier: 0.80
   cost_share_s2: 2
   cost_share_s3: 3
-  vot_threshold_low: 8.81
-  vot_threshold_med: 18.00
   max_walk_time: 60
   eaperiod: 11
   amperiod: 17
@@ -263,11 +261,6 @@ CONSTANTS:
   c_fwt: 1.5
   c_xwt: 2
   c_waux: 2.5
-  ivt_lrt_multiplier: 0.65
-  ivt_brt_multiplier: 0.95
-  ivt_cmr_multiplier: 0.65
-  ivt_ltd_multiplier: 1.0
-  ivt_cost_multiplier: 0.6
   
 
 # so far, we can use the same spec as for non-joint tours

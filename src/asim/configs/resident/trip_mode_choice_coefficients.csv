@@ -1433,4 +1433,4 @@ coef_calib_tourescooterjointtour0_ESCOOTER_disc,0.0,F
 coef_calib_tourescooterjointtour0_ESCOOTER_maint,0.0,F
 coef_calib_tourescooterjointtour1_ESCOOTER_disc,-28.0,F
 coef_calib_tourescooterjointtour1_ESCOOTER_maint,-28.0,F
-coef_calib_flexfleet,0.0,F
+coef_calib_flexfleet,8.5,F

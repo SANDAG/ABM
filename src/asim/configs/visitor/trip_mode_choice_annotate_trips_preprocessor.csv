@@ -121,16 +121,16 @@ nev direct time,nev_direct_time,"np.maximum(s3_dist_skims/nevSpeed*60, s3_time_s
 nev total time,nev_time,"np.maximum(nev_direct_time + nevDiversionConstant, nevDiversionFactor*nev_direct_time)"
 # Microtransit and NEV access to transit,,
 outbound microtransit access available,microtransit_access_available_out,df.outbound & (microtransit_orig>0) & (origin_micro_prm_dist<microtransitMaxDist) & microtransit_operating
-outbound microtransit direct access time,microtransit_direct_access_time_out,"np.maximum(origin_micro_prm_dist/microtransitSpeed*60, odt_skims['TNCOUT_PRM_ACC'])"
+outbound microtransit direct access time,microtransit_direct_access_time_out,"np.maximum(origin_micro_prm_dist/microtransitSpeed*60, odt_skims['KNROUT_PRM_ACC'])"
 outbound microtransit access time,microtransit_access_time_out,"np.maximum(microtransit_direct_access_time_out + microtransitDiversionConstant, microtransitDiversionFactor*microtransit_direct_access_time_out)"
 inbound microtransit egress available,microtransit_egress_available_in,~df.outbound & (microtransit_dest>0) & (dest_micro_prm_dist<microtransitMaxDist) & microtransit_operating
-inbound microtransit direct egress time,microtransit_direct_egress_time_in,"np.maximum(dest_micro_prm_dist/microtransitSpeed*60, odt_skims['TNCIN_PRM_EGR'])"
+inbound microtransit direct egress time,microtransit_direct_egress_time_in,"np.maximum(dest_micro_prm_dist/microtransitSpeed*60, odt_skims['KNRIN_PRM_EGR'])"
 inbound microtransit egress time,microtransit_egress_time_in,"np.maximum(microtransit_direct_egress_time_in + microtransitDiversionConstant, microtransitDiversionFactor*microtransit_direct_egress_time_in)"
 outbound nev access available,nev_access_available_out,df.outbound & (nev_orig>0) & (origin_micro_prm_dist<nevMaxDist) & nev_operating
-outbound nev direct access time,nev_direct_access_time_out,"np.maximum(origin_micro_prm_dist/nevSpeed*60, odt_skims['TNCOUT_PRM_ACC'])"
+outbound nev direct access time,nev_direct_access_time_out,"np.maximum(origin_micro_prm_dist/nevSpeed*60, odt_skims['KNROUT_PRM_ACC'])"
 outbound nev access time,nev_access_time_out,"np.maximum(nev_direct_access_time_out + nevDiversionConstant, nevDiversionFactor*nev_direct_access_time_out)"
 inbound nev egress available,nev_egress_available_in,~df.outbound & (nev_dest>0) & (dest_micro_prm_dist<nevMaxDist) & nev_operating
-inbound nev direct egress time,nev_direct_egress_time_in,"np.maximum(dest_micro_prm_dist/nevSpeed*60, odt_skims['TNCIN_PRM_EGR'])"
+inbound nev direct egress time,nev_direct_egress_time_in,"np.maximum(dest_micro_prm_dist/nevSpeed*60, odt_skims['KNRIN_PRM_EGR'])"
 inbound nev egress time,nev_egress_time_in,"np.maximum(nev_direct_egress_time_in + nevDiversionConstant, nevDiversionFactor*nev_direct_egress_time_in)"
 # Microtransit and NEV egress from transit,,
 outbound microtransit egress from local available,microtransit_local_egress_available_out,df.outbound & (microtransit_dest>0) & (dest_micro_local_dist>maxWalkIfMTAccessAvailable) & (dest_micro_local_dist<microtransitMaxDist) & microtransit_operating

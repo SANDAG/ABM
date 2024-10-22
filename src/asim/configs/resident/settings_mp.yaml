@@ -77,6 +77,7 @@ models:
   # - write_to_datalake
   - update_tables
   - write_tables
+  # - check_disk_usage # Uncomment to get max disk usage at end of iteration 3 resident model
 
 
 multiprocess_steps:

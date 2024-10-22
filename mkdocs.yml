@@ -8,10 +8,11 @@ theme:
   name: material
   features:
     - navigation.tabs
-    - content.code.annotate
-    - content.tabs.link
     - navigation.indexes
     - navigation.top
+    - navigation.expand
+    - content.code.annotate
+    - content.tabs.link
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
@@ -48,10 +49,37 @@ plugins:
 
 nav:
   - Home: index.md
-  - Model Design: design.md
+  - Model Design: 
+    - Overall Design: design/design.md
+    - Initialization: design/init/initialization.md
+    - Demand: 
+        - design/demand/index.md
+        - design/demand/resident.md
+        - design/demand/crossborder.md
+        - design/demand/airport.md
+        - design/demand/visitor.md
+        - design/demand/external.md
+    - Supply: 
+        - design/supply/index.md
+        - design/supply/bike-logsums.md
+        - design/supply/walk-skims.md
+        - design/supply/network-import-tned.md
+        - design/supply/highway-skims-assign.md
+        - design/supply/transit-skims-assign.md
+    - Report: design/report/report.md
   - Installing and Running: running.md
-  - Model Inputs and Outputs: inputsandoutputs.md
-  - Applying ABM3: applying.md
+  - Model Inputs and Outputs: 
+    - Inputs: inputs.md
+    - Outputs: outputs.md
+  - Applying ABM3: 
+    - Model Application: application/applying.md
+    - Population Synthesis: application/population-synthesis.md
+    - Land Use Data Preparation: application/landuse-prep.md
+    - Scenario Manager: application/scenario-manager.md
+    - EV Rebates: application/ev-rebates.md
+    - Flexible Fleets: application/flexible-fleets.md
+    - Micromobility: application/micromobility.md
+    - Network Coding: application/network-coding.md
   - Commercial Vehicle Model: cvm.md
   - About:
     - Release Notes: release-notes.md
@@ -81,6 +109,7 @@ markdown_extensions:
   - toc:
       # insert a blank space before the character
       permalink: " ¶"
+      toc_depth: 3      
   - pymdownx.critic
   - pymdownx.caret
   - pymdownx.keys
@@ -91,4 +120,10 @@ markdown_extensions:
         - name: mermaid
           class: mermaid
           format: !!python/name:mermaid2.fence_mermaid_custom
+  - pymdownx.arithmatex:
+      generic: true
+  
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js  
   

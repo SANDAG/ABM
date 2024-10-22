@@ -121,8 +121,8 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
         self._matrix_cache = {}  # used to hold data for reporting and post-processing of skims
         self.acc_egr_walk_percep = "2"
         self.acc_egr_drive_percep = "2"
-        self.acc_spd_fac = {"WALK": "3.0", "PNROUT": "25.0", "PNRIN": "3.0", "KNROUT": "25.0", "KNRIN": "3.0", "TNCOUT": "25.0", "TNCIN": "3.0"}
-        self.egr_spd_fac = {"WALK": "3.0", "PNROUT": "3.0", "PNRIN": "25.0", "KNROUT": "3.0", "KNRIN": "25.0", "TNCOUT": "3.0", "TNCIN": "25.0"}
+        self.acc_spd_fac = {"WALK": "3.0", "PNROUT": "25.0", "PNRIN": "3.0", "KNROUT": "25.0", "KNRIN": "3.0"}
+        self.egr_spd_fac = {"WALK": "3.0", "PNROUT": "3.0", "PNRIN": "25.0", "KNROUT": "3.0", "KNRIN": "25.0"}
         
 
     def from_snapshot(self, snapshot):
@@ -213,9 +213,9 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
 
             if not assignment_only:
 
-                transit_modes = ['WALK_LOC', 'PNRIN_LOC', 'KNRIN_LOC', 'PNROUT_LOC', 'KNROUT_LOC', 'TNCOUT_LOC', 'TNCIN_LOC',
-                                  'WALK_PRM', 'PNRIN_PRM', 'KNRIN_PRM', 'PNROUT_PRM', 'KNROUT_PRM', 'TNCOUT_PRM', 'TNCIN_PRM',
-                                  'WALK_MIX', 'PNRIN_MIX', 'KNRIN_MIX', 'PNROUT_MIX', 'KNROUT_MIX', 'TNCOUT_MIX', 'TNCIN_MIX']
+                transit_modes = ['WALK_LOC', 'PNRIN_LOC', 'KNRIN_LOC', 'PNROUT_LOC', 'KNROUT_LOC',
+                                  'WALK_PRM', 'PNRIN_PRM', 'KNRIN_PRM', 'PNROUT_PRM', 'KNROUT_PRM',
+                                  'WALK_MIX', 'PNRIN_MIX', 'KNRIN_MIX', 'PNROUT_MIX', 'KNROUT_MIX']
 
                 for mode_name in transit_modes:
                     self.run_skims(period, mode_name, params, regional_pass, num_processors, network)
@@ -911,7 +911,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
         
         with _m.logbook_trace("Reset Mix skims to 0 if not both local and premium"):
 
-            for amode in ['WALK', 'PNRIN', 'PNROUT', 'KNRIN', 'KNROUT', 'TNCIN', 'TNCOUT']:
+            for amode in ['WALK', 'PNRIN', 'PNROUT', 'KNRIN', 'KNROUT']:
 
                 localivt_skim = self.get_matrix_data(amode + "_MIX_BUSIVTT" + "__" + period)
                 totalivt_skim = self.get_matrix_data(amode + "_MIX_TOTALIVTT" + "__" + period)
@@ -935,7 +935,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                   'MIX_EGR', 'MIX_TOTALIVTT', 'MIX_BUSIVTT', 'MIX_LRTIVTT', 'MIX_CMRIVTT', 'MIX_EXPIVTT', 'MIX_LTDEXPIVTT', 'MIX_BRTIVTT']
 
         with _m.logbook_trace("Set high values to 0"):
-            for amode in ['WALK', 'PNRIN', 'PNROUT', 'KNRIN', 'KNROUT', 'TNCIN', 'TNCOUT']:
+            for amode in ['WALK', 'PNRIN', 'PNROUT', 'KNRIN', 'KNROUT']:
                 for skim in skims:
                     name = amode + "_" + skim + "__" + period
                     # Set high values to 0

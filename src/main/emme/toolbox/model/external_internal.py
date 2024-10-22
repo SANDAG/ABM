@@ -43,7 +43,7 @@
     input_dir = os.path.join(main_directory, "input")
     base_scenario = modeller.scenario
     external_internal = modeller.tool("sandag.model.external_internal")
-    external_internal(input_dir, input_truck_dir, base_scenario)
+    external_internal(input_dir, base_scenario)
 """
 
 TOOLBOX_ORDER = 61

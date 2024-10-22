@@ -95,6 +95,6 @@ coef_manufacturing_4day,0.0,F
 coef_mgmt_srv_4day,0.970302573177628,F
 coef_military_4day,0.0,F
 coef_retail_4day,-2.2338993784519388,F
-asc_1day,-2.5488707215613267,F
-asc_23day,-1.5339620734289143,F
-asc_4day,-1.947902150190833,F
+asc_1day,-2.6588707215613267,F
+asc_23day,-1.6439620734289143,F
+asc_4day,-2.057902150190833,F

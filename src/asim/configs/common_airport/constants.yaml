@@ -8,3 +8,10 @@ ridehailCostPerMile: 0.96
 ridehailCostPerMinute: 0.33
 ridehailCostMinimum: 9.19
 driveSpeed: 25.00
+ivt_lrt_multiplier: 0.85
+ivt_brt_multiplier: 0.95
+ivt_cmr_multiplier: 0.85
+ivt_ltd_multiplier: 1.0
+ivt_cost_multiplier: 0.6
+vot_threshold_low: 8.81
+vot_threshold_med: 18.00

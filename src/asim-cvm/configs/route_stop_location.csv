@@ -5,6 +5,9 @@ gen tt by elapse time,@_GEN_TT*df['route_elapsed_time']/1000,coef_gen_tt_elapsed
 auto operating cost lcv,@leg1_skims['TRK_L_DIST']*0.192*(df.vehicle_type=='LCV'),coef_op_cost_lcv_warehouse,coef_op_cost_lcv_intermodal,coef_op_cost_lcv_residential,coef_op_cost_lcv_commercial
 auto operating cost sut,@leg1_skims['TRK_M_DIST']*0.733*(df.vehicle_type=='SUT'),coef_op_cost_sut_warehouse,coef_op_cost_sut_intermodal,coef_op_cost_sut_residential,coef_op_cost_sut_commercial
 auto operating cost mut,@leg1_skims['TRK_H_DIST']*1.170*(df.vehicle_type=='MUT'),coef_op_cost_mut_warehouse,coef_op_cost_mut_intermodal,coef_op_cost_mut_residential,coef_op_cost_mut_commercial
+distance coef lcv,@leg1_skims['TRK_L_DIST']*(df.vehicle_type=='LCV'),coef_dist_lcv_warehouse,coef_dist_lcv_intermodal,coef_dist_lcv_residential,coef_dist_lcv_commercial
+distance coef sut,@leg1_skims['TRK_M_DIST']*(df.vehicle_type=='SUT'),coef_dist_sut_warehouse,coef_dist_sut_intermodal,coef_dist_sut_residential,coef_dist_sut_commercial
+distance coef mut,@leg1_skims['TRK_H_DIST']*(df.vehicle_type=='MUT'),coef_dist_mut_warehouse,coef_dist_mut_intermodal,coef_dist_mut_residential,coef_dist_mut_commercial
 gen tt stop is service,@_GEN_TT*(df['next_stop_purpose']=='service'),coef_gen_tt_stop_service_warehouse,coef_gen_tt_stop_service_intermodal,coef_gen_tt_stop_service_residential,coef_gen_tt_stop_service_commercial
 gen tt stop is maintenance,@_GEN_TT*(df['next_stop_purpose']=='maintenance'),coef_gen_tt_stop_maintenance_warehouse,coef_gen_tt_stop_maintenance_intermodal,coef_gen_tt_stop_maintenance_residential,coef_gen_tt_stop_maintenance_commercial
 gen tt stop is home,@_GEN_TT*(df['next_stop_purpose']=='home'),coef_gen_tt_stop_home_warehouse,coef_gen_tt_stop_home_intermodal,coef_gen_tt_stop_home_residential,coef_gen_tt_stop_home_commercial

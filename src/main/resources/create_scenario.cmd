@@ -7,24 +7,22 @@ if "%2"=="" goto usage
 if "%3"=="" goto usage
 if "%4"=="" goto usage
 if "%5"=="" goto usage
+if "%6"=="" goto usage
 
 set SCENARIO_FOLDER=%1
 set YEAR=%2
 set NETWORKDIR=%3
 set EMME_VERSION=%4
 set LANDUSE_INPUT_PATH=%5
+set SUFFIX=%6
 
 @echo creating scenario folders
-set FOLDERS=input application bin conf input_truck logFiles output python report sql uec analysis visualizer visualizer\outputs\summaries input_checker src src\asim src\asim-cvm
+set FOLDERS=input application bin conf logFiles output python report sql uec analysis input_checker src src\asim src\asim-cvm
 for %%i in (%FOLDERS%) do (
 md %SCENARIO_FOLDER%\%%i)
 
 rem grant full permissions to scenario folder
 cacls %SCENARIO_FOLDER% /t /e /g Everyone:f
-
-rem copy master server-config.csv to a scenario folder
-rem to make local copy of server configuration file effective, user needs to rename it to server-config-local.csv
-xcopy /Y T:\ABM\release\ABM\config\server-config.csv %SCENARIO_FOLDER%\conf
 
 rem setup model folders
 xcopy /Y .\common\application\"*.*" %SCENARIO_FOLDER%\application
@@ -36,8 +34,6 @@ xcopy /Y .\common\bin\"*.*" %SCENARIO_FOLDER%\bin
 rem xcopy /Y .\conf\%YEAR%\"*.*" %SCENARIO_FOLDER%\conf
 xcopy /Y .\common\conf\"*.*" %SCENARIO_FOLDER%\conf
 xcopy /Y .\common\output\"*.*" %SCENARIO_FOLDER%\output
-xcopy /s/Y .\common\visualizer %SCENARIO_FOLDER%\visualizer
-xcopy /s/Y .\dependencies.* %SCENARIO_FOLDER%\visualizer
 xcopy /Y/s/E .\common\input\input_checker\"*.*" %SCENARIO_FOLDER%\input_checker
 xcopy /Y/s/E .\common\src\asim\"*.*" %SCENARIO_FOLDER%\src\asim
 xcopy /Y/s/E .\common\src\asim-cvm\"*.*" %SCENARIO_FOLDER%\src\asim-cvm
@@ -45,34 +41,24 @@ xcopy /Y/s/E .\common\src\asim-cvm\"*.*" %SCENARIO_FOLDER%\src\asim-cvm
 @echo assemble inputs
 del %SCENARIO_FOLDER%\input /q
 rem copy pop, hh, landuse, and other input files
-xcopy /s/Y .\input\%YEAR%\"*.*" %SCENARIO_FOLDER%\input
+xcopy /s/Y .\input\%YEAR%%SUFFIX%\"*.*" %SCENARIO_FOLDER%\input
 rem copy common geography files to input folder
 xcopy /Y .\common\input\geography\"*.*" %SCENARIO_FOLDER%\input
 xcopy /Y .\common\input\geography\mgra\"*.*" %SCENARIO_FOLDER%\input
 xcopy /Y .\common\input\geography\pmsa\"*.*" %SCENARIO_FOLDER%\input
 xcopy /Y .\common\input\geography\taz\"*.*" %SCENARIO_FOLDER%\input
-rem copy ctm paramter tables to input folder
-xcopy /Y .\common\input\ctm\"*.*" %SCENARIO_FOLDER%\input
 rem copy common model files to input folder
 xcopy /Y .\common\input\model\"*.*" %SCENARIO_FOLDER%\input
-rem copy common truck files to input_truck folder
-xcopy /Y .\common\input\truck\"*.*" %SCENARIO_FOLDER%\input_truck
-rem copy airport input files
-xcopy /Y .\common\input\airports\"*.*" %SCENARIO_FOLDER%\input
 rem copy ei input files
 xcopy /Y .\common\input\ei\"*.*" %SCENARIO_FOLDER%\input
 rem copy ie input files
 xcopy /Y .\common\input\ie\"*.*" %SCENARIO_FOLDER%\input
 rem copy ee input files
 xcopy /Y .\common\input\ee\"*.*" %SCENARIO_FOLDER%\input
-rem copy emfact input files
-xcopy /Y .\common\input\emfact\"*.*" %SCENARIO_FOLDER%\input
 rem copy special event input files
 xcopy /Y .\common\input\specialevent\"*.*" %SCENARIO_FOLDER%\input
 rem copy xborder input files
 xcopy /Y .\common\input\xborder\"*.*" %SCENARIO_FOLDER%\input
-rem copy visitor input files
-xcopy /Y .\common\input\visitor\"*.*" %SCENARIO_FOLDER%\input
 rem copy input checker config files
 xcopy /Y .\common\input\input_checker\"*.*" %SCENARIO_FOLDER%
 rem copy network inputs
@@ -110,14 +96,14 @@ echo %PROP_FILE%
 @REM )
 @REM del %PROP_FILE%
 @REM move %TEMP_FILE% %PROP_FILE%
-python .\common\python\update_properties.py %PROP_FILE% %YEAR%
+python .\common\python\update_properties.py %PROP_FILE% %YEAR% %SUFFIX%
 
 @echo init emme folder
 call init_emme.cmd %SCENARIO_FOLDER% %EMME_VERSION%
 
 :usage
 
-@echo Usage: %0 ^<scenario_folder^> ^<year^> ^<network^> ^<emme_version^>
+@echo Usage: %0 ^<scenario_folder^> ^<year^> ^<network^> ^<emme_version^> ^<landuse_input_path^> ^<year_suffix^>
 @echo If 3rd parameter is empty, default network inputs in standard release are used
 
 

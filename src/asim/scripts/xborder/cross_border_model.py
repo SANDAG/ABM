@@ -705,6 +705,7 @@ if __name__ == '__main__':
         action='store_true', help='Run activitysim.')
     parser.add_argument(
          '-c', '--configs',
+         action = 'append',
          help = 'Config Directory')
     parser.add_argument(
          '-d', '--data',
@@ -717,7 +718,8 @@ if __name__ == '__main__':
     run_preprocessor = args.preprocess
     run_asim = args.asim
     update_wait_times = args.wait_times
-    config_dir = args.configs
+    config_dir = args.configs[0]
+    common_config_dir = args.configs[1]
     data_dir = args.data
     output_dir = args.output
 
@@ -725,7 +727,8 @@ if __name__ == '__main__':
     with open(os.path.join(config_dir,'preprocessing.yaml')) as f:
         settings = yaml.load(f, Loader=yaml.FullLoader)
 
-    with open(os.path.join(config_dir,'constants.yaml')) as f:
+    #with open(os.path.join(config_dir,'constants.yaml')) as f:
+    with open(os.path.join(common_config_dir, 'constants.yaml')) as f:
         constants_settings = yaml.load(f, Loader=yaml.FullLoader)
     settings['scenario_year'] = constants_settings['scenarioYear']
 
@@ -822,7 +825,7 @@ if __name__ == '__main__':
             print('UPDATING POE WAIT TIMES: ITER {0}'.format(i))
             process = subprocess.Popen([
                     'python', '-u', 'src/asim/simulation.py', '-s',
-                    'wait_time_mode.yaml', '-c', config_dir ,'-o', output_dir, '-d', data_dir, '-d', 'output/skims'],
+                    'wait_time_mode.yaml', '-c', config_dir, '-c', common_config_dir,'-o', output_dir, '-d', data_dir, '-d', 'output/skims'],
                 stdout=sys.stdout, stderr=subprocess.PIPE)
             _, stderr = process.communicate()
             if process.returncode != 0:
@@ -955,7 +958,7 @@ if __name__ == '__main__':
 
         print('RUNNING ACTIVITYSIM!')
         process = subprocess.Popen(
-            ['python', '-u', 'src/asim/simulation.py', '-c', config_dir ,'-o', output_dir, '-d', data_dir, '-d', 'output/skims'],
+            ['python', '-u', 'src/asim/simulation.py', '-c', config_dir , '-c', common_config_dir,'-o', output_dir, '-d', data_dir, '-d', 'output/skims'],
             stdout=sys.stdout, stderr=subprocess.PIPE)
         _, stderr = process.communicate()
         if process.returncode != 0:
