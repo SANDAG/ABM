@@ -1,7 +1,7 @@
 rem COPY REQUIRED FILES TO SPECIFIED ABM SCENARIO
 @echo off
 
-set SOURCE_DIRECTORY=\\sandag.org\transdata\ABM\release_test\tools\PowerBI_validation_tool
+set SOURCE_DIRECTORY=\\sandag.org\transdata\ABM\release\tools\PowerBI_validation_tool
 set PROJECT_DRIVE=%1
 set PROJECT_DIRECTORY=%2
 set VALIDATION_DIRECTORY=%PROJECT_DRIVE%%PROJECT_DIRECTORY%\analysis\validation
