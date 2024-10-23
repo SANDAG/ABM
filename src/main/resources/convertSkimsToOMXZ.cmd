@@ -5,3 +5,6 @@ set PROJECT_DIRECTORY=%2
 cd /d %PROJECT_DIRECTORY%/output/skims
 
 wring omx
+
+del traffic_skims*.omx
+del transit_skims*.omx
