@@ -105,6 +105,7 @@ COLS_TO_INCLUDE_IN_ALTS_TABLE:
   - logged_makes
   - logged_chargers_per_capita
   - SAN
+  - NewPrice
 
 # annotate_persons:
 #   SPEC: annotate_persons_vehicle_type
