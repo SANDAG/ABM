@@ -298,6 +298,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         skipHighwayAssignment = props["RunModel.skipHighwayAssignment"]
         skipTransitSkimming = props["RunModel.skipTransitSkimming"]
         skipTransitConnector = props["RunModel.skipTransitConnector"]
+        skipSkimConversion = props["RunModel.skipSkimConversion"]
         skipTransponderExport = props["RunModel.skipTransponderExport"]
         skipScenManagement = props["RunModel.skipScenManagement"]
         skipABMPreprocessing = props["RunModel.skipABMPreprocessing"]
@@ -595,6 +596,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         #     transit_scenario = transit_emmebank.scenario(number)
                         #     omx_file = _join(output_dir, "skims", "transit_skims_" + period + ".omx")
                         #     export_transit_skims(omx_file, [period], transit_scenario, big_to_zero=False)
+
+                if not skipSkimConversion[iteration]:
+                    self.run_proc("convertSkimsToOMXZ.cmd",
+                                  [drive, path_forward_slash])
 
                 if not skipTransponderExport[iteration]:
                     am_scenario = main_emmebank.scenario(base_scenario.number + 2)
