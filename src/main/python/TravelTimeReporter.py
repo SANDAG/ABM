@@ -392,7 +392,7 @@ class TravelTimeReporter:
                 np.maximum(
                     self.constants[flavor + "DiversionConstant"] + direct_time,
                     self.constants[flavor + "DiversionFactor"] * direct_time
-                ) + self.constants[flavor + "WaitTime"],
+                ),
                 self.settings["infinity"]
             ),
             self.land_use.index,
