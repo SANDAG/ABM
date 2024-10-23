@@ -960,8 +960,8 @@ Export network results to csv files for SQL data loader."""
                 fout_stop.write("\n")
 
     def collapse_network_adjustments(self, network, segment_results, link_results):
-        segment_alights = [v for k, v in list(segment_results.items()) if "alightings" in k]
-        segment_boards = [v for k, v in list(segment_results.items()) if "boardings" in k] + ["transit_boardings"]
+        segment_alights = [v for k, v in segment_results.items() if "alightings" in k]
+        segment_boards = [v for k, v in segment_results.items() if "boardings" in k] + ["transit_boardings"]
         segment_result_attrs = segment_alights + segment_boards
         link_result_attrs = list(link_results.values()) + ["aux_transit_volume"]
         link_attrs = network.attributes("LINK")

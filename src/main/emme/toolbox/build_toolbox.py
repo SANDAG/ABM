@@ -252,7 +252,7 @@ class MTBXDatabase():
                 'description': '',
                 'namespace': tree.namespace,
                 MTBXDatabase.TOOLBOX_MAGIC_NUMBER: 'True'}
-        for key, val in list(atts.items()):
+        for key, val in atts.items():
             value_string = "{id}, '{name}', '{value}'".format(
                 id=tree.element_id, name=key, value=val)
             sql = """INSERT INTO attributes (%s)
@@ -319,7 +319,7 @@ class MTBXDatabase():
                 'python_suffix': node.extension,
                 'name': node.title,
                 MTBXDatabase.TOOL_MAGIC_NUMBER: 'True'}
-        for key, val in list(atts.items()):
+        for key, val in atts.items():
             value_string = "{id}, '{name}', '{value!s}'".format(
                 id=node.element_id, name=key, value=val)
             sql = """INSERT INTO attributes (%s)
