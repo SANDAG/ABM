@@ -2,7 +2,6 @@
 
 SPEC: vehicle_type_choice_op4.csv
 COEFFICIENTS: vehicle_type_choice_op4_coefficients.csv
-ALTS: vehicle_type_choice_op4_alternatives.csv
 
 # SPEC: vehicle_type_choice_op2.csv
 # COEFFICIENTS: vehicle_type_choice_op2_coefficients.csv
@@ -95,7 +94,7 @@ alts_preprocessor:
   SPEC: vehicle_type_choice_annotate_alts_preprocessor
   DF: alts_wide
 
-COLS_TO_INCLUDE_IN_ALTERNATIVES_TABLE:
+COLS_TO_INCLUDE_IN_ALTS_TABLE:
   - age
   - fuel_type_num_coded
   - body_type_num_coded
