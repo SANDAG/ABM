@@ -393,7 +393,7 @@ class TravelTimeReporter:
                     self.constants[flavor + "DiversionConstant"] + direct_time,
                     self.constants[flavor + "DiversionFactor"] * direct_time
                 )
-                self.settings["infinity"]
+                self.settings["infinity"],
             ),
             self.land_use.index,
             self.land_use.index
