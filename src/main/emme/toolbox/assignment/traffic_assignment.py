@@ -468,8 +468,7 @@ Assignment matrices and resulting network flows are always in PCE.
                     msa_vals = numpy.frombuffer(msa_array, dtype='float32')
                     flow_vals = numpy.frombuffer(flow_array, dtype='float32')
                     result = msa_vals + (1.0 / msa_iteration) * (flow_vals - msa_vals)
-                    result_array = array.array('f')
-                    result_array.fromstring(result.tostring())
+                    result_array = array.array('f', result.tobytes())
                     values.append(result_array)
                 scenario.set_attribute_values("LINK", link_attrs, values)
 
@@ -479,8 +478,7 @@ Assignment matrices and resulting network flows are always in PCE.
                     msa_vals = numpy.frombuffer(msa_array, dtype='float32')
                     flow_vals = numpy.frombuffer(flow_array, dtype='float32')
                     result = msa_vals + (1.0 / msa_iteration) * (flow_vals - msa_vals)
-                    result_array = array.array('f')
-                    result_array.fromstring(result.tostring())
+                    result_array = array.array('f', result.tobytes())
                     values.append(result_array)
                 scenario.set_attribute_values("TURN", turn_attrs, values)
 
