@@ -209,6 +209,7 @@ Export network results to csv files for SQL data loader."""
             ("YR", "@year_open_traffic"),
             ("PROJ", "@project_code"),
             ("FC", "type"),
+            ("FFC", "@fed_type"),
             ("HOV", "@hov"),
             ("EATRUCK", "@truck_ea"),
             ("AMTRUCK", "@truck_am"),
