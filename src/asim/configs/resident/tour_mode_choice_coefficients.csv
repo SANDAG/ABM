@@ -757,8 +757,13 @@ coef_calib_autosufficienthhin_EBIKE_school,-2.9282323636347396,F
 coef_calib_autosufficienthhin_ESCOOTER_atwork,-10.912007173155711,F
 coef_calib_autosufficienthhin_EBIKE_atwork,-5.877228265020214,F
 coef_calib_onboard,-0.293475781,F
+<<<<<<< HEAD
 coef_calib_mt_zeroautohh,4.825,F
 coef_calib_nev_zeroautohh,4.825,F
 coef_calib_ebike_owner_BIKE,-1.407,F
 coef_calib_ebike_owner_EBIKE,0.942,F
 coef_calib_ebike_shared,-4.139014765889209,F
+=======
+coef_calib_mt_zeroautohh,0.0,F
+coef_calib_nev_zeroautohh,0.0,F
+>>>>>>> e0805677 (Added calibration coefficients for zero-auto households traveling within flexible fleet service areas)
