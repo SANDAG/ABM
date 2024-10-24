@@ -33,7 +33,7 @@ Several new attributes were added to allow the user to configure how flexible fl
 | DiversionFactor            | Time multiplier accounting for diversion to service other passengers                                                                         | 1.25 for both   |
 | StartPeriod                | Time period to start service (not yet implemented)                                                                                           | 9 for both      |
 | EndPeriod                  | Time period to end service (not yet implemented)                                                                                             | MT: 32, NEV: 38 |
-| maxWalkIfMTAccessAvailable | Maximum disatance someone is willing to walk at the destination end if flexible fleet services are available (same for microtransit and NEV) | 1.0             |
+| maxWalkIfMTAccessAvailable | Maximum disatance someone is willing to walk at the destination end if flexible fleet services are available (same for microtransit and NEV) | 0.5             |
 
 ## Travel Time Calculation
 ### Direct Time

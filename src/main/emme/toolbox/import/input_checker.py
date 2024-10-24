@@ -42,11 +42,11 @@ _dir = os.path.dirname
 
 class input_checker(_m.Tool()):
 
-	path = _m.Attribute(unicode)
+	path = _m.Attribute(str)
 
 	tool_run_msg = ""
 
-	@_m.method(return_type=_m.UnicodeType)
+	@_m.method(return_type=str)
 	def tool_run_msg_status(self):
 		return self.tool_run_msg
 

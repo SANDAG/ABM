@@ -57,7 +57,7 @@ master_run(main_directory, scenario_id, scenario_title, emmebank_title, num_proc
 """
 
 TOOLBOX_ORDER = 1
-VIRUTALENV_PATH = "C:\\python_virtualenv\\abm14_2_0"
+VIRUTALENV_PATH = "C:\\python_virtualenv\\abm15_1_0"
 
 import inro.modeller as _m
 import inro.emme.database.emmebank as _eb
@@ -68,6 +68,7 @@ import glob as _glob
 import subprocess as _subprocess
 import ctypes as _ctypes
 import json as _json
+import importlib
 import shutil as _shutil
 import tempfile as _tempfile
 from copy import deepcopy as _copy
@@ -100,14 +101,14 @@ props_utils = _m.Modeller().module("sandag.utilities.properties")
 
 
 class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
-    main_directory = _m.Attribute(unicode)
+    main_directory = _m.Attribute(str)
     scenario_id = _m.Attribute(int)
-    scenario_title = _m.Attribute(unicode)
-    emmebank_title = _m.Attribute(unicode)
+    scenario_title = _m.Attribute(str)
+    emmebank_title = _m.Attribute(str)
     num_processors = _m.Attribute(str)
-    select_link = _m.Attribute(unicode)
+    select_link = _m.Attribute(str)
 
-    properties_path = _m.Attribute(unicode)
+    properties_path = _m.Attribute(str)
 
     tool_run_msg = ""
 
@@ -187,7 +188,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
             raise
 
-    @_m.method(return_type=_m.UnicodeType)
+    @_m.method(return_type=str)
     def tool_run_msg_status(self):
         return self.tool_run_msg
 
@@ -240,6 +241,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         export_network_data = modeller.tool("sandag.export.export_data_loader_network")
         export_matrix_data = modeller.tool("sandag.export.export_data_loader_matrices")
         export_for_commercial_vehicle = modeller.tool("sandag.export.export_for_commercial_vehicle")
+        validation = modeller.tool("sandag.validation.validation")
         file_manager = modeller.tool("sandag.utilities.file_manager")
         utils = modeller.module('sandag.utilities.demand')
         load_properties = modeller.tool('sandag.utilities.properties')
@@ -352,6 +354,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         path_forward_slash = path_no_drive.replace("\\", "/")
         input_dir = _join(self._path, "input")
         output_dir = _join(self._path, "output")
+        validation_dir = _join(self._path, "analysis/validation")
         main_emmebank = _eb.Emmebank(_join(self._path, "emme_project", "Database", "emmebank"))
         if emmebank_title:
             main_emmebank.title = emmebank_title
@@ -793,19 +796,63 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 [drive, drive + path_forward_slash],
                 "Exporting MGRA-level travel times", capture_output=True)
 
-        # This validation procedure only works with base (2022) scenarios utilizing TNED networks
-        if scenarioYear == "2022":
-            self.run_proc(
-                "runValidation.bat",
-                [drive, path_no_drive, scenarioYear],
-                "Validation", capture_output=True)
-                
         if not skipDatalake:
             self.write_metadata(main_directory, scenario_title, select_link, username, scenarioYear, sample_rate, prod_env, props)
             self.run_proc(
                 "write_to_datalake.cmd",
                 [drive, drive + path_forward_slash, prod_env],
                 "Writing model output to datalake", capture_output=True)
+
+        #Validation for 2022 scenario
+        if scenarioYear == "2016":
+            validation(self._path, main_emmebank, base_scenario) # to create source_EMME.xlsx
+
+            # #Create Worksheet for ABM Validation using PowerBI Visualization #JY: can be uncommented if deciding to incorporate PowerBI vis in ABM workflow
+            # self.run_proc("VisPowerBI.bat",  # forced to update excel links
+            #                 [drive, path_no_drive, scenarioYear, 0],
+            #                 "VisPowerBI",
+            #                 capture_output=True)
+
+            ### CL: Below step is temporarily used to update validation output files. When Gregor complete Upload procedure, below step should be removed. 05/31/20
+            # self.run_proc("ExcelUpdate.bat",  # forced to update excel links
+                            # [drive, path_no_drive, scenarioYear, 0],
+                            # "ExcelUpdate",
+                            # capture_output=True)
+
+            ### ES: Commented out until this segment is updated to reference new database. 9/10/20 ###
+            # add segments below for auto-reporting, YMA, 1/23/2019
+            # add this loop to find the sceanro_id in the [dimension].[scenario] table
+
+            #database_scenario_id = 0
+            #int_hour = 0
+            #while int_hour <= 96:
+
+            #    database_scenario_id = self.sql_select_scenario(scenarioYear, end_iteration,
+            #                                                    sample_rate[end_iteration - 1], path_no_drive,
+            #                                                    start_db_time)
+            #    if database_scenario_id > 0:
+            #        break
+
+            #    int_hour = int_hour + 1
+            #    _time.sleep(900)  # wait for 15 mins
+
+            # if load failed, then send notification email
+            #if database_scenario_id == 0 and int_hour > 96:
+            #    str_request_check_result = self.sql_check_load_request(scenarioYear, path_no_drive, username,
+            #                                                           start_db_time)
+            #    print(str_request_check_result)
+            #    sys.exit(0)
+                # self.send_notification(str_request_check_result,username) #not working in server
+            #else:
+            #    print(database_scenario_id)
+            #    self.run_proc("DataSummary.bat",  # get summary from database, added for auto-reporting
+            #                  [drive, path_no_drive, scenarioYear, database_scenario_id],
+            #                  "Data Summary")
+
+            #    self.run_proc("ExcelUpdate.bat",  # forced to update excel links
+            #                  [drive, path_no_drive, scenarioYear, database_scenario_id],
+            #                  "Excel Update",
+            #                  capture_output=True)
 
         # # terminate all java processes
         # _subprocess.call("taskkill /F /IM java.exe")
@@ -986,10 +1033,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         # errors when logged
                         _m.logbook_write("Process run %s report" % name, report.render())
                     except Exception as error:
-                        print _time.strftime("%Y-%M-%d %H:%m:%S")
-                        print "Error writing report '%s' to logbook" % name
-                        print error
-                        print _traceback.format_exc(error)
+                        print (_time.strftime("%Y-%M-%d %H:%m:%S"))
+                        print ("Error writing report '%s' to logbook" % name)
+                        print (error)
+                        print (_traceback.format_exc(error))
                         if self._log_level == "DISABLE_ON_ERROR":
                             _m.logbook_level(_m.LogbookLevel.NONE)
             else:
@@ -999,7 +1046,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
     def check_free_space(self, min_space):
         path = "c:\\"
         temp, total, free = _ctypes.c_ulonglong(), _ctypes.c_ulonglong(), _ctypes.c_ulonglong()
-        if sys.version_info >= (3,) or isinstance(path, unicode):
+        if sys.version_info >= (3,) or isinstance(path, str):
             fun = _ctypes.windll.kernel32.GetDiskFreeSpaceExW
         else:
             fun = _ctypes.windll.kernel32.GetDiskFreeSpaceExA
@@ -1034,7 +1081,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         if notMatch:
             out_file = _join(output_dir, output_file)
-            with open(out_file, 'ab') as csvfile:
+            with open(out_file, 'a') as csvfile:
                 spamwriter = csv.writer(csvfile)
                 # spamwriter.writerow([])
                 for item in notMatch:
@@ -1075,7 +1122,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         desktop = modeller.desktop
         data_explorer = desktop.data_explorer()
         for db in data_explorer.databases():
-            if _norm(db.path) == _norm(unicode(emmebank)):
+            if _norm(db.path) == _norm(str(emmebank)):
                 db.open()
                 return db
         return None
@@ -1125,12 +1172,12 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             "TRK_H": set([heavy_trk_trnpdr, heavy_trk]),
         }
         report = ["<div style='margin-left:5px'>Link mode changes</div>"]
-        for name, class_availabilities in availabilities[period].iteritems():
+        for name, class_availabilities in availabilities[period].items():
             report.append("<div style='margin-left:10px'>%s</div>" % name)
             changes = _defaultdict(lambda: 0)
             for link in network.links():
                 if name in link["#name"]:
-                    for class_name, is_avail in class_availabilities.iteritems():
+                    for class_name, is_avail in class_availabilities.items():
                         modes = class_mode_map[class_name]
                         if is_avail == 1 and not modes.issubset(link.modes):
                             link.modes |= modes
@@ -1139,7 +1186,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                             link.modes -= modes
                             changes["removed %s from" % class_name] += 1
             report.append("<div style='margin-left:20px'><ul>")
-            for x in changes.iteritems():
+            for x in changes.items():
                 report.append("<li>%s %s links</li>" % x)
             report.append("</div></ul>")
         scenario.publish_network(network)
@@ -1150,7 +1197,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             log_report.add_html(item)
         _m.logbook_write(title, log_report.render())
 
-    @_m.method(return_type=unicode)
+    @_m.method(return_type=str)
     def get_link_attributes(self):
         export_utils = _m.Modeller().module("inro.emme.utility.export_utilities")
         return export_utils.get_link_attributes(_m.Modeller().scenario)
@@ -1255,7 +1302,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             ,"environment" : prod_env
             ,"network_path" : props["network"]
             ,"landuse_path" : props["landuse"]
-            ,"release_path" : props["release"]
         }
         _m.logbook_write("Created new scenario_guid: %s" % (datalake_metadata_dict['scenario_guid']))
         got_id, scenario_id = self.get_scenario_id(datalake_metadata_dict['scenario_guid'], scenario_title, prod_env)

@@ -13,12 +13,12 @@ load_properties = _m.Modeller().tool('sandag.utilities.properties')
 class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
 
     create_connector_flag = _m.Attribute(bool)
-    scenario =  _m.Attribute(_m.InstanceType)
-    period = _m.Attribute(unicode)
+    scenario =  _m.Attribute(object)
+    period = _m.Attribute(str)
 
     tool_run_msg = ""
 
-    @_m.method(return_type=unicode)
+    @_m.method(return_type=str)
     def tool_run_msg_status(self):
         return self.tool_run_msg
 
@@ -26,7 +26,7 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
 
         self.create_connector_flag = _m.Attribute(bool)
         self.scenario = _m.Modeller().scenario
-        self.period = _m.Attribute(unicode)
+        self.period = _m.Attribute(str)
       
         #self.scenario = scenario
         self.line_haul_modes_local = ["l"] # local
@@ -191,8 +191,6 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                 selection={
                                     "centroid":"all",
                                     "node": "%s" % self.line_haul_mode_specs[i],
-                                    "link":"none",
-                                    "exclude_split_links":False,
                                     "only_midblock_nodes": False},
                                 max_length=self.max_length_wlk[i],
                                 max_connectors=8,
@@ -208,8 +206,6 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                 selection={
                                     "centroid":"all",
                                     "node": "@park=1,9 and %s" % self.line_haul_mode_specs[i],
-                                    "link":"none",
-                                    "exclude_split_links":False,
                                     "only_midblock_nodes": False},
                                 max_length=self.max_length_pnr[i],
                                 max_connectors=3,
@@ -225,8 +221,6 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                 selection={
                                     "centroid":"all",
                                     "node": "%s" % self.line_haul_mode_specs[i],
-                                    "link":"none",
-                                    "exclude_split_links":False,
                                     "only_midblock_nodes": False},
                                 max_length=self.max_length_knr[i],
                                 max_connectors=3,
@@ -242,8 +236,6 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                 selection={
                                     "centroid":"all",
                                     "node": "%s" % self.line_haul_mode_specs[i],
-                                    "link":"none",
-                                    "exclude_split_links":False,
                                     "only_midblock_nodes": False},
                                 max_length=self.max_length_tnc[i],
                                 max_connectors=3,
@@ -259,8 +251,6 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                 selection={
                                     "centroid":"all",
                                     "node": "%s" % self.line_haul_mode_specs[i],
-                                    "link":"none",
-                                    "exclude_split_links":False,
                                     "only_midblock_nodes": False},
                                 max_length=self.max_length_wlk[i],
                                 max_connectors=2,
@@ -273,8 +263,6 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                 selection={
                                     "centroid":"i=1,4",
                                     "node": "%s" % self.line_haul_mode_specs[i],
-                                    "link":"none",
-                                    "exclude_split_links":False,
                                     "only_midblock_nodes": False},
                                 max_length=5,
                                 max_connectors=2,
@@ -290,8 +278,6 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                 selection={
                                     "centroid":"all",
                                     "node": "@park=1,9 and %s" % self.line_haul_mode_specs[i],
-                                    "link":"none",
-                                    "exclude_split_links":False,
                                     "only_midblock_nodes": False},
                                 max_length=self.max_length_knr[i],
                                 max_connectors=2,
@@ -307,8 +293,6 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                 selection={
                                     "centroid":"all",
                                     "node": "%s" % self.line_haul_mode_specs[i],
-                                    "link":"none",
-                                    "exclude_split_links":False,
                                     "only_midblock_nodes": False},
                                 max_length=self.max_length_knr[i],
                                 max_connectors=2,
@@ -324,8 +308,6 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                 selection={
                                     "centroid":"all",
                                     "node": "@park=1,9 and %s" % self.line_haul_mode_specs[i],
-                                    "link":"none",
-                                    "exclude_split_links":False,
                                     "only_midblock_nodes": False},
                                 max_length=self.max_length_wlk[i],
                                 max_connectors=2,
@@ -337,8 +319,6 @@ class CreateTransitConnector(_m.Tool(), gen_utils.Snapshot):
                                 selection={
                                     "centroid":"i=1,4",
                                     "node": "@park=1,9 and %s" % self.line_haul_mode_specs[i],
-                                    "link":"none",
-                                    "exclude_split_links":False,
                                     "only_midblock_nodes": False},
                                 max_length=5,
                                 max_connectors=2,

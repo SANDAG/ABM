@@ -11,3 +11,5 @@ annotate_tours:
 skip_patch_tour_ids: True
 
 CONSTANTS:
+  vot_threshold_low: 8.81
+  vot_threshold_med: 18.00

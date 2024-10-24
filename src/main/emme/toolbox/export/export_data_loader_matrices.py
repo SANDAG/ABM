@@ -144,7 +144,7 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
         formater = lambda x: ("%.5f" % x).rstrip('0').rstrip(".")
         ee_trip_path = os.path.join(os.path.dirname(self.output_dir), "report", "eetrip.csv")
         with _m.logbook_trace("Export external-external demand"):
-            with open(ee_trip_path, 'w') as f:
+            with open(ee_trip_path, 'w', newline='') as f:
                 f.write("OTAZ,DTAZ,TOD,MODE,TRIPS,TIME,DIST,AOC,TOLLCOST\n")
                 for period in self.periods:
                     matrix_data_time = emmebank.matrix("SOV_NT_M_TIME__" + period).get_data(scenario)
@@ -170,7 +170,7 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
                                      formater(distance), formater(od_aoc), formater(tollcost)]))
                                 f.write("\n")
                         if rounded_demand > 0:
-                            print period + "_" + name + "_EETRIPS", "rounded_demand", rounded_demand
+                            print (period + "_" + name + "_EETRIPS", "rounded_demand", rounded_demand)
 
         # EXTERNAL-INTERNAL TRIP TABLE
         name_mapping = [
@@ -184,7 +184,7 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
         ei_trip_path = os.path.join(os.path.dirname(self.output_dir), "report", "eitrip.csv")
 
         with _m.logbook_trace("Export external-internal demand"):
-            with open(ei_trip_path, 'w') as f:
+            with open(ei_trip_path, 'w', newline='') as f:
                 f.write("OTAZ,DTAZ,TOD,MODE,PURPOSE,TRIPS,TIME,DIST,AOC,TOLLCOST\n")
                 for period in self.periods:
                     matrix_data_time = emmebank.matrix("SOV_TR_M_TIME__" + period).get_data(scenario)
@@ -213,7 +213,7 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
                                          formater(distance), formater(od_aoc), formater(tollcost)]))
                                     f.write("\n")
                             if rounded_demand > 0:
-                                print period + "_" + name + "_EI" + purpose, "rounded_demand", rounded_demand
+                                print (period + "_" + name + "_EI" + purpose, "rounded_demand", rounded_demand)
 
     @_m.logbook_trace("Export total auto and truck demand to OMX")
     def total_demand(self):
@@ -235,11 +235,11 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
                 "%s_TRK_L":     'mf"%s_TRK_L"',
                 "%s_TRK_M":     'mf"%s_TRK_M"',
             }
-            matrices = dict((k % period, v % period) for k, v in matrices.iteritems())
+            matrices = dict((k % period, v % period) for k, v in matrices.items())
             omx_file = os.path.join(self.output_dir, "trip_%s.omx" % period)
             with gen_utils.ExportOMX(omx_file, self.base_scenario) as exporter:
                 exporter.write_matrices(matrices)
 
-    @_m.method(return_type=unicode)
+    @_m.method(return_type=str)
     def tool_run_msg_status(self):
         return self.tool_run_msg
