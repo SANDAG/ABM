@@ -234,7 +234,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             ("create_time_periods", self.create_time_periods)
         ])
         self._log = [{
-            "content": list(attributes.items()),
+            "content": attributes.items(),
             "type": "table", "header": ["name", "value"],
             "title": "Tool input values"
         }]
@@ -283,8 +283,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 ("ASPD",      ("@speed_adjusted",      "HWY_TWO_WAY", "EXTRA", "Adjusted link speed (miles/hr)")),
                 ("YR",        ("@year_open_traffic",   "HWY_TWO_WAY", "EXTRA", "The year the link opened to traffic")),
                 ("PROJ",      ("@project_code",        "HWY_TWO_WAY", "EXTRA", "Project number for use with hwyproj.xls")),
-                ("FC",        ("type",                 "TWO_WAY",     "STANDARD", "Roadway functional class")),
-                ("FFC",       ("@fed_type",            "TWO_WAY",     "EXTRA", "Roadway federal functional class")),
+                ("FC",        ("type",                 "TWO_WAY",     "STANDARD", "")),
                 ("HOV",       ("@hov",                 "TWO_WAY",     "EXTRA", "Link operation type")),
                 ("MINMODE",   ("@minmode",             "TWO_WAY",     "EXTRA", "Transit mode type")),
                 ("EATRUCK",   ("@truck_ea",            "HWY_TWO_WAY", "EXTRA", "Early AM truck restriction code ")),
