@@ -15,13 +15,7 @@ def export_highway_shape(scenario_path: str) -> geopandas.GeoDataFrame:
         scenario_path: String location of the completed ABM scenario folder
 
     Returns:
-        A GeoPandas GeoDataFrame of the loaded highway network """
-        
-    # temporary so that the sensitivity summary on data lake works
-    # the sensitivity summary on data lake uses IFC (from TCOV) rather than FC (from TNED)
-    hwy_tcad = pd.read_csv(os.path.join(scenario_path, "report", "hwyTcad.csv"))
-    hwy_tcad['IFC'] = hwy_tcad['FC']
-    hwy_tcad.to_csv(os.path.join(scenario_path, "report", "hwyTcad.csv"), index=False)    
+        A GeoPandas GeoDataFrame of the loaded highway network """   
     
     # read in input highway network
     hwy_tcad = pd.read_csv(os.path.join(scenario_path, "report", "hwyTcad.csv"),
@@ -29,6 +23,7 @@ def export_highway_shape(scenario_path: str) -> geopandas.GeoDataFrame:
                                     "NM",  # link name
                                     "Length",  # link length in miles
                                     "FC",  # initial functional class
+                                    "FFC", # federal functional class
                                     "HOV",  # link operation type
                                     "EATRUCK",  # truck restriction code - Early AM
                                     "AMTRUCK",  # truck restriction code - AM Peak
@@ -386,6 +381,7 @@ def export_highway_shape(scenario_path: str) -> geopandas.GeoDataFrame:
                          "Length",
                          "FC",
                          "FC_Desc",
+                         "FFC",
                          "HOV",
                          "EATRUCK",
                          "AMTRUCK",
@@ -484,6 +480,7 @@ def export_highway_shape(scenario_path: str) -> geopandas.GeoDataFrame:
                              "Length": "len_mile",
                              "FC": "fc",
                              "FC_Desc": "fc_desc",
+                             "FFC": "ffc",
                              "HOV": "hov",
                              "EATRUCK": "truck_ea",
                              "AMTRUCK": "truck_am",
