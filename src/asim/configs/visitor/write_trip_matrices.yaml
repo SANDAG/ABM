@@ -404,5 +404,3 @@ CONSTANTS:
     EV:
       first_hour: 33
       last_hour: 48
-  vot_threshold_low: 8.81
-  vot_threshold_med: 18.00

@@ -635,13 +635,13 @@ class Properties(object):
         return self._prop.update(*args, **kwargs)
 
     def keys(self):
-        return self._prop.keys()
+        return list(self._prop.keys())
 
     def values(self):
-        return self._prop.values()
+        return list(self._prop.values())
 
     def items(self):
-        return self._prop.items()
+        return list(self._prop.items())
 
     def iteritems(self):
         return iter(self._prop.items())
