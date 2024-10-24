@@ -215,7 +215,7 @@ class input_checker(_m.Tool()):
 
 	def checks(self):
 		# read all input DFs into memory
-		for key, df in self.inputs.items():
+		for key, df in list(self.inputs.items()):
 			expr = key + ' = df'
 			exec(expr)
 
@@ -426,7 +426,7 @@ class input_checker(_m.Tool()):
 			# display result for each test val if it was specified
 			if not (pd.isnull(row['Test_Vals'])):
 				fh.write("\r\n\t TEST results for each test val")
-				result_tuples = zip(row['Test_Vals'].split(","), self.result_list[row['Test']])
+				result_tuples = list(zip(row['Test_Vals'].split(","), self.result_list[row['Test']]))
 				fh.write("\r\n\t ")
 				fh.write(','.join('[{} - {}]'.format(x[0],x[1]) for x in result_tuples))
 				
