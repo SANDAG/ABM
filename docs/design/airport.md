@@ -6,7 +6,7 @@ It is important to note that, to work within the ActivitySim framework, the airp
 
 The overall design of the model is shown in the figure below.
 
-![](../../images/design/airport_model_design.png)
+![](../images/design/airport_model_design.png)
 
 1. Tour Enumeration: A list of airport travel parties is generated from input enplanements and transferring passenger rates, as well as distributions that describe the share of travel parties by purpose (business versus personal), household income, and party size.
 2. Tour Level Models

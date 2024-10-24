@@ -439,6 +439,13 @@ CONSTANTS:
   time_distrib_stddEA_work: 0.7
   time_distrib_mean_nonwork: 1.0
   time_distrib_stddEA_nonwork: 0.6
+  work_dist_coef: -8.6
+  other_dist_coef: -4.9
+  vot_bin_idx_to_skim_label:
+    1: L
+    2: M
+    3: H
+  max_walk_time: 60
   tnc_shared_ivt_factor: 1.25
   tnc_single_wait_time_mean_by_density:
     1: 10.3

@@ -22,6 +22,9 @@ def export_highway_shape(scenario_path: str) -> geopandas.GeoDataFrame:
                            usecols=["ID",  # highway coverage id
                                     "NM",  # link name
                                     "Length",  # link length in miles
+                                    "COJUR",  # count jurisdiction code
+                                    "COSTAT",  # count station number
+                                    "COLOC",  # count location code
                                     "FC",  # initial functional class
                                     "FFC", # federal functional class
                                     "HOV",  # link operation type
@@ -379,6 +382,9 @@ def export_highway_shape(scenario_path: str) -> geopandas.GeoDataFrame:
     hwy_tcad = hwy_tcad[["ID",
                          "NM",
                          "Length",
+                         "COJUR",
+                         "COSTAT",
+                         "COLOC",
                          "FC",
                          "FC_Desc",
                          "FFC",
@@ -478,6 +484,9 @@ def export_highway_shape(scenario_path: str) -> geopandas.GeoDataFrame:
     hwy_tcad.rename(columns={"ID": "hwycov_id",
                              "NM": "link_name",
                              "Length": "len_mile",
+                             "COJUR": "count_jur",
+                             "COSTAT": "count_stat",
+                             "COLOC": "count_loc",
                              "FC": "fc",
                              "FC_Desc": "fc_desc",
                              "FFC": "ffc",

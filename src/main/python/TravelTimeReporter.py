@@ -368,31 +368,11 @@ class TravelTimeReporter:
         Obtains the total transit time, not including access or egress
         """
         print("Calculating transit times")
-
-        _loc_time = (
-            self.skims["WALK_LOC_XFERWALK__" + self.settings["time_period"]] +
-            self.skims["WALK_LOC_XFERWAIT__" + self.settings["time_period"]] +
-            self.skims["WALK_LOC_TOTALIVTT__" + self.settings["time_period"]]
-        )
-
-        _prm_time = (
-            self.skims["WALK_PRM_XFERWALK__" + self.settings["time_period"]] +
-            self.skims["WALK_PRM_XFERWAIT__" + self.settings["time_period"]] +
-            self.skims["WALK_PRM_TOTALIVTT__" + self.settings["time_period"]]
-        )
-
-        _mix_time = (
+        self.skims["transit_time"] = self.expand_skim(
+            self.skims["WALK_MIX_FIRSTWAIT__" + self.settings["time_period"]] +
             self.skims["WALK_MIX_XFERWALK__" + self.settings["time_period"]] +
             self.skims["WALK_MIX_XFERWAIT__" + self.settings["time_period"]] +
             self.skims["WALK_MIX_TOTALIVTT__" + self.settings["time_period"]]
-        )
-
-        self.skims["transit_time"] = self.expand_skim(
-                np.minimum(
-                _loc_time,
-                _prm_time,
-                _mix_time
-            )
         )
 
     def get_total_transit_time(self):
@@ -420,7 +400,7 @@ class TravelTimeReporter:
         
         # Create Boolean matrix that is True if the flexible fleets service is available for the OD pair and False if it is not
         available = pd.DataFrame(
-            (orig_service > 0) & (orig_service == dest_service) & (self.skims["HOV3_M_DIST__" + self.settings["time_period"]] < self.constants[flavor + "MaxDist"]),
+            (orig_service > 0) & (orig_service == dest_service) & (self.skims["HOV3_M_TIME__" + self.settings["time_period"]] < self.constants[flavor + "MaxDist"]),
             self.land_use.index,
             self.land_use.index
         )
@@ -442,7 +422,7 @@ class TravelTimeReporter:
                 np.maximum(
                     self.constants[flavor + "DiversionConstant"] + direct_time,
                     self.constants[flavor + "DiversionFactor"] * direct_time
-                ),
+                ) + self.constants[flavor + "WaitTime"],
                 self.settings["infinity"]
             ),
             self.land_use.index,
@@ -488,15 +468,14 @@ class TravelTimeReporter:
         _escooterTime = self.results["bike"] * self.constants["bikeSpeed"] / self.constants["escooterSpeed"] + self.results["i"].map(self.land_use["MicroAccessTime"]) + self.constants["microRentTime"]
 
         self.results["ebike"] = np.where(
-            _ebikeTime > _ebikeMaxTime,
+            self.results["bike"] == self.settings["infinity"],
             self.settings["infinity"],
-            _ebikeTime
+            self.results["bike"] * self.constants["bikeSpeed"] / self.constants["ebikeSpeed"]
         )
-
         self.results["escooter"] = np.where(
-            _escooterTime > _escooterMaxTime,
+            self.results["bike"] == self.settings["infinity"],
             self.settings["infinity"],
-            _escooterTime
+            self.results["bike"] * self.constants["bikeSpeed"] / self.constants["escooterSpeed"]
         )
 
     def write_results(self):
