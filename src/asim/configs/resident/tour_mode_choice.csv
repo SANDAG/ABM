@@ -395,3 +395,6 @@ util_escooter_cost_inb,escooter utility for inbound cost,@((microFixedCost + mic
 util_escooter_cost_out,escooter utility for outbound cost,@((microFixedCost + microVarCost*df.escooter_time_out)/df.cost_sensitivity),,,,,,,,,,,,,,,,,,,,,,,coef_income
 #,Calibration from on-board survey
 util_calib_onboard,Calibration coefficient to match implied number of tours from on-board survey,1,,,,,,coef_calib_onboard,coef_calib_onboard,coef_calib_onboard,coef_calib_onboard,coef_calib_onboard,coef_calib_onboard,coef_calib_onboard,coef_calib_onboard,coef_calib_onboard,coef_calib_onboard,coef_calib_onboard,coef_calib_onboard,,,,,,
+#,Flexible fleet calibration for zero-auto households
+util_calib_mt_zeroautohh,Calibration coefficient for zero-auto households traveling within microtransit service area,@(df.microtransit_available & (df.auto_ownership == 0)),,,,,,,,,,,,,,,,,,,,coef_calib_mt_zeroautohh,,,
+util_calib_nev_zeroautohh,Calibration coefficient for zero-auto households traveling within NEV service area,@(df.nev_available & (df.auto_ownership == 0)),,,,,,,,,,,,,,,,,,,,coef_calib_nev_zeroautohh,,,
