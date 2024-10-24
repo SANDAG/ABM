@@ -988,6 +988,7 @@ Export network results to csv files for SQL data loader."""
                     next_seg = seg2.line.segment(seg2.number+1)
                     for attr in segment_alights:
                         next_seg[attr] += seg2[attr]
+                    attr_map["transit_time"] = seg1["transit_time"] + seg2["transit_time"]
                 network.merge_links(node, mapping)
 
         # Backup transit lines with altered routes and remove from network
