@@ -288,7 +288,7 @@ class FourDs(_m.Tool()):
             return tot_icnt,duDen,empDen,popDen,retDen,popEmpDenPerMi
     
         #new_cols = [0-'totint',1-'duden',2-'empden',3-'popden',4-'retempden',5-'totintbin',6-'empdenbin',7-'dudenbin',8-'PopEmpDenPerMi']
-        mgra_landuse[self.new_cols[0]],mgra_landuse[self.new_cols[1]],mgra_landuse[self.new_cols[2]],mgra_landuse[self.new_cols[3]],mgra_landuse[self.new_cols[4]],mgra_landuse[self.new_cols[8]] = list(zip(*mgra_landuse['mgra'].map(density_function)))
+        mgra_landuse[self.new_cols[0]],mgra_landuse[self.new_cols[1]],mgra_landuse[self.new_cols[2]],mgra_landuse[self.new_cols[3]],mgra_landuse[self.new_cols[4]],mgra_landuse[self.new_cols[8]] = zip(*mgra_landuse['mgra'].map(density_function))
 
         mgra_landuse = mgra_landuse.fillna(0)
         mgra_landuse[self.new_cols[5]] = np.where(mgra_landuse[self.new_cols[0]] < 80, 1, np.where(mgra_landuse[self.new_cols[0]] < 130, 2, 3))

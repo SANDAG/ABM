@@ -68,10 +68,8 @@ class CreateScenarioGUI(tkinter.Frame):
             divider=u"_"*200
             if getattr(sys, 'frozen', False):
                 self.releaseDir=os.path.abspath(os.path.join(os.path.dirname(sys.executable), '..', '..'))
-                self.version=os.path.basename(os.path.abspath(os.path.join(os.path.dirname(sys.executable), '..')))
             else:
                 self.releaseDir=os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..'))
-                self.version=os.path.basename(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
             self.defaultScenarioDir="T:\\STORAGE-63T\\2025RP_init_concept\\"
             self.defaultNetworkDir="T:\\projects\\sr15\\tned_etl\\2025RP_draft"
             self.defaultLandUseDir="T:\\projects\\sr15\\land_use\\2025RP_draft"
@@ -82,11 +80,7 @@ class CreateScenarioGUI(tkinter.Frame):
             self.buttonVar= tkinter.IntVar(root)
             self.yButton=tkinter.Radiobutton(body, text="Yes", variable=self.buttonVar, value=1, command=self.initStudy)
             self.nButton=tkinter.Radiobutton(body, text="No", variable=self.buttonVar, value=0,command=self.initStudy)
-            if self.version[:8] == "version_":
-                version_name = self.version[8:].replace("_",".",2)
-            else:
-                version_name = self.version
-            tkinter.Label(body, text=u"Release Version " + version_name + "\n"+divider, font=("Helvetica", 11, 'bold'), width=50, fg='royal blue').grid(row=current_row,columnspan=5)
+            tkinter.Label(body, text=u"Release Version 15.2.0\n"+divider, font=("Helvetica", 11, 'bold'), width=50, fg='royal blue').grid(row=current_row,columnspan=5)
             current_row += 1
             tkinter.Label(body, text=u"Create an ABM Work Space", font=("Helvetica", 10, 'bold')).grid(row=current_row,columnspan=n_columns)
             current_row += 1
@@ -129,6 +123,17 @@ class CreateScenarioGUI(tkinter.Frame):
             current_row += 1
             tkinter.Label(body, text=u"Create an ABM scenario", font=("Helvetica", 10, 'bold')).grid(row=current_row,columnspan=n_columns)
             current_row += 1
+
+            #tkinter.Label(body, text=u"Version", font=("Helvetica", 8, 'bold')).grid(row=8)
+            #var = StringVar(root)
+            if getattr(sys, 'frozen', False):
+                self.version=os.path.basename(os.path.abspath(os.path.join(os.path.dirname(sys.executable), '..')))
+            else:
+                self.version=os.path.basename(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
+            #optionList=["version_14_2_2"]
+            #option=tkinter.OptionMenu(body,var,*optionList,command=self.setversion)
+            #option.config(width=50)
+            #option.grid(row=8, column=1)
 
             tkinter.Label(body, text=u"Emme Version", font=("Helvetica", 8, 'bold')).grid(row=current_row)
             var = tkinter.StringVar(root)
@@ -372,7 +377,6 @@ class CreateScenarioGUI(tkinter.Frame):
                 self.update_property("geographyID = 1", "geographyID = " + self.geo.get())
                 self.update_property("network = NETWORK", "network = " + self.networkpath.get())
                 self.update_property("landuse = LANDUSE", "landuse = " + self.lupath.get())
-                self.update_property("release = RELEASE", "release = " + self.releaseDir+"\\"+self.version)
             elif type=="study":
                 studyyears = self.studyyears.get().split(',')
                 exclude_file = self.studynetworkpath.get() + '\\exclude.txt'

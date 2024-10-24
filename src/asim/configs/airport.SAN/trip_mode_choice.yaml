@@ -251,6 +251,8 @@ CONSTANTS:
   ivt_hvy_multiplier: 0.80
   cost_share_s2: 2
   cost_share_s3: 3
+  vot_threshold_low: 8.81
+  vot_threshold_med: 18.00
   max_walk_time: 60
   eaperiod: 11
   amperiod: 17

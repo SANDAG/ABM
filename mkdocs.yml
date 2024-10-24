@@ -8,11 +8,10 @@ theme:
   name: material
   features:
     - navigation.tabs
-    - navigation.indexes
-    - navigation.top
-    - navigation.expand
     - content.code.annotate
     - content.tabs.link
+    - navigation.indexes
+    - navigation.top
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
@@ -51,22 +50,10 @@ nav:
   - Home: index.md
   - Model Design: 
     - Overall Design: design/design.md
-    - Initialization: design/init/initialization.md
-    - Demand: 
-        - design/demand/index.md
-        - design/demand/resident.md
-        - design/demand/crossborder.md
-        - design/demand/airport.md
-        - design/demand/visitor.md
-        - design/demand/external.md
-    - Supply: 
-        - design/supply/index.md
-        - design/supply/bike-logsums.md
-        - design/supply/walk-skims.md
-        - design/supply/network-import-tned.md
-        - design/supply/highway-skims-assign.md
-        - design/supply/transit-skims-assign.md
-    - Report: design/report/report.md
+    - Resident: design/resident.md
+    - Crossborder: design/crossborder.md
+    - Airport Ground Access: design/airport.md
+    - Overnight Visitor: design/visitor.md
   - Installing and Running: running.md
   - Model Inputs and Outputs: 
     - Inputs: inputs.md

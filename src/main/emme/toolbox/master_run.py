@@ -241,6 +241,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         export_network_data = modeller.tool("sandag.export.export_data_loader_network")
         export_matrix_data = modeller.tool("sandag.export.export_data_loader_matrices")
         export_for_commercial_vehicle = modeller.tool("sandag.export.export_for_commercial_vehicle")
+        validation = modeller.tool("sandag.validation.validation")
         file_manager = modeller.tool("sandag.utilities.file_manager")
         utils = modeller.module('sandag.utilities.demand')
         load_properties = modeller.tool('sandag.utilities.properties')
@@ -353,6 +354,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         path_forward_slash = path_no_drive.replace("\\", "/")
         input_dir = _join(self._path, "input")
         output_dir = _join(self._path, "output")
+        validation_dir = _join(self._path, "analysis/validation")
         main_emmebank = _eb.Emmebank(_join(self._path, "emme_project", "Database", "emmebank"))
         if emmebank_title:
             main_emmebank.title = emmebank_title
@@ -794,19 +796,63 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 [drive, drive + path_forward_slash],
                 "Exporting MGRA-level travel times", capture_output=True)
 
-        # This validation procedure only works with base (2022) scenarios utilizing TNED networks
-        if scenarioYear == "2022":
-            self.run_proc(
-                "runValidation.bat",
-                [drive, path_no_drive, scenarioYear],
-                "Validation", capture_output=True)
-                
         if not skipDatalake:
             self.write_metadata(main_directory, scenario_title, select_link, username, scenarioYear, sample_rate, prod_env, props)
             self.run_proc(
                 "write_to_datalake.cmd",
                 [drive, drive + path_forward_slash, prod_env],
                 "Writing model output to datalake", capture_output=True)
+
+        #Validation for 2022 scenario
+        if scenarioYear == "2016":
+            validation(self._path, main_emmebank, base_scenario) # to create source_EMME.xlsx
+
+            # #Create Worksheet for ABM Validation using PowerBI Visualization #JY: can be uncommented if deciding to incorporate PowerBI vis in ABM workflow
+            # self.run_proc("VisPowerBI.bat",  # forced to update excel links
+            #                 [drive, path_no_drive, scenarioYear, 0],
+            #                 "VisPowerBI",
+            #                 capture_output=True)
+
+            ### CL: Below step is temporarily used to update validation output files. When Gregor complete Upload procedure, below step should be removed. 05/31/20
+            # self.run_proc("ExcelUpdate.bat",  # forced to update excel links
+                            # [drive, path_no_drive, scenarioYear, 0],
+                            # "ExcelUpdate",
+                            # capture_output=True)
+
+            ### ES: Commented out until this segment is updated to reference new database. 9/10/20 ###
+            # add segments below for auto-reporting, YMA, 1/23/2019
+            # add this loop to find the sceanro_id in the [dimension].[scenario] table
+
+            #database_scenario_id = 0
+            #int_hour = 0
+            #while int_hour <= 96:
+
+            #    database_scenario_id = self.sql_select_scenario(scenarioYear, end_iteration,
+            #                                                    sample_rate[end_iteration - 1], path_no_drive,
+            #                                                    start_db_time)
+            #    if database_scenario_id > 0:
+            #        break
+
+            #    int_hour = int_hour + 1
+            #    _time.sleep(900)  # wait for 15 mins
+
+            # if load failed, then send notification email
+            #if database_scenario_id == 0 and int_hour > 96:
+            #    str_request_check_result = self.sql_check_load_request(scenarioYear, path_no_drive, username,
+            #                                                           start_db_time)
+            #    print(str_request_check_result)
+            #    sys.exit(0)
+                # self.send_notification(str_request_check_result,username) #not working in server
+            #else:
+            #    print(database_scenario_id)
+            #    self.run_proc("DataSummary.bat",  # get summary from database, added for auto-reporting
+            #                  [drive, path_no_drive, scenarioYear, database_scenario_id],
+            #                  "Data Summary")
+
+            #    self.run_proc("ExcelUpdate.bat",  # forced to update excel links
+            #                  [drive, path_no_drive, scenarioYear, database_scenario_id],
+            #                  "Excel Update",
+            #                  capture_output=True)
 
         # # terminate all java processes
         # _subprocess.call("taskkill /F /IM java.exe")
@@ -862,7 +908,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         try:
             _m.logbook_level(log_states[self._log_level])
         except KeyError:
-            raise Exception("properties.RunModel.LogLevel: value must be one of %s" % ",".join(list(log_states.keys())))
+            raise Exception("properties.RunModel.LogLevel: value must be one of %s" % ",".join(log_states.keys()))
 
     def run_transit_assignments(self, transit_emmebank_dict, scenarioYear, output_dir, create_connector_flag, main_directory_original):
 
@@ -1256,7 +1302,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             ,"environment" : prod_env
             ,"network_path" : props["network"]
             ,"landuse_path" : props["landuse"]
-            ,"release_path" : props["release"]
         }
         _m.logbook_write("Created new scenario_guid: %s" % (datalake_metadata_dict['scenario_guid']))
         got_id, scenario_id = self.get_scenario_id(datalake_metadata_dict['scenario_guid'], scenario_title, prod_env)
