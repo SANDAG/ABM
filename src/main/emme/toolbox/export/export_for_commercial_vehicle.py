@@ -96,8 +96,8 @@ class ExportForCommercialVehicleModel(_m.Tool(), gen_utils.Snapshot):
         modes = ['ldn', 'ldt', 'lhdn', 'lhdt', 'mhdn', 'mhdt', 'hhdn', 'hhdt']
         classes = ['SOV_NT_H', 'SOV_TR_H', 'TRK_L', 'TRK_L', 'TRK_M', 'TRK_M', 'TRK_H', 'TRK_H']
         # Mappings between COMMVEH modes and Emme classes
-        mode_class = dict(zip(modes, classes))
-        class_mode = dict(zip(classes, modes))
+        mode_class = dict(list(zip(modes, classes)))
+        class_mode = dict(list(zip(classes, modes)))
         
         is_toll_mode = lambda m: m.endswith('t')
         #periods = ['EA', 'AM', 'MD', 'PM', 'EV']
