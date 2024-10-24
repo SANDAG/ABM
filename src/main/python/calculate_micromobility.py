@@ -230,12 +230,12 @@ class Config():
             print('No MicroAccessTime column found in %s, using 2 minute '
                   'default for PARKAREA==1, 15 minutes otherwise.' % mgra_file_path)
             park_area = pd.read_csv(mgra_file_path, usecols=['mgra', 'parkarea'],
-                                    index_col='mgra', dtype='Int64').squeeze()
+                                    index_col='mgra', dtype='Int64', squeeze=True)
             mat = pd.Series(index=park_area.index, data=15.0, name='MicroAccessTime')
             mat.loc[park_area == 1] = 2.0
         else:
             mat = pd.read_csv(mgra_file_path, usecols=['mgra', 'MicroAccessTime'],
-                              index_col='mgra').squeeze()
+                              index_col='mgra', squeeze=True)
 
         self.mat = mat
 
@@ -248,7 +248,8 @@ class Config():
 
         self.mt_mgras = \
             pd.read_csv(mt_mgra_file_path,
-                        usecols=lambda x: x.strip().lower() == 'mgra').squeeze().values
+                        usecols=lambda x: x.strip().lower() == 'mgra',
+                        squeeze=True).values
 
 
 if __name__ == '__main__':

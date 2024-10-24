@@ -39,7 +39,7 @@ def init_emme_project(root, title, emmeversion):
     project = desktop.project
     project.name = "SANDAG Emme project"
     prj_file_path = os.path.join(project_root, 'NAD 1983 NSRS2007 StatePlane California VI FIPS 0406 (US Feet).prj')
-    with open(prj_file_path, 'w', newline='') as f:
+    with open(prj_file_path, 'w') as f:
         f.write(WKT_PROJECTION)
     project.spatial_reference_file = prj_file_path
     project.initial_view = _ws_types.Box(6.18187e+06, 1.75917e+06, 6.42519e+06, 1.89371e+06)
@@ -145,7 +145,7 @@ if __name__ == "__main__":
                         default=os.path.abspath(os.getcwd()))
     parser.add_argument('-t', '--title', help="the Emmebank title",
                         default="SANDAG empty database")
-    parser.add_argument('-v', '--emmeversion', help='the Emme version', default='24.00.00')
+    parser.add_argument('-v', '--emmeversion', help='the Emme version', default='4.3.7')
     args = parser.parse_args()
 
     init_emme_project(args.root, args.title, args.emmeversion)

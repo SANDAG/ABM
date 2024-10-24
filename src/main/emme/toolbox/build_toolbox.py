@@ -44,7 +44,7 @@ import pickle
 
 
 def check_namespace(ns):
-    if not re.match("^[a-zA-Z][a-zA-Z0-9_]*$", ns) and ns != '__pycache__':
+    if not re.match("^[a-zA-Z][a-zA-Z0-9_]*$", ns):
         raise Exception("Namespace '%s' is invalid" % ns)
 
 
@@ -56,9 +56,9 @@ def get_emme_version():
 
 def usc_transform(value):
     try:
-        return str(value)
+        return unicode(value)
     except Exception:
-        return str(str(value), encoding="raw-unicode-escape")
+        return unicode(str(value), encoding="raw-unicode-escape")
 
 
 class BaseNode(object):
@@ -154,7 +154,7 @@ class ToolNode():
     def consolidate(self):
         with open(self.script, 'r') as f:
             code = f.read()
-        self.code = base64.b64encode(pickle.dumps(code))
+        self.code = usc_transform(base64.b64encode(pickle.dumps(code)))
         self.script = ''
 
     def set_toolbox_order(self):
@@ -252,7 +252,7 @@ class MTBXDatabase():
                 'description': '',
                 'namespace': tree.namespace,
                 MTBXDatabase.TOOLBOX_MAGIC_NUMBER: 'True'}
-        for key, val in atts.items():
+        for key, val in list(atts.items()):
             value_string = "{id}, '{name}', '{value}'".format(
                 id=tree.element_id, name=key, value=val)
             sql = """INSERT INTO attributes (%s)
@@ -319,7 +319,7 @@ class MTBXDatabase():
                 'python_suffix': node.extension,
                 'name': node.title,
                 MTBXDatabase.TOOL_MAGIC_NUMBER: 'True'}
-        for key, val in atts.items():
+        for key, val in list(atts.items()):
             value_string = "{id}, '{name}', '{value!s}'".format(
                 id=node.element_id, name=key, value=val)
             sql = """INSERT INTO attributes (%s)

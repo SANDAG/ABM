@@ -1172,12 +1172,12 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             "TRK_H": set([heavy_trk_trnpdr, heavy_trk]),
         }
         report = ["<div style='margin-left:5px'>Link mode changes</div>"]
-        for name, class_availabilities in availabilities[period].items():
+        for name, class_availabilities in list(availabilities[period].items()):
             report.append("<div style='margin-left:10px'>%s</div>" % name)
             changes = _defaultdict(lambda: 0)
             for link in network.links():
                 if name in link["#name"]:
-                    for class_name, is_avail in class_availabilities.items():
+                    for class_name, is_avail in list(class_availabilities.items()):
                         modes = class_mode_map[class_name]
                         if is_avail == 1 and not modes.issubset(link.modes):
                             link.modes |= modes
@@ -1186,7 +1186,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                             link.modes -= modes
                             changes["removed %s from" % class_name] += 1
             report.append("<div style='margin-left:20px'><ul>")
-            for x in changes.items():
+            for x in list(changes.items()):
                 report.append("<li>%s %s links</li>" % x)
             report.append("</div></ul>")
         scenario.publish_network(network)
