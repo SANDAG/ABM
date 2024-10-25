@@ -17,6 +17,34 @@ yml_path = path + "/src/asim/scripts/resident/2zoneSkim_params.yaml"
 with open(yml_path, 'r') as f:
     parms = yaml.safe_load(f)
 
+def add_missing_mazs_to_skim_table(centroids, maz_to_maz_walk_cost_out, maz_to_maz_cost):
+    """
+    Considering that we are using a maximum walk threshold for our skims here, it is possible that some MGRAs, 
+    especially in non-urban areas, might not be within threshold distance of other MGRAs. This means that the skim table 
+    may not have skims for all MGRAs. 
+    
+    This function allows identifying those MGRAs that may be missing from 
+    the skim table, finds the shortest distance 
+    for them (not to themselves), and therefore creating a missig_maz df that now contains  skims for those MGRAs that 
+    otherwise did not have skim at all.
+
+    """
+    # Identify missing MAZs
+    missing_maz = centroids[~centroids['MAZ'].isin(maz_to_maz_walk_cost_out['OMAZ'])][['MAZ']]
+    missing_maz = missing_maz.rename(columns={'MAZ': 'OMAZ'})
+
+    # Filter and sort maz_to_maz_cost DataFrame so we have the shortest distance for each OMAZ first
+    filtered_maz_to_maz_cost = maz_to_maz_cost[maz_to_maz_cost['OMAZ'] != maz_to_maz_cost['DMAZ']]
+    sorted_maz_to_maz_cost = filtered_maz_to_maz_cost.sort_values('DISTWALK')
+
+    # Group by 'OMAZ' and select the first (shortest dist) 'DMAZ' and 'DISTWALK' for each group
+    grouped_maz_to_maz_cost = sorted_maz_to_maz_cost.groupby('OMAZ').agg({'DMAZ': 'first', 'DISTWALK': 'first'}).reset_index()
+
+    # Merge the missing MAZs with the grouped maz_to_maz_cost DataFrame
+    result = missing_maz.merge(grouped_maz_to_maz_cost, on='OMAZ', how='left')
+
+    return result
+
 print(f"{datetime.now().strftime('%H:%M:%S')} Preparing MAZ-MAZ and MAZ-Stop Connectors...")
 startTime = time.time()
 #asim_inputs = os.path.join(path, "ASIM_INPUTS")
@@ -111,7 +139,7 @@ maz_to_maz_walk_cost = maz_to_maz_cost[maz_to_maz_cost["DISTWALK"] <= max_maz_ma
 print(f"{datetime.now().strftime('%H:%M:%S')} Get Shortest Path Length...")
 maz_to_maz_walk_cost["DISTWALK"] = net.shortest_path_lengths(maz_to_maz_walk_cost["OMAZ_NODE"], maz_to_maz_walk_cost["DMAZ_NODE"])
 maz_to_maz_walk_cost_out = maz_to_maz_walk_cost[maz_to_maz_walk_cost["DISTWALK"] <= max_maz_maz_walk_dist_feet / 5280.0]
-missing_maz = pd.DataFrame(centroids[~centroids['MAZ'].isin(maz_to_maz_walk_cost_out['OMAZ'])]['MAZ']).rename(columns = {'MAZ': 'OMAZ'}).merge(maz_to_maz_cost[maz_to_maz_cost['OMAZ'] != maz_to_maz_cost['DMAZ']].sort_values('DISTWALK').groupby('OMAZ').agg({'DMAZ': 'first', 'DISTWALK': 'first'}).reset_index(), on = 'OMAZ', how = 'left')
+missing_maz = add_missing_mazs_to_skim_table(centroids, maz_to_maz_walk_cost_out, maz_to_maz_cost)
 maz_maz_walk_output = maz_to_maz_walk_cost_out[["OMAZ","DMAZ","DISTWALK"]].append(missing_maz).sort_values(['OMAZ', 'DMAZ'])
 #creating fields as required by the TNC routing Java model. "actual" is walk time in minutes
 maz_maz_walk_output[['i', 'j']] = maz_maz_walk_output[['OMAZ', 'DMAZ']]
@@ -144,7 +172,8 @@ maz_to_maz_bike_cost = maz_to_maz_cost[maz_to_maz_cost["DISTWALK"] <= max_maz_ma
 print(f"{datetime.now().strftime('%H:%M:%S')} Get Shortest Path Length...")
 maz_to_maz_bike_cost["DISTBIKE"] = net.shortest_path_lengths(maz_to_maz_bike_cost["OMAZ_NODE"], maz_to_maz_bike_cost["DMAZ_NODE"])
 maz_to_maz_bike_cost_out = maz_to_maz_bike_cost[maz_to_maz_bike_cost["DISTBIKE"] <= max_maz_maz_bike_dist_feet / 5280.0]
-missing_maz = pd.DataFrame(centroids[~centroids['MAZ'].isin(maz_to_maz_bike_cost_out['OMAZ'])]['MAZ']).rename(columns = {'MAZ': 'OMAZ'}).merge(maz_to_maz_cost[maz_to_maz_cost['OMAZ'] != maz_to_maz_cost['DMAZ']].sort_values('DISTWALK').groupby('OMAZ').agg({'DMAZ': 'first', 'DISTWALK': 'first'}).reset_index().rename(columns = {'DISTWALK': 'DISTBIKE'}), on = 'OMAZ', how = 'left')
+_missing_maz = add_missing_mazs_to_skim_table(centroids, maz_to_maz_bike_cost_out, maz_to_maz_cost)
+missing_maz = _missing_maz.rename(columns = {'DISTWALK': 'DISTBIKE'})
 print(f"{datetime.now().strftime('%H:%M:%S')} Write Results...")
 maz_to_maz_bike_cost_out[["OMAZ","DMAZ","DISTBIKE"]].append(missing_maz).sort_values(['OMAZ', 'DMAZ']).to_csv(path + '/output/skims/' + parms['mmms']["maz_maz_bike_output"], index=False)
 del(missing_maz)
@@ -194,7 +223,17 @@ for mode, output in modes.items():
     maz_to_stop_walk_cost_out_mode.loc[:, 'MODE'] = mode
     # in case straight line distance is less than max and actual distance is greater than max (e.g., street net), set actual distance to max
     maz_to_stop_walk_cost_out_mode['DISTWALK'] = maz_to_stop_walk_cost_out_mode['DISTWALK'].clip(upper=max_walk_dist)
-    missing_maz = pd.DataFrame(centroids[~centroids['MAZ'].isin(maz_to_stop_walk_cost_out_mode['MAZ'])]['MAZ']).merge(maz_to_stop_cost.sort_values('DISTANCE').groupby(['MAZ', 'MODE']).agg({'stop': 'first', 'DISTANCE': 'first'}).reset_index(), on = 'MAZ', how = 'left')
+    # peforms a similar operation as the add_missing_mazs_to_skim_table() function
+    missing_maz = pd.DataFrame(
+    centroids[~centroids["MAZ"].isin(maz_to_stop_walk_cost_out_mode["MAZ"])]["MAZ"]
+).merge(
+    maz_to_stop_cost.sort_values("DISTANCE")
+    .groupby(["MAZ", "MODE"])
+    .agg({"stop": "first", "DISTANCE": "first"})
+    .reset_index(),
+    on="MAZ",
+    how="left",
+)
     maz_to_stop_walk_cost = maz_to_stop_walk_cost_out_mode.append(missing_maz.rename(columns = {'DISTANCE': 'DISTWALK'})).sort_values(['MAZ', 'stop'])
     del(maz_to_stop_walk_cost_out_mode)
     del(missing_maz)
