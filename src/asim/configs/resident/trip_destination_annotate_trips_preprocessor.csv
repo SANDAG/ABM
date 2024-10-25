@@ -33,6 +33,7 @@ adding _trips to avoid conflict with the variables in the tours_merged,age_trips
 ,walkTour,"np.where(tour_mode == 'WALK', 1, 0)"
 ,bikeTour,"np.where(tour_mode == 'BIKE', 1, 0)"
 ,microTour,"np.where((tour_mode == 'ESCOOTER') | (tour_mode == 'EBIKE'), 1, 0)"
+,ebikeTour,"np.where((tour_mode == 'EBIKE'), 1, 0)"
 Micromobility access Time,o_MicroAccessTime,"reindex(land_use.MicroAccessTime,df.origin)"
 ,max_walk_distance,max_walk_distance
 ,max_bike_distance,max_bike_distance
