@@ -24,6 +24,8 @@ md %SCENARIO_FOLDER%\%%i)
 rem grant full permissions to scenario folder
 cacls %SCENARIO_FOLDER% /t /e /g Everyone:f
 
+mkdir %SCENARIO_FOLDER%\output\skims
+
 rem setup model folders
 xcopy /Y .\common\application\"*.*" %SCENARIO_FOLDER%\application
 xcopy /E/Y/i .\common\application\GnuWin32\"*.*" %SCENARIO_FOLDER%\application\GnuWin32
@@ -33,7 +35,6 @@ xcopy /Y .\common\uec\"*.*" %SCENARIO_FOLDER%\uec
 xcopy /Y .\common\bin\"*.*" %SCENARIO_FOLDER%\bin
 rem xcopy /Y .\conf\%YEAR%\"*.*" %SCENARIO_FOLDER%\conf
 xcopy /Y .\common\conf\"*.*" %SCENARIO_FOLDER%\conf
-xcopy /Y .\common\output\"*.*" %SCENARIO_FOLDER%\output
 xcopy /Y/s/E .\common\input\input_checker\"*.*" %SCENARIO_FOLDER%\input_checker
 xcopy /Y/s/E .\common\src\asim\"*.*" %SCENARIO_FOLDER%\src\asim
 xcopy /Y/s/E .\common\src\asim-cvm\"*.*" %SCENARIO_FOLDER%\src\asim-cvm
