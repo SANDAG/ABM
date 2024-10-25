@@ -61,8 +61,6 @@ MD assignment
 CD ..
 
 if %ITERATION% equ 1 (
-    ECHO Running resident model pre-processing   
-    %PYTHON3% src/asim/scripts/resident/2zoneSkim.py %PROJECT_DIRECTORY% || goto error
 
     %PYTHON3% src/asim/scripts/resident/resident_preprocessing.py input output %SCENYEAR% %PROJECT_DIRECTORY% || goto error
 
