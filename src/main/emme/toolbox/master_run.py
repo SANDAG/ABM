@@ -599,7 +599,8 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
                 if not skipSkimConversion[iteration]:
                     self.run_proc("convertSkimsToOMXZ.cmd",
-                                  [drive, path_forward_slash])
+                                  [drive, path_forward_slash],
+                                  "Converting skims to omxz format", capture_output=True)
 
                 if not skipTransponderExport[iteration]:
                     am_scenario = main_emmebank.scenario(base_scenario.number + 2)
