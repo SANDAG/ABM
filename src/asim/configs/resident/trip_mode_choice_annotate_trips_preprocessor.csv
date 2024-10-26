@@ -284,8 +284,10 @@ Number of school children in vehicle on trip,num_escortees,df.escort_participant
 ,tnc_prm_out_asc,"np.where((tnc_prm_out_asc > 0) & (odt_skims['KNROUT_PRM_XFERS'] > 0), 0.5 * tnc_prm_out_asc, tnc_prm_out_asc)"
 ,tnc_prm_inb_asc,"np.where((tnc_prm_inb_asc > 0) & (dot_skims['KNRIN_PRM_XFERS'] > 0), 0.5 * tnc_prm_inb_asc, tnc_prm_inb_asc)"
 # Micromobility times,,
-ebike time,ebike_time,bike_time * bikeSpeed / ebikeSpeed
-escooter time,escooter_time,bike_time * bikeSpeed / escooterSpeed
+ebike time multiplier,ebike_time_multiplier,bikeSpeed / ebikeSpeed
+ebike time,ebike_time,bike_time * ebike_time_multiplier
+escooter time multiplier,escooter_time_multiplier,bikeSpeed / escooterSpeed
+escooter time,escooter_time,bike_time * escooter_time_multiplier
 Micromobility access Time,MicroAccessTime,"reindex(land_use.MicroAccessTime,origin)"
 ebike max distance availability,ebikeMaxDistance,(od_skims['DIST'] > ebikeMaxDist)
 escooter max distance availability,escooterMaxDistance,(od_skims['DIST'] > escooterMaxDist)
