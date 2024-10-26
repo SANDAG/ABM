@@ -1,10 +1,14 @@
 set PROJECT_DRIVE=%1
 set PROJECT_DIRECTORY=%2
 
+SET PATH=%ANACONDA3_DIR%\Library\bin;%PATH%
+SET PATH=%ANACONDA3_DIR%\Scripts;%ANACONDA3_DIR%\bin;%PATH%
+
+SET ANACONDA3_DIR=%CONDA_PREFIX%
+SET CONDA3_ACT=%ANACONDA3_DIR%\Scripts\activate.bat
+CALL %CONDA3_ACT% asim_132
+
 %PROJECT_DRIVE%
-cd /d %PROJECT_DIRECTORY%/output/skims
-
-wring omx
-
-del traffic_skims*.omx
-del transit_skims*.omx
+cd /d %PROJECT_DIRECTORY%
+cd output\skims
+CALL wring omx
