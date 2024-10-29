@@ -114,11 +114,6 @@ class TravelTimeReporter:
                         "skims",
                         self.settings["active_skim_files"][skim_name]
                 )
-            ).rename(
-                columns = {
-                    "OMAZ": "i",
-                    "DMAZ": "j",
-                }
             ).set_index(
                 ["i", "j"]
             )
