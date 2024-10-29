@@ -247,10 +247,10 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
 
             bus_fares = {}
             for mode_id, fares in mode_groups["bus"]:
-                for fare, count in list(fares.items()):
+                for fare, count in fares.items():
                     bus_fares[fare] = bus_fares.get(fare, 0) + count
             # set nominal bus fare as unweighted average of two most frequent fares
-            bus_fares = sorted(list(bus_fares.items()), key=lambda x: x[1], reverse=True)
+            bus_fares = sorted(bus_fares.items(), key=lambda x: x[1], reverse=True)
 
             if len(bus_fares) >= 2:
                 bus_fare = (bus_fares[0][0] + bus_fares[1][0]) / 2
@@ -261,7 +261,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             # find max premium mode fare
             premium_fare = 0
             for mode_id, fares in mode_groups["premium"]:
-                for fare in list(fares.keys()):
+                for fare in fares.keys():
                     premium_fare = max(premium_fare, fare)
             # find max coaster_fare by checking the cumulative fare along each line
             coaster_fare = 0
@@ -397,8 +397,8 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                     "wait": transfer["wait_time"],
                 })
             except Exception as error:
-                new_message = "Timed transfer[%s]: %s" % (i, error)
-                raise type(error)(type(error)(new_message)).with_traceback(sys.exc_info()[2])
+                new_message = "Timed transfer[%s]: %s" % (i, error.message)
+                raise type(error), type(error)(new_message), sys.exc_info()[2]
 
         # If there is only one transfer at the location (redundant case)
         # OR all transfers are from the same line (can have different waits)
