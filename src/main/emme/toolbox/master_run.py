@@ -287,14 +287,13 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         useLocalDrive = props["RunModel.useLocalDrive"]
 
+        skipMGRASkims = props["RunModel.skipMGRASkims"]
         skip4Ds = props["RunModel.skip4Ds"]
         skipInputChecker = props["RunModel.skipInputChecker"]
         skipInitialization = props["RunModel.skipInitialization"]
         deleteAllMatrices = props["RunModel.deleteAllMatrices"]
         skipCopyWarmupTripTables = props["RunModel.skipCopyWarmupTripTables"]
         skipCopyBikeLogsum = props["RunModel.skipCopyBikeLogsum"]
-        skipCopyWalkImpedance = props["RunModel.skipCopyWalkImpedance"]
-        skipWalkLogsums = props["RunModel.skipWalkLogsums"]
         skipBikeLogsums = props["RunModel.skipBikeLogsums"]
         skipBuildNetwork = props["RunModel.skipBuildNetwork"]
         skipHighwayAssignment = props["RunModel.skipHighwayAssignment"]
@@ -450,18 +449,15 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             del(householdFile)
 
             if startFromIteration == 1:  # only run the setup / init steps if starting from iteration 1
-                if not skipWalkLogsums:
-                    self.run_proc("runSandagWalkLogsums.cmd", [drive, path_forward_slash],
-                                  "Walk - create AT logsums and impedances", capture_output=True)
-                if not skipCopyWalkImpedance:
-                    self.copy_files(["walkMgraEquivMinutes.csv", "microMgraEquivMinutes.csv"],
-                                    input_dir, output_dir)
+                if not skipMGRASkims:
+                    self.run_proc("runSandagMGRASkims.cmd", [drive, path_forward_slash],
+                                  "Create MGRA-level skims", capture_output=True)
 
                 if not skip4Ds:
                     run4Ds(path=self._path, int_radius=0.65, ref_path='visualizer_reference_path')
 
                 mgraFile = 'mgra15_based_input' + str(scenarioYear) + '.csv'  # Should be read in from properties? -JJF
-                self.complete_work(scenarioYear, input_dir, output_dir, mgraFile, "walkMgraEquivMinutes.csv")
+                self.complete_work(scenarioYear, input_dir, output_dir, mgraFile, "maz_maz_walk.csv")
 
                 # Update rapid dwell time before importing network
                 mode5tod = pd.read_csv(_join(input_dir,'MODE5TOD.csv'))
@@ -908,7 +904,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         try:
             _m.logbook_level(log_states[self._log_level])
         except KeyError:
-            raise Exception("properties.RunModel.LogLevel: value must be one of %s" % ",".join(log_states.keys()))
+            raise Exception("properties.RunModel.LogLevel: value must be one of %s" % ",".join(list(log_states.keys())))
 
     def run_transit_assignments(self, transit_emmebank_dict, scenarioYear, output_dir, create_connector_flag, main_directory_original):
 
@@ -1073,7 +1069,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
     def complete_work(self, scenarioYear, input_dir, output_dir, input_file, output_file):
 
         fullList = np.array(pd.read_csv(_join(input_dir, input_file))['mgra'])
-        workList = np.array(pd.read_csv(_join(output_dir, output_file))['i'])
+        workList = np.array(pd.read_csv(_join(output_dir, "skims", output_file))['i'])
 
         list_set = set(workList)
         unique_list = (list(list_set))

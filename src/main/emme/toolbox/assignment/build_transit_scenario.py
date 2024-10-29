@@ -247,10 +247,10 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
 
             bus_fares = {}
             for mode_id, fares in mode_groups["bus"]:
-                for fare, count in fares.items():
+                for fare, count in list(fares.items()):
                     bus_fares[fare] = bus_fares.get(fare, 0) + count
             # set nominal bus fare as unweighted average of two most frequent fares
-            bus_fares = sorted(bus_fares.items(), key=lambda x: x[1], reverse=True)
+            bus_fares = sorted(list(bus_fares.items()), key=lambda x: x[1], reverse=True)
 
             if len(bus_fares) >= 2:
                 bus_fare = (bus_fares[0][0] + bus_fares[1][0]) / 2
@@ -261,7 +261,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             # find max premium mode fare
             premium_fare = 0
             for mode_id, fares in mode_groups["premium"]:
-                for fare in fares.keys():
+                for fare in list(fares.keys()):
                     premium_fare = max(premium_fare, fare)
             # find max coaster_fare by checking the cumulative fare along each line
             coaster_fare = 0
@@ -330,13 +330,15 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             # (The auto_time attribute is generated from the VDF values which include reliability factor)
             ## also copying auto_time to ul1, so it does not get wiped when transit connectors are created. 
             
-            src_attrs = [params["fixed_link_time"]]
-            dst_attrs = ["data2"]
-            if scenario.has_traffic_results and "@auto_time" in scenario.attributes("LINK"):
-                src_attrs.extend(["@auto_time", "@auto_time"])
-                dst_attrs.extend(["auto_time", "data1"])
-            values = network.get_attribute_values("LINK", src_attrs)
-            network.set_attribute_values("LINK", dst_attrs, values)
+            for link in network.links():
+                if scenario.has_traffic_results and "@auto_time" in scenario.attributes("LINK"):
+                    link["auto_time"]=link["@auto_time"]
+                    link["data1"]=link["@auto_time"]
+                rail_modes = set(network.mode(m) for m in "lco")
+                if link.modes & rail_modes:
+                    link["data2"]=link[params["fixed_rail_link_time"]]
+                else:
+                    link["data2"]=link[params["fixed_bus_link_time"]]
 
             scenario.publish_network(network)
             self._node_id_tracker = None

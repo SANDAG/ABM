@@ -258,13 +258,12 @@ class FourDs(_m.Tool()):
         mgra_landuse = mgra_landuse.merge(syn_pop, how = 'left', on = 'mgra')
         #all street distance  
         equiv_min = pd.read_csv(_join(self.path, "output", self.equivmins_file))
-        equiv_min['dist'] = equiv_min['actual']/60*3
         print("MGRA input landuse: " + self.mgradata_file)
         
         def density_function(mgra_in):
             eqmn = equiv_min[equiv_min['i'] == mgra_in]
-            mgra_circa_int = eqmn[eqmn['dist'] < self.int_radius]['j'].unique()
-            mgra_circa_oth = eqmn[eqmn['dist'] < self.oth_radius]['j'].unique()
+            mgra_circa_int = eqmn[eqmn['DISTWALK'] < self.int_radius]['j'].unique()
+            mgra_circa_oth = eqmn[eqmn['DISTWALK'] < self.oth_radius]['j'].unique()
             totEmp = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['emp_total'].sum()
             totRet = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['emp_ret'].sum()
             totHH = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['hh'].sum()
@@ -288,7 +287,7 @@ class FourDs(_m.Tool()):
             return tot_icnt,duDen,empDen,popDen,retDen,popEmpDenPerMi
     
         #new_cols = [0-'totint',1-'duden',2-'empden',3-'popden',4-'retempden',5-'totintbin',6-'empdenbin',7-'dudenbin',8-'PopEmpDenPerMi']
-        mgra_landuse[self.new_cols[0]],mgra_landuse[self.new_cols[1]],mgra_landuse[self.new_cols[2]],mgra_landuse[self.new_cols[3]],mgra_landuse[self.new_cols[4]],mgra_landuse[self.new_cols[8]] = zip(*mgra_landuse['mgra'].map(density_function))
+        mgra_landuse[self.new_cols[0]],mgra_landuse[self.new_cols[1]],mgra_landuse[self.new_cols[2]],mgra_landuse[self.new_cols[3]],mgra_landuse[self.new_cols[4]],mgra_landuse[self.new_cols[8]] = list(zip(*mgra_landuse['mgra'].map(density_function)))
 
         mgra_landuse = mgra_landuse.fillna(0)
         mgra_landuse[self.new_cols[5]] = np.where(mgra_landuse[self.new_cols[0]] < 80, 1, np.where(mgra_landuse[self.new_cols[0]] < 130, 2, 3))

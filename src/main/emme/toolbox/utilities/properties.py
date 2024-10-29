@@ -30,14 +30,13 @@ class PropertiesSetter(object):
     sample_rates = _m.Attribute(str)
 
     useLocalDrive = _m.Attribute(bool)
+    skipMGRASkims = _m.Attribute(bool)
     skip4Ds = _m.Attribute(bool)
     skipBuildNetwork = _m.Attribute(bool)
     skipInputChecker = _m.Attribute(bool)
     skipInitialization = _m.Attribute(bool)
     deleteAllMatrices = _m.Attribute(bool)
     skipCopyWarmupTripTables = _m.Attribute(bool)
-    skipWalkLogsums = _m.Attribute(bool)
-    skipCopyWalkImpedance = _m.Attribute(bool)
     skipBikeLogsums = _m.Attribute(bool)
     skipCopyBikeLogsum = _m.Attribute(bool)
     skipTransitConnector = _m.Attribute(bool)
@@ -155,9 +154,9 @@ class PropertiesSetter(object):
 
     def __init__(self):
         self._run_model_names = (
-            "env", "useLocalDrive", "skip4Ds", "skipInputChecker",
+            "env", "useLocalDrive", "skipMGRASkims", "skip4Ds", "skipInputChecker",
             "startFromIteration", "skipInitialization", "deleteAllMatrices", "skipCopyWarmupTripTables",
-            "skipCopyBikeLogsum", "skipCopyWalkImpedance", "skipWalkLogsums", "skipBikeLogsums", "skipBuildNetwork",
+            "skipCopyBikeLogsum", "skipBikeLogsums", "skipBuildNetwork",
             "skipHighwayAssignment", "skipTransitSkimming", "skipTransitConnector", "skipTransponderExport", "skipScenManagement", "skipABMPreprocessing", "skipABMResident", "skipABMAirport", "skipABMXborderWait", "skipABMXborder", "skipABMVisitor", "skipMAASModel",
             "skipCVMEstablishmentSyn", "skipCTM", "skipTruck", "skipEI", "skipExternal", "skipTripTableCreation", "skipFinalHighwayAssignment",
             "skipFinalTransitAssignment", "skipVisualizer", "skipDataExport", "skipDatalake", "skipDataLoadRequest",
@@ -209,14 +208,13 @@ class PropertiesSetter(object):
 
         skip_startup_items = [
             ("useLocalDrive",           "Use the local drive during the model run"),
+            ("skipMGRASkims",           "Skip MGRA skims"),
             ("skip4Ds",                 "Skip running 4Ds"),
             ("skipBuildNetwork",        "Skip build of highway and transit network"),
             ("skipInputChecker",		"Skip running input checker"),
             ("skipInitialization",      "Skip matrix and transit database initialization"),
             ("deleteAllMatrices",       "&nbsp;&nbsp;&nbsp;&nbsp;Delete all matrices"),
             ("skipCopyWarmupTripTables","Skip import of warmup trip tables"),
-            ("skipWalkLogsums",         "Skip walk logsums"),
-            ("skipCopyWalkImpedance",   "Skip copy of walk impedance"),
             ("skipBikeLogsums",         "Skip bike logsums"),
             ("skipCopyBikeLogsum",      "Skip copy of bike logsum"),
         ]
@@ -355,14 +353,13 @@ class PropertiesSetter(object):
         self.sample_rates = ",".join(str(x) for x in props.get("sample_rates"))
 
         self.useLocalDrive = props.get("RunModel.useLocalDrive", True)
+        self.skipMGRASkims = props.get("RunModel.skipMGRASkims", False)
         self.skip4Ds = props.get("RunModel.skip4Ds", False)
         self.skipBuildNetwork = props.get("RunModel.skipBuildNetwork", False)
         self.skipInputChecker = props.get("RunModel.skipInputChecker", False)
         self.skipInitialization = props.get("RunModel.skipInitialization", False)
         self.deleteAllMatrices = props.get("RunModel.deleteAllMatrices", False)
         self.skipCopyWarmupTripTables = props.get("RunModel.skipCopyWarmupTripTables", False)
-        self.skipWalkLogsums = props.get("RunModel.skipWalkLogsums", False)
-        self.skipCopyWalkImpedance = props.get("RunModel.skipCopyWalkImpedance", False)
         self.skipBikeLogsums = props.get("RunModel.skipBikeLogsums", False)
         self.skipCopyBikeLogsum = props.get("RunModel.skipCopyBikeLogsum", False)
 
@@ -401,17 +398,16 @@ class PropertiesSetter(object):
         props["sample_rates"] = [float(x) for x in self.sample_rates.split(",")]
 
         props["RunModel.useLocalDrive"] = self.useLocalDrive
+        props["RunModel.skipMGRASkims"] = self.skipMGRASkims
         props["RunModel.skip4Ds"] = self.skip4Ds
         props["RunModel.skipBuildNetwork"] = self.skipBuildNetwork
         props["RunModel.skipInputChecker"] = self.skipInputChecker
         props["RunModel.skipInitialization"] = self.skipInitialization
         props["RunModel.deleteAllMatrices"] = self.deleteAllMatrices
         props["RunModel.skipCopyWarmupTripTables"] = self.skipCopyWarmupTripTables
-        props["RunModel.skipWalkLogsums"] = self.skipWalkLogsums
-        props["RunModel.skipCopyWalkImpedance"] = self.skipCopyWalkImpedance
+       
         props["RunModel.skipBikeLogsums"] = self.skipBikeLogsums
         props["RunModel.skipCopyBikeLogsum"] = self.skipCopyBikeLogsum
-
         props["RunModel.skipHighwayAssignment"] = self.skipHighwayAssignment
         props["RunModel.skipTransitSkimming"] = self.skipTransitSkimming
         props["RunModel.skipTransitConnector"] = self.skipTransitConnector
@@ -635,13 +631,13 @@ class Properties(object):
         return self._prop.update(*args, **kwargs)
 
     def keys(self):
-        return self._prop.keys()
+        return list(self._prop.keys())
 
     def values(self):
-        return self._prop.values()
+        return list(self._prop.values())
 
     def items(self):
-        return self._prop.items()
+        return list(self._prop.items())
 
     def iteritems(self):
         return iter(self._prop.items())

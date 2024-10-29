@@ -267,7 +267,8 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "xfer_headway": "@headway_ea",
                 "fare": "@fare_per_op",
                 "in_vehicle": "@vehicle_per_op",
-                "fixed_link_time": "@trtime"
+                "fixed_rail_link_time": "@trtime",
+                "fixed_bus_link_time": "@time_link_ea"
             },
             "AM": {
                 "access" : access,
@@ -280,7 +281,8 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "xfer_headway": "@headway_am",
                 "fare": "@fare_per_pk",
                 "in_vehicle": "@vehicle_per_pk",
-                "fixed_link_time": "@trtime"
+                "fixed_rail_link_time": "@trtime",
+                "fixed_bus_link_time": "@time_link_am"
             },
             "MD": {
                 "access" : access,
@@ -293,7 +295,8 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "xfer_headway": "@headway_md",
                 "fare": "@fare_per_op",
                 "in_vehicle": "@vehicle_per_op",
-                "fixed_link_time": "@trtime"
+                "fixed_rail_link_time": "@trtime",
+                "fixed_bus_link_time": "@time_link_md"
             },
             "PM": {
                 "access" : access,
@@ -306,7 +309,8 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "xfer_headway": "@headway_pm",
                 "fare": "@fare_per_pk",
                 "in_vehicle": "@vehicle_per_pk",
-                "fixed_link_time": "@trtime"
+                "fixed_rail_link_time": "@trtime",
+                "fixed_bus_link_time": "@time_link_pm"
             },
             "EV": {
                 "access" : access,
@@ -319,7 +323,8 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "xfer_headway": "@headway_ev",
                 "fare": "@fare_per_op",
                 "in_vehicle": "@vehicle_per_op",
-                "fixed_link_time": "@trtime"
+                "fixed_rail_link_time": "@trtime",
+                "fixed_bus_link_time": "@time_link_ev"
             }
         }
         return perception_parameters[period]
@@ -338,7 +343,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
             "day_pass": [],  # boarding fare is the same as 1/2 day pass
             "premium": []    # special premium services not covered by day pass
         }
-        for mode_id, fares in fare_set.items():
+        for mode_id, fares in list(fare_set.items()):
             try:
                 max_fare = max(fares.keys())
             except ValueError:
@@ -363,7 +368,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
 
         def get_transition_rules(next_level):
             rules = []
-            for name, group in mode_groups.items():
+            for name, group in list(mode_groups.items()):
                 for mode_id, fares in group:
                     rules.append({"mode": mode_id, "next_journey_level": next_level[name]})
             rules.append({"mode": "c", "next_journey_level": next_level["coaster"]})
