@@ -176,39 +176,17 @@ Export network results to csv files for SQL data loader."""
             ("Length", "length"),
             ("Dir", "is_one_way"),
             ("hwycov-id:1", "@tcov_id"),
-            ("ID:1", "@tcov_id"),
-            ("Length:1", "length_feet"),
-            ("QID", "zero"),
-            ("CCSTYLE", "zero"),
-            ("UVOL", "zero"),
-            ("AVOL", "zero"),
-            ("TMP1", "zero"),
-            ("TMP2", "zero"),
-            ("PLOT", "zero"),
             ("SPHERE", "@sphere"),
-            ("RTNO", "zero"),
-            ("LKNO", "zero"),
             ("NM", "#name"),
             ("FXNM", "#name_from"),
             ("TXNM", "#name_to"),
             ("AN", "i"),
             ("BN", "j"),
-            ("COJUR", "zero"),
-            ("COSTAT", "zero"),
-            ("COLOC", "zero"),
-            ("RLOOP", "zero"),
-            ("ADTLK", "zero"),
-            ("ADTVL", "zero"),
-            ("PKPCT", "zero"),
-            ("TRPCT", "zero"),
-            ("SECNO", "zero"),
-            ("DIR:1", "zero"),
-            ("FFC", "type"),
-            ("CLASS", "zero"),
             ("ASPD", "@speed_adjusted"),
             ("YR", "@year_open_traffic"),
             ("PROJ", "@project_code"),
             ("FC", "type"),
+            ("FFC", "@fed_type"),
             ("HOV", "@hov"),
             ("EATRUCK", "@truck_ea"),
             ("AMTRUCK", "@truck_am"),
@@ -216,37 +194,18 @@ Export network results to csv files for SQL data loader."""
             ("PMTRUCK", "@truck_pm"),
             ("EVTRUCK", "@truck_ev"),
             ("SPD", "@speed_posted"),
-            ("TSPD", "zero"),
             ("WAY", "way"),
             ("MED", "@median"),
             ("COST", "@cost_operating"),
         ]
         directional_attrs = [
-            ("ABLNO", "@lane_md", "0"),
-            ("ABLNA", "@lane_am", "0"),
-            ("ABLNP", "@lane_pm", "0"),
             ("ABAU", "@lane_auxiliary", "0"),
-            ("ABPCT", "zero", "0"),
-            ("ABPHF", "zero", "0"),
             ("ABCNT", "@traffic_control", "0"),
             ("ABTL", "@turn_thru", "0"),
             ("ABRL", "@turn_right", "0"),
             ("ABLL", "@turn_left", "0"),
-            ("ABTLB", "zero", "0"),
-            ("ABRLB", "zero", "0"),
-            ("ABLLB", "zero", "0"),
             ("ABGC", "@green_to_cycle_init", "0"),
             ("ABPLC", "per_lane_capacity", "1900"),
-            ("ABTMO", "@time_link_md", "999"),
-            ("ABTMA", "@time_link_am", "999"),
-            ("ABTMP", "@time_link_pm", "999"),
-            ("ABTXO", "@time_inter_md", "0"),
-            ("ABTXA", "@time_inter_am", "0"),
-            ("ABTXP", "@time_inter_pm", "0"),
-            ("ABCST", "zero", "999.999"),
-            ("ABVLA", "zero", "0"),
-            ("ABVLP", "zero", "0"),
-            ("ABLOS", "zero", "0"),
         ]
         for key, name, default in directional_attrs:
             hwylink_attrs.append((key, name))
@@ -270,7 +229,6 @@ Export network results to csv files for SQL data loader."""
             ("ABH2CST",   "hov2_total_gencost", ""),
             ("ABH3CST",   "hov3_total_gencost", ""),
             ("ABSTM",     "auto_time", ""),
-            ("ABHTM",     "auto_time", ""),
         ]
         periods = ["_ea", "_am", "_md", "_pm", "_ev"]
         for column in time_period_atts:
@@ -305,14 +263,6 @@ Export network results to csv files for SQL data loader."""
             hwylink_attrs.append((key, name))
             if key.startswith("AB"):
                 hwylink_attrs.append(("BA" + key[2:], (name, default)))
-        for period in periods:
-            for key, name, default in vdf_attrs:
-                name = name + period if name.startswith("@") else name
-                default = default or "0"
-                hwylink_attrs.append((key + period.upper(), name))
-                if key.startswith("AB"):
-                    hwylink_attrs.append(("BA" + key[2:] + period.upper(), (name, default)))
-
         network = base_scenario.get_partial_network(["LINK"], include_attributes=True)
 
         #copy assignment from period scenarios
@@ -758,7 +708,7 @@ Export network results to csv files for SQL data loader."""
             desktop_traffic_database.open()
         except Exception as error:
             import traceback
-            print ((traceback.format_exc()))
+            print (traceback.format_exc())
         project = desktop.project
         scenario = _m.Modeller().emmebank.scenario(101)
         data_explorer.replace_primary_scenario(scenario)
@@ -850,7 +800,7 @@ Export network results to csv files for SQL data loader."""
             pass
 
     def get_partial_network(self, scenario, attributes):
-        domains = list(attributes.keys())
+        domains = attributes.keys()
         network = scenario.get_partial_network(domains, include_attributes=False)
         for domain, attrs in attributes.items():
             if attrs:
@@ -940,13 +890,13 @@ Export network results to csv files for SQL data loader."""
                 walk_xfer_on = 0.0
                 direct_xfer_off = seg[xfer_alightings]
                 walk_xfer_off = 0.0
-                if i_node in stop_on:
-                    if line.id in stop_on[i_node]:
+                if stop_on.has_key(i_node):
+                    if stop_on[i_node].has_key(line.id):
                         if direct_xfer_on > 0:
                             walk_xfer_on = direct_xfer_on - stop_on[i_node][line.id]
                             direct_xfer_on = stop_on[i_node][line.id]
-                if i_node in stop_off:
-                    if line.id in stop_off[i_node]:
+                if stop_off.has_key(i_node):
+                    if stop_off[i_node].has_key(line.id):
                         if direct_xfer_off > 0:
                             walk_xfer_off = direct_xfer_off - stop_off[i_node][line.id]
                             direct_xfer_off = stop_off[i_node][line.id]
@@ -960,10 +910,10 @@ Export network results to csv files for SQL data loader."""
                 fout_stop.write("\n")
 
     def collapse_network_adjustments(self, network, segment_results, link_results):
-        segment_alights = [v for k, v in list(segment_results.items()) if "alightings" in k]
-        segment_boards = [v for k, v in list(segment_results.items()) if "boardings" in k] + ["transit_boardings"]
+        segment_alights = [v for k, v in segment_results.items() if "alightings" in k]
+        segment_boards = [v for k, v in segment_results.items() if "boardings" in k] + ["transit_boardings"]
         segment_result_attrs = segment_alights + segment_boards
-        link_result_attrs = list(link_results.values()) + ["aux_transit_volume"]
+        link_result_attrs = link_results.values() + ["aux_transit_volume"]
         link_attrs = network.attributes("LINK")
         link_modified_attrs = [
             "length", "@trtime", link_results["link_transit_flow"]]
@@ -1219,7 +1169,7 @@ Export network results to csv files for SQL data loader."""
                 for on_line in results[off_line]:
                     trip = float(results[off_line][on_line])
                     stop_off[stop][off_line] += trip
-                    if on_line not in stop_on[stop]:
+                    if not stop_on[stop].has_key(on_line):
                         stop_on[stop][on_line] = 0.0
                     stop_on[stop][on_line] += trip
         return stop_off, stop_on
