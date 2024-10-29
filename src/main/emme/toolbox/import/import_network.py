@@ -67,7 +67,7 @@ import inro.modeller as _m
 import inro.emme.datatable as _dt
 import inro.emme.network as _network
 from inro.emme.core.exception import Error as _NetworkError
-import inro.emme.core.services as _services
+
 
 from collections import defaultdict as _defaultdict, OrderedDict
 from contextlib import contextmanager as _context
@@ -77,6 +77,7 @@ from math import ceil as _ceiling
 from math import floor as _floor
 from copy import deepcopy as _copy
 import numpy as _np
+import heapq as _heapq
 import pandas as pd
 
 import traceback as _traceback
@@ -84,8 +85,6 @@ import os
 
 _join = os.path.join
 _dir = os.path.dirname
-
-_INF = 1e400
 
 gen_utils = _m.Modeller().module("sandag.utilities.general")
 dem_utils = _m.Modeller().module("sandag.utilities.demand")
@@ -235,7 +234,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             ("create_time_periods", self.create_time_periods)
         ])
         self._log = [{
-            "content": list(attributes.items()),
+            "content": attributes.items(),
             "type": "table", "header": ["name", "value"],
             "title": "Tool input values"
         }]
@@ -284,7 +283,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 ("ASPD",      ("@speed_adjusted",      "HWY_TWO_WAY", "EXTRA", "Adjusted link speed (miles/hr)")),
                 ("YR",        ("@year_open_traffic",   "HWY_TWO_WAY", "EXTRA", "The year the link opened to traffic")),
                 ("PROJ",      ("@project_code",        "HWY_TWO_WAY", "EXTRA", "Project number for use with hwyproj.xls")),
-                ("FC",        ("type",                 "TWO_WAY",     "STANDARD", "")),
+                ("FC",        ("type",                 "TWO_WAY",     "STANDARD", "Roadway functional class")),
+                ("FFC",       ("@fed_type",            "TWO_WAY",     "EXTRA", "Roadway federal functional class")),
                 ("HOV",       ("@hov",                 "TWO_WAY",     "EXTRA", "Link operation type")),
                 ("MINMODE",   ("@minmode",             "TWO_WAY",     "EXTRA", "Transit mode type")),
                 ("EATRUCK",   ("@truck_ea",            "HWY_TWO_WAY", "EXTRA", "Early AM truck restriction code ")),
@@ -401,7 +401,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                                                  overwrite=self.overwrite, emmebank=self.emmebank))
         # create attributes in scenario
         for elem_type, mapping in attr_map.items():
-            for name, _tcoved_type, emme_type, desc in list(mapping.values()):
+            for name, _tcoved_type, emme_type, desc in mapping.values():
                 if emme_type == "EXTRA":
                     for s in scenarios:
                         if not s.extra_attribute(name):
@@ -1773,18 +1773,17 @@ def find_path(orig_link, dest_link, mode):
     visited = set([])
     visited_add = visited.add
     back_links = {}
-    heap = _services.Heap()
+    heap = []
 
     for link in orig_link.j_node.outgoing_links():
         if mode in link.modes:
             back_links[link] = None
-            costs[link] = link["length"]
-            heap.insert(link, link["length"])
+            _heapq.heappush(heap, (link["length"], link))
 
     link_found = False
     try:
         while not link_found:
-            link = heap.pop()
+            link_cost, link = _heapq.heappop(heap)
             if link in visited:
                 continue
             visited_add(link)
@@ -1793,16 +1792,14 @@ def find_path(orig_link, dest_link, mode):
                     continue
                 if outgoing in visited:
                     continue
-                outgoing_cost = costs[link] + outgoing["length"]
-                if outgoing_cost < costs[outgoing]:
-                    costs[outgoing] = outgoing_cost
-                    back_links[outgoing] = link
-                    heap.insert(outgoing_cost, outgoing)
+                back_links[outgoing] = link
                 if outgoing == dest_link:
                     link_found = True
                     break
-    except RuntimeError:
-        pass  # RuntimeError if heap is empty
+                outgoing_cost = link_cost + link["length"]
+                _heapq.heappush(heap, (outgoing_cost, outgoing))
+    except IndexError:
+        pass  # IndexError if heap is empty
     if not link_found:
         raise NoPathException(
             "no path found between links with trcov_id %s and %s (Emme IDs %s and %s)" % (
@@ -1835,24 +1832,23 @@ def revised_headway(headway):
 def interchange_distance(orig_link, direction):
     visited = set([])
     visited_add = visited.add
-    costs = _defaultdict(lambda : _INF)
-    heap = _services.Heap()
+    back_links = {}
+    heap = []
     if direction == "DOWNSTREAM":
         get_links = lambda l: l.j_node.outgoing_links()
         check_far_node = lambda l: l.j_node.is_interchange
     elif direction == "UPSTREAM":
         get_links = lambda l: l.i_node.incoming_links()
         check_far_node = lambda l: l.i_node.is_interchange
-    if check_far_node(orig_link):
-        return orig_link["length"] / 2.0 
+    
     # Shortest path search for nearest interchange node along freeway
     for link in get_links(orig_link):
-        heap.insert(link, link["length"])
-        costs[link] = link["length"] 
+        _heapq.heappush(heap, (link["length"], link))
+        
     interchange_found = False
     try:
         while not interchange_found:
-            link = heap.pop()
+            link_cost, link = _heapq.heappop(heap)
             if link in visited:
                 continue
             visited_add(link)
@@ -1862,12 +1858,10 @@ def interchange_distance(orig_link, direction):
             for next_link in get_links(link):
                 if next_link in visited:
                     continue
-                next_cost = costs[link] + next_link["length"]
-                if next_cost < costs[next_link]:
-                    costs[next_link] = next_cost
-                    heap.insert(next_link, next_cost)
-    except RuntimeError:
-        # RuntimeError if heap is empty
+                next_cost = link_cost + link["length"]
+                _heapq.heappush(heap, (next_cost, next_link))
+    except IndexError:
+        # IndexError if heap is empty
         # case where start / end of highway, dist = 99
         return 99
-    return orig_link["length"] / 2.0 + costs[link]
+    return orig_link["length"] / 2.0 + link_cost
