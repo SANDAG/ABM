@@ -114,7 +114,7 @@ class TravelTimeReporter:
             skim_values = np.array(skims[core.format(self.settings["time_period"])])
             skim_values = np.where(
                 skim_values == 0,
-                self.ssettings["infinity"],
+                self.settings["infinity"],
                 skim_values
             )
             self.skims[core] = self.expand_skim(
