@@ -268,7 +268,7 @@ nevDiversionConstant: 6
 nevDiversionFactor: 1.25
 nevStartPeriod: 9
 nevEndPeriod: 38
-maxWalkIfMTAccessAvailable: 0.5 # Maximum distance to walk to premium transit if microtransit access is available
+maxWalkIfMTAccessAvailable: 1.0 # Maximum distance to walk to premium transit if microtransit access is available
 
 # cost of "average" monthly transit pass cost.  Used in transit pass ownership model.
 # cost of pass divided by 2 for age < 18 and 65+.
