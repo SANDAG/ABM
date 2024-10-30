@@ -284,7 +284,7 @@ class MTBXDatabase():
                 'name': node.title,
                 'children': [c.element_id for c in node.children],
                 MTBXDatabase.CATEGORY_MAGIC_NUMBER: 'True'}
-        for key, val in list(atts.items()):
+        for key, val in atts.items():
             value_string = "{id}, '{name}', '{value}'".format(
                 id=node.element_id, name=key, value=val)
             sql = """INSERT INTO attributes (%s)
