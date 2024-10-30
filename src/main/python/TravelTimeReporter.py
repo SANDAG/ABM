@@ -108,17 +108,14 @@ class TravelTimeReporter:
         """
         # Read MAZ-level skims
         for skim_name in self.settings["active_skim_files"]:
-            active_skims = pd.read_csv(
-                os.path.join(
-                    self.model_run,
-                    "output",
-                    "skims",
-                    self.settings["active_skim_files"][skim_name]
+            self.skims[skim_name] = pd.read_csv(
+                        os.path.join(
+                        self.model_run,
+                        "output",
+                        "skims",
+                        self.settings["active_skim_files"][skim_name]
                 )
-            )
-            if "i" in active_skims.columns:
-                active_skims = active_skims.drop(["i", "j"],axis=1)
-            self.skims[skim_name] = active_skims.rename(
+            ).rename(
                 columns = {
                     "OMAZ": "i",
                     "DMAZ": "j",
