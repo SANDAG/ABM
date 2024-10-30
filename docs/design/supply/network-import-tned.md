@@ -1,5 +1,6 @@
 # Network Import from TNED
 
+<<<<<<< HEAD
 This section describes the procedure by which the ABM3 model system imports (into Emme) network (highway and transit) files along with a general description of the different network files.
 
 ## Network Files
@@ -58,3 +59,6 @@ This step creates the transit lines by importing them from the trrt.csv, trlink.
 #### Calculate Transit Attributes
 
 The transit line and stop / segment attributes (including fares) are imported to Emme attributes. The special_fares.txt lists network-level incremental fares by boarding (line and/or stop) and in-vehicle segment. They specify additive fares based on the network elements encountered on a transit journey and are used to represent the Coaster (or other) zonal fare system.
+=======
+Details of importing and processing the ETL network.
+>>>>>>> 188e3fd0 (Merge docs folders from ABM3_develop)

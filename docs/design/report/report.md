@@ -1,5 +1,6 @@
 # Reporting Framework
 
+<<<<<<< HEAD
 **Reporting Process Overview:**
 
 1. **ABM3 model output files are stored to data lake:**
@@ -20,3 +21,6 @@
     - Power BI reads the data from the Delta tables.
     - Power BI report templates with various metrics of interest are automatically refreshed with new model run outputs.
     - Metrics can easily be compared across different scenario IDs.
+=======
+Details of reporting components.
+>>>>>>> 188e3fd0 (Merge docs folders from ABM3_develop)

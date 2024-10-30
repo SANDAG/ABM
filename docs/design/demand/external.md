@@ -1,4 +1,5 @@
 # External Models
+<<<<<<< HEAD
 The external aggregate travel models predict characteristics of US-SD and SD-US/MX travel behavior for all non-commercial, non-visitor vehicle trips and selected transit trips. Note that non-commercial MX-SD trips are forecast in the crossborder model, and non-commercial SD-US and SD-MX trips are forecast in the resident model.
 
 ![](../../images/design/external_external_county_cordons.png)
@@ -40,3 +41,11 @@ The trips are then split among toll and non-toll paths according to a simplified
 
 ## Sources
 information primarily taken from this SANDAG document: [link to pdf](https://www.sandag.org/-/media/SANDAG/Documents/PDF/data-and-research/applied-research-and-performance-monitoring/surveys/appendix-t-SANDAG-travel-demand-model-documentation.pdf)
+=======
+
+Details aggregate external models.
+
+## External Internal Model
+
+## External External Model
+>>>>>>> 188e3fd0 (Merge docs folders from ABM3_develop)
