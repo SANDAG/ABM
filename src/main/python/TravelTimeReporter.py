@@ -102,6 +102,29 @@ class TravelTimeReporter:
             
         skims.close()
 
+        # Read bike and walk times from AM traffic skim
+        am_traffic_skim_file = os.path.join(
+            self.model_run,
+            "output",
+            "skims",
+            "traffic_skims_AM.omx"
+        )
+        skims = omx.open_file(am_traffic_skim_file, "r")
+        for core in ["BIKE_TIME", "walkTime"]:
+            skim_values = np.array(skims[core.format(self.settings["time_period"])])
+            skim_values = np.where(
+                skim_values == 0,
+                self.ssettings["infinity"],
+                skim_values
+            )
+            self.skims[core] = self.expand_skim(
+                pd.DataFrame(
+                    skim_values,
+                    zones,
+                    zones
+                )
+            )
+
     def read_active_skims(self):
         """
         Reads active skims into memory as data frames
@@ -410,6 +433,29 @@ class TravelTimeReporter:
         orig_terminal_time = self.field2matrix("terminal_time", origin = True)
         dest_terminal_time = self.field2matrix("terminal_time", origin = False)
         self.skims["drive_alone_time"] = orig_terminal_time + self.expand_skim(self.skims["SOV_NT_L_TIME__" + self.settings["time_period"]]) + dest_terminal_time
+
+    def add_active_taz_time(self, bike = True):
+        """
+        Adds the skim values for OD pairs not in the MAZ skim files and reads in the TAZ-level skim values.
+
+        Parameters
+        ----------
+        bike (bool):
+            If set to `True`, obtain the bike skim values. Otherwise obtain the walk skim values.
+        """
+        if bike:
+            mode = "bike"
+            skim = "BIKE_TIME"
+        else:
+            mode = "walk"
+            skim = "walkTIME"
+
+        self.skims["taz_time"] = self.unpivot_skim(skim)
+        self.skims[mode + "_time"] = np.where(
+            self.skims[mode + "_time"] == self.settings["infinity"],
+            self.skims["taz_time"],
+            self.skims[mode + "_time"]
+        )
 
     # # # # # # # # # # # # OUTPUT FUNCTIONS # # # # # # # # # # # #
     #==============================================================#
