@@ -4,13 +4,13 @@ Description,Target,Expression
 ,is_joint,"reindex(tours.tour_category, df.tour_id) == 'joint'"
 ,tour_leg_origin,"np.where(df.outbound,reindex(tours.origin, df.tour_id), reindex(tours.destination, df.tour_id))"
 ,tour_leg_dest,"np.where(df.outbound,reindex(tours.destination, df.tour_id), reindex(tours.origin, df.tour_id))"
-,ebike_owner_trips,"reindex(tours.ebike_owner, df.tour_id)"
 #,,
 ,_tod,"np.where(df.outbound,reindex_i(tours.start, df.tour_id),reindex_i(tours.end, df.tour_id))"
 ,trip_period,network_los.skim_time_period_label(_tod)
 #,,
 adding _trips to avoid conflict with the variables in the tours_merged,income_trips,"reindex(households.income, df.person_id)"
 adding _trips to avoid conflict with the variables in the tours_merged,age_trips,"reindex(persons.age, df.person_id)"
+adding _trips to avoid conflict with the variables in the tours_merged,ebike_owner_trips,"reindex(households.ebike_owner, df.person_id)"
 ,female,"reindex(persons.female, df.person_id)"
 #,age_55p,"reindex(persons.age_55_p, df.person_id)"
 #,age_35_54,"reindex(persons.age_35_to_54, df.person_id)"
