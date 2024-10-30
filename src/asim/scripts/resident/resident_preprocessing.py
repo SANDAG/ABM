@@ -228,11 +228,15 @@ class Series15_Processor:
                 od_connections = skim_df.loc[skim_df[origin_col] == closest_maz].copy()
                 print(f"\t origins with this internal maz {len(od_connections)}")
                 od_connections[origin_col] = ext_maz
+                if "i" in skim_df.columns:
+                    od_connections["i"] = ext_maz
                 new_connections.append(od_connections)
 
                 if dest_col is not None:
                     do_connections = skim_df.loc[skim_df[dest_col] == closest_maz].copy()
                     do_connections[dest_col] = ext_maz
+                    if "j" in skim_df.columns:
+                        do_connections["j"] = ext_maz
                     print(f"\t destinations with this internal maz {len(do_connections)}")
                     new_connections.append(do_connections)
 

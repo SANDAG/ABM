@@ -115,14 +115,14 @@ class TravelTimeReporter:
                     self.settings["active_skim_files"][skim_name]
                 )
             )
-            if not "i" in active_skims.columns:
-                active_skims = active_skims.rename(
-                    columns = {
-                        "OMAZ": "i",
-                        "DMAZ": "j",
-                    }
-                )
-            self.skims[skim_name] = active_skims.set_index(
+            if "i" in active_skims.columns:
+                active_skims = active_skims.drop(["i", "j"],axis=1)
+            self.skims[skim_name] = active_skims.rename(
+                columns = {
+                    "OMAZ": "i",
+                    "DMAZ": "j",
+                }
+            ).set_index(
                 ["i", "j"]
             )
 
