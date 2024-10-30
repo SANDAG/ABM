@@ -4,7 +4,12 @@ infinity: 999
 outfile: report\walkMgrasWithin30Min_MD.csv
 
 transit_skim_matrices: # If set to True, replace values of zero with the number set as infinity
-  WALK_MIX_FIRSTWAIT__{}: False
+  WALK_LOC_XFERWALK__{}: False
+  WALK_LOC_XFERWAIT__{}: False
+  WALK_LOC_TOTALIVTT__{}: True
+  WALK_PRM_XFERWALK__{}: False
+  WALK_PRM_XFERWAIT__{}: False
+  WALK_PRM_TOTALIVTT__{}: True
   WALK_MIX_XFERWALK__{}: False
   WALK_MIX_XFERWAIT__{}: False
   WALK_MIX_TOTALIVTT__{}: True
