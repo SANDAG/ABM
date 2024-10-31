@@ -12,10 +12,10 @@ write_skim_cache: False
 
 # series15
 taz_skims:
-  - traffic_skims*.omx
-  - transit_skims*.omx
-  - dest_pmsa.omxz
-  - dest_poi.omxz
+  - traffic_skims*.omxz
+  - transit_skims*.omxz
+  - dest_pmsa.omx
+  - dest_poi.omx
 
 maz: land_use.csv   # mgra.csv
 
