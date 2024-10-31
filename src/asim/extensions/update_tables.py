@@ -8,7 +8,7 @@ import yaml
 import numpy as np
 import pandas as pd
 
-from activitysim.core import config, inject, pipeline, tracing
+from activitysim.core import config, workflow
 from activitysim.core.config import setting
 
 # from io import StringIO
@@ -75,12 +75,12 @@ def get_commit_info(repo_path):
     return {"short_commit_hash": commit_hash, "branch_name": branch_name}
 
 
-def write_metadata(prefix):
+def write_metadata(state, prefix):
 
-    output_dir = inject.get_injectable("output_dir")
+    output_dir = state.get_injectable("output_dir")
 
     # repo branch name and commit hash: activitysim
-    asim_git_folder = find_git_folder(pipeline.__file__, "../../..")
+    asim_git_folder = find_git_folder(workflow.__file__, "../../..")
     asim_commit_info = get_commit_info(asim_git_folder)
 
     # repo branch name and commit hash: abm3
@@ -180,11 +180,11 @@ def replace_missing_values(df):
 
     return df
     
-def get_output_table_names(output_tables_settings, output_tables_settings_name):
+def get_output_table_names(state, output_tables_settings, output_tables_settings_name):
     """ """
     action = output_tables_settings.get("action")
     tables = output_tables_settings.get("tables")
-    registered_tables = pipeline.registered_tables()
+    registered_tables = state.registered_tables()
     if action == "include":
         # interpret empty or missing tables setting to mean include all registered tables
         output_tables_list = tables if tables is not None else registered_tables
@@ -197,10 +197,10 @@ def get_output_table_names(output_tables_settings, output_tables_settings_name):
         )
     return output_tables_list
 
-@inject.step()
-def update_tables():
+@workflow.step()
+def update_tables(state):
     # get list of model outputs to update
-    output_dir = inject.get_injectable("output_dir")
+    output_dir = state.get_injectable("output_dir")
     input_dir = os.path.abspath(os.path.join(output_dir, "..", "..", "input"))
     # input_dir = inject.get_injectable("data_dir")
     output_tables_settings_name = "output_tables"
@@ -209,7 +209,7 @@ def update_tables():
         logger.info("No output_tables specified in settings file. Nothing to update.")
         return
     output_tables_list = get_output_table_names(
-        output_tables_settings, output_tables_settings_name
+        state, output_tables_settings, output_tables_settings_name
     )
 
     common_settings_file_name = "..\common\outputs.yaml"
@@ -225,7 +225,7 @@ def update_tables():
                 or table_name == "persons"):
             continue
         
-        output_table = pipeline.get_table(table_name)
+        output_table = state.get_table(table_name)
         
         # set sample rate to float
         if table_name == "households" and setting("model_name") == "resident":
@@ -292,7 +292,7 @@ def update_tables():
             output_table = rename_columns(table_settings, output_table)
             output_table = replace_missing_values(output_table)
         
-        pipeline.replace_table(table_name, output_table)
+        state.add_table(table_name, output_table)
 
     prefix = output_tables_settings.get("prefix", "final_")
-    write_metadata(prefix)
+    write_metadata(state, prefix)
