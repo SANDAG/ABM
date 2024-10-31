@@ -110,14 +110,18 @@ class TravelTimeReporter:
             "traffic_skims_AM.omx"
         )
         skims = omx.open_file(am_traffic_skim_file, "r")
-        for core in ["BIKE_TIME", "walkTime"]:
+        active_taz_skims = {
+            "BIKE_TIME": "taz_bike_time",
+            "walkTime": "taz_walk_time"
+        }
+        for core in active_taz_skims:
             skim_values = np.array(skims[core.format(self.settings["time_period"])])
             skim_values = np.where(
                 skim_values == 0,
                 self.settings["infinity"],
                 skim_values
             )
-            self.skims[core] = self.expand_skim(
+            self.skims[active_taz_skims[core]] = self.expand_skim(
                 pd.DataFrame(
                     skim_values,
                     zones,
@@ -445,16 +449,16 @@ class TravelTimeReporter:
         """
         if bike:
             mode = "bike"
-            skim = "BIKE_TIME"
+            skim = "taz_bike_time"
         else:
             mode = "walk"
-            skim = "walkTIME"
+            skim = "taz_walk_time"
 
-        self.skims["taz_time"] = self.unpivot_skim(skim)
-        self.skims[mode + "_time"] = np.where(
-            self.skims[mode + "_time"] == self.settings["infinity"],
-            self.skims["taz_time"],
-            self.skims[mode + "_time"]
+        self.results["taz_time"] = self.unpivot_skim(skim)
+        self.results[mode] = np.where(
+            self.results[mode] == self.settings["infinity"],
+            self.results["taz_time"],
+            self.results[mode]
         )
 
     # # # # # # # # # # # # OUTPUT FUNCTIONS # # # # # # # # # # # #
@@ -470,8 +474,8 @@ class TravelTimeReporter:
         self.results = pd.DataFrame(
             {
                 "transit": self.unpivot_skim("total_transit_time"),
-                "walk": self.skims["walk_time"].query("walkTime <= @time_threshold")["walkTime"],
-                "bike": self.skims["bike_time"].query("BIKE_TIME <= @time_threshold")["BIKE_TIME"],
+                "walk": self.skims["maz_walk_time"].query("walkTime <= @time_threshold")["walkTime"],
+                "bike": self.skims["maz_bike_time"].query("BIKE_TIME <= @time_threshold")["BIKE_TIME"],
                 "microtransit": self.unpivot_skim("microtransit_time"),
                 "nev": self.unpivot_skim("nev_time"),
 #                "drive_alone": self.unpivot_skim("drive_alone_time")
@@ -479,6 +483,9 @@ class TravelTimeReporter:
         ).reset_index().fillna(self.settings["infinity"]).sort_values(
             ["i", "j"]
         )
+
+        self.add_active_taz_time(bike = False)
+        self.add_active_taz_time(bike = True)
 
         _ebikeMaxTime = self.constants["ebikeMaxDist"] / self.constants["ebikeSpeed"] * 60
         _escooterMaxTime = self.constants["escooterMaxDist"] / self.constants["escooterSpeed"] * 60

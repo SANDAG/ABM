@@ -20,5 +20,5 @@ traffic_skim_matrices: # If set to True, replace values of zero with the number 
   SOV_NT_L_TIME__{}: False
 
 active_skim_files:
-  walk_time: maz_maz_walk.csv
-  bike_time: maz_maz_bike.csv
+  maz_walk_time: maz_maz_walk.csv
+  maz_bike_time: maz_maz_bike.csv
