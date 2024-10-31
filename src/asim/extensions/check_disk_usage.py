@@ -9,7 +9,7 @@ from activitysim.core import workflow
 logger = logging.getLogger("activitysim")
 
 @workflow.step()
-def check_disk_usage(state):
+def check_disk_usage(state: workflow.State):
     output_dir = state.get_injectable("output_dir")
     path = os.path.abspath(os.path.join(output_dir, "..", ".."))
     disk_usage = win32.Dispatch('Scripting.FileSystemObject').GetFolder(path).Size
