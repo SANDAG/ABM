@@ -95,7 +95,7 @@ def write_metadata(state, prefix):
             "commit": ""
         }
 
-    trip_settings = WriteTripMatricesSettings.read_settings_file("write_trip_matrices.yaml")
+    trip_settings = WriteTripMatricesSettings.read_settings_file(state.filesystem, "write_trip_matrices.yaml")
     constants = trip_settings.CONSTANTS
 
     model_metadata_dict = {
