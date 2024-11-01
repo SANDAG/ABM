@@ -156,8 +156,8 @@ class TravelTimeReporter:
             )
 
         # Replace TAZ-skim level values with MGRA-skim values if they are present
-        self.unpivot_skim("taz_bike_time")
-        self.unpivot_skim("taz_walk_time")
+        self.skims["taz_bike_time"] = self.unpivot_skim("taz_bike_time")
+        self.skims["taz_walk_time"] = self.unpivot_skim("taz_walk_time")
 
         self.skims["bike_time"] = self.skims["taz_bike_time"].copy()
         self.skims["walk_time"] = self.skims["taz_walk_time"].copy()
