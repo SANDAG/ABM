@@ -508,6 +508,8 @@ class TravelTimeReporter:
             self.results[mode]
         )
 
+        del self.results["taz_time"]
+
     # # # # # # # # # # # # OUTPUT FUNCTIONS # # # # # # # # # # # #
     #==============================================================#
     def coalesce_results(self):
