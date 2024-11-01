@@ -203,7 +203,7 @@ def update_tables(state: workflow.State):
     input_dir = os.path.abspath(os.path.join(output_dir, "..", "..", "input"))
     # input_dir = inject.get_injectable("data_dir")
     output_tables_settings_name = "output_tables"
-    output_tables_settings = state.settings(output_tables_settings_name)
+    output_tables_settings = state.settings.output_tables
     if output_tables_settings is None:
         logger.info("No output_tables specified in settings file. Nothing to update.")
         return
