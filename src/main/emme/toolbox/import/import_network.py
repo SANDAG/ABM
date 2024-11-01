@@ -67,7 +67,7 @@ import inro.modeller as _m
 import inro.emme.datatable as _dt
 import inro.emme.network as _network
 from inro.emme.core.exception import Error as _NetworkError
-
+import inro.emme.core.services as _services
 
 from collections import defaultdict as _defaultdict, OrderedDict
 from contextlib import contextmanager as _context
@@ -77,7 +77,6 @@ from math import ceil as _ceiling
 from math import floor as _floor
 from copy import deepcopy as _copy
 import numpy as _np
-import heapq as _heapq
 import pandas as pd
 
 import traceback as _traceback
@@ -86,6 +85,7 @@ import os
 _join = os.path.join
 _dir = os.path.dirname
 
+_INF = 1e400
 gen_utils = _m.Modeller().module("sandag.utilities.general")
 dem_utils = _m.Modeller().module("sandag.utilities.demand")
 
@@ -1773,17 +1773,18 @@ def find_path(orig_link, dest_link, mode):
     visited = set([])
     visited_add = visited.add
     back_links = {}
-    heap = []
+    heap = _services.Heap()
 
     for link in orig_link.j_node.outgoing_links():
         if mode in link.modes:
             back_links[link] = None
-            _heapq.heappush(heap, (link["length"], link))
+            costs[link] = link["length"]
+            heap.insert(link, link["length"])
 
     link_found = False
     try:
         while not link_found:
-            link_cost, link = _heapq.heappop(heap)
+            link = heap.pop()
             if link in visited:
                 continue
             visited_add(link)
@@ -1792,12 +1793,14 @@ def find_path(orig_link, dest_link, mode):
                     continue
                 if outgoing in visited:
                     continue
-                back_links[outgoing] = link
+                outgoing_cost = costs[link] + outgoing["length"]
+                if outgoing_cost < costs[outgoing]:
+                    costs[outgoing] = outgoing_cost
+                    back_links[outgoing] = link
+                    heap.insert(outgoing_cost, outgoing)
                 if outgoing == dest_link:
                     link_found = True
                     break
-                outgoing_cost = link_cost + link["length"]
-                _heapq.heappush(heap, (outgoing_cost, outgoing))
     except IndexError:
         pass  # IndexError if heap is empty
     if not link_found:
@@ -1832,23 +1835,24 @@ def revised_headway(headway):
 def interchange_distance(orig_link, direction):
     visited = set([])
     visited_add = visited.add
-    back_links = {}
-    heap = []
+    costs = _defaultdict(lambda : _INF)
+    heap = _services.Heap()
     if direction == "DOWNSTREAM":
         get_links = lambda l: l.j_node.outgoing_links()
         check_far_node = lambda l: l.j_node.is_interchange
     elif direction == "UPSTREAM":
         get_links = lambda l: l.i_node.incoming_links()
         check_far_node = lambda l: l.i_node.is_interchange
-    
+    if check_far_node(orig_link):
+        return orig_link["length"] / 2.0 
     # Shortest path search for nearest interchange node along freeway
     for link in get_links(orig_link):
-        _heapq.heappush(heap, (link["length"], link))
-        
+        heap.insert(link, link["length"])
+        costs[link] = link["length"]
     interchange_found = False
     try:
         while not interchange_found:
-            link_cost, link = _heapq.heappop(heap)
+            link = heap.pop()
             if link in visited:
                 continue
             visited_add(link)
@@ -1858,10 +1862,12 @@ def interchange_distance(orig_link, direction):
             for next_link in get_links(link):
                 if next_link in visited:
                     continue
-                next_cost = link_cost + link["length"]
-                _heapq.heappush(heap, (next_cost, next_link))
+                next_cost = costs[link] + next_link["length"]
+                if next_cost < costs[next_link]:
+                    costs[next_link] = next_cost
+                    heap.insert(next_link, next_cost)
     except IndexError:
         # IndexError if heap is empty
         # case where start / end of highway, dist = 99
         return 99
-    return orig_link["length"] / 2.0 + link_cost
+    return orig_link["length"] / 2.0 + costs[link]
