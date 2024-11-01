@@ -250,11 +250,13 @@ class TravelTimeReporter:
             id_vars = ["i"],
             var_name = "j",
             value_name = "time"
-        ).sort_values(
-            ["i", "j"]
-            ).set_index(
+        ).query(
+            "time <= @time_threshold"
+            ).sort_values(
                 ["i", "j"]
-                )["time"]
+                ).set_index(
+                    ["i", "j"]
+                    )["time"]
 
     # # # # # # # # # # # # CALCULATOR FUNCTIONS # # # # # # # # # # # #
     #==================================================================#
@@ -451,9 +453,7 @@ class TravelTimeReporter:
                 "nev": self.unpivot_skim("nev_time"),
 #                "drive_alone": self.unpivot_skim("drive_alone_time")
             }
-        ).query(
-            "time <= @time_threshold"
-            ).reset_index().fillna(self.settings["infinity"]).sort_values(
+        ).reset_index().fillna(self.settings["infinity"]).sort_values(
             ["i", "j"]
             )
 
