@@ -179,6 +179,8 @@ class TravelTimeReporter:
         self.land_use["nev_egress_available"] = (self.land_use["nev"] > 0) & (self.land_use["micro_accegr_dist"] <= self.constants["nevMaxDist"]) & (self.land_use["micro_accegr_dist"] >= self.constants["maxWalkIfMTAccessAvailable"])
         self.land_use["nev_accegr_time"] = 60 * self.land_use["micro_accegr_dist"] / self.constants["nevSpeed"]
 
+        self.expansion_matrix = pd.get_dummies(self.land_use["TAZ"]) # Indicates which MGRAs belong to which TAZ
+
     # # # # # # # # # # # # UTILITY FUNCTIONS # # # # # # # # # # # #
     #===============================================================#
     def field2matrix(self, field, origin = True):
@@ -222,9 +224,8 @@ class TravelTimeReporter:
         expanded_skim (pandas.DataFrame):
             Skim matrix where the index and columns are the origins and destinations MGRAs, respectively, and the values are the impedance from each origin MGRA to the destination MGRA
         """
-        expansion_matrix = pd.get_dummies(self.land_use["TAZ"]) # Indicates which MGRAs belong to which TAZ
         return pd.DataFrame(
-            expansion_matrix.values.dot(skim.values).dot(expansion_matrix.T.values),
+            self.expansion_matrix.values.dot(skim.values).dot(self.expansion_matrix.T.values),
             self.land_use.index,
             self.land_use.index
         )
