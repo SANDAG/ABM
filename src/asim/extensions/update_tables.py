@@ -181,8 +181,8 @@ def replace_missing_values(df):
     
 def get_output_table_names(state, output_tables_settings, output_tables_settings_name):
     """ """
-    action = output_tables_settings.get("action")
-    tables = output_tables_settings.get("tables")
+    action = output_tables_settings.action
+    tables = output_tables_settings.tables
     registered_tables = state.registered_tables()
     if action == "include":
         # interpret empty or missing tables setting to mean include all registered tables
@@ -293,5 +293,5 @@ def update_tables(state: workflow.State):
         
         state.add_table(table_name, output_table)
 
-    prefix = output_tables_settings.get("prefix", "final_")
+    prefix = output_tables_settings.prefix
     write_metadata(state, prefix)
