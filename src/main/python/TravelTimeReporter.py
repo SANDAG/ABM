@@ -477,9 +477,7 @@ class TravelTimeReporter:
                 "nev": self.unpivot_skim("nev_time"),
 #                "drive_alone": self.unpivot_skim("drive_alone_time")
             }
-        ).query(
-            "time <= @time_threshold"
-            ).reset_index().fillna(self.settings["infinity"]).sort_values(
+        ).reset_index().fillna(self.settings["infinity"]).sort_values(
             ["i", "j"]
             )
 
