@@ -211,7 +211,12 @@ def update_tables(state: workflow.State):
         state, output_tables_settings, output_tables_settings_name
     )
 
-    common_settings_file_name = "..\common\outputs.yaml"
+    configs_dirs = state.filesystem.get_configs_dir()
+    for configs_dir in configs_dirs:
+        if "common" in configs_dir:
+            common_configs_dir = configs_dir
+            break
+    common_settings_file_name = os.path.join(common_configs_dir, "outputs.yaml")
     common_settings_stream = open(common_settings_file_name, "r")
     common_settings = yaml.safe_load(common_settings_stream)
     common_settings_stream.close()
