@@ -301,47 +301,31 @@ class TravelTimeReporter:
         """
         Returns transit access and egress times from every MGRA to every other MGRA
         """
-        print("Calculating direct flexible fleet access and egress times")
-        microtransit_direct_access_time = self.get_microtransit_direct_accegr_time(access = True, nev = False)
-        microtransit_direct_egress_time = self.get_microtransit_direct_accegr_time(access = False, nev = False)
-        nev_direct_access_time = self.get_microtransit_direct_accegr_time(access = True, nev = True)
-        nev_direct_egress_time = self.get_microtransit_direct_accegr_time(access = False, nev = True)
+        # print("Calculating direct flexible fleet access and egress times")
+        # microtransit_direct_access_time = self.get_microtransit_direct_accegr_time(access = True, nev = False)
+        # microtransit_direct_egress_time = self.get_microtransit_direct_accegr_time(access = False, nev = False)
+        # nev_direct_access_time = self.get_microtransit_direct_accegr_time(access = True, nev = True)
+        # nev_direct_egress_time = self.get_microtransit_direct_accegr_time(access = False, nev = True)
 
-        print("Calculating flexible fleet diverted access and egress times")
-        microtransit_access_time = self.get_total_microtransit_accegr_times(microtransit_direct_access_time, nev = False)
-        microtransit_egress_time = self.get_total_microtransit_accegr_times(microtransit_direct_egress_time, nev = False)
-        nev_access_time = self.get_total_microtransit_accegr_times(nev_direct_access_time, nev = True)
-        nev_egress_time = self.get_total_microtransit_accegr_times(nev_direct_egress_time, nev = True)
+        # print("Calculating flexible fleet diverted access and egress times")
+        # microtransit_access_time = self.get_total_microtransit_accegr_times(microtransit_direct_access_time, nev = False)
+        # microtransit_egress_time = self.get_total_microtransit_accegr_times(microtransit_direct_egress_time, nev = False)
+        # nev_access_time = self.get_total_microtransit_accegr_times(nev_direct_access_time, nev = True)
+        # nev_egress_time = self.get_total_microtransit_accegr_times(nev_direct_egress_time, nev = True)
 
-        print("Getting flexible fleet availability")
-        microtransit_access_available = self.field2matrix("microtransit_access_available", origin = True)
-        microtransit_egress_available = self.field2matrix("microtransit_egress_available", origin = False)
-        nev_access_available = self.field2matrix("nev_access_available", origin = True)
-        nev_egress_available = self.field2matrix("nev_egress_available", origin = False)
+        # print("Getting flexible fleet availability")
+        # microtransit_access_available = self.field2matrix("microtransit_access_available", origin = True)
+        # microtransit_egress_available = self.field2matrix("microtransit_egress_available", origin = False)
+        # nev_access_available = self.field2matrix("nev_access_available", origin = True)
+        # nev_egress_available = self.field2matrix("nev_egress_available", origin = False)
 
         print("Getting walk access and egress times")
         walk_access_time = self.field2matrix("walk_accegr_time", origin = True)
         walk_egress_time = self.field2matrix("walk_accegr_time", origin = False)
 
         print("Calculating access and egress times")
-        self.skims["access_time"] = np.where(
-            nev_access_available,
-            nev_access_time,
-            np.where(
-                microtransit_access_available,
-                microtransit_access_time,
-                walk_access_time
-            )
-        )
-        self.skims["egress_time"] = np.where(
-            nev_egress_available,
-            nev_egress_time,
-            np.where(
-                microtransit_egress_available,
-                microtransit_egress_time,
-                walk_egress_time
-            )
-        )
+        self.skims["access_time"] = walk_access_time
+        self.skims["egress_time"] = walk_egress_time
 
     def get_transit_time(self):
         """
@@ -460,6 +444,8 @@ class TravelTimeReporter:
             self.results["taz_time"],
             self.results[mode]
         )
+
+        del self.results["taz_time"]
 
     # # # # # # # # # # # # OUTPUT FUNCTIONS # # # # # # # # # # # #
     #==============================================================#
