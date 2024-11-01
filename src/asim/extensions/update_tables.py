@@ -212,7 +212,9 @@ def update_tables(state: workflow.State):
     )
 
     common_settings_file_name = "..\common\outputs.yaml"
-    common_settings = config.read_model_settings(common_settings_file_name)
+    common_settings_stream = open(common_settings_file_name, "r")
+    common_settings = yaml.safe_load(common_settings_stream)
+    common_settings_stream.close()
 
     for table_name in output_tables_list:
         if not isinstance(table_name, str):
