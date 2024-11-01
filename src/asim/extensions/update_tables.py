@@ -229,18 +229,18 @@ def update_tables(state: workflow.State):
         output_table = state.get_table(table_name)
         
         # set sample rate to float
-        if table_name == "households" and setting("model_name") == "resident":
+        if table_name == "households" and state.settings.model_name == "resident":
             output_table["sample_rate"] = output_table["sample_rate"].astype(float)
 
         # split vehicle_type column
-        if table_name == "vehicles" and setting("model_name") == "resident":
+        if table_name == "vehicles" and state.settings.model_name == "resident":
             output_table[["vehicle_category", "num_occupants", "fuel_type"]] = output_table[
                 "vehicle_type"
             ].str.split(pat="_", expand=True)
             # output_table.drop(columns={'vehicle_type'}, inplace=True) ## TODO decide whether to drop column here or in bronze -> silver filter
         
         # add missing columns from input persons file
-        if table_name == "persons" and setting("model_name") == "resident":
+        if table_name == "persons" and state.settings.model_name == "resident":
             input_persons = pd.read_csv(os.path.join(input_dir,"persons.csv"),
             usecols=[
             "perid",
@@ -261,7 +261,7 @@ def update_tables(state: workflow.State):
             output_table = output_table.merge(input_persons,how="inner",left_on="person_id",right_on="perid")
         
         # add missing columns from input land use file
-        if table_name == "land_use" and setting("model_name") == "resident":
+        if table_name == "land_use" and state.settings.model_name == "resident":
             input_land_use = pd.read_csv(os.path.join(input_dir,"land_use.csv"),
             usecols=[
             "mgra",
