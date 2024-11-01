@@ -251,13 +251,11 @@ class TravelTimeReporter:
             id_vars = ["i"],
             var_name = "j",
             value_name = "time"
-        ).query(
-            "time <= @time_threshold"
-            ).sort_values(
-                ["i", "j"]
+        ).sort_values(
+            ["i", "j"]
             ).set_index(
                 ["i", "j"]
-            )["time"]
+                )["time"]
 
     # # # # # # # # # # # # CALCULATOR FUNCTIONS # # # # # # # # # # # #
     #==================================================================#
@@ -454,9 +452,11 @@ class TravelTimeReporter:
                 "nev": self.unpivot_skim("nev_time"),
 #                "drive_alone": self.unpivot_skim("drive_alone_time")
             }
-        ).reset_index().fillna(self.settings["infinity"]).sort_values(
+        ).query(
+            "time <= @time_threshold"
+            ).reset_index().fillna(self.settings["infinity"]).sort_values(
             ["i", "j"]
-        )
+            )
 
         _ebikeMaxTime = self.constants["ebikeMaxDist"] / self.constants["ebikeSpeed"] * 60
         _escooterMaxTime = self.constants["escooterMaxDist"] / self.constants["escooterSpeed"] * 60
