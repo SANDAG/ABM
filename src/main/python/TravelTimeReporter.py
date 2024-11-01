@@ -102,37 +102,11 @@ class TravelTimeReporter:
             
         skims.close()
 
-        # Read bike and walk times from AM traffic skim
-        am_traffic_skim_file = os.path.join(
-            self.model_run,
-            "output",
-            "skims",
-            "traffic_skims_AM.omx"
-        )
-        skims = omx.open_file(am_traffic_skim_file, "r")
-        active_taz_skims = {
-            "BIKE_TIME": "taz_bike_time",
-            "walkTime": "taz_walk_time"
-        }
-        for core in active_taz_skims:
-            skim_values = np.array(skims[core.format(self.settings["time_period"])])
-            skim_values = np.where(
-                skim_values == 0,
-                self.settings["infinity"],
-                skim_values
-            )
-            self.skims[active_taz_skims[core]] = self.expand_skim(
-                pd.DataFrame(
-                    skim_values,
-                    zones,
-                    zones
-                )
-            )
-
     def read_active_skims(self):
         """
         Reads active skims into memory as data frames
         """
+        # Read MAZ-level skims
         for skim_name in self.settings["active_skim_files"]:
             active_skims = pd.read_csv(
                 os.path.join(
@@ -152,6 +126,45 @@ class TravelTimeReporter:
             ).set_index(
                 ["i", "j"]
             )
+
+        # Read bike and walk times from AM traffic skim
+        am_traffic_skim_file = os.path.join(
+            self.model_run,
+            "output",
+            "skims",
+            "traffic_skims_AM.omx"
+        )
+        skims = omx.open_file(am_traffic_skim_file, "r")
+        zones = skims.mapping("zone_number").keys()
+        active_taz_skims = {
+            "BIKE_TIME": "taz_bike_time",
+            "walkTime": "taz_walk_time"
+        }
+        for core in active_taz_skims:
+            skim_values = np.array(skims[core.format(self.settings["time_period"])])
+            skim_values = np.where(
+                skim_values == 0,
+                self.settings["infinity"],
+                skim_values
+            )
+            self.skims[active_taz_skims[core]] = self.expand_skim(
+                pd.DataFrame(
+                    skim_values,
+                    zones,
+                    zones
+                )
+            )
+
+        # Replace TAZ-skim level values with MGRA-skim values if they are present
+        self.unpivot_skim("taz_bike_time")
+        self.unpivot_skim("taz_walk_time")
+        self.unpivot_skim("maz_bike_time")
+        self.unpivot_skim("maz_walk_time")
+
+        self.skims["bike_time"] = self.skims["taz_bike_time"].copy()
+        self.skims["walk_time"] = self.skims["taz_walk_time"].copy()
+        self.skims["bike_time"].loc[self.skims["maz_bike_time"].index] = self.skims["maz_bike_time"]
+        self.skims["walk_time"].loc[self.skims["maz_walk_time"].index] = self.skims["maz_walk_time"]
 
     def init_land_use(self):
         """
@@ -422,31 +435,6 @@ class TravelTimeReporter:
         dest_terminal_time = self.field2matrix("terminal_time", origin = False)
         self.skims["drive_alone_time"] = orig_terminal_time + self.expand_skim(self.skims["SOV_NT_L_TIME__" + self.settings["time_period"]]) + dest_terminal_time
 
-    def add_active_taz_time(self, bike = True):
-        """
-        Adds the skim values for OD pairs not in the MAZ skim files and reads in the TAZ-level skim values.
-
-        Parameters
-        ----------
-        bike (bool):
-            If set to `True`, obtain the bike skim values. Otherwise obtain the walk skim values.
-        """
-        if bike:
-            mode = "bike"
-            skim = "taz_bike_time"
-        else:
-            mode = "walk"
-            skim = "taz_walk_time"
-
-        self.results["taz_time"] = self.unpivot_skim(skim)
-        self.results[mode] = np.where(
-            self.results[mode] == self.settings["infinity"],
-            self.results["taz_time"],
-            self.results[mode]
-        )
-
-        del self.results["taz_time"]
-
     # # # # # # # # # # # # OUTPUT FUNCTIONS # # # # # # # # # # # #
     #==============================================================#
     def coalesce_results(self):
@@ -460,8 +448,8 @@ class TravelTimeReporter:
         self.results = pd.DataFrame(
             {
                 "transit": self.unpivot_skim("total_transit_time"),
-                "walk": self.skims["maz_walk_time"].query("walkTime <= @time_threshold")["walkTime"],
-                "bike": self.skims["maz_bike_time"].query("BIKE_TIME <= @time_threshold")["BIKE_TIME"],
+                "walk": self.skims["walk_time"],
+                "bike": self.skims["bike_time"],
                 "microtransit": self.unpivot_skim("microtransit_time"),
                 "nev": self.unpivot_skim("nev_time"),
 #                "drive_alone": self.unpivot_skim("drive_alone_time")
@@ -469,9 +457,6 @@ class TravelTimeReporter:
         ).reset_index().fillna(self.settings["infinity"]).sort_values(
             ["i", "j"]
         )
-
-        self.add_active_taz_time(bike = False)
-        self.add_active_taz_time(bike = True)
 
         _ebikeMaxTime = self.constants["ebikeMaxDist"] / self.constants["ebikeSpeed"] * 60
         _escooterMaxTime = self.constants["escooterMaxDist"] / self.constants["escooterSpeed"] * 60
