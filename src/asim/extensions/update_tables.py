@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 
 from activitysim.core import config, workflow
+from activitysim.abm.models.trip_matrices import WriteTripMatricesSettings
 
 # from io import StringIO
 
@@ -94,8 +95,8 @@ def write_metadata(state, prefix):
             "commit": ""
         }
 
-    trip_settings = config.read_model_settings("write_trip_matrices.yaml")
-    constants = trip_settings.get("CONSTANTS")
+    trip_settings = WriteTripMatricesSettings.read_settings_file("write_trip_matrices.yaml")
+    constants = trip_settings.CONSTANTS
 
     model_metadata_dict = {
         "asim_branch_name": asim_commit_info["branch_name"],
