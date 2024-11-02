@@ -228,12 +228,21 @@ no long walks,walkAvailable,"np.where((walk_time_skims < max_walk_time),1,0) * n
 ,dest_micro_local_dist,"reindex(land_use.micro_dist_local_bus, destination)"
 ,dest_micro_prm_dist,"reindex(land_use.micro_dist_premium_transit, destination)"
 ,dest_micro_mix_dist,"np.minimum(dest_micro_local_dist, dest_micro_prm_dist)"
+<<<<<<< HEAD
 ,micro_local_dist_tncout,"odt_skims['KNROUT_LOC_ACC']/60 * driveSpeed"
 ,micro_local_dist_tncin,"odt_skims['KNRIN_LOC_ACC']/60 * driveSpeed"
 ,micro_prm_dist_tncout,"odt_skims['KNROUT_PRM_ACC']/60 * driveSpeed"
 ,micro_prm_dist_tncin,"odt_skims['KNRIN_PRM_ACC']/60 * driveSpeed"
 ,micro_mix_dist_tncout,"odt_skims['KNROUT_MIX_ACC']/60 * driveSpeed"
 ,micro_mix_dist_tncin,"odt_skims['KNRIN_MIX_ACC']/60 * driveSpeed"
+=======
+,micro_local_dist_tncout,"odt_skims['KNROUT_LOC_ACC']/60 * driveSpeed",
+,micro_local_dist_tncin,"odt_skims['KNRIN_LOC_ACC']/60 * driveSpeed",
+,micro_prm_dist_tncout,"odt_skims['KNROUT_PRM_ACC']/60 * driveSpeed",
+,micro_prm_dist_tncin,"odt_skims['KNRIN_PRM_ACC']/60 * driveSpeed",
+,micro_mix_dist_tncout,"odt_skims['KNROUT_MIX_ACC']/60 * driveSpeed",
+,micro_mix_dist_tncin,"odt_skims['KNRIN_MIX_ACC']/60 * driveSpeed",
+>>>>>>> e9f9a08f (Merge asim config updates from ABM3_develop)
 #access egress times,,
 ,origin_local_time,origin_local_dist * 60/walkSpeed
 ,origin_prm_time,origin_prm_dist * 60/walkSpeed
