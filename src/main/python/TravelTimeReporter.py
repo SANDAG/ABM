@@ -107,14 +107,17 @@ class TravelTimeReporter:
         Reads active skims into memory as data frames
         """
         for skim_name in self.settings["active_skim_files"]:
-            self.skims[skim_name] = pd.read_csv(
-                        os.path.join(
-                        self.model_run,
-                        "output",
-                        "skims",
-                        self.settings["active_skim_files"][skim_name]
+            active_skims = pd.read_csv(
+                os.path.join(
+                    self.model_run,
+                    "output",
+                    "skims",
+                    self.settings["active_skim_files"][skim_name]
                 )
-            ).rename(
+            )
+            if "i" in active_skims.columns:
+                active_skims = active_skims.drop(["i", "j"],axis=1)
+            self.skims[skim_name] = active_skims.rename(
                 columns = {
                     "OMAZ": "i",
                     "DMAZ": "j",
