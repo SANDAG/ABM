@@ -235,8 +235,8 @@ def write_to_datalake(output_path, models, exclude, env):
         os.path.abspath(os.path.join(output_path, '..', 'input', 'zone_term.csv')),
         os.path.abspath(os.path.join(output_path, '..', 'input', 'trlink.csv')),
         os.path.join(output_path, 'bikeMgraLogsum.csv'),
-        os.path.join(report_path, 'walkMgrasWithin45Min_AM.csv'),
-        os.path.join(report_path, 'walkMgrasWithin45Min_MD.csv')
+        os.path.join(report_path, 'walkMgrasWithin30Min_AM.csv'),
+        os.path.join(report_path, 'walkMgrasWithin30Min_MD.csv')
     ]
     for file in other_files:
         try:
