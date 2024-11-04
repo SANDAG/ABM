@@ -156,15 +156,22 @@ class TravelTimeReporter:
             )
 
         # Replace TAZ-skim level values with MGRA-skim values if they are present
-        self.skims["taz_bike_time"] = self.unpivot_skim("taz_bike_time")
-        self.skims["taz_walk_time"] = self.unpivot_skim("taz_walk_time")
+        self.skims["taz_bike_time"] = self.unpivot_skim("taz_bike_time", False)
+        self.skims["taz_walk_time"] = self.unpivot_skim("taz_walk_time", False)
 
         self.skims["bike_time"] = self.skims["taz_bike_time"].copy()
         self.skims["walk_time"] = self.skims["taz_walk_time"].copy()
-        for ix, row in self.skims["maz_bike_time"].iterrows():
-            self.skims["bike_time"].loc[ix] = self.skims["maz_bike_time"].loc[ix, "BIKE_TIME"]
-        for ix, row in self.skims["maz_walk_time"].iterrows():
-            self.skims["walk_time"].loc[ix] = self.skims["maz_walk_time"].loc[ix, "walkTime"]
+        self.skims["bike_time"].loc[self.skims["maz_bike_time"].index] = self.skims["maz_bike_time"]["BIKE_TIME"]
+        self.skims["walk_time"].loc[self.skims["maz_walk_time"].index] = self.skims["maz_walk_time"]["walkTime"]
+
+        # Remove OD-pairs above time threshold
+        time_threshold = self.settings["time_threshold"]
+        self.skims["bike_time"] = self.skims["bike_time"].loc[
+            self.skims["bike_time"] <= time_threshold
+        ]
+        self.skims["walk_time"] = self.skims["walk_time"].loc[
+            self.skims["walk_time"] <= time_threshold
+        ]
 
     def init_land_use(self):
         """
@@ -230,7 +237,7 @@ class TravelTimeReporter:
             self.land_use.index
         )
 
-    def unpivot_skim(self, skim_name):
+    def unpivot_skim(self, skim_name, filter_for_time = True):
         """
         Unpivots a skim into a series with the origin and destination as the index
 
@@ -238,6 +245,8 @@ class TravelTimeReporter:
         ----------
         skim_name (str):
             Name of skim to unpivot
+        filter_for_time (bool):
+            If true, values will above the time threshold will be removed
 
         Returns
         -------
@@ -247,13 +256,26 @@ class TravelTimeReporter:
         time_threshold = self.settings["time_threshold"]
         self.skims[skim_name].index.name = "i"
 
-        return pd.melt(
-            self.skims[skim_name].reset_index(),
-            id_vars = ["i"],
-            var_name = "j",
-            value_name = "time"
-        ).query(
-            "time <= @time_threshold"
+        if filter_for_time:
+            return pd.melt(
+                self.skims[skim_name].reset_index(),
+                id_vars = ["i"],
+                var_name = "j",
+                value_name = "time"
+            ).query(
+                "time <= @time_threshold"
+                ).sort_values(
+                    ["i", "j"]
+                    ).set_index(
+                        ["i", "j"]
+                        )["time"]
+        
+        else:
+            return pd.melt(
+                self.skims[skim_name].reset_index(),
+                id_vars = ["i"],
+                var_name = "j",
+                value_name = "time"
             ).sort_values(
                 ["i", "j"]
                 ).set_index(
