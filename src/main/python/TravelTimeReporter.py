@@ -162,9 +162,9 @@ class TravelTimeReporter:
         self.skims["bike_time"] = self.skims["taz_bike_time"].copy()
         self.skims["walk_time"] = self.skims["taz_walk_time"].copy()
         for ix, row in self.skims["maz_bike_time"].iterrows():
-            self.skims["bike_time"].loc[ix] = self.skims["maz_bike_time"].loc[ix, "time"]
+            self.skims["bike_time"].loc[ix] = self.skims["maz_bike_time"].loc[ix, "BIKE_TIME"]
         for ix, row in self.skims["maz_walk_time"].iterrows():
-            self.skims["walk_time"].loc[ix] = self.skims["maz_walk_time"].loc[ix, "time"]
+            self.skims["walk_time"].loc[ix] = self.skims["maz_walk_time"].loc[ix, "walkTime"]
 
     def init_land_use(self):
         """
