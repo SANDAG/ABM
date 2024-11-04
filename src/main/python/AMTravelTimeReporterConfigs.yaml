@@ -1,7 +1,7 @@
 time_period: AM
-time_threshold: 45
+time_threshold: 30
 infinity: 999
-outfile: report\walkMgrasWithin45Min_AM.csv
+outfile: report\walkMgrasWithin30Min_AM.csv
 
 transit_skim_matrices: # If set to True, replace values of zero with the number set as infinity
   WALK_LOC_XFERWALK__{}: False
