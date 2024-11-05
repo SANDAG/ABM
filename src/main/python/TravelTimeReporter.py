@@ -141,7 +141,7 @@ class TravelTimeReporter:
             "walkTime": "taz_walk_time"
         }
         for core in active_taz_skims:
-            skim_values = np.array(skims[core.format(self.settings["time_period"])])
+            skim_values = np.array(skims[core])
             skim_values = np.where(
                 skim_values == 0,
                 self.settings["infinity"],
