@@ -6,6 +6,6 @@ The Emme Extended transit assignment is based on the concept of optimal strategy
 
 The shortest "travel time" is a generalized cost formulation, including perception factors (or weights) on the different travel time components, along with fares, and other costs / perception biases such as transfer penalties which vary over the network and transit journey.
 
-The model has three access modes to transit (walk, park-and-ride (PNR), and kiss-and-ride (KNR)) and three transit sets (local bus only, premium transit only, and local bus and premium transit sets), for 9 total demand classes by 5 TOD. These classes are assigned by slices, one at a time, to produce the total transit passenger flows on the network.
+The model has four access modes to transit (walk, park-and-ride (PNR), kiss-and-ride (KNR), and Transportation Network Company (TNC)) and three transit sets (local bus only, premium transit only, and local bus and premium transit sets), for 12 total demand classes by 5 TOD. These classes are assigned by slices, one at a time, to produce the total transit passenger flows on the network.
 
-While there are 9 slices of demand, there are only three classes of skims: Local bus only, premium only, and all modes. The access mode does not change the assignment parameters or skims.
+While there are 12 slices of demand, there are only three classes of skims: Local bus only, premium only, and all modes. The access mode does not change the assignment parameters or skims.
