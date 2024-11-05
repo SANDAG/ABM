@@ -8,77 +8,24 @@ The ABM3 model system has been configured to be compatible with SANDAG's Transpo
 
 The following are the required network files used during the Emme import network procedure:
 
-<table>
-  <tr>
-    <th>File</th>
-    <th>Source</h>
-    <th>Description</th>
-  </tr>
-  <tr>
-    <td>EMMEOutputs.gdb/TNED_HwyNet</td>
-    <td>TNED</td>
-    <td>Roadway network links</td>
-  </tr>
-  <tr>
-    <td>EMMEOutputs.gdb/TNED_HwyNodes</td>
-    <td>TNED</td>
-    <td>Roadway network nodes</td>
-  </tr>
-  <tr>
-    <td>EMMEOutputs.gdb/TNED_RailNet</td>
-    <td>TNED</td>
-    <td>Rail network links</td>
-  </tr>
-  <tr>
-    <td>EMMEOutputs.gdb/TNED_RailNodes</td>
-    <td>TNED</td>
-    <td>Rail network nodes</td>
-  </tr>
-  <tr>
-    <td>EMMEOutputs.gdb/Turns</td>
-    <td>TNED</td>
-    <td>Turn prohibition records</td>
-  </tr>
-  <tr>
-    <td>special_fares.txt</td>
-    <td>Manually Maintained</td>
-    <td>Special fares in terms of boarding and incremental in-vehicle costs</td>
-  </tr>
-  <tr>
-    <td>timexfer_{time_of_day}.csv</td>
-    <td>Manually Maintained</td>
-    <td>Timed transfer pairs of lines, by period. Where <i>time_of_day</i> refers to EA, AM, MD, PM, or EV.</td>
-  </tr>
-  <tr>
-    <td>trrt.csv</td>
-    <td>TNED</td>
-    <td>Attribute data (modes, headways) for the transit lines</td>
-  </tr>
-  <tr>
-    <td>trlink.csv</td>
-    <td>TNED</td>
-    <td>Sequence of links (routing) for the transit lines</td>
-  </tr>
-  <tr>
-    <td>trstop.csv</td>
-    <td>TNED</td>
-    <td>Stop data for the transit lines</td>
-  </tr>
-  <tr>
-    <td>MODE5TOD.csv</td>
-    <td>Manually Maintained</td>
-    <td>Global (per-mode) transit cost and perception attributes</td>
-  </tr>
-  <tr>
-    <td>vehicle_class_toll_factors.csv</td>
-    <td>Manually Maintained</td>
-    <td>Factors to adjust the toll cost by facility name and class</td>
-  </tr>
-</table>
+| **File**                       | **Source**          | **Description**                                                                              |
+|--------------------------------|---------------------|----------------------------------------------------------------------------------------------|
+| EMMEOutputs.gdb/TNED_HwyNet    | TNED                | Roadway network links                                                                        |
+| EMMEOutputs.gdb/TNED_HwyNodes  | TNED                | Roadway network nodes                                                                        |
+| EMMEOutputs.gdb/TNED_RailNet   | TNED                | Rail network links                                                                           |
+| EMMEOutputs.gdb/TNED_RailNodes | TNED                | Rail network nodes                                                                           |
+| EMMEOutputs.gdb/Turns          | TNED                | Turn prohibition records                                                                     |
+| special_fares.txt              | Manually Maintained | Special fares in terms of boarding and incremental in-vehicle costs                          |
+| timexfer_{time_of_day}.csv     | Manually Maintained | Timed transfer pairs of lines, by period. Where time_of_day refers to EA, AM, MD, PM, or EV. |
+| trrt.csv                       | TNED                | Attribute data (modes, headways) for the transit lines                                       |
+| trlink.csv                     | TNED                | Sequence of links (routing) for the transit lines                                            |
+| trstop.csv                     | TNED                | Stop data for the transit lines                                                              |
+| MODE5TOD.csv                   | Manually Maintained | Global (per-mode) transit cost and perception attributes                                     |
+| vehicle_class_toll_factors.csv | Manually Maintained | Factors to adjust the toll cost by facility name and class                                   |
 
 ## Import Network Procedure
 
-This section describes the main steps carried out during the Emme import network procedure. The entire process is executed by the [import_network.py](https://github.com/SANDAG/ABM/blob/ABM3_develop/src/main/emme/toolbox/import/import_network.py) script. The descriptions below are excerpts and slight adaptations from the [User Guide - SANDAG Travel Model in Emme](https://github.com/SANDAG/ABM/wiki/files/user_guide_sandag_emme.pdf) report.
+This section describes the main steps carried out during the Emme import network procedure. The entire process is executed by the [import_network.py](https://github.com/SANDAG/ABM/blob/ABM3_develop/src/main/emme/toolbox/import/import_network.py) script.
 
 #### Create Modes
 
