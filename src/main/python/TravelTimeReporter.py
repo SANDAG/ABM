@@ -106,6 +106,7 @@ class TravelTimeReporter:
         """
         Reads active skims into memory as data frames
         """
+        # Read MAZ-level skims
         for skim_name in self.settings["active_skim_files"]:
             active_skims = pd.read_csv(
                 os.path.join(
@@ -126,6 +127,52 @@ class TravelTimeReporter:
                 ["i", "j"]
             )
 
+        # Read bike and walk times from AM traffic skim
+        am_traffic_skim_file = os.path.join(
+            self.model_run,
+            "output",
+            "skims",
+            "traffic_skims_AM.omx"
+        )
+        skims = omx.open_file(am_traffic_skim_file, "r")
+        zones = skims.mapping("zone_number").keys()
+        active_taz_skims = {
+            "BIKE_TIME": "taz_bike_time",
+            "walkTime": "taz_walk_time"
+        }
+        for core in active_taz_skims:
+            skim_values = np.array(skims[core])
+            skim_values = np.where(
+                skim_values == 0,
+                self.settings["infinity"],
+                skim_values
+            )
+            self.skims[active_taz_skims[core]] = self.expand_skim(
+                pd.DataFrame(
+                    skim_values,
+                    zones,
+                    zones
+                )
+            )
+
+        # Replace TAZ-skim level values with MGRA-skim values if they are present
+        self.skims["taz_bike_time"] = self.unpivot_skim("taz_bike_time", False)
+        self.skims["taz_walk_time"] = self.unpivot_skim("taz_walk_time", False)
+
+        self.skims["bike_time"] = self.skims["taz_bike_time"].copy()
+        self.skims["walk_time"] = self.skims["taz_walk_time"].copy()
+        self.skims["bike_time"].loc[self.skims["maz_bike_time"].index] = self.skims["maz_bike_time"]["BIKE_TIME"]
+        self.skims["walk_time"].loc[self.skims["maz_walk_time"].index] = self.skims["maz_walk_time"]["walkTime"]
+
+        # Remove OD-pairs above time threshold
+        time_threshold = self.settings["time_threshold"]
+        self.skims["bike_time"] = self.skims["bike_time"].loc[
+            self.skims["bike_time"] <= time_threshold
+        ]
+        self.skims["walk_time"] = self.skims["walk_time"].loc[
+            self.skims["walk_time"] <= time_threshold
+        ]
+
     def init_land_use(self):
         """
         Adds fields to land use table to be used in calculations
@@ -138,6 +185,8 @@ class TravelTimeReporter:
         self.land_use["nev_access_available"] = (self.land_use["nev"] > 0) & (self.land_use["micro_accegr_dist"] <= self.constants["nevMaxDist"])
         self.land_use["nev_egress_available"] = (self.land_use["nev"] > 0) & (self.land_use["micro_accegr_dist"] <= self.constants["nevMaxDist"]) & (self.land_use["micro_accegr_dist"] >= self.constants["maxWalkIfMTAccessAvailable"])
         self.land_use["nev_accegr_time"] = 60 * self.land_use["micro_accegr_dist"] / self.constants["nevSpeed"]
+
+        self.expansion_matrix = pd.get_dummies(self.land_use["TAZ"]) # Indicates which MGRAs belong to which TAZ
 
     # # # # # # # # # # # # UTILITY FUNCTIONS # # # # # # # # # # # #
     #===============================================================#
@@ -182,14 +231,13 @@ class TravelTimeReporter:
         expanded_skim (pandas.DataFrame):
             Skim matrix where the index and columns are the origins and destinations MGRAs, respectively, and the values are the impedance from each origin MGRA to the destination MGRA
         """
-        expansion_matrix = pd.get_dummies(self.land_use["TAZ"]) # Indicates which MGRAs belong to which TAZ
         return pd.DataFrame(
-            expansion_matrix.values.dot(skim.values).dot(expansion_matrix.T.values),
+            self.expansion_matrix.values.dot(skim.values).dot(self.expansion_matrix.T.values),
             self.land_use.index,
             self.land_use.index
         )
 
-    def unpivot_skim(self, skim_name):
+    def unpivot_skim(self, skim_name, filter_for_time = True):
         """
         Unpivots a skim into a series with the origin and destination as the index
 
@@ -197,6 +245,8 @@ class TravelTimeReporter:
         ----------
         skim_name (str):
             Name of skim to unpivot
+        filter_for_time (bool):
+            If true, values will above the time threshold will be removed
 
         Returns
         -------
@@ -206,18 +256,31 @@ class TravelTimeReporter:
         time_threshold = self.settings["time_threshold"]
         self.skims[skim_name].index.name = "i"
 
-        return pd.melt(
-            self.skims[skim_name].reset_index(),
-            id_vars = ["i"],
-            var_name = "j",
-            value_name = "time"
-        ).query(
-            "time <= @time_threshold"
+        if filter_for_time:
+            return pd.melt(
+                self.skims[skim_name].reset_index(),
+                id_vars = ["i"],
+                var_name = "j",
+                value_name = "time"
+            ).query(
+                "time <= @time_threshold"
+                ).sort_values(
+                    ["i", "j"]
+                    ).set_index(
+                        ["i", "j"]
+                        )["time"]
+        
+        else:
+            return pd.melt(
+                self.skims[skim_name].reset_index(),
+                id_vars = ["i"],
+                var_name = "j",
+                value_name = "time"
             ).sort_values(
                 ["i", "j"]
-            ).set_index(
-                ["i", "j"]
-            )["time"]
+                ).set_index(
+                    ["i", "j"]
+                    )["time"]
 
     # # # # # # # # # # # # CALCULATOR FUNCTIONS # # # # # # # # # # # #
     #==================================================================#
@@ -274,47 +337,31 @@ class TravelTimeReporter:
         """
         Returns transit access and egress times from every MGRA to every other MGRA
         """
-        print("Calculating direct flexible fleet access and egress times")
-        microtransit_direct_access_time = self.get_microtransit_direct_accegr_time(access = True, nev = False)
-        microtransit_direct_egress_time = self.get_microtransit_direct_accegr_time(access = False, nev = False)
-        nev_direct_access_time = self.get_microtransit_direct_accegr_time(access = True, nev = True)
-        nev_direct_egress_time = self.get_microtransit_direct_accegr_time(access = False, nev = True)
+        # print("Calculating direct flexible fleet access and egress times")
+        # microtransit_direct_access_time = self.get_microtransit_direct_accegr_time(access = True, nev = False)
+        # microtransit_direct_egress_time = self.get_microtransit_direct_accegr_time(access = False, nev = False)
+        # nev_direct_access_time = self.get_microtransit_direct_accegr_time(access = True, nev = True)
+        # nev_direct_egress_time = self.get_microtransit_direct_accegr_time(access = False, nev = True)
 
-        print("Calculating flexible fleet diverted access and egress times")
-        microtransit_access_time = self.get_total_microtransit_accegr_times(microtransit_direct_access_time, nev = False)
-        microtransit_egress_time = self.get_total_microtransit_accegr_times(microtransit_direct_egress_time, nev = False)
-        nev_access_time = self.get_total_microtransit_accegr_times(nev_direct_access_time, nev = True)
-        nev_egress_time = self.get_total_microtransit_accegr_times(nev_direct_egress_time, nev = True)
+        # print("Calculating flexible fleet diverted access and egress times")
+        # microtransit_access_time = self.get_total_microtransit_accegr_times(microtransit_direct_access_time, nev = False)
+        # microtransit_egress_time = self.get_total_microtransit_accegr_times(microtransit_direct_egress_time, nev = False)
+        # nev_access_time = self.get_total_microtransit_accegr_times(nev_direct_access_time, nev = True)
+        # nev_egress_time = self.get_total_microtransit_accegr_times(nev_direct_egress_time, nev = True)
 
-        print("Getting flexible fleet availability")
-        microtransit_access_available = self.field2matrix("microtransit_access_available", origin = True)
-        microtransit_egress_available = self.field2matrix("microtransit_egress_available", origin = False)
-        nev_access_available = self.field2matrix("nev_access_available", origin = True)
-        nev_egress_available = self.field2matrix("nev_egress_available", origin = False)
+        # print("Getting flexible fleet availability")
+        # microtransit_access_available = self.field2matrix("microtransit_access_available", origin = True)
+        # microtransit_egress_available = self.field2matrix("microtransit_egress_available", origin = False)
+        # nev_access_available = self.field2matrix("nev_access_available", origin = True)
+        # nev_egress_available = self.field2matrix("nev_egress_available", origin = False)
 
         print("Getting walk access and egress times")
         walk_access_time = self.field2matrix("walk_accegr_time", origin = True)
         walk_egress_time = self.field2matrix("walk_accegr_time", origin = False)
 
         print("Calculating access and egress times")
-        self.skims["access_time"] = np.where(
-            nev_access_available,
-            nev_access_time,
-            np.where(
-                microtransit_access_available,
-                microtransit_access_time,
-                walk_access_time
-            )
-        )
-        self.skims["egress_time"] = np.where(
-            nev_egress_available,
-            nev_egress_time,
-            np.where(
-                microtransit_egress_available,
-                microtransit_egress_time,
-                walk_egress_time
-            )
-        )
+        self.skims["access_time"] = walk_access_time
+        self.skims["egress_time"] = walk_egress_time
 
     def get_transit_time(self):
         """
@@ -424,15 +471,15 @@ class TravelTimeReporter:
         self.results = pd.DataFrame(
             {
                 "transit": self.unpivot_skim("total_transit_time"),
-                "walk": self.skims["walk_time"].query("walkTime <= @time_threshold")["walkTime"],
-                "bike": self.skims["bike_time"].query("BIKE_TIME <= @time_threshold")["BIKE_TIME"],
+                "walk": self.skims["walk_time"],
+                "bike": self.skims["bike_time"],
                 "microtransit": self.unpivot_skim("microtransit_time"),
                 "nev": self.unpivot_skim("nev_time"),
 #                "drive_alone": self.unpivot_skim("drive_alone_time")
             }
         ).reset_index().fillna(self.settings["infinity"]).sort_values(
             ["i", "j"]
-        )
+            )
 
         _ebikeMaxTime = self.constants["ebikeMaxDist"] / self.constants["ebikeSpeed"] * 60
         _escooterMaxTime = self.constants["escooterMaxDist"] / self.constants["escooterSpeed"] * 60
