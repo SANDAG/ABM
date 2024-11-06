@@ -890,13 +890,13 @@ Export network results to csv files for SQL data loader."""
                 walk_xfer_on = 0.0
                 direct_xfer_off = seg[xfer_alightings]
                 walk_xfer_off = 0.0
-                if stop_on.has_key(i_node):
-                    if stop_on[i_node].has_key(line.id):
+                if i_node in stop_on:
+                    if line.id in stop_on[i_node]:
                         if direct_xfer_on > 0:
                             walk_xfer_on = direct_xfer_on - stop_on[i_node][line.id]
                             direct_xfer_on = stop_on[i_node][line.id]
-                if stop_off.has_key(i_node):
-                    if stop_off[i_node].has_key(line.id):
+                if i_node in stop_off:
+                    if line.id in stop_off[i_node]:
                         if direct_xfer_off > 0:
                             walk_xfer_off = direct_xfer_off - stop_off[i_node][line.id]
                             direct_xfer_off = stop_off[i_node][line.id]
@@ -913,7 +913,7 @@ Export network results to csv files for SQL data loader."""
         segment_alights = [v for k, v in segment_results.items() if "alightings" in k]
         segment_boards = [v for k, v in segment_results.items() if "boardings" in k] + ["transit_boardings"]
         segment_result_attrs = segment_alights + segment_boards
-        link_result_attrs = link_results.values() + ["aux_transit_volume"]
+        link_result_attrs = list(link_results.values()) + ["aux_transit_volume"]
         link_attrs = network.attributes("LINK")
         link_modified_attrs = [
             "length", "@trtime", link_results["link_transit_flow"]]
@@ -1169,7 +1169,7 @@ Export network results to csv files for SQL data loader."""
                 for on_line in results[off_line]:
                     trip = float(results[off_line][on_line])
                     stop_off[stop][off_line] += trip
-                    if not stop_on[stop].has_key(on_line):
+                    if on_line not in stop_on[stop]:
                         stop_on[stop][on_line] = 0.0
                     stop_on[stop][on_line] += trip
         return stop_off, stop_on
