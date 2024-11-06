@@ -108,14 +108,17 @@ class TravelTimeReporter:
         """
         # Read MAZ-level skims
         for skim_name in self.settings["active_skim_files"]:
-            self.skims[skim_name] = pd.read_csv(
-                        os.path.join(
-                        self.model_run,
-                        "output",
-                        "skims",
-                        self.settings["active_skim_files"][skim_name]
+            active_skims = pd.read_csv(
+                os.path.join(
+                    self.model_run,
+                    "output",
+                    "skims",
+                    self.settings["active_skim_files"][skim_name]
                 )
-            ).rename(
+            )
+            if "i" in active_skims.columns:
+                active_skims = active_skims.drop(["i", "j"],axis=1)
+            self.skims[skim_name] = active_skims.rename(
                 columns = {
                     "OMAZ": "i",
                     "DMAZ": "j",
@@ -476,7 +479,7 @@ class TravelTimeReporter:
             }
         ).reset_index().fillna(self.settings["infinity"]).sort_values(
             ["i", "j"]
-        )
+            )
 
         _ebikeMaxTime = self.constants["ebikeMaxDist"] / self.constants["ebikeSpeed"] * 60
         _escooterMaxTime = self.constants["escooterMaxDist"] / self.constants["escooterSpeed"] * 60
