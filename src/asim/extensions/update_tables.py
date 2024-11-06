@@ -264,7 +264,7 @@ def update_tables(state: workflow.State):
             "hours": "int8",
             "rac1p": "int8",
             "hisp": "int8"})
-            output_table = output_table.merge(input_persons,how="inner",left_on="person_id",right_on="perid")
+            output_table = output_table.reset_index().merge(input_persons,how="inner",left_on="person_id",right_on="perid").set_index("person_id")
         
         # add missing columns from input land use file
         if table_name == "land_use" and state.settings.model_name == "resident":
