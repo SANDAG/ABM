@@ -297,7 +297,8 @@ def update_tables(state: workflow.State):
             output_table = remove_columns(table_settings, output_table)
             output_table = reorder_columns(table_settings, output_table)
             output_table = rename_columns(table_settings, output_table)
-            output_table = replace_missing_values(output_table)
+            if table_name != "tours":
+                output_table = replace_missing_values(output_table)
         
         state.add_table(table_name, output_table)
 
