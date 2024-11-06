@@ -14,6 +14,7 @@ No changes made to ActivitySim version.
 - [PR 222](https://github.com/SANDAG/ABM/pull/222): Updated version number in the property file
 - [PR 223](https://github.com/SANDAG/ABM/pull/223): Updated validation to work with networks created from TNED
 - [PR 226](https://github.com/SANDAG/ABM/pull/226): Included FFC attribute in Emme network for reporting
+- [PR 215](https://github.com/SANDAG/ABM/pull/215), [PR 235](https://github.com/SANDAG/ABM/pull/235),  [PR 237](https://github.com/SANDAG/ABM/pull/237), & [PR 238](https://github.com/SANDAG/ABM/pull/238): Documentation updates
 
 ### Bug Fixes
 - [PR 212](https://github.com/SANDAG/ABM/pull/212), [PR 213](https://github.com/SANDAG/ABM/pull/213), & [PR 217](https://github.com/SANDAG/ABM/pull/217): File and configuration cleanup
