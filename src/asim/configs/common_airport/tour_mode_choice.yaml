@@ -5,7 +5,6 @@ COEFFICIENT_TEMPLATE: tour_mode_choice_coefficients_template.csv
 LOGSUM_CHOOSER_COLUMNS:
   - person_id  
 
-CHOICE_COL_NAME: tour_mode
 MODE_CHOICE_LOGSUM_COLUMN_NAME: mode_choice_logsum
 COMPUTE_TRIP_MODE_CHOICE_LOGSUMS: False
 
