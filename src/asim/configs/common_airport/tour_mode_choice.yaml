@@ -1,3 +1,19 @@
+LOGIT_TYPE: NL
+
+NESTS:
+  name: root
+  coefficient: 1
+  alternatives:
+    - DRIVEALONE
+    - SHARED2
+    - SHARED3
+    - WALK
+    - BIKE
+    - WALK_TRANSIT
+    - TAXI
+    - TNC_SINGLE
+    - TNC_SHARED
+
 SPEC: tour_mode_choice.csv
 COEFFICIENTS: tour_mode_choice_coefficients.csv
 COEFFICIENT_TEMPLATE: tour_mode_choice_coefficients_template.csv
