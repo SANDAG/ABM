@@ -324,6 +324,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         skipFinalTransitAssignment = props["RunModel.skipFinalTransitAssignment"]
         skipVisualizer = props["RunModel.skipVisualizer"]
         skipDataExport = props["RunModel.skipDataExport"]
+        skipValidation = props["RunModel.skipValidation"]
         skipDatalake = props["RunModel.skipDatalake"]
         skipDataLoadRequest = props["RunModel.skipDataLoadRequest"]
         skipDeleteIntermediateFiles = props["RunModel.skipDeleteIntermediateFiles"]
@@ -791,7 +792,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 "Exporting MGRA-level travel times", capture_output=True)
 
         # This validation procedure only works with base (2022) scenarios utilizing TNED networks
-        if scenarioYear == "2022":
+        if scenarioYear == "2022" and not skipValidation:
             self.run_proc(
                 "runValidation.bat",
                 [drive, path_no_drive, scenarioYear],
