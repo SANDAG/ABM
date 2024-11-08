@@ -48,6 +48,9 @@ MD airport.CBX
 MD airport.SAN
 CD ..
 
+:: Copy outputs.yaml from configs/common to configs/common_airport
+copy src/asim/configs/common/outputs.yaml src/asim/configs/common_airport
+
 :: Run Models
 ECHO Run ActivitySim AirportCBX Model
 %PYTHON3% src/asim/scripts/airport/airport_model.py -a -c src/asim/configs/airport.CBX -d input -o output/airport.CBX || exit /b 2
