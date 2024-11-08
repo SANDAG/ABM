@@ -14,6 +14,9 @@ No changes made to ActivitySim version.
 - [PR 222](https://github.com/SANDAG/ABM/pull/222): Updated version number in the property file
 - [PR 223](https://github.com/SANDAG/ABM/pull/223): Updated validation to work with networks created from TNED
 - [PR 226](https://github.com/SANDAG/ABM/pull/226): Included FFC attribute in Emme network for reporting
+- [PR 239](https://github.com/SANDAG/ABM/pull/239): Added option to skip validation in master run
+- [PR 240](https://github.com/SANDAG/ABM/pull/240), [PR 242](https://github.com/SANDAG/ABM/pull/242), & [PR 243](https://github.com/SANDAG/ABM/pull/243): Fixes to MAZ to transit stop distances and walk times
+- [PR 241](https://github.com/SANDAG/ABM/pull/241): Fixes to bike logsums and micromobility mode choice
 - [PR 215](https://github.com/SANDAG/ABM/pull/215), [PR 235](https://github.com/SANDAG/ABM/pull/235),  [PR 237](https://github.com/SANDAG/ABM/pull/237), & [PR 238](https://github.com/SANDAG/ABM/pull/238): Documentation updates
 
 ### Bug Fixes
