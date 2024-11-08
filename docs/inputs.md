@@ -166,15 +166,7 @@ The table below contains brief descriptions of the input files required to execu
 | emp_non_ws_wfh | Non-wage and salary work from home employments | 
 | emp_non_ws_oth | Non-wage and salary other employments | 
 | emp_total | Total employment | 
-| pseudomsa | Pseudo MSA - | 
-|  | 1: Downtown | 
-|  | 2: Central | 
-|  | 3: North City | 
-|  | 4: South Suburban | 
-|  | 5: East Suburban | 
-|  | 6: North County West | 
-|  | 7: North County East | 
-|  | 8: East County | 
+| pseudomsa | Pseudo MSA<br>1: Downtown<br>2: Central<br>3: North City<br>4: South Suburban<br>5: East Suburban<br>6: North County West<br>7: North County East<br>8: East County | 
 | zip09 | 2009 Zip Code | 
 | enrollgradekto8 | Grade School K-8 enrollment | 
 | enrollgrade9to12 | Grade School 9-12 enrollment | 
@@ -184,12 +176,12 @@ The table below contains brief descriptions of the input files required to execu
 | parkactive | Acres of Active Park | 
 | openspaceparkpreserve | Acres of Open Park or Preserve | 
 | beachactive | Acres of Active Beach | 
-| district27 |  | 
+| district27 | Special layer reg employer shuttle service around Sorrento Valley | 
 | milestocoast | Distance (miles) to the nearest coast | 
 | acres | Total acres in the mgra (used in CTM) | 
 | land_acres | Acres of land in the mgra (used in CTM) | 
 | effective_acres | Effective acres in the mgra (used in CTM) | 
-| truckregiontype |  | 
+| truckregiontype | CV model parameter | 
 | exp_hourly | Expected hourly prking cost | 
 | exp_daily | Expected daily prking cost | 
 | exp_monthly | Expected monthly prking cost | 
@@ -335,7 +327,7 @@ The table below contains brief descriptions of the input files required to execu
 | pnum                 | Person Number                                                                                 |
 | age                  | Age of person                                                                                 |
 | sex                  | Gender of person<br>1 = Male<br>2 = Female                                                     |
-| military             | Military status of person:<br>0 = N/A Less than 17 Years Old<br>1 = Yes, Now on Active Duty    |
+| miltary             | Military status of person:<br>0 = N/A Less than 17 Years Old<br>1 = Yes, Now on Active Duty    |
 | pemploy              | Employment status of person:<br>1 = Employed Full-Time<br>2 = Employed Part-Time<br>3 = Unemployed or Not in Labor Force<br>4 = Less than 16 Years Old |
 | pstudent             | Student status of person:<br>1 = Pre K-12<br>2 = College Undergrad+Grad and Prof. School<br>3 = Not Attending School |
 | ptype                | Person type:<br>1 = Full-time Worker<br>2 = Part-time Worker<br>3 = College Student<br>4 = Non-working Adult<br>5 = Non-working Senior<br>6 = Driving Age Student<br>7 = Non-driving Student<br>8 = Pre-school |
