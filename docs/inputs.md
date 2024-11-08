@@ -181,7 +181,6 @@ The table below contains brief descriptions of the input files required to execu
 | acres | Total acres in the mgra (used in CTM) | 
 | land_acres | Acres of land in the mgra (used in CTM) | 
 | effective_acres | Effective acres in the mgra (used in CTM) | 
-| truckregiontype | CV model parameter | 
 | exp_hourly | Expected hourly prking cost | 
 | exp_daily | Expected daily prking cost | 
 | exp_monthly | Expected monthly prking cost | 
