@@ -343,6 +343,14 @@ The table below contains brief descriptions of the input files required to execu
 | grade                | School grade of person:<br>0 = N/A (not attending school)<br>2 = K to grade 8<br>5 = Grade 9 to grade 12<br>6 = College undergraduate |
 | occen5               | Occupation:<br>0 = Not in universe (Under 16 years or LAST-WRK = 2)<br>1..997 = Legal census occupation code |
 | occsoc5              | Detailed occupation codes defined by the Bureau of Labor Statistics |
+| indcen              | Industry code.<br>0 = default<br>9970 = NAICS2 is MIL |
+| weeks              | Weeks worked during past 12 months<br>0 .N/A (less than 16 years old/did not work during the past 12 .months)<br>1 .50 to 52 weeks worked during past 12 months<br>2 .48 to 49 weeks worked during past 12 months<br>3 .40 to 47 weeks worked during past 12 months<br>4 .27 to 39 weeks worked during past 12 month<br>5 .14 to 26 weeks worked during past 12 months<br>6 .13 weeks or less worked during past 12 months|
+| hours              | Hours worked per week past 12 months<br>0 .N/A (less than 16 years old/did not work during the past .12 months)<br>1..98 .1 to 98 usual hours<br>99 .99 or more usual hours |
+| rac1p              | Race:<br>1 = White alone<br>2 = Black or African American alone<br>3 = American Indian alone<br>4 = Alaska Native alone<br>5 = American Indian and Alaska Native tribes specified; or .American Indian or Alaska Native, not specified and no other .races<br>6 = Asian alone<br>7 = Native Hawaiian and Other Pacific Islander alone<br>8 = Some Other Race alone<br>9 =Two or More Races |
+| hisp              | Hispanic origin:<br>1 = Not Hispanic<br>2 = Hispanic |
+| version              | Synthetic population run version. Presently set to 0. |
+| naics2_original_code              | 2 digit North American Industry Classification System (NAICS) |
+| soc2              | 2 digit Standard Occupational Classification |
 
 
 <a id="vehicle_class_toll"></a>
