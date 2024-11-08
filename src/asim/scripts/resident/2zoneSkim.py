@@ -221,26 +221,14 @@ for mode, output in modes.items():
     max_walk_dist = parms['mmms']['max_maz_' + output + '_stop_walk_dist_feet'] / 5280.0
     maz_to_stop_walk_cost_out_mode = maz_to_stop_walk_cost_out[maz_to_stop_walk_cost_out['MODE'].str.contains(mode)].copy()
     maz_to_stop_walk_cost_out_mode.loc[:, 'MODE'] = mode
-    # peforms a similar operation as the add_missing_mazs_to_skim_table() function
-    missing_maz = pd.DataFrame(
-        centroids[~centroids["MAZ"].isin(maz_to_stop_walk_cost_out_mode["MAZ"])]["MAZ"]
-    ).merge(
-        maz_to_stop_cost.sort_values("DISTANCE")
-        .groupby(["MAZ", "MODE"])
-        .agg({"stop": "first", "DISTANCE": "first"})
-        .reset_index(),
-        on="MAZ",
-        how="left",
-    )
-    maz_to_stop_walk_cost = maz_to_stop_walk_cost_out_mode.append(missing_maz.rename(columns = {'DISTANCE': 'DISTWALK'})).sort_values(['MAZ', 'stop'])
+    maz_to_stop_walk_cost = maz_to_stop_walk_cost_out_mode.sort_values(['MAZ', 'stop'])
     del(maz_to_stop_walk_cost_out_mode)
-    del(missing_maz)
     maz_stop_walk = maz_to_stop_walk_cost[maz_to_stop_walk_cost.MODE==mode].groupby('MAZ')['DISTWALK'].min().reset_index()
     maz_stop_walk.loc[maz_stop_walk['DISTWALK'] > max_walk_dist, 'DISTWALK'] = np.nan
     #maz_stop_walk["walk_time"] = maz_stop_walk["DISTWALK"].apply(lambda x: x / parms['mmms']['walk_speed_mph'] * 60.0)
-    maz_stop_walk['DISTWALK'].fillna(999999, inplace = True)
     maz_stop_walk.rename({'MAZ': 'maz', 'DISTWALK': 'walk_dist_' + output}, axis='columns', inplace=True)
-    maz_stop_walk0 = maz_stop_walk0.merge(maz_stop_walk, left_on='maz', right_on='maz')
+    maz_stop_walk0 = maz_stop_walk0.merge(maz_stop_walk, left_on='maz', right_on='maz', how='outer')
+    maz_stop_walk0['walk_dist_' + output].fillna(999999, inplace = True)
 
 maz_stop_walk0.sort_values(by=['maz'], inplace=True)
 print(f"{datetime.now().strftime('%H:%M:%S')} Write Results...")
