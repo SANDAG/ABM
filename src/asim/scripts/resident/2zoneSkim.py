@@ -207,8 +207,8 @@ maz_to_stop_walk_cost["DISTWALK"] = net.shortest_path_lengths(maz_to_stop_walk_c
 
 
 print(f"{datetime.now().strftime('%H:%M:%S')} Remove Maz Stop Pairs Beyond Max Walk Distance...")
-maz_to_stop_walk_cost_out = maz_to_stop_walk_cost[(maz_to_stop_walk_cost["DISTANCE"] <= max_maz_local_bus_stop_walk_dist_feet / 5280.0) & (maz_to_stop_walk_cost['MODE'] == 'L') | 
-                                                    (maz_to_stop_walk_cost["DISTANCE"] <= max_maz_premium_transit_stop_walk_dist_feet / 5280.0) & (maz_to_stop_walk_cost['MODE'] == 'E')].copy()
+maz_to_stop_walk_cost_out = maz_to_stop_walk_cost[(maz_to_stop_walk_cost["DISTWALK"] <= max_maz_local_bus_stop_walk_dist_feet / 5280.0) & (maz_to_stop_walk_cost['MODE'] == 'L') | 
+                                                    (maz_to_stop_walk_cost["DISTWALK"] <= max_maz_premium_transit_stop_walk_dist_feet / 5280.0) & (maz_to_stop_walk_cost['MODE'] == 'E')].copy()
 
 
 maz_stop_walk0 = pd.DataFrame(centroids['MAZ'])
@@ -221,19 +221,17 @@ for mode, output in modes.items():
     max_walk_dist = parms['mmms']['max_maz_' + output + '_stop_walk_dist_feet'] / 5280.0
     maz_to_stop_walk_cost_out_mode = maz_to_stop_walk_cost_out[maz_to_stop_walk_cost_out['MODE'].str.contains(mode)].copy()
     maz_to_stop_walk_cost_out_mode.loc[:, 'MODE'] = mode
-    # in case straight line distance is less than max and actual distance is greater than max (e.g., street net), set actual distance to max
-    maz_to_stop_walk_cost_out_mode['DISTWALK'] = maz_to_stop_walk_cost_out_mode['DISTWALK'].clip(upper=max_walk_dist)
     # peforms a similar operation as the add_missing_mazs_to_skim_table() function
     missing_maz = pd.DataFrame(
-    centroids[~centroids["MAZ"].isin(maz_to_stop_walk_cost_out_mode["MAZ"])]["MAZ"]
-).merge(
-    maz_to_stop_cost.sort_values("DISTANCE")
-    .groupby(["MAZ", "MODE"])
-    .agg({"stop": "first", "DISTANCE": "first"})
-    .reset_index(),
-    on="MAZ",
-    how="left",
-)
+        centroids[~centroids["MAZ"].isin(maz_to_stop_walk_cost_out_mode["MAZ"])]["MAZ"]
+    ).merge(
+        maz_to_stop_cost.sort_values("DISTANCE")
+        .groupby(["MAZ", "MODE"])
+        .agg({"stop": "first", "DISTANCE": "first"})
+        .reset_index(),
+        on="MAZ",
+        how="left",
+    )
     maz_to_stop_walk_cost = maz_to_stop_walk_cost_out_mode.append(missing_maz.rename(columns = {'DISTANCE': 'DISTWALK'})).sort_values(['MAZ', 'stop'])
     del(maz_to_stop_walk_cost_out_mode)
     del(missing_maz)
