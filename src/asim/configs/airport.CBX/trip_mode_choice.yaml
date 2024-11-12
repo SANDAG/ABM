@@ -243,9 +243,6 @@ CONSTANTS:
   density_index_multiplier: -5
   origin_density_index_multiplier: -15
   origin_density_index_max: -15
-  ivt_com_multiplier: 0.80
-  ivt_exp_multiplier: -0.0175
-  ivt_hvy_multiplier: 0.80
   cost_share_s2: 2
   cost_share_s3: 3
   max_walk_time: 60
