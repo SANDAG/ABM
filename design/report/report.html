@@ -1354,7 +1354,40 @@
 
 
 <h1 id="reporting-framework">Reporting Framework<a class="headerlink" href="#reporting-framework" title="Permanent link"> ¶</a></h1>
-<p>Details of reporting components.</p>
+<p><strong>Reporting Process Overview:</strong></p>
+<ol>
+<li>
+<p><strong>ABM3 model output files are stored to data lake:</strong></p>
+<ul>
+<li>Model outputs are written to the data lake immediately following ABM3 model run completion.</li>
+<li>Output CSV files are converted to Parquet format before writing to the data lake.</li>
+<li>Each model run is assigned a unique scenario ID.</li>
+</ul>
+</li>
+<li>
+<p><strong>Data lake files are loaded to Delta tables:</strong></p>
+<ul>
+<li>Each output file in the data lake is loaded into its corresponding Delta table. For example, the trips output file is loaded into the trips Delta table, the persons output file is loaded into the persons Delta table, etc.</li>
+<li>Delta tables store the results from all model runs, organized by scenario ID.</li>
+</ul>
+</li>
+<li>
+<p><strong>Delta Tables are processed in Databricks:</strong></p>
+<ul>
+<li>Delta tables are read, transformed, and aggregated as needed to support analysis and reporting requirements.</li>
+<li>Once transformations are complete, the resulting data is written back to the data lake as new Delta tables or used to update existing tables.</li>
+<li>These new Delta tables are also organized by scenario ID, making it easier to manage and query specific versions of processed data.</li>
+</ul>
+</li>
+<li>
+<p><strong>Delta tables are ingested by Power BI:</strong></p>
+<ul>
+<li>Power BI reads the data from the Delta tables.</li>
+<li>Power BI report templates with various metrics of interest are automatically refreshed with new model run outputs.</li>
+<li>Metrics can easily be compared across different scenario IDs.</li>
+</ul>
+</li>
+</ol>
 
 
 
