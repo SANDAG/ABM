@@ -7,6 +7,7 @@ Since release 15.1.0, several bug fixes and new features were added. Results of 
 No changes made to ActivitySim version.
 
 ### Features
+- [PR 161](https://github.com/SANDAG/ABM/pull/161): Set TNC to transit modes to use KNR to transit skims and removed TNC to transit skims
 - [PR 203](https://github.com/SANDAG/ABM/pull/203): Added tracking of disk space usage
 - [PR 204](https://github.com/SANDAG/ABM/pull/204), [PR 219](https://github.com/SANDAG/ABM/pull/219), & [PR 232](https://github.com/SANDAG/ABM/pull/232): Flexible fleets improvement and calibration
 - [PR 206](https://github.com/SANDAG/ABM/pull/206): Reduced sensitivity of electric vehicle ownership to number of chargers
