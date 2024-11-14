@@ -49,7 +49,7 @@ MD airport.SAN
 CD ..
 
 :: Copy outputs.yaml from configs/common to configs/common_airport
-copy src/asim/configs/common/outputs.yaml src/asim/configs/common_airport
+copy src\asim\configs\common\outputs.yaml src\asim\configs\common_airport
 
 :: Run Models
 ECHO Run ActivitySim AirportCBX Model
