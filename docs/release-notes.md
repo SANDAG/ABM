@@ -1,7 +1,7 @@
 # Release Notes
 
 ## Version 15.2.0 (November 14, 2024)
-Since release 15.1.0, several bug fixes and new features were added. Results of ABM3 using Version 15.2 are anticipated to be presented to the SANDAG Board of Directors in January 2025.
+Since release 15.1.0, several bug fixes and new features were added. Results of ABM3 using Version 15.2 are anticipated to be presented to the SANDAG Board of Directors in Spring 2025.
 
 ### ActivitySim Version
 No changes made to ActivitySim version.
