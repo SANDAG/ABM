@@ -53,7 +53,6 @@ LOGSUM_CHOOSER_COLUMNS:
   - person_id  
   - demographic_segment
 
-CHOICE_COL_NAME: tour_mode
 MODE_CHOICE_LOGSUM_COLUMN_NAME: mode_choice_logsum
 COMPUTE_TRIP_MODE_CHOICE_LOGSUMS: False
 
