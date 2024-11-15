@@ -106,8 +106,6 @@ CONSTANTS:
   shortWalk: 0.333
   longWalk: 0.667
   walkSpeed: 3.00
-  bikeThresh: 6.00
-  bikeSpeed: 12.00
   parkLocation1AccessCost: 0.00
   parkLocation1CostDay: 39.04
   parkLocation1InVehicleTime: 0.00
@@ -246,9 +244,6 @@ CONSTANTS:
   density_index_multiplier: -5
   origin_density_index_multiplier: -15
   origin_density_index_max: -15
-  ivt_com_multiplier: 0.80
-  ivt_exp_multiplier: -0.0175
-  ivt_hvy_multiplier: 0.80
   cost_share_s2: 2
   cost_share_s3: 3
   max_walk_time: 60

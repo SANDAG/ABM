@@ -382,7 +382,8 @@ util_calib_escorttour,abm2+ calibration constant,tour_type == 'escort',,,,coef_c
 util_one_or_more_school_escort,No SOV if on school escort tour,"@(np.where(np.isnan(df.get('num_escortees', 0)), 0 , df.get('num_escortees', 0)) >= 1)",-999,,,,,,,,,,,,,,,,,,,,,,
 util_two_or_more_school_escort,Can't take HOV2 if taking two children and yourself,"@(np.where(np.isnan(df.get('num_escortees', 0)), 0 , df.get('num_escortees', 0)) >= 2)",,-999,,,,,,,,,,,,,,,,,,,,,
 #,Micromobility (e-scooter/e-bike),,,,,,,,,,,,,,,,,,,,,,,,
-util_micromobility_long_access,Shut off micromobility if access time > threshold,"@((df.micro_access_out > microAccessThreshold) | (df.micro_access_inb > microAccessThreshold)|(df.get('num_escortees', 0)>0))",,,,,,,,,,,,,,,,,,,,,,-999,-999
+util_ebike_long_access,Shut off ebike if access time > threshold,"@(((df.micro_access_out > microAccessThreshold) | (df.micro_access_inb > microAccessThreshold)) & (~df.ebike_owner)) | (df.get('num_escortees', 0)>0) | (od_skims['BIKE_TIME']<=0)",,,,,,,,,,,,,,,,,,,,,,-999,
+util_escooter_long_access,Shut off escooter if access time > threshold,"@((df.micro_access_out > microAccessThreshold) | (df.micro_access_inb > microAccessThreshold) | (df.get('num_escortees', 0)>0)) | (od_skims['BIKE_TIME']<=0)",,,,,,,,,,,,,,,,,,,,,,,-999
 util_micromobility_long_trip,Shut off ebike if distance > threshold,ebikeMaxDistance,,,,,,,,,,,,,,,,,,,,,,-999,
 util_micromobility_long_trip,Shut off escooter if distance > threshold,escooterMaxDistance,,,,,,,,,,,,,,,,,,,,,,,-999
 util_ebike_ivt,Ebike utility for in-vehicle time,@(df.ebike_time_inb + df.ebike_time_out)*df.time_factor,,,,,,,,,,,,,,,,,,,,,,coef_ivt,
