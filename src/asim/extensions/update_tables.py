@@ -166,7 +166,12 @@ def replace_missing_values(df):
 
     """
     # Define the replacements for each data type, currently only two types used by ActivitySim. Need to add more, like Categorical if necessary.
-    replacements = {np.number: -9, object: 'null'}
+    replacements = {np.number: -9, object: 'null', 'category': 'null'}
+
+    # Add null to list of categories for categorical columns
+    for col in df.columns:
+        if df[col].dtype == "category":
+            df[col] = df[col].cat.add_categories(["null"])
 
     # Loop over the data types
     for dtype, replacement in replacements.items():
