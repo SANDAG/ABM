@@ -99,7 +99,7 @@ multiprocess_steps:
     slice:
       tables:
         - accessibility
-      exclude: True  # this is needed so landuse (i.e. destinations) doesn't get split
+      except: True  # this is needed so landuse (i.e. destinations) doesn't get split
   - name: mp_households
     begin: av_ownership
     slice:

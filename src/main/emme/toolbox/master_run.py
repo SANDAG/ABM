@@ -285,20 +285,18 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         useLocalDrive = props["RunModel.useLocalDrive"]
 
+        skipMGRASkims = props["RunModel.skipMGRASkims"]
         skip4Ds = props["RunModel.skip4Ds"]
         skipInputChecker = props["RunModel.skipInputChecker"]
         skipInitialization = props["RunModel.skipInitialization"]
         deleteAllMatrices = props["RunModel.deleteAllMatrices"]
         skipCopyWarmupTripTables = props["RunModel.skipCopyWarmupTripTables"]
         skipCopyBikeLogsum = props["RunModel.skipCopyBikeLogsum"]
-        skipCopyWalkImpedance = props["RunModel.skipCopyWalkImpedance"]
-        skipWalkLogsums = props["RunModel.skipWalkLogsums"]
         skipBikeLogsums = props["RunModel.skipBikeLogsums"]
         skipBuildNetwork = props["RunModel.skipBuildNetwork"]
         skipHighwayAssignment = props["RunModel.skipHighwayAssignment"]
         skipTransitSkimming = props["RunModel.skipTransitSkimming"]
         skipTransitConnector = props["RunModel.skipTransitConnector"]
-        skipSkimConversion = props["RunModel.skipSkimConversion"]
         skipTransponderExport = props["RunModel.skipTransponderExport"]
         skipScenManagement = props["RunModel.skipScenManagement"]
         skipABMPreprocessing = props["RunModel.skipABMPreprocessing"]
@@ -325,6 +323,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         skipFinalTransitAssignment = props["RunModel.skipFinalTransitAssignment"]
         skipVisualizer = props["RunModel.skipVisualizer"]
         skipDataExport = props["RunModel.skipDataExport"]
+        skipValidation = props["RunModel.skipValidation"]
         skipDatalake = props["RunModel.skipDatalake"]
         skipDataLoadRequest = props["RunModel.skipDataLoadRequest"]
         skipDeleteIntermediateFiles = props["RunModel.skipDeleteIntermediateFiles"]
@@ -448,18 +447,15 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             del(householdFile)
 
             if startFromIteration == 1:  # only run the setup / init steps if starting from iteration 1
-                if not skipWalkLogsums:
-                    self.run_proc("runSandagWalkLogsums.cmd", [drive, path_forward_slash],
-                                  "Walk - create AT logsums and impedances", capture_output=True)
-                if not skipCopyWalkImpedance:
-                    self.copy_files(["walkMgraEquivMinutes.csv", "microMgraEquivMinutes.csv"],
-                                    input_dir, output_dir)
+                if not skipMGRASkims:
+                    self.run_proc("runSandagMGRASkims.cmd", [drive, path_forward_slash],
+                                  "Create MGRA-level skims", capture_output=True)
 
                 if not skip4Ds:
                     run4Ds(path=self._path, int_radius=0.65, ref_path='visualizer_reference_path')
 
                 mgraFile = 'mgra15_based_input' + str(scenarioYear) + '.csv'  # Should be read in from properties? -JJF
-                self.complete_work(scenarioYear, input_dir, output_dir, mgraFile, "walkMgraEquivMinutes.csv")
+                self.complete_work(scenarioYear, input_dir, output_dir, mgraFile, "maz_maz_walk.csv")
 
                 # Update rapid dwell time before importing network
                 mode5tod = pd.read_csv(_join(input_dir,'MODE5TOD.csv'))
@@ -596,11 +592,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         #     transit_scenario = transit_emmebank.scenario(number)
                         #     omx_file = _join(output_dir, "skims", "transit_skims_" + period + ".omx")
                         #     export_transit_skims(omx_file, [period], transit_scenario, big_to_zero=False)
-
-                if not skipSkimConversion[iteration]:
-                    self.run_proc("convertSkimsToOMXZ.cmd",
-                                  [drive, path_forward_slash],
-                                  "Converting skims to omxz format", capture_output=True)
 
                 if not skipTransponderExport[iteration]:
                     am_scenario = main_emmebank.scenario(base_scenario.number + 2)
@@ -800,7 +791,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 "Exporting MGRA-level travel times", capture_output=True)
 
         # This validation procedure only works with base (2022) scenarios utilizing TNED networks
-        if scenarioYear == "2022":
+        if scenarioYear == "2022" and not skipValidation:
             self.run_proc(
                 "runValidation.bat",
                 [drive, path_no_drive, scenarioYear],
@@ -1032,7 +1023,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
     def complete_work(self, scenarioYear, input_dir, output_dir, input_file, output_file):
 
         fullList = np.array(pd.read_csv(_join(input_dir, input_file))['mgra'])
-        workList = np.array(pd.read_csv(_join(output_dir, output_file))['i'])
+        workList = np.array(pd.read_csv(_join(output_dir, "skims", output_file))['i'])
 
         list_set = set(workList)
         unique_list = (list(list_set))

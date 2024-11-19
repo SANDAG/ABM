@@ -258,13 +258,12 @@ class FourDs(_m.Tool()):
         mgra_landuse = mgra_landuse.merge(syn_pop, how = 'left', on = 'mgra')
         #all street distance  
         equiv_min = pd.read_csv(_join(self.path, "output", self.equivmins_file))
-        equiv_min['dist'] = equiv_min['actual']/60*3
         print("MGRA input landuse: " + self.mgradata_file)
         
         def density_function(mgra_in):
             eqmn = equiv_min[equiv_min['i'] == mgra_in]
-            mgra_circa_int = eqmn[eqmn['dist'] < self.int_radius]['j'].unique()
-            mgra_circa_oth = eqmn[eqmn['dist'] < self.oth_radius]['j'].unique()
+            mgra_circa_int = eqmn[eqmn['DISTWALK'] < self.int_radius]['j'].unique()
+            mgra_circa_oth = eqmn[eqmn['DISTWALK'] < self.oth_radius]['j'].unique()
             totEmp = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['emp_total'].sum()
             totRet = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['emp_ret'].sum()
             totHH = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['hh'].sum()

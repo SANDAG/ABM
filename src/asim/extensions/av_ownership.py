@@ -3,79 +3,35 @@
 import logging
 
 import numpy as np
-import pandas as pd
 
-from activitysim.core import (
-    config,
-    expressions,
-    estimation,
-    simulate,
-    tracing,
-    workflow,
-)
-from activitysim.core.configuration.base import PreprocessorSettings, PydanticReadable
-from activitysim.core.configuration.logit import LogitComponentSettings
+from activitysim.abm.models.util import estimation
+from activitysim.core import config, expressions, inject, pipeline, simulate, tracing
 
 logger = logging.getLogger("activitysim")
 
 
-class AVOwnershipSettings(LogitComponentSettings, extra="forbid"):
-    """
-    Settings for the `transit_pass_subsidy` component.
-    """
-
-    preprocessor: PreprocessorSettings | None = None
-    """Setting for the preprocessor."""
-
-    AV_OWNERSHIP_ALT: int = 0
-    """The column index number of the spec file for owning an autonomous vehicle."""
-
-    # iterative what-if analysis example
-    # omit these settings to not iterate
-    AV_OWNERSHIP_ITERATIONS: int | None = 1
-    """Maximum number of auto-calibration iterations to run."""
-    AV_OWNERSHIP_TARGET_PERCENT: float | None = 0.0
-    """Target percent of households owning an autonomous vehicle."""
-    AV_OWNERSHIP_TARGET_PERCENT_TOLERANCE: float | None = 0.01
-    """
-    Tolerance for the target percent of households owning an autonomous vehicle.  
-    Auto-calibration iterations will stop after achieving tolerance or hitting the max number.
-    """
-    AV_OWNERSHIP_COEFFICIENT_CONSTANT: str | None = "coef_av_target_share"
-    """Name of the coefficient to adjust in each auto-calibration iteration."""
-
-
-@workflow.step
-def av_ownership(
-    state: workflow.State,
-    households_merged: pd.DataFrame,
-    households: pd.DataFrame,
-    model_settings: AVOwnershipSettings | None = None,
-    model_settings_file_name: str = "av_ownership.yaml",
-    trace_label: str = "av_ownership",
-    trace_hh_id: bool = False,
-) -> None:
+@inject.step()
+def av_ownership(households_merged, households, chunk_size, trace_hh_id):
     """
     This model predicts whether a household owns an autonomous vehicle.
     The output from this model is TRUE or FALSE.
     """
 
-    if model_settings is None:
-        model_settings = AVOwnershipSettings.read_settings_file(
-            state.filesystem,
-            model_settings_file_name,
-        )
+    trace_label = "av_ownership"
+    model_settings_file_name = "av_ownership.yaml"
 
-    choosers = households_merged
+    choosers = households_merged.to_frame()
+    model_settings = config.read_model_settings(model_settings_file_name)
+
     logger.info("Running %s with %d households", trace_label, len(choosers))
 
-    estimator = estimation.manager.begin_estimation(state, "av_ownership")
+    estimator = estimation.manager.begin_estimation("av_ownership")
 
     constants = config.get_model_constants(model_settings)
-    av_ownership_alt = model_settings.AV_OWNERSHIP_ALT
+    av_ownership_alt = model_settings.get("AV_OWNERSHIP_ALT", 0)
 
     # - preprocessor
-    preprocessor_settings = model_settings.preprocessor
+    preprocessor_settings = model_settings.get("preprocessor", None)
     if preprocessor_settings:
 
         locals_d = {}
@@ -83,15 +39,14 @@ def av_ownership(
             locals_d.update(constants)
 
         expressions.assign_columns(
-            state,
             df=choosers,
             model_settings=preprocessor_settings,
             locals_dict=locals_d,
             trace_label=trace_label,
         )
 
-    model_spec = state.filesystem.read_model_spec(file_name=model_settings.SPEC)
-    coefficients_df = state.filesystem.read_model_coefficients(model_settings)
+    model_spec = simulate.read_model_spec(file_name=model_settings["SPEC"])
+    coefficients_df = simulate.read_model_coefficients(model_settings)
     nest_spec = config.get_logit_model_settings(model_settings)
 
     if estimator:
@@ -101,23 +56,14 @@ def av_ownership(
         estimator.write_choosers(choosers)
 
     # - iterative single process what-if adjustment if specified
-    iterations = model_settings.AV_OWNERSHIP_ITERATIONS
-    iterations_coefficient_constant = model_settings.AV_OWNERSHIP_COEFFICIENT_CONSTANT
-    iterations_target_percent = model_settings.AV_OWNERSHIP_TARGET_PERCENT
-    iterations_target_percent_tolerance = (
-        model_settings.AV_OWNERSHIP_TARGET_PERCENT_TOLERANCE
+    iterations = model_settings.get("AV_OWNERSHIP_ITERATIONS", 1)
+    iterations_coefficient_constant = model_settings.get(
+        "AV_OWNERSHIP_COEFFICIENT_CONSTANT", None
     )
-
-    # check to make sure all required settings are specified
-    assert (
-        iterations_coefficient_constant is not None if (iterations > 0) else True
-    ), "AV_OWNERSHIP_COEFFICIENT_CONSTANT required if AV_OWNERSHIP_ITERATIONS is specified"
-    assert (
-        iterations_target_percent is not None if (iterations > 0) else True
-    ), "AV_OWNERSHIP_TARGET_PERCENT required if AV_OWNERSHIP_ITERATIONS is specified"
-    assert (
-        iterations_target_percent_tolerance is not None if (iterations > 0) else True
-    ), "AV_OWNERSHIP_TARGET_PERCENT_TOLERANCE required if AV_OWNERSHIP_ITERATIONS is specified"
+    iterations_target_percent = model_settings.get("AV_OWNERSHIP_TARGET_PERCENT", None)
+    iterations_target_percent_tolerance = model_settings.get(
+        "AV_OWNERSHIP_TARGET_PERCENT_TOLERANCE", 0.01
+    )
 
     for iteration in range(iterations):
 
@@ -129,24 +75,22 @@ def av_ownership(
         )
 
         # re-read spec to reset substitution
-        model_spec = state.filesystem.read_model_spec(file_name=model_settings.SPEC)
-        model_spec = simulate.eval_coefficients(
-            state, model_spec, coefficients_df, estimator
-        )
+        model_spec = simulate.read_model_spec(file_name=model_settings["SPEC"])
+        model_spec = simulate.eval_coefficients(model_spec, coefficients_df, estimator)
 
         choices = simulate.simple_simulate(
-            state,
             choosers=choosers,
             spec=model_spec,
             nest_spec=nest_spec,
             locals_d=constants,
+            chunk_size=chunk_size,
             trace_label=trace_label,
             trace_choice_name="av_ownership",
             estimator=estimator,
-            compute_settings=model_settings.compute_settings,
         )
 
         if iterations_target_percent is not None:
+            # choices_for_filter = choices[choosers[iterations_chooser_filter]]
 
             current_percent = (choices == av_ownership_alt).sum() / len(choosers)
             logger.info(
@@ -195,13 +139,14 @@ def av_ownership(
         estimator.write_override_choices(choices)
         estimator.end_estimation()
 
+    households = households.to_frame()
     households["av_ownership"] = (
         choices.reindex(households.index).fillna(0).astype(bool)
     )
 
-    state.add_table("households", households)
+    pipeline.replace_table("households", households)
 
     tracing.print_summary("av_ownership", households.av_ownership, value_counts=True)
 
     if trace_hh_id:
-        state.tracing.trace_df(households, label=trace_label, warn_if_empty=True)
+        tracing.trace_df(households, label=trace_label, warn_if_empty=True)

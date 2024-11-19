@@ -39,7 +39,6 @@ CONSTANTS:
   time_distrib_stddev_work: 0.7
   time_distrib_mean_nonwork: 1.0
   time_distrib_stddev_nonwork: 0.6
-  tnc_shared_ivt_factor: 1.25
   tnc_single_wait_time_mean_by_density:
     1: 10.3
     2: 8.5

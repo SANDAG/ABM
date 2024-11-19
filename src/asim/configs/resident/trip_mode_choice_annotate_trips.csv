@@ -15,6 +15,8 @@ Description,Target,Expression
 Origin Terminal Time,_oTermTime,"reindex(land_use.terminal_time,df.origin)"
 Destination Terminal Time,_dTermTime,"reindex(land_use.terminal_time,df.destination)"
 ,_tour_participants,df.tour_id.map(tours.number_of_participants)
+,_tour_mode,df.tour_id.map(tours.tour_mode)
+,_tourEbike,(_tour_mode == 'EBIKE')
 ,_is_joint,(_tour_participants > 1)
 #,,
 ,_time_drive_terminal,0
@@ -136,7 +138,7 @@ Destination Terminal Time,_dTermTime,"reindex(land_use.terminal_time,df.destinat
 #,,
 ,_time_walk,0
 ,_time_walk,"_time_walk + (df.trip_mode=='WALK') * od_skims['walkTime']"
-,_time_walk,"_time_walk + (df.trip_mode=='EBIKE') * (~df.ebike_owner) * (microRentTime + _MicroAccessTime)"
+,_time_walk,"_time_walk + (df.trip_mode=='EBIKE') * np.where(((~df.ebike_owner) | (~_tourEbike)),1,0) * (microRentTime + _MicroAccessTime)"
 ,_time_walk,"_time_walk + (df.trip_mode=='ESCOOTER') * (microRentTime + _MicroAccessTime)"
 ,_time_walk,"_time_walk + (df.trip_mode=='SCH_BUS') * 10"
 ,_time_walk,"_time_walk + (df.trip_mode=='WALK_LOC') * ~df.nev_local_access_available_in * ~df.microtransit_local_access_available_in * _origin_local_time"
@@ -175,7 +177,7 @@ Destination Terminal Time,_dTermTime,"reindex(land_use.terminal_time,df.destinat
 #,,
 ,_distance_walk,0
 ,_distance_walk,"_distance_walk + (df.trip_mode=='WALK') * od_skims['walkTime']/60 * walkSpeed"
-,_distance_walk,"_distance_walk + (df.trip_mode=='EBIKE') * (~df.ebike_owner) * _MicroAccessTime/60 * walkSpeed"
+,_distance_walk,"_distance_walk + (df.trip_mode=='EBIKE') * np.where(((~df.ebike_owner) | (~_tourEbike)),1,0) * _MicroAccessTime/60 * walkSpeed"
 ,_distance_walk,"_distance_walk + (df.trip_mode=='ESCOOTER') * _MicroAccessTime/60 * walkSpeed"
 ,_distance_walk,"_distance_walk + (df.trip_mode=='SCH_BUS') * 10/60 * walkSpeed"
 ,_distance_walk,"_distance_walk + (df.trip_mode=='WALK_LOC') * ~df.nev_local_access_available_in * ~df.microtransit_local_access_available_in * _origin_local_dist"
@@ -219,7 +221,7 @@ Destination Terminal Time,_dTermTime,"reindex(land_use.terminal_time,df.destinat
 ,_distance_mm,"_distance_mm + df.trip_mode.isin(['EBIKE'])*od_skims['BIKE_TIME'] * (bikeSpeed/ebikeSpeed)/60 * ebikeSpeed"
 ,distance_mm,"_distance_mm + df.trip_mode.isin(['ESCOOTER'])*od_skims['BIKE_TIME'] * (bikeSpeed/escooterSpeed)/60 * escooterSpeed"
 ,_cost_fare_mm,0
-,_cost_fare_mm,"_cost_fare_mm + df.trip_mode.isin(['EBIKE'])*(~df.ebike_owner)*(microFixedCost + microVarCost*time_mm)"
+,_cost_fare_mm,"_cost_fare_mm + df.trip_mode.isin(['EBIKE'])*np.where(((~df.ebike_owner) | (~_tourEbike)),1,0)*(microFixedCost + microVarCost*time_mm)"
 ,cost_fare_mm,"_cost_fare_mm + df.trip_mode.isin(['ESCOOTER'])*(microFixedCost + microVarCost*time_mm)"
 ,_distance_bike,0
 ,distance_bike,"_distance_bike + df.trip_mode.isin(['BIKE'])*od_skims['BIKE_TIME']/60 * bikeSpeed"

@@ -28,8 +28,8 @@ mmms:
     mmms_link_len: "Shape_Leng"
     max_maz_maz_walk_dist_feet: 15840
     max_maz_maz_bike_dist_feet: 26400
-    max_maz_local_bus_stop_walk_dist_feet: 5280     # 1 mile
-    max_maz_premium_transit_stop_walk_dist_feet: 6336   # 1.2 miles
+    max_maz_local_bus_stop_walk_dist_feet: 23760     # 4.5 miles (allow microtransit)
+    max_maz_premium_transit_stop_walk_dist_feet: 23760   # 4.5 miles (allow microtransit)
     walk_speed_mph: 3.0
     drive_speed_mph: 25.0
     maz_maz_walk_output: "maz_maz_walk.csv"

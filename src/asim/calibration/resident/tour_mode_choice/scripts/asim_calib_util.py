@@ -625,7 +625,7 @@ def match_model_and_calib_targets_to_coefficients(original_tour_mc_constants_df,
                 for coef_purpose in output_calibration_purposes_to_coef_names_dict[purpose]:
                     coef_mode = output_calibration_mode_to_coef_name_dict[mode]
                     coef_name = 'coef_calib_' + output_calibration_autosuff_to_coef_names_indiv_dict[auto_suff] + '_' + coef_mode + '_' + coef_purpose
-                    target_name = mode + '_' + auto_suff + '_' + purpose ### DELETE
+                    #target_name = mode + '_' + auto_suff + '_' + purpose ### DELETE
 
                     if purpose == 'joint':
                         coef_name = 'coef_calib_' + output_calibration_autosuff_to_coef_names_joint_dict[auto_suff] + '_' + coef_mode + '_' + coef_purpose

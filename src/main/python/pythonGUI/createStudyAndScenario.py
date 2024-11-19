@@ -347,11 +347,12 @@ class CreateScenarioGUI(tkinter.Frame):
 
         #Update properties file
         def update_property(self, old, new):
+            new_updated = new.replace(r'\U', r'/U').replace(r'\u', r'/u')
             property_file = os.path.join(self.scenariopath.get(), 'conf', 'sandag_abm.properties')
             property_file = property_file.replace('\\\\', '/')
             with open(property_file, 'r') as file :
                 filedata = file.read()
-            filedata = filedata.replace(old, new)
+            filedata = filedata.replace(old, new_updated)
             with open(property_file, 'w') as file:
                 file.write(filedata)
 

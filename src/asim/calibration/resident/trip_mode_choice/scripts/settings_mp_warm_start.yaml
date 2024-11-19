@@ -1,0 +1,109 @@
+inherit_settings: settings.yaml
+
+multiprocess: True
+households_sample_size: 320000
+num_processes: 40
+trace_hh_id:
+chunk_training_mode: disabled
+# chunk_size: 240_000_000_000
+
+use_shadow_pricing: True
+
+memory_profile: False
+
+# raise error if any sub-process fails without waiting for others to complete
+# (Shadow pricing requires fail_fast setting in multiprocessing mode)
+fail_fast: True
+
+resume_after: trip_scheduling
+
+models:
+  ### mp_init_proto_pop (single process)
+  - initialize_proto_population # Separate step so proto tables can be split for multiprocess.
+  ### mp_disaggregate_accessibility
+  - compute_disaggregate_accessibility
+  ### mp_initialize_hhs (single process)
+  - initialize_landuse
+  - initialize_households
+  ### mp_accessibility
+  - compute_accessibility
+  ### mp_households
+  - av_ownership
+  - auto_ownership_simulate
+  - work_from_home
+  - external_worker_identification
+  - external_workplace_location
+  - school_location
+  - workplace_location
+  - transit_pass_subsidy
+  - transit_pass_ownership
+  - vehicle_type_choice
+  - adjust_auto_operating_cost
+  - transponder_ownership
+  - free_parking
+  - telecommute_frequency
+  - cdap_simulate
+  - mandatory_tour_frequency
+  - mandatory_tour_scheduling
+  - school_escorting
+  - joint_tour_frequency_composition
+  - external_joint_tour_identification
+  - joint_tour_participation
+  - joint_tour_destination
+  - external_joint_tour_destination
+  - joint_tour_scheduling
+  - non_mandatory_tour_frequency
+  - external_non_mandatory_identification
+  - non_mandatory_tour_destination
+  - external_non_mandatory_destination
+  - non_mandatory_tour_scheduling
+  - vehicle_allocation
+  - tour_mode_choice_simulate
+  - atwork_subtour_frequency
+  - atwork_subtour_destination
+  - atwork_subtour_scheduling
+  - atwork_subtour_mode_choice
+  - stop_frequency
+  - trip_purpose
+  - trip_destination
+  - trip_purpose_and_destination
+  - trip_scheduling
+  - trip_mode_choice
+  - parking_location
+  ### mp_summarize (single process)
+  - write_data_dictionary
+  - track_skim_usage
+  - write_trip_matrices
+  # - write_to_datalake
+  - update_tables
+  - write_tables
+
+
+multiprocess_steps:
+  - name: mp_init_proto_pop
+    begin: initialize_proto_population
+  - name: mp_disaggregate_accessibility
+    num_processes: 20
+    begin: compute_disaggregate_accessibility
+    slice:
+      tables:
+        - proto_households
+        - proto_persons
+        - proto_tours
+  - name: mp_initialize_hhs
+    begin: initialize_landuse
+  - name: mp_accessibility
+    begin: compute_accessibility
+    num_processes: 10
+    slice:
+      tables:
+        - accessibility
+      except: True  # this is needed so landuse (i.e. destinations) doesn't get split
+  - name: mp_households
+    begin: av_ownership
+    slice:
+      tables:
+        - households
+        - persons
+  - name: mp_summarize
+    begin: write_data_dictionary

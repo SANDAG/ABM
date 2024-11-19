@@ -8,8 +8,8 @@ import yaml
 import numpy as np
 import pandas as pd
 
-from activitysim.core import config, workflow
-from activitysim.abm.models.trip_matrices import WriteTripMatricesSettings
+from activitysim.core import config, inject, pipeline, tracing
+from activitysim.core.config import setting
 
 # from io import StringIO
 
@@ -75,12 +75,12 @@ def get_commit_info(repo_path):
     return {"short_commit_hash": commit_hash, "branch_name": branch_name}
 
 
-def write_metadata(state, prefix):
+def write_metadata(prefix):
 
-    output_dir = state.get_injectable("output_dir")
+    output_dir = inject.get_injectable("output_dir")
 
     # repo branch name and commit hash: activitysim
-    asim_git_folder = find_git_folder(workflow.__file__, "../../..")
+    asim_git_folder = find_git_folder(pipeline.__file__, "../../..")
     asim_commit_info = get_commit_info(asim_git_folder)
 
     # repo branch name and commit hash: abm3
@@ -95,8 +95,8 @@ def write_metadata(state, prefix):
             "commit": ""
         }
 
-    trip_settings = WriteTripMatricesSettings.read_settings_file(state.filesystem, "write_trip_matrices.yaml")
-    constants = trip_settings.CONSTANTS
+    trip_settings = config.read_model_settings("write_trip_matrices.yaml")
+    constants = trip_settings.get("CONSTANTS")
 
     model_metadata_dict = {
         "asim_branch_name": asim_commit_info["branch_name"],
@@ -166,12 +166,7 @@ def replace_missing_values(df):
 
     """
     # Define the replacements for each data type, currently only two types used by ActivitySim. Need to add more, like Categorical if necessary.
-    replacements = {np.number: -9, object: 'null', 'category': 'null'}
-
-    # Add null to list of categories for categorical columns
-    for col in df.columns:
-        if df[col].dtype == "category":
-            df[col] = df[col].cat.add_categories(["null"])
+    replacements = {np.number: -9, object: 'null'}
 
     # Loop over the data types
     for dtype, replacement in replacements.items():
@@ -185,11 +180,11 @@ def replace_missing_values(df):
 
     return df
     
-def get_output_table_names(state, output_tables_settings, output_tables_settings_name):
+def get_output_table_names(output_tables_settings, output_tables_settings_name):
     """ """
-    action = output_tables_settings.action
-    tables = output_tables_settings.tables
-    registered_tables = state.registered_tables()
+    action = output_tables_settings.get("action")
+    tables = output_tables_settings.get("tables")
+    registered_tables = pipeline.registered_tables()
     if action == "include":
         # interpret empty or missing tables setting to mean include all registered tables
         output_tables_list = tables if tables is not None else registered_tables
@@ -202,30 +197,23 @@ def get_output_table_names(state, output_tables_settings, output_tables_settings
         )
     return output_tables_list
 
-@workflow.step()
-def update_tables(state: workflow.State):
+@inject.step()
+def update_tables():
     # get list of model outputs to update
-    output_dir = state.get_injectable("output_dir")
+    output_dir = inject.get_injectable("output_dir")
     input_dir = os.path.abspath(os.path.join(output_dir, "..", "..", "input"))
     # input_dir = inject.get_injectable("data_dir")
     output_tables_settings_name = "output_tables"
-    output_tables_settings = state.settings.output_tables
+    output_tables_settings = setting(output_tables_settings_name)
     if output_tables_settings is None:
         logger.info("No output_tables specified in settings file. Nothing to update.")
         return
     output_tables_list = get_output_table_names(
-        state, output_tables_settings, output_tables_settings_name
+        output_tables_settings, output_tables_settings_name
     )
 
-    configs_dirs = state.filesystem.get_configs_dir()
-    for configs_dir in configs_dirs:
-        if "common" in str(configs_dir):
-            common_configs_dir = configs_dir
-            break
-    common_settings_file_name = os.path.join(common_configs_dir, "outputs.yaml")
-    common_settings_stream = open(common_settings_file_name, "r")
-    common_settings = yaml.safe_load(common_settings_stream)
-    common_settings_stream.close()
+    common_settings_file_name = "..\common\outputs.yaml"
+    common_settings = config.read_model_settings(common_settings_file_name)
 
     for table_name in output_tables_list:
         if not isinstance(table_name, str):
@@ -237,21 +225,21 @@ def update_tables(state: workflow.State):
                 or table_name == "persons"):
             continue
         
-        output_table = state.get_table(table_name)
+        output_table = pipeline.get_table(table_name)
         
         # set sample rate to float
-        if table_name == "households" and state.settings.model_name == "resident":
+        if table_name == "households" and setting("model_name") == "resident":
             output_table["sample_rate"] = output_table["sample_rate"].astype(float)
 
         # split vehicle_type column
-        if table_name == "vehicles" and state.settings.model_name == "resident":
+        if table_name == "vehicles" and setting("model_name") == "resident":
             output_table[["vehicle_category", "num_occupants", "fuel_type"]] = output_table[
                 "vehicle_type"
             ].str.split(pat="_", expand=True)
             # output_table.drop(columns={'vehicle_type'}, inplace=True) ## TODO decide whether to drop column here or in bronze -> silver filter
         
         # add missing columns from input persons file
-        if table_name == "persons" and state.settings.model_name == "resident":
+        if table_name == "persons" and setting("model_name") == "resident":
             input_persons = pd.read_csv(os.path.join(input_dir,"persons.csv"),
             usecols=[
             "perid",
@@ -269,10 +257,10 @@ def update_tables(state: workflow.State):
             "hours": "int8",
             "rac1p": "int8",
             "hisp": "int8"})
-            output_table = output_table.reset_index().merge(input_persons,how="inner",left_on="person_id",right_on="perid").set_index("person_id")
+            output_table = output_table.merge(input_persons,how="inner",left_on="person_id",right_on="perid")
         
         # add missing columns from input land use file
-        if table_name == "land_use" and state.settings.model_name == "resident":
+        if table_name == "land_use" and setting("model_name") == "resident":
             input_land_use = pd.read_csv(os.path.join(input_dir,"land_use.csv"),
             usecols=[
             "mgra",
@@ -302,10 +290,9 @@ def update_tables(state: workflow.State):
             output_table = remove_columns(table_settings, output_table)
             output_table = reorder_columns(table_settings, output_table)
             output_table = rename_columns(table_settings, output_table)
-            if table_name != "tours":
-                output_table = replace_missing_values(output_table)
+            output_table = replace_missing_values(output_table)
         
-        state.add_table(table_name, output_table)
+        pipeline.replace_table(table_name, output_table)
 
-    prefix = output_tables_settings.prefix
-    write_metadata(state, prefix)
+    prefix = output_tables_settings.get("prefix", "final_")
+    write_metadata(prefix)

@@ -28,13 +28,13 @@ SET CONDA2_DEA=%ANACONDA2_DIR%\Scripts\deactivate.bat
 SET CONDA3=%ANACONDA3_DIR%\Scripts\conda.exe
 SET CONDA2=%ANACONDA2_DIR%\Scripts\conda.exe
 
-SET PYTHON3=%ANACONDA3_DIR%\envs\asim_132\python.exe
+SET PYTHON3=%ANACONDA3_DIR%\envs\asim_baydag\python.exe
 :: FIX PATH AND ENV HERE LATER
 SET PYTHON2=%ANACONDA2_DIR%\python.exe
 
 ECHO Activate ActivitySim....
 CD /d %ANACONDA3_DIR%\Scripts
-CALL %CONDA3_ACT% asim_132
+CALL %CONDA3_ACT% asim_baydag
 
 set MKL_NUM_THREADS=1
 set MKL=1
@@ -47,9 +47,6 @@ ECHO Create Output Directory
 MD airport.CBX
 MD airport.SAN
 CD ..
-
-:: Copy outputs.yaml from configs/common to configs/common_airport
-copy src\asim\configs\common\outputs.yaml src\asim\configs\common_airport
 
 :: Run Models
 ECHO Run ActivitySim AirportCBX Model

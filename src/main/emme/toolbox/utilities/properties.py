@@ -30,14 +30,13 @@ class PropertiesSetter(object):
     sample_rates = _m.Attribute(str)
 
     useLocalDrive = _m.Attribute(bool)
+    skipMGRASkims = _m.Attribute(bool)
     skip4Ds = _m.Attribute(bool)
     skipBuildNetwork = _m.Attribute(bool)
     skipInputChecker = _m.Attribute(bool)
     skipInitialization = _m.Attribute(bool)
     deleteAllMatrices = _m.Attribute(bool)
     skipCopyWarmupTripTables = _m.Attribute(bool)
-    skipWalkLogsums = _m.Attribute(bool)
-    skipCopyWalkImpedance = _m.Attribute(bool)
     skipBikeLogsums = _m.Attribute(bool)
     skipCopyBikeLogsum = _m.Attribute(bool)
     skipTransitConnector = _m.Attribute(bool)
@@ -48,9 +47,6 @@ class PropertiesSetter(object):
     skipTransitSkimming_1 = _m.Attribute(bool)
     skipTransitSkimming_2 = _m.Attribute(bool)
     skipTransitSkimming_3 = _m.Attribute(bool)
-    skipSkimConversion_1 = _m.Attribute(bool)
-    skipSkimConversion_2 = _m.Attribute(bool)
-    skipSkimConversion_3 = _m.Attribute(bool)
     skipTransponderExport_1 = _m.Attribute(bool)
     skipTransponderExport_2 = _m.Attribute(bool)
     skipTransponderExport_3 = _m.Attribute(bool)
@@ -95,6 +91,7 @@ class PropertiesSetter(object):
     skipFinalTransitAssignment = _m.Attribute(bool)
     skipVisualizer = _m.Attribute(bool)
     skipDataExport = _m.Attribute(bool)
+    skipValidation = _m.Attribute(bool)
     skipDatalake = _m.Attribute(bool)
     skipDataLoadRequest = _m.Attribute(bool)
     skipDeleteIntermediateFiles = _m.Attribute(bool)
@@ -116,9 +113,6 @@ class PropertiesSetter(object):
     skipTransitSkimming = property(
         fget=lambda self: self._get_list_prop("skipTransitSkimming"),
         fset=lambda self, value: self._set_list_prop("skipTransitSkimming", value))
-    skipSkimConversion = property(
-        fget=lambda self: self._get_list_prop("skipSkimConversion"),
-        fset=lambda self, value: self._set_list_prop("skipSkimConversion", value))
     skipTransponderExport = property(
         fget=lambda self: self._get_list_prop("skipTransponderExport"),
         fset=lambda self, value: self._set_list_prop("skipTransponderExport", value))
@@ -161,12 +155,12 @@ class PropertiesSetter(object):
 
     def __init__(self):
         self._run_model_names = (
-            "env", "useLocalDrive", "skip4Ds", "skipInputChecker",
+            "env", "useLocalDrive", "skipMGRASkims", "skip4Ds", "skipInputChecker",
             "startFromIteration", "skipInitialization", "deleteAllMatrices", "skipCopyWarmupTripTables",
-            "skipCopyBikeLogsum", "skipCopyWalkImpedance", "skipWalkLogsums", "skipBikeLogsums", "skipBuildNetwork",
-            "skipHighwayAssignment", "skipTransitSkimming", "skipTransitConnector", "skipSkimConversion", "skipTransponderExport", "skipScenManagement", "skipABMPreprocessing", "skipABMResident", "skipABMAirport", "skipABMXborderWait", "skipABMXborder", "skipABMVisitor", "skipMAASModel",
+            "skipCopyBikeLogsum", "skipBikeLogsums", "skipBuildNetwork",
+            "skipHighwayAssignment", "skipTransitSkimming", "skipTransitConnector", "skipTransponderExport", "skipScenManagement", "skipABMPreprocessing", "skipABMResident", "skipABMAirport", "skipABMXborderWait", "skipABMXborder", "skipABMVisitor", "skipMAASModel",
             "skipCVMEstablishmentSyn", "skipCTM", "skipTruck", "skipEI", "skipExternal", "skipTripTableCreation", "skipFinalHighwayAssignment",
-            "skipFinalTransitAssignment", "skipVisualizer", "skipDataExport", "skipDatalake", "skipDataLoadRequest",
+            "skipFinalTransitAssignment", "skipVisualizer", "skipDataExport", "skipValidation", "skipDatalake", "skipDataLoadRequest",
             "skipDeleteIntermediateFiles")
         self._properties = None
 
@@ -215,14 +209,13 @@ class PropertiesSetter(object):
 
         skip_startup_items = [
             ("useLocalDrive",           "Use the local drive during the model run"),
+            ("skipMGRASkims",           "Skip MGRA skims"),
             ("skip4Ds",                 "Skip running 4Ds"),
             ("skipBuildNetwork",        "Skip build of highway and transit network"),
             ("skipInputChecker",		"Skip running input checker"),
             ("skipInitialization",      "Skip matrix and transit database initialization"),
             ("deleteAllMatrices",       "&nbsp;&nbsp;&nbsp;&nbsp;Delete all matrices"),
             ("skipCopyWarmupTripTables","Skip import of warmup trip tables"),
-            ("skipWalkLogsums",         "Skip walk logsums"),
-            ("skipCopyWalkImpedance",   "Skip copy of walk impedance"),
             ("skipBikeLogsums",         "Skip bike logsums"),
             ("skipCopyBikeLogsum",      "Skip copy of bike logsum"),
         ]
@@ -230,7 +223,6 @@ class PropertiesSetter(object):
             ("skipHighwayAssignment",   "Skip highway assignments and skims"),
             ("skipTransitSkimming",     "Skip transit skims"),
             ("skipTransitConnector",    "&nbsp;&nbsp;&nbsp;&nbsp;Skip creating new connectors"),
-            ("skipSkimConversion",      "Skip conversion of skims to omxz format"),
             ("skipTransponderExport",   "Skip transponder accessibilities"),
             ("skipScenManagement",      "Skip scenario management"),
             ("skipABMPreprocessing",    "Skip ActivitySim preprocessing"),
@@ -252,6 +244,7 @@ class PropertiesSetter(object):
             ("skipFinalTransitAssignment",  "Skip final transit assignments"),
             ("skipVisualizer",              "Skip running visualizer"),
             ("skipDataExport",              "Skip data export"),
+            ("skipValidation",              "Skip validation"),
             ("skipDatalake",                "Skip write to datalake"),
             ("skipDataLoadRequest",         "Skip data load request"),
             ("skipDeleteIntermediateFiles", "Skip delete intermediate files"),
@@ -362,21 +355,19 @@ class PropertiesSetter(object):
         self.sample_rates = ",".join(str(x) for x in props.get("sample_rates"))
 
         self.useLocalDrive = props.get("RunModel.useLocalDrive", True)
+        self.skipMGRASkims = props.get("RunModel.skipMGRASkims", False)
         self.skip4Ds = props.get("RunModel.skip4Ds", False)
         self.skipBuildNetwork = props.get("RunModel.skipBuildNetwork", False)
         self.skipInputChecker = props.get("RunModel.skipInputChecker", False)
         self.skipInitialization = props.get("RunModel.skipInitialization", False)
         self.deleteAllMatrices = props.get("RunModel.deleteAllMatrices", False)
         self.skipCopyWarmupTripTables = props.get("RunModel.skipCopyWarmupTripTables", False)
-        self.skipWalkLogsums = props.get("RunModel.skipWalkLogsums", False)
-        self.skipCopyWalkImpedance = props.get("RunModel.skipCopyWalkImpedance", False)
         self.skipBikeLogsums = props.get("RunModel.skipBikeLogsums", False)
         self.skipCopyBikeLogsum = props.get("RunModel.skipCopyBikeLogsum", False)
 
         self.skipHighwayAssignment = props.get("RunModel.skipHighwayAssignment", [False, False, False])
         self.skipTransitSkimming = props.get("RunModel.skipTransitSkimming", [False, False, False])
         self.skipTransitConnector = props.get("RunModel.skipTransitConnector", False)
-        self.skipSkimConversion = props.get("RunModel.skipSkimConversion", [False, False, False])
         self.skipTransponderExport = props.get("RunModel.skipTransponderExport", [False, False, False])
         self.skipScenManagement = props.get("RunModel.skipScenManagement", False)
         self.skipABMPreprocessing = props.get("RunModel.skipABMPreprocessing", [False, False, False])
@@ -398,6 +389,7 @@ class PropertiesSetter(object):
         self.skipFinalTransitAssignment = props.get("RunModel.skipFinalTransitAssignment", False)
         self.skipVisualizer = props.get("RunModel.skipVisualizer", False)
         self.skipDataExport = props.get("RunModel.skipDataExport", False)
+        self.skipValidation = props.get("RunModel.skipValidation", False)
         self.skipDatalake = props.get("RunModel.skipDatalake", False)
         self.skipDataLoadRequest = props.get("RunModel.skipDataLoadRequest", False)
         self.skipDeleteIntermediateFiles = props.get("RunModel.skipDeleteIntermediateFiles", False)
@@ -409,21 +401,19 @@ class PropertiesSetter(object):
         props["sample_rates"] = [float(x) for x in self.sample_rates.split(",")]
 
         props["RunModel.useLocalDrive"] = self.useLocalDrive
+        props["RunModel.skipMGRASkims"] = self.skipMGRASkims
         props["RunModel.skip4Ds"] = self.skip4Ds
         props["RunModel.skipBuildNetwork"] = self.skipBuildNetwork
         props["RunModel.skipInputChecker"] = self.skipInputChecker
         props["RunModel.skipInitialization"] = self.skipInitialization
         props["RunModel.deleteAllMatrices"] = self.deleteAllMatrices
         props["RunModel.skipCopyWarmupTripTables"] = self.skipCopyWarmupTripTables
-        props["RunModel.skipWalkLogsums"] = self.skipWalkLogsums
-        props["RunModel.skipCopyWalkImpedance"] = self.skipCopyWalkImpedance
+       
         props["RunModel.skipBikeLogsums"] = self.skipBikeLogsums
         props["RunModel.skipCopyBikeLogsum"] = self.skipCopyBikeLogsum
-
         props["RunModel.skipHighwayAssignment"] = self.skipHighwayAssignment
         props["RunModel.skipTransitSkimming"] = self.skipTransitSkimming
         props["RunModel.skipTransitConnector"] = self.skipTransitConnector
-        props["RunModel.skipSkimConversion"] = self.skipSkimConversion
         props["RunModel.skipTransponderExport"] = self.skipTransponderExport
         props["RunModel.skipScenManagement"] = self.skipScenManagement
         props["RunModel.skipABMPreprocessing"] = self.skipABMPreprocessing
@@ -444,6 +434,7 @@ class PropertiesSetter(object):
         props["RunModel.skipFinalTransitAssignment"] = self.skipFinalTransitAssignment
         props["RunModel.skipVisualizer"] = self.skipVisualizer
         props["RunModel.skipDataExport"] = self.skipDataExport
+        props["RunModel.skipValidation"] = self.skipValidation
         props["RunModel.skipDatalake"] = self.skipDatalake
         props["RunModel.skipDataLoadRequest"] = self.skipDataLoadRequest
         props["RunModel.skipDeleteIntermediateFiles"] = self.skipDeleteIntermediateFiles
