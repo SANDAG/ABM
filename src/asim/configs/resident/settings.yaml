@@ -128,7 +128,7 @@ distributed_time_factor_nonwork_stddev: 0.6
 distributed_time_factor_min: 0.1
 distributed_time_factor_max: 10
 
-resume_after:
+resume_after: write_trip_matrices
 
 models:
   ### mp_init_proto_pop (single process)
@@ -187,4 +187,5 @@ models:
   - write_data_dictionary
   - track_skim_usage
   - write_trip_matrices
+  - update_tables
   - write_tables
