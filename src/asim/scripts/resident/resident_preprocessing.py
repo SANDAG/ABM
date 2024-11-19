@@ -52,21 +52,21 @@ class Series15_Processor:
 
         # skims are copied from input dir to output dir before operating on them
         self.traffic_skim_list = [
-            'traffic_skims_EA.omxz',
-            'traffic_skims_AM.omxz',
-            'traffic_skims_MD.omxz',
-            'traffic_skims_PM.omxz',
-            'traffic_skims_EV.omxz',
+            'traffic_skims_EA.omx',
+            'traffic_skims_AM.omx',
+            'traffic_skims_MD.omx',
+            'traffic_skims_PM.omx',
+            'traffic_skims_EV.omx',
         ]
         self.transit_skim_list = [
-            'transit_skims_EA.omxz',
-            'transit_skims_AM.omxz',
-            'transit_skims_MD.omxz',
-            'transit_skims_PM.omxz',
-            'transit_skims_EV.omxz',
+            'transit_skims_EA.omx',
+            'transit_skims_AM.omx',
+            'transit_skims_MD.omx',
+            'transit_skims_PM.omx',
+            'transit_skims_EV.omx',
         ]
         # below omx file and core are used to create 'DIST' skim
-        self.traffic_dist_omx_file = os.path.join(self.output_dir, 'skims', 'traffic_skims_AM.omxz')
+        self.traffic_dist_omx_file = os.path.join(self.output_dir, 'skims', 'traffic_skims_AM.omx')
         self.traffic_dist_omx_core = 'SOV_TR_H_DIST__AM'
 
         # bike logsums are the same for each time period,
@@ -325,8 +325,8 @@ class Series15_Processor:
         if self.add_time_dependent_bike_logsums:
             for skim_file in self.traffic_skim_list:
                 # assumes skim file has time period as the last two characters in the name
-                # e.g. traffic_skims_AM.omxz
-                time_period = skim_file.strip('.omxz')[-2:].upper()
+                # e.g. traffic_skims_AM.omx
+                time_period = skim_file.strip('.omx')[-2:].upper()
                 assert time_period in self.time_periods, f'time period {time_period} not in {self.time_periods}'
                 skim = omx.open_file(os.path.join(self.output_dir, 'skims', skim_file), 'a')
                 if f'BIKE_LOGSUM__{time_period}' not in skim.list_matrices():
