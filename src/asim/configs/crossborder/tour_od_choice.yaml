@@ -62,10 +62,6 @@ SEGMENTS:
 LOGSUM_SETTINGS: tour_mode_choice
 LOGSUM_PREPROCESSOR: preprocessor
 
-compute_settings:
-  protect_columns:
-    - origin_destination
-
 CONSTANTS:
   tecate_open_per: 5
   tecate_close_per: 40

@@ -18,8 +18,8 @@ write_skim_cache: False
 trace_tvpb_cache_as_csv: False
 
 taz_skims: 
-  - traffic_skims*.omxz
-  - transit_skims*.omxz
+  - traffic_skims*.omx
+  - transit_skims*.omx
   - dest_pmsa.omx
   - dest_poi.omx
 

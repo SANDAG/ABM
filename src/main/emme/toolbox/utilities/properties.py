@@ -47,9 +47,6 @@ class PropertiesSetter(object):
     skipTransitSkimming_1 = _m.Attribute(bool)
     skipTransitSkimming_2 = _m.Attribute(bool)
     skipTransitSkimming_3 = _m.Attribute(bool)
-    skipSkimConversion_1 = _m.Attribute(bool)
-    skipSkimConversion_2 = _m.Attribute(bool)
-    skipSkimConversion_3 = _m.Attribute(bool)
     skipTransponderExport_1 = _m.Attribute(bool)
     skipTransponderExport_2 = _m.Attribute(bool)
     skipTransponderExport_3 = _m.Attribute(bool)
@@ -116,9 +113,6 @@ class PropertiesSetter(object):
     skipTransitSkimming = property(
         fget=lambda self: self._get_list_prop("skipTransitSkimming"),
         fset=lambda self, value: self._set_list_prop("skipTransitSkimming", value))
-    skipSkimConversion = property(
-        fget=lambda self: self._get_list_prop("skipSkimConversion"),
-        fset=lambda self, value: self._set_list_prop("skipSkimConversion", value))
     skipTransponderExport = property(
         fget=lambda self: self._get_list_prop("skipTransponderExport"),
         fset=lambda self, value: self._set_list_prop("skipTransponderExport", value))
@@ -229,7 +223,6 @@ class PropertiesSetter(object):
             ("skipHighwayAssignment",   "Skip highway assignments and skims"),
             ("skipTransitSkimming",     "Skip transit skims"),
             ("skipTransitConnector",    "&nbsp;&nbsp;&nbsp;&nbsp;Skip creating new connectors"),
-            ("skipSkimConversion",      "Skip conversion of skims to omxz format"),
             ("skipTransponderExport",   "Skip transponder accessibilities"),
             ("skipScenManagement",      "Skip scenario management"),
             ("skipABMPreprocessing",    "Skip ActivitySim preprocessing"),
@@ -375,7 +368,6 @@ class PropertiesSetter(object):
         self.skipHighwayAssignment = props.get("RunModel.skipHighwayAssignment", [False, False, False])
         self.skipTransitSkimming = props.get("RunModel.skipTransitSkimming", [False, False, False])
         self.skipTransitConnector = props.get("RunModel.skipTransitConnector", False)
-        self.skipSkimConversion = props.get("RunModel.skipSkimConversion", [False, False, False])
         self.skipTransponderExport = props.get("RunModel.skipTransponderExport", [False, False, False])
         self.skipScenManagement = props.get("RunModel.skipScenManagement", False)
         self.skipABMPreprocessing = props.get("RunModel.skipABMPreprocessing", [False, False, False])
@@ -422,7 +414,6 @@ class PropertiesSetter(object):
         props["RunModel.skipHighwayAssignment"] = self.skipHighwayAssignment
         props["RunModel.skipTransitSkimming"] = self.skipTransitSkimming
         props["RunModel.skipTransitConnector"] = self.skipTransitConnector
-        props["RunModel.skipSkimConversion"] = self.skipSkimConversion
         props["RunModel.skipTransponderExport"] = self.skipTransponderExport
         props["RunModel.skipScenManagement"] = self.skipScenManagement
         props["RunModel.skipABMPreprocessing"] = self.skipABMPreprocessing

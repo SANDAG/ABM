@@ -15,7 +15,7 @@ taz = gpd.read_file(os.path.join(path,'input','TAZ15.shp'))
 # %%
 taz['geometry'] = taz['geometry'].representative_point()
 
-xwalk = gpd.sjoin(taz,pmsa, predicate = 'within')
+xwalk = gpd.sjoin(taz,pmsa, op = 'within')
 xwalk[['TAZ','pseudomsa']].to_csv(os.path.join(path,'output', 'skims','taz_pmsa_xwalk.csv'), index = False)
 
 # %%

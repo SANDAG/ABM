@@ -16,11 +16,11 @@ SET CONDA3_DEA=%ANACONDA3_DIR%\Scripts\deactivate.bat
 
 SET CONDA3=%ANACONDA3_DIR%\Scripts\conda.exe
 
-SET PYTHON3=%ANACONDA3_DIR%\envs\asim_132\python.exe 
+SET PYTHON3=%ANACONDA3_DIR%\envs\asim_baydag\python.exe 
 
 rem ### Call environment
 CD /d %ANACONDA3_DIR%\Scripts
-CALL %CONDA3_ACT% asim_132
+CALL %CONDA3_ACT% asim_baydag
 
 %PROJECT_DRIVE%
 cd %PROJECT_DRIVE%%PROJECT_DIRECTORY%                                        
