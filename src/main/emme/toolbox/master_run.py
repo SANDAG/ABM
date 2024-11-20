@@ -291,7 +291,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         skipInitialization = props["RunModel.skipInitialization"]
         deleteAllMatrices = props["RunModel.deleteAllMatrices"]
         skipCopyWarmupTripTables = props["RunModel.skipCopyWarmupTripTables"]
-        skipCopyBikeLogsum = props["RunModel.skipCopyBikeLogsum"]
         skipBikeLogsums = props["RunModel.skipBikeLogsums"]
         skipBuildNetwork = props["RunModel.skipBuildNetwork"]
         skipHighwayAssignment = props["RunModel.skipHighwayAssignment"]
@@ -526,7 +525,9 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 if not skipBikeLogsums:
                     self.run_proc("runSandagBikeLogsums.cmd", [drive, path_forward_slash],
                                   "Bike - create AT logsums and impedances")
-                if not skipCopyBikeLogsum:
+                    # Copy updated logsums to scenario input to avoid overwriting
+                    self.copy_files(["bikeMgraLogsum.csv", "bikeTazLogsum.csv"], output_dir, input_dir)
+                elif not os.path.exists(_join(output_dir, "bikeMgraLogsum.csv")):
                     self.copy_files(["bikeMgraLogsum.csv", "bikeTazLogsum.csv"], input_dir, output_dir)
 
             else:
