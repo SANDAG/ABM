@@ -225,7 +225,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         copy_scenario = modeller.tool("inro.emme.data.scenario.copy_scenario")
         run4Ds = modeller.tool("sandag.import.run4Ds")
         import_network = modeller.tool("sandag.import.import_network")
-        input_checker = modeller.tool("sandag.import.input_checker")
         init_transit_db = modeller.tool("sandag.initialize.initialize_transit_database")
         init_matrices = modeller.tool("sandag.initialize.initialize_matrices")
         import_demand = modeller.tool("sandag.import.import_seed_demand")
@@ -287,7 +286,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         skipMGRASkims = props["RunModel.skipMGRASkims"]
         skip4Ds = props["RunModel.skip4Ds"]
-        skipInputChecker = props["RunModel.skipInputChecker"]
         skipInitialization = props["RunModel.skipInitialization"]
         deleteAllMatrices = props["RunModel.deleteAllMatrices"]
         skipCopyWarmupTripTables = props["RunModel.skipCopyWarmupTripTables"]
@@ -476,8 +474,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         overwrite=True,
                         emmebank=main_emmebank)
 
-                    if not skipInputChecker:
-                        input_checker(path=self._path)
 
                     # parse vehicle availablility file by time-of-day
                     availability_file = "vehicle_class_availability.csv"
