@@ -38,7 +38,6 @@ class PropertiesSetter(object):
     deleteAllMatrices = _m.Attribute(bool)
     skipCopyWarmupTripTables = _m.Attribute(bool)
     skipBikeLogsums = _m.Attribute(bool)
-    skipCopyBikeLogsum = _m.Attribute(bool)
     skipTransitConnector = _m.Attribute(bool)
 
     skipHighwayAssignment_1 = _m.Attribute(bool)
@@ -157,7 +156,7 @@ class PropertiesSetter(object):
         self._run_model_names = (
             "env", "useLocalDrive", "skipMGRASkims", "skip4Ds", "skipInputChecker",
             "startFromIteration", "skipInitialization", "deleteAllMatrices", "skipCopyWarmupTripTables",
-            "skipCopyBikeLogsum", "skipBikeLogsums", "skipBuildNetwork",
+            "skipBikeLogsums", "skipBuildNetwork",
             "skipHighwayAssignment", "skipTransitSkimming", "skipTransitConnector", "skipTransponderExport", "skipScenManagement", "skipABMPreprocessing", "skipABMResident", "skipABMAirport", "skipABMXborderWait", "skipABMXborder", "skipABMVisitor", "skipMAASModel",
             "skipCVMEstablishmentSyn", "skipCTM", "skipTruck", "skipEI", "skipExternal", "skipTripTableCreation", "skipFinalHighwayAssignment",
             "skipFinalTransitAssignment", "skipVisualizer", "skipDataExport", "skipValidation", "skipDatalake", "skipDataLoadRequest",
@@ -217,7 +216,6 @@ class PropertiesSetter(object):
             ("deleteAllMatrices",       "&nbsp;&nbsp;&nbsp;&nbsp;Delete all matrices"),
             ("skipCopyWarmupTripTables","Skip import of warmup trip tables"),
             ("skipBikeLogsums",         "Skip bike logsums"),
-            ("skipCopyBikeLogsum",      "Skip copy of bike logsum"),
         ]
         skip_per_iteration_items = [
             ("skipHighwayAssignment",   "Skip highway assignments and skims"),
@@ -363,7 +361,6 @@ class PropertiesSetter(object):
         self.deleteAllMatrices = props.get("RunModel.deleteAllMatrices", False)
         self.skipCopyWarmupTripTables = props.get("RunModel.skipCopyWarmupTripTables", False)
         self.skipBikeLogsums = props.get("RunModel.skipBikeLogsums", False)
-        self.skipCopyBikeLogsum = props.get("RunModel.skipCopyBikeLogsum", False)
 
         self.skipHighwayAssignment = props.get("RunModel.skipHighwayAssignment", [False, False, False])
         self.skipTransitSkimming = props.get("RunModel.skipTransitSkimming", [False, False, False])
@@ -410,7 +407,6 @@ class PropertiesSetter(object):
         props["RunModel.skipCopyWarmupTripTables"] = self.skipCopyWarmupTripTables
        
         props["RunModel.skipBikeLogsums"] = self.skipBikeLogsums
-        props["RunModel.skipCopyBikeLogsum"] = self.skipCopyBikeLogsum
         props["RunModel.skipHighwayAssignment"] = self.skipHighwayAssignment
         props["RunModel.skipTransitSkimming"] = self.skipTransitSkimming
         props["RunModel.skipTransitConnector"] = self.skipTransitConnector
