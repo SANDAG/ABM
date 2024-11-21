@@ -245,7 +245,6 @@ microSpeed: 12
 microVarCost: 39 #cents
 microFixedCost: 100 #cents
 microRentTime: 1
-microConstant: 60
 microAccessThreshold: 100
 ebikeownership: 0.008
 ebikeMaxDist: 10.50

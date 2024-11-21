@@ -761,3 +761,4 @@ coef_calib_mt_zeroautohh,4.825,F
 coef_calib_nev_zeroautohh,4.825,F
 coef_calib_ebike_owner_BIKE,-1.407,F
 coef_calib_ebike_owner_EBIKE,0.942,F
+coef_calib_ebike_shared,0.0,F

@@ -386,11 +386,11 @@ util_escooter_long_access,Shut off escooter if access time > threshold,"@((df.mi
 util_micromobility_long_trip,Shut off ebike if distance > threshold,ebikeMaxDistance,,,,,,,,,,,,,,,,,,,,,,-999,
 util_micromobility_long_trip,Shut off escooter if distance > threshold,escooterMaxDistance,,,,,,,,,,,,,,,,,,,,,,,-999
 util_ebike_ivt,Ebike utility for in-vehicle time,@(df.ebike_time_inb + df.ebike_time_out)*df.time_factor,,,,,,,,,,,,,,,,,,,,,,coef_ivt,
-util_ebike_access,Ebike utility for access/egress time,"@(microConstant + np.where(df.ebike_owner, 0, microRentTime + df.micro_access_inb + df.micro_access_out))*df.time_factor",,,,,,,,,,,,,,,,,,,,,,coef_acctime,
+util_ebike_access,Ebike utility for access/egress time,"@(np.where(df.ebike_owner, 0, microRentTime + df.micro_access_inb + df.micro_access_out))*df.time_factor",,,,,,,,,,,,,,,,,,,,,,coef_acctime,
 util_ebike_cost_inb,Ebike utility for inbound cost,@((~df.ebike_owner)&((microFixedCost + microVarCost*df.ebike_time_inb)/df.cost_sensitivity)),,,,,,,,,,,,,,,,,,,,,,coef_income,
 util_ebike_cost_out,Ebike utility for outbound cost,@((~df.ebike_owner)&((microFixedCost + microVarCost*df.ebike_time_out)/df.cost_sensitivity)),,,,,,,,,,,,,,,,,,,,,,coef_income,
 util_escooter_ivt,escooter utility for in-vehicle time,@(df.escooter_time_inb + df.escooter_time_out)*df.time_factor,,,,,,,,,,,,,,,,,,,,,,,coef_ivt
-util_escooter_access,escooter utility for in-vehicle time,@(microConstant + microRentTime + df.micro_access_inb + df.micro_access_out)*df.time_factor,,,,,,,,,,,,,,,,,,,,,,,coef_acctime
+util_escooter_access,escooter utility for in-vehicle time,@(microRentTime + df.micro_access_inb + df.micro_access_out)*df.time_factor,,,,,,,,,,,,,,,,,,,,,,,coef_acctime
 util_escooter_cost_inb,escooter utility for inbound cost,@((microFixedCost + microVarCost*df.escooter_time_inb)/df.cost_sensitivity),,,,,,,,,,,,,,,,,,,,,,,coef_income
 util_escooter_cost_out,escooter utility for outbound cost,@((microFixedCost + microVarCost*df.escooter_time_out)/df.cost_sensitivity),,,,,,,,,,,,,,,,,,,,,,,coef_income
 #,Calibration from on-board survey
@@ -399,3 +399,4 @@ util_calib_onboard,Calibration coefficient to match implied number of tours from
 util_calib_mt_zeroautohh,Calibration coefficient for zero-auto households traveling within microtransit service area,@(df.microtransit_available & (df.auto_ownership == 0)),,,,,,,,,,,,,,,,,,,,coef_calib_mt_zeroautohh,,,
 util_calib_nev_zeroautohh,Calibration coefficient for zero-auto households traveling within NEV service area,@(df.nev_available & (df.auto_ownership == 0)),,,,,,,,,,,,,,,,,,,,coef_calib_nev_zeroautohh,,,
 util_calib_ebike_owner,Calibration coefficient for ebike owners,@(df.ebike_owner),,,,,coef_calib_ebike_owner_BIKE,,,,,,,,,,,,,,,,,coef_calib_ebike_owner_EBIKE,
+util_calib_shared_ebike,Calibration coefficient for shared ebike,@(~df.ebike_owner),,,,,,,,,,,,,,,,,,,,,,coef_calib_ebike_shared,
