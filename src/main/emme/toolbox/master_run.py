@@ -321,6 +321,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         skipFinalTransitAssignment = props["RunModel.skipFinalTransitAssignment"]
         skipVisualizer = props["RunModel.skipVisualizer"]
         skipDataExport = props["RunModel.skipDataExport"]
+        skipTravelTimeReporter = props["RunModel.skipTravelTimeReporter"]
         skipValidation = props["RunModel.skipValidation"]
         skipDatalake = props["RunModel.skipDatalake"]
         skipDataLoadRequest = props["RunModel.skipDataLoadRequest"]
@@ -783,6 +784,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 [drive, drive + path_forward_slash],
                 "Exporting highway shapefile", capture_output=True)
             
+        if not skipTravelTimeReporter:
             self.run_proc(
                 "run_travel_time_calculator.cmd",
                 [drive, drive + path_forward_slash],
