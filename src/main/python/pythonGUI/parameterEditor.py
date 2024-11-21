@@ -27,7 +27,7 @@ class ParametersGUI(Tkinter.Frame):
             rbLabels=(u"Copy warm start trip tables:",u"Copy bike AT access files:",u"Create bike AT access files:",u"Build highway network:",u"Build transit network:",u"Run highway assignment:",
                       u"Run highway skimming:",u"Run transit assignment:",u"Run transit skimming:",u"Export results to CSVs:",u"Load results to database:")
             #properties
-            self.properties=("RunModel.skipCopyWarmupTripTables","RunModel.skipCopyBikeLogsum","RunModel.skipBikeLogsums","RunModel.skipBuildHwyNetwork","RunModel.skipBuildTransitNetwork","RunModel.skipFinalHighwayAssignment",
+            self.properties=("RunModel.skipCopyWarmupTripTables","RunModel.skipBikeLogsums","RunModel.skipBuildHwyNetwork","RunModel.skipBuildTransitNetwork","RunModel.skipFinalHighwayAssignment",
                           "RunModel.skipFinalHighwaySkimming","RunModel.skipFinalTransitAssignment","RunModel.skipFinalTransitSkimming",
                           "RunModel.skipDataExport","RunModel.skipDataLoadRequest")
 
