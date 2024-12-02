@@ -30,7 +30,7 @@ util_TNC_SINGLE_wait,TNC Single - Wait time,1.5 * tnc_single_wait_time,,,,,,,coe
 util_TNC_SINGLE_cost,TNC Single - Cost,"@df.coef_cost * (np.maximum(TNC_single_baseFare + (df.s2_dist_skims * TNC_single_costPerMile) + (df.s2_time_skims * TNC_single_costPerMinute), TNC_single_costMinimum) * 100 + df.s2_cost_skims)",,,,,,,coef_one,,,,
 #,,,,,,,,,,,,,
 util_TNC Shared_switch,TNC Shared - switch turn-off (depends on data availability),@((~df.nev_available) & (~df.microtransit_available) & (scenarioYear==2022)),,,,,,,,-999,,,
-util_TNC_SHARED_IVT,TNC Shared - In-vehicle time,"@np.where(df.nev_available, df.nev_time, np.where(df.microtransit_available, df.microtransit_time, df.s3_time_skims)) * TNC_shared_IVTFactor",,,,,,,,coef_ivt,,,
+util_TNC_SHARED_IVT,TNC Shared - In-vehicle time,"@np.where(df.nev_available, df.nev_time, np.where(df.microtransit_available, df.microtransit_time, df.s3_time_skims * TNC_shared_IVTFactor))",,,,,,,,coef_ivt,,,
 util_TNC_SHARED_wait,TNC Shared - Wait time,"@1.5 * np.where(df.nev_available, nevWaitTime, np.where(df.microtransit_available, microtransitWaitTime, df.tnc_shared_wait_time))",,,,,,,,coef_ivt,,,
 util_TNC_SHARED_cost,TNC Shared - Cost,"@df.coef_cost * np.where(df.nev_available, nevCost, np.where(df.microtransit_available, microtransitCost, (np.maximum(TNC_shared_baseFare + (df.s3_dist_skims * TNC_shared_costPerMile) + (df.s3_time_skims * TNC_shared_costPerMinute), TNC_shared_costMinimum))) * 100 + df.s3_cost_skims)",,,,,,,,coef_one,,,
 #,,,,,,,,,,,,,

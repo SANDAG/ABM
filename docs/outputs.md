@@ -102,24 +102,14 @@ Model outputs are stored in the .\outputs directory. The contents of the directo
    <td>Derived bike network traversals file
    </td>
   </tr>
-  <tr>
-   <td>microMgraEquivMinutes.csv
-   </td>
-   <td>Equivalent minutes for using micromobility between close-together MGRAs (not used)
-   </td>
-  </tr>
+  
   <tr>
    <td>runtime_summary.csv
    </td>
    <td>Summary of model runtime
    </td>
   </tr>
-  <tr>
-   <td>temp_tazdata_cvm.csv
-   </td>
-   <td>TAZ data for commercial vehicle model
-   </td>
-  </tr>
+  
   <tr>
    <td>transponderModelAccessibilities.csv
    </td>
@@ -132,12 +122,7 @@ Model outputs are stored in the .\outputs directory. The contents of the directo
    <td>Trips for each time period, for assignment
    </td>
   </tr>
-  <tr>
-   <td>walkMgraEquivMinutes.csv
-   </td>
-   <td>Equivalent minutes for walking between close-together MGRAs
-   </td>
-  </tr>
+  
 </table>
 
 
@@ -1292,6 +1277,12 @@ This directory contains trip tables from auto and transit assignments.
    </td>
   </tr>
   <tr>
+   <td>cvmtrips_(period).omx
+   </td>
+   <td>CVM trip table for model by period (EA, AM, MD, PM, EV) and value of time (low, medium, high)
+   </td>
+  </tr>
+  <tr>
    <td>emptyAVTrips.omx
    </td>
    <td>Empty private autonomous vehicle trips 
@@ -1301,6 +1292,12 @@ This directory contains trip tables from auto and transit assignments.
    <td>householdAVTrips.csv
    </td>
    <td>All private autonomous vehicle trips
+   </td>
+  </tr>
+  <tr>
+   <td>htmtrips_(period).omx
+   </td>
+   <td>HTM trip table for model by period (EA, AM, MD, PM, EV) and value of time (low, medium, high)
    </td>
   </tr>
   <tr>
@@ -4228,9 +4225,21 @@ Resident Model person file (final_persons.csv)
    </td>
   </tr>
   <tr>
+   <td>mandatory_tour_frequency
+   </td>
+   <td>Mandatory Tour Frequency Model Choice if worker or student, else null (Output from Mandatory Tour Frequency Model). String "work1": 1 work tour, "work2" 2 work tours, "school1: 1 school tour, "school2" 2 school tours, "work_and_school": 1 work and 1 school tour
+   </td>
+  </tr>
+  <tr>
    <td>num_non_mand
    </td>
    <td>Total number of non-mandatory tours (Output from School Escort Model, Non-Mandatory Tour Frequency Model, and At-Work Subtour Model)
+   </td>
+  </tr>
+  <tr>
+   <td>num_mand
+   </td>
+   <td>Total number of mandatory tours  (Output from Mandatory Tour Frequency Model)
    </td>
   </tr>
   <tr>
@@ -4267,6 +4276,12 @@ Resident Model person file (final_persons.csv)
    <td>num_social_tours
    </td>
    <td>Total number of social\visiting tours (Output from Non-Mandatory Tour Frequency Model)
+   </td>
+  </tr>
+  <tr>
+   <td>num_work_tours
+   </td>
+   <td>Total number of work tours  (Output from Mandatory Tour Frequency Model)
    </td>
   </tr>
   <tr>
