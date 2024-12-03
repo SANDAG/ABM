@@ -483,7 +483,7 @@ Description,Target,Expression
 ,origin_purpose,"np.where(trips.trip_count == 1 & (trips.primary_purpose == 'atwork'), 'work', origin_purpose)"
 ,origin_purpose,"np.where((trips.trip_count > 1) & (trips.trip_num==1) & (trips.outbound), 'home', origin_purpose)"
 ,origin_purpose,"np.where(((trips.trip_count > 1) & (trips.trip_num>1)) | ((trips.trip_count > 1) & (trips.trip_num==1) & ~(trips.outbound)), trips['purpose'].shift(1), origin_purpose)"
-#Flexible fleet access/egress availability
+#Flexible fleet access/egress availability,,
 ,microtransit_access_available_out,trips.microtransit_local_access_available_out | trips.microtransit_prm_access_available_out | trips.microtransit_mix_access_available_out
 ,microtransit_egress_available_out,trips.microtransit_local_egress_available_out | trips.microtransit_prm_egress_available_out | trips.microtransit_mix_egress_available_out
 ,microtransit_access_available_in,trips.microtransit_local_access_available_in | trips.microtransit_prm_access_available_in | trips.microtransit_mix_access_available_in
