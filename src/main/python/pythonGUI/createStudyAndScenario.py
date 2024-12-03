@@ -143,7 +143,7 @@ class CreateScenarioGUI(tkinter.Frame):
             tkinter.Label(body, text=u"Year", font=("Helvetica", 8, 'bold')).grid(row=current_row)
             var = tkinter.StringVar(root)
             #self.year="2016"
-            yearOptionList = ["2022","2026","2029","2035","2050"]
+            yearOptionList = ["2022","2026","2029","2032","2035","2040","2050"]
             #if self.select_lu:
             var.set(self.year)
             #else:
