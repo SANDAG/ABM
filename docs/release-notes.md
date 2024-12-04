@@ -9,6 +9,7 @@ Multiple bugs were fixed and some recalibration was done since the release of ve
 - [PR 256](https://github.com/SANDAG/ABM/pull/256): Increase travel time reporter threshold from 30 to 45 minutes
 - [PR 257](https://github.com/SANDAG/ABM/pull/257): Adds option to skip travel time reporter (was previously included in data exporter)
 - [PR 266](https://github.com/SANDAG/ABM/pull/266): 2032 and 2040 added as options when scelcting a scenario year in the scenario creation GUI
+- [PR 267](https://github.com/SANDAG/ABM/pull/266): Added fields to final trips table from resident, visitor, and crossborder models to indicate if a flexible fleet service was used
 - [PR 252](https://github.com/SANDAG/ABM/pull/252), [PR 254](https://github.com/SANDAG/ABM/pull/254), [PR 260](https://github.com/SANDAG/ABM/pull/260), & [PR 265](https://github.com/SANDAG/ABM/pull/265): Documentation updates
 
 ### Bug Fixes
