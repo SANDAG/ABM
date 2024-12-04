@@ -1260,6 +1260,30 @@ regional_pass: 10.90
     </tr>
 </table>
 
+<a id="cvm_establishment_synthesis"></a>
+
+### CVM Establishment Synthesis
+
+#### `percent_of_establishments_by_luz_size_emp_cat.csv`
+
+<table>
+    <tr>
+        <th>Sheet Name</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Info</td>
+        <td>
+            Basic information of the data, and the size class definitions included
+        </td>
+    </tr>
+    <tr>
+        <td>Data</td>
+        <td>Detailed industry sector breakdown by size class and LUZ</td>
+    </tr>
+    
+</table>
+
 
 <a id="cross_border_entry_return"></a>
 
@@ -1705,6 +1729,159 @@ regional_pass: 10.90
         <td>Nonwork</td>
         <td>Number of non-work vehicle trips</td>
     </tr>
+</table>
+
+<a id="heavy_truck_model_inputs"></a>
+
+### Heavy Truck Model Inputs
+#### `inputs_sandag_htm_<Scenario_Year>`
+
+<table>
+    <tr>
+        <th>Sheet Name</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>FAZ_County</td>
+        <td>County-FAZ mapping</td>
+    </tr>
+    <tr>
+        <td>TAZ_FAZ</td>
+        <td>Identifies in which FAZ, each TAZ is located</td>
+    </tr>
+    <tr>
+        <td>OtherMode_Truck</td>
+        <td>Determines what percentage of each mode belongs to trucks</td>
+    </tr>
+    <tr>
+        <td>OtherMode_Truck</td>
+        <td>Determines what percentage of each mode belongs to trucks</td>
+    </tr>
+    <tr>
+        <td>SD_Flows</td>
+        <td>Identifies all OD pairs that have at least one end in SANDAG region or passes through the SANDAG region.</td>
+    </tr>
+    <tr>
+        <td>FAZ_Gateway</td>
+        <td>A look up table that corresponds FAF FAZ that are outside the SANDAG region to one/any SANDAG Gateways. This table also includes area code of each FAZ that is outside SANDAG region.</td>
+    </tr>
+    <tr>
+        <td>Commodity_Group</td>
+        <td>Determines the commodity group (15 categories) to which each of the 43 commodities from the FAF data belongs.
+</td>
+    </tr>
+    <tr>
+        <td>EMP_Calc</td>
+        <td>Calculate the share of each of the 3 digits NAICS employee categories within the 19 categories SANDAG ABM employee for each of the 5 FAZs in San Diego County</td>
+    </tr>
+    <tr>
+        <td>EMP_Converter</td>
+        <td>Provides a table that correlates SANDAG model employee categories with corresponding NAICS employee categories</td>
+    </tr>
+    <tr>
+        <td>CG_Emp_P</td>
+        <td>Establishes the relationship between each Commodity group and the NAICS employee category for the production end.</td>
+    </tr>
+    <tr>
+        <td>CG_Emp_A</td>
+        <td>Establishes the relationship between each commodity group and the NAICS employee category for the attraction end.</td>
+    </tr>
+    <tr>
+        <td>Annual_Factor</td>
+        <td>Number of business days in a year</td>
+    </tr>
+    <tr>
+    <td>Truck_Dist</td>
+    <td>Provides the percent distribution of truck type based on OD distance. </td>
+    </tr>
+    <tr>
+    <td>Payload</td>
+    <td>Average pounds of load that each truck type can carry based on commodity groups. </td>
+    </tr>
+    <tr>
+    <td>Time_of_Day</td>
+    <td>Provides distribution of trucks throughout the day </td>
+    </tr>
+    <tr>
+    <td>External_Count</td>
+    <td>The Inbound and outbound truck counts by type at each of the 12 SANDAG gateways. For base year, this is the daily truck counts at the gateways.
+ </td>
+    </tr>
+    <tr>
+    <td>SRA_Dist</td>
+    <td>The overall distribution of trucks when they cross each of the gateway from/to each of the 63 SRAs. For base year this information is calculated from truck GPS data </td>
+    </tr>
+    <tr>
+    <td>SRA_TAZ</td>
+    <td>SRA-TAZ Mapping</td>
+    </tr>
+</table>
+
+<a id="heavy_truck_model_baseAndFutureYears"></a>
+
+### Heavy Truck Model Inputs
+#### `FAF5_BaseAndFutureYears_Oct27_2023.csv`
+
+<table>
+    <tr>
+        <th>Column Name</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>dms_orig</td>
+        <td>FAF region or state where a freight movement begins the domestic portion of shipment. 
+For imports, this is the US entry region where an import enters United States.</td>
+    </tr>
+    <tr>
+        <td>dms_dest</td>
+        <td>FAF region or state where a freight movement ends the domestic portion of shipment. 
+For exports, this is the US exit region where an export leaves United States.</td>
+    </tr>
+    <tr>
+        <td>Mode</td>
+        <td>Mode used between domestic origins and destinations</td>
+    </tr>
+    <tr>
+        <td>Commodity</td>
+        <td>2-digit level of the Standard Classification of Transported Goods (SCTG)
+</td>
+    </tr>
+    <tr>
+        <td>Direction</td>
+        <td>Trade Direction: II or XI </td>
+    </tr>
+    <tr>
+        <td>Trade</td>
+        <td>Trade Type: Domestic or Foreign
+</td>
+    </tr>
+    <tr>
+        <td>fr_orig</td>
+        <td>Foreign region of shipment origin
+</td>
+    </tr>
+    <tr>
+        <td>fr_dest</td>
+        <td>Foreign region of shipment destination</td>
+    </tr>
+    <tr>
+        <td>fr_inmode</td>
+        <td>Mode used between a foreign region and the US entry region for the imported goods
+</td>
+    </tr>
+    <tr>
+        <td>fr_outmode</td>
+        <td>Mode used between the US exit region and foreign region for the exported goods</td>
+    </tr>
+    <tr>
+        <td>distons_year</td>
+        <td>Total weight of commodities shipped (unit: Thousand Tons) in year</td>
+    </tr>
+    <tr>
+        <td>disvalue_year</td>
+        <td>Total value (in 2017 constant dollar) of commodities shipped (unit: Million Dollars) in year</td>
+    </tr>
+    
 </table>
 
 <a id="internal_external_tod"></a>
