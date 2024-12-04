@@ -493,14 +493,6 @@ trips:
     costFareTransit: cost_fare_transit
     costTotal: cost_total
     transfersTransit: transfers_transit
-    microtransit_mix_access_available_out: microtransit_access_available_out
-    nev_mix_access_available_out: nev_access_available_out
-    microtransit_mix_egress_available_out: microtransit_egress_available_out
-    nev_mix_egress_available_out: nev_egress_available_out
-    microtransit_mix_access_available_in: microtransit_access_available_in
-    nev_mix_access_available_in: nev_access_available_in
-    microtransit_mix_egress_available_in: microtransit_egress_available_in
-    nev_mix_egress_available_in: nev_egress_available_in
 
 households:
   remove_columns:
