@@ -483,3 +483,5 @@ Description,Target,Expression
 ,origin_purpose,"np.where(trips.trip_count == 1 & (trips.primary_purpose == 'atwork'), 'work', origin_purpose)"
 ,origin_purpose,"np.where((trips.trip_count > 1) & (trips.trip_num==1) & (trips.outbound), 'home', origin_purpose)"
 ,origin_purpose,"np.where(((trips.trip_count > 1) & (trips.trip_num>1)) | ((trips.trip_count > 1) & (trips.trip_num==1) & ~(trips.outbound)), trips['purpose'].shift(1), origin_purpose)"
+#AV allocation model needs column to be entirely in string format,,
+,escort_participants,"np.where(trips.escort_participants.isna() | trips.escort_participants == '',trips.escort_participants,'_'+trips.escort_participants)"
