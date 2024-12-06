@@ -88,7 +88,11 @@ The table below contains brief descriptions of the input files required to execu
 | [externalExternalTripsByYear.csv](#external_trip) <i> (raw inputs have these by year) <i> | External origin-destination station trip matrix | CSV | Transportation Modelers | |  |  |  | 
 | [externalInternalControlTotalsByYear.csv](#external_internal) <i> (raw inputs have these by year) <i> | External Internal station control totals read by GISDK | CSV | Transportation Modelers | |  |  |  | 
 | [internalExternal_tourTOD.csv](#internal_external_tod) | Internal-External Model tour time-of-day frequency distribution | CSV | Transportation Modelers | 
+| **CVM Establishment Synthesis** |
+| land_use | MGRA based land use file | CSV | |
+| percent_of_establishments_by_luz_size_emp_cat.xlsx | Percent of establishments in LUZ that belong in each size category by industry sector | Excel Workbook | |
 | **Commercial Vehicle Model** (TO BE UPDATED) |  |  |  | 
+| SynthEstablishments.csv | Output from CVM establishment synthesis, similar description as previous part | CSV | |
 | tazcentroids_cvm.csv | Zone centroid coordinates in state plane feet and albers | CSV | Transportation Modelers | 
 | commVehFF.csv | Commercial Vehicle Model friction factors | CSV | Transportation Modelers | 
 | OE.csv | Commercial vehicle model parameters file for off-peak early (OE) period | CSV | Transportation Modelers | 
@@ -110,6 +114,9 @@ The table below contains brief descriptions of the input files required to execu
 | regionalIEtrips<year>.csv | Truck model data: Truck internal to external data | CSV | Transportation Modelers | 
 | regionalEEtrips<year>.csv | Truck model data: Truck external to external data | CSV | Transportation Modelers | 
 | specialGenerators.csv | Truck model data: Truck special generator data | CSV | Transportation Modelers | 
+| **Heavy Truck Model ( HTM )** |
+| inputs_sandag_htm_<Scenario_Year>.xlsx | Contains all the required inputs ( in different sheets) for the Heavy Truck Model | Excel Workbook | |
+| FAF5_BaseAndFutureYears_Oct27_2023.csv | FAF5 Data (filtered) containing FAF flows for required years | CSV | |
 | **Other** |  |  |  | 
 | [parametersByYears.csv](#parametersbyyearscsv) | Parameters by scenario years. Includes AOC, aiport enplanements, cross-border tours, cross-border sentri share. | CSV | Transportation Modelers | 
 | [filesByYears.csv](#filesbyyearscsv) | File names by scenario years. | CSV | Transportation Modelers | 
@@ -1260,6 +1267,167 @@ regional_pass: 10.90
     </tr>
 </table>
 
+<a id="cvm_establishment_synthesis"></a>
+
+### CVM Establishment Synthesis
+#### `PERCENT_OF_ESTABLISHMENTS_BY_LUZ_SIZE_EMP_CAT.CSV`
+
+<table>
+    <tr>
+        <th>Column Name</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Info</td>
+        <td>
+            Basic information of the data, and the size class definitions included
+        </td>
+    </tr>
+    <tr>
+        <td>Data</td>
+        <td>Detailed industry sector breakdown by size class and LUZ</td>
+    </tr>
+    
+</table>
+
+<a id ="cvm"></a>
+
+### Commercial Vehicle Model ( CVM )
+#### `SYNTHESTABLISHMENTS.CSV`
+
+<table>
+    <tr>
+        <th>Column Name</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Establishment_ID</td>
+        <td>
+            Unique establishment id ( index ) for each establishment
+        </td>
+    </tr>
+    <tr>
+        <td>Industry_No</td>
+        <td>The category of industry that the establishment belongs to (range: 1 - 12 )</td>
+    </tr>
+     <tr>
+        <td>Industry_Name</td>
+        <td>The name of industry that the establishment belongs to ( EPO, AGM, CON etc.)/td>
+    </tr>
+     <tr>
+        <td>LUZ</td>
+        <td>Land Use Zone ( Or the TAZ) to which the establishment belongs to</td>
+    </tr>
+     <tr>
+        <td>MGRA</td>
+        <td>The MGRA number to which establishment belongs to </td>
+    </tr>
+     <tr>
+        <td>Employees</td>
+        <td>The number of employees in the establishment</td>
+    </tr>
+     <tr>
+        <td>Size_Class</td>
+        <td>The categorized size of the establishment based on the number of employees</td>
+    </tr>
+    
+</table>
+
+<a id="cvm_industry"></a>
+
+<table>
+    <tr>
+        <th>Industry No</th>
+        <th>Industry Name</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>
+            AGM
+        </td>
+        <td>Agriculture, Forestry, Fishing, and Hunting, and Mining</td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>
+            MFG
+        </td>
+        <td>Manufacturing</td>
+    </tr>
+    <tr>
+        <td>3</td>
+        <td>
+            IUT
+        </td>
+        <td>Industrial Utilities</td>
+    </tr>
+    <tr>
+        <td>4</td>
+        <td>
+            RET
+        </td>
+        <td>Retail Trade</td>
+    </tr>
+    <tr>
+        <td>5</td>
+        <td>
+            WHL
+        </td>
+        <td>Wholesale Trade</td>
+    </tr>
+    <tr>
+        <td>6</td>
+        <td>
+            CON
+        </td>
+        <td>Construction</td>
+    </tr>
+    <tr>
+        <td>7</td>
+        <td>
+            TRN
+        </td>
+        <td>Transportation and Warehousing</td>
+    </tr>
+    <tr>
+        <td>8</td>
+        <td>
+            IFR
+        </td>
+        <td>Information, Financial, Insurance, Real Estate, and Professional Services</td>
+    </tr>
+    <tr>
+        <td>9</td>
+        <td>
+            EPO
+        </td>
+        <td>Education, Public, and Other Services</td>
+    </tr>
+    <tr>
+        <td>10</td>
+        <td>
+            MHS
+        </td>
+        <td>Medical and Health Services</td>
+    </tr>
+    <tr>
+        <td>11</td>
+        <td>
+            LAF
+        </td>
+        <td>Leisure, Accomodations, and Food</td>
+    </tr>
+    <tr>
+        <td>12</td>
+        <td>
+            MIL
+        </td>
+        <td>Military</td>
+    </tr>
+    
+</table>
+
 
 <a id="cross_border_entry_return"></a>
 
@@ -1748,6 +1916,416 @@ regional_pass: 10.90
         <td>Percent</td>
         <td>Distribution of tours by entry and return periods</td>
     </tr>
+</table>
+
+### Inputs SANDAG HTM
+#### `INPUTS_SANDAG_HTM_<SCENARIO_YEAR>.XLSX`
+
+<table>
+	<tr>
+		<th>Sheet Name</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>FAZ_County</td>
+		<td>County-FAZ Mapping</td>
+	</tr>
+	<tr>
+		<td>TAZ_FAZ</td>
+		<td>Identifies in which FAZ, each TAZ is located</td>
+	</tr>
+	<tr>
+		<td>OtherMode_Truck</td>
+		<td>Determines what percentage of each mode belongs to trucks</td>
+	</tr>
+	<tr>
+		<td>SD_Flows</td>
+		<td>Identifies all OD pairs that have at least one end in SANDAG region or passes through the SANDAG region.</td>
+	</tr>
+	<tr>
+		<td>FAZ_Gateway</td>
+		<td>A look up table that corresponds FAF FAZ that are outside the SANDAG region to one/many SANDAG Gateways. This table also includes area code of each FAZ that is outside SANDAG region.
+</td>
+	</tr>
+	<tr>
+		<td>Commodity_Group</td>
+		<td>Determines the commodity group (15 categories) to which each of the 43 commodities from the FAF data belongs.</td>
+	</tr>
+	<tr>
+		<td>EMP_Calc</td>
+		<td>Calculate the share of each of the 3 digits NAICS employee categories withing the 19 categories SANDAG ABM employee for each of the 5 FAZs in San Diego County</td>
+	</tr>
+	<tr>
+		<td>EMP_Converter</td>
+		<td>Provides a table that correlates SANDAG model employee categories with corresponding NAICS employee categories.
+</td>
+	</tr>
+	<tr>
+		<td>CG_Emp_P</td>
+		<td>Establishes the relationship between each commodity group and the NAICS employee category for the production end.</td>
+	</tr>
+	<tr>
+		<td>CG_Emp_A</td>
+		<td>Establishes the relationship between each commodity group and the NAICS employee category for the attraction end.</td>
+	</tr>
+	<tr>
+		<td>Annual_Factor</td>
+		<td>Number of business days in a year.</td>
+	</tr>
+    <tr>
+        <td>Truck_Dist</td>
+        <td>Provides the percent distribution of truck type based on OD distance. </td>
+    </tr>
+    <tr>
+        <td>Payload</td>
+        <td>Average pounds of load that each truck type can carry based on commodity groups.
+</td>
+    </tr>
+    <tr>
+        <td>Time_of_Day</td>
+        <td>Provides distribution of trucks throughout the day.</td>
+    </tr>
+    <tr>
+        <td>External_Count</td>
+        <td>The Inbound and outbound truck counts by type at each of the 12 SANDAG gateways. For base year, this is the daily truck counts at the gateways.
+</td>
+    </tr>
+    <tr>
+        <td>SRA_Dist</td>
+        <td>The overall distribution of trucks when they cross each of the gateway from/to each of the 63 SRAs. For base year this information is calculated from truck GPS data</td>
+    </tr>
+    <tr>
+        <td>SRA_TAZ</td>
+        <td>SRA-TAZ Mapping</td>
+    </tr>
+    
+</table>
+
+### FAF5_BaseAndFutureYears_Oct27_2023 (Possible values for <year> : 2017, 2025,2030,2035,2040,2045,2050)
+#### `FAF5_BaseAndFutureYears_Oct27_2023.CSV`
+
+<table>
+	<tr>
+		<th>Column Name</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>dms_orig</td>
+		<td>FAF region or state where a freight movement begins the domestic portion of shipment. For imports, this is the US entry region where an import enters United States.
+</td>
+	</tr>
+	<tr>
+		<td>dms_dest</td>
+		<td>FAF region or state where a freight movement ends the domestic portion of shipment. For exports, this is the US exit region where an export leaves United States.
+</td>
+	</tr>
+	<tr>
+		<td>Mode</td>
+		<td>Mode used between domestic origins and destinations</td>
+	</tr>
+	<tr>
+		<td>Commodity</td>
+		<td>2-digit level of the Standard Classification of Transported Goods ( SCTG) </td>
+	</tr>
+	<tr>
+		<td>Direction</td>
+		<td>Trade Direction : II or XI
+</td>
+	</tr>
+	<tr>
+		<td>Trade</td>
+		<td>Trade Type : Domestic or Foreign</td>
+	</tr>
+	<tr>
+		<td>fr_orig</td>
+		<td>Foreign region of shipment origin</td>
+	</tr>
+	<tr>
+		<td>fr_dest</td>
+		<td>Foreign region of shipment destination
+</td>
+	</tr>
+	<tr>
+		<td>fr_inmode</td>
+		<td>Mode used between a foreign region and the US entry region for the imported goods</td>
+	</tr>
+	<tr>
+		<td>fr_outmode</td>
+		<td>Mode used between the US exit region and foreign region for the exported goods</td>
+	</tr>
+	<tr>
+		<td>distons_year</td>
+		<td>Total weight of commodities shipped (unit: Thousand Tons) in year</td>
+	</tr>
+    <tr>
+        <td>disvalue_year</td>
+        <td>Total value (in 2017 constant dollar) of commodities shipped (unit: Million Dollars) in year </td>
+    </tr>
+    
+    
+</table>
+
+### Mode Dictionary
+<table>
+
+<tr>
+		<th>Numeric Label</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>1</td>
+		<td>Truck
+</td>
+	</tr>
+	<tr>
+		<td>2</td>
+		<td>Rail
+</td>
+	</tr>
+	<tr>
+		<td>3</td>
+		<td>Water</td>
+	</tr>
+	<tr>
+		<td>4</td>
+		<td>Air ( include truck-air) </td>
+	</tr>
+	<tr>
+		<td>5</td>
+		<td>Multiple modes & mail
+</td>
+	</tr>
+	<tr>
+		<td>6</td>
+		<td>Pipeline</td>
+	</tr>
+	<tr>
+		<td>7</td>
+		<td>Other and unknown</td>
+	</tr>
+	<tr>
+		<td>8</td>
+		<td>No domestic mode
+</td>
+	</tr>
+	   
+    
+</table>
+
+### Commodity Groups Dictionary
+<table>
+
+<tr>
+		<th>Numeric Label</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>01</td>
+		<td>Live animals/fish
+</td>
+	</tr>
+	<tr>
+		<td>02</td>
+		<td>Cereal grains
+</td>
+	</tr>
+	<tr>
+		<td>03</td>
+		<td>Other ag prods.</td>
+	</tr>
+	<tr>
+		<td>04</td>
+		<td>Animal feed</td>
+	</tr>
+	<tr>
+		<td>05</td>
+		<td>Meat/seafood
+</td>
+	</tr>
+	<tr>
+		<td>06</td>
+		<td>Milled grain prods.</td>
+	</tr>
+	<tr>
+		<td>07</td>
+		<td>Other foodstuffs</td>
+	</tr>
+	<tr>
+		<td>08</td>
+		<td>Alcoholic Beverages
+</td>
+	</tr>
+    <tr>
+		<td>09</td>
+		<td>Tobacco prods
+</td>
+	</tr>
+    <tr>
+		<td>10</td>
+		<td>Building stone
+</td>
+	</tr>
+    <tr>
+		<td>11</td>
+		<td>Natural sands
+</td>
+	</tr>
+    <tr>
+		<td>12</td>
+		<td>Gravel
+</td>
+	</tr>
+    <tr>
+		<td>13</td>
+		<td>Nonmetallic minerals
+</td>
+	</tr>
+    <tr>
+		<td>14</td>
+		<td>Metallic ores
+</td>
+	</tr>
+    <tr>
+		<td>15</td>
+		<td>Coal
+</td>
+	</tr>
+    <tr>
+		<td>16</td>
+		<td>Crude Petroleum
+</td>
+	</tr>
+    <tr>
+		<td>17</td>
+		<td>Gasoline
+</td>
+	</tr>
+    <tr>
+		<td>18</td>
+		<td>Fuel oils
+</td>
+	</tr>
+    <tr>
+		<td>19</td>
+		<td>Natural gas and other fossil products
+</td>
+	</tr>
+    <tr>
+		<td>20</td>
+		<td>Basic chemicals
+</td>
+	</tr>
+    <tr>
+		<td>21</td>
+		<td>Pharmaceuticals
+</td>
+	</tr>
+    <tr>
+		<td>22</td>
+		<td>Fertilizers
+</td>
+	</tr>
+    <tr>
+		<td>23</td>
+		<td>Chemical prods.
+</td>
+	</tr>
+    <tr>
+		<td>24</td>
+		<td>Plastics/rubber
+</td>
+	</tr>
+    <tr>
+		<td>25</td>
+		<td>Logs
+</td>
+	</tr>
+    <tr>
+		<td>26</td>
+		<td>Wood prods
+</td>
+	</tr>
+    <tr>
+		<td>27</td>
+		<td>Newsprint/paper
+</td>
+	</tr>
+    <tr>
+		<td>28</td>
+		<td>Paper articles
+</td>
+	</tr>
+    <tr>
+		<td>29</td>
+		<td>Printed prods.
+</td>
+	</tr>
+    <tr>
+		<td>30</td>
+		<td>Textiles/leather
+</td>
+	</tr>
+    <tr>
+		<td>31</td>
+		<td>Nonmetal min. prods.
+</td>
+	</tr>
+    <tr>
+		<td>32</td>
+		<td>Base metals
+</td>
+	</tr>
+    <tr>
+		<td>33</td>
+		<td>Articles-base metal
+</td>
+	</tr>
+    <tr>
+		<td>34</td>
+		<td>Machinery
+</td>
+	</tr>
+    <tr>
+		<td>35</td>
+		<td>Electronics
+</td>
+	</tr>
+    <tr>
+		<td>36</td>
+		<td>Motorized Vehicles
+</td>
+	</tr>
+    <tr>
+		<td>37</td>
+		<td>Transport equip.
+</td>
+	</tr>
+    <tr>
+		<td>38</td>
+		<td>Precision instruments
+</td>
+	</tr>
+    <tr>
+		<td>39</td>
+		<td>Furniture
+</td>
+	</tr>
+    <tr>
+		<td>40</td>
+		<td>Misc. mfg. prods.
+</td>
+	</tr>
+    <tr>
+		<td>41</td>
+		<td>Waste/scrap
+</td>
+	</tr>
+    <tr>
+		<td>43</td>
+		<td>Mixed freight
+</td>
+	</tr>
+    
 </table>
 
 ### Parameters by Scenario Years
