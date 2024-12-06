@@ -110,12 +110,12 @@ dem_utils = _m.Modeller().module("sandag.utilities.demand")
 
 class TrafficAssignment(_m.Tool(), gen_utils.Snapshot):
 
-    period = _m.Attribute(unicode)
+    period = _m.Attribute(str)
     msa_iteration = _m.Attribute(int)
     relative_gap = _m.Attribute(float)
     max_iterations = _m.Attribute(int)
     num_processors = _m.Attribute(str)
-    select_link = _m.Attribute(unicode)
+    select_link = _m.Attribute(str)
     raise_zero_dist = _m.Attribute(bool)
     stochastic = _m.Attribute(bool)
     input_directory = _m.Attribute(str)
@@ -343,7 +343,7 @@ Assignment matrices and resulting network flows are always in PCE.
 
     def __call__(self, period, msa_iteration, relative_gap, max_iterations, num_processors, scenario,
                  select_link=[], raise_zero_dist=True, stochastic=False, input_directory=None):
-        select_link = _json.loads(select_link) if isinstance(select_link, basestring) else select_link
+        select_link = _json.loads(select_link) if isinstance(select_link, str) else select_link
         attrs = {
             "period": period,
             "msa_iteration": msa_iteration,
@@ -468,8 +468,7 @@ Assignment matrices and resulting network flows are always in PCE.
                     msa_vals = numpy.frombuffer(msa_array, dtype='float32')
                     flow_vals = numpy.frombuffer(flow_array, dtype='float32')
                     result = msa_vals + (1.0 / msa_iteration) * (flow_vals - msa_vals)
-                    result_array = array.array('f')
-                    result_array.fromstring(result.tostring())
+                    result_array = array.array('f', result.tobytes())
                     values.append(result_array)
                 scenario.set_attribute_values("LINK", link_attrs, values)
 
@@ -479,8 +478,7 @@ Assignment matrices and resulting network flows are always in PCE.
                     msa_vals = numpy.frombuffer(msa_array, dtype='float32')
                     flow_vals = numpy.frombuffer(flow_array, dtype='float32')
                     result = msa_vals + (1.0 / msa_iteration) * (flow_vals - msa_vals)
-                    result_array = array.array('f')
-                    result_array.fromstring(result.tostring())
+                    result_array = array.array('f', result.tobytes())
                     values.append(result_array)
                 scenario.set_attribute_values("TURN", turn_attrs, values)
 
@@ -1065,11 +1063,11 @@ Assignment matrices and resulting network flows are always in PCE.
         report.wrap_html('Matrix details', "<br>".join(text))
         _m.logbook_write(title, report.render())
 
-    @_m.method(return_type=unicode)
+    @_m.method(return_type=str)
     def tool_run_msg_status(self):
         return self.tool_run_msg
 
-    @_m.method(return_type=unicode)
+    @_m.method(return_type=str)
     def get_link_attributes(self):
         export_utils = _m.Modeller().module("inro.emme.utility.export_utilities")
         return export_utils.get_link_attributes(_m.Modeller().scenario)
@@ -1092,6 +1090,6 @@ def temp_functions(emmebank):
         yield
     finally:
         with _m.logbook_trace("Reset functions to assignment parameters"):
-            for func, expression in orig_expression.iteritems():
+            for func, expression in orig_expression.items():
                 change_function(func, expression, emmebank)
 

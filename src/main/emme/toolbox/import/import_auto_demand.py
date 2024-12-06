@@ -80,12 +80,12 @@ gen_utils = _m.Modeller().module("sandag.utilities.general")
 class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
 
     external_zones = _m.Attribute(str)
-    output_dir = _m.Attribute(unicode)
+    output_dir = _m.Attribute(str)
     num_processors = _m.Attribute(str)
 
     tool_run_msg = ""
 
-    @_m.method(return_type=_m.UnicodeType)
+    @_m.method(return_type=str)
     def tool_run_msg_status(self):
         return self.tool_run_msg
 
@@ -184,7 +184,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
             try:
                 yield omx_manager
             finally:
-                for name, value in self._matrix_cache.iteritems():
+                for name, value in self._matrix_cache.items():
                     matrix = emmebank.matrix(name)
                     matrix.set_numpy_data(value, self.scenario.id)
 

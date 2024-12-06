@@ -95,17 +95,17 @@ desktop = _m.Modeller().desktop
 
 class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
 
-    period = _m.Attribute(unicode)
+    period = _m.Attribute(str)
     scenario_id = _m.Attribute(int)
     base_scenario_id =  _m.Attribute(str)
 
-    data_table_name = _m.Attribute(unicode)
-    scenario_title = _m.Attribute(unicode)
+    data_table_name = _m.Attribute(str)
+    scenario_title = _m.Attribute(str)
     overwrite = _m.Attribute(bool)
 
     tool_run_msg = ""
 
-    @_m.method(return_type=unicode)
+    @_m.method(return_type=str)
     def tool_run_msg_status(self):
         return self.tool_run_msg
 
@@ -269,7 +269,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 if line.mode.id != "c":
                     continue
                 segments = line.segments()
-                first = segments.next()
+                first = next(segments)
                 fare = first["@coaster_fare_board"]
                 for seg in segments:
                     fare += seg["@coaster_fare_inveh"]
@@ -355,7 +355,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                             if s.allow_boardings])
             link_candidates = []
             for seg in from_line.segments(True):
-                if not s.allow_alightings:
+                if not seg.allow_alightings:
                     continue
                 for link in seg.i_node.outgoing_links():
                     if link.j_node in to_nodes:
@@ -405,7 +405,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
         # OR all transfers are to the same line and have the same wait
         # Merge all transfers onto the same transfer node
         network_transfers = []
-        for (from_link, to_link), transfers in walk_transfers.iteritems():
+        for (from_link, to_link), transfers in walk_transfers.items():
             walk_links = set([t["walk_link"] for t in transfers])
             from_lines = set([t["from_line"] for t in transfers])
             to_lines = set([t["to_line"] for t in transfers])
@@ -544,11 +544,11 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 network.delete_transit_line(line)
                 new_line = network.create_transit_line(
                     line_data.pop("id"), line_data.pop("vehicle"), itinerary)
-                for k, v in line_data.iteritems():
+                for k, v in line_data.items():
                     new_line[k] = v
                 for seg in new_line.segments(include_hidden=True):
                     data = seg_data.get((seg.i_node, seg.j_node, seg.loop_index), {})
-                    for k, v in data.iteritems():
+                    for k, v in data.items():
                         seg[k] = v
 
         network.delete_attribute("NODE", "circle_lines")

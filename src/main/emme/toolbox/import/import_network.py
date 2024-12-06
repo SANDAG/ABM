@@ -67,8 +67,8 @@ import inro.modeller as _m
 import inro.emme.datatable as _dt
 import inro.emme.network as _network
 from inro.emme.core.exception import Error as _NetworkError
+import inro.emme.core.services as _services
 
-from itertools import izip as _izip
 from collections import defaultdict as _defaultdict, OrderedDict
 from contextlib import contextmanager as _context
 import fiona as _fiona
@@ -77,7 +77,6 @@ from math import ceil as _ceiling
 from math import floor as _floor
 from copy import deepcopy as _copy
 import numpy as _np
-import heapq as _heapq
 import pandas as pd
 
 import traceback as _traceback
@@ -86,7 +85,7 @@ import os
 _join = os.path.join
 _dir = os.path.dirname
 
-
+_INF = 1e400
 gen_utils = _m.Modeller().module("sandag.utilities.general")
 dem_utils = _m.Modeller().module("sandag.utilities.demand")
 
@@ -101,17 +100,17 @@ FILE_NAMES = {
 
 class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
-    source = _m.Attribute(unicode)
+    source = _m.Attribute(str)
     scenario_id = _m.Attribute(int)
     overwrite = _m.Attribute(bool)
-    title = _m.Attribute(unicode)
+    title = _m.Attribute(str)
     save_data_tables = _m.Attribute(bool)
-    data_table_name = _m.Attribute(unicode)
+    data_table_name = _m.Attribute(str)
     create_time_periods = _m.Attribute(bool)
 
     tool_run_msg = ""
 
-    @_m.method(return_type=_m.UnicodeType)
+    @_m.method(return_type=str)
     def tool_run_msg_status(self):
         return self.tool_run_msg
 
@@ -235,7 +234,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             ("create_time_periods", self.create_time_periods)
         ])
         self._log = [{
-            "content": attributes.items(),
+            "content": list(attributes.items()),
             "type": "table", "header": ["name", "value"],
             "title": "Tool input values"
         }]
@@ -284,8 +283,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 ("ASPD",      ("@speed_adjusted",      "HWY_TWO_WAY", "EXTRA", "Adjusted link speed (miles/hr)")),
                 ("YR",        ("@year_open_traffic",   "HWY_TWO_WAY", "EXTRA", "The year the link opened to traffic")),
                 ("PROJ",      ("@project_code",        "HWY_TWO_WAY", "EXTRA", "Project number for use with hwyproj.xls")),
-                ("FC",        ("type",                 "TWO_WAY",     "STANDARD", "Roadway functional class")),
-                ("FFC",       ("@fed_type",            "TWO_WAY",     "EXTRA", "Roadway federal functional class")),
+                ("FC",        ("type",                 "TWO_WAY",     "STANDARD", "")),
                 ("HOV",       ("@hov",                 "TWO_WAY",     "EXTRA", "Link operation type")),
                 ("MINMODE",   ("@minmode",             "TWO_WAY",     "EXTRA", "Transit mode type")),
                 ("EATRUCK",   ("@truck_ea",            "HWY_TWO_WAY", "EXTRA", "Early AM truck restriction code ")),
@@ -401,7 +399,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 scenarios.append(create_scenario(ident, "%s - %s assign" % (title, period),
                                                  overwrite=self.overwrite, emmebank=self.emmebank))
         # create attributes in scenario
-        for elem_type, mapping in attr_map.iteritems():
+        for elem_type, mapping in attr_map.items():
             for name, _tcoved_type, emme_type, desc in mapping.values():
                 if emme_type == "EXTRA":
                     for s in scenarios:
@@ -414,7 +412,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                             s.create_network_field(elem_type, name, 'STRING', description=desc)
 
             log_content = []
-            for k, v in mapping.iteritems():
+            for k, v in mapping.items():
                 if v[3] == "DERIVED":
                     k = "--"
                 log_content.append([k] + list(v))
@@ -427,8 +425,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             })
 
         network = _network.Network()
-        for elem_type, mapping in attr_map.iteritems():
-            for field, (attr, tcoved_type, emme_type, desc) in mapping.iteritems():
+        for elem_type, mapping in attr_map.items():
+            for field, (attr, tcoved_type, emme_type, desc) in mapping.items():
                 if emme_type == "STANDARD":
                     continue
                 default = "" if emme_type == "STRING" else 0
@@ -514,7 +512,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 ("J", "EGRESS_TNC", 25),
             ],
         }
-        for mode_type, modes in mode_table.iteritems():
+        for mode_type, modes in mode_table.items():
             for mode_info in modes:
                 mode = network.create_mode(mode_type, mode_info[0])
                 mode.description = mode_info[1]
@@ -554,7 +552,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         non_toll_modes = set([network.mode(m_id) for m_id in "vmtshi"])
         self._auto_mode_lookup = {
             "GP": modes_gp_lanes,
-            "TOLL": dict((k, v - non_toll_modes) for k, v in modes_gp_lanes.iteritems()),
+            "TOLL": dict((k, v - non_toll_modes) for k, v in modes_gp_lanes.items()),
             "HOV2": set([network.mode(m_id) for m_id in "dhiHI"]),
             "HOV3": set([network.mode(m_id) for m_id in "diI"]),
         }
@@ -603,7 +601,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
         is_centroid = lambda arc, node : (arc["FC"] == 10)  and (node == "AN")
         link_attr_map = {}
-        for field, (name, tcoved_type, emme_type, desc) in attr_map["LINK"].iteritems():
+        for field, (name, tcoved_type, emme_type, desc) in attr_map["LINK"].items():
             if tcoved_type in ("TWO_WAY", "HWY_TWO_WAY", "ONE_WAY", "HWY_ONE_WAY"):
                 link_attr_map[field] = (name, tcoved_type.replace("HWY_", ""), emme_type, desc)
         
@@ -623,7 +621,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             hwy_data, network, mode_callback=define_modes, centroid_callback=is_centroid, link_attr_map=link_attr_map)
 
         hwy_node_data = gen_utils.DataTableProc("TNED_HwyNodes", self.source)
-        node_attrs = [(k, v[0]) for k, v in attr_map["NODE"].iteritems()
+        node_attrs = [(k, v[0]) for k, v in attr_map["NODE"].items()
                       if v[1] in ("BOTH", "HWY")]
         for record in hwy_node_data:
             node = network.node(record["HNODE"])
@@ -642,7 +640,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             transit_data.save("%s_TNED_RailNet" % self.data_table_name, self.overwrite)
 
         link_attr_map = {}
-        for field, (name, tcoved_type, emme_type, desc) in attr_map["LINK"].iteritems():
+        for field, (name, tcoved_type, emme_type, desc) in attr_map["LINK"].items():
             if tcoved_type in ("TWO_WAY", "RAIL_TWO_WAY", "ONE_WAY", "RAIL_ONE_WAY"):
                 link_attr_map[field] = (name, tcoved_type.replace("RAIL_", ""), emme_type, desc)
 
@@ -661,7 +659,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
         transit_node_data = gen_utils.DataTableProc("TNED_RailNodes", self.source)
         # Load PARK, elevation, stop type data onto transit nodes
-        node_attrs = [(k, v[0]) for k, v in attr_map["NODE"].iteritems()
+        node_attrs = [(k, v[0]) for k, v in attr_map["NODE"].items()
                       if v[1] in ("BOTH", "RAIL")]
         for record in transit_node_data:
             node = network.node(record["HNODE"])
@@ -678,7 +676,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         reverse_attr_map = {}
         arc_id_name = "HWYCOV0_ID"
         arc_guid_name = "HWYSegGUID"
-        for field, (name, tcoved_type, emme_type, desc) in link_attr_map.iteritems():
+        for field, (name, tcoved_type, emme_type, desc) in link_attr_map.items():
             if field in [arc_id_name, arc_guid_name, "DIR"]:
                 # these attributes are special cases for reverse link
                 forward_attr_map[field] = name
@@ -723,7 +721,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 link.length = arc["LENGTH"]
                 if len(coordinates) > 2:
                     link.vertices = coordinates[1:-1]
-            for field, attr in forward_attr_map.iteritems():
+            for field, attr in forward_attr_map.items():
                 link[attr] = arc[field]
             if arc["WAY"] == 2 or arc["WAY"] == 0:
                 reverse_link = network.link(j_node, i_node)
@@ -731,7 +729,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     reverse_link = network.create_link(j_node, i_node, modes)
                     reverse_link.length = link.length
                     reverse_link.vertices = list(reversed(link.vertices))
-                for field, attr in reverse_attr_map.iteritems():
+                for field, attr in reverse_attr_map.items():
                     reverse_link[attr] = arc[field]
                 reverse_link[emme_id_name] = -1*arc[arc_id_name]
                 reverse_link[emme_guid_name] = "-" + arc[arc_guid_name]
@@ -800,7 +798,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         mode5tod_attrs = []
         for elem_type in "TRANSIT_LINE", "TRANSIT_SEGMENT":
             mapping = attr_map[elem_type]
-            for field, (attr, tcoved_type, emme_type, desc) in mapping.iteritems():
+            for field, (attr, tcoved_type, emme_type, desc) in mapping.items():
                 if tcoved_type == "TRRT":
                     trrt_attrs.append((field, attr))
                 elif tcoved_type == "MODE5TOD":
@@ -946,37 +944,37 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     {"type": "text",
                      "content": "Stop %s: could not find transit line by ID %s (link GUID %s)" % (
                         record["Stop_ID"], record["Route_ID"], record["Link_GUID"])})
-        for stops in line_stops.itervalues():
+        for stops in line_stops.values():
             stops.sort(key=lambda stop: float(stop["Milepost"]))
 
         seg_float_attr_map = []
         seg_string_attr_map = []
-        for field, (attr, t_type, e_type, desc) in attr_map["TRANSIT_SEGMENT"].iteritems():
+        for field, (attr, t_type, e_type, desc) in attr_map["TRANSIT_SEGMENT"].items():
             if t_type == "TRSTOP":
                 if e_type == "STRING":
                     seg_string_attr_map.append([field, attr])
                 else:
                     seg_float_attr_map.append([field, attr])
 
-        for line_name, stops in line_stops.iteritems():
+        for line_name, stops in line_stops.items():
             tline = network.transit_line(line_name)
             if not tline:
                 continue
             itinerary = tline.segments(include_hidden=True)
-            segment = prev_segment = itinerary.next()
+            segment = prev_segment = next(itinerary)
             for stop in stops:
                 if "DUMMY" in stop["StopName"]:
                     continue
                 stop_link_id = stop['Link_GUID']
                 stop_node_id = int(stop['Node'])
                 while segment.link and segment.link["#hwyseg_guid"].lstrip("-") != stop_link_id:
-                    segment = itinerary.next()
+                    segment = next(itinerary)
 
                 if stop_node_id == segment.i_node.number:
                     pass
                 elif segment.j_node and stop_node_id == segment.j_node.number:
                     # if matches the J-node then the stop is on the next segment
-                    segment = itinerary.next()
+                    segment = next(itinerary)
                 else:
                     next_segment = None
                     if segment.j_node:
@@ -1020,11 +1018,11 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             raise Exception("'%s' is not a route name or route ID" % ident)
 
         # Normalizing the case of the headers as different examples have been seen
-        for period, data in timed_xfer_data.iteritems():
+        for period, data in timed_xfer_data.items():
             norm_data = []
             for record in data:
                 norm_record = {}
-                for key, val in record.iteritems():
+                for key, val in record.items():
                     norm_record[key.lower()] = val
                 norm_data.append(norm_record)
 
@@ -1095,7 +1093,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             yaml_installed = True
             try:
                 import yaml
-                special_fares = yaml.load(fare_file)
+                special_fares = yaml.safe_load(fare_file)
                 self._log.append({"type": "text", "content": yaml.dump(special_fares).replace("\n", "<br>")})
             except ImportError:
                 yaml_installed = False
@@ -1331,7 +1329,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     facility_factors[name]["count"] = 0
 
             # validate ToD entry, either list EA, AM, MD, PM and EV, or ALL, but not both
-            for name, factors in facility_factors.iteritems():
+            for name, factors in facility_factors.items():
                 # default keys should be "ALL" and "count"
                 if "ALL" in factors:
                     if len(factors) > 2:
@@ -1349,7 +1347,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
         def lookup_link_name(link):
             for attr_name in ["#name", "#name_from", "#name_to"]:
-                for name, _factors in facility_factors.iteritems():
+                for name, _factors in facility_factors.items():
                     if name in link[attr_name]:
                         return _factors
             return facility_factors["DEFAULT_FACTORS"]
@@ -1361,11 +1359,11 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             del factors["count"]
             # @hov = 2 or 3 overrides hov2 and hov3 costs
             if link["@hov"] == 2:
-                for _, time_factors in factors.iteritems():
+                for _, time_factors in factors.items():
                     time_factors["hov2"] = 0.0
                     time_factors["hov3"] = 0.0
             elif link["@hov"] == 3:
-                for _, time_factors in factors.iteritems():
+                for _, time_factors in factors.items():
                     time_factors["hov3"] = 0.0
             return factors
 
@@ -1381,7 +1379,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 for time in time_periods:
                     for name in vehicle_classes:
                         link["@cost_" + name + time] = link["@cost_operating"]
-        for name, class_factors in facility_factors.iteritems():
+        for name, class_factors in facility_factors.items():
             msg = "Facility name '%s' matched to %s links." % (name, class_factors["count"])
             self._log.append({"type": "text2", "content": msg})
 
@@ -1774,17 +1772,18 @@ def find_path(orig_link, dest_link, mode):
     visited = set([])
     visited_add = visited.add
     back_links = {}
-    heap = []
+    heap = _services.Heap()
 
     for link in orig_link.j_node.outgoing_links():
         if mode in link.modes:
             back_links[link] = None
-            _heapq.heappush(heap, (link["length"], link))
+            costs[link] = link["length"]
+            heap.insert(link, link["length"])
 
     link_found = False
     try:
         while not link_found:
-            link_cost, link = _heapq.heappop(heap)
+            link = heap.pop()
             if link in visited:
                 continue
             visited_add(link)
@@ -1793,12 +1792,14 @@ def find_path(orig_link, dest_link, mode):
                     continue
                 if outgoing in visited:
                     continue
-                back_links[outgoing] = link
+                outgoing_cost = costs[link] + outgoing["length"]
+                if outgoing_cost < costs[outgoing]:
+                    costs[outgoing] = outgoing_cost
+                    back_links[outgoing] = link
+                    heap.insert(outgoing_cost, outgoing)
                 if outgoing == dest_link:
                     link_found = True
                     break
-                outgoing_cost = link_cost + link["length"]
-                _heapq.heappush(heap, (outgoing_cost, outgoing))
     except IndexError:
         pass  # IndexError if heap is empty
     if not link_found:
@@ -1833,21 +1834,24 @@ def revised_headway(headway):
 def interchange_distance(orig_link, direction):
     visited = set([])
     visited_add = visited.add
-    back_links = {}
-    heap = []
+    costs = _defaultdict(lambda : _INF)
+    heap = _services.Heap()
     if direction == "DOWNSTREAM":
         get_links = lambda l: l.j_node.outgoing_links()
         check_far_node = lambda l: l.j_node.is_interchange
     elif direction == "UPSTREAM":
         get_links = lambda l: l.i_node.incoming_links()
         check_far_node = lambda l: l.i_node.is_interchange
+    if check_far_node(orig_link):
+        return orig_link["length"] / 2.0 
     # Shortest path search for nearest interchange node along freeway
     for link in get_links(orig_link):
-        _heapq.heappush(heap, (link["length"], link))
+        heap.insert(link, link["length"])
+        costs[link] = link["length"]
     interchange_found = False
     try:
         while not interchange_found:
-            link_cost, link = _heapq.heappop(heap)
+            link = heap.pop()
             if link in visited:
                 continue
             visited_add(link)
@@ -1857,10 +1861,12 @@ def interchange_distance(orig_link, direction):
             for next_link in get_links(link):
                 if next_link in visited:
                     continue
-                next_cost = link_cost + link["length"]
-                _heapq.heappush(heap, (next_cost, next_link))
+                next_cost = costs[link] + next_link["length"]
+                if next_cost < costs[next_link]:
+                    costs[next_link] = next_cost
+                    heap.insert(next_link, next_cost)
     except IndexError:
         # IndexError if heap is empty
         # case where start / end of highway, dist = 99
         return 99
-    return orig_link["length"] / 2.0 + link_cost
+    return orig_link["length"] / 2.0 + costs[link]
