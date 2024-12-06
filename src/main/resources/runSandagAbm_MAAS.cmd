@@ -42,11 +42,20 @@ ping -n 10 %MAIN% > nul
 cd %PROJECT_DRIVE%%PROJECT_DIRECTORY%
 
 rem TNC Fleet Model
-%JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp "%CLASSPATH%" -Djxl.nowarnings=true -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.maas.TNCFleetModel %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE%
+%JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp "%CLASSPATH%" -Djxl.nowarnings=true -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.maas.TNCFleetModel %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE% || goto error
 
 rem Household AV Allocation Model
-%JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp "%CLASSPATH%" -Djxl.nowarnings=true -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.maas.HouseholdAVAllocationModelRunner %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE%
+%JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp "%CLASSPATH%" -Djxl.nowarnings=true -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.maas.HouseholdAVAllocationModelRunner %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE% || goto error
 rem ### restore saved environment variable values, and change back to original current directory
 set JAVA_PATH=%OLDJAVAPATH%
 set PATH=%OLDPATH%
 set CLASSPATH=%OLDCLASSPATH%
+
+goto :EOF
+
+:error
+rem ### restore saved environment variable values, and change back to original current directory
+set JAVA_PATH=%OLDJAVAPATH%
+set PATH=%OLDPATH%
+set CLASSPATH=%OLDCLASSPATH%
+exit /b 2
