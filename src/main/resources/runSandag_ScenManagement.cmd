@@ -22,9 +22,9 @@ SET CONDA3=%ANACONDA3_DIR%\Scripts\conda.exe
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :: CALL ON THE ENVIRONMENT, AND IF IT DOES NOT EXIST, CREATE IT FROM THE YAML FILE
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-CALL %CONDA3_ACT% asim_baydag
+CALL %CONDA3_ACT% asim_132
 
-SET PYTHON3=%ANACONDA3_DIR%\envs\asim_baydag\python.exe
+SET PYTHON3=%ANACONDA3_DIR%\envs\asim_132\python.exe
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
