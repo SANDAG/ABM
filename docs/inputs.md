@@ -93,6 +93,8 @@ The table below contains brief descriptions of the input files required to execu
 | percent_of_establishments_by_luz_size_emp_cat.xlsx | Percent of establishments in LUZ that belong in each size category by industry sector | Excel Workbook | |
 | **Commercial Vehicle Model** |  |  |  | 
 | SynthEstablishments.csv | Output from CVM establishment synthesis, similar description as previous part | CSV | |
+| MGRAEmpByEstSize.csv | MGRA Based synthetically generated establishments. Used for disgnostic purposes, not for simulation | CSV | |
+| SummaryEstablishments.csv | Contains information about synthetically generated establishments to be used as inputs to the commercial vehicle model | CSV | |
 | **Truck Model** |  |  |  | 
 | TruckTripRates.csv | Truck model data: Truck trip rates | CSV | Transportation Modelers | 
 | regionalEItrips<year>.csv | Truck model data: Truck external to internal data | CSV | Transportation Modelers | 
@@ -1277,7 +1279,6 @@ regional_pass: 10.90
 
 <a id ="cvm"></a>
 
-### CVM Establishment Synthesis
 #### `SYNTHESTABLISHMENTS.CSV`
 
 <table>
