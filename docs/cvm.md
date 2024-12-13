@@ -28,14 +28,6 @@ Resident model, namely workers traveling for meetings, sales calls, out-of-town 
 The CVM also does not model long-distance freight truck movements that enter and exit the region, which 
 are covered by the Heavy Truck Model (HTM).
 
-The HTM covers long-distance freight movements into and out of San Diego County. The source of the 
-demand in the HTM are commodity flows between shippers and receivers throughout North America, 
-focusing on those with either a trip end (shipper or receiver) in San Diego County or which pass through San 
-Diego County, for example, between Mexico and Los Angeles. Commodity flows are derived from the 
-Federal Highway Administration (FHWA) Freight Analysis Framework version 5 (FAF5). The model design 
-assumes that freight truck trips between establishments within San Diego County are covered by the CVM, 
-which has been designed to explicitly account for truck movements involving warehouse and distribution 
-centers and port facilities.
 
 ## Design
 
@@ -58,9 +50,6 @@ for food and package deliveries and for services;
 • Leveraging the TNC driver survey to represent this recently emerged type of on-line establishment 
 and the “gig” workers it employs.
 
-In addition, the HTM update to the most current version of FAF5 was important to representing commodity 
-trading and supply chain trends after the COVID-19 pandemic. The HTM update also includes improvements 
-to process efficiency and accuracy.
 
 #### CVM Overview and Flow Between Components
 

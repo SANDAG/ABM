@@ -91,23 +91,8 @@ The table below contains brief descriptions of the input files required to execu
 | **CVM Establishment Synthesis** |
 | land_use | MGRA based land use file | CSV | |
 | percent_of_establishments_by_luz_size_emp_cat.xlsx | Percent of establishments in LUZ that belong in each size category by industry sector | Excel Workbook | |
-| **Commercial Vehicle Model** (TO BE UPDATED) |  |  |  | 
+| **Commercial Vehicle Model** |  |  |  | 
 | SynthEstablishments.csv | Output from CVM establishment synthesis, similar description as previous part | CSV | |
-| tazcentroids_cvm.csv | Zone centroid coordinates in state plane feet and albers | CSV | Transportation Modelers | 
-| commVehFF.csv | Commercial Vehicle Model friction factors | CSV | Transportation Modelers | 
-| OE.csv | Commercial vehicle model parameters file for off-peak early (OE) period | CSV | Transportation Modelers | 
-| AM.csv | Commercial vehicle model parameters file for AM period | CSV | Transportation Modelers | 
-| MD.csv | Commercial vehicle model parameters file for mid-day (MD) period | CSV | Transportation Modelers | 
-| PM.csv | Commercial vehicle model parameters file for PM period | CSV | Transportation Modelers | 
-| OL.csv | Commercial vehicle model parameters file for off-peak late (OL) period | CSV | Transportation Modelers | 
-| FA.csv | Commercial vehicle model parameters file for fleet allocator (FA) industry | CSV | Transportation Modelers | 
-| GO.csv | Commercial vehicle model parameters file for government/ office (GO) industry | CSV | Transportation Modelers | 
-| IN.csv | Commercial vehicle model parameters file for industrial (IN) industry | CSV | Transportation Modelers | 
-| FA.csv | Commercial vehicle model parameters file for fleet allocator (FA) industry | CSV | Transportation Modelers | 
-| RE.csv | Commercial vehicle model parameters file for retail (RE) industry | CSV | Transportation Modeler | 
-| SV.csv | Commercial vehicle model parameters file for service (SV) industry | CSV | Transportation Modelers | 
-| TH.csv | Commercial vehicle model parameters file transport and handling (TH) industry | CSV | Transportation Modelers | 
-| WH.csv | Commercial vehicle model parameters file wholesale (WH) industry | CSV | Transportation Modelers | 
 | **Truck Model** |  |  |  | 
 | TruckTripRates.csv | Truck model data: Truck trip rates | CSV | Transportation Modelers | 
 | regionalEItrips<year>.csv | Truck model data: Truck external to internal data | CSV | Transportation Modelers | 
@@ -1292,7 +1277,7 @@ regional_pass: 10.90
 
 <a id ="cvm"></a>
 
-### Commercial Vehicle Model ( CVM )
+### CVM Establishment Synthesis
 #### `SYNTHESTABLISHMENTS.CSV`
 
 <table>
@@ -1332,6 +1317,83 @@ regional_pass: 10.90
     </tr>
     
 </table>
+
+#### CVM Establishment Synthesis File ( MGRAEmpByEstSize.csv )
+##### `MGRAEmpByEstSize.csv`
+<table>
+  <tr>
+    <td>Field 
+    </td>
+    <td>Description
+    </td>
+  </tr>
+  <tr>
+    <td>mgra
+    </td>
+    <td>MGRA id
+    </td>
+  </tr>
+  <tr>
+    <td>taz
+    </td>
+    <td>TAZ id
+    </td>
+  </tr>
+  <tr>
+    <td>luz
+    </td>
+    <td>Land use zone
+
+  </tr>
+  <tr>
+    <td>emp_Sector_Size_Class
+    </td>
+    <td>Employment numbers, where Sector is gov, mil, ag_min, bus_svcs, 
+fin_res_mgm, educ, hlth, ret, trn_wrh, con, utl, mnf, whl, ent, accm, food, 
+oth; where Size_Class ranges 1-7.
+
+  </tr>
+  
+
+</table>
+
+#### CVM Establishment Synthesis File ( SummarySynthEstabs.csv )
+##### `SummarySynthEstabs.csv`
+
+<table>
+  <tr>
+    <td>Field
+    </td>
+    <td>Description
+    </td>
+  </tr>
+  <tr>
+    <td>Industry_No
+    </td>
+    <td>Industry No
+    </td>
+  </tr>
+  <tr>
+    <td>Industry_Name
+    </td>
+    <td>Industry name
+    </td>
+  </tr>
+  <tr>
+    <td>Size_Class
+    </td>
+    <td>Size class
+</td>
+  </tr>
+  <tr>
+    <td>Count
+    </td>
+    <td>Total number
+  </td>
+  </tr>
+</table>
+
+
 
 <a id="cvm_industry"></a>
 
