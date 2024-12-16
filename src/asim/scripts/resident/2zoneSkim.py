@@ -32,9 +32,31 @@ class SkimParameters:
         )
 
 class NetworkBuilder:
-    """Handles network construction and node assignment"""
+    """
+    Handles network construction and node assignment for transportation networks.
+    
+    This class processes raw node and link data to create a network. It handles coordinate projections, network topology,
+    and centroid connections.
+    """
     
     def __init__(self, nodes: gpd.GeoDataFrame, links: gpd.GeoDataFrame, config: dict):
+        """
+        Initialize the NetworkBuilder with nodes, links, and configuration.
+
+        Args:
+            nodes (gpd.GeoDataFrame): GeoDataFrame containing node geometries and attributes.
+                Must include columns for node ID and coordinates.
+            links (gpd.GeoDataFrame): GeoDataFrame containing link geometries and attributes.
+                Must include columns for from/to nodes and length.
+            config (dict): Configuration dictionary containing:
+                - mmms (dict): Network construction parameters
+                - mmms_link_ref_id (str): Column name for link start node
+                - mmms_link_nref_id (str): Column name for link end node
+                - mmms_link_len (str): Column name for link length
+
+        Note:
+            The network is built immediately upon initialization using _build_network().
+        """
         self.nodes = nodes
         self.links = links
         self.config = config
@@ -43,14 +65,21 @@ class NetworkBuilder:
     @classmethod
     def from_files(cls, model_inputs: str, config: dict) -> 'NetworkBuilder':
         """
-        Create NetworkBuilder instance from files.
-        
+        Create a NetworkBuilder instance by reading nodes and links from shapefiles.
+
+        This factory method handles reading and processing the raw input files to create
+        a properly configured NetworkBuilder instance.
+
         Args:
-            model_inputs: Path to input directory
-            config: Configuration dictionary
-            
+            model_inputs (str): Path to directory containing input shapefiles
+            config (dict): Configuration dictionary containing:
+                - mmms (dict): File and processing parameters
+                - shapefile_node_name (str): Filename for nodes shapefile
+                - shapefile_name (str): Filename for links shapefile
+
         Returns:
-            NetworkBuilder instance
+            NetworkBuilder: A fully initialized NetworkBuilder instance with processed
+                nodes and links.
         """
         # Read and process nodes
         nodes = gpd.read_file(os.path.join(model_inputs, config['mmms']['shapefile_node_name']))
@@ -59,19 +88,34 @@ class NetworkBuilder:
         # Read and process links
         links = gpd.read_file(os.path.join(model_inputs, config['mmms']['shapefile_name']))
         links = cls._process_links(links)
+
+        # Read and process stops and routes
+        stops = pd.read_csv(os.path.join(model_inputs, config['stop_attributes']['file']))
+        routes = pd.read_csv(os.path.join(model_inputs, config['route_attributes']['file']))
+        routes = routes.filter(['Route_ID', 'Route_Name', 'Mode'])
+        # add mode from route file & convert lat.long to stateplane(KK)=====
+        stops = stops.merge(routes,  left_on='Route_ID', right_on='Route_ID')
         
-        return cls(nodes, links, config)
+        return cls(nodes, links, stops, routes, config)
     
     @staticmethod
     def _process_nodes(nodes: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         """
-        Process raw nodes GeoDataFrame.
-        
+        Process raw nodes GeoDataFrame by projecting and adding coordinates.
+
+        Performs the following operations:
+        1. Projects the geometries to EPSG:2230 (NAD83 California State Plane Zone 6 for the SAN Diego region)
+        2. Sets NodeLev_ID as the index
+        3. Extracts X and Y coordinates from the geometry
+
         Args:
-            nodes: Raw nodes GeoDataFrame
-            
+            nodes (gpd.GeoDataFrame): Raw nodes GeoDataFrame with geometry column
+
         Returns:
-            Processed nodes GeoDataFrame
+            gpd.GeoDataFrame: Processed nodes with:
+                - Projected coordinates (EPSG:2230)
+                - NodeLev_ID as index
+                - X and Y columns containing coordinates
         """
         nodes = nodes.to_crs(epsg=2230).set_index("NodeLev_ID")
         nodes['X'] = nodes.geometry.x
@@ -104,10 +148,10 @@ class NetworkBuilder:
         )
     
     @classmethod
-    def process_centroids(cls, nodes: gpd.GeoDataFrame, links: gpd.GeoDataFrame, 
+    def get_closest_net_node_to_MGRA(cls, nodes: gpd.GeoDataFrame, links: gpd.GeoDataFrame, 
                          config: dict) -> pd.DataFrame:
         """
-        Process centroids from nodes and links.
+        Gets closest network nodes to MAZ centroids. This is used to assign network nodes to MAZ centroids. This assigned nodes is then used to calculate skims.
         
         Args:
             nodes: Processed nodes GeoDataFrame
@@ -117,14 +161,14 @@ class NetworkBuilder:
         Returns:
             DataFrame containing centroid information
         """
-        # Get closest network nodes for MAZs
+        # Get closest network nodes for MAZ centroids, e.g. 'centroid connector' start and end nodes
         maz_closest_network_node_id = cls._get_closest_network_nodes(nodes, links, config)
         
         # Create centroids DataFrame
         centroids = cls._create_centroids_df(nodes, config)
         
-        # Merge with closest network nodes
-        return cls._merge_centroids_with_nodes(centroids, maz_closest_network_node_id, 
+        # Merge with closest network nodes. This will add the end node of the connector as the associated network node for the MGRA
+        return cls._merge_centroids_with_connector_end_nodes(centroids, maz_closest_network_node_id, 
                                              nodes, config)
     
     @staticmethod
@@ -135,6 +179,7 @@ class NetworkBuilder:
         mmms = config['mmms']
         maz_id = config['maz_shape_maz_id']
         
+        # Return the 'centroid connector' start and end nodes, reads as : links[links['A'].isin(list(nodes[nodes['MGRA']!=0].index))][['A','B']] with A and B being the start and end node of a link
         return links[links[mmms["mmms_link_ref_id"]].isin(
             list(nodes[nodes[maz_id]!=0].index)
         )][[mmms["mmms_link_ref_id"], mmms["mmms_link_nref_id"]]]
@@ -151,11 +196,11 @@ class NetworkBuilder:
         })
     
     @staticmethod
-    def _merge_centroids_with_nodes(centroids: pd.DataFrame,
+    def _merge_centroids_with_connector_end_nodes(centroids: pd.DataFrame,
                                   closest_nodes: pd.DataFrame,
                                   nodes: gpd.GeoDataFrame,
                                   config: dict) -> pd.DataFrame:
-        """Merge centroids with their closest network nodes"""
+        """Merge centroids with their closest network nodes at the nd of the connector"""
         mmms = config['mmms']
         
         centroids = pd.merge(
@@ -173,20 +218,97 @@ class NetworkBuilder:
         centroids["network_node_y"] = nodes["Y"].loc[centroids["network_node_id"]].tolist()
         
         return centroids
-        
-    def assign_network_nodes(self, df: pd.DataFrame, x_col: str, y_col: str) -> pd.Series:
+    
+    @staticmethod    
+    def _process_stop_geometry(stops: pd.DataFrame) -> gpd.GeoDataFrame:
         """
-        Assign nearest network nodes to points.
-        
+        Convert stops to GeoDataFrame and project coordinates.
+
         Args:
-            df: DataFrame containing point coordinates
-            x_col: Name of X coordinate column
-            y_col: Name of Y coordinate column
-            
+            stops (pd.DataFrame): Stops DataFrame with Longitude/Latitude
+
         Returns:
-            Series of nearest node IDs
+            gpd.GeoDataFrame: Projected stops with updated coordinates
         """
-        return self.network.get_node_ids(df[x_col], df[y_col])
+        pd.set_option('display.float_format', lambda x: '%.9f' % x)
+        
+        gpd_stops = gpd.GeoDataFrame(
+            stops, 
+            geometry=gpd.points_from_xy(stops.Longitude, stops.Latitude, crs='epsg:4326')
+        )
+        gpd_stops = gpd_stops.to_crs('epsg:2230')
+        
+        gpd_stops['Longitude'] = gpd_stops['geometry'].x
+        gpd_stops['Latitude'] = gpd_stops['geometry'].y
+        
+        return gpd_stops
+
+    @staticmethod
+    def _assign_network_nodes_to_stops(
+        stops: pd.DataFrame, 
+        gpd_stops: gpd.GeoDataFrame,
+        net: pdna.Network,
+        nodes: pd.DataFrame
+    ) -> pd.DataFrame:
+        """
+        Assign network nodes to stops.
+
+        Args:
+            stops (pd.DataFrame): Stops DataFrame
+            gpd_stops (gpd.GeoDataFrame): Projected stops
+            net (pdna.Network): Network object
+            nodes (pd.DataFrame): Network nodes
+
+        Returns:
+            pd.DataFrame: Stops with assigned network nodes and coordinates
+        """
+        stops["network_node_id"] = net.get_node_ids(gpd_stops['Longitude'], gpd_stops['Latitude'])
+        stops["network_node_x"] = nodes["X"].loc[stops["network_node_id"]].tolist()
+        stops["network_node_y"] = nodes["Y"].loc[stops["network_node_id"]].tolist()
+        return stops
+    
+    @staticmethod
+    def _assign_transit_modes(stops: pd.DataFrame) -> pd.DataFrame:
+        """
+        Assign simplified transit modes to stops.
+        
+        Modes:
+        - L: Local bus (Mode 10)
+        - E: Premium (Modes 4-9)
+        - N: None (should not occur)
+
+        Args:
+            stops (pd.DataFrame): Stops DataFrame with Mode column
+
+        Returns:
+            pd.DataFrame: Stops with assigned simplified modes
+        """
+        prm_modes = [4, 5, 6, 7, 8, 9]
+        stops['mode'] = np.where(
+            stops['Mode'] == 10, 'L',
+            np.where(stops['Mode'].isin(prm_modes), 'E', 'N')
+        )
+        return stops
+
+    @classmethod
+    def process_transit_stops(cls, stops: pd.DataFrame, net: pdna.Network, nodes: pd.DataFrame) -> pd.DataFrame:
+        """
+        Main function to process transit stops.
+
+        Args:
+            model_inputs (str): Path to input directory
+            parms (dict): Parameters dictionary
+            net (pdna.Network): Network object
+            nodes (pd.DataFrame): Network nodes
+
+        Returns:
+            pd.DataFrame: Processed stops with network nodes and modes
+        """
+        gpd_stops = cls._process_stop_geometry(stops)
+        stops = cls._assign_network_nodes_to_stops(stops, gpd_stops, net, nodes)
+        stops = cls._assign_transit_modes(stops)
+
+        return stops
 
 class SkimGenerator:
     """Main class for generating various types of skims"""
@@ -195,31 +317,21 @@ class SkimGenerator:
         self.network_builder = network_builder
         self.params = params
         self.output_path = output_path
-        self.centroids = self._get_centroids(network_builder.nodes, network_builder.links, network_builder.config)
+        self.net_centroids = self._get_closest_net_node(network_builder.nodes, network_builder.links, network_builder.config)
+        self.stops = self._get_transit_stops(network_builder.stops)
         
-    def _get_centroids(self, nodes: gpd.GeoDataFrame, links: gpd.GeoDataFrame, config: dict) -> pd.DataFrame:
+    def _get_closest_net_node(self, nodes: gpd.GeoDataFrame, links: gpd.GeoDataFrame, config: dict) -> pd.DataFrame:
         """Get centroids DataFrame"""
-        return NetworkBuilder.process_centroids(nodes, links, config)
-
-    def _add_missing_mazs(self, centroids: pd.DataFrame, skim_table: pd.DataFrame, 
-                         cost_table: pd.DataFrame, dist_col: str = 'DISTWALK') -> pd.DataFrame:
-        """Add missing MAZs to skim table with their nearest neighbors"""
-        missing_maz = centroids[~centroids['MAZ'].isin(skim_table['OMAZ'])][['MAZ']]
-        missing_maz = missing_maz.rename(columns={'MAZ': 'OMAZ'})
-        
-        filtered_cost = cost_table[cost_table['OMAZ'] != cost_table['DMAZ']]
-        sorted_cost = filtered_cost.sort_values(dist_col)
-        grouped_cost = sorted_cost.groupby('OMAZ').agg({
-            'DMAZ': 'first',
-            dist_col: 'first'
-        }).reset_index()
-        
-        return missing_maz.merge(grouped_cost, on='OMAZ', how='left')
+        return self.network_builder.get_closest_net_node_to_MGRA(nodes, links, config)
+    
+    def _get_transit_stops(self, stops: pd.DataFrame) -> pd.DataFrame:
+        """Get transit stops DataFrame"""
+        return self.network_builder.process_transit_stops(stops, self.network_builder.network, self.network_builder.nodes)
 
     def generate_maz_maz_walk_skim(self) -> pd.DataFrame:
         """Generate MAZ to MAZ walk skims"""
-        maz_pairs = self._create_maz_pairs(self.centroids)
-        walk_skim = self._process_walk_distances(maz_pairs, self.params.max_maz_maz_walk_dist_feet)
+        maz_pairs = self._create_maz_pairs(self.net_centroids)
+        walk_skim = self._get_walk_distances(maz_pairs, self.params.max_maz_maz_walk_dist_feet)
         
         # Add intrazonal distances
         walk_skim = self._add_intrazonal_distances(walk_skim)
@@ -227,23 +339,17 @@ class SkimGenerator:
         
     def generate_maz_maz_bike_skim(self) -> pd.DataFrame:
         """Generate MAZ to MAZ bike skims"""
-        maz_pairs = self._create_maz_pairs(self.centroids)
-        bike_skim = self._process_bike_distances(maz_pairs, self.params.max_maz_maz_bike_dist_feet)
+        maz_pairs = self._create_maz_pairs(self.net_centroids)
+        bike_skim = self._get_bike_distances(maz_pairs, self.params.max_maz_maz_bike_dist_feet)
         return bike_skim
         
-    def generate_maz_stop_walk_skim(self, stops: pd.DataFrame) -> pd.DataFrame:
+    def generate_maz_stop_walk_skim(self) -> pd.DataFrame:
         """Generate MAZ to stop walk skims"""
-        maz_stop_pairs = self._create_maz_stop_pairs(self.centroids, stops)
-        modes = {"L": "local_bus", "E": "premium_transit"}
-        
-        result = pd.DataFrame({'maz': self.centroids['MAZ']}).astype({'maz': 'int'}).sort_values('maz')
-        
-        for mode, output in modes.items():
-            max_dist = getattr(self.params, f'max_maz_{output}_stop_walk_dist_feet') / 5280.0
-            mode_skim = self._process_stop_distances(maz_stop_pairs, mode, max_dist)
-            result = self._merge_stop_distances(result, mode_skim, output)
-            
-        return result.sort_values('maz')
+        maz_stop_pairs, maz_stop_output = self._create_maz_stop_pairs(self.net_centroids, self.stops)
+        stop_skim = self._get_stop_distances(maz_stop_pairs)
+        maz_stop_output = self._process_stop_skims_by_mode(stop_skim, maz_stop_output)
+                    
+        return maz_stop_output.sort_values('maz')
     
     def _create_maz_pairs(self, centroids: pd.DataFrame) -> pd.DataFrame:
         """Create all possible MAZ to MAZ pairs with their network nodes"""
@@ -264,7 +370,53 @@ class SkimGenerator:
         pairs["DISTWALK"] = pairs.eval("(((OMAZ_NODE_X-DMAZ_NODE_X)**2 + (OMAZ_NODE_Y-DMAZ_NODE_Y)**2)**0.5) / 5280.0")
         return pairs[pairs["OMAZ"] != pairs["DMAZ"]]
 
-    def _process_walk_distances(self, pairs: pd.DataFrame, max_dist: float) -> pd.DataFrame:
+    def _create_maz_stop_pairs(centroids: pd.DataFrame, stops: pd.DataFrame, stop_id_field: str) -> pd.DataFrame:
+        """
+        Build a table of MAZ to transit stop connections with initial distances.
+        
+        Creates a cross-join between MAZs and stops, calculating the straight-line
+        distance between each MAZ-stop pair. Distances are converted to miles.
+
+  
+        """
+        # Create cross product of MAZs and stops
+        o_m = np.repeat(centroids['MAZ'].tolist(), len(stops))
+        o_m_nn = np.repeat(centroids['network_node_id'].tolist(), len(stops))
+        d_t = np.tile(stops[stop_id_field].tolist(), len(centroids))
+        d_t_nn = np.tile(stops['network_node_id'].tolist(), len(centroids))
+        o_m_x = np.repeat(centroids['network_node_x'].tolist(), len(stops))
+        o_m_y = np.repeat(centroids['network_node_y'].tolist(), len(stops))
+        d_t_x = np.tile(stops['network_node_x'].tolist(), len(centroids))
+        d_t_y = np.tile(stops['network_node_y'].tolist(), len(centroids))
+        mode = np.tile(stops['mode'].tolist(), len(centroids))
+
+        # Create DataFrame
+        pairs = pd.DataFrame({
+            "MAZ": o_m,
+            "stop": d_t,
+            "OMAZ_NODE": o_m_nn,
+            "DSTOP_NODE": d_t_nn,
+            "OMAZ_NODE_X": o_m_x,
+            "OMAZ_NODE_Y": o_m_y,
+            "DSTOP_NODE_X": d_t_x,
+            "DSTOP_NODE_Y": d_t_y,
+            "MODE": mode
+        })
+
+        # Calculate distances in miles
+        pairs["DISTANCE"] = pairs.eval(
+            "(((OMAZ_NODE_X-DSTOP_NODE_X)**2 + (OMAZ_NODE_Y-DSTOP_NODE_Y)**2)**0.5) / 5280.0"
+        )
+
+        #create stop distances output file
+        maz_stop_output = pd.DataFrame(centroids['MAZ'])
+        maz_stop_output = maz_stop_output.rename(columns = {'MAZ': 'maz'})
+        maz_stop_output['maz'] = maz_stop_output['maz'].astype('int')
+        maz_stop_output.sort_values(by=['maz'], inplace=True)
+
+        return pairs, maz_stop_output
+
+    def _get_walk_distances(self, pairs: pd.DataFrame, max_dist: float) -> pd.DataFrame:
         """Process walking distances between MAZ pairs"""
         filtered = pairs[pairs["DISTWALK"] <= max_dist / 5280.0].copy()
         filtered["DISTWALK"] = self.network_builder.network.shortest_path_lengths(
@@ -275,6 +427,71 @@ class SkimGenerator:
         result[['i', 'j']] = result[['OMAZ', 'DMAZ']]
         result['actual'] = result['DISTWALK'] / self.params.walk_speed_mph * 60.0
         return result
+    
+    def _get_bike_distances(self, pairs: pd.DataFrame, max_dist: float) -> pd.DataFrame:
+        """Process bike distances between MAZ pairs"""
+        filtered = pairs[pairs["DISTBIKE"] <= max_dist / 5280.0].copy()
+        filtered["DISTBIKE"] = self.network_builder.network.shortest_path_lengths(
+            filtered["OMAZ_NODE"], filtered["DSTOP_NODE"])
+        result = filtered[filtered["DISTBIKE"] <= max_dist / 5280.0]
+        
+        return result
+    
+    def _get_stop_distances(self, pairs: pd.DataFrame) -> pd.DataFrame:
+        """Process bike distances between MAZ pairs"""
+        filtered = pairs[(pairs["DISTANCE"] <= self.params.max_maz_local_bus_stop_walk_dist_feet / 5280.0) & (pairs['MODE'] == 'L') | 
+                                            (pairs["DISTANCE"] <= self.params.max_maz_premium_transit_stop_walk_dist_feet / 5280.0) & (pairs['MODE'] == 'E')]
+        filtered["DISTWALK"] = self.network_builder.network.shortest_path_lengths(
+            filtered["OMAZ_NODE"], filtered["DMAZ_NODE"])
+        
+        result = filtered[(filtered["DISTWALK"] <= self.params.max_maz_local_bus_stop_walk_dist_feet / 5280.0) & (filtered['MODE'] == 'L') | 
+                                            (filtered["DISTWALK"] <= self.params.max_maz_premium_transit_stop_walk_dist_feet / 5280.0) & (filtered['MODE'] == 'E')]
+
+        return result
+    
+    def _process_stop_skims_by_mode(stop_skims: pd.DataFrame, maz_stop_output: pd.DataFrame) -> pd.DataFrame:
+        """
+        Process stop skims by transit mode and merge with output DataFrame.
+
+        Args:
+            stop_skims (pd.DataFrame): DataFrame containing stop skim data with columns:
+                - MODE: Transit mode ('L' or 'E')
+                - MAZ: MAZ ID
+                - DISTWALK: Walk distance
+            maz_stop_output (pd.DataFrame): Base DataFrame to merge results into
+
+        Returns:
+            pd.DataFrame: Processed DataFrame with walk distances by mode:
+                - maz: MAZ ID
+                - walk_dist_local_bus: Walk distance to nearest local bus stop
+                - walk_dist_premium_transit: Walk distance to nearest premium transit stop
+        """
+        modes = {"L": "local_bus", "E": "premium_transit"}
+        
+        for mode, mode_descr in modes.items():
+            stop_skims_by_mode = (
+                stop_skims[stop_skims.MODE == mode]
+                .groupby("MAZ")["DISTWALK"]
+                .min()
+                .reset_index()
+            )
+
+            stop_skims_by_mode = stop_skims_by_mode.rename(
+                {
+                    "MAZ": "maz",
+                    "DISTWALK": f"walk_dist_{mode_descr}",
+                },
+                axis="columns",
+            )
+            
+            maz_stop_output = maz_stop_output.merge(
+                stop_skims_by_mode, 
+                on="maz", 
+                how="outer"
+            )
+            maz_stop_output[f"walk_dist_{mode_descr}"].fillna(999999, inplace=True)
+
+        return maz_stop_output
 
     def _add_intrazonal_distances(self, skim: pd.DataFrame) -> pd.DataFrame:
         """Add intrazonal distances based on nearest neighbors"""
@@ -294,6 +511,20 @@ class SkimGenerator:
         
         return pd.concat([skim, intra_skims], axis=0)
 
+    def _add_missing_mazs(self, centroids: pd.DataFrame, skim_table: pd.DataFrame, 
+                         cost_table: pd.DataFrame, dist_col: str = 'DISTWALK') -> pd.DataFrame:
+        """Add missing MAZs to skim table with their nearest neighbors"""
+        missing_maz = centroids[~centroids['MAZ'].isin(skim_table['OMAZ'])][['MAZ']]
+        missing_maz = missing_maz.rename(columns={'MAZ': 'OMAZ'})
+        
+        filtered_cost = cost_table[cost_table['OMAZ'] != cost_table['DMAZ']]
+        sorted_cost = filtered_cost.sort_values(dist_col)
+        grouped_cost = sorted_cost.groupby('OMAZ').agg({
+            'DMAZ': 'first',
+            dist_col: 'first'
+        }).reset_index()
+        
+        return missing_maz.merge(grouped_cost, on='OMAZ', how='left')
 
 def main(path: str):
     """Main execution function"""
@@ -321,7 +552,7 @@ def main(path: str):
     bike_skim.to_csv(os.path.join(output_path, config['mmms']['maz_maz_bike_output']), index=False)
     
     print(f"{datetime.now().strftime('%H:%M:%S')} Generating MAZ-stop walk skims...")
-    stop_skim = skim_generator.generate_maz_stop_walk_skim(stops)
+    stop_skim = skim_generator.generate_maz_stop_walk_skim()
     stop_skim.to_csv(os.path.join(output_path, "maz_stop_walk.csv"), index=False)
 
 if __name__ == "__main__":
