@@ -3371,6 +3371,37 @@ This directory contains outputs from the Crossborder model, which represents all
   </tr>
 </table>
 
+### CVM Establishment Synthesis (.\cvm_establishment_synthesis)
+
+
+<table>
+  <tr>
+   <td>File 
+   </td>
+   <td>Description
+   </td>
+  </tr>
+  <tr>
+   <td>MGRAEmpByEstSize.csv
+   </td>
+   <td>MGRA based synthetically generated establishments. Used for diagnostic purposes, not for simulation 
+   </td>
+  </tr>
+  <tr>
+   <td>SummarySynthEstabs.csv
+   </td>
+   <td>Total count summary by size class and industry sector
+   </td>
+  </tr>
+  <tr>
+   <td>SynthEstablishments.csv
+   </td>
+   <td>Contains information about synthetically generated establishments to be used as inputs to the commercial vehicle model
+   </td>
+  </tr>
+  
+  
+</table>
 
 ### Commercial Vehicle Model (.\cvm)
 
@@ -4578,6 +4609,271 @@ This directory contains San Diego commercial travel model outputs.
   
 </table>
 
+#### Commerical Vehicle Model Trip File ( final_routes.csv )
+
+<table>
+  <tr>
+    <td>Field
+    </td>
+    <td>Description
+    </td>
+  </tr>
+  <tr>
+    <td>establishment_id
+    </td>
+    <td>Establishment ID ( Industry ID )
+    </td>
+  </tr>
+  <tr>
+    <td>business_type
+    </td>
+    <td>Name of the industry
+    </td>
+  </tr>
+  <tr>
+    <td>route_purpose
+    </td>
+    <td>Primary purpose of the route:
+        <p>
+        • Goods - pickup and/or deliver goods
+        <p>
+        • Service - provide services to customers
+        <p>
+        • Maintenance - vehicle maintenance or driver business
+    </td>
+  </tr>
+  <tr>
+    <td>customer_type
+    </td>
+    <td>Type of the customer ( residential; non-residential; mixed)
+  </tr>
+  <tr>
+    <td>vehicle_type
+    </td>
+    <td>Type of the vehicle (LV, MUT, SUT)
+    </td>
+  </tr>
+  <tr>
+    <td>is_tnc
+    </td>
+    <td>TRUE if route is a TNC, otherwise FALSE
+    </td>
+  </tr>
+  <tr>
+    <td>vehicle_type_abm3
+    </td>
+    <td>Type of the vehicle ( Passenger car, LHDU, MHDU, and HHDU)
+    </td>
+  </tr>
+  <tr>
+    <td>random
+    </td>
+    <td>Random number used in route generation calculations
+    </td>
+
+  </tr>
+  <tr>
+    <td>start_time
+    </td>
+    <td>Start Time ( half-hour intervals )
+    </td>
+  </tr>
+
+  <tr>
+    <td>route_start_time_period_
+    </td>
+    <td>Start time period
+    </td>
+  </tr>
+  <tr>
+    <td>origin_stop_type
+    </td>
+    <td>Origin Stop Type:
+      <p>
+      • base - establishment location (any land use type)
+      <p>
+      • warehouse - warehouse, distribution center land use type
+      <p>
+      • commercial - commercial land use type (not warehouse)
+      <p>
+      • residential - residential land use type
+    </td>
+  </tr>
+  <tr>
+    <td>origination_zone
+    </td>
+    <td>Origin Zone for start of route
+    </td>
+  </tr>
+  <tr>
+    <td>destination_stop_type
+    </td>
+    <td>Destination Stop Type:
+      <p>
+      • base - establishment location (any land use type)
+      <p>
+      • warehouse - warehouse, distribution center land use type
+      <p>
+      • commercial - commercial land use type (not warehouse)
+      <p>
+      • residential - residential land use type
+    </td>
+  </tr>
+  <tr>
+    <td>terminal_zone
+    </td>
+    <td>Destination Zone for termination of route
+    </td>
+  </tr>
+  <tr>
+    <td>route_id
+    </td>
+    <td>unique route id ( or trip id )
+    </td>
+  </tr>
+</table>
+
+#### Commerical Vehicle Model Trip File ( final_trips.csv )
+
+<table>
+  <tr>
+    <td>Field
+    </td>
+    <td>Description
+    </td>
+  </tr>
+  <tr>
+    <td>route_id
+    </td>
+    <td>the route id on which the trip is assigned to
+    </td>
+  </tr>
+  <tr>
+    <td>route_trip_num
+    </td>
+    <td>the number of trips on the route_id
+    </td>
+  </tr>
+  <tr>
+    <td>trip_origin
+    </td>
+    <td>origin zone (MGRA) of the trip
+    </td>
+  </tr>
+  <tr>
+    <td>trip_destination
+    </td>
+    <td>destination zone (MGRA) of the trip
+  </tr>
+  <tr>
+    <td>trip_destination_purpose
+    </td>
+    <td>purpose of the trip:
+      <p>
+        • base - return to establishment
+      <p>
+        • goods_delivery - deliver goods
+      <p>
+        • goods_pickup - pickup goods
+      <p>
+        • home - go to driver's home
+      <p>
+        • maintenance - maintenance (refueling, vehicle maintenance, driver breaks/meals)
+      <p>
+        • service - provide a service
+      <p>
+        • terminate - end route (vehicle day), go to terminal destination chosen for route
+    </td>
+  </tr>
+  <tr>
+    <td>trip_destination_type
+    </td>
+    <td>attraction land use type at the destination:
+      <p>
+        • base - establishment location (any land use type)
+      <p>
+        • warehouse - warehouse, distribution center land use type
+      <p>
+        • intermodal - airport, seaport, rail intermodal land use type
+      <p>
+        • commercial - commercial land use type (not warehouse or intermodal)
+      <p>
+        • residential - residential land use type
+    </td>
+  </tr>
+  <tr>
+    <td>trip_start_time
+    </td>
+    <td>start time of the trip (half hour intervals counted from beginning)
+    </td>
+  </tr>
+  <tr>
+    <td>trip_travel_time
+    </td>
+    <td>travel time ( in motion time ) of the vehicle during the trip
+    </td>
+  </tr>
+  <tr>
+    <td>dwell_time
+    </td>
+    <td>resting/dwelling time of the vehicle during the trip
+    </td>
+  </tr>
+  <tr>
+    <td>route_elapsed_time
+    </td>
+    <td>total time elapsed during the trip ( trip_travel_time + route_trip_num)
+    </td>
+  </tr>
+  <tr>
+    <td>cv_trip_id
+    </td>
+    <td>the unique trip id of the cv trip (route_id + route_trip_num)
+    </td>
+  </tr>
+  <tr>
+    <td>taz_origin
+    </td>
+    <td>origin zone ( TAZ ) of the trip
+    </td>
+  </tr>
+  <tr>
+    <td>taz_destination
+    </td>
+    <td>destination zone (TAZ) of the trip
+    </td>
+  </tr>
+  <tr>
+    <td>vehicle_type
+    </td>
+    <td>Vehicle types: DRIVEALONE ( passenger car), LHGT, MHDT, or HHDT
+    </td>
+  </tr>
+  <tr>
+    <td>tod
+    </td>
+    <td>Start time period of the trip ( ABM3 categories)
+    </td>
+  </tr>
+  <tr>
+    <td>distanceDrive
+    </td>
+    <td>Trip distance, from traffic_skims_MD
+    </td>
+  </tr>
+  <tr>
+    <td>costTollDrive
+    </td>
+    <td>Trip toll cost, from traffic_skims_MD
+    </td>
+  </tr>
+  <tr>
+    <td>costOperatingDrive
+    </td>
+    <td>Trip operating costs (cents)
+    </td>
+  </tr>
+</table>
 
 ### Parking cost calculations (.\parking)
 

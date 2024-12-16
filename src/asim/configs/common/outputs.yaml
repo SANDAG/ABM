@@ -458,6 +458,10 @@ trips:
     - s2_dist_skims
     - s2_time_skims
     - s2_cost_skims
+    - da_dist_skims
+    - s3_time_skims
+    - s3_dist_skims
+    - s3_cost_skims
     - c_ivt
     - c_fwt
     - c_xwt
@@ -493,6 +497,14 @@ trips:
     costFareTransit: cost_fare_transit
     costTotal: cost_total
     transfersTransit: transfers_transit
+    microtransit_mix_access_available_out: microtransit_access_available_out
+    nev_mix_access_available_out: nev_access_available_out
+    microtransit_mix_egress_available_out: microtransit_egress_available_out
+    nev_mix_egress_available_out: nev_egress_available_out
+    microtransit_mix_access_available_in: microtransit_access_available_in
+    nev_mix_access_available_in: nev_access_available_in
+    microtransit_mix_egress_available_in: microtransit_egress_available_in
+    nev_mix_egress_available_in: nev_egress_available_in
 
 households:
   remove_columns:
