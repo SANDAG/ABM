@@ -401,16 +401,3 @@ Description,Target,Expression
 ,time_total,df.time_walk + timeBike + timeDrive + df.time_wait_drive + time_transit_wait + timeTransitInVehicle
 #,,
 ,value_of_time_category_id,"np.where(vot1,1,np.where(vot2,2,3))"
-#Flexible fleet access/egress availability,,
-,microtransit_egress_available_out,trips.microtransit_local_egress_available_out | trips.microtransit_prm_egress_available_out | trips.microtransit_mix_egress_available_out
-,microtransit_access_available_in,trips.microtransit_local_access_available_in | trips.microtransit_prm_access_available_in | trips.microtransit_mix_access_available_in
-,nev_egress_available_out,trips.nev_local_egress_available_out | trips.nev_prm_egress_available_out | trips.nev_mix_egress_available_out
-,nev_access_available_in,trips.nev_local_access_available_in | trips.nev_prm_access_available_in | trips.nev_mix_access_available_in
-#Flexible fleet boardings,,
-,_transit_trip,"(trips.trip_mode == 'WALK_LOC') | (trips.trip_mode == 'WALK_PRM') | (trips.trip_mode == 'WALK_MIX')"
-,microtransit_boarding,"trips.microtransit_available & (trips.trip_mode == 'TNC_SHARED')"
-,microtransit_outbound_egress_boarding,"outbound & microtransit_egress_available_out & _transit_trip"
-,microtransit_inbound_access_boarding,"inbound & microtransit_access_available_in & _transit_trip"
-,nev_boarding,"trips.nev_available & (trips.trip_mode == 'TNC_SHARED')"
-,nev_outbound_egress_boarding,"outbound & nev_egress_available_out & _transit_trip"
-,nev_inbound_access_boarding,"inbound & nev_access_available_in & _transit_trip"

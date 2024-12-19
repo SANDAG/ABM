@@ -483,28 +483,5 @@ Description,Target,Expression
 ,origin_purpose,"np.where(trips.trip_count == 1 & (trips.primary_purpose == 'atwork'), 'work', origin_purpose)"
 ,origin_purpose,"np.where((trips.trip_count > 1) & (trips.trip_num==1) & (trips.outbound), 'home', origin_purpose)"
 ,origin_purpose,"np.where(((trips.trip_count > 1) & (trips.trip_num>1)) | ((trips.trip_count > 1) & (trips.trip_num==1) & ~(trips.outbound)), trips['purpose'].shift(1), origin_purpose)"
-#Flexible fleet access/egress availability,,
-,microtransit_access_available_out,trips.microtransit_local_access_available_out | trips.microtransit_prm_access_available_out | trips.microtransit_mix_access_available_out
-,microtransit_egress_available_out,trips.microtransit_local_egress_available_out | trips.microtransit_prm_egress_available_out | trips.microtransit_mix_egress_available_out
-,microtransit_access_available_in,trips.microtransit_local_access_available_in | trips.microtransit_prm_access_available_in | trips.microtransit_mix_access_available_in
-,microtransit_egress_available_in,trips.microtransit_local_egress_available_in | trips.microtransit_prm_egress_available_in | trips.microtransit_mix_egress_available_in
-,nev_access_available_out,trips.nev_local_access_available_out | trips.nev_prm_access_available_out | trips.nev_mix_access_available_out
-,nev_egress_available_out,trips.nev_local_egress_available_out | trips.nev_prm_egress_available_out | trips.nev_mix_egress_available_out
-,nev_access_available_in,trips.nev_local_access_available_in | trips.nev_prm_access_available_in | trips.nev_mix_access_available_in
-,nev_egress_available_in,trips.nev_local_egress_available_in | trips.nev_prm_egress_available_in | trips.nev_mix_egress_available_in
-#Flexible fleet boardings,,
-,_walk_to_transit_trip,"(trips.trip_mode == 'WALK_LOC') | (trips.trip_mode == 'WALK_PRM') | (trips.trip_mode == 'WALK_MIX')"
-,_pnr_to_transit_trip,"(trips.trip_mode == 'PNR_LOC') | (trips.trip_mode == 'PNR_PRM') | (trips.trip_mode == 'PNR_MIX')"
-,_knr_to_transit_trip,"(trips.trip_mode == 'KNR_LOC') | (trips.trip_mode == 'KNR_PRM') | (trips.trip_mode == 'KNR_MIX')"
-,_tnc_to_transit_trip,"(trips.trip_mode == 'TNC_LOC') | (trips.trip_mode == 'TNC_PRM') | (trips.trip_mode == 'TNC_MIX')"
-,_transit_trip,"_walk_to_transit_trip | _pnr_to_transit_trip | _knr_to_transit_trip | _tnc_to_transit_trip"
-,microtransit_boarding,"trips.microtransit_available & (trips.trip_mode == 'TNC_SHARED')"
-,microtransit_outbound_access_boarding,"outbound & microtransit_access_available_out & _tnc_to_transit_trip"
-,microtransit_outbound_egress_boarding,"outbound & microtransit_egress_available_out & _transit_trip"
-,microtransit_inbound_access_boarding,"inbound & microtransit_access_available_in & _transit_trip"
-,microtransit_inbound_egress_boarding,"inbound & microtransit_egress_available_in & _tnc_to_transit_trip"
-,nev_boarding,"trips.nev_available & (trips.trip_mode == 'TNC_SHARED')"
-,nev_outbound_access_boarding,"outbound & nev_access_available_out & _tnc_to_transit_trip"
-,nev_outbound_egress_boarding,"outbound & nev_egress_available_out & _transit_trip"
-,nev_inbound_access_boarding,"inbound & nev_access_available_in & _transit_trip"
-,nev_inbound_egress_boarding,"inbound & nev_egress_available_in & _tnc_to_transit_trip"
+#AV allocation model needs column to be entirely in string format,,
+,escort_participants,"np.where((trips.escort_participants.isna()) | (trips.escort_participants == ''),trips.escort_participants,'_'+trips.escort_participants)"
