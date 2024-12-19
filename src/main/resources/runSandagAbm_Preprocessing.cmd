@@ -55,8 +55,6 @@ MD airport.SAN
 MD crossborder
 MD visitor
 MD resident
-MD parking
-MD parking/plots
 MD assignment
 CD ..
 
