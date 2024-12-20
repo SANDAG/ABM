@@ -25,24 +25,26 @@ The table below contains brief descriptions of the input files required to execu
 | --- | --- | --- | --- |
 | **Land Use** |  |  |  | 
 | [mgra_based_input{SCENARIO_YEAR}.csv](#lu) | Land use forecast of the size and structure of the region’s economy and corresponding demographic forecast | CSV | Land Use Modelers, Transportation Modelers, and GIS | 
-| [mobilityHubMGRA.csv](#mobility_mgra) |  | CSV | Transportation Modelers | 
 | **Synthetic Population** |  |  |  | 
 | [households.csv](#population_synth_households) | Synthetic households | CSV | Transportation Modelers | 
 | [persons.csv](#population_synth_persons) | Synthetic persons | CSV | Transportation Modelers | 
-| **Network: Highway** |  |  |  | 
+| **Network** |  |  |  | 
+| EmmeOutputs.gdb | Network Input Files | GDB | Transportation Modelers |
+| transit_connectors | Input Files | | |
 | [vehicle_class_toll_factors.csv](#vehicle_class_toll) | Relative toll values by six vehicle classes by Facility name. Used to identify "free for HOV" type managed lane facilities. | CSV | Transportation Modelers | 
-| **Network: Transit** |  |  |  | 
 | [trlink.csv](#tr_link) | Transit route with a list of links file | CSV | Transportation Modelers | 
 | trrt.csv | Transit route attribute file | CSV | Transportation Modelers | 
 | [trstop.csv](#transit_binary_stop) | Transit stop attribute file | TCSV | Transportation Modelers | 
 | mode5tod.csv | Transit mode parameters table | CSV | Transportation Modelers |
 | [timexfer_XX.csv](#transit_transfer_proh) | Transit timed transfers table between COASTER and feeder buses; XX is the TOD (EA, AM, MD, PM, and EV) | CSV | Transportation Modelers | 
 | special_fares.txt | Fares to coaster | Text File | Transportation Modelers | 
-| **Network: Active Transportation** |  |  |  | 
+| [mobilityHubMGRA.csv](#mobility_mgra) |  | CSV | Transportation Modelers | 
 | [SANDAG_Bike_Net.dbf](#bike_net_link) | Bike network links | DBF | GIS | 
 | [SANDAG_Bike_Node.dbf](#bike_net_node) | Bike network nodes | DBF | GIS | 
 | [bikeTazLogsum.csv](#bike_taz_logsum) <i>(not saved in inputs, instead, run at the beginning of a model run)<i> | Bike TAZ logsum | CSV | Transportation Modelers | 
 | [bikeMgraLogsum.csv](#bike_mgra_logsum) <i>(not saved in inputs, instead, run at the beginning of a model run)<i> | Bike MGRA logsum | CSV | Transportation Modelers | 
+| mgra15.sbn | | SBN | |
+| taz15.shp | | SHP | |
 | **Cross-Border Model (Derived from cross-border survey)** |  |  |  | 
 | crossBorder_tourPurpose_control.csv |  | CSV |  | 
 | crossBorder_tourPurpose_nonSENTRI.csv | Cross Border Model tour purpose distribution for Non-SENTRI tours | CSV | Transportation Modelers | 
@@ -54,25 +56,30 @@ The table below contains brief descriptions of the input files required to execu
 | [crossBorder_stopPurpose.csv](#cross_border_stop_purpose) | Cross Border Model stop purpose distribution | CSV | Transportation Modelers | 
 | [crossBorder_outboundStopDuration.csv](#cross_border_out_stop) | Cross Border Model time-of-day offsets for outbound stops | CSV | Transportation Modelers | 
 | [crossBorder_inboundStopDuration.csv](#cross_border_in_stop) | Cross Border Model time-of-day offsets for inbound stops | CSV | Transportation Modelers | 
+| [closest_maz_to_external_tazs.csv](#closest_maz_to_external_tazs) | | CSV | Transportation Modelers |
+| [mazs_xborder.csv](#mazs_xborder) | | CSV | Transportation Modelers | 
 | **External Models (Derived from SCAG survey)** |  |  |  | 
 | [externalExternalTripsByYear.csv](#external_trip) <i> (raw inputs have these by year) <i> | External origin-destination station trip matrix | CSV | Transportation Modelers | |  |  |  | 
 | [externalInternalControlTotalsByYear.csv](#external_internal) <i> (raw inputs have these by year) <i> | External Internal station control totals read by GISDK | CSV | Transportation Modelers | |  |  |  | 
 | [internalExternal_tourTOD.csv](#internal_external_tod) | Internal-External Model tour time-of-day frequency distribution | CSV | Transportation Modelers | 
+| [resident_ie_size_term.csv](#resident_ie_size_term) | | CSV | Transportation Modelers
 | **Commercial Vehicle Model** |  |  |  | 
-| land_use | MGRA based land use file | CSV | |
+| land_use(output from preprocessing step) | MGRA based land use file | CSV | |
 | percent_of_establishments_by_luz_size_emp_cat.xlsx | Percent of establishments in LUZ that belong in each size category by industry sector | Excel Workbook | |
-| SynthEstablishments.csv | Output from CVM establishment synthesis, similar description as previous part | CSV | |
-| MGRAEmpByEstSize.csv | MGRA Based synthetically generated establishments. Used for disgnostic purposes, not for simulation | CSV | |
-| SummaryEstablishments.csv | Contains information about synthetically generated establishments to be used as inputs to the commercial vehicle model | CSV | |
+| CVM\SynthEstablishments.csv | Output from CVM establishment synthesis, similar description as previous part | CSV | |
+| CVM\MGRAEmpByEstSize.csv | MGRA Based synthetically generated establishments. Used for disgnostic purposes, not for simulation | CSV | |
+| CVM\SummaryEstablishments.csv | Contains information about synthetically generated establishments to be used as inputs to the commercial vehicle model | CSV | |
 | **Heavy Truck Model ( HTM )** |
-| inputs_sandag_htm_<Scenario_Year>.xlsx | Contains all the required inputs ( in different sheets) for the Heavy Truck Model | Excel Workbook | |
-| FAF5_BaseAndFutureYears_Oct27_2023.csv | FAF5 Data (filtered) containing FAF flows for required years | CSV | |
+| HTM\inputs_sandag_htm_<Scenario_Year>.xlsx | Contains all the required inputs ( in different sheets) for the Heavy Truck Model | Excel Workbook | |
+| HTM\FAF5_BaseAndFutureYears_Oct27_2023.csv | FAF5 Data (filtered) containing FAF flows for required years | CSV | |
 | **Other** |  |  |  | 
 | [parametersByYears.csv](#parametersbyyearscsv) | Parameters by scenario years. Includes AOC, aiport enplanements, cross-border tours, cross-border sentri share. | CSV | Transportation Modelers | 
 | [filesByYears.csv](#filesbyyearscsv) | File names by scenario years. | CSV | Transportation Modelers | 
 | trip_XX.omx | Warm start trip table; XX is the TOD (EA, AM, MD, PM, and EV) | OMX | Transportation Modelers |
 | zone.txt | TAZ terminal times | Space Delimited Text File | Transportation Modelers | 
-
+| all_vol_dfs.csv [to be updated] | | | |
+| all_wait_times.csv [to be updated] | | | |
+| specialEvents_() [to be updated] | | | |
 <a id="land_use"></a>
 
 ## Land Use
@@ -163,35 +170,6 @@ The table below contains brief descriptions of the input files required to execu
 | empdenbin | Employment density bin | 
 | dudenbin | Dwelling unit density bin | 
 | PopEmpDenPerMi | Population and employment density per mile |
-
-### MGRAs at Mobility Hubs
-#### `MOBILITYHUBMGRA.CSV`
-
-<table>
-    <tr>
-        <th>Column Name</th>
-        <td>Decription</td>
-    </tr>
-    <tr>
-        <td>MGRA</td>
-        <td>MGRA ID</td>
-    </tr>
-    <tr>
-        <td>MoHubName</td>
-        <td>Mobility Hub name</td>
-    </tr>
-    <tr>
-        <td>MoHubType</td>
-        <td>
-            Mobility Hub type:<br>
-            Suburban<br>
-            Coastal<br>
-            Gateway<br>
-            Major Employment Center<br>
-            Urban
-        </td>
-    </tr>
-</table>
 
 
 ## Synthetic Population
@@ -339,6 +317,35 @@ in_vehicle_cost:
 day_pass: 4.54
 regional_pass: 10.90
 ```
+### MGRAs at Mobility Hubs
+#### `MOBILITYHUBMGRA.CSV`
+
+<table>
+    <tr>
+        <th>Column Name</th>
+        <td>Decription</td>
+    </tr>
+    <tr>
+        <td>MGRA</td>
+        <td>MGRA ID</td>
+    </tr>
+    <tr>
+        <td>MoHubName</td>
+        <td>Mobility Hub name</td>
+    </tr>
+    <tr>
+        <td>MoHubType</td>
+        <td>
+            Mobility Hub type:<br>
+            Suburban<br>
+            Coastal<br>
+            Gateway<br>
+            Major Employment Center<br>
+            Urban
+        </td>
+    </tr>
+</table>
+
 
 <a id="transit_binary_stop"></a>
 
