@@ -26,7 +26,7 @@ copy ".\\common\\python\\emme\\solutions.mtbx" "%SCENARIO_FOLDER%\emme_project\S
 
 rem create a batch script at startup
 (
-echo set python_virtualenv=C:\python_virtualenv\abm15_1_0
+echo set python_virtualenv=C:\python_virtualenv\abm15_4_0
 echo start "TITLE" "%E_PATH%\\programs\\EmmeDesktop.exe" ./emme_project.emp
 )>%SCENARIO_FOLDER%\emme_project\start_emme_with_virtualenv.bat
 
