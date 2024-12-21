@@ -1312,11 +1312,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#version-1521-december-3-2024" class="md-nav__link">
-    Version 15.2.1 (December 3, 2024)
+  <a href="#version-1521-december-20-2024" class="md-nav__link">
+    Version 15.2.1 (December 20, 2024)
   </a>
   
-    <nav class="md-nav" aria-label="Version 15.2.1 (December 3, 2024)">
+    <nav class="md-nav" aria-label="Version 15.2.1 (December 20, 2024)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1564,11 +1564,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#version-1521-december-3-2024" class="md-nav__link">
-    Version 15.2.1 (December 3, 2024)
+  <a href="#version-1521-december-20-2024" class="md-nav__link">
+    Version 15.2.1 (December 20, 2024)
   </a>
   
-    <nav class="md-nav" aria-label="Version 15.2.1 (December 3, 2024)">
+    <nav class="md-nav" aria-label="Version 15.2.1 (December 20, 2024)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1772,23 +1772,25 @@
 
 
 <h1 id="release-notes">Release Notes<a class="headerlink" href="#release-notes" title="Permanent link"> ¶</a></h1>
-<h2 id="version-1521-december-3-2024">Version 15.2.1 (December 3, 2024)<a class="headerlink" href="#version-1521-december-3-2024" title="Permanent link"> ¶</a></h2>
-<p>Multiple bugs were fixed and some recalibration was done since the release of version 15.2.0. Version 15.2.1 will be used for the draft 2025 RP modeling.</p>
+<h2 id="version-1521-december-20-2024">Version 15.2.1 (December 20, 2024)<a class="headerlink" href="#version-1521-december-20-2024" title="Permanent link"> ¶</a></h2>
+<p>Multiple bugs were fixed and some recalibration was done since the release of version 15.2.0. Version 15.2.1 was used for the draft 2025 RP modeling.</p>
 <h3 id="features">Features<a class="headerlink" href="#features" title="Permanent link"> ¶</a></h3>
 <ul>
 <li><a href="https://github.com/SANDAG/ABM/pull/249">PR 249</a>: Addition of calibration scripts</li>
 <li><a href="https://github.com/SANDAG/ABM/pull/251">PR 251</a>, <a href="https://github.com/SANDAG/ABM/pull/258">PR 258</a>, <a href="https://github.com/SANDAG/ABM/pull/259">PR 259</a>, &amp; <a href="https://github.com/SANDAG/ABM/pull/262">PR 262</a>: Calibration updates (atwork stop location, work from home, bike shares, work location) including additional mode choice coefficients for ebike owners</li>
 <li><a href="https://github.com/SANDAG/ABM/pull/256">PR 256</a>: Increase travel time reporter threshold from 30 to 45 minutes</li>
 <li><a href="https://github.com/SANDAG/ABM/pull/257">PR 257</a>: Adds option to skip travel time reporter (was previously included in data exporter)</li>
-<li><a href="https://github.com/SANDAG/ABM/pull/266">PR 266</a>: 2032 and 2040 added as options when scelcting a scenario year in the scenario creation GUI</li>
-<li><a href="https://github.com/SANDAG/ABM/pull/266">PR 267</a>: Added fields to final trips table from resident, visitor, and crossborder models to indicate if a flexible fleet service was used</li>
-<li><a href="https://github.com/SANDAG/ABM/pull/252">PR 252</a>, <a href="https://github.com/SANDAG/ABM/pull/254">PR 254</a>, <a href="https://github.com/SANDAG/ABM/pull/260">PR 260</a>, &amp; <a href="https://github.com/SANDAG/ABM/pull/265">PR 265</a>: Documentation updates</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/266">PR 266</a>: 2032 and 2040 added as options when selecting a scenario year in the scenario creation GUI</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/268">PR 268</a>: Assume owned ebike in travel time reporter</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/271">PR 271</a>: Recalibrate bike mode share in response to AT network updates </li>
+<li><a href="https://github.com/SANDAG/ABM/pull/252">PR 252</a>, <a href="https://github.com/SANDAG/ABM/pull/254">PR 254</a>, <a href="https://github.com/SANDAG/ABM/pull/260">PR 260</a>, <a href="https://github.com/SANDAG/ABM/pull/265">PR 265</a>, <a href="https://github.com/SANDAG/ABM/pull/280">PR 280</a>, &amp; <a href="https://github.com/SANDAG/ABM/pull/284">PR 284</a>: Documentation updates</li>
 </ul>
 <h3 id="bug-fixes">Bug Fixes<a class="headerlink" href="#bug-fixes" title="Permanent link"> ¶</a></h3>
 <ul>
 <li><a href="https://github.com/SANDAG/ABM/pull/253">PR 253</a>: Removal of bike logsum copy from Emme GUI</li>
 <li><a href="https://github.com/SANDAG/ABM/pull/255">PR 255</a>: Removal of input checker step</li>
 <li><a href="https://github.com/SANDAG/ABM/pull/263">PR 263</a>: Update bike lane AT network field</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/274">PR 274</a>, <a href="https://github.com/SANDAG/ABM/pull/276">PR 276</a>, &amp; <a href="https://github.com/SANDAG/ABM/pull/278">PR 278</a>: MAAS model fixes including crash on failure and force escort participants column to be read in as string</li>
 </ul>
 <h2 id="version-1520-november-14-2024">Version 15.2.0 (November 14, 2024)<a class="headerlink" href="#version-1520-november-14-2024" title="Permanent link"> ¶</a></h2>
 <p>Since release 15.1.0, several bug fixes and new features were added. Results of ABM3 using Version 15.2 are anticipated to be presented to the SANDAG Board of Directors in Spring 2025.</p>
