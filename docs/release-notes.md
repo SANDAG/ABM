@@ -1,21 +1,23 @@
 # Release Notes
 
-## Version 15.2.1 (December 3, 2024)
-Multiple bugs were fixed and some recalibration was done since the release of version 15.2.0. Version 15.2.1 will be used for the draft 2025 RP modeling.
+## Version 15.2.1 (December 20, 2024)
+Multiple bugs were fixed and some recalibration was done since the release of version 15.2.0. Version 15.2.1 was used for the draft 2025 RP modeling.
 
 ### Features
 - [PR 249](https://github.com/SANDAG/ABM/pull/249): Addition of calibration scripts
 - [PR 251](https://github.com/SANDAG/ABM/pull/251), [PR 258](https://github.com/SANDAG/ABM/pull/258), [PR 259](https://github.com/SANDAG/ABM/pull/259), & [PR 262](https://github.com/SANDAG/ABM/pull/262): Calibration updates (atwork stop location, work from home, bike shares, work location) including additional mode choice coefficients for ebike owners
 - [PR 256](https://github.com/SANDAG/ABM/pull/256): Increase travel time reporter threshold from 30 to 45 minutes
 - [PR 257](https://github.com/SANDAG/ABM/pull/257): Adds option to skip travel time reporter (was previously included in data exporter)
-- [PR 266](https://github.com/SANDAG/ABM/pull/266): 2032 and 2040 added as options when scelcting a scenario year in the scenario creation GUI
-- [PR 267](https://github.com/SANDAG/ABM/pull/266): Added fields to final trips table from resident, visitor, and crossborder models to indicate if a flexible fleet service was used
-- [PR 252](https://github.com/SANDAG/ABM/pull/252), [PR 254](https://github.com/SANDAG/ABM/pull/254), [PR 260](https://github.com/SANDAG/ABM/pull/260), & [PR 265](https://github.com/SANDAG/ABM/pull/265): Documentation updates
+- [PR 266](https://github.com/SANDAG/ABM/pull/266): 2032 and 2040 added as options when selecting a scenario year in the scenario creation GUI
+- [PR 268](https://github.com/SANDAG/ABM/pull/268): Assume owned ebike in travel time reporter
+- [PR 271](https://github.com/SANDAG/ABM/pull/271): Recalibrate bike mode share in response to AT network updates 
+- [PR 252](https://github.com/SANDAG/ABM/pull/252), [PR 254](https://github.com/SANDAG/ABM/pull/254), [PR 260](https://github.com/SANDAG/ABM/pull/260), [PR 265](https://github.com/SANDAG/ABM/pull/265), [PR 280](https://github.com/SANDAG/ABM/pull/280), & [PR 284](https://github.com/SANDAG/ABM/pull/284): Documentation updates
 
 ### Bug Fixes
 - [PR 253](https://github.com/SANDAG/ABM/pull/253): Removal of bike logsum copy from Emme GUI
 - [PR 255](https://github.com/SANDAG/ABM/pull/255): Removal of input checker step
 - [PR 263](https://github.com/SANDAG/ABM/pull/263): Update bike lane AT network field
+- [PR 274](https://github.com/SANDAG/ABM/pull/274), [PR 276](https://github.com/SANDAG/ABM/pull/276), & [PR 278](https://github.com/SANDAG/ABM/pull/278): MAAS model fixes including crash on failure and force escort participants column to be read in as string
 
 ## Version 15.2.0 (November 14, 2024)
 Since release 15.1.0, several bug fixes and new features were added. Results of ABM3 using Version 15.2 are anticipated to be presented to the SANDAG Board of Directors in Spring 2025.
