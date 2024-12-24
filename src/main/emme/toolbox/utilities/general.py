@@ -462,19 +462,20 @@ class OMXManager(object):
         self._name_tmplt = name_tmplt
         self._omx_files = {}
 
-    def lookup(self, name_args, key):
+    def lookup(self, directory, name_args, key):
         file_name = self._name_tmplt % name_args
         omx_file = self._omx_files.get(file_name)
+        
         # with _m.logbook_trace("file_name: %s" % (file_name)):
         if omx_file is None:
-            file_path = os.path.join(self._directory, file_name)
+            file_path = os.path.join(directory, file_name)
             omx_file = _omx.open_file(file_path, 'r')
             self._omx_files[file_name] = omx_file
         return omx_file[key].read()
 
-    def file_exists(self, name_args):
+    def file_exists(self,directory, name_args):
         file_name = self._name_tmplt % name_args
-        file_path = os.path.join(self._directory, file_name)
+        file_path = os.path.join(directory, file_name)
         return os.path.isfile(file_path)
 
     def zone_list(self, file_name):
