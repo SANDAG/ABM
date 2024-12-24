@@ -21,9 +21,6 @@ ECHO Activate ActivitySim for CVM...
 CD /d %ANACONDA3_DIR%\Scripts
 CALL %CONDA3_ACT% asim_sandag_cvm
 
-:: FIX PATH AND ENV HERE LATER
-::SET PYTHON2=%ANACONDA2_DIR%\python.exe
-
 set MKL_NUM_THREADS=1
 set MKL=1
 
