@@ -317,15 +317,14 @@ class SkimGenerator:
     def _get_closest_net_node(self, nodes: gpd.GeoDataFrame, links: gpd.GeoDataFrame, config: dict) -> pd.DataFrame:
         """Get centroids DataFrame"""
         return self.network_builder.get_closest_net_node_to_MGRA(nodes, links, config)
-    
 
     def generate_maz_maz_walk_skim(self) -> pd.DataFrame:
         """Generate MAZ to MAZ walk skims"""
         maz_pairs = self._create_maz_pairs(self.net_centroids)
         walk_skim = self._get_walk_distances(maz_pairs, self.params.max_maz_maz_walk_dist_feet)
-        
         # Add intrazonal distances
         walk_skim = self._add_intrazonal_distances(walk_skim)
+        walk_skim = self._convert_columns_to_type(walk_skim, {'OMAZ': 'uint16', 'DMAZ': 'uint16', 'i': 'uint16', 'j': 'uint16'})
         return walk_skim
         
     def generate_maz_maz_bike_skim(self) -> pd.DataFrame:
@@ -338,9 +337,9 @@ class SkimGenerator:
         """Generate MAZ to stop walk skims"""
         maz_stop_pairs, maz_stop_output = self._create_maz_stop_pairs(self.net_centroids, self.stops)
         stop_skim = self._get_stop_distances(maz_stop_pairs)
-        maz_stop_output = self._process_stop_skims_by_mode(stop_skim, maz_stop_output)
+        stop_skim = self._process_stop_skims_by_mode(stop_skim, maz_stop_output)
                     
-        return maz_stop_output.sort_values('maz')
+        return stop_skim.sort_values('maz')
     
     def _create_maz_pairs(self, centroids: pd.DataFrame) -> pd.DataFrame:
         """Create all possible MAZ to MAZ pairs with their network nodes"""
@@ -413,10 +412,14 @@ class SkimGenerator:
         filtered["DISTWALK"] = self.network_builder.network.shortest_path_lengths(
             filtered["OMAZ_NODE"], filtered["DMAZ_NODE"])
         result = filtered[filtered["DISTWALK"] <= max_dist / 5280.0]
+
+        # Add missing MAZs
+        result = self._add_missing_mazs(self.net_centroids, result, pairs, 'DISTWALK')
         
         # Add required fields for TNC routing
         result[['i', 'j']] = result[['OMAZ', 'DMAZ']]
         result['actual'] = result['DISTWALK'] / self.params.walk_speed_mph * 60.0
+
         return result
     
     def _get_bike_distances(self, pairs: pd.DataFrame, max_dist: float) -> pd.DataFrame:
@@ -425,6 +428,9 @@ class SkimGenerator:
         filtered["DISTBIKE"] = self.network_builder.network.shortest_path_lengths(
             filtered["OMAZ_NODE"], filtered["DMAZ_NODE"])
         result = filtered[filtered["DISTBIKE"] <= max_dist / 5280.0]
+
+        # Add missing MAZs
+        result = self._add_missing_mazs(self.net_centroids, result, pairs, 'DISTBIKE')
         
         return result
     
@@ -485,11 +491,11 @@ class SkimGenerator:
         return maz_stop_output
 
     def _add_intrazonal_distances(self, skim: pd.DataFrame) -> pd.DataFrame:
-        """Add intrazonal distances based on nearest neighbors"""
+        """Add intrazonal distances based on 3 nearest neighbors"""
         skim = skim.sort_values(['OMAZ', 'DISTWALK'])
         skim.set_index(['OMAZ', 'DMAZ'], inplace=True)
         unique_omaz = skim.index.get_level_values(0).unique()
-        
+        # find the average of the closest 3 zones
         means = skim.loc[(unique_omaz, slice(None)), 'DISTWALK'].groupby(level=0).head(3).groupby(level=0).mean()
         intra_skims = pd.DataFrame({
             'OMAZ': unique_omaz,
@@ -500,22 +506,41 @@ class SkimGenerator:
             'actual': (means.values/self.params.walk_speed_mph * 60.0) / 2
         }).set_index(['OMAZ', 'DMAZ'])
         
-        return pd.concat([skim, intra_skims], axis=0)
+        return pd.concat([skim, intra_skims], axis=0).reset_index()
 
     def _add_missing_mazs(self, centroids: pd.DataFrame, skim_table: pd.DataFrame, 
                          cost_table: pd.DataFrame, dist_col: str = 'DISTWALK') -> pd.DataFrame:
-        """Add missing MAZs to skim table since some MAZs will not be within distance of a stop or each other"""
+        """Add missing MAZs to skim table since some MAZs will not be within distance of a stop or each other.
+        This will make sure we will have skims for all MAZs in the region."""
         missing_maz = centroids[~centroids['MAZ'].isin(skim_table['OMAZ'])][['MAZ']]
         missing_maz = missing_maz.rename(columns={'MAZ': 'OMAZ'})
         
         filtered_cost = cost_table[cost_table['OMAZ'] != cost_table['DMAZ']]
+        if dist_col != 'DISTWALK':
+            filtered_cost = filtered_cost.rename(columns={'DISTWALK': dist_col})
         sorted_cost = filtered_cost.sort_values(dist_col)
         grouped_cost = sorted_cost.groupby('OMAZ').agg({
             'DMAZ': 'first',
             dist_col: 'first'
         }).reset_index()
-        
-        return missing_maz.merge(grouped_cost, on='OMAZ', how='left')
+
+        missing_maz = missing_maz.merge(grouped_cost, on='OMAZ', how='left')   
+        skim_table = skim_table[["OMAZ","DMAZ", dist_col]].append(missing_maz).sort_values(['OMAZ', 'DMAZ'])
+
+        return skim_table
+    
+    def _convert_columns_to_type(self, df: pd.DataFrame, columns: Dict[str, str]) -> pd.DataFrame:
+        """
+        Convert specified columns in a DataFrame to a given data type.
+
+        Args:
+            df (pd.DataFrame): The DataFrame to convert.
+            columns (Dict[str, str]): A dictionary where keys are column names and values are the target data types.
+
+        Returns:
+            pd.DataFrame: The DataFrame with converted columns.
+        """
+        return df.astype(columns)
 
 def main(path: str):
     """Main execution function"""
@@ -534,13 +559,13 @@ def main(path: str):
     skim_generator = SkimGenerator(network_builder, params, output_path)
     
     # Generate and save skims
-    # print(f"{datetime.now().strftime('%H:%M:%S')} Generating MAZ-MAZ walk skims...")
-    # walk_skim = skim_generator.generate_maz_maz_walk_skim()
-    # walk_skim.to_csv(os.path.join(output_path, config['mmms']['maz_maz_walk_output']))
+    print(f"{datetime.now().strftime('%H:%M:%S')} Generating MAZ-MAZ walk skims...")
+    walk_skim = skim_generator.generate_maz_maz_walk_skim()
+    walk_skim.to_csv(os.path.join(output_path, config['mmms']['maz_maz_walk_output']), index=False)
     
-    # print(f"{datetime.now().strftime('%H:%M:%S')} Generating MAZ-MAZ bike skims...")
-    # bike_skim = skim_generator.generate_maz_maz_bike_skim()
-    # bike_skim.to_csv(os.path.join(output_path, config['mmms']['maz_maz_bike_output']), index=False)
+    print(f"{datetime.now().strftime('%H:%M:%S')} Generating MAZ-MAZ bike skims...")
+    bike_skim = skim_generator.generate_maz_maz_bike_skim()
+    bike_skim.to_csv(os.path.join(output_path, config['mmms']['maz_maz_bike_output']), index=False)
     
     print(f"{datetime.now().strftime('%H:%M:%S')} Generating MAZ-stop walk skims...")
     stop_skim = skim_generator.generate_maz_stop_walk_skim()
