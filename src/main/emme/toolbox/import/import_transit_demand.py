@@ -185,12 +185,12 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     # internal_external_tnc_Demand = omx_manager.lookup(("InternalExternal", period), omx_key.replace("KNR","TNC") % "SET")
                     # internal_external_demand = internal_external_knr_demand + internal_external_tnc_Demand
                 # else:
-                person_demand = omx_manager.lookup(("", period), omx_key % "SET")
-                visitor_demand = omx_manager.lookup(("Visitor", period), omx_key % "SET")
-                cross_border_demand = omx_manager.lookup(("CrossBorder", period), omx_key % "SET" )
-                airport_demand = omx_manager.lookup(("Airport", ".SAN" + period), omx_key % "SET")
-                if omx_manager.file_exists(("Airport", ".CBX" + period)):
-                    airport_demand += omx_manager.lookup(("Airport", ".CBX" + period), omx_key % "SET")
+                person_demand = omx_manager.lookup(self.output_dir + '/resident',("", period), omx_key % "SET")
+                visitor_demand = omx_manager.lookup(self.output_dir + '/visitor',("Visitor", period), omx_key % "SET")
+                cross_border_demand = omx_manager.lookup(self.output_dir + '/crossborder',("CrossBorder", period), omx_key % "SET" )
+                airport_demand = omx_manager.lookup(self.output_dir + '/airport.SAN',("Airport", ".SAN" + period), omx_key % "SET")
+                if omx_manager.file_exists(self.output_dir + '/airport.CBX',("Airport", ".CBX" + period)):
+                    airport_demand += omx_manager.lookup(self.output_dir + '/airport.CBX',("Airport", ".CBX" + period), omx_key % "SET")
 
                 # internal_external_demand = omx_manager.lookup(("InternalExternal", period), omx_key)                    
                     

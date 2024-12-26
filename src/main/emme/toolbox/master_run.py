@@ -726,7 +726,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         "Adding DIST skim", capture_output=True)
 
         if not skipFinalTransitAssignment:
-            import_transit_demand(output_dir + '/assignment', transit_scenario_dict)
+            import_transit_demand(output_dir, transit_scenario_dict)
             with _m.logbook_trace("Final transit assignments"):
                 # Final iteration includes the transit skims per ABM-1072
                 for number, period in period_ids:
