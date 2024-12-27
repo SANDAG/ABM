@@ -305,7 +305,7 @@ class NetworkBuilder:
         return stops
 
 class SkimGenerator:
-    """Main class for generating various types of skims"""
+    """Main class for generating walk, bike, and stop skims"""
     
     def __init__(self, network_builder: NetworkBuilder, params: SkimParameters, output_path: str):
         self.network_builder = network_builder
@@ -331,6 +331,7 @@ class SkimGenerator:
         """Generate MAZ to MAZ bike skims"""
         maz_pairs = self._create_maz_pairs(self.net_centroids)
         bike_skim = self._get_bike_distances(maz_pairs, self.params.max_maz_maz_bike_dist_feet)
+        bike_skim = self._convert_columns_to_type(bike_skim, {'OMAZ': 'uint16', 'DMAZ': 'uint16'})
         return bike_skim
         
     def generate_maz_stop_walk_skim(self) -> pd.DataFrame:
@@ -407,7 +408,8 @@ class SkimGenerator:
         return pairs, maz_stop_output
 
     def _get_walk_distances(self, pairs: pd.DataFrame, max_dist: float) -> pd.DataFrame:
-        """Process walking distances between MAZ pairs"""
+        """Process walking distances between MAZ pairs
+        This finction also adds i, j ,and actual columns that are required by Java code for TNC routing"""
         filtered = pairs[pairs["DISTWALK"] <= max_dist / 5280.0].copy()
         filtered["DISTWALK"] = self.network_builder.network.shortest_path_lengths(
             filtered["OMAZ_NODE"], filtered["DMAZ_NODE"])
@@ -435,7 +437,7 @@ class SkimGenerator:
         return result
     
     def _get_stop_distances(self, pairs: pd.DataFrame) -> pd.DataFrame:
-        """Process bike distances between MAZ pairs"""
+        """Process stop distances between MAZ pairs"""
         filtered = pairs[(pairs["DISTANCE"] <= self.params.max_maz_local_bus_stop_walk_dist_feet / 5280.0) & (pairs['MODE'] == 'L') | 
                                             (pairs["DISTANCE"] <= self.params.max_maz_premium_transit_stop_walk_dist_feet / 5280.0) & (pairs['MODE'] == 'E')]
         filtered["DISTWALK"] = self.network_builder.network.shortest_path_lengths(
