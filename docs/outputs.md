@@ -1238,113 +1238,6 @@ There are two subdirectories containing outputs for each of the two airport mode
   </tr>
 </table>
 
-
-### Assignment model trip tables (.\assignment)
-
-This directory contains trip tables from auto and transit assignments.
-
-#### Demand Matrices
-
-<table>
-  <tr>
-   <td><strong>File </strong>
-   </td>
-   <td><strong>Description</strong>
-   </td>
-  </tr>
-  <tr>
-   <td>autoairportTrips.(airport)_(period_(vot).omx
-   </td>
-   <td>Auto trip table for airport (CBX, SAN) by period (EA, AM, MD, PM, EV) and value of time (low, medium, high)
-   </td>
-  </tr>
-  <tr>
-   <td>autocrossborderTrips_(period)_(vot).omx
-   </td>
-   <td>Auto trip table for cross border model by period (EA, AM, MD, PM, EV) and value of time (low, medium, high)
-   </td>
-  </tr>
-  <tr>
-   <td>autoTrips_(period)_(vot).omx
-   </td>
-   <td>Auto trip table for resident model by period (EA, AM, MD, PM, EV) and value of time (low, medium, high)
-   </td>
-  </tr>
-  <tr>
-   <td>autovisitorTrips_(period)_(vot).omx
-   </td>
-   <td>Auto trip table for visitor model by period (EA, AM, MD, PM, EV) and value of time (low, medium, high)
-   </td>
-  </tr>
-  <tr>
-   <td>cvmtrips_(period).omx
-   </td>
-   <td>CVM trip table for model by period (EA, AM, MD, PM, EV) and value of time (low, medium, high)
-   </td>
-  </tr>
-  <tr>
-   <td>emptyAVTrips.omx
-   </td>
-   <td>Empty private autonomous vehicle trips 
-   </td>
-  </tr>
-  <tr>
-   <td>householdAVTrips.csv
-   </td>
-   <td>All private autonomous vehicle trips
-   </td>
-  </tr>
-  <tr>
-   <td>htmtrips_(period).omx
-   </td>
-   <td>HTM trip table for model by period (EA, AM, MD, PM, EV) and value of time (low, medium, high)
-   </td>
-  </tr>
-  <tr>
-   <td>TNCTrips.csv
-   </td>
-   <td>All TNC trips
-   </td>
-  </tr>
-  <tr>
-   <td>TNCVehicleTrips_(period).omx
-   </td>
-   <td>TNC vehicle trip table by period (EA, AM, MD, PM, EV)
-   </td>
-  </tr>
-  <tr>
-   <td>TranairportTrips.(airport)_(period).omx
-   </td>
-   <td>Transit trip tables for airport (CBX, SAN) by period (EA, AM, MD, PM, EV)
-   </td>
-  </tr>
-  <tr>
-   <td>TrancrossborderTrips_(period).omx
-   </td>
-   <td>Transit trip tables for cross-border model by period (EA, AM, MD, PM, EV)
-   </td>
-  </tr>
-  <tr>
-   <td>TranTrips_(period).omx
-   </td>
-   <td>Transit trip tables for resident model by period (EA, AM, MD, PM, EV)
-   </td>
-  </tr>
-  <tr>
-   <td>TranvisitorTrips_(period).omx
-   </td>
-   <td>Transit trip tables for visitor model by period (EA, AM, MD, PM, EV)
-   </td>
-  </tr>
-  <tr>
-   <td>TripMatrices.csv
-   </td>
-   <td>Disaggregate commercial vehicle trips
-   </td>
-  </tr>
-</table>
-
-
 #### Airport Model auto demand matrices
 
 <table>
@@ -1494,303 +1387,107 @@ This directory contains trip tables from auto and transit assignments.
   </tr>
 </table>
 
+### Assignment model trip tables (.\assignment)
 
-#### Crossborder Model auto demand matrices
+This directory contains trip tables from auto and transit assignments.
 
-<table>
-  <tr>
-   <td>Table Name
-   </td>
-   <td>Description
-   </td>
-  </tr>
-  <tr>
-   <td>SR2_&lt;<time period>>
-   </td>
-   <td>Shared Ride 2 for &lt;<time period>>
-   </td>
-  </tr>
-  <tr>
-   <td>SR3_&lt;<time period>>
-   </td>
-   <td>Shared Ride 3 for &lt;<time period>>
-   </td>
-  </tr>
-  <tr>
-   <td>SOV_&lt;<time period>>
-   </td>
-   <td>Drive Alone for &lt;<time period>>
-   </td>
-  </tr>
-  <tr>
-   <td colspan="2" >where TIME PERIOD = EA, AM, MD, PM, EV
-   </td>
-  </tr>
-</table>
-
-
-#### Crossborder Model transit demand matrices
+#### Demand Matrices
 
 <table>
   <tr>
-   <td>Table Name
+   <td><strong>File </strong>
    </td>
-   <td>Description
-   </td>
-  </tr>
-  <tr>
-   <td>WLK_SET_set1_&lt;<time period>>
-   </td>
-   <td>
+   <td><strong>Description</strong>
    </td>
   </tr>
   <tr>
-   <td>PNR_SET_set1_&lt;<time period>>
+   <td>autoairportTrips.(airport)_(period_(vot).omx
    </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>KNR_SET_set1_&lt;<time period>>
-   </td>
-   <td>
+   <td>Auto trip table for airport (CBX, SAN) by period (EA, AM, MD, PM, EV) and value of time (low, medium, high)
    </td>
   </tr>
   <tr>
-   <td>TNC_SET_set1_&lt;<time period>>
+   <td>autocrossborderTrips_(period)_(vot).omx
    </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>WLK_SET_set2_&lt;<time period>>
-   </td>
-   <td>
+   <td>Auto trip table for cross border model by period (EA, AM, MD, PM, EV) and value of time (low, medium, high)
    </td>
   </tr>
   <tr>
-   <td>PNR_SET_set2_&lt;<time period>>
+   <td>autoTrips_(period)_(vot).omx
    </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>KNR_SET_set2_&lt;<time period>>
-   </td>
-   <td>
+   <td>Auto trip table for resident model by period (EA, AM, MD, PM, EV) and value of time (low, medium, high)
    </td>
   </tr>
   <tr>
-   <td>TNC_SET_set2_&lt;<time period>>
+   <td>autovisitorTrips_(period)_(vot).omx
    </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>WLK_SET_set3_&lt;<time period>>
-   </td>
-   <td>
+   <td>Auto trip table for visitor model by period (EA, AM, MD, PM, EV) and value of time (low, medium, high)
    </td>
   </tr>
   <tr>
-   <td>PNR_SET_set3_&lt;<time period>>
+   <td>cvmtrips_(period).omx
    </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>KNR_SET_set3_&lt;<time period>>
-   </td>
-   <td>
+   <td>CVM trip table for model by period (EA, AM, MD, PM, EV) and value of time (low, medium, high)
    </td>
   </tr>
   <tr>
-   <td>TNC_SET_set3_&lt;<time period>>
+   <td>emptyAVTrips.omx
    </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td colspan="2" >where TIME PERIOD = EA, AM, MD, PM, EV
-   </td>
-  </tr>
-</table>
-
-
-#### Crossborder Model non-motorized demand matrices
-
-<table>
-  <tr>
-   <td>Table Name
-   </td>
-   <td>Description
+   <td>Empty private autonomous vehicle trips 
    </td>
   </tr>
   <tr>
-   <td>WALK_&lt;<time period>>
+   <td>householdAVTrips.csv
    </td>
-   <td>Walk for &lt;<time period>>
-   </td>
-  </tr>
-  <tr>
-   <td>BIKE_&lt;<time period>>
-   </td>
-   <td>Bike for &lt;<time period>>
+   <td>All private autonomous vehicle trips
    </td>
   </tr>
   <tr>
-   <td colspan="2" >where TIME PERIOD = EA, AM, MD, PM, EV
+   <td>htmtrips_(period).omx
    </td>
-  </tr>
-</table>
-
-
-#### Visitor Model auto demand matrices
-
-<table>
-  <tr>
-   <td>Table Name
-   </td>
-   <td>Description
+   <td>HTM trip table for model by period (EA, AM, MD, PM, EV) and value of time (low, medium, high)
    </td>
   </tr>
   <tr>
-   <td>SR2_&lt;<time period>>
+   <td>TNCTrips.csv
    </td>
-   <td>Shared Ride 2 for &lt;<time period>>
-   </td>
-  </tr>
-  <tr>
-   <td>SR3_&lt;<time period>>
-   </td>
-   <td>Shared Ride 3 for &lt;<time period>>
+   <td>All TNC trips
    </td>
   </tr>
   <tr>
-   <td>SOV_&lt;<time period>>
+   <td>TNCVehicleTrips_(period).omx
    </td>
-   <td>Drive Alone for &lt;<time period>>
-   </td>
-  </tr>
-  <tr>
-   <td colspan="2" >where TIME PERIOD = EA, AM, MD, PM, EV
-   </td>
-  </tr>
-</table>
-
-
-#### Visitor Model transit demand matrices
-
-<table>
-  <tr>
-   <td>Table Name
-   </td>
-   <td>Description
+   <td>TNC vehicle trip table by period (EA, AM, MD, PM, EV)
    </td>
   </tr>
   <tr>
-   <td>WLK_SET_set1_&lt;<time period>>
+   <td>TranairportTrips.(airport)_(period).omx
    </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>PNR_SET_set1_&lt;<time period>>
-   </td>
-   <td>
+   <td>Transit trip tables for airport (CBX, SAN) by period (EA, AM, MD, PM, EV)
    </td>
   </tr>
   <tr>
-   <td>KNR_SET_set1_&lt;<time period>>
+   <td>TrancrossborderTrips_(period).omx
    </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>TNC_SET_set1_&lt;<time period>>
-   </td>
-   <td>
+   <td>Transit trip tables for cross-border model by period (EA, AM, MD, PM, EV)
    </td>
   </tr>
   <tr>
-   <td>WLK_SET_set2_&lt;<time period>>
+   <td>TranTrips_(period).omx
    </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>PNR_SET_set2_&lt;<time period>>
-   </td>
-   <td>
+   <td>Transit trip tables for resident model by period (EA, AM, MD, PM, EV)
    </td>
   </tr>
   <tr>
-   <td>KNR_SET_set2_&lt;<time period>>
+   <td>TranvisitorTrips_(period).omx
    </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>TNC_SET_set2_&lt;<time period>>
-   </td>
-   <td>
+   <td>Transit trip tables for visitor model by period (EA, AM, MD, PM, EV)
    </td>
   </tr>
   <tr>
-   <td>WLK_SET_set3_&lt;<time period>>
+   <td>TripMatrices.csv
    </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>PNR_SET_set3_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>KNR_SET_set3_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>TNC_SET_set3_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td colspan="2" >where TIME PERIOD = EA, AM, MD, PM, EV
-   </td>
-  </tr>
-</table>
-
-
-
-#### Visitor Model non-motorized demand matrices
-
-<table>
-  <tr>
-   <td>Table Name
-   </td>
-   <td>Description
-   </td>
-  </tr>
-  <tr>
-   <td>WALK_&lt;<time period>>
-   </td>
-   <td>Walk for &lt;<time period>>
-   </td>
-  </tr>
-  <tr>
-   <td>BIKE_&lt;<time period>>
-   </td>
-   <td>Bike for &lt;<time period>>
-   </td>
-  </tr>
-  <tr>
-   <td colspan="2" >where TIME PERIOD = EA, AM, MD, PM, EV
+   <td>Disaggregate commercial vehicle trips
    </td>
   </tr>
 </table>
@@ -3370,6 +3067,156 @@ This directory contains outputs from the Crossborder model, which represents all
    </td>
   </tr>
 </table>
+
+#### Crossborder Model auto demand matrices
+
+<table>
+  <tr>
+   <td>Table Name
+   </td>
+   <td>Description
+   </td>
+  </tr>
+  <tr>
+   <td>SR2_&lt;<time period>>
+   </td>
+   <td>Shared Ride 2 for &lt;<time period>>
+   </td>
+  </tr>
+  <tr>
+   <td>SR3_&lt;<time period>>
+   </td>
+   <td>Shared Ride 3 for &lt;<time period>>
+   </td>
+  </tr>
+  <tr>
+   <td>SOV_&lt;<time period>>
+   </td>
+   <td>Drive Alone for &lt;<time period>>
+   </td>
+  </tr>
+  <tr>
+   <td colspan="2" >where TIME PERIOD = EA, AM, MD, PM, EV
+   </td>
+  </tr>
+</table>
+
+
+#### Crossborder Model transit demand matrices
+
+<table>
+  <tr>
+   <td>Table Name
+   </td>
+   <td>Description
+   </td>
+  </tr>
+  <tr>
+   <td>WLK_SET_set1_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>PNR_SET_set1_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>KNR_SET_set1_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>TNC_SET_set1_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>WLK_SET_set2_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>PNR_SET_set2_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>KNR_SET_set2_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>TNC_SET_set2_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>WLK_SET_set3_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>PNR_SET_set3_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>KNR_SET_set3_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>TNC_SET_set3_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td colspan="2" >where TIME PERIOD = EA, AM, MD, PM, EV
+   </td>
+  </tr>
+</table>
+
+
+#### Crossborder Model non-motorized demand matrices
+
+<table>
+  <tr>
+   <td>Table Name
+   </td>
+   <td>Description
+   </td>
+  </tr>
+  <tr>
+   <td>WALK_&lt;<time period>>
+   </td>
+   <td>Walk for &lt;<time period>>
+   </td>
+  </tr>
+  <tr>
+   <td>BIKE_&lt;<time period>>
+   </td>
+   <td>Bike for &lt;<time period>>
+   </td>
+  </tr>
+  <tr>
+   <td colspan="2" >where TIME PERIOD = EA, AM, MD, PM, EV
+   </td>
+  </tr>
+</table>
+
 
 ### CVM Establishment Synthesis (.\cvm_establishment_synthesis)
 
@@ -7969,6 +7816,155 @@ This directory contains outputs from the overnight visitor model.
   </tr>
 </table>
 
+#### Visitor Model auto demand matrices
+
+<table>
+  <tr>
+   <td>Table Name
+   </td>
+   <td>Description
+   </td>
+  </tr>
+  <tr>
+   <td>SR2_&lt;<time period>>
+   </td>
+   <td>Shared Ride 2 for &lt;<time period>>
+   </td>
+  </tr>
+  <tr>
+   <td>SR3_&lt;<time period>>
+   </td>
+   <td>Shared Ride 3 for &lt;<time period>>
+   </td>
+  </tr>
+  <tr>
+   <td>SOV_&lt;<time period>>
+   </td>
+   <td>Drive Alone for &lt;<time period>>
+   </td>
+  </tr>
+  <tr>
+   <td colspan="2" >where TIME PERIOD = EA, AM, MD, PM, EV
+   </td>
+  </tr>
+</table>
+
+
+#### Visitor Model transit demand matrices
+
+<table>
+  <tr>
+   <td>Table Name
+   </td>
+   <td>Description
+   </td>
+  </tr>
+  <tr>
+   <td>WLK_SET_set1_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>PNR_SET_set1_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>KNR_SET_set1_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>TNC_SET_set1_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>WLK_SET_set2_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>PNR_SET_set2_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>KNR_SET_set2_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>TNC_SET_set2_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>WLK_SET_set3_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>PNR_SET_set3_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>KNR_SET_set3_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>TNC_SET_set3_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td colspan="2" >where TIME PERIOD = EA, AM, MD, PM, EV
+   </td>
+  </tr>
+</table>
+
+
+
+#### Visitor Model non-motorized demand matrices
+
+<table>
+  <tr>
+   <td>Table Name
+   </td>
+   <td>Description
+   </td>
+  </tr>
+  <tr>
+   <td>WALK_&lt;<time period>>
+   </td>
+   <td>Walk for &lt;<time period>>
+   </td>
+  </tr>
+  <tr>
+   <td>BIKE_&lt;<time period>>
+   </td>
+   <td>Bike for &lt;<time period>>
+   </td>
+  </tr>
+  <tr>
+   <td colspan="2" >where TIME PERIOD = EA, AM, MD, PM, EV
+   </td>
+  </tr>
+</table>
 
 
 ### Trip Mode Definitions
