@@ -3,7 +3,7 @@ inherit_settings: settings.yaml
 multiprocess: True
 households_sample_size: 320000
 num_processes: 40
-trace_hh_id: 
+trace_hh_id:
 chunk_training_mode: disabled
 # chunk_size: 240_000_000_000
 
@@ -15,7 +15,7 @@ memory_profile: False
 # (Shadow pricing requires fail_fast setting in multiprocessing mode)
 fail_fast: True
 
-resume_after: vehicle_allocation
+resume_after: trip_scheduling
 
 models:
   ### mp_init_proto_pop (single process)
@@ -38,6 +38,7 @@ models:
   - transit_pass_subsidy
   - transit_pass_ownership
   - vehicle_type_choice
+  - adjust_auto_operating_cost
   - transponder_ownership
   - free_parking
   - telecommute_frequency
@@ -65,14 +66,16 @@ models:
   - stop_frequency
   - trip_purpose
   - trip_destination
-  # - trip_purpose_and_destination
-  # - trip_scheduling
-  # - trip_mode_choice
-  # - parking_location
+  - trip_purpose_and_destination
+  - trip_scheduling
+  - trip_mode_choice
+  - parking_location
   ### mp_summarize (single process)
   - write_data_dictionary
-  # - track_skim_usage
-  # - write_trip_matrices
+  - track_skim_usage
+  - write_trip_matrices
+  # - write_to_datalake
+  - update_tables
   - write_tables
 
 

@@ -1,5 +1,54 @@
 # Release Notes
 
+## Version 15.2.1 (December 20, 2024)
+Multiple bugs were fixed and some recalibration was done since the release of version 15.2.0. Version 15.2.1 was used for the draft 2025 RP modeling.
+
+### Features
+- [PR 249](https://github.com/SANDAG/ABM/pull/249): Addition of calibration scripts
+- [PR 251](https://github.com/SANDAG/ABM/pull/251), [PR 258](https://github.com/SANDAG/ABM/pull/258), [PR 259](https://github.com/SANDAG/ABM/pull/259), & [PR 262](https://github.com/SANDAG/ABM/pull/262): Calibration updates (atwork stop location, work from home, bike shares, work location) including additional mode choice coefficients for ebike owners
+- [PR 256](https://github.com/SANDAG/ABM/pull/256): Increase travel time reporter threshold from 30 to 45 minutes
+- [PR 257](https://github.com/SANDAG/ABM/pull/257): Adds option to skip travel time reporter (was previously included in data exporter)
+- [PR 266](https://github.com/SANDAG/ABM/pull/266): 2032 and 2040 added as options when selecting a scenario year in the scenario creation GUI
+- [PR 268](https://github.com/SANDAG/ABM/pull/268): Assume owned ebike in travel time reporter
+- [PR 271](https://github.com/SANDAG/ABM/pull/271): Recalibrate bike mode share in response to AT network updates 
+- [PR 252](https://github.com/SANDAG/ABM/pull/252), [PR 254](https://github.com/SANDAG/ABM/pull/254), [PR 260](https://github.com/SANDAG/ABM/pull/260), [PR 265](https://github.com/SANDAG/ABM/pull/265), [PR 280](https://github.com/SANDAG/ABM/pull/280), & [PR 284](https://github.com/SANDAG/ABM/pull/284): Documentation updates
+
+### Bug Fixes
+- [PR 253](https://github.com/SANDAG/ABM/pull/253): Removal of bike logsum copy from Emme GUI
+- [PR 255](https://github.com/SANDAG/ABM/pull/255): Removal of input checker step
+- [PR 263](https://github.com/SANDAG/ABM/pull/263): Update bike lane AT network field
+- [PR 274](https://github.com/SANDAG/ABM/pull/274), [PR 276](https://github.com/SANDAG/ABM/pull/276), & [PR 278](https://github.com/SANDAG/ABM/pull/278): MAAS model fixes including crash on failure and force escort participants column to be read in as string
+
+## Version 15.2.0 (November 14, 2024)
+Since release 15.1.0, several bug fixes and new features were added. Results of ABM3 using Version 15.2 are anticipated to be presented to the SANDAG Board of Directors in Spring 2025.
+
+### ActivitySim Version
+No changes made to ActivitySim version.
+
+### Features
+- [PR 169](https://github.com/SANDAG/ABM/pull/169): Set TNC to transit modes to use KNR to transit skims and removed TNC to transit skims
+- [PR 203](https://github.com/SANDAG/ABM/pull/203): Added tracking of disk space usage
+- [PR 204](https://github.com/SANDAG/ABM/pull/204), [PR 219](https://github.com/SANDAG/ABM/pull/219), & [PR 232](https://github.com/SANDAG/ABM/pull/232): Flexible fleets improvement and calibration
+- [PR 206](https://github.com/SANDAG/ABM/pull/206): Reduced sensitivity of electric vehicle ownership to number of chargers
+- [PR 210](https://github.com/SANDAG/ABM/pull/210): Added input network and land use paths to scenario table in Datalake
+- [PR 222](https://github.com/SANDAG/ABM/pull/222): Updated version number in the property file
+- [PR 223](https://github.com/SANDAG/ABM/pull/223): Updated validation to work with networks created from TNED
+- [PR 226](https://github.com/SANDAG/ABM/pull/226): Included FFC attribute in Emme network for reporting
+- [PR 239](https://github.com/SANDAG/ABM/pull/239): Added option to skip validation in master run
+- [PR 240](https://github.com/SANDAG/ABM/pull/240), [PR 242](https://github.com/SANDAG/ABM/pull/242), & [PR 243](https://github.com/SANDAG/ABM/pull/243): Fixes to MAZ to transit stop distances and walk times
+- [PR 241](https://github.com/SANDAG/ABM/pull/241): Fixes to bike logsums and micromobility mode choice
+- [PR 215](https://github.com/SANDAG/ABM/pull/215), [PR 235](https://github.com/SANDAG/ABM/pull/235),  [PR 237](https://github.com/SANDAG/ABM/pull/237), [PR 238](https://github.com/SANDAG/ABM/pull/238), [PR 244](https://github.com/SANDAG/ABM/pull/244), & [PR 246](https://github.com/SANDAG/ABM/pull/246): Documentation updates
+
+### Bug Fixes
+- [PR 212](https://github.com/SANDAG/ABM/pull/212), [PR 213](https://github.com/SANDAG/ABM/pull/213), [PR 217](https://github.com/SANDAG/ABM/pull/217), & [PR 245](https://github.com/SANDAG/ABM/pull/245): File and configuration cleanup
+- [PR 214](https://github.com/SANDAG/ABM/pull/214), [PR 216](https://github.com/SANDAG/ABM/pull/216), [PR 220](https://github.com/SANDAG/ABM/pull/220), [PR 221](https://github.com/SANDAG/ABM/pull/221), [PR 225](https://github.com/SANDAG/ABM/pull/225), [PR 228](https://github.com/SANDAG/ABM/pull/228), [PR 230](https://github.com/SANDAG/ABM/pull/230), [PR 231](https://github.com/SANDAG/ABM/pull/231), & [PR 233](https://github.com/SANDAG/ABM/pull/233): Various fixes to Travel Time Reporter
+- [PR 218](https://github.com/SANDAG/ABM/pull/218): Allowed for traffic assignment to work without any tolled links
+- [PR 224](https://github.com/SANDAG/ABM/pull/224): Removed Java-based walk logsum step
+- [PR 227](https://github.com/SANDAG/ABM/pull/227): Fixed issue with link transit travel times
+- [PR 229](https://github.com/SANDAG/ABM/pull/229): Fixed Java unicode error with filepaths containing folders starting with the letter U
+- [PR 234](https://github.com/SANDAG/ABM/pull/234): Corrected mixed party type to correct value
+- [PR 242](https://github.com/SANDAG/ABM/pull/242) & [PR 243](https://github.com/SANDAG/ABM/pull/243): Fix issues with MAZ to stop distances
+
 ## Version 15.1.0 (September 4, 2024)
 As mentioned in the notes for Version 15.0.2, several improvements to the Commercial Vehicle Model (CVM) were made, largely due to SANDAG staff realizing that the survey used to estimate the CVM had likely overestimated the amount of commercial vehicle travel that was made on a given day in the region. New weights were estimated, and then the CVM was recalibrated to match these new weights. After doing this, it was found that modeled highway volumes were lower than observed counts, so some further adjustments were made to get them back up. Some components of the resident model were recalibrated to better match the survey, a new database started being used, a bug in the transit network was fixed, and other miscelaneous improvements were made.
 

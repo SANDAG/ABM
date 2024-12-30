@@ -225,7 +225,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         copy_scenario = modeller.tool("inro.emme.data.scenario.copy_scenario")
         run4Ds = modeller.tool("sandag.import.run4Ds")
         import_network = modeller.tool("sandag.import.import_network")
-        input_checker = modeller.tool("sandag.import.input_checker")
         init_transit_db = modeller.tool("sandag.initialize.initialize_transit_database")
         init_matrices = modeller.tool("sandag.initialize.initialize_matrices")
         import_demand = modeller.tool("sandag.import.import_seed_demand")
@@ -287,11 +286,9 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         skipMGRASkims = props["RunModel.skipMGRASkims"]
         skip4Ds = props["RunModel.skip4Ds"]
-        skipInputChecker = props["RunModel.skipInputChecker"]
         skipInitialization = props["RunModel.skipInitialization"]
         deleteAllMatrices = props["RunModel.deleteAllMatrices"]
         skipCopyWarmupTripTables = props["RunModel.skipCopyWarmupTripTables"]
-        skipCopyBikeLogsum = props["RunModel.skipCopyBikeLogsum"]
         skipBikeLogsums = props["RunModel.skipBikeLogsums"]
         skipBuildNetwork = props["RunModel.skipBuildNetwork"]
         skipHighwayAssignment = props["RunModel.skipHighwayAssignment"]
@@ -323,6 +320,8 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         skipFinalTransitAssignment = props["RunModel.skipFinalTransitAssignment"]
         skipVisualizer = props["RunModel.skipVisualizer"]
         skipDataExport = props["RunModel.skipDataExport"]
+        skipTravelTimeReporter = props["RunModel.skipTravelTimeReporter"]
+        skipValidation = props["RunModel.skipValidation"]
         skipDatalake = props["RunModel.skipDatalake"]
         skipDataLoadRequest = props["RunModel.skipDataLoadRequest"]
         skipDeleteIntermediateFiles = props["RunModel.skipDeleteIntermediateFiles"]
@@ -475,8 +474,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         overwrite=True,
                         emmebank=main_emmebank)
 
-                    if not skipInputChecker:
-                        input_checker(path=self._path)
 
                     # parse vehicle availablility file by time-of-day
                     availability_file = "vehicle_class_availability.csv"
@@ -525,7 +522,9 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 if not skipBikeLogsums:
                     self.run_proc("runSandagBikeLogsums.cmd", [drive, path_forward_slash],
                                   "Bike - create AT logsums and impedances")
-                if not skipCopyBikeLogsum:
+                    # Copy updated logsums to scenario input to avoid overwriting
+                    self.copy_files(["bikeMgraLogsum.csv", "bikeTazLogsum.csv"], output_dir, input_dir)
+                elif not os.path.exists(_join(output_dir, "bikeMgraLogsum.csv")):
                     self.copy_files(["bikeMgraLogsum.csv", "bikeTazLogsum.csv"], input_dir, output_dir)
 
             else:
@@ -784,13 +783,14 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 [drive, drive + path_forward_slash],
                 "Exporting highway shapefile", capture_output=True)
             
+        if not skipTravelTimeReporter:
             self.run_proc(
                 "run_travel_time_calculator.cmd",
                 [drive, drive + path_forward_slash],
                 "Exporting MGRA-level travel times", capture_output=True)
 
         # This validation procedure only works with base (2022) scenarios utilizing TNED networks
-        if scenarioYear == "2022":
+        if scenarioYear == "2022" and not skipValidation:
             self.run_proc(
                 "runValidation.bat",
                 [drive, path_no_drive, scenarioYear],

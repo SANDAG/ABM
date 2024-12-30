@@ -102,24 +102,14 @@ Model outputs are stored in the .\outputs directory. The contents of the directo
    <td>Derived bike network traversals file
    </td>
   </tr>
-  <tr>
-   <td>microMgraEquivMinutes.csv
-   </td>
-   <td>Equivalent minutes for using micromobility between close-together MGRAs (not used)
-   </td>
-  </tr>
+  
   <tr>
    <td>runtime_summary.csv
    </td>
    <td>Summary of model runtime
    </td>
   </tr>
-  <tr>
-   <td>temp_tazdata_cvm.csv
-   </td>
-   <td>TAZ data for commercial vehicle model
-   </td>
-  </tr>
+  
   <tr>
    <td>transponderModelAccessibilities.csv
    </td>
@@ -132,12 +122,7 @@ Model outputs are stored in the .\outputs directory. The contents of the directo
    <td>Trips for each time period, for assignment
    </td>
   </tr>
-  <tr>
-   <td>walkMgraEquivMinutes.csv
-   </td>
-   <td>Equivalent minutes for walking between close-together MGRAs
-   </td>
-  </tr>
+  
 </table>
 
 
@@ -1292,6 +1277,12 @@ This directory contains trip tables from auto and transit assignments.
    </td>
   </tr>
   <tr>
+   <td>cvmtrips_(period).omx
+   </td>
+   <td>CVM trip table for model by period (EA, AM, MD, PM, EV) and value of time (low, medium, high)
+   </td>
+  </tr>
+  <tr>
    <td>emptyAVTrips.omx
    </td>
    <td>Empty private autonomous vehicle trips 
@@ -1301,6 +1292,12 @@ This directory contains trip tables from auto and transit assignments.
    <td>householdAVTrips.csv
    </td>
    <td>All private autonomous vehicle trips
+   </td>
+  </tr>
+  <tr>
+   <td>htmtrips_(period).omx
+   </td>
+   <td>HTM trip table for model by period (EA, AM, MD, PM, EV) and value of time (low, medium, high)
    </td>
   </tr>
   <tr>
@@ -3374,13 +3371,1509 @@ This directory contains outputs from the Crossborder model, which represents all
   </tr>
 </table>
 
+### CVM Establishment Synthesis (.\cvm_establishment_synthesis)
+
+
+<table>
+  <tr>
+   <td>File 
+   </td>
+   <td>Description
+   </td>
+  </tr>
+  <tr>
+   <td>MGRAEmpByEstSize.csv
+   </td>
+   <td>MGRA based synthetically generated establishments. Used for diagnostic purposes, not for simulation 
+   </td>
+  </tr>
+  <tr>
+   <td>SummarySynthEstabs.csv
+   </td>
+   <td>Total count summary by size class and industry sector
+   </td>
+  </tr>
+  <tr>
+   <td>SynthEstablishments.csv
+   </td>
+   <td>Contains information about synthetically generated establishments to be used as inputs to the commercial vehicle model
+   </td>
+  </tr>
+  
+  
+</table>
 
 ### Commercial Vehicle Model (.\cvm)
 
-//TODO
+This directory contains San Diego commercial travel model outputs.
 
-Update with CVM results once model is updated
+<table>
+  <tr>
+   <td>File 
+   </td>
+   <td>Description
+   </td>
+  </tr>
+  <tr>
+   <td>final_commercial_accessibility.csv
+   </td>
+   <td>contains the commercial vehicle accessibility by category for each zone
+   </td>
+  </tr>
+  <tr>
+   <td>final_cv_trips.csv
+   </td>
+   <td>contains the commercial vehicle trips by Origin-Destination, trip purpose and travel time
+   </td>
+  </tr>
+  <tr>
+   <td>final_establishments.csv
+   </td>
+   <td>details of the establishments generated for each zone
+   </td>
+  </tr>
+  <tr>
+   <td>final_establishments_all.csv
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>final_households.csv
+   </td>
+   <td>information of the households which attract CVM trips 
+   </td>
+  </tr>
+  <tr>
+   <td>final_land use.csv
+   </td>
+   <td>land use information of the MGRA Zones
+   </td>
+  </tr>
+  <tr>
+   <td>final_routes
+   </td>
+   <td>route information of CVM trips
+   </td>
+  </tr>
+  <tr>
+   <td>final_trips
+   </td>
+   <td>Final trip-based CVM summary
+   </td>
+  </tr>
+  <tr>
+   <td>Trip Tables (where TOD is AM, MD, PM or EV)
+   </td>
+  </tr>
+  <tr>
+   <td>cvmtrips_TOD.omx
+   </td>
+   <td>contains the commercial vehicle trips of the TOD, has three components (modes): Car, light truck, medium truck and heavy truck
+   </td>
+  </tr>
+  
+</table>
 
+#### Commerical Vehicle Model Trip File ( final_commercial_accessibility.csv )
+
+<table>
+  <tr>
+    <td>Field
+    </td>
+    <td>Description
+    </td>
+  </tr>
+  <tr>
+    <td>estab_acc_estab_group1
+    </td>
+    <td>Establishments access to establishment customer attractions:establishment_attraction_ret + establishment_attraction_whl + establishment_attraction_mfg
+    </td>
+  </tr>
+  <tr>
+    <td>estab_acc_estab_group2
+    </td>
+    <td>Establishments access to establishment customer attractions:establishment_attraction_iut + establishment_attraction_laf
+    </td>
+  </tr>
+  <tr>
+    <td>estab_acc_estab_group3
+    </td>
+    <td>Establishments access to establishment customer attractions:establishment_attraction_agm + establishment_attraction_con + establishment_attraction_epo + establishment_attraction_mhs + establishment_attraction_trn
+
+  </tr>
+  <tr>
+    <td>estab_acc_estab_group4
+    </td>
+    <td>Establishments access to establishment customer attractions:establishment_attraction_ifr
+  </tr>
+  <tr>
+    <td>tnc_acc_estab_all
+    </td>
+    <td>TNC access to establishment customer attractions (all industries)
+  </tr>
+  <tr>
+    <td>estab_acc_hh_food 
+    </td>
+    <td>Establishment access to household food delivery attractors
+  </tr>
+  <tr>
+    <td>estab_acc_hh_package
+    </td>
+    <td>Establishment access to household package delivery attractors
+  </tr>
+  <tr>
+    <td>estab_acc_logsum
+    </td>
+    <td>Establishment accessibility logsum (total establishment attractors – visits to non-residential customers of all types)
+  </tr>
+  <tr>
+    <td>household_acc_logsum
+    </td>
+    <td>Household accessibility logsum (total household attractors – visits to residential customers)
+
+  </tr>
+  <tr>
+    <td>accessibility
+    </td>
+    <td>estab_acc_logsum + household_acc_logsum
+
+  </tr>
+  <tr>
+    <td>acc_hh_goods
+    </td>
+    <td>Accessibility to households for goods delivery only
+
+  </tr>
+  <tr>
+    <td>zone_id
+    </td>
+    <td>The MGRA id of the zone
+
+  </tr>
+  
+
+</table>
+
+#### Commerical Vehicle Model Trip File ( final_cv_trips.csv )
+
+<table>
+  <tr>
+    <td>Field
+    </td>
+    <td>Description
+    </td>
+  </tr>
+  <tr>
+    <td>route_id
+    </td>
+    <td>the route id on which the trip is assigned to
+    </td>
+  </tr>
+  <tr>
+    <td>route_trip_num
+    </td>
+    <td>the number of trips on the route_id
+    </td>
+  </tr>
+  <tr>
+    <td>trip_origin
+    </td>
+    <td>origin zone (MGRA) of the trip
+
+  </tr>
+  <tr>
+    <td>trip_destination
+    </td>
+    <td>destination zone (MGRA) of the trip
+
+  </tr>
+  <tr>
+    <td>trip_origin_purpose
+    </td>
+    <td>purpose of the stop at the origin of the trip:
+    <p>
+      • base - return to establishment
+    <p>
+      • goods_delivery - deliver goods
+    <p>
+      • goods_pickup - pickup goods
+    <p>
+      • home - go to driver's home
+    <p>
+      • maintenance - maintenance (refueling, vehicle maintenance, driver breaks/meals)
+    <p>
+      • service - provide a service
+    <p>
+    terminate - end route (vehicle day), go to terminal destination chosen for route
+  </tr>
+  <td>trip_destination_purpose
+    </td>
+    <td>purpose of the stop at the destination of the trip:
+    <p>
+      • base - return to establishment
+    <p>
+      • goods_delivery - deliver goods
+    <p>
+      • goods_pickup - pickup goods
+    <p>
+      • home - go to driver's home
+    <p>
+      • maintenance - maintenance (refueling, vehicle maintenance, driver breaks/meals)
+    <p>
+      • service - provide a service
+    <p>
+    terminate - end route (vehicle day), go to terminal destination chosen for route
+  </tr>
+  <tr>
+    <td>trip_destination_type
+    </td>
+    <td>attraction land use type at the destination:
+    <p>
+      • base - establishment location (any land use type)
+    <p>
+      • warehouse - warehouse, distribution center land use type
+    <p>
+      • intermodal - airport, seaport, rail intermodal land use type
+    <p>
+      • commercial - commercial land use type (not warehouse or intermodal)
+    <p>
+      • residential - residential land use type
+  </tr>
+  <tr>
+    <td>trip_start_time
+    </td>
+    <td>start time of the trip (half-hour intervals counted from beginning)
+  </tr>
+  <tr>
+    <td>trip_travel_time
+    </td>
+    <td>travel time (in motion time) of the vehicle during the trip
+
+  </tr>
+  <tr>
+    <td>dwell_time
+    </td>
+    <td>resting/dwelling time of the vehicle during the trip (stop duration)
+
+  </tr>
+  <tr>
+    <td>route_elapsed_time
+    </td>
+    <td>total time elapsed during the trip (trip_travel_time + dwell_time)
+
+
+  </tr>
+  <tr>
+    <td>cv_trip_id
+    </td>
+    <td>the unique trip id of the cv trip (route_id + route_trip_num)
+
+  </tr>
+  
+
+</table>
+
+#### Commerical Vehicle Model Trip File ( final_establishments.csv )
+
+<table>
+  <tr>
+    <td>Field
+    </td>
+    <td>Description
+    </td>
+  </tr>
+  <tr>
+    <td>industry_number
+    </td>
+    <td>The category of industry that the establishment belongs to range from 1 to 12
+    </td>
+  </tr>
+  <tr>
+    <td>industry_name
+    </td>
+    <td>The name of the industry that the establishment belongs to (EPO, AGM, CON etc.)
+    </td>
+  </tr>
+  <tr>
+    <td>LUZ
+    </td>
+    <td>Land Use Zone ( TAZ Number)
+    </td>
+  </tr>
+  <tr>
+    <td>zone_id
+    </td>
+    <td>MGRA Number
+
+  </tr>
+  <tr>
+    <td>employees
+    </td>
+    <td>The number of employees in the establishment
+    </td>
+  </tr>
+  <tr>
+    <td>size_class
+    </td>
+    <td>The categorized size of the establishment based on the number of employees
+(range: 1-7)
+    </td>
+  </tr>
+  <tr>
+    <td>sample_rate
+    </td>
+    <td>the percentage of sample selected (generally 1)
+    </td>
+  </tr>
+  <tr>
+    <td>has_attraction
+    </td>
+    <td>TRUE if the zone has trip attraction, otherwise FALSE
+    </td>
+
+  </tr>
+  <tr>
+    <td>attractions
+    </td>
+    <td>number of trip attractions by the establishment
+    </td>
+  </tr>
+
+  <tr>
+    <td>has_generation
+    </td>
+    <td>TRUE if the zone has trip generation, otherwise FALSE
+    </td>
+  </tr>
+  <tr>
+    <td>n_routes
+    </td>
+    <td>number of routes the establishment generated
+    </td>
+  </tr>
+  <tr>
+    <td>accessibility
+    </td>
+    <td>Total accessibility to household + establishment attractions
+    </td>
+  </tr>
+  <tr>
+    <td>establishment_id
+    </td>
+    <td>unique id of the establishment
+    </td>
+  </tr>
+</table>
+
+#### Commerical Vehicle Model Trip File ( final_establishments_all.csv )
+
+<table>
+  <tr>
+    <td>Field
+    </td>
+    <td>Description
+    </td>
+  </tr>
+  <tr>
+    <td>industry_number
+    </td>
+    <td>The category of industry that the establishment belongs to range from 1 to 12
+    </td>
+  </tr>
+  <tr>
+    <td>industry_name
+    </td>
+    <td>The name of the industry that the establishment belongs to (EPO, AGM, CON etc.)
+    </td>
+  </tr>
+  <tr>
+    <td>LUZ
+    </td>
+    <td>Land Use Zone ( TAZ Number)
+    </td>
+  </tr>
+  <tr>
+    <td>zone_id
+    </td>
+    <td>MGRA Number
+
+  </tr>
+  <tr>
+    <td>employees
+    </td>
+    <td>The number of employees in the establishment
+    </td>
+  </tr>
+  <tr>
+    <td>size_class
+    </td>
+    <td>The categorized size of the establishment based on the number of employees
+(range: 1-7)
+    </td>
+  </tr>
+  <tr>
+    <td>sample_rate
+    </td>
+    <td>the percentage of sample selected (generally 1)
+    </td>
+  </tr>
+   <tr>
+    <td>attractions
+    </td>
+    <td>number of trip attractions by the establishment
+    </td>
+  </tr>
+ <tr>
+    <td>industry_group
+    </td>
+    <td>Range 1-5
+    </td>
+  </tr>
+ <tr>
+    <td>beta_industry_group
+    </td>
+    <td>Parameter used in the establishment attractions model
+    </td>
+  </tr>
+ <tr>
+    <td>constant
+    </td>
+    <td>Parameter used in the establishment attractions model
+    </td>
+  </tr>
+ <tr>
+    <td>has_attraction_probability
+    </td>
+    <td>Intermediate result of establishments attractor model. Probability that the establishment will have deliveries or service stops
+    </td>
+  </tr>
+ <tr>
+    <td>random
+    </td>
+    <td>Random number used in attraction generation calculations
+    </td>
+  </tr>
+
+  <tr>
+    <td>has_attraction
+    </td>
+    <td>TRUE if the zone has trip attraction, otherwise FALSE
+    </td>
+
+  </tr>
+ 
+  <tr>
+    <td>establishment_id
+    </td>
+    <td>unique id of the establishment
+    </td>
+  </tr>
+</table>
+
+
+#### Commerical Vehicle Model Trip File ( final_households.csv )
+
+<table>
+  <tr>
+    <td>Field
+    </td>
+    <td>Description
+    </td>
+  </tr>
+  <tr>
+    <td>home_zone_id
+    </td>
+    <td>MGRA of the household
+    </td>
+  </tr>
+  <tr>
+    <td>income
+    </td>
+    <td>annual household income
+    </td>
+  </tr>
+  <tr>
+    <td>hhsize
+    </td>
+    <td>household size
+    </td>
+  </tr>
+  <tr>
+    <td>HHT
+    </td>
+    <td>household type (ranges 1-7)
+
+  </tr>
+  <tr>
+    <td>auto_ownership
+    </td>
+    <td>number of vehicles owned by the household
+    </td>
+  </tr>
+  <tr>
+    <td>num_workers
+    </td>
+    <td>number of workers in the household
+    </td>
+  </tr>
+  <tr>
+    <td>sample_rate
+    </td>
+    <td>the percentage of sample selected (generally 1)
+    </td>
+  </tr>
+   <tr>
+    <td>num_adults
+    </td>
+    <td>number of adults in the household
+    </td>
+  </tr>
+ <tr>
+    <td>num_nonworker_adults
+    </td>
+    <td>number of non-working adults in the households
+    </td>
+  </tr>
+ <tr>
+    <td>num_children
+    </td>
+    <td>number of children in the household
+    </td>
+  </tr>
+ <tr>
+    <td>has_attraction_food
+    </td>
+    <td>TRUE if the household attracts food delivery trips, otherwise FALSE
+    </td>
+  </tr>
+ <tr>
+    <td>has_attraction_package
+    </td>
+    <td>TRUE if the household attracts package delivery trips, otherwise FALSE
+    </td>
+  </tr>
+
+  <tr>
+    <td>has_attraction_service
+    </td>
+    <td>TRUE if the household attracts service trips, otherwise FALSE
+    </td>
+
+  </tr>
+ 
+  <tr>
+    <td>household_id
+    </td>
+    <td>unique household id
+    </td>
+  </tr>
+</table>
+
+#### Commerical Vehicle Model Trip File ( final_land_use.csv )
+
+<table>
+  <tr>
+    <td>Field
+    </td>
+    <td>Description
+    </td>
+  </tr>
+  <tr>
+    <td>mgra
+    </td>
+    <td>MGRA id
+    </td>
+  </tr>
+  <tr>
+    <td>taz
+    </td>
+    <td>TAZ number
+    </td>
+  </tr>
+  <tr>
+    <td>luz_id
+    </td>
+    <td>LUZ id
+    </td>
+  </tr>
+  <tr>
+    <td>pop
+    </td>
+    <td>population of the zone
+</td>
+  </tr>
+  <tr>
+    <td>hhp
+    </td>
+    <td>total household population ( excluding GQ population )
+    </td>
+  </tr>
+  <tr>
+    <td>hh
+    </td>
+    <td>number of households in the zone
+    </td>
+  </tr>
+  <tr>
+    <td>hhs
+    </td>
+    <td>average household size
+    </td>
+  </tr>
+   <tr>
+    <td>gq_civ
+    </td>
+    <td>GQ Civilian
+    </td>
+  </tr>
+ <tr>
+    <td>gq_mil
+    </td>
+    <td>GQ Military
+    </td>
+  </tr>
+ <tr>
+    <td>i10
+    </td>
+    <td>number of households with income $200,000 or more
+    </td>
+  </tr>
+ <tr>
+    <td>emp_gov
+    </td>
+    <td>Government employment
+    </td>
+  </tr>
+ <tr>
+    <td>emp_mil
+    </td>
+    <td> Military employment
+    </td>
+  </tr>
+
+  <tr>
+    <td>emp_ag_min
+    </td>
+    <td>Agriculture and mining employment
+    </td>
+
+  </tr>
+ 
+  <tr>
+    <td>emp_bus_svcs
+    </td>
+    <td>Business services employment
+    </td>
+  </tr>
+
+  <tr>
+    <td>emp_bus_svcs
+    </td>
+    <td>Business services employment
+    </td>
+  </tr>
+
+  <tr>
+    <td>emp_fin_res_mgm
+    </td>
+    <td>Finance and Resource Management employment
+    </td>
+  </tr>
+
+  <tr>
+    <td>emp_educ
+    </td>
+    <td>Education employment
+    </td>
+  </tr>
+
+  <tr>
+    <td>emp_hlth
+    </td>
+    <td>Health employment
+    </td>
+  </tr>
+
+  <tr>
+    <td>emp_ret
+    </td>
+    <td>Retail employment
+    </td>
+  </tr>
+
+  <tr>
+    <td>emp_trn_wrh
+    </td>
+    <td>Transportation and warehouse employment
+    </td>
+  </tr>
+
+  <tr>
+    <td>emp_con
+    </td>
+    <td>Construction employment
+    </td>
+  </tr>
+  <tr>
+    <td>emp_utl
+    </td>
+    <td>Utilities employment
+    </td>
+  </tr>
+  <tr>
+    <td>emp_mnf
+    </td>
+    <td>Manufacturing employment
+    </td>
+  </tr>
+  <tr>
+    <td>emp_whl
+    </td>
+    <td>Wholesale employment
+    </td>
+  </tr>
+  <tr>
+    <td>emp_ent
+    </td>
+    <td>Entertainment employment
+    </td>
+  </tr>
+  <tr>
+    <td>emp_accm
+    </td>
+    <td>Accomodation employment
+    </td>
+  </tr>
+  <tr>
+    <td>emp_food
+    </td>
+    <td>Food employment
+    </td>
+  </tr>
+  <tr>
+    <td>emp_oth
+    </td>
+    <td>Other employment
+    </td>
+  </tr>
+  <tr>
+    <td>emp_non_ws_wfh
+    </td>
+    <td>Non-wage and salary work from home employment
+    </td>
+  </tr>
+  <tr>
+    <td>emp_non_ws_oth
+    </td>
+    <td>Non-wage and salary other employment
+    </td>
+  </tr>
+  <tr>
+    <td>emp_total
+    </td>
+    <td>Total employment
+    </td>
+  </tr>
+  <tr>
+    <td>pseudomsa
+    </td>
+    <td>Pseudo MSA -
+    <p>
+      1: Downtown
+    <p>
+      2: Central
+    <p>
+      3: North City
+    <p>
+      4: South Suburban
+    <p>
+      5: East Suburban
+    <p>
+      6: North County West
+    <p>
+      7: North County East
+    <p>
+      8: East County
+    </td>
+  </tr>
+  <tr>
+    <td>enrollgradekto8
+    </td>
+    <td>Grade School K-8 enrollment
+    </td>
+  </tr>
+  <tr>
+    <td>enrollgrade9to12
+    </td>
+    <td>Grade School 9-12 enrollment
+    </td>
+  </tr>
+  <tr>
+    <td>othercollegeenroll
+    </td>
+    <td>Other College Enrollment
+    </td>
+  </tr>
+  <tr>
+    <td>hotelroomtotal
+    </td>
+    <td>Total Number of hotel rooms
+    </td>
+  </tr>
+  <tr>
+    <td>parkactive
+    </td>
+    <td>Acres of active park
+    </td>
+  </tr>
+  <tr>
+    <td>openspaceparkpreserve
+    </td>
+    <td>Acres of Open Park or Preserve
+    </td>
+  </tr>
+  <tr>
+    <td>beachactive
+    </td>
+    <td>Acres of active beaches
+    </td>
+  </tr>
+  <tr>
+    <td>district27
+    </td>
+    <td>District 27
+    </td>
+  </tr>
+  <tr>
+    <td>milestocoast
+    </td>
+    <td>Distance in miles to the nearest coast
+    </td>
+  </tr>
+  <tr>
+    <td>acres
+    </td>
+    <td>Total acres in the MGRA
+    </td>
+  </tr>
+  <tr>
+    <td>land_acres
+    </td>
+    <td>Acres of land in the MGRA
+    </td>
+  </tr>
+  <tr>
+    <td>effective_acres
+    </td>
+    <td>Effective acres in the MGRA
+    </td>
+  </tr>
+  <tr>
+    <td>truckregiontype
+    </td>
+    <td>Truck Region type
+    </td>
+  </tr>
+  <tr>
+    <td>exp_hourly
+    </td>
+    <td>Hourly Parking Expenditure
+    </td>
+  </tr>
+  <tr>
+    <td>exp_daily
+    </td>
+    <td>Daily Parking Expenditure
+    </td>
+  </tr>
+  <tr>
+    <td>exp_monthly
+    </td>
+    <td>Monthly Parking Expenditure
+    </td>
+  </tr>
+  <tr>
+    <td>parking_type
+    </td>
+    <td>Parking choice at destination:
+      <p>
+        0 = Not constrained to remote parking
+      <p>
+        1 = Park at destination
+      <p>
+        2 = Remote parking
+      <p>
+        3 = Park at home
+    </td>
+  </tr>
+  <tr>
+    <td>parking_spaces
+    </td>
+    <td>Number of parking spaces available
+    </td>
+  </tr>
+  <tr>
+    <td>ech_dist
+    </td>
+    <td>Elementary school district
+    </td>
+  </tr>
+  <tr>
+    <td>hch_dist
+    </td>
+    <td>High School district
+    </td>
+  </tr>
+  <tr>
+    <td>remoteAVParking
+    </td>
+    <td>Remote AV parking available at MGRA:
+    <p>
+      0 = Not available
+    <p>
+      1 = Available
+    </td>
+  </tr>
+  <tr>
+    <td>refueling_stations
+    </td>
+    <td>Number of refueling stations in the MGRA
+    </td>
+  </tr>
+  <tr>
+    <td>MicroAccessTime
+    </td>
+    <td>Micro-mobility access time (mins)
+    </td>
+  </tr>
+  <tr>
+    <td>microtransit
+    </td>
+    <td>Number of micro transit facilities
+    </td>
+  </tr>
+  <tr>
+    <td>nev
+    </td>
+    <td>Number of EV Charging stations
+    </td>
+  </tr>
+  <tr>
+    <td>toint
+    </td>
+    <td>Total Intersection
+    </td>
+  </tr>
+  <tr>
+    <td>duden
+    </td>
+    <td>Dwelling unit density
+    </td>
+  </tr>
+  <tr>
+    <td>empden
+    </td>
+    <td>Employment density
+    </td>
+  </tr>
+  <tr>
+    <td>popden
+    </td>
+    <td>Population density
+    </td>
+  </tr>
+  <tr>
+    <td>retempden
+    </td>
+    <td>Retail Employment density
+    </td>
+  </tr>
+  <tr>
+    <td>totintbin
+    </td>
+    <td>Total Intersection Bin
+    </td>
+  </tr>
+  <tr>
+    <td>empdenbin
+    </td>
+    <td>Employment density bin
+    </td>
+  </tr>
+  <tr>
+    <td>dudenbin
+    </td>
+    <td>Dwelling unit density per bin
+    </td>
+  </tr>
+  <tr>
+    <td>PopEmpDenPerMi
+    </td>
+    <td>Population and employment density per mile
+    </td>
+  </tr>
+  <tr>
+    <td>TAZ
+    </td>
+    <td>TAZ id
+    </td>
+  </tr>
+  <tr>
+    <td>poe_id
+    </td>
+    <td>Port of Entry ID ( not used by CVM)
+    </td>
+  </tr>
+  <tr>
+    <td>external_work
+    </td>
+    <td>number of workers if an external zone
+    </td>
+  </tr>
+  <tr>
+    <td>external_nonwork
+    </td>
+    <td>number of nonworkers if an external zone
+    </td>
+  </tr>
+  <tr>
+    <td>external_TAZ
+    </td>
+    <td>is an external TAZ ( 1 if true, 0 if false)
+    </td>
+  </tr>
+  <tr>
+    <td>external_MAZ
+    </td>
+    <td>is an external MAZ ( 1 if true, 0 if false)
+    </td>
+  </tr>
+  <tr>
+    <td>walk_dist_local_bus
+    </td>
+    <td>walking distance ( in miles) to nearest local bus
+    </td>
+  </tr>
+  <tr>
+    <td>walk_dist_premium_transit
+    </td>
+    <td>walking distance ( in miles) to premium transit
+    </td>
+  </tr>
+  <tr>
+    <td>micro_dist_local_bus
+    </td>
+    <td>micro district distance to local bus
+    </td>
+  </tr>
+  <tr>
+    <td>micro_dist_premium_transit
+    </td>
+    <td>micro district distance to premium transit
+    </td>
+  </tr>
+  <tr>
+    <td>ML_DIST
+    </td>
+    <td>distance in miles to managed lanes 
+    </td>
+  </tr>
+  <tr>
+    <td>AVGTTS
+    </td>
+    <td>Average travel time savings for all households in each zone across all possible destinations
+    </td>
+  </tr>
+  <tr>
+    <td>PCTDETOUR
+    </td>
+    <td>Percent detour is the percent difference between the AM transponder travel time and the AM non-transponder travel time to sample zones when the general-purpose lanes parallel to all toll lanes using transponders are unavailable
+    </td>
+  </tr>
+  <tr>
+    <td>terminal_time
+    </td>
+    <td>Terminal Time (0,3,4,5,7,10 minutes)
+    </td>
+  </tr>
+  <tr>
+    <td>num_hh_food_delivery
+    </td>
+    <td>Number of households which attract food deliveries
+    </td>
+  </tr>
+  <tr>
+    <td>num_hh_package_delivery
+    </td>
+    <td>Number of households which attract package deliveries
+    </td>
+  </tr>
+  <tr>
+    <td>num_hh_service
+    </td>
+    <td>Number of households which attract service trips
+    </td>
+  </tr>
+  <tr>
+    <td>establishment_attraction
+    </td>
+    <td>Attraction of establishments
+    </td>
+  </tr>
+  <tr>
+    <td>establishment_attraction_agm
+    </td>
+    <td>Attraction of establishments for agriculture and mining
+    </td>
+  </tr>
+  <tr>
+    <td>establishment_attraction_con
+    </td>
+    <td>Attraction of establishments for construction
+    </td>
+  </tr>
+  <tr>
+    <td>establishment_attraction_epo
+    </td>
+    <td>Attraction of establishments for education
+    </td>
+  </tr>
+  <tr>
+    <td>establishment_attraction_ifr
+    </td>
+    <td> Attraction of establishments for information, real estate, finance,professional services
+    </td>
+  </tr>
+  <tr>
+    <td>establishment_attraction_iut
+    </td>
+    <td>Attraction of establishments for industrial and utilities
+    </td>
+  </tr>
+  <tr>
+    <td>establishment_attraction_laf
+    </td>
+    <td> Attraction of establishments for leisure, accommodations, and food
+    </td>
+  </tr>
+  <tr>
+    <td>establishment_attraction_mfg
+    </td>
+    <td>Attraction of establishments for manufacturing
+    </td>
+  </tr>
+  <tr>
+    <td>establishment_attraction_mhs
+    </td>
+    <td> Attraction of establishments for medical and health services
+    </td>
+  </tr>
+  <tr>
+    <td>establishment_attraction_mil
+    </td>
+    <td>Attraction of establishments for military
+    </td>
+  </tr>
+  <tr>
+    <td>establishment_attraction_ret
+    </td>
+    <td> Attraction of establishments for retail trade
+    </td>
+  </tr>
+  <tr>
+    <td>establishment_attraction_trn
+    </td>
+    <td>  Attraction of establishments for transportation and warehousing
+    </td>
+  </tr>
+  <tr>
+    <td>establishment_attraction_whl
+    </td>
+    <td> Attraction of establishments for wholesale trade
+    </td>
+  </tr>
+  <tr>
+    <td>is_port
+    </td>
+    <td>TRUE if the zone is a port, otherwise FALSE
+    </td>
+  </tr>
+  <tr>
+    <td>zone_id
+    </td>
+    <td>MGRA id
+    </td>
+  </tr>
+   
+  
+</table>
+
+#### Commerical Vehicle Model Trip File ( final_routes.csv )
+
+<table>
+  <tr>
+    <td>Field
+    </td>
+    <td>Description
+    </td>
+  </tr>
+  <tr>
+    <td>establishment_id
+    </td>
+    <td>Establishment ID ( Industry ID )
+    </td>
+  </tr>
+  <tr>
+    <td>business_type
+    </td>
+    <td>Name of the industry
+    </td>
+  </tr>
+  <tr>
+    <td>route_purpose
+    </td>
+    <td>Primary purpose of the route:
+        <p>
+        • Goods - pickup and/or deliver goods
+        <p>
+        • Service - provide services to customers
+        <p>
+        • Maintenance - vehicle maintenance or driver business
+    </td>
+  </tr>
+  <tr>
+    <td>customer_type
+    </td>
+    <td>Type of the customer ( residential; non-residential; mixed)
+  </tr>
+  <tr>
+    <td>vehicle_type
+    </td>
+    <td>Type of the vehicle (LV, MUT, SUT)
+    </td>
+  </tr>
+  <tr>
+    <td>is_tnc
+    </td>
+    <td>TRUE if route is a TNC, otherwise FALSE
+    </td>
+  </tr>
+  <tr>
+    <td>vehicle_type_abm3
+    </td>
+    <td>Type of the vehicle ( Passenger car, LHDU, MHDU, and HHDU)
+    </td>
+  </tr>
+  <tr>
+    <td>random
+    </td>
+    <td>Random number used in route generation calculations
+    </td>
+
+  </tr>
+  <tr>
+    <td>start_time
+    </td>
+    <td>Start Time ( half-hour intervals )
+    </td>
+  </tr>
+
+  <tr>
+    <td>route_start_time_period_
+    </td>
+    <td>Start time period
+    </td>
+  </tr>
+  <tr>
+    <td>origin_stop_type
+    </td>
+    <td>Origin Stop Type:
+      <p>
+      • base - establishment location (any land use type)
+      <p>
+      • warehouse - warehouse, distribution center land use type
+      <p>
+      • commercial - commercial land use type (not warehouse)
+      <p>
+      • residential - residential land use type
+    </td>
+  </tr>
+  <tr>
+    <td>origination_zone
+    </td>
+    <td>Origin Zone for start of route
+    </td>
+  </tr>
+  <tr>
+    <td>destination_stop_type
+    </td>
+    <td>Destination Stop Type:
+      <p>
+      • base - establishment location (any land use type)
+      <p>
+      • warehouse - warehouse, distribution center land use type
+      <p>
+      • commercial - commercial land use type (not warehouse)
+      <p>
+      • residential - residential land use type
+    </td>
+  </tr>
+  <tr>
+    <td>terminal_zone
+    </td>
+    <td>Destination Zone for termination of route
+    </td>
+  </tr>
+  <tr>
+    <td>route_id
+    </td>
+    <td>unique route id ( or trip id )
+    </td>
+  </tr>
+</table>
+
+#### Commerical Vehicle Model Trip File ( final_trips.csv )
+
+<table>
+  <tr>
+    <td>Field
+    </td>
+    <td>Description
+    </td>
+  </tr>
+  <tr>
+    <td>route_id
+    </td>
+    <td>the route id on which the trip is assigned to
+    </td>
+  </tr>
+  <tr>
+    <td>route_trip_num
+    </td>
+    <td>the number of trips on the route_id
+    </td>
+  </tr>
+  <tr>
+    <td>trip_origin
+    </td>
+    <td>origin zone (MGRA) of the trip
+    </td>
+  </tr>
+  <tr>
+    <td>trip_destination
+    </td>
+    <td>destination zone (MGRA) of the trip
+  </tr>
+  <tr>
+    <td>trip_destination_purpose
+    </td>
+    <td>purpose of the trip:
+      <p>
+        • base - return to establishment
+      <p>
+        • goods_delivery - deliver goods
+      <p>
+        • goods_pickup - pickup goods
+      <p>
+        • home - go to driver's home
+      <p>
+        • maintenance - maintenance (refueling, vehicle maintenance, driver breaks/meals)
+      <p>
+        • service - provide a service
+      <p>
+        • terminate - end route (vehicle day), go to terminal destination chosen for route
+    </td>
+  </tr>
+  <tr>
+    <td>trip_destination_type
+    </td>
+    <td>attraction land use type at the destination:
+      <p>
+        • base - establishment location (any land use type)
+      <p>
+        • warehouse - warehouse, distribution center land use type
+      <p>
+        • intermodal - airport, seaport, rail intermodal land use type
+      <p>
+        • commercial - commercial land use type (not warehouse or intermodal)
+      <p>
+        • residential - residential land use type
+    </td>
+  </tr>
+  <tr>
+    <td>trip_start_time
+    </td>
+    <td>start time of the trip (half hour intervals counted from beginning)
+    </td>
+  </tr>
+  <tr>
+    <td>trip_travel_time
+    </td>
+    <td>travel time ( in motion time ) of the vehicle during the trip
+    </td>
+  </tr>
+  <tr>
+    <td>dwell_time
+    </td>
+    <td>resting/dwelling time of the vehicle during the trip
+    </td>
+  </tr>
+  <tr>
+    <td>route_elapsed_time
+    </td>
+    <td>total time elapsed during the trip ( trip_travel_time + route_trip_num)
+    </td>
+  </tr>
+  <tr>
+    <td>cv_trip_id
+    </td>
+    <td>the unique trip id of the cv trip (route_id + route_trip_num)
+    </td>
+  </tr>
+  <tr>
+    <td>taz_origin
+    </td>
+    <td>origin zone ( TAZ ) of the trip
+    </td>
+  </tr>
+  <tr>
+    <td>taz_destination
+    </td>
+    <td>destination zone (TAZ) of the trip
+    </td>
+  </tr>
+  <tr>
+    <td>vehicle_type
+    </td>
+    <td>Vehicle types: DRIVEALONE ( passenger car), LHGT, MHDT, or HHDT
+    </td>
+  </tr>
+  <tr>
+    <td>tod
+    </td>
+    <td>Start time period of the trip ( ABM3 categories)
+    </td>
+  </tr>
+  <tr>
+    <td>distanceDrive
+    </td>
+    <td>Trip distance, from traffic_skims_MD
+    </td>
+  </tr>
+  <tr>
+    <td>costTollDrive
+    </td>
+    <td>Trip toll cost, from traffic_skims_MD
+    </td>
+  </tr>
+  <tr>
+    <td>costOperatingDrive
+    </td>
+    <td>Trip operating costs (cents)
+    </td>
+  </tr>
+</table>
 
 ### Parking cost calculations (.\parking)
 
@@ -4228,9 +5721,21 @@ Resident Model person file (final_persons.csv)
    </td>
   </tr>
   <tr>
+   <td>mandatory_tour_frequency
+   </td>
+   <td>Mandatory Tour Frequency Model Choice if worker or student, else null (Output from Mandatory Tour Frequency Model). String "work1": 1 work tour, "work2" 2 work tours, "school1: 1 school tour, "school2" 2 school tours, "work_and_school": 1 work and 1 school tour
+   </td>
+  </tr>
+  <tr>
    <td>num_non_mand
    </td>
    <td>Total number of non-mandatory tours (Output from School Escort Model, Non-Mandatory Tour Frequency Model, and At-Work Subtour Model)
+   </td>
+  </tr>
+  <tr>
+   <td>num_mand
+   </td>
+   <td>Total number of mandatory tours  (Output from Mandatory Tour Frequency Model)
    </td>
   </tr>
   <tr>
@@ -4267,6 +5772,12 @@ Resident Model person file (final_persons.csv)
    <td>num_social_tours
    </td>
    <td>Total number of social\visiting tours (Output from Non-Mandatory Tour Frequency Model)
+   </td>
+  </tr>
+  <tr>
+   <td>num_work_tours
+   </td>
+   <td>Total number of work tours  (Output from Mandatory Tour Frequency Model)
    </td>
   </tr>
   <tr>
@@ -5514,6 +7025,127 @@ Resident Model vehicle file (final_vehicles.csv)
   </tr>
 </table>
 
+### Heavy Truck Model (.\htm)
+
+This directory contains San Diego heavy truck model outputs.
+
+<table>
+  <tr>
+   <td>File 
+   </td>
+   <td>Description
+   </td>
+  </tr>
+  <tr>
+   <td>htmtrips_(period).omx ((period) = EA, AM, MD, PM, EV)
+
+   </td>
+   <td> HTM trips of (period), by mode (Light, Medium or Heavy trucks) and type of trip (IE, EI or EE)
+   </td>
+  </tr>
+  <tr>
+   <td>Htmsummary_files.xlsx
+   </td>
+   <td>OD-based HTM trip tables by Mode (Light, Medium or Heavy trucks)
+   </td>
+  </tr>
+  <tr>
+   <td>final_trips.csv
+   </td>
+   <td>Aggregate all HTM trips by TAZ and truck type
+   </td>
+  </tr>
+  
+</table>
+
+#### Heavy Truck Model Trip File ( htmsummary_files.xlsx )
+
+<table>
+  <tr>
+    <td>Field
+    </td>
+    <td>Description
+    </td>
+  </tr>
+  <tr>
+    <td>Light
+    </td>
+    <td>OD-based HTM trip tables for light trucks (LHDT)
+    </td>
+  </tr>
+  <tr>
+    <td>Medium
+    </td>
+    <td>OD-based HTM trip tables for medium trucks (MHDT)
+    </td>
+  </tr>
+  <tr>
+    <td>Heavy
+    </td>
+    <td>OD-based HTM trip tables for heavy trucks (HHDT)
+  </tr>
+
+</table>
+
+#### Heavy Truck Model Trip File ( final_trips.csv )
+
+<table>
+  <tr>
+    <td>Field
+    </td>
+    <td>Description
+    </td>
+  </tr>
+  <tr>
+    <td>taz_p
+    </td>
+    <td>origin zone (TAZ) of the trip
+    </td>
+  </tr>
+  <tr>
+    <td>taz_a
+    </td>
+    <td>destination zone (TAZ) of the trip
+    </td>
+  </tr>
+  <tr>
+    <td>Truck_Type
+    </td>
+    <td>Truck type (Light, Medium and High trucks)
+  </tr>
+  <tr>
+    <td>tod
+    </td>
+    <td>Start time period of the trip (ABM3 time periods)
+  </tr>
+  <tr>
+    <td>trips
+    </td>
+    <td>Sum of trips for corresponding TAZ and Truck Type
+  </tr>
+  <tr>
+    <td>distanceDrive
+    </td>
+    <td>Trip distance, from traffic_skims_MD
+  </tr>
+  <tr>
+    <td>timeDrive
+    </td>
+    <td>Trip time, from traffic_skims_MD
+  </tr>
+  <tr>
+    <td>costTollDrive
+    </td>
+    <td>Trip toll cost, from traffic_skims_MD
+  </tr>
+  <tr>
+    <td>costOperatingDrive
+    </td>
+    <td>Trip operation cost
+  </tr>
+  
+
+</table>
 
 
 ### Visitor model outputs (.\visitor)
