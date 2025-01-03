@@ -152,7 +152,7 @@ The table below contains brief descriptions of the input files required to execu
 | exp_hourly | Expected hourly prking cost | 
 | exp_daily | Expected daily prking cost | 
 | exp_monthly | Expected monthly prking cost | 
-| parking_type | MGRA parking type | 
+| parking_type | 1: parking constrained area: has cluster_id and district_id<br> 2: buffer around parking constrained area which is used to include free spaces to average into parking cost calculation: has district_id but no cluster_id<br> 3: no parking cost: Has neither cluster_id nor district_id | 
 | parking_spaces | MGRA estimated parking spaces | 
 | ech_dist | Elementary school district | 
 | hch_dist | High school district | 
