@@ -2,7 +2,7 @@
 
 Model outputs are stored in the .\outputs directory. The contents of the directory are listed in the table below.
 
-### Output Directory (.\output)
+## Output Directory (.\output)
 
 
 <table>
@@ -40,12 +40,6 @@ Model outputs are stored in the .\outputs directory. The contents of the directo
    <td>cvm (directory)
    </td>
    <td>Commercial Vehicle Model outputs
-   </td>
-  </tr>
-  <tr>
-   <td>parking (directory)
-   </td>
-   <td>Parking model outputs
    </td>
   </tr>
   <tr>
@@ -127,7 +121,7 @@ Model outputs are stored in the .\outputs directory. The contents of the directo
 
 
 
-### Skims (.\skims)
+## Skims (.\skims)
 
 This directory contains auto, transit, and non-motorized level-of-service matrices, also known as skims. Each file is a collection of origin destination tables of times and costs, at the TAZ level.
 
@@ -204,7 +198,7 @@ This directory contains auto, transit, and non-motorized level-of-service matric
 
 
 <a id="auto-skims"></a>
-#### Auto skims by period
+### Auto skims by period
 
 ```TRAFFIC_SKIMS_<time period>.OMX```
 
@@ -275,7 +269,7 @@ This directory contains auto, transit, and non-motorized level-of-service matric
 
 
 <a id="transit-skims"></a>
-#### Transit skims by period
+### Transit skims by period
 
 ```TRANSIT_SKIMS_<time_period>.OMX```
 
@@ -405,7 +399,7 @@ This directory contains auto, transit, and non-motorized level-of-service matric
 
 
 
-### ActivitySim log files
+## ActivitySim log files
 
 ActivitySim writes out various log files when it runs; these have standard names for each model component. Therefore we list them separately, but copies of these files may be in each model’s output directory depending upon the settings used to run ActivitySim for that model component.
 
@@ -547,7 +541,7 @@ ActivitySim writes out various log files when it runs; these have standard names
 
 
 
-### Airport model outputs (.\airport.CBX, .\airport.SAN)
+## Airport model outputs (.\airport.CBX, .\airport.SAN)
 
 There are two subdirectories containing outputs for each of the two airport models. airport.CBX contains output for the Cross-Border Express model, and airport.SAN contains output for the San Diego International Airport model. Each directory has identical files so we provide one generic output table below.
 
@@ -623,7 +617,7 @@ There are two subdirectories containing outputs for each of the two airport mode
 
 
 
-#### Airport Model household file (final_(airport)households.csv)
+### Airport Model household file (final_(airport)households.csv)
 
 
 <table>
@@ -661,7 +655,7 @@ There are two subdirectories containing outputs for each of the two airport mode
 
 
 
-#### Airport Model person file (final_(airport)persons.csv)
+### Airport Model person file (final_(airport)persons.csv)
 
 
 <table>
@@ -686,7 +680,7 @@ There are two subdirectories containing outputs for each of the two airport mode
 </table>
 
 
-#### Airport Model tour file (final_(airport)tours.csv)
+### Airport Model tour file (final_(airport)tours.csv)
 
 
 <table>
@@ -831,7 +825,7 @@ There are two subdirectories containing outputs for each of the two airport mode
 </table>
 
 
-#### Airport Model trip file (final_(airport)trips.csv)
+### Airport Model trip file (final_(airport)trips.csv)
 
 <table>
   <tr>
@@ -1155,7 +1149,7 @@ There are two subdirectories containing outputs for each of the two airport mode
 </table>
 
 
-#### Arrival Mode Table for Airport Models
+### Arrival Mode Table for Airport Models
 
 <table>
   <tr>
@@ -1238,7 +1232,7 @@ There are two subdirectories containing outputs for each of the two airport mode
   </tr>
 </table>
 
-#### Airport Model auto demand matrices
+### Airport Model auto demand matrices
 
 <table>
   <tr>
@@ -1272,7 +1266,7 @@ There are two subdirectories containing outputs for each of the two airport mode
 </table>
 
 
-#### Airport Model transit demand matrices
+### Airport Model transit demand matrices
 
 <table>
   <tr>
@@ -1360,7 +1354,7 @@ There are two subdirectories containing outputs for each of the two airport mode
 </table>
 
 
-#### Airport Model non-motorized demand matrices
+### Airport Model non-motorized demand matrices
 
 <table>
   <tr>
@@ -1387,11 +1381,11 @@ There are two subdirectories containing outputs for each of the two airport mode
   </tr>
 </table>
 
-### Assignment model trip tables (.\assignment)
+## Assignment model trip tables (.\assignment)
 
 This directory contains trip tables from auto and transit assignments.
 
-#### Demand Matrices
+### Demand Matrices
 
 <table>
   <tr>
@@ -1494,7 +1488,7 @@ This directory contains trip tables from auto and transit assignments.
 
 
 
-#### TNC Vehicle trip demand table
+### TNC Vehicle trip demand table
 
 <table>
   <tr>
@@ -1696,7 +1690,7 @@ This directory contains trip tables from auto and transit assignments.
 </table>
 
 
-#### Household autonomous vehicle trip data
+### Household autonomous vehicle trip data
 
 <table>
   <tr>
@@ -2224,7 +2218,7 @@ This directory contains trip tables from auto and transit assignments.
 </table>
 
 
-#### TNC vehicle trip matrix
+### TNC vehicle trip matrix
 
 <table>
   <tr>
@@ -2261,7 +2255,7 @@ This directory contains trip tables from auto and transit assignments.
 
 
 
-#### Empty Autonomous vehicle trips data
+### Empty Autonomous vehicle trips data
 
 <table>
   <tr>
@@ -2303,7 +2297,7 @@ This directory contains trip tables from auto and transit assignments.
 </table>
 
 
-### Crossborder model outputs (.\crossborder)
+## Crossborder model outputs (.\crossborder)
 
 This directory contains outputs from the Crossborder model, which represents all travel made by Mexico residents in San Diego County.
 
@@ -2384,7 +2378,7 @@ This directory contains outputs from the Crossborder model, which represents all
 </table>
 
 
-#### Crossborder Model household file (final_households.csv)
+### Crossborder Model household file (final_households.csv)
 
 <table>
   <tr>
@@ -2432,7 +2426,7 @@ This directory contains outputs from the Crossborder model, which represents all
 </table>
 
 
-#### Crossborder Model person file (final_persons.csv)
+### Crossborder Model person file (final_persons.csv)
 
 <table>
   <tr>
@@ -2480,7 +2474,7 @@ This directory contains outputs from the Crossborder model, which represents all
 </table>
 
 
-#### Crossborder Model tour file (final_tours.csv)
+### Crossborder Model tour file (final_tours.csv)
 
 <table>
   <tr>
@@ -2606,7 +2600,7 @@ This directory contains outputs from the Crossborder model, which represents all
 </table>
 
 
-#### Crossborder Model trip file (final_trips.csv)
+### Crossborder Model trip file (final_trips.csv)
 
 <table>
   <tr>
@@ -3033,7 +3027,7 @@ This directory contains outputs from the Crossborder model, which represents all
 
 
 
-#### Crossborder Model Tour Mode Definitions
+### Crossborder Model Tour Mode Definitions
 
 <table>
   <tr>
@@ -3068,7 +3062,7 @@ This directory contains outputs from the Crossborder model, which represents all
   </tr>
 </table>
 
-#### Crossborder Model auto demand matrices
+### Crossborder Model auto demand matrices
 
 <table>
   <tr>
@@ -3102,7 +3096,7 @@ This directory contains outputs from the Crossborder model, which represents all
 </table>
 
 
-#### Crossborder Model transit demand matrices
+### Crossborder Model transit demand matrices
 
 <table>
   <tr>
@@ -3190,7 +3184,7 @@ This directory contains outputs from the Crossborder model, which represents all
 </table>
 
 
-#### Crossborder Model non-motorized demand matrices
+### Crossborder Model non-motorized demand matrices
 
 <table>
   <tr>
@@ -3218,39 +3212,8 @@ This directory contains outputs from the Crossborder model, which represents all
 </table>
 
 
-### CVM Establishment Synthesis (.\cvm_establishment_synthesis)
 
-
-<table>
-  <tr>
-   <td>File 
-   </td>
-   <td>Description
-   </td>
-  </tr>
-  <tr>
-   <td>MGRAEmpByEstSize.csv
-   </td>
-   <td>MGRA based synthetically generated establishments. Used for diagnostic purposes, not for simulation 
-   </td>
-  </tr>
-  <tr>
-   <td>SummarySynthEstabs.csv
-   </td>
-   <td>Total count summary by size class and industry sector
-   </td>
-  </tr>
-  <tr>
-   <td>SynthEstablishments.csv
-   </td>
-   <td>Contains information about synthetically generated establishments to be used as inputs to the commercial vehicle model
-   </td>
-  </tr>
-  
-  
-</table>
-
-### Commercial Vehicle Model (.\cvm)
+## Commercial Vehicle Model (.\cvm)
 
 This directory contains San Diego commercial travel model outputs.
 
@@ -3322,7 +3285,7 @@ This directory contains San Diego commercial travel model outputs.
   
 </table>
 
-#### Commerical Vehicle Model Trip File ( final_commercial_accessibility.csv )
+### Commerical Vehicle Model Trip File ( final_commercial_accessibility.csv )
 
 <table>
   <tr>
@@ -3402,7 +3365,7 @@ This directory contains San Diego commercial travel model outputs.
 
 </table>
 
-#### Commerical Vehicle Model Trip File ( final_cv_trips.csv )
+### Commerical Vehicle Model Trip File ( final_cv_trips.csv )
 
 <table>
   <tr>
@@ -3521,7 +3484,7 @@ This directory contains San Diego commercial travel model outputs.
 
 </table>
 
-#### Commerical Vehicle Model Trip File ( final_establishments.csv )
+### Commerical Vehicle Model Trip File ( final_establishments.csv )
 
 <table>
   <tr>
@@ -3613,7 +3576,7 @@ This directory contains San Diego commercial travel model outputs.
   </tr>
 </table>
 
-#### Commerical Vehicle Model Trip File ( final_establishments_all.csv )
+### Commerical Vehicle Model Trip File ( final_establishments_all.csv )
 
 <table>
   <tr>
@@ -3719,7 +3682,7 @@ This directory contains San Diego commercial travel model outputs.
 </table>
 
 
-#### Commerical Vehicle Model Trip File ( final_households.csv )
+### Commerical Vehicle Model Trip File ( final_households.csv )
 
 <table>
   <tr>
@@ -3817,7 +3780,7 @@ This directory contains San Diego commercial travel model outputs.
   </tr>
 </table>
 
-#### Commerical Vehicle Model Trip File ( final_land_use.csv )
+### Commerical Vehicle Model Trip File ( final_land_use.csv )
 
 <table>
   <tr>
@@ -4456,7 +4419,7 @@ This directory contains San Diego commercial travel model outputs.
   
 </table>
 
-#### Commerical Vehicle Model Trip File ( final_routes.csv )
+### Commerical Vehicle Model Trip File ( final_routes.csv )
 
 <table>
   <tr>
@@ -4580,7 +4543,7 @@ This directory contains San Diego commercial travel model outputs.
   </tr>
 </table>
 
-#### Commerical Vehicle Model Trip File ( final_trips.csv )
+### Commerical Vehicle Model Trip File ( final_trips.csv )
 
 <table>
   <tr>
@@ -4722,64 +4685,8 @@ This directory contains San Diego commercial travel model outputs.
   </tr>
 </table>
 
-### Parking cost calculations (.\parking)
 
-This directory contains intermediate files and final expected parking costs calculated from input parking supply data and walk distances between MGRAs.
-
-
-<table>
-  <tr>
-   <td>File 
-   </td>
-   <td>Description
-   </td>
-  </tr>
-  <tr>
-   <td>aggregated_street_data.csv
-   </td>
-   <td>Street length and intersections aggregated to MGRA level, used to estimate free on-street parking spaces
-   </td>
-  </tr>
-  <tr>
-   <td>cache (directory)
-   </td>
-   <td>Directory containing intermediate calculations for expected parking costs
-   </td>
-  </tr>
-  <tr>
-   <td>distances.csv
-   </td>
-   <td>MGRA-MGRA distances used for expected parking cost calculations
-   </td>
-  </tr>
-  <tr>
-   <td>districts.csv
-   </td>
-   <td>Calculated parking districts at MGRA level used for expected parking cost calculations
-   </td>
-  </tr>
-  <tr>
-   <td>final_parking_data.csv
-   </td>
-   <td>Expected hourly, daily, and monthly parking costs, total spaces, and parking district at the MGRA level for use in travel models
-   </td>
-  </tr>
-  <tr>
-   <td>plots
-   </td>
-   <td>Directory containing plots of the parking model results
-   </td>
-  </tr>
-  <tr>
-   <td>shapefiles
-   </td>
-   <td>Directory containing shapefiles for parking model calculations
-   </td>
-  </tr>
-</table>
-
-
-### Resident model outputs (.\resident)
+## Resident model outputs (.\resident)
 
 This directory contains San Diego resident travel model outputs.
 
@@ -4920,7 +4827,7 @@ This directory contains San Diego resident travel model outputs.
 
 
 
-#### Resident Model household file (final_households.csv)
+### Resident Model household file (final_households.csv)
 
 
 <table>
@@ -5251,7 +5158,7 @@ This directory contains San Diego resident travel model outputs.
 </table>
 
 
-Resident Model person file (final_persons.csv)
+### Resident Model person file (final_persons.csv)
 
 
 <table>
@@ -5686,7 +5593,7 @@ Resident Model person file (final_persons.csv)
 </table>
 
 
-Resident Model vehicle file (final_vehicles.csv)
+### Resident Model vehicle file (final_vehicles.csv)
 
 
 <table>
@@ -5766,7 +5673,7 @@ Resident Model vehicle file (final_vehicles.csv)
 
 
 
-#### Resident Model joint tour participants file (final_joint_tour_participants.csv)
+### Resident Model joint tour participants file (final_joint_tour_participants.csv)
 
 
 <table>
@@ -5810,7 +5717,7 @@ Resident Model vehicle file (final_vehicles.csv)
 
 
 
-#### Resident Model tour file (final_tours.csv)
+### Resident Model tour file (final_tours.csv)
 
 
 <table>
@@ -6022,7 +5929,7 @@ Resident Model vehicle file (final_vehicles.csv)
 
 
 
-#### Resident Model trip file (final_trips.csv)
+### Resident Model trip file (final_trips.csv)
 
 
 <table>
@@ -6522,7 +6429,7 @@ Resident Model vehicle file (final_vehicles.csv)
 
 
 
-#### Resident Model tour mode definitions
+### Resident Model tour mode definitions
 
 
 <table>
@@ -6674,7 +6581,7 @@ Resident Model vehicle file (final_vehicles.csv)
 
 
 
-#### Resident Model auto demand matrices
+### Resident Model auto demand matrices
 
 
 <table>
@@ -6724,7 +6631,7 @@ Resident Model vehicle file (final_vehicles.csv)
 
 
 
-#### Resident Model transit demand matrices
+### Resident Model transit demand matrices
 
 
 <table>
@@ -6848,7 +6755,7 @@ Resident Model vehicle file (final_vehicles.csv)
 
 
 
-#### Resident Model non-motorized demand matrices
+### Resident Model non-motorized demand matrices
 
 
 <table>
@@ -6872,7 +6779,7 @@ Resident Model vehicle file (final_vehicles.csv)
   </tr>
 </table>
 
-### Heavy Truck Model (.\htm)
+## Heavy Truck Model (.\htm)
 
 This directory contains San Diego heavy truck model outputs.
 
@@ -6905,7 +6812,7 @@ This directory contains San Diego heavy truck model outputs.
   
 </table>
 
-#### Heavy Truck Model Trip File ( htmsummary_files.xlsx )
+### Heavy Truck Model Trip File ( htmsummary_files.xlsx )
 
 <table>
   <tr>
@@ -6934,7 +6841,7 @@ This directory contains San Diego heavy truck model outputs.
 
 </table>
 
-#### Heavy Truck Model Trip File ( final_trips.csv )
+### Heavy Truck Model Trip File ( final_trips.csv )
 
 <table>
   <tr>
@@ -6995,7 +6902,7 @@ This directory contains San Diego heavy truck model outputs.
 </table>
 
 
-### Visitor model outputs (.\visitor)
+## Visitor model outputs (.\visitor)
 
 This directory contains outputs from the overnight visitor model.
 
@@ -7064,7 +6971,7 @@ This directory contains outputs from the overnight visitor model.
 
 
 
-#### Visitor Model household file (final_households.csv)
+### Visitor Model household file (final_households.csv)
 
 
 <table>
@@ -7102,7 +7009,7 @@ This directory contains outputs from the overnight visitor model.
 
 
 
-#### Visitor Model person file (final_persons.csv)
+### Visitor Model person file (final_persons.csv)
 
 
 <table>
@@ -7134,7 +7041,7 @@ This directory contains outputs from the overnight visitor model.
 
 
 
-#### Visitor Model tour file (final_tours.csv)
+### Visitor Model tour file (final_tours.csv)
 
 
 <table>
@@ -7280,7 +7187,7 @@ This directory contains outputs from the overnight visitor model.
 
 
 
-#### Visitor Model trip file ((final_trips.csv)
+### Visitor Model trip file (final_trips.csv)
 
 
 <table>
@@ -7738,7 +7645,7 @@ This directory contains outputs from the overnight visitor model.
 
 
 
-#### Visitor model’s tour mode choice definitions
+### Visitor model’s tour mode choice definitions
 
 
 <table>
@@ -7816,7 +7723,7 @@ This directory contains outputs from the overnight visitor model.
   </tr>
 </table>
 
-#### Visitor Model auto demand matrices
+### Visitor Model auto demand matrices
 
 <table>
   <tr>
@@ -7850,7 +7757,7 @@ This directory contains outputs from the overnight visitor model.
 </table>
 
 
-#### Visitor Model transit demand matrices
+### Visitor Model transit demand matrices
 
 <table>
   <tr>
@@ -7939,7 +7846,7 @@ This directory contains outputs from the overnight visitor model.
 
 
 
-#### Visitor Model non-motorized demand matrices
+### Visitor Model non-motorized demand matrices
 
 <table>
   <tr>
@@ -7967,7 +7874,7 @@ This directory contains outputs from the overnight visitor model.
 </table>
 
 
-### Trip Mode Definitions
+#### Trip Mode Definitions
 
 <table>
   <tr>
