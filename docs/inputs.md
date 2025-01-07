@@ -25,54 +25,26 @@ The table below contains brief descriptions of the input files required to execu
 | --- | --- | --- | --- |
 | **Land Use** |  |  |  | 
 | [mgra_based_input{SCENARIO_YEAR}.csv](#lu) | Land use forecast of the size and structure of the region’s economy and corresponding demographic forecast | CSV | Land Use Modelers, Transportation Modelers, and GIS | 
-| [activity_code_indcen_acs.csv](#activity_mapping) | PECAS activity code categories mapping to Census industry codes; This is used for military occupation mapping. | CSV | Land Use Modelers | 
-| [pecas_occ_occsoc_acs.csv](#pecas_occ) | PECAS activity code categories mapping to Census industry codes | CSV | Lande Use Modelers | 
-| [mobilityHubMGRA.csv](#mobility_mgra) |  | CSV | Transportation Modelers | 
 | **Synthetic Population** |  |  |  | 
 | [households.csv](#population_synth_households) | Synthetic households | CSV | Transportation Modelers | 
 | [persons.csv](#population_synth_persons) | Synthetic persons | CSV | Transportation Modelers | 
-| **Network: Highway (to be updated with TNED)** |  |  |  | 
-| hwycov.e00 | Highway network nodes from GIS | ESRI input exchange | Transportation Modelers | 
-| hwycov.e00 | Highway network links from GIS | ESRI input exchange | Transportation Modelers | 
-| turns.csv | Highway network turns file | CSV | Transportation Modelers | 
-| LINKTYPETURNS.dbf | Highway network link type turns table | DBF | Transportation Modelers | 
-| LINKTYPETURNSCST.DBF |  | DBF | Transportation Modelers | 
+| **Network** |  |  |  | 
+| EmmeOutputs.gdb | Network Input Files | GDB | Transportation Modelers |
+| transit_connectors | Input Files | | |
 | [vehicle_class_toll_factors.csv](#vehicle_class_toll) | Relative toll values by six vehicle classes by Facility name. Used to identify "free for HOV" type managed lane facilities. | CSV | Transportation Modelers | 
-| [off_peak_toll_factors.csv](#off_peak_toll) | Relative toll values for the three off-peak times-of-day (EA, MD, EV) by Facility name. Multiplied together with the values from vehicle_class_toll_factors.csv to get the final toll. | CSV | Transportation Modelers | 
-| [vehicle_class_availability.csv](#hwy_link_vehicle_class_availability) | The availability / unavailability of six vehicle classes for five times-of-day by facility name. | CSV | Transportation Modelers | 
-| **Network: Transit (To be updated with TNED)** |  |  |  | 
-| trcov.e00 | Transit network arc data from GIS | ESRI input exchange | Transportation Modelers | 
-| trcov.e00 | Transit network node data from GIS | ESRI input exchange | Transportation Modelers | 
 | [trlink.csv](#tr_link) | Transit route with a list of links file | CSV | Transportation Modelers | 
 | trrt.csv | Transit route attribute file | CSV | Transportation Modelers | 
 | [trstop.csv](#transit_binary_stop) | Transit stop attribute file | TCSV | Transportation Modelers | 
 | mode5tod.csv | Transit mode parameters table | CSV | Transportation Modelers |
 | [timexfer_XX.csv](#transit_transfer_proh) | Transit timed transfers table between COASTER and feeder buses; XX is the TOD (EA, AM, MD, PM, and EV) | CSV | Transportation Modelers | 
 | special_fares.txt | Fares to coaster | Text File | Transportation Modelers | 
-| **Network: Active Transportation** |  |  |  | 
+| [mobilityHubMGRA.csv](#mobility_mgra) |  | CSV | Transportation Modelers | 
 | [SANDAG_Bike_Net.dbf](#bike_net_link) | Bike network links | DBF | GIS | 
 | [SANDAG_Bike_Node.dbf](#bike_net_node) | Bike network nodes | DBF | GIS | 
 | [bikeTazLogsum.csv](#bike_taz_logsum) <i>(not saved in inputs, instead, run at the beginning of a model run)<i> | Bike TAZ logsum | CSV | Transportation Modelers | 
 | [bikeMgraLogsum.csv](#bike_mgra_logsum) <i>(not saved in inputs, instead, run at the beginning of a model run)<i> | Bike MGRA logsum | CSV | Transportation Modelers | 
-| [walkMgraEquivMinutes.csv](#walk_mgra_equiv) <i>(not saved in inputs, instead, run at the beginning of a model run)<i> | Walk, in minutes, between MGRAs | CSV |  | |  |  |  |
-| **Visitor Model (Derived from visitor survey)** |  |  |  | 
-| visitor_businessFrequency.csv | Visitor model tour frequency distribution for business travelers | CSV | Transportation Modelers | 
-| visitor_personalFrequency.csv | Visitor model tour frequency distribution for personal travelers | CSV | Transportation Modelers | 
-| visitor_partySize.csv | Visitor model party size distribution | CSV | Transportation Modelers | 
-| visitor_autoAvailable.csv | Visitor model auto availability distribution | CSV | Transportation Modelers | 
-| visitor_income.csv | Visitor model income distribution | CSV | Transportation Modelers | 
-| visitor_tourTOD.csv | Visitor model tour time-of-day distribution | CSV | Transportation Modelers | 
-| visitor_stopFrequency.csv | Visitor model stop frequency distribution | CSV | Transportation Modelers | 
-| visitor_stopPurpose.csv | Visitor model stop purpose distribution | CSV | Transportation Modelers | 
-| visitor_outboundStopDuration.csv | Visitor model time-of-day offsets for outbound stops | CSV | Transportation Modelers | 
-| visitor_inboundStopDuration.csv | Visitor model time-of-day offsets for inbound stops | CSV | Transportation Modelers | 
-| **Airport Model (Derived from airport survey)** |  |  |  | 
-| [airport_purpose.csv](#airport_trip_purpose) | Airport model tour purpose frequency table | CSV | Transportation Modelers | 
-| [airport_party.csv](#airport_party_purpose) | Airport model party type frequency table | CSV | Transportation Modelers | 
-| [airport_nights.csv](#airport_nights) | Airport model trip duration frequency table | CSV | Transportation Modelers | 
-| [airport_income.csv](#airport_income) | Airport model trip income distribution table | CSV | Transportation Modelers | 
-| [airport_departure.csv](#airport_departure) | Airport model time-of-day distribution for departing trips | CSV | Transportation Modelers | 
-| [airport_arrival.csv](#airport_arrival) | Airport model time-of-day distribution for arriving trips | CSV | Transportation Modelers | 
+| mgra15.shp | | SHP | |
+| taz15.shp | | SHP | |
 | **Cross-Border Model (Derived from cross-border survey)** |  |  |  | 
 | crossBorder_tourPurpose_control.csv |  | CSV |  | 
 | crossBorder_tourPurpose_nonSENTRI.csv | Cross Border Model tour purpose distribution for Non-SENTRI tours | CSV | Transportation Modelers | 
@@ -84,33 +56,35 @@ The table below contains brief descriptions of the input files required to execu
 | [crossBorder_stopPurpose.csv](#cross_border_stop_purpose) | Cross Border Model stop purpose distribution | CSV | Transportation Modelers | 
 | [crossBorder_outboundStopDuration.csv](#cross_border_out_stop) | Cross Border Model time-of-day offsets for outbound stops | CSV | Transportation Modelers | 
 | [crossBorder_inboundStopDuration.csv](#cross_border_in_stop) | Cross Border Model time-of-day offsets for inbound stops | CSV | Transportation Modelers | 
+| [closest_maz_to_external_tazs.csv](#closest_maz_to_external_tazs) | | CSV | Transportation Modelers |
+| [mazs_xborder.csv](#mazs_xborder) | | CSV | Transportation Modelers | 
 | **External Models (Derived from SCAG survey)** |  |  |  | 
 | [externalExternalTripsByYear.csv](#external_trip) <i> (raw inputs have these by year) <i> | External origin-destination station trip matrix | CSV | Transportation Modelers | |  |  |  | 
 | [externalInternalControlTotalsByYear.csv](#external_internal) <i> (raw inputs have these by year) <i> | External Internal station control totals read by GISDK | CSV | Transportation Modelers | |  |  |  | 
 | [internalExternal_tourTOD.csv](#internal_external_tod) | Internal-External Model tour time-of-day frequency distribution | CSV | Transportation Modelers | 
-| **CVM Establishment Synthesis** |
-| land_use | MGRA based land use file | CSV | |
-| percent_of_establishments_by_luz_size_emp_cat.xlsx | Percent of establishments in LUZ that belong in each size category by industry sector | Excel Workbook | |
+| [resident_ie_size_term.csv](#resident_ie_size_term) | | CSV | Transportation Modelers
 | **Commercial Vehicle Model** |  |  |  | 
-| SynthEstablishments.csv | Output from CVM establishment synthesis, similar description as previous part | CSV | |
-| MGRAEmpByEstSize.csv | MGRA Based synthetically generated establishments. Used for disgnostic purposes, not for simulation | CSV | |
-| SummaryEstablishments.csv | Contains information about synthetically generated establishments to be used as inputs to the commercial vehicle model | CSV | |
-| **Truck Model** |  |  |  | 
-| TruckTripRates.csv | Truck model data: Truck trip rates | CSV | Transportation Modelers | 
-| regionalEItrips<year>.csv | Truck model data: Truck external to internal data | CSV | Transportation Modelers | 
-| regionalIEtrips<year>.csv | Truck model data: Truck internal to external data | CSV | Transportation Modelers | 
-| regionalEEtrips<year>.csv | Truck model data: Truck external to external data | CSV | Transportation Modelers | 
-| specialGenerators.csv | Truck model data: Truck special generator data | CSV | Transportation Modelers | 
+| land_use(output from preprocessing step) | MGRA based land use file | CSV | |
+| percent_of_establishments_by_luz_size_emp_cat.xlsx | Percent of establishments in LUZ that belong in each size category by industry sector | Excel Workbook | |
+| CVM\SynthEstablishments.csv | Output from CVM establishment synthesis, similar description as previous part | CSV | |
+| CVM\MGRAEmpByEstSize.csv | MGRA Based synthetically generated establishments. Used for disgnostic purposes, not for simulation | CSV | |
+| CVM\SummaryEstablishments.csv | Contains information about synthetically generated establishments to be used as inputs to the commercial vehicle model | CSV | |
 | **Heavy Truck Model ( HTM )** |
-| inputs_sandag_htm_<Scenario_Year>.xlsx | Contains all the required inputs ( in different sheets) for the Heavy Truck Model | Excel Workbook | |
-| FAF5_BaseAndFutureYears_Oct27_2023.csv | FAF5 Data (filtered) containing FAF flows for required years | CSV | |
+| HTM\inputs_sandag_htm_<Scenario_Year>.xlsx | Contains all the required inputs ( in different sheets) for the Heavy Truck Model | Excel Workbook | |
+| HTM\FAF5_BaseAndFutureYears_Oct27_2023.csv | FAF5 Data (filtered) containing FAF flows for required years | CSV | |
 | **Other** |  |  |  | 
 | [parametersByYears.csv](#parametersbyyearscsv) | Parameters by scenario years. Includes AOC, aiport enplanements, cross-border tours, cross-border sentri share. | CSV | Transportation Modelers | 
 | [filesByYears.csv](#filesbyyearscsv) | File names by scenario years. | CSV | Transportation Modelers | 
 | trip_XX.omx | Warm start trip table; XX is the TOD (EA, AM, MD, PM, and EV) | OMX | Transportation Modelers |
-| zone.term | TAZ terminal times | Space Delimited Text File | Transportation Modelers | 
+| zone_term.csv | TAZ terminal times | Space Delimited Text File | Transportation Modelers | 
+| all_vol_dfs.csv [to be updated] | | | |
+| all_wait_times.csv [to be updated] | | | |
+| specialEvents_() [to be updated] | | | |
+<a id="land_use"></a>
 
-```MGRA_BASED_INPUT<<SCENARIO_YEAR>>.CSV```<a name="lu"></a>
+## Land Use
+### MGRA_BASED_INPUT_SCENARIO_YEAR.CSV
+<a name="lu"></a>
 
 | Column name | Description | 
 | --- | --- |
@@ -178,7 +152,7 @@ The table below contains brief descriptions of the input files required to execu
 | exp_hourly | Expected hourly prking cost | 
 | exp_daily | Expected daily prking cost | 
 | exp_monthly | Expected monthly prking cost | 
-| parking_type | MGRA parking type | 
+| parking_type | 1: parking constrained area: has cluster_id and district_id<br> 2: buffer around parking constrained area which is used to include free spaces to average into parking cost calculation: has district_id but no cluster_id<br> 3: no parking cost: Has neither cluster_id nor district_id | 
 | parking_spaces | MGRA estimated parking spaces | 
 | ech_dist | Elementary school district | 
 | hch_dist | High school district | 
@@ -197,93 +171,8 @@ The table below contains brief descriptions of the input files required to execu
 | dudenbin | Dwelling unit density bin | 
 | PopEmpDenPerMi | Population and employment density per mile |
 
-<a id="activity_mapping"></a>
 
-### Activity Mapping to Industry Codes
-#### `ACTIVITY_CODE_INDCEN_ACS.CSV`
-
-| Column Name | Description |
-| ----------- | ----------- |
-| indcen | Industry code defined in PECAS: They are about 270 industry categories grouped by 6-digit NAICS code (North American Industrial Classification System) |
-| activity_code | Activity code defined in PECAS. They are about 30 types of activities grouped by the industry categories:<br>1 = Agriculture<br>3 = Construction Non-Building office support (including mining)<br>5 = Utilities office support<br>9 = Manufacturing office support<br>10 = Wholesale and Warehousing<br>11 = Transportation Activity<br>12 = Retail Activity<br>13 = Professional and Business Services<br>14 = Professional and Business Services (Building Maintenance)<br>16 = Private Education Post-Secondary (Post K-12) and Other<br>17 = Health Services<br>18 = Personal Services Office Based<br>19 = Amusement Services<br>20 = Hotels and Motels<br>21 = Restaurants and Bars<br>22 = Personal Services Retail Based<br>23 = Religious Activity<br>24 = Private Households<br>25 = State and Local Government Enterprises Activity<br>27 = Federal Non-Military Activity<br>28 = Federal Military Activity<br>30 = State and Local Government Non-Education Activity office support<br>31 = Public Education |
-
-
-<a id="pecas_occ"></a>
-
-### PECAS SOC - Defined Occupational Codes
-#### `PECAS_OCC_OCCSOC_ACS.CSV`
-
-<table>
-    <tr>
-        <th>Column Name</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <td>occsoc5</td>
-        <td>Detailed occupation codes defined by the <a href="https://www.bls.gov/soc/">Standard Occupational Classification (SOC)</a> system</td>
-    </tr>
-    <tr>
-        <td>commodity_id</td>
-        <td>
-            Commodity code defined in PECAS. The detailed SOC occupations are grouped into 6 types of laborers, which are included as part of commodity: <br>
-            51 = Services Labor<br>
-            52 = Work at Home Labor<br>
-            53 = Sales and Office Labor<br>
-            54 = Natural Resources Construction and Maintenance Labor<br>
-            55 = Production Transportation and Material Moving Labor<br>
-            56 = Military Labor
-        </td>
-    </tr>
-</table>
-
-<a id="external_zones"></a>
-
-### Listing of External Zones Attributes
-#### `EXTERNALZONES.XLS`
-
-<table>
-    <tr>
-        <th>Column Name</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <td>Internal Cordon LUZ</td>
-        <td>Internal Cordon Land use zone</td>
-    </tr>
-    <tr>
-        <td>External LUZ</td>
-        <td>External land use zone</td>
-    </tr>
-    <tr>
-        <td>Cordon Point</td>
-        <td>Cordon Point description</td>
-    </tr>
-    <tr>
-        <td>Destination Approximation</td>
-        <td>Name of approximate city destination</td>
-    </tr>
-    <tr>
-        <td>Miles to be Added to Cordon Point</td>
-        <td>Miles to be added to cordon point</td>
-    </tr>
-    <tr>
-        <td>Travel Time</td>
-        <td>Travel time to external zone</td>
-    </tr>
-    <tr>
-        <td>Border Delay</td>
-        <td>Border delay time</td>
-    </tr>
-    <tr>
-        <td>Minutes to be Added to Cordon Point</td>
-        <td>Minutes to be added to cordon point</td>
-    </tr>
-    <tr>
-        <td>MPH</td>
-        <td>Average miles per hour based on miles and minutes to be added to cordon point</td>
-    </tr>
-</table>
-
+## Synthetic Population
 <a id="population_synth_households"></a>
 
 ### Population Synthesizer Household Data
@@ -338,6 +227,7 @@ The table below contains brief descriptions of the input files required to execu
 | soc2              | 2 digit Standard Occupational Classification |
 
 
+## Network
 <a id="vehicle_class_toll"></a>
 
 ### Highway Network Vehicle Class Toll Factors File
@@ -352,8 +242,6 @@ Example:
 | I-15          | 2016 | EA          | 1.0       | 0.0       | 0.0       | 1.0          | 1.03         | 2.33         |
 | SR-125        | 2016 | ALL         | 1.0       | 1.0       | 1.0       | 1.0          | 1.03         | 2.33         |
 | I-5           | 2035 | ALL         | 1.0       | 1.0       | 0.0       | 1.0          | 1.03         | 2.33         |
-
-The toll values for each class on each link are calculated by multiplying the input toll value from hwycov.e00 (ITOLLA, ITOLLP, ITOLLO) by this factor, matched by the Facility name (together with the toll factors from <a href="#hwy_link_off_peak_toll_factors">off_peak_toll_factors.csv</a> in converting ITOLLO to the off-peak times-of-day). 
 
 The network links are matched to a record in this file based on the NM, FXNM or TXNM values (in that order). A simple substring matching is used, so the record with Facility_name "I-15" matches any link with name "I-15 SB", "I-15 NB", "I-15/DEL LAGO DAR NB" etc. The records should not be overlapping: if there are two records which match a given link it will be an arbitrary choice as to which one is used.
 
@@ -410,103 +298,8 @@ Note that if a link does not match to a record in this file, the default factors
     </tr>
 </table>
 
-<a id="off_peak_toll"></a>
 
-### Highway Network Off-Peak Toll Factors File
-#### `off_peak_toll_factors.csv`
-
-Optional file. Used to specify different tolls in the off-peak time-of-day scenarios based on the single link ITOLLO field, together with the tolls by vehicle class from <a href="#hwy_link_vehicle_class_toll_factors">vehicle_class_toll_factors.csv</a>.
-Used by the Import network Modeller tool.
-
-Example:
-```
-Facility_name, OP_EA_factor, OP_MD_factor, OP_EV_factor
-I-15,                  0.75,          1.0,         0.75
-SR-125,                1.0 ,          1.0,         1.0
-SR-52,                 0.8 ,          1.0,         0.8
-```
-
-See note re: network link matching under <a href="#hwy_link_vehicle_class_toll_factors">vehicle_class_toll_factors.csv</a>. Note that all facilities need not be specified, links not matched will use a factor of 1.0.
-
-<table>
-    <tr>
-        <th>Column Name</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <td>Facility_name</td>
-        <td>Name of the facility, used in the substring matching with links by NM, FXNM or TXNM fields</td>
-    </tr>
-    <tr>
-        <td>OP_EA_FACTOR</td>
-        <td>Positive toll factor for Early AM period tolls</td>
-    </tr>
-    <tr>
-        <td>OP_MD_FACTOR</td>
-        <td>Positive toll factor for Midday period tolls</td>
-    </tr>
-    <tr>
-        <td>OP_EV_FACTOR</td>
-        <td>Positive toll factor for Evening period tolls</td>
-    </tr>
-</table>
-
-<a id="hwy_link_vehicle_class_availability"></a>
-
-### Highway Network Vehicle Class Toll Factors File
-#### `vehicle_class_availability.csv`
-
-Optional file. Specifies the availability / unavailability of six vehicle classes for five times-of-day by Facility name. This will override any mode / vehicle class availability specified directly on the network (hwycov.e00), via ITRUCK and IHOV fields. Used in the generation of time-of-day Emme scenarios in the Master run Modeller tool.
-
-Example:
-
-| Facility_name | vehicle_class | EA_Avail | AM_Avail | MD_Avail | PM_Avail | EV_Avail |
-| ------------- | ------------- | -------- | -------- | -------- | -------- | -------- |
-| I-15          | DA            | 1        | 1        | 1        | 1        | 1        |
-| I-15          | S2            | 1        | 1        | 1        | 1        | 1        |
-| I-15          | S3            | 1        | 0        | 1        | 0        | 1        |
-| I-15          | TRK_L         | 1        | 1        | 1        | 1        | 1        |
-| I-15          | TRK_M         | 1        | 0        | 0        | 0        | 1        |
-| I-15          | TRK_H         | 1        | 0        | 0        | 0        | 1        |
-
-See note re: network link matching under <a href="#hwy_link_vehicle_class_toll_factors">vehicle_class_toll_factors.csv</a>. Note that all facilities need not be specified, links not matched will use the availability as indicated by the link fields in hwycov.e00.
-
-<table>
-    <tr>
-        <th>Column Name</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <td>Facility_name</td>
-        <td>Name of the facility, used in the substring matching with links by NM, FXNM or TXNM fields</td>
-    </tr>
-    <tr>
-        <td>Vehicle_class</td>
-        <td>Name of the vehicle class, one of DA, S2, S3, TRK_L, TRK_M, or TRK_H</td>
-    </tr>
-    <tr>
-        <td>EA_Avail</td>
-        <td>For this facility and vehicle class, is available for Early AM period (0 or 1)</td>
-    </tr>
-    <tr>
-        <td>AM_Avail</td>
-        <td>For this facility and vehicle class, is available for AM Peak period (0 or 1)</td>
-    </tr>
-    <tr>
-        <td>MD_Avail</td>
-        <td>For this facility and vehicle class, is available for Midday period (0 or 1)</td>
-    </tr>
-    <tr>
-        <td>PM_Avail</td>
-        <td>For this facility and vehicle class, is available for PM Peak period (0 or 1)</td>
-    </tr>
-    <tr>
-        <td>EV_Avail</td>
-        <td>For this facility and vehicle class, is available for Evening period (0 or 1)</td>
-    </tr>
-</table>
-
-#### `special_fares.txt`
+### `special_fares.txt`
 
 ```
 boarding_cost:
@@ -524,6 +317,35 @@ in_vehicle_cost:
 day_pass: 4.54
 regional_pass: 10.90
 ```
+### MGRAs at Mobility Hubs
+#### `MOBILITYHUBMGRA.CSV`
+
+<table>
+    <tr>
+        <th>Column Name</th>
+        <td>Decription</td>
+    </tr>
+    <tr>
+        <td>MGRA</td>
+        <td>MGRA ID</td>
+    </tr>
+    <tr>
+        <td>MoHubName</td>
+        <td>Mobility Hub name</td>
+    </tr>
+    <tr>
+        <td>MoHubType</td>
+        <td>
+            Mobility Hub type:<br>
+            Suburban<br>
+            Coastal<br>
+            Gateway<br>
+            Major Employment Center<br>
+            Urban
+        </td>
+    </tr>
+</table>
+
 
 <a id="transit_binary_stop"></a>
 
@@ -934,23 +756,7 @@ regional_pass: 10.90
     </tr>
 </table>
 
-### Zone Terminal Time
-#### `ZONE.TERM`
 
-<table>
-    <tr>
-        <th>Column Name</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <td>Zone</td>
-        <td>TAZ number</td>
-    </tr>
-    <tr>
-        <td>Terminal time</td>
-        <td>Terminal time (3, 4, 5, 7, 10 minutes)<td>
-    </tr>
-</table>
 
 <a id="bike_taz_logsum"></a>
 
@@ -1008,101 +814,7 @@ regional_pass: 10.90
     </tr>
 </table>
 
-<a id="walk_mgra_equiv"></a>
-
-### Walk MGRA Equivalent Minutes
-#### `WALKMGRAEQUIVMINUTES.CSV`
-
-<table>
-    <tr>
-        <th>Column Name</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <td>i</td>
-        <td>Origin (MGRA)</td>
-    </tr>
-    <tr>
-        <td>j</td>
-        <td>Destination (MGRA)</td>
-    </tr>
-    <tr>
-        <td>percieved</td>
-        <td>Percieved time to walk</td>
-    </tr>
-    <tr>
-        <td>actual</td>
-        <td>Actual time to walk (minutes)</td>
-    </tr>
-    <tr>
-        <td>gain</td>
-        <td>Gain in elevation</td>
-    </tr>
-</table>
-
-<a id="airport_trip_purpose"></a>
-
-### Airport Trip Purpose Distribution
-#### `AIRPORT_PURPOSE.SAN.CSV AND AIRPORT_PURPOSE.CBX.CSV`
-
-<table>
-    <tr>
-        <th>Column Name</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <td>Purpose</td>
-        <td>
-            Trip Purpose:<br>
-            0 = Resident Business<br>
-            1 = Resident Personal<br>
-            2 = Visitor Business<br>
-            3 = Visitor Personal<br>
-            4 = External
-        </td>
-    </tr>
-    <tr>
-        <td>Percent</td>
-        <td>Distribution of Trips in trip purpose</td>
-    </tr>
-</table>
-
-<a id="airport_party_purpose"></a>
-
-### Airport Party Size by Purpose Distribution
-#### `AIRPORT_PARTY.SAN.CSV AND AIRPORT_PARTY.CBX.CSV`
-
-<table>
-    <tr>
-        <th>Column Name</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <td>Party</td>
-        <td>Party size (0 through 5+)</td>
-    </tr>
-    <tr>
-        <td>purp0_perc</td>
-        <td>Distribution for Resident Business purpose</td>
-    </tr>
-    <tr>
-        <td>purp1_perc</td>
-        <td>Distribution for Resident Personal purpose</td>
-    </tr>
-    <tr>
-        <td>purp2_perc</td>
-        <td>Distribution for Visitor Business purpose</td>
-    </tr>
-    <tr>
-        <td>purp3_perc</td>
-        <td>Distribution for Visitor Personal purpose</td>
-    </tr>
-    <tr>
-        <td>purp4_perc</td>
-        <td>Distribution for External purpose</td>
-    </tr>
-</table>
-
+## Airport
 <a id="airport_nights"></a>
 
 ### Airport Number of Nights by Purpose Distribution
@@ -1256,8 +968,8 @@ regional_pass: 10.90
 
 <a id="cvm_establishment_synthesis"></a>
 
-### CVM Establishment Synthesis
-#### `PERCENT_OF_ESTABLISHMENTS_BY_LUZ_SIZE_EMP_CAT.CSV`
+## Commercial Vehicle Model
+### `PERCENT_OF_ESTABLISHMENTS_BY_LUZ_SIZE_EMP_CAT.CSV`
 
 <table>
     <tr>
@@ -1279,7 +991,7 @@ regional_pass: 10.90
 
 <a id ="cvm"></a>
 
-#### `SYNTHESTABLISHMENTS.CSV`
+### `CVM/SYNTHESTABLISHMENTS.CSV`
 
 <table>
     <tr>
@@ -1319,8 +1031,10 @@ regional_pass: 10.90
     
 </table>
 
-#### CVM Establishment Synthesis File ( MGRAEmpByEstSize.csv )
-##### `MGRAEmpByEstSize.csv`
+<a id ="cvm"></a>
+
+### `CVM/MGRAEMPBYESTSIZE.CSV`
+
 <table>
   <tr>
     <td>Field 
@@ -1491,6 +1205,7 @@ oth; where Size_Class ranges 1-7.
     
 </table>
 
+## Crossborder
 
 <a id="cross_border_entry_return"></a>
 
@@ -1893,7 +1608,8 @@ oth; where Size_Class ranges 1-7.
 
 <a id="external_trip"></a>
 
-#### `EXTERNALEXTERNALTRIPSByYEAR.CSV`
+## External Models
+### `EXTERNALEXTERNALTRIPSByYEAR.CSV`
 
 <table>
     <tr>
@@ -1981,8 +1697,8 @@ oth; where Size_Class ranges 1-7.
     </tr>
 </table>
 
-### Inputs SANDAG HTM
-#### `INPUTS_SANDAG_HTM_<SCENARIO_YEAR>.XLSX`
+## Heavy Truck Model (HTM)
+#### `HTM/INPUTS_SANDAG_HTM_<SCENARIO_YEAR>.XLSX`
 
 <table>
     <tr>
@@ -2064,8 +1780,7 @@ oth; where Size_Class ranges 1-7.
     
 </table>
 
-### FAF5_BaseAndFutureYears_Oct27_2023 (Possible values for <year> : 2017, 2025,2030,2035,2040,2045,2050)
-#### `FAF5_BaseAndFutureYears_Oct27_2023.CSV`
+#### `HTM/FAF5_BaseAndFutureYears_Oct27_2023.CSV`
 
 <table>
     <tr>
@@ -2391,6 +2106,7 @@ oth; where Size_Class ranges 1-7.
     
 </table>
 
+## Others
 ### Parameters by Scenario Years
 #### `PARAMETERSBYYEARS.CSV`
 
@@ -2565,32 +2281,21 @@ oth; where Size_Class ranges 1-7.
 
 <a id="mobility_mgra"></a>
 
-### MGRAs at Mobility Hubs
-#### `MOBILITYHUBMGRA.CSV`
+### Zone Terminal Time
+#### `ZONE_TERM.CSV`
 
 <table>
     <tr>
         <th>Column Name</th>
-        <td>Decription</td>
+        <th>Description</th>
     </tr>
     <tr>
-        <td>MGRA</td>
-        <td>MGRA ID</td>
+        <td>Zone</td>
+        <td>TAZ number</td>
     </tr>
     <tr>
-        <td>MoHubName</td>
-        <td>Mobility Hub name</td>
-    </tr>
-    <tr>
-        <td>MoHubType</td>
-        <td>
-            Mobility Hub type:<br>
-            Suburban<br>
-            Coastal<br>
-            Gateway<br>
-            Major Employment Center<br>
-            Urban
-        </td>
+        <td>Terminal time</td>
+        <td>Terminal time (3, 4, 5, 7, 10 minutes)<td>
     </tr>
 </table>
 
