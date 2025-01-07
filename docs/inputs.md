@@ -991,7 +991,7 @@ regional_pass: 10.90
 
 <a id ="cvm"></a>
 
-### `SYNTHESTABLISHMENTS.CSV`
+### `CVM/SYNTHESTABLISHMENTS.CSV`
 
 <table>
     <tr>
@@ -1033,7 +1033,7 @@ regional_pass: 10.90
 
 <a id ="cvm"></a>
 
-### `MGRAEMPBYESTSIZE.CSV`
+### `CVM/MGRAEMPBYESTSIZE.CSV`
 
 <table>
   <tr>
@@ -1698,8 +1698,7 @@ oth; where Size_Class ranges 1-7.
 </table>
 
 ## Heavy Truck Model (HTM)
-### Inputs SANDAG HTM
-#### `INPUTS_SANDAG_HTM_<SCENARIO_YEAR>.XLSX`
+#### `HTM/INPUTS_SANDAG_HTM_<SCENARIO_YEAR>.XLSX`
 
 <table>
     <tr>
@@ -1781,8 +1780,7 @@ oth; where Size_Class ranges 1-7.
     
 </table>
 
-### FAF5_BaseAndFutureYears_Oct27_2023 (Possible values for <year> : 2017, 2025,2030,2035,2040,2045,2050)
-#### `FAF5_BaseAndFutureYears_Oct27_2023.CSV`
+#### `HTM/FAF5_BaseAndFutureYears_Oct27_2023.CSV`
 
 <table>
     <tr>
