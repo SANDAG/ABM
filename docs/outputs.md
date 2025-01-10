@@ -3285,7 +3285,7 @@ This directory contains San Diego commercial travel model outputs.
   
 </table>
 
-### Commerical Vehicle Model Trip File ( final_commercial_accessibility.csv )
+### CVM commercial accessibility file
 
 <table>
   <tr>
@@ -3365,7 +3365,7 @@ This directory contains San Diego commercial travel model outputs.
 
 </table>
 
-### Commerical Vehicle Model Trip File ( final_cv_trips.csv )
+### CVM trips file
 
 <table>
   <tr>
@@ -3484,7 +3484,7 @@ This directory contains San Diego commercial travel model outputs.
 
 </table>
 
-### Commerical Vehicle Model Trip File ( final_establishments.csv )
+### CVM establishments file
 
 <table>
   <tr>
@@ -3576,7 +3576,7 @@ This directory contains San Diego commercial travel model outputs.
   </tr>
 </table>
 
-### Commerical Vehicle Model Trip File ( final_establishments_all.csv )
+### CVM establishments_all file
 
 <table>
   <tr>
@@ -3682,7 +3682,7 @@ This directory contains San Diego commercial travel model outputs.
 </table>
 
 
-### Commerical Vehicle Model Trip File ( final_households.csv )
+### CVM households file
 
 <table>
   <tr>
@@ -3780,7 +3780,7 @@ This directory contains San Diego commercial travel model outputs.
   </tr>
 </table>
 
-### Commerical Vehicle Model Trip File ( final_land_use.csv )
+### CVM land_use file
 
 <table>
   <tr>
@@ -4419,7 +4419,7 @@ This directory contains San Diego commercial travel model outputs.
   
 </table>
 
-### Commerical Vehicle Model Trip File ( final_routes.csv )
+### CVM final_routes file
 
 <table>
   <tr>
@@ -4543,7 +4543,7 @@ This directory contains San Diego commercial travel model outputs.
   </tr>
 </table>
 
-### Commerical Vehicle Model Trip File ( final_trips.csv )
+### CVM final_trips file
 
 <table>
   <tr>
