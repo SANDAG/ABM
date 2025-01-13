@@ -18,7 +18,7 @@ import time
 NUM_PRCESSORS = 1
 MAX_DISTANCE = 10  # Maximum distance for Dijkstra's algorithm to search for shortest paths
 
-DATA_DIR = r"C:\Users\david.hensle\OneDrive - Resource Systems Group, Inc\Documents\projects\sandag\bike_route_choice\network"
+DATA_DIR = r"T:\ABM\user\aber\bike_route_choice\network"
 
 
 # Global Variables for Network Size
@@ -30,7 +30,7 @@ SAN_DIEGO_LAT_MIN, SAN_DIEGO_LAT_MAX = 0, 10
 SAN_DIEGO_LON_MIN, SAN_DIEGO_LON_MAX = 0, 10
 
 
-def read_bike_network_data(num_centroids=0):
+def read_bike_network_data(num_centroids=0, zone_level='mgra'):
     """Read actual bike network data from CSV files."""
     print("Reading network data from ", DATA_DIR)
     nodes = pd.read_csv(os.path.join(DATA_DIR, "derivedBikeNodes.csv"))
@@ -39,7 +39,7 @@ def read_bike_network_data(num_centroids=0):
 
     # take the first n centroids for testing smaller samples
     if num_centroids > 0:
-        new_centroids = nodes[nodes.centroid].sample(num_centroids).index
+        new_centroids = nodes[nodes.centroid & (nodes[zone_level] > 0)].sample(num_centroids).index
         nodes.centroid = False
         nodes.loc[new_centroids, 'centroid'] = True
 
@@ -191,6 +191,90 @@ def plot_shortest_path_with_results(nodes, edges, shortest_path_df, origin, dest
     plt.show(block=True)
 
 
+def plot_shortest_path_with_results_buffered(nodes, edges, shortest_path_df, origin, destination, buffer_size=None):
+    """Plot the shortest path between two nodes with additional path information within a square buffer around the origin node."""
+    print("Plotting the shortest path...")
+    path_data = shortest_path_df[(shortest_path_df.origin == origin) & (shortest_path_df.destination == destination)]
+    if path_data.empty:
+        print(f"No path found between {origin} and {destination}")
+        return
+
+    # Get the coordinates of the origin node
+    origin_node = nodes[nodes['id'] == origin].iloc[0]
+    origin_x, origin_y = origin_node['x'], origin_node['y']
+
+    if buffer_size:
+        # Define the buffer boundaries
+        min_x, max_x = origin_x - buffer_size, origin_x + buffer_size
+        min_y, max_y = origin_y - buffer_size, origin_y + buffer_size
+
+        # Filter nodes within the buffer
+        filtered_nodes = nodes[(nodes['x'] >= min_x) & (nodes['x'] <= max_x) & (nodes['y'] >= min_y) & (nodes['y'] <= max_y)]
+
+        # Filter edges to include only those with both nodes within the buffer
+        filtered_edges = edges[edges['fromNode'].isin(filtered_nodes['id']) & edges['toNode'].isin(filtered_nodes['id'])]
+
+        # check to make sure destination node is also in the buffer
+        if destination not in filtered_nodes['id'].values:
+            print(f"Destination node {destination} is not in the buffer size of {buffer_size}")
+
+    else:
+        filtered_nodes = nodes
+        filtered_edges = edges
+
+    # Create a graph from the filtered nodes and edges
+    G = nx.Graph()
+    G.add_nodes_from([(node['id'], {'pos': (node['x'], node['y'])}) for _, node in filtered_nodes.iterrows()])
+    G.add_edges_from([(edge.fromNode, edge.toNode, {'weight': edge.distance}) for _, edge in filtered_edges.iterrows()])
+
+    # Extract positions for plotting
+    pos = nx.get_node_attributes(G, 'pos')
+
+    # Plot the network
+    plt.figure(figsize=(10, 10))
+    nx.draw(G, pos, node_size=10, with_labels=False, edge_color='gray', alpha=0.5, width=0.5)
+
+    # Highlight the shortest path
+    path_edges = [(path_data.fromNode.iloc[i], path_data.toNode.iloc[i]) for i in range(len(path_data))]
+    path_nodes = set(path_data.fromNode).union(set(path_data.toNode))
+    nx.draw_networkx_nodes(G, pos, nodelist=path_nodes, node_color='red', node_size=50, label="Path Nodes")
+    nx.draw_networkx_edges(G, pos, edgelist=path_edges, edge_color='blue', width=2, label="Shortest Path")
+
+    # Highlight the origin and destination nodes
+    nx.draw_networkx_nodes(G, pos, nodelist=[origin], node_color='green', node_size=100, label="Origin")
+    nx.draw_networkx_nodes(G, pos, nodelist=[destination], node_color='purple', node_size=100, label="Destination")
+
+    # Calculate path information
+    num_edges = len(path_edges)
+    total_distance = path_data['distance'].sum()
+    
+    if 'bikeCostTraversal' in path_data:
+        total_cost = path_data['bikeCostTotal'].sum()
+        turns = path_data[path_data.turnType > 0]['turnType'].count()
+        # Add path information to the plot
+        info_text = (f"Origin: {origin}\n"
+                    f"Destination: {destination}\n"
+                    f"Number of Edges: {num_edges}\n"
+                    f"Total Distance: {total_distance:.2f} units\n"
+                    f"Turns: {turns}\n"
+                    f"Total Cost: {total_cost:.2f}")
+    else:
+        # Add path information to the plot
+        total_cost = path_data['bikeCost'].sum()
+        info_text = (f"Origin: {origin}\n"
+                    f"Destination: {destination}\n"
+                    f"Number of Edges: {num_edges}\n"
+                    f"Total Distance: {total_distance:.2f} units\n"
+                    f"Total Cost: {total_cost:.2f}")
+    plt.text(0.05, 0.95, info_text, transform=plt.gca().transAxes, fontsize=12,
+             verticalalignment='top', bbox=dict(boxstyle="round,pad=0.3", edgecolor='black', facecolor='white'))
+
+    # Add a legend
+    plt.legend(loc="upper right")
+    plt.title(f"Shortest Path from Node {origin} to Node {destination}")
+    plt.show(block=True)
+
+
 @njit
 def reconstruct_path(predecessors, destination):
     path = []
@@ -199,28 +283,23 @@ def reconstruct_path(predecessors, destination):
         path.append(current)
         current = predecessors[current]
     return path[::-1]  # Reverse the path to start from the origin
+    
 
-
-@njit
-def process_paths(origin, distances, predecessors, centroids):
+# @njit
+def process_paths(shortest_paths, dest_centroids):
     rows = []
+    for orig, _, o_predecessors in shortest_paths:
+        reachable = (o_predecessors >= 0).nonzero()[0]
+        for dest in reachable[np.isin(reachable,dest_centroids)]:
+            # Reconstruct the path from the predecessors array
+            path = reconstruct_path(o_predecessors, dest)
 
-    reachable_mask = np.isfinite(distances)
-    reachable_indices = np.flatnonzero(reachable_mask)
-
-    for destination in reachable_indices:
-        # do not create a row if the destination is not to a centroid
-        if destination not in centroids:
-            continue
-
-        # Reconstruct the path from the predecessors array
-        path = reconstruct_path(predecessors, destination)
-
-        # Add rows for each node in the path
-        for path_node_num, path_node in enumerate(path):
-            rows.append((origin, destination, path_node_num, path_node))
+            # Add rows for each node in the path
+            for path_node_num, path_node in enumerate(path):
+                rows.append((orig, dest, path_node_num, path_node))
 
     return rows
+
 
 
 def convert_shortest_paths_to_long_df_numba(shortest_paths, edges, node_mapping):
@@ -237,10 +316,8 @@ def convert_shortest_paths_to_long_df_numba(shortest_paths, edges, node_mapping)
     print("Converting shortest paths to pandas dataframe...")
 
     print("Processing paths with numba...")
-    centroids = list(shortest_paths.keys())
-    rows = []
-    for origin, (distances, predecessors) in shortest_paths.items():
-        rows.extend(process_paths(origin, distances, predecessors, centroids))
+    centroids = list(zip(*shortest_paths))[0]
+    rows = process_paths(shortest_paths, centroids)
 
 
     print("Creating dataframe...")
@@ -259,10 +336,87 @@ def convert_shortest_paths_to_long_df_numba(shortest_paths, edges, node_mapping)
 
     # merging edge attributes onto sp_df
     sp_df = sp_df.merge(
-        edges[['fromNode', 'toNode', 'distance']], 
+        edges[['fromNode', 'toNode', 'distance', 'bikeCost']], 
         how='left',
         on=['fromNode', 'toNode'],
     )
+
+    return sp_df
+
+def convert_shortest_paths_to_long_df_numba_traversals(shortest_paths, nodes, edges, traversals, edge_mapping, zone_level='mgra'):
+    """
+    Convert the output of perform_dijkstra_scipy into a pandas DataFrame in long format.
+
+    Args:
+        shortest_paths (dict): A dictionary with centroids as keys and tuples of shortest path lengths
+                               and predecessors as values.
+
+    Returns:
+        pd.DataFrame: A DataFrame with shortest path information where each row is an edge in the path
+    """
+    print("Converting shortest paths to pandas dataframe...")
+
+    print("Processing paths with numba...")
+    # origin_centroids = list(shortest_paths.keys())
+    dest_centroids = nodes[nodes['centroid'] & (nodes[zone_level] > 0)].merge(
+        edge_mapping,
+        how='left',
+        left_on='id',
+        right_on='toNode'
+    )['index'].tolist()
+    rows = process_paths(shortest_paths, dest_centroids)
+
+
+    print("Creating dataframe...")
+    rows = np.array(rows)
+    sp_df = pd.DataFrame(rows, columns=['origin', 'destination', 'path_node_num', 'toEdge'])
+
+    # convert the 0 index node id back to the actual node id
+
+    sp_df = sp_df.merge(edge_mapping[['fromNode','index']],how='left',left_on='origin',right_on='index')
+    sp_df['origin'] = sp_df['fromNode']
+    sp_df = sp_df.drop(columns=['index', 'fromNode'])
+
+    sp_df = sp_df.merge(edge_mapping[['toNode','index']],how='left',left_on='destination',right_on='index')
+    sp_df['destination'] = sp_df['toNode']
+    sp_df = sp_df.drop(columns=['index', 'toNode'])
+
+    sp_df = sp_df.merge(edge_mapping[['fromNode','toNode','index']],how='left',left_on='toEdge',right_on='index')
+    sp_df = sp_df.drop(columns=['index', 'toEdge'])
+
+    sp_df['path_id'] = sp_df.groupby(['origin', 'destination']).ngroup()
+    sp_df['prevNode'] = sp_df.groupby('path_id')['fromNode'].shift(1)
+
+    # reverse_map = {v: k for k, v in node_mapping.items()}
+    # sp_df['origin'] = sp_df['origin'].map(reverse_map)
+    # sp_df['destination'] = sp_df['destination'].map(reverse_map)
+    # sp_df['toNode'] = sp_df['toNode'].map(reverse_map)
+
+    # sp_df['path_id'] = sp_df.groupby(['origin', 'destination']).ngroup()
+    # sp_df['fromNode'] = sp_df.groupby('path_id')['toNode'].shift(1)
+    # sp_df = sp_df[sp_df['toNode'] != sp_df['origin']]  # Remove the dummy start rows
+    sp_df['prevNode'] = sp_df['prevNode'].fillna(-1)
+    # sp_df[sp_df['fromNode'] == sp_df['origin']]['prevNode'] = -1
+    sp_df['prevNode'] = sp_df['prevNode'].astype(int)
+
+    # merging edge attributes onto sp_df
+    sp_df = sp_df.merge(
+        edges[['fromNode', 'toNode', 'distance', 'bikeCost']], 
+        how='left',
+        on=['fromNode', 'toNode'],
+    ).rename(columns={'bikeCost': 'bikeCostEdge'})
+
+    # merging traversal attributes onto sp_df
+    sp_df = sp_df.merge(
+        traversals[['start', 'thru', 'end', 'turnType', 'bikecost']],
+        how='left',
+        left_on=['prevNode','fromNode','toNode'],
+        right_on=['start','thru','end']
+    ).rename(columns={'bikecost': 'bikeCostTraversal'}).drop(columns=['start','thru','end'])
+
+    sp_df['bikeCostTraversal'] = sp_df['bikeCostTraversal'].fillna(0)
+    sp_df['turnType'] = sp_df['turnType'].fillna(0)
+    sp_df['bikeCostTotal'] = sp_df['bikeCostTraversal'] + sp_df['bikeCostEdge']
 
     return sp_df
 
@@ -271,16 +425,16 @@ def _perform_dijkstra(centroids, adjacency_matrix, limit=3):
     """Perform Dijkstra's algorithm for a batch of centroids."""
     print(f"Processing Dijkstra's on {len(centroids)} centroids with limit={limit}...")
     distances, predecessors = dijkstra(
-        adjacency_matrix, directed=False, indices=centroids, return_predecessors=True, limit=limit
+        adjacency_matrix, directed=True, indices=centroids, return_predecessors=True, limit=limit
     )
-    shortest_paths = {}
-    for centroid, distance_mat, predecessor_mat in zip(centroids, distances, predecessors):
-        shortest_paths[centroid] = (distance_mat, predecessor_mat)
+    # shortest_paths = {}
+    # for centroid, distance_mat, predecessor_mat in zip(centroids, distances, predecessors):
+    #     shortest_paths[centroid] = (distance_mat, predecessor_mat)
 
-    return shortest_paths
+    return list(zip(centroids, distances, predecessors))
 
 
-def perform_dijkstras_algorithm(nodes, edges, limit=3, num_processors=4):
+def perform_dijkstras_algorithm(nodes, edges, limit=3, zone_level='mgra', num_processors=4):
     """Perform Dijkstra's algorithm for centroids using SciPy's sparse graph solver with batched parallel processing."""
     num_nodes = len(nodes)
 
@@ -290,11 +444,11 @@ def perform_dijkstras_algorithm(nodes, edges, limit=3, num_processors=4):
     # Create a sparse adjacency matrix
     row = edges.fromNode.map(node_mapping).to_numpy()
     col = edges.toNode.map(node_mapping).to_numpy()
-    data = edges.distance.to_numpy()
+    data = edges.bikeCost.to_numpy()
     adjacency_matrix = csr_matrix((data, (row, col)), shape=(num_nodes, num_nodes))
 
-    # Get centroids (nodes with 'centroid' flag True)
-    centroids = nodes[nodes['centroid']].id.map(node_mapping).tolist()
+    # Get mgra centroids (nodes with 'centroid' flag True and 'mgra' greater than zero)
+    centroids = nodes[nodes['centroid'] & (nodes[zone_level] > 0)].id.map(node_mapping).tolist()
 
     print(f"Need to calculate Dijkstra's on {len(centroids)} centroids with {num_processors} processors")
 
@@ -314,11 +468,87 @@ def perform_dijkstras_algorithm(nodes, edges, limit=3, num_processors=4):
 
     return shortest_paths, node_mapping
 
+def perform_dijkstras_algorithm_traversals(nodes, edges, traversals, limit=3, zone_level='mgra', num_processors=4):
+    """Perform Dijkstra's algorithm for centroids using SciPy's sparse graph solver with batched parallel processing."""
+    num_edges = len(edges)
+
+    # # node mapping needs to start at 0 in order to create adjacency matrix
+    edge_mapping = edges[['fromNode','toNode','bikeCost']].reset_index()
+
+    traversals_mapped = traversals.merge(
+        edge_mapping,
+        how='left',
+        left_on=['start','thru'],
+        right_on=['fromNode','toNode']
+    ).merge(
+        edge_mapping,
+        how='left',
+        left_on=['thru','end'],
+        right_on=['fromNode','toNode'],
+        suffixes=('FromEdge','ToEdge')
+    )
+    # Total bike cost is edge cost (after traversal) plus traversal cost
+    # Note origin zone connector edge cost is not included with this approach, but this has no impact on shortest path selection
+    traversals_mapped['bikeCostTotal'] = traversals_mapped.bikeCostToEdge + traversals_mapped.bikecost
+
+    # Create a sparse adjacency matrix
+    row = traversals_mapped.indexFromEdge.to_numpy()
+    col = traversals_mapped.indexToEdge.to_numpy()
+    data = traversals_mapped.bikeCostTotal.to_numpy()
+    adjacency_matrix = csr_matrix((data, (row, col)), shape=(num_edges, num_edges))
+
+    # Get mgra centroids (nodes with 'centroid' flag True and 'mgra' greater than zero)
+    # Centroid connectors
+    origin_centroids = nodes[nodes['centroid'] & (nodes[zone_level] > 0)].merge(
+        edge_mapping,
+        how='left',
+        left_on='id',
+        right_on='fromNode'
+    )
+
+    null_cols = origin_centroids[origin_centroids.isnull().any(axis=1)]
+    if not null_cols.empty:
+        print("WARNING: Null columns found in centroids dataframe! Dropping")
+        print(null_cols)
+        origin_centroids = origin_centroids.dropna()
+
+    origin_centroids = origin_centroids['index'].tolist()
+
+    print(f"Need to calculate Dijkstra's on {len(origin_centroids)} centroids with {num_processors} processors")
+
+    if num_processors > 1:
+        # Split centroids into batches
+        centroid_batches = np.array_split(origin_centroids, num_processors)
+
+        shortest_paths = {}
+        with Pool(processes=num_processors) as pool:
+            results = pool.map(_perform_dijkstra, [(batch, adjacency_matrix, limit) for batch in centroid_batches])
+            for batch_result in results:
+                shortest_paths.update(batch_result)
+
+    else:
+        # Perform Dijkstra's algorithm for all centroids
+        shortest_paths = _perform_dijkstra(origin_centroids, adjacency_matrix, limit)
+
+    return shortest_paths, edge_mapping
+
 
 def summarize_shortest_paths(sp_df):
     summary = sp_df.groupby(['origin', 'destination']).agg(
-        {'distance': 'sum', 'path_node_num': 'max'}).reset_index().rename(
+        {'distance': 'sum', 'bikeCost': 'sum', 'path_node_num': 'max'}).reset_index().rename(
         columns={'path_node_num': 'num_edges_per_path'}).describe()
+    print(summary)
+    return
+
+def summarize_shortest_paths_traversals(sp_df):
+    summary = sp_df.groupby(['origin', 'destination']).agg(
+        {'distance': 'sum', 
+         'turnType': lambda x: (x.ne(0)).sum(),
+         'bikeCostTotal': 'sum', 
+         'bikeCostEdge': 'sum',
+         'bikeCostTraversal': 'sum',
+         'path_node_num': 'max'}).reset_index().rename(
+        columns={'path_node_num': 'num_edges_per_path','turnType': 'turns'}).describe()
     print(summary)
     return
 
