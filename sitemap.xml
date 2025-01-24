@@ -31,6 +31,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://sandag.github.io/abm/reports.html</loc>
+         <lastmod>2025-01-24</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://sandag.github.io/abm/running.html</loc>
          <lastmod>2025-01-24</lastmod>
          <changefreq>daily</changefreq>
