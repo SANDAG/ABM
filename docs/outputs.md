@@ -8732,15 +8732,23 @@ The report files are produced by the SANDAG travel model.
     <td>Description</td>
   </tr>
   <tr>
-    <td>OBJECTID</td>
-    <td>An ObjectID is a unique, not null integer field used to uniquely identify rows in tables in a geodatabase.</td>
+    <td>ID</td>
+    <td>Unique identifier assigned to each model run</td>
   </tr>
   <tr>
-    <td>LENGTH</td>
+    <td>HWYSegGUID</td>
+    <td>Highway segment globally unique identifier (GUID)</td>
+  </tr>
+  <tr>
+    <td>Length</td>
     <td>Length of link in miles</td>
   </tr>
   <tr>
-    <td>HWYCOV0_ID</td>
+    <td>Dir</td>
+    <td>Link direction where: 0 = Center City Walk Links, 1 = Northbound, 2 = Westbound, 3 = Southbound, 4 = Eastbound</td>
+  </tr>
+  <tr>
+    <td>hwycov-id:1</td>
     <td>SANDAG-assigned link ID</td>
   </tr>
   <tr>
@@ -8752,75 +8760,20 @@ The report files are produced by the SANDAG travel model.
     <td>Street name</td>
   </tr>
   <tr>
+    <td>FXNM</td>
+    <td>Program assigned cross street name at the FROM end of the link</td>
+  </tr>
+  <tr>
+    <td>TXNM</td>
+    <td>Program assigned cross street name at the TO end of the link</td>
+  </tr>
+  <tr>
     <td>AN</td>
     <td>A node number</td>
   </tr>
   <tr>
     <td>BN</td>
     <td>B node number</td>
-  </tr>
-  <tr>
-    <td>COJUR</td>
-    <td>Count jurisdiction code where:<br>
-      1 = Carlsbad<br>
-      2 = Chula Vista<br>
-      3 = Coronado<br>
-      4 = Del Mar<br>
-      5 = El Cajon<br>
-      6 = Encinitas<br>
-      7 = Escondido<br>
-      8 = Imperial Beach<br>
-      9 = La Mesa<br>
-      10 = Lemon Grove<br>
-      11 = National City<br>
-      12 = Oceanside<br>
-      13 = Poway<br>
-      14 = San Diego City<br>
-      15 = San Marcos<br>
-      16 = Santee<br>
-      17 = Solana Beach<br>
-      18 = Vista<br>
-      19 = San Diego County<br>
-      20 = Caltrans
-    </td>
-  </tr>
-  <tr>
-    <td>COSTAT</td>
-    <td>Count station number</td>
-  </tr>
-  <tr>
-    <td>COLOC</td>
-    <td>Count location code where:<br>
-      0 = The count was taken on another link but is being applied to this link<br>
-      1 = The count was taken on this link
-    </td>
-  </tr>
-  <tr>
-    <td>DIR</td>
-    <td>Link direction where:<br>
-      0 = Center City Walk Links<br>
-      1 = Northbound<br>
-      2 = Westbound<br>
-      3 = Southbound<br>
-      4 = Eastbound
-    </td>
-  </tr>
-  <tr>
-    <td>FFC</td>
-    <td>Federal functional class where:<br>
-      1 = Freeway<br>
-      2 = Prime Arterial<br>
-      3 = Major Arterial<br>
-      4 = Collector<br>
-      5 = Local Collector<br>
-      6 = Rural Collector<br>
-      7 = Local (non circulation element) Road<br>
-      8 = Freeway Connector Ramp<br>
-      9 = Local Ramp<br>
-      11 = Rail Line<br>
-      12 = Bus Street<br>
-      13 = ADT (Average Daily Traffic) Link
-    </td>
   </tr>
   <tr>
     <td>ASPD</td>
@@ -8836,90 +8789,35 @@ The report files are produced by the SANDAG travel model.
   </tr>
   <tr>
     <td>FC</td>
-    <td>Roadway functional class where:<br>
-      1 = Freeway<br>
-      2 = Prime Arterial<br>
-      3 = Major Arterial<br>
-      4 = Collector<br>
-      5 = Local Collector<br>
-      6 = Rural Collector<br>
-      7 = Local (non circulation element) Road<br>
-      8 = Freeway Connector Ramp<br>
-      9 = Local Ramp<br>
-      10 = TAZ Connector<br>
-      11 = Rail Line<br>
-      12 = Bus Street<br>
-      99 = Walk Links, Transfer Links or Center City Walk Links
-    </td>
+    <td>Roadway functional class where: 1 = Freeway, 2 = Prime Arterial, 3 = Major Arterial, 4 = Collector, 5 = Local Collector, 6 = Rural Collector, 7 = Local (non-circulation element) Road, 8 = Freeway Connector Ramp, 9 = Local Ramp, 10 = TAZ Connector, 11 = Rail Line, 12 = Bus Street, 99 = Walk Links, Transfer Links or Center City Walk Links</td>
+  </tr>
+  <tr>
+    <td>FFC</td>
+    <td>Federal functional class where: 0 = everything else other than 1, 2, and 9; 1 = Interstate Freeway; 2 = Other Freeway or Expressway; 3 = Principal Arterial; 4 = Minor Arterial; 5 = Major Collector; 6 = Minor Collector; 9 = Not Classified</td>
   </tr>
   <tr>
     <td>HOV</td>
-    <td>Roadway Operation Restriction where:<br>
-      1 = General Purpose<br>
-      2 = 2+ HOV (Managed lanes if toll >1)<br>
-      3 = 3+ HOV (Managed lanes if toll > 1)<br>
-      4 = Toll Lane
-    </td>
-  </tr>
-  <tr>
-    <td>AMTRUCK</td>
-    <td>AM Truck Restriction where:<br>
-      1 = All Vehicle Classes<br>
-      2 = HHDT Excluded<br>
-      3 = MHDT & HHDT Excluded<br>
-      4 = LHDT, MHDT & HHDT Excluded (All Trucks)<br>
-      5 = HHDT Only<br>
-      6 = MHDT & HHDT Only<br>
-      7 = LHDT, MHDT & HHDT Only (Truck Only)
-    </td>
+    <td>Roadway Operation Restriction where: 1 = General Purpose; 2 = 2+ HOV (Managed lanes if toll >1); 3 = 3+ HOV (Managed lanes if toll > 1); 4 = Toll Lane</td>
   </tr>
   <tr>
     <td>EATRUCK</td>
-    <td>Early AM Truck Restriction where:<br>
-      1 = All Vehicle Classes<br>
-      2 = HHDT Excluded<br>
-      3 = MHDT & HHDT Excluded<br>
-      4 = LHDT, MHDT & HHDT Excluded (All Trucks)<br>
-      5 = HHDT Only<br>
-      6 = MHDT & HHDT Only<br>
-      7 = LHDT, MHDT & HHDT Only (Truck Only)
-    </td>
+    <td>Early AM Truck Restriction where: 1 = All Vehicle Classes, 2 = HHDT Excluded, 3 = MHDT & HHDT Excluded, 4 = LHDT, MHDT & HHDT Excluded (All Trucks), 5 = HHDT Only, 6 = MHDT & HHDT Only, 7 = LHDT, MHDT & HHDT Only (Truck Only)</td>
+  </tr>
+  <tr>
+    <td>AMTRUCK</td>
+    <td>AM Truck Restriction where: 1 = All Vehicle Classes, 2 = HHDT Excluded, 3 = MHDT & HHDT Excluded, 4 = LHDT, MHDT & HHDT Excluded (All Trucks), 5 = HHDT Only, 6 = MHDT & HHDT Only, 7 = LHDT, MHDT & HHDT Only (Truck Only)</td>
   </tr>
   <tr>
     <td>MDTRUCK</td>
-    <td>Midday Truck Restriction where:<br>
-      1 = All Vehicle Classes<br>
-      2 = HHDT Excluded<br>
-      3 = MHDT & HHDT Excluded<br>
-      4 = LHDT, MHDT & HHDT Excluded (All Trucks)<br>
-      5 = HHDT Only<br>
-      6 = MHDT & HHDT Only<br>
-      7 = LHDT, MHDT & HHDT Only (Truck Only)
-    </td>
+    <td>Midday Truck Restriction where: 1 = All Vehicle Classes, 2 = HHDT Excluded, 3 = MHDT & HHDT Excluded, 4 = LHDT, MHDT & HHDT Excluded (All Trucks), 5 = HHDT Only, 6 = MHDT & HHDT Only, 7 = LHDT, MHDT & HHDT Only (Truck Only)</td>
   </tr>
   <tr>
     <td>PMTRUCK</td>
-    <td>PM Truck Restriction where:<br>
-      1 = All Vehicle Classes<br>
-      2 = HHDT Excluded<br>
-      3 = MHDT & HHDT Excluded<br>
-      4 = LHDT, MHDT & HHDT Excluded (All Trucks)<br>
-      5 = HHDT Only<br>
-      6 = MHDT & HHDT Only<br>
-      7 = LHDT, MHDT & HHDT Only (Truck Only)
-    </td>
+    <td>PM Truck Restriction where: 1 = All Vehicle Classes, 2 = HHDT Excluded, 3 = MHDT & HHDT Excluded, 4 = LHDT, MHDT & HHDT Excluded (All Trucks), 5 = HHDT Only, 6 = MHDT & HHDT Only, 7 = LHDT, MHDT & HHDT Only (Truck Only)</td>
   </tr>
   <tr>
     <td>EVTRUCK</td>
-    <td>Evening Truck Restriction where:<br>
-      1 = All Vehicle Classes<br>
-      2 = HHDT Excluded<br>
-      3 = MHDT & HHDT Excluded<br>
-      4 = LHDT, MHDT & HHDT Excluded (All Trucks)<br>
-      5 = HHDT Only<br>
-      6 = MHDT & HHDT Only<br>
-      7 = LHDT, MHDT & HHDT Only (Truck Only)
-    </td>
+    <td>Evening Truck Restriction where: 1 = All Vehicle Classes, 2 = HHDT Excluded, 3 = MHDT & HHDT Excluded, 4 = LHDT, MHDT & HHDT Excluded (All Trucks), 5 = HHDT Only, 6 = MHDT & HHDT Only, 7 = LHDT, MHDT & HHDT Only (Truck Only)</td>
   </tr>
   <tr>
     <td>SPD</td>
@@ -8927,73 +8825,15 @@ The report files are produced by the SANDAG travel model.
   </tr>
   <tr>
     <td>WAY</td>
-    <td>One or two way roadway indicator where:<br>
-      1 = One-way road<br>
-      2 = Two-way road
-    </td>
+    <td>One or two way link indicator where: 1 = One-way link, 2 = Two-way link</td>
   </tr>
   <tr>
     <td>MED</td>
-    <td>Median type where:<br>
-      1 = No median<br>
-      2 = Raised or fixed median<br>
-      3 = Continuous left turn center lane
-    </td>
+    <td>Median type where: 1 = No median, 2 = Raised or fixed median, 3 = Continuous left turn center lane</td>
   </tr>
   <tr>
-    <td>TOLLEA</td>
-    <td>Early AM Toll Cost in cents where, for example:<br>
-      1 = $0.01 per mile<br>
-      200 = $2.00 per mile
-    </td>
-  </tr>
-  <tr>
-    <td>TOLLA</td>
-    <td>AM Toll Cost in cents where, for example:<br>
-      1 = $0.01 per mile<br>
-      200 = $2.00 per mile
-    </td>
-  </tr>
-  <tr>
-    <td>TOLLMD</td>
-    <td>Midday Toll Cost in cents where, for example:<br>
-      1 = $0.01 per mile<br>
-      200 = $2.00 per mile
-    </td>
-  </tr>
-  <tr>
-    <td>TOLLP</td>
-    <td>PM Toll Cost in cents where, for example:<br>
-      1 = $0.01 per mile<br>
-      200 = $2.00 per mile
-    </td>
-  </tr>
-  <tr>
-    <td>TOLLEV</td>
-    <td>Evening Toll Cost in cents where, for example:<br>
-      1 = $0.01 per mile<br>
-      200 = $2.00 per mile
-    </td>
-  </tr>
-  <tr>
-    <td>ABLNEA</td>
-    <td>Early AM number of lanes in the FROM-TO direction</td>
-  </tr>
-  <tr>
-    <td>ABLNA</td>
-    <td>AM number of lanes in the FROM-TO direction</td>
-  </tr>
-  <tr>
-    <td>ABLNMD</td>
-    <td>Midday number of lanes in the FROM-TO direction</td>
-  </tr>
-  <tr>
-    <td>ABLNP</td>
-    <td>PM number of lanes in the FROM-TO direction</td>
-  </tr>
-  <tr>
-    <td>ABLNEV</td>
-    <td>Evening AM number of lanes in the FROM-TO direction</td>
+    <td>COST</td>
+    <td>Cost associated with the link</td>
   </tr>
   <tr>
     <td>ABAU</td>
@@ -9001,44 +8841,19 @@ The report files are produced by the SANDAG travel model.
   </tr>
   <tr>
     <td>ABCNT</td>
-    <td>Intersection control type at the TO end of the link:<br>
-      0 = No Control<br>
-      1 = Traffic Signal<br>
-      2 = All-Way Stop Sign<br>
-      3 = Two-Way Stop Sign<br>
-      4 = Ramp Meter<br>
-      5 = Ramp Meter with HOV lane meter<br>
-      6 = Light Rail Crossing<br>
-      7 = Toll Booth<br>
-      9 = Prevent Control
-    </td>
+    <td>Intersection control type at the TO end of the link: 0 = No Control, 1 = Traffic Signal, 2 = All-Way Stop Sign, 3 = Two-Way Stop Sign, 4 = Ramp Meter, 5 = Ramp Meter with HOV lane meter, 6 = Light Rail Crossing, 7 = Toll Booth, 9 = Prevent Control</td>
   </tr>
   <tr>
     <td>ABTL</td>
-    <td>Intersection approach through lanes at the TO end of the link:<br>
-      0~4 = number of through lanes<br>
-      7 = Free<br>
-      8 = Prohibited<br>
-      9 = No dedicated lane for the movement
-    </td>
+    <td>Intersection approach through lanes at the TO end of the link: 0~4 = number of through lanes, 7 = Free, 8 = Prohibited, 9 = No dedicated lane for the movement</td>
   </tr>
   <tr>
     <td>ABRL</td>
-    <td>Intersection approach right-turn lanes at the TO end of the link:<br>
-      0~2 = number of through lanes<br>
-      7 = Free<br>
-      8 = Prohibited<br>
-      9 = No dedicated lane for the movement
-    </td>
+    <td>Intersection approach right-turn lanes at the TO end of the link: 0~2 = number of through lanes, 7 = Free, 8 = Prohibited, 9 = No dedicated lane for the movement</td>
   </tr>
   <tr>
     <td>ABLL</td>
-    <td>Intersection approach left-turn lanes at the TO end of the link:<br>
-      0~2 = number of through lanes<br>
-      7 = Free<br>
-      8 = Prohibited<br>
-      9 = No dedicated lane for the movement
-    </td>
+    <td>Intersection approach left-turn lanes at the TO end of the link: 0~2 = number of through lanes, 7 = Free, 8 = Prohibited, 9 = No dedicated lane for the movement</td>
   </tr>
   <tr>
     <td>ABGC</td>
@@ -9049,137 +8864,584 @@ The report files are produced by the SANDAG travel model.
     <td>Per-lane capacity per hour in the TO direction of the link</td>
   </tr>
   <tr>
-    <td>ABCPEA</td>
-    <td>Early AM period mid-link capacity in the TO direction of the link</td>
+    <td>BAAU</td>
+    <td>Number of auxiliary lanes in the TO-FROM direction</td>
   </tr>
   <tr>
-    <td>ABCPA</td>
-    <td>AM period mid-link capacity at the TO end of the link</td>
+    <td>BACNT</td>
+    <td>Intersection control type at the FROM end of the link: 0 = No Control, 1 = Traffic Signal, 2 = All-Way Stop Sign, 3 = Two-Way Stop Sign, 4 = Ramp Meter, 5 = Ramp Meter with HOV lane meter, 6 = Light Rail Crossing, 7 = Toll Booth, 9 = Prevent Control</td>
   </tr>
   <tr>
-    <td>ABCPMD</td>
-    <td>Midday period mid-link capacity at the TO end of the link</td>
+    <td>BATL</td>
+    <td>Intersection approach through lanes at the FROM end of the link: 0~4 = number of through lanes, 7 = Free, 8 = Prohibited, 9 = No dedicated lane for the movement</td>
   </tr>
   <tr>
-    <td>ABCPP</td>
-    <td>PM period mid-link capacity at the TO end of the link</td>
+    <td>BARL</td>
+    <td>Intersection approach right-turn lanes at the FROM end of the link: 0~2 = number of through lanes, 7 = Free, 8 = Prohibited, 9 = No dedicated lane for the movement</td>
   </tr>
   <tr>
-    <td>ABCPEV</td>
-    <td>Evening period mid-link capacity at the TO end of the link</td>
+    <td>BALL</td>
+    <td>Intersection approach left-turn lanes at the FROM end of the link: 0~2 = number of through lanes, 7 = Free, 8 = Prohibited, 9 = No dedicated lane for the movement</td>
   </tr>
   <tr>
-    <td>ABCXEA</td>
-    <td>Early AM period intersection-approach capacity at the TO end of the link</td>
+    <td>BAGC</td>
+    <td>Intersection green-to-cycle ratio at the FROM end of the link (%)</td>
   </tr>
   <tr>
-    <td>ABCXA</td>
-    <td>AM period intersection-approach capacity at the TO end of the link</td>
+    <td>BAPLC</td>
+    <td>Per-lane capacity per hour in the FROM direction of the link</td>
   </tr>
   <tr>
-    <td>ABCXMD</td>
-    <td>Midday period intersection-approach capacity at the TO end of the link</td>
+    <td>relifac</td>
+    <td>Reliability factor for the link</td>
   </tr>
   <tr>
-    <td>ABCXP</td>
-    <td>PM period intersection-approach capacity at the TO end of the link</td>
+    <td>TOLL2_EA</td>
+    <td>Early AM Toll cost for Toll 2 vehicles</td>
   </tr>
   <tr>
-    <td>ABCXEV</td>
-    <td>Evening period intersection-approach capacity at the TO end of the link</td>
+    <td>TOLL2_AM</td>
+    <td>AM Toll cost for Toll 2 vehicles</td>
   </tr>
   <tr>
-    <td>ABCHEA</td>
-    <td>Early AM period hourly mid-link capacity at the TO end of the link</td>
+    <td>TOLL2_MD</td>
+    <td>Midday Toll cost for Toll 2 vehicles</td>
   </tr>
   <tr>
-    <td>ABCHA</td>
-    <td>AM period hourly mid-link capacity at the TO end of the link</td>
+    <td>TOLL2_PM</td>
+    <td>PM Toll cost for Toll 2 vehicles</td>
   </tr>
   <tr>
-    <td>ABCHMD</td>
-    <td>Midday period hourly mid-link capacity at the TO end of the link</td>
+    <td>TOLL2_EV</td>
+    <td>Evening Toll cost for Toll 2 vehicles</td>
   </tr>
   <tr>
-    <td>ABCHP</td>
-    <td>PM period hourly mid-link capacity at the TO end of the link</td>
+    <td>TOLL3_EA</td>
+    <td>Early AM Toll cost for Toll 3 vehicles</td>
   </tr>
   <tr>
-    <td>ABCHEV</td>
-    <td>Evening period hourly mid-link capacity at the TO end of the link</td>
+    <td>TOLL3_AM</td>
+    <td>AM Toll cost for Toll 3 vehicles</td>
   </tr>
   <tr>
-    <td>ABTMEA</td>
-    <td>Early AM period link time in minutes in the FROM-TO direction</td>
+    <td>TOLL3_MD</td>
+    <td>Midday Toll cost for Toll 3 vehicles</td>
   </tr>
   <tr>
-    <td>ABTMA</td>
-    <td>AM period link time in minutes in the FROM-TO direction</td>
+    <td>TOLL3_PM</td>
+    <td>PM Toll cost for Toll 3 vehicles</td>
   </tr>
   <tr>
-    <td>ABTMMD</td>
-    <td>Midday period link time in minutes in the FROM-TO direction</td>
+    <td>TOLL3_EV</td>
+    <td>Evening Toll cost for Toll 3 vehicles</td>
   </tr>
   <tr>
-    <td>ABTMP</td>
-    <td>PM period link time in minutes in the FROM-TO direction</td>
+    <td>TOLL4_EA</td>
+    <td>Early AM Toll cost for Toll 4 vehicles</td>
   </tr>
   <tr>
-    <td>ABTMEV</td>
-    <td>Evening period link time in minutes in the FROM-TO direction</td>
+    <td>TOLL4_AM</td>
+    <td>AM Toll cost for Toll 4 vehicles</td>
   </tr>
   <tr>
-    <td>ABTXEA</td>
-    <td>Early AM period intersection delay time in the TO end of the link</td>
+    <td>TOLL4_MD</td>
+    <td>Midday Toll cost for Toll 4 vehicles</td>
   </tr>
   <tr>
-    <td>ABTXA</td>
-    <td>AM period intersection delay time in the TO end of the link</td>
+    <td>TOLL4_PM</td>
+    <td>PM Toll cost for Toll 4 vehicles</td>
   </tr>
   <tr>
-    <td>ABTXMD</td>
-    <td>Midday period intersection delay time in the TO end of the link</td>
+    <td>TOLL4_EV</td>
+    <td>Evening Toll cost for Toll 4 vehicles</td>
   </tr>
   <tr>
-    <td>ABTXP</td>
-    <td>PM period intersection delay time in the TO end of the link</td>
+    <td>TOLL5_EA</td>
+    <td>Early AM Toll cost for Toll 5 vehicles</td>
   </tr>
   <tr>
-    <td>ABTXEV</td>
-    <td>Evening period intersection delay time in the TO end of the link</td>
+    <td>TOLL5_AM</td>
+    <td>AM Toll cost for Toll 5 vehicles</td>
   </tr>
   <tr>
-    <td>HWYSegGUID</td>
-    <td>Highway segment globally unique identifier (GUID)</td>
+    <td>TOLL5_MD</td>
+    <td>Midday Toll cost for Toll 5 vehicles</td>
   </tr>
   <tr>
-    <td>FXNM</td>
-    <td>Program assigned cross street name at the FROM end of the link</td>
+    <td>TOLL5_PM</td>
+    <td>PM Toll cost for Toll 5 vehicles</td>
   </tr>
   <tr>
-    <td>TXNM</td>
-    <td>Program assigned cross street name at the TO end of the link</td>
+    <td>TOLL5_EV</td>
+    <td>Evening Toll cost for Toll 5 vehicles</td>
   </tr>
   <tr>
-    <td>MINMODE</td>
-    <td>Transit and access mode type where:<br>
-      1 = Special transfer walk links between certain nearby stops<br>
-      2 = Walk links in the downtown area<br>
-      3 = The special TAP connectors<br>
-      400 = Commuter Rail<br>
-      500 = Trolley & Light Rail Transit (LRT)<br>
-      600 = Rapid Freeway<br>
-      700 = Rapid Arterial<br>
-      800 = Limited Express Bus<br>
-      900 = Express Bus<br>
-      1000 = Local Bus
-    </td>
+    <td>TOLL_EA</td>
+    <td>Early AM Toll Cost (in cents per mile)</td>
   </tr>
   <tr>
-    <td>SHAPE_Length</td>
-    <td>Length of link in ft</td>
+    <td>TOLL_AM</td>
+    <td>AM Toll Cost (in cents per mile)</td>
+  </tr>
+  <tr>
+    <td>TOLL_MD</td>
+    <td>Midday Toll Cost (in cents per mile)</td>
+  </tr>
+  <tr>
+    <td>TOLL_PM</td>
+    <td>PM Toll Cost (in cents per mile)</td>
+  </tr>
+  <tr>
+    <td>TOLL_EV</td>
+    <td>Evening Toll Cost (in cents per mile)</td>
+  </tr>
+  <tr>
+    <td>ABCP_EA</td>
+    <td>Early AM mid-link capacity in the TO direction</td>
+  </tr>
+  <tr>
+    <td>ABCP_AM</td>
+    <td>AM mid-link capacity in the TO direction</td>
+  </tr>
+  <tr>
+    <td>ABCP_MD</td>
+    <td>Midday mid-link capacity in the TO direction</td>
+  </tr>
+  <tr>
+    <td>ABCP_PM</td>
+    <td>PM mid-link capacity in the TO direction</td>
+  </tr>
+  <tr>
+    <td>ABCP_EV</td>
+    <td>Evening mid-link capacity in the TO direction</td>
+  </tr>
+  <tr>
+    <td>BACP_EA</td>
+    <td>Early AM mid-link capacity in the FROM direction</td>
+  </tr>
+  <tr>
+    <td>BACP_AM</td>
+    <td>AM mid-link capacity in the FROM direction</td>
+  </tr>
+  <tr>
+    <td>BACP_MD</td>
+    <td>Midday mid-link capacity in the FROM direction</td>
+  </tr>
+  <tr>
+    <td>BACP_PM</td>
+    <td>PM mid-link capacity in the FROM direction</td>
+  </tr>
+  <tr>
+    <td>BACP_EV</td>
+    <td>Evening mid-link capacity in the FROM direction</td>
+  </tr>
+  <tr>
+    <td>ABCX_EA</td>
+    <td>Early AM intersection approach capacity in the TO direction</td>
+  </tr>
+  <tr>
+    <td>ABCX_AM</td>
+    <td>AM intersection approach capacity in the TO direction</td>
+  </tr>
+  <tr>
+    <td>ABCX_MD</td>
+    <td>Midday intersection approach capacity in the TO direction</td>
+  </tr>
+  <tr>
+    <td>ABCX_PM</td>
+    <td>PM intersection approach capacity in the TO direction</td>
+  </tr>
+  <tr>
+    <td>ABCX_EV</td>
+    <td>Evening intersection approach capacity in the TO direction</td>
+  </tr>
+  <tr>
+    <td>BACX_EA</td>
+    <td>Early AM intersection approach capacity in the FROM direction</td>
+  </tr>
+  <tr>
+    <td>BACX_AM</td>
+    <td>AM intersection approach capacity in the FROM direction</td>
+  </tr>
+  <tr>
+    <td>BACX_MD</td>
+    <td>Midday intersection approach capacity in the FROM direction</td>
+  </tr>
+  <tr>
+    <td>BACX_PM</td>
+    <td>PM intersection approach capacity in the FROM direction</td>
+  </tr>
+  <tr>
+    <td>BACX_EV</td>
+    <td>Evening intersection approach capacity in the FROM direction</td>
+  </tr>
+  <tr>
+    <td>ABCH_EA</td>
+    <td>Early AM hourly mid-link capacity in the TO direction</td>
+  </tr>
+  <tr>
+    <td>ABCH_AM</td>
+    <td>AM hourly mid-link capacity in the TO direction</td>
+  </tr>
+  <tr>
+    <td>ABCH_MD</td>
+    <td>Midday hourly mid-link capacity in the TO direction</td>
+  </tr>
+  <tr>
+    <td>ABCH_PM</td>
+    <td>PM hourly mid-link capacity in the TO direction</td>
+  </tr>
+  <tr>
+    <td>ABCH_EV</td>
+    <td>Evening hourly mid-link capacity in the TO direction</td>
+  </tr>
+  <tr>
+    <td>BACH_EA</td>
+    <td>Early AM hourly mid-link capacity in the FROM direction</td>
+  </tr>
+  <tr>
+    <td>BACH_AM</td>
+    <td>AM hourly mid-link capacity in the FROM direction</td>
+  </tr>
+  <tr>
+    <td>BACH_MD</td>
+    <td>Midday hourly mid-link capacity in the FROM direction</td>
+  </tr>
+  <tr>
+    <td>BACH_PM</td>
+    <td>PM hourly mid-link capacity in the FROM direction</td>
+  </tr>
+  <tr>
+    <td>BACH_EV</td>
+    <td>Evening hourly mid-link capacity in the FROM direction</td>
+  </tr>
+  <tr>
+    <td>ABTM_EA</td>
+    <td>Early AM link travel time (minutes) in the FROM-TO direction</td>
+  </tr>
+  <tr>
+    <td>ABTM_AM</td>
+    <td>AM link travel time (minutes) in the FROM-TO direction</td>
+  </tr>
+  <tr>
+    <td>ABTM_MD</td>
+    <td>Midday link travel time (minutes) in the FROM-TO direction</td>
+  </tr>
+  <tr>
+    <td>ABTM_PM</td>
+    <td>PM link travel time (minutes) in the FROM-TO direction</td>
+  </tr>
+  <tr>
+    <td>ABTM_EV</td>
+    <td>Evening link travel time (minutes) in the FROM-TO direction</td>
+  </tr>
+  <tr>
+    <td>BATM_EA</td>
+    <td>Early AM link travel time (minutes) in the TO-FROM direction</td>
+  </tr>
+  <tr>
+    <td>BATM_AM</td>
+    <td>AM link travel time (minutes) in the TO-FROM direction</td>
+  </tr>
+  <tr>
+    <td>BATM_MD</td>
+    <td>Midday link travel time (minutes) in the TO-FROM direction</td>
+  </tr>
+  <tr>
+    <td>BATM_PM</td>
+    <td>PM link travel time (minutes) in the TO-FROM direction</td>
+  </tr>
+  <tr>
+    <td>BATM_EV</td>
+    <td>Evening link travel time (minutes) in the TO-FROM direction</td>
+  </tr>
+  <tr>
+    <td>ABTX_EA</td>
+    <td>Early AM intersection delay time (seconds) in the TO end</td>
+  </tr>
+  <tr>
+    <td>ABTX_AM</td>
+    <td>AM intersection delay time (seconds) in the TO end</td>
+  </tr>
+  <tr>
+    <td>ABTX_MD</td>
+    <td>Midday intersection delay time (seconds) in the TO end</td>
+  </tr>
+  <tr>
+    <td>ABTX_PM</td>
+    <td>PM intersection delay time (seconds) in the TO end</td>
+  </tr>
+  <tr>
+    <td>ABTX_EV</td>
+    <td>Evening intersection delay time (seconds) in the TO end</td>
+  </tr>
+  <tr>
+    <td>BATX_EA</td>
+    <td>Early AM intersection delay time (seconds) in the FROM end</td>
+  </tr>
+  <tr>
+    <td>BATX_AM</td>
+    <td>AM intersection delay time (seconds) in the FROM end</td>
+  </tr>
+  <tr>
+    <td>BATX_MD</td>
+    <td>Midday intersection delay time (seconds) in the FROM end</td>
+  </tr>
+  <tr>
+    <td>BATX_PM</td>
+    <td>PM intersection delay time (seconds) in the FROM end</td>
+  </tr>
+  <tr>
+    <td>BATX_EV</td>
+    <td>Evening intersection delay time (seconds) in the FROM end</td>
+  </tr>
+  <tr>
+    <td>ABLN_EA</td>
+    <td>Early AM number of lanes in the FROM-TO direction</td>
+  </tr>
+  <tr>
+    <td>ABLN_AM</td>
+    <td>AM number of lanes in the FROM-TO direction</td>
+  </tr>
+  <tr>
+    <td>ABLN_MD</td>
+    <td>Midday number of lanes in the FROM-TO direction</td>
+  </tr>
+  <tr>
+    <td>ABLN_PM</td>
+    <td>PM number of lanes in the FROM-TO direction</td>
+  </tr>
+  <tr>
+    <td>ABLN_EV</td>
+    <td>Evening number of lanes in the FROM-TO direction</td>
+  </tr>
+  <tr>
+    <td>BALN_EA</td>
+    <td>Early AM number of lanes in the TO-FROM direction</td>
+  </tr>
+  <tr>
+    <td>BALN_AM</td>
+    <td>AM number of lanes in the TO-FROM direction</td>
+  </tr>
+  <tr>
+    <td>BALN_MD</td>
+    <td>Midday number of lanes in the TO-FROM direction</td>
+  </tr>
+  <tr>
+    <td>BALN_PM</td>
+    <td>PM number of lanes in the TO-FROM direction</td>
+  </tr>
+  <tr>
+    <td>BALN_EV</td>
+    <td>Evening number of lanes in the TO-FROM direction</td>
+  </tr>
+  <tr>
+    <td>ABSCST_EA</td>
+    <td>Early AM period AB directional travel cost</td>
+  </tr>
+  <tr>
+    <td>ABSCST_AM</td>
+    <td>AM period AB directional travel cost</td>
+  </tr>
+  <tr>
+    <td>ABSCST_MD</td>
+    <td>Midday period AB directional travel cost</td>
+  </tr>
+  <tr>
+    <td>ABSCST_PM</td>
+    <td>PM period AB directional travel cost</td>
+  </tr>
+  <tr>
+    <td>ABSCST_EV</td>
+    <td>Evening period AB directional travel cost</td>
+  </tr>
+  <tr>
+    <td>BAH2CST_EA</td>
+    <td>Early AM period BA directional HOV2 travel cost</td>
+  </tr>
+  <tr>
+    <td>BAH2CST_AM</td>
+    <td>AM period BA directional HOV2 travel cost</td>
+  </tr>
+  <tr>
+    <td>BAH2CST_MD</td>
+    <td>Midday period BA directional HOV2 travel cost</td>
+  </tr>
+  <tr>
+    <td>BAH2CST_PM</td>
+    <td>PM period BA directional HOV2 travel cost</td>
+  </tr>
+  <tr>
+    <td>BAH2CST_EV</td>
+    <td>Evening period BA directional HOV2 travel cost</td>
+  </tr>
+  <tr>
+    <td>ABH3CST_EA</td>
+    <td>Early AM period AB directional HOV3 travel cost</td>
+  </tr>
+  <tr>
+    <td>ABH3CST_AM</td>
+    <td>AM period AB directional HOV3 travel cost</td>
+  </tr>
+  <tr>
+    <td>ABH3CST_MD</td>
+    <td>Midday period AB directional HOV3 travel cost</td>
+  </tr>
+  <tr>
+    <td>ABH3CST_PM</td>
+    <td>PM period AB directional HOV3 travel cost</td>
+  </tr>
+  <tr>
+    <td>ABH3CST_EV</td>
+    <td>Evening period AB directional HOV3 travel cost</td>
+  </tr>
+  <tr>
+    <td>BAH3CST_EA</td>
+    <td>Early AM period BA directional HOV3 travel cost</td>
+  </tr>
+  <tr>
+    <td>BAH3CST_AM</td>
+    <td>AM period BA directional HOV3 travel cost</td>
+  </tr>
+  <tr>
+    <td>BAH3CST_MD</td>
+    <td>Midday period BA directional HOV3 travel cost</td>
+  </tr>
+  <tr>
+    <td>BAH3CST_PM</td>
+    <td>PM period BA directional HOV3 travel cost</td>
+  </tr>
+  <tr>
+    <td>BAH3CST_EV</td>
+    <td>Evening period BA directional HOV3 travel cost</td>
+  </tr>
+  <tr>
+    <td>ABSTM_EA</td>
+    <td>Early AM period AB directional transit flow</td>
+  </tr>
+  <tr>
+    <td>ABSTM_AM</td>
+    <td>AM period AB directional transit flow</td>
+  </tr>
+  <tr>
+    <td>ABSTM_MD</td>
+    <td>Midday period AB directional transit flow</td>
+  </tr>
+  <tr>
+    <td>ABSTM_PM</td>
+    <td>PM period AB directional transit flow</td>
+  </tr>
+  <tr>
+    <td>ABSTM_EV</td>
+    <td>Evening period AB directional transit flow</td>
+  </tr>
+  <tr>
+    <td>BASTM_EA</td>
+    <td>Early AM period BA directional transit flow</td>
+  </tr>
+  <tr>
+    <td>BASTM_AM</td>
+    <td>AM period BA directional transit flow</td>
+  </tr>
+  <tr>
+    <td>BASTM_MD</td>
+    <td>Midday period BA directional transit flow</td>
+  </tr>
+  <tr>
+    <td>BASTM_PM</td>
+    <td>PM period BA directional transit flow</td>
+  </tr>
+  <tr>
+    <td>BASTM_EV</td>
+    <td>Evening period BA directional transit flow</td>
+  </tr>
+  <tr>
+    <td>ABPRELOAD_EA</td>
+    <td>Early AM period AB directional preload flow</td>
+  </tr>
+  <tr>
+    <td>ABPRELOAD_AM</td>
+    <td>AM period AB directional preload flow</td>
+  </tr>
+  <tr>
+    <td>ABPRELOAD_MD</td>
+    <td>Midday period AB directional preload flow</td>
+  </tr>
+  <tr>
+    <td>ABPRELOAD_PM</td>
+    <td>PM period AB directional preload flow</td>
+  </tr>
+  <tr>
+    <td>ABPRELOAD_EV</td>
+    <td>Evening period AB directional preload flow</td>
+  </tr>
+  <tr>
+    <td>BAPRELOAD_EA</td>
+    <td>Early AM period BA directional preload flow</td>
+  </tr>
+  <tr>
+    <td>BAPRELOAD_AM</td>
+    <td>AM period BA directional preload flow</td>
+  </tr>
+  <tr>
+    <td>BAPRELOAD_MD</td>
+    <td>Midday period BA directional preload flow</td>
+  </tr>
+  <tr>
+    <td>BAPRELOAD_PM</td>
+    <td>PM period BA directional preload flow</td>
+  </tr>
+  <tr>
+    <td>BAPRELOAD_EV</td>
+    <td>Evening period BA directional preload flow</td>
+  </tr>
+  <tr>
+    <td>AB_GCRatio</td>
+    <td>Intersection green-to-cycle ratio at the TO end of the link (%)</td>
+  </tr>
+  <tr>
+    <td>BA_GCRatio</td>
+    <td>Intersection green-to-cycle ratio at the FROM end of the link (%)</td>
+  </tr>
+  <tr>
+    <td>AB_Cycle</td>
+    <td>Cycle time at the AB end of the link</td>
+  </tr>
+  <tr>
+    <td>BA_Cycle</td>
+    <td>Cycle time at the BA end of the link</td>
+  </tr>
+  <tr>
+    <td>AB_PF</td>
+    <td>Performance factor in the AB direction</td>
+  </tr>
+  <tr>
+    <td>BA_PF</td>
+    <td>Performance factor in the BA direction</td>
+  </tr>
+  <tr>
+    <td>ALPHA1</td>
+    <td>Volume delay function (VDF) parameter Alpha1</td>
+  </tr>
+  <tr>
+    <td>BETA1</td>
+    <td>Volume delay function (VDF) parameter Beta1</td>
+  </tr>
+  <tr>
+    <td>ALPHA2</td>
+    <td>Volume delay function (VDF) parameter Alpha2</td>
+  </tr>
+  <tr>
+    <td>BETA2</td>
+    <td>Volume delay function (VDF) parameter Beta2</td>
+  </tr>
+  <tr>
+    <td>geometry</td>
+    <td>Geospatial data representation of the link</td>
   </tr>
 </table>
+
+
 
 
 ### Aggregated Transit Flow Table (transit_aggflow.csv) 
