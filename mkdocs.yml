@@ -71,6 +71,7 @@ nav:
   - Model Inputs and Outputs: 
     - Inputs: inputs.md
     - Outputs: outputs.md
+    - Reports: reports.md
   - Applying ABM3: 
     - Model Application: application/applying.md
     - Population Synthesis: application/population-synthesis.md
