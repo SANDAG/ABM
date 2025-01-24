@@ -116,12 +116,6 @@ Model outputs are stored in the .\outputs directory. The contents of the directo
    <td>Trips for each time period, for assignment
    </td>
   </tr>
-  <tr>
-   <td>report (directory)
-   </td>
-   <td>Report files produced by SANDAG travel model
-   </td>
-  </tr>
   
 </table>
 
