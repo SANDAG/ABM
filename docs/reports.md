@@ -3,7 +3,7 @@
 The report files are produced by the SANDAG travel model. 
 
 
-### External-External Model Trip List (externalExternalTrips.CSV (.\eetrip.csv))
+### External-External Model Trip List (.\eetrip.csv)
 
 <table>
   <tr>
@@ -118,7 +118,7 @@ The report files are produced by the SANDAG travel model.
 </table>
 
 
-### External-Internal Model Trip List (externalInternalTrips.CSV (.\eitrip.csv))
+### External-Internal Model Trip List (.\eitrip.csv)
 
 <table>
   <tr>
