@@ -11,4 +11,4 @@ CALL %CONDA3_ACT% asim_132
 %PROJECT_DRIVE%
 cd /d %PROJECT_DIRECTORY%
 cd output\skims
-CALL wring omx
+CALL wring omx :: wring omx creates omxz files that have the same values as the omx files but are stored more efficiently
