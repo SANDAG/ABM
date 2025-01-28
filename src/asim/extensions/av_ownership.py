@@ -32,7 +32,7 @@ class AVOwnershipSettings(LogitComponentSettings, extra="forbid"):
 
     # iterative what-if analysis example
     # omit these settings to not iterate
-    AV_OWNERSHIP_ITERATIONS: int | None = 1
+    AV_OWNERSHIP_ITERATIONS: int | None = None
     """Maximum number of auto-calibration iterations to run."""
     AV_OWNERSHIP_TARGET_PERCENT: float | None = 0.0
     """Target percent of households owning an autonomous vehicle."""
