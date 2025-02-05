@@ -68,8 +68,3 @@ dependencies:
 - xmle
 - zarr = 2.14.*
 - zstandard
-
-- pip:
-  - autodoc_pydantic
-  - wring
-  - -e ..
