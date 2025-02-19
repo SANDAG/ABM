@@ -18,11 +18,13 @@ dependencies:
 - geopandas
 - gh
 - git
+- gitpython
 - ipykernel  # so this env will appear in jupyter as a selection
 - isort
 - jupyterlab
 - larch = 5.7.*
 - matplotlib
+- multimethod = 1.9
 - myst-parser  # allows markdown in sphinx
 - nbconvert
 - nbformat
