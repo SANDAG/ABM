@@ -6,11 +6,6 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://sandag.github.io/abm/cvm.html</loc>
-         <lastmod>2025-02-21</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://sandag.github.io/abm/faq.html</loc>
          <lastmod>2025-02-21</lastmod>
          <changefreq>daily</changefreq>
@@ -81,6 +76,26 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://sandag.github.io/abm/calib_valid/calib_overview.html</loc>
+         <lastmod>2025-02-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://sandag.github.io/abm/calib_valid/calibration.html</loc>
+         <lastmod>2025-02-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://sandag.github.io/abm/calib_valid/convergence.html</loc>
+         <lastmod>2025-02-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://sandag.github.io/abm/calib_valid/validation.html</loc>
+         <lastmod>2025-02-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://sandag.github.io/abm/design/design.html</loc>
          <lastmod>2025-02-21</lastmod>
          <changefreq>daily</changefreq>
@@ -97,6 +112,11 @@
     </url>
     <url>
          <loc>https://sandag.github.io/abm/design/demand/crossborder.html</loc>
+         <lastmod>2025-02-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://sandag.github.io/abm/design/demand/cvm.html</loc>
          <lastmod>2025-02-21</lastmod>
          <changefreq>daily</changefreq>
     </url>
