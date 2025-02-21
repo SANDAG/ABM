@@ -58,6 +58,7 @@ nav:
         - design/demand/crossborder.md
         - design/demand/airport.md
         - design/demand/visitor.md
+        - design/demand/cvm.md
         - design/demand/external.md
     - Supply: 
         - design/supply/index.md
@@ -81,7 +82,11 @@ nav:
     - Flexible Fleets: application/flexible-fleets.md
     - Micromobility: application/micromobility.md
     - Network Coding: application/network-coding.md
-  - Commercial Vehicle Model: cvm.md
+  - Calibration and Validation:
+    - Overview: calib_valid/calib_overview.md
+    - Calibration: calib_valid/calibration.md
+    - Convergence: calib_valid/convergence.md
+    - Validation: calib_valid/validation.md
   - About:
     - Release Notes: release-notes.md
     - FAQs: faq.md
