@@ -283,4 +283,19 @@ annotate_trips:
     - tours
     - land_use
 
+# to reduce memory needs filter chooser table to these fields
+TOURS_MERGED_CHOOSER_COLUMNS:
+  - number_of_participants
+  - tour_category
+  - parent_tour_id
+  - tour_type
+  - purpose_id
+  - income
+  - nights
+  - tour_mode
+  - mode_segment
+  - direction
+  - emp_trip_mode
+  - party_size
+
 MODE_CHOICE_LOGSUM_COLUMN_NAME: mode_choice_logsum
