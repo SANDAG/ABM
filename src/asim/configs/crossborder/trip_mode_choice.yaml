@@ -88,7 +88,6 @@ CONSTANTS:
   c_fwt: 1.5
   c_waux: 2.5
   c_xwt: 2
-  C_UNAVAILABLE: -9999
   # alternative-specific constants
   exp_asc: 10  # express bus asc
   brt_asc: -10  # BRT asc

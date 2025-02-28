@@ -93,18 +93,12 @@ minAgeDriveAloneAV: 13
 
 #valueOfTime: 8.00
 costPerMile: 32.5
-costShareSr2: 1.75
-costShareSr3: 2.50
-waitThresh: 10.00
-walkThresh: 1.50
 shortWalk: 0.333
-longWalk: 0.667
 walkSpeed: 3.00
 bikeSpeed: 7.80
 ebikeSpeed: 10.00
 escooterSpeed: 6.70
 driveSpeed: 25.00
-maxCbdAreaTypeThresh: 2
 indivTour: 1.00000
 
 ### Crosswalk between SOC codes and SANDAG occupation classification
@@ -194,30 +188,12 @@ ivt_lrt_multiplier: 0.85
 ivt_brt_multiplier: 0.95
 ivt_cmr_multiplier: 0.85
 ivt_ltd_multiplier: 1.0
-ivt_cost_multiplier: 0.6
 # line-haul mode constants; note commuter rail is based on CMRIVTT. Also currently hyperloop is not applied because we do not skim hyperloop IVTT
 eb_equiv_asc: 10
 brt_equiv_asc: -5
 lrt_equiv_asc: -30
-hyp_equiv_asc: -20
 pnr_lrt_equiv_asc: -20
 #
-walktimeshort_multiplier: 2
-walktimelong_multiplier: 10
-biketimeshort_multiplier: 4
-biketimelong_multiplier: 20
-short_i_wait_multiplier: 2
-long_i_wait_multiplier: 1
-wacc_multiplier: 2
-wegr_multiplier: 2
-waux_multiplier: 2
-dtim_multiplier: 2
-xwait_multiplier: 2
-dacc_ratio: 0
-xfers_wlk_multiplier: 10
-xfers_drv_multiplier: 20
-drvtrn_distpen_0_multiplier: 270
-drvtrn_distpen_max: 15
 density_index_multiplier: -0.2
 #    joint_sr2_ASC_no_auto: 0
 #    joint_sr2_ASC_auto_deficient: 0
@@ -241,7 +217,6 @@ zoo_maz: 10561
 torrypines_maz: 4093
 
 # Micromobility constants
-microSpeed: 12
 microVarCost: 39 #cents
 microFixedCost: 100 #cents
 microRentTime: 1
