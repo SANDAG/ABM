@@ -11,11 +11,11 @@ SET CONDA3_ACT=%ANACONDA3_DIR%\Scripts\activate.bat
 
 SET CONDA3=%ANACONDA3_DIR%\Scripts\conda.exe
 
-SET PYTHON3=%ANACONDA3_DIR%\envs\asim_132\python.exe
+SET PYTHON3=%ANACONDA3_DIR%\envs\asim_134\python.exe
 
 ECHO Activate ActivitySim....
 CD /d %ANACONDA3_DIR%\Scripts
-CALL %CONDA3_ACT% asim_132
+CALL %CONDA3_ACT% asim_134
 
 cd /d %PROJECT_DIRECTORY%
 
