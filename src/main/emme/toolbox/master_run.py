@@ -773,6 +773,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         if not skipDataExport:
 
+            self.run_proc(
+                "deleteOMXZskims.cmd",
+                [drive, drive + path_forward_slash],
+                "Deleting OMXZ skims", capture_output=True)
+
             # export network and matrix results from Emme directly to T if using local drive
             output_directory = _join(self._path, "output")
             export_network_data(self._path, scenario_id, main_emmebank, transit_emmebank_dict, num_processors)
