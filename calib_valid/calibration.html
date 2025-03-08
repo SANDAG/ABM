@@ -81,7 +81,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#calibration" class="md-skip">
+        <a href="#data" class="md-skip">
           Skip to content
         </a>
       
@@ -1324,8 +1324,17 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
-        
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Calibration
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
       
       <a href="calibration.html" class="md-nav__link md-nav__link--active">
         
@@ -1336,6 +1345,57 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#data" class="md-nav__link">
+    Data
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#method" class="md-nav__link">
+    Method
+  </a>
+  
+    <nav class="md-nav" aria-label="Method">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#theory" class="md-nav__link">
+    Theory
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#application" class="md-nav__link">
+    Application
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -1495,8 +1555,48 @@
   
   
   
-    
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#data" class="md-nav__link">
+    Data
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#method" class="md-nav__link">
+    Method
+  </a>
+  
+    <nav class="md-nav" aria-label="Method">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#theory" class="md-nav__link">
+    Theory
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#application" class="md-nav__link">
+    Application
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -1514,8 +1614,37 @@
   
 
 
-<h1 id="calibration">Calibration<a class="headerlink" href="#calibration" title="Permanent link"> ¶</a></h1>
-<p>Calibration details.</p>
+  <h1>Calibration</h1>
+
+<p># Calibration </p>
+<h2 id="data">Data<a class="headerlink" href="#data" title="Permanent link"> ¶</a></h2>
+<p>\
+The primary data used for the ABM3 model calibration was the 2022 SANDAG Household Travel Survey (HTS) Wave 1. This was augmented with American Community Survey (ACS) 2021 data (specifically for the auto ownership model), DMV data (specifically for the vehicle type choice model), and the 2015 onboard survey (OBS) data for transit trips. \
+\
+Most models in ABM3 were calibrated, with the exception of Disaggregate Accessibility, AV Ownership, Vehicle Type Choice, Mandatory Tour Frequency, Mandatory Tour Scheduling, School Escorting, Joint Tour Scheduling, Non-Mandatory Tour Scheduling, Vehicle Allocation, At-work subtour scheduling, Trip Purpose, Trip Scheduling and Parking Location. Most of the calibrated models were calibrated to the 2022 HTS. However, the Auto Ownership, Work From Home and Telecommute Frequency were calibrated using ACS data. The Tour Mode Choice, At-work Subtour Mode Choice, and Trip Mode Choice models were calibrated using HTS data, and adjusted to OBS data. \
+\
+For further details on the data used for the calibration of the model, see the <a href="https://sandag.github.io/ABM/pdf_reports/202403_ABM3_Calibration_And_Validation_Report.pdf">ABM3 Calibration And Validation Report</a>.</p>
+<h2 id="method">Method<a class="headerlink" href="#method" title="Permanent link"> ¶</a></h2>
+<h3 id="theory">Theory<a class="headerlink" href="#theory" title="Permanent link"> ¶</a></h3>
+<p>\
+All models in ABM3 follow the multinomial logit framework, a type of discrete choice model in which each alternative is assigned a utility value, and the probability of selecting each alternative is computed based on its utility. During model implementation, we sometimes encounter model results that do not sufficiently replicate observed shares (e.g., survey data), necessitating calibration. To improve model fit, alternative-specific constants are introduced to achieve a reasonable level of fit to observed data. These constants reflect non-included attributes of the alternative and measurement error. </p>
+<p>We introduce an alternative-specific constant <span class="arithmatex">\($ \alpha_i $ \)</span> into <span class="arithmatex">\($ V_i $\)</span>, the utility function for each alternative:</p>
+<div class="arithmatex">\[ V_i' = V_i + \alpha_i \]</div>
+<p>This adjustment modifies the choice probability equation as follows:</p>
+<div class="arithmatex">\[ P_i = \frac{e^{V_i + \alpha_i}}{\sum_{j} e^{V_j + \alpha_j}} =\frac{e^{V_i} }{\sum_{j} e^{{V_j} + \alpha_j}} * e^{a_i}\]</div>
+<p>The first term on the right-hand side of the equation above is almost equal to the original model-predicted probability, or $ P_i^{model} $, with the difference being that the sum of utilities in the denominator also includes the impact of the added constant $ \alpha_i $. Assuming that this term is equal to the original model-predicted probability, we can determine the appropriate value of $ \alpha_i $ by setting the modified choice probability above to the observed share from data:
+$ P_i^{observed} = P_i^{model} e^{\alpha_i} $</p>
+<p>Solving for $ \alpha_i $:</p>
+<p>$\alpha_i = \ln \left( \frac{P_i<sup>{observed}}{P_i</sup>{model}} \right) $</p>
+<p>In simpler terms, the calibration constant is computed as follows:</p>
+<p>$ \text{calibration constant} = \ln \left( \frac{\text{observed share}}{\text{model share}} \right) $</p>
+<p>Due to ignoring the impact of $ \alpha_i $ in the denominator of $ P_i^{model} $, the calibration process cannot conclude in just one iteration but needs to be performed iteratively, where the results are added to the alternative-specific constant from the previous iteration. The adjustment increases or decreases the utility of the alternative based on the under- or over-estimated share, thus changing the probability of the alternative and ultimately the number of the predicted choices.
+, calibration process cannot conclude in just one iteration, but needs to be performed iteratively, where the results are added to the alternative-specific constant from the previous iteration. The adjustment increases or decreases the utility of the alternative based on the under or over estimated share, thus changing the probability of the alternative and ultimately the number of the predicted.\
+\
+Typically there is one less alternative-specific constant than the number of alternatives; the alternative without a constant is referred to as the '91base'92 alternative. In some models, the alternative-specific constants are relatively simple, where the constants are not stratified by any attributes of the decision-maker, while in other models, such as the coordinated daily activity pattern model or tour mode choice, the constants are stratified by socio-economic variables. In the case of the coordinated daily activity pattern model, the constants are stratified by person type, while in tour mode choice, constants are stratified by auto sufficiency, income, or geographical district. \</p>
+<h3 id="application">Application<a class="headerlink" href="#application" title="Permanent link"> ¶</a></h3>
+<p>\
+Calibration was completed using <a href="https://github.com/SANDAG/ABM/tree/ABM3_develop/src/asim/calibration/resident">Jupyter notebooks</a>. During calibration, calibration coefficients were calculated for each model (work from home, external workplace location, etc.), and for each specified segmentation within the model if appropriate (person type, tour length, etc). For a full list of models, see the <a href="https://sandag.github.io/ABM/pdf_reports/202403_ABM3_Calibration_And_Validation_Report.pdf">ABM3 Calibration and Validation Report.</a> The calibrated model was iteratively run and compared to the target until an optimal fit between the model and the target data was achieved. A visualizer (Power BI) was utilized to easily identify inconsistencies between the calibrated model and the target data. These inconsistencies were addressed by the team and on a case by case basis were justified or resolved. Summaries by district were also used to determine if there were regional differences of optimal fit between the calibration model and the target data. If necessary, regional calibration constants were also utilized. </p>
 
 
 
