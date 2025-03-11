@@ -18,11 +18,11 @@ SET CONDA3_DEA=%ANACONDA3_DIR%\Scripts\deactivate.bat
 
 SET CONDA3=%ANACONDA3_DIR%\Scripts\conda.exe
 
-SET PYTHON3=%ANACONDA3_DIR%\envs\asim_sandag_cvm\python.exe
+SET PYTHON3=%ANACONDA3_DIR%\envs\asim_134\python.exe
 
-ECHO Activate asim_sandag_cvm....
+ECHO Activate asim_134....
 CD /d %ANACONDA3_DIR%\Scripts
-CALL %CONDA3_ACT% asim_sandag_cvm
+CALL %CONDA3_ACT% asim_134
 
 set MKL_NUM_THREADS=1
 set MKL=1
