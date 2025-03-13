@@ -268,7 +268,9 @@ def route_endpoint_tnc(
             chunk_tag=None,
             trace_label=trace_label,
             zone_layer=None,
-            compute_settings=ComputeSettings(drop_unused_columns=False),
+            compute_settings=model_settings.compute_settings.subcomponent_settings(
+                "sample"
+            ),
         )
         choices_list.append(choices[model_settings.RESULT_COL_NAME])
 

@@ -15,7 +15,7 @@ from activitysim.core import (
     tracing,
     workflow,
 )
-from activitysim.core.configuration.base import PreprocessorSettings, PydanticReadable, ComputeSettings
+from activitysim.core.configuration.base import PreprocessorSettings, PydanticReadable
 from activitysim.core.configuration.logit import (
     BaseLogitComponentSettings,
     LogitComponentSettings,
@@ -462,7 +462,9 @@ def _route_stop_location(
             chunk_tag=None,
             trace_label=trace_label,
             zone_layer=None,
-            compute_settings=ComputeSettings(drop_unused_columns=False),
+            compute_settings=model_settings.compute_settings.subcomponent_settings(
+                "sample"
+            ),
         )
 
         # choose a MAZ for each DEST_TAZ choice, choice probability based on MAZ size_term fraction of TAZ total
