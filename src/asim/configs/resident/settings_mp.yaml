@@ -2,7 +2,7 @@ inherit_settings: settings.yaml
 
 multiprocess: True
 households_sample_size: 0
-num_processes: 40
+num_processes: 24
 trace_hh_id:
 chunk_training_mode: disabled
 # chunk_size: 240_000_000_000
