@@ -64,6 +64,11 @@ IF %ERRORLEVEL% NEQ 0 (GOTO :ERROR) else (GOTO :SUCCESS)
     :: sort TAZ zone index in omx
     %PYTHON3% src/asim-cvm/scripts/set_zoneMapping.py cvm output
 
+    CD /d %ANACONDA2_DIR%\Scripts
+    ECHO %cd%
+    CALL %CONDA2_ACT% base
+    CD /d %PROJECT_DRIVE%%PROJECT_DIRECTORY%
+
 	:: convert trip tables into Python2
 	%PYTHON2% src/asim-cvm/scripts/convert_tripTables.py cvm output
 
