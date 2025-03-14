@@ -1,6 +1,6 @@
 # Installing and Running ABM3
 
-This page describes how to install and run ABM3, including hardware and software requirements. In general, a powerful server is required to run the model. The main software required for the model includes EMME, Python, and Java. EMME is a commercial transportation modeling platform that must be purchased separately and requires a computer with a Windows operating system. Python is an open-source cross-platform programming language that is currently one of the most popular programming languages. Python is the core language of ActivitySim. Java is an open-source programming language required for certain bespoke non-ActivitySim model components. 
+This page describes how to install and run ABM3, including hardware and software requirements. In general, a powerful server is required to run the model. The main software required for the model includes EMME, Python, and Java. EMME is a commercial transportation modeling platform that must be purchased separately and requires a computer with a Windows operating system. Python is an open-source cross-platform programming language that is the core language of ActivitySim. Java is an open-source programming language required for certain bespoke non-ActivitySim model components. 
 
 
 ## System Requirements
@@ -34,7 +34,7 @@ Note that the model is unlikely to run on servers that have less than 1 TB of RA
 
 ## Software Requirements
 
-To run ABM3, [EMME](https://www.bentley.com/software/emme/), Python2.7 package manager [Anaconda2](https://repo.anaconda.com/archive/), Python3 package manager [Anaconda3](https://www.anaconda.com/), and [Java](https://www.java.com/en/) should be installed on the computer that will be used to run the model.
+To run ABM3, there are certain software that should be installed on your workstation including: [EMME](https://www.bentley.com/software/emme/), Python2.7 package manager [Anaconda2](https://repo.anaconda.com/archive/), Python3 package manager [Anaconda3](https://www.anaconda.com/), and [Java](https://www.java.com/en/).
 
 The ABM3 model system is an integrated model that is controlled by and primarily runs in the EMME transportation planning software platform. EMME is used for network assignment, creating transportation skims, and the model's Graphical User Interface (GUI). The software also provides functionality for viewing and editing highway and transit network files and viewing of matrix files. The [Bentley CONNECTION Client](https://www.bentley.com/software/connection-client/) software (the license manager for EMME) will need to be logged into and activated prior to running the model.
 
