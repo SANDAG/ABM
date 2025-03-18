@@ -56,6 +56,9 @@ IF %ERRORLEVEL% NEQ 0 (GOTO :ERROR) else (GOTO :SUCCESS)
     ECHO HTM complete!
     ECHO %DATE% %TIME%
 
+    CD /d %ANACONDA2_DIR%\Scripts
+    ECHO %cd%
+    CALL %CONDA2_ACT% base
     CD /d %PROJECT_DRIVE%%PROJECT_DIRECTORY%
 	
 	:: convert trip tables into Python2
