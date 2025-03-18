@@ -55,7 +55,7 @@ After Anaconda installation, the following step is to create the Python2-based e
 * Create a directory called *python_virtualenv* on the server's local drive and copy in the following files:
     * [add_python_virtualenv.bat](https://github.com/SANDAG/ABM/blob/ABM2_TRUNK/add_python_virtualenv.bat)
     * [requirements.txt](https://github.com/SANDAG/ABM/blob/ABM2_TRUNK/requirements.txt)
-* Open EMME 4.3.7 Shell (likely as Administrator)
+* Open EMME Shell (likely as Administrator)
 * Navigate (via *cd* command) to wherever *add_python_virtualenv.bat* was copied to
 * Execute *add_python_virtualenv.bat*
 * Copy [python_virtualenv.pth](https://github.com/SANDAG/ABM/blob/ABM3_develop/src/main/emme/python_virtualenv.pth) to EMME's site-packages directory
@@ -156,6 +156,9 @@ During an ABM3 model run, there are certain system environment variables that ge
     * {path to Anaconda2}
     * {path to Anaconda2}\Scripts
     * {path to Anaconda2}\Library\bin
+    * {path to Anaconda3}
+    * {path to Anaconda3}\Scripts
+    * {path to Anaconda3}\Library\bin
 
 #### Azure Environment Variables
 
@@ -167,7 +170,7 @@ To create those Azure system environment variables:
 
 * Open PowerShell as Administrator
 * Navigate (via *cd* command) to *T:\ABM\software\PS1*
-* Execute *ABM_Variables.ps1*
+* Execute *.\ABM_Variables.ps1*
     * If you encounter an error message indicating the .ps1 file is not digitally signed, you may bypass the execution policy for your current PowerShell session by running: ```Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass``` Then, re-execute *ABM_Variables.ps1*.
 
 ### SQLCMD
