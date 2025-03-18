@@ -773,11 +773,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         if not skipDataExport:
 
-            self.run_proc(
-                "deleteOMXZskims.cmd",
-                [drive, drive + path_forward_slash],
-                "Deleting OMXZ skims", capture_output=True)
-
             # export network and matrix results from Emme directly to T if using local drive
             output_directory = _join(self._path, "output")
             export_network_data(self._path, scenario_id, main_emmebank, transit_emmebank_dict, num_processors)
@@ -799,6 +794,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 "run_travel_time_calculator.cmd",
                 [drive, drive + path_forward_slash],
                 "Exporting MGRA-level travel times", capture_output=True)
+            
+            self.run_proc(
+                "deleteOMXZskims.cmd",
+                [drive, drive + path_forward_slash],
+                "Deleting OMXZ skims", capture_output=True)
 
         # This validation procedure only works with base (2022) scenarios utilizing TNED networks
         if scenarioYear == "2022" and not skipValidation:
