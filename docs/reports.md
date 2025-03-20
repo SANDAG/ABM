@@ -1125,43 +1125,43 @@ The report files are produced by the SANDAG travel model.
   </tr>
   <tr>
     <td>ABTX_EA</td>
-    <td>Early AM intersection delay time (seconds) in the TO end</td>
+    <td>Early AM intersection delay time (minutes) in the TO end</td>
   </tr>
   <tr>
     <td>ABTX_AM</td>
-    <td>AM intersection delay time (seconds) in the TO end</td>
+    <td>AM intersection delay time (minutes) in the TO end</td>
   </tr>
   <tr>
     <td>ABTX_MD</td>
-    <td>Midday intersection delay time (seconds) in the TO end</td>
+    <td>Midday intersection delay time (minutes) in the TO end</td>
   </tr>
   <tr>
     <td>ABTX_PM</td>
-    <td>PM intersection delay time (seconds) in the TO end</td>
+    <td>PM intersection delay time (minutes) in the TO end</td>
   </tr>
   <tr>
     <td>ABTX_EV</td>
-    <td>Evening intersection delay time (seconds) in the TO end</td>
+    <td>Evening intersection delay time (minutes) in the TO end</td>
   </tr>
   <tr>
     <td>BATX_EA</td>
-    <td>Early AM intersection delay time (seconds) in the FROM end</td>
+    <td>Early AM intersection delay time (minutes) in the FROM end</td>
   </tr>
   <tr>
     <td>BATX_AM</td>
-    <td>AM intersection delay time (seconds) in the FROM end</td>
+    <td>AM intersection delay time (minutes) in the FROM end</td>
   </tr>
   <tr>
     <td>BATX_MD</td>
-    <td>Midday intersection delay time (seconds) in the FROM end</td>
+    <td>Midday intersection delay time (minutes) in the FROM end</td>
   </tr>
   <tr>
     <td>BATX_PM</td>
-    <td>PM intersection delay time (seconds) in the FROM end</td>
+    <td>PM intersection delay time (minutes) in the FROM end</td>
   </tr>
   <tr>
     <td>BATX_EV</td>
-    <td>Evening intersection delay time (seconds) in the FROM end</td>
+    <td>Evening intersection delay time (minutes) in the FROM end</td>
   </tr>
   <tr>
     <td>ABLN_EA</td>
