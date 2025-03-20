@@ -87,7 +87,7 @@ class BaseNode(object):
                     if line.startswith("TOOLBOX_TITLE"):
                         title = line.split("=")[1].strip()
                         node.title = title[1:-1]  # exclude first and last quotes
-        except Exception(e):
+        except Exception as e:
             print (script_path, namespace)
             print (type(e), str(e))
             return None
