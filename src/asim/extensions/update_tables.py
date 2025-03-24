@@ -205,9 +205,7 @@ def get_output_table_names(state, output_tables_settings, output_tables_settings
 @workflow.step()
 def update_tables(state: workflow.State):
     # get list of model outputs to update
-    output_dir = state.get_injectable("output_dir")
-    input_dir = os.path.abspath(os.path.join(output_dir, "..", "..", "input"))
-    # input_dir = inject.get_injectable("data_dir")
+    input_dir = state.get_injectable("data_dir")[0]
     output_tables_settings_name = "output_tables"
     output_tables_settings = state.settings.output_tables
     if output_tables_settings is None:
