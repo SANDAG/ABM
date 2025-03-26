@@ -1034,6 +1034,19 @@
     Output Directory (.\output)
   </a>
   
+    <nav class="md-nav" aria-label="Output Directory (.\output)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#total-vehicle-trips-assigned-to-the-highway-network-by-period" class="md-nav__link">
+    Total Vehicle Trips Assigned to the Highway Network by period
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2014,6 +2027,19 @@
     Output Directory (.\output)
   </a>
   
+    <nav class="md-nav" aria-label="Output Directory (.\output)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#total-vehicle-trips-assigned-to-the-highway-network-by-period" class="md-nav__link">
+    Total Vehicle Trips Assigned to the Highway Network by period
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2611,9 +2637,64 @@
    </td>
   </tr>
   <tr>
-   <td>trip_(period).omx
+   <td><a href="#trip-tables">trip_(period).omx</a>
    </td>
-   <td>Trips for each time period, for assignment
+   <td>Total Trip tables to assign to the highway network by 5 time periods (tod = EA, AM, MD, PM, EV)
+   </td>
+  </tr>
+
+</table>
+
+<p><a id="trip-tables"></a></p>
+<h3 id="total-vehicle-trips-assigned-to-the-highway-network-by-period">Total Vehicle Trips Assigned to the Highway Network by period<a class="headerlink" href="#total-vehicle-trips-assigned-to-the-highway-network-by-period" title="Permanent link"> ¶</a></h3>
+<p><code>TRIP_&lt;TIME PERIOD&gt;.OMX</code></p>
+<table>
+  <tr>
+   <td>Table Name
+   </td>
+   <td>Description
+   </td>
+  </tr>
+  <tr>
+   <td>&lt;time_period>_HOV3_&lt;vot>
+   </td>
+   <td>Shared Ride 3 trips for time period and vot
+   </td>
+  </tr>
+  <tr>
+   <td>&lt;time_period>_TRK_&lt;vot>
+   </td>
+   <td>Truck trips for time period and vot
+   </td>
+  </tr>
+  <tr>
+   <td>&lt;time_period>_SOV_NT_&lt;vot>
+   </td>
+   <td>Drive Alone Non-Transponder trips for time period and vot
+   </td>
+  </tr>
+  <tr>
+   <td>&lt;time_period>_SOV_TR_&lt;vot>
+   </td>
+   <td>Drive Alone Transponder trips for time period and vot
+   </td>
+  </tr>
+  <tr>
+   <td>&lt;time_period>_HOV2_&lt;vot>
+   </td>
+   <td>Shared Ride 2 trips for time period and vot
+   </td>
+  </tr>
+  <tr>
+   <td>vot = L (low), M (medium), and H (high)
+   </td>
+   <td>
+   </td>
+   </tr>
+  <tr>
+   <td>*time period = EA, AM, MD, PM, EV
+   </td>
+   <td>
    </td>
   </tr>
 
@@ -2703,19 +2784,19 @@
   <tr>
    <td>&lt;time_period>_&lt;traffic_class>&lt;_vot>_TIME
    </td>
-   <td>Travel time for evaluation of volume-delay functions
+   <td>Travel time (minutes) for evaluation of volume-delay functions
    </td>
   </tr>
   <tr>
    <td>&lt;time_period>_&lt;traffic_class>&lt;_vot>_DIST
    </td>
-   <td>Travel distance
+   <td>Travel distance (miles)
    </td>
   </tr>
   <tr>
    <td>&lt;time_period>_&lt;traffic_class>&lt;_vot>_REL
    </td>
-   <td>
+   <td>Impedance (cost/time) compared to other routes
    </td>
   </tr>
   <tr>
@@ -2727,7 +2808,7 @@
   <tr>
    <td>&lt;time_period>_&lt;traffic_class>&lt;_vot>_TOLLDIST
    </td>
-   <td>Total distance on toll facilities (only for TOLL traffic classes)
+   <td>Total distance (miles) on toll facilities (only for TOLL traffic classes)
    </td>
   </tr>
   <tr>
@@ -2739,7 +2820,7 @@
   <tr>
    <td>&lt;time_period>_&lt;traffic_class>&lt;_vot>_HOVDIST
    </td>
-   <td>Distance on HOV facilities (only for HOV traffic classes)
+   <td>Distance (miles) on HOV facilities (only for HOV traffic classes)
    </td>
   </tr>
   <tr>
@@ -2775,19 +2856,19 @@
   <tr>
    <td>&lt;time_period>_&lt;transit_class>_FIRSTWAIT
    </td>
-   <td>actual wait time at initial boarding point
+   <td>actual wait time (minutes) at initial boarding point
    </td>
   </tr>
   <tr>
    <td>&lt;time_period>_&lt;transit_class>_XFERWAIT
    </td>
-   <td>actual wait time at all transfer boarding points
+   <td>actual wait time (minutes) at all transfer boarding points
    </td>
   </tr>
   <tr>
    <td>&lt;time_period>_&lt;transit_class>_TOTALWAIT
    </td>
-   <td>total actual wait time
+   <td>total actual wait time (minutes)
    </td>
   </tr>
   <tr>
@@ -2805,67 +2886,67 @@
   <tr>
    <td>&lt;time_period>_&lt;transit_class>_ACCWALK
    </td>
-   <td>access actual walk time prior to initial boarding
+   <td>access actual walk time (minutes) prior to initial boarding
    </td>
   </tr>
   <tr>
    <td>&lt;time_period>_&lt;transit_class>_EGRWALK
    </td>
-   <td>egress actual walk time after final alighting
+   <td>egress actual walk time (minutes) after final alighting
    </td>
   </tr>
   <tr>
    <td>&lt;time_period>_&lt;transit_class>_TOTALWALK
    </td>
-   <td>total actual walk time
+   <td>total actual walk time (minutes)
    </td>
   </tr>
   <tr>
    <td>&lt;time_period>_&lt;transit_class>_TOTALIVTT
    </td>
-   <td>Total actual in-vehicle travel time
+   <td>Total actual in-vehicle travel time (minutes)
    </td>
   </tr>
   <tr>
    <td>&lt;time_period>_&lt;transit_class>_DWELLTIME
    </td>
-   <td>Total dwell time at stops
+   <td>Total dwell time (minutes) at stops
    </td>
   </tr>
   <tr>
    <td>&lt;time_period>_&lt;transit_class>_BUSIVTT
    </td>
-   <td>actual in-vehicle travel time on local bus mode
+   <td>actual in-vehicle travel time (minutes) on local bus mode
    </td>
   </tr>
   <tr>
    <td>&lt;time_period>_&lt;transit_class>_LRTIVTT
    </td>
-   <td>actual in-vehicle travel time on LRT mode
+   <td>actual in-vehicle travel time (minutes) on LRT mode
    </td>
   </tr>
   <tr>
    <td>&lt;time_period>_&lt;transit_class> _CMRIVTT
    </td>
-   <td>actual in-vehicle travel time on commuter rail mode
+   <td>actual in-vehicle travel time (minutes) on commuter rail mode
    </td>
   </tr>
   <tr>
    <td>&lt;time_period>_&lt;transit_class> _EXPIVTT
    </td>
-   <td>actual in-vehicle travel time on express bus mode
+   <td>actual in-vehicle travel time (minutes) on express bus mode
    </td>
   </tr>
   <tr>
    <td>&lt;time_period>_&lt;transit_class>_LTDEXPIVTT
    </td>
-   <td>actual in-vehicle travel time on premium bus mode
+   <td>actual in-vehicle travel time (minutes) on premium bus mode
    </td>
   </tr>
   <tr>
    <td>&lt;time_period>_&lt;transit_class>_BRTIVTT
    </td>
-   <td>actual in-vehicle travel time on  BRT mode
+   <td>actual in-vehicle travel time (minutes) on  BRT mode
    </td>
   </tr>
   <tr>
