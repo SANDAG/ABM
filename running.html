@@ -961,16 +961,30 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#installing-abm3-model" class="md-nav__link">
-    Installing ABM3 Model
+  <a href="#installing-abm3" class="md-nav__link">
+    Installing ABM3
   </a>
   
-    <nav class="md-nav" aria-label="Installing ABM3 Model">
+    <nav class="md-nav" aria-label="Installing ABM3">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#setting-up-the-python-environments" class="md-nav__link">
-    Setting up the Python environments
+    Setting up the Python Environments
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#environment-variables" class="md-nav__link">
+    Environment Variables
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sqlcmd" class="md-nav__link">
+    SQLCMD
   </a>
   
 </li>
@@ -982,15 +996,15 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#creating-a-scenario-folder" class="md-nav__link">
-    Creating a scenario folder
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-an-abm3-scenario" class="md-nav__link">
+    Creating an ABM3 Scenario
+  </a>
   
 </li>
       
@@ -1604,16 +1618,30 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#installing-abm3-model" class="md-nav__link">
-    Installing ABM3 Model
+  <a href="#installing-abm3" class="md-nav__link">
+    Installing ABM3
   </a>
   
-    <nav class="md-nav" aria-label="Installing ABM3 Model">
+    <nav class="md-nav" aria-label="Installing ABM3">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#setting-up-the-python-environments" class="md-nav__link">
-    Setting up the Python environments
+    Setting up the Python Environments
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#environment-variables" class="md-nav__link">
+    Environment Variables
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sqlcmd" class="md-nav__link">
+    SQLCMD
   </a>
   
 </li>
@@ -1625,15 +1653,15 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#creating-a-scenario-folder" class="md-nav__link">
-    Creating a scenario folder
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-an-abm3-scenario" class="md-nav__link">
+    Creating an ABM3 Scenario
+  </a>
   
 </li>
       
@@ -1663,7 +1691,7 @@
 
 
 <h1 id="installing-and-running-abm3">Installing and Running ABM3<a class="headerlink" href="#installing-and-running-abm3" title="Permanent link"> ¶</a></h1>
-<p>This page describes how to install and run ABM3, including hardware and software requirements. In general, a powerful server is required to run the model. The main software required for the model includes EMME, Python, and Java. EMME is a commercial transportation modeling platform that must be purchased separately and requires a computer with a Windows operating system. Python is an open-source cross-platform programming language that is currently one of the most popular programming languages. Python is the core language of ActivitySim. Java is an open-source programming language required for certain bespoke non-ActivitySim model components. </p>
+<p>This page describes how to install and run ABM3, including hardware and software requirements. In general, a powerful server is required to run the model. The main software required for the model includes EMME, Python, and Java. EMME is a commercial transportation modeling platform that must be purchased separately and requires a computer with a Windows operating system. Python is an open-source cross-platform programming language that is the core language of ActivitySim. Java is an open-source programming language required for certain bespoke non-ActivitySim model components. </p>
 <h2 id="system-requirements">System Requirements<a class="headerlink" href="#system-requirements" title="Permanent link"> ¶</a></h2>
 <p>ABM3 runs on a Microsoft Windows workstation or server, with the minimum and recommended system specification as follows:</p>
 <p>Minimum specification:</p>
@@ -1699,37 +1727,183 @@
 <p>In general, a higher CPU core count and RAM will result in faster run times as long as ActivitySim is configured to utilize the additional processors and RAM.</p>
 <p>Note that the model is unlikely to run on servers that have less than 1 TB of RAM, unless chunking is set to active and in explicit mode (requires an upcoming version of ActivitySim 1.3)</p>
 <h2 id="software-requirements">Software Requirements<a class="headerlink" href="#software-requirements" title="Permanent link"> ¶</a></h2>
-<p>Three software applications, <a href="https://www.bentley.com/software/emme/">EMME</a>, Python package manager <a href="https://www.anaconda.com/">Anaconda</a>, and <a href="https://www.java.com/en/">Java</a> should be installed on the computer that will be used to run the model.</p>
-<p>The ABM3 model system is an integrated model that is controlled by and primarily runs in the EMME transportation planning software platform. EMME is used for network assignment and creating transportation skims, and the model&rsquo;s Graphical User Interface (GUI). The software also provides functionality for viewing and editing highway and transit network files and viewing of matrix files. The Bentley Connect Edition software (the license manager for EMME) will need to be logged in and activated prior to running the model. </p>
-<p>A Python package manager is software that creates an environment for an instance of Python. ActivitySim and related Python processes in the model are executed in an environment that is setup with a specific version of Python and specific library versions. This ensures that changes outside of the Python environment will not cause errors or change model results, and additionally ensure that the specific version of Python and specific libraries needed by the model do not cause errors or changes to other Python software installations on the server. The libraries needed by ActivitySim extend the base functionality of Python. Note that Anaconda requires a paid subscription for agencies larger than 200 users. To install Anaconda, follow the instructions <a href="https://www.anaconda.com/">here</a>. </p>
-<p>Java is required in order to create bicycle logsums, run the taxi/TNC routing model, and run the intra-household autonomous vehicle routing model. The model has been tested against Java version 8 (e.g. 1.8) but should run in later versions as well. </p>
-<h2 id="installing-abm3-model">Installing ABM3 Model<a class="headerlink" href="#installing-abm3-model" title="Permanent link"> ¶</a></h2>
-<h3 id="setting-up-the-python-environments">Setting up the Python environments<a class="headerlink" href="#setting-up-the-python-environments" title="Permanent link"> ¶</a></h3>
-<p>As noted above, User needs to install Anaconda on the machine they are working on, if it is not already installed. The following step is creating a specific environment to run ActivitySim. The environment is a configuration of Python that is for ActivitySim - this environment allows ActivitySim to use specific software libraries without interfering with the server&rsquo;s installed version of Python (if one exists, it is not required) and keeps other Python installations from interfering with ActivitySim. </p>
-<p>To run ABM3, user needs to install two different python environments, one in Python 3, which will be used by all ActivitySim-based models, and one in Python 2, which is required as long as the EMME version in use still depends on Python 2, and is used to convert the omx rip tables out of the ActivitySim models. To set up these environments, use the following instruction from within the Anaconda 3 PowerShell Prompt for Python 3 and Anaconda 2 PowerShell Prompt for Python 2. </p>
-<p>To set up the Python 3 environment, first, change directories using cd /d to the environment folder under the ActivtySim source code directory. As of June 2024, this directory may be cloned from the BayDAG_estimation branch located on the SANDAG&rsquo;s forked version of ActivitySim <a href="https://github.com/SANDAG/activitysim/tree/BayDAG_estimation">here</a>. The environment folder in this directory contains a number of yaml files that may be used to install the environment. User may use the following command to install the AcitvitySim environment along with SANDAG&rsquo;s version of AcitivtySim under the asim_baydag name.</p>
-<p><code>conda env create --file=activitysim-dev.yml -n asim_baydag</code></p>
-<p>After installing the environment, do a quick test of it by activating it, using:</p>
-<p><code>conda activate asim_baydag</code></p>
-<p>To set up the Python 2 environment, user simply needs to install the openmatrix package in the base environment. To do so, first open the Anaconda 2 terminal and use the following command to install the openmatrix package:</p>
-<p><code>pip install openmatrix</code></p>
-<h3 id="installing-java">Installing Java<a class="headerlink" href="#installing-java" title="Permanent link"> ¶</a></h3>
-<p>Java version 1.81 needs to be installed on the server. SANDAG servers usually have this version of Java already installed on them.</p>
-<h3 id="creating-a-scenario-folder">Creating a scenario folder<a class="headerlink" href="#creating-a-scenario-folder" title="Permanent link"> ¶</a></h3>
-<p>Follow the steps below to create a model scenario folder using SANDAG’s tool:</p>
+<p>To run ABM3, there are certain software that should be installed on your workstation including: <a href="https://www.bentley.com/software/emme/">EMME</a>, Python2.7 package manager <a href="https://repo.anaconda.com/archive/">Anaconda2</a>, Python3 package manager <a href="https://www.anaconda.com/">Anaconda3</a>, and <a href="https://www.java.com/en/">Java</a>.</p>
+<p>The ABM3 model system is an integrated model that is controlled by and primarily runs in the EMME transportation planning software platform. EMME is used for network assignment, creating transportation skims, and the model&rsquo;s Graphical User Interface (GUI). The software also provides functionality for viewing and editing highway and transit network files and viewing of matrix files. The <a href="https://www.bentley.com/software/connection-client/">Bentley CONNECTION Client</a> software (the license manager for EMME) will need to be logged into and activated prior to running the model.</p>
+<p>A Python package manager is software that creates an environment for an instance of Python. ActivitySim and related Python processes in the model are executed in an environment that is setup with a specific version of Python and specific library versions. This ensures that changes outside of the Python environment will not cause errors or change model results, and additionally ensure that the specific version of Python and specific libraries needed by the model do not cause errors or changes to other Python software installations on the server. The libraries needed by ActivitySim extend the base functionality of Python.</p>
+<p>Java is required in order to create bicycle logsums, run the taxi/TNC routing model, and run the intra-household autonomous vehicle routing model. The model has been tested against Java version 8 (i.e., 1.8) and is therefore the recommended version to be used when running the SANDAG ABM.</p>
+<h2 id="installing-abm3">Installing ABM3<a class="headerlink" href="#installing-abm3" title="Permanent link"> ¶</a></h2>
+<h3 id="setting-up-the-python-environments">Setting up the Python Environments<a class="headerlink" href="#setting-up-the-python-environments" title="Permanent link"> ¶</a></h3>
+<p>As noted above, the user needs to install Anaconda2 and Anaconda3 on the workstation they intend to install ABM3 on. The Anaconda2 software is utilized to create a Python2-based environment required to interface with a specific version of EMME (4.3.7) whereas Anaconda3 is utilized to create environments to run ActivitySim.</p>
+<h4 id="python2-environment">Python2 Environment<a class="headerlink" href="#python2-environment" title="Permanent link"> ¶</a></h4>
+<p>After Anaconda installation, the following step is to create the Python2-based environment, which can be done via the following steps:</p>
 <ul>
-<li>Check for an open server using the DOS tool mascot-abm.</li>
-<li>Log into server</li>
-<li>Using the show hidden icons arrow on the taskbar, click the INRO Software Manager to check if EMME license is operating. If it&rsquo;s not, log into license server on Mustang by typing in the Host box: mustang.sandag.org:5170 (automatic)</li>
-<li>Using the server’s Windows Explorer, navigate to T:\ABM\release\ABM\version_14_2_2\dist</li>
-<li>Double click on createStudyAndScenario.exe and click Run.</li>
-<li>On pop-up, enter fields in Create an ABM scenario. Make sure to enter the correct ABM version, EMME version, year, and know your Scenario Folder (where you will run the model from; typically study area/abm_runs) and your Network Folder (input networks). Browse to an existing folder or copy (ctrl + c) and paste (ctrl + v) paths to minimize chance of typos. After fields are entered, click Create.</li>
-<li>A DOS window will open and necessary files will be copied. If you have a server with a valid license, it will pause for about 30-45 seconds on init emme folder. You will get a pop-up window that says you have successfully created the scenario. Click Quit. Exit the GUI by clicking on Quit.</li>
-<li>Go to your newly created abm_run folder and double check on input files/date stamps to verify they match expected date stamps. Make any modifications to input files (i.e. <code>parametersByYears.csv</code> for adjusting auto operating costs, <code>filesByYears.csv</code> for specifying year-specific files, or <code>mgra_based_inputXXX.csv</code> file for adjusting parking costs)</li>
+<li>Create a directory called <em>python_virtualenv</em> on the server&rsquo;s local drive and copy in the following files:<ul>
+<li><a href="https://github.com/SANDAG/ABM/blob/ABM2_TRUNK/add_python_virtualenv.bat">add_python_virtualenv.bat</a></li>
+<li><a href="https://github.com/SANDAG/ABM/blob/ABM2_TRUNK/requirements.txt">requirements.txt</a></li>
+</ul>
+</li>
+<li>Open EMME Shell (likely as Administrator)</li>
+<li>Navigate (via <em>cd</em> command) to wherever <em>add_python_virtualenv.bat</em> was copied to</li>
+<li>Execute <em>add_python_virtualenv.bat</em></li>
+<li>Copy <a href="https://github.com/SANDAG/ABM/blob/ABM3_develop/src/main/emme/python_virtualenv.pth">python_virtualenv.pth</a> to EMME&rsquo;s site-packages directory<ul>
+<li>For example, <em>C:\Program Files\INRO\Emme\EMME 4\Emme-4.3.7\Python27\Lib\site-packages</em></li>
+</ul>
+</li>
+</ul>
+<p>If installation was succesfully completed, you will have created an environment at e.g., <em>C:\python_virtualenv\abm14_2_0</em>. Ensure relevant libraries were installed under the environment&rsquo;s <em>site-packages</em> directory. </p>
+<h4 id="python3-environments">Python3 Environments<a class="headerlink" href="#python3-environments" title="Permanent link"> ¶</a></h4>
+<p>The following step is creating two Python3-based Activitysim environments: one for running ActivitySim and the other specificallly for running the ActivitySim-based Commercial Vehicle Model (CVM).</p>
+<h5 id="activitysim-environment">ActivitySim Environment<a class="headerlink" href="#activitysim-environment" title="Permanent link"> ¶</a></h5>
+<h6 id="sandag-users">SANDAG Users<a class="headerlink" href="#sandag-users" title="Permanent link"> ¶</a></h6>
+<p>To create the ActivitySim (<em>asim_baydag</em>) environment:</p>
+<ul>
+<li>Open Anaconda3 Prompt as Administrator</li>
+<li>Execute the following commands:</li>
+</ul>
+<div class="highlight"><pre><span></span><code>conda update -n base conda
+net use T: \\sandag.org\transdata
+cd T:\ABM\dev\ABM3\src\asim\scripts
+T:
+conda env create --file=environment.yml -n asim_baydag
+conda activate asim_baydag
+pip install azure-identity
+pip install azure-storage-blob
+cd T:/ABM/dev/ActivitySim
+pip install –e .
+</code></pre></div>
+<h6 id="external-users">External Users<a class="headerlink" href="#external-users" title="Permanent link"> ¶</a></h6>
+<p>To create the ActivitySim (<em>asim_baydag</em>) environment, first, change directories using <code>cd /d</code> to the <em>conda-environments</em> folder under the ActivtySim source code directory. As of June 2024, this directory may be cloned from the <em>BayDAG_estimation</em> branch located on <a href="https://github.com/SANDAG/activitysim/tree/BayDAG_estimation">SANDAG&rsquo;s forked version of ActivitySim</a>. The <em>conda-environments</em> folder in this directory contains a number of yaml files that may be used to install the environment. Users may use the following command to install the AcitvitySim environment along with SANDAG&rsquo;s version of AcitivtySim under the <em>asim_baydag</em> name:</p>
+<p><code>conda env create --file=activitysim-dev.yml -n asim_baydag</code></p>
+<p>After installing the environment, users may confirm successful installation by activating it using:</p>
+<p><code>conda activate asim_baydag</code></p>
+<h5 id="cvm-activitysim-environment">CVM ActivitySim Environment<a class="headerlink" href="#cvm-activitysim-environment" title="Permanent link"> ¶</a></h5>
+<h6 id="sandag-users_1">SANDAG Users<a class="headerlink" href="#sandag-users_1" title="Permanent link"> ¶</a></h6>
+<p>To create the ActivitySim CVM environment:</p>
+<ul>
+<li>Open Anaconda3 Prompt as Administrator</li>
+<li>Execute the following commands:</li>
+</ul>
+<div class="highlight"><pre><span></span><code>cd T:\ABM\dev\CVM
+T:
+conda env create -p {path to Anaconda3}/envs/asim_sandag_cvm --file activitysim/conda-environments/activitysim-dev-base.yml
+conda activate asim_sandag_cvm
+pip install -e ./sharrow
+pip install -e ./activitysim
+</code></pre></div>
+<p>Note: On servers, {path to anaconda3} could be e.g., <code>C:/ProgramData/Anaconda3/</code> or <code>C:/Anaconda3</code></p>
+<h6 id="external-users_1">External Users<a class="headerlink" href="#external-users_1" title="Permanent link"> ¶</a></h6>
+<p>To create the ActivitySim CVM environment:</p>
+<ul>
+<li>Open Anaconda3 Prompt</li>
+<li>Execute the following commands</li>
+</ul>
+<div class="highlight"><pre><span></span><code>mkdir workspace
+cd workspace
+git clone https://github.com/ActivitySim/sharrow.git
+git clone https://github.com/SANDAG/activitysim-cvm
+cd activitysim
+git switch time-settings
+cd ..
+conda env create -p {path to Anaconda3}/envs/asim_sandag_cvm --file activitysim/conda-environments/activitysim-dev-base.yml
+conda activate C:/Anaconda3/envs/asim_sandag_cvm
+pip install -e ./sharrow
+pip install -e ./activitysim
+</code></pre></div>
+<p>Note: For {path to anaconda3} point to wherever Anaconda3 is installed on your workstation</p>
+<h3 id="environment-variables">Environment Variables<a class="headerlink" href="#environment-variables" title="Permanent link"> ¶</a></h3>
+<p>During an ABM3 model run, there are certain system environment variables that get referenced. These variables must be added to your workstation&rsquo;s environment variables. To do so:</p>
+<ul>
+<li>Navigate to your workstation&rsquo;s <em>System Properties</em> &gt; <em>Advanced</em> &gt; <em>Environment Variables</em></li>
+<li>Under <em>System variables</em>, using the <em>New&hellip;</em> button, add the following variables:<ul>
+<li>CONDA_PREFIX={path to Anaconda3}<ul>
+<li>e.g., C:\Anaconda3</li>
+</ul>
+</li>
+<li>CONDA_TWO_PREFIX={path to Anaconda2}<ul>
+<li>e.g., C:\Anaconda2</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Under <em>System variables</em> &gt; <em>Path</em>, using the <em>Edit&hellip;</em> button, add (if not already present) the following variables to <em>Path</em>:<ul>
+<li>{path to Anaconda2}</li>
+<li>{path to Anaconda2}\Scripts</li>
+<li>{path to Anaconda2}\Library\bin</li>
+<li>{path to Anaconda3}</li>
+<li>{path to Anaconda3}\Scripts</li>
+<li>{path to Anaconda3}\Library\bin</li>
+</ul>
+</li>
+</ul>
+<h4 id="azure-environment-variables">Azure Environment Variables<a class="headerlink" href="#azure-environment-variables" title="Permanent link"> ¶</a></h4>
+<p><em>Note: This section mainly relevant to SANDAG users.</em></p>
+<p>When an ABM3 scenario finalizes, it loads onto Azure for post-processing. There are a number of system environment variables necessary to establish a connection to the Azure system. </p>
+<p>To create those Azure system environment variables:</p>
+<ul>
+<li>Open PowerShell as Administrator</li>
+<li>Navigate (via <em>cd</em> command) to <em>T:\ABM\software\PS1</em></li>
+<li>Execute <em>.\ABM_Variables.ps1</em><ul>
+<li>If you encounter an error message indicating the .ps1 file is not digitally signed, you may bypass the execution policy for your current PowerShell session by running: <code>Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass</code> Then, re-execute <em>ABM_Variables.ps1</em>.</li>
+</ul>
+</li>
+</ul>
+<h3 id="sqlcmd">SQLCMD<a class="headerlink" href="#sqlcmd" title="Permanent link"> ¶</a></h3>
+<p><em>Note: This section mainly relevant to SANDAG users.</em></p>
+<p>An installation of the <em>sqlcmd</em> utility is necessary to execute Transact-SQL statements directly in the command line. Within the ABM3 modeling framework, it is utilized to execute a command that identifies the next available Azure scenario ID in preparation for loading a finalized ABM3 scenario onto Azure. </p>
+<p>To install the sqlcmd utility, download and execute the latest Microsoft Software Installer (i.e., .msi) file from the <a href="https://github.com/microsoft/go-sqlcmd/releases">Microsoft sqlcmd GitHub repository</a> (hint: <em>sqlcmd-amd64.msi</em>)</p>
+<p>To verify successful installation of sqlcmd utility on your workstation:</p>
+<ul>
+<li>Copy <a href="https://github.com/SANDAG/ABM/blob/ABM3_develop/src/main/resources/GetScenarioId.bat">GetScenarioId.bat</a> somewhere onto your workstation</li>
+<li>Open command prompt</li>
+<li>Navigate (via <em>cd</em> command) to location where <em>GetScenarioId.bat</em> was copied to</li>
+<li>Execute the following command:<ul>
+<li><code>GetScenarioId.bat 9999 sqlcmdTest "dev"</code><ul>
+<li><em>Note: The steps under Azure Environment Variables must be executed beforehand</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>If installation and command execution were successful, you should see the following:</li>
+</ul>
+<p><br></p>
+<div align="center">
+    <img src="images\running\sqlcmd_test.jpg" alt="alt_text" title="image_tooltip">
+    <br>
+    <em>SQLCMD Utility Test</em>
+</div>
+
+<h3 id="installing-java">Installing Java<a class="headerlink" href="#installing-java" title="Permanent link"> ¶</a></h3>
+<p>Java version 1.8 needs to be installed on the workstation. SANDAG servers usually have this version of Java already installed on them. </p>
+<p>Alternatively, the exact version may be found on Oracle&rsquo;s <a href="https://www.oracle.com/java/technologies/javase/javase8-archive-downloads.html">Java SE 8 Archive Downloads</a> site. (hint: <em>jre-8u162-windows-x64.exe</em>)</p>
+<h2 id="creating-an-abm3-scenario">Creating an ABM3 Scenario<a class="headerlink" href="#creating-an-abm3-scenario" title="Permanent link"> ¶</a></h2>
+<p><em>Note: This section mainly relevant to SANDAG users.</em></p>
+<p>Follow the steps below to create an ABM3 scenario directory:</p>
+<ul>
+<li>Check for an available server using the <a href="http://vpdamwiis-01.sandag.org:5000/modeling">SANDAG Live Report: ABM Compute Servers</a> page</li>
+<li>Log onto available server and ensure:<ol>
+<li>Server&rsquo;s C Drive has at least 500 GB worth of space</li>
+<li>You are logged onto the Bentley CONNECTION Client license manager software</li>
+</ol>
+</li>
+<li>Using the server’s Windows Explorer, navigate to the latest approved ABM3 release. As of March 2025, this is <em>T:\ABM\release\ABM\version_15_2_2</em></li>
+<li>Double click on <em>createStudyAndScenario.bat</em> and click Run.</li>
+<li>On pop-up, fill out the fields under <em>Create an ABM scenario</em>.<ul>
+<li><strong>EMME Version</strong>: As of March 2025, only available version is 4.3.7</li>
+<li><strong>Year</strong>: Using drop-down menu, select scenario year you&rsquo;d like to run</li>
+<li><strong>Base</strong>: Whether you would like to run a Build or No Build scenario. Note that the base 2022 year only has the option to run as Base.</li>
+<li><strong>Geography ID</strong>: Leave as 1. As of March 2025, this field has no functionality. </li>
+<li><strong>Scenario Folder</strong>: File path you would like to create scenario at. The tool will create the directory if it doesn&rsquo;t already exist. For cases where you point to an exisitng directory, the tool will notify users that location exists to avoid unintended overwriting.</li>
+<li><strong>Network Folder</strong>: File path to input network. </li>
+<li><strong>Land Use Folder</strong>: File path to input land use files.</li>
+</ul>
+</li>
+<li>After fields are filled out, click <em>Create</em>.</li>
+<li>A DOS window will open and all required files will be copied. If you have a server with a valid license, it will pause for about 30-45 seconds on <em>init EMME folder</em>. You will get a pop-up window that indicates you have successfully created the scenario. Click <em>Quit</em>. Then, you may exit the GUI by clicking on <em>Quit</em>.</li>
+<li>Navigate to newly created scenario and ensure the correct input files were copied over.</li>
 </ul>
 <h2 id="running-abm3">Running ABM3<a class="headerlink" href="#running-abm3" title="Permanent link"> ¶</a></h2>
-<p>To open the EMME application from the created scenario directory, user needs to go to the emme_project folder, and open the start_emme_with_virtualenv.bat file. This opens up the EMME application, where the application prompts the choice of a scenario. It is recommended to select the main highway scenario (Scen. 100) to start off the model run, although other scenarios may be selected as well. </p>
-<p>Following this step, user should open the EMME Modeler by clicking on the gold square sign at the top left of the screen. 
+<p>To open the EMME application from the created scenario directory, users need to go to the <em>emme_project</em> folder, and double-click on the <em>start_emme_with_virtualenv.bat</em> file. This opens up the EMME application, where the application prompts the choice of a scenario. It is recommended to select the main highway scenario (Scen. 100) to start off the model run, although other scenarios may be selected as well. </p>
+<p>Following this step, users should open the <em>EMME Modeler</em> by clicking on the gold square icon at the top left of the screen. 
 <br></p>
 <div align="center">
     <img src="images\running\1.jpg" alt="alt_text" title="image_tooltip">
@@ -1738,57 +1912,57 @@
 </div>
 
 <p><br>
-The EMME Modeler opens to the EMME Standard Toolbox, but needs to be switched to the SANDAG toolbox by selecting it from the bottom-left of the screen. From this toolbox, open the Master Run tool.</p>
+The <em>EMME Modeler</em> opens to the <em>EMME Standard Toolbox</em>, but needs to be switched to the <em>SANDAG toolbox</em> by selecting it from the bottom-left of the screen. From this toolbox, open the <em>Master Run</em> tool by double-clicking it.</p>
 <p><br></p>
 <div align="center">
     <img src="images\running\2.jpg" alt="alt_text" title="image_tooltip">
     <br>
     <em>Opening SANDAG Toolbox and Master run</em>
 </div>
-<p><br>
-Opening the Master Run tool allows the user to run all or part of the model, and set a number of settings such as sample size.</p>
+<p><br></p>
+<p>The <em>Master Run</em> tool allows the user to run all or part of the model, and set a number of settings such as sample size per iteration.</p>
 <p><br></p>
 <div align="center">
-    <img src="images\running\3.jpg" alt="alt_text" title="image_tooltip">
+    <img src="images\running\master_run.jpg" alt="alt_text" title="image_tooltip">
     <br>
     <em>Master Run tool</em>
 </div>
 <p><br>
-The Master run tool operates the SANDAG travel demand model. To operate the model, configure the inputs by providing Scenario ID, Scenario title and Emmebank title, and keeping Number of Processors to default. Select main ABM directory will automatically be set to the current project directory and does not require change.</p>
+The <em>Master run</em> tool operates the SANDAG travel demand model. Users have the option to configure a number of settings prior to launching the model run:</p>
 <ul>
-<li>Main ABM directory: directory which contains the ABM scenario data, including this project. The default is the parent directory of the current Emme project.</li>
-<li>Scenario ID: Scenario ID for the base imported network data. The result scenarios are indexed in the next five scenarios by time period.</li>
-<li>Scenario title: title to use for the scenario.</li>
-<li>Emmebank title: title to use for the Emmebank (Emme database)</li>
-<li>Number of processors: the number of processors to use for traffic and transit assignments and skims, aggregate demand models (where required) and other parallelized procedures in Emme. Default is <code>Max available – 1</code>.</li>
-<li>Properties (<code>conf/sandag_abm.properties</code>)<ul>
-<li>On opening the <strong>Master run</strong> tool the <code>sandag_abm.properties</code> file is read and the values cached and the inputs below are pre-set. When the Run button is clicked this file is written out with the values specified. Any manual changes to the file in-between opening the tool and clicking the Run button are overwritten.</li>
-<li>Sample rate by iteration: three comma-separated values for the ActivitySim sample rates for each iteration</li>
-<li>Start from iteration: start iteration for the model run</li>
-<li>Skip steps: optional checkboxes to skip model steps.</li>
+<li><strong>Select main ABM directory</strong>: No changes necessary. The file path to the scenario. Defaults to the parent directory of opened EMME project.</li>
+<li><strong>Scenario ID</strong>: No changes necessary. Scenario ID for the base imported network data. The result scenarios are indexed in the next five scenarios by time period. </li>
+<li><strong>Scenario title</strong>: Title to use for the scenario. Standard practice is to input scenario title.</li>
+<li><strong>Emmebank title</strong>: Title to use for the Emmebank (EMME database). Standard practice is to input scenario title.</li>
+<li><strong>Number of processors</strong>: the number of processors to use for traffic and transit assignments and skims, aggregate demand models (where required) and other parallelized procedures in Emme. Default is <code>Max available – 1</code>.</li>
+<li><strong>Datalake Environment</strong>: Datalake environment to which scenario outputs will be loaded onto: Prod (Production), or Dev (Development). This parameter mostly relevant to SANDAG users.</li>
+<li><strong>Sampe rate by iteration</strong>: Three comma-separated values for the ActivitySim sample rates for each iteration.</li>
 </ul>
-</li>
-<li>Select link: add select link analyses for traffic.</li>
-</ul>
-<p>By expanding the Run model – skip steps drop down, the user can make any custom changes. Usually the defaults should be sufficient although if you are using a new bike network, you should uncheck the Skip bike logsums and check the Skip copy of bikelogsum.</p>
+<p>By expanding the <em>Run model – skip steps</em> drop down, the user has the option to skip certain steps of the model run. Usually, the defaults (see image below) should be sufficient. It should be noted that checkmarking a step means that it will be skipped.</p>
 <p><br></p>
 <div align="center">
-    <img src="images\running\4.png" alt="alt_text" title="image_tooltip">
+    <img src="images\running\master_run_skip_steps.jpg" alt="alt_text" title="image_tooltip">
     <br>
     <em>Run model tool</em>
 </div>
 <p><br></p>
-<p>Following this setup, you can click Run to start the model run. We recommend occasionally checking the model run status to make sure the run is going smoothly. When the model run finishes successfully, the Master Run tool will show a model run successful message in green at the top of the tool window.</p>
-<p>If the run is unsuccessful (there will be an error prompt from Emme), check Emme logbook and log files (under “logfiles”) for clues to where it stopped.</p>
-<p>As the model runs, a full runtime trace of the model steps, inputs and reports is recorded in the Modeller Logbook. As each step completes, it will record an entry in the Logbook along with reports and other results. The Logbook can be opened from the Clock-like icon in the upper right of the Modeller window. This icon can also be found in the toolbar in the Emme Desktop. If a Modeller tool is running, a window will pop-up over the Emme Desktop which includes a Show Logbook button (this window can be closed to use Desktop worksheets and tables while any tool is running). Click on the Refresh button to update the logbook view with the latest status.</p>
+<p>On opening the <strong>Master run</strong> tool, the <code>conf/sandag_abm.properties</code> file is read and its values pre-set the <em>Run model - skip steps</em> inputs. When the <em>Run</em> button is clicked, this file is written out with the values specified. Any manual changes to the file in-between opening the tool and clicking the <em>Run</em> button are overwritten.</p>
+<ul>
+<li><strong>Start from iteration</strong>: Indicate from what iteration you would like model run to start.</li>
+<li><strong><em>Skip steps</em></strong>: Optional checkboxes to skip model steps.</li>
+<li><strong>Select link(s)</strong>: Add select link analyses for traffic.</li>
+</ul>
+<p>Following this setup, you can click <em>Run</em> to start the model run. It is recommended to occasionally check the model run status to make sure the run is going smoothly. When the model run finishes successfully, the <em>Master run</em> tool will show a model run successful message in green at the top of the tool window.</p>
+<p>If the run is unsuccessful (there will be an error prompt from EMME), check the <em>EMME Logbook</em> and log files (under the <em>logFiles</em> or <em>output</em> directories) for clues to where it may have crashed.</p>
+<p>As the model runs, a full runtime trace of the model steps, inputs and reports is recorded in the <em>Modeller Logbook</em>. As each step completes, it will record an entry in the Logbook along with reports and other results. The Logbook can be opened from the clock-like icon in the upper right of the <em>Modeller</em> window. This icon can also be found in the upper left toolbar in the <em>EMME Desktop</em>, or upper right in the <em>EMME Logbook</em>. If a <em>Modeller</em> tool is running, a window will pop-up over the <em>EMME Desktop</em> which includes a <em>Show Logbook</em> button (this window can be closed to use Desktop worksheets and tables while any tool is running). Click on the <em>Refresh</em> button to update the Logbook view with the latest status.</p>
 <p><br></p>
 <div align="center">
-    <img src="images\running\7.jpg" alt="alt_text" title="image_tooltip">
+    <img src="images\running\modeller_logbook.jpg" alt="alt_text" title="image_tooltip">
     <br>
     <em>Modeller logbook</em>
 </div>
 <p><br></p>
-<p>The Logbook provides a real time, automated documentation of the model execution. The overall structure of the model is represented at the top level, with the occurrence, sequence and repetition of the steps involved in the model process. Nested Logbook entries may be collapsed or expanded to see detail. For the Emme assignment procedures, interactive charts are recorded. The statistical summaries of the impedance matrices are recorded for each time period following the assignment. These summary tables provide an easy way to check for skims with obvious outlier values.</p>
+<p>The Logbook provides a real-time, automated documentation of the model execution. The overall structure of the model is represented at the top level, with the occurrence, sequence and repetition of the steps involved in the model process. Nested Logbook entries may be collapsed or expanded to see detail. For the EMME assignment procedures, interactive charts are recorded. The statistical summaries of the impedance matrices are recorded for each time period following the assignment. These summary tables provide an easy way to check for skims with obvious outlier values.</p>
 
 
 
