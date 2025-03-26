@@ -130,7 +130,7 @@ To create the ActivitySim CVM environment:
 mkdir workspace
 cd workspace
 git clone https://github.com/ActivitySim/sharrow.git
-git clone https://github.com/camsys/activitysim.git
+git clone https://github.com/SANDAG/activitysim-cvm
 cd activitysim
 git switch time-settings
 cd ..
