@@ -21,7 +21,6 @@ extract:
       data:
           - "households.csv"
           - "land_use.csv"
-          - "occFactors.csv"
     - filepath: "../../../../output/skims"
       test_size:
       data:

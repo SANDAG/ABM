@@ -75,9 +75,6 @@ NESTS:
           - WALK
 
 CONSTANTS:
-  terminal: 1
-  central_mobility_hub: 2
-  nearest: 3
   terminalMgra: &terminalMgra 11249
   parkLocation1Mgra: *terminalMgra
   parkLocation2Mgra: -999
@@ -97,14 +94,6 @@ CONSTANTS:
   curbLocation5Mgra: -999
   shuttleVanLocation: *terminalMgra
   hotelCourtesyLocation: *terminalMgra
-  orig_col_name: origin
-  dest_col_name: destination
-  costShareSr2: 1.75
-  costShareSr3: 2.50
-  waitThresh: 10.00
-  walkThresh: 1.00
-  shortWalk: 0.333
-  longWalk: 0.667
   walkSpeed: 3.00
   parkLocation1AccessCost: 0.00
   parkLocation1CostDay: 39.04
@@ -141,112 +130,32 @@ CONSTANTS:
   rentalCarInVehicleTime: 7.50
   rentalCarWalkTime: 3.00
   rentalCarWaitTime: 7.50
-  terminalAccessCost: 0.00
-  terminalInVehicleTime: 0.00
   terminalWalkTime: 5.00
   terminalWaitTime: 0.00
-  centralMobilityHubAccessCost: 0.00
-  centralMobilityHubInVehicleTime: 0.00
-  centralMobilityHubWalkTime: 0.00
-  centralMobilityHubWaitTime: 0.00
   ridehailWaitTime: 4.10
-  ridehailLocation1AccessCost: 0.00
   ridehailLocation1AccessWalkTime: 5.00
-  ridehailLocation1AccessWaitTime: 0.00
-  ridehailLocation1AccessTime: 0.00
-  ridehailLocation2AccessCost: 0.00
   ridehailLocation2AccessWalkTime: -999.00
-  ridehailLocation2AccessWaitTime: -999.00
-  ridehailLocation2AccessTime: -999.00
   taxi_available: 1
   taxiWaitTime:  2.00
-  taxiLocation1AccessCost: 0.00
   taxiLocation1AccessWalkTime: 5.00
-  taxiLocation1AccessWaitTime: 0.00
-  taxiLocation1AccessTime: 0.00
-  taxiLocation2AccessCost: 0.00
   taxiLocation2AccessWalkTime: -999.00
-  taxiLocation2AccessWaitTime: -999.00
-  taxiLocation2AccessTime: -999.00  
-  curbLocation1AccessCost: 0.00
   curbLocation1InVehicleTime: 0.00
   curbLocation1WalkTime: 5.00
   curbLocation1WaitTime: 0.00
-  curbLocation2AccessCost: 0.00
   curbLocation2InVehicleTime: -999.00
   curbLocation2WalkTime: -999.00
   curbLocation2WaitTime: -999.00
-  curbLocation3AccessCost: 0.00
   curbLocation3InVehicleTime: -999.00
   curbLocation3WalkTime: -999.00
   curbLocation3WaitTime: -999.00
-  curbLocation4AccessCost: 0.00
   curbLocation4InVehicleTime: -999.00
   curbLocation4WalkTime: -999.00
   curbLocation4WaitTime: -999.00
-  curbLocation5AccessCost: 0.00
   curbLocation5InVehicleTime: -999.00
   curbLocation5WalkTime: -999.00
   curbLocation5WaitTime: -999.00
-  parkingLocation1Available: 1.00
-  parkingLocation2Available: 0.00
-  parkingLocation3Available: 0.00
-  parkingLocation4Available: 1.00
-  parkingLocation5Available: 1.00
-  parkAndEscortAvailable: 1.00
-  rentalCarAvailable: 1.00
-  shuttleVanAvailable: 1.00
-  hotelCourtseyAvailable: 1.00
   hotelCourtesyWalkTime: 5.00
-  ridehailLocation1Available: 1.00
-  ridehailLocation2Available: 0.00
-  curbsideLocation1Available: 1.00
-  curbsideLocation2Available: 0.00
-  curbsideLocation3Available: 0.00
-  curbsideLocation4Available: 0.00
-  curbsideLocation5Available: 0.00
-  parkingLocation1ReadTransitLogsum: 0.00
-  parkingLocation2ReadTransitLogsum: 0.00
-  parkingLocation3ReadTransitLogsum: 0.00
-  parkingLocation4ReadTransitLogsum: 0.00
-  parkingLocation5ReadTransitLogsum: 0.00
-  parkAndEscortReadTransitLogsum: 0.00
-  rentalCarReadTransitLogsum: 1.00
-  centralMobilityHubReadTransitLogsum: 1.00
-  ridehailLocation1ReadTransitLogsum: 0.00
-  ridehailLocation2ReadTransitLogsum: 0.00
-  curbsideLocation1ReadTransitLogsum: 0.00
-  curbsideLocation2ReadTransitLogsum: 0.00
-  curbsideLocation3ReadTransitLogsum: 0.00
-  curbsideLocation4ReadTransitLogsum: 0.00
-  curbsideLocation5ReadTransitLogsum: 0.00
 
-  I_SOV_MODES: [1, 2]
-  I_SR2_MODES: [3, 4]
-  I_SR3P_MODES: [5, 6]
-  I_AUTO_MODES: [1, 2, 3, 4, 5, 6]
-  I_WALK_MODE: 7
-  I_BIKE_MODE: 8
-  I_WALK_TRANSIT_MODES: [9, 10, 11, 12, 13]
-  I_DRIVE_TRANSIT_MODES: [14, 15, 16, 17, 18]
-  I_RIDE_HAIL_MODES: [19, 20, 21]
-  min_waitTime: 0
-  max_waitTime: 50
-  topology_bike_multiplier: 20
-  topology_trn_multiplier: 2.20
-  topology_walk_multiplier: 15
-  ridehail_wait_time_multiplier: 1.5
-  walktimelong_multiplier: 5
-  biketimelong_multiplier: 5
-  xfers_wlk_multiplier: 5
-  xfers_drv_multiplier: 15
-  dacc_ratio_multiplier: 0
-  density_index_multiplier: -5
-  origin_density_index_multiplier: -15
-  origin_density_index_max: -15
-  cost_share_s2: 2
-  cost_share_s3: 3
-  max_walk_time: 60
   eaperiod: 11
   amperiod: 17
   mdperiod: 30

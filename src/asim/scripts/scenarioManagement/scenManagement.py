@@ -92,3 +92,7 @@ doc['FLEET_YEAR'] = int(scenYear)
 doc['CONSTANTS']['scenarioYear'] = int(scenYear)
 doc['CONSTANTS']['CHARGERS_PER_CAP'] = int(paramByYear.loc[paramByYear.year==scenYearWithSuffix, 'ev.chargers'].values[0]) / population
 util.write_yaml(_join(configs_dir, 'resident', 'vehicle_type_choice.yaml'), doc)
+
+work_from_home_coeffs = pd.read_csv(_join(configs_dir, 'resident', 'work_from_home_coeffs.csv'), index_col = 0)
+work_from_home_coeffs.loc['coef_regional_calibration', 'value'] = paramByYear.loc[paramByYear.year==scenYearWithSuffix, 'wfh.coef.regional.calibration'].values[0]
+work_from_home_coeffs.to_csv(_join(configs_dir, 'resident', 'work_from_home_coeffs.csv'))

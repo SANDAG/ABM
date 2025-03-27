@@ -75,9 +75,6 @@ SEGMENT_IDS:
   # work_high: 3  # INCOME_SEGMENT_HIGH
   # work_veryhigh: 4  # INCOME_SEGMENT_VERYHIGH
 
-CONSTANTS:
-  WORK_HIGH_SEGMENT_ID: 3
-
 
 # model adds these tables (informational - not added if commented out)
 SHADOW_PRICE_TABLE: workplace_shadow_prices
