@@ -1,4 +1,14 @@
 # Release Notes
+## Version 15.2.2 (April X, 2025)
+A few new features were added and minor bugs were fixed. Version 15.2.2 was used for the draft EIR.
+
+### Features
+- [PR 291](https://github.com/SANDAG/ABM/pull/291) & [PR 293](https://github.com/SANDAG/ABM/pull/293): Adding work from home calibration coefficient to parametersByYears.csv
+- [PR 287](https://github.com/SANDAG/ABM/pull/287): Refactoring of [2zoneSkim.py](https://github.com/SANDAG/ABM/blob/ABM3_develop/src/asim/scripts/resident/2zoneSkim.py) script
+- [PR 286](https://github.com/SANDAG/ABM/pull/286), [PR 288](https://github.com/SANDAG/ABM/pull/288), [PR 290](https://github.com/SANDAG/ABM/pull/290), [PR 292](https://github.com/SANDAG/ABM/pull/292), [PR 295](https://github.com/SANDAG/ABM/pull/295), [PR 296](https://github.com/SANDAG/ABM/pull/296), [PR 299](https://github.com/SANDAG/ABM/pull/299), [PR 302](https://github.com/SANDAG/ABM/pull/302), & [PR 303](https://github.com/SANDAG/ABM/pull/303): Documentation updates
+
+### Bug Fixes
+- [PR 289](https://github.com/SANDAG/ABM/pull/289) & [PR 297](https://github.com/SANDAG/ABM/pull/297): Removed unused files and settings
 
 ## Version 15.2.1 (December 20, 2024)
 Multiple bugs were fixed and some recalibration was done since the release of version 15.2.0. Version 15.2.1 was used for the draft 2025 RP modeling.
