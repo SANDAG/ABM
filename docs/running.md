@@ -193,7 +193,7 @@ To verify successful installation of sqlcmd utility on your workstation:
 
 <br>
 <div align="center">
-    <img src="images\running\sqlcmd_test.jpg" alt="alt_text" title="image_tooltip">
+    <img src="images\running\sqlcmd_test.JPG" alt="alt_text" title="image_tooltip">
     <br>
     <em>SQLCMD Utility Test</em>
 </div>
@@ -255,7 +255,7 @@ The *Master Run* tool allows the user to run all or part of the model, and set a
 
 <br>
 <div align="center">
-    <img src="images\running\master_run.jpg" alt="alt_text" title="image_tooltip">
+    <img src="images\running\master_run.JPG" alt="alt_text" title="image_tooltip">
     <br>
     <em>Master Run tool</em>
 </div>
@@ -274,7 +274,7 @@ By expanding the *Run model – skip steps* drop down, the user has the option t
 
 <br>
 <div align="center">
-    <img src="images\running\master_run_skip_steps.jpg" alt="alt_text" title="image_tooltip">
+    <img src="images\running\master_run_skip_steps.JPG" alt="alt_text" title="image_tooltip">
     <br>
     <em>Run model tool</em>
 </div>
