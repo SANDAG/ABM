@@ -1,0 +1,166 @@
+scenarioYear: 2022
+
+mode:
+  auto:
+    speed: 25.00
+    xborder_coef: 1.5
+    driveAlone:
+    sharedRide2:
+      occupancy: 2.0
+      costShare: 0.57
+    sharedRide3:
+      occupancy: 3.33
+      costShare: 0.37
+
+  nonmotorized:
+    walk:
+      speed: 3.00
+      maxTime: 60
+      maxDistance: 3
+      shortWalkAssumedDistance: 0.333
+    bike:
+      speed: 7.80
+      maxTime: 60
+      maxDistance: 12
+
+  micromobility:
+    varCost: 39
+    fixedCost: 100
+    rentTime: 1
+    accessThreshold: 100
+    ebike:
+      speed: 10.00
+      ownership: 0.008
+      maxDist: 10.50
+    escooter:
+      speed: 6.70
+      maxDist: 2.00
+
+  transit:
+    rapidBusWaitTimeDiscount: 1.0
+    ivtMultipliers:
+      lrt: 0.85
+      brt: 0.95
+      cmr: 0.85
+      ltd: 1.0
+    equivASC:
+      eb: 10
+      brt: -5
+      lrt: -30
+      pnr_lrt: -20
+    pnrDensityIndexMultiplier: -0.2
+
+  ridehail:
+    minWaitTime: 0
+    maxWaitTime: 50
+
+    taxi:
+      occupancy: 1.1
+      baseFare: 3.00
+      costPerMile: 3.3
+      costPerMinute: 0.46
+      waitTime:
+        mean:
+          HighDensity: 5.5
+          MediumHighDensity: 9.5
+          MediumDensity: 13.3
+          MediumLowDensity: 17.3
+          LowDensity: 26.5
+        sd:
+          HighDensity: 6.4
+          MediumHighDensity: 6.4
+          MediumDensity: 6.4
+          MediumLowDensity: 6.4
+          LowDensity: 6.4
+
+    tncSingle:
+      occupancy: 1.2
+      baseFare: 3.31
+      costPerMile: 0.96
+      costPerMinute: 0.33
+      costMinimum: 9.19
+      waitTime:
+        mean:
+          HighDensity: 3.0
+          MediumHighDensity: 6.3
+          MediumDensity: 8.4
+          MediumLowDensity: 8.5
+          LowDensity: 10.3
+        sd:
+          HighDensity: 4.1
+          MediumHighDensity: 4.1
+          MediumDensity: 4.1
+          MediumLowDensity: 4.1
+          LowDensity: 4.1
+
+    tncShared:
+      occupancy: 2.0
+      baseFare: 1.66
+      costPerMile: 0.48
+      costPerMinute: 0.16
+      costMinimum: 4.6
+      IVTFactor: 1.5
+      waitTime:
+        mean:
+          HighDensity: 5.0
+          MediumHighDensity: 8.0
+          MediumDensity: 11.0
+          MediumLowDensity: 15.0
+          LowDensity: 15.0
+        sd:
+          HighDensity: 4.1
+          MediumHighDensity: 4.1
+          MediumDensity: 4.1
+          MediumLowDensity: 4.1
+          LowDensity: 4.1
+
+    flexFleets:
+      microtransit:
+        speed: 30
+        cost: 125 #cents
+        waitTime: 12
+        maxDist: 4.5
+        diversionConstant: 6
+        diversionFactor: 1.25
+        startPeriod: 9
+        endPeriod: 32
+      nev:
+        speed: 17
+        cost: 125 #cents
+        waitTime: 12
+        maxDist: 3
+        dwellMinutesPerMile: 0.5
+        diversionConstant: 6
+        diversionFactor: 1.25
+        startPeriod: 9
+        endPeriod: 38
+      maxWalkIfTransitAccessAvailable: 1.0 # Maximum distance to walk to premium transit if microtransit access is available
+
+  school_bus:
+
+policy:
+  AV:
+    ownershipTargetPercent: 0.0
+    autoIVTfactor: 0.75
+    autoParkingCostFactor: 0.5
+    autoCostPerMileFactor: 0.7
+    autoTerminalTimeFactor: 0.65
+    minAgeDriveAlone: 13
+  EV:
+    rebateCutoffs:
+      low: 3
+      medium: 4
+
+distributedTimeFactor:
+  work:
+    mean: 1.0
+    stddev: 0.7
+  nonwork:
+    mean: 1.0
+    stddev: 0.6
+  min: 0.1
+  max: 10
+
+votThreshold:
+  low: 8.81
+  medium: 18.00
