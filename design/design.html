@@ -1609,75 +1609,20 @@
 <li>Aggregate external-internal and through travel models are run in <strong>Python</strong>. </li>
 </ul>
 <p>After all models are run, trip tables are built from the result and assigned to transport networks.</p>
-<p><center></p>
-<table>
-<thead>
-<tr>
-<th style="text-align: right;"></th>
-<th style="text-align: left;">scenario_id</th>
-<th>model</th>
-<th>otaz</th>
-<th>dtaz</th>
-<th>distance_total</th>
-<th></th>
-<th>cost_total</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: right;">0</td>
-<td style="text-align: left;">230</td>
-<td>external-internal</td>
-<td>6</td>
-<td>13</td>
-<td>102.816</td>
-<td>&hellip;</td>
-<td>39.100</td>
-</tr>
-<tr>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">230</td>
-<td>external-internal</td>
-<td>6</td>
-<td>14</td>
-<td>102.628</td>
-<td>&hellip;</td>
-<td>40.021</td>
-</tr>
-<tr>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">230</td>
-<td>external-internal</td>
-<td>6</td>
-<td>15</td>
-<td>102.367</td>
-<td>&hellip;</td>
-<td>33.728</td>
-</tr>
-<tr>
-<td style="text-align: right;">3</td>
-<td style="text-align: left;">230</td>
-<td>external-internal</td>
-<td>7</td>
-<td>16</td>
-<td>103.8597</td>
-<td>&hellip;</td>
-<td>33.179</td>
-</tr>
-<tr>
-<td style="text-align: right;">4</td>
-<td style="text-align: left;">230</td>
-<td>external-internal</td>
-<td>7</td>
-<td>17</td>
-<td>101.568</td>
-<td>&hellip;</td>
-<td>32.941</td>
-</tr>
-</tbody>
-</table>
-<p><em>Example of a trip table for the external-internal model</em></p>
-<p></center></p>
+<center>
+
+|   | scenario_id  | model          | otaz | dtaz |distance_total   |     |cost_total|
+|---:|:------------|----------------|------|------|-----------------|-----|----------|
+|  0 | 230    | external-internal   | 6    | 13   | 102.816         | ... |39.100    |
+|  1 | 230    | external-internal   | 6    | 14   | 102.628         | ... |40.021    |
+|  2 | 230    | external-internal   | 6    | 15   | 102.367         | ... |33.728    |
+|  3 | 230    | external-internal   | 7    | 16   | 103.8597        | ... |33.179    |
+|  4 | 230    | external-internal   | 7    | 17   | 101.568         | ... |32.941    |
+
+*Example of a trip table for the external-internal model*
+
+</center>
+
 <p>A check is made to determine whether the model has reached convergence (currently this is set to three feedback iterations). What this means in the context of the model is if an iteration is close enough to the results of another iteration, it will not run the next iteration.</p>
 <p>If convergence is reached, outputs are processed for export to the SANDAG Datalake for reporting summaries. If not, speeds from assignment are averaged using method of successive averages, and skims are rebuilt for the next iteration. The model system is then re-run with the updated skims.</p>
 <h2 id="the-synthetic-population"><strong>The Synthetic Population</strong><a class="headerlink" href="#the-synthetic-population" title="Permanent link"> ¶</a></h2>
