@@ -116,21 +116,21 @@ The table below contains brief descriptions of the input files required to execu
 | i10 | Number of households with income $200,000 or more ($2010) | 
 | emp_gov | Government employment | 
 | emp_mil | military employment | 
-| emp_ag_min | Agriculture and mining employment | 
-| emp_bus_svcs | Professional and Business Services employment | 
-| emp_fin_res_mgm | Financial and resource management employment | 
-| emp_educ | Education services employment | 
-| emp_hlth | Health services employment | 
-| emp_ret | Retail services employment | 
-| emp_trn_wrh | Transportation and Warehousing employment | 
-| emp_con | Construction employment | 
-| emp_utl | Utilities office support employment | 
-| emp_mnf | Manufacturing employment | 
-| emp_whl | Wholesale employment | 
-| emp_ent | Entertainment services employment | 
-| emp_accm | Hotel and accomodation services | 
-| emp_food | Food services employment | 
-| emp_oth | Other employment | 
+| emp_ag_min | Agriculture and mining employment (NAICS:11,21) | 
+| emp_bus_svcs | Professional and Business Services employment (NAICS:51,54,56) | 
+| emp_fin_res_mgm | Financial and resource management employment (NAICS:52,53,55) | 
+| emp_educ | Education services employment (NAICS:61) | 
+| emp_hlth | Health services employment (NAICS:62) | 
+| emp_ret | Retail services employment (NAICS:44,45) | 
+| emp_trn_wrh | Transportation and Warehousing employment (NAICS:48,49) | 
+| emp_con | Construction employment (NAICS:23) | 
+| emp_utl | Utilities office support employment (NAICS:22) | 
+| emp_mnf | Manufacturing employment (NAICS:31,32,33)| 
+| emp_whl | Wholesale employment (NAICS:42) | 
+| emp_ent | Entertainment services employment (NAICS:71) | 
+| emp_accm | Hotel and accomodation services (NAICS:721) | 
+| emp_food | Food services employment (NAICS:722) | 
+| emp_oth | Other employment (NAICS:81) | 
 | emp_non_ws_wfh | Non-wage and salary work from home employments | 
 | emp_non_ws_oth | Non-wage and salary other employments | 
 | emp_total | Total employment | 
@@ -223,7 +223,7 @@ The table below contains brief descriptions of the input files required to execu
 | rac1p              | Race:<br>1 = White alone<br>2 = Black or African American alone<br>3 = American Indian alone<br>4 = Alaska Native alone<br>5 = American Indian and Alaska Native tribes specified; or .American Indian or Alaska Native, not specified and no other .races<br>6 = Asian alone<br>7 = Native Hawaiian and Other Pacific Islander alone<br>8 = Some Other Race alone<br>9 =Two or More Races |
 | hisp              | Hispanic origin:<br>1 = Not Hispanic<br>2 = Hispanic |
 | version              | Synthetic population run version. Presently set to 0. |
-| naics2_original_code              | 2 digit North American Industry Classification System (NAICS) |
+| naics2_original_code              | 2 digit North American Industry Classification System (NAICS)<br>11 = Agriculture, Forestry, Fishing and Hunting<br> 21 = Mining, Quarrying, and Oil and Gas Extraction<br>22 = Utilities<br>23 = Construction<br>31 = Manufacturing<br>32 = Wood Product Manufacturing<br>33 = Primary Metal Manufacturing<br>42 = Wholesale Trade<br>44 = Retail Trade<br>45 = General Merchandise Retailers<br>48 = Transportation and Warehousing<br>49 = Postal Service<br>51 = Information<br>52 = Finance and Insurance<br>53 = Real Estate and Rental and Leasing<br>54 = Professional, Scientific, and Technical Services<br>55 = Management of Companies and Enterprises<br>56 = Administrative and Support and Waste Management and Remediation Services<br>61 = Educational Services<br>62 = Health Care and Social Assistance<br>71 = Arts, Entertainment, and Recreation<br>721 = Accommodation<br>722 = Food Services and Drinking Places<br>81 = Other Services (except Public Administration)<br>92 =  Public Administration | 
 | soc2              | 2 digit Standard Occupational Classification |
 
 
