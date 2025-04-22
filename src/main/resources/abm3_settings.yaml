@@ -31,10 +31,10 @@ mode:
     ebike:
       speed: 10.00
       ownership: 0.008
-      maxDist: 10.50
+      maxDistance: 10.50
     escooter:
       speed: 6.70
-      maxDist: 2.00
+      maxDistance: 2.00
 
   transit:
     rapidBusWaitTimeDiscount: 1.0
@@ -119,7 +119,7 @@ mode:
         speed: 30
         cost: 125 #cents
         waitTime: 12
-        maxDist: 4.5
+        maxDistance: 4.5
         diversionConstant: 6
         diversionFactor: 1.25
         startPeriod: 9
@@ -128,7 +128,7 @@ mode:
         speed: 17
         cost: 125 #cents
         waitTime: 12
-        maxDist: 3
+        maxDistance: 3
         dwellMinutesPerMile: 0.5
         diversionConstant: 6
         diversionFactor: 1.25
