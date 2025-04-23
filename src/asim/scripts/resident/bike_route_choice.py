@@ -5,6 +5,7 @@ import random
 import matplotlib.pyplot as plt
 import networkx as nx
 from scipy.sparse import csr_matrix
+from scipy.sparse import csr_array, coo_array
 from scipy.spatial import cKDTree
 from scipy.sparse.csgraph import dijkstra
 from multiprocessing import Pool
@@ -45,6 +46,23 @@ def read_bike_network_data(num_centroids=0, zone_level='mgra'):
 
     print(f"Nodes: {nodes.shape} Edges: {edges.shape} Traversals: {traversals.shape}")
 
+    return nodes, edges, traversals
+
+def randomize_network_cost(edges, traversals, random_scale):
+    print("Randomizing network costs")
+    edges_rand = edges.copy()
+    traversals_rand = traversals.copy()
+    edges_rand.bikeCost = edges_rand.bikeCost * (1 + random_scale * np.random.uniform(-1.0,1.0,len(edges_rand)))
+    traversals_rand.bikecost = traversals_rand.bikecost * (1 + random_scale * np.random.uniform(-1.0,1.0,len(traversals_rand)))
+    return edges_rand, traversals_rand
+    
+
+
+def remove_cost_differences(nodes, edges, traversals, zone_level):
+    # Need to remove origin zone connector cost and traversal cost to test with identical costs with and without traversals
+    print("Removing differences in cost for testing with and without traversals")
+    traversals.bikecost = 0
+    # edges.loc[edges.fromNode.isin(nodes[nodes['centroid'] & (nodes[zone_level] > 0)].id), 'bikeCost'] = 0
     return nodes, edges, traversals
 
 
@@ -260,12 +278,14 @@ def plot_shortest_path_with_results_buffered(nodes, edges, shortest_path_df, ori
                     f"Total Cost: {total_cost:.2f}")
     else:
         # Add path information to the plot
-        total_cost = path_data['bikeCost'].sum()
+        total_cost = path_data['cost'].sum()
+        path_size = path_data.iloc[0]['pathSize']
         info_text = (f"Origin: {origin}\n"
                     f"Destination: {destination}\n"
                     f"Number of Edges: {num_edges}\n"
                     f"Total Distance: {total_distance:.2f} units\n"
-                    f"Total Cost: {total_cost:.2f}")
+                    f"Total Cost: {total_cost:.2f}\n"
+                    f"Path Size: {path_size:.2f}")
     plt.text(0.05, 0.95, info_text, transform=plt.gca().transAxes, fontsize=12,
              verticalalignment='top', bbox=dict(boxstyle="round,pad=0.3", edgecolor='black', facecolor='white'))
 
@@ -296,10 +316,130 @@ def process_paths(shortest_paths, dest_centroids):
 
             # Add rows for each node in the path
             for path_node_num, path_node in enumerate(path):
-                rows.append((orig, dest, path_node_num, path_node))
+                rows.append((orig, dest, path_node_num, path_node)) # FIXME: path_node_num is 0-indexed when using traversals
 
     return rows
 
+
+def process_paths_new(centroids, predecessors):
+    print("Processing paths without numba...")
+
+    # Add self-referential column to predecessor table to indicate end of path
+    predecessors_null = np.hstack((predecessors,np.full((predecessors.shape[0],1),-1)))
+    predecessors_null[predecessors_null == -9999] = -1
+    # Get starting indices for OD pairs with path found
+    notnull = (predecessors_null >= 0).nonzero()
+    notnull = tuple(i.astype(np.int32) for i in notnull) # force int32 to save memory (defaults to int64)
+    notnull_dest = np.isin(notnull[1], centroids).nonzero()
+    origin_indices, dest_indices = (notnull[0][notnull_dest],notnull[1][notnull_dest])
+
+    # Iterate through predecessors
+    node_indices = dest_indices
+    paths = [node_indices]
+    while(np.any(node_indices >= 0)):
+        node_indices = predecessors_null[origin_indices,node_indices]
+        paths.append(node_indices)
+
+    stack_paths = np.vstack(paths).T
+    stack_paths = stack_paths[:,::-1] # Reverse order to get origin -> destination
+    stack_paths_from = stack_paths[:,:-1]
+    stack_paths_to = stack_paths[:,1:] # Offset by 1 to get to-node
+
+    # Remove null edges
+    od_index, path_num = (stack_paths_from >= 0).nonzero()
+    # path_num_actual = path_num - np.argmax(stack_paths_from >= 0, axis=1)[od_index] # 0-index
+    paths_from_node = stack_paths_from[od_index, path_num]
+    paths_to_node = stack_paths_to[od_index, path_num]
+
+    paths_orig = origin_indices[od_index] # centroids index
+    paths_dest = dest_indices[od_index] # mapped node id
+
+    return(paths_orig, paths_dest, paths_from_node, paths_to_node)
+
+
+def calculate_final_logsums(centroids, nodes, edges, node_mapping, all_paths_orig, all_paths_dest, all_paths_from_node, all_paths_to_node, all_paths_iteration, num_iterations):
+    print("Calculating logsums...")
+    
+    # Mapped node id to centroids index
+    centroids_rev_map = np.zeros(max(centroids)+1,dtype=np.int32)
+    centroids_rev_map[centroids] = range(len(centroids))
+    all_paths_dest_rev = centroids_rev_map[all_paths_dest]
+
+    # SciPy Sparse arrays only surrport 2d arrays, so flatten OD and link indices
+    paths_od_ravel = np.ravel_multi_index((all_paths_orig,all_paths_dest_rev),(len(centroids),len(centroids)))
+    paths_link_ravel = np.ravel_multi_index((all_paths_from_node,all_paths_to_node),(len(nodes),len(nodes)))
+
+    # SciPy COO array will add duplicates together upon conversion to CSR array
+    # Insert ones for each path link to count number of paths for each OD/link
+    # Likely not an optimal solution, but np.unique took far longer, should consider other alternatives 
+    ones_arr = np.ones(len(paths_od_ravel),dtype=np.uint8)
+    link_num_paths = coo_array((ones_arr,(paths_od_ravel,paths_link_ravel)),shape=(len(centroids)**2,len(nodes)**2))
+    link_num_paths = csr_array(link_num_paths)
+    
+    paths_num_paths = link_num_paths[paths_od_ravel,paths_link_ravel]
+    
+    row = edges.fromNode.map(node_mapping).to_numpy()
+    col = edges.toNode.map(node_mapping).to_numpy()
+    data = edges.distance.to_numpy()
+    link_lengths = csr_array((data, (row, col)), shape=(len(nodes),len(nodes)))
+    data = edges.bikeCost.to_numpy()
+    link_costs = csr_array((data, (row, col)), shape=(len(nodes),len(nodes)))
+
+    # Apply link lengths and costs to path links
+    all_paths_length = link_lengths[all_paths_from_node,all_paths_to_node]
+    all_paths_cost = link_costs[all_paths_from_node,all_paths_to_node]
+
+    # path size = sum( ( la / Li ) * ( 1 / Man ) ) = sum( la / Man ) / Li
+    all_paths_size_component = all_paths_length / paths_num_paths   # la / Man
+    # Flatten OD and iteration indices to sum cost, length, path size
+    # Should check if COO array is faster than bincount
+    paths_od_iter_ravel = np.ravel_multi_index((all_paths_orig,all_paths_dest_rev,all_paths_iteration),(len(centroids),len(centroids),num_iterations))
+    od_iter_length_total = np.bincount(paths_od_iter_ravel,all_paths_length)    # Li
+    od_iter_path_size = np.bincount(paths_od_iter_ravel,all_paths_size_component) / od_iter_length_total    # sum( la / Man ) / Li
+    od_iter_cost = np.bincount(paths_od_iter_ravel,all_paths_cost)
+
+    # Unflatten OD and iteration indices, no longer need individual links
+    od_iter_indices = (od_iter_length_total > 0).nonzero()[0]
+    paths_od_iter_orig, paths_od_iter_dest, paths_od_iter_iter = np.unravel_index(od_iter_indices, (len(centroids),len(centroids),num_iterations))
+    paths_od_iter_cost = od_iter_cost[od_iter_indices]
+    paths_od_iter_path_size = od_iter_path_size[od_iter_indices]
+
+    # Normalize path size, need to sum path size by OD
+    paths_od_ravel = np.ravel_multi_index((paths_od_iter_orig,paths_od_iter_dest),(len(centroids),len(centroids)))
+    od_path_size_sum = np.bincount(paths_od_ravel,paths_od_iter_path_size)
+    paths_od_iter_path_size_sum = od_path_size_sum[paths_od_ravel]
+    paths_od_iter_path_size_normalized = paths_od_iter_path_size / paths_od_iter_path_size_sum
+
+    # Add path cost to utility function. Log or no log?
+    # paths_od_iter_utility = (-1 * paths_od_iter_cost) + np.log(paths_od_iter_path_size_normalized)
+    paths_od_iter_utility = (-1 * paths_od_iter_cost) + paths_od_iter_path_size_normalized
+
+    # Unflatten OD indices, no longer need iterations
+    od_indices = (od_path_size_sum > 0).nonzero()[0]
+    paths_od_orig, paths_od_dest = np.unravel_index(od_indices, (len(centroids),len(centroids)))
+
+    # Logsum calculation
+    od_logsum = np.bincount(paths_od_ravel,np.exp(paths_od_iter_utility))
+    paths_od_logsum = np.log(od_logsum[od_indices])
+
+    # Centroids index to mapped node id
+    centroids_np = np.array(centroids)
+    paths_od_orig_mapped = centroids_np[paths_od_orig]
+    paths_od_dest_mapped = centroids_np[paths_od_dest]
+
+    print("Converting to pandas dataframe...")
+    paths_df = pd.DataFrame({
+        'origin': paths_od_orig_mapped,
+        'destination': paths_od_dest_mapped,
+        'logsum': paths_od_logsum,
+    }, copy=False)
+
+    # Mapped node id to original node id
+    reverse_map = {v: k for k, v in node_mapping.items()}
+    paths_df['origin'] = paths_df['origin'].map(reverse_map)
+    paths_df['destination'] = paths_df['destination'].map(reverse_map)
+
+    return paths_df
 
 
 def convert_shortest_paths_to_long_df_numba(shortest_paths, edges, node_mapping):
@@ -431,7 +571,7 @@ def _perform_dijkstra(centroids, adjacency_matrix, limit=3):
     # for centroid, distance_mat, predecessor_mat in zip(centroids, distances, predecessors):
     #     shortest_paths[centroid] = (distance_mat, predecessor_mat)
 
-    return list(zip(centroids, distances, predecessors))
+    return (distances, predecessors)
 
 
 def perform_dijkstras_algorithm(nodes, edges, limit=3, zone_level='mgra', num_processors=4):
@@ -464,9 +604,9 @@ def perform_dijkstras_algorithm(nodes, edges, limit=3, zone_level='mgra', num_pr
 
     else:
         # Perform Dijkstra's algorithm for all centroids
-        shortest_paths = _perform_dijkstra(centroids, adjacency_matrix, limit)
+        distances, predecessors = _perform_dijkstra(centroids, adjacency_matrix, limit)
 
-    return shortest_paths, node_mapping
+    return (centroids, distances, predecessors, node_mapping)
 
 def perform_dijkstras_algorithm_traversals(nodes, edges, traversals, limit=3, zone_level='mgra', num_processors=4):
     """Perform Dijkstra's algorithm for centroids using SciPy's sparse graph solver with batched parallel processing."""
@@ -474,28 +614,6 @@ def perform_dijkstras_algorithm_traversals(nodes, edges, traversals, limit=3, zo
 
     # # node mapping needs to start at 0 in order to create adjacency matrix
     edge_mapping = edges[['fromNode','toNode','bikeCost']].reset_index()
-
-    traversals_mapped = traversals.merge(
-        edge_mapping,
-        how='left',
-        left_on=['start','thru'],
-        right_on=['fromNode','toNode']
-    ).merge(
-        edge_mapping,
-        how='left',
-        left_on=['thru','end'],
-        right_on=['fromNode','toNode'],
-        suffixes=('FromEdge','ToEdge')
-    )
-    # Total bike cost is edge cost (after traversal) plus traversal cost
-    # Note origin zone connector edge cost is not included with this approach, but this has no impact on shortest path selection
-    traversals_mapped['bikeCostTotal'] = traversals_mapped.bikeCostToEdge + traversals_mapped.bikecost
-
-    # Create a sparse adjacency matrix
-    row = traversals_mapped.indexFromEdge.to_numpy()
-    col = traversals_mapped.indexToEdge.to_numpy()
-    data = traversals_mapped.bikeCostTotal.to_numpy()
-    adjacency_matrix = csr_matrix((data, (row, col)), shape=(num_edges, num_edges))
 
     # Get mgra centroids (nodes with 'centroid' flag True and 'mgra' greater than zero)
     # Centroid connectors
@@ -513,6 +631,29 @@ def perform_dijkstras_algorithm_traversals(nodes, edges, traversals, limit=3, zo
         origin_centroids = origin_centroids.dropna()
 
     origin_centroids = origin_centroids['index'].tolist()
+
+    traversals_mapped = traversals.merge(
+        edge_mapping,
+        how='left',
+        left_on=['start','thru'],
+        right_on=['fromNode','toNode']
+    ).merge(
+        edge_mapping,
+        how='left',
+        left_on=['thru','end'],
+        right_on=['fromNode','toNode'],
+        suffixes=('FromEdge','ToEdge')
+    )
+    # Total bike cost is edge cost (after traversal) plus traversal cost
+    # Note origin zone connector edge cost is not included with this approach, but this has no impact on shortest path selection
+    traversals_mapped['bikeCostTotal'] = traversals_mapped.bikeCostToEdge + traversals_mapped.bikecost
+    traversals_mapped.loc[traversals_mapped.indexFromEdge.isin(origin_centroids), 'bikeCostTotal'] += traversals_mapped.bikeCostFromEdge
+
+    # Create a sparse adjacency matrix
+    row = traversals_mapped.indexFromEdge.to_numpy()
+    col = traversals_mapped.indexToEdge.to_numpy()
+    data = traversals_mapped.bikeCostTotal.to_numpy()
+    adjacency_matrix = csr_matrix((data, (row, col)), shape=(num_edges, num_edges))
 
     print(f"Need to calculate Dijkstra's on {len(origin_centroids)} centroids with {num_processors} processors")
 
