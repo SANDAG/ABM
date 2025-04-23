@@ -24,23 +24,19 @@ mode:
       maxDistance: 12
 
   micromobility:
-    varCost: 39
-    fixedCost: 100
     rentTime: 1
     accessThreshold: 100
     ebike:
       speed: 10.00
-      ownership: 0.008
       maxDistance: 10.50
     escooter:
       speed: 6.70
       maxDistance: 2.00
 
   transit:
-    rapidBusWaitTimeDiscount: 1.0
+    bucPCEVeh: 3.0
     ivtMultipliers:
       lrt: 0.85
-      brt: 0.95
       cmr: 0.85
       ltd: 1.0
     equivASC:
@@ -50,15 +46,33 @@ mode:
       pnr_lrt: -20
     pnrDensityIndexMultiplier: -0.2
 
+    access:
+      walk:
+        connectorMaxLength:
+          - 0.85
+          - 1.2
+      pnr:
+        connectorMaxLength:
+          - 10
+          - 10
+      knr:
+        connectorMaxLength:
+          - 5
+          - 5
+      tnc:
+        connectorMaxLength:
+          - 5
+          - 5
+
   ridehail:
     minWaitTime: 0
     maxWaitTime: 50
 
     taxi:
       occupancy: 1.1
-      baseFare: 3.00
-      costPerMile: 3.3
-      costPerMinute: 0.46
+      driveAloneShare: 0.0
+      sharedRide2Share: 0.9
+      sharedRide3Share: 0.1
       waitTime:
         mean:
           HighDensity: 5.5
@@ -75,10 +89,9 @@ mode:
 
     tncSingle:
       occupancy: 1.2
-      baseFare: 3.31
-      costPerMile: 0.96
-      costPerMinute: 0.33
-      costMinimum: 9.19
+      driveAloneShare: 0.0
+      sharedRide2Share: 0.8
+      sharedRide3Share: 0.2
       waitTime:
         mean:
           HighDensity: 3.0
@@ -95,10 +108,9 @@ mode:
 
     tncShared:
       occupancy: 2.0
-      baseFare: 1.66
-      costPerMile: 0.48
-      costPerMinute: 0.16
-      costMinimum: 4.6
+      driveAloneShare: 0.0
+      sharedRide2Share: 0.7
+      sharedRide3Share: 0.3
       IVTFactor: 1.5
       waitTime:
         mean:
@@ -138,9 +150,16 @@ mode:
 
   school_bus:
 
+  truck:
+    light:
+      pce: 1.3
+    medium:
+      pce: 1.5
+    heavy:
+      pce: 2.5
+
 policy:
   AV:
-    ownershipTargetPercent: 0.0
     autoIVTfactor: 0.75
     autoParkingCostFactor: 0.5
     autoCostPerMileFactor: 0.7
@@ -150,6 +169,7 @@ policy:
     rebateCutoffs:
       low: 3
       medium: 4
+  monthlyTransitPassCost: 100
 
 distributedTimeFactor:
   work:

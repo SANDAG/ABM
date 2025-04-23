@@ -83,7 +83,7 @@ distributed_time_factor_max: {distributedTimeFactor-max:}
 
 c_drive: {mode-auto-xborder_coef:}
 
-AV_OWNERSHIP_TARGET_PERCENT: {policy-AV-ownershipTargetPercent:}
+AV_OWNERSHIP_TARGET_PERCENT: 0
 autoIVTFactorAV: {policy-av-autoIVTfactor:}
 autoParkingCostFactorAV: {policy-av-autoParkingCostFactor:}
 autoCostPerMileFactorAV: {policy-av-autoCostPerMileFactor:}
@@ -129,9 +129,9 @@ soc_occupation_xwalk:
   99:  # 99 -  Non-workers, Code not part of SOC system
 
 # RIDEHAIL Settings
-Taxi_baseFare: {mode-ridehail-taxi-baseFare:}
-Taxi_costPerMile: {mode-ridehail-taxi-costPerMile:}
-Taxi_costPerMinute: {mode-ridehail-taxi-costPerMinute:}
+Taxi_baseFare: 3
+Taxi_costPerMile: 3.3
+Taxi_costPerMinute: 0.46
 Taxi_waitTime_mean:
   1: {mode-ridehail-taxi-waitTime-mean-HighDensity:}
   2: {mode-ridehail-taxi-waitTime-mean-MediumHighDensity:}
@@ -145,10 +145,10 @@ Taxi_waitTime_sd:
   3: {mode-ridehail-taxi-waitTime-sd-MediumDensity:}
   4: {mode-ridehail-taxi-waitTime-sd-MediumLowDensity:}
   5: {mode-ridehail-taxi-waitTime-sd-LowDensity:}
-TNC_single_baseFare: {mode-ridehail-tncSingle-baseFare:}
-TNC_single_costPerMile: {mode-ridehail-tncSingle-costPerMile:}
-TNC_single_costPerMinute: {mode-ridehail-tncSingle-costPerMinute:}
-TNC_single_costMinimum: {mode-ridehail-tncSingle-costMinimum:}
+TNC_single_baseFare: 3.31
+TNC_single_costPerMile: 0.96
+TNC_single_costPerMinute: 0.33
+TNC_single_costMinimum: 9.19
 TNC_single_waitTime_mean:
   1: {mode-ridehail-tncSingle-waitTime-mean-HighDensity:}
   2: {mode-ridehail-tncSingle-waitTime-mean-MediumHighDensity:}
@@ -161,10 +161,10 @@ TNC_single_waitTime_sd:
   3: {mode-ridehail-tncSingle-waitTime-sd-MediumDensity:}
   4: {mode-ridehail-tncSingle-waitTime-sd-MediumLowDensity:}
   5: {mode-ridehail-tncSingle-waitTime-sd-LowDensity:}
-TNC_shared_baseFare: {mode-ridehail-tncShared-baseFare:}
-TNC_shared_costPerMile: {mode-ridehail-tncShared-costPerMile:}
-TNC_shared_costPerMinute: {mode-ridehail-tncShared-costPerMinute:}
-TNC_shared_costMinimum: {mode-ridehail-tncShared-costMinimum:}
+TNC_shared_baseFare: 1.66
+TNC_shared_costPerMile: 0.48
+TNC_shared_costPerMinute: 0.16
+TNC_shared_costMinimum: 4.6
 TNC_shared_IVTFactor: {mode-ridehail-tncShared-IVTFactor:}
 TNC_shared_waitTime_mean:
   1: {mode-ridehail-tncShared-waitTime-mean-HighDensity:}
@@ -182,10 +182,10 @@ min_waitTime: {mode-ridehail-minWaitTime:}
 max_waitTime: {mode-ridehail-maxWaitTime:}
 
 # rapid bus wait time discount
-WAIT_TIME_DISC: {mode-transit-rapidBusWaitTimeDiscount:}
+WAIT_TIME_DISC: 1.0
 
 ivt_lrt_multiplier: {mode-transit-ivtMultipliers-lrt:}
-ivt_brt_multiplier: {mode-transit-ivtMultipliers-brt:}
+ivt_brt_multiplier: 0.95
 ivt_cmr_multiplier: {mode-transit-ivtMultipliers-cmr:}
 ivt_ltd_multiplier: {mode-transit-ivtMultipliers-ltd:}
 # line-haul mode constants; note commuter rail is based on CMRIVTT. Also currently hyperloop is not applied because we do not skim hyperloop IVTT
@@ -217,11 +217,11 @@ zoo_maz: 10561
 torrypines_maz: 4093
 
 # Micromobility constants
-microVarCost: {mode-micromobility-varCost:} #cents
-microFixedCost: {mode-micromobility-fixedCost:} #cents
+microVarCost: 39 #cents
+microFixedCost: 100 #cents
 microRentTime: {mode-micromobility-rentTime:}
 microAccessThreshold: {mode-micromobility-accessThreshold:}
-ebikeownership: {mode-micromobility-ebike-ownership:}
+ebikeownership: 0.008
 ebikeMaxDist: {mode-micromobility-ebike-maxDistance:}
 escooterMaxDist: {mode-micromobility-escooter-maxDistance:}
 
@@ -250,7 +250,7 @@ maxWalkIfMTAccessAvailable: {mode-ridehail-flexFleets-maxWalkIfTransitAccessAvai
 monthly_transit_pass_cost: {policy-monthlyTransitPassCost:}
 
 # year after which a vehicle (therefore its household) must have transponder
-hhTR_Vehyear: {policy-hhTRVehYear:}
+hhTR_Vehyear: 2029
 
 # SHARED2 and SHARED3 Occupancies
 OCC_SHARED2: {mode-auto-sharedRide2-occupancy:}
