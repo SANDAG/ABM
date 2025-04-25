@@ -31,7 +31,7 @@ def store_settings(
             full_settings["-".join(subset + [setting])] = ",".join([str(s) for s in settings_to_store[setting]])
 
         else:
-            full_settings["-"].join(subset + [setting]) = settings_to_store[setting]
+            full_settings["-".join(subset + [setting])] = settings_to_store[setting]
 
 def read_settings(
         settings_file: str
