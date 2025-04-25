@@ -4,10 +4,10 @@ land_use_columns: ['emp_ret', 'emp_total', 'hh', 'walk_dist_local_bus']
 
 CONSTANTS:
   # dispersion parameters
-  dispersion_parameter_automobile: -0.05
-  dispersion_parameter_transit: -0.05
-  dispersion_parameter_walk: -1.00
+  dispersion_parameter_automobile: {mode-auto-dispersionParameter:}
+  dispersion_parameter_transit: {mode-transit-dispersionParameter:}
+  dispersion_parameter_walk: {mode-nomotorized-walk-dispersionParameter:}
   # maximum walk distance in miles
-  maximum_walk_distance: 3.0
+  maximum_walk_distance: {mode-nomotorized-walk-maxDistance:}
   # perceived minute of in-vehicle time for every minute of out-of-vehicle time
-  out_of_vehicle_time_weight: 2.0
+  out_of_vehicle_time_weight: {mode-transit-ovtWeight:}

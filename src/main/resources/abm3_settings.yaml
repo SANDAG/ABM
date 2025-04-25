@@ -4,6 +4,7 @@ mode:
   auto:
     speed: 25.00
     xborder_coef: 1.5
+    dispersionParameter: -0.05
     driveAlone:
     sharedRide2:
       occupancy: 2.0
@@ -18,6 +19,7 @@ mode:
       maxTime: 60
       maxDistance: 3
       shortWalkAssumedDistance: 0.333
+      dispersionParameter: -1.00
     bike:
       speed: 7.80
       maxTime: 60
@@ -45,6 +47,8 @@ mode:
       lrt: -30
       pnr_lrt: -20
     pnrDensityIndexMultiplier: -0.2
+    dispersionParameter: -0.05
+    ovtWeight: 2.0
 
     access:
       walk:
@@ -169,6 +173,7 @@ policy:
     rebateCutoffs:
       low: 3
       medium: 4
+    chargerSensitivityDecayFactor: -0.08245202
   monthlyTransitPassCost: 100
 
 distributedTimeFactor:
@@ -184,3 +189,9 @@ distributedTimeFactor:
 votThreshold:
   low: 8.81
   medium: 18.00
+
+shadowPricing:
+  sizeThreshold: 10
+  targetThreshold: 20
+  percentTolorance: 5
+  failThreshold: 1
