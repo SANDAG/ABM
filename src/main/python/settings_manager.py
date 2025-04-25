@@ -238,5 +238,6 @@ update_directory(
 
 # Update CVM config files
 update_directory(
-    os.path.join(run_path, "src", "asim-cvm", "configs")
+    os.path.join(run_path, "src", "asim-cvm", "configs"),
+    settings
 )
