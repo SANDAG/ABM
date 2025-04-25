@@ -1,4 +1,5 @@
 scenarioYear: 2022
+purpose: {purpose} # To prevent a KeyError in airport model config files
 
 mode:
   auto:
