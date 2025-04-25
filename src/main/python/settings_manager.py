@@ -140,7 +140,10 @@ def update_directory(
     """
     for f in os.listdir(dir):
         if os.path.isdir(os.path.join(dir, f)):
-            update_directory(os.path.join(dir, f))
+            update_directory(
+                os.path.join(dir, f),
+                settings
+            )
 
         elif f.endswith(".yaml"):
             update_settings_file(
