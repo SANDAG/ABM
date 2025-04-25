@@ -34,7 +34,7 @@ mode:
       maxDistance: 2.00
 
   transit:
-    bucPCEVeh: 3.0
+    busPCEVeh: 3.0
     ivtMultipliers:
       lrt: 0.85
       cmr: 0.85
