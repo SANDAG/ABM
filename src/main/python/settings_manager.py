@@ -3,6 +3,7 @@ import os
 import yaml
 
 run_path = sys.argv[1]
+BRACKET_CODE = "$U+007D$"
 
 def store_settings(
         full_settings: dict,
@@ -78,6 +79,60 @@ def read_settings(
 
     return settings
 
+def encode_closing_curly_brackets(
+        data: str,
+        code: str
+):
+    """
+    Replaces the presence of } in a string that isn't preceeded by : by the string defined in `code`
+
+    Parameters
+    ----------
+    data (str):
+        File data
+    code (str):
+        Code to replace } with
+
+    Returns
+    -------
+    data (str):
+        File data with } replaced by `code`
+    """
+    # Identify brackets of interest
+    locs = []
+    for i in range(1, len(data)):
+        if data[i] == "}":
+            if data[i-1] != ":":
+                locs.append(i)
+    locs.reverse() # The replacement will be done in reverse order to preserve index numbers
+
+    # Replace brackets with code
+    for ix in locs:
+        data = data[:ix] + code + data[(ix+1):]
+
+    return data
+
+def decode_closing_curly_brackets(
+        data: str,
+        code: str
+):
+    """
+    Replaces the string defined in `code` with } in the input `data` string
+
+    Parameters
+    ----------
+    data (str):
+        File data
+    code (str):
+        Code to be replaced by }
+
+    Returns
+    -------
+    data (str):
+        File data with `code` replaced by }
+    """
+    return data.replace(code, "}")
+
 def update_settings_file(
         filename: str,
         settings: dict,
@@ -118,7 +173,9 @@ def update_settings_file(
         data = f.read()
         f.close()
 
+    data = encode_closing_curly_brackets(data, BRACKET_CODE)
     data = data.format(**settings)
+    data = decode_closing_curly_brackets(data, BRACKET_CODE)
 
     with open(filename, "w") as f:
         f.write(data)
