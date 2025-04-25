@@ -3,12 +3,14 @@ import os
 import yaml
 
 run_path = sys.argv[1]
-BRACKET_CODE = "$U+007D$"
+OPENING_BRACKET_CODE = "[U+007B]"
+CLOSING_BRACKET_CODE = "[U+007D]"
+assert OPENING_BRACKET_CODE != CLOSING_BRACKET_CODE, "Opening and closing bracket codes must be different"
 
 def store_settings(
         full_settings: dict,
         settings_to_store: dict,
-        subset: list = []
+        subset: list = [],
 ):
     """
     Stores a set of settings into an existing dictionary in place. If a list is specified in `subset` that list joined
@@ -79,12 +81,14 @@ def read_settings(
 
     return settings
 
-def encode_closing_curly_brackets(
+def encode_curly_brackets(
         data: str,
-        code: str
+        opening_bracket_code: str = OPENING_BRACKET_CODE,
+        closing_bracket_code: str = CLOSING_BRACKET_CODE,
 ):
     """
-    Replaces the presence of } in a string that isn't preceeded by : by the string defined in `code`
+    Replaces the presence of } in a string that isn't preceeded by : along with the corresponding opening bracket
+    by the string defined in `code`
 
     Parameters
     ----------
@@ -106,15 +110,22 @@ def encode_closing_curly_brackets(
                 locs.append(i)
     locs.reverse() # The replacement will be done in reverse order to preserve index numbers
 
-    # Replace brackets with code
-    for ix in locs:
-        data = data[:ix] + code + data[(ix+1):]
+    # Replace brackets with codes
+    for closing_index in locs:
+        data = data[:closing_index] + closing_bracket_code + data[(closing_index+1):]
+        opening_data = data.split(closing_bracket_code)[0]
+        for i in range(len(opening_data)-1, -1, -1):
+            if opening_data[i] == "{":
+                opening_index = i
+                break
+        data = data[:opening_index] + opening_bracket_code + data[(opening_index+1):]
 
     return data
 
-def decode_closing_curly_brackets(
+def decode_curly_brackets(
         data: str,
-        code: str
+        opening_bracket_code: str = OPENING_BRACKET_CODE,
+        closing_bracket_code: str = CLOSING_BRACKET_CODE,
 ):
     """
     Replaces the string defined in `code` with } in the input `data` string
@@ -131,7 +142,7 @@ def decode_closing_curly_brackets(
     data (str):
         File data with `code` replaced by }
     """
-    return data.replace(code, "}")
+    return data.replace(opening_bracket_code, "{").replace(closing_bracket_code, "}")
 
 def update_settings_file(
         filename: str,
@@ -173,9 +184,9 @@ def update_settings_file(
         data = f.read()
         f.close()
 
-    data = encode_closing_curly_brackets(data, BRACKET_CODE)
+    data = encode_curly_brackets(data)
     data = data.format(**settings)
-    data = decode_closing_curly_brackets(data, BRACKET_CODE)
+    data = decode_curly_brackets(data)
 
     with open(filename, "w") as f:
         f.write(data)
