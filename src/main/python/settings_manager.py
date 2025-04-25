@@ -184,6 +184,9 @@ def update_settings_file(
         data = f.read()
         f.close()
 
+    if ":}" not in data: # Check if there's nothing in the file to update and end if there's not
+        return
+
     data = encode_curly_brackets(data)
     data = data.format(**settings)
     data = decode_curly_brackets(data)
@@ -207,6 +210,9 @@ def update_directory(
         Dictionary of settings to update with
     """
     for f in os.listdir(dir):
+        if f == "logging.yaml": # This file won't be updated and trying to edit it may cause a crash
+            continue
+
         if os.path.isdir(os.path.join(dir, f)):
             update_directory(
                 os.path.join(dir, f),
