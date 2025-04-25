@@ -84,11 +84,11 @@ distributed_time_factor_max: {distributedTimeFactor-max:}
 c_drive: {mode-auto-xborder_coef:}
 
 AV_OWNERSHIP_TARGET_PERCENT: 0
-autoIVTFactorAV: {policy-av-autoIVTfactor:}
-autoParkingCostFactorAV: {policy-av-autoParkingCostFactor:}
-autoCostPerMileFactorAV: {policy-av-autoCostPerMileFactor:}
-autoTerminalTimeFactorAV: {policy-av-autoTerminalTimeFactor:}
-minAgeDriveAloneAV: {policy-av-minAgeDriveAlone:}
+autoIVTFactorAV: {policy-AV-autoIVTfactor:}
+autoParkingCostFactorAV: {policy-AV-autoParkingCostFactor:}
+autoCostPerMileFactorAV: {policy-AV-autoCostPerMileFactor:}
+autoTerminalTimeFactorAV: {policy-AV-autoTerminalTimeFactor:}
+minAgeDriveAloneAV: {policy-AV-minAgeDriveAlone:}
 
 
 #valueOfTime: 8.00
@@ -192,7 +192,7 @@ ivt_ltd_multiplier: {mode-transit-ivtMultipliers-ltd:}
 eb_equiv_asc: {mode-transit-equivASC-eb:}
 brt_equiv_asc: {mode-transit-equivASC-brt:}
 lrt_equiv_asc: {mode-transit-equivASC-lrt:}
-pnr_lrt_equiv_asc: {mode-transit-equivASC-pnr:}
+pnr_lrt_equiv_asc: {mode-transit-equivASC-pnr_lrt:}
 #
 density_index_multiplier: {mode-transit-pnrDensityIndexMultiplier:}
 #    joint_sr2_ASC_no_auto: 0
