@@ -284,6 +284,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         useLocalDrive = props["RunModel.useLocalDrive"]
 
+        skipSettingsManager = props["RunModel.skipSettingsManager"]
         skipMGRASkims = props["RunModel.skipMGRASkims"]
         skip4Ds = props["RunModel.skip4Ds"]
         skipInitialization = props["RunModel.skipInitialization"]
@@ -445,6 +446,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             del(householdFile)
 
             if startFromIteration == 1:  # only run the setup / init steps if starting from iteration 1
+                if not skipSettingsManager:
+                    self.run_proc("runSettingsManager.cmd", [drive, drive + path_forward_slash],
+                                  "Run settings manager", capture_output=True)
+
                 if not skipMGRASkims:
                     self.run_proc("runSandagMGRASkims.cmd", [drive, path_forward_slash],
                                   "Create MGRA-level skims", capture_output=True)
