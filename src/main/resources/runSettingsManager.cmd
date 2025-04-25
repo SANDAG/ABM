@@ -5,5 +5,8 @@ set PROJECT_DIRECTORY=%2
 cd /d %PROJECT_DIRECTORY%
 
 SET ANACONDA3_DIR=%CONDA_PREFIX%
-SET PYTHON3=%ANACONDA3_DIR%\envs\asim_baydag\python.exe
+SET CONDA3_ACT=%ANACONDA3_DIR%\Scripts\activate.bat
+CALL %CONDA3_ACT% asim_134
+
+SET PYTHON3=%ANACONDA3_DIR%\envs\asim_134\python.exe
 %PYTHON3% python/settings_manager.py %PROJECT_DIRECTORY%
