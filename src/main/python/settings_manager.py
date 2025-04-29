@@ -187,9 +187,13 @@ def update_settings_file(
     if ":}" not in data: # Check if there's nothing in the file to update and end if there's not
         return
 
-    data = encode_curly_brackets(data)
-    data = data.format(**settings)
-    data = decode_curly_brackets(data)
+    try:
+        data = encode_curly_brackets(data)
+        data = data.format(**settings)
+        data = decode_curly_brackets(data)
+    except Exception as e:
+        print("Error in updating " + filename)
+        raise e
 
     with open(filename, "w") as f:
         f.write(data)
