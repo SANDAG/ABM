@@ -180,6 +180,11 @@ TNC_shared_waitTime_sd:
   5: {mode-ridehail-tncShared-waitTime-sd-LowDensity:}
 min_waitTime: {mode-ridehail-minWaitTime:}
 max_waitTime: {mode-ridehail-maxWaitTime:}
+wait_time_distribution_by_density_breaks:
+  - 500
+  - 2000
+  - 5000
+  - 15000
 
 # rapid bus wait time discount
 WAIT_TIME_DISC: 1.0
