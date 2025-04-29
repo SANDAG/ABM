@@ -6,8 +6,8 @@ CONSTANTS:
   # dispersion parameters
   dispersion_parameter_automobile: {mode-auto-dispersionParameter:}
   dispersion_parameter_transit: {mode-transit-dispersionParameter:}
-  dispersion_parameter_walk: {mode-nomotorized-walk-dispersionParameter:}
+  dispersion_parameter_walk: {mode-nonmotorized-walk-dispersionParameter:}
   # maximum walk distance in miles
-  maximum_walk_distance: {mode-nomotorized-walk-maxDistance:}
+  maximum_walk_distance: {mode-nonmotorized-walk-maxDistance:}
   # perceived minute of in-vehicle time for every minute of out-of-vehicle time
   out_of_vehicle_time_weight: {mode-transit-ovtWeight:}
