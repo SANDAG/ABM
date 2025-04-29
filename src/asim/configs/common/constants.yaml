@@ -133,51 +133,51 @@ Taxi_baseFare: 3
 Taxi_costPerMile: 3.3
 Taxi_costPerMinute: 0.46
 Taxi_waitTime_mean:
-  1: {mode-ridehail-taxi-waitTime-mean-HighDensity:}
-  2: {mode-ridehail-taxi-waitTime-mean-MediumHighDensity:}
+  1: {mode-ridehail-taxi-waitTime-mean-LowDensity:}
+  2: {mode-ridehail-taxi-waitTime-mean-MediumLowDensity:}
   3: {mode-ridehail-taxi-waitTime-mean-MediumDensity:}
-  4: {mode-ridehail-taxi-waitTime-mean-MediumLowDensity:}
-  5: {mode-ridehail-taxi-waitTime-mean-LowDensity:}
+  4: {mode-ridehail-taxi-waitTime-mean-MediumHighDensity:}
+  5: {mode-ridehail-taxi-waitTime-mean-HighDensity:}
 #### [NICK] Updated all SD numbers from sandag_abm.properties. Were all 0 before
 Taxi_waitTime_sd:
-  1: {mode-ridehail-taxi-waitTime-sd-HighDensity:}
-  2: {mode-ridehail-taxi-waitTime-sd-MediumHighDensity:}
+  1: {mode-ridehail-taxi-waitTime-sd-LowDensity:}
+  2: {mode-ridehail-taxi-waitTime-sd-MediumLowDensity:}
   3: {mode-ridehail-taxi-waitTime-sd-MediumDensity:}
-  4: {mode-ridehail-taxi-waitTime-sd-MediumLowDensity:}
-  5: {mode-ridehail-taxi-waitTime-sd-LowDensity:}
+  4: {mode-ridehail-taxi-waitTime-sd-MediumHighDensity:}
+  5: {mode-ridehail-taxi-waitTime-sd-HighDensity:}
 TNC_single_baseFare: 3.31
 TNC_single_costPerMile: 0.96
 TNC_single_costPerMinute: 0.33
 TNC_single_costMinimum: 9.19
 TNC_single_waitTime_mean:
-  1: {mode-ridehail-tncSingle-waitTime-mean-HighDensity:}
-  2: {mode-ridehail-tncSingle-waitTime-mean-MediumHighDensity:}
+  1: {mode-ridehail-tncSingle-waitTime-mean-LowDensity:}
+  2: {mode-ridehail-tncSingle-waitTime-mean-MediumLowDensity:}
   3: {mode-ridehail-tncSingle-waitTime-mean-MediumDensity:}
-  4: {mode-ridehail-tncSingle-waitTime-mean-MediumLowDensity:}
-  5: {mode-ridehail-tncSingle-waitTime-mean-LowDensity:}
+  4: {mode-ridehail-tncSingle-waitTime-mean-MediumHighDensity:}
+  5: {mode-ridehail-tncSingle-waitTime-mean-HighDensity:}
 TNC_single_waitTime_sd:
-  1: {mode-ridehail-tncSingle-waitTime-sd-HighDensity:}
-  2: {mode-ridehail-tncSingle-waitTime-sd-MediumHighDensity:}
+  1: {mode-ridehail-tncSingle-waitTime-sd-LowDensity:}
+  2: {mode-ridehail-tncSingle-waitTime-sd-MediumLowDensity:}
   3: {mode-ridehail-tncSingle-waitTime-sd-MediumDensity:}
-  4: {mode-ridehail-tncSingle-waitTime-sd-MediumLowDensity:}
-  5: {mode-ridehail-tncSingle-waitTime-sd-LowDensity:}
+  4: {mode-ridehail-tncSingle-waitTime-sd-MediumHighDensity:}
+  5: {mode-ridehail-tncSingle-waitTime-sd-HighDensity:}
 TNC_shared_baseFare: 1.66
 TNC_shared_costPerMile: 0.48
 TNC_shared_costPerMinute: 0.16
 TNC_shared_costMinimum: 4.6
 TNC_shared_IVTFactor: {mode-ridehail-tncShared-IVTFactor:}
 TNC_shared_waitTime_mean:
-  1: {mode-ridehail-tncShared-waitTime-mean-HighDensity:}
-  2: {mode-ridehail-tncShared-waitTime-mean-MediumHighDensity:}
+  1: {mode-ridehail-tncShared-waitTime-mean-LowDensity:}
+  2: {mode-ridehail-tncShared-waitTime-mean-MediumLowDensity:}
   3: {mode-ridehail-tncShared-waitTime-mean-MediumDensity:}
-  4: {mode-ridehail-tncShared-waitTime-mean-MediumLowDensity:}
-  5: {mode-ridehail-tncShared-waitTime-mean-LowDensity:}
+  4: {mode-ridehail-tncShared-waitTime-mean-MediumHighDensity:}
+  5: {mode-ridehail-tncShared-waitTime-mean-HighDensity:}
 TNC_shared_waitTime_sd:
-  1: {mode-ridehail-tncShared-waitTime-sd-HighDensity:}
-  2: {mode-ridehail-tncShared-waitTime-sd-MediumHighDensity:}
+  1: {mode-ridehail-tncShared-waitTime-sd-LowDensity:}
+  2: {mode-ridehail-tncShared-waitTime-sd-MediumLowDensity:}
   3: {mode-ridehail-tncShared-waitTime-sd-MediumDensity:}
-  4: {mode-ridehail-tncShared-waitTime-sd-MediumLowDensity:}
-  5: {mode-ridehail-tncShared-waitTime-sd-LowDensity:}
+  4: {mode-ridehail-tncShared-waitTime-sd-MediumHighDensity:}
+  5: {mode-ridehail-tncShared-waitTime-sd-HighDensity:}
 min_waitTime: {mode-ridehail-minWaitTime:}
 max_waitTime: {mode-ridehail-maxWaitTime:}
 wait_time_distribution_by_density_breaks:
