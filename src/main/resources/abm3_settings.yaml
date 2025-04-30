@@ -40,6 +40,7 @@ mode:
     ivtMultipliers:
       lrt: 0.85
       cmr: 0.85
+      brt: 0.95
       ltd: 1.0
     equivASC:
       eb: 10
@@ -90,6 +91,7 @@ mode:
           MediumDensity: 6.4
           MediumLowDensity: 6.4
           LowDensity: 6.4
+      costMinimum: 0
 
     tncSingle:
       occupancy: 1.2
