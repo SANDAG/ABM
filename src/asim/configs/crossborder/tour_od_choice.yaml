@@ -63,9 +63,9 @@ LOGSUM_SETTINGS: tour_mode_choice
 LOGSUM_PREPROCESSOR: preprocessor
 
 CONSTANTS:
-  tecate_open_per: {borderCrossings-tecate-open:}
-  tecate_close_per: {borderCrossings-tecate-close:}
-  otaymesa_open_per: {borderCrossings-otayMesa-open:}
-  otaymesa_close_per: {borderCrossings-otayMesa-close:}
-  sanysidro_open_per: {borderCrossings-sanYsidro-open:}
-  sanysidro_close_per: {borderCrossings-sanYsidro-close:}
+  tecate_open_per: {crossborder-borderCrossings-tecate-open:}
+  tecate_close_per: {crossborder-borderCrossings-tecate-close:}
+  otaymesa_open_per: {crossborder-borderCrossings-otayMesa-open:}
+  otaymesa_close_per: {crossborder-borderCrossings-otayMesa-close:}
+  sanysidro_open_per: {crossborder-borderCrossings-sanYsidro-open:}
+  sanysidro_close_per: {crossborder-borderCrossings-sanYsidro-close:}
