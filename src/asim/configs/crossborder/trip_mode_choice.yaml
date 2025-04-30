@@ -35,23 +35,23 @@ CONSTANTS:
   orig_col_name: origin
   dest_col_name: destination
   PERIODS_PER_HOUR: 2
-  time_distrib_mean_work: 1.0
-  time_distrib_stddev_work: 0.7
-  time_distrib_mean_nonwork: 1.0
-  time_distrib_stddev_nonwork: 0.6
+  time_distrib_mean_work: {distributedTimeFactor-work-mean:}
+  time_distrib_stddev_work: {distributedTimeFactor-work-stddev:}
+  time_distrib_mean_nonwork: {distributedTimeFactor-nonwork-mean:}
+  time_distrib_stddev_nonwork: {distributedTimeFactor-nonwork-stddev:}
   # From old tvpb - uncomment only as needed
   #c_ivt: -0.03
   #c_cost: -0.0003
   # coeffs used in maz_tap and tap_tap utility expressions
-  c_walk: 1.7
-  c_fwt: 1.5
-  c_waux: 2.5
-  c_xwt: 2
+  c_walk: {crossborder-coef-walk:}
+  c_fwt: {crossborder-coef-fwt:}
+  c_waux: {crossborder-coef-waux:}
+  c_xwt: {crossborder-coef-xwt:}
   # alternative-specific constants
-  exp_asc: 10  # express bus asc
-  brt_asc: -10  # BRT asc
-  lrt_asc: -20  # LRT alternative-specific constant
-  cr_asc: 0.00  # Commuter Rail alternative-specific constant
+  exp_asc: {crossborder-asc-exp:}  # express bus asc
+  brt_asc: {crossborder-asc-brt:}  # BRT asc
+  lrt_asc: {crossborder-asc-lrt:}  # LRT alternative-specific constant
+  cr_asc: {crossborder-asc-cr:}  # Commuter Rail alternative-specific constant
 
 
 # so far, we can use the same spec as for non-joint tours

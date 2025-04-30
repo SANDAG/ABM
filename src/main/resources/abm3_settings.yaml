@@ -186,6 +186,34 @@ distributedTimeFactor:
   min: 0.1
   max: 10
 
+crossborder:
+  borderCrossings:
+    sanYsidro:
+      toll: 0
+      open: 0
+      close: 48
+    otayMesa:
+      toll: 500
+      open: 0
+      close: 48
+    tecate:
+      toll: 0
+      open: 5
+      close: 40
+  coef:
+    walk: 1.7
+    fwt: 1.5
+    waux: 2.5
+    xwt: 2
+  asc:
+    exp: 10
+    brt: -10
+    lrt: -20
+    cr: 0.00
+  vot_coefs:
+    trip_c_ivt_base: -0.021
+    trip_c_cost: -0.0003
+
 votThreshold:
   low: 8.81
   medium: 18.00

@@ -433,5 +433,5 @@ MATRICES:
         data_field: BIKE_EV
 
 CONSTANTS:
-  trip_c_ivt_base: -0.021
-  trip_c_cost: -0.0003
+  trip_c_ivt_base: {crossborder-votCoefs-trip_c_ivt_base:}
+  trip_c_cost: {crossborder-votCoefs-trip_c_cost:}
