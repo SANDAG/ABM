@@ -1515,8 +1515,20 @@
 
 
 <h1 id="land-use-data-preparation">Land-Use Data Preparation<a class="headerlink" href="#land-use-data-preparation" title="Permanent link"> ¶</a></h1>
-<p>//TODO: Describe how to prepare land-use data.</p>
-<p>Describe how to update parking costs, enrollment data.</p>
+<p>The repo <a href="https://github.com/SANDAG/landuse_prep_tool">https://github.com/SANDAG/landuse_prep_tool</a> is used to process land use data for ABM3. </p>
+<p>The <a href="https://github.com/SANDAG/landuse_prep_tool">land use preparation tool</a> processes outputs from the Estimates and Forecasts team for use in ABM3. It consists of three main components: </p>
+<ol>
+<li>
+<p><a href="https://github.com/SANDAG/landuse_prep_tool/tree/main/1_1_Parking#1-reduction-and-imputing-raw-parking-inventory-data">Processing outputs of the 2022 parking inventory to impute missing data</a>. </p>
+</li>
+<li>
+<p>Estimating regression models to <a href="https://github.com/SANDAG/landuse_prep_tool/tree/main/1_1_Parking#2-creation-of-space-estimation-model">predict the number of free and paid parking spaces</a> within each MGRA. </p>
+</li>
+<li>
+<p>Generating <a href="https://github.com/SANDAG/landuse_prep_tool/tree/main/2_ABM_Preprocess#landuse_prep_tool">household, person, and land use inputs</a> required to run the ABM. </p>
+</li>
+</ol>
+<p>In most cases, only the third step needs to be executed—unless there are updates to the base year network or parking inventory data. </p>
 
 
 

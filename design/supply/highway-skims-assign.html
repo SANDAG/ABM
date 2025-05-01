@@ -835,6 +835,17 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Highway Skimming and Assignment
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="highway-skims-assign.html" class="md-nav__link md-nav__link--active">
         
   
@@ -844,6 +855,39 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#volume-delay-functions" class="md-nav__link">
+    Volume-delay Functions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#traffic-skims-and-results" class="md-nav__link">
+    Traffic Skims and Results
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -1498,6 +1542,28 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#volume-delay-functions" class="md-nav__link">
+    Volume-delay Functions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#traffic-skims-and-results" class="md-nav__link">
+    Traffic Skims and Results
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1515,7 +1581,218 @@
 
 
 <h1 id="highway-skimming-and-assignment">Highway Skimming and Assignment<a class="headerlink" href="#highway-skimming-and-assignment" title="Permanent link"> ¶</a></h1>
-<p>Details of highway skimming and assignment.</p>
+<p>The traffic assignment for the SANDAG model is a 15-class assignment with generalized cost on links and BPR-type volume-delay functions which include capacities on links and at intersection approaches. The assignment is run using the fast-converging Second-Order Linear Approximation (SOLA) method in Emme to a relative gap of 5×10⁻⁴. The per-link fixed costs include toll values and operating costs which vary by class of demand (see Table x for the complete list of classes). Assignment matrices and resulting network flows are always in PCE. </p>
+<p><em>Table 1. List of traffic demand classes and key class parameter values</em></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Mode</th>
+<th>VOT ($0.01/min)</th>
+<th>PCE</th>
+<th>Cost Attribute</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SOV_NT_L</td>
+<td>s</td>
+<td>8.81</td>
+<td></td>
+<td>@cost_auto</td>
+</tr>
+<tr>
+<td>SOV_TR_L</td>
+<td>S</td>
+<td>8.81</td>
+<td></td>
+<td>@cost_auto</td>
+</tr>
+<tr>
+<td>HOV2_L</td>
+<td>H</td>
+<td>8.81</td>
+<td></td>
+<td>@cost_hov2</td>
+</tr>
+<tr>
+<td>HOV3_L</td>
+<td>I</td>
+<td>8.81</td>
+<td></td>
+<td>@cost_hov3</td>
+</tr>
+<tr>
+<td>SOV_NT_M</td>
+<td>s</td>
+<td>18</td>
+<td></td>
+<td>@cost_auto</td>
+</tr>
+<tr>
+<td>SOV_TR_M</td>
+<td>S</td>
+<td>18</td>
+<td></td>
+<td>@cost_auto</td>
+</tr>
+<tr>
+<td>HOV2_M</td>
+<td>H</td>
+<td>18</td>
+<td></td>
+<td>@cost_hov2</td>
+</tr>
+<tr>
+<td>HOV3_M</td>
+<td>I</td>
+<td>18</td>
+<td></td>
+<td>@cost_hov3</td>
+</tr>
+<tr>
+<td>SOV_NT_H</td>
+<td>s</td>
+<td>85</td>
+<td></td>
+<td>@cost_auto</td>
+</tr>
+<tr>
+<td>SOV_TR_H</td>
+<td>S</td>
+<td>85</td>
+<td></td>
+<td>@cost_auto</td>
+</tr>
+<tr>
+<td>HOV2_H</td>
+<td>H</td>
+<td>85</td>
+<td></td>
+<td>@cost_hov2</td>
+</tr>
+<tr>
+<td>HOV3_H</td>
+<td>I</td>
+<td>85</td>
+<td></td>
+<td>@cost_hov3</td>
+</tr>
+<tr>
+<td>TRK_L</td>
+<td>T</td>
+<td>67</td>
+<td>1.3</td>
+<td>@cost_lgt_truck</td>
+</tr>
+<tr>
+<td>TRK_M</td>
+<td>M</td>
+<td>68</td>
+<td>1.5</td>
+<td>@cost_med_truck</td>
+</tr>
+<tr>
+<td>TRK_H</td>
+<td>V</td>
+<td>89</td>
+<td>2.5</td>
+<td>@cost_hvy_truck</td>
+</tr>
+</tbody>
+</table>
+<h2 id="volume-delay-functions">Volume-delay Functions<a class="headerlink" href="#volume-delay-functions" title="Permanent link"> ¶</a></h2>
+<p>The volume-delay functions are specified as open-ended algebraic expressions supporting standard functions. The VDF functions for SANDAG are a modified BPR of the form:</p>
+<div class="arithmatex">\[
+T = T_0 \cdot \left(1 + \alpha_1 \left(\frac{\text{FLOW} + \text{PRELOAD}}{\text{CAPACITY}}\right)^{\beta_1} \right)
++ \frac{\text{CYCLE}}{2} (1 - \text{GC})^2 \cdot \left(1 + \alpha_2 \left(\frac{\text{FLOW} + \text{PRELOAD}}{\text{INT_CAPACITY}}\right)^{\beta_2} \right)
+\]</div>
+<h4 id="where">Where:<a class="headerlink" href="#where" title="Permanent link"> ¶</a></h4>
+<ul>
+<li><strong>T0</strong> is the free-flow travel time along the link in minutes  </li>
+<li><strong>ALPHA1</strong>, <strong>BETA1</strong>, <strong>ALPHA2</strong>, and <strong>BETA2</strong> are BPR calibration terms  </li>
+<li><strong>FLOW</strong> is the assigned flow from the traffic demand in PCEs  </li>
+<li><strong>PRELOAD</strong> is the background volume from transit vehicles in PCEs  </li>
+<li><strong>CAPACITY</strong> is the link mid-block capacity  </li>
+<li><strong>INT_CAPACITY</strong> is the total intersection approach capacity in PCEs  </li>
+<li><strong>CYCLE</strong> is the signal cycle length in minutes  </li>
+<li><strong>GC</strong> is the green-to-cycle length for the link approach  </li>
+</ul>
+<h4 id="attributes">Attributes:<a class="headerlink" href="#attributes" title="Permanent link"> ¶</a></h4>
+<ul>
+<li>Attribute keyword for <strong>FLOW</strong>: <code>volau</code>  </li>
+<li>Attribute for <strong>PRELOAD</strong>: <code>volad</code>  <ul>
+<li>This is calculated from the transit itineraries, their frequency, and the length of the period and is also stored in link data 2 (<code>ul2</code>)</li>
+</ul>
+</li>
+</ul>
+<h4 id="per-link-attributes">Per-link attributes:<a class="headerlink" href="#per-link-attributes" title="Permanent link"> ¶</a></h4>
+<ul>
+<li><strong>T0</strong>: link data 1 (<code>ul1</code>)  </li>
+<li><strong>CAPACITY</strong>: link data 2 (<code>ul3</code>)  </li>
+<li><strong>GC</strong>: <code>@green_to_cycle</code>, cross-referenced by <code>el1</code>  </li>
+<li><strong>INT_CAPACITY</strong>: <code>@capacity_inter</code>, cross-referenced by <code>el3</code>  </li>
+</ul>
+<h4 id="global-parameters-small-subset-of-values-for-all-links">Global parameters (small subset of values for all links):<a class="headerlink" href="#global-parameters-small-subset-of-values-for-all-links" title="Permanent link"> ¶</a></h4>
+<ul>
+<li><strong>CYCLE</strong>: 1.25, 1.5, 2.0, or 2.5  </li>
+<li><strong>ALPHA1</strong>: always 0.8  </li>
+<li><strong>BETA1</strong>: 5.5 or 4  </li>
+<li><strong>ALPHA2</strong>: 6.0 or 4.5  </li>
+<li><strong>BETA2</strong>: always 2  </li>
+</ul>
+<hr />
+<p>With these global parameters, there are 7 total volume-delay functions:</p>
+<ul>
+<li><strong>fd10</strong> for freeways and links which do not end at an intersection:  </li>
+</ul>
+<div class="arithmatex">\[
+\text{ul1} \cdot \left(1.0 + 0.24 \cdot \left(\frac{\text{volau} + \text{volad}}{\text{ul3}}\right)^{5.5} \right)
+\]</div>
+<ul>
+<li><strong>fd20</strong> for local collector and lower intersection and stop-controlled approaches:  </li>
+</ul>
+<div class="arithmatex">\[
+\text{ul1} \cdot \left(1.0 + 0.8 \cdot \left(\frac{\text{volau} + \text{volad}}{\text{ul3}}\right)^4 \right) +
+\frac{1.25}{2} \cdot (1 - \text{el1})^2 \cdot \left(1 + 4.5 \cdot \left(\frac{\text{volau} + \text{volad}}{\text{el3}}\right)^2 \right)
+\]</div>
+<ul>
+<li><strong>fd21</strong> for collector intersection approaches:  </li>
+</ul>
+<div class="arithmatex">\[
+\text{ul1} \cdot \left(1.0 + 0.8 \cdot \left(\frac{\text{volau} + \text{volad}}{\text{ul3}}\right)^4 \right) +
+\frac{1.5}{2} \cdot (1 - \text{el1})^2 \cdot \left(1.0 + 4.5 \cdot \left(\frac{\text{volau} + \text{volad}}{\text{el3}}\right)^2 \right)
+\]</div>
+<ul>
+<li><strong>fd22</strong> for major arterial and major or prime arterial intersection approaches:  </li>
+</ul>
+<div class="arithmatex">\[
+\text{ul1} \cdot \left(1.0 + 0.8 \cdot \left(\frac{\text{volau} + \text{volad}}{\text{ul3}}\right)^4 \right) +
+\frac{2.0}{2} \cdot (1 - \text{el1})^2 \cdot \left(1.0 + 4.5 \cdot \left(\frac{\text{volau} + \text{volad}}{\text{el3}}\right)^2 \right)
+\]</div>
+<ul>
+<li><strong>fd23</strong> for primary arterial intersection approaches:  </li>
+</ul>
+<div class="arithmatex">\[
+\text{ul1} \cdot \left(1.0 + 0.8 \cdot \left(\frac{\text{volau} + \text{volad}}{\text{ul3}}\right)^4 \right) +
+\frac{2.5}{2} \cdot (1 - \text{el1})^2 \cdot \left(1.0 + 4.5 \cdot \left(\frac{\text{volau} + \text{volad}}{\text{el3}}\right)^2 \right)
+\]</div>
+<ul>
+<li><strong>fd24</strong> for metered ramps:  </li>
+</ul>
+<div class="arithmatex">\[
+\text{ul1} \cdot \left(1.0 + 0.8 \cdot \left(\frac{\text{volau} + \text{volad}}{\text{ul3}}\right)^4 \right) +
+\frac{2.5}{2} \cdot (1 - \text{el1})^2 \cdot \left(1.0 + 6.0 \cdot \left(\frac{\text{volau} + \text{volad}}{\text{el3}}\right)^2 \right)
+\]</div>
+<ul>
+<li><strong>fd25</strong> for freeway node approach (AM and PM only):  </li>
+</ul>
+<div class="arithmatex">\[
+\text{ul1} \cdot \left(1.0 + 0.6 \cdot \left(\frac{\text{volau} + \text{volad}}{\text{ul3}}\right)^4 \right)
+\]</div>
+<h2 id="traffic-skims-and-results">Traffic Skims and Results<a class="headerlink" href="#traffic-skims-and-results" title="Permanent link"> ¶</a></h2>
+<p>The traffic skims are calculated by fixing the flows and running a second zero-iteration assignment, which computes the O-D skim values using path analyses. The total generalized cost, travel time, and distance are computed for all classes, as well as the toll cost, HOV facility distance, and managed lane distance for the applicable classes. The fixed flows are the MSA averaged flows for iterations after the first global iteration.  </p>
+<p>Note that the assigned flows for trucks are in PCE values unless otherwise specified. This includes any select type results. </p>
 
 
 
