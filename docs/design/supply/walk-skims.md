@@ -1,3 +1,3 @@
 # Walk Skims
 
-Details of walk skim calculations.
+This component calculates matrices describing the level-of-service for walking between MGRAs. The matrices contain walk distance and actual walk time, are saved in CSV format (maz_maz_walk.csv), and are used in ABM3 for both estimating demand and measuring performance metrics such as actual time spent walking. These skims, as well as the bike skims, are computed using an “all-streets” network , which offers greater geographic detail than the standard highway network and includes additional attributes like facility type and elevation gain. In ABM3, walk distances between MGRAs are computed using a Python-based script built on the pandana.network.Network class. This class, from the Pandana library, employs a custom implementation of Dijkstra’s algorithm for shortest path calculations. The MGRA-level (2-zone) skimming is performed at the start of the ActivitySim resident preprocessing model. 
