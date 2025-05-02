@@ -11,20 +11,14 @@ cd /d %PROJECT_DIRECTORY%
 :: SET UP PATHS
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 SET ANACONDA3_DIR=%CONDA_PREFIX%
-SET ANACONDA2_DIR=%CONDA_TWO_PREFIX%
 
 SET PATH=%ANACONDA3_DIR%\Library\bin;%PATH%
 SET PATH=%ANACONDA3_DIR%\Scripts;%ANACONDA3_DIR%\bin;%PATH%
 
-SET PATH=%ANACONDA2_DIR%\Library\bin
-SET PATH=%ANACONDA2_DIR%\Scripts;%ANACONDA2_DIR%\bin
-
 :: setup paths to Python application, Conda script, etc.
 SET CONDA3_ACT=%ANACONDA3_DIR%\Scripts\activate.bat
-SET CONDA2_ACT=%ANACONDA2_DIR%\Scripts\activate.bat
 
 SET CONDA3=%ANACONDA3_DIR%\Scripts\conda.exe
-SET CONDA2=%ANACONDA2_DIR%\Scripts\conda.exe
 
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :: CALL ON THE ENVIRONMENT, AND IF IT DOES NOT EXIST, CREATE IT FROM THE YAML FILE

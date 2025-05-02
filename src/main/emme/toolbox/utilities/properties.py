@@ -444,7 +444,7 @@ class PropertiesSetter(object):
 
 class PropertiesTool(PropertiesSetter, _m.Tool()):
 
-    properties_path = _m.Attribute(unicode)
+    properties_path = _m.Attribute(str)
 
     def __init__(self):
         super(PropertiesTool, self).__init__()
@@ -454,7 +454,7 @@ class PropertiesTool(PropertiesSetter, _m.Tool()):
 
     tool_run_msg = ""
 
-    @_m.method(return_type=_m.UnicodeType)
+    @_m.method(return_type=str)
     def tool_run_msg_status(self):
         return self.tool_run_msg
 
@@ -503,7 +503,7 @@ class PropertiesTool(PropertiesSetter, _m.Tool()):
             self.save_properties()
             message = "Properties file saved"
             self.tool_run_msg = _m.PageBuilder.format_info(message, escape=False)
-        except Exception, e:
+        except Exception as e:
             self.tool_run_msg = _m.PageBuilder.format_exception(
                 e, _traceback.format_exc(e))
             raise
@@ -577,8 +577,8 @@ class Properties(object):
                 raise Exception("%s file conflict - edited externally after loading" % path)
         self["SavedFrom"] = "Emme Modeller properties writer Process ID %s" % os.getpid()
         self["SavedLast"] = time.strftime("%b-%d-%Y %H:%M:%S")
-        with open(path, 'w') as f:
-            for key, value in self.iteritems():
+        with open(path, 'w', newline='') as f:
+            for key, value in self.items():
                 if isinstance(value, list):
                     value = ",".join([self._format(v) for v in value])
                 else:
@@ -622,7 +622,7 @@ class Properties(object):
         return self._prop.clear()
 
     def has_key(self, k):
-        return self._prop.has_key(k)
+        return k in self._prop
 
     def pop(self, k, d=None):
         return self._prop.pop(k, d)
@@ -631,7 +631,7 @@ class Properties(object):
         return self._prop.update(*args, **kwargs)
 
     def keys(self):
-        return self._prop.keys()
+        return elf._prop.keys()
 
     def values(self):
         return self._prop.values()
@@ -640,7 +640,7 @@ class Properties(object):
         return self._prop.items()
 
     def iteritems(self):
-        return self._prop.iteritems()
+        return iter(self._prop.items())
 
     def pop(self, *args):
         return self._prop.pop(*args)
@@ -661,4 +661,4 @@ class Properties(object):
         return iter(self._prop)
 
     def __unicode__(self):
-        return unicode(repr(self._prop))
+        return str(repr(self._prop))

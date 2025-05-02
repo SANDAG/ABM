@@ -8,28 +8,19 @@ set scenario_year=%6
 set scenario_year_with_suffix=%7
 
 SET ANACONDA3_DIR=%CONDA_PREFIX%
-SET ANACONDA2_DIR=%CONDA_TWO_PREFIX%
 
 :: setup paths to Python application, Conda script, etc.
 SET CONDA3_ACT=%ANACONDA3_DIR%\Scripts\activate.bat
-SET CONDA2_ACT=%ANACONDA2_DIR%\Scripts\activate.bat
 
 SET CONDA3_DEA=%ANACONDA3_DIR%\Scripts\deactivate.bat
-SET CONDA2_DEA=%ANACONDA2_DIR%\Scripts\deactivate.bat
 
 SET CONDA3=%ANACONDA3_DIR%\Scripts\conda.exe
-SET CONDA2=%ANACONDA2_DIR%\Scripts\conda.exe
 
 SET PYTHON3=%ANACONDA3_DIR%\envs\asim_sandag_cvm\python.exe
-:: FIX PATH AND ENV HERE LATER
-SET PYTHON2=%ANACONDA2_DIR%\python.exe
 
 ECHO Activate ActivitySim for CVM...
 CD /d %ANACONDA3_DIR%\Scripts
 CALL %CONDA3_ACT% asim_sandag_cvm
-
-:: FIX PATH AND ENV HERE LATER
-SET PYTHON2=%ANACONDA2_DIR%\python.exe
 
 set MKL_NUM_THREADS=1
 set MKL=1
@@ -58,9 +49,6 @@ IF %ERRORLEVEL% NEQ 0 (GOTO :ERROR) else (GOTO :SUCCESS)
 
     CD /d %PROJECT_DRIVE%%PROJECT_DIRECTORY%
 	
-	:: convert trip tables into Python2
-	%PYTHON2% src/asim-cvm/scripts/convert_tripTables.py htm output
-
     :: finish and exit batch file
     EXIT /B 0
 
