@@ -218,53 +218,60 @@ crossborder:
 
 airport:
   annualizationFactor: 365
+  transitPathMultipliers:
+    walk: 1.7
+    drive: 1.5
+    fwt: 1.5
+    xwt: 2
+    waux: 2.5
+
   san:
     terminalMGRA: 11249
     enplanements: 14536000
     connecting: 856170
     avgPartySize: 1.7
-    
+    terminalWalkTime: 5.00
+    terminalWaitTime: 0.00
+    centralMobilityHubMGRA: 0
+    taxiAvailable: 1
+
     accessOptions:
-      parkLocation1:
-        mgra: *terminalMGRA
-        accessCost: 0.00
-        dailyCost: 39.04
-        inVehicleTime: 0.00
-        walkTime: 5.00
-        waitTime: 0.00
-
-      parkLocation2:
-        mgra: -999
-        accessCost: 0
-        dailyCost: 0
-        inVehicleTime: -999
-        walkTime: -999
-        waitTime: -999
-
-      parkLocation3:
-        mgra: -999
-        accessCost: 0
-        dailyCost: 0
-        inVehicleTime: -999
-        walkTime: -999
-        waitTime: -999
-
-      parkLocation4:
-        mgra: 6528
-        accessCost: 0.00
-        dailyCost: 25.62
-        inVehicleTime: 6.00
-        walkTime: 2.00
-        waitTime: 3.00
-
-      parkLocation5:
-        mgra: 2802
-        accessCost: 0.00
-        dailyCost: 25.62
-        inVehicleTime: 6.00
-        walkTime: 2.00
-        waitTime: 3.00
-      
+      park:
+        loc1:
+          mgra: *terminalMGRA
+          accessCost: 0.00
+          dailyCost: 39.04
+          inVehicleTime: 0.00
+          walkTime: 5.00
+          waitTime: 0.00
+        loc2:
+          mgra: -999
+          accessCost: 0
+          dailyCost: 0
+          inVehicleTime: -999
+          walkTime: -999
+          waitTime: -999
+        loc3:
+          mgra: -999
+          accessCost: 0
+          dailyCost: 0
+          inVehicleTime: -999
+          walkTime: -999
+          waitTime: -999
+        loc4:
+          mgra: 6528
+          accessCost: 0.00
+          dailyCost: 25.62
+          inVehicleTime: 6.00
+          walkTime: 2.00
+          waitTime: 3.00
+        loc5:
+          mgra: 2802
+          accessCost: 0.00
+          dailyCost: 25.62
+          inVehicleTime: 6.00
+          walkTime: 2.00
+          waitTime: 3.00
       parkEscort:
         mgra: *terminalMGRA
         accessCost: 0.00
@@ -272,52 +279,167 @@ airport:
         inVehicleTime: 0.00
         walkTime: 5.00
         waitTime: 0.00
-
-      rentalLocation:
+      rental:
         mgra: 2994
         accessCost: 0.00
         dailyCost: 60.99
         inVehicleTime: 7.50
         walkTime: 5.00
         waitTime: 7.50
-
-      ridehailLocation1:
+      shuttleVan:
         mgra: *terminalMGRA
-
-
-      ridehailLocation2:
-        mgra: -999
-
-
+      hotelCourtesy:
+        mgra: *terminalMGRA
+        walkTime: 5.00
+      ridehail:
+        tncWaitTime: 4.10
+        taxiWaitTime: 2.00
+        loc1:
+          mgra: *terminalMGRA
+          accessWalkTime:
+            tnc: 5.00
+            taxi: 5.00
+        loc2:
+          mgra: -999
+          accessWalkTime:
+            tnc: -999
+            taxi: -999
       transit:
         mgra: *terminalMGRA
-
-      curbLocation1:
-        mgra: *terminalMGRA
-
-      curbLocation2:
-        mgra: -999
-
-      curbLocation3:
-        mgra: -999
-
-      curbLocation4:
-        mgra: -999
-
-      curbLocation5:
-        mgra: -999
-
-      shuttleVanLocation:
-        mgra: *terminalMGRA
-
-      hotelCourtesyLocation:
-        mgra: *terminalMGRA
+      curb:
+        loc1:
+          mgra: *terminalMGRA
+          inVehicleTime: 0.00
+          walkTime: 5.00
+          waitTime: 0.00
+        loc2:
+          mgra: -999
+          inVehicleTime: -999
+          walkTime: -999
+          waitTime: -999
+        loc3:
+          mgra: -999
+          inVehicleTime: -999
+          walkTime: -999
+          waitTime: -999
+        loc4:
+          mgra: -999
+          inVehicleTime: -999
+          walkTime: -999
+          waitTime: -999
+        loc5:
+          mgra: -999
+          inVehicleTime: -999
+          walkTime: -999
+          waitTime: -999
 
   cbx:
     terminalMGRA: 9350
     enplanements: 4186500
     connecting: 0
     avgPartySize: 2.2
+    terminalWalkTime: 5.00
+    terminalWaitTime: 0.00
+    centralMobilityHubMGRA: 0
+    taxiAvailable: 1
+
+    accessOptions:
+      park:
+        loc1:
+          mgra: *terminalMGRA
+          accessCost: 0.00
+          dailyCost: 21.00
+          inVehicleTime: 0.00
+          walkTime: 5.00
+          waitTime: 0.00
+        loc2:
+          mgra: -999
+          accessCost: 0.00
+          dailyCost: 14.00
+          inVehicleTime: 7.00
+          walkTime: 2.00
+          waitTime: 5.00
+        loc3:
+          mgra: -999
+          accessCost: 0.00
+          dailyCost: 12.00
+          inVehicleTime: 10.00
+          walkTime: 2.00
+          waitTime: 5.00
+        loc4:
+          mgra: -999
+          accessCost: 0.00
+          dailyCost: 0
+          inVehicleTime: -999
+          walkTime: 0
+          waitTime: 0
+        loc5:
+          mgra: -999
+          accessCost: 0.00
+          dailyCost: 0
+          inVehicleTime: -999
+          walkTime: 0
+          waitTime: 0
+      parkEscort:
+        mgra: *terminalMGRA
+        accessCost: 0.00
+        hourlyCost: 4.00
+        inVehicleTime: 0.00
+        walkTime: 10.00
+        waitTime: 0.00
+      rental:
+        mgra: *terminalMGRA
+        accessCost: 0.00
+        dailyCost: 40.00
+        inVehicleTime: 7.50
+        walkTime: 3.00
+        waitTime: 7.50
+      shuttleVan:
+        mgra: *terminalMGRA
+      hotelCourtesy:
+        mgra: *terminalMGRA
+        walkTime: 0.00
+      ridehail:
+        tncWaitTime: 2.00
+        taxiWaitTime: 1.00
+        loc1:
+          mgra: *terminalMGRA
+          accessWalkTime:
+            tnc: 0.00
+            taxi: 0.00
+        loc2:
+          mgra: -999
+          accessWalkTime:
+            tnc: -999
+            taxi: -999
+      transit:
+        mgra: *terminalMGRA
+      curb:
+        loc1:
+          mgra: *terminalMGRA
+          inVehicleTime: 0.00
+          walkTime: 0.00
+          waitTime: 0.00
+        loc2:
+          mgra: -999
+          inVehicleTime: -999
+          walkTime: -999
+          waitTime: -999
+        loc3:
+          mgra: -999
+          inVehicleTime: -999
+          walkTime: -999
+          waitTime: -999
+        loc4:
+          mgra: -999
+          inVehicleTime: -999
+          walkTime: -999
+          waitTime: -999
+        loc5:
+          mgra: -999
+          inVehicleTime: -999
+          walkTime: -999
+          waitTime: -999
 
 votThreshold:
   low: 8.81
