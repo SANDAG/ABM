@@ -81,4 +81,4 @@ industry_groups:
     constant: 99
 
 CONSTANTS:
-  beta_employment: {cvm-betaEmployment-establishmentAttractor} # used in the second step of the establishment attraction model
+  beta_employment: {cvm-betaEmployment-establishmentAttractor:} # used in the second step of the establishment attraction model
