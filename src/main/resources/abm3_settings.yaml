@@ -216,6 +216,109 @@ crossborder:
     trip_c_ivt_base: -0.021
     trip_c_cost: -0.0003
 
+airport:
+  annualizationFactor: 365
+  san:
+    terminalMGRA: 11249
+    enplanements: 14536000
+    connecting: 856170
+    avgPartySize: 1.7
+    
+    accessOptions:
+      parkLocation1:
+        mgra: *terminalMGRA
+        accessCost: 0.00
+        dailyCost: 39.04
+        inVehicleTime: 0.00
+        walkTime: 5.00
+        waitTime: 0.00
+
+      parkLocation2:
+        mgra: -999
+        accessCost: 0
+        dailyCost: 0
+        inVehicleTime: -999
+        walkTime: -999
+        waitTime: -999
+
+      parkLocation3:
+        mgra: -999
+        accessCost: 0
+        dailyCost: 0
+        inVehicleTime: -999
+        walkTime: -999
+        waitTime: -999
+
+      parkLocation4:
+        mgra: 6528
+        accessCost: 0.00
+        dailyCost: 25.62
+        inVehicleTime: 6.00
+        walkTime: 2.00
+        waitTime: 3.00
+
+      parkLocation5:
+        mgra: 2802
+        accessCost: 0.00
+        dailyCost: 25.62
+        inVehicleTime: 6.00
+        walkTime: 2.00
+        waitTime: 3.00
+      
+      parkEscort:
+        mgra: *terminalMGRA
+        accessCost: 0.00
+        hourlyCost: 7.32
+        inVehicleTime: 0.00
+        walkTime: 5.00
+        waitTime: 0.00
+
+      rentalLocation:
+        mgra: 2994
+        accessCost: 0.00
+        dailyCost: 60.99
+        inVehicleTime: 7.50
+        walkTime: 5.00
+        waitTime: 7.50
+
+      ridehailLocation1:
+        mgra: *terminalMGRA
+
+
+      ridehailLocation2:
+        mgra: -999
+
+
+      transit:
+        mgra: *terminalMGRA
+
+      curbLocation1:
+        mgra: *terminalMGRA
+
+      curbLocation2:
+        mgra: -999
+
+      curbLocation3:
+        mgra: -999
+
+      curbLocation4:
+        mgra: -999
+
+      curbLocation5:
+        mgra: -999
+
+      shuttleVanLocation:
+        mgra: *terminalMGRA
+
+      hotelCourtesyLocation:
+        mgra: *terminalMGRA
+
+  cbx:
+    terminalMGRA: 9350
+    enplanements: 4186500
+    connecting: 0
+    avgPartySize: 2.2
+
 votThreshold:
   low: 8.81
   medium: 18.00
