@@ -441,6 +441,28 @@ airport:
           walkTime: -999
           waitTime: -999
 
+cvm:
+  vot:
+    light: 67 # Dollars per hour
+    medium: 68
+    heavy: 89
+    tnc: 85
+  weightedAverageProportions:
+    light: 0.544
+    medium: 0.341
+    heavy: 0.115
+    tnc:
+      light: 1
+      medium: 0
+      heavy: 0
+    attractionDecay: 4
+    attractionParameter: -0.0543
+    tncAttractionDecay: 4
+    tncAttractionParameter: -0.0515
+  betaEmployment:
+    establishmentAttractor: 0.7051
+    routeGeneration: 0.9583
+
 votThreshold:
   low: 8.81
   medium: 18.00
