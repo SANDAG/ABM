@@ -1,7 +1,7 @@
 ## ActivitySim
 ## See full license in LICENSE.txt.
 
-scenarioYear: {scenarioYear:}
+scenarioYear: 2022
 # set below to 1 for everything to be internal, 0 otherwise
 NO_EXTERNAL: 0
 
