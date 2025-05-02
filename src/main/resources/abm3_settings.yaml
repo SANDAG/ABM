@@ -224,7 +224,7 @@ airport:
     waux: 2.5
 
   san:
-    terminalMGRA: 11249
+    terminalMGRA: &sanTerminalMGRA 11249
     enplanements: 14536000
     connecting: 856170
     avgPartySize: 1.7
@@ -236,7 +236,7 @@ airport:
     accessOptions:
       park:
         loc1:
-          mgra: *terminalMGRA
+          mgra: *sanTerminalMGRA
           accessCost: 0.00
           dailyCost: 39.04
           inVehicleTime: 0.00
@@ -271,7 +271,7 @@ airport:
           walkTime: 2.00
           waitTime: 3.00
       parkEscort:
-        mgra: *terminalMGRA
+        mgra: *sanTerminalMGRA
         accessCost: 0.00
         hourlyCost: 7.32
         inVehicleTime: 0.00
@@ -285,15 +285,15 @@ airport:
         walkTime: 5.00
         waitTime: 7.50
       shuttleVan:
-        mgra: *terminalMGRA
+        mgra: *sanTerminalMGRA
       hotelCourtesy:
-        mgra: *terminalMGRA
+        mgra: *sanTerminalMGRA
         walkTime: 5.00
       ridehail:
         tncWaitTime: 4.10
         taxiWaitTime: 2.00
         loc1:
-          mgra: *terminalMGRA
+          mgra: *sanTerminalMGRA
           accessWalkTime:
             tnc: 5.00
             taxi: 5.00
@@ -303,10 +303,10 @@ airport:
             tnc: -999
             taxi: -999
       transit:
-        mgra: *terminalMGRA
+        mgra: *sanTerminalMGRA
       curb:
         loc1:
-          mgra: *terminalMGRA
+          mgra: *sanTerminalMGRA
           inVehicleTime: 0.00
           walkTime: 5.00
           waitTime: 0.00
@@ -332,7 +332,7 @@ airport:
           waitTime: -999
 
   cbx:
-    terminalMGRA: 9350
+    terminalMGRA: &cbxTerminalMGRA 9350
     enplanements: 4186500
     connecting: 0
     avgPartySize: 2.2
@@ -344,7 +344,7 @@ airport:
     accessOptions:
       park:
         loc1:
-          mgra: *terminalMGRA
+          mgra: *cbxTerminalMGRA
           accessCost: 0.00
           dailyCost: 21.00
           inVehicleTime: 0.00
@@ -379,29 +379,29 @@ airport:
           walkTime: 0
           waitTime: 0
       parkEscort:
-        mgra: *terminalMGRA
+        mgra: *cbxTerminalMGRA
         accessCost: 0.00
         hourlyCost: 4.00
         inVehicleTime: 0.00
         walkTime: 10.00
         waitTime: 0.00
       rental:
-        mgra: *terminalMGRA
+        mgra: *cbxTerminalMGRA
         accessCost: 0.00
         dailyCost: 40.00
         inVehicleTime: 7.50
         walkTime: 3.00
         waitTime: 7.50
       shuttleVan:
-        mgra: *terminalMGRA
+        mgra: *cbxTerminalMGRA
       hotelCourtesy:
-        mgra: *terminalMGRA
+        mgra: *cbxTerminalMGRA
         walkTime: 0.00
       ridehail:
         tncWaitTime: 2.00
         taxiWaitTime: 1.00
         loc1:
-          mgra: *terminalMGRA
+          mgra: *cbxTerminalMGRA
           accessWalkTime:
             tnc: 0.00
             taxi: 0.00
@@ -411,10 +411,10 @@ airport:
             tnc: -999
             taxi: -999
       transit:
-        mgra: *terminalMGRA
+        mgra: *cbxTerminalMGRA
       curb:
         loc1:
-          mgra: *terminalMGRA
+          mgra: *cbxTerminalMGRA
           inVehicleTime: 0.00
           walkTime: 0.00
           waitTime: 0.00

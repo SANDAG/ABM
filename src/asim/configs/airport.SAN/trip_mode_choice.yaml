@@ -75,7 +75,7 @@ NESTS:
           - WALK
 
 CONSTANTS:
-  terminalMgra: &terminalMgra {airport-san-terminalMGRA:}
+  terminalMgra: {airport-san-terminalMGRA:}
   parkLocation1Mgra: {airport-san-accessOptions-park-loc1-mgra:}
   parkLocation2Mgra: {airport-san-accessOptions-park-loc2-mgra:}
   parkLocation3Mgra: {airport-san-accessOptions-park-loc3-mgra:}
