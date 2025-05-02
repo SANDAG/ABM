@@ -96,7 +96,7 @@ vot-indexed skims,da_dist_skims,((odt_skims['SOV_NT_L_DIST'] * (_vot_bin_da == 1
 # defined in network_los: exp_asc,,
 ,density_measure,"reindex(land_use.PopEmpDenPerMi, df[ORIGIN])"
 ,density_bin,"pd.cut(density_measure, bins=[-np.inf] + wait_time_distribution_by_density_breaks + [np.inf], labels=[1,2,3,4,5]).astype(int)"
-,taxi_wait_time_mean,"density_bin.map({k: v for k,v in taxi_wait_time_mean_by_density.items()})"
+,taxi_wait_time_mean,"density_bin.map({k: v for k,v in Taxi_waitTime_mean.items()})"
 ,taxi_wait_time_sd,"density_bin.map({k: v for k,v in Taxi_waitTime_sd.items()})"
 ,tnc_single_wait_time_mean,"density_bin.map({k: v for k,v in TNC_single_waitTime_mean.items()})"
 ,tnc_single_wait_time_sd,"density_bin.map({k: v for k,v in TNC_single_waitTime_sd.items()})"
