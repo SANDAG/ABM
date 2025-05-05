@@ -82,7 +82,7 @@ CONSTANTS:
   parkLocation5Mgra: {airport-cbx-accessOptions-park-loc5-mgra:}
   parkEscortLocationMgra: {airport-cbx-accessOptions-parkEscort-mgra:}
   rentalLocationMgra: {airport-cbx-accessOptions-rental-mgra:}
-  centralMobilityHubMgra: {airport-cbx-accessOptions-centralMobilityHubMGRA:}
+  centralMobilityHubMgra: {airport-cbx-centralMobilityHubMGRA:}
   ridehailLocation1Mgra: {airport-cbx-accessOptions-ridehail-loc1-mgra:}
   ridehailLocation2Mgra: {airport-cbx-accessOptions-ridehail-loc2-mgra:}
   transitMgra: {airport-cbx-accessOptions-transit-mgra:}
