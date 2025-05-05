@@ -210,7 +210,7 @@ crossborder:
     brt: -10
     lrt: -20
     cr: 0.00
-  vot_coefs:
+  votCoefs:
     trip_c_ivt_base: -0.021
     trip_c_cost: -0.0003
 
