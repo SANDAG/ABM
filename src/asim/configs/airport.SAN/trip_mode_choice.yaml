@@ -84,16 +84,16 @@ CONSTANTS:
   parkEscortLocationMgra: {airport-san-accessOptions-parkEscort-mgra:}
   rentalLocationMgra: {airport-san-accessOptions-rental-mgra:}
   centralMobilityHubMgra: {airport-san-centralMobilityHubMGRA:}
-  ridehailLocation1Mgra: {airport-san-ridehail-loc1-mgra:}
-  ridehailLocation2Mgra: {airport-san-ridehail-loc2-mgra:}
-  transitMgra: {airport-san-transit-mgra:}
-  curbLocation1Mgra: {airport-san-curb-loc1-mgra:}
-  curbLocation2Mgra: {airport-san-curb-loc2-mgra:}
-  curbLocation3Mgra: {airport-san-curb-loc3-mgra:}
-  curbLocation4Mgra: {airport-san-curb-loc4-mgra:}
-  curbLocation5Mgra: {airport-san-curb-loc5-mgra:}
-  shuttleVanLocation: {airport-san-shuttleVan-mgra:}
-  hotelCourtesyLocation: {airport-san-hotelCourtesy-mgra:}
+  ridehailLocation1Mgra: {airport-san-accessOptions-ridehail-loc1-mgra:}
+  ridehailLocation2Mgra: {airport-san-accessOptions-ridehail-loc2-mgra:}
+  transitMgra: {airport-san-accessOptions-transit-mgra:}
+  curbLocation1Mgra: {airport-san-accessOptions-curb-loc1-mgra:}
+  curbLocation2Mgra: {airport-san-accessOptions-curb-loc2-mgra:}
+  curbLocation3Mgra: {airport-san-accessOptions-curb-loc3-mgra:}
+  curbLocation4Mgra: {airport-san-accessOptions-curb-loc4-mgra:}
+  curbLocation5Mgra: {airport-san-accessOptions-curb-loc5-mgra:}
+  shuttleVanLocation: {airport-san-accessOptions-shuttleVan-mgra:}
+  hotelCourtesyLocation: {airport-san-accessOptions-hotelCourtesy-mgra:}
   walkSpeed: {mode-nonmotorized-walk-speed:}
   parkLocation1AccessCost: {airport-san-accessOptions-park-loc1-accessCost:}
   parkLocation1CostDay: {airport-san-accessOptions-park-loc1-dailyCost:}

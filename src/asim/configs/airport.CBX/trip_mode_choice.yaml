@@ -82,17 +82,17 @@ CONSTANTS:
   parkLocation5Mgra: {airport-cbx-accessOptions-park-loc5-mgra:}
   parkEscortLocationMgra: {airport-cbx-accessOptions-parkEscort-mgra:}
   rentalLocationMgra: {airport-cbx-accessOptions-rental-mgra:}
-  centralMobilityHubMgra: {airport-cbx-centralMobilityHubMGRA:}
-  ridehailLocation1Mgra: {airport-cbx-ridehail-loc1-mgra:}
-  ridehailLocation2Mgra: {airport-cbx-ridehail-loc2-mgra:}
-  transitMgra: {airport-cbx-transit-mgra:}
-  curbLocation1Mgra: {airport-cbx-curb-loc1-mgra:}
-  curbLocation2Mgra: {airport-cbx-curb-loc2-mgra:}
-  curbLocation3Mgra: {airport-cbx-curb-loc3-mgra:}
-  curbLocation4Mgra: {airport-cbx-curb-loc4-mgra:}
-  curbLocation5Mgra: {airport-cbx-curb-loc5-mgra:}
-  shuttleVanLocation: {airport-cbx-shuttleVan-mgra:}
-  hotelCourtesyLocation: {airport-cbx-hotelCourtesy-mgra:}
+  centralMobilityHubMgra: {airport-cbx-accessOptions-centralMobilityHubMGRA:}
+  ridehailLocation1Mgra: {airport-cbx-accessOptions-ridehail-loc1-mgra:}
+  ridehailLocation2Mgra: {airport-cbx-accessOptions-ridehail-loc2-mgra:}
+  transitMgra: {airport-cbx-accessOptions-transit-mgra:}
+  curbLocation1Mgra: {airport-cbx-accessOptions-curb-loc1-mgra:}
+  curbLocation2Mgra: {airport-cbx-accessOptions-curb-loc2-mgra:}
+  curbLocation3Mgra: {airport-cbx-accessOptions-curb-loc3-mgra:}
+  curbLocation4Mgra: {airport-cbx-accessOptions-curb-loc4-mgra:}
+  curbLocation5Mgra: {airport-cbx-accessOptions-curb-loc5-mgra:}
+  shuttleVanLocation: {airport-cbx-accessOptions-shuttleVan-mgra:}
+  hotelCourtesyLocation: {airport-cbx-accessOptions-hotelCourtesy-mgra:}
   walkSpeed: {mode-nonmotorized-walk-speed:}
   parkLocation1AccessCost: {airport-cbx-accessOptions-park-loc1-accessCost:}
   parkLocation1CostDay: {airport-cbx-accessOptions-park-loc1-dailyCost:}
