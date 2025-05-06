@@ -47,7 +47,6 @@ location_settings_estb:
     vot_light: {cvm-vot-light:} # dollar per hour
     vot_medium: {cvm-vot-medium:}
     vot_heavy: {cvm-vot-heavy:}
-    vot_tnc: {cvm-vot-tnc:}
   SIMULATE_CHOOSER_COLUMNS:
     - business_type
     - next_stop_purpose
@@ -92,6 +91,8 @@ location_settings_tnc:
       eligibility_term: commerce_emp_non_trn_wrh
   SIZE_TERM_SELECTOR: stop_location_tnc
   CHOOSER_SEGMENT_COLUMN_NAME: next_stop_location_type
+  CONSTANTS:
+    vot_tnc: {cvm-vot-tnc:}
   SIMULATE_CHOOSER_COLUMNS:
     - business_type
     - next_stop_purpose
