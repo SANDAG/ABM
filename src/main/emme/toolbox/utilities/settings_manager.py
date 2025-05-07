@@ -4,9 +4,7 @@ import inro.modeller as _m
 
 class SettingsManager(object):
 
-    def __init__(
-            self,
-            settings_file: str):
+    def __init__(self, settings_file):
         self.OPENING_BRACKET_CODE = "[U+007B]"
         self.CLOSING_BRACKET_CODE = "[U+007D]"
         assert self.OPENING_BRACKET_CODE != self.CLOSING_BRACKET_CODE, "Opening and closing bracket codes must be different"
@@ -44,10 +42,7 @@ class SettingsManager(object):
             else:
                 full_settings["-".join(subset + [setting])] = settings_to_store[setting]
 
-    def read_settings(
-            self,
-            settings_file: str
-    ):
+    def read_settings(self, settings_file):
         """
         Reads in the master settings file and stores in a single non-nested dictionary. Nesting is accounted for by adding
         the names of the upper levels joined by a hyphen. An example input and output is shown below:
@@ -87,10 +82,7 @@ class SettingsManager(object):
 
         self.store_settings(self.settings, master_settings)
 
-    def encode_curly_brackets(
-            self,
-            data: str,
-    ):
+    def encode_curly_brackets(self, data):
         """
         Replaces the presence of } in a string that isn't preceeded by : along with the corresponding opening bracket
         by the string defined in `code`
@@ -148,11 +140,7 @@ class SettingsManager(object):
         """
         return data.replace(self.OPENING_BRACKET_CODE, "{").replace(self.CLOSING_BRACKET_CODE, "}")
 
-    def update_settings_file(
-            self,
-            filename: str,
-            settings: dict,
-    ):
+    def update_settings_file(self, filename):
         """
         Updates a settings file with a dictionary by replacing the text string {KEY:} with the value of `settings`[KEY].
         The updated settings file is then overwritten.
@@ -194,7 +182,7 @@ class SettingsManager(object):
 
         try:
             data = self.encode_curly_brackets(data)
-            data = data.format(**settings)
+            data = data.format(**self.settings)
             data = self.decode_curly_brackets(data)
         except Exception as e:
             print("Error in updating " + filename)
@@ -204,11 +192,7 @@ class SettingsManager(object):
             f.write(data)
             f.close()
 
-    def update_directory(
-            self,
-            dir: str,
-            settings: dict,
-    ):
+    def update_directory(self, dir):
         """
         Applies update_settings_file to every yaml file in a directory including all of its subdirectories.
 
@@ -235,35 +219,9 @@ class SettingsManager(object):
                     self.settings
                 )
 
-    def __call__(
-            self,
-            target: str,
-    ):
+    def __call__(self, target):
         if os.path.isdir(target):
             self.update_directory(target)
 
         elif os.path.isfile(target):
             self.update_settings_file(target)
-
-# # Read master settings file
-# settings = read_settings(
-#     os.path.join(run_path, "conf", "abm3_settings.yaml")
-# )
-
-# # Update property file
-# update_settings_file(
-#     os.path.join(run_path, "conf", "sandag_abm.properties"),
-#     settings
-# )
-
-# # Update passenger ActivitySim config files
-# update_directory(
-#     os.path.join(run_path, "src", "asim", "configs"),
-#     settings
-# )
-
-# # Update CVM config files
-# update_directory(
-#     os.path.join(run_path, "src", "asim-cvm", "configs"),
-#     settings
-# )
