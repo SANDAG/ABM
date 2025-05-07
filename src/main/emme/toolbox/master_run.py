@@ -242,9 +242,15 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         file_manager = modeller.tool("sandag.utilities.file_manager")
         utils = modeller.module('sandag.utilities.demand')
         load_properties = modeller.tool('sandag.utilities.properties')
-        run_summary = modeller.tool("sandag.utilities.run_summary")
+        run_summary = modeller.tool("sandag.utilities.run_summary")      
+        settings_manager = modeller.tool("sandag.utilities.settings_manager")
 
         self.username = username
+
+        manage_settings = settings_manager.SettingsManager(_join(main_directory, "conf", "abm3_settings.yaml"))
+        manage_settings(_join(main_directory, "conf", "sandag_abm.properties"))
+        manage_settings(_join(main_directory, "src", "asim", "configs"))
+        manage_settings(_join(main_directory, "src", "asim-cvm", "configs"))
 
         props = load_properties(_join(main_directory, "conf", "sandag_abm.properties"))
         props.set_year_specific_properties(_join(main_directory, "input", "parametersByYears.csv"))
@@ -446,9 +452,9 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             del(householdFile)
 
             if startFromIteration == 1:  # only run the setup / init steps if starting from iteration 1
-                if not skipSettingsManager:
-                    self.run_proc("runSettingsManager.cmd", [drive, drive + path_forward_slash],
-                                  "Run settings manager", capture_output=True)
+                # if not skipSettingsManager:
+                #     self.run_proc("runSettingsManager.cmd", [drive, drive + path_forward_slash],
+                #                   "Run settings manager", capture_output=True)
 
                 if not skipMGRASkims:
                     self.run_proc("runSandagMGRASkims.cmd", [drive, path_forward_slash],
