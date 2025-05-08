@@ -243,7 +243,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         utils = modeller.module('sandag.utilities.demand')
         load_properties = modeller.tool('sandag.utilities.properties')
         run_summary = modeller.tool("sandag.utilities.run_summary")      
-        settings_manager = modeller.tool("sandag.utilities.settings_manager")
+        settings_manager = modeller.module("sandag.utilities.settings_manager")
 
         self.username = username
 

@@ -1,6 +1,5 @@
 import os
 import yaml
-import inro.modeller as _m
 
 class SettingsManager(object):
 
