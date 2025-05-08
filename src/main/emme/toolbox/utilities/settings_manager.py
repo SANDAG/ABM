@@ -114,10 +114,7 @@ class SettingsManager(object):
 
         return data
 
-    def decode_curly_brackets(
-            self,
-            data: str,
-    ):
+    def decode_curly_brackets(self, data):
         """
         Replaces the string defined in `code` with } in the input `data` string
 
