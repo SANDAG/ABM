@@ -199,16 +199,10 @@ class SettingsManager(object):
                 continue
 
             if os.path.isdir(os.path.join(dir, f)):
-                self.update_directory(
-                    os.path.join(dir, f),
-                    self.settings
-                )
+                self.update_directory(os.path.join(dir, f))
 
             elif f.endswith(".yaml"):
-                self.update_settings_file(
-                    os.path.join(dir, f),
-                    self.settings
-                )
+                self.update_settings_file(os.path.join(dir, f))
 
     def __call__(self, target):
         if os.path.isdir(target):
