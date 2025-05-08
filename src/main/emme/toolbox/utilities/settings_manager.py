@@ -11,7 +11,7 @@ class SettingsManager(object):
         self.settings = {}
         self.read_settings(settings_file)
 
-    def store_settings(self, full_settings, settings_to_store, subset):
+    def store_settings(self, full_settings, settings_to_store, subset = []):
         """
         Stores a set of settings into an existing dictionary in place. If a list is specified in `subset` that list joined
         by hyphens will be the keys.
