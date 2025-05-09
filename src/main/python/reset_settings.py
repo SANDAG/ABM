@@ -16,11 +16,11 @@ copy2(
     os.path.join(run_directory, "conf", "sandag_abm.properties")
 )
 copytree(
-    os.path.join(release_directory, "src", "asim", "configs"),
+    os.path.join(release_directory, "common", "src", "asim", "configs"),
     os.path.join(run_directory, "src", "asim")
 )
 copytree(
-    os.path.join(release_directory, "src", "asim-cvm", "configs"),
+    os.path.join(release_directory, "common", "src", "asim-cvm", "configs"),
     os.path.join(run_directory, "src", "asim-cvm")
 )
 
