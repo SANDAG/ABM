@@ -17,11 +17,11 @@ copy2(
 )
 copytree(
     os.path.join(release_directory, "src", "asim", "configs"),
-    os.path.join(run_directory, "src", "asim", "configs")
+    os.path.join(run_directory, "src", "asim")
 )
 copytree(
     os.path.join(release_directory, "src", "asim-cvm", "configs"),
-    os.path.join(run_directory, "src", "asim-cvm", "configs")
+    os.path.join(run_directory, "src", "asim-cvm")
 )
 
 print("Settings have been reset!")
