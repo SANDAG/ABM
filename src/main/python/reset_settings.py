@@ -2,7 +2,7 @@ import os
 import sys
 from shutil import copy2, copytree
 
-run_directory = sys.argv[0]
+run_directory = sys.argv[1]
 property_file = os.path.join(run_directory, "conf", "sandag_abm.properties")
 
 with open(property_file, "r") as f:
