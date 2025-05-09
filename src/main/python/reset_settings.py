@@ -58,7 +58,7 @@ def set_properties(fp, pairs):
         f.close()
 
     for pair in pairs:
-        data = data.set_property(data, pair[0], pair[1])
+        data = set_property(data, pair[0], pair[1])
 
     with open(fp, "w") as f:
         f.write(data)
