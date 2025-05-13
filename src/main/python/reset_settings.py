@@ -3,10 +3,7 @@ import os
 import sys
 from shutil import copy2, copytree, rmtree
 
-def get_property(
-        data: str,
-        property: str
-):
+def get_property(data, property):
     """
     Reads a property from a text string of the property file
 
@@ -24,12 +21,7 @@ def get_property(
     """
     return data.split(property + " = ")[1].split("\n")[0]
 
-def set_property(
-        data: str,
-        property: str,
-        value: str,
-        str_replace: bool
-):
+def set_property(data, property, value, str_replace):
     """
     Sets a property in a text string that will be written as a property file
 
@@ -58,10 +50,7 @@ def set_property(
         end = start + len(text_to_replace)
         return data[:start] + value + data[end:]
 
-def set_properties(
-        fp: str,
-        groups: list
-):
+def set_properties(fp, groups):
     """
     Updates a property file with a list of length-2 tuples. For each tuple the first value will be replaced in the file with
     the second.
