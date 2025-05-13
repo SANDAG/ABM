@@ -21,7 +21,7 @@ def get_property(data, property):
     """
     return data.split(property + " = ")[1].split("\n")[0]
 
-def set_property(data, oldvalue, newvalue):
+def set_property(data, property, value):
     """
     Sets a property in a text string that will be written as a property file
 
@@ -29,17 +29,18 @@ def set_property(data, oldvalue, newvalue):
     ----------
     data (str):
         Text of property file
-    oldvalue (str):
-        Text string to be replaced
-    newvalue (str):
-        Text string to replace `oldvalue` with
+    property (str):
+        Name of property to be set
+    value (str):
+        Value to set `property` as
 
     Returns
     -------
     data (str):
         Updated text of property file
     """
-    return data.replace(oldvalue, newvalue)
+    text_to_replace = data.split(property + " = ")[1].split("\n")[0]
+    return data.replace(text_to_replace, value)
 
 def set_properties(fp, pairs):
     """
@@ -86,19 +87,25 @@ if __name__ == "__main__":
     set_properties(
         os.path.join(run_directory, "conf", "sandag_abm.properties"),
         [
-            ("RELEASE", release_directory),
-            ("LANDUSE", landuse_directory),
-            ("NETWORK", network_directory),
+            ("release", release_directory),
+            ("landuse", landuse_directory),
+            ("network", network_directory),
         ]
     )
 
     # Copy passenger model settings
+    os.rmdir(
+        os.path.join(run_directory, "src", "asim", "configs")
+    )
     copytree(
         os.path.join(release_directory, "common", "src", "asim", "configs"),
         os.path.join(run_directory, "src", "asim")
     )
 
     # Copy CVM settings
+    os.rmdir(
+        os.path.join(run_directory, "src", "asim", "configs")
+    )
     copytree(
         os.path.join(release_directory, "common", "src", "asim-cvm", "configs"),
         os.path.join(run_directory, "src", "asim-cvm")
