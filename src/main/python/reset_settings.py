@@ -40,7 +40,9 @@ def set_property(data, property, value):
         Updated text of property file
     """
     text_to_replace = data.split(property + " = ")[1].split("\n")[0]
-    return data.replace(text_to_replace, value)
+    start = data.index(text_to_replace)
+    end = start + len(text_to_replace)
+    return data[:start] + value + data[end:]
 
 def set_properties(fp, pairs):
     """
