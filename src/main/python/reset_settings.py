@@ -99,7 +99,7 @@ if __name__ == "__main__":
     )
     copytree(
         os.path.join(release_directory, "common", "src", "asim", "configs"),
-        os.path.join(run_directory, "src", "asim")
+        os.path.join(run_directory, "src", "asim", "configs")
     )
 
     # Copy CVM settings
@@ -108,7 +108,7 @@ if __name__ == "__main__":
     )
     copytree(
         os.path.join(release_directory, "common", "src", "asim-cvm", "configs"),
-        os.path.join(run_directory, "src", "asim-cvm")
+        os.path.join(run_directory, "src", "asim-cvm", "configs")
     )
 
     print("Settings have been reset!")
