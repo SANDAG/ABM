@@ -104,7 +104,7 @@ if __name__ == "__main__":
 
     # Copy CVM settings
     rmtree(
-        os.path.join(run_directory, "src", "asim", "configs")
+        os.path.join(run_directory, "src", "asim-cvm", "configs")
     )
     copytree(
         os.path.join(release_directory, "common", "src", "asim-cvm", "configs"),
