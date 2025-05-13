@@ -30,21 +30,27 @@ def set_property(data, property, value):
     data (str):
         Text of property file
     property (str):
-        Name of property to be set
+        If `str_replace` is False, this property will be updated with `value`. Otherwise all instances of that text string
+        will be replaced with `value`.
     value (str):
         Value to set `property` as
-
+    str_replace (bool):
+        If true, str.replace() will be used to replace all instances of `property` with `value`. Otherwise the single value of
+        `property` will be replaced by `value`.
     Returns
     -------
     data (str):
         Updated text of property file
     """
-    text_to_replace = data.split(property + " = ")[1].split("\n")[0]
-    start = data.index(text_to_replace)
-    end = start + len(text_to_replace)
-    return data[:start] + value + data[end:]
+    if str_replace:
+        return data.replace(property, value)
+    else:
+        text_to_replace = data.split(property + " = ")[1].split("\n")[0]
+        start = data.index(text_to_replace)
+        end = start + len(text_to_replace)
+        return data[:start] + value + data[end:]
 
-def set_properties(fp, pairs):
+def set_properties(fp, groups):
     """
     Updates a property file with a list of length-2 tuples. For each tuple the first value will be replaced in the file with
     the second.
@@ -53,15 +59,16 @@ def set_properties(fp, pairs):
     ----------
     fp (str):
         Filepath of property file
-    pairs (list):
-        List of length-2 tuples indicating what needs to be replaced and what to replace it by
+    group (list):
+        List of length-3 tuples indicating what needs to be replaced, what to replace it by, and what method will be used
     """
     with open(fp, "r") as f:
         data = f.read()
         f.close()
 
-    for pair in pairs:
-        data = set_property(data, pair[0], pair[1])
+    for group in groups:
+        assert len(group) == 3, "Inputs must be length-3 tuples"
+        data = set_property(data, group[0], group[1], group[2])
 
     with open(fp, "w") as f:
         f.write(data)
@@ -78,6 +85,8 @@ if __name__ == "__main__":
     release_directory = get_property(data, "release")
     landuse_directory = get_property(data, "landuse")
     network_directory = get_property(data, "network")
+    scenario_year = get_property(data, "scenarioYear")
+    scenario_year_suffix = get_property(data, "scenarioYearSuffix")
 
     # Copy property file
     copy2(
@@ -89,9 +98,11 @@ if __name__ == "__main__":
     set_properties(
         os.path.join(run_directory, "conf", "sandag_abm.properties"),
         [
-            ("release", release_directory),
-            ("landuse", landuse_directory),
-            ("network", network_directory),
+            ("release", release_directory, False),
+            ("landuse", landuse_directory, False),
+            ("network", network_directory, False),
+            ("${year}", scenario_year, True),
+            ("${suffix}", scenario_year_suffix, True),
         ]
     )
 
