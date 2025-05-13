@@ -1,7 +1,7 @@
 # jflo 5/9/2025
 import os
 import sys
-from shutil import copy2, copytree
+from shutil import copy2, copytree, rmtree
 
 def get_property(data, property):
     """
@@ -94,7 +94,7 @@ if __name__ == "__main__":
     )
 
     # Copy passenger model settings
-    os.rmdir(
+    rmtree(
         os.path.join(run_directory, "src", "asim", "configs")
     )
     copytree(
@@ -103,7 +103,7 @@ if __name__ == "__main__":
     )
 
     # Copy CVM settings
-    os.rmdir(
+    rmtree(
         os.path.join(run_directory, "src", "asim", "configs")
     )
     copytree(
