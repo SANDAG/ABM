@@ -30,7 +30,6 @@ class PropertiesSetter(object):
     sample_rates = _m.Attribute(str)
 
     useLocalDrive = _m.Attribute(bool)
-    skipSettingsManager = _m.Attribute(bool)
     skipMGRASkims = _m.Attribute(bool)
     skip4Ds = _m.Attribute(bool)
     skipBuildNetwork = _m.Attribute(bool)
@@ -209,7 +208,6 @@ class PropertiesSetter(object):
 
         skip_startup_items = [
             ("useLocalDrive",           "Use the local drive during the model run"),
-            ("skipSettingsManager",     "Skip settings management"),
             ("skipMGRASkims",           "Skip MGRA skims"),
             ("skip4Ds",                 "Skip running 4Ds"),
             ("skipBuildNetwork",        "Skip build of highway and transit network"),
@@ -355,7 +353,6 @@ class PropertiesSetter(object):
         self.sample_rates = ",".join(str(x) for x in props.get("sample_rates"))
 
         self.useLocalDrive = props.get("RunModel.useLocalDrive", True)
-        self.skipSettingsManager = props.get("RunModel.skipSettingsManager")
         self.skipMGRASkims = props.get("RunModel.skipMGRASkims", False)
         self.skip4Ds = props.get("RunModel.skip4Ds", False)
         self.skipBuildNetwork = props.get("RunModel.skipBuildNetwork", False)
@@ -401,7 +398,6 @@ class PropertiesSetter(object):
         props["sample_rates"] = [float(x) for x in self.sample_rates.split(",")]
 
         props["RunModel.useLocalDrive"] = self.useLocalDrive
-        props["RunModel.skipSettingsManager"] = self.skipSettingsManager
         props["RunModel.skipMGRASkims"] = self.skipMGRASkims
         props["RunModel.skip4Ds"] = self.skip4Ds
         props["RunModel.skipBuildNetwork"] = self.skipBuildNetwork

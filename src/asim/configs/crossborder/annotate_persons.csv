@@ -1,9 +1,9 @@
 Description,Target,Expression
 #,,annotate persons table after import
-,time_distrib_mean_work,1
-,time_distrib_stddev_nonwork,0.6
-,time_distrib_mean_nonwork,1
-,time_distrib_stddev_work,0.7
+,time_distrib_mean_work,distributed_time_factor_work_mean
+,time_distrib_stddev_nonwork,distributed_time_factor_nonwork_stddev
+,time_distrib_mean_nonwork,distributed_time_factor_nonwork_mean
+,time_distrib_stddev_work,distributed_time_factor_work_stddev
 fake demog segments needed by trip mode choice model,demographic_segment,'everyone'
 university status required by tour mode choice,is_university,False
 work time factor,work_time_factor,"rng.lognormal_for_df(persons, mu=time_distrib_mean_work, sigma=time_distrib_stddev_work)"
