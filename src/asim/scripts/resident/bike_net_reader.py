@@ -9,8 +9,6 @@ import os
 import logging
 import warnings
 
-from activitysim.core import simulate, workflow, chunk
-
 # Set up logging
 logger = logging.getLogger(__name__)
 
@@ -942,60 +940,6 @@ def calculate_utilities(
             )
         else:
             logger.info(f"No expression values to trace for {trace_label} utilities")
-
-    assert utilities.index.equals(
-        choosers.index
-    ), "Index mismatch between utilities and choosers"
-
-    return utilities
-
-
-def calculate_utilities_using_activitysim(
-    settings: BikeRouteChoiceSettings,
-    choosers: pd.DataFrame,
-    spec: pd.DataFrame,
-    trace_label: str,
-) -> pd.DataFrame:
-    """
-    Calculate utilities using ActivitySim's functionality
-
-    Parameters:
-        settings: BikeRouteChoiceSettings - settings for the bike route choice model
-        choosers: pd.DataFrame - DataFrame of choosers (edges or traversals)
-        spec: pd.DataFrame - DataFrame of utility specifications
-        trace_label: str - label for tracing
-
-    Returns:
-        pd.DataFrame - DataFrame of calculated utilities with same index as choosers
-    """
-
-    # first creating temporary state and chunk sizer needed to run eval_utilities
-    state = workflow.State.make_temp()
-    state.filesystem.output_dir = settings.output_path
-    # setting chunk_sizer to no chunking
-    chunk_sizer = chunk.ChunkSizer(
-        state=state,
-        chunk_tag="chunkless",
-        trace_label=trace_label,
-        num_choosers=0,
-        chunk_size=0,
-    )
-
-    # evaluate utilities
-    utilities = simulate.eval_utilities(
-        state=state,
-        choosers=choosers,
-        spec=spec.set_index("Expression")["Coefficient"].to_frame(),
-        locals_d={
-            "np": np,
-            "pd": pd,
-        },
-        trace_label=trace_label,
-        chunk_sizer=chunk_sizer,
-        trace_all_rows=settings.trace_bike_utilities,
-    )
-
-    utilities.rename(columns={"Coefficient": "utility"}, inplace=True)
 
     assert utilities.index.equals(
         choosers.index
