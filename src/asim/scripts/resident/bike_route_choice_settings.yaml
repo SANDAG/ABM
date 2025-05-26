@@ -1,0 +1,18 @@
+# Path to bike network shapefiles
+node_file: SANDAG_Bike_Node.shp
+link_file: SANDAG_Bike_Net.shp
+
+# Data directory, optional additional place to look for data
+data_dir: C:\Users\david.hensle\OneDrive - Resource Systems Group, Inc\Documents\projects\sandag\bike_route_choice\network
+
+# Path to bike route choice model output
+output_path: C:\Users\david.hensle\OneDrive - Resource Systems Group, Inc\Documents\projects\sandag\bike_route_choice\output
+
+# Edge utility specification file
+edge_util_file: bike_edge_utils.csv
+
+# Traversal utility specification file
+traversal_util_file: bike_traversal_utils.csv
+
+# whether to trace the edge utilities
+trace_bike_utilities: True

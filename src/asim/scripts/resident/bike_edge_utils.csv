@@ -1,0 +1,11 @@
+﻿Label,Description,Expression,Coefficient
+util_total_distance,Total distance in miles,@df.distance,-0.858
+util_class_I_bike_lane_dist,Distance on class I bike lanes,"@df.distance * np.where(df.bikeClass == 1, 1, 0)",0.610
+util_class_II_bike_lane_dist,Distance on class II bike lanes,"@df.distance * np.where(df.bikeClass == 2, 1, 0)",0.314
+util_class_III_bike_lane_dist,Distance on class III bike lanes,"@df.distance * np.where(df.bikeClass == 3, 1, 0)",0.085
+util_art_no_bike_lane,Distance on arterial without bike lanes,"@df.distance * np.where((df.arterial == False) & (df.lanes == 0), 1, 0)",-1.050
+util_dist_cycle_track_class_II,Distance on cyle track class II bike lanes,"@df.distance * df.cycleTrack",0.012
+util_dist_cycle_track_class_III,Distance on boulevard class III bike routes,"@df.distance * df.bikeBlvd",0.430
+# FIXME how to calculate if we don't know the destination? Use traversal angle but then how to get distance?,,
+#util_dist_wrong_way,Distance wrong way,,-3.445
+util_elevation_gain_ft,Cumulative gain in elevation ignoring declines in feet,@df.gain,-0.01
