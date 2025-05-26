@@ -6,6 +6,7 @@ import yaml
 from pydantic import BaseModel, ValidationError
 from typing import Optional, List
 import os
+import sys
 import logging
 import warnings
 
@@ -657,12 +658,12 @@ def read_bike_net(
         buggyRTE_penultimate, left_on=["start", "thru"], right_index=True, how="left"
     )
 
-    traversals.loc[traversals.index.isin(lasts.index), "buggyRTE_none"] = (
-        traversals.loc[traversals.index.isin(lasts.index), "buggyRTE_nonepenultimate"]
-    )
-    traversals.loc[~traversals.index.isin(lasts.index), "buggyRTE_none"] = (
-        traversals.loc[~traversals.index.isin(lasts.index), "buggyRTE_nonelast"]
-    )
+    traversals.loc[
+        traversals.index.isin(lasts.index), "buggyRTE_none"
+    ] = traversals.loc[traversals.index.isin(lasts.index), "buggyRTE_nonepenultimate"]
+    traversals.loc[
+        ~traversals.index.isin(lasts.index), "buggyRTE_none"
+    ] = traversals.loc[~traversals.index.isin(lasts.index), "buggyRTE_nonelast"]
 
     lasts = (
         traversals.groupby(["start", "thru"])
@@ -1019,8 +1020,6 @@ def calculate_traversal_utilities(
 
 if __name__ == "__main__":
     # can pass settings file as command line argument
-    import sys
-
     if len(sys.argv) > 1:
         settings_file = sys.argv[1]
     else:
