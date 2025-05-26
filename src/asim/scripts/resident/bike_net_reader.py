@@ -492,6 +492,19 @@ def read_bike_net(
         "turnType",
     ] = turn_none
 
+    # keep track of the number of outgoing turns w/ turn type == none
+    # FIXME this should almost certainly get removed
+    traversals = traversals.merge(
+        (traversals.set_index(["start", "thru"]).turnType == turn_none)
+        .reset_index()
+        .groupby(["start", "thru"])
+        .sum()
+        .rename(columns={"turnType": "none_turns"}),
+        left_on=["start", "thru"],
+        right_index=True,
+        how="left",
+    )
+
     # do the same but with right turns
     # FIXME this should be the actual usage, not the above, but we're
     # copying from the java implementation
@@ -508,6 +521,17 @@ def read_bike_net(
     logger.info("Calculating derived traversal attributes")
 
     # keep track of how many duplicate traversals have turn type == none
+    traversals = traversals.merge(
+        (traversals.set_index(["start", "thru", "end"]).turnType == turn_none)
+        .reset_index()
+        .groupby(["start", "thru", "end"])
+        .sum()
+        .rename(columns={"turnType": "dupNoneTurns_toEdge"}),
+        left_on=["start", "thru", "end"],
+        right_index=True,
+        how="left",
+    )
+
     traversals = traversals.merge(
         (traversals.set_index(["start", "thru", "end"]).turnType == turn_right)
         .reset_index()
