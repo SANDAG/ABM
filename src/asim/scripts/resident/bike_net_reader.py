@@ -493,129 +493,376 @@ def read_bike_net(
         "turnType",
     ] = turn_none
 
-    # keep track of the number of outgoing turns w/ turn type == none
+    # do the same but with right turns
+    # FIXME this should be the actual usage, not the above, but we're
+    # copying from the java implementation
     traversals = traversals.merge(
-        (traversals.set_index(["start", "thru"]).turnType == turn_none)
+        (traversals.set_index(["start", "thru"]).turnType == turn_right)
         .reset_index()
         .groupby(["start", "thru"])
         .sum()
-        .rename(columns={"turnType": "none_turns"}),
+        .rename(columns={"turnType": "rt_turns"}),
         left_on=["start", "thru"],
         right_index=True,
         how="left",
     )
+    logger.info("Calculating derived traversal attributes")
 
     # keep track of how many duplicate traversals have turn type == none
     traversals = traversals.merge(
-        (traversals.set_index(["start", "thru", "end"]).turnType == turn_none)
+        (traversals.set_index(["start", "thru", "end"]).turnType == turn_right)
         .reset_index()
         .groupby(["start", "thru", "end"])
         .sum()
-        .rename(columns={"turnType": "dupNoneTurns_toEdge"}),
+        .rename(columns={"turnType": "dupRtTurns_toEdge"}),
         left_on=["start", "thru", "end"],
         right_index=True,
         how="left",
     )
 
-    # populate derived traversal attributes
-    logger.info("Calculating derived traversal attributes")
-    traversals = (
-        traversals.assign(
-            thruCentroid=traversals.centroidConnector_fromEdge
-            & traversals.centroidConnector_toEdge,
-            signalExclRight=(
-                traversals.signalized
-                & (traversals.turnType != turn_right)
-                & (
-                    traversals.centroid_start
-                    | traversals.centroid_thru
-                    | traversals.centroid_end
-                    | (traversals.turnType != turn_none)
-                )
-                # FIXME: this doesn't include isThruJunction method yet
-            ),
-            # unlfrma: unsignalized left from major arterial
-            unlfrma=(
-                (~traversals.signalized)
-                & (traversals.functionalClass_fromEdge <= 3)
-                & (traversals.functionalClass_fromEdge > 0)
-                & (traversals.bikeClass_fromEdge != 1)
-                & (traversals.turnType == turn_left)
-            ),
-            # unlfrmi: unsignalized left from minor arterial
-            unlfrmi=(
-                (~traversals.signalized)
-                & (traversals.functionalClass_fromEdge == 4)
-                & (traversals.bikeClass_fromEdge != 1)
-                & (traversals.turnType == turn_left)
-            ),
-            # unxma: unsignalized cross major arterial
-            unxma=(
-                ~(
-                    traversals.centroid_start
-                    | traversals.centroid_thru
-                    | traversals.centroid_end
-                )
-                & (
-                    (
-                        (traversals.turnType == turn_none)
-                        & (
-                            traversals.majorArtXings
-                            - traversals.dupMajArts_fromEdge
-                            - traversals.dupMajArts_toEdge
-                        )
-                        >= 2
-                    )
-                    | (
-                        (traversals.turnType == turn_left)
-                        & (traversals.functionalClass_toEdge <= 3)
-                        & (traversals.functionalClass_toEdge > 0)
-                        & (traversals.bikeClass_toEdge != 1)
-                    )
-                )
-            ),
-            # unxmi: unsignalized cross minor arterial
-            unxmi=(
-                ~(
-                    traversals.centroid_start
-                    | traversals.centroid_thru
-                    | traversals.centroid_end
-                )
-                & (
-                    (
-                        (traversals.turnType == turn_none)
-                        & (
-                            traversals.artXings
-                            - traversals.dupArts_fromEdge
-                            - traversals.dupArts_toEdge
-                        )
-                        >= 2
-                    )
-                    | (
-                        (traversals.turnType == turn_left)
-                        & (traversals.functionalClass_toEdge == 4)
-                        & (traversals.functionalClass_toEdge > 0)
-                        & (traversals.bikeClass_toEdge != 1)
-                    )
-                )
-            ),
-            # FIXME: no access to highway variable!
+    # keep track of whether traversal is "thru junction"
+    traversals["ThruJunction_anynonevec"] = (
+        ~(
+            traversals.centroid_start
+            | traversals.centroid_thru
+            | traversals.centroid_end
         )
-        .set_index(["start", "thru", "end"])[
-            [
-                "turnType",
-                "thruCentroid",
-                "signalExclRight",
-                "unlfrma",
-                "unlfrmi",
-                "unxma",
-                "unxmi",
-            ]
-        ]
-        .astype({"turnType": int})
+        & (traversals.turnType == turn_none)
+        & (traversals.none_turns - traversals.dupNoneTurns_toEdge > 0)
     )
 
-    logger.info("Finished creating bike network edges and traversals")
+    # FIXME the above should eventually be removed if the below proves to be the desired behavior
+    traversals["ThruJunction_anyrtvec"] = (
+        ~(
+            traversals.centroid_start
+            | traversals.centroid_thru
+            | traversals.centroid_end
+        )
+        & (traversals.turnType == turn_none)
+        & (traversals.rt_turns - traversals.dupRtTurns_toEdge > 0)
+    )
+
+    ##########################################################################
+    # BUG IMPLEMENTATIONS BELOW
+
+    def isThruJunc(trav, turn_type, last_all):
+        # this method is buggy because it only considers the last traversal
+        # instead of checking for any right turn
+        if trav.centroid_start or trav.centroid_thru or trav.centroid_end:
+            return False
+        if trav.turnType != turn_none:
+            return False
+        if (
+            len(
+                traversals[
+                    (traversals.start == trav.start)
+                    & (traversals.thru == trav.thru)
+                    & (traversals.end != trav.start)
+                    & (traversals.end != trav.end)
+                ]
+            )
+            == 0
+        ):
+            return True
+
+        if last_all == "last":
+            if (
+                traversals[
+                    (traversals.start == trav.start)
+                    & (traversals.thru == trav.thru)
+                    & (traversals.end != trav.start)
+                    & (traversals.end != trav.end)
+                ]
+                .iloc[-1]
+                .turnType
+                == turn_type
+            ):
+                return False
+            else:
+                return True
+
+        elif last_all == "any":
+            return not (
+                traversals[
+                    (traversals.start == trav.start)
+                    & (traversals.thru == trav.thru)
+                    & (traversals.end != trav.start)
+                    & (traversals.end != trav.end)
+                ].turnType
+                == turn_right
+            ).any()
+
+    traversals["ThruJunction_lastnoneloop"] = False
+    traversals["ThruJunction_lastrtloop"] = False
+    traversals["ThruJunction_anynoneloop"] = False
+    traversals["ThruJunction_anyrtloop"] = False
+
+    for idx, trav in traversals.iterrows():
+
+        traversals.loc[idx, "ThruJunction_lastnoneloop"] = bool(
+            trav.signalized
+            and (trav.turnType != turn_right)
+            and not isThruJunc(trav, turn_none, "last")
+        )
+        traversals.loc[idx, "ThruJunction_lastrtloop"] = bool(
+            trav.signalized
+            and (trav.turnType != turn_right)
+            and not isThruJunc(trav, turn_right, "last")
+        )
+        traversals.loc[idx, "ThruJunction_anynoneloop"] = bool(
+            trav.signalized
+            and (trav.turnType != turn_right)
+            and not isThruJunc(trav, turn_none, "any")
+        )
+        traversals.loc[idx, "ThruJunction_anyrtloop"] = bool(
+            trav.signalized
+            and (trav.turnType != turn_right)
+            and not isThruJunc(trav, turn_right, "any")
+        )
+
+    # the below is buggy because it counts none-turns instead of right turns
+    lasts = (
+        traversals.groupby(["start", "thru"])
+        .last()
+        .reset_index()
+        .set_index(["start", "thru", "end"])
+        .turnType
+        == turn_none
+    )
+    penultimates = (
+        traversals[
+            ~traversals.set_index(["start", "thru", "end"]).index.isin(lasts.index)
+        ]
+        .groupby(["start", "thru"])
+        .last()
+        .reset_index()
+        .set_index(["start", "thru", "end"])
+        .turnType
+        == turn_none
+    )
+
+    buggyRTE_last = (
+        lasts.reset_index()
+        .set_index(["start", "thru"])
+        .turnType.rename("buggyRTE_nonelast")
+    )
+    buggyRTE_penultimate = (
+        penultimates.reset_index()
+        .set_index(["start", "thru"])
+        .turnType.reindex(buggyRTE_last.index, fill_value=False)
+        .rename("buggyRTE_nonepenultimate")
+    )
+
+    traversals = traversals.merge(
+        buggyRTE_last, left_on=["start", "thru"], right_index=True, how="left"
+    ).merge(
+        buggyRTE_penultimate, left_on=["start", "thru"], right_index=True, how="left"
+    )
+
+    traversals.loc[traversals.index.isin(lasts.index), "buggyRTE_none"] = (
+        traversals.loc[traversals.index.isin(lasts.index), "buggyRTE_nonepenultimate"]
+    )
+    traversals.loc[~traversals.index.isin(lasts.index), "buggyRTE_none"] = (
+        traversals.loc[~traversals.index.isin(lasts.index), "buggyRTE_nonelast"]
+    )
+
+    lasts = (
+        traversals.groupby(["start", "thru"])
+        .last()
+        .reset_index()
+        .set_index(["start", "thru", "end"])
+        .turnType
+        == turn_right
+    )
+    penultimates = (
+        traversals[
+            ~traversals.set_index(["start", "thru", "end"]).index.isin(lasts.index)
+        ]
+        .groupby(["start", "thru"])
+        .last()
+        .reset_index()
+        .set_index(["start", "thru", "end"])
+        .turnType
+        == turn_right
+    )
+
+    buggyRTE_last = (
+        lasts.reset_index()
+        .set_index(["start", "thru"])
+        .turnType.rename("buggyRTE_rtlast")
+    )
+    buggyRTE_penultimate = (
+        penultimates.reset_index()
+        .set_index(["start", "thru"])
+        .turnType.reindex(buggyRTE_last.index, fill_value=False)
+        .rename("buggyRTE_rtpenultimate")
+    )
+
+    traversals = traversals.merge(
+        buggyRTE_last, left_on=["start", "thru"], right_index=True, how="left"
+    ).merge(
+        buggyRTE_penultimate, left_on=["start", "thru"], right_index=True, how="left"
+    )
+
+    traversals.loc[traversals.index.isin(lasts.index), "buggyRTE_rt"] = traversals.loc[
+        traversals.index.isin(lasts.index), "buggyRTE_rtpenultimate"
+    ]
+    traversals.loc[~traversals.index.isin(lasts.index), "buggyRTE_rt"] = traversals.loc[
+        ~traversals.index.isin(lasts.index), "buggyRTE_rtlast"
+    ]
+
+    traversals["ThruJunction_lastnonevec"] = (
+        ~(
+            traversals.centroid_start
+            | traversals.centroid_thru
+            | traversals.centroid_end
+        )
+        & (traversals.turnType == turn_none)
+        & ~(traversals.buggyRTE_none)
+    )
+    traversals["ThruJunction_lastrtvec"] = (
+        ~(
+            traversals.centroid_start
+            | traversals.centroid_thru
+            | traversals.centroid_end
+        )
+        & (traversals.turnType == turn_none)
+        & ~(traversals.buggyRTE_rt)
+    )
+    # END BUG CODE
+    #######################################
+
+    # populate derived traversal attributes
+    traversals = traversals.assign(
+        thruCentroid=traversals.centroidConnector_fromEdge
+        & traversals.centroidConnector_toEdge,
+        # this one is allegedly the one to keep
+        signalExclRight_anyrtvec=(
+            traversals.signalized
+            & (traversals.turnType != turn_right)
+            & (~traversals.ThruJunction_anyrtvec)
+        ),
+        # the rest can be ditched (ALLEGEDLY)
+        signalExclRight_anynonevec=(
+            traversals.signalized
+            & (traversals.turnType != turn_right)
+            & (~traversals.ThruJunction_anynonevec)
+        ),
+        signalExclRight_anyrtloop=(
+            traversals.signalized
+            & (traversals.turnType != turn_right)
+            & (~traversals.ThruJunction_anyrtloop)
+        ),
+        signalExclRight_anynoneloop=(
+            traversals.signalized
+            & (traversals.turnType != turn_right)
+            & (~traversals.ThruJunction_anynoneloop)
+        ),
+        signalExclRight_lastnonevec=(
+            traversals.signalized
+            & (traversals.turnType != turn_right)
+            & (~traversals.ThruJunction_lastnonevec)
+        ),
+        signalExclRight_lastrtvec=(
+            traversals.signalized
+            & (traversals.turnType != turn_right)
+            & (~traversals.ThruJunction_lastrtvec)
+        ),
+        signalExclRight_lastnoneloop=(
+            traversals.signalized
+            & (traversals.turnType != turn_right)
+            & (~traversals.ThruJunction_lastnoneloop)
+        ),
+        signalExclRight_lastrtloop=(
+            traversals.signalized
+            & (traversals.turnType != turn_right)
+            & (~traversals.ThruJunction_lastrtloop)
+        ),
+        # unlfrma: unsignalized left from major arterial
+        unlfrma=(
+            (~traversals.signalized)
+            & (traversals.functionalClass_fromEdge <= 3)
+            & (traversals.functionalClass_fromEdge > 0)
+            & (traversals.bikeClass_fromEdge != 1)
+            & (traversals.turnType == turn_left)
+        ),
+        # unlfrmi: unsignalized left from minor arterial
+        unlfrmi=(
+            (~traversals.signalized)
+            & (traversals.functionalClass_fromEdge == 4)
+            & (traversals.bikeClass_fromEdge != 1)
+            & (traversals.turnType == turn_left)
+        ),
+        # unxma: unsignalized cross major arterial
+        unxma=(
+            ~(
+                traversals.centroid_start
+                | traversals.centroid_thru
+                | traversals.centroid_end
+            )
+            & (
+                (
+                    (traversals.turnType == turn_none)
+                    & (
+                        traversals.majorArtXings
+                        - traversals.dupMajArts_fromEdge
+                        - traversals.dupMajArts_toEdge
+                    )
+                    >= 2
+                )
+                | (
+                    (traversals.turnType == turn_left)
+                    & (traversals.functionalClass_toEdge <= 3)
+                    & (traversals.functionalClass_toEdge > 0)
+                    & (traversals.bikeClass_toEdge != 1)
+                )
+            )
+        ),
+        # unxmi: unsignalized cross minor arterial
+        unxmi=(
+            ~(
+                traversals.centroid_start
+                | traversals.centroid_thru
+                | traversals.centroid_end
+            )
+            & (
+                (
+                    (traversals.turnType == turn_none)
+                    & (
+                        traversals.artXings
+                        - traversals.dupArts_fromEdge
+                        - traversals.dupArts_toEdge
+                    )
+                    >= 2
+                )
+                | (
+                    (traversals.turnType == turn_left)
+                    & (traversals.functionalClass_toEdge == 4)
+                    & (traversals.functionalClass_toEdge > 0)
+                    & (traversals.bikeClass_toEdge != 1)
+                )
+            )
+        ),
+    )[
+        [
+            "turnType",
+            "thruCentroid",
+            "signalExclRight_lastnoneloop",  # current Java implementation
+            "signalExclRight_lastrtloop",  # fixes rt-vs-none
+            "signalExclRight_lastnonevec",  # vector implementation of current Java
+            "signalExclRight_lastrtvec",  # same as above but also fixes rt-vs-none
+            "signalExclRight_anynoneloop",  # fixes any-vs-last check
+            "signalExclRight_anyrtloop",  # fixes any-vs-last and rt-vs-none (allegedly correct)
+            "signalExclRight_anynonevec",  # vector implementation of any-vs-last fix
+            "signalExclRight_anyrtvec",  # allegedly correct vector implementation
+            "unlfrma",
+            "unlfrmi",
+            "unxma",
+            "unxmi",
+        ]
+    ].astype(
+        {"turnType": int}
+    )
 
     return nodes, edges, traversals
 
