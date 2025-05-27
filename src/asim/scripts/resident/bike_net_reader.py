@@ -9,6 +9,7 @@ import os
 import sys
 import logging
 import warnings
+import tqdm
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -551,7 +552,7 @@ def read_bike_net(
             | traversals.centroid_end
         )
         & (traversals.turnType == turn_none)
-        & (traversals.none_turns - traversals.dupNoneTurns_toEdge > 0)
+        & (traversals.none_turns - traversals.dupNoneTurns_toEdge == 0)
     )
 
     # FIXME the above should eventually be removed if the below proves to be the desired behavior
@@ -562,7 +563,7 @@ def read_bike_net(
             | traversals.centroid_end
         )
         & (traversals.turnType == turn_none)
-        & (traversals.rt_turns - traversals.dupRtTurns_toEdge > 0)
+        & (traversals.rt_turns - traversals.dupRtTurns_toEdge == 0)
     )
 
     ##########################################################################
@@ -620,19 +621,21 @@ def read_bike_net(
     traversals["ThruJunction_anynoneloop"] = False
     traversals["ThruJunction_anyrtloop"] = False
 
-    for idx, trav in traversals.iterrows():
+    logger.info("Beginning slow loop")
 
-        traversals.loc[idx, "ThruJunction_lastnoneloop"] = bool(
-            isThruJunc(trav, turn_none, "last")
+    for idx, trav in tqdm.tqdm(traversals.iterrows(), total=len(traversals)):
+
+        traversals.loc[idx, "ThruJunction_lastnoneloop"] = isThruJunc(
+            trav, turn_none, "last"
         )
-        traversals.loc[idx, "ThruJunction_lastrtloop"] = bool(
-            isThruJunc(trav, turn_right, "last")
+        traversals.loc[idx, "ThruJunction_lastrtloop"] = isThruJunc(
+            trav, turn_right, "last"
         )
-        traversals.loc[idx, "ThruJunction_anynoneloop"] = bool(
-            isThruJunc(trav, turn_none, "any")
+        traversals.loc[idx, "ThruJunction_anynoneloop"] = isThruJunc(
+            trav, turn_none, "any"
         )
-        traversals.loc[idx, "ThruJunction_anyrtloop"] = bool(
-            isThruJunc(trav, turn_right, "any")
+        traversals.loc[idx, "ThruJunction_anyrtloop"] = isThruJunc(
+            trav, turn_right, "any"
         )
 
     # the below is buggy because it counts none-turns instead of right turns
@@ -746,6 +749,7 @@ def read_bike_net(
     )
     # END BUG CODE
     #######################################
+    logger.info("Finished calculating buggy implementations")
 
     # populate derived traversal attributes
     traversals = (
