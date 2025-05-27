@@ -623,24 +623,16 @@ def read_bike_net(
     for idx, trav in traversals.iterrows():
 
         traversals.loc[idx, "ThruJunction_lastnoneloop"] = bool(
-            trav.signalized
-            and (trav.turnType != turn_right)
-            and not isThruJunc(trav, turn_none, "last")
+            isThruJunc(trav, turn_none, "last")
         )
         traversals.loc[idx, "ThruJunction_lastrtloop"] = bool(
-            trav.signalized
-            and (trav.turnType != turn_right)
-            and not isThruJunc(trav, turn_right, "last")
+            isThruJunc(trav, turn_right, "last")
         )
         traversals.loc[idx, "ThruJunction_anynoneloop"] = bool(
-            trav.signalized
-            and (trav.turnType != turn_right)
-            and not isThruJunc(trav, turn_none, "any")
+            isThruJunc(trav, turn_none, "any")
         )
         traversals.loc[idx, "ThruJunction_anyrtloop"] = bool(
-            trav.signalized
-            and (trav.turnType != turn_right)
-            and not isThruJunc(trav, turn_right, "any")
+            isThruJunc(trav, turn_right, "any")
         )
 
     # the below is buggy because it counts none-turns instead of right turns
