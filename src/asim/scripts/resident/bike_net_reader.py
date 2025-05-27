@@ -756,135 +756,137 @@ def read_bike_net(
     #######################################
 
     # populate derived traversal attributes
-    traversals = traversals.assign(
-        thruCentroid=traversals.centroidConnector_fromEdge
-        & traversals.centroidConnector_toEdge,
-        # this one is allegedly the one to keep
-        signalExclRight_anyrtvec=(
-            traversals.signalized
-            & (traversals.turnType != turn_right)
-            & (~traversals.ThruJunction_anyrtvec)
-        ),
-        # the rest can be ditched (ALLEGEDLY)
-        signalExclRight_anynonevec=(
-            traversals.signalized
-            & (traversals.turnType != turn_right)
-            & (~traversals.ThruJunction_anynonevec)
-        ),
-        signalExclRight_anyrtloop=(
-            traversals.signalized
-            & (traversals.turnType != turn_right)
-            & (~traversals.ThruJunction_anyrtloop)
-        ),
-        signalExclRight_anynoneloop=(
-            traversals.signalized
-            & (traversals.turnType != turn_right)
-            & (~traversals.ThruJunction_anynoneloop)
-        ),
-        signalExclRight_lastnonevec=(
-            traversals.signalized
-            & (traversals.turnType != turn_right)
-            & (~traversals.ThruJunction_lastnonevec)
-        ),
-        signalExclRight_lastrtvec=(
-            traversals.signalized
-            & (traversals.turnType != turn_right)
-            & (~traversals.ThruJunction_lastrtvec)
-        ),
-        signalExclRight_lastnoneloop=(
-            traversals.signalized
-            & (traversals.turnType != turn_right)
-            & (~traversals.ThruJunction_lastnoneloop)
-        ),
-        signalExclRight_lastrtloop=(
-            traversals.signalized
-            & (traversals.turnType != turn_right)
-            & (~traversals.ThruJunction_lastrtloop)
-        ),
-        # unlfrma: unsignalized left from major arterial
-        unlfrma=(
-            (~traversals.signalized)
-            & (traversals.functionalClass_fromEdge <= 3)
-            & (traversals.functionalClass_fromEdge > 0)
-            & (traversals.bikeClass_fromEdge != 1)
-            & (traversals.turnType == turn_left)
-        ),
-        # unlfrmi: unsignalized left from minor arterial
-        unlfrmi=(
-            (~traversals.signalized)
-            & (traversals.functionalClass_fromEdge == 4)
-            & (traversals.bikeClass_fromEdge != 1)
-            & (traversals.turnType == turn_left)
-        ),
-        # unxma: unsignalized cross major arterial
-        unxma=(
-            ~(
-                traversals.centroid_start
-                | traversals.centroid_thru
-                | traversals.centroid_end
-            )
-            & (
-                (
-                    (traversals.turnType == turn_none)
-                    & (
-                        traversals.majorArtXings
-                        - traversals.dupMajArts_fromEdge
-                        - traversals.dupMajArts_toEdge
+    traversals = (
+        traversals.assign(
+            thruCentroid=traversals.centroidConnector_fromEdge
+            & traversals.centroidConnector_toEdge,
+            # this one is allegedly the one to keep
+            signalExclRight_anyrtvec=(
+                traversals.signalized
+                & (traversals.turnType != turn_right)
+                & (~traversals.ThruJunction_anyrtvec)
+            ),
+            # the rest can be ditched (ALLEGEDLY)
+            signalExclRight_anynonevec=(
+                traversals.signalized
+                & (traversals.turnType != turn_right)
+                & (~traversals.ThruJunction_anynonevec)
+            ),
+            signalExclRight_anyrtloop=(
+                traversals.signalized
+                & (traversals.turnType != turn_right)
+                & (~traversals.ThruJunction_anyrtloop)
+            ),
+            signalExclRight_anynoneloop=(
+                traversals.signalized
+                & (traversals.turnType != turn_right)
+                & (~traversals.ThruJunction_anynoneloop)
+            ),
+            signalExclRight_lastnonevec=(
+                traversals.signalized
+                & (traversals.turnType != turn_right)
+                & (~traversals.ThruJunction_lastnonevec)
+            ),
+            signalExclRight_lastrtvec=(
+                traversals.signalized
+                & (traversals.turnType != turn_right)
+                & (~traversals.ThruJunction_lastrtvec)
+            ),
+            signalExclRight_lastnoneloop=(
+                traversals.signalized
+                & (traversals.turnType != turn_right)
+                & (~traversals.ThruJunction_lastnoneloop)
+            ),
+            signalExclRight_lastrtloop=(
+                traversals.signalized
+                & (traversals.turnType != turn_right)
+                & (~traversals.ThruJunction_lastrtloop)
+            ),
+            # unlfrma: unsignalized left from major arterial
+            unlfrma=(
+                (~traversals.signalized)
+                & (traversals.functionalClass_fromEdge <= 3)
+                & (traversals.functionalClass_fromEdge > 0)
+                & (traversals.bikeClass_fromEdge != 1)
+                & (traversals.turnType == turn_left)
+            ),
+            # unlfrmi: unsignalized left from minor arterial
+            unlfrmi=(
+                (~traversals.signalized)
+                & (traversals.functionalClass_fromEdge == 4)
+                & (traversals.bikeClass_fromEdge != 1)
+                & (traversals.turnType == turn_left)
+            ),
+            # unxma: unsignalized cross major arterial
+            unxma=(
+                ~(
+                    traversals.centroid_start
+                    | traversals.centroid_thru
+                    | traversals.centroid_end
+                )
+                & (
+                    (
+                        (traversals.turnType == turn_none)
+                        & (
+                            traversals.majorArtXings
+                            - traversals.dupMajArts_fromEdge
+                            - traversals.dupMajArts_toEdge
+                        )
+                        >= 2
                     )
-                    >= 2
-                )
-                | (
-                    (traversals.turnType == turn_left)
-                    & (traversals.functionalClass_toEdge <= 3)
-                    & (traversals.functionalClass_toEdge > 0)
-                    & (traversals.bikeClass_toEdge != 1)
-                )
-            )
-        ),
-        # unxmi: unsignalized cross minor arterial
-        unxmi=(
-            ~(
-                traversals.centroid_start
-                | traversals.centroid_thru
-                | traversals.centroid_end
-            )
-            & (
-                (
-                    (traversals.turnType == turn_none)
-                    & (
-                        traversals.artXings
-                        - traversals.dupArts_fromEdge
-                        - traversals.dupArts_toEdge
+                    | (
+                        (traversals.turnType == turn_left)
+                        & (traversals.functionalClass_toEdge <= 3)
+                        & (traversals.functionalClass_toEdge > 0)
+                        & (traversals.bikeClass_toEdge != 1)
                     )
-                    >= 2
                 )
-                | (
-                    (traversals.turnType == turn_left)
-                    & (traversals.functionalClass_toEdge == 4)
-                    & (traversals.functionalClass_toEdge > 0)
-                    & (traversals.bikeClass_toEdge != 1)
+            ),
+            # unxmi: unsignalized cross minor arterial
+            unxmi=(
+                ~(
+                    traversals.centroid_start
+                    | traversals.centroid_thru
+                    | traversals.centroid_end
                 )
-            )
-        ),
-    )[
-        [
-            "turnType",
-            "thruCentroid",
-            "signalExclRight_lastnoneloop",  # current Java implementation
-            "signalExclRight_lastrtloop",  # fixes rt-vs-none
-            "signalExclRight_lastnonevec",  # vector implementation of current Java
-            "signalExclRight_lastrtvec",  # same as above but also fixes rt-vs-none
-            "signalExclRight_anynoneloop",  # fixes any-vs-last check
-            "signalExclRight_anyrtloop",  # fixes any-vs-last and rt-vs-none (allegedly correct)
-            "signalExclRight_anynonevec",  # vector implementation of any-vs-last fix
-            "signalExclRight_anyrtvec",  # allegedly correct vector implementation
-            "unlfrma",
-            "unlfrmi",
-            "unxma",
-            "unxmi",
+                & (
+                    (
+                        (traversals.turnType == turn_none)
+                        & (
+                            traversals.artXings
+                            - traversals.dupArts_fromEdge
+                            - traversals.dupArts_toEdge
+                        )
+                        >= 2
+                    )
+                    | (
+                        (traversals.turnType == turn_left)
+                        & (traversals.functionalClass_toEdge == 4)
+                        & (traversals.functionalClass_toEdge > 0)
+                        & (traversals.bikeClass_toEdge != 1)
+                    )
+                )
+            ),
+        )
+        .set_index(["start", "thru", "end"])[
+            [
+                "turnType",
+                "thruCentroid",
+                "signalExclRight_lastnoneloop",  # current Java implementation
+                "signalExclRight_lastrtloop",  # fixes rt-vs-none
+                "signalExclRight_lastnonevec",  # vector implementation of current Java
+                "signalExclRight_lastrtvec",  # same as above but also fixes rt-vs-none
+                "signalExclRight_anynoneloop",  # fixes any-vs-last check
+                "signalExclRight_anyrtloop",  # fixes any-vs-last and rt-vs-none (allegedly correct)
+                "signalExclRight_anynonevec",  # vector implementation of any-vs-last fix
+                "signalExclRight_anyrtvec",  # allegedly correct vector implementation
+                "unlfrma",
+                "unlfrmi",
+                "unxma",
+                "unxmi",
+            ]
         ]
-    ].astype(
-        {"turnType": int}
+        .astype({"turnType": int})
     )
 
     return nodes, edges, traversals
