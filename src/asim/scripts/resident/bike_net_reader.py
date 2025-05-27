@@ -114,7 +114,7 @@ def read_file(settings, file_path: str) -> gpd.GeoDataFrame:
         return return_file(script_path)
 
     # 3. Try data directory
-    data_path = os.path.join(settings.data_dir, file_path)
+    data_path = os.path.join(os.path.expanduser(settings.data_dir), file_path)
     if os.path.exists(data_path):
         return return_file(data_path)
 
@@ -682,12 +682,12 @@ def read_bike_net(
         buggyRTE_penultimate, left_on=["start", "thru"], right_index=True, how="left"
     )
 
-    traversals.loc[
-        traversals.index.isin(lasts.index), "buggyRTE_none"
-    ] = traversals.loc[traversals.index.isin(lasts.index), "buggyRTE_nonepenultimate"]
-    traversals.loc[
-        ~traversals.index.isin(lasts.index), "buggyRTE_none"
-    ] = traversals.loc[~traversals.index.isin(lasts.index), "buggyRTE_nonelast"]
+    traversals.loc[traversals.index.isin(lasts.index), "buggyRTE_none"] = (
+        traversals.loc[traversals.index.isin(lasts.index), "buggyRTE_nonepenultimate"]
+    )
+    traversals.loc[~traversals.index.isin(lasts.index), "buggyRTE_none"] = (
+        traversals.loc[~traversals.index.isin(lasts.index), "buggyRTE_nonelast"]
+    )
 
     lasts = (
         traversals.groupby(["start", "thru"])
