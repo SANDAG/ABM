@@ -349,7 +349,7 @@ def read_bike_net(
         traversals.loc[traversals.angle > math.pi, "angle"] - 2 * math.pi
     )
     traversals.loc[traversals.angle < -math.pi, "angle"] = (
-        traversals.loc[traversals.angle > math.pi, "angle"] + 2 * math.pi
+        traversals.loc[traversals.angle < -math.pi, "angle"] + 2 * math.pi
     )
     traversals.set_index(["start", "thru", "end"])
 
