@@ -80,7 +80,7 @@ def airport_returns(
         trips.index.max() + 1, trips.index.max() + 1 + len(trip_returns)
     )
     trip_returns = trip_returns.set_index("trip_id")
-    trips = trips.append(trip_returns)
+    trips = pd.concat([trips, trip_returns])
 
     state.add_table("trips", trips)
 
