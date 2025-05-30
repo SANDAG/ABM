@@ -417,12 +417,15 @@ if __name__ == '__main__':
         _, stderr = process.communicate()
         if process.returncode != 0:
             raise subprocess.SubprocessError(stderr.decode())
-
-
-
-
-
-
-
-
-
+        
+        print('RECODING TRIP MODES')
+        settings_file = os.path.join(config_dir, "settings.yaml")
+        with open(settings_file) as f:
+            settings = yaml.safe_load(f)
+            f.close()
+        prefix = settings["output_tables"]["prefix"]
+        
+        trips_file = os.path.join(output_dir, prefix + "trips.csv")
+        trips = pd.read_csv(trips_file)
+        del trips["trip_mode"]
+        trips.rename(columns = {"trip_mode_assign": "trip_mode"}).to_csv(trips_file, index = False)
