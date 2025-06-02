@@ -1,4 +1,4 @@
-name: asim_132
+name: asim_140
 channels:
 - conda-forge
 - nodefaults
@@ -11,7 +11,7 @@ dependencies:
 - bump2version  # for making a release
 - coveralls
 - cytoolz = 0.12.*
-- dask = 2023.3.*
+- dask = 2023.11.*
 - descartes
 - filelock
 - fsspec
@@ -31,11 +31,11 @@ dependencies:
 - nbmake
 - numba = 0.57.*
 - numexpr
-- numpy = 1.23.*
+- numpy = 1.24.*
 - numpydoc
 - openmatrix = 0.3.*
 - orca = 1.8
-- pandas = 1.4.*
+- pandas = 2.2.*
 - pandana
 - pandera >= 0.15, <0.18.1
 - platformdirs = 3.2.*
@@ -47,7 +47,7 @@ dependencies:
 - pydata-sphinx-theme
 - pyinstrument = 4.4
 - pypyr = 5.8.*
-- pytables >=3.7
+- pytables >=3.9
 - pytest = 7.2.*
 - pytest-cov
 - pytest-regressions
@@ -66,7 +66,7 @@ dependencies:
 - sphinx = 6.1.*
 - sphinx_rtd_theme = 1.2.*
 - sphinx-argparse = 0.4.*
-- xarray = 2023.2.*
+- xarray = 2025.01.*
 - xmle
-- zarr = 2.14.*
+- zarr >= 2,<3
 - zstandard
