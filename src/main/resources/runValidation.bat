@@ -19,7 +19,7 @@ set ENV=%CONDA_PREFIX%
 call %ENV%\Scripts\activate.bat %ENV%
 
 rem ### Use ABM3 conda env (for both tcov and tned)
-call activate asim_134
+call activate asim_140
 
 rem ### Running validation pipeline for input scenario
 python %SOURCE_DIRECTORY%\src\%SCENARIOYEAR%\validation.py %PROJECT_DRIVE%%PROJECT_DIRECTORY% %SCENARIOYEAR%

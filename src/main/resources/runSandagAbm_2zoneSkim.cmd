@@ -20,12 +20,12 @@ ECHO CONDA_ACT: %CONDA_ACT%
 SET CONDA_DEA=%ANACONDA_DIR%\Scripts\deactivate.bat
 ECHO CONDA_DEA: %CONDA_DEA%
 
-SET PYTHON=C:\Users\%USERNAME%\.conda\envs\asim_134\python.exe
+SET PYTHON=C:\Users\%USERNAME%\.conda\envs\asim_140\python.exe
 ECHO PYTHON: %PYTHON%
 
 ECHO Activate ActivitySim Environment....
 CD /d %ANACONDA_DIR%\Scripts
-CALL %CONDA_ACT% asim_134
+CALL %CONDA_ACT% asim_140
 
 
 cd /d %PROJECT_DIRECTORY%
