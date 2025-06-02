@@ -613,7 +613,7 @@ def read_bike_net(
                     & (traversals.end != trav.start)
                     & (traversals.end != trav.end)
                 ].turnType
-                == turn_right
+                == turn_type
             ).any()
 
     traversals["ThruJunction_lastnoneloop"] = False
@@ -639,7 +639,10 @@ def read_bike_net(
         )
 
     # the below is buggy because it counts none-turns instead of right turns
-    lasts = (
+
+    # index: all last traversals of all input groups
+    # values: whether the index traversal is a none turn
+    is_none = (
         traversals.groupby(["start", "thru"])
         .last()
         .reset_index()
@@ -647,9 +650,15 @@ def read_bike_net(
         .turnType
         == turn_none
     )
-    penultimates = (
+
+    last_travs = is_none.index
+
+    # index: all last and penultimate traversals
+    # values: whether the index traversal is a none turn
+    is_none = pd.concat([is_none,
         traversals[
-            ~traversals.set_index(["start", "thru", "end"]).index.isin(lasts.index)
+            # don't allow index of penultimates to match last - we want two different candidates
+            ~traversals.set_index(["start", "thru", "end"]).index.isin(last_travs)
         ]
         .groupby(["start", "thru"])
         .last()
@@ -657,34 +666,31 @@ def read_bike_net(
         .set_index(["start", "thru", "end"])
         .turnType
         == turn_none
-    )
+    ])
 
-    buggyRTE_last = (
-        lasts.reset_index()
-        .set_index(["start", "thru"])
-        .turnType.rename("buggyRTE_nonelast")
-    )
-    buggyRTE_penultimate = (
-        penultimates.reset_index()
-        .set_index(["start", "thru"])
-        .turnType.reindex(buggyRTE_last.index, fill_value=False)
-        .rename("buggyRTE_nonepenultimate")
-    )
+    penult_travs = is_none.index[~is_none.index.isin(last_travs)]
+    penult_is_none = is_none[penult_travs]
+    last_is_none = is_none[last_travs]
 
+    # tack on the two new columns
     traversals = traversals.merge(
-        buggyRTE_last, left_on=["start", "thru"], right_index=True, how="left"
+        last_is_none, left_on=["start", "thru"], right_index=True, how="left"
     ).merge(
-        buggyRTE_penultimate, left_on=["start", "thru"], right_index=True, how="left"
+        penult_is_none, left_on=["start", "thru"], right_index=True, how="left"
     )
 
-    traversals.loc[traversals.index.isin(lasts.index), "buggyRTE_none"] = (
-        traversals.loc[traversals.index.isin(lasts.index), "buggyRTE_nonepenultimate"]
+    # for all traversals that match the last traversal, use the penultimate value
+    traversals.loc[traversals.index.isin(last_is_none.index), "buggyRTE_none"] = (
+        traversals.loc[traversals.index.isin(last_is_none.index), "penultimate_is_none"]
     )
-    traversals.loc[~traversals.index.isin(lasts.index), "buggyRTE_none"] = (
-        traversals.loc[~traversals.index.isin(lasts.index), "buggyRTE_nonelast"]
+    # for all other traversals, use the last value
+    traversals.loc[~traversals.index.isin(last_is_none.index), "buggyRTE_none"] = (
+        traversals.loc[~traversals.index.isin(last_is_none.index), "last_is_none"]
     )
 
-    lasts = (
+    # index: all last traversals of all input groups
+    # values: whether the index traversal is a right turn
+    last_is_rt = (
         traversals.groupby(["start", "thru"])
         .last()
         .reset_index()
@@ -692,9 +698,11 @@ def read_bike_net(
         .turnType
         == turn_right
     )
-    penultimates = (
+    # index: all penultimate traversals of input groups w/ >1 out link
+    # values: whether the index traversal is a right turn
+    penultimate_is_rt = (
         traversals[
-            ~traversals.set_index(["start", "thru", "end"]).index.isin(lasts.index)
+            ~traversals.set_index(["start", "thru", "end"]).index.isin(last_is_rt.index)
         ]
         .groupby(["start", "thru"])
         .last()
@@ -704,29 +712,32 @@ def read_bike_net(
         == turn_right
     )
 
-    buggyRTE_last = (
-        lasts.reset_index()
+    # drop the end column 
+    last_is_rt = (
+        last_is_rt.reset_index()
         .set_index(["start", "thru"])
-        .turnType.rename("buggyRTE_rtlast")
+        .turnType.rename("last_is_rt")
     )
-    buggyRTE_penultimate = (
-        penultimates.reset_index()
+    # drop the end column and assume false for input groups w/ 1 out link
+    penultimate_is_rt = (
+        penultimate_is_rt.reset_index()
         .set_index(["start", "thru"])
-        .turnType.reindex(buggyRTE_last.index, fill_value=False)
-        .rename("buggyRTE_rtpenultimate")
+        .turnType.reindex(last_is_rt.index, fill_value=False)
+        .rename("penultimate_is_rt")
     )
 
+    # tack on two new columns
     traversals = traversals.merge(
-        buggyRTE_last, left_on=["start", "thru"], right_index=True, how="left"
+        last_is_rt, left_on=["start", "thru"], right_index=True, how="left"
     ).merge(
-        buggyRTE_penultimate, left_on=["start", "thru"], right_index=True, how="left"
+        penultimate_is_rt, left_on=["start", "thru"], right_index=True, how="left"
     )
 
-    traversals.loc[traversals.index.isin(lasts.index), "buggyRTE_rt"] = traversals.loc[
-        traversals.index.isin(lasts.index), "buggyRTE_rtpenultimate"
+    traversals.loc[traversals.index.isin(last_is_rt.index), "buggyRTE_rt"] = traversals.loc[
+        traversals.index.isin(last_is_rt.index), "penultimate_is_rt"
     ]
-    traversals.loc[~traversals.index.isin(lasts.index), "buggyRTE_rt"] = traversals.loc[
-        ~traversals.index.isin(lasts.index), "buggyRTE_rtlast"
+    traversals.loc[~traversals.index.isin(last_is_rt.index), "buggyRTE_rt"] = traversals.loc[
+        ~traversals.index.isin(last_is_rt.index), "last_is_rt"
     ]
 
     traversals["ThruJunction_lastnonevec"] = (
