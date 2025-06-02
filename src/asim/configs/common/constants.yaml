@@ -213,13 +213,13 @@ max_bike_time: {mode-nonmotorized-bike-maxTime:}
 max_walk_distance: {mode-nonmotorized-walk-maxDistance:}
 max_bike_distance: {mode-nonmotorized-bike-maxDistance:}
 # Location of attractions for associated special size terms
-cabrillo_maz: 23831
-seaworld_maz: 8127
-legoland_maz: 24245
-safari_maz: 14345
-midway_maz: 10646
-zoo_maz: 10561
-torrypines_maz: 4093
+cabrillo_maz: {MGRAsOfInterest-specialGenerators-cabrillo:}
+seaworld_maz: {MGRAsOfInterest-specialGenerators-seaworld:}
+legoland_maz: {MGRAsOfInterest-specialGenerators-legoland:}
+safari_maz: {MGRAsOfInterest-specialGenerators-safariPark:}
+midway_maz: {MGRAsOfInterest-specialGenerators-midway:}
+zoo_maz: {MGRAsOfInterest-specialGenerators-zoo:}
+torrypines_maz: {MGRAsOfInterest-specialGenerators-torreyPines:}
 
 # Micromobility constants
 microVarCost: 39 #cents
@@ -274,7 +274,7 @@ MedIncomeBEVRebate: 0
 MedIncomePEVRebate: 0
 
 # MGRAs for Ports of Entry
-SanYsidro_maz_id: 9279
-OtayMesa_maz_id: 9387
-Tecate_maz_id: 22324
-OtayMesaEast_maz_id: 7123
+SanYsidro_maz_id: {MGRAsOfInterest-portsOfEntry-sanYsidro:}
+OtayMesa_maz_id: {MGRAsOfInterest-portsOfEntry-otayMesa:}
+Tecate_maz_id: {MGRAsOfInterest-portsOfEntry-tecate:}
+OtayMesaEast_maz_id: {MGRAsOfInterest-portsOfEntry-otayMesaEast:}

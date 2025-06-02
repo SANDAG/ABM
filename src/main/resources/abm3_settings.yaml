@@ -470,3 +470,18 @@ shadowPricing:
   targetThreshold: 20
   percentTolerance: 5
   failThreshold: 1
+
+MGRAsOfInterest:
+  specialGenerators:
+    cabrillo: 23831
+    seaworld: 8127
+    legoland: 24245
+    safariPark: 14345
+    midway: 10646
+    zoo: 10561
+    torreyPines: 4093
+  portsOfEntry:
+    sanYsidro: 9279
+    otayMesa: 9387
+    otayMesaEast: 7123
+    tecate: 22324
