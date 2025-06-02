@@ -22,6 +22,7 @@ mode:
     "mode-bike-speed": 10,
     "mode-bike-maxDist": 20
 }
+```
 This is done to ease global replacement. In any configuration yaml file (or the property file), a value from the master settings file can be replaced by putting the dictionary key folowed by a colon within curly brackets. Using the above example, any instance of `{mode-walk-speed:}` in any configuration file would be replaced by 3 when the settings manager is run, even if those references are in different files.
 
 ## Resetting settings
