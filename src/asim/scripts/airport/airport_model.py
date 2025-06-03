@@ -169,7 +169,7 @@ def create_tours(settings):
         employee_mode_2 = employee_park.copy()
         employee_mode_2['PT_terminal'] = 1- employee_mode_2['Public Transit Share to Terminal']
         employee_mode_2['Mode'] = 'WALK'
-        employee_mode = employee_mode.append(employee_mode_2)
+        employee_mode = pd.concat([employee_mode, employee_mode_2])
         employee_mode = employee_mode.pivot(index = 'Mode', columns = 'MGRA', values = 'PT_terminal' ).reset_index().fillna(0)
         employee_mode['Name'] = pd.Series([0,1])
         final_employee = pd.DataFrame()
@@ -184,7 +184,7 @@ def create_tours(settings):
                 mode_type_ids = np.argmax((mode_scaled_probs + 1.0).astype('i4'), axis=1)
                 tour_table['emp_trip_mode'] = mode_type_ids
                 tour_table['emp_trip_mode'] = tour_table['emp_trip_mode'].map(id_to_mode)
-                final_employee = final_employee.append(tour_table)
+                final_employee = pd.concat([final_employee, tour_table])
         final_employee = final_employee.drop('parkinglot',axis = 1)
     else:
         final_employee = emp_tours.drop('parkinglot',axis = 1).copy()
@@ -296,7 +296,7 @@ def create_sched_probs(settings):
             asim_sched[m].columns = [['purpose','outbound'] + ["{}_48".format(i) for i in range(1,49)]]
 
         
-    return asim_sched[0].append(asim_sched[1]).fillna(0)
+    return pd.concat([asim_sched[0], asim_sched[1]]).fillna(0)
     
 def create_households(tours):
     print("Creating households.")
