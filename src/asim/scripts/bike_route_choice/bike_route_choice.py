@@ -1,59 +1,16 @@
-import os
+import sys
 import numpy as np
-import pandas as pd
-import random
-import matplotlib.pyplot as plt
-import networkx as nx
+import logging
 from scipy.sparse import csr_matrix
 from scipy.sparse import csr_array, coo_array
-from scipy.spatial import cKDTree
 from scipy.sparse.csgraph import dijkstra
-from multiprocessing import Pool
-from numba import njit, types
-from numba.typed import Dict
-import time
 
+import bike_net_reader
+import bike_route_calculator
+from bike_route_utilities import BikeRouteChoiceSettings, load_settings
 
-# Global Variables for Network Size
-NUM_PRCESSORS = 1
-MAX_DISTANCE = (
-    10  # Maximum distance for Dijkstra's algorithm to search for shortest paths
-)
-
-DATA_DIR = r"T:\ABM\user\aber\bike_route_choice\network"
-
-
-INACCESSIBLE_COST_COEF = 999.0
-
-
-# Global Variables for Network Size
-NUM_NODES = 2000  # Changeable number of nodes
-NUM_CENTROIDS = 50  # Number of centroids (randomly selected nodes)
-
-# San Diego County Approximate Size (in miles)
-SAN_DIEGO_LAT_MIN, SAN_DIEGO_LAT_MAX = 0, 10
-SAN_DIEGO_LON_MIN, SAN_DIEGO_LON_MAX = 0, 10
-
-
-def read_bike_network_data(num_centroids=0, zone_level="mgra"):
-    """Read actual bike network data from CSV files."""
-    print("Reading network data from ", DATA_DIR)
-    nodes = pd.read_csv(os.path.join(DATA_DIR, "derivedBikeNodes.csv"))
-    edges = pd.read_csv(os.path.join(DATA_DIR, "derivedBikeEdges.csv"))
-    traversals = pd.read_csv(os.path.join(DATA_DIR, "derivedBikeTraversals.csv"))
-
-    # take the first n centroids for testing smaller samples
-    if num_centroids > 0:
-        new_centroids = (
-            nodes[nodes.centroid & (nodes[zone_level] > 0)].sample(num_centroids).index
-        )
-        nodes.centroid = False
-        nodes.loc[new_centroids, "centroid"] = True
-
-    print(f"Nodes: {nodes.shape} Edges: {edges.shape} Traversals: {traversals.shape}")
-
-    return nodes, edges, traversals
-
+# Set up logging
+logger = logging.getLogger(__name__)
 
 # def randomize_network_cost(edges, traversals, random_scale):
 #     print("Randomizing network costs")
@@ -64,205 +21,8 @@ def read_bike_network_data(num_centroids=0, zone_level="mgra"):
 #     return edges_rand, traversals_rand
 
 
-def get_edge_cost(edges, coef_dict, random_scale_coef=None, random_scale_link=None):
-
-    coefs = coef_dict.copy()
-
-    if random_scale_coef is not None:
-        for name, coef in coefs.items():
-            rand_coef = coef * (
-                1 + np.random.uniform(0 - random_scale_coef, random_scale_coef)
-            )
-            coefs[name] = rand_coef
-
-    edge_cost = (
-        (
-            coefs["distcla0"]
-            * edges.distance
-            * ((edges.bikeClass < 1) | (edges.bikeClass > 3))
-        )
-        + (coefs["distcla1"] * edges.distance * ((edges.bikeClass == 1)))
-        + (
-            coefs["distcla2"]
-            * edges.distance
-            * ((edges.bikeClass == 2) & (~edges.cycleTrack))
-        )
-        + (
-            coefs["distcla3"]
-            * edges.distance
-            * ((edges.bikeClass == 3) & (~edges.bikeBlvd))
-        )
-        + (
-            coefs["dartne2"]
-            * edges.distance
-            * (
-                (edges.bikeClass != 2)
-                & (edges.bikeClass != 1)
-                & (edges.functionalClass < 4)
-                & (edges.functionalClass > 0)
-            )
-        )
-        + (
-            coefs["dwrongwy"]
-            * edges.distance
-            * ((edges.bikeClass != 1) & (edges.lanes == 0))
-        )
-        + (coefs["dcyctrac"] * edges.distance * ((edges.cycleTrack)))
-        + (coefs["dbikblvd"] * edges.distance * ((edges.bikeBlvd)))
-        + (coefs["gain"] * edges.gain)
-    )
-
-    if random_scale_link is not None:
-        edge_cost = edge_cost * np.random.choice(
-            [(1 - random_scale_link), (1 + random_scale_link)], edge_cost.size
-        )
-
-    edge_cost = edge_cost + (
-        INACCESSIBLE_COST_COEF
-        * ((edges.functionalClass < 3) & (edges.functionalClass > 0))
-    )
-
-    return edge_cost
-
-
-def plot_shortest_path_with_results_buffered(
-    nodes, edges, shortest_path_df, origin, destination, iteration, buffer_size=None
-):
-    """Plot the shortest path between two nodes with additional path information within a square buffer around the origin node."""
-    print("Plotting the shortest path...")
-    path_data = shortest_path_df[
-        (shortest_path_df.origin == origin)
-        & (shortest_path_df.destination == destination)
-        & (shortest_path_df.iteration == iteration)
-    ]
-    if path_data.empty:
-        print(
-            f"No path found between {origin} and {destination} for iteration {iteration}"
-        )
-        return
-
-    # Get the coordinates of the origin node
-    origin_node = nodes[nodes["id"] == origin].iloc[0]
-    origin_x, origin_y = origin_node["x"], origin_node["y"]
-
-    if buffer_size:
-        # Define the buffer boundaries
-        min_x, max_x = origin_x - buffer_size, origin_x + buffer_size
-        min_y, max_y = origin_y - buffer_size, origin_y + buffer_size
-
-        # Filter nodes within the buffer
-        filtered_nodes = nodes[
-            (nodes["x"] >= min_x)
-            & (nodes["x"] <= max_x)
-            & (nodes["y"] >= min_y)
-            & (nodes["y"] <= max_y)
-        ]
-
-        # Filter edges to include only those with both nodes within the buffer
-        filtered_edges = edges[
-            edges["fromNode"].isin(filtered_nodes["id"])
-            & edges["toNode"].isin(filtered_nodes["id"])
-        ]
-
-        # check to make sure destination node is also in the buffer
-        if destination not in filtered_nodes["id"].values:
-            print(
-                f"Destination node {destination} is not in the buffer size of {buffer_size}"
-            )
-
-    else:
-        filtered_nodes = nodes
-        filtered_edges = edges
-
-    # Create a graph from the filtered nodes and edges
-    G = nx.Graph()
-    G.add_nodes_from(
-        [
-            (node["id"], {"pos": (node["x"], node["y"])})
-            for _, node in filtered_nodes.iterrows()
-        ]
-    )
-    G.add_edges_from(
-        [
-            (edge.fromNode, edge.toNode, {"weight": edge.distance})
-            for _, edge in filtered_edges.iterrows()
-        ]
-    )
-
-    # Extract positions for plotting
-    pos = nx.get_node_attributes(G, "pos")
-
-    # Plot the network
-    plt.figure(figsize=(10, 10))
-    nx.draw(
-        G, pos, node_size=10, with_labels=False, edge_color="gray", alpha=0.5, width=0.5
-    )
-
-    # Highlight the shortest path
-    path_edges = [
-        (path_data.fromNode.iloc[i], path_data.toNode.iloc[i])
-        for i in range(len(path_data))
-    ]
-    path_nodes = set(path_data.fromNode).union(set(path_data.toNode))
-    nx.draw_networkx_nodes(
-        G, pos, nodelist=path_nodes, node_color="red", node_size=50, label="Path Nodes"
-    )
-    nx.draw_networkx_edges(
-        G, pos, edgelist=path_edges, edge_color="blue", width=2, label="Shortest Path"
-    )
-
-    # Highlight the origin and destination nodes
-    nx.draw_networkx_nodes(
-        G, pos, nodelist=[origin], node_color="green", node_size=100, label="Origin"
-    )
-    nx.draw_networkx_nodes(
-        G,
-        pos,
-        nodelist=[destination],
-        node_color="purple",
-        node_size=100,
-        label="Destination",
-    )
-
-    # Calculate path information
-    num_edges = len(path_edges)
-    total_distance = path_data["distance"].sum()
-
-    total_cost = path_data["cost_total"].sum()
-    turns = path_data[path_data.turnType > 0]["turnType"].count()
-    path_size = path_data.iloc[0]["path_size"]
-    # Add path information to the plot
-    info_text = (
-        f"Origin: {origin}\n"
-        f"Destination: {destination}\n"
-        f"Iteration: {iteration}\n"
-        f"Number of Edges: {num_edges}\n"
-        f"Total Distance: {total_distance:.2f} units\n"
-        f"Turns: {turns}\n"
-        f"Total Cost: {total_cost:.2f}\n"
-        f"Path Size: {path_size:.2f}"
-    )
-
-    plt.text(
-        0.05,
-        0.95,
-        info_text,
-        transform=plt.gca().transAxes,
-        fontsize=12,
-        verticalalignment="top",
-        bbox=dict(boxstyle="round,pad=0.3", edgecolor="black", facecolor="white"),
-    )
-
-    # Add a legend
-    plt.legend(loc="upper right")
-    plt.title(
-        f"Shortest Path from Node {origin} to Node {destination} for iteration {iteration}"
-    )
-    plt.show(block=True)
-
-
 def process_paths_new(centroids, predecessors):
-    print("Processing paths without numba...")
+    logger.info("Processing paths without numba...")
 
     # Add self-referential column to predecessor table to indicate end of path
     predecessors_null = np.hstack(
@@ -348,7 +108,7 @@ def calculate_final_logsums_batch_traversals(
             - trace_paths_to_node (np.ndarray): To-node indices for traced paths.
             - trace_paths_path_size (np.ndarray): Path size for traced paths.
     """
-    print("Calculating logsums...")
+    logger.info("Calculating logsums...")
 
     # Mapped node id to centroids index
     dest_centroids_rev_map = np.zeros(max(dest_centroids) + 1, dtype=np.int32)
@@ -575,50 +335,52 @@ def _perform_dijkstra(centroids, adjacency_matrix, limit=3):
         return_predecessors=True,
         limit=limit,
     )
-    # shortest_paths = {}
-    # for centroid, distance_mat, predecessor_mat in zip(centroids, distances, predecessors):
-    #     shortest_paths[centroid] = (distance_mat, predecessor_mat)
 
     return (distances, predecessors)
 
 
 def perform_dijkstras_algorithm_batch_traversals(
-    nodes, edges, traversals, origin_centroids, limit=3
+    nodes, edges, traversals, origin_centroids, limit
 ):
     """Perform Dijkstra's algorithm for centroids using SciPy's sparse graph solver with batched parallel processing."""
     num_edges = len(edges)
 
     # # node mapping needs to start at 0 in order to create adjacency matrix
-    edge_mapping = edges[["fromNode", "toNode", "edgeCost"]].reset_index()
+    # fromNode and toNode index is saved as columns in edges
+    edge_mapping = edges["edge_utility"].reset_index()
 
-    traversals_mapped = traversals.merge(
-        edge_mapping,
-        how="left",
-        left_on=["start", "thru"],
-        right_on=["fromNode", "toNode"],
-    ).merge(
-        edge_mapping,
-        how="left",
-        left_on=["thru", "end"],
-        right_on=["fromNode", "toNode"],
-        suffixes=("FromEdge", "ToEdge"),
+    traversals_mapped = (
+        traversals.reset_index()
+        .merge(
+            edge_mapping,
+            how="left",
+            left_on=["start", "thru"],
+            right_on=["fromNode", "toNode"],
+        )
+        .merge(
+            edge_mapping,
+            how="left",
+            left_on=["thru", "end"],
+            right_on=["fromNode", "toNode"],
+            suffixes=("FromEdge", "ToEdge"),
+        )
     )
     # Total bike cost is edge cost (after traversal) plus traversal cost
     # Note origin zone connector edge cost is not included with this approach, but this has no impact on shortest path selection
-    traversals_mapped["bikeCostTotal"] = (
-        traversals_mapped.edgeCostToEdge + traversals_mapped.bikecost
+    traversals_mapped["total_utility"] = (
+        traversals_mapped.edge_utilityToEdge + traversals_mapped.traversal_utility
     )
     traversals_mapped.loc[
-        traversals_mapped.indexFromEdge.isin(origin_centroids), "bikeCostTotal"
-    ] += traversals_mapped.edgeCostFromEdge
+        traversals_mapped.indexFromEdge.isin(origin_centroids), "total_utility"
+    ] += traversals_mapped.edge_utilityFromEdge
 
     # Create a sparse adjacency matrix
     row = traversals_mapped.indexFromEdge.to_numpy()
     col = traversals_mapped.indexToEdge.to_numpy()
-    data = traversals_mapped.bikeCostTotal.to_numpy()
+    data = traversals_mapped.total_utility.to_numpy()
     adjacency_matrix = csr_matrix((data, (row, col)), shape=(num_edges, num_edges))
 
-    print(f"Need to calculate Dijkstra's on {len(origin_centroids)} centroids")
+    logger.info(f"Need to calculate Dijkstra's on {len(origin_centroids)} centroids")
 
     # Perform Dijkstra's algorithm for all centroids
     shortest_paths = _perform_dijkstra(origin_centroids, adjacency_matrix, limit)
@@ -626,16 +388,13 @@ def perform_dijkstras_algorithm_batch_traversals(
 
 
 def run_iterations_batch_traversals(
+    settings,
     nodes,
     edges,
     traversals,
     origin_centroids,
     dest_centroids,
-    cost_limit,
     num_iterations,
-    coef_dict,
-    random_scale_coef,
-    random_scale_link,
 ):
 
     all_paths = []
@@ -643,14 +402,28 @@ def run_iterations_batch_traversals(
     for i in range(num_iterations):
         # randomize costs
         # edges_rand, traversals_rand = randomize_network_cost(edges, traversals, random_scale)
-        edges_rand = edges.copy()
-        edges_rand["edgeCost"] = get_edge_cost(
-            edges, coef_dict, random_scale_coef, random_scale_link
+        # FIXME - calculate utilities with randomized costs
+        edges["edge_utility"] = bike_route_calculator.calculate_utilities_from_spec(
+            settings,
+            choosers=edges,
+            spec_file=settings.edge_util_file,
+            trace_label="bike_edge_utilities",
         )
+        traversals[
+            "traversal_utility"
+        ] = bike_route_calculator.calculate_utilities_from_spec(
+            settings,
+            choosers=traversals,
+            spec_file=settings.traversal_util_file,
+            trace_label="bike_traversal_utilities",
+        )
+        # convert edge utility to distance
+        avg_utility_per_mi = (edges["edge_utility"] / edges["distance"]).mean()
+        utility_limit = -1 * settings.max_dijkstra_distance * avg_utility_per_mi
 
         # run dijkstra's
         distances, predecessors = perform_dijkstras_algorithm_batch_traversals(
-            nodes, edges_rand, traversals, origin_centroids, limit=cost_limit
+            nodes, edges, traversals, origin_centroids, limit=utility_limit
         )
 
         # process paths
@@ -675,19 +448,20 @@ def run_iterations_batch_traversals(
 
 
 def run_batch_traversals(
+    settings,
     nodes,
     edges,
     traversals,
     origin_centroids,
     dest_centroids,
-    cost_limit,
     num_iterations,
-    coef_dict,
-    random_scale_coef,
-    random_scale_link,
     trace_origins=[],
     trace_dests=[],
 ):
+    """
+    Run batch traversals for the bike route choice model.
+
+    """
     (
         all_paths_orig,
         all_paths_dest,
@@ -695,16 +469,13 @@ def run_batch_traversals(
         all_paths_to_edge,
         all_paths_iteration,
     ) = run_iterations_batch_traversals(
+        settings,
         nodes,
         edges,
         traversals,
         origin_centroids,
         dest_centroids,
-        cost_limit,
         num_iterations,
-        coef_dict,
-        random_scale_coef,
-        random_scale_link,
     )
     trace_origins_rev = []
     trace_dests_rev = []
@@ -738,3 +509,42 @@ def run_batch_traversals(
         trace_dests_rev,
     )
     return final_paths
+
+
+def run_bike_route_choice(settings):
+    """Main function to run the bike route choice model."""
+
+    # create bike network
+    nodes, edges, traversals = bike_net_reader.create_bike_net(settings)
+
+    # Define centroids
+    # FIXME - centroids need to be selected intelligently
+    centroids = nodes[nodes.taz > 0].index.to_numpy()[
+        :100
+    ]  # Use first 100 centroids for testing
+
+    # Run the bike route choice model
+    final_paths = run_batch_traversals(
+        settings=settings,
+        nodes=nodes,
+        edges=edges,
+        traversals=traversals,
+        origin_centroids=centroids,
+        dest_centroids=centroids,  # For testing, use same centroids for origins and destinations
+        num_iterations=2,  # FIXME need setting Number of iterations for randomization
+    )
+
+    print("Bike route choice model completed.")
+    return final_paths
+
+
+if __name__ == "__main__":
+    # can pass settings file as command line argument
+    if len(sys.argv) > 1:
+        settings_file = sys.argv[1]
+    else:
+        settings_file = "bike_route_choice_settings.yaml"
+    # load settings
+    settings = load_settings(settings_file)
+
+    run_bike_route_choice(settings)

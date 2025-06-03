@@ -15,4 +15,7 @@ edge_util_file: bike_edge_utils.csv
 traversal_util_file: bike_traversal_utils.csv
 
 # whether to trace the edge utilities
-trace_bike_utilities: True
+trace_bike_utilities: False
+
+read_cached_bike_net: True
+save_bike_net: True

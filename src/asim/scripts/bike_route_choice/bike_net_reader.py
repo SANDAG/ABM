@@ -1,15 +1,10 @@
-import geopandas as gpd
 import pandas as pd
 import numpy as np
-import math
-import yaml
-from pydantic import BaseModel, ValidationError
-from typing import Optional, List
 import os
-import sys
+import math
 import logging
-import warnings
 import tqdm
+from bike_route_utilities import BikeRouteChoiceSettings, read_file
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -21,113 +16,9 @@ turn_right = 2
 turn_reverse = 3
 
 
-class BikeRouteChoiceSettings(BaseModel):
-    """
-    Bike route choice settings
-    """
-
-    # path to bike network shapefiles
-    node_file: str = "SANDAG_Bike_Node.shp"
-    link_file: str = "SANDAG_Bike_Net.shp"
-
-    # data directory, optional additional place to look for data
-    data_dir: str = ""
-
-    # edge utility specifcation file
-    edge_util_file: str = "bike_edge_utils.csv"
-
-    # traversal utility specifcation file
-    traversal_util_file: str = "bike_traversal_utils.csv"
-
-    # path to bike route choice model output
-    output_path: str = "output"
-
-    # whether to trace edge and traversal utility calculations
-    trace_bike_utilities: bool = False
-
-    # whether to recreate Java attributes -- not needed, but here for backwards compatibility tests
-    recreate_java_attributes: bool = False
-
-
-def load_settings(
-    yaml_path: str = "bike_route_choice_settings.yaml",
-) -> BikeRouteChoiceSettings:
-    with open(yaml_path, "r") as f:
-        data = yaml.safe_load(f)
-    try:
-        settings = BikeRouteChoiceSettings(**data)
-    except ValidationError as e:
-        print("Settings validation error:", e)
-        raise
-
-    # ensure output path exists
-    if not os.path.exists(settings.output_path):
-        os.makedirs(settings.output_path)
-        logger.info(f"Created output directory: {settings.output_path}")
-
-    # setup logger
-    log_file_location = os.path.join(settings.output_path, "bike_model.log")
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s - %(levelname)s - %(message)s",
-        handlers=[logging.FileHandler(log_file_location), logging.StreamHandler()],
-    )
-
-    return settings
-
-
-def calc_edge_angle(
-    start_x: float, start_y: float, end_x: float, end_y: float
-) -> float:
-    """
-    Calculate the heading of an edge from its start x and y coordinates
-    """
-
-    deltax = end_x - start_x
-    deltay = end_y - start_y
-
-    return math.atan2(deltay, deltax)
-
-
-def read_file(settings, file_path: str) -> gpd.GeoDataFrame:
-    """
-    Read a shapefile and return a GeoDataFrame
-
-    Looks for the shapefile in a few places:
-    1. The current working directory
-    2. The directory of the script
-    3. The data directory specified in the settings file
-    """
-
-    def return_file(path: str) -> gpd.GeoDataFrame | pd.DataFrame:
-        if path.endswith(".shp"):
-            return gpd.read_file(path)
-        elif path.endswith(".csv"):
-            return pd.read_csv(path, comment="#")
-        else:
-            raise ValueError(f"Unsupported file type: {path}")
-
-    # 1. Try current working directory
-    if os.path.exists(file_path):
-        return return_file(file_path)
-
-    # 2. Try directory of the script
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    script_path = os.path.join(script_dir, file_path)
-    if os.path.exists(script_path):
-        return return_file(script_path)
-
-    # 3. Try data directory
-    data_path = os.path.join(os.path.expanduser(settings.data_dir), file_path)
-    if os.path.exists(data_path):
-        return return_file(data_path)
-
-    raise FileNotFoundError(
-        f"Shapefile '{file_path}' not found in current directory, script directory, or provided path."
-    )
-
-
-def create_and_attribute_edges(node: pd.DataFrame, link: pd.DataFrame) -> pd.DataFrame:
+def create_and_attribute_edges(
+    settings: BikeRouteChoiceSettings, node: pd.DataFrame, link: pd.DataFrame
+) -> pd.DataFrame:
     """
     Create and attribute edges from the provided node and link dataframes.
     This function creates a directional edge dataframe from the links,
@@ -136,6 +27,7 @@ def create_and_attribute_edges(node: pd.DataFrame, link: pd.DataFrame) -> pd.Dat
     edge headings and arterial status.
 
     Parameters:
+        settings: BikeRouteChoiceSettings - Settings for the bike route choice model
         node: pd.DataFrame - Node dataframe
         link: pd.DataFrame - Link dataframe
 
@@ -621,7 +513,7 @@ def calculate_signalExclRight_alternatives(traversals: pd.DataFrame) -> pd.DataF
 
 
 def create_and_attribute_traversals(
-    edges: pd.DataFrame, nodes: pd.DataFrame
+    settings: BikeRouteChoiceSettings, edges: pd.DataFrame, nodes: pd.DataFrame
 ) -> pd.DataFrame:
     """
     Create and attribute traversals from edges and nodes.
@@ -982,7 +874,7 @@ def create_and_attribute_traversals(
     return traversals
 
 
-def read_bike_net(
+def create_bike_net(
     settings: BikeRouteChoiceSettings,
 ) -> tuple[
     pd.DataFrame,  # node dataframe
@@ -1009,6 +901,19 @@ def read_bike_net(
         edges: pd.DataFrame   -     edge dataframe with derived attributes in expected format
         traversals: pd.DataFrame -  traversal dataframe with derived attributes in expected format
     """
+    if settings.read_cached_bike_net:
+        logger.info("Reading cached bike network from CSV files")
+        edges = pd.read_csv(
+            os.path.join(settings.output_path, "edges.csv"), index_col=[0, 1]
+        )
+        nodes = pd.read_csv(
+            os.path.join(settings.output_path, "nodes.csv"), index_col=0
+        )
+        traversals = pd.read_csv(
+            os.path.join(os.path.join(settings.output_path, "traversals.csv")),
+            index_col=[0, 1, 2],
+        )
+        return nodes, edges, traversals
 
     # read shapefiles
     logger.info("Reading link and node shapefiles")
@@ -1016,177 +921,15 @@ def read_bike_net(
     link = read_file(settings, settings.link_file)
 
     # create and attribute edges
-    edges, nodes = create_and_attribute_edges(node, link)
+    edges, nodes = create_and_attribute_edges(settings, node, link)
 
-    traversals = create_and_attribute_traversals(edges, nodes)
+    traversals = create_and_attribute_traversals(settings, edges, nodes)
+
+    # save edges, nodes, and traversals to csv files if specified
+    if settings.save_bike_net:
+        logger.info("Saving bike network to CSV files")
+        edges.to_csv(os.path.join(settings.output_path, "edges.csv"))
+        nodes.to_csv(os.path.join(settings.output_path, "nodes.csv"))
+        traversals.to_csv(os.path.join(settings.output_path, "traversals.csv"))
 
     return nodes, edges, traversals
-
-
-def calculate_utilities(
-    settings: BikeRouteChoiceSettings,
-    choosers: pd.DataFrame,
-    spec: pd.DataFrame,
-    trace_label: str,
-) -> pd.DataFrame:
-    """
-    Calculate utilities for choosers using the provided specifications.
-    Modeled after ActivitySim's core.simulate.eval_utilities.
-
-    Parameters:
-        settings: BikeRouteChoiceSettings - settings for the bike route choice model
-        choosers: pd.DataFrame - DataFrame of choosers (edges or traversals)
-        spec: pd.Series - DataFrame with index as utility expressions and values as coefficients
-        trace_label: str - label for tracing
-    Returns:
-        pd.DataFrame - DataFrame of calculated utilities with same index as choosers
-    """
-
-    assert isinstance(
-        spec, pd.Series
-    ), "Spec must be a pandas Series with utility expressions as index and coefficients as values"
-
-    globals_dict = {}
-    locals_dict = {
-        "np": np,
-        "pd": pd,
-        "df": choosers,
-    }
-
-    expression_values = np.empty((spec.shape[0], choosers.shape[0]))
-
-    for i, expr in enumerate(spec.index):
-        try:
-            with warnings.catch_warnings(record=True) as w:
-                # Cause all warnings to always be triggered.
-                warnings.simplefilter("always")
-                if expr.startswith("@"):
-                    expression_value = eval(expr[1:], globals_dict, locals_dict)
-                else:
-                    expression_value = choosers.eval(expr)
-
-                if len(w) > 0:
-                    for wrn in w:
-                        logger.warning(
-                            f"{trace_label} - {type(wrn).__name__} ({wrn.message}) evaluating: {str(expr)}"
-                        )
-
-        except Exception as err:
-            logger.exception(
-                f"{trace_label} - {type(err).__name__} ({str(err)}) evaluating: {str(expr)}"
-            )
-            raise err
-
-        expression_values[i] = expression_value
-
-    # - compute_utilities
-    utilities = np.dot(expression_values.transpose(), spec.astype(np.float64).values)
-    utilities = pd.DataFrame(utilities, index=choosers.index, columns=["utility"])
-
-    if settings.trace_bike_utilities:
-        # trace entire utility calculation
-        logger.info(f"Tracing {trace_label} utilities")
-        trace_targets = pd.Series(True, index=choosers.index)
-        offsets = np.nonzero(list(trace_targets))[0]
-
-        if expression_values is not None:
-            data = expression_values[:, offsets]
-            # index is utility expressions (and optional label if MultiIndex)
-            expression_values_df = pd.DataFrame(data=data, index=spec.index)
-            expression_values_df.to_csv(
-                os.path.join(settings.output_path, f"{trace_label}_utilities.csv"),
-            )
-        else:
-            logger.info(f"No expression values to trace for {trace_label} utilities")
-
-    assert utilities.index.equals(
-        choosers.index
-    ), "Index mismatch between utilities and choosers"
-
-    return utilities
-
-
-def calculate_edge_utilities(
-    settings: BikeRouteChoiceSettings,
-    edges: pd.DataFrame,
-    randomize_coeffs: bool = True,
-) -> pd.DataFrame:
-    """
-    Calculate edge utilities from the edge utility specification file
-    """
-
-    # read edge utility specification file
-    edge_spec = read_file(settings, settings.edge_util_file)
-    trace_label = "bike_edge_utilities"
-
-    # TODO Randomize edge coefficients
-    if randomize_coeffs:
-        logger.info("Randomizing edge coefficients")
-        # edge_spec["Coefficient"] *= np.random.uniform(0, 1, size=edge_spec.shape[0])
-
-    # calculate edge utilities
-    edge_utilities = calculate_utilities(
-        settings=settings,
-        choosers=edges,
-        spec=edge_spec.set_index("Expression")["Coefficient"],
-        trace_label=trace_label,
-    )
-
-    # check that all edge utilities are less than or equal to zero
-    # positive utilities will cause issues in Dijkstra's algorithm
-    assert (
-        edge_utilities.utility <= 0
-    ).all(), "Edge utilities should all be less than or equal to zero"
-
-    return edge_utilities
-
-
-def calculate_traversal_utilities(
-    settings: BikeRouteChoiceSettings,
-    traversals: pd.DataFrame,
-    randomize_coeffs: bool = True,
-) -> pd.DataFrame:
-    """
-    Calculate traversal utilities from the traversal utility specification file
-    """
-
-    # read traversal utility specification file
-    trav_util = read_file(settings, settings.traversal_util_file)
-    trace_label = "bike_traversal_utilities"
-
-    # TODO Randomize traversal coefficients
-    if randomize_coeffs:
-        logger.info("Randomizing traversal coefficients")
-        # trav_util["Coefficient"] *= np.random.uniform(0, 1, size=trav_util.shape[0])
-
-    # calculate traversal utilities
-    traversal_utilities = calculate_utilities(
-        settings=settings,
-        choosers=traversals,
-        spec=trav_util.set_index("Expression")["Coefficient"],
-        trace_label=trace_label,
-    )
-
-    # check that all traversal utilities are less than or equal to zero
-    assert (
-        traversal_utilities.utility <= 0
-    ).all(), "Traversal utilities should all be less than or equal to zero"
-
-    return traversal_utilities
-
-
-if __name__ == "__main__":
-    # can pass settings file as command line argument
-    if len(sys.argv) > 1:
-        settings_file = sys.argv[1]
-    else:
-        settings_file = "bike_route_choice_settings.yaml"
-    # load settings
-    settings = load_settings(settings_file)
-
-    # create bike network
-    nodes, edges, traversals = read_bike_net(settings)
-
-    # calculate utilities
-    edges["utility"] = calculate_edge_utilities(settings, edges)
-    traversals["utility"] = calculate_traversal_utilities(settings, traversals)
