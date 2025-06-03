@@ -162,7 +162,7 @@ def create_and_attribute_edges(node: pd.DataFrame, link: pd.DataFrame) -> pd.Dat
         )
         .copy()
         .assign(
-            distance=link.Shape_Leng / 5280.0, # convert feet to miles
+            distance=link.Shape_Leng / 5280.0,  # convert feet to miles
             autosPermitted=link.Func_Class.isin(range(1, 8)),
             centroidConnector=link.Func_Class == 10,
         )[
@@ -198,7 +198,7 @@ def create_and_attribute_edges(node: pd.DataFrame, link: pd.DataFrame) -> pd.Dat
         )
         .copy()
         .assign(
-            distance=link.Shape_Leng / 5280.0, # convert feet to miles
+            distance=link.Shape_Leng / 5280.0,  # convert feet to miles
             autosPermitted=link.Func_Class.isin(range(1, 8)),
             centroidConnector=link.Func_Class == 10,
         )[
@@ -309,7 +309,7 @@ def create_and_attribute_edges(node: pd.DataFrame, link: pd.DataFrame) -> pd.Dat
 
 
 def recreate_java_attributes(
-       traversals: pd.DataFrame,
+    traversals: pd.DataFrame,
 ):
     """
     Recreate Java attributes for traversals.
@@ -375,7 +375,7 @@ def recreate_java_attributes(
                 ].turnType
                 == turn_type
             ).any()
-        
+
     # keep track of whether traversal is "thru junction"
     traversals["ThruJunction_anynonevec"] = (
         ~(
@@ -426,18 +426,21 @@ def recreate_java_attributes(
 
     # index: all last and penultimate traversals
     # values: whether the index traversal is a none turn
-    is_none = pd.concat([is_none,
-        traversals[
-            # don't allow index of penultimates to match last - we want two different candidates
-            ~traversals.set_index(["start", "thru", "end"]).index.isin(last_travs)
+    is_none = pd.concat(
+        [
+            is_none,
+            traversals[
+                # don't allow index of penultimates to match last - we want two different candidates
+                ~traversals.set_index(["start", "thru", "end"]).index.isin(last_travs)
+            ]
+            .groupby(["start", "thru"])
+            .last()
+            .reset_index()
+            .set_index(["start", "thru", "end"])
+            .turnType
+            == turn_none,
         ]
-        .groupby(["start", "thru"])
-        .last()
-        .reset_index()
-        .set_index(["start", "thru", "end"])
-        .turnType
-        == turn_none
-    ])
+    )
 
     penult_travs = is_none.index[~is_none.index.isin(last_travs)]
     penult_is_none = is_none[penult_travs]
@@ -446,18 +449,16 @@ def recreate_java_attributes(
     # tack on the two new columns
     traversals = traversals.merge(
         last_is_none, left_on=["start", "thru"], right_index=True, how="left"
-    ).merge(
-        penult_is_none, left_on=["start", "thru"], right_index=True, how="left"
-    )
+    ).merge(penult_is_none, left_on=["start", "thru"], right_index=True, how="left")
 
     # for all traversals that match the last traversal, use the penultimate value
-    traversals.loc[traversals.index.isin(last_is_none.index), "buggyRTE_none"] = (
-        traversals.loc[traversals.index.isin(last_is_none.index), "penultimate_is_none"]
-    )
+    traversals.loc[
+        traversals.index.isin(last_is_none.index), "buggyRTE_none"
+    ] = traversals.loc[traversals.index.isin(last_is_none.index), "penultimate_is_none"]
     # for all other traversals, use the last value
-    traversals.loc[~traversals.index.isin(last_is_none.index), "buggyRTE_none"] = (
-        traversals.loc[~traversals.index.isin(last_is_none.index), "last_is_none"]
-    )
+    traversals.loc[
+        ~traversals.index.isin(last_is_none.index), "buggyRTE_none"
+    ] = traversals.loc[~traversals.index.isin(last_is_none.index), "last_is_none"]
 
     # index: all last traversals of all input groups
     # values: whether the index traversal is a right turn
@@ -483,7 +484,7 @@ def recreate_java_attributes(
         == turn_right
     )
 
-    # drop the end column 
+    # drop the end column
     last_is_rt = (
         last_is_rt.reset_index()
         .set_index(["start", "thru"])
@@ -500,16 +501,14 @@ def recreate_java_attributes(
     # tack on two new columns
     traversals = traversals.merge(
         last_is_rt, left_on=["start", "thru"], right_index=True, how="left"
-    ).merge(
-        penultimate_is_rt, left_on=["start", "thru"], right_index=True, how="left"
-    )
+    ).merge(penultimate_is_rt, left_on=["start", "thru"], right_index=True, how="left")
 
-    traversals.loc[traversals.index.isin(last_is_rt.index), "buggyRTE_rt"] = traversals.loc[
-        traversals.index.isin(last_is_rt.index), "penultimate_is_rt"
-    ]
-    traversals.loc[~traversals.index.isin(last_is_rt.index), "buggyRTE_rt"] = traversals.loc[
-        ~traversals.index.isin(last_is_rt.index), "last_is_rt"
-    ]
+    traversals.loc[
+        traversals.index.isin(last_is_rt.index), "buggyRTE_rt"
+    ] = traversals.loc[traversals.index.isin(last_is_rt.index), "penultimate_is_rt"]
+    traversals.loc[
+        ~traversals.index.isin(last_is_rt.index), "buggyRTE_rt"
+    ] = traversals.loc[~traversals.index.isin(last_is_rt.index), "last_is_rt"]
 
     traversals["ThruJunction_lastnonevec"] = (
         ~(
@@ -604,7 +603,7 @@ def calculate_signalExclRight_alternatives(traversals: pd.DataFrame) -> pd.DataF
             traversals.signalized
             & (traversals.turnType != turn_right)
             & (~traversals.ThruJunction_lastrtloop)
-        )
+        ),
     )
 
     java_attributes = [
@@ -619,7 +618,6 @@ def calculate_signalExclRight_alternatives(traversals: pd.DataFrame) -> pd.DataF
     ]
 
     return traversals, java_attributes
-
 
 
 def create_and_attribute_traversals(
@@ -885,7 +883,7 @@ def create_and_attribute_traversals(
     )
 
     # populate derived traversal attributes
-    
+
     traversals = traversals.assign(
         thruCentroid=traversals.centroidConnector_fromEdge
         & traversals.centroidConnector_toEdge,
@@ -963,7 +961,6 @@ def create_and_attribute_traversals(
         ),
     )
 
-
     output_cols = [
         "turnType",
         "thruCentroid",
@@ -979,7 +976,7 @@ def create_and_attribute_traversals(
 
     # keep only the relevant columns
     traversals = traversals.set_index(["start", "thru", "end"])[output_cols]
-    
+
     logger.info("Finished calculating derived traversal attributes")
 
     return traversals
@@ -1022,7 +1019,6 @@ def read_bike_net(
     edges, nodes = create_and_attribute_edges(node, link)
 
     traversals = create_and_attribute_traversals(edges, nodes)
-
 
     return nodes, edges, traversals
 
