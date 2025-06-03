@@ -45,6 +45,9 @@ class BikeRouteChoiceSettings(BaseModel):
     # whether to trace edge and traversal utility calculations
     trace_bike_utilities: bool = False
 
+    # whether to recreate Java attributes -- not needed, but here for backwards compatibility tests
+    recreate_java_attributes: bool = False
+
 
 def load_settings(
     yaml_path: str = "bike_route_choice_settings.yaml",
@@ -124,38 +127,23 @@ def read_file(settings, file_path: str) -> gpd.GeoDataFrame:
     )
 
 
-def read_bike_net(
-    settings: BikeRouteChoiceSettings,
-) -> tuple[
-    pd.DataFrame,  # node dataframe
-    pd.DataFrame,  # edge dataframe
-    pd.DataFrame,  # traversal dataframe
-]:
+def create_and_attribute_edges(node: pd.DataFrame, link: pd.DataFrame) -> pd.DataFrame:
     """
-    Read bike network from supplied shapefiles and derive attributes
-
-    This method reads in two shapefiles detailing the nodes and edges
-    of a bike network, manipulates the data tables to match the expected
-    output format, and derives additonal attributes, some of which are
-    solely used internally while others are appended to the edge and node
-    tables. Additionally, a new table is developed of all traversals, that
-    is, all possible combinations of edges leading to and from a node which
-    are not reversals.
+    Create and attribute edges from the provided node and link dataframes.
+    This function creates a directional edge dataframe from the links,
+    creates reverse direction edges, combines them, and attributes them.
+    It also manipulates the node dataframe to the output format and calculates
+    edge headings and arterial status.
 
     Parameters:
-        node_file: str  -   path to the node shapefile
-        edge_file: str  -   path to the edge shapefile
+        node: pd.DataFrame - Node dataframe
+        link: pd.DataFrame - Link dataframe
 
     Returns:
-        nodes: pd.DataFrame   -     node dataframe with derived attributes in expected format
-        edges: pd.DataFrame   -     edge dataframe with derived attributes in expected format
-        traversals: pd.DataFrame -  traversal dataframe with derived attributes in expected format
-    """
+        edges: pd.DataFrame - Edge dataframe with derived attributes
+        nodes: pd.DataFrame - Node dataframe with derived attributes
 
-    # read shapefiles
-    logger.info("Reading link and node shapefiles")
-    node = read_file(settings, settings.node_file)
-    link = read_file(settings, settings.link_file)
+    """
 
     # create directional edge dataframe from links
     logger.info("Creating directional edges from links")
@@ -174,7 +162,7 @@ def read_bike_net(
         )
         .copy()
         .assign(
-            distance=link.Shape_Leng / 5280.0,
+            distance=link.Shape_Leng / 5280.0, # convert feet to miles
             autosPermitted=link.Func_Class.isin(range(1, 8)),
             centroidConnector=link.Func_Class == 10,
         )[
@@ -210,7 +198,7 @@ def read_bike_net(
         )
         .copy()
         .assign(
-            distance=link.Shape_Leng / 5280.0,
+            distance=link.Shape_Leng / 5280.0, # convert feet to miles
             autosPermitted=link.Func_Class.isin(range(1, 8)),
             centroidConnector=link.Func_Class == 10,
         )[
@@ -317,255 +305,27 @@ def read_bike_net(
         .arterial.sum()
         .reindex(nodes.index)
     )
+    return edges, nodes
 
-    # FIXME: Need availability flag for highways
 
-    # create initial traversal table from edges
-    logger.info("Creating traversal table from edges")
-    traversals = (
-        edges.reset_index()
-        .merge(
-            edges.reset_index(),
-            left_on="toNode",
-            right_on="fromNode",
-            suffixes=["_fromEdge", "_toEdge"],
-        )
-        .rename(
-            columns={
-                "fromNode_fromEdge": "start",
-                "toNode_fromEdge": "thru",
-                "toNode_toEdge": "end",
-            }
-        )
-        .merge(nodes, left_on="thru", right_index=True)
-    )
+def recreate_java_attributes(
+       traversals: pd.DataFrame,
+):
+    """
+    Recreate Java attributes for traversals.
+    WARNING: This function contains bugs that we think exist in the Java implementation.
+    This is merely an optional function used for potential backwards compatibility.\
+    
+    Loop and vectorized outputs should be the same.  Loop code closely mimic the Java implementation,
+    while vectorized code is more efficient for python implementation.
 
-    # drop U-turns
-    traversals = traversals[traversals.start != traversals.end]
+    Parameters:
+        traversals: pd.DataFrame - Traversal dataframe with derived attributes
 
-    # calculate traversal angles
-    traversals["angle"] = traversals.angle_toEdge - traversals.angle_fromEdge
-    traversals.loc[traversals.angle > math.pi, "angle"] = (
-        traversals.loc[traversals.angle > math.pi, "angle"] - 2 * math.pi
-    )
-    traversals.loc[traversals.angle < -math.pi, "angle"] = (
-        traversals.loc[traversals.angle < -math.pi, "angle"] + 2 * math.pi
-    )
-    traversals.set_index(["start", "thru", "end"])
+    Returns:
+        pd.DataFrame - Traversal dataframe with recreated Java attributes
 
-    # keep track of the absolute value of the traversal angle
-    traversals["absAngle"] = traversals.angle.abs()
-
-    # attach component nodes' centroid statuses
-    traversals = (
-        traversals.merge(
-            nodes.centroid,
-            left_on="start",
-            right_index=True,
-            suffixes=("_thru", "_start"),
-        )
-        .merge(
-            nodes.centroid,
-            left_on="end",
-            right_index=True,
-        )
-        .rename(columns={"centroid": "centroid_end"})
-    )
-
-    # calculate traversal angle attributes for thru node
-    max_angles = (
-        traversals[
-            traversals.autosPermitted_toEdge & (traversals.start != traversals.end)
-        ]
-        .groupby(["start", "thru"])
-        .angle.max()
-        .fillna(-math.pi)
-        .rename("max_angle")
-    )
-
-    min_angles = (
-        traversals[
-            traversals.autosPermitted_toEdge & (traversals.start != traversals.end)
-        ]
-        .groupby(["start", "thru"])
-        .angle.min()
-        .fillna(math.pi)
-        .rename("min_angle")
-    )
-
-    min_abs_angles = (
-        traversals[
-            traversals.autosPermitted_toEdge & (traversals.start != traversals.end)
-        ]
-        .groupby(["start", "thru"])
-        .absAngle.min()
-        .fillna(math.pi)
-        .rename("min_abs_angle")
-    )
-
-    leg_count = (
-        traversals[
-            traversals.autosPermitted_toEdge & (traversals.start != traversals.end)
-        ]
-        .groupby(["start", "thru"])
-        .size()
-        .rename("leg_count")
-        + 1
-    )
-
-    # consolidate into a dataframe for merging and reindex to full traversal table
-    turn_atts = (
-        pd.concat(
-            [
-                max_angles,
-                min_angles,
-                min_abs_angles,
-                leg_count,
-            ],
-            axis=1,
-        )
-        .reindex([traversals.start, traversals.thru])
-        .fillna(
-            {
-                "max_angle": -math.pi,
-                "min_angle": math.pi,
-                "min_abs_angle": math.pi,
-                "leg_count": 1,
-            }
-        )
-    )
-
-    # attach to full table
-    traversals = pd.concat(
-        [traversals.set_index(["start", "thru"]), turn_atts], axis=1
-    ).reset_index()
-
-    # calculate turn type
-    traversals.loc[~traversals.leg_count.isna(), "turnType"] = turn_none
-
-    traversals.loc[
-        (traversals.leg_count == 3)
-        & (traversals.angle <= traversals.min_angle)
-        & (traversals.angle.abs() > math.pi / 6),
-        "turnType",
-    ] = turn_right
-
-    traversals.loc[
-        (traversals.leg_count == 3)
-        & (traversals.angle >= traversals.max_angle)
-        & (traversals.angle.abs() > math.pi / 6),
-        "turnType",
-    ] = turn_left
-
-    traversals.loc[
-        (traversals.leg_count > 3)
-        & (traversals.angle.abs() > traversals.min_abs_angle)
-        & (
-            (traversals.angle.abs() >= math.pi / 6)
-            | (traversals.angle <= traversals.min_angle)
-            | (traversals.angle >= traversals.max_angle)
-        )
-        & (traversals.angle < 0),
-        "turnType",
-    ] = turn_right
-
-    traversals.loc[
-        (traversals.leg_count > 3)
-        & (traversals.angle.abs() > traversals.min_abs_angle)
-        & (
-            (traversals.angle.abs() >= math.pi / 6)
-            | (traversals.angle <= traversals.min_angle)
-            | (traversals.angle >= traversals.max_angle)
-        )
-        & (traversals.angle >= 0),
-        "turnType",
-    ] = turn_left
-
-    traversals.loc[
-        (traversals.angle < -math.pi * 5 / 6) | (traversals.angle > math.pi * 5 / 6),
-        "turnType",
-    ] = turn_reverse
-
-    traversals.loc[traversals.start == traversals.end, "turnType"] = turn_reverse
-
-    traversals.loc[
-        traversals.centroid_start | traversals.centroid_thru | traversals.centroid_end,
-        "turnType",
-    ] = turn_none
-
-    # keep track of the number of outgoing turns w/ turn type == none
-    # FIXME this should almost certainly get removed
-    traversals = traversals.merge(
-        (traversals.set_index(["start", "thru"]).turnType == turn_none)
-        .reset_index()
-        .groupby(["start", "thru"])
-        .sum()
-        .rename(columns={"turnType": "none_turns"}),
-        left_on=["start", "thru"],
-        right_index=True,
-        how="left",
-    )
-
-    # do the same but with right turns
-    # FIXME this should be the actual usage, not the above, but we're
-    # copying from the java implementation
-    traversals = traversals.merge(
-        (traversals.set_index(["start", "thru"]).turnType == turn_right)
-        .reset_index()
-        .groupby(["start", "thru"])
-        .sum()
-        .rename(columns={"turnType": "rt_turns"}),
-        left_on=["start", "thru"],
-        right_index=True,
-        how="left",
-    )
-    logger.info("Calculating derived traversal attributes")
-
-    # keep track of how many duplicate traversals have turn type == none
-    traversals = traversals.merge(
-        (traversals.set_index(["start", "thru", "end"]).turnType == turn_none)
-        .reset_index()
-        .groupby(["start", "thru", "end"])
-        .sum()
-        .rename(columns={"turnType": "dupNoneTurns_toEdge"}),
-        left_on=["start", "thru", "end"],
-        right_index=True,
-        how="left",
-    )
-
-    traversals = traversals.merge(
-        (traversals.set_index(["start", "thru", "end"]).turnType == turn_right)
-        .reset_index()
-        .groupby(["start", "thru", "end"])
-        .sum()
-        .rename(columns={"turnType": "dupRtTurns_toEdge"}),
-        left_on=["start", "thru", "end"],
-        right_index=True,
-        how="left",
-    )
-
-    # keep track of whether traversal is "thru junction"
-    traversals["ThruJunction_anynonevec"] = (
-        ~(
-            traversals.centroid_start
-            | traversals.centroid_thru
-            | traversals.centroid_end
-        )
-        & (traversals.turnType == turn_none)
-        & (traversals.none_turns - traversals.dupNoneTurns_toEdge == 0)
-    )
-
-    # FIXME the above should eventually be removed if the below proves to be the desired behavior
-    traversals["ThruJunction_anyrtvec"] = (
-        ~(
-            traversals.centroid_start
-            | traversals.centroid_thru
-            | traversals.centroid_end
-        )
-        & (traversals.turnType == turn_none)
-        & (traversals.rt_turns - traversals.dupRtTurns_toEdge == 0)
-    )
-
+    """
     ##########################################################################
     # BUG IMPLEMENTATIONS BELOW
 
@@ -615,13 +375,24 @@ def read_bike_net(
                 ].turnType
                 == turn_type
             ).any()
+        
+    # keep track of whether traversal is "thru junction"
+    traversals["ThruJunction_anynonevec"] = (
+        ~(
+            traversals.centroid_start
+            | traversals.centroid_thru
+            | traversals.centroid_end
+        )
+        & (traversals.turnType == turn_none)
+        & (traversals.none_turns - traversals.dupNoneTurns_toEdge == 0)
+    )
 
     traversals["ThruJunction_lastnoneloop"] = False
     traversals["ThruJunction_lastrtloop"] = False
     traversals["ThruJunction_anynoneloop"] = False
     traversals["ThruJunction_anyrtloop"] = False
 
-    logger.info("Beginning slow loop")
+    logger.info("Beginning slow loop recreating Java attributes")
 
     for idx, trav in tqdm.tqdm(traversals.iterrows(), total=len(traversals)):
 
@@ -760,141 +531,498 @@ def read_bike_net(
     )
     # END BUG CODE
     #######################################
-    logger.info("Finished calculating buggy implementations")
+    logger.info("Finished calculating java attributes")
+
+    java_cols = [
+        "ThruJunction_anynonevec",
+        "ThruJunction_lastnoneloop",
+        "ThruJunction_lastrtloop",
+        "ThruJunction_anynoneloop",
+        "ThruJunction_anyrtloop",
+        "ThruJunction_anyrtvec",
+        "ThruJunction_lastnonevec",
+        "ThruJunction_lastrtvec",
+    ]
+
+    return traversals, java_cols
+
+
+def calculate_signalExclRight_alternatives(traversals: pd.DataFrame) -> pd.DataFrame:
+    """
+    Calculate alternative signalized right turn exclusion columns.
+    This was originally used to test backwards compatibility with the Java implementation.
+    It is not used in the current implementation, but is left here for reference.
+
+        "signalExclRight_lastnoneloop",  # current Java implementation
+        "signalExclRight_lastrtloop",  # fixes rt-vs-none
+        "signalExclRight_lastnonevec",  # vector implementation of current Java
+        "signalExclRight_lastrtvec",  # same as above but also fixes rt-vs-none
+        "signalExclRight_anynoneloop",  # fixes any-vs-last check
+        "signalExclRight_anyrtloop",  # fixes any-vs-last and rt-vs-none (allegedly correct)
+        "signalExclRight_anynonevec",  # vector implementation of any-vs-last fix
+        "signalExclRight_anyrtvec",  # allegedly correct vector implementation
+
+    Parameters:
+        traversals: pd.DataFrame - Traversal dataframe with attributes
+
+    Returns:
+        pd.DataFrame - Traversal dataframe with alternative signalized right turn exclusion columns
+    """
+    # the rest can be ditched (ALLEGEDLY)
+    traversals = traversals.assign(
+        signalExclRight_anynonevec=(
+            traversals.signalized
+            & (traversals.turnType != turn_right)
+            & (~traversals.ThruJunction_anynonevec)
+        ),
+        signalExclRight_anyrtloop=(
+            traversals.signalized
+            & (traversals.turnType != turn_right)
+            & (~traversals.ThruJunction_anyrtloop)
+        ),
+        signalExclRight_anynoneloop=(
+            traversals.signalized
+            & (traversals.turnType != turn_right)
+            & (~traversals.ThruJunction_anynoneloop)
+        ),
+        signalExclRight_lastnonevec=(
+            traversals.signalized
+            & (traversals.turnType != turn_right)
+            & (~traversals.ThruJunction_lastnonevec)
+        ),
+        signalExclRight_lastrtvec=(
+            traversals.signalized
+            & (traversals.turnType != turn_right)
+            & (~traversals.ThruJunction_lastrtvec)
+        ),
+        signalExclRight_lastnoneloop=(
+            traversals.signalized
+            & (traversals.turnType != turn_right)
+            & (~traversals.ThruJunction_lastnoneloop)
+        ),
+        signalExclRight_lastrtloop=(
+            traversals.signalized
+            & (traversals.turnType != turn_right)
+            & (~traversals.ThruJunction_lastrtloop)
+        )
+    )
+
+    java_attributes = [
+        "signalExclRight_lastnoneloop",
+        "signalExclRight_lastrtloop",
+        "signalExclRight_lastnonevec",
+        "signalExclRight_lastrtvec",
+        "signalExclRight_anynoneloop",
+        "signalExclRight_anyrtloop",
+        "signalExclRight_anynonevec",
+        "signalExclRight_anyrtvec",
+    ]
+
+    return traversals, java_attributes
+
+
+
+def create_and_attribute_traversals(
+    edges: pd.DataFrame, nodes: pd.DataFrame
+) -> pd.DataFrame:
+    """
+    Create and attribute traversals from edges and nodes.
+
+    This function creates a traversal table from the edges, calculates traversal attributes,
+    and merges node information to provide a comprehensive traversal dataset.
+    It calculates angles, turn types, and various derived attributes for each traversal.
+
+    Parameters:
+        edges: pd.DataFrame - Edge dataframe with attributes
+        nodes: pd.DataFrame - Node dataframe with attributes
+
+    Returns:
+        pd.DataFrame - Traversal dataframe with derived attributes
+    """
+
+    # create initial traversal table from edges
+    logger.info("Creating traversal table from edges")
+    traversals = (
+        edges.reset_index()
+        .merge(
+            edges.reset_index(),
+            left_on="toNode",
+            right_on="fromNode",
+            suffixes=["_fromEdge", "_toEdge"],
+        )
+        .rename(
+            columns={
+                "fromNode_fromEdge": "start",
+                "toNode_fromEdge": "thru",
+                "toNode_toEdge": "end",
+            }
+        )
+        .merge(nodes, left_on="thru", right_index=True)
+    )
+
+    # drop U-turns
+    traversals = traversals[traversals.start != traversals.end]
+
+    # calculate traversal angles
+    traversals["angle"] = traversals.angle_toEdge - traversals.angle_fromEdge
+    traversals.loc[traversals.angle > math.pi, "angle"] = (
+        traversals.loc[traversals.angle > math.pi, "angle"] - 2 * math.pi
+    )
+    traversals.loc[traversals.angle < -math.pi, "angle"] = (
+        traversals.loc[traversals.angle < -math.pi, "angle"] + 2 * math.pi
+    )
+    traversals.set_index(["start", "thru", "end"])
+
+    # keep track of the absolute value of the traversal angle
+    traversals["absAngle"] = traversals.angle.abs()
+
+    # attach component nodes' centroid statuses
+    traversals = (
+        traversals.merge(
+            nodes.centroid,
+            left_on="start",
+            right_index=True,
+            suffixes=("_thru", "_start"),
+        )
+        .merge(
+            nodes.centroid,
+            left_on="end",
+            right_index=True,
+        )
+        .rename(columns={"centroid": "centroid_end"})
+    )
+
+    logger.info("Calculating derived traversal attributes")
+
+    # calculate traversal angle attributes for thru node
+    max_angles = (
+        traversals[
+            traversals.autosPermitted_toEdge & (traversals.start != traversals.end)
+        ]
+        .groupby(["start", "thru"])
+        .angle.max()
+        .fillna(-math.pi)
+        .rename("max_angle")
+    )
+
+    min_angles = (
+        traversals[
+            traversals.autosPermitted_toEdge & (traversals.start != traversals.end)
+        ]
+        .groupby(["start", "thru"])
+        .angle.min()
+        .fillna(math.pi)
+        .rename("min_angle")
+    )
+
+    min_abs_angles = (
+        traversals[
+            traversals.autosPermitted_toEdge & (traversals.start != traversals.end)
+        ]
+        .groupby(["start", "thru"])
+        .absAngle.min()
+        .fillna(math.pi)
+        .rename("min_abs_angle")
+    )
+
+    leg_count = (
+        traversals[
+            traversals.autosPermitted_toEdge & (traversals.start != traversals.end)
+        ]
+        .groupby(["start", "thru"])
+        .size()
+        .rename("leg_count")
+        + 1
+    )
+
+    # consolidate into a dataframe for merging and reindex to full traversal table
+    turn_atts = (
+        pd.concat(
+            [
+                max_angles,
+                min_angles,
+                min_abs_angles,
+                leg_count,
+            ],
+            axis=1,
+        )
+        .reindex([traversals.start, traversals.thru])
+        .fillna(
+            {
+                "max_angle": -math.pi,
+                "min_angle": math.pi,
+                "min_abs_angle": math.pi,
+                "leg_count": 1,
+            }
+        )
+    )
+
+    # attach to full table
+    traversals = pd.concat(
+        [traversals.set_index(["start", "thru"]), turn_atts], axis=1
+    ).reset_index()
+
+    # calculate turn type
+    # turn type is determined by the angle and leg count
+    # the options are no turns, left, right, and reverse
+    traversals.loc[~traversals.leg_count.isna(), "turnType"] = turn_none
+
+    traversals.loc[
+        (traversals.leg_count == 3)
+        & (traversals.angle <= traversals.min_angle)
+        & (traversals.angle.abs() > math.pi / 6),
+        "turnType",
+    ] = turn_right
+
+    traversals.loc[
+        (traversals.leg_count == 3)
+        & (traversals.angle >= traversals.max_angle)
+        & (traversals.angle.abs() > math.pi / 6),
+        "turnType",
+    ] = turn_left
+
+    traversals.loc[
+        (traversals.leg_count > 3)
+        & (traversals.angle.abs() > traversals.min_abs_angle)
+        & (
+            (traversals.angle.abs() >= math.pi / 6)
+            | (traversals.angle <= traversals.min_angle)
+            | (traversals.angle >= traversals.max_angle)
+        )
+        & (traversals.angle < 0),
+        "turnType",
+    ] = turn_right
+
+    traversals.loc[
+        (traversals.leg_count > 3)
+        & (traversals.angle.abs() > traversals.min_abs_angle)
+        & (
+            (traversals.angle.abs() >= math.pi / 6)
+            | (traversals.angle <= traversals.min_angle)
+            | (traversals.angle >= traversals.max_angle)
+        )
+        & (traversals.angle >= 0),
+        "turnType",
+    ] = turn_left
+
+    traversals.loc[
+        (traversals.angle < -math.pi * 5 / 6) | (traversals.angle > math.pi * 5 / 6),
+        "turnType",
+    ] = turn_reverse
+
+    traversals.loc[traversals.start == traversals.end, "turnType"] = turn_reverse
+
+    traversals.loc[
+        traversals.centroid_start | traversals.centroid_thru | traversals.centroid_end,
+        "turnType",
+    ] = turn_none
+
+    traversals.turnType = traversals.turnType.astype(int)
+
+    # keep track of the number of outgoing turns w/ turn type == none
+    # FIXME this should almost certainly get removed
+    traversals = traversals.merge(
+        (traversals.set_index(["start", "thru"]).turnType == turn_none)
+        .reset_index()
+        .groupby(["start", "thru"])
+        .sum()
+        .rename(columns={"turnType": "none_turns"}),
+        left_on=["start", "thru"],
+        right_index=True,
+        how="left",
+    )
+
+    # do the same but with right turns
+    # FIXME this should be the actual usage, not the above, but we're
+    # copying from the java implementation
+    traversals = traversals.merge(
+        (traversals.set_index(["start", "thru"]).turnType == turn_right)
+        .reset_index()
+        .groupby(["start", "thru"])
+        .sum()
+        .rename(columns={"turnType": "rt_turns"}),
+        left_on=["start", "thru"],
+        right_index=True,
+        how="left",
+    )
+
+    # keep track of how many duplicate traversals have turn type == none
+    traversals = traversals.merge(
+        (traversals.set_index(["start", "thru", "end"]).turnType == turn_none)
+        .reset_index()
+        .groupby(["start", "thru", "end"])
+        .sum()
+        .rename(columns={"turnType": "dupNoneTurns_toEdge"}),
+        left_on=["start", "thru", "end"],
+        right_index=True,
+        how="left",
+    )
+
+    traversals = traversals.merge(
+        (traversals.set_index(["start", "thru", "end"]).turnType == turn_right)
+        .reset_index()
+        .groupby(["start", "thru", "end"])
+        .sum()
+        .rename(columns={"turnType": "dupRtTurns_toEdge"}),
+        left_on=["start", "thru", "end"],
+        right_index=True,
+        how="left",
+    )
+
+    if settings.recreate_java_attributes:
+        traversals, java_cols = recreate_java_attributes(traversals)
+        traversals, java_attributes = calculate_signalExclRight_alternatives(traversals)
+        java_cols += java_attributes
+
+    traversals["ThruJunction_anyrtvec"] = (
+        ~(
+            traversals.centroid_start
+            | traversals.centroid_thru
+            | traversals.centroid_end
+        )
+        & (traversals.turnType == turn_none)
+        & (traversals.rt_turns - traversals.dupRtTurns_toEdge == 0)
+    )
 
     # populate derived traversal attributes
-    traversals = (
-        traversals.assign(
-            thruCentroid=traversals.centroidConnector_fromEdge
-            & traversals.centroidConnector_toEdge,
-            # this one is allegedly the one to keep
-            signalExclRight_anyrtvec=(
-                traversals.signalized
-                & (traversals.turnType != turn_right)
-                & (~traversals.ThruJunction_anyrtvec)
-            ),
-            # the rest can be ditched (ALLEGEDLY)
-            signalExclRight_anynonevec=(
-                traversals.signalized
-                & (traversals.turnType != turn_right)
-                & (~traversals.ThruJunction_anynonevec)
-            ),
-            signalExclRight_anyrtloop=(
-                traversals.signalized
-                & (traversals.turnType != turn_right)
-                & (~traversals.ThruJunction_anyrtloop)
-            ),
-            signalExclRight_anynoneloop=(
-                traversals.signalized
-                & (traversals.turnType != turn_right)
-                & (~traversals.ThruJunction_anynoneloop)
-            ),
-            signalExclRight_lastnonevec=(
-                traversals.signalized
-                & (traversals.turnType != turn_right)
-                & (~traversals.ThruJunction_lastnonevec)
-            ),
-            signalExclRight_lastrtvec=(
-                traversals.signalized
-                & (traversals.turnType != turn_right)
-                & (~traversals.ThruJunction_lastrtvec)
-            ),
-            signalExclRight_lastnoneloop=(
-                traversals.signalized
-                & (traversals.turnType != turn_right)
-                & (~traversals.ThruJunction_lastnoneloop)
-            ),
-            signalExclRight_lastrtloop=(
-                traversals.signalized
-                & (traversals.turnType != turn_right)
-                & (~traversals.ThruJunction_lastrtloop)
-            ),
-            # unlfrma: unsignalized left from major arterial
-            unlfrma=(
-                (~traversals.signalized)
-                & (traversals.functionalClass_fromEdge <= 3)
-                & (traversals.functionalClass_fromEdge > 0)
-                & (traversals.bikeClass_fromEdge != 1)
-                & (traversals.turnType == turn_left)
-            ),
-            # unlfrmi: unsignalized left from minor arterial
-            unlfrmi=(
-                (~traversals.signalized)
-                & (traversals.functionalClass_fromEdge == 4)
-                & (traversals.bikeClass_fromEdge != 1)
-                & (traversals.turnType == turn_left)
-            ),
-            # unxma: unsignalized cross major arterial
-            unxma=(
-                ~(
-                    traversals.centroid_start
-                    | traversals.centroid_thru
-                    | traversals.centroid_end
-                )
-                & (
-                    (
-                        (traversals.turnType == turn_none)
-                        & (
-                            traversals.majorArtXings
-                            - traversals.dupMajArts_fromEdge
-                            - traversals.dupMajArts_toEdge
-                        )
-                        >= 2
+    
+    traversals = traversals.assign(
+        thruCentroid=traversals.centroidConnector_fromEdge
+        & traversals.centroidConnector_toEdge,
+        # this one is allegedly the one to keep
+        # taken from signalExclRight_anyrtvec
+        signalExclRight=(
+            traversals.signalized
+            & (traversals.turnType != turn_right)
+            & (~traversals.ThruJunction_anyrtvec)
+        ),
+        # unlfrma: unsignalized left from major arterial
+        unlfrma=(
+            (~traversals.signalized)
+            & (traversals.functionalClass_fromEdge <= 3)
+            & (traversals.functionalClass_fromEdge > 0)
+            & (traversals.bikeClass_fromEdge != 1)
+            & (traversals.turnType == turn_left)
+        ),
+        # unlfrmi: unsignalized left from minor arterial
+        unlfrmi=(
+            (~traversals.signalized)
+            & (traversals.functionalClass_fromEdge == 4)
+            & (traversals.bikeClass_fromEdge != 1)
+            & (traversals.turnType == turn_left)
+        ),
+        # unxma: unsignalized cross major arterial
+        unxma=(
+            ~(
+                traversals.centroid_start
+                | traversals.centroid_thru
+                | traversals.centroid_end
+            )
+            & (
+                (
+                    (traversals.turnType == turn_none)
+                    & (
+                        traversals.majorArtXings
+                        - traversals.dupMajArts_fromEdge
+                        - traversals.dupMajArts_toEdge
                     )
-                    | (
-                        (traversals.turnType == turn_left)
-                        & (traversals.functionalClass_toEdge <= 3)
-                        & (traversals.functionalClass_toEdge > 0)
-                        & (traversals.bikeClass_toEdge != 1)
-                    )
+                    >= 2
                 )
-            ),
-            # unxmi: unsignalized cross minor arterial
-            unxmi=(
-                ~(
-                    traversals.centroid_start
-                    | traversals.centroid_thru
-                    | traversals.centroid_end
+                | (
+                    (traversals.turnType == turn_left)
+                    & (traversals.functionalClass_toEdge <= 3)
+                    & (traversals.functionalClass_toEdge > 0)
+                    & (traversals.bikeClass_toEdge != 1)
                 )
-                & (
-                    (
-                        (traversals.turnType == turn_none)
-                        & (
-                            traversals.artXings
-                            - traversals.dupArts_fromEdge
-                            - traversals.dupArts_toEdge
-                        )
-                        >= 2
+            )
+        ),
+        # unxmi: unsignalized cross minor arterial
+        unxmi=(
+            ~(
+                traversals.centroid_start
+                | traversals.centroid_thru
+                | traversals.centroid_end
+            )
+            & (
+                (
+                    (traversals.turnType == turn_none)
+                    & (
+                        traversals.artXings
+                        - traversals.dupArts_fromEdge
+                        - traversals.dupArts_toEdge
                     )
-                    | (
-                        (traversals.turnType == turn_left)
-                        & (traversals.functionalClass_toEdge == 4)
-                        & (traversals.functionalClass_toEdge > 0)
-                        & (traversals.bikeClass_toEdge != 1)
-                    )
+                    >= 2
                 )
-            ),
-        )
-        .set_index(["start", "thru", "end"])[
-            [
-                "turnType",
-                "thruCentroid",
-                "signalExclRight_lastnoneloop",  # current Java implementation
-                "signalExclRight_lastrtloop",  # fixes rt-vs-none
-                "signalExclRight_lastnonevec",  # vector implementation of current Java
-                "signalExclRight_lastrtvec",  # same as above but also fixes rt-vs-none
-                "signalExclRight_anynoneloop",  # fixes any-vs-last check
-                "signalExclRight_anyrtloop",  # fixes any-vs-last and rt-vs-none (allegedly correct)
-                "signalExclRight_anynonevec",  # vector implementation of any-vs-last fix
-                "signalExclRight_anyrtvec",  # allegedly correct vector implementation
-                "unlfrma",
-                "unlfrmi",
-                "unxma",
-                "unxmi",
-            ]
-        ]
-        .astype({"turnType": int})
+                | (
+                    (traversals.turnType == turn_left)
+                    & (traversals.functionalClass_toEdge == 4)
+                    & (traversals.functionalClass_toEdge > 0)
+                    & (traversals.bikeClass_toEdge != 1)
+                )
+            )
+        ),
     )
+
+
+    output_cols = [
+        "turnType",
+        "thruCentroid",
+        "signalExclRight",
+        "unlfrma",
+        "unlfrmi",
+        "unxma",
+        "unxmi",
+    ]
+    if settings.recreate_java_attributes:
+        # include the java attributes if they were recreated
+        output_cols += java_cols
+
+    # keep only the relevant columns
+    traversals = traversals.set_index(["start", "thru", "end"])[output_cols]
+    
+    logger.info("Finished calculating derived traversal attributes")
+
+    return traversals
+
+
+def read_bike_net(
+    settings: BikeRouteChoiceSettings,
+) -> tuple[
+    pd.DataFrame,  # node dataframe
+    pd.DataFrame,  # edge dataframe
+    pd.DataFrame,  # traversal dataframe
+]:
+    """
+    Read bike network from supplied shapefiles and derive attributes
+
+    This method reads in two shapefiles detailing the nodes and edges
+    of a bike network, manipulates the data tables to match the expected
+    output format, and derives additonal attributes, some of which are
+    solely used internally while others are appended to the edge and node
+    tables. Additionally, a new table is developed of all traversals, that
+    is, all possible combinations of edges leading to and from a node which
+    are not reversals.
+
+    Parameters:
+        node_file: str  -   path to the node shapefile
+        edge_file: str  -   path to the edge shapefile
+
+    Returns:
+        nodes: pd.DataFrame   -     node dataframe with derived attributes in expected format
+        edges: pd.DataFrame   -     edge dataframe with derived attributes in expected format
+        traversals: pd.DataFrame -  traversal dataframe with derived attributes in expected format
+    """
+
+    # read shapefiles
+    logger.info("Reading link and node shapefiles")
+    node = read_file(settings, settings.node_file)
+    link = read_file(settings, settings.link_file)
+
+    # create and attribute edges
+    edges, nodes = create_and_attribute_edges(node, link)
+
+    traversals = create_and_attribute_traversals(edges, nodes)
+
 
     return nodes, edges, traversals
 

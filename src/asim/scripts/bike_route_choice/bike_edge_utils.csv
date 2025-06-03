@@ -6,6 +6,7 @@ util_class_III_bike_lane_dist,Distance on class III bike lanes,"@df.distance * n
 util_art_no_bike_lane,Distance on arterial without bike lanes,"@df.distance * np.where((df.arterial == False) & (df.lanes == 0), 1, 0)",-1.050
 util_dist_cycle_track_class_II,Distance on cyle track class II bike lanes,"@df.distance * df.cycleTrack",0.012
 util_dist_cycle_track_class_III,Distance on boulevard class III bike routes,"@df.distance * df.bikeBlvd",0.430
-# FIXME how to calculate if we don't know the destination? Use traversal angle but then how to get distance?,,
-#util_dist_wrong_way,Distance wrong way,,-3.445
+# FIXME double check this distance wrong way logic,,
+util_dist_wrong_way,Distance wrong way,"@df.distance * np.where((df.bikeClass != 1) & (df.lanes == 0), 1, 0)",-3.445
 util_elevation_gain_ft,Cumulative gain in elevation ignoring declines in feet,@df.gain,-0.01
+util_access_of_highway,"Unallowed access onto interstate, freeway, or expressway","@(df.functionalClass == 1) | (df.functionalClass == 2)",-999.9

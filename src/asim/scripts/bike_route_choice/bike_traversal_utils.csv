@@ -5,7 +5,5 @@ util_unsig_left_from_principal,Unsignalized left turns from principal arterials,
 util_unsig_left_from_minor,Unsignalized left turns from minor arterials,unlfrmi,-0.150
 util_unsig_cross_or_left_onto_principal,Unsignalized cross or left onto principal arterials,unxma,-0.150
 util_unsig_cross_or_left_onto_minor,Unsignalized cross or left onto minor arterials,unxmi,-0.150
-# FIXME: variable not yet created -- probably an edge attribute,,
-# util_access_of_highway,"Unallowed access onto interstate, freeway, or expressway",accessOfHighway,-999.9
 # can't calculate path size here since we don't know the path yet,,
 #util_log_path_size,log of path size,logPathSize,1.0
