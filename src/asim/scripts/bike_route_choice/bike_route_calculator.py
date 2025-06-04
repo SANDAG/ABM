@@ -92,7 +92,7 @@ def calculate_utilities_from_spec(
     choosers: pd.DataFrame,
     spec_file: str,
     trace_label: str,
-    randomize_coeffs: bool = True,
+    randomize: bool = False,
 ) -> pd.DataFrame:
     """
     Calculate utilities from a specification file (edge or traversal).
@@ -102,7 +102,7 @@ def calculate_utilities_from_spec(
         choosers: pd.DataFrame (edges or traversals)
         spec_file: str (path to the specification file)
         trace_label: str (label for tracing/logging)
-        randomize_coeffs: bool (whether to randomize coefficients)
+        randomize: bool (whether to randomize coefficients)
 
     Returns:
         pd.DataFrame with a 'utility' column
@@ -111,9 +111,19 @@ def calculate_utilities_from_spec(
     spec = read_file(settings, spec_file)
 
     # Optionally randomize coefficients
-    if randomize_coeffs:
-        logger.info(f"Randomizing coefficients for {trace_label}")
-        # spec["Coefficient"] *= np.random.uniform(0, 1, size=spec.shape[0])
+    if randomize:
+        # randomize coefficients between 1 +/- settings.random_scale_coef, expect for unavailiability (-999)
+        spec["Coefficient"] = spec["Coefficient"].apply(
+            lambda x: x
+            * (
+                1
+                + np.random.uniform(
+                    0 - settings.random_scale_coef, settings.random_scale_coef
+                )
+            )
+            if x > -990
+            else x
+        )
 
     # calculate utilities
     utilities = calculate_utilities(
@@ -123,9 +133,28 @@ def calculate_utilities_from_spec(
         trace_label=trace_label,
     )
 
+    # Optionally also add a random component across all utilities
+    if randomize:
+        utilities["utility"] = utilities["utility"] * np.random.choice(
+            [(1 - settings.random_scale_link), (1 + settings.random_scale_link)],
+            utilities.size,
+        )
+
     # check that all utilities are less than or equal to zero
+    if (utilities["utility"] > 0).any():
+        logger.warning(
+            f"{trace_label} utilities contain positive values, which may indicate an issue with the utility calculation."
+        )
+        logger.info(f"Utilities: {utilities['utility'].describe()}")
+        logger.info(
+            f"Percentage of positive utilities: {(utilities['utility'] > 0).mean() * 100:.2f}%"
+        )
+        logger.info(
+            "Capping the positive utilities to zero to avoid issues in dijkstra's algorithm."
+        )
+        utilities.loc[utilities["utility"] > 0, "utility"] = 0
     assert (
-        utilities.utility <= 0
-    ).all(), f"{trace_label.capitalize()} should all be less than or equal to zero"
+        ~utilities.utility.isna()
+    ).all(), f"{trace_label} utilities should not contain any NaN values"
 
     return utilities

@@ -4,10 +4,12 @@ import yaml
 from pydantic import BaseModel, ValidationError
 import geopandas as gpd
 import pandas as pd
+import numpy as np
 import logging
 import networkx as nx
 import matplotlib.pyplot as plt
 import networkx as nx
+from typing import Literal
 
 
 # Set up logging
@@ -38,6 +40,19 @@ class BikeRouteChoiceSettings(BaseModel):
     # whether to trace edge and traversal utility calculations
     trace_bike_utilities: bool = False
 
+    # runtime settings
+    number_of_batches: int = 1
+    number_of_processors: int = 1
+
+    # randomization settings
+    random_seed: int = 42
+    random_scale_coef: float = 0.5
+    random_scale_link: float = 0.7
+
+    # trace origin and destination pairs
+    trace_origins: list = []
+    trace_destinations: list = []
+
     # whether to recreate Java attributes -- not needed, but here for backwards compatibility tests
     recreate_java_attributes: bool = False
 
@@ -47,6 +62,17 @@ class BikeRouteChoiceSettings(BaseModel):
     # caching options for bike network creation to save time
     read_cached_bike_net: bool = False  # will crash if network does not exist
     save_bike_net: bool = True
+
+    # can define a subset of zones to use for the model
+    # this is useful for testing or if you only want to run the model for a specific area
+    zone_subset: int | list | None = None
+
+    # whether to treat mazs or tazs as the centroid zones
+    zone_level: Literal["taz", "maz"] = "taz"
+
+    # how many different paths to build for each origin-destination pair
+    # this is the number of times dijkstra's algorithm will be run
+    number_of_iterations: int = 10
 
 
 def load_settings(
@@ -72,6 +98,9 @@ def load_settings(
         format="%(asctime)s - %(levelname)s - %(message)s",
         handlers=[logging.FileHandler(log_file_location), logging.StreamHandler()],
     )
+
+    # set random seed for reproducibility
+    np.random.seed(settings.random_seed)
 
     return settings
 

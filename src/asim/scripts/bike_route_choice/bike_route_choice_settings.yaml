@@ -14,8 +14,30 @@ edge_util_file: bike_edge_utils.csv
 # Traversal utility specification file
 traversal_util_file: bike_traversal_utils.csv
 
+# can define a subset of zones to use for the model
+# this is useful for testing or if you only want to run the model for a specific area
+zone_subset: 20
+
+# whether to treat "mgra" or "taz" as the centroid zones
+zone_level: taz
+
+# how many different paths to build for each origin-destination pair
+# this is the number of times dijkstra's algorithm will be run
+number_of_iterations: 2
+
+# runtime settings
+number_of_batches: 1
+number_of_processors: 1
+
+# randomization settings
+random_scale_coef: 0.5
+random_scale_link: 0.7
+
 # whether to trace the edge utilities
 trace_bike_utilities: False
+
+trace_origins: [184947, 184948]
+trace_destinations: [375629, 375630]
 
 read_cached_bike_net: True
 save_bike_net: True
