@@ -14,16 +14,22 @@ from bike_route_utilities import BikeRouteChoiceSettings, load_settings
 # Set up logging
 logger = logging.getLogger(__name__)
 
-# def randomize_network_cost(edges, traversals, random_scale):
-#     print("Randomizing network costs")
-#     edges_rand = edges.copy()
-#     traversals_rand = traversals.copy()
-#     edges_rand.bikeCost = edges_rand.bikeCost * (1 + random_scale * np.random.uniform(-1.0,1.0,len(edges_rand)))
-#     traversals_rand.bikecost = traversals_rand.bikecost * (1 + random_scale * np.random.uniform(-1.0,1.0,len(traversals_rand)))
-#     return edges_rand, traversals_rand
-
 
 def process_paths_new(centroids, predecessors):
+    """
+    Converts the predecessors array from Dijkstra's algorithm into paths.
+
+    Args:
+        centroids (list): List of centroid indices.
+        predecessors (np.ndarray): Predecessors array from Dijkstra's algorithm.
+
+    Returns:
+        tuple: A tuple containing:
+            - paths_orig (np.ndarray): Origin indices for paths.
+            - paths_dest (np.ndarray): Destination indices for paths.
+            - paths_from_node (np.ndarray): From-node indices for paths.
+            - paths_to_node (np.ndarray): To-node indices for paths.
+    """
     logger.info("Processing paths without numba...")
 
     # Add self-referential column to predecessor table to indicate end of path
@@ -381,7 +387,7 @@ def perform_dijkstras_algorithm_batch_traversals(
     """Perform Dijkstra's algorithm for centroids using SciPy's sparse graph solver with batched parallel processing."""
     num_edges = len(edges)
 
-    # # node mapping needs to start at 0 in order to create adjacency matrix
+    # node mapping needs to start at 0 in order to create adjacency matrix
     # fromNode and toNode index is saved as columns in edges
     # then reindex again to get index of the edge
     edge_mapping = edges["edge_utility"].reset_index().reset_index()
@@ -425,13 +431,26 @@ def perform_dijkstras_algorithm_batch_traversals(
 
 
 def run_iterations_batch_traversals(
-    settings,
-    nodes,
-    edges,
-    traversals,
-    origin_centroids,
-    dest_centroids,
+    settings: BikeRouteChoiceSettings,
+    edges: pd.DataFrame,
+    traversals: pd.DataFrame,
+    origin_centroids: list,
+    dest_centroids: list,
 ):
+    """
+    Run multiple iterations of Dijkstra's algorithm using traversals as "links" and edges as "vertices".
+    For each iteration, it calculates utilities for edges and traversals, then performs Dijkstra's algorithm to find paths.
+
+    Args:
+        settings: BikeRouteChoiceSettings
+        edges: pd.DataFrame
+        traversals: pd.DataFrame
+        origin_centroids: list
+        dest_centroids: list
+
+    Returns:
+        tuple: A tuple containing arrays of path information.
+    """
 
     all_paths = []
 
@@ -504,7 +523,6 @@ def run_batch_traversals(
         all_paths_iteration,
     ) = run_iterations_batch_traversals(
         settings,
-        nodes,
         edges,
         traversals,
         origin_centroids,
