@@ -462,6 +462,9 @@ def _route_stop_location(
             chunk_tag=None,
             trace_label=trace_label,
             zone_layer=None,
+            compute_settings=model_settings.compute_settings.subcomponent_settings(
+                "sample"
+            ),
         )
 
         # choose a MAZ for each DEST_TAZ choice, choice probability based on MAZ size_term fraction of TAZ total

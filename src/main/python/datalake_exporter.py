@@ -261,7 +261,8 @@ models = [
     ('report', '..', False)
 ]
 exclude = [
-    'final_pipeline.h5'
+    'final_pipeline.h5',
+    'final_pipeline'
 ]
 database = 'abm_15_1_0'
 write_to_datalake(output_path, models, exclude, env)

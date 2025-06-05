@@ -294,6 +294,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         skipHighwayAssignment = props["RunModel.skipHighwayAssignment"]
         skipTransitSkimming = props["RunModel.skipTransitSkimming"]
         skipTransitConnector = props["RunModel.skipTransitConnector"]
+        skipSkimConversion = props["RunModel.skipSkimConversion"]
         skipTransponderExport = props["RunModel.skipTransponderExport"]
         skipScenManagement = props["RunModel.skipScenManagement"]
         skipABMPreprocessing = props["RunModel.skipABMPreprocessing"]
@@ -591,6 +592,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         #     omx_file = _join(output_dir, "skims", "transit_skims_" + period + ".omx")
                         #     export_transit_skims(omx_file, [period], transit_scenario, big_to_zero=False)
 
+                if not skipSkimConversion[iteration]:
+                    self.run_proc("convertSkimsToOMXZ.cmd",
+                                  [drive, path_forward_slash],
+                                  "Converting skims to omxz format", capture_output=True)
+
                 if not skipTransponderExport[iteration]:
                     am_scenario = main_emmebank.scenario(base_scenario.number + 2)
                     export_for_transponder(output_dir, num_processors, am_scenario)
@@ -788,6 +794,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 "run_travel_time_calculator.cmd",
                 [drive, drive + path_forward_slash],
                 "Exporting MGRA-level travel times", capture_output=True)
+            
+            self.run_proc(
+                "deleteOMXZskims.cmd",
+                [drive, drive + path_forward_slash],
+                "Deleting OMXZ skims", capture_output=True)
 
         # This validation procedure only works with base (2022) scenarios utilizing TNED networks
         if scenarioYear == "2022" and not skipValidation:

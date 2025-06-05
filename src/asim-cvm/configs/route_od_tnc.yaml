@@ -21,3 +21,6 @@ RESULT_COL_NAME: origination_zone
 
 REQUIRE_ACCESSIBILITY: False
 ACCESSIBILITY_TERMS:
+
+compute_settings:
+  drop_unused_columns: False

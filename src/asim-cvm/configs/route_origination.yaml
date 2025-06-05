@@ -60,6 +60,9 @@ port_taz:
   - 2050
   - 3742
 
+compute_settings:
+  drop_unused_columns: False
+
 CONSTANTS:
   vot_light: 67 # dollar per hour
   vot_medium: 68
