@@ -335,8 +335,8 @@ def recreate_java_attributes(
     )
 
     penult_travs = is_none.index[~is_none.index.isin(last_travs)]
-    penult_is_none = is_none[penult_travs]
-    last_is_none = is_none[last_travs]
+    penult_is_none = is_none[penult_travs].reset_index(2).turnType.rename("penultimate_is_none")
+    last_is_none = is_none[last_travs].reset_index(2).turnType.rename("last_is_none")
 
     # tack on the two new columns
     traversals = traversals.merge(
@@ -506,7 +506,7 @@ def calculate_signalExclRight_alternatives(traversals: pd.DataFrame) -> pd.DataF
         "signalExclRight_anynoneloop",
         "signalExclRight_anyrtloop",
         "signalExclRight_anynonevec",
-        "signalExclRight_anyrtvec",
+        # "signalExclRight_anyrtvec",
     ]
 
     return traversals, java_attributes
@@ -585,6 +585,7 @@ def create_and_attribute_traversals(
     logger.info("Calculating derived traversal attributes")
 
     # calculate traversal angle attributes for thru node
+    # maximum turning angle
     max_angles = (
         traversals[
             traversals.autosPermitted_toEdge & (traversals.start != traversals.end)
@@ -595,6 +596,7 @@ def create_and_attribute_traversals(
         .rename("max_angle")
     )
 
+    # minimum turning angle (most negative)
     min_angles = (
         traversals[
             traversals.autosPermitted_toEdge & (traversals.start != traversals.end)
@@ -605,6 +607,7 @@ def create_and_attribute_traversals(
         .rename("min_angle")
     )
 
+    # minimum absolute turning angle
     min_abs_angles = (
         traversals[
             traversals.autosPermitted_toEdge & (traversals.start != traversals.end)
@@ -615,6 +618,7 @@ def create_and_attribute_traversals(
         .rename("min_abs_angle")
     )
 
+    # number of outbound legs
     leg_count = (
         traversals[
             traversals.autosPermitted_toEdge & (traversals.start != traversals.end)
@@ -657,6 +661,7 @@ def create_and_attribute_traversals(
     # the options are no turns, left, right, and reverse
     traversals.loc[~traversals.leg_count.isna(), "turnType"] = turn_none
 
+    # label right turns
     traversals.loc[
         (traversals.leg_count == 3)
         & (traversals.angle <= traversals.min_angle)
@@ -664,6 +669,7 @@ def create_and_attribute_traversals(
         "turnType",
     ] = turn_right
 
+    # label left turns
     traversals.loc[
         (traversals.leg_count == 3)
         & (traversals.angle >= traversals.max_angle)
@@ -671,6 +677,7 @@ def create_and_attribute_traversals(
         "turnType",
     ] = turn_left
 
+    # more right turns
     traversals.loc[
         (traversals.leg_count > 3)
         & (traversals.angle.abs() > traversals.min_abs_angle)
@@ -683,6 +690,7 @@ def create_and_attribute_traversals(
         "turnType",
     ] = turn_right
 
+    # more left turns
     traversals.loc[
         (traversals.leg_count > 3)
         & (traversals.angle.abs() > traversals.min_abs_angle)
@@ -695,13 +703,16 @@ def create_and_attribute_traversals(
         "turnType",
     ] = turn_left
 
+    # reversals by angle
     traversals.loc[
         (traversals.angle < -math.pi * 5 / 6) | (traversals.angle > math.pi * 5 / 6),
         "turnType",
     ] = turn_reverse
 
+    # reversals by start/end node
     traversals.loc[traversals.start == traversals.end, "turnType"] = turn_reverse
 
+    # all centroid connector traversals are NONE type
     traversals.loc[
         traversals.centroid_start | traversals.centroid_thru | traversals.centroid_end,
         "turnType",
@@ -748,6 +759,7 @@ def create_and_attribute_traversals(
         how="left",
     )
 
+    # keep track of how many duplicate traversals have turn type == right
     traversals = traversals.merge(
         (traversals.set_index(["start", "thru", "end"]).turnType == turn_right)
         .reset_index()
@@ -864,7 +876,7 @@ def create_and_attribute_traversals(
     ]
     if settings.recreate_java_attributes:
         # include the java attributes if they were recreated
-        output_cols += java_cols
+        output_cols += java_attributes
 
     # keep only the relevant columns
     traversals = traversals.set_index(["start", "thru", "end"])[output_cols]
