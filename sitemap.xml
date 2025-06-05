@@ -76,6 +76,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://sandag.github.io/abm/application/settings-manager.html</loc>
+         <lastmod>2025-06-05</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://sandag.github.io/abm/calib_valid/calib_overview.html</loc>
          <lastmod>2025-06-05</lastmod>
          <changefreq>daily</changefreq>
