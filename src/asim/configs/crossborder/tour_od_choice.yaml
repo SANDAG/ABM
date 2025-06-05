@@ -67,9 +67,9 @@ compute_settings:
     - origin_destination
 
 CONSTANTS:
-  tecate_open_per: 5
-  tecate_close_per: 40
-  otaymesa_open_per: 0
-  otaymesa_close_per: 48
-  sanysidro_open_per: 0
-  sanysidro_close_per: 48
+  tecate_open_per: {crossborder-borderCrossings-tecate-open:}
+  tecate_close_per: {crossborder-borderCrossings-tecate-close:}
+  otaymesa_open_per: {crossborder-borderCrossings-otayMesa-open:}
+  otaymesa_close_per: {crossborder-borderCrossings-otayMesa-close:}
+  sanysidro_open_per: {crossborder-borderCrossings-sanYsidro-open:}
+  sanysidro_close_per: {crossborder-borderCrossings-sanYsidro-close:}

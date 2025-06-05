@@ -64,6 +64,6 @@ compute_settings:
   drop_unused_columns: False
 
 CONSTANTS:
-  vot_light: 67 # dollar per hour
-  vot_medium: 68
-  vot_heavy: 89
+  vot_light: {cvm-vot-light:} # dollar per hour
+  vot_medium: {cvm-vot-medium:}
+  vot_heavy: {cvm-vot-heavy:}
