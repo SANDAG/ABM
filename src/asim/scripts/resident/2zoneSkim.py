@@ -527,7 +527,7 @@ class SkimGenerator:
         }).reset_index()
 
         missing_maz = missing_maz.merge(grouped_cost, on='OMAZ', how='left')   
-        skim_table = skim_table[["OMAZ","DMAZ", dist_col]].append(missing_maz).sort_values(['OMAZ', 'DMAZ'])
+        skim_table = pd.concat([skim_table[["OMAZ","DMAZ", dist_col]], missing_maz]).sort_values(['OMAZ', 'DMAZ'])
 
         return skim_table
     
