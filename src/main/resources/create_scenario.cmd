@@ -17,7 +17,7 @@ set LANDUSE_INPUT_PATH=%5
 set SUFFIX=%6
 
 @echo creating scenario folders
-set FOLDERS=input application bin conf logFiles output python report sql uec analysis input_checker src src\asim src\asim-cvm
+set FOLDERS=input application bin conf logFiles output python report sql uec analysis src src\asim src\asim-cvm
 for %%i in (%FOLDERS%) do (
 md %SCENARIO_FOLDER%\%%i)
 
@@ -35,7 +35,6 @@ xcopy /Y .\common\uec\"*.*" %SCENARIO_FOLDER%\uec
 xcopy /Y .\common\bin\"*.*" %SCENARIO_FOLDER%\bin
 rem xcopy /Y .\conf\%YEAR%\"*.*" %SCENARIO_FOLDER%\conf
 xcopy /Y .\common\conf\"*.*" %SCENARIO_FOLDER%\conf
-xcopy /Y/s/E .\common\input\input_checker\"*.*" %SCENARIO_FOLDER%\input_checker
 xcopy /Y/s/E .\common\src\asim\"*.*" %SCENARIO_FOLDER%\src\asim
 xcopy /Y/s/E .\common\src\asim-cvm\"*.*" %SCENARIO_FOLDER%\src\asim-cvm
 
@@ -60,8 +59,6 @@ rem copy special event input files
 xcopy /Y .\common\input\specialevent\"*.*" %SCENARIO_FOLDER%\input
 rem copy xborder input files
 xcopy /Y .\common\input\xborder\"*.*" %SCENARIO_FOLDER%\input
-rem copy input checker config files
-xcopy /Y .\common\input\input_checker\"*.*" %SCENARIO_FOLDER%
 rem copy network inputs
 call copy_networks.cmd %NETWORKDIR% %SCENARIO_FOLDER%\input
 
@@ -72,8 +69,6 @@ xcopy /Y %LANDUSE_INPUT_PATH%\"mgra15_based_input"%YEAR%".csv" %SCENARIO_FOLDER%
 
 rem copy analysis templates
 @echo copy analysis templates
-if %YEAR%==2016 (xcopy /Y/S   .\common\input\template\validation\2016\"*.*" %SCENARIO_FOLDER%\analysis\validation\)
-if %YEAR%==2018 (xcopy /Y/S   .\common\input\template\validation\2018\"*.*" %SCENARIO_FOLDER%\\analysis\validation\)
 if %YEAR%==2022 (xcopy /Y/S   .\common\input\template\validation\2022\"*.*" %SCENARIO_FOLDER%\analysis\validation\) 
 xcopy /Y/S   .\common\input\template\summary\"*.*" %SCENARIO_FOLDER%\analysis\summary\     
 
