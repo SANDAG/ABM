@@ -42,7 +42,7 @@ def get_poe_wait_times(settings):
             wait_time_dummy = wait_times[wait_times.poe == wait_times.poe.unique()[0]].copy()
             wait_time_dummy[['std_wait','sentri_wait','ped_wait','ready_wait']] = 0
             wait_time_dummy['poe'] = i
-            wait_times = wait_times.append(wait_time_dummy, ignore_index = True)
+            wait_times = pd.concat([wait_times, wait_time_dummy], ignore_index=True)
 
     start_hour_mask = wait_times['StartPeriod'] > 16
     wait_times.loc[start_hour_mask, 'StartHour'] = wait_times.loc[
@@ -180,7 +180,7 @@ def _update_sparse_skims(
                 if col in df.columns:
                     new_rows = df[df[col] == original_maz].copy()
                     new_rows[col] = new_maz_id
-                    df = df.append(new_rows, ignore_index=True)
+                    df = pd.concat([df, new_rows], ignore_index=True)
 
     df.to_csv(os.path.join(data_dir, output_fname), index=False)
 
