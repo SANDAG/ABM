@@ -218,10 +218,10 @@ def plot_shortest_path_with_results_buffered(
 
     # Highlight the shortest path
     path_edges = [
-        (path_data.fromNode.iloc[i], path_data.toNode.iloc[i])
+        (path_data.from_node.iloc[i], path_data.to_node.iloc[i])
         for i in range(len(path_data))
     ]
-    path_nodes = set(path_data.fromNode).union(set(path_data.toNode))
+    path_nodes = set(path_data.from_node).union(set(path_data.to_node))
     nx.draw_networkx_nodes(
         G, pos, nodelist=path_nodes, node_color="red", node_size=50, label="Path Nodes"
     )
@@ -246,8 +246,8 @@ def plot_shortest_path_with_results_buffered(
     num_edges = len(path_edges)
     total_distance = path_data["distance"].sum()
 
-    total_cost = path_data["cost_total"].sum()
-    turns = path_data[path_data.turnType > 0]["turnType"].count()
+    # total_cost = path_data["cost_total"].sum()
+    # turns = path_data[path_data.turnType > 0]["turnType"].count()
     path_size = path_data.iloc[0]["path_size"]
     # Add path information to the plot
     info_text = (
@@ -256,8 +256,8 @@ def plot_shortest_path_with_results_buffered(
         f"Iteration: {iteration}\n"
         f"Number of Edges: {num_edges}\n"
         f"Total Distance: {total_distance:.2f} units\n"
-        f"Turns: {turns}\n"
-        f"Total Cost: {total_cost:.2f}\n"
+        # f"Turns: {turns}\n"
+        # f"Total Cost: {total_cost:.2f}\n"
         f"Path Size: {path_size:.2f}"
     )
 
