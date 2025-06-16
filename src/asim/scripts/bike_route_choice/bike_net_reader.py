@@ -812,7 +812,7 @@ def create_and_attribute_traversals(
     # populate derived traversal attributes
 
     traversals = traversals.assign(
-        
+
         thruCentroid=(traversals.centroidConnector_fromEdge
         & traversals.centroidConnector_toEdge),
 
@@ -941,13 +941,13 @@ def create_bike_net(
     if settings.read_cached_bike_net:
         logger.info("Reading cached bike network from CSV files")
         edges = pd.read_csv(
-            os.path.join(settings.output_path, "edges.csv"), index_col=[0, 1]
+            os.path.join(os.path.expanduser(settings.output_path), "edges.csv"), index_col=[0, 1]
         )
         nodes = pd.read_csv(
-            os.path.join(settings.output_path, "nodes.csv"), index_col=0
+            os.path.join(os.path.expanduser(settings.output_path), "nodes.csv"), index_col=0
         )
         traversals = pd.read_csv(
-            os.path.join(os.path.join(settings.output_path, "traversals.csv")),
+            os.path.join(os.path.join(os.path.expanduser(settings.output_path), "traversals.csv")),
             index_col=[0, 1, 2],
         )
         return nodes, edges, traversals
@@ -965,8 +965,8 @@ def create_bike_net(
     # save edges, nodes, and traversals to csv files if specified
     if settings.save_bike_net:
         logger.info("Saving bike network to CSV files")
-        edges.to_csv(os.path.join(settings.output_path, "edges.csv"))
-        nodes.to_csv(os.path.join(settings.output_path, "nodes.csv"))
-        traversals.to_csv(os.path.join(settings.output_path, "traversals.csv"))
+        edges.to_csv(os.path.join(os.path.expanduser(settings.output_path), "edges.csv"))
+        nodes.to_csv(os.path.join(os.path.expanduser(settings.output_path), "nodes.csv"))
+        traversals.to_csv(os.path.join(os.path.expanduser(settings.output_path), "traversals.csv"))
 
     return nodes, edges, traversals

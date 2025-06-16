@@ -87,12 +87,12 @@ def load_settings(
         raise
 
     # ensure output path exists
-    if not os.path.exists(settings.output_path):
-        os.makedirs(settings.output_path)
+    if not os.path.exists(os.path.expanduser(settings.output_path)):
+        os.makedirs(os.path.expanduser(settings.output_path))
         logger.info(f"Created output directory: {settings.output_path}")
 
     # setup logger
-    log_file_location = os.path.join(settings.output_path, "bike_model.log")
+    log_file_location = os.path.join(os.path.expanduser(settings.output_path), "bike_model.log")
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(levelname)s - %(message)s",
