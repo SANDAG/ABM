@@ -417,6 +417,9 @@ def perform_dijkstras_algorithm_batch_traversals(
         traversals_mapped.indexFromEdge.isin(origin_centroids), "total_utility"
     ] += traversals_mapped.edge_utilityFromEdge
 
+    # Convert from negative utility to positive cost for Dijkstra's
+    traversals_mapped.total_utility *= -1
+
     # Create a sparse adjacency matrix
     row = traversals_mapped.indexFromEdge.to_numpy()
     col = traversals_mapped.indexToEdge.to_numpy()
