@@ -10,10 +10,15 @@ from bike_route_utilities import BikeRouteChoiceSettings, read_file
 logger = logging.getLogger(__name__)
 
 # turn type encodings
-turn_none = 0
-turn_left = 1
-turn_right = 2
-turn_reverse = 3
+TURN_NONE = 0
+TURN_LEFT = 1
+TURN_RIGHT = 2
+TURN_REVERSE = 3
+
+BLUE_STEEL  = TURN_RIGHT
+LE_TIGRE    = TURN_RIGHT
+FERRARI     = TURN_RIGHT
+MAGNUM      = TURN_LEFT
 
 
 def create_and_attribute_edges(
@@ -218,17 +223,17 @@ def recreate_java_attributes(
         pd.DataFrame - Traversal dataframe with recreated Java attributes
 
     """
-    ##########################################################################
-    # BUG IMPLEMENTATIONS BELOW
-
     def isThruJunc(trav, turn_type, last_all):
         # this method is buggy because it only considers the last traversal
         # instead of checking for any right turn
         if trav.centroid_start or trav.centroid_thru or trav.centroid_end:
             return False
-        if trav.turnType != turn_none:
+        
+        if trav.turnType != TURN_NONE:
             return False
-        if (
+        
+        if (    
+            # if there are no sibling traversals
             len(
                 traversals[
                     (traversals.start == trav.start)
@@ -241,7 +246,9 @@ def recreate_java_attributes(
         ):
             return True
 
+
         if last_all == "last":
+            # if the last sibling traversal is of the target turn type
             if (
                 traversals[
                     (traversals.start == trav.start)
@@ -258,6 +265,7 @@ def recreate_java_attributes(
                 return True
 
         elif last_all == "any":
+            # if any sibling traversal is of the target turn type
             return not (
                 traversals[
                     (traversals.start == trav.start)
@@ -275,10 +283,11 @@ def recreate_java_attributes(
             | traversals.centroid_thru
             | traversals.centroid_end
         )
-        & (traversals.turnType == turn_none)
+        & (traversals.turnType == TURN_NONE)
         & (traversals.none_turns - traversals.dupNoneTurns_toEdge == 0)
     )
 
+    # create columns to populate in the slow loop
     traversals["ThruJunction_lastnoneloop"] = False
     traversals["ThruJunction_lastrtloop"] = False
     traversals["ThruJunction_anynoneloop"] = False
@@ -286,19 +295,21 @@ def recreate_java_attributes(
 
     logger.info("Beginning slow loop recreating Java attributes")
 
+    # the slow loop through all the traversals (could this be parallelized?)
     for idx, trav in tqdm.tqdm(traversals.iterrows(), total=len(traversals)):
 
+        # check all four possible parameter combos
         traversals.loc[idx, "ThruJunction_lastnoneloop"] = isThruJunc(
-            trav, turn_none, "last"
+            trav, TURN_NONE, "last"
         )
         traversals.loc[idx, "ThruJunction_lastrtloop"] = isThruJunc(
-            trav, turn_right, "last"
+            trav, TURN_RIGHT, "last"
         )
         traversals.loc[idx, "ThruJunction_anynoneloop"] = isThruJunc(
-            trav, turn_none, "any"
+            trav, TURN_NONE, "any"
         )
         traversals.loc[idx, "ThruJunction_anyrtloop"] = isThruJunc(
-            trav, turn_right, "any"
+            trav, TURN_RIGHT, "any"
         )
 
     # the below is buggy because it counts none-turns instead of right turns
@@ -311,7 +322,7 @@ def recreate_java_attributes(
         .reset_index()
         .set_index(["start", "thru", "end"])
         .turnType
-        == turn_none
+        == TURN_NONE
     )
 
     last_travs = is_none.index
@@ -330,12 +341,17 @@ def recreate_java_attributes(
             .reset_index()
             .set_index(["start", "thru", "end"])
             .turnType
-            == turn_none,
+            == TURN_NONE,
         ]
     )
 
+    # create an index of all penultimate sibling turn movements
     penult_travs = is_none.index[~is_none.index.isin(last_travs)]
+
+    # get the penultimate sibling turn movments whose turn type is none
     penult_is_none = is_none[penult_travs].reset_index(2).turnType.rename("penultimate_is_none")
+
+    # get the last sibling turn movements whose turn type is none
     last_is_none = is_none[last_travs].reset_index(2).turnType.rename("last_is_none")
 
     # tack on the two new columns
@@ -360,7 +376,7 @@ def recreate_java_attributes(
         .reset_index()
         .set_index(["start", "thru", "end"])
         .turnType
-        == turn_right
+        == TURN_RIGHT
     )
     # index: all penultimate traversals of input groups w/ >1 out link
     # values: whether the index traversal is a right turn
@@ -373,7 +389,7 @@ def recreate_java_attributes(
         .reset_index()
         .set_index(["start", "thru", "end"])
         .turnType
-        == turn_right
+        == TURN_RIGHT
     )
 
     # drop the end column
@@ -390,25 +406,31 @@ def recreate_java_attributes(
         .rename("penultimate_is_rt")
     )
 
-    # tack on two new columns
+    # tack on two new columns (last_is_rt and penultimate_is_rt)
     traversals = traversals.merge(
         last_is_rt, left_on=["start", "thru"], right_index=True, how="left"
     ).merge(penultimate_is_rt, left_on=["start", "thru"], right_index=True, how="left")
 
+    # define the right turn exists parameter for all positions, 
+    # starting with those which are last-siblings
     traversals.loc[
         traversals.index.isin(last_is_rt.index), "buggyRTE_rt"
     ] = traversals.loc[traversals.index.isin(last_is_rt.index), "penultimate_is_rt"]
+    
+    # then moving on to all others
     traversals.loc[
         ~traversals.index.isin(last_is_rt.index), "buggyRTE_rt"
     ] = traversals.loc[~traversals.index.isin(last_is_rt.index), "last_is_rt"]
 
+    # define whether each entry is a thru-junction based on its underlying
+    # right-turn-exists variables
     traversals["ThruJunction_lastnonevec"] = (
         ~(
             traversals.centroid_start
             | traversals.centroid_thru
             | traversals.centroid_end
         )
-        & (traversals.turnType == turn_none)
+        & (traversals.turnType == TURN_NONE)
         & ~(traversals.buggyRTE_none)
     )
     traversals["ThruJunction_lastrtvec"] = (
@@ -417,11 +439,10 @@ def recreate_java_attributes(
             | traversals.centroid_thru
             | traversals.centroid_end
         )
-        & (traversals.turnType == turn_none)
+        & (traversals.turnType == TURN_NONE)
         & ~(traversals.buggyRTE_rt)
     )
-    # END BUG CODE
-    #######################################
+
     logger.info("Finished calculating java attributes")
 
     java_cols = [
@@ -463,37 +484,37 @@ def calculate_signalExclRight_alternatives(traversals: pd.DataFrame) -> pd.DataF
     traversals = traversals.assign(
         signalExclRight_anynonevec=(
             traversals.signalized
-            & (traversals.turnType != turn_right)
+            & (traversals.turnType != TURN_RIGHT)
             & (~traversals.ThruJunction_anynonevec)
         ),
         signalExclRight_anyrtloop=(
             traversals.signalized
-            & (traversals.turnType != turn_right)
+            & (traversals.turnType != TURN_RIGHT)
             & (~traversals.ThruJunction_anyrtloop)
         ),
         signalExclRight_anynoneloop=(
             traversals.signalized
-            & (traversals.turnType != turn_right)
+            & (traversals.turnType != TURN_RIGHT)
             & (~traversals.ThruJunction_anynoneloop)
         ),
         signalExclRight_lastnonevec=(
             traversals.signalized
-            & (traversals.turnType != turn_right)
+            & (traversals.turnType != TURN_RIGHT)
             & (~traversals.ThruJunction_lastnonevec)
         ),
         signalExclRight_lastrtvec=(
             traversals.signalized
-            & (traversals.turnType != turn_right)
+            & (traversals.turnType != TURN_RIGHT)
             & (~traversals.ThruJunction_lastrtvec)
         ),
         signalExclRight_lastnoneloop=(
             traversals.signalized
-            & (traversals.turnType != turn_right)
+            & (traversals.turnType != TURN_RIGHT)
             & (~traversals.ThruJunction_lastnoneloop)
         ),
         signalExclRight_lastrtloop=(
             traversals.signalized
-            & (traversals.turnType != turn_right)
+            & (traversals.turnType != TURN_RIGHT)
             & (~traversals.ThruJunction_lastrtloop)
         ),
     )
@@ -659,7 +680,7 @@ def create_and_attribute_traversals(
     # calculate turn type
     # turn type is determined by the angle and leg count
     # the options are no turns, left, right, and reverse
-    traversals.loc[~traversals.leg_count.isna(), "turnType"] = turn_none
+    traversals.loc[~traversals.leg_count.isna(), "turnType"] = TURN_NONE
 
     # label right turns
     traversals.loc[
@@ -667,7 +688,7 @@ def create_and_attribute_traversals(
         & (traversals.angle <= traversals.min_angle)
         & (traversals.angle.abs() > math.pi / 6),
         "turnType",
-    ] = turn_right
+    ] = TURN_RIGHT
 
     # label left turns
     traversals.loc[
@@ -675,7 +696,7 @@ def create_and_attribute_traversals(
         & (traversals.angle >= traversals.max_angle)
         & (traversals.angle.abs() > math.pi / 6),
         "turnType",
-    ] = turn_left
+    ] = TURN_LEFT
 
     # more right turns
     traversals.loc[
@@ -688,7 +709,7 @@ def create_and_attribute_traversals(
         )
         & (traversals.angle < 0),
         "turnType",
-    ] = turn_right
+    ] = TURN_RIGHT
 
     # more left turns
     traversals.loc[
@@ -701,29 +722,29 @@ def create_and_attribute_traversals(
         )
         & (traversals.angle >= 0),
         "turnType",
-    ] = turn_left
+    ] = TURN_LEFT
 
     # reversals by angle
     traversals.loc[
         (traversals.angle < -math.pi * 5 / 6) | (traversals.angle > math.pi * 5 / 6),
         "turnType",
-    ] = turn_reverse
+    ] = TURN_REVERSE
 
     # reversals by start/end node
-    traversals.loc[traversals.start == traversals.end, "turnType"] = turn_reverse
+    traversals.loc[traversals.start == traversals.end, "turnType"] = TURN_REVERSE
 
     # all centroid connector traversals are NONE type
     traversals.loc[
         traversals.centroid_start | traversals.centroid_thru | traversals.centroid_end,
         "turnType",
-    ] = turn_none
+    ] = TURN_NONE
 
     traversals.turnType = traversals.turnType.astype(int)
 
     # keep track of the number of outgoing turns w/ turn type == none
     # FIXME this should almost certainly get removed
     traversals = traversals.merge(
-        (traversals.set_index(["start", "thru"]).turnType == turn_none)
+        (traversals.set_index(["start", "thru"]).turnType == TURN_NONE)
         .reset_index()
         .groupby(["start", "thru"])
         .sum()
@@ -737,7 +758,7 @@ def create_and_attribute_traversals(
     # FIXME this should be the actual usage, not the above, but we're
     # copying from the java implementation
     traversals = traversals.merge(
-        (traversals.set_index(["start", "thru"]).turnType == turn_right)
+        (traversals.set_index(["start", "thru"]).turnType == TURN_RIGHT)
         .reset_index()
         .groupby(["start", "thru"])
         .sum()
@@ -749,7 +770,7 @@ def create_and_attribute_traversals(
 
     # keep track of how many duplicate traversals have turn type == none
     traversals = traversals.merge(
-        (traversals.set_index(["start", "thru", "end"]).turnType == turn_none)
+        (traversals.set_index(["start", "thru", "end"]).turnType == TURN_NONE)
         .reset_index()
         .groupby(["start", "thru", "end"])
         .sum()
@@ -761,7 +782,7 @@ def create_and_attribute_traversals(
 
     # keep track of how many duplicate traversals have turn type == right
     traversals = traversals.merge(
-        (traversals.set_index(["start", "thru", "end"]).turnType == turn_right)
+        (traversals.set_index(["start", "thru", "end"]).turnType == TURN_RIGHT)
         .reset_index()
         .groupby(["start", "thru", "end"])
         .sum()
@@ -771,31 +792,35 @@ def create_and_attribute_traversals(
         how="left",
     )
 
+    # for replicating the buggy Java implementation
     if settings.recreate_java_attributes:
         traversals, java_cols = recreate_java_attributes(traversals)
         traversals, java_attributes = calculate_signalExclRight_alternatives(traversals)
         java_cols += java_attributes
 
+    # this is the correct implementation
     traversals["ThruJunction_anyrtvec"] = (
         ~(
             traversals.centroid_start
             | traversals.centroid_thru
             | traversals.centroid_end
         )
-        & (traversals.turnType == turn_none)
+        & (traversals.turnType == TURN_NONE)
         & (traversals.rt_turns - traversals.dupRtTurns_toEdge == 0)
     )
 
     # populate derived traversal attributes
 
     traversals = traversals.assign(
-        thruCentroid=traversals.centroidConnector_fromEdge
-        & traversals.centroidConnector_toEdge,
+
+        thruCentroid=(traversals.centroidConnector_fromEdge
+        & traversals.centroidConnector_toEdge),
+
         # this one is allegedly the one to keep
         # taken from signalExclRight_anyrtvec
         signalExclRight=(
             traversals.signalized
-            & (traversals.turnType != turn_right)
+            & (traversals.turnType != TURN_RIGHT)
             & (~traversals.ThruJunction_anyrtvec)
         ),
         # unlfrma: unsignalized left from major arterial
@@ -804,14 +829,14 @@ def create_and_attribute_traversals(
             & (traversals.functionalClass_fromEdge <= 3)
             & (traversals.functionalClass_fromEdge > 0)
             & (traversals.bikeClass_fromEdge != 1)
-            & (traversals.turnType == turn_left)
+            & (traversals.turnType == TURN_LEFT)
         ),
         # unlfrmi: unsignalized left from minor arterial
         unlfrmi=(
             (~traversals.signalized)
             & (traversals.functionalClass_fromEdge == 4)
             & (traversals.bikeClass_fromEdge != 1)
-            & (traversals.turnType == turn_left)
+            & (traversals.turnType == TURN_LEFT)
         ),
         # unxma: unsignalized cross major arterial
         unxma=(
@@ -822,7 +847,7 @@ def create_and_attribute_traversals(
             )
             & (
                 (
-                    (traversals.turnType == turn_none)
+                    (traversals.turnType == TURN_NONE)
                     & (
                         traversals.majorArtXings
                         - traversals.dupMajArts_fromEdge
@@ -831,7 +856,7 @@ def create_and_attribute_traversals(
                     >= 2
                 )
                 | (
-                    (traversals.turnType == turn_left)
+                    (traversals.turnType == TURN_LEFT)
                     & (traversals.functionalClass_toEdge <= 3)
                     & (traversals.functionalClass_toEdge > 0)
                     & (traversals.bikeClass_toEdge != 1)
@@ -847,7 +872,7 @@ def create_and_attribute_traversals(
             )
             & (
                 (
-                    (traversals.turnType == turn_none)
+                    (traversals.turnType == TURN_NONE)
                     & (
                         traversals.artXings
                         - traversals.dupArts_fromEdge
@@ -856,7 +881,7 @@ def create_and_attribute_traversals(
                     >= 2
                 )
                 | (
-                    (traversals.turnType == turn_left)
+                    (traversals.turnType == TURN_LEFT)
                     & (traversals.functionalClass_toEdge == 4)
                     & (traversals.functionalClass_toEdge > 0)
                     & (traversals.bikeClass_toEdge != 1)
@@ -916,13 +941,13 @@ def create_bike_net(
     if settings.read_cached_bike_net:
         logger.info("Reading cached bike network from CSV files")
         edges = pd.read_csv(
-            os.path.join(settings.output_path, "edges.csv"), index_col=[0, 1]
+            os.path.join(os.path.expanduser(settings.output_path), "edges.csv"), index_col=[0, 1]
         )
         nodes = pd.read_csv(
-            os.path.join(settings.output_path, "nodes.csv"), index_col=0
+            os.path.join(os.path.expanduser(settings.output_path), "nodes.csv"), index_col=0
         )
         traversals = pd.read_csv(
-            os.path.join(os.path.join(settings.output_path, "traversals.csv")),
+            os.path.join(os.path.join(os.path.expanduser(settings.output_path), "traversals.csv")),
             index_col=[0, 1, 2],
         )
         return nodes, edges, traversals
@@ -940,8 +965,8 @@ def create_bike_net(
     # save edges, nodes, and traversals to csv files if specified
     if settings.save_bike_net:
         logger.info("Saving bike network to CSV files")
-        edges.to_csv(os.path.join(settings.output_path, "edges.csv"))
-        nodes.to_csv(os.path.join(settings.output_path, "nodes.csv"))
-        traversals.to_csv(os.path.join(settings.output_path, "traversals.csv"))
+        edges.to_csv(os.path.join(os.path.expanduser(settings.output_path), "edges.csv"))
+        nodes.to_csv(os.path.join(os.path.expanduser(settings.output_path), "nodes.csv"))
+        traversals.to_csv(os.path.join(os.path.expanduser(settings.output_path), "traversals.csv"))
 
     return nodes, edges, traversals

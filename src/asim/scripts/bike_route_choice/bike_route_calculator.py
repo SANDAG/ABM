@@ -78,7 +78,7 @@ def calculate_utilities(
         )
         expressions = pd.concat([choosers, expressions], axis=1)
         expressions["utility"] = utilities["utility"]
-        expressions.to_csv(os.path.join(settings.output_path, f"{trace_label}.csv"))
+        expressions.to_csv(os.path.join(os.path.expanduser(settings.output_path), f"{trace_label}.csv"))
 
     assert utilities.index.equals(
         choosers.index
