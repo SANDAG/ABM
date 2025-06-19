@@ -1,6 +1,8 @@
 import sys
 import numpy as np
 import pandas as pd
+import geopandas as gpd
+import shapely as shp
 import logging
 from scipy.sparse import csr_matrix
 from scipy.sparse import csr_array, coo_array
@@ -741,6 +743,42 @@ def run_bike_route_choice(settings):
         trace_paths.to_csv(
             f"{settings.output_path}/bike_route_choice_trace.csv", index=False
         )
+
+        if settings.generate_shapefile:
+            logger.info("Generating shapefile...")
+
+            # convert xy coords to shapely points
+            node_coords = gpd.GeoDataFrame(nodes.index,geometry=gpd.points_from_xy(nodes.x,nodes.y),crs=settings.crs).set_index('id')
+
+            # attach fromNode and toNode points
+            edge_coords = edges.reset_index()[['fromNode','toNode']].merge(
+                                node_coords[['geometry']],left_on='fromNode',right_index=True
+                            ).merge(
+                                node_coords[['geometry']],left_on='toNode',right_index=True,suffixes=('_from','_to')
+                            ).set_index(['fromNode','toNode'])
+            
+            # generate linestrings from points
+            # TODO investigate if this can be sped up - the lambda is slow
+            edge_coords = gpd.GeoDataFrame(
+                edge_coords, 
+                geometry=edge_coords.apply(
+                    lambda x: shp.LineString([x.geometry_from,x.geometry_to]), 
+                    axis=1)
+                ).drop(columns=['geometry_from','geometry_to'])
+            
+            # attach edges to the paths
+            trace_paths = gpd.GeoDataFrame(
+                trace_paths.merge(
+                    edge_coords['geometry'],
+                    left_on=['from_node','to_node'],
+                    right_index=True,
+                    how='left'),
+                crs=settings.crs
+                )
+            
+            logger.info("Writing shapefile...")
+            trace_paths.to_file(f"{settings.output_path}/bike_route_choice_trace.shp")
+
 
     print("Bike route choice model completed.")
     return final_paths

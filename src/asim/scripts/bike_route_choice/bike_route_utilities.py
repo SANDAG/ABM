@@ -63,6 +63,10 @@ class BikeRouteChoiceSettings(BaseModel):
     read_cached_bike_net: bool = False  # will crash if network does not exist
     save_bike_net: bool = True
 
+    # shapefile generation properties
+    generate_shapefile: bool = False
+    crs: str = None
+
     # can define a subset of zones to use for the model
     # this is useful for testing or if you only want to run the model for a specific area
     zone_subset: int | list | None = None
