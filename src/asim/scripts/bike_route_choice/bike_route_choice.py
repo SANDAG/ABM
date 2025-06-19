@@ -658,7 +658,7 @@ def run_bike_route_choice(settings):
     dest_centroids = list(dest_centroid_map.values())
 
     trace_origins_edgepos = np.array(pd.Series(settings.trace_origins).map(origin_centroid_map))
-    trace_dests_edgepos = np.array(pd.Series(settings.trace_origins).map(dest_centroid_map))
+    trace_dests_edgepos = np.array(pd.Series(settings.trace_destinations).map(dest_centroid_map))
 
 
     logger.info(
