@@ -68,7 +68,7 @@ class BikeRouteChoiceSettings(BaseModel):
     zone_subset: int | list | None = None
 
     # whether to treat mazs or tazs as the centroid zones
-    zone_level: Literal["taz", "maz"] = "taz"
+    zone_level: Literal["taz", "mgra"] = "taz"
 
     # how many different paths to build for each origin-destination pair
     # this is the number of times dijkstra's algorithm will be run

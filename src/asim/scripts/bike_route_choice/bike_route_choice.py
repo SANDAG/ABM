@@ -513,6 +513,8 @@ def run_batch_traversals(
     traversals,
     origin_centroids,
     dest_centroids,
+    trace_origin_edgepos,
+    trace_dest_edgepos,
 ):
     """
     Run batch traversals for the bike route choice model.
@@ -535,21 +537,28 @@ def run_batch_traversals(
     trace_dests_rev = []
 
     if len(settings.trace_origins) > 0:
-        trace_origins_np = np.array(settings.trace_origins)
-        trace_origins_rev = trace_origins_np - 1
-        # origin_centroids_rev_map = np.zeros(max(origin_centroids) + 1, dtype=np.int32)
-        # origin_centroids_rev_map[origin_centroids] = range(len(origin_centroids))
-        # trace_origins_rev = origin_centroids_rev_map[
-        #     trace_origins_np[np.isin(settings.trace_origins, origin_centroids)]
-        # ]
 
-        trace_dests_np = np.array(settings.trace_destinations)
-        # dest_centroids_rev_map = np.zeros(max(dest_centroids) + 1, dtype=np.int32)
-        # dest_centroids_rev_map[dest_centroids] = range(len(dest_centroids))
-        # trace_dests_rev = dest_centroids_rev_map[
-        #     trace_dests_np[np.isin(settings.trace_destinations, dest_centroids)]
-        # ]
-        trace_dests_rev = trace_dests_np - 1
+        filtered_trace_origs = trace_origin_edgepos[np.isin(trace_origin_edgepos,origin_centroids)]
+
+        trace_origins_rev = pd.DataFrame(
+            enumerate(origin_centroids),
+            columns=['subset_pos','edge_pos']
+            ).set_index(
+                'edge_pos'
+            ).loc[
+                filtered_trace_origs
+            ].subset_pos.values
+
+        filtered_trace_dests = trace_dest_edgepos[np.isin(trace_dest_edgepos,dest_centroids)]
+
+        trace_dests_rev = pd.DataFrame(
+            enumerate(dest_centroids),
+            columns=['subset_pos','edge_pos']
+            ).set_index(
+                'edge_pos'
+            ).loc[
+                filtered_trace_dests
+            ].subset_pos.values
 
     # calculate non-randomized utilities for edges and traversals to use in final logsum calculation
     edges["edge_utility"] = bike_route_calculator.calculate_utilities_from_spec(
@@ -610,9 +619,9 @@ def generate_centroids(
     if isinstance(settings.zone_subset, list):
         # filter centroids based on zone_subset if it is a list
         origin_centroids = origin_centroids[
-            origin_centroids["id"].isin(settings.zone_subset)
+            origin_centroids[settings.zone_level].isin(settings.zone_subset)
         ]
-        dest_centroids = dest_centroids[dest_centroids["id"].isin(settings.zone_subset)]
+        dest_centroids = dest_centroids[dest_centroids[settings.zone_level].isin(settings.zone_subset)]
     elif isinstance(settings.zone_subset, int):
         # take the first N centroids if zone_subset is an integer
         origin_centroids = origin_centroids[: settings.zone_subset]
@@ -631,8 +640,8 @@ def generate_centroids(
     origin_centroids = _clean_centroids(origin_centroids, "origin", edge_mapping)
     dest_centroids = _clean_centroids(dest_centroids, "destination", edge_mapping)
 
-    origin_centroids = origin_centroids["index"].tolist()
-    dest_centroids = dest_centroids["index"].tolist()
+    origin_centroids = origin_centroids.set_index(settings.zone_level)["index"].to_dict()
+    dest_centroids = dest_centroids.set_index(settings.zone_level)["index"].to_dict()
 
     return origin_centroids, dest_centroids
 
@@ -644,7 +653,13 @@ def run_bike_route_choice(settings):
     nodes, edges, traversals = bike_net_reader.create_bike_net(settings)
 
     # Define centroids
-    origin_centroids, dest_centroids = generate_centroids(settings, nodes, edges)
+    origin_centroid_map, dest_centroid_map = generate_centroids(settings, nodes, edges)
+    origin_centroids = list(origin_centroid_map.values())
+    dest_centroids = list(dest_centroid_map.values())
+
+    trace_origins_edgepos = np.array(pd.Series(settings.trace_origins).map(origin_centroid_map))
+    trace_dests_edgepos = np.array(pd.Series(settings.trace_origins).map(dest_centroid_map))
+
 
     logger.info(
         f"Splitting {len(origin_centroids)} origins into {settings.number_of_batches} batches"
@@ -675,6 +690,8 @@ def run_bike_route_choice(settings):
                             traversals,
                             origin_centroid_sub_batch,
                             dest_centroids,
+                            trace_origins_edgepos,
+                            trace_dests_edgepos,
                         )
                         for origin_centroid_sub_batch in origin_centroid_sub_batches
                     ],
@@ -694,6 +711,8 @@ def run_bike_route_choice(settings):
                 traversals=traversals,
                 origin_centroids=origin_centroid_batch,
                 dest_centroids=dest_centroids,
+                trace_origin_edgepos=trace_origins_edgepos,
+                trace_dest_edgepos=trace_dests_edgepos,
             )
             final_paths.extend(results)
 
