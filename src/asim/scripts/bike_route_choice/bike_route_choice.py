@@ -533,20 +533,23 @@ def run_batch_traversals(
     )
     trace_origins_rev = []
     trace_dests_rev = []
+
     if len(settings.trace_origins) > 0:
         trace_origins_np = np.array(settings.trace_origins)
-        origin_centroids_rev_map = np.zeros(max(origin_centroids) + 1, dtype=np.int32)
-        origin_centroids_rev_map[origin_centroids] = range(len(origin_centroids))
-        trace_origins_rev = origin_centroids_rev_map[
-            trace_origins_np[np.isin(settings.trace_origins, origin_centroids)]
-        ]
+        trace_origins_rev = trace_origins_np - 1
+        # origin_centroids_rev_map = np.zeros(max(origin_centroids) + 1, dtype=np.int32)
+        # origin_centroids_rev_map[origin_centroids] = range(len(origin_centroids))
+        # trace_origins_rev = origin_centroids_rev_map[
+        #     trace_origins_np[np.isin(settings.trace_origins, origin_centroids)]
+        # ]
 
         trace_dests_np = np.array(settings.trace_destinations)
-        dest_centroids_rev_map = np.zeros(max(dest_centroids) + 1, dtype=np.int32)
-        dest_centroids_rev_map[dest_centroids] = range(len(dest_centroids))
-        trace_dests_rev = dest_centroids_rev_map[
-            trace_dests_np[np.isin(settings.trace_destinations, dest_centroids)]
-        ]
+        # dest_centroids_rev_map = np.zeros(max(dest_centroids) + 1, dtype=np.int32)
+        # dest_centroids_rev_map[dest_centroids] = range(len(dest_centroids))
+        # trace_dests_rev = dest_centroids_rev_map[
+        #     trace_dests_np[np.isin(settings.trace_destinations, dest_centroids)]
+        # ]
+        trace_dests_rev = trace_dests_np - 1
 
     # calculate non-randomized utilities for edges and traversals to use in final logsum calculation
     edges["edge_utility"] = bike_route_calculator.calculate_utilities_from_spec(
