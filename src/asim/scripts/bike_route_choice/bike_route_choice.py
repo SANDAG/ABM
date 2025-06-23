@@ -764,12 +764,9 @@ def run_bike_route_choice(settings):
                             ).set_index(['fromNode','toNode'])
             
             # generate linestrings from points
-            # TODO investigate if this can be sped up - the lambda is slow
             edge_coords = gpd.GeoDataFrame(
                 edge_coords, 
-                geometry=edge_coords.apply(
-                    lambda x: shp.LineString([x.geometry_from,x.geometry_to]), 
-                    axis=1)
+                geometry=edge_coords.apply(shp.LineString, axis=1)
                 ).drop(columns=['geometry_from','geometry_to'])
             
             # attach edges to the paths
