@@ -392,21 +392,21 @@ def perform_dijkstras_algorithm_batch_traversals(
     # node mapping needs to start at 0 in order to create adjacency matrix
     # fromNode and toNode index is saved as columns in edges
     # then reindex again to get index of the edge
-    edge_mapping = edges["edge_utility"].reset_index().reset_index()
+    edge_mapping = edges["edge_utility"]
 
     traversals_mapped = (
         traversals.reset_index()
         .merge(
             edge_mapping,
             how="left",
-            left_on=["start", "thru"],
-            right_on=["fromNode", "toNode"],
+            left_on="edgeID_fromEdge",
+            right_index=True
         )
         .merge(
             edge_mapping,
             how="left",
-            left_on=["thru", "end"],
-            right_on=["fromNode", "toNode"],
+            left_on="edgeID_toEdge",
+            right_index=True,
             suffixes=("FromEdge", "ToEdge"),
         )
     )
@@ -416,15 +416,15 @@ def perform_dijkstras_algorithm_batch_traversals(
         traversals_mapped.edge_utilityToEdge + traversals_mapped.traversal_utility
     )
     traversals_mapped.loc[
-        traversals_mapped.indexFromEdge.isin(origin_centroids), "total_utility"
+        traversals_mapped.edgeID_fromEdge.isin(origin_centroids), "total_utility"
     ] += traversals_mapped.edge_utilityFromEdge
 
     # Convert from negative utility to positive cost for Dijkstra's
     traversals_mapped.total_utility *= -1
 
     # Create a sparse adjacency matrix
-    row = traversals_mapped.indexFromEdge.to_numpy()
-    col = traversals_mapped.indexToEdge.to_numpy()
+    row = traversals_mapped.edgeID_fromEdge.to_numpy()
+    col = traversals_mapped.edgeID_toEdge.to_numpy()
     data = traversals_mapped.total_utility.to_numpy()
     adjacency_matrix = csr_matrix((data, (row, col)), shape=(num_edges, num_edges))
 
@@ -479,8 +479,10 @@ def run_iterations_batch_traversals(
             randomize=True,
         )
         # convert edge utility to distance
-        avg_utility_per_mi = (edges["edge_utility"] / edges["distance"]).mean()
-        utility_limit = -1 * settings.max_dijkstra_distance * avg_utility_per_mi
+        avg_utility_df = edges.loc[(edges.edge_utility > -999) & (edges.distance > 0)]
+        avg_utility_per_mi = ((avg_utility_df["edge_utility"] + traversals.traversal_utility.mean())
+                              / avg_utility_df["distance"]).mean()
+        utility_limit = -1 * settings.max_dijkstra_distance * avg_utility_per_mi 
 
         # run dijkstra's
         distances, predecessors = perform_dijkstras_algorithm_batch_traversals(
@@ -597,55 +599,57 @@ def run_batch_traversals(
     return final_paths
 
 
-def generate_centroids(
+def get_centroid_connectors(
     settings: BikeRouteChoiceSettings, nodes: pd.DataFrame, edges: pd.DataFrame
 ):
     """
     Generate centroids for the bike route choice model.
     This function is a placeholder and should be replaced with a more intelligent centroid selection method.
+
+    Returns:
+        Index of edge IDs of corresponding connectors
     """
     # node mapping needs to start at 0 in order to create adjacency matrix
     # constructing edge_mapping with columns [index, fromNode, toNode]
-    edge_mapping = edges.reset_index()[["fromNode", "toNode"]].reset_index()
+    edge_mapping = edges[["fromNode", "toNode"]]
 
     # Get mgra centroids (nodes with 'centroid' flag True and 'mgra' greater than zero)
     # Centroid connectors
-    origin_centroids = nodes[
+    origin_centroid_connectors = nodes[
         nodes["centroid"] & (nodes[settings.zone_level] > 0)
-    ].merge(edge_mapping, how="left", left_on="id", right_on="fromNode")
+    ].merge(edge_mapping, how="left", left_index=True, right_on="fromNode")
 
-    dest_centroids = nodes[nodes["centroid"] & (nodes[settings.zone_level] > 0)].merge(
-        edge_mapping, how="left", left_on="id", right_on="toNode"
+    dest_centroid_connectors = nodes[nodes["centroid"] & (nodes[settings.zone_level] > 0)].merge(
+        edge_mapping, how="left", left_index=True, right_on="toNode"
     )
 
     if isinstance(settings.zone_subset, list):
         # filter centroids based on zone_subset if it is a list
-        origin_centroids = origin_centroids[
-            origin_centroids[settings.zone_level].isin(settings.zone_subset)
+        origin_centroid_connectors = origin_centroid_connectors[
+            origin_centroid_connectors[settings.zone_level].isin(settings.zone_subset)
         ]
-        dest_centroids = dest_centroids[dest_centroids[settings.zone_level].isin(settings.zone_subset)]
+        dest_centroid_connectors = dest_centroid_connectors[dest_centroid_connectors[settings.zone_level].isin(settings.zone_subset)]
     elif isinstance(settings.zone_subset, int):
         # take the first N centroids if zone_subset is an integer
-        origin_centroids = origin_centroids[: settings.zone_subset]
-        dest_centroids = dest_centroids[: settings.zone_subset]
+        origin_centroid_connectors = origin_centroid_connectors[: settings.zone_subset]
+        dest_centroid_connectors = dest_centroid_connectors[: settings.zone_subset]
 
-    def _clean_centroids(df, label, edge_mapping):
+    def _clean_centroid_connectors(df, label, edge_mapping):
         null_rows = df[df.isnull().any(axis=1)]
         if not null_rows.empty:
             logger.warning(
                 f"Null columns found in {label} centroids dataframe! Dropping:\n {null_rows}"
             )
             df = df.dropna()
-            df = df.astype({"index": edge_mapping["index"].dtype})
         return df
 
-    origin_centroids = _clean_centroids(origin_centroids, "origin", edge_mapping)
-    dest_centroids = _clean_centroids(dest_centroids, "destination", edge_mapping)
+    origin_centroid_connectors = _clean_centroid_connectors(origin_centroid_connectors, "origin", edge_mapping)
+    dest_centroid_connectors = _clean_centroid_connectors(dest_centroid_connectors, "destination", edge_mapping)
 
-    origin_centroids = origin_centroids.set_index(settings.zone_level)["index"].to_dict()
-    dest_centroids = dest_centroids.set_index(settings.zone_level)["index"].to_dict()
+    origin_centroid_connectors = origin_centroid_connectors[settings.zone_level]
+    dest_centroid_connectors = dest_centroid_connectors[settings.zone_level]
 
-    return origin_centroids, dest_centroids
+    return origin_centroid_connectors, dest_centroid_connectors
 
 
 def run_bike_route_choice(settings):
@@ -655,19 +659,21 @@ def run_bike_route_choice(settings):
     nodes, edges, traversals = bike_net_reader.create_bike_net(settings)
 
     # Define centroids
-    origin_centroid_map, dest_centroid_map = generate_centroids(settings, nodes, edges)
-    origin_centroids = list(origin_centroid_map.values())
-    dest_centroids = list(dest_centroid_map.values())
+    origin_centroid_connectors, dest_centroid_connectors = get_centroid_connectors(settings, nodes, edges)
 
-    trace_origins_edgepos = np.array(pd.Series(settings.trace_origins).map(origin_centroid_map))
-    trace_dests_edgepos = np.array(pd.Series(settings.trace_destinations).map(dest_centroid_map))
+    trace_origins_edgepos = np.array(origin_centroid_connectors[origin_centroid_connectors.isin(settings.trace_origins)].index)
+    trace_dests_edgepos = np.array(dest_centroid_connectors[dest_centroid_connectors.isin(settings.trace_destinations)].index)
+
+    # drop zone IDs
+    origin_centroid_connectors = origin_centroid_connectors.index
+    dest_centroid_connectors = dest_centroid_connectors.index
 
 
     logger.info(
-        f"Splitting {len(origin_centroids)} origins into {settings.number_of_batches} batches"
+        f"Splitting {len(origin_centroid_connectors)} origins into {settings.number_of_batches} batches"
     )
     origin_centroid_batches = np.array_split(
-        origin_centroids, settings.number_of_batches
+        origin_centroid_connectors, settings.number_of_batches
     )
 
     # run the bike route choice model in either single or multi-process mode
@@ -691,7 +697,7 @@ def run_bike_route_choice(settings):
                             edges,
                             traversals,
                             origin_centroid_sub_batch,
-                            dest_centroids,
+                            dest_centroid_connectors,
                             trace_origins_edgepos,
                             trace_dests_edgepos,
                         )
@@ -712,7 +718,7 @@ def run_bike_route_choice(settings):
                 edges=edges,
                 traversals=traversals,
                 origin_centroids=origin_centroid_batch,
-                dest_centroids=dest_centroids,
+                dest_centroids=dest_centroid_connectors,
                 trace_origin_edgepos=trace_origins_edgepos,
                 trace_dest_edgepos=trace_dests_edgepos,
             )
@@ -748,7 +754,7 @@ def run_bike_route_choice(settings):
             logger.info("Generating shapefile...")
 
             # convert xy coords to shapely points
-            node_coords = gpd.GeoDataFrame(nodes.index,geometry=gpd.points_from_xy(nodes.x,nodes.y),crs=settings.crs).set_index('id')
+            node_coords = gpd.GeoDataFrame(nodes.index,geometry=gpd.points_from_xy(nodes.x,nodes.y),crs=settings.crs).set_index('nodeID')
 
             # attach fromNode and toNode points
             edge_coords = edges.reset_index()[['fromNode','toNode']].merge(

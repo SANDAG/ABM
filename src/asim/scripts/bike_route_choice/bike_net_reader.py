@@ -123,7 +123,7 @@ def create_and_attribute_edges(
         node.assign(centroid=(node.MGRA > 0) | (node.TAZ > 0))
         .rename(
             columns={
-                "NodeLev_ID": "id",
+                "NodeLev_ID":"nodeID",
                 "XCOORD": "x",
                 "YCOORD": "y",
                 "MGRA": "mgra",
@@ -132,7 +132,7 @@ def create_and_attribute_edges(
             }
         )
         .drop(columns=["ZCOORD", "geometry"])
-        .set_index("id")
+        .set_index("nodeID")
     )
 
     # calculate edge headings
@@ -560,6 +560,7 @@ def create_and_attribute_traversals(
             left_on="toNode",
             right_on="fromNode",
             suffixes=["_fromEdge", "_toEdge"],
+            how='outer'
         )
         .rename(
             columns={
@@ -568,7 +569,7 @@ def create_and_attribute_traversals(
                 "toNode_toEdge": "end",
             }
         )
-        .merge(nodes, left_on="thru", right_index=True)
+        .merge(nodes, left_on="thru", right_index=True, how='outer')
     )
 
     # drop U-turns
@@ -891,6 +892,7 @@ def create_and_attribute_traversals(
     )
 
     output_cols = [
+        "start","thru","end",
         "turnType",
         "thruCentroid",
         "signalExclRight",
@@ -904,7 +906,7 @@ def create_and_attribute_traversals(
         output_cols += java_attributes
 
     # keep only the relevant columns
-    traversals = traversals.set_index(["start", "thru", "end"])[output_cols]
+    traversals = traversals.set_index(["edgeID_fromEdge","edgeID_toEdge"])[output_cols]
 
     logger.info("Finished calculating derived traversal attributes")
 
@@ -959,6 +961,10 @@ def create_bike_net(
 
     # create and attribute edges
     edges, nodes = create_and_attribute_edges(settings, node, link)
+
+    # generate authoritiative positional index
+    edges = edges.reset_index()
+    edges.index.name = 'edgeID'
 
     traversals = create_and_attribute_traversals(settings, edges, nodes)
 
