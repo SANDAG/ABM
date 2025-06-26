@@ -152,41 +152,6 @@ def create_persons(settings, num_households):
     return persons
 
 
-def _update_sparse_skims(
-    settings, data_dir, filter_col=None, filter_list=None, new_mazs=None):
-
-    input_fname = settings['input_fname']
-    output_fname = settings['output_fname']
-    filter_col = settings.get('filter_col', filter_col)
-
-    df = pd.read_csv(os.path.join(data_dir, input_fname))
-
-    # rename columns from spec
-    df.rename(columns=settings['rename_columns'], inplace=True)
-
-    # filter columns from spec
-    if filter_col:
-        if filter_list is None:
-            raise ValueError("filter_list param needed to filter table.")
-        df = df.loc[df[filter_col].isin(filter_list)]
-
-    # create new rows for new MAZs based on original MAZ counterparts
-    cols_to_match = ['OMAZ', 'DMAZ', 'MAZ']
-    if new_mazs is not None:
-        for i, row in new_mazs.iterrows():
-            original_maz = row['original_MAZ']
-            new_maz_id = row['MAZ']
-            for col in cols_to_match:
-                if col in df.columns:
-                    new_rows = df[df[col] == original_maz].copy()
-                    new_rows[col] = new_maz_id
-                    df = pd.concat([df, new_rows], ignore_index=True)
-
-    df.to_csv(os.path.join(data_dir, output_fname), index=False)
-
-    return
-
-
 def _rename_skims(settings, skim_type):
 
     skims_settings = settings['skims'][skim_type]
@@ -228,34 +193,6 @@ def _rename_skims(settings, skim_type):
         output_skims.close()
 
     return
-
-
-def create_skims_and_tap_files(settings, new_mazs=None):
-
-    skims_settings = settings['skims']
-
-    # create taps files and transit skims
-    print('Creating tap files.')
-    transit_skims = omx.open_file(os.path.join(
-        data_dir, skims_settings['tap_to_tap']['input_fname']), 'a')
-    all_taps = pd.DataFrame(
-        pd.Series(list(transit_skims.root.lookup.zone_number)))
-    all_taps.columns = ['TAP']
-    all_taps.to_csv(
-        os.path.join(data_dir, settings['taps_output_fname']), index=False)
-    tap_lines = pd.read_csv(
-        os.path.join(data_dir, settings['tap_lines_input_fname']))
-    tap_lines.to_csv(
-        os.path.join(data_dir, settings['tap_lines_output_fname']))
-    transit_skims.close()
-
-
-    # update skims/network data
-    print('Updating maz-to-maz skims.')
-    _update_sparse_skims(
-        skims_settings['maz_to_maz']['walk'],
-        data_dir=data_dir,
-        new_mazs=new_mazs)
 
 
 def create_stop_freq_specs(settings):
@@ -767,7 +704,6 @@ if __name__ == '__main__':
 
         # create/update configs in place
         create_scheduling_probs_and_alts(settings, los_settings)
-        # create_skims_and_tap_files(settings, new_mazs)
         create_stop_freq_specs(settings)
         update_trip_purpose_probs(settings)
         create_trip_scheduling_duration_probs(settings, los_settings)
