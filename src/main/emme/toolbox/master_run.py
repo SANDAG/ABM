@@ -846,7 +846,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             except Exception as e:
                 skipDeleteIntermediateFiles = True
                 _m.logbook_write("WARNING: Copy to remote drive failed")
-
+                _m.logbook_write(_traceback.format_exc())
 
         if not skipDataLoadRequest:
             start_db_time = datetime.datetime.now()  # record the time to search for request id in the load request table, YMA, 1/23/2019
