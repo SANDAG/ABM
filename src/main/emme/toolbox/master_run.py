@@ -829,19 +829,24 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         # UPLOAD DATA AND SWITCH PATHS
         if useLocalDrive:
-            # # Uncomment to get disk usage at end of run
-            # # Note that max disk usage occurs in resident model, not at end of run
-            # disk_usage = win32.Dispatch('Scripting.FileSystemObject').GetFolder(self._path).Size
-            # _m.logbook_write("Disk space usage: %f GB" % (disk_usage / (1024 ** 3)))
-            file_manager("UPLOAD", main_directory, username, scenario_id,
-                         delete_local_files=not skipDeleteIntermediateFiles)
-            self._path = main_directory
-            drive, path_no_drive = os.path.splitdrive(self._path)
-            # self._path = main_directory
-            # drive, path_no_drive = os.path.splitdrive(self._path)
-            for period in periods:
-                init_transit_db.add_database(
-                    _eb.Emmebank(_join(main_directory, "emme_project", "Database_transit_" + period, "emmebank")))
+            try:
+                # # Uncomment to get disk usage at end of run
+                # # Note that max disk usage occurs in resident model, not at end of run
+                # disk_usage = win32.Dispatch('Scripting.FileSystemObject').GetFolder(self._path).Size
+                # _m.logbook_write("Disk space usage: %f GB" % (disk_usage / (1024 ** 3)))
+                file_manager("UPLOAD", main_directory, username, scenario_id,
+                            delete_local_files=not skipDeleteIntermediateFiles)
+                self._path = main_directory
+                drive, path_no_drive = os.path.splitdrive(self._path)
+                # self._path = main_directory
+                # drive, path_no_drive = os.path.splitdrive(self._path)
+                for period in periods:
+                    init_transit_db.add_database(
+                        _eb.Emmebank(_join(main_directory, "emme_project", "Database_transit_" + period, "emmebank")))
+            except Exception as e:
+                skipDeleteIntermediateFiles = True
+                _m.logbook_write("WARNING: Copy to remote drive failed")
+
 
         if not skipDataLoadRequest:
             start_db_time = datetime.datetime.now()  # record the time to search for request id in the load request table, YMA, 1/23/2019
