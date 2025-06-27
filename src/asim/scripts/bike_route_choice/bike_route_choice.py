@@ -115,6 +115,8 @@ def calculate_final_logsums_batch_traversals(
             - trace_paths_from_node (np.ndarray): From-node indices for traced paths.
             - trace_paths_to_node (np.ndarray): To-node indices for traced paths.
             - trace_paths_path_size (np.ndarray): Path size for traced paths.
+            - trace_paths_edge_cost (np.ndarray): Edge cost for traced paths.
+            - trace_paths_trav_cost (np.ndarray): Traversal cost for traced paths.
     """
     logger.info("Calculating logsums...")
 
@@ -230,6 +232,8 @@ def calculate_final_logsums_batch_traversals(
         trace_paths_prev_node = all_paths_prev_node[trace_indices]
         trace_paths_from_node = all_paths_from_node[trace_indices]
         trace_paths_to_node = all_paths_to_node[trace_indices]
+        trace_paths_edge_cost = all_paths_edge_cost[trace_indices]
+        trace_paths_trav_cost = all_paths_trav_cost[trace_indices]
 
     # SciPy COO array will add duplicates together upon conversion to CSR array
     # Insert ones for each path link to count number of paths for each OD/link
@@ -351,6 +355,8 @@ def calculate_final_logsums_batch_traversals(
             trace_paths_from_node,
             trace_paths_to_node,
             trace_paths_path_size,
+            trace_paths_edge_cost,
+            trace_paths_trav_cost,
         )
     else:
         return (
@@ -744,6 +750,8 @@ def run_bike_route_choice(settings):
                 "from_node": final_paths[7],
                 "to_node": final_paths[8],
                 "path_size": final_paths[9],
+                "edge_cost": final_paths[10],
+                "traversal_cost": final_paths[11],
             }
         )
         trace_paths.to_csv(
