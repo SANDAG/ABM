@@ -136,8 +136,11 @@ def calculate_utilities_from_spec(
     # Optionally also add a random component across all utilities
     if randomize:
         utilities.loc[utilities.utility > -999,"utility"] = utilities.loc[utilities.utility > -999,"utility"] * (
-            # draw a set of random components for each utility and scale to +/- setting (0:1 -> -random_scale_link:+random_scale_link)
-            2*np.random.random(len(utilities.loc[utilities.utility > -999])) - 1) * settings.random_scale_link
+            np.random.choice(
+                [(1-settings.random_scale_link),(1+settings.random_scale_link)],
+                size=len(utilities.loc[utilities.utility > -999])
+            )
+        )
 
     # check that all utilities are less than or equal to zero
     if (utilities["utility"] > 0).any():

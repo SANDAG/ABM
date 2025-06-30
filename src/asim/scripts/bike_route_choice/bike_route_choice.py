@@ -482,7 +482,7 @@ def run_iterations_batch_traversals(
             choosers=traversals,
             spec_file=settings.traversal_util_file,
             trace_label=f"bike_traversal_utilities_iteration_{i}",
-            randomize=True,
+            randomize=False,
         )
         # convert edge utility to distance
         avg_utility_df = edges.loc[(edges.edge_utility > -999) & (edges.distance > 0)]
