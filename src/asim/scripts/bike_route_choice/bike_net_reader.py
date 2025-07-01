@@ -75,6 +75,7 @@ def create_and_attribute_edges(
                 "bikeBlvd",
                 "distance",
                 "gain",
+                "geometry",
             ]
         ]
     )
@@ -98,6 +99,7 @@ def create_and_attribute_edges(
             distance=link.Shape_Leng / 5280.0,  # convert feet to miles
             autosPermitted=link.Func_Class.isin(range(1, 8)),
             centroidConnector=link.Func_Class == 10,
+            geometry=link.geometry.reverse()
         )[
             [
                 "fromNode",
@@ -111,6 +113,7 @@ def create_and_attribute_edges(
                 "bikeBlvd",
                 "distance",
                 "gain",
+                "geometry",
             ]
         ]
     )

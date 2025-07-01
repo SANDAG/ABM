@@ -132,11 +132,14 @@ def calculate_final_logsums_batch_traversals(
     edge_to_node = edges.toNode.map(node_mapping).to_numpy()
     edge_cost = edges.edge_utility.to_numpy()
     edge_length = edges.distance.to_numpy()
+    edge_ids = edges.edgeID.to_numpy()
 
     all_paths_from_node = edge_from_node[all_paths_to_edge]
     all_paths_to_node = edge_to_node[all_paths_to_edge]
     all_paths_edge_cost = edge_cost[all_paths_to_edge]
     all_paths_edge_length = edge_length[all_paths_to_edge]
+    all_paths_edge_id = edge_ids[all_paths_to_edge]
+
     if len(trace_origins) > 0:
         all_paths_prev_node = edge_from_node[all_paths_from_edge]
 
@@ -187,6 +190,9 @@ def calculate_final_logsums_batch_traversals(
     all_paths_edge_cost = np.concatenate(
         (all_paths_edge_cost, edge_cost[all_paths_from_edge][orig_connectors_indices])
     )
+    all_paths_edge_id = np.concatenate(
+        (all_paths_edge_id, edge_ids[all_paths_from_edge][orig_connectors_indices])
+    )
     all_paths_edge_length = np.concatenate(
         (
             all_paths_edge_length,
@@ -234,6 +240,7 @@ def calculate_final_logsums_batch_traversals(
         trace_paths_to_node = all_paths_to_node[trace_indices]
         trace_paths_edge_cost = all_paths_edge_cost[trace_indices]
         trace_paths_trav_cost = all_paths_trav_cost[trace_indices]
+        trace_paths_edge_id = all_paths_edge_id[trace_indices]
 
     # SciPy COO array will add duplicates together upon conversion to CSR array
     # Insert ones for each path link to count number of paths for each OD/link
@@ -357,12 +364,14 @@ def calculate_final_logsums_batch_traversals(
             trace_paths_path_size,
             trace_paths_edge_cost,
             trace_paths_trav_cost,
+            trace_paths_edge_id,
         )
     else:
         return (
             paths_od_orig_mapped,
             paths_od_dest_mapped,
             paths_od_logsum,
+            np.empty((0)),
             np.empty((0)),
             np.empty((0)),
             np.empty((0)),
@@ -700,7 +709,7 @@ def run_bike_route_choice(settings):
                         (
                             settings,
                             nodes,
-                            edges,
+                            edges.drop(columns='geometry'),
                             traversals,
                             origin_centroid_sub_batch,
                             dest_centroid_connectors,
@@ -721,7 +730,7 @@ def run_bike_route_choice(settings):
             results = run_batch_traversals(
                 settings=settings,
                 nodes=nodes,
-                edges=edges,
+                edges=edges.drop(columns='geometry'),
                 traversals=traversals,
                 origin_centroids=origin_centroid_batch,
                 dest_centroids=dest_centroid_connectors,
@@ -752,6 +761,7 @@ def run_bike_route_choice(settings):
                 "path_size": final_paths[9],
                 "edge_cost": final_paths[10],
                 "traversal_cost": final_paths[11],
+                "edgeID":final_paths[12],
             }
         )
         trace_paths.to_csv(
@@ -761,27 +771,12 @@ def run_bike_route_choice(settings):
         if settings.generate_shapefile:
             logger.info("Generating shapefile...")
 
-            # convert xy coords to shapely points
-            node_coords = gpd.GeoDataFrame(nodes.index,geometry=gpd.points_from_xy(nodes.x,nodes.y),crs=settings.crs).set_index('nodeID')
-
-            # attach fromNode and toNode points
-            edge_coords = edges.reset_index()[['fromNode','toNode']].merge(
-                                node_coords[['geometry']],left_on='fromNode',right_index=True
-                            ).merge(
-                                node_coords[['geometry']],left_on='toNode',right_index=True,suffixes=('_from','_to')
-                            ).set_index(['fromNode','toNode'])
             
-            # generate linestrings from points
-            edge_coords = gpd.GeoDataFrame(
-                edge_coords, 
-                geometry=edge_coords.apply(shp.LineString, axis=1)
-                ).drop(columns=['geometry_from','geometry_to'])
-            
-            # attach edges to the paths
+            # # attach edges to the paths
             trace_paths = gpd.GeoDataFrame(
                 trace_paths.merge(
-                    edge_coords['geometry'],
-                    left_on=['from_node','to_node'],
+                    edges['geometry'],
+                    left_on=['edgeID'],
                     right_index=True,
                     how='left'),
                 crs=settings.crs
