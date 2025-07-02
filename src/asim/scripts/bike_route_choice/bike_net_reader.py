@@ -946,14 +946,14 @@ def create_bike_net(
     if settings.read_cached_bike_net:
         logger.info("Reading cached bike network from CSV files")
         edges = pd.read_csv(
-            os.path.join(os.path.expanduser(settings.output_path), "edges.csv"), index_col=[0, 1]
+            os.path.join(os.path.expanduser(settings.output_path), "edges.csv"), index_col=[0]
         )
         nodes = pd.read_csv(
             os.path.join(os.path.expanduser(settings.output_path), "nodes.csv"), index_col=0
         )
         traversals = pd.read_csv(
             os.path.join(os.path.join(os.path.expanduser(settings.output_path), "traversals.csv")),
-            index_col=[0, 1, 2],
+            index_col=[0, 1],
         )
         return nodes, edges, traversals
 

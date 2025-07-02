@@ -72,6 +72,7 @@ def process_paths_new(centroids, predecessors):
 
 
 def calculate_final_logsums_batch_traversals(
+    settings,
     nodes,
     edges,
     traversals,
@@ -90,6 +91,7 @@ def calculate_final_logsums_batch_traversals(
     Includes path size calculation.
 
     Args:
+        settings: BikeRouteChoiceSettings
         nodes (pd.DataFrame): DataFrame containing node information.
         edges (pd.DataFrame): DataFrame containing edge information.
         traversals (pd.DataFrame): DataFrame containing traversal information.
@@ -121,7 +123,7 @@ def calculate_final_logsums_batch_traversals(
     logger.info("Calculating logsums...")
 
     # Mapped node id to centroids index
-    dest_centroids_rev_map = np.zeros(max(dest_centroids) + 1, dtype=np.int32)
+    dest_centroids_rev_map = np.zeros(int(max(dest_centroids)) + 1, dtype=np.int32)
     dest_centroids_rev_map[dest_centroids] = range(len(dest_centroids))
     all_paths_dest_rev = dest_centroids_rev_map[all_paths_dest]
 
@@ -285,12 +287,14 @@ def calculate_final_logsums_batch_traversals(
     )
     paths_od_iter_cost = od_iter_cost[od_iter_indices]
     paths_od_iter_path_size = od_iter_path_size[od_iter_indices]
+    paths_od_iter_length_total = od_iter_length_total[od_iter_indices]
 
     # Normalize path size, need to sum path size by OD
     paths_od_ravel = np.ravel_multi_index(
         (paths_od_iter_orig, paths_od_iter_dest),
         (len(origin_centroids), len(dest_centroids)),
     )
+    od_count_iter = np.bincount(paths_od_ravel)
     od_path_size_sum = np.bincount(paths_od_ravel, paths_od_iter_path_size)
     paths_od_iter_path_size_sum = od_path_size_sum[paths_od_ravel]
     paths_od_iter_path_size_normalized = (
@@ -298,10 +302,16 @@ def calculate_final_logsums_batch_traversals(
     )
 
     # Add path cost to utility function
-    paths_od_iter_utility = (-1 * paths_od_iter_cost) + np.log(
+    paths_od_iter_utility = paths_od_iter_cost + np.log(
         paths_od_iter_path_size_normalized
     )
-    # paths_od_iter_utility = (-1 * paths_od_iter_cost) + (paths_od_iter_path_size_normalized)
+    paths_od_iter_utility_exp = np.exp(paths_od_iter_utility)
+
+    od_utility_exp_sum = np.bincount(paths_od_ravel, paths_od_iter_utility_exp)
+    paths_od_iter_utility_exp_sum = od_utility_exp_sum[paths_od_ravel]
+    paths_od_iter_prob = paths_od_iter_utility_exp / paths_od_iter_utility_exp_sum
+
+    paths_od_iter_length_weighted = paths_od_iter_length_total * paths_od_iter_prob
 
     # Unflatten OD indices, no longer need iterations
     od_indices = (od_path_size_sum > 0).nonzero()[0]
@@ -309,8 +319,15 @@ def calculate_final_logsums_batch_traversals(
         od_indices, (len(origin_centroids), len(dest_centroids))
     )
 
+    paths_od_count_iter = od_count_iter[od_indices]
+    paths_od_path_size_sum = od_path_size_sum[od_indices]
+
+    # Average path length
+    od_dist = np.bincount(paths_od_ravel, paths_od_iter_length_weighted)
+    paths_od_dist = od_dist[od_indices]
+
     # Logsum calculation
-    od_logsum = np.bincount(paths_od_ravel, np.exp(paths_od_iter_utility))
+    od_logsum = np.bincount(paths_od_ravel, paths_od_iter_utility_exp)
     paths_od_logsum = np.log(od_logsum[od_indices])
 
     # Centroids index to mapped node id
@@ -354,7 +371,10 @@ def calculate_final_logsums_batch_traversals(
         return (
             paths_od_orig_mapped,
             paths_od_dest_mapped,
+            paths_od_dist,
             paths_od_logsum,
+            paths_od_path_size_sum,
+            paths_od_count_iter,
             trace_paths_orig_mapped,
             trace_paths_dest_mapped,
             trace_paths_iteration,
@@ -370,7 +390,12 @@ def calculate_final_logsums_batch_traversals(
         return (
             paths_od_orig_mapped,
             paths_od_dest_mapped,
+            paths_od_dist,
             paths_od_logsum,
+            paths_od_path_size_sum,
+            paths_od_count_iter,
+            np.empty((0)),
+            np.empty((0)),
             np.empty((0)),
             np.empty((0)),
             np.empty((0)),
@@ -598,6 +623,7 @@ def run_batch_traversals(
     )
 
     final_paths = calculate_final_logsums_batch_traversals(
+        settings,
         nodes,
         edges,
         traversals,
@@ -656,6 +682,7 @@ def get_centroid_connectors(
                 f"Null columns found in {label} centroids dataframe! Dropping:\n {null_rows}"
             )
             df = df.dropna()
+            df.index = df.index.astype(np.int32)
         return df
 
     origin_centroid_connectors = _clean_centroid_connectors(origin_centroid_connectors, "origin", edge_mapping)
@@ -739,11 +766,16 @@ def run_bike_route_choice(settings):
             )
             final_paths.extend(results)
 
+    final_paths_concat = tuple(map(np.concatenate,zip(*final_paths)))
+
     logsums = pd.DataFrame(
         {
-            "origin": final_paths[0],
-            "destination": final_paths[1],
-            "logsum": final_paths[2],
+            "origin": final_paths_concat[0],
+            "destination": final_paths_concat[1],
+            "distance": final_paths_concat[2],
+            "logsum": final_paths_concat[3],
+            "path_size_sum": final_paths_concat[4],
+            "iterations": final_paths_concat[5]
         }
     )
     logsums.to_csv(f"{settings.output_path}/bike_route_choice_logsums.csv", index=False)
@@ -752,16 +784,16 @@ def run_bike_route_choice(settings):
     if len(settings.trace_origins) > 0:
         trace_paths = pd.DataFrame(
             {
-                "origin": final_paths[3],
-                "destination": final_paths[4],
-                "iteration": final_paths[5],
-                "prev_node": final_paths[6],
-                "from_node": final_paths[7],
-                "to_node": final_paths[8],
-                "path_size": final_paths[9],
-                "edge_cost": final_paths[10],
-                "traversal_cost": final_paths[11],
-                "edgeID":final_paths[12],
+                "origin": final_paths_concat[6],
+                "destination": final_paths_concat[7],
+                "iteration": final_paths_concat[8],
+                "prev_node": final_paths_concat[9],
+                "from_node": final_paths_concat[10],
+                "to_node": final_paths_concat[11],
+                "path_size": final_paths_concat[12],
+                "edge_cost": final_paths_concat[13],
+                "traversal_cost": final_paths_concat[14],
+                "edgeID":final_paths_concat[15],
             }
         )
         trace_paths.to_csv(
@@ -787,7 +819,7 @@ def run_bike_route_choice(settings):
 
 
     print("Bike route choice model completed.")
-    return final_paths
+    return final_paths_concat
 
 
 if __name__ == "__main__":
