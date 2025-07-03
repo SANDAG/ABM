@@ -65,6 +65,20 @@ One big advantage of using micro-simulation is that there are no limits on how m
 
 As an example, there could be a model that examines how households with 0 / 1 / 2+ children without a car travel. This example examines at a household level, however, these segments can be based on either individuals or entire households.
 
+## **Time of Day Modeling**
+
+To account for variation in the transportation system throughout the day (such as how congestion is worse during peak periods than off-peak periods), the day is divided into five time periods. Assignment and skimming is done separately for each period, and the higher-resolution activitysim models use the appropriate skim for determining values such as a the travel time for a trip given the time of day that it's being made.
+
+ABM3's time periods are defined as follows:
+
+| Period | Name          | Start Time | End Time |
+| ------ | ------------- | ---------- | -------- |
+| EA     | Early Morning | 3:00 AM    | 5:59 AM  |
+| AM     | AM Peak       | 6:00 AM    | 8:59 AM  |
+| MD     | Mid-Day       | 9:00 AM    | 3:29 PM  |
+| PM     | PM Peak       | 3:30 PM    | 6:59 PM  |
+| EV     | Evening       | 7:00 PM    | 2:59 AM  |
+
 <!-- The decision-makers are used in the subsequent discrete-choice models in a microsimulation framework where a single alternative is selected from a list of available alternatives according to a probability distribution.  The probability distribution is generated from a logit model which considers the attributes of the decision-maker and the attributes of the various alternatives. For example, (include a simple example here). The application paradigm is referred to as Monte Carlo simulation, since a random number draw is used to select an alternative from the probability distribution. The decision-making unit is an important element of model estimation and implementation and is explicitly identified for each model specified in the following sections.
 
 A key advantage of using the micro-simulation approach is that there are essentially no computational constraints on the number of explanatory variables that can be included in a model specification.  However, even with this flexibility, the model system will include some segmentation of decision-makers.  Segmentation is a useful tool to both structure models (for example, each person type segment could have their own model for certain choices) and to characterize person roles within a household.  Segments can be created for persons as well as households. -->
