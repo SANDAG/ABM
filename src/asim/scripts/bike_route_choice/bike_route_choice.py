@@ -2,7 +2,6 @@ import sys
 import numpy as np
 import pandas as pd
 import geopandas as gpd
-import shapely as shp
 import logging
 from scipy.sparse import csr_matrix
 from scipy.sparse import csr_array, coo_array

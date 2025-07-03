@@ -8,7 +8,6 @@ import numpy as np
 import logging
 import networkx as nx
 import matplotlib.pyplot as plt
-import networkx as nx
 from typing import Literal
 
 
