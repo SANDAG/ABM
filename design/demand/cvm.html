@@ -730,6 +730,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#truck-weight-class-definitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Truck Weight Class Definitions
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#inputs" class="md-nav__link">
     <span class="md-ellipsis">
       Inputs
@@ -1155,6 +1164,8 @@
       
         
       
+        
+      
     
     
       
@@ -1242,6 +1253,27 @@
   
   <span class="md-ellipsis">
     Land Use Data Preparation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../application/settings-manager.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Settings Manager
   </span>
   
 
@@ -1635,6 +1667,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#truck-weight-class-definitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Truck Weight Class Definitions
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#inputs" class="md-nav__link">
     <span class="md-ellipsis">
       Inputs
@@ -1801,6 +1842,29 @@ purpose. The model also considers travel times and vehicle operating costs, incl
 to the alternative next stop locations, and the elapsed time on the route. As the elapsed time on the route increases, the model will be more likely to choose locations closer to the terminal location.</p>
 <p>Next Stop Duration Simulation determines the simulated time spent at each location. For goods purposes, the stop duration would include time spent loading or unloading items and interacting with customers. For services, the duration represents the amount of time spent at the customer site providing the service, which will vary widely depending on the business type, such as installation/repairs, landscaping, construction, health care, and cleaning, to name a few common service types. For maintenance/other purposes, the stop duration could involve vehicle refueling or repairs or it could involve driver meal breaks or other personal or company business. For the “home” purpose, duration is assumed to be personal time spent at the driver’s home.</p>
 <p>For regular establishments, the duration is simulated using a model that considers the stop purpose, the vehicle type used, and whether the stop begins before or after 12 p.m., with stops later in the day expected to be more time constrained, particularly for service provision. For TNCs, the duration model considers the stop purpose and the land use density at the stop location, with increased density assumed to require longer stop times, as would be expected for deliveries to multi-family residential building and to office buildings.</p>
+<h2 id="truck-weight-class-definitions">Truck Weight Class Definitions<a class="headerlink" href="#truck-weight-class-definitions" title="Permanent link"> ¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Weight Class</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Light-Heavy Duty (LHD)</td>
+<td>8,500 - 14,000 lbs.</td>
+</tr>
+<tr>
+<td>Medium-Heavy Duty (MHD)</td>
+<td>14,000 - 33,000 lbs.</td>
+</tr>
+<tr>
+<td>Heavy-Heavy Duty (HHD)</td>
+<td>&gt;33,000 lbs.</td>
+</tr>
+</tbody>
+</table>
 <h2 id="inputs">Inputs<a class="headerlink" href="#inputs" title="Permanent link"> ¶</a></h2>
 <p>CVM inputs include the following, which are generated from SANDAG ABM resident model prior to the CVM sub-model step. </p>
 <p>• final_households.csv: from resident model </p>

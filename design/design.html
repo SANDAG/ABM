@@ -544,6 +544,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#time-of-day-modeling" class="md-nav__link">
+    <span class="md-ellipsis">
+      Time of Day Modeling
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1146,6 +1155,8 @@
       
         
       
+        
+      
     
     
       
@@ -1233,6 +1244,27 @@
   
   <span class="md-ellipsis">
     Land Use Data Preparation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../application/settings-manager.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Settings Manager
   </span>
   
 
@@ -1634,6 +1666,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#time-of-day-modeling" class="md-nav__link">
+    <span class="md-ellipsis">
+      Time of Day Modeling
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1703,6 +1744,51 @@
 <p>The probabilities are calculated using a method that considers both the characteristics of the decision-makers (like age or income) and the features of the options available. To make the choice, a random process is used, similar to drawing a number out of a hat (this is called <a href="https://aws.amazon.com/what-is/monte-carlo-simulation/">Monte Carlo simulation</a>). The &ldquo;decision-making unit&rdquo; (the person or household) is key to how the model works and is carefully defined for each model.</p>
 <p>One big advantage of using micro-simulation is that there are no limits on how many factors (like age, income, etc.) can be included in the model. However, even with this flexibility, the model will group some decision-makers into segments. This helps organize the model by, for example, creating different models for different types of people or for different roles within a household. </p>
 <p>As an example, there could be a model that examines how households with 0 / 1 / 2+ children without a car travel. This example examines at a household level, however, these segments can be based on either individuals or entire households.</p>
+<h2 id="time-of-day-modeling"><strong>Time of Day Modeling</strong><a class="headerlink" href="#time-of-day-modeling" title="Permanent link"> ¶</a></h2>
+<p>To account for variation in the transportation system throughout the day (such as how congestion is worse during peak periods than off-peak periods), the day is divided into five time periods. Assignment and skimming is done separately for each period, and the higher-resolution activitysim models use the appropriate skim for determining values such as a the travel time for a trip given the time of day that it&rsquo;s being made.</p>
+<p>ABM3&rsquo;s time periods are defined as follows:</p>
+<table>
+<thead>
+<tr>
+<th>Period</th>
+<th>Name</th>
+<th>Start Time</th>
+<th>End Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>EA</td>
+<td>Early Morning</td>
+<td>3:00 AM</td>
+<td>5:59 AM</td>
+</tr>
+<tr>
+<td>AM</td>
+<td>AM Peak</td>
+<td>6:00 AM</td>
+<td>8:59 AM</td>
+</tr>
+<tr>
+<td>MD</td>
+<td>Mid-Day</td>
+<td>9:00 AM</td>
+<td>3:29 PM</td>
+</tr>
+<tr>
+<td>PM</td>
+<td>PM Peak</td>
+<td>3:30 PM</td>
+<td>6:59 PM</td>
+</tr>
+<tr>
+<td>EV</td>
+<td>Evening</td>
+<td>7:00 PM</td>
+<td>2:59 AM</td>
+</tr>
+</tbody>
+</table>
 <!-- The decision-makers are used in the subsequent discrete-choice models in a microsimulation framework where a single alternative is selected from a list of available alternatives according to a probability distribution.  The probability distribution is generated from a logit model which considers the attributes of the decision-maker and the attributes of the various alternatives. For example, (include a simple example here). The application paradigm is referred to as Monte Carlo simulation, since a random number draw is used to select an alternative from the probability distribution. The decision-making unit is an important element of model estimation and implementation and is explicitly identified for each model specified in the following sections.
 
 A key advantage of using the micro-simulation approach is that there are essentially no computational constraints on the number of explanatory variables that can be included in a model specification.  However, even with this flexibility, the model system will include some segmentation of decision-makers.  Segmentation is a useful tool to both structure models (for example, each person type segment could have their own model for certain choices) and to characterize person roles within a household.  Segments can be created for persons as well as households. -->

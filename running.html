@@ -1212,6 +1212,8 @@
       
         
       
+        
+      
     
     
       
@@ -1299,6 +1301,27 @@
   
   <span class="md-ellipsis">
     Land Use Data Preparation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="application/settings-manager.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Settings Manager
   </span>
   
 
@@ -1852,7 +1875,7 @@
 <p>The following step is creating two Python3-based Activitysim environments: one for running ActivitySim and the other specificallly for running the ActivitySim-based Commercial Vehicle Model (CVM).</p>
 <h5 id="activitysim-environment">ActivitySim Environment<a class="headerlink" href="#activitysim-environment" title="Permanent link"> ¶</a></h5>
 <h6 id="sandag-users">SANDAG Users<a class="headerlink" href="#sandag-users" title="Permanent link"> ¶</a></h6>
-<p>To create the ActivitySim (<em>asim_baydag</em>) environment:</p>
+<p>To create the ActivitySim (<em>asim_140</em>) environment:</p>
 <ul>
 <li>Open Anaconda3 Prompt as Administrator</li>
 <li>Execute the following commands:</li>
@@ -1861,52 +1884,23 @@
 net use T: \\sandag.org\transdata
 cd T:\ABM\dev\ABM3\src\asim\scripts
 T:
-conda env create --file=environment.yml -n asim_baydag
-conda activate asim_baydag
+conda env create --file=environment.yml -n asim_140
+conda activate asim_140
 pip install azure-identity
 pip install azure-storage-blob
-cd T:/ABM/dev/ActivitySim
-pip install –e .
+pip install wring 
+pip install ortools==9.7.2996
+pip install activitysim==1.4.0
 </code></pre></div>
 <h6 id="external-users">External Users<a class="headerlink" href="#external-users" title="Permanent link"> ¶</a></h6>
-<p>To create the ActivitySim (<em>asim_baydag</em>) environment, first, change directories using <code>cd /d</code> to the <em>conda-environments</em> folder under the ActivtySim source code directory. As of June 2024, this directory may be cloned from the <em>BayDAG_estimation</em> branch located on <a href="https://github.com/SANDAG/activitysim/tree/BayDAG_estimation">SANDAG&rsquo;s forked version of ActivitySim</a>. The <em>conda-environments</em> folder in this directory contains a number of yaml files that may be used to install the environment. Users may use the following command to install the AcitvitySim environment along with SANDAG&rsquo;s version of AcitivtySim under the <em>asim_baydag</em> name:</p>
-<p><code>conda env create --file=activitysim-dev.yml -n asim_baydag</code></p>
+<p>To create the ActivitySim (<em>asim_140</em>) environment, first, change directories using <code>cd /d</code> to the <em>conda-environments</em> folder under the ActivtySim source code directory. This directory may be cloned from the <em>BayDAG_estimation</em> branch located on <a href="https://github.com/activitysim/activitysim/tree/v1.4.0">SANDAG&rsquo;s forked version of ActivitySim</a>. The <em>conda-environments</em> folder in this directory contains a number of yaml files that may be used to install the environment. Users may use the following command to install the AcitvitySim environment along with SANDAG&rsquo;s version of AcitivtySim under the <em>asim_140</em> name:</p>
+<p><code>conda env create --file=activitysim-dev.yml -n asim_140</code></p>
 <p>After installing the environment, users may confirm successful installation by activating it using:</p>
-<p><code>conda activate asim_baydag</code></p>
-<h5 id="cvm-activitysim-environment">CVM ActivitySim Environment<a class="headerlink" href="#cvm-activitysim-environment" title="Permanent link"> ¶</a></h5>
-<h6 id="sandag-users_1">SANDAG Users<a class="headerlink" href="#sandag-users_1" title="Permanent link"> ¶</a></h6>
-<p>To create the ActivitySim CVM environment:</p>
-<ul>
-<li>Open Anaconda3 Prompt as Administrator</li>
-<li>Execute the following commands:</li>
-</ul>
-<div class="highlight"><pre><span></span><code>cd T:\ABM\dev\CVM
-T:
-conda env create -p {path to Anaconda3}/envs/asim_sandag_cvm --file activitysim/conda-environments/activitysim-dev-base.yml
-conda activate asim_sandag_cvm
-pip install -e ./sharrow
-pip install -e ./activitysim
-</code></pre></div>
-<p>Note: On servers, {path to anaconda3} could be e.g., <code>C:/ProgramData/Anaconda3/</code> or <code>C:/Anaconda3</code></p>
-<h6 id="external-users_1">External Users<a class="headerlink" href="#external-users_1" title="Permanent link"> ¶</a></h6>
-<p>To create the ActivitySim CVM environment:</p>
-<ul>
-<li>Open Anaconda3 Prompt</li>
-<li>Execute the following commands</li>
-</ul>
-<div class="highlight"><pre><span></span><code>mkdir workspace
-cd workspace
-git clone https://github.com/ActivitySim/sharrow.git
-git clone https://github.com/SANDAG/activitysim-cvm
-cd activitysim
-git switch time-settings
-cd ..
-conda env create -p {path to Anaconda3}/envs/asim_sandag_cvm --file activitysim/conda-environments/activitysim-dev-base.yml
-conda activate C:/Anaconda3/envs/asim_sandag_cvm
-pip install -e ./sharrow
-pip install -e ./activitysim
-</code></pre></div>
-<p>Note: For {path to anaconda3} point to wherever Anaconda3 is installed on your workstation</p>
+<p><code>conda activate asim_140</code></p>
+<p>The user then needs to install the following packages via pip:
+<div class="highlight"><pre><span></span><code>pip install wring 
+pip install ortools==9.7.2996
+</code></pre></div></p>
 <h3 id="environment-variables">Environment Variables<a class="headerlink" href="#environment-variables" title="Permanent link"> ¶</a></h3>
 <p>During an ABM3 model run, there are certain system environment variables that get referenced. These variables must be added to your workstation&rsquo;s environment variables. To do so:</p>
 <ul>
