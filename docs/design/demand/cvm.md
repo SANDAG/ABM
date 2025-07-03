@@ -193,6 +193,13 @@ Next Stop Duration Simulation determines the simulated time spent at each locati
 
 For regular establishments, the duration is simulated using a model that considers the stop purpose, the vehicle type used, and whether the stop begins before or after 12 p.m., with stops later in the day expected to be more time constrained, particularly for service provision. For TNCs, the duration model considers the stop purpose and the land use density at the stop location, with increased density assumed to require longer stop times, as would be expected for deliveries to multi-family residential building and to office buildings.
 
+## Truck Weight Class Definitions
+
+| Type                    | Weight Class         |
+| ----------------------- | -------------------- |
+| Light-Heavy Duty (LHD)  | 8,500 - 14,000 lbs.  |
+| Medium-Heavy Duty (MHD) | 14,000 - 33,000 lbs. |
+| Heavy-Heavy Duty (HHD)  | >33,000 lbs.         |
 
 ## Inputs
 

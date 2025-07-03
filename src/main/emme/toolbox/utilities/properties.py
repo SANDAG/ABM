@@ -393,7 +393,7 @@ class PropertiesSetter(object):
         self.skipFinalTransitAssignment = props.get("RunModel.skipFinalTransitAssignment", False)
         self.skipVisualizer = props.get("RunModel.skipVisualizer", False)
         self.skipDataExport = props.get("RunModel.skipDataExport", False)
-        self.skipTravelTimeReporter = props.get("RunModel.skipTravelTimeReporter", False)
+        self.skipTravelTimeReporter = props.get("RunModel.skipTravelTimeReporter", True)
         self.skipValidation = props.get("RunModel.skipValidation", False)
         self.skipDatalake = props.get("RunModel.skipDatalake", False)
         self.skipDataLoadRequest = props.get("RunModel.skipDataLoadRequest", False)

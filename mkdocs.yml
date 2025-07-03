@@ -77,6 +77,7 @@ nav:
     - Model Application: application/applying.md
     - Population Synthesis: application/population-synthesis.md
     - Land Use Data Preparation: application/landuse-prep.md
+    - Settings Manager: application/settings-manager.md
     - Scenario Manager: application/scenario-manager.md
     - EV Rebates: application/ev-rebates.md
     - Flexible Fleets: application/flexible-fleets.md
