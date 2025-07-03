@@ -222,5 +222,4 @@ dependencies:
     - wcmatch==10.0
     - webencodings==0.5.1
     - zipp==3.21.0
-prefix: C:\Users\aber\.conda\envs\bike_test
 
