@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import geopandas as gpd
 import logging
+import warnings
 from scipy.sparse import csr_matrix
 from scipy.sparse import csr_array, coo_array
 from scipy.sparse.csgraph import dijkstra
@@ -264,10 +265,14 @@ def calculate_final_logsums_batch_traversals(
         (len(origin_centroids), len(dest_centroids), settings.number_of_iterations),
     )
     od_iter_length_total = np.bincount(paths_od_iter_ravel, all_paths_edge_length)  # Li
-    od_iter_path_size = (
-        np.bincount(paths_od_iter_ravel, all_paths_size_component)
-        / od_iter_length_total
-    )  # sum( la / Man ) / Li
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        od_iter_path_size = (
+            np.bincount(paths_od_iter_ravel, all_paths_size_component)
+            / od_iter_length_total
+        )  # sum( la / Man ) / Li
+    
     od_iter_cost = np.bincount(paths_od_iter_ravel, all_paths_cost)
 
     # extract path sizes for OD pairs that are being traced
@@ -763,7 +768,7 @@ def run_bike_route_choice(settings):
                 trace_origin_edgepos=trace_origins_edgepos,
                 trace_dest_edgepos=trace_dests_edgepos,
             )
-            final_paths.extend(results)
+            final_paths.append(results)
 
     final_paths_concat = tuple(map(np.concatenate,zip(*final_paths)))
 
