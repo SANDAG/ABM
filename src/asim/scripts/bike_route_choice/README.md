@@ -70,15 +70,15 @@ utility function in the model includes a “path size” measure, described in t
 following section.
 
 ## Path Size
-The path size of alternative *i* in alternative list *n* is calculated using the
+The size of path alternative $n_i$ in alternative set $\textbf{n}$ is calculated using the
 formula:
-
-> *n*.path_size\[*i*\] = sum( *l*.length / (*n*.path_length\[*i*\] * *n*.paths_using\[*l*\]) for *l* in *n*.path_links\[*i*\])
-
-where `paths_using` is the number of paths in the alternative set *n* which contain 
-link *l*. Its use derives from the theory of aggregate and elemental alternatives, 
-where a link is an aggregation of all paths that use the link. If multiple routes
-overlap, their "size" is less than one. If two routes overlap completely, their
+```math
+size(n_i)=\sum_{l\in n_i}\frac{edgeLength(l)}{pathLength(n_i)*pathsUsing(\textbf{n},l)}
+```
+where $pathsUsing$ is the integer number of paths in the alternative set $\textbf{n}$
+which contain link $l$. Its use derives from the theory of aggregate and elemental 
+alternatives, where a link is an aggregation of all paths that use the link. If multiple
+routes overlap, their "size" is less than one. If two routes overlap completely, their
 size will be one-half.
 
 ## Path Sampling
