@@ -142,16 +142,22 @@ class NetworkBuilder:
     
     @classmethod
     def _build_network(cls, nodes: gpd.GeoDataFrame, links: gpd.GeoDataFrame, config: dict) -> pdna.Network:
-        """Build pandana network from nodes and links"""
+        """Build pandana network from nodes and links (Pandana 0.7 compatible)"""
         mmms = config['mmms']
-        return pdna.Network(
-            nodes.X,
-            nodes.Y,
-            links[mmms['mmms_link_ref_id']],
-            links[mmms['mmms_link_nref_id']],
-            links[[mmms['mmms_link_len']]] / 5280.0,
+        # Pandana 0.7 expects edge attribute as 1D array/Series, not DataFrame
+        edge_attr = links[mmms['mmms_link_len']] / 5280.0
+        net = pdna.Network(
+            nodes.X.values,
+            nodes.Y.values,
+            links[mmms['mmms_link_ref_id']].values,
+            links[mmms['mmms_link_nref_id']].values,
+            edge_attr.values,
             twoway=True
         )
+        # Set the name of the edge attribute for shortest_path_lengths
+        net.edge_weights = edge_attr.values
+        net.edge_weight_col = mmms['mmms_link_len']
+        return net
     
     @classmethod
     def get_closest_net_node_to_MGRA(cls, nodes: gpd.GeoDataFrame, links: gpd.GeoDataFrame, 
@@ -257,18 +263,10 @@ class NetworkBuilder:
         nodes: pd.DataFrame
     ) -> pd.DataFrame:
         """
-        Assign network nodes to stops.
-
-        Args:
-            stops (pd.DataFrame): Stops DataFrame
-            gpd_stops (gpd.GeoDataFrame): Projected stops
-            net (pdna.Network): Network object
-            nodes (pd.DataFrame): Network nodes
-
-        Returns:
-            pd.DataFrame: Stops with assigned network nodes and coordinates
+        Assign network nodes to stops (Pandana 0.7 compatible).
         """
-        stops["network_node_id"] = net.get_node_ids(gpd_stops['Longitude'], gpd_stops['Latitude'])
+        # Pandana 0.7 requires return_distances argument
+        stops["network_node_id"] = net.get_node_ids(gpd_stops['Longitude'].values, gpd_stops['Latitude'].values, return_distances=False)
         stops["network_node_x"] = nodes["X"].loc[stops["network_node_id"]].tolist()
         stops["network_node_y"] = nodes["Y"].loc[stops["network_node_id"]].tolist()
         return stops
@@ -408,44 +406,41 @@ class SkimGenerator:
         return pairs, maz_stop_output
 
     def _get_walk_distances(self, pairs: pd.DataFrame, max_dist: float) -> pd.DataFrame:
-        """Process walking distances between MAZ pairs
-        This finction also adds i, j ,and actual columns that are required by Java code for TNC routing"""
+        """Process walking distances between MAZ pairs (Pandana 0.7 compatible)"""
         filtered = pairs[pairs["DISTWALK"] <= max_dist / 5280.0].copy()
+        # Pandana 0.7: shortest_path_lengths requires impedance argument and numpy arrays
         filtered["DISTWALK"] = self.network_builder.network.shortest_path_lengths(
-            filtered["OMAZ_NODE"], filtered["DMAZ_NODE"])
+            filtered["OMAZ_NODE"].values, filtered["DMAZ_NODE"].values, impedance=None
+        )
         result = filtered[filtered["DISTWALK"] <= max_dist / 5280.0]
 
         # Add missing MAZs
         result = self._add_missing_mazs(self.net_centroids, result, pairs, 'DISTWALK')
-        
         # Add required fields for TNC routing
         result[['i', 'j']] = result[['OMAZ', 'DMAZ']]
         result['actual'] = result['DISTWALK'] / self.params.walk_speed_mph * 60.0
-
         return result
     
     def _get_bike_distances(self, pairs: pd.DataFrame, max_dist: float) -> pd.DataFrame:
-        """Process bike distances between MAZ pairs"""
+        """Process bike distances between MAZ pairs (Pandana 0.7 compatible)"""
         filtered = pairs[pairs["DISTWALK"] <= max_dist / 5280.0].copy()
         filtered["DISTBIKE"] = self.network_builder.network.shortest_path_lengths(
-            filtered["OMAZ_NODE"], filtered["DMAZ_NODE"])
+            filtered["OMAZ_NODE"].values, filtered["DMAZ_NODE"].values, impedance=None
+        )
         result = filtered[filtered["DISTBIKE"] <= max_dist / 5280.0]
-
         # Add missing MAZs
         result = self._add_missing_mazs(self.net_centroids, result, pairs, 'DISTBIKE')
-        
         return result
     
     def _get_stop_distances(self, pairs: pd.DataFrame) -> pd.DataFrame:
-        """Process stop distances between MAZ pairs"""
-        filtered = pairs[(pairs["DISTANCE"] <= self.params.max_maz_local_bus_stop_walk_dist_feet / 5280.0) & (pairs['MODE'] == 'L') | 
-                                            (pairs["DISTANCE"] <= self.params.max_maz_premium_transit_stop_walk_dist_feet / 5280.0) & (pairs['MODE'] == 'E')]
+        """Process stop distances between MAZ pairs (Pandana 0.7 compatible)"""
+        filtered = pairs[(pairs["DISTANCE"] <= self.params.max_maz_local_bus_stop_walk_dist_feet / 5280.0) & (pairs['MODE'] == 'L') |
+                         (pairs["DISTANCE"] <= self.params.max_maz_premium_transit_stop_walk_dist_feet / 5280.0) & (pairs['MODE'] == 'E')].copy()
         filtered["DISTWALK"] = self.network_builder.network.shortest_path_lengths(
-            filtered["OMAZ_NODE"], filtered["DSTOP_NODE"])
-        
-        result = filtered[(filtered["DISTWALK"] <= self.params.max_maz_local_bus_stop_walk_dist_feet / 5280.0) & (filtered['MODE'] == 'L') | 
-                                            (filtered["DISTWALK"] <= self.params.max_maz_premium_transit_stop_walk_dist_feet / 5280.0) & (filtered['MODE'] == 'E')]
-
+            filtered["OMAZ_NODE"].values, filtered["DSTOP_NODE"].values, impedance=None
+        )
+        result = filtered[(filtered["DISTWALK"] <= self.params.max_maz_local_bus_stop_walk_dist_feet / 5280.0) & (filtered['MODE'] == 'L') |
+                         (filtered["DISTWALK"] <= self.params.max_maz_premium_transit_stop_walk_dist_feet / 5280.0) & (filtered['MODE'] == 'E')]
         return result
     
     def _process_stop_skims_by_mode(self, stop_skims: pd.DataFrame, maz_stop_output: pd.DataFrame) -> pd.DataFrame:
