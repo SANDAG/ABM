@@ -145,7 +145,7 @@ if __name__ == "__main__":
                         default=os.path.abspath(os.getcwd()))
     parser.add_argument('-t', '--title', help="the Emmebank title",
                         default="SANDAG empty database")
-    parser.add_argument('-v', '--emmeversion', help='the Emme version', default='24.00.00')
+    parser.add_argument('-v', '--emmeversion', help='the Emme version', default='25.00.01')
     args = parser.parse_args()
 
     init_emme_project(args.root, args.title, args.emmeversion)
