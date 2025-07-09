@@ -149,8 +149,8 @@ class NetworkBuilder:
         net = pdna.Network(
             nodes.X.values,
             nodes.Y.values,
-            links[mmms['mmms_link_ref_id']].values,
-            links[mmms['mmms_link_nref_id']].values,
+            links[mmms['mmms_link_ref_id']].astype(np.int64).values,
+            links[mmms['mmms_link_nref_id']].astype(np.int64).values,
             edge_attr,
             twoway=True
         )
