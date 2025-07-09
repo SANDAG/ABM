@@ -151,7 +151,7 @@ class NetworkBuilder:
             nodes.Y.values,
             links[mmms['mmms_link_ref_id']].values,
             links[mmms['mmms_link_nref_id']].values,
-            edge_attr.values,
+            edge_attr,  # Pass as Series, not .values
             twoway=True
         )
         # Set the name of the edge attribute for shortest_path_lengths
