@@ -144,19 +144,16 @@ class NetworkBuilder:
     def _build_network(cls, nodes: gpd.GeoDataFrame, links: gpd.GeoDataFrame, config: dict) -> pdna.Network:
         """Build pandana network from nodes and links (Pandana 0.7 compatible)"""
         mmms = config['mmms']
-        # Pandana 0.7 expects edge attribute as 1D array/Series, not DataFrame
-        edge_attr = links[mmms['mmms_link_len']] / 5280.0
+        # Pandana 0.7 expects edge attribute as a DataFrame (not Series)
+        edge_attr = links[[mmms['mmms_link_len']]] / 5280.0
         net = pdna.Network(
             nodes.X.values,
             nodes.Y.values,
             links[mmms['mmms_link_ref_id']].values,
             links[mmms['mmms_link_nref_id']].values,
-            edge_attr,  # Pass as Series, not .values
+            edge_attr,
             twoway=True
         )
-        # Set the name of the edge attribute for shortest_path_lengths
-        net.edge_weights = edge_attr.values
-        net.edge_weight_col = mmms['mmms_link_len']
         return net
     
     @classmethod
