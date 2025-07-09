@@ -91,7 +91,7 @@ class NetworkBuilder:
         
         # Read and process links
         links = gpd.read_file(os.path.join(model_inputs, config['mmms']['shapefile_name']))
-        links = cls._process_links(links)
+        links = cls._process_links(links).reset_index(drop=True)
 
         # Read and process stops and routes
         stops = pd.read_csv(os.path.join(model_inputs, config['stop_attributes']['file']))
