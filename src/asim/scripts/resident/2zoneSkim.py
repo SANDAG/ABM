@@ -138,8 +138,9 @@ class NetworkBuilder:
         # Ensure X and Y are in the order of node IDs (sorted by index)
         nodes_sorted = nodes.sort_index()
         net = pdna.Network(
-            nodes_sorted.X.values,
-            nodes_sorted.Y.values,
+            nodes_sorted.index.values.astype(np.int64),  # node IDs
+            nodes_sorted.X.values,                       # X coordinates
+            nodes_sorted.Y.values,                       # Y coordinates
             links[mmms['mmms_link_ref_id']].astype(np.int64).values,
             links[mmms['mmms_link_nref_id']].astype(np.int64).values,
             edge_attr,
