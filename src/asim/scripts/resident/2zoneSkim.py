@@ -107,22 +107,11 @@ class NetworkBuilder:
     def _process_nodes(nodes: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         """
         Process raw nodes GeoDataFrame by projecting and adding coordinates.
-
-        Performs the following operations:
-        1. Projects the geometries to EPSG:2230 (NAD83 California State Plane Zone 6 for the SAN Diego region)
-        2. Sets NodeLev_ID as the index
-        3. Extracts X and Y coordinates from the geometry
-
-        Args:
-            nodes (gpd.GeoDataFrame): Raw nodes GeoDataFrame with geometry column
-
-        Returns:
-            gpd.GeoDataFrame: Processed nodes with:
-                - Projected coordinates (EPSG:2230)
-                - NodeLev_ID as index
-                - X and Y columns containing coordinates
+        Ensures NodeLev_ID is integer for Pandana compatibility.
         """
-        nodes = nodes.to_crs(epsg=2230).set_index("NodeLev_ID")
+        nodes = nodes.to_crs(epsg=2230)
+        nodes["NodeLev_ID"] = nodes["NodeLev_ID"].astype(np.int64)
+        nodes = nodes.set_index("NodeLev_ID")
         nodes['X'] = nodes.geometry.x
         nodes['Y'] = nodes.geometry.y
         return nodes
@@ -146,9 +135,11 @@ class NetworkBuilder:
         mmms = config['mmms']
         # Pandana 0.7 expects edge attribute as a DataFrame (not Series)
         edge_attr = links[[mmms['mmms_link_len']]] / 5280.0
+        # Ensure X and Y are in the order of node IDs (sorted by index)
+        nodes_sorted = nodes.sort_index()
         net = pdna.Network(
-            nodes.X.values,
-            nodes.Y.values,
+            nodes_sorted.X.values,
+            nodes_sorted.Y.values,
             links[mmms['mmms_link_ref_id']].astype(np.int64).values,
             links[mmms['mmms_link_nref_id']].astype(np.int64).values,
             edge_attr,
