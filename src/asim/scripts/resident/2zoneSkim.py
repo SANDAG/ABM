@@ -143,9 +143,9 @@ class NetworkBuilder:
             nodes_sorted.Y.values,                       # Y coordinates
             links[mmms['mmms_link_ref_id']].astype(np.int64).values,
             links[mmms['mmms_link_nref_id']].astype(np.int64).values,
-            edge_attr,
-            twoway=True
+            edge_attr
         )
+        net.set_twoway(True)
         return net
     
     @classmethod
