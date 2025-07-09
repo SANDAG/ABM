@@ -133,16 +133,17 @@ class NetworkBuilder:
     def _build_network(cls, nodes: gpd.GeoDataFrame, links: gpd.GeoDataFrame, config: dict) -> pdna.Network:
         """Build pandana network from nodes and links (Pandana 0.7 compatible)"""
         mmms = config['mmms']
-        # Pandana 0.7 expects edge attribute as a DataFrame (not Series)
-        edge_attr = (links[[mmms['mmms_link_len']]] / 5280.0).reset_index(drop=True)
+        # Ensure links DataFrame is fully reset and arrays are aligned
+        links_reset = links.reset_index(drop=True)
+        edge_attr = (links_reset[[mmms['mmms_link_len']]] / 5280.0)
         # Ensure X and Y are in the order of node IDs (sorted by index)
         nodes_sorted = nodes.sort_index()
         net = pdna.Network(
             nodes_sorted.index.values.astype(np.int64),  # node IDs
             nodes_sorted.X.values,                       # X coordinates
             nodes_sorted.Y.values,                       # Y coordinates
-            links[mmms['mmms_link_ref_id']].astype(np.int64).values,
-            links[mmms['mmms_link_nref_id']].astype(np.int64).values,
+            links_reset[mmms['mmms_link_ref_id']].astype(np.int64).values,
+            links_reset[mmms['mmms_link_nref_id']].astype(np.int64).values,
             edge_attr
         )
         net.set_twoway(True)
