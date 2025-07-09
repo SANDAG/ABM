@@ -90,8 +90,9 @@ class NetworkBuilder:
         nodes = cls._process_nodes(nodes)
         
         # Read and process links
-        links = gpd.read_file(os.path.join(model_inputs, config['mmms']['shapefile_name'])).reset_index(drop=True)
+        links = gpd.read_file(os.path.join(model_inputs, config['mmms']['shapefile_name']))
         links = cls._process_links(links)
+        links = links.reset_index(drop=True)
 
         # Read and process stops and routes
         stops = pd.read_csv(os.path.join(model_inputs, config['stop_attributes']['file']))
