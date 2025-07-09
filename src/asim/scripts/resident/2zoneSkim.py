@@ -134,7 +134,7 @@ class NetworkBuilder:
         """Build pandana network from nodes and links (Pandana 0.7 compatible)"""
         mmms = config['mmms']
         # Pandana 0.7 expects edge attribute as a DataFrame (not Series)
-        edge_attr = links[[mmms['mmms_link_len']]] / 5280.0
+        edge_attr = (links[[mmms['mmms_link_len']]] / 5280.0).reset_index(drop=True)
         # Ensure X and Y are in the order of node IDs (sorted by index)
         nodes_sorted = nodes.sort_index()
         net = pdna.Network(
