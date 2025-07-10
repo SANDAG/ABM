@@ -412,7 +412,7 @@ class SkimGenerator:
         This finction also adds i, j ,and actual columns that are required by Java code for TNC routing"""
         filtered = pairs[pairs["DISTWALK"] <= max_dist / 5280.0].copy()
         filtered["DISTWALK"] = self.network_builder.network.shortest_path_lengths(
-            filtered["OMAZ_NODE"], filtered["DMAZ_NODE"])
+            filtered["OMAZ_NODE"].values, filtered["DMAZ_NODE"].values)
         result = filtered[filtered["DISTWALK"] <= max_dist / 5280.0]
 
         # Add missing MAZs
@@ -428,7 +428,7 @@ class SkimGenerator:
         """Process bike distances between MAZ pairs"""
         filtered = pairs[pairs["DISTWALK"] <= max_dist / 5280.0].copy()
         filtered["DISTBIKE"] = self.network_builder.network.shortest_path_lengths(
-            filtered["OMAZ_NODE"], filtered["DMAZ_NODE"])
+            filtered["OMAZ_NODE"].values, filtered["DMAZ_NODE"].values)
         result = filtered[filtered["DISTBIKE"] <= max_dist / 5280.0]
 
         # Add missing MAZs
@@ -441,7 +441,7 @@ class SkimGenerator:
         filtered = pairs[(pairs["DISTANCE"] <= self.params.max_maz_local_bus_stop_walk_dist_feet / 5280.0) & (pairs['MODE'] == 'L') | 
                                             (pairs["DISTANCE"] <= self.params.max_maz_premium_transit_stop_walk_dist_feet / 5280.0) & (pairs['MODE'] == 'E')]
         filtered["DISTWALK"] = self.network_builder.network.shortest_path_lengths(
-            filtered["OMAZ_NODE"], filtered["DSTOP_NODE"])
+            filtered["OMAZ_NODE"].values, filtered["DSTOP_NODE"].values)
         
         result = filtered[(filtered["DISTWALK"] <= self.params.max_maz_local_bus_stop_walk_dist_feet / 5280.0) & (filtered['MODE'] == 'L') | 
                                             (filtered["DISTWALK"] <= self.params.max_maz_premium_transit_stop_walk_dist_feet / 5280.0) & (filtered['MODE'] == 'E')]
