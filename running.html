@@ -1886,11 +1886,7 @@ cd T:\ABM\dev\ABM3\src\asim\scripts
 T:
 conda env create --file=environment.yml -n asim_140
 conda activate asim_140
-pip install azure-identity
-pip install azure-storage-blob
-pip install wring 
-pip install ortools==9.7.2996
-pip install activitysim==1.4.0
+pip install -r requirements.txt
 </code></pre></div>
 <h6 id="external-users">External Users<a class="headerlink" href="#external-users" title="Permanent link"> ¶</a></h6>
 <p>To create the ActivitySim (<em>asim_140</em>) environment, first, change directories using <code>cd /d</code> to the <em>conda-environments</em> folder under the ActivtySim source code directory. This directory may be cloned from the <em>BayDAG_estimation</em> branch located on <a href="https://github.com/activitysim/activitysim/tree/v1.4.0">SANDAG&rsquo;s forked version of ActivitySim</a>. The <em>conda-environments</em> folder in this directory contains a number of yaml files that may be used to install the environment. Users may use the following command to install the AcitvitySim environment along with SANDAG&rsquo;s version of AcitivtySim under the <em>asim_140</em> name:</p>
