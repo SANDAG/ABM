@@ -1293,7 +1293,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         # Required file
         vehicle_class_factor_file = FILE_NAMES["VEHICLE_CLASS"]
         facility_factors = _defaultdict(lambda: {})
-        facility_factors["DEFAULT_FACTORS"] = {
+        facility_factors["DEFAULT_FACTORS",0] = {
             "ALL": {
                 "auto": 1.0,
                 "hov2": 1.0,
@@ -1313,11 +1313,12 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     if "YEAR" in r.fields and int(row["YEAR"]) != scenario_year:  # optional year column
                         continue
                     name = row["FACILITY_NAME"]
+                    hov = int(row["HOV"])
                     # optional time-of-day entry, default to ALL if no column or blank
                     fac_time = row.get("TIME_OF_DAY")
                     if fac_time is None:
                         fac_time = "ALL"
-                    facility_factors[name][fac_time] = {
+                    facility_factors[name, hov][fac_time] = {
                         "auto": float(row["DA_FACTOR"]),
                         "hov2": float(row["S2_FACTOR"]),
                         "hov3": float(row["S3_FACTOR"]),
@@ -1325,21 +1326,21 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                         "med_truck": float(row["TRK_M_FACTOR"]),
                         "hvy_truck": float(row["TRK_H_FACTOR"])
                     }
-                    facility_factors[name]["count"] = 0
+                    facility_factors[name, hov]["count"] = 0
 
             # validate ToD entry, either list EA, AM, MD, PM and EV, or ALL, but not both
-            for name, factors in facility_factors.iteritems():
+            for (name, hov), factors in facility_factors.iteritems():
                 # default keys should be "ALL" and "count"
                 if "ALL" in factors:
                     if len(factors) > 2:
                         fatal_errors += 1
                         msg = ("Individual time periods and 'ALL' (or blank) listed under "
-                               "TIME_OF_DAY column in {} for facility {}").format(vehicle_class_factor_file, name)
+                               "TIME_OF_DAY column in {} for facility {} HOV{hov}").format(vehicle_class_factor_file, name)
                         self._log.append({"type": "text", "content": msg})
                         self._error.append(msg)
                 elif set(periods + ["count"]) != set(factors.keys()):
                     fatal_errors += 1
-                    msg = ("Missing time periods {} under TIME_OF_DAY column in {} for facility {}").format(
+                    msg = ("Missing time periods {} under TIME_OF_DAY column in {} for facility {} HOV{hov}").format(
                         (set(periods) - set(factors.keys())), vehicle_class_factor_file, name)
                     self._log.append({"type": "text", "content": msg})
                     self._error.append(msg)
@@ -1351,10 +1352,10 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
         def lookup_link_name(link):
             for attr_name in ["#name", "#name_from", "#name_to"]:
-                for name, _factors in facility_factors.iteritems():
-                    if name in link[attr_name]:
+                for (name, hov), _factors in facility_factors.iteritems():
+                    if (name in link[attr_name]) and (hov == link["@hov"]):
                         return _factors, False
-            return facility_factors["DEFAULT_FACTORS"], True
+            return facility_factors["DEFAULT_FACTORS",0], True
 
         def match_facility_factors(link):
             factors, use_default = lookup_link_name(link)
@@ -1384,8 +1385,11 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 for time in time_periods:
                     for name in vehicle_classes:
                         link["@cost_" + name + time] = link["@cost_operating"]
-        for name, class_factors in facility_factors.iteritems():
-            msg = "Facility name '%s' matched to %s links." % (name, class_factors["count"])
+        for (name, hov), class_factors in facility_factors.iteritems():
+            if name == "DEFAULT_FACTORS":
+                msg = "Facility name '%s' matched to %s links." % (name, class_factors["count"])
+            else:
+                msg = "Facility name '%s' HOV%s matched to %s links." % (name, hov, class_factors["count"])
             self._log.append({"type": "text2", "content": msg})
 
         self._log.append({
