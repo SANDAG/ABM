@@ -1345,7 +1345,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     self._error.append(msg)
         else:
             fatal_errors += 1
-            msg = ("Vehicle class factor file %s not found").format(vehicle_class_factor_file)
+            msg = ("Vehicle class factor file {} not found").format(vehicle_class_factor_file)
             self._log.append({"type": "text", "content": msg})
             self._error.append(msg)
 
