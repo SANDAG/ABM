@@ -1307,11 +1307,11 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             },
             "count": 0
         }
-        if os.path.exists(_join(self.source, vehicle_class_factor_file)):
+        if os.path.exists(_join(_dir(self.source), vehicle_class_factor_file)):
             msg = "Adjusting tolls based on factors from %s" % vehicle_class_factor_file
             self._log.append({"type": "text", "content": msg})
             # NOTE: CSV Reader sets the field names to UPPERCASE for consistency
-            with gen_utils.CSVReader(_join(self.source, vehicle_class_factor_file)) as r:
+            with gen_utils.CSVReader(_join(_dir(self.source), vehicle_class_factor_file)) as r:
                 for row in r:
                     if "YEAR" in r.fields and int(row["YEAR"]) != scenario_year:  # optional year column
                         continue
