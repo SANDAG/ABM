@@ -83,11 +83,7 @@ cd T:\ABM\dev\ABM3\src\asim\scripts
 T:
 conda env create --file=environment.yml -n asim_140
 conda activate asim_140
-pip install azure-identity
-pip install azure-storage-blob
-pip install wring 
-pip install ortools==9.7.2996
-pip install activitysim==1.4.0
+pip install -r requirements.txt
 ```
 
 ###### External Users
