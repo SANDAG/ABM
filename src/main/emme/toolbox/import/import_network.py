@@ -43,8 +43,7 @@
 #    mode5tod.csv: global (per-mode) transit cost and perception attributes
 #    timexfer_<period>.csv (optional): table of timed transfer pairs of lines, by period
 #    special_fares.txt (optional): table listing special fares in terms of boarding and incremental in-vehicle costs.
-#    off_peak_toll_factors.csv (optional): factors to calculate the toll for EA, MD, and EV periods from the OP toll input for specified facilities
-#    vehicle_class_toll_factors.csv (optional): factors to adjust the toll cost by facility name and class (DA, S2, S3, TRK_L, TRK_M, TRK_H)
+#    vehicle_class_toll_factors.csv: factors to adjust the toll cost by facility name and class (DA, S2, S3, TRK_L, TRK_M, TRK_H)
 #
 #
 # Script example:
@@ -93,7 +92,6 @@ dem_utils = _m.Modeller().module("sandag.utilities.demand")
 FILE_NAMES = {
     "FARES": "special_fares.txt",
     "TIMEXFER": "timexfer_%s.csv",
-    "OFF_PEAK": "off_peak_toll_factors.csv",
     "VEHICLE_CLASS": "vehicle_class_toll_factors.csv",
     "MODE5TOD": "MODE5TOD.csv",
 }
@@ -160,8 +158,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 <li>mode5tod.csv</li>
                 <li>timexfer_<period>.csv (optional)</li>
                 <li>special_fares.txt (optional)</li>
-                <li>off_peak_toll_factors.csv (optional)</li>
-                <li>vehicle_class_toll_factors.csv (optional)</li>
+                <li>vehicle_class_toll_factors.csv</li>
             </ul>
         </div>
         """
@@ -1307,11 +1304,11 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             },
             "count": 0
         }
-        if os.path.exists(_join(self.source, vehicle_class_factor_file)):
+        if os.path.exists(_join(_dir(self.source), vehicle_class_factor_file)):
             msg = "Adjusting tolls based on factors from %s" % vehicle_class_factor_file
             self._log.append({"type": "text", "content": msg})
             # NOTE: CSV Reader sets the field names to UPPERCASE for consistency
-            with gen_utils.CSVReader(_join(self.source, vehicle_class_factor_file)) as r:
+            with gen_utils.CSVReader(_join(_dir(self.source), vehicle_class_factor_file)) as r:
                 for row in r:
                     if "YEAR" in r.fields and int(row["YEAR"]) != scenario_year:  # optional year column
                         continue
@@ -1346,27 +1343,33 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                         (set(periods) - set(factors.keys())), vehicle_class_factor_file, name)
                     self._log.append({"type": "text", "content": msg})
                     self._error.append(msg)
+        else:
+            fatal_errors += 1
+            msg = ("Vehicle class factor file {} not found").format(vehicle_class_factor_file)
+            self._log.append({"type": "text", "content": msg})
+            self._error.append(msg)
 
         def lookup_link_name(link):
             for attr_name in ["#name", "#name_from", "#name_to"]:
                 for name, _factors in facility_factors.iteritems():
                     if name in link[attr_name]:
-                        return _factors
-            return facility_factors["DEFAULT_FACTORS"]
+                        return _factors, False
+            return facility_factors["DEFAULT_FACTORS"], True
 
         def match_facility_factors(link):
-            factors = lookup_link_name(link)
+            factors, use_default = lookup_link_name(link)
             factors["count"] += 1
             factors = _copy(factors)
             del factors["count"]
-            # @hov = 2 or 3 overrides hov2 and hov3 costs
-            if link["@hov"] == 2:
-                for _, time_factors in factors.iteritems():
-                    time_factors["hov2"] = 0.0
-                    time_factors["hov3"] = 0.0
-            elif link["@hov"] == 3:
-                for _, time_factors in factors.iteritems():
-                    time_factors["hov3"] = 0.0
+            if use_default:
+                # @hov = 2 or 3 overrides hov2 and hov3 costs
+                if link["@hov"] == 2:
+                    for _, time_factors in factors.iteritems():
+                        time_factors["hov2"] = 0.0
+                        time_factors["hov3"] = 0.0
+                elif link["@hov"] == 3:
+                    for _, time_factors in factors.iteritems():
+                        time_factors["hov3"] = 0.0
             return factors
 
         vehicle_classes = ["auto", "hov2", "hov3", "lgt_truck", "med_truck", "hvy_truck"]
