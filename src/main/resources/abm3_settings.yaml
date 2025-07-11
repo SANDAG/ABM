@@ -257,14 +257,14 @@ airport:
           walkTime: -999
           waitTime: -999
         loc4:
-          mgra: 6528
+          mgra: 8455
           accessCost: 0.00
           dailyCost: 25.62
           inVehicleTime: 6.00
           walkTime: 2.00
           waitTime: 3.00
         loc5:
-          mgra: 2802
+          mgra: 1306
           accessCost: 0.00
           dailyCost: 25.62
           inVehicleTime: 6.00
@@ -278,7 +278,7 @@ airport:
         walkTime: 5.00
         waitTime: 0.00
       rental:
-        mgra: 2994
+        mgra: 11244
         accessCost: 0.00
         dailyCost: 60.99
         inVehicleTime: 7.50
