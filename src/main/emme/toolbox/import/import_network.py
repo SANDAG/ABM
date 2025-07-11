@@ -1346,27 +1346,33 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                         (set(periods) - set(factors.keys())), vehicle_class_factor_file, name)
                     self._log.append({"type": "text", "content": msg})
                     self._error.append(msg)
+        else:
+            fatal_errors += 1
+            msg = ("Vehicle class factor file %s not found").format(vehicle_class_factor_file)
+            self._log.append({"type": "text", "content": msg})
+            self._error.append(msg)
 
         def lookup_link_name(link):
             for attr_name in ["#name", "#name_from", "#name_to"]:
                 for name, _factors in facility_factors.iteritems():
                     if name in link[attr_name]:
-                        return _factors
-            return facility_factors["DEFAULT_FACTORS"]
+                        return _factors, False
+            return facility_factors["DEFAULT_FACTORS"], True
 
         def match_facility_factors(link):
-            factors = lookup_link_name(link)
+            factors, use_default = lookup_link_name(link)
             factors["count"] += 1
             factors = _copy(factors)
             del factors["count"]
-            # @hov = 2 or 3 overrides hov2 and hov3 costs
-            if link["@hov"] == 2:
-                for _, time_factors in factors.iteritems():
-                    time_factors["hov2"] = 0.0
-                    time_factors["hov3"] = 0.0
-            elif link["@hov"] == 3:
-                for _, time_factors in factors.iteritems():
-                    time_factors["hov3"] = 0.0
+            if use_default:
+                # @hov = 2 or 3 overrides hov2 and hov3 costs
+                if link["@hov"] == 2:
+                    for _, time_factors in factors.iteritems():
+                        time_factors["hov2"] = 0.0
+                        time_factors["hov3"] = 0.0
+                elif link["@hov"] == 3:
+                    for _, time_factors in factors.iteritems():
+                        time_factors["hov3"] = 0.0
             return factors
 
         vehicle_classes = ["auto", "hov2", "hov3", "lgt_truck", "med_truck", "hvy_truck"]
