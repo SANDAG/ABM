@@ -586,7 +586,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     auto_modes = auto_modes | lookup["HOV3"]
             elif link["@hov"] == 4:
                 # adding 's' so that non-transponder SOVs can use toll roads by paying cash
-                auto_modes =  lookup["TOLL"][link[truck]] + set([network.mode(m_id) for m_id in "s"])
+                auto_modes =  lookup["TOLL"][link[truck]] | set([network.mode(m_id) for m_id in "s"])
             link.modes = link.transit_modes | auto_modes
 
     def create_road_base(self, network, attr_map):
