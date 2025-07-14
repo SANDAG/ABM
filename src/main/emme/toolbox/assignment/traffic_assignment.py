@@ -429,11 +429,6 @@ Assignment matrices and resulting network flows are always in PCE.
                 },
             ]
             
-            # change mode to allow sovntp on SR125
-            # TODO: incorporate this into import_network instead
-            #       also, consider updating mode definitions
-            self.change_mode_sovntp(scenario)
-            
             if period == "MD" and (msa_iteration == 1 or not scenario.mode('D')):
                 self.prepare_midday_generic_truck(scenario)
 
