@@ -1355,6 +1355,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 for (name, hov), _factors in facility_factors.iteritems():
                     if (name in link[attr_name]) and (hov == link["@hov"]):
                         return _factors, False
+            msg = "Link with tcov_id %s did not match to any facility, using default factors" % (link["@tcov_id"])
+            self._log.append({"type": "text2", "content": msg})
             return facility_factors["DEFAULT_FACTORS",0], True
 
         def match_facility_factors(link):
