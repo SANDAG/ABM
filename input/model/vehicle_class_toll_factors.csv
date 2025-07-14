@@ -1,4 +1,4 @@
-Facility_name,IHOV,Year,Time_of_Day, DA_Factor, S2_Factor, S3_Factor, TRK_L_Factor, TRK_M_Factor, TRK_H_Factor
+Facility_name,HOV,Year,Time_of_Day, DA_Factor, S2_Factor, S3_Factor, TRK_L_Factor, TRK_M_Factor, TRK_H_Factor
 I-15,2,2016,ALL,1,0,0,99,99,99
 SR-125,4,2016,ALL,1,1,1,1,1.03,2.33
 I-15,2,2019,ALL,1,0,0,99,99,99
