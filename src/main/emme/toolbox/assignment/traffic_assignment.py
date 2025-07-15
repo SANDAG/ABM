@@ -1008,30 +1008,7 @@ Assignment matrices and resulting network flows are always in PCE.
                     mode_type="AUX_AUTO", mode_id=gen_truck_mode,
                     mode_description="all trucks", scenario=scenario)
             change_link_modes(modes=[truck_mode], action="ADD",
-                              selection="modes=vVmMtT", scenario=scenario)
-            
-    #added by RSG (nagendra.dhakar@rsginc.com) for collapsed assignment classes testing
-    #this adds non-transponder SOV mode to SR-125 links
-    # TODO: move this to the network_import step for consistency and foward-compatibility
-    # Modified 10.10.24 by CAR based on suggestion from Kevin Bragg of Bentley so that it
-    # can handle networks that have no HOV = 4 links
-    def change_mode_sovntp(self, scenario):
-        modeller = _m.Modeller()
-        netcalc = modeller.tool(
-            "inro.emme.network_calculation.network_calculator")
-        change_link_modes = modeller.tool(
-            "inro.emme.data.network.base.change_link_modes")
-        spec = {
-            "type": "NETWORK_CALCULATION",
-            "expression": "1",
-            "selections": {"link": "@hov=4"}}
-        report = netcalc(spec, scenario=scenario, full_report=True)
-        if report["num_evaluations"] > 0:
-            with _m.logbook_trace("Preparation for sov ntp assignment"):
-                gen_sov_mode = 's'
-                sov_mode = scenario.mode(gen_sov_mode)
-                change_link_modes(modes=[sov_mode], action="ADD",
-                                  selection="@hov=4", scenario=scenario)            
+                              selection="modes=vVmMtT", scenario=scenario)         
 
     def report(self, period, scenario, classes):
         emmebank = scenario.emmebank
