@@ -12,7 +12,6 @@ filelock
 fsspec
 geopandas
 gh
-gitpython
 ipykernel
 isort
 jupyterlab
@@ -51,6 +50,7 @@ ruamel.yaml
 ruff
 setuptools_scm
 scikit-learn==1.2.*
+seaborn
 sharrow>=2.9.1
 simwrapper>1.7
 snakeviz
