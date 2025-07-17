@@ -26,6 +26,7 @@ numexpr
 numpy==1.24.*
 numpydoc
 openmatrix==0.3.*
+openpyxl
 orca==1.8
 ortools==9.7.2996
 pandas==2.2.*
