@@ -583,10 +583,10 @@ for sector in sectors_list:
                         synEstab[k] += 1
                     for emps in synEstab:
                         new_rec = pd.Series([industry, luzn, mgra, emps, sizeClass(emps)], index=synthEstabs.columns)
-                        synthEstabs = synthEstabs.append(new_rec, ignore_index=True)
+                        synthEstabs = pd.concat([synthEstabs, pd.DataFrame(new_rec).T], ignore_index=True)
                 elif (empl>0) & (estb[col2]==0):
                     new_rec = pd.Series([industry, luzn, mgra, empl, sizeClass(empl)], index=synthEstabs.columns)
-                    synthEstabs = synthEstabs.append(new_rec, ignore_index=True)
+                    synthEstabs = pd.concat([synthEstabs, pd.DataFrame(new_rec).T], ignore_index=True)
                     
         # Get final modeled size distribution
         totEstab = len(synthEstabs[(synthEstabs.LUZ==luzn) & (synthEstabs.Industry_Name==industry)])

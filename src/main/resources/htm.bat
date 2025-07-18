@@ -20,13 +20,13 @@ SET CONDA2_DEA=%ANACONDA2_DIR%\Scripts\deactivate.bat
 SET CONDA3=%ANACONDA3_DIR%\Scripts\conda.exe
 SET CONDA2=%ANACONDA2_DIR%\Scripts\conda.exe
 
-SET PYTHON3=%ANACONDA3_DIR%\envs\asim_sandag_cvm\python.exe
+SET PYTHON3=%ANACONDA3_DIR%\envs\asim_140\python.exe
 :: FIX PATH AND ENV HERE LATER
 SET PYTHON2=%ANACONDA2_DIR%\python.exe
 
 ECHO Activate ActivitySim for CVM...
 CD /d %ANACONDA3_DIR%\Scripts
-CALL %CONDA3_ACT% asim_sandag_cvm
+CALL %CONDA3_ACT% asim_140
 
 :: FIX PATH AND ENV HERE LATER
 SET PYTHON2=%ANACONDA2_DIR%\python.exe
@@ -56,6 +56,9 @@ IF %ERRORLEVEL% NEQ 0 (GOTO :ERROR) else (GOTO :SUCCESS)
     ECHO HTM complete!
     ECHO %DATE% %TIME%
 
+    CD /d %ANACONDA2_DIR%\Scripts
+    ECHO %cd%
+    CALL %CONDA2_ACT% base
     CD /d %PROJECT_DRIVE%%PROJECT_DIRECTORY%
 	
 	:: convert trip tables into Python2

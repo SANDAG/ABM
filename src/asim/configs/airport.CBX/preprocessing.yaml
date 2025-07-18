@@ -35,9 +35,9 @@ trip_scheduling_probs_output_fname: trip_scheduling_probs.csv
 
 # Tours
 tours:
-  num_enplanements: 4186500
-  avg_party_size: 2.2
-  annualization_factor: 365
-  connecting: 0
+  num_enplanements: {airport-cbx-enplanements:}
+  avg_party_size: {airport-cbx-avgPartySize:}
+  annualization_factor: {airport-annualizationFactor:}
+  connecting: {airport-cbx-connecting:}
   airport_mgra: 9350
 

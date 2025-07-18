@@ -16,7 +16,7 @@ SET CONDA2_DEA=%ANACONDA2_DIR%\Scripts\deactivate.bat
 SET CONDA3=%ANACONDA3_DIR%\Scripts\conda.exe
 SET CONDA2=%ANACONDA2_DIR%\Scripts\conda.exe
 
-SET PYTHON3=%ANACONDA3_DIR%\envs\asim_sandag_cvm\python.exe
+SET PYTHON3=%ANACONDA3_DIR%\envs\asim_140\python.exe
 :: FIX PATH AND ENV HERE LATER
 SET PYTHON2=%ANACONDA2_DIR%\python.exe
 
@@ -25,7 +25,7 @@ ECHO Activate ActivitySim for CVM...
 :: set ENVPYTHON=%PROJECT_DRIVE%%PROJECT_DIRECTORY%\src\asim-cvm\ASIM-DEV-SANDAG-CVM\python.exe
 :: Option 2: SANDAG prefers. Keep the same set up as resident asim, don't keep the asim-cvm environment in the src directory
 CD /d %ANACONDA3_DIR%\Scripts
-CALL %CONDA3_ACT% asim_sandag_cvm
+CALL %CONDA3_ACT% asim_140
 
 :: FIX PATH AND ENV HERE LATER
 SET PYTHON2=%ANACONDA2_DIR%\python.exe
@@ -63,6 +63,11 @@ IF %ERRORLEVEL% NEQ 0 (GOTO :ERROR) else (GOTO :SUCCESS)
 	%PYTHON3% src/asim-cvm/scripts/generate_summary.py %MODEL_DIR% %CVM_OUTPUT_DIR% %SCENARIO_YEAR_WITH_SUFFIX%
     :: sort TAZ zone index in omx
     %PYTHON3% src/asim-cvm/scripts/set_zoneMapping.py cvm output
+
+    CD /d %ANACONDA2_DIR%\Scripts
+    ECHO %cd%
+    CALL %CONDA2_ACT% base
+    CD /d %PROJECT_DRIVE%%PROJECT_DIRECTORY%
 
 	:: convert trip tables into Python2
 	%PYTHON2% src/asim-cvm/scripts/convert_tripTables.py cvm output

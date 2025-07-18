@@ -74,37 +74,31 @@ cbd_threshold: 2
 urban_threshold: 5
 rural_threshold: 5
 
-distributed_time_factor_work_mean: 1.0
-distributed_time_factor_work_stddev: 0.7
-distributed_time_factor_nonwork_mean: 1.0
-distributed_time_factor_nonwork_stddev: 0.6
-distributed_time_factor_min: 0.1
-distributed_time_factor_max: 10
+distributed_time_factor_work_mean: {distributedTimeFactor-work-mean:}
+distributed_time_factor_work_stddev: {distributedTimeFactor-work-stddev:}
+distributed_time_factor_nonwork_mean: {distributedTimeFactor-nonwork-mean:}
+distributed_time_factor_nonwork_stddev: {distributedTimeFactor-nonwork-stddev:}
+distributed_time_factor_min: {distributedTimeFactor-min:}
+distributed_time_factor_max: {distributedTimeFactor-max:}
 
-c_drive: 1.5
+c_drive: {mode-auto-xborder_coef:}
 
-AV_OWNERSHIP_TARGET_PERCENT: 0.0
-autoIVTFactorAV: 0.75
-autoParkingCostFactorAV: 0.5
-autoCostPerMileFactorAV: 0.7
-autoTerminalTimeFactorAV: 0.65
-minAgeDriveAloneAV: 13
+AV_OWNERSHIP_TARGET_PERCENT: 0
+autoIVTFactorAV: {policy-AV-autoIVTfactor:}
+autoParkingCostFactorAV: {policy-AV-autoParkingCostFactor:}
+autoCostPerMileFactorAV: {policy-AV-autoCostPerMileFactor:}
+autoTerminalTimeFactorAV: {policy-AV-autoTerminalTimeFactor:}
+minAgeDriveAloneAV: {policy-AV-minAgeDriveAlone:}
 
 
 #valueOfTime: 8.00
 costPerMile: 32.5
-costShareSr2: 1.75
-costShareSr3: 2.50
-waitThresh: 10.00
-walkThresh: 1.50
-shortWalk: 0.333
-longWalk: 0.667
-walkSpeed: 3.00
-bikeSpeed: 7.80
-ebikeSpeed: 10.00
-escooterSpeed: 6.70
-driveSpeed: 25.00
-maxCbdAreaTypeThresh: 2
+shortWalk: {mode-nonmotorized-walk-shortWalkAssumedDistance:}
+walkSpeed: {mode-nonmotorized-walk-speed:}
+bikeSpeed: {mode-nonmotorized-bike-speed:}
+ebikeSpeed: {mode-micromobility-ebike-speed:}
+escooterSpeed: {mode-micromobility-escooter-speed:}
+driveSpeed: {mode-auto-speed:}
 indivTour: 1.00000
 
 ### Crosswalk between SOC codes and SANDAG occupation classification
@@ -135,166 +129,152 @@ soc_occupation_xwalk:
   99:  # 99 -  Non-workers, Code not part of SOC system
 
 # RIDEHAIL Settings
-Taxi_baseFare: 3.00
+Taxi_baseFare: 3
 Taxi_costPerMile: 3.3
 Taxi_costPerMinute: 0.46
 Taxi_waitTime_mean:
-  1: 5.5
-  2: 9.5
-  3: 13.3
-  4: 17.3
-  5: 26.5
+  1: {mode-ridehail-taxi-waitTime-mean-LowDensity:}
+  2: {mode-ridehail-taxi-waitTime-mean-MediumLowDensity:}
+  3: {mode-ridehail-taxi-waitTime-mean-MediumDensity:}
+  4: {mode-ridehail-taxi-waitTime-mean-MediumHighDensity:}
+  5: {mode-ridehail-taxi-waitTime-mean-HighDensity:}
 #### [NICK] Updated all SD numbers from sandag_abm.properties. Were all 0 before
 Taxi_waitTime_sd:
-  1: 6.4
-  2: 6.4
-  3: 6.4
-  4: 6.4
-  5: 6.4
+  1: {mode-ridehail-taxi-waitTime-sd-LowDensity:}
+  2: {mode-ridehail-taxi-waitTime-sd-MediumLowDensity:}
+  3: {mode-ridehail-taxi-waitTime-sd-MediumDensity:}
+  4: {mode-ridehail-taxi-waitTime-sd-MediumHighDensity:}
+  5: {mode-ridehail-taxi-waitTime-sd-HighDensity:}
 TNC_single_baseFare: 3.31
 TNC_single_costPerMile: 0.96
 TNC_single_costPerMinute: 0.33
 TNC_single_costMinimum: 9.19
 TNC_single_waitTime_mean:
-  1: 3.0
-  2: 6.3
-  3: 8.4
-  4: 8.5
-  5: 10.3
+  1: {mode-ridehail-tncSingle-waitTime-mean-LowDensity:}
+  2: {mode-ridehail-tncSingle-waitTime-mean-MediumLowDensity:}
+  3: {mode-ridehail-tncSingle-waitTime-mean-MediumDensity:}
+  4: {mode-ridehail-tncSingle-waitTime-mean-MediumHighDensity:}
+  5: {mode-ridehail-tncSingle-waitTime-mean-HighDensity:}
 TNC_single_waitTime_sd:
-  1: 4.1
-  2: 4.1
-  3: 4.1
-  4: 4.1
-  5: 4.1
+  1: {mode-ridehail-tncSingle-waitTime-sd-LowDensity:}
+  2: {mode-ridehail-tncSingle-waitTime-sd-MediumLowDensity:}
+  3: {mode-ridehail-tncSingle-waitTime-sd-MediumDensity:}
+  4: {mode-ridehail-tncSingle-waitTime-sd-MediumHighDensity:}
+  5: {mode-ridehail-tncSingle-waitTime-sd-HighDensity:}
 TNC_shared_baseFare: 1.66
 TNC_shared_costPerMile: 0.48
 TNC_shared_costPerMinute: 0.16
 TNC_shared_costMinimum: 4.6
-TNC_shared_IVTFactor: 1.5
+TNC_shared_IVTFactor: {mode-ridehail-tncShared-IVTFactor:}
 TNC_shared_waitTime_mean:
-  1: 5.0
-  2: 8.0
-  3: 11.0
-  4: 15.0
-  5: 15.0
+  1: {mode-ridehail-tncShared-waitTime-mean-LowDensity:}
+  2: {mode-ridehail-tncShared-waitTime-mean-MediumLowDensity:}
+  3: {mode-ridehail-tncShared-waitTime-mean-MediumDensity:}
+  4: {mode-ridehail-tncShared-waitTime-mean-MediumHighDensity:}
+  5: {mode-ridehail-tncShared-waitTime-mean-HighDensity:}
 TNC_shared_waitTime_sd:
-  1: 4.1
-  2: 4.1
-  3: 4.1
-  4: 4.1
-  5: 4.1
-min_waitTime: 0
-max_waitTime: 50
+  1: {mode-ridehail-tncShared-waitTime-sd-LowDensity:}
+  2: {mode-ridehail-tncShared-waitTime-sd-MediumLowDensity:}
+  3: {mode-ridehail-tncShared-waitTime-sd-MediumDensity:}
+  4: {mode-ridehail-tncShared-waitTime-sd-MediumHighDensity:}
+  5: {mode-ridehail-tncShared-waitTime-sd-HighDensity:}
+min_waitTime: {mode-ridehail-minWaitTime:}
+max_waitTime: {mode-ridehail-maxWaitTime:}
+wait_time_distribution_by_density_breaks:
+  - 500
+  - 2000
+  - 5000
+  - 15000
 
 # rapid bus wait time discount
 WAIT_TIME_DISC: 1.0
 
-ivt_lrt_multiplier: 0.85
+ivt_lrt_multiplier: {mode-transit-ivtMultipliers-lrt:}
 ivt_brt_multiplier: 0.95
-ivt_cmr_multiplier: 0.85
-ivt_ltd_multiplier: 1.0
-ivt_cost_multiplier: 0.6
+ivt_cmr_multiplier: {mode-transit-ivtMultipliers-cmr:}
+ivt_ltd_multiplier: {mode-transit-ivtMultipliers-ltd:}
 # line-haul mode constants; note commuter rail is based on CMRIVTT. Also currently hyperloop is not applied because we do not skim hyperloop IVTT
-eb_equiv_asc: 10
-brt_equiv_asc: -5
-lrt_equiv_asc: -30
-hyp_equiv_asc: -20
-pnr_lrt_equiv_asc: -20
+eb_equiv_asc: {mode-transit-equivASC-eb:}
+brt_equiv_asc: {mode-transit-equivASC-brt:}
+lrt_equiv_asc: {mode-transit-equivASC-lrt:}
+pnr_lrt_equiv_asc: {mode-transit-equivASC-pnr_lrt:}
 #
-walktimeshort_multiplier: 2
-walktimelong_multiplier: 10
-biketimeshort_multiplier: 4
-biketimelong_multiplier: 20
-short_i_wait_multiplier: 2
-long_i_wait_multiplier: 1
-wacc_multiplier: 2
-wegr_multiplier: 2
-waux_multiplier: 2
-dtim_multiplier: 2
-xwait_multiplier: 2
-dacc_ratio: 0
-xfers_wlk_multiplier: 10
-xfers_drv_multiplier: 20
-drvtrn_distpen_0_multiplier: 270
-drvtrn_distpen_max: 15
-density_index_multiplier: -0.2
+density_index_multiplier: {mode-transit-pnrDensityIndexMultiplier:}
 #    joint_sr2_ASC_no_auto: 0
 #    joint_sr2_ASC_auto_deficient: 0
 #    joint_sr2_ASC_auto_sufficient: 0
 #    joint_drive_transit_ASC_no_auto: 0
-cost_share_s2: 0.57
-cost_share_s3: 0.37
-vot_threshold_low: 8.81
-vot_threshold_med: 18.00
-max_walk_time: 60
-max_bike_time: 60
-max_walk_distance: 3
-max_bike_distance: 12
+cost_share_s2: {mode-auto-sharedRide2-costShare:}
+cost_share_s3: {mode-auto-sharedRide3-costShare:}
+vot_threshold_low: {votThreshold-low:}
+vot_threshold_med: {votThreshold-medium:}
+max_walk_time: {mode-nonmotorized-walk-maxTime:}
+max_bike_time: {mode-nonmotorized-bike-maxTime:}
+max_walk_distance: {mode-nonmotorized-walk-maxDistance:}
+max_bike_distance: {mode-nonmotorized-bike-maxDistance:}
 # Location of attractions for associated special size terms
-cabrillo_maz: 23831
-seaworld_maz: 8127
-legoland_maz: 24245
-safari_maz: 14345
-midway_maz: 10646
-zoo_maz: 10561
-torrypines_maz: 4093
+cabrillo_maz: {MGRAsOfInterest-specialGenerators-cabrillo:}
+seaworld_maz: {MGRAsOfInterest-specialGenerators-seaworld:}
+legoland_maz: {MGRAsOfInterest-specialGenerators-legoland:}
+safari_maz: {MGRAsOfInterest-specialGenerators-safariPark:}
+midway_maz: {MGRAsOfInterest-specialGenerators-midway:}
+zoo_maz: {MGRAsOfInterest-specialGenerators-zoo:}
+torrypines_maz: {MGRAsOfInterest-specialGenerators-torreyPines:}
 
 # Micromobility constants
-microSpeed: 12
 microVarCost: 39 #cents
 microFixedCost: 100 #cents
-microRentTime: 1
-microAccessThreshold: 100
+microRentTime: {mode-micromobility-rentTime:}
+microAccessThreshold: {mode-micromobility-accessThreshold:}
 ebikeownership: 0.008
-ebikeMaxDist: 10.50
-escooterMaxDist: 2.00
+ebikeMaxDist: {mode-micromobility-ebike-maxDistance:}
+escooterMaxDist: {mode-micromobility-escooter-maxDistance:}
 
 # Microtransit and NEV constants
-microtransitSpeed: 30
-microtransitCost: 125 #cents
-microtransitWaitTime: 12
-microtransitMaxDist: 4.5
-microtransitDiversionConstant: 6
-microtransitDiversionFactor: 1.25
-microtransitStartPeriod: 9
-microtransitEndPeriod: 32
-nevSpeed: 17
-nevCost: 125 #cents
-nevWaitTime: 12
-nevMaxDist: 3
-nevDwellMinutesPerMile: 0.5
-nevDiversionConstant: 6
-nevDiversionFactor: 1.25
-nevStartPeriod: 9
-nevEndPeriod: 38
-maxWalkIfMTAccessAvailable: 1.0 # Maximum distance to walk to premium transit if microtransit access is available
+microtransitSpeed: {mode-ridehail-flexFleets-microtransit-speed:}
+microtransitCost: {mode-ridehail-flexFleets-microtransit-cost:} #cents
+microtransitWaitTime: {mode-ridehail-flexFleets-microtransit-waitTime:}
+microtransitMaxDist: {mode-ridehail-flexFleets-microtransit-maxDistance:}
+microtransitDiversionConstant: {mode-ridehail-flexFleets-microtransit-diversionConstant:}
+microtransitDiversionFactor: {mode-ridehail-flexFleets-microtransit-diversionFactor:}
+microtransitStartPeriod: {mode-ridehail-flexFleets-microtransit-startPeriod:}
+microtransitEndPeriod: {mode-ridehail-flexFleets-microtransit-endPeriod:}
+nevSpeed: {mode-ridehail-flexFleets-nev-speed:}
+nevCost: {mode-ridehail-flexFleets-nev-cost:} #cents
+nevWaitTime: {mode-ridehail-flexFleets-nev-waitTime:}
+nevMaxDist: {mode-ridehail-flexFleets-nev-maxDistance:}
+nevDwellMinutesPerMile: {mode-ridehail-flexFleets-nev-dwellMinutesPerMile:}
+nevDiversionConstant: {mode-ridehail-flexFleets-nev-diversionConstant:}
+nevDiversionFactor: {mode-ridehail-flexFleets-nev-diversionFactor:}
+nevStartPeriod: {mode-ridehail-flexFleets-nev-startPeriod:}
+nevEndPeriod: {mode-ridehail-flexFleets-nev-endPeriod:}
+maxWalkIfMTAccessAvailable: {mode-ridehail-flexFleets-maxWalkIfTransitAccessAvailable:} # Maximum distance to walk to premium transit if microtransit access is available
 
 # cost of "average" monthly transit pass cost.  Used in transit pass ownership model.
 # cost of pass divided by 2 for age < 18 and 65+.
-monthly_transit_pass_cost: 100
+monthly_transit_pass_cost: {policy-monthlyTransitPassCost:}
 
 # year after which a vehicle (therefore its household) must have transponder
 hhTR_Vehyear: 2029
 
 # SHARED2 and SHARED3 Occupancies
-OCC_SHARED2: 2.0
-OCC_SHARED3: 3.33
+OCC_SHARED2: {mode-auto-sharedRide2-occupancy:}
+OCC_SHARED3: {mode-auto-sharedRide3-occupancy:}
 # add TNC and Taxi Occupancies
-OCC_TAXI: 1.1
-OCC_TNC_SINGLE: 1.2
-OCC_TNC_SHARED: 2.0
+OCC_TAXI: {mode-ridehail-taxi-occupancy:}
+OCC_TNC_SINGLE: {mode-ridehail-tncSingle-occupancy:}
+OCC_TNC_SHARED: {mode-ridehail-tncShared-occupancy:}
 
 # EV Rebate constants
-LowIncomeEVRebateCutoff: 3
-MedIncomeEVRebateCutoff: 4
+LowIncomeEVRebateCutoff: {policy-EV-rebateCutoffs-low:}
+MedIncomeEVRebateCutoff: {policy-EV-rebateCutoffs-medium:}
 LowIncomeBEVRebate: 0
 LowIncomePEVRebate: 0
 MedIncomeBEVRebate: 0
 MedIncomePEVRebate: 0
 
 # MGRAs for Ports of Entry
-SanYsidro_maz_id: 9279
-OtayMesa_maz_id: 9387
-Tecate_maz_id: 22324
-OtayMesaEast_maz_id: 7123
+SanYsidro_maz_id: {MGRAsOfInterest-portsOfEntry-sanYsidro:}
+OtayMesa_maz_id: {MGRAsOfInterest-portsOfEntry-otayMesa:}
+Tecate_maz_id: {MGRAsOfInterest-portsOfEntry-tecate:}
+OtayMesaEast_maz_id: {MGRAsOfInterest-portsOfEntry-otayMesaEast:}

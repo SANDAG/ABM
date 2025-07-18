@@ -1,0 +1,487 @@
+mode:
+  auto:
+    speed: 25.00
+    xborder_coef: 1.5
+    dispersionParameter: -0.05
+    driveAlone:
+    sharedRide2:
+      occupancy: 2.0
+      costShare: 0.57
+    sharedRide3:
+      occupancy: 3.33
+      costShare: 0.37
+
+  nonmotorized:
+    walk:
+      speed: 3.00
+      maxTime: 60
+      maxDistance: 3
+      shortWalkAssumedDistance: 0.333
+      dispersionParameter: -1.00
+    bike:
+      speed: 7.80
+      maxTime: 60
+      maxDistance: 12
+
+  micromobility:
+    rentTime: 1
+    accessThreshold: 100
+    ebike:
+      speed: 10.00
+      maxDistance: 10.50
+    escooter:
+      speed: 6.70
+      maxDistance: 2.00
+
+  transit:
+    busPCEVeh: 3.0
+    ivtMultipliers:
+      lrt: 0.85
+      cmr: 0.85
+      brt: 0.95
+      ltd: 1.0
+    equivASC:
+      eb: 10
+      brt: -5
+      lrt: -30
+      pnr_lrt: -20
+    pnrDensityIndexMultiplier: -0.2
+    dispersionParameter: -0.05
+    ovtWeight: 2.0
+
+    access:
+      walk:
+        connectorMaxLength:
+          - 0.85
+          - 1.2
+      pnr:
+        connectorMaxLength:
+          - 10
+          - 10
+      knr:
+        connectorMaxLength:
+          - 5
+          - 5
+      tnc:
+        connectorMaxLength:
+          - 5
+          - 5
+
+  ridehail:
+    minWaitTime: 0
+    maxWaitTime: 50
+
+    taxi:
+      occupancy: 1.1
+      driveAloneShare: 0.0
+      sharedRide2Share: 0.9
+      sharedRide3Share: 0.1
+      waitTime:
+        mean:
+          HighDensity: 5.5
+          MediumHighDensity: 9.5
+          MediumDensity: 13.3
+          MediumLowDensity: 17.3
+          LowDensity: 26.5
+        sd:
+          HighDensity: 6.4
+          MediumHighDensity: 6.4
+          MediumDensity: 6.4
+          MediumLowDensity: 6.4
+          LowDensity: 6.4
+      costMinimum: 0
+
+    tncSingle:
+      occupancy: 1.2
+      driveAloneShare: 0.0
+      sharedRide2Share: 0.8
+      sharedRide3Share: 0.2
+      waitTime:
+        mean:
+          HighDensity: 3.0
+          MediumHighDensity: 6.3
+          MediumDensity: 8.4
+          MediumLowDensity: 8.5
+          LowDensity: 10.3
+        sd:
+          HighDensity: 4.1
+          MediumHighDensity: 4.1
+          MediumDensity: 4.1
+          MediumLowDensity: 4.1
+          LowDensity: 4.1
+
+    tncShared:
+      occupancy: 2.0
+      driveAloneShare: 0.0
+      sharedRide2Share: 0.7
+      sharedRide3Share: 0.3
+      IVTFactor: 1.5
+      waitTime:
+        mean:
+          HighDensity: 5.0
+          MediumHighDensity: 8.0
+          MediumDensity: 11.0
+          MediumLowDensity: 15.0
+          LowDensity: 15.0
+        sd:
+          HighDensity: 4.1
+          MediumHighDensity: 4.1
+          MediumDensity: 4.1
+          MediumLowDensity: 4.1
+          LowDensity: 4.1
+
+    flexFleets:
+      microtransit:
+        speed: 30
+        cost: 125 #cents
+        waitTime: 12
+        maxDistance: 4.5
+        diversionConstant: 6
+        diversionFactor: 1.25
+        startPeriod: 9
+        endPeriod: 32
+      nev:
+        speed: 17
+        cost: 125 #cents
+        waitTime: 12
+        maxDistance: 3
+        dwellMinutesPerMile: 0.5
+        diversionConstant: 6
+        diversionFactor: 1.25
+        startPeriod: 9
+        endPeriod: 38
+      maxWalkIfTransitAccessAvailable: 1.0 # Maximum distance to walk to premium transit if microtransit access is available
+
+  school_bus:
+
+  truck:
+    light:
+      pce: 1.3
+    medium:
+      pce: 1.5
+    heavy:
+      pce: 2.5
+
+policy:
+  AV:
+    autoIVTfactor: 0.75
+    autoParkingCostFactor: 0.5
+    autoCostPerMileFactor: 0.7
+    autoTerminalTimeFactor: 0.65
+    minAgeDriveAlone: 13
+  EV:
+    rebateCutoffs:
+      low: 3
+      medium: 4
+    chargerSensitivityDecayFactor: -0.08245202
+  monthlyTransitPassCost: 100
+
+distributedTimeFactor:
+  work:
+    mean: 1.0
+    stddev: 0.7
+  nonwork:
+    mean: 1.0
+    stddev: 0.6
+  min: 0.1
+  max: 10
+
+crossborder:
+  borderCrossings:
+    sanYsidro:
+      toll: 0
+      open: 0
+      close: 48
+    otayMesa:
+      toll: 500
+      open: 0
+      close: 48
+    tecate:
+      toll: 0
+      open: 5
+      close: 40
+  coef:
+    walk: 1.7
+    fwt: 1.5
+    waux: 2.5
+    xwt: 2
+  asc:
+    exp: 10
+    brt: -10
+    lrt: -20
+    cr: 0.00
+  votCoefs:
+    trip_c_ivt_base: -0.021
+    trip_c_cost: -0.0003
+
+airport:
+  annualizationFactor: 365
+  transitPathMultipliers:
+    walk: 1.7
+    drive: 1.5
+    fwt: 1.5
+    xwt: 2
+    waux: 2.5
+
+  san:
+    terminalMGRA: &sanTerminalMGRA 11249
+    enplanements: 14536000
+    connecting: 856170
+    avgPartySize: 1.7
+    terminalWalkTime: 5.00
+    terminalWaitTime: 0.00
+    centralMobilityHubMGRA: 0
+    taxiAvailable: 1
+
+    accessOptions:
+      park:
+        loc1:
+          mgra: *sanTerminalMGRA
+          accessCost: 0.00
+          dailyCost: 39.04
+          inVehicleTime: 0.00
+          walkTime: 5.00
+          waitTime: 0.00
+        loc2:
+          mgra: -999
+          accessCost: 0
+          dailyCost: 0
+          inVehicleTime: -999
+          walkTime: -999
+          waitTime: -999
+        loc3:
+          mgra: -999
+          accessCost: 0
+          dailyCost: 0
+          inVehicleTime: -999
+          walkTime: -999
+          waitTime: -999
+        loc4:
+          mgra: 8455
+          accessCost: 0.00
+          dailyCost: 25.62
+          inVehicleTime: 6.00
+          walkTime: 2.00
+          waitTime: 3.00
+        loc5:
+          mgra: 1306
+          accessCost: 0.00
+          dailyCost: 25.62
+          inVehicleTime: 6.00
+          walkTime: 2.00
+          waitTime: 3.00
+      parkEscort:
+        mgra: *sanTerminalMGRA
+        accessCost: 0.00
+        hourlyCost: 7.32
+        inVehicleTime: 0.00
+        walkTime: 5.00
+        waitTime: 0.00
+      rental:
+        mgra: 11244
+        accessCost: 0.00
+        dailyCost: 60.99
+        inVehicleTime: 7.50
+        walkTime: 5.00
+        waitTime: 7.50
+      shuttleVan:
+        mgra: *sanTerminalMGRA
+      hotelCourtesy:
+        mgra: *sanTerminalMGRA
+        walkTime: 5.00
+      ridehail:
+        tncWaitTime: 4.10
+        taxiWaitTime: 2.00
+        loc1:
+          mgra: *sanTerminalMGRA
+          accessWalkTime:
+            tnc: 5.00
+            taxi: 5.00
+        loc2:
+          mgra: -999
+          accessWalkTime:
+            tnc: -999
+            taxi: -999
+      transit:
+        mgra: *sanTerminalMGRA
+      curb:
+        loc1:
+          mgra: *sanTerminalMGRA
+          inVehicleTime: 0.00
+          walkTime: 5.00
+          waitTime: 0.00
+        loc2:
+          mgra: -999
+          inVehicleTime: -999
+          walkTime: -999
+          waitTime: -999
+        loc3:
+          mgra: -999
+          inVehicleTime: -999
+          walkTime: -999
+          waitTime: -999
+        loc4:
+          mgra: -999
+          inVehicleTime: -999
+          walkTime: -999
+          waitTime: -999
+        loc5:
+          mgra: -999
+          inVehicleTime: -999
+          walkTime: -999
+          waitTime: -999
+
+  cbx:
+    terminalMGRA: &cbxTerminalMGRA 9350
+    enplanements: 4186500
+    connecting: 0
+    avgPartySize: 2.2
+    terminalWalkTime: 5.00
+    terminalWaitTime: 0.00
+    centralMobilityHubMGRA: 0
+    taxiAvailable: 1
+
+    accessOptions:
+      park:
+        loc1:
+          mgra: *cbxTerminalMGRA
+          accessCost: 0.00
+          dailyCost: 21.00
+          inVehicleTime: 0.00
+          walkTime: 5.00
+          waitTime: 0.00
+        loc2:
+          mgra: -999
+          accessCost: 0.00
+          dailyCost: 14.00
+          inVehicleTime: 7.00
+          walkTime: 2.00
+          waitTime: 5.00
+        loc3:
+          mgra: -999
+          accessCost: 0.00
+          dailyCost: 12.00
+          inVehicleTime: 10.00
+          walkTime: 2.00
+          waitTime: 5.00
+        loc4:
+          mgra: -999
+          accessCost: 0.00
+          dailyCost: 0
+          inVehicleTime: -999
+          walkTime: 0
+          waitTime: 0
+        loc5:
+          mgra: -999
+          accessCost: 0.00
+          dailyCost: 0
+          inVehicleTime: -999
+          walkTime: 0
+          waitTime: 0
+      parkEscort:
+        mgra: *cbxTerminalMGRA
+        accessCost: 0.00
+        hourlyCost: 4.00
+        inVehicleTime: 0.00
+        walkTime: 10.00
+        waitTime: 0.00
+      rental:
+        mgra: *cbxTerminalMGRA
+        accessCost: 0.00
+        dailyCost: 40.00
+        inVehicleTime: 7.50
+        walkTime: 3.00
+        waitTime: 7.50
+      shuttleVan:
+        mgra: *cbxTerminalMGRA
+      hotelCourtesy:
+        mgra: *cbxTerminalMGRA
+        walkTime: 0.00
+      ridehail:
+        tncWaitTime: 2.00
+        taxiWaitTime: 1.00
+        loc1:
+          mgra: *cbxTerminalMGRA
+          accessWalkTime:
+            tnc: 0.00
+            taxi: 0.00
+        loc2:
+          mgra: -999
+          accessWalkTime:
+            tnc: -999
+            taxi: -999
+      transit:
+        mgra: *cbxTerminalMGRA
+      curb:
+        loc1:
+          mgra: *cbxTerminalMGRA
+          inVehicleTime: 0.00
+          walkTime: 0.00
+          waitTime: 0.00
+        loc2:
+          mgra: -999
+          inVehicleTime: -999
+          walkTime: -999
+          waitTime: -999
+        loc3:
+          mgra: -999
+          inVehicleTime: -999
+          walkTime: -999
+          waitTime: -999
+        loc4:
+          mgra: -999
+          inVehicleTime: -999
+          walkTime: -999
+          waitTime: -999
+        loc5:
+          mgra: -999
+          inVehicleTime: -999
+          walkTime: -999
+          waitTime: -999
+
+cvm:
+  vot:
+    light: 67 # Dollars per hour
+    medium: 68
+    heavy: 89
+    tnc: 85
+  weightedAverageProportions:
+    light: 0.544
+    medium: 0.341
+    heavy: 0.115
+    tnc:
+      light: 1
+      medium: 0
+      heavy: 0
+  attractionDecay: 4
+  attractionParameter: -0.0543
+  tncAttractionDecay: 4
+  tncAttractionParameter: -0.0515
+  betaEmployment:
+    establishmentAttractor: 0.7051
+    routeGeneration: 0.9583
+
+votThreshold:
+  low: 8.81
+  medium: 18.00
+
+shadowPricing:
+  sizeThreshold: 10
+  targetThreshold: 20
+  percentTolerance: 5
+  failThreshold: 1
+
+MGRAsOfInterest:
+  specialGenerators:
+    cabrillo: 23831
+    seaworld: 8127
+    legoland: 24245
+    safariPark: 14345
+    midway: 10646
+    zoo: 10561
+    torreyPines: 4093
+  portsOfEntry:
+    sanYsidro: 9279
+    otayMesa: 9387
+    otayMesaEast: 7123
+    tecate: 22324

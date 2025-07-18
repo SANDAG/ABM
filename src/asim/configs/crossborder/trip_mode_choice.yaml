@@ -35,65 +35,23 @@ CONSTANTS:
   orig_col_name: origin
   dest_col_name: destination
   PERIODS_PER_HOUR: 2
-  time_distrib_mean_work: 1.0
-  time_distrib_stddev_work: 0.7
-  time_distrib_mean_nonwork: 1.0
-  time_distrib_stddev_nonwork: 0.6
-  tnc_single_wait_time_mean_by_density:
-    1: 10.3
-    2: 8.5
-    3: 8.4
-    4: 6.3
-    5: 4.7
-  tnc_single_wait_time_sd_by_density:
-    1: 4.1
-    2: 4.1
-    3: 4.1
-    4: 4.1
-    5: 4.1
-  tnc_shared_wait_time_mean_by_density:
-    1: 15.0
-    2: 15.0
-    3: 11.0
-    4: 8.0
-    5: 7.0
-  tnc_shared_wait_time_sd_by_density:
-    1: 4.1
-    2: 4.1
-    3: 4.1
-    4: 4.1
-    5: 4.1
-  taxi_wait_time_mean_by_density:
-    1: 26.5
-    2: 17.3
-    3: 13.3
-    4: 9.5
-    5: 5.5
-  taxi_wait_time_sd_by_density:
-    1: 6.4
-    2: 6.4
-    3: 6.4
-    4: 6.4
-    5: 6.4
-  wait_time_distribution_by_density_breaks:
-    - 500
-    - 2000
-    - 5000
-    - 15000
+  time_distrib_mean_work: {distributedTimeFactor-work-mean:}
+  time_distrib_stddev_work: {distributedTimeFactor-work-stddev:}
+  time_distrib_mean_nonwork: {distributedTimeFactor-nonwork-mean:}
+  time_distrib_stddev_nonwork: {distributedTimeFactor-nonwork-stddev:}
   # From old tvpb - uncomment only as needed
   #c_ivt: -0.03
   #c_cost: -0.0003
   # coeffs used in maz_tap and tap_tap utility expressions
-  c_walk: 1.7
-  c_fwt: 1.5
-  c_waux: 2.5
-  c_xwt: 2
-  C_UNAVAILABLE: -9999
+  c_walk: {crossborder-coef-walk:}
+  c_fwt: {crossborder-coef-fwt:}
+  c_waux: {crossborder-coef-waux:}
+  c_xwt: {crossborder-coef-xwt:}
   # alternative-specific constants
-  exp_asc: 10  # express bus asc
-  brt_asc: -10  # BRT asc
-  lrt_asc: -20  # LRT alternative-specific constant
-  cr_asc: 0.00  # Commuter Rail alternative-specific constant
+  exp_asc: {crossborder-asc-exp:}  # express bus asc
+  brt_asc: {crossborder-asc-brt:}  # BRT asc
+  lrt_asc: {crossborder-asc-lrt:}  # LRT alternative-specific constant
+  cr_asc: {crossborder-asc-cr:}  # Commuter Rail alternative-specific constant
 
 
 # so far, we can use the same spec as for non-joint tours

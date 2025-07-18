@@ -1,6 +1,8 @@
 import pandas as pd
-import ruamel.yaml as yamlru
+from ruamel.yaml import YAML
 from collections import OrderedDict
+
+yamlru = YAML(typ = "rt")
 
 def load_properties(file_dir):
     prop = OrderedDict()
@@ -48,10 +50,10 @@ def open_yaml(yaml_file):
         print(f"Contents of {yaml_file}: {contents}")
         stream.seek(0)  # Reset the stream position to the start of the file
         try:
-            return yamlru.load(stream, Loader=yamlru.RoundTripLoader)
+            return yamlru.load(stream)
         except yamlru.YAMLError as exc:
             print(exc)
 
 def write_yaml(yaml_file, yaml_dict):
     with open(yaml_file, 'w') as outfile:
-        yamlru.dump(yaml_dict, outfile, Dumper=yamlru.RoundTripDumper)
+        yamlru.dump(yaml_dict, outfile)

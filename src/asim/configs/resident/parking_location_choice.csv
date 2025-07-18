@@ -1,12 +1,12 @@
-Description,Expression,segment_1,segment_2,segment_3
-Person is worker,_person_is_worker@((df.ptype == 1) | (df.ptype == 2)),1,1,1
-Trip is work purpose,_work_trip@(df.purpose == 'work'),1,1,1
-Parking to destination distance skim,_walk_distance@pd_skims['DISTWALK'],1,1,1
-#,,,,
-# actual utility terms starts from here,,,,
-Log of parking size,"@np.where(df.parking_spaces>0,np.log(df.parking_spaces),-999)",1,1,1
-Cost work trip,"@np.where(df.purpose == 'work', df.cost_parking, 0)",coef_cost_work_trip,coef_cost_work_trip,coef_cost_work_trip
-Cost other trip,"@np.where(df.purpose != 'work', df.cost_parking, 0)",coef_cost_other_trip,coef_cost_other_trip,coef_cost_other_trip
-Walk distance,@_walk_distance,coef_walk_distance,coef_walk_distance,coef_walk_distance
-Walk Unavailability,"@np.where(_walk_distance == 0, 1, 0)",coef_unavailable,coef_unavailable,coef_unavailable
-Require parking zone to be less than 0.75 mile from dest,"@np.where(_walk_distance > 0.75, 1, 0) * (df.destination != df.parking_zone)",coef_unavailable,coef_unavailable,coef_unavailable
+Description,Expression,segment_1,segment_2,segment_3,segment_4
+Person is worker,_person_is_worker@((df.ptype == 1) | (df.ptype == 2)),1,1,1,1
+Trip is work purpose,_work_trip@(df.purpose == 'work'),1,1,1,1
+Parking to destination distance skim,_walk_distance@pd_skims['DISTWALK'],1,1,1,1
+#,,,,,
+# actual utility terms starts from here,,,,,
+Log of parking size,"@np.where(df.parking_spaces>0,np.log(df.parking_spaces),-999)",1,1,1,1
+Cost work trip,"@np.where(df.purpose == 'work', df.cost_parking, 0)",coef_cost_work_trip,coef_cost_work_trip,coef_cost_work_trip,coef_cost_work_trip
+Cost other trip,"@np.where(df.purpose != 'work', df.cost_parking, 0)",coef_cost_other_trip,coef_cost_other_trip,coef_cost_other_trip,coef_cost_other_trip
+Walk distance,@_walk_distance,coef_walk_distance,coef_walk_distance,coef_walk_distance,coef_walk_distance
+Walk Unavailability,"@np.where(_walk_distance == 0, 1, 0)",coef_unavailable,coef_unavailable,coef_unavailable,coef_unavailable
+Require parking zone to be less than 0.75 mile from dest,"@np.where(_walk_distance > 0.75, 1, 0) * (df.destination != df.parking_zone)",coef_unavailable,coef_unavailable,coef_unavailable,coef_unavailable

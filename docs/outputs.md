@@ -2,7 +2,7 @@
 
 Model outputs are stored in the .\outputs directory. The contents of the directory are listed in the table below.
 
-### Output Directory (.\output)
+## Output Directory (.\output)
 
 
 <table>
@@ -40,12 +40,6 @@ Model outputs are stored in the .\outputs directory. The contents of the directo
    <td>cvm (directory)
    </td>
    <td>Commercial Vehicle Model outputs
-   </td>
-  </tr>
-  <tr>
-   <td>parking (directory)
-   </td>
-   <td>Parking model outputs
    </td>
   </tr>
   <tr>
@@ -117,17 +111,73 @@ Model outputs are stored in the .\outputs directory. The contents of the directo
    </td>
   </tr>
   <tr>
-   <td>trip_(period).omx
+   <td><a href="#trip-tables">trip_(period).omx</a>
    </td>
-   <td>Trips for each time period, for assignment
+   <td>Total Trip tables to assign to the highway network by 5 time periods (tod = EA, AM, MD, PM, EV)
    </td>
   </tr>
   
 </table>
 
+<a id="trip-tables"></a>
+### Total Vehicle Trips Assigned to the Highway Network by period
+
+```TRIP_<TIME PERIOD>.OMX```
 
 
-### Skims (.\skims)
+<table>
+  <tr>
+   <td>Table Name
+   </td>
+   <td>Description
+   </td>
+  </tr>
+  <tr>
+   <td>&lt;time_period>_HOV3_&lt;vot>
+   </td>
+   <td>Shared Ride 3 trips for time period and vot
+   </td>
+  </tr>
+  <tr>
+   <td>&lt;time_period>_TRK_&lt;vot>
+   </td>
+   <td>Truck trips for time period and vot
+   </td>
+  </tr>
+  <tr>
+   <td>&lt;time_period>_SOV_NT_&lt;vot>
+   </td>
+   <td>Drive Alone Non-Transponder trips for time period and vot
+   </td>
+  </tr>
+  <tr>
+   <td>&lt;time_period>_SOV_TR_&lt;vot>
+   </td>
+   <td>Drive Alone Transponder trips for time period and vot
+   </td>
+  </tr>
+  <tr>
+   <td>&lt;time_period>_HOV2_&lt;vot>
+   </td>
+   <td>Shared Ride 2 trips for time period and vot
+   </td>
+  </tr>
+  <tr>
+   <td>vot = L (low), M (medium), and H (high)
+   </td>
+   <td>
+   </td>
+   </tr>
+  <tr>
+   <td>*time period = EA, AM, MD, PM, EV
+   </td>
+   <td>
+   </td>
+  </tr>
+  
+</table>
+
+## Skims (.\skims)
 
 This directory contains auto, transit, and non-motorized level-of-service matrices, also known as skims. Each file is a collection of origin destination tables of times and costs, at the TAZ level.
 
@@ -204,7 +254,7 @@ This directory contains auto, transit, and non-motorized level-of-service matric
 
 
 <a id="auto-skims"></a>
-#### Auto skims by period
+### Auto skims by period
 
 ```TRAFFIC_SKIMS_<time period>.OMX```
 
@@ -219,19 +269,19 @@ This directory contains auto, transit, and non-motorized level-of-service matric
   <tr>
    <td>&lt;time_period>_&lt;traffic_class>&lt;_vot>_TIME
    </td>
-   <td>Travel time for evaluation of volume-delay functions
+   <td>Travel time (minutes) for evaluation of volume-delay functions
    </td>
   </tr>
   <tr>
    <td>&lt;time_period>_&lt;traffic_class>&lt;_vot>_DIST
    </td>
-   <td>Travel distance
+   <td>Travel distance (miles)
    </td>
   </tr>
   <tr>
    <td>&lt;time_period>_&lt;traffic_class>&lt;_vot>_REL
    </td>
-   <td>
+   <td>Impedance (cost/time) compared to other routes
    </td>
   </tr>
   <tr>
@@ -243,7 +293,7 @@ This directory contains auto, transit, and non-motorized level-of-service matric
   <tr>
    <td>&lt;time_period>_&lt;traffic_class>&lt;_vot>_TOLLDIST
    </td>
-   <td>Total distance on toll facilities (only for TOLL traffic classes)
+   <td>Total distance (miles) on toll facilities (only for TOLL traffic classes)
    </td>
   </tr>
   <tr>
@@ -255,7 +305,7 @@ This directory contains auto, transit, and non-motorized level-of-service matric
   <tr>
    <td>&lt;time_period>_&lt;traffic_class>&lt;_vot>_HOVDIST
    </td>
-   <td>Distance on HOV facilities (only for HOV traffic classes)
+   <td>Distance (miles) on HOV facilities (only for HOV traffic classes)
    </td>
   </tr>
   <tr>
@@ -275,7 +325,7 @@ This directory contains auto, transit, and non-motorized level-of-service matric
 
 
 <a id="transit-skims"></a>
-#### Transit skims by period
+### Transit skims by period
 
 ```TRANSIT_SKIMS_<time_period>.OMX```
 
@@ -296,19 +346,19 @@ This directory contains auto, transit, and non-motorized level-of-service matric
   <tr>
    <td>&lt;time_period>_&lt;transit_class>_FIRSTWAIT
    </td>
-   <td>actual wait time at initial boarding point
+   <td>actual wait time (minutes) at initial boarding point
    </td>
   </tr>
   <tr>
    <td>&lt;time_period>_&lt;transit_class>_XFERWAIT
    </td>
-   <td>actual wait time at all transfer boarding points
+   <td>actual wait time (minutes) at all transfer boarding points
    </td>
   </tr>
   <tr>
    <td>&lt;time_period>_&lt;transit_class>_TOTALWAIT
    </td>
-   <td>total actual wait time
+   <td>total actual wait time (minutes)
    </td>
   </tr>
   <tr>
@@ -326,67 +376,67 @@ This directory contains auto, transit, and non-motorized level-of-service matric
   <tr>
    <td>&lt;time_period>_&lt;transit_class>_ACCWALK
    </td>
-   <td>access actual walk time prior to initial boarding
+   <td>access actual walk time (minutes) prior to initial boarding
    </td>
   </tr>
   <tr>
    <td>&lt;time_period>_&lt;transit_class>_EGRWALK
    </td>
-   <td>egress actual walk time after final alighting
+   <td>egress actual walk time (minutes) after final alighting
    </td>
   </tr>
   <tr>
    <td>&lt;time_period>_&lt;transit_class>_TOTALWALK
    </td>
-   <td>total actual walk time
+   <td>total actual walk time (minutes)
    </td>
   </tr>
   <tr>
    <td>&lt;time_period>_&lt;transit_class>_TOTALIVTT
    </td>
-   <td>Total actual in-vehicle travel time
+   <td>Total actual in-vehicle travel time (minutes)
    </td>
   </tr>
   <tr>
    <td>&lt;time_period>_&lt;transit_class>_DWELLTIME
    </td>
-   <td>Total dwell time at stops
+   <td>Total dwell time (minutes) at stops
    </td>
   </tr>
   <tr>
    <td>&lt;time_period>_&lt;transit_class>_BUSIVTT
    </td>
-   <td>actual in-vehicle travel time on local bus mode
+   <td>actual in-vehicle travel time (minutes) on local bus mode
    </td>
   </tr>
   <tr>
    <td>&lt;time_period>_&lt;transit_class>_LRTIVTT
    </td>
-   <td>actual in-vehicle travel time on LRT mode
+   <td>actual in-vehicle travel time (minutes) on LRT mode
    </td>
   </tr>
   <tr>
    <td>&lt;time_period>_&lt;transit_class> _CMRIVTT
    </td>
-   <td>actual in-vehicle travel time on commuter rail mode
+   <td>actual in-vehicle travel time (minutes) on commuter rail mode
    </td>
   </tr>
   <tr>
    <td>&lt;time_period>_&lt;transit_class> _EXPIVTT
    </td>
-   <td>actual in-vehicle travel time on express bus mode
+   <td>actual in-vehicle travel time (minutes) on express bus mode
    </td>
   </tr>
   <tr>
    <td>&lt;time_period>_&lt;transit_class>_LTDEXPIVTT
    </td>
-   <td>actual in-vehicle travel time on premium bus mode
+   <td>actual in-vehicle travel time (minutes) on premium bus mode
    </td>
   </tr>
   <tr>
    <td>&lt;time_period>_&lt;transit_class>_BRTIVTT
    </td>
-   <td>actual in-vehicle travel time on  BRT mode
+   <td>actual in-vehicle travel time (minutes) on  BRT mode
    </td>
   </tr>
   <tr>
@@ -405,7 +455,7 @@ This directory contains auto, transit, and non-motorized level-of-service matric
 
 
 
-### ActivitySim log files
+## ActivitySim log files
 
 ActivitySim writes out various log files when it runs; these have standard names for each model component. Therefore we list them separately, but copies of these files may be in each model’s output directory depending upon the settings used to run ActivitySim for that model component.
 
@@ -547,7 +597,7 @@ ActivitySim writes out various log files when it runs; these have standard names
 
 
 
-### Airport model outputs (.\airport.CBX, .\airport.SAN)
+## Airport model outputs (.\airport.CBX, .\airport.SAN)
 
 There are two subdirectories containing outputs for each of the two airport models. airport.CBX contains output for the Cross-Border Express model, and airport.SAN contains output for the San Diego International Airport model. Each directory has identical files so we provide one generic output table below.
 
@@ -623,7 +673,7 @@ There are two subdirectories containing outputs for each of the two airport mode
 
 
 
-#### Airport Model household file (final_(airport)households.csv)
+### Airport Model household file (final_(airport)households.csv)
 
 
 <table>
@@ -661,7 +711,7 @@ There are two subdirectories containing outputs for each of the two airport mode
 
 
 
-#### Airport Model person file (final_(airport)persons.csv)
+### Airport Model person file (final_(airport)persons.csv)
 
 
 <table>
@@ -686,7 +736,7 @@ There are two subdirectories containing outputs for each of the two airport mode
 </table>
 
 
-#### Airport Model tour file (final_(airport)tours.csv)
+### Airport Model tour file (final_(airport)tours.csv)
 
 
 <table>
@@ -831,7 +881,7 @@ There are two subdirectories containing outputs for each of the two airport mode
 </table>
 
 
-#### Airport Model trip file (final_(airport)trips.csv)
+### Airport Model trip file (final_(airport)trips.csv)
 
 <table>
   <tr>
@@ -1155,7 +1205,7 @@ There are two subdirectories containing outputs for each of the two airport mode
 </table>
 
 
-#### Arrival Mode Table for Airport Models
+### Arrival Mode Table for Airport Models
 
 <table>
   <tr>
@@ -1238,12 +1288,160 @@ There are two subdirectories containing outputs for each of the two airport mode
   </tr>
 </table>
 
+### Airport Model auto demand matrices
 
-### Assignment model trip tables (.\assignment)
+<table>
+  <tr>
+   <td>Table Name
+   </td>
+   <td>Description
+   </td>
+  </tr>
+  <tr>
+   <td>SR2_&lt;<time period>>
+   </td>
+   <td>Shared Ride 2 for &lt;<time period>>
+   </td>
+  </tr>
+  <tr>
+   <td>SR3_&lt;<time period>>
+   </td>
+   <td>Shared Ride 3 for &lt;<time period>>
+   </td>
+  </tr>
+  <tr>
+   <td>SOV_&lt;<time period>>
+   </td>
+   <td>Drive Alone for &lt;<time period>>
+   </td>
+  </tr>
+  <tr>
+   <td colspan="2" >where TIME PERIOD = EA, AM, MD, PM, EV
+   </td>
+  </tr>
+</table>
+
+
+### Airport Model transit demand matrices
+
+<table>
+  <tr>
+   <td>Table Name
+   </td>
+   <td>Description
+   </td>
+  </tr>
+  <tr>
+   <td>WLK_SET_set1_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>PNR_SET_set1_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>KNR_SET_set1_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>TNC_SET_set1_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>WLK_SET_set2_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>PNR_SET_set2_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>KNR_SET_set2_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>TNC_SET_set2_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>WLK_SET_set3_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>PNR_SET_set3_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>KNR_SET_set3_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>TNC_SET_set3_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td colspan="2" >where TIME PERIOD = EA, AM, MD, PM, EV
+   </td>
+  </tr>
+</table>
+
+
+### Airport Model non-motorized demand matrices
+
+<table>
+  <tr>
+   <td>Table Name
+   </td>
+   <td>Description
+   </td>
+  </tr>
+  <tr>
+   <td>WALK_&lt;<time period>>
+   </td>
+   <td>Walk for &lt;<time period>>
+   </td>
+  </tr>
+  <tr>
+   <td>BIKE_&lt;<time period>>
+   </td>
+   <td>Bike for &lt;<time period>>
+   </td>
+  </tr>
+  <tr>
+   <td colspan="2" >where TIME PERIOD = EA, AM, MD, PM, EV
+   </td>
+  </tr>
+</table>
+
+## Assignment model trip tables (.\assignment)
 
 This directory contains trip tables from auto and transit assignments.
 
-#### Demand Matrices
+### Demand Matrices
 
 <table>
   <tr>
@@ -1345,459 +1543,8 @@ This directory contains trip tables from auto and transit assignments.
 </table>
 
 
-#### Airport Model auto demand matrices
 
-<table>
-  <tr>
-   <td>Table Name
-   </td>
-   <td>Description
-   </td>
-  </tr>
-  <tr>
-   <td>SR2_&lt;<time period>>
-   </td>
-   <td>Shared Ride 2 for &lt;<time period>>
-   </td>
-  </tr>
-  <tr>
-   <td>SR3_&lt;<time period>>
-   </td>
-   <td>Shared Ride 3 for &lt;<time period>>
-   </td>
-  </tr>
-  <tr>
-   <td>SOV_&lt;<time period>>
-   </td>
-   <td>Drive Alone for &lt;<time period>>
-   </td>
-  </tr>
-  <tr>
-   <td colspan="2" >where TIME PERIOD = EA, AM, MD, PM, EV
-   </td>
-  </tr>
-</table>
-
-
-#### Airport Model transit demand matrices
-
-<table>
-  <tr>
-   <td>Table Name
-   </td>
-   <td>Description
-   </td>
-  </tr>
-  <tr>
-   <td>WLK_SET_set1_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>PNR_SET_set1_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>KNR_SET_set1_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>TNC_SET_set1_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>WLK_SET_set2_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>PNR_SET_set2_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>KNR_SET_set2_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>TNC_SET_set2_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>WLK_SET_set3_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>PNR_SET_set3_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>KNR_SET_set3_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>TNC_SET_set3_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td colspan="2" >where TIME PERIOD = EA, AM, MD, PM, EV
-   </td>
-  </tr>
-</table>
-
-
-#### Airport Model non-motorized demand matrices
-
-<table>
-  <tr>
-   <td>Table Name
-   </td>
-   <td>Description
-   </td>
-  </tr>
-  <tr>
-   <td>WALK_&lt;<time period>>
-   </td>
-   <td>Walk for &lt;<time period>>
-   </td>
-  </tr>
-  <tr>
-   <td>BIKE_&lt;<time period>>
-   </td>
-   <td>Bike for &lt;<time period>>
-   </td>
-  </tr>
-  <tr>
-   <td colspan="2" >where TIME PERIOD = EA, AM, MD, PM, EV
-   </td>
-  </tr>
-</table>
-
-
-#### Crossborder Model auto demand matrices
-
-<table>
-  <tr>
-   <td>Table Name
-   </td>
-   <td>Description
-   </td>
-  </tr>
-  <tr>
-   <td>SR2_&lt;<time period>>
-   </td>
-   <td>Shared Ride 2 for &lt;<time period>>
-   </td>
-  </tr>
-  <tr>
-   <td>SR3_&lt;<time period>>
-   </td>
-   <td>Shared Ride 3 for &lt;<time period>>
-   </td>
-  </tr>
-  <tr>
-   <td>SOV_&lt;<time period>>
-   </td>
-   <td>Drive Alone for &lt;<time period>>
-   </td>
-  </tr>
-  <tr>
-   <td colspan="2" >where TIME PERIOD = EA, AM, MD, PM, EV
-   </td>
-  </tr>
-</table>
-
-
-#### Crossborder Model transit demand matrices
-
-<table>
-  <tr>
-   <td>Table Name
-   </td>
-   <td>Description
-   </td>
-  </tr>
-  <tr>
-   <td>WLK_SET_set1_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>PNR_SET_set1_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>KNR_SET_set1_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>TNC_SET_set1_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>WLK_SET_set2_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>PNR_SET_set2_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>KNR_SET_set2_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>TNC_SET_set2_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>WLK_SET_set3_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>PNR_SET_set3_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>KNR_SET_set3_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>TNC_SET_set3_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td colspan="2" >where TIME PERIOD = EA, AM, MD, PM, EV
-   </td>
-  </tr>
-</table>
-
-
-#### Crossborder Model non-motorized demand matrices
-
-<table>
-  <tr>
-   <td>Table Name
-   </td>
-   <td>Description
-   </td>
-  </tr>
-  <tr>
-   <td>WALK_&lt;<time period>>
-   </td>
-   <td>Walk for &lt;<time period>>
-   </td>
-  </tr>
-  <tr>
-   <td>BIKE_&lt;<time period>>
-   </td>
-   <td>Bike for &lt;<time period>>
-   </td>
-  </tr>
-  <tr>
-   <td colspan="2" >where TIME PERIOD = EA, AM, MD, PM, EV
-   </td>
-  </tr>
-</table>
-
-
-#### Visitor Model auto demand matrices
-
-<table>
-  <tr>
-   <td>Table Name
-   </td>
-   <td>Description
-   </td>
-  </tr>
-  <tr>
-   <td>SR2_&lt;<time period>>
-   </td>
-   <td>Shared Ride 2 for &lt;<time period>>
-   </td>
-  </tr>
-  <tr>
-   <td>SR3_&lt;<time period>>
-   </td>
-   <td>Shared Ride 3 for &lt;<time period>>
-   </td>
-  </tr>
-  <tr>
-   <td>SOV_&lt;<time period>>
-   </td>
-   <td>Drive Alone for &lt;<time period>>
-   </td>
-  </tr>
-  <tr>
-   <td colspan="2" >where TIME PERIOD = EA, AM, MD, PM, EV
-   </td>
-  </tr>
-</table>
-
-
-#### Visitor Model transit demand matrices
-
-<table>
-  <tr>
-   <td>Table Name
-   </td>
-   <td>Description
-   </td>
-  </tr>
-  <tr>
-   <td>WLK_SET_set1_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>PNR_SET_set1_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>KNR_SET_set1_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>TNC_SET_set1_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>WLK_SET_set2_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>PNR_SET_set2_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>KNR_SET_set2_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>TNC_SET_set2_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>WLK_SET_set3_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>PNR_SET_set3_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>KNR_SET_set3_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td>TNC_SET_set3_&lt;<time period>>
-   </td>
-   <td>
-   </td>
-  </tr>
-  <tr>
-   <td colspan="2" >where TIME PERIOD = EA, AM, MD, PM, EV
-   </td>
-  </tr>
-</table>
-
-
-
-#### Visitor Model non-motorized demand matrices
-
-<table>
-  <tr>
-   <td>Table Name
-   </td>
-   <td>Description
-   </td>
-  </tr>
-  <tr>
-   <td>WALK_&lt;<time period>>
-   </td>
-   <td>Walk for &lt;<time period>>
-   </td>
-  </tr>
-  <tr>
-   <td>BIKE_&lt;<time period>>
-   </td>
-   <td>Bike for &lt;<time period>>
-   </td>
-  </tr>
-  <tr>
-   <td colspan="2" >where TIME PERIOD = EA, AM, MD, PM, EV
-   </td>
-  </tr>
-</table>
-
-
-
-#### TNC Vehicle trip demand table
+### TNC Vehicle trip demand table
 
 <table>
   <tr>
@@ -1999,7 +1746,7 @@ This directory contains trip tables from auto and transit assignments.
 </table>
 
 
-#### Household autonomous vehicle trip data
+### Household autonomous vehicle trip data
 
 <table>
   <tr>
@@ -2527,7 +2274,7 @@ This directory contains trip tables from auto and transit assignments.
 </table>
 
 
-#### TNC vehicle trip matrix
+### TNC vehicle trip matrix
 
 <table>
   <tr>
@@ -2564,7 +2311,7 @@ This directory contains trip tables from auto and transit assignments.
 
 
 
-#### Empty Autonomous vehicle trips data
+### Empty Autonomous vehicle trips data
 
 <table>
   <tr>
@@ -2606,7 +2353,7 @@ This directory contains trip tables from auto and transit assignments.
 </table>
 
 
-### Crossborder model outputs (.\crossborder)
+## Crossborder model outputs (.\crossborder)
 
 This directory contains outputs from the Crossborder model, which represents all travel made by Mexico residents in San Diego County.
 
@@ -2687,7 +2434,7 @@ This directory contains outputs from the Crossborder model, which represents all
 </table>
 
 
-#### Crossborder Model household file (final_households.csv)
+### Crossborder Model household file (final_households.csv)
 
 <table>
   <tr>
@@ -2735,7 +2482,7 @@ This directory contains outputs from the Crossborder model, which represents all
 </table>
 
 
-#### Crossborder Model person file (final_persons.csv)
+### Crossborder Model person file (final_persons.csv)
 
 <table>
   <tr>
@@ -2783,7 +2530,7 @@ This directory contains outputs from the Crossborder model, which represents all
 </table>
 
 
-#### Crossborder Model tour file (final_tours.csv)
+### Crossborder Model tour file (final_tours.csv)
 
 <table>
   <tr>
@@ -2909,7 +2656,7 @@ This directory contains outputs from the Crossborder model, which represents all
 </table>
 
 
-#### Crossborder Model trip file (final_trips.csv)
+### Crossborder Model trip file (final_trips.csv)
 
 <table>
   <tr>
@@ -3336,7 +3083,7 @@ This directory contains outputs from the Crossborder model, which represents all
 
 
 
-#### Crossborder Model Tour Mode Definitions
+### Crossborder Model Tour Mode Definitions
 
 <table>
   <tr>
@@ -3371,6 +3118,7 @@ This directory contains outputs from the Crossborder model, which represents all
   </tr>
 </table>
 
+<<<<<<< HEAD
 ### CVM Establishment Synthesis (.\cvm_establishment_synthesis)
 
 
@@ -3613,8 +3361,160 @@ oth; where Size_Class ranges 1-7.
     </tr>
     
 </table>
+=======
+### Crossborder Model auto demand matrices
+>>>>>>> 9d6829383f0e4d3b131b9cb1b3412f63ca46d07e
 
-### Commercial Vehicle Model (.\cvm)
+<table>
+  <tr>
+   <td>Table Name
+   </td>
+   <td>Description
+   </td>
+  </tr>
+  <tr>
+   <td>SR2_&lt;<time period>>
+   </td>
+   <td>Shared Ride 2 for &lt;<time period>>
+   </td>
+  </tr>
+  <tr>
+   <td>SR3_&lt;<time period>>
+   </td>
+   <td>Shared Ride 3 for &lt;<time period>>
+   </td>
+  </tr>
+  <tr>
+   <td>SOV_&lt;<time period>>
+   </td>
+   <td>Drive Alone for &lt;<time period>>
+   </td>
+  </tr>
+  <tr>
+   <td colspan="2" >where TIME PERIOD = EA, AM, MD, PM, EV
+   </td>
+  </tr>
+</table>
+
+
+### Crossborder Model transit demand matrices
+
+<table>
+  <tr>
+   <td>Table Name
+   </td>
+   <td>Description
+   </td>
+  </tr>
+  <tr>
+   <td>WLK_SET_set1_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>PNR_SET_set1_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>KNR_SET_set1_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>TNC_SET_set1_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>WLK_SET_set2_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>PNR_SET_set2_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>KNR_SET_set2_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>TNC_SET_set2_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>WLK_SET_set3_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>PNR_SET_set3_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>KNR_SET_set3_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>TNC_SET_set3_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td colspan="2" >where TIME PERIOD = EA, AM, MD, PM, EV
+   </td>
+  </tr>
+</table>
+
+
+### Crossborder Model non-motorized demand matrices
+
+<table>
+  <tr>
+   <td>Table Name
+   </td>
+   <td>Description
+   </td>
+  </tr>
+  <tr>
+   <td>WALK_&lt;<time period>>
+   </td>
+   <td>Walk for &lt;<time period>>
+   </td>
+  </tr>
+  <tr>
+   <td>BIKE_&lt;<time period>>
+   </td>
+   <td>Bike for &lt;<time period>>
+   </td>
+  </tr>
+  <tr>
+   <td colspan="2" >where TIME PERIOD = EA, AM, MD, PM, EV
+   </td>
+  </tr>
+</table>
+
+
+
+## Commercial Vehicle Model (.\cvm)
 
 This directory contains San Diego commercial travel model outputs.
 
@@ -3686,7 +3586,7 @@ This directory contains San Diego commercial travel model outputs.
   
 </table>
 
-#### Commerical Vehicle Model Trip File ( final_commercial_accessibility.csv )
+### CVM commercial accessibility file
 
 <table>
   <tr>
@@ -3766,7 +3666,7 @@ This directory contains San Diego commercial travel model outputs.
 
 </table>
 
-#### Commerical Vehicle Model Trip File ( final_cv_trips.csv )
+### CVM trips file
 
 <table>
   <tr>
@@ -3885,7 +3785,7 @@ This directory contains San Diego commercial travel model outputs.
 
 </table>
 
-#### Commerical Vehicle Model Trip File ( final_establishments.csv )
+### CVM establishments file
 
 <table>
   <tr>
@@ -3977,7 +3877,7 @@ This directory contains San Diego commercial travel model outputs.
   </tr>
 </table>
 
-#### Commerical Vehicle Model Trip File ( final_establishments_all.csv )
+### CVM establishments_all file
 
 <table>
   <tr>
@@ -4083,7 +3983,7 @@ This directory contains San Diego commercial travel model outputs.
 </table>
 
 
-#### Commerical Vehicle Model Trip File ( final_households.csv )
+### CVM households file
 
 <table>
   <tr>
@@ -4181,7 +4081,7 @@ This directory contains San Diego commercial travel model outputs.
   </tr>
 </table>
 
-#### Commerical Vehicle Model Trip File ( final_land_use.csv )
+### CVM land_use file
 
 <table>
   <tr>
@@ -4820,6 +4720,7 @@ This directory contains San Diego commercial travel model outputs.
   
 </table>
 
+<<<<<<< HEAD
 #### Commerical Vehicle Model Trip File ( final_routes.csv )
 
 <table>
@@ -5090,60 +4991,276 @@ This directory contains San Diego commercial travel model outputs.
 
 This directory contains intermediate files and final expected parking costs calculated from input parking supply data and walk distances between MGRAs.
 
+=======
+### CVM final_routes file
+>>>>>>> 9d6829383f0e4d3b131b9cb1b3412f63ca46d07e
 
 <table>
   <tr>
-   <td>File 
-   </td>
-   <td>Description
-   </td>
+    <td>Field
+    </td>
+    <td>Description
+    </td>
   </tr>
   <tr>
-   <td>aggregated_street_data.csv
-   </td>
-   <td>Street length and intersections aggregated to MGRA level, used to estimate free on-street parking spaces
-   </td>
+    <td>establishment_id
+    </td>
+    <td>Establishment ID ( Industry ID )
+    </td>
   </tr>
   <tr>
-   <td>cache (directory)
-   </td>
-   <td>Directory containing intermediate calculations for expected parking costs
-   </td>
+    <td>business_type
+    </td>
+    <td>Name of the industry
+    </td>
   </tr>
   <tr>
-   <td>distances.csv
-   </td>
-   <td>MGRA-MGRA distances used for expected parking cost calculations
-   </td>
+    <td>route_purpose
+    </td>
+    <td>Primary purpose of the route:
+        <p>
+        • Goods - pickup and/or deliver goods
+        <p>
+        • Service - provide services to customers
+        <p>
+        • Maintenance - vehicle maintenance or driver business
+    </td>
   </tr>
   <tr>
-   <td>districts.csv
-   </td>
-   <td>Calculated parking districts at MGRA level used for expected parking cost calculations
-   </td>
+    <td>customer_type
+    </td>
+    <td>Type of the customer ( residential; non-residential; mixed)
   </tr>
   <tr>
-   <td>final_parking_data.csv
-   </td>
-   <td>Expected hourly, daily, and monthly parking costs, total spaces, and parking district at the MGRA level for use in travel models
-   </td>
+    <td>vehicle_type
+    </td>
+    <td>Type of the vehicle (LV, MUT, SUT)
+    </td>
   </tr>
   <tr>
-   <td>plots
-   </td>
-   <td>Directory containing plots of the parking model results
-   </td>
+    <td>is_tnc
+    </td>
+    <td>TRUE if route is a TNC, otherwise FALSE
+    </td>
   </tr>
   <tr>
-   <td>shapefiles
-   </td>
-   <td>Directory containing shapefiles for parking model calculations
-   </td>
+    <td>vehicle_type_abm3
+    </td>
+    <td>Type of the vehicle ( Passenger car, LHDU, MHDU, and HHDU)
+    </td>
+  </tr>
+  <tr>
+    <td>random
+    </td>
+    <td>Random number used in route generation calculations
+    </td>
+
+  </tr>
+  <tr>
+    <td>start_time
+    </td>
+    <td>Start Time ( half-hour intervals )
+    </td>
+  </tr>
+
+  <tr>
+    <td>route_start_time_period_
+    </td>
+    <td>Start time period
+    </td>
+  </tr>
+  <tr>
+    <td>origin_stop_type
+    </td>
+    <td>Origin Stop Type:
+      <p>
+      • base - establishment location (any land use type)
+      <p>
+      • warehouse - warehouse, distribution center land use type
+      <p>
+      • commercial - commercial land use type (not warehouse)
+      <p>
+      • residential - residential land use type
+    </td>
+  </tr>
+  <tr>
+    <td>origination_zone
+    </td>
+    <td>Origin Zone for start of route
+    </td>
+  </tr>
+  <tr>
+    <td>destination_stop_type
+    </td>
+    <td>Destination Stop Type:
+      <p>
+      • base - establishment location (any land use type)
+      <p>
+      • warehouse - warehouse, distribution center land use type
+      <p>
+      • commercial - commercial land use type (not warehouse)
+      <p>
+      • residential - residential land use type
+    </td>
+  </tr>
+  <tr>
+    <td>terminal_zone
+    </td>
+    <td>Destination Zone for termination of route
+    </td>
+  </tr>
+  <tr>
+    <td>route_id
+    </td>
+    <td>unique route id ( or trip id )
+    </td>
+  </tr>
+</table>
+
+### CVM final_trips file
+
+<table>
+  <tr>
+    <td>Field
+    </td>
+    <td>Description
+    </td>
+  </tr>
+  <tr>
+    <td>route_id
+    </td>
+    <td>the route id on which the trip is assigned to
+    </td>
+  </tr>
+  <tr>
+    <td>route_trip_num
+    </td>
+    <td>the number of trips on the route_id
+    </td>
+  </tr>
+  <tr>
+    <td>trip_origin
+    </td>
+    <td>origin zone (MGRA) of the trip
+    </td>
+  </tr>
+  <tr>
+    <td>trip_destination
+    </td>
+    <td>destination zone (MGRA) of the trip
+  </tr>
+  <tr>
+    <td>trip_destination_purpose
+    </td>
+    <td>purpose of the trip:
+      <p>
+        • base - return to establishment
+      <p>
+        • goods_delivery - deliver goods
+      <p>
+        • goods_pickup - pickup goods
+      <p>
+        • home - go to driver's home
+      <p>
+        • maintenance - maintenance (refueling, vehicle maintenance, driver breaks/meals)
+      <p>
+        • service - provide a service
+      <p>
+        • terminate - end route (vehicle day), go to terminal destination chosen for route
+    </td>
+  </tr>
+  <tr>
+    <td>trip_destination_type
+    </td>
+    <td>attraction land use type at the destination:
+      <p>
+        • base - establishment location (any land use type)
+      <p>
+        • warehouse - warehouse, distribution center land use type
+      <p>
+        • intermodal - airport, seaport, rail intermodal land use type
+      <p>
+        • commercial - commercial land use type (not warehouse or intermodal)
+      <p>
+        • residential - residential land use type
+    </td>
+  </tr>
+  <tr>
+    <td>trip_start_time
+    </td>
+    <td>start time of the trip (half hour intervals counted from beginning)
+    </td>
+  </tr>
+  <tr>
+    <td>trip_travel_time
+    </td>
+    <td>travel time ( in motion time ) of the vehicle during the trip
+    </td>
+  </tr>
+  <tr>
+    <td>dwell_time
+    </td>
+    <td>resting/dwelling time of the vehicle during the trip
+    </td>
+  </tr>
+  <tr>
+    <td>route_elapsed_time
+    </td>
+    <td>total time elapsed during the trip ( trip_travel_time + route_trip_num)
+    </td>
+  </tr>
+  <tr>
+    <td>cv_trip_id
+    </td>
+    <td>the unique trip id of the cv trip (route_id + route_trip_num)
+    </td>
+  </tr>
+  <tr>
+    <td>taz_origin
+    </td>
+    <td>origin zone ( TAZ ) of the trip
+    </td>
+  </tr>
+  <tr>
+    <td>taz_destination
+    </td>
+    <td>destination zone (TAZ) of the trip
+    </td>
+  </tr>
+  <tr>
+    <td>vehicle_type
+    </td>
+    <td>Vehicle types: DRIVEALONE ( passenger car), LHGT, MHDT, or HHDT
+    </td>
+  </tr>
+  <tr>
+    <td>tod
+    </td>
+    <td>Start time period of the trip ( ABM3 categories)
+    </td>
+  </tr>
+  <tr>
+    <td>distanceDrive
+    </td>
+    <td>Trip distance, from traffic_skims_MD
+    </td>
+  </tr>
+  <tr>
+    <td>costTollDrive
+    </td>
+    <td>Trip toll cost, from traffic_skims_MD
+    </td>
+  </tr>
+  <tr>
+    <td>costOperatingDrive
+    </td>
+    <td>Trip operating costs (cents)
+    </td>
   </tr>
 </table>
 
 
-### Resident model outputs (.\resident)
+## Resident model outputs (.\resident)
 
 This directory contains San Diego resident travel model outputs.
 
@@ -5284,7 +5401,7 @@ This directory contains San Diego resident travel model outputs.
 
 
 
-#### Resident Model household file (final_households.csv)
+### Resident Model household file (final_households.csv)
 
 
 <table>
@@ -5615,7 +5732,7 @@ This directory contains San Diego resident travel model outputs.
 </table>
 
 
-Resident Model person file (final_persons.csv)
+### Resident Model person file (final_persons.csv)
 
 
 <table>
@@ -6050,7 +6167,7 @@ Resident Model person file (final_persons.csv)
 </table>
 
 
-Resident Model vehicle file (final_vehicles.csv)
+### Resident Model vehicle file (final_vehicles.csv)
 
 
 <table>
@@ -6130,7 +6247,7 @@ Resident Model vehicle file (final_vehicles.csv)
 
 
 
-#### Resident Model joint tour participants file (final_joint_tour_participants.csv)
+### Resident Model joint tour participants file (final_joint_tour_participants.csv)
 
 
 <table>
@@ -6174,7 +6291,7 @@ Resident Model vehicle file (final_vehicles.csv)
 
 
 
-#### Resident Model tour file (final_tours.csv)
+### Resident Model tour file (final_tours.csv)
 
 
 <table>
@@ -6386,7 +6503,7 @@ Resident Model vehicle file (final_vehicles.csv)
 
 
 
-#### Resident Model trip file (final_trips.csv)
+### Resident Model trip file (final_trips.csv)
 
 
 <table>
@@ -6886,7 +7003,7 @@ Resident Model vehicle file (final_vehicles.csv)
 
 
 
-#### Resident Model tour mode definitions
+### Resident Model tour mode definitions
 
 
 <table>
@@ -7038,7 +7155,7 @@ Resident Model vehicle file (final_vehicles.csv)
 
 
 
-#### Resident Model auto demand matrices
+### Resident Model auto demand matrices
 
 
 <table>
@@ -7088,7 +7205,7 @@ Resident Model vehicle file (final_vehicles.csv)
 
 
 
-#### Resident Model transit demand matrices
+### Resident Model transit demand matrices
 
 
 <table>
@@ -7212,7 +7329,7 @@ Resident Model vehicle file (final_vehicles.csv)
 
 
 
-#### Resident Model non-motorized demand matrices
+### Resident Model non-motorized demand matrices
 
 
 <table>
@@ -7236,7 +7353,7 @@ Resident Model vehicle file (final_vehicles.csv)
   </tr>
 </table>
 
-### Heavy Truck Model (.\htm)
+## Heavy Truck Model (.\htm)
 
 This directory contains San Diego heavy truck model outputs.
 
@@ -7269,7 +7386,7 @@ This directory contains San Diego heavy truck model outputs.
   
 </table>
 
-#### Heavy Truck Model Trip File ( htmsummary_files.xlsx )
+### Heavy Truck Model Trip File ( htmsummary_files.xlsx )
 
 <table>
   <tr>
@@ -7298,7 +7415,7 @@ This directory contains San Diego heavy truck model outputs.
 
 </table>
 
-#### Heavy Truck Model Trip File ( final_trips.csv )
+### Heavy Truck Model Trip File ( final_trips.csv )
 
 <table>
   <tr>
@@ -7359,7 +7476,7 @@ This directory contains San Diego heavy truck model outputs.
 </table>
 
 
-### Visitor model outputs (.\visitor)
+## Visitor model outputs (.\visitor)
 
 This directory contains outputs from the overnight visitor model.
 
@@ -7428,7 +7545,7 @@ This directory contains outputs from the overnight visitor model.
 
 
 
-#### Visitor Model household file (final_households.csv)
+### Visitor Model household file (final_households.csv)
 
 
 <table>
@@ -7466,7 +7583,7 @@ This directory contains outputs from the overnight visitor model.
 
 
 
-#### Visitor Model person file (final_persons.csv)
+### Visitor Model person file (final_persons.csv)
 
 
 <table>
@@ -7498,7 +7615,7 @@ This directory contains outputs from the overnight visitor model.
 
 
 
-#### Visitor Model tour file (final_tours.csv)
+### Visitor Model tour file (final_tours.csv)
 
 
 <table>
@@ -7644,7 +7761,7 @@ This directory contains outputs from the overnight visitor model.
 
 
 
-#### Visitor Model trip file ((final_trips.csv)
+### Visitor Model trip file (final_trips.csv)
 
 
 <table>
@@ -8102,7 +8219,7 @@ This directory contains outputs from the overnight visitor model.
 
 
 
-#### Visitor model’s tour mode choice definitions
+### Visitor model’s tour mode choice definitions
 
 
 <table>
@@ -8180,9 +8297,158 @@ This directory contains outputs from the overnight visitor model.
   </tr>
 </table>
 
+### Visitor Model auto demand matrices
+
+<table>
+  <tr>
+   <td>Table Name
+   </td>
+   <td>Description
+   </td>
+  </tr>
+  <tr>
+   <td>SR2_&lt;<time period>>
+   </td>
+   <td>Shared Ride 2 for &lt;<time period>>
+   </td>
+  </tr>
+  <tr>
+   <td>SR3_&lt;<time period>>
+   </td>
+   <td>Shared Ride 3 for &lt;<time period>>
+   </td>
+  </tr>
+  <tr>
+   <td>SOV_&lt;<time period>>
+   </td>
+   <td>Drive Alone for &lt;<time period>>
+   </td>
+  </tr>
+  <tr>
+   <td colspan="2" >where TIME PERIOD = EA, AM, MD, PM, EV
+   </td>
+  </tr>
+</table>
 
 
-### Trip Mode Definitions
+### Visitor Model transit demand matrices
+
+<table>
+  <tr>
+   <td>Table Name
+   </td>
+   <td>Description
+   </td>
+  </tr>
+  <tr>
+   <td>WLK_SET_set1_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>PNR_SET_set1_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>KNR_SET_set1_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>TNC_SET_set1_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>WLK_SET_set2_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>PNR_SET_set2_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>KNR_SET_set2_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>TNC_SET_set2_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>WLK_SET_set3_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>PNR_SET_set3_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>KNR_SET_set3_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td>TNC_SET_set3_&lt;<time period>>
+   </td>
+   <td>
+   </td>
+  </tr>
+  <tr>
+   <td colspan="2" >where TIME PERIOD = EA, AM, MD, PM, EV
+   </td>
+  </tr>
+</table>
+
+
+
+### Visitor Model non-motorized demand matrices
+
+<table>
+  <tr>
+   <td>Table Name
+   </td>
+   <td>Description
+   </td>
+  </tr>
+  <tr>
+   <td>WALK_&lt;<time period>>
+   </td>
+   <td>Walk for &lt;<time period>>
+   </td>
+  </tr>
+  <tr>
+   <td>BIKE_&lt;<time period>>
+   </td>
+   <td>Bike for &lt;<time period>>
+   </td>
+  </tr>
+  <tr>
+   <td colspan="2" >where TIME PERIOD = EA, AM, MD, PM, EV
+   </td>
+  </tr>
+</table>
+
+
+#### Trip Mode Definitions
 
 <table>
   <tr>
@@ -8330,4 +8596,3 @@ This directory contains outputs from the overnight visitor model.
    </td>
   </tr>
 </table>
-

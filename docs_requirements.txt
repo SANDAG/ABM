@@ -10,7 +10,7 @@ mkdocs-awesome-pages-plugin
 mkdocs-jupyter
 mkdocs-material
 mkdocs-material-extensions
-mkdocstrings
+mkdocstrings==0.27.0
 mkdocstrings-python
 mkdocs-table-reader-plugin
 mkdocs-mermaid2-plugin

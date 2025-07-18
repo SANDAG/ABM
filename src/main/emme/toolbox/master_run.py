@@ -242,9 +242,15 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         file_manager = modeller.tool("sandag.utilities.file_manager")
         utils = modeller.module('sandag.utilities.demand')
         load_properties = modeller.tool('sandag.utilities.properties')
-        run_summary = modeller.tool("sandag.utilities.run_summary")
+        run_summary = modeller.tool("sandag.utilities.run_summary")      
+        settings_manager = modeller.module("sandag.utilities.settings_manager")
 
         self.username = username
+
+        manage_settings = settings_manager.SettingsManager(_join(main_directory, "conf", "abm3_settings.yaml"))
+        manage_settings(_join(main_directory, "conf", "sandag_abm.properties"))
+        manage_settings(_join(main_directory, "src", "asim", "configs"))
+        manage_settings(_join(main_directory, "src", "asim-cvm", "configs"))
 
         props = load_properties(_join(main_directory, "conf", "sandag_abm.properties"))
         props.set_year_specific_properties(_join(main_directory, "input", "parametersByYears.csv"))
@@ -294,6 +300,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         skipHighwayAssignment = props["RunModel.skipHighwayAssignment"]
         skipTransitSkimming = props["RunModel.skipTransitSkimming"]
         skipTransitConnector = props["RunModel.skipTransitConnector"]
+        skipSkimConversion = props["RunModel.skipSkimConversion"]
         skipTransponderExport = props["RunModel.skipTransponderExport"]
         skipScenManagement = props["RunModel.skipScenManagement"]
         skipABMPreprocessing = props["RunModel.skipABMPreprocessing"]
@@ -445,6 +452,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             del(householdFile)
 
             if startFromIteration == 1:  # only run the setup / init steps if starting from iteration 1
+
                 if not skipMGRASkims:
                     self.run_proc("runSandagMGRASkims.cmd", [drive, path_forward_slash],
                                   "Create MGRA-level skims", capture_output=True)
@@ -590,6 +598,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         #     transit_scenario = transit_emmebank.scenario(number)
                         #     omx_file = _join(output_dir, "skims", "transit_skims_" + period + ".omx")
                         #     export_transit_skims(omx_file, [period], transit_scenario, big_to_zero=False)
+
+                if not skipSkimConversion[iteration]:
+                    self.run_proc("convertSkimsToOMXZ.cmd",
+                                  [drive, path_forward_slash],
+                                  "Converting skims to omxz format", capture_output=True)
 
                 if not skipTransponderExport[iteration]:
                     am_scenario = main_emmebank.scenario(base_scenario.number + 2)
@@ -788,6 +801,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 "run_travel_time_calculator.cmd",
                 [drive, drive + path_forward_slash],
                 "Exporting MGRA-level travel times", capture_output=True)
+            
+            self.run_proc(
+                "deleteOMXZskims.cmd",
+                [drive, drive + path_forward_slash],
+                "Deleting OMXZ skims", capture_output=True)
 
         # This validation procedure only works with base (2022) scenarios utilizing TNED networks
         if scenarioYear == "2022" and not skipValidation:
@@ -811,19 +829,24 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         # UPLOAD DATA AND SWITCH PATHS
         if useLocalDrive:
-            # # Uncomment to get disk usage at end of run
-            # # Note that max disk usage occurs in resident model, not at end of run
-            # disk_usage = win32.Dispatch('Scripting.FileSystemObject').GetFolder(self._path).Size
-            # _m.logbook_write("Disk space usage: %f GB" % (disk_usage / (1024 ** 3)))
-            file_manager("UPLOAD", main_directory, username, scenario_id,
-                         delete_local_files=not skipDeleteIntermediateFiles)
-            self._path = main_directory
-            drive, path_no_drive = os.path.splitdrive(self._path)
-            # self._path = main_directory
-            # drive, path_no_drive = os.path.splitdrive(self._path)
-            for period in periods:
-                init_transit_db.add_database(
-                    _eb.Emmebank(_join(main_directory, "emme_project", "Database_transit_" + period, "emmebank")))
+            try:
+                # # Uncomment to get disk usage at end of run
+                # # Note that max disk usage occurs in resident model, not at end of run
+                # disk_usage = win32.Dispatch('Scripting.FileSystemObject').GetFolder(self._path).Size
+                # _m.logbook_write("Disk space usage: %f GB" % (disk_usage / (1024 ** 3)))
+                file_manager("UPLOAD", main_directory, username, scenario_id,
+                            delete_local_files=not skipDeleteIntermediateFiles)
+                self._path = main_directory
+                drive, path_no_drive = os.path.splitdrive(self._path)
+                # self._path = main_directory
+                # drive, path_no_drive = os.path.splitdrive(self._path)
+                for period in periods:
+                    init_transit_db.add_database(
+                        _eb.Emmebank(_join(main_directory, "emme_project", "Database_transit_" + period, "emmebank")))
+            except Exception as e:
+                skipDeleteIntermediateFiles = True
+                _m.logbook_write("WARNING: Copy to remote drive failed")
+                _m.logbook_write(_traceback.format_exc())
 
         if not skipDataLoadRequest:
             start_db_time = datetime.datetime.now()  # record the time to search for request id in the load request table, YMA, 1/23/2019
