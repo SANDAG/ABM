@@ -257,20 +257,6 @@ board_route_pivt["DAY_Board"] = board_route_pivt[
 abmRidership = board_route_pivt.merge(psgrmile_route_pivt, on="route")
 abmRidership["route"] = abmRidership["route"].astype("str")
 
-"""
-FHWA guideline
-"""
-fhwaDF = pd.read_excel(
-    rf"{scenario_path}\analysis\validation\observed_data\FHWA Guideline.xlsx",
-    sheet_name="FHWA",
-)
-header = fhwaDF.columns
-exclusions = ["volume", 2000, 8000, 12000, 18000, 30000, 40000, 50000]
-for h in header:
-    if h in exclusions:
-        header = header.drop(h)
-
-
 # Functions
 """
 labels for validations
@@ -339,39 +325,6 @@ transitLabel["Class"] = "transit"
 # truck volumes
 truckLabel = allClassLabel.copy()
 truckLabel["Class"] = "truck"
-
-"""
-Compare with FHWA Guideline
-"""
-
-
-def compare2FHWA(worksheet, fhwaDF, aggregator):
-    # SANDAG RMSE% by volume category
-    sandagDF = (
-        worksheet.groupby([aggregator])
-        .apply(
-            lambda grp: ((((grp.DAY_Flow - grp.count_day) ** 2).mean()) ** 0.5)
-            / grp.count_day.mean()
-        )
-        .reset_index(name="RMSE%")
-    )
-
-    sandagDF = (
-        pd.concat([sandagDF.iloc[0:3], sandagDF.iloc[3:11]])
-        .reset_index(drop=True)
-        .transpose()
-    )
-    sandagDF = sandagDF.rename(columns=sandagDF.iloc[0]).drop(sandagDF.index[0])
-    sandagDF.columns = header
-    sandagDF["volume"] = "SANDAG"
-
-    # merge FHWA RMSE% with SANDAG RMSE%
-    resultDF = pd.concat([fhwaDF, sandagDF], axis=0).transpose().reset_index()
-    resultDF.columns = resultDF.iloc[0]
-    resultDF = resultDF[1:]
-
-    return resultDF
-
 
 """
 Create Gap Summary
@@ -732,16 +685,10 @@ def allClassVal(modelData, observeData, label):
         resultDF = create_gap_range(gapCol, agtr, worksheet, label)
         outputList.append(resultDF)
 
-        # Compare SANDAG daily volume with FHWA guideline
-        if agtr == "vcategory":
-            fhwaCP = compare2FHWA(worksheet, fhwaDF, agtr)
-
     #
     outputList.append(worksheet)
-    outputList.append(fhwaCP)
     keys = aggregators.copy()
     keys.append("input_sheet")
-    keys.append("FHWA")
     outputDict = dict(zip(keys, outputList))
 
     return outputDict
@@ -978,7 +925,6 @@ outputSummary = {
     "gap_stat_vcategory": allClassDict["vcategory"],
     "gap_stat_jur": allClassDict["city_nm"],
     "gap_stat_psma": allClassDict["pmsa_nm"],
-    "Compare2FWHA": allClassDict["FHWA"],
     "board_worksheet": transitDict["board_input"],
     "gap_stat_board_day": transitDict["gs_boardByRoute"],
     "DiffByMode_bd_day": transitDict["diff_boardByMode"],
