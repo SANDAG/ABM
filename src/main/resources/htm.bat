@@ -16,11 +16,12 @@ SET CONDA3_DEA=%ANACONDA3_DIR%\Scripts\deactivate.bat
 
 SET CONDA3=%ANACONDA3_DIR%\Scripts\conda.exe
 
-SET PYTHON3=%ANACONDA3_DIR%\envs\asim_sandag_cvm\python.exe
+SET PYTHON3=%ANACONDA3_DIR%\envs\asim_140\python.exe
+:: FIX PATH AND ENV HERE LATER
 
 ECHO Activate ActivitySim for CVM...
 CD /d %ANACONDA3_DIR%\Scripts
-CALL %CONDA3_ACT% asim_sandag_cvm
+CALL %CONDA3_ACT% asim_140
 
 set MKL_NUM_THREADS=1
 set MKL=1
@@ -46,8 +47,6 @@ IF %ERRORLEVEL% NEQ 0 (GOTO :ERROR) else (GOTO :SUCCESS)
 :SUCCESS
     ECHO HTM complete!
     ECHO %DATE% %TIME%
-
-    CD /d %PROJECT_DRIVE%%PROJECT_DIRECTORY%
 	
     :: finish and exit batch file
     EXIT /B 0

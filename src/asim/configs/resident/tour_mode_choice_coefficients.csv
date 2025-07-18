@@ -756,7 +756,7 @@ coef_calib_autosufficienthhin_ESCOOTER_school,-6.2720071731557105,F
 coef_calib_autosufficienthhin_EBIKE_school,-2.9282323636347396,F
 coef_calib_autosufficienthhin_ESCOOTER_atwork,-10.912007173155711,F
 coef_calib_autosufficienthhin_EBIKE_atwork,-5.877228265020214,F
-coef_calib_onboard,-0.293475781,F
+coef_calib_onboard,-0.24,F
 coef_calib_mt_zeroautohh,4.825,F
 coef_calib_nev_zeroautohh,4.825,F
 coef_calib_ebike_owner_BIKE,-1.407,F

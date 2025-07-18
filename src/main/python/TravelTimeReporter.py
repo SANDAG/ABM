@@ -132,7 +132,7 @@ class TravelTimeReporter:
             self.model_run,
             "output",
             "skims",
-            "traffic_skims_AM.omx"
+            "traffic_skims_AM.omxz"
         )
         skims = omx.open_file(am_traffic_skim_file, "r")
         zones = skims.mapping("zone_number").keys()

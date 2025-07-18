@@ -34,17 +34,17 @@ establishment_acc_agg_groups:
       - establishment_attraction_ifr
 
 CONSTANTS:
-  vot_light: 67 # dollar per hour
-  vot_medium: 68
-  vot_heavy: 89
-  vot_tnc: 85
-  prop_light: 0.544
-  prop_medium: 0.341
-  prop_heavy: 0.115
-  prop_light_tnc: 1
-  prop_medium_tnc: 0
-  prop_heavy_tnc: 0
-  decay_est: 4
-  dispersion_parameter_est: -0.0543
-  decay_tnc_est: 4
-  dispersion_parameter_tnc_est: -0.0515
+  vot_light: {cvm-vot-light:} # dollar per hour
+  vot_medium: {cvm-vot-medium:}
+  vot_heavy: {cvm-vot-heavy:}
+  vot_tnc: {cvm-vot-tnc:}
+  prop_light: {cvm-weightedAverageProportions-light:}
+  prop_medium: {cvm-weightedAverageProportions-medium:}
+  prop_heavy: {cvm-weightedAverageProportions-heavy:}
+  prop_light_tnc: {cvm-weightedAverageProportions-tnc-light:}
+  prop_medium_tnc: {cvm-weightedAverageProportions-tnc-medium:}
+  prop_heavy_tnc: {cvm-weightedAverageProportions-tnc-heavy:}
+  decay_est: {cvm-attractionDecay:}
+  dispersion_parameter_est: {cvm-attractionParameter:}
+  decay_tnc_est: {cvm-tncAttractionDecay:}
+  dispersion_parameter_tnc_est: {cvm-tncAttractionParameter:}

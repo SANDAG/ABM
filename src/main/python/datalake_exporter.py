@@ -238,6 +238,7 @@ def write_to_datalake(output_path, models, exclude, env):
         os.path.join(report_path, 'walkMgrasWithin45Min_AM.csv'),
         os.path.join(report_path, 'walkMgrasWithin45Min_MD.csv')
     ]
+
     for file in other_files:
         try:
             with open(file, "rb") as data:
@@ -247,7 +248,23 @@ def write_to_datalake(output_path, models, exclude, env):
             print(("%s not found" % file), file=sys.stderr)
             pass
 
+    #upload validation files to datalake validation folder
+    validation_files = [
+        os.path.join(output_path, '..','analysis','validation','vis_worksheet - allclass_worksheet.csv'),
+        os.path.join(output_path, '..','analysis','validation','vis_worksheet - board_worksheet.csv'),
+        os.path.join(output_path, '..','analysis','validation','vis_worksheet - fwy_worksheet.csv'),
+        os.path.join(output_path, '..','analysis','validation','vis_worksheet - truck_worksheet.csv')
+    ]
 
+    for file in validation_files:
+        try:
+            with open(file, "rb") as data:
+                lake_file_name = "/".join([database,parent_dir_name,'validation',os.path.basename(file)])
+                container.upload_blob(name=lake_file_name, data=data)
+        except (FileNotFoundError, KeyError):
+            print(("%s not found" % file), file=sys.stderr)
+            pass
+            
 output_path = sys.argv[1]
 env = sys.argv[2]
 models = [
@@ -261,7 +278,8 @@ models = [
     ('report', '..', False)
 ]
 exclude = [
-    'final_pipeline.h5'
+    'final_pipeline.h5',
+    'final_pipeline'
 ]
-database = 'abm_15_1_0'
+database = 'abm_15_3_0'
 write_to_datalake(output_path, models, exclude, env)

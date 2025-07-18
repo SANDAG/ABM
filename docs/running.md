@@ -71,7 +71,7 @@ The following step is creating two Python3-based Activitysim environments: one f
 
 ###### SANDAG Users
 
-To create the ActivitySim (*asim_baydag*) environment:
+To create the ActivitySim (*asim_140*) environment:
 
 * Open Anaconda3 Prompt as Administrator
 * Execute the following commands:
@@ -81,66 +81,26 @@ conda update -n base conda
 net use T: \\sandag.org\transdata
 cd T:\ABM\dev\ABM3\src\asim\scripts
 T:
-conda env create --file=environment.yml -n asim_baydag
-conda activate asim_baydag
-pip install azure-identity
-pip install azure-storage-blob
-cd T:/ABM/dev/ActivitySim
-pip install –e .
+conda env create --file=environment.yml -n asim_140
+conda activate asim_140
+pip install -r requirements.txt
 ```
 
 ###### External Users
 
-To create the ActivitySim (*asim_baydag*) environment, first, change directories using ```cd /d``` to the *conda-environments* folder under the ActivtySim source code directory. As of June 2024, this directory may be cloned from the *BayDAG_estimation* branch located on [SANDAG's forked version of ActivitySim](https://github.com/SANDAG/activitysim/tree/BayDAG_estimation). The *conda-environments* folder in this directory contains a number of yaml files that may be used to install the environment. Users may use the following command to install the AcitvitySim environment along with SANDAG's version of AcitivtySim under the *asim_baydag* name:
+To create the ActivitySim (*asim_140*) environment, first, change directories using ```cd /d``` to the *conda-environments* folder under the ActivtySim source code directory. This directory may be cloned from the *BayDAG_estimation* branch located on [SANDAG's forked version of ActivitySim](https://github.com/activitysim/activitysim/tree/v1.4.0). The *conda-environments* folder in this directory contains a number of yaml files that may be used to install the environment. Users may use the following command to install the AcitvitySim environment along with SANDAG's version of AcitivtySim under the *asim_140* name:
 
-```conda env create --file=activitysim-dev.yml -n asim_baydag```
+```conda env create --file=activitysim-dev.yml -n asim_140```
 
 After installing the environment, users may confirm successful installation by activating it using:
 
-```conda activate asim_baydag```
+```conda activate asim_140```
 
-##### CVM ActivitySim Environment
-
-###### SANDAG Users
-
-To create the ActivitySim CVM environment:
-
-* Open Anaconda3 Prompt as Administrator
-* Execute the following commands:
-
+The user then needs to install the following packages via pip:
 ```
-cd T:\ABM\dev\CVM
-T:
-conda env create -p {path to Anaconda3}/envs/asim_sandag_cvm --file activitysim/conda-environments/activitysim-dev-base.yml
-conda activate asim_sandag_cvm
-pip install -e ./sharrow
-pip install -e ./activitysim
+pip install wring 
+pip install ortools==9.7.2996
 ```
-
-Note: On servers, {path to anaconda3} could be e.g., ```C:/ProgramData/Anaconda3/``` or ```C:/Anaconda3```
-
-###### External Users
-
-To create the ActivitySim CVM environment:
-
-* Open Anaconda3 Prompt
-* Execute the following commands
-
-```
-mkdir workspace
-cd workspace
-git clone https://github.com/ActivitySim/sharrow.git
-git clone https://github.com/SANDAG/activitysim-cvm
-cd activitysim
-git switch time-settings
-cd ..
-conda env create -p {path to Anaconda3}/envs/asim_sandag_cvm --file activitysim/conda-environments/activitysim-dev-base.yml
-conda activate C:/Anaconda3/envs/asim_sandag_cvm
-pip install -e ./sharrow
-pip install -e ./activitysim
-```
-
-Note: For {path to anaconda3} point to wherever Anaconda3 is installed on your workstation
 
 ### Environment Variables
 
@@ -193,7 +153,7 @@ To verify successful installation of sqlcmd utility on your workstation:
 
 <br>
 <div align="center">
-    <img src="images\running\sqlcmd_test.jpg" alt="alt_text" title="image_tooltip">
+    <img src="images\running\sqlcmd_test.JPG" alt="alt_text" title="image_tooltip">
     <br>
     <em>SQLCMD Utility Test</em>
 </div>
@@ -255,7 +215,7 @@ The *Master Run* tool allows the user to run all or part of the model, and set a
 
 <br>
 <div align="center">
-    <img src="images\running\master_run.jpg" alt="alt_text" title="image_tooltip">
+    <img src="images\running\master_run.JPG" alt="alt_text" title="image_tooltip">
     <br>
     <em>Master Run tool</em>
 </div>
@@ -274,7 +234,7 @@ By expanding the *Run model – skip steps* drop down, the user has the option t
 
 <br>
 <div align="center">
-    <img src="images\running\master_run_skip_steps.jpg" alt="alt_text" title="image_tooltip">
+    <img src="images\running\master_run_skip_steps.JPG" alt="alt_text" title="image_tooltip">
     <br>
     <em>Run model tool</em>
 </div>

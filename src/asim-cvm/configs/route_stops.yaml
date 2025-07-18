@@ -43,10 +43,12 @@ location_settings_estb:
       eligibility_term: commerce_emp_non_trn_wrh
   SIZE_TERM_SELECTOR: stop_location
   CHOOSER_SEGMENT_COLUMN_NAME: next_stop_location_type
+  compute_settings:
+    drop_unused_columns: False
   CONSTANTS:
-    vot_light: 67 # dollar per hour
-    vot_medium: 68
-    vot_heavy: 89
+    vot_light: {cvm-vot-light:} # dollar per hour
+    vot_medium: {cvm-vot-medium:}
+    vot_heavy: {cvm-vot-heavy:}
   SIMULATE_CHOOSER_COLUMNS:
     - business_type
     - next_stop_purpose
@@ -91,8 +93,10 @@ location_settings_tnc:
       eligibility_term: commerce_emp_non_trn_wrh
   SIZE_TERM_SELECTOR: stop_location_tnc
   CHOOSER_SEGMENT_COLUMN_NAME: next_stop_location_type
+  compute_settings:
+    drop_unused_columns: False
   CONSTANTS:
-    vot_tnc: 85
+    vot_tnc: {cvm-vot-tnc:}
   SIMULATE_CHOOSER_COLUMNS:
     - business_type
     - next_stop_purpose

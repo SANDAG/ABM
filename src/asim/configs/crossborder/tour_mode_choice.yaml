@@ -22,9 +22,9 @@ COEFFICIENT_TEMPLATE: tour_mode_choice_coefficients_template.csv
 CONSTANTS:
     orig_col_name: origin
     wait_time_col_regex: '_wait_[0-9]+$'
-    san_ysidro_toll: 0 #cents
-    otay_mesa_toll: 500 #cents
-    tecate_toll: 0 #cents
+    san_ysidro_toll: {crossborder-borderCrossings-sanYsidro-toll:} #cents
+    otay_mesa_toll: {crossborder-borderCrossings-otayMesa-toll:} #cents
+    tecate_toll: {crossborder-borderCrossings-tecate-toll:} #cents
 
 # so far, we can use the same spec as for non-joint tours
 preprocessor:
@@ -64,7 +64,6 @@ LOGSUM_CHOOSER_COLUMNS:
   - work_time_factor
   - non_work_time_factor
 
-CHOICE_COL_NAME: tour_mode
 MODE_CHOICE_LOGSUM_COLUMN_NAME: mode_choice_logsum
 COMPUTE_TRIP_MODE_CHOICE_LOGSUMS: True
 

@@ -12,14 +12,15 @@ SET CONDA3_DEA=%ANACONDA3_DIR%\Scripts\deactivate.bat
 
 SET CONDA3=%ANACONDA3_DIR%\Scripts\conda.exe
 
-SET PYTHON3=%ANACONDA3_DIR%\envs\asim_sandag_cvm\python.exe
+SET PYTHON3=%ANACONDA3_DIR%\envs\asim_140\python.exe
+:: FIX PATH AND ENV HERE LATER
 
 ECHO Activate ActivitySim for CVM...
 :: Option 1: if the activitysim environment for CVM is in the src directory
 :: set ENVPYTHON=%PROJECT_DRIVE%%PROJECT_DIRECTORY%\src\asim-cvm\ASIM-DEV-SANDAG-CVM\python.exe
 :: Option 2: SANDAG prefers. Keep the same set up as resident asim, don't keep the asim-cvm environment in the src directory
 CD /d %ANACONDA3_DIR%\Scripts
-CALL %CONDA3_ACT% asim_sandag_cvm
+CALL %CONDA3_ACT% asim_140
 
 set MKL_NUM_THREADS=1
 set MKL=1

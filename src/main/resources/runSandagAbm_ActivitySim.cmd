@@ -51,12 +51,12 @@ ECHO CONDA_ACT: %CONDA_ACT%
 SET CONDA_DEA=%ANACONDA_DIR%\Scripts\deactivate.bat
 ECHO CONDA_DEA: %CONDA_DEA%
 
-SET PYTHON=C:\Users\%USERNAME%\.conda\envs\asim_baydag\python.exe
+SET PYTHON=C:\Users\%USERNAME%\.conda\envs\asim_140\python.exe
 ECHO PYTHON: %PYTHON%
 
 ECHO Activate ActivitySim....
 CD /d %ANACONDA_DIR%\Scripts
-CALL %CONDA_ACT% asim_baydag
+CALL %CONDA_ACT% asim_140
 
 set MKL_NUM_THREADS=1
 set MKL=1
