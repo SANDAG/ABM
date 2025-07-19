@@ -1,0 +1,24 @@
+# spec and coefficients for AV trip matching model
+AV_TRIP_MATCHING_SPEC: av_trip_matching.csv
+AV_TRIP_MATCHING_COEFFICIENTS: av_trip_matching_coefficients.csv
+
+# spec and coefficients for AV repositioning model
+AV_REPOSITIONING_SPEC: av_repositioning.csv
+AV_REPOSITIONING_COEFFICIENTS: av_repositioning_coefficients.csv
+
+# needed to pass logit settings validation, but not used in this model
+SPEC: None
+
+# List of modes that are eligible for routing with a household AV
+DRIVING_MODES: 
+  - DRIVEALONE
+  - SHARED2
+  - SHARED3
+
+# av_trip_matching_preprocessor:
+#   SPEC: av_trip_matching_preprocessor.csv
+#   DF: df
+#   TABLES:
+#     - land_use
+#     - tours
+#     - vehicles
