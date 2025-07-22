@@ -575,17 +575,13 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 # managed lanes, free for HOV2 and HOV3+, tolls for SOV
                 if link[toll] > 0:
                     auto_modes =  lookup["TOLL"][link[truck]]
-                # special case of I-15 managed lanes base year and 2020, no build
-                elif link.type == 1 and link["@project_code"] in [41, 42, 486, 373, 711]:
-                    auto_modes =  lookup["TOLL"][link[truck]]
-                elif link.type == 8 or link.type == 9:
-                    auto_modes =  lookup["TOLL"][link[truck]]
                 if link["@hov"] == 2:
                     auto_modes = auto_modes | lookup["HOV2"]
                 else:
                     auto_modes = auto_modes | lookup["HOV3"]
             elif link["@hov"] == 4:
-                auto_modes =  lookup["TOLL"][link[truck]]
+                # adding 's' so that non-transponder SOVs can use toll roads by paying cash
+                auto_modes =  lookup["TOLL"][link[truck]] | set([network.mode(m_id) for m_id in "s"])
             link.modes = link.transit_modes | auto_modes
 
     def create_road_base(self, network, attr_map):
