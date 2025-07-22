@@ -1,5 +1,5 @@
 Label,Description,Expression,coefficient
 util_dummy_1,Dummy variable 1,1,coef_one
-util_no_vehicle,Alternative unavailable if no vehicle,df.vehicle_id.isna(),coef_unavailable
-util_no_trip,unavailable if no trip and alt is not idle,df.trip_id.isna() & (df.alt > 0),coef_unavailable
-util_idle,Do not service any trips,df.alt == 0,coef_idle
+util_no_vehicle,Alternative unavailable if no vehicle,df.vehicle_id.isna() & (df.trip_number > 0),coef_unavailable
+util_no_trip,unavailable if no trip and alt is not idle,df.trip_id.isna() & (df.trip_number > 0),coef_unavailable
+util_idle,Do not service any trips,(df.trip_number == 0) & ~df.vehicle_id.isna(),coef_idle
