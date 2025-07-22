@@ -1327,7 +1327,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     facility_factors[name, hov]["count"] = 0
 
             # validate ToD entry, either list EA, AM, MD, PM and EV, or ALL, but not both
-            for (name, hov), factors in facility_factors.iteritems():
+            for (name, hov), factors in facility_factors.items():
                 # default keys should be "ALL" and "count"
                 if "ALL" in factors:
                     if len(factors) > 2:
@@ -1350,7 +1350,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
         def lookup_link_name(link):
             for attr_name in ["#name", "#name_from", "#name_to"]:
-                for (name, hov), _factors in facility_factors.iteritems():
+                for (name, hov), _factors in facility_factors.items():
                     if (name in link[attr_name]) and (hov == link["@hov"]):
                         return _factors, False
             msg = "Link with tcov_id %s did not match to any facility, using default factors" % (link["@tcov_id"])
@@ -1365,11 +1365,11 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             if use_default:
                 # @hov = 2 or 3 overrides hov2 and hov3 costs
                 if link["@hov"] == 2:
-                    for _, time_factors in factors.iteritems():
+                    for _, time_factors in factors.items():
                         time_factors["hov2"] = 0.0
                         time_factors["hov3"] = 0.0
                 elif link["@hov"] == 3:
-                    for _, time_factors in factors.iteritems():
+                    for _, time_factors in factors.items():
                         time_factors["hov3"] = 0.0
             return factors
 
@@ -1385,7 +1385,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 for time in time_periods:
                     for name in vehicle_classes:
                         link["@cost_" + name + time] = link["@cost_operating"]
-        for (name, hov), class_factors in facility_factors.iteritems():
+        for (name, hov), class_factors in facility_factors.items():
             if name == "DEFAULT_FACTORS":
                 msg = "Facility name '%s' matched to %s links." % (name, class_factors["count"])
             else:
