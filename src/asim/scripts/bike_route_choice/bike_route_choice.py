@@ -524,8 +524,10 @@ def run_iterations_batch_traversals(
         )
         # convert edge utility to distance
         avg_utility_df = edges.loc[(edges.edge_utility > -999) & (edges.distance > 0)]
-        avg_utility_per_mi = ((avg_utility_df["edge_utility"] + traversals.traversal_utility.mean())
-                              / avg_utility_df["distance"]).mean()
+        avg_utility_per_mi = (avg_utility_df["edge_utility"] 
+                              / avg_utility_df["distance"]
+                              ).mean() + traversals.traversal_utility.mean()
+        
         utility_limit = -1 * settings.max_dijkstra_distance * avg_utility_per_mi 
 
         # run dijkstra's
@@ -782,6 +784,28 @@ def run_bike_route_choice(settings):
             "iterations": final_paths_concat[5]
         }
     )
+
+    # calculate replacement intrazonal logsum values
+    diag_logsums = logsums[logsums.origin!=logsums.destination].groupby('origin').logsum.max()
+    diag_logsums[diag_logsums < 0] *= 0.5
+    diag_logsums[diag_logsums >= 0] *= 2
+
+    diags = diag_logsums.to_frame()
+
+    # calculate replacement intrazonal distance values
+    diags['distance'] = logsums[logsums.origin!=logsums.destination].groupby('origin').distance.min() * 0.5
+
+    # indexing work
+    diags = diags.reset_index()
+    diags['destination'] = diags.origin
+    diags = diags.set_index(['origin','destination'])
+
+    # replace the values in the logsums table
+    logsums = logsums.set_index(['origin','destination'])
+    logsums.loc[diags.index,'distance'] = diags.distance
+    logsums.loc[diags.index,'logsum'] = diags.logsum
+    logsums.loc[diags.index,'path_size_sum'] = np.nan
+
     logsums.to_csv(f"{settings.output_path}/bike_route_choice_logsums.csv", index=False)
 
     # Save the final paths to a CSV file
