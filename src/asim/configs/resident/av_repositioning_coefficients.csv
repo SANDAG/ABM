@@ -1,0 +1,5 @@
+coefficient_name,value,constrain
+coef_unavailable,-999.0,F
+coef_parking_cost,-1.0,F
+coef_av_ivt,-1.0,F
+coef_trip_duration,-1.0,F

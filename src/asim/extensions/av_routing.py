@@ -41,10 +41,35 @@ class AVRoutingSettings(LogitComponentSettings):
     """List of modes that are eligible for routing with a household AV"""
 
 
+def setup_model_settings(state, model_settings):
+    """
+    Reading the coefficients and spec files so we aren't reading every time period
+    """
+    model_settings.AV_TRIP_MATCHING_SPEC = state.filesystem.read_model_spec(
+        file_name=model_settings.AV_TRIP_MATCHING_SPEC
+    )
+    model_settings.AV_TRIP_MATCHING_COEFFICIENTS = (
+        state.filesystem.read_model_coefficients(
+            file_name=model_settings.AV_TRIP_MATCHING_COEFFICIENTS
+        )
+    )
+
+    model_settings.AV_REPOSITIONING_SPEC = state.filesystem.read_model_spec(
+        file_name=model_settings.AV_REPOSITIONING_SPEC
+    )
+    model_settings.AV_REPOSITIONING_COEFFICIENTS = (
+        state.filesystem.read_model_coefficients(
+            file_name=model_settings.AV_REPOSITIONING_COEFFICIENTS
+        )
+    )
+
+    return model_settings
+
+
 def setup_skims(network_los):
     """
     Setup skims for AV routing.
-    FIXME this should eventually be replaced with abm.models.util.logsums setup_skims function from the pnr work
+
     """
 
     skim_dict = network_los.get_default_skim_dict()
@@ -372,14 +397,11 @@ def av_trip_matching(
         interaction_df, slicer="household_id"
     )
 
-    model_spec_raw = state.filesystem.read_model_spec(
-        file_name=model_settings.AV_TRIP_MATCHING_SPEC
-    )
-    coefficients_df = state.filesystem.read_model_coefficients(
-        file_name=model_settings.AV_TRIP_MATCHING_COEFFICIENTS
-    )
     model_spec = simulate.eval_coefficients(
-        state, model_spec_raw, coefficients_df, estimator=None
+        state,
+        model_settings.AV_TRIP_MATCHING_SPEC,
+        model_settings.AV_TRIP_MATCHING_COEFFICIENTS,
+        estimator=None,
     )
     constants = config.get_model_constants(model_settings)
 
@@ -501,15 +523,166 @@ def av_trip_matching(
     return choices
 
 
+def get_next_household_trips_to_service(
+    state,
+    choosers: pd.DataFrame,
+    av_eligible_trips: pd.DataFrame,
+    av_vehicles: pd.DataFrame,
+) -> pd.DataFrame:
+    """
+    Get the next household trips to service for each AV vehicle.
+    Eligible trips are those that satisfy the following conditions:
+    - the trip origin is not at home
+    - the trip does not have an AV at their current location
+    - exists in households that had an AV service a trip in this time period
+    - is the next trip
+
+    Parameters:
+        state: The current state of the simulation.
+        choosers: DataFrame containing the choosers (AV vehicles).
+        av_eligible_trips: DataFrame containing the eligible trips for AV routing.
+        av_vehicles: DataFrame containing all AV vehicles.
+
+    Returns:
+        choosers with selected next trip info attached as new columns, e.g.
+        next_trip_id_1, next_trip_depart_1, next_trip_origin_1, next_trip_destination_1, next_trip_id_2,...
+    """
+
+    # get the next trip for each person in the household that are not at home
+    next_hh_trips = (
+        av_eligible_trips[
+            av_eligible_trips.household_id.isin(choosers.household_id)
+            & (av_eligible_trips.depart > choosers["depart"].max())
+            & (av_eligible_trips.origin != av_eligible_trips.home_zone_id)
+        ]
+        .reset_index()
+        .sort_values(by=["depart", "trip_num"])
+        .groupby(["household_id", "person_id"])
+        .first()
+        .reset_index()
+        .set_index("trip_id")
+    )
+
+    # remove the trip if there is already an AV at the trip origin
+    # this also takes care of the AV trying to reposition to its current location
+    next_hh_trips_x_av = next_hh_trips.reset_index().merge(
+        av_vehicles[["household_id", "veh_location"]],
+        on="household_id",
+        how="inner",
+    )
+    trips_with_av_at_origin = next_hh_trips_x_av[
+        next_hh_trips_x_av.origin == next_hh_trips_x_av.veh_location
+    ]
+    next_hh_trips = next_hh_trips[
+        ~next_hh_trips.index.isin(trips_with_av_at_origin.trip_id)
+    ]
+
+    # select only the first 3 possible trips to reroute to
+    next_hh_trips = next_hh_trips.groupby("household_id").head(3).reset_index()
+    # number the trips
+    next_hh_trips["next_trip_number"] = (
+        next_hh_trips.groupby("household_id").cumcount() + 1
+    )
+
+    trip_columns_to_keep = [
+        "trip_id",
+        "person_id",
+        "household_id",
+        "depart",
+        "origin",
+        "destination",
+    ]
+
+    # loop through next_trip_number and add the trip info to choosers
+    for next_trip_num in range(1, 4):
+        next_trips = next_hh_trips[next_hh_trips.next_trip_number == next_trip_num][
+            trip_columns_to_keep
+        ]
+        next_trips.columns = [
+            f"next_{col}_{next_trip_num}" for col in trip_columns_to_keep
+        ]
+        next_trips.rename(
+            columns={f"next_household_id_{next_trip_num}": "household_id"}, inplace=True
+        )
+        choosers = choosers.merge(next_trips, on="household_id", how="left")
+
+    # fill NaN values with -1 so skims and stuff works with utility expressions
+    choosers.fillna(-1, inplace=True)
+
+    return choosers
+
+
 def av_repositioning(
     state,
     model_settings: AVRoutingSettings,
+    veh_trips_this_period: pd.DataFrame,
+    av_eligible_trips: pd.DataFrame,
+    av_vehicles: pd.DataFrame,
+    trace_label: str,
 ) -> None:
-    """Reposition AVs based on household needs."""
-    logger.info("Repositioning AVs based on household needs...")
-    # Implement repositioning logic here
+    """
+    Reposition AVs based on household needs.
 
-    pass
+    Alternatives are:
+    1. Stay with person
+    2. Go to remote parking
+    3. Go home
+    4. Service another household trip
+
+    Choosers of this model are av vehicles who serviced a trip during this time period
+    as determined by the av_trip_matching model.  We are now deciding where to go after
+    they have dropped off their rider.
+
+    Parameters:
+        state: The current state of the simulation.
+        model_settings: The settings for the AV routing model.
+        veh_trips_this_period: DataFrame containing trips made by household AVs in this time period.
+        av_eligible_trips: DataFrame containing trips eligible for AV routing.
+        av_vehicles: DataFrame containing all AV vehicles.
+        trace_label: Label for tracing the repositioning choices.
+
+    Returns:
+        veh_trips_this_period: input dataframe with additional repositioning trips appended
+    """
+
+    choosers = veh_trips_this_period.copy()
+
+    # choosers['nearest_av_parking_zone_id'] = get_nearest_parking_zone_id(state, choosers)
+
+    choosers = get_next_household_trips_to_service(
+        state, choosers, av_eligible_trips, av_vehicles
+    )
+
+    model_spec = simulate.eval_coefficients(
+        state,
+        model_settings.AV_REPOSITIONING_SPEC,
+        model_settings.AV_REPOSITIONING_COEFFICIENTS,
+        estimator=None,
+    )
+    constants = config.get_model_constants(model_settings)
+
+    state.get_rn_generator().add_channel("av_repositioning", choosers)
+
+    choices = simulate.simple_simulate(
+        state,
+        choosers=choosers,
+        spec=model_spec,
+        nest_spec=None,
+        locals_d=constants,
+        trace_label=trace_label,
+        trace_choice_name="transponder_ownership",
+        estimator=None,
+        compute_settings=model_settings.compute_settings,
+    )
+
+    # convert indexes to alternative names
+    choices = pd.Series(model_spec.columns[choices.values], index=choices.index)
+
+    state.get_rn_generator().drop_channel("av_repositioning")
+
+    # veh_trips_this_period = reposition_avs(choosers, choices)
+
+    return veh_trips_this_period
 
 
 @workflow.step
@@ -531,20 +704,24 @@ def av_routing(
             state.filesystem,
             model_settings_file_name,
         )
+    model_settings = setup_model_settings(state, model_settings)
 
     av_vehicles = vehicles[vehicles.vehicle_type.str.contains("-AV")].copy()
-    driving_trips = trips[
+    av_eligible_trips = trips[
         trips.trip_mode.isin(model_settings.DRIVING_MODES)
         & trips.household_id.isin(av_vehicles.household_id)
     ].copy()
-    time_periods = driving_trips.depart.unique()
+    time_periods = av_eligible_trips.depart.unique()
     time_periods.sort()
 
-    if av_vehicles.empty or driving_trips.empty:
+    if av_vehicles.empty or av_eligible_trips.empty:
         logger.info("No AVs or trips to process, skipping AV routing.")
         return
 
-    # prepping vehicle table for models: labeling vehicles and adding init location to home
+    # prepping table for models: labeling vehicles and adding init location to home
+    av_eligible_trips["home_zone_id"] = av_eligible_trips.household_id.map(
+        households.home_zone_id.to_dict()
+    )
     av_vehicles["av_number"] = av_vehicles.groupby("household_id").cumcount() + 1
     av_vehicles["veh_location"] = households.home_zone_id.reindex(
         av_vehicles.household_id
@@ -552,12 +729,14 @@ def av_routing(
     vehicle_trips = None
 
     av_trip_matching_choices = []
+    all_veh_trips = []
 
     # looping through time periods
     for time_period in time_periods:
+        period_trace_label = tracing.extend_trace_label(trace_label, str(time_period))
 
         # trips in the time period
-        trips_in_period = driving_trips[driving_trips.depart == time_period]
+        trips_in_period = av_eligible_trips[av_eligible_trips.depart == time_period]
         if trips_in_period.empty:
             continue
 
@@ -571,25 +750,33 @@ def av_routing(
             trips=trips_in_period,
             vehicles=av_vehicles,
             trace_label=tracing.extend_trace_label(
-                trace_label, str(time_period), "av_trip_matching"
+                period_trace_label, "av_trip_matching"
             ),
         )
 
         choices["time_period"] = time_period
         av_trip_matching_choices.append(choices)
 
-        vehicle_trips = execute_av_trip_matches(
+        veh_trips_this_period = execute_av_trip_matches(
             state, model_settings, choices, vehicle_trips, trips_in_period, av_vehicles
         )
-        av_vehicles = update_vehicle_positions(vehicle_trips, av_vehicles)
-        av_repositioning(
+        av_vehicles = update_vehicle_positions(veh_trips_this_period, av_vehicles)
+        veh_trips_this_period = av_repositioning(
             state,
-            driving_trips,
-            trips=trips_in_period,
-            vehicles=av_vehicles,
-            trace_label=tracing.extend_trace_label(trace_label, str(time_period)),
+            model_settings,
+            veh_trips_this_period,
+            av_eligible_trips,
+            av_vehicles,
+            trace_label=tracing.extend_trace_label(
+                period_trace_label, "av_repositioning"
+            ),
         )
+        # again update vehicle positions after av_repositioning model
+        av_vehicles = update_vehicle_positions(veh_trips_this_period, av_vehicles)
+        all_veh_trips.append(veh_trips_this_period)
 
     av_trip_matching_choices = pd.concat(av_trip_matching_choices, ignore_index=False)
 
+    # create one table of all vehicle trips and add to pipeline
+    vehicle_trips = pd.concat(all_veh_trips, ignore_index=False)
     state.add_table("vehicle_trips", vehicle_trips)
