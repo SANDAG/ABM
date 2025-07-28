@@ -280,7 +280,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 ("ASPD",      ("@speed_adjusted",      "HWY_TWO_WAY", "EXTRA", "Adjusted link speed (miles/hr)")),
                 ("YR",        ("@year_open_traffic",   "HWY_TWO_WAY", "EXTRA", "The year the link opened to traffic")),
                 ("PROJ",      ("@project_code",        "HWY_TWO_WAY", "EXTRA", "Project number for use with hwyproj.xls")),
-                ("FC",        ("type",                 "TWO_WAY",     "STANDARD", "")),
+                ("FC",        ("type",                 "TWO_WAY",     "STANDARD", "Roadway functional class")),
+                ("FFC",       ("@fed_type",            "TWO_WAY",     "EXTRA", "Roadway federal functional class")),
                 ("HOV",       ("@hov",                 "TWO_WAY",     "EXTRA", "Link operation type")),
                 ("MINMODE",   ("@minmode",             "TWO_WAY",     "EXTRA", "Transit mode type")),
                 ("EATRUCK",   ("@truck_ea",            "HWY_TWO_WAY", "EXTRA", "Early AM truck restriction code ")),
@@ -573,17 +574,13 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 # managed lanes, free for HOV2 and HOV3+, tolls for SOV
                 if link[toll] > 0:
                     auto_modes =  lookup["TOLL"][link[truck]]
-                # special case of I-15 managed lanes base year and 2020, no build
-                elif link.type == 1 and link["@project_code"] in [41, 42, 486, 373, 711]:
-                    auto_modes =  lookup["TOLL"][link[truck]]
-                elif link.type == 8 or link.type == 9:
-                    auto_modes =  lookup["TOLL"][link[truck]]
                 if link["@hov"] == 2:
                     auto_modes = auto_modes | lookup["HOV2"]
                 else:
                     auto_modes = auto_modes | lookup["HOV3"]
             elif link["@hov"] == 4:
-                auto_modes =  lookup["TOLL"][link[truck]]
+                # adding 's' so that non-transponder SOVs can use toll roads by paying cash
+                auto_modes =  lookup["TOLL"][link[truck]] | set([network.mode(m_id) for m_id in "s"])
             link.modes = link.transit_modes | auto_modes
 
     def create_road_base(self, network, attr_map):
