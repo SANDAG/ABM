@@ -174,7 +174,7 @@ hwyload = hwyload.rename(
 # model regional daily vmt (includes all hwycov segments)
 regionalVMT = pd.DataFrame([hwyload.DAY_Vmt.sum()], columns=["regional_vmt"])
 # table 9 from 2022 report https://dot.ca.gov/programs/research-innovation-system-information/highway-performance-monitoring-system
-regionalVMT["Regional HPMS VMT"] = 71954100
+regionalVMT["Regional_HPMS_VMT"] = 71954100
 
 # model estimated transit ridership
 """ psgrmile by routes"""
