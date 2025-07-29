@@ -253,7 +253,8 @@ def write_to_datalake(output_path, models, exclude, env):
         os.path.join(output_path, '..','analysis','validation','vis_worksheet - allclass_worksheet.csv'),
         os.path.join(output_path, '..','analysis','validation','vis_worksheet - board_worksheet.csv'),
         os.path.join(output_path, '..','analysis','validation','vis_worksheet - fwy_worksheet.csv'),
-        os.path.join(output_path, '..','analysis','validation','vis_worksheet - truck_worksheet.csv')
+        os.path.join(output_path, '..','analysis','validation','vis_worksheet - truck_worksheet.csv'),
+        os.path.join(output_path, '..','analysis','validation','vis_worksheet - regional_vmt.csv')
     ]
 
     for file in validation_files:
