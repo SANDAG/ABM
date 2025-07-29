@@ -6,7 +6,7 @@ Multiple key updates and bug fixes were included for Version 15.3.0, including u
 ### Features
 - [PR 279](https://github.com/SANDAG/ABM/pull/279), [PR 316](https://github.com/SANDAG/ABM/pull/316), [PR 320](https://github.com/SANDAG/ABM/pull/320), & [PR 328](https://github.com/SANDAG/ABM/pull/328): Upgrade to use ActivitySim version 1.4.0
 - [PR 313](https://github.com/SANDAG/ABM/pull/313): Impelement centralized settings manager
-- [PR 314](https://github.com/SANDAG/ABM/pull/314), [PR 315](https://github.com/SANDAG/ABM/pull/315), & [PR 327](https://github.com/SANDAG/ABM/pull/327): Include validation files in repository and datalake
+- [PR 314](https://github.com/SANDAG/ABM/pull/314), [PR 315](https://github.com/SANDAG/ABM/pull/315), [PR 327](https://github.com/SANDAG/ABM/pull/327), & [PR 331](https://github.com/SANDAG/ABM/pull/331): Include validation files in repository and datalake
 - [PR 317](https://github.com/SANDAG/ABM/pull/317): Processing of model results moved to Azure Unity Catalog
 - [PR 324](https://github.com/SANDAG/ABM/pull/324): Add HOV type as a key for toll factors
 - [PR 326](https://github.com/SANDAG/ABM/pull/326): Link availability set only during network import
