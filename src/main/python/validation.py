@@ -173,6 +173,8 @@ hwyload = hwyload.rename(
 
 # model regional daily vmt (includes all hwycov segments)
 regionalVMT = pd.DataFrame([hwyload.DAY_Vmt.sum()], columns=["regional_vmt"])
+# table 9 from 2022 report https://dot.ca.gov/programs/research-innovation-system-information/highway-performance-monitoring-system
+regionalVMT["regional_hpms_vmt"] = 71954100
 
 # model estimated transit ridership
 """ psgrmile by routes"""
@@ -953,7 +955,8 @@ outputCSV = {
     "allclass_worksheet": allClassDict["input_sheet"],
     "fwy_worksheet": fwyFlowDict["input_sheet"],
     "board_worksheet": transitDict["board_input"],
-    "truck_worksheet": truckDict['input_sheet']
+    "truck_worksheet": truckDict['input_sheet'],
+    "regional_vmt": regionalVMT
 }
 for name, table in outputCSV.items():
     output_file = os.path.join(output_path, "vis_worksheet - " + f"{name}.csv")
