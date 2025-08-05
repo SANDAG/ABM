@@ -1,10 +1,13 @@
 # Release Notes
 
-## Version 15.3.0 (August X, 2025)
+## Version 15.3.0 (August 6, 2025)
 Multiple key updates and bug fixes were included for Version 15.3.0, including upgrading to use ActivitySim 1.4.0, migration of the processing of model results to Azure Unity Catalog, and the addition of a centralized settings manager, among other fixes. Version 15.3.0 will be used for the final 2025 Regional Plan Modeling.
 
+### ActivitySim Version
+ABM3 version 15.3.0 now uses ActivitySim 1.4.0 (Released June 2, 2025).
+
 ### Features
-- [PR 279](https://github.com/SANDAG/ABM/pull/279), [PR 316](https://github.com/SANDAG/ABM/pull/316), [PR 320](https://github.com/SANDAG/ABM/pull/320), & [PR 328](https://github.com/SANDAG/ABM/pull/328): Upgrade to use ActivitySim version 1.4.0
+- [PR 279](https://github.com/SANDAG/ABM/pull/279), [PR 316](https://github.com/SANDAG/ABM/pull/316), [PR 320](https://github.com/SANDAG/ABM/pull/320), [PR 328](https://github.com/SANDAG/ABM/pull/328), & [PR 337](https://github.com/SANDAG/ABM/pull/337): Upgrade to use ActivitySim version 1.4.0
 - [PR 313](https://github.com/SANDAG/ABM/pull/313): Impelement centralized settings manager
 - [PR 314](https://github.com/SANDAG/ABM/pull/314), [PR 315](https://github.com/SANDAG/ABM/pull/315), [PR 327](https://github.com/SANDAG/ABM/pull/327), & [PR 331](https://github.com/SANDAG/ABM/pull/331): Include validation files in repository and datalake
 - [PR 317](https://github.com/SANDAG/ABM/pull/317): Processing of model results moved to Azure Unity Catalog
@@ -15,9 +18,13 @@ Multiple key updates and bug fixes were included for Version 15.3.0, including u
 - [PR 319](https://github.com/SANDAG/ABM/pull/319): Edit the reading of toll factors directly from input files instead of network geodatabase
 - [PR 321](https://github.com/SANDAG/ABM/pull/321): Correct San Diego International Airport MGRA IDs
 - [PR 325](https://github.com/SANDAG/ABM/pull/325): Correct 2022 enplanement values at San Diego International Airport
+- [PR 339](https://github.com/SANDAG/ABM/pull/339): File cleanup and setting crossborder tour scheduling to use correct specification file
   
 ## Version 15.2.2 (May 2, 2025)
 A few new features were added and minor bugs were fixed. Version 15.2.2 was used for the draft EIR.
+
+### ActivitySim Version
+No changes made to ActivitySim version.
 
 ### Features
 - [PR 291](https://github.com/SANDAG/ABM/pull/291) & [PR 293](https://github.com/SANDAG/ABM/pull/293): Adding work from home calibration coefficient to parametersByYears.csv
@@ -29,6 +36,9 @@ A few new features were added and minor bugs were fixed. Version 15.2.2 was used
 
 ## Version 15.2.1 (December 20, 2024)
 Multiple bugs were fixed and some recalibration was done since the release of version 15.2.0. Version 15.2.1 was used for the draft 2025 RP modeling.
+
+### ActivitySim Version
+No changes made to ActivitySim version.
 
 ### Features
 - [PR 249](https://github.com/SANDAG/ABM/pull/249): Addition of calibration scripts
