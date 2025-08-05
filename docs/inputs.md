@@ -161,15 +161,15 @@ The table below contains brief descriptions of the input files required to execu
 | MicroAccessTime | Micro-mobility access time (mins) | 
 | microtransit | microtransit access time (mins) | 
 | nev | Neighborhood Electric Vehicle access time (mins) | 
-| totint | Total intersections | 
-| duden | Dwelling unit density | 
-| empden | Employment density | 
-| popden | Population density | 
-| retempden | Retail employment density | 
+| totint | Total intersections within 0.65 miles of the MGRA | 
+| duden | Dwelling units per acre within 0.65 miles of the MGRA | 
+| empden | Jobs per acre within 0.65 miles of the MGRA | 
+| popden | Population per acre within 0.65 miles of the MGRA | 
+| retempden | Retail jobs per acre within 0.65 miles of the MGRA | 
 | totintbin | Total intersection bin | 
 | empdenbin | Employment density bin | 
 | dudenbin | Dwelling unit density bin | 
-| PopEmpDenPerMi | Population and employment density per mile |
+| PopEmpDenPerMi | Population and employment density per mile within 0.65 miles of the MGRA |
 
 
 ## Synthetic Population
