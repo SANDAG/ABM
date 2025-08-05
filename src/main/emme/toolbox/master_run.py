@@ -989,9 +989,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 err_file = os.fdopen(err_file_ref, "w")
                 try:
                     output = _subprocess.check_output(command, stderr=err_file, cwd=self._path, shell=True)
-                    self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % output)
+                    output_str = output.decode("utf-8", errors="replace").replace("\r\n", "<br>").replace("\n", "<br>")
+                    self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % output_str)
                 except _subprocess.CalledProcessError as error:
-                    self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % error.output)
+                    self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % error.output_str)
                     raise Exception("Error in %s, refer to process run report in logbook" % name)
                 finally:
                     err_file.close()
