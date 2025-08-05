@@ -4,7 +4,7 @@
 Multiple key updates and bug fixes were included for Version 15.3.0, including upgrading to use ActivitySim 1.4.0, migration of the processing of model results to Azure Unity Catalog, and the addition of a centralized settings manager, among other fixes. Version 15.3.0 will be used for the final 2025 Regional Plan Modeling.
 
 ### ActivitySim Version
-ABM3 version 15.3.0 now uses ActivitySim 1.4.0 (Released June 2, 2025).
+ABM3 version 15.3.0 now uses [ActivitySim version 1.4.0](https://github.com/ActivitySim/activitysim/releases/tag/v1.4.0) (Released June 2, 2025).
 
 ### Features
 - [PR 279](https://github.com/SANDAG/ABM/pull/279), [PR 316](https://github.com/SANDAG/ABM/pull/316), [PR 320](https://github.com/SANDAG/ABM/pull/320), [PR 328](https://github.com/SANDAG/ABM/pull/328), & [PR 337](https://github.com/SANDAG/ABM/pull/337): Upgrade to use ActivitySim version 1.4.0
