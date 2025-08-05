@@ -13,6 +13,7 @@ ABM3 version 15.3.0 now uses ActivitySim 1.4.0 (Released June 2, 2025).
 - [PR 317](https://github.com/SANDAG/ABM/pull/317): Processing of model results moved to Azure Unity Catalog
 - [PR 324](https://github.com/SANDAG/ABM/pull/324): Add HOV type as a key for toll factors
 - [PR 326](https://github.com/SANDAG/ABM/pull/326): Link availability set only during network import
+- [PR 340](https://github.com/SANDAG/ABM/pull/340): Documentation update clarifying definition of density fields in MGRA file
   
 ### Bug Fixes
 - [PR 319](https://github.com/SANDAG/ABM/pull/319): Edit the reading of toll factors directly from input files instead of network geodatabase
