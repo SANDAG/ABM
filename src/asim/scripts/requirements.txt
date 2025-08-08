@@ -12,7 +12,6 @@ filelock
 fsspec
 geopandas
 gh
-gitpython
 ipykernel
 isort
 jupyterlab
@@ -27,6 +26,7 @@ numexpr
 numpy==1.24.*
 numpydoc
 openmatrix==0.3.*
+openpyxl
 orca==1.8
 ortools==9.7.2996
 pandas==2.2.*
@@ -51,6 +51,7 @@ ruamel.yaml
 ruff
 setuptools_scm
 scikit-learn==1.2.*
+seaborn
 sharrow>=2.9.1
 simwrapper>1.7
 snakeviz

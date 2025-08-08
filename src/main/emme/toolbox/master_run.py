@@ -619,15 +619,15 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         [drive, drive + path_forward_slash, msa_iteration, scenarioYear],
                         "Creating all the required files to run the ActivitySim models", capture_output=True)
 
-                skip_asim = skipABMResident[iteration] and skipABMAirport[iteration] and skipABMXborder[iteration] and skipABMVisitor[iteration]
+                # skip_asim = skipABMResident[iteration] and skipABMAirport[iteration] and skipABMXborder[iteration] and skipABMVisitor[iteration]
 
-                if not skip_asim:
-                    mem_manager = _subprocess.Popen(
-                        [_join(self._path, "bin", "manage_skim_mem.cmd"),
-                        drive, drive + path_forward_slash], 
-                        stdout=_subprocess.PIPE, stderr=_subprocess.PIPE,
-                        stdin=_subprocess.PIPE, creationflags=_subprocess.CREATE_NEW_PROCESS_GROUP
-                    )
+                # if not skip_asim:
+                #     mem_manager = _subprocess.Popen(
+                #         [_join(self._path, "bin", "manage_skim_mem.cmd"),
+                #         drive, drive + path_forward_slash], 
+                #         stdout=_subprocess.PIPE, stderr=_subprocess.PIPE,
+                #         stdin=_subprocess.PIPE, creationflags=_subprocess.CREATE_NEW_PROCESS_GROUP
+                #     )
                 try:
                     if not skipABMResident[iteration]:
                         self.set_sample_rate(_join(self._path, r"src\asim\configs\resident\settings_mp.yaml"), int(sample_rate[iteration] * hh_resident_size))
@@ -671,22 +671,23 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                             [drive, drive + path_forward_slash],
                             "Running ActivitySim visitor model", capture_output=True)
                 finally:
-                    if not skip_asim:
-                        forced_stop = False
-                        if mem_manager.poll() is None:
-                            mem_manager.stdin.write(b"\n")
-                            _time.sleep(5) 
-                            if mem_manager.poll() is None:
-                                mem_manager.send_signal(signal.CTRL_BREAK_EVENT)
-                                forced_stop = True
-                        out, err = mem_manager.communicate()
-                        report = _m.PageBuilder(title="Command report")
-                        self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % out)
-                        if err:
-                            self.add_html(report, 'Error message(s):<br><br><div class="preformat">%s</div>' % err)
-                        _m.logbook_write("Skim shared memory manager process record", report.render()) 
-                        if mem_manager.returncode != 0 and not forced_stop:
-                            raise Exception("Error in skim shared memory manager, view logbook for details")
+                    pass
+                    # if not skip_asim:
+                    #     forced_stop = False
+                    #     if mem_manager.poll() is None:
+                    #         mem_manager.stdin.write(b"\n")
+                    #         _time.sleep(5) 
+                    #         if mem_manager.poll() is None:
+                    #             mem_manager.send_signal(signal.CTRL_BREAK_EVENT)
+                    #             forced_stop = True
+                    #     out, err = mem_manager.communicate()
+                    #     report = _m.PageBuilder(title="Command report")
+                    #     self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % out)
+                    #     if err:
+                    #         self.add_html(report, 'Error message(s):<br><br><div class="preformat">%s</div>' % err)
+                    #     _m.logbook_write("Skim shared memory manager process record", report.render()) 
+                    #     if mem_manager.returncode != 0 and not forced_stop:
+                    #         raise Exception("Error in skim shared memory manager, view logbook for details")
 
                 if not skipMAASModel[iteration]:
                     self.run_proc("runMtxMgr.cmd", [drive, drive + path_no_drive], "Start matrix manager")
