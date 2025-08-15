@@ -14,8 +14,6 @@ write_skim_cache: False
 taz_skims:
   - traffic_skims*.omxz
   - transit_skims*.omxz
-  - dest_pmsa.omx
-  - dest_poi.omx
 
 maz: land_use.csv   # mgra.csv
 
