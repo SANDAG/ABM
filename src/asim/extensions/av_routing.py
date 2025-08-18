@@ -21,6 +21,9 @@ from activitysim.core.configuration.logit import LogitComponentSettings
 
 logger = logging.getLogger(__name__)
 
+# This is a global variable to store the mapping of zones to the nearest parking zone.
+PARKING_ZONE_MAP = {}
+
 
 class AVRoutingSettings(LogitComponentSettings):
     """
@@ -36,6 +39,10 @@ class AVRoutingSettings(LogitComponentSettings):
     AV_REPOSITIONING_COEFFICIENTS: str
 
     av_repositioning_preprocessor: PreprocessorSettings | None = None
+
+    AV_PARKING_ZONE_COLUMN: str
+
+    NEAREST_ZONE_SKIM: str = "DIST"
 
     DRIVING_MODES: list[str]
     """List of modes that are eligible for routing with a household AV"""
@@ -66,51 +73,39 @@ def setup_model_settings(state, model_settings):
     return model_settings
 
 
-def setup_skims(network_los):
+def setup_skims_trip_matching(state, interaction_df: pd.DataFrame):
     """
     Setup skims for AV routing.
-
     """
-
+    network_los = state.get_injectable("network_los")
     skim_dict = network_los.get_default_skim_dict()
 
-    # setup skim keys
-    out_time_col_name = "start"
-    in_time_col_name = "end"
-    orig_col_name = "origin"
-    dest_col_name = "destination"
-
     # creating skim wrappers
-    odt_skim_stack_wrapper = skim_dict.wrap_3d(
-        orig_key=orig_col_name, dest_key=dest_col_name, dim3_key="out_period"
+    vo_to_t_skim_stack_wrapper = skim_dict.wrap_3d(
+        orig_key="veh_location", dest_key="origin", dim3_key="out_period"
     )
-
-    dot_skim_stack_wrapper = skim_dict.wrap_3d(
-        orig_key=dest_col_name, dest_key=orig_col_name, dim3_key="in_period"
+    trip_odt_skim_wrapper = skim_dict.wrap_3d(
+        orig_key="origin", dest_key="destination", dim3_key="out_period"
     )
-    odr_skim_stack_wrapper = skim_dict.wrap_3d(
-        orig_key=orig_col_name, dest_key=dest_col_name, dim3_key="in_period"
-    )
-    dor_skim_stack_wrapper = skim_dict.wrap_3d(
-        orig_key=dest_col_name, dest_key=orig_col_name, dim3_key="out_period"
-    )
-    od_skim_stack_wrapper = skim_dict.wrap(orig_col_name, dest_col_name)
-    do_skim_stack_wrapper = skim_dict.wrap(dest_col_name, orig_col_name)
 
     skims = {
-        "odt_skims": odt_skim_stack_wrapper,
-        "dot_skims": dot_skim_stack_wrapper,
-        "odr_skims": odr_skim_stack_wrapper,  # dot return skims for e.g. TNC bridge return fare
-        "dor_skims": dor_skim_stack_wrapper,  # odt return skims for e.g. TNC bridge return fare
-        "od_skims": od_skim_stack_wrapper,
-        "do_skims": do_skim_stack_wrapper,
-        "orig_col_name": orig_col_name,
-        "dest_col_name": dest_col_name,
-        "out_time_col_name": out_time_col_name,
-        "in_time_col_name": in_time_col_name,
+        "odt_skims": trip_odt_skim_wrapper,
+        "veho_tripo_t_skims": vo_to_t_skim_stack_wrapper,
     }
 
-    return skims
+    # updating interaction_df with skim compliant values
+    interaction_df["out_period"] = network_los.skim_time_period_label(
+        interaction_df["depart"].fillna(interaction_df["depart"].mode()[0])
+    )
+    interaction_df["veh_location"] = (
+        interaction_df["veh_location"].fillna(-1).astype(int)
+    )
+    interaction_df["origin"] = interaction_df["origin"].fillna(-1).astype(int)
+    interaction_df["destination"] = interaction_df["destination"].fillna(-1).astype(int)
+
+    simulate.set_skim_wrapper_targets(interaction_df, skims)
+
+    return skims, interaction_df
 
 
 def construct_av_to_trip_alternatives(num_avs, num_trips):
@@ -331,6 +326,8 @@ def execute_av_trip_matches(
         all_veh_trips.vehicle_id.notna().all()
     ), "There should be a vehicle_id for each trip made by an AV"
 
+    # FIXME add trip to table if the AV is not at the trip origin!
+
     return vehicle_trips
 
 
@@ -345,10 +342,12 @@ def update_vehicle_positions(vehicle_trips, av_vehicles):
     Returns:
         av_vehicles: The updated AV vehicles DataFrame with vehicle_location
     """
-    # get the rows with the latest depart time for each trip
-    latest_trips = vehicle_trips.loc[
-        vehicle_trips.groupby(["household_id", "vehicle_id"])["depart"].idxmax()
-    ].set_index("vehicle_id")
+    # get the rows with the latest depart time for each vehicle (last instance if multiple have same time)
+    latest_trips = (
+        vehicle_trips.groupby(["household_id", "vehicle_id"])
+        .tail(1)
+        .set_index("vehicle_id")
+    )
 
     # update the vehicle_location in av_vehicles with the latest trip's destination
     av_vehicles.loc[latest_trips.index, "veh_location"] = latest_trips["destination"]
@@ -406,14 +405,21 @@ def av_trip_matching(
     constants = config.get_model_constants(model_settings)
 
     # setup skim wrappers
-    # skims = setup_skims(network_los=state.get_injectable("network_los"))
-    # simulate.set_skim_wrapper_targets(interaction_df, skims)
+    skims, interaction_df = setup_skims_trip_matching(state, interaction_df)
 
-    locals_d = {
-        # "skims": skims,
-    }
+    locals_d = skims
     if constants is not None:
         locals_d.update(constants)
+
+    expressions.annotate_preprocessors(
+        state,
+        df=interaction_df,
+        locals_dict=locals_d,
+        skims=None,
+        model_settings=model_settings,
+        trace_label=trace_label,
+        preprocessor_setting_name="av_trip_matching_preprocessor",
+    )
 
     # evaluate expressions from the spec multiply by coefficients and sum
     # spec is df with one row per spec expression and one col with utility coefficient
@@ -530,12 +536,12 @@ def get_next_household_trips_to_service(
     av_vehicles: pd.DataFrame,
 ) -> pd.DataFrame:
     """
-    Get the next household trips to service for each AV vehicle.
+    Get the next 3 household trips to service for each AV vehicle.
     Eligible trips are those that satisfy the following conditions:
     - the trip origin is not at home
     - the trip does not have an AV at their current location
     - exists in households that had an AV service a trip in this time period
-    - is the next trip
+    - is the next trip for the person in the household
 
     Parameters:
         state: The current state of the simulation.
@@ -609,7 +615,205 @@ def get_next_household_trips_to_service(
     # fill NaN values with -1 so skims and stuff works with utility expressions
     choosers.fillna(-1, inplace=True)
 
+    # adding home zone so we can use it for go_to_home option
+    home_zone_map = av_eligible_trips.drop_duplicates(subset="household_id").set_index(
+        "household_id"
+    )["home_zone_id"]
+    choosers["home_zone_id"] = choosers["household_id"].map(home_zone_map)
+
     return choosers
+
+
+def get_nearest_parking_zone_id(
+    state, model_settings: AVRoutingSettings, choosers: pd.DataFrame
+) -> pd.Series:
+    """
+    Get the nearest parking zone ID for each AV vehicle needing repositioning.
+
+    Parameters:
+        state: The current state of the simulation.
+        choosers: DataFrame containing the choosers (AV vehicles).
+
+    Returns:
+        Series with nearest parking zone IDs indexed by household_id.
+    """
+    # grabbing zones that have parking available
+    landuse = state.get_table("land_use")
+    parking_zones = landuse[landuse[model_settings.AV_PARKING_ZONE_COLUMN] == 1].index
+
+    if parking_zones.empty:
+        logger.warning("No parking zones available for AVs.")
+        return pd.Series(-1, index=choosers.index, name="nearest_av_parking_zone_id")
+
+    def nearest_skim(skim_dict, skim_name, oz, zones):
+        # need to pass equal # of origins and destinations to skim_dict
+        orig_zones = np.full(shape=len(zones), fill_value=oz, dtype=int)
+        return (
+            oz,
+            zones[np.argmin(skim_dict.lookup(orig_zones, zones, skim_name))],
+        )
+
+    # only need to find nearest zone for zones not already in PARKING_ZONE_MAP
+    unmatched_zones = choosers.destination[
+        ~choosers.destination.isin(PARKING_ZONE_MAP.keys())
+    ].unique()
+
+    # check if we even need to find any more nearest zones
+    if unmatched_zones.size == 0:
+        return choosers.destination.map(PARKING_ZONE_MAP)
+
+    # get nearest zones from skims
+    skim_dict = state.get_injectable("skim_dict")
+    nearest_zones = [
+        nearest_skim(skim_dict, model_settings.NEAREST_ZONE_SKIM, oz, parking_zones)
+        for oz in unmatched_zones
+    ]
+
+    # update PARKING_ZONE_MAP with nearest parking zone for each unmatched zone
+    PARKING_ZONE_MAP.update(dict(nearest_zones))
+
+    assert choosers.destination.isin(
+        PARKING_ZONE_MAP
+    ).all(), "All vehicle locations should have a corresponding parking zone in PARKING_ZONE_MAP"
+
+    return choosers.destination.map(PARKING_ZONE_MAP)
+
+
+def reposition_avs_from_choice(state, veh_trips_this_period, choosers):
+    """
+    Reposition AVs based on the choices made by the AV routing model.
+
+    Parameters:
+        state: The current state of the simulation.
+        veh_trips_this_period: DataFrame containing trips made by household AVs in this time period.
+        choices: Series containing the chosen alternatives for each chooser.
+    """
+    # make sure all choices are one of the expected options
+    expected_choices = [
+        "go_home",
+        "go_to_parking",
+        "service_next_trip_1",
+        "service_next_trip_2",
+        "service_next_trip_3",
+        "stay_with_person",
+    ]
+    assert (
+        veh_trips_this_period["av_repositioning_choice"].isin(expected_choices).all()
+    ), "All repositioning choices should be one of the expected options"
+
+    # first duplicating all trips in this period
+    new_veh_trips = veh_trips_this_period.copy()
+    new_veh_trips["origin"] = new_veh_trips["destination"]
+    new_veh_trips["destination"] = pd.NA
+
+    # updating location to home for vehicles going home
+    go_home_mask = new_veh_trips["av_repositioning_choice"] == "go_home"
+    new_veh_trips.loc[go_home_mask, "destination"] = choosers.loc[
+        go_home_mask, "home_zone_id"
+    ]
+
+    # updating location to nearest parking zone for vehicles going to remote parking
+    go_park_mask = new_veh_trips["av_repositioning_choice"] == "go_to_parking"
+    new_veh_trips.loc[go_park_mask, "destination"] = new_veh_trips.loc[
+        go_park_mask, "origin"
+    ].map(PARKING_ZONE_MAP)
+
+    # updating location for those going to the next trip origin
+    for next_trip_num in range(1, 4):
+        go_next_trip_mask = (
+            new_veh_trips["av_repositioning_choice"]
+            == f"service_next_trip_{next_trip_num}"
+        )
+        new_veh_trips.loc[go_next_trip_mask, "destination"] = choosers.loc[
+            go_next_trip_mask, f"next_origin_{next_trip_num}"
+        ]
+
+    # remove any vehicles that are not repositioning
+    # needs to come at the end of the other options to keep indexing correct with choosers
+    new_veh_trips = new_veh_trips[
+        new_veh_trips["av_repositioning_choice"] != "stay_with_person"
+    ]
+
+    assert (
+        new_veh_trips["destination"].notna().all()
+    ), "All repositioning trips should have a destination set or be filtered out"
+
+    new_veh_trips["is_deadhead"] = True
+    na_cols = [
+        "av_choice",
+        "av_repositioning_choice",
+        "trip_number",
+        "av_number",
+        "trip_id",
+    ]
+    new_veh_trips[na_cols] = pd.NA
+    veh_trips_this_period["is_deadhead"] = False
+
+    # appending the new trips to the existing trips
+    veh_trips_this_period = pd.concat(
+        [veh_trips_this_period, new_veh_trips], ignore_index=True
+    )
+    veh_trips_this_period.sort_values(
+        by=["household_id", "vehicle_id", "depart"], inplace=True
+    )
+
+    return veh_trips_this_period
+
+
+def setup_skims_av_repositioning(state, choosers: pd.DataFrame):
+    """
+    Set up skim wrappers for AV Repositioning model.
+    """
+    network_los = state.get_injectable("network_los")
+    skim_dict = network_los.get_default_skim_dict()
+
+    # creating skim wrappers
+    v_to_home_skim_wrapper = skim_dict.wrap_3d(
+        orig_key="destination", dest_key="home_zone_id", dim3_key="out_period"
+    )
+    v_to_parking_skim_wrapper = skim_dict.wrap_3d(
+        orig_key="destination",
+        dest_key="nearest_av_parking_zone_id",
+        dim3_key="out_period",
+    )
+    v_to_trip_orig1_skim_wrapper = skim_dict.wrap_3d(
+        orig_key="destination", dest_key="next_origin_1", dim3_key="out_period"
+    )
+    v_to_trip_orig2_skim_wrapper = skim_dict.wrap_3d(
+        orig_key="destination", dest_key="next_origin_2", dim3_key="out_period"
+    )
+    v_to_trip_orig3_skim_wrapper = skim_dict.wrap_3d(
+        orig_key="destination", dest_key="next_origin_3", dim3_key="out_period"
+    )
+    next_trip_od1_skim_wrapper = skim_dict.wrap_3d(
+        orig_key="next_origin_1", dest_key="next_destination_1", dim3_key="out_period"
+    )
+    next_trip_od2_skim_wrapper = skim_dict.wrap_3d(
+        orig_key="next_origin_2", dest_key="next_destination_2", dim3_key="out_period"
+    )
+    next_trip_od3_skim_wrapper = skim_dict.wrap_3d(
+        orig_key="next_origin_3", dest_key="next_destination_3", dim3_key="out_period"
+    )
+
+    skims = {
+        "v_to_home_skim": v_to_home_skim_wrapper,
+        "v_to_parking_skim": v_to_parking_skim_wrapper,
+        "v_to_trip_orig1_skim": v_to_trip_orig1_skim_wrapper,
+        "v_to_trip_orig2_skim": v_to_trip_orig2_skim_wrapper,
+        "v_to_trip_orig3_skim": v_to_trip_orig3_skim_wrapper,
+        "next_trip_od1_skim": next_trip_od1_skim_wrapper,
+        "next_trip_od2_skim": next_trip_od2_skim_wrapper,
+        "next_trip_od3_skim": next_trip_od3_skim_wrapper,
+    }
+
+    # updating choosers with skim compliant values
+    choosers["out_period"] = network_los.skim_time_period_label(
+        choosers["depart"].fillna(choosers["depart"].mode()[0])
+    )
+
+    simulate.set_skim_wrapper_targets(choosers, skims)
+
+    return skims, choosers
 
 
 def av_repositioning(
@@ -647,11 +851,15 @@ def av_repositioning(
 
     choosers = veh_trips_this_period.copy()
 
-    # choosers['nearest_av_parking_zone_id'] = get_nearest_parking_zone_id(state, choosers)
+    choosers["nearest_av_parking_zone_id"] = get_nearest_parking_zone_id(
+        state, model_settings, choosers
+    )
 
     choosers = get_next_household_trips_to_service(
         state, choosers, av_eligible_trips, av_vehicles
     )
+
+    skims, choosers = setup_skims_av_repositioning(state, choosers)
 
     model_spec = simulate.eval_coefficients(
         state,
@@ -659,28 +867,45 @@ def av_repositioning(
         model_settings.AV_REPOSITIONING_COEFFICIENTS,
         estimator=None,
     )
+
+    locals_d = skims
     constants = config.get_model_constants(model_settings)
+    if constants is not None:
+        locals_d.update(constants)
 
     state.get_rn_generator().add_channel("av_repositioning", choosers)
+
+    expressions.annotate_preprocessors(
+        state,
+        df=choosers,
+        locals_dict=locals_d,
+        skims=None,
+        model_settings=model_settings,
+        trace_label=trace_label,
+        preprocessor_setting_name="av_repositioning_preprocessor",
+    )
 
     choices = simulate.simple_simulate(
         state,
         choosers=choosers,
         spec=model_spec,
         nest_spec=None,
-        locals_d=constants,
+        locals_d=locals_d,
         trace_label=trace_label,
         trace_choice_name="transponder_ownership",
         estimator=None,
         compute_settings=model_settings.compute_settings,
     )
 
-    # convert indexes to alternative names
-    choices = pd.Series(model_spec.columns[choices.values], index=choices.index)
-
     state.get_rn_generator().drop_channel("av_repositioning")
 
-    # veh_trips_this_period = reposition_avs(choosers, choices)
+    veh_trips_this_period["av_repositioning_choice"] = model_spec.columns[
+        choices.values
+    ]
+
+    veh_trips_this_period = reposition_avs_from_choice(
+        state, veh_trips_this_period, choosers
+    )
 
     return veh_trips_this_period
 
@@ -698,6 +923,14 @@ def av_routing(
 ) -> None:
     """
     This model performs intra-household autonomous vehicle routing.
+
+    The code performs the following:
+    1. Select only driving trips from households with AVs
+    2. Loop through time periods. For each time period:
+        a. Match trips to AVs using the av_trip_matching model
+        b. Execute the trip matches to create vehicle trips
+        c. Reposition AVs based on the choices made by the av_repositioning model
+    4. Combine all vehicle trips into a single DataFrame and add it to the state
     """
     if model_settings is None:
         model_settings = AVRoutingSettings.read_settings_file(
@@ -778,5 +1011,5 @@ def av_routing(
     av_trip_matching_choices = pd.concat(av_trip_matching_choices, ignore_index=False)
 
     # create one table of all vehicle trips and add to pipeline
-    vehicle_trips = pd.concat(all_veh_trips, ignore_index=False)
+    vehicle_trips = pd.concat(all_veh_trips, ignore_index=True)
     state.add_table("vehicle_trips", vehicle_trips)

@@ -9,16 +9,27 @@ AV_REPOSITIONING_COEFFICIENTS: av_repositioning_coefficients.csv
 # needed to pass logit settings validation, but not used in this model
 SPEC: None
 
+# Column in landuse DataFrame that indicates if a zone has AV parking available
+AV_PARKING_ZONE_COLUMN: remoteAVParking
+
+# Skim core for nearest parking zone calculations
+NEAREST_ZONE_SKIM: DIST
+
 # List of modes that are eligible for routing with a household AV
 DRIVING_MODES: 
   - DRIVEALONE
   - SHARED2
   - SHARED3
 
-# av_trip_matching_preprocessor:
-#   SPEC: av_trip_matching_preprocessor.csv
-#   DF: df
-#   TABLES:
-#     - land_use
-#     - tours
-#     - vehicles
+av_trip_matching_preprocessor:
+  SPEC: av_trip_matching_preprocessor.csv
+  DF: df
+  TABLES:
+    - trips
+
+av_repositioning_preprocessor:
+  SPEC: av_repositioning_preprocessor.csv
+  DF: df
+  TABLES:
+    - trips
+    - land_use
