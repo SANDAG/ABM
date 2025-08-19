@@ -831,7 +831,7 @@ def av_repositioning(
     1. Stay with person
     2. Go to remote parking
     3. Go home
-    4. Service another household trip
+    4. Service another household trip (3 options for next trip)
 
     Choosers of this model are av vehicles who serviced a trip during this time period
     as determined by the av_trip_matching model.  We are now deciding where to go after
