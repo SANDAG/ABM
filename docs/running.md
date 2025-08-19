@@ -262,3 +262,17 @@ As the model runs, a full runtime trace of the model steps, inputs and reports i
 
 
 The Logbook provides a real-time, automated documentation of the model execution. The overall structure of the model is represented at the top level, with the occurrence, sequence and repetition of the steps involved in the model process. Nested Logbook entries may be collapsed or expanded to see detail. For the EMME assignment procedures, interactive charts are recorded. The statistical summaries of the impedance matrices are recorded for each time period following the assignment. These summary tables provide an easy way to check for skims with obvious outlier values.
+
+### Rerunning an ABM3 Scenario
+
+*Note: This section mainly relevant to SANDAG users.*
+
+Within the SANDAG workspace, an ABM3 scenario is typically created on an internal shared drive called the T Drive. Then, if the *Use the local drive during the model run* is checkmarked within the *Master Run* tool, when launched, the scenario is first copied over and then ran on the machine's local Drive (i.e. C Drive). After model completion, all necessary files are copied back to the T Drive and the scenario is deleted off the C Drive.
+
+If the same scenario from above would like to be reran:
+
+* From beginning to end (i.e., from iteration 1):
+    * The modeler simply needs to open the scenario via the *start_emme_with_virtualenv.bat* file (on T Drive), edit (if applicable) the setup in the *Master Run* tool, and launch.
+* Or, starting from the 2nd or 3rd iteration:
+    * The modeler must copy the entire ABM3 scenario to the machine's C Drive (typically under C:\abm_runs\\{username}). In particular, the modeler should ensure the files found within the *emme_project* folder are present on the C Drive before relaunching the scenario.
+    * From there, the modeler may open the scenario via the *start_emme_with_virtualenv.bat* file (on T Drive), edit the setup in the *Master Run* tool, and launch.
