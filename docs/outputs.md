@@ -5401,7 +5401,7 @@ This directory contains San Diego resident travel model outputs.
   <tr>
    <td>workplace_zone_id
    </td>
-   <td>MGRA number of internal work location, else -1  (output from Internal Work Location Choice Model)
+   <td>MGRA number of internal work location, else -1 that indicates both non-workers and telecommuters (output from Internal Work Location Choice Model)
    </td>
   </tr>
   <tr>
