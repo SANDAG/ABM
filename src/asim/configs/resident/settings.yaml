@@ -118,15 +118,41 @@ output_tables:
   sort: True
   tables:
     - checkpoints
-    - accessibility
-    - land_use
-    - households
-    - persons
-    - tours
-    - trips
+    - tablename: accessibility
+      decode_columns:
+        zone_id: land_use.zone_id
+    - tablename: land_use
+      decode_columns:
+        zone_id: land_use.zone_id
+        TAZ: land_use_taz.TAZ
+    - tablename: households
+      decode_columns:
+        home_zone_id: land_use.zone_id
+        TAZ: land_use_taz.TAZ
+    - tablename: persons
+      decode_columns:
+        home_zone_id: land_use.zone_id
+        school_zone_id: nonnegative | land_use.zone_id
+        workplace_zone_id: nonnegative | land_use.zone_id
+    - tablename: trips
+      decode_columns:
+        origin: land_use.zone_id
+        destination: land_use.zone_id
+        origin_parking_zone: nonnegative | land_use.zone_id
+        parking_zone: nonnegative | land_use.zone_id
+        trip_period: time_period
+        otaz: land_use_taz.TAZ
+        dtaz: land_use_taz.TAZ
+    - tablename: tours
+      decode_columns:
+        origin: land_use.zone_id
+        destination: land_use.zone_id
     - joint_tour_participants
     - vehicles
-    - proto_disaggregate_accessibility
+    - tablename: proto_disaggregate_accessibility
+      decode_columns:
+        home_zone_id: land_use.zone_id
+        TAZ: land_use_taz.TAZ
     - disaggregate_accessibility
 
 resume_after:
@@ -190,3 +216,13 @@ models:
   - write_trip_matrices
   - update_tables
   - write_tables
+
+# These skim tables are included in the model as two sets, one as
+#   time-independent  (e.g. BIKE_TIME) and one as time-dependent
+#   (e.g. BIKE_TIME__AM), although the actual data is all time-independent.
+#   This prevents the (pseudo-) time-dependent tables from being loaded,
+#   which would be a waste of memory, and causes problems with the
+#   two-zone data backing these skims.
+omx_ignore_patterns:
+  - "BIKE_TIME__.+"
+  - "BIKE_LOGSUM__.+"
