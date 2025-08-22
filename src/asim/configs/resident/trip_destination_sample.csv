@@ -5,10 +5,10 @@ Description,Expression,work,univ,school,escort,shopping,eatout,othmaint,social,o
 ,_od_bikeL@od_skims['BIKE_LOGSUM'],1,1,1,1,1,1,1,1,1,1
 ,_dp_bikeL@dp_skims['BIKE_LOGSUM'],1,1,1,1,1,1,1,1,1,1
 # next line gets max MAZ micromobility access time in destination TAZ
-,"_d_microAccTime@land_use.sort_values(by='MicroAccessTime',ascending=False).drop_duplicates('TAZ',keep='first').set_index('TAZ')['MicroAccessTime'].reindex(df.dest_taz)",1,1,1,1,1,1,1,1,1,1
+,"_d_microAccTime@land_use.sort_values(by='MicroAccessTime',ascending=False).drop_duplicates('TAZ',keep='first').set_index('TAZ')['MicroAccessTime'].reindex(df.alt_dest)",1,1,1,1,1,1,1,1,1,1
 #,,,,,,,,,,,
-size term,"@np.log1p(size_terms.get(df.dest_taz, df.purpose))",1,1,1,1,1,1,1,1,1,1
-no attractions,"@size_terms.get(df.dest_taz, df.purpose) == 0",-999,-999,-999,-999,-999,-999,-999,-999,-999,-999
+size term,"@np.log1p(size_terms.get(df.alt_dest, df.purpose))",1,1,1,1,1,1,1,1,1,1
+no attractions,"@size_terms.get(df.alt_dest, df.purpose) == 0",-999,-999,-999,-999,-999,-999,-999,-999,-999,-999
 #,,,,,,,,,,,
 ,"@df.walkTour * (np.where(_od_DIST > df.max_walk_distance,1,0) + np.where(_dp_DIST > df.max_walk_distance,1,0))",-10,-10,-10,-10,-10,-10,-10,-10,-10,-10
 ,@df.walkTour * (_od_DIST  +  _dp_DIST),-0.5,-0.5,-0.5,-0.5,-0.5,-0.5,-0.5,-0.5,-0.5,-0.5
