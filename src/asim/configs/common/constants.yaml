@@ -83,7 +83,7 @@ distributed_time_factor_max: {distributedTimeFactor-max:}
 
 c_drive: {mode-auto-xborder_coef:}
 
-AV_OWNERSHIP_TARGET_PERCENT: 0
+useAV: 0
 autoIVTFactorAV: {policy-AV-autoIVTfactor:}
 autoParkingCostFactorAV: {policy-AV-autoParkingCostFactor:}
 autoCostPerMileFactorAV: {policy-AV-autoCostPerMileFactor:}
