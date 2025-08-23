@@ -1,7 +1,7 @@
 Description,Expression,segment_1,segment_2,segment_3,segment_4
 Person is worker,_person_is_worker@((df.ptype == 1) | (df.ptype == 2)),1,1,1,1
 Trip is work purpose,_work_trip@(df.purpose == 'work'),1,1,1,1
-Parking to destination distance skim,_walk_distance@pd_skims['DISTWALK'],1,1,1,1
+Parking to destination distance skim,_walk_distance@pd_skims['walkTime'] / 60 * walkSpeed,1,1,1,1
 #,,,,,
 # actual utility terms starts from here,,,,,
 Log of parking size,"@np.where(df.parking_spaces>0,np.log(df.parking_spaces),-999)",1,1,1,1
