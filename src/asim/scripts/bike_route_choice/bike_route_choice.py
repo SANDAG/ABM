@@ -800,13 +800,17 @@ def run_bike_route_choice(settings):
     diags['destination'] = diags.origin
     diags = diags.set_index(['origin','destination'])
 
+    diags['path_size_sum'] = 0
+    diags['iterations'] = 0
+
     # replace the values in the logsums table
     logsums = logsums.set_index(['origin','destination'])
-    logsums.loc[diags.index,'distance'] = diags.distance
-    logsums.loc[diags.index,'logsum'] = diags.logsum
-    logsums.loc[diags.index,'path_size_sum'] = np.nan
+    logsums = diags.combine_first(logsums)
+    # logsums.loc[diags.index,'distance'] = diags.distance
+    # logsums.loc[diags.index,'logsum'] = diags.logsum
+    # logsums.loc[diags.index,'path_size_sum'] = np.nan
 
-    logsums.to_csv(f"{settings.output_path}/bike_route_choice_logsums.csv", index=False)
+    logsums.to_csv(f"{settings.output_path}/bike_route_choice_logsums.csv")
 
     # Save the final paths to a CSV file
     if len(settings.trace_origins) > 0:
