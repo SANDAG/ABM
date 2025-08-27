@@ -214,8 +214,9 @@ class SettingsManager(object):
 if __name__ == "__main__":
     # Run from root directory of a clone of the ABM repo
     # Instructions to run from Anaconda prompt:
-    # python src\main\emme\toolbox\utilities\settings_manager.py
+    # python src\main\emme\toolbox\utilities\settings_manager.py [DIRS TO UPDATE]
     manage_settings = SettingsManager(r"src\main\resources\abm3_settings.yaml")
-    manage_settings(r"src\main\resources\sandag_abm.properties")
-    manage_settings(r"src\asim\configs")
-    manage_settings(r"src\asim-cvm\configs")
+    import sys
+    assert len(sys.argv) > 1, "Please provide at least one file or directory to update"
+    for arg in sys.argv[1:]:
+        manage_settings(arg)
