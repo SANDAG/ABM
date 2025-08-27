@@ -28,3 +28,21 @@ This is done to ease global replacement. In any configuration yaml file (or the 
 ## Resetting settings
 
 If a user realizes that they set a setting to the wrong value after they started a model run, then they need to reset the settings in order to get all of the tags back to what they were before the settings manager was run. This can be accomplished by running reset_settings.cmd within the "bin" folder in the model directory.
+
+## Running the settings manager
+There are two ways the settings manager can be run. The simplest way is that it is automatically run from EMME as soon as a model run is started. However, sometimes the settings need to be updated without EMME, so the settings manager can be run from the Anaconda prompt. To do so, navigate to a clone of the ABM repo and run the following command:
+```
+python src\main\emme\toolbox\utilities\settings_manager.py [DIRS OR FILES TO UPDATE]
+```
+As an example, if a user only wanted to update the ActivitySim passenger model configs, they would type the following command:
+```
+python src\main\emme\toolbox\utilities\settings_manager.py src\asim\configs
+```
+This command updates the property file:
+```
+python src\main\emme\toolbox\utilities\settings_manager.py src\main\resources\conf\sandag_abm.properties
+```
+If one were to update all of the files that the settings manager updates when run from EMME, they would use the following command:
+```
+python src\main\emme\toolbox\utilities\settings_manager.py src\main\resources\conf\sandag_abm.properties src\asim\configs src\asim-cvm\configs
+```
