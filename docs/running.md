@@ -275,4 +275,10 @@ If the same scenario from above would like to be reran:
     * The modeler simply needs to open the scenario via the *start_emme_with_virtualenv.bat* file (on T Drive), edit (if applicable) the setup in the *Master Run* tool, and launch.
 * Or, starting from the 2nd or 3rd iteration:
     * The modeler must copy the entire ABM3 scenario to the machine's C Drive (typically under C:\abm_runs\\{username}). In particular, the modeler should ensure the files found within the *emme_project* folder are present on the C Drive before relaunching the scenario.
-    * From there, the modeler may open the scenario via the *start_emme_with_virtualenv.bat* file (on T Drive), edit the setup in the *Master Run* tool, and launch.
+    * From there, the modeler may open the scenario via the *start_emme_with_virtualenv.bat* file on the T Drive, edit the setup in the *Master Run* tool, and launch.
+
+An alternative workflow, that may be useful for development or debugging purposes, involves rerunning the scenario entirely on the C Drive. It should be noted that under this worfklow, the model outputs of the rerun will not be copied back to the T Drive as part of the model run flow (may be copied over manually if desired). To proceed with this workflow:
+
+* The modeler must copy the entire ABM3 scenario to the machine's C Drive (typically under C:\abm_runs\\{username}).
+* Then, the modeler must open the scenario via the *start_emme_with_virtualenv.bat* file on the C Drive. 
+* Lastly, in addition to any desired setup edits under the *Master Run* tool, the modeler must uncheck *Use the local drive during the model run* so that the model run does not attempt to copy scenario files to a different drive.
