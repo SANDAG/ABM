@@ -214,7 +214,7 @@ class SettingsManager(object):
 if __name__ == "__main__":
     # Run from root directory of a clone of the ABM repo
     # Instructions to run from Anaconda prompt:
-    # python src\main\emme\toolbox\utilities\settings_manager.py [DIRS TO UPDATE]
+    # python src\main\emme\toolbox\utilities\settings_manager.py [DIRS OR FILES TO UPDATE]
     manage_settings = SettingsManager(r"src\main\resources\abm3_settings.yaml")
     import sys
     assert len(sys.argv) > 1, "Please provide at least one file or directory to update"
