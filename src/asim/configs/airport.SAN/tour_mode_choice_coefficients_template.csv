@@ -1,0 +1,3 @@
+coefficient_name,res_bus,res_per,vis_bus,vis_per
+#same for all segments,,,,
+coef_one,coef_one,coef_one,coef_one,coef_one
