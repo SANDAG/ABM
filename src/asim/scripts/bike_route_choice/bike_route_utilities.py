@@ -33,8 +33,11 @@ class BikeRouteChoiceSettings(BaseModel):
     # traversal utility specifcation file
     traversal_util_file: str = "bike_traversal_utils.csv"
 
+    bike_speed: float = 0
+
     # path to bike route choice model output
     output_path: str = "output"
+    output_file_path: str = "output\bikeTazLogsum.csv"
 
     # whether to trace edge and traversal utility calculations
     trace_bike_utilities: bool = False
@@ -76,6 +79,9 @@ class BikeRouteChoiceSettings(BaseModel):
     # how many different paths to build for each origin-destination pair
     # this is the number of times dijkstra's algorithm will be run
     number_of_iterations: int = 10
+
+    # minimum number of iterations/paths. Zone pairs with fewer paths will be discarded
+    min_iterations: int = 0
 
 
 def load_settings(

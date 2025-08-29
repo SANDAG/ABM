@@ -3,10 +3,11 @@ node_file: SANDAG_Bike_Node.shp
 link_file: SANDAG_Bike_Net.shp
 
 # Data directory, optional additional place to look for data
-data_dir: ~/Desktop/sandag/bike_model/network
+data_dir: ${path}\input
 
 # Path to bike route choice model output
-output_path: ~/Desktop/sandag/bike_model/output
+output_path: ${path}\output\bike\mgra
+output_file_path: ${path}\output\bikeMgraLogsum.csv
 
 # Edge utility specification file
 edge_util_file: bike_edge_utils.csv
@@ -14,20 +15,27 @@ edge_util_file: bike_edge_utils.csv
 # Traversal utility specification file
 traversal_util_file: bike_traversal_utils.csv
 
+# Bike speed to determine bike times
+bike_speed: {mode-nonmotorized-bike-speed:}
+
 # can define a subset of zones to use for the model
 # this is useful for testing or if you only want to run the model for a specific area
-zone_subset: [15615,15659,15627,15655]
+# zone_subset: [90,  5310, 5873, 8647, 5647, 3032]
 
 # whether to treat "mgra" or "taz" as the centroid zones
 zone_level: mgra
+max_dijkstra_distance: 2
 
 # how many different paths to build for each origin-destination pair
 # this is the number of times dijkstra's algorithm will be run
-number_of_iterations: 2
+number_of_iterations: 10
+
+# minimum number of iterations/paths. Zone pairs with fewer paths will be discarded
+min_iterations: 7
 
 # runtime settings
-number_of_batches: 1
-number_of_processors: 1
+number_of_batches: 16
+number_of_processors: 47
 
 generate_shapefile: True
 crs: epsg:2230
@@ -39,8 +47,8 @@ random_scale_link: 0.7
 # whether to trace the edge utilities
 trace_bike_utilities: False
 
-trace_origins: [15615, 15659 ]
-trace_destinations: [15627, 15655 ]
+# trace_origins: [90,  5310, 5873]
+# trace_destinations: [8647, 5647, 3032]
 
-read_cached_bike_net: True
-save_bike_net: True
+read_cached_bike_net: False
+save_bike_net: False

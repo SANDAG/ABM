@@ -251,6 +251,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         manage_settings(_join(main_directory, "conf", "sandag_abm.properties"))
         manage_settings(_join(main_directory, "src", "asim", "configs"))
         manage_settings(_join(main_directory, "src", "asim-cvm", "configs"))
+        manage_settings(_join(main_directory, "src", "asim", "scripts", "bike_route_choice"))
 
         props = load_properties(_join(main_directory, "conf", "sandag_abm.properties"))
         props.set_year_specific_properties(_join(main_directory, "input", "parametersByYears.csv"))
@@ -528,8 +529,14 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         import_demand(omx_file, "TRUCK", period, base_scenario)
 
                 if not skipBikeLogsums:
-                    self.run_proc("runSandagBikeLogsums.cmd", [drive, path_forward_slash],
-                                  "Bike - create AT logsums and impedances")
+                    for file_name in ['bike_route_choice_settings_mgra.yaml','bike_route_choice_settings_taz.yaml']:
+                        with open(_join(self._path,r'src\asim\scripts\bike_route_choice',file_name), 'r') as file:
+                            settings = file.read()
+                        settings = settings.replace(r"${path}",self._path)
+                        with open(_join(self._path,r'src\asim\scripts\bike_route_choice',file_name), 'w') as file:
+                            file.writelines(settings)
+                    self.run_proc("runSandagBikeLogsumsNew.cmd", [drive, path_forward_slash],
+                                  "Bike - create AT logsums and impedances", capture_output=True)
                     # Copy updated logsums to scenario input to avoid overwriting
                     self.copy_files(["bikeMgraLogsum.csv", "bikeTazLogsum.csv"], output_dir, input_dir)
                 elif not os.path.exists(_join(output_dir, "bikeMgraLogsum.csv")):

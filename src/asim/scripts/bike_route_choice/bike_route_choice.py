@@ -812,6 +812,20 @@ def run_bike_route_choice(settings):
 
     logsums.to_csv(f"{settings.output_path}/bike_route_choice_logsums.csv")
 
+    logsums['time'] = (logsums['distance'] / settings.bike_speed) * 60
+
+    logsums = logsums.merge(nodes[[settings.zone_level]], how='left', left_on='origin', right_index=True)
+    logsums = logsums.rename(columns={settings.zone_level: 'i'})
+    logsums = logsums.merge(nodes[[settings.zone_level]], how='left', left_on='destination', right_index=True)
+    logsums = logsums.rename(columns={settings.zone_level: 'j'})
+
+    if settings.zone_level == 'mgra':
+        logsums = logsums[(logsums.iterations == 0) | (logsums.iterations >= settings.min_iterations)]
+
+    logsums = logsums[['i','j','logsum','time']]
+
+    logsums.to_csv(settings.output_file_path,index=False)
+
     # Save the final paths to a CSV file
     if len(settings.trace_origins) > 0:
         trace_paths = pd.DataFrame(
