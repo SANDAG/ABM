@@ -59,7 +59,7 @@ class BikeRouteChoiceSettings(BaseModel):
     recreate_java_attributes: bool = False
 
     # maximum distance in miles for Dijkstra's algorithm to search for shortest paths
-    max_dijkstra_distance: float = 10
+    max_dijkstra_utility: float = 10
 
     # caching options for bike network creation to save time
     read_cached_bike_net: bool = False  # will crash if network does not exist

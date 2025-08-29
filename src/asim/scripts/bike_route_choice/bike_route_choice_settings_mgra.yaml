@@ -24,7 +24,7 @@ bike_speed: {mode-nonmotorized-bike-speed:}
 
 # whether to treat "mgra" or "taz" as the centroid zones
 zone_level: mgra
-max_dijkstra_distance: 2
+max_dijkstra_utility: 0.75
 
 # how many different paths to build for each origin-destination pair
 # this is the number of times dijkstra's algorithm will be run

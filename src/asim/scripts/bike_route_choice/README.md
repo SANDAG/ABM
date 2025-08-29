@@ -40,12 +40,7 @@ In the specified settings YAML file, several options are available for configura
 - `number_of_iterations`: maximum number of paths which should be found before terminating
 - `number_of_batches`: number of batches into which origin centroids should be divided for sequential processing
 - `number_of_processors`: number of processors to use for processing each batch
-- `max_dijkstra_distance`: "cutoff threshold"* distance for early termination of the shortest-paths search
-
-*Note that the threshold distance is not strictly observed as a cutoff, as it
-must be converted to a generalized cost using the mean cost per unit distance,
-which may lead to over-threshold paths being accepted due to variations in cost
-sensitivity.
+- `max_dijkstra_distance`: cutoff threshold utility (positive) for early termination of the shortest-paths search
 
 **Output and Caching**
 - `output_path`: path to the directory in which model outputs should be written

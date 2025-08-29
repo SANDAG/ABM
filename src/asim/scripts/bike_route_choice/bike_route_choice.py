@@ -522,17 +522,10 @@ def run_iterations_batch_traversals(
             trace_label=f"bike_traversal_utilities_iteration_{i}",
             randomize=False,
         )
-        # convert edge utility to distance
-        avg_utility_df = edges.loc[(edges.edge_utility > -999) & (edges.distance > 0)]
-        avg_utility_per_mi = (avg_utility_df["edge_utility"] 
-                              / avg_utility_df["distance"]
-                              ).mean() + traversals.traversal_utility.mean()
-        
-        utility_limit = -1 * settings.max_dijkstra_distance * avg_utility_per_mi 
 
         # run dijkstra's
         distances, predecessors = perform_dijkstras_algorithm_batch_traversals(
-            edges, traversals, origin_centroids, limit=utility_limit
+            edges, traversals, origin_centroids, limit=settings.max_dijkstra_utility
         )
 
         # process paths
