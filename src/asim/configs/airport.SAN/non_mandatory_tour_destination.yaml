@@ -18,22 +18,8 @@ LOGSUM_SETTINGS: tour_mode_choice.yaml
 
 
 SEGMENTS:
-  - res_bus1
-  - res_bus2
-  - res_bus3
-  - res_bus4
-  - res_bus5
-  - res_bus6
-  - res_bus7
-  - res_bus8
-  - res_per1
-  - res_per2
-  - res_per3
-  - res_per4
-  - res_per5
-  - res_per6
-  - res_per7
-  - res_per8
+  - res_bus
+  - res_per
   - vis_bus
   - vis_per
 
@@ -55,41 +41,13 @@ SIMULATE_CHOOSER_COLUMNS:
 CHOOSER_ORIG_COL_NAME: home_zone_id
 ALT_DEST_COL_NAME: alt_dest
 IN_PERIOD:
-  res_bus1: 14
-  res_bus2: 14
-  res_bus3: 14
-  res_bus4: 14
-  res_bus5: 14
-  res_bus6: 14
-  res_bus7: 14
-  res_bus8: 14
-  res_per1: 14
-  res_per2: 14
-  res_per3: 14
-  res_per4: 14
-  res_per5: 14
-  res_per6: 14
-  res_per7: 14
-  res_per8: 14
+  res_bus: 14
+  res_per: 14
   vis_bus: 14
   vis_per: 14
 OUT_PERIOD:
-  res_bus1: 14
-  res_bus2: 14
-  res_bus3: 14
-  res_bus4: 14
-  res_bus5: 14
-  res_bus6: 14
-  res_bus7: 14
-  res_bus8: 14
-  res_per1: 14
-  res_per2: 14
-  res_per3: 14
-  res_per4: 14
-  res_per5: 14
-  res_per6: 14
-  res_per7: 14
-  res_per8: 14
+  res_bus: 14
+  res_per: 14
   vis_bus: 14
   vis_per: 14
 

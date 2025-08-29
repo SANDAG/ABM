@@ -70,7 +70,7 @@ input_table_list:
       - purpose_id
       - party_size
       - nights
-      - income
+      # - income
       - mode_segment
       - direction
       - household_id
@@ -79,7 +79,7 @@ input_table_list:
       - tour_type
       - origin
       - destination
-      - emp_trip_mode
+      # - emp_trip_mode
 
 
 # set false to disable variability check in simple_simulate and interaction_simulate

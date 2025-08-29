@@ -1,7 +1,7 @@
-Purpose,Percent
-0,0.107
-1,0.253
-2,0.223
-3,0.357
-4,0.06
-5,0
+Purpose,Description,Percent
+0,res_bus,0.109
+1,res_per,0.255
+2,vis_bus,0.224
+3,vis_per,0.358
+4,external,0
+5,emp,0
