@@ -36,13 +36,13 @@ gen_utils = _m.Modeller().module("sandag.utilities.general")
 
 class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
 
-    operation = _m.Attribute(unicode)
-    remote_dir = _m.Attribute(unicode)
-    local_dir = _m.Attribute(unicode)
-    user_folder = _m.Attribute(unicode)
-    scenario_id = _m.Attribute(unicode)
-    initialize = _m.Attribute(_m.BooleanType)
-    delete_local_files = _m.Attribute(_m.BooleanType)
+    operation = _m.Attribute(str)
+    remote_dir = _m.Attribute(str)
+    local_dir = _m.Attribute(str)
+    user_folder = _m.Attribute(str)
+    scenario_id = _m.Attribute(str)
+    initialize = _m.Attribute(bool)
+    delete_local_files = _m.Attribute(bool)
 
     tool_run_msg = ""
     LOCAL_ROOT = "C:\\abm_runs"
@@ -382,7 +382,11 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
         # name = "File copy report: copied {count} files {size}".format(count=count, size=size)
         name = "File copy report"
         report = _m.PageBuilder(title=name)
-        report.add_html("<br>".join(self._report))
+        def clean(item):
+            if isinstance(item, bytes):
+                item = item.decode(errors="replace")
+            return item.replace("\r\n", "<br>").replace("\n", "<br>")
+        report.add_html("<br>".join(clean(item) for item in self._report))
         _m.logbook_write(name, report.render())
 
 
