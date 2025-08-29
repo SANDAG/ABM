@@ -13,6 +13,8 @@ import bike_net_reader
 import bike_route_calculator
 from bike_route_utilities import BikeRouteChoiceSettings, load_settings
 
+import time
+
 # Set up logging
 logger = logging.getLogger(__name__)
 
@@ -862,6 +864,9 @@ def run_bike_route_choice(settings):
 
 
 if __name__ == "__main__":
+
+    start_time = time.time()
+
     # can pass settings file as command line argument
     if len(sys.argv) > 1:
         settings_file = sys.argv[1]
@@ -871,3 +876,7 @@ if __name__ == "__main__":
     settings = load_settings(settings_file)
 
     run_bike_route_choice(settings)
+
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    logger.info(f"Total time taken: {elapsed_time:.2f} seconds")
