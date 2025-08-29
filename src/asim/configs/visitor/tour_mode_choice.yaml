@@ -38,7 +38,6 @@ COEFFICIENT_TEMPLATE: tour_mode_choice_coefficients_template.csv
 CONSTANTS:
     orig_col_name: origin
     dest_col_name: destination
-    wait_time_col_regex: '_wait_[0-9]+$'
 
 # so far, we can use the same spec as for non-joint tours
 preprocessor:
@@ -53,7 +52,6 @@ LOGSUM_CHOOSER_COLUMNS:
   - person_id  
   - demographic_segment
 
-CHOICE_COL_NAME: tour_mode
 MODE_CHOICE_LOGSUM_COLUMN_NAME: mode_choice_logsum
 COMPUTE_TRIP_MODE_CHOICE_LOGSUMS: False
 

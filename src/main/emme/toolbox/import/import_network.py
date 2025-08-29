@@ -43,8 +43,7 @@
 #    mode5tod.csv: global (per-mode) transit cost and perception attributes
 #    timexfer_<period>.csv (optional): table of timed transfer pairs of lines, by period
 #    special_fares.txt (optional): table listing special fares in terms of boarding and incremental in-vehicle costs.
-#    off_peak_toll_factors.csv (optional): factors to calculate the toll for EA, MD, and EV periods from the OP toll input for specified facilities
-#    vehicle_class_toll_factors.csv (optional): factors to adjust the toll cost by facility name and class (DA, S2, S3, TRK_L, TRK_M, TRK_H)
+#    vehicle_class_toll_factors.csv: factors to adjust the toll cost by facility name and class (DA, S2, S3, TRK_L, TRK_M, TRK_H)
 #
 #
 # Script example:
@@ -93,7 +92,6 @@ dem_utils = _m.Modeller().module("sandag.utilities.demand")
 FILE_NAMES = {
     "FARES": "special_fares.txt",
     "TIMEXFER": "timexfer_%s.csv",
-    "OFF_PEAK": "off_peak_toll_factors.csv",
     "VEHICLE_CLASS": "vehicle_class_toll_factors.csv",
     "MODE5TOD": "MODE5TOD.csv",
 }
@@ -160,8 +158,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 <li>mode5tod.csv</li>
                 <li>timexfer_<period>.csv (optional)</li>
                 <li>special_fares.txt (optional)</li>
-                <li>off_peak_toll_factors.csv (optional)</li>
-                <li>vehicle_class_toll_factors.csv (optional)</li>
+                <li>vehicle_class_toll_factors.csv</li>
             </ul>
         </div>
         """
@@ -578,17 +575,13 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 # managed lanes, free for HOV2 and HOV3+, tolls for SOV
                 if link[toll] > 0:
                     auto_modes =  lookup["TOLL"][link[truck]]
-                # special case of I-15 managed lanes base year and 2020, no build
-                elif link.type == 1 and link["@project_code"] in [41, 42, 486, 373, 711]:
-                    auto_modes =  lookup["TOLL"][link[truck]]
-                elif link.type == 8 or link.type == 9:
-                    auto_modes =  lookup["TOLL"][link[truck]]
                 if link["@hov"] == 2:
                     auto_modes = auto_modes | lookup["HOV2"]
                 else:
                     auto_modes = auto_modes | lookup["HOV3"]
             elif link["@hov"] == 4:
-                auto_modes =  lookup["TOLL"][link[truck]]
+                # adding 's' so that non-transponder SOVs can use toll roads by paying cash
+                auto_modes =  lookup["TOLL"][link[truck]] | set([network.mode(m_id) for m_id in "s"])
             link.modes = link.transit_modes | auto_modes
 
     def create_road_base(self, network, attr_map):
@@ -1296,7 +1289,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         # Required file
         vehicle_class_factor_file = FILE_NAMES["VEHICLE_CLASS"]
         facility_factors = _defaultdict(lambda: {})
-        facility_factors["DEFAULT_FACTORS"] = {
+        facility_factors["DEFAULT_FACTORS",0] = {
             "ALL": {
                 "auto": 1.0,
                 "hov2": 1.0,
@@ -1307,20 +1300,21 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             },
             "count": 0
         }
-        if os.path.exists(_join(self.source, vehicle_class_factor_file)):
+        if os.path.exists(_join(_dir(self.source), vehicle_class_factor_file)):
             msg = "Adjusting tolls based on factors from %s" % vehicle_class_factor_file
             self._log.append({"type": "text", "content": msg})
             # NOTE: CSV Reader sets the field names to UPPERCASE for consistency
-            with gen_utils.CSVReader(_join(self.source, vehicle_class_factor_file)) as r:
+            with gen_utils.CSVReader(_join(_dir(self.source), vehicle_class_factor_file)) as r:
                 for row in r:
                     if "YEAR" in r.fields and int(row["YEAR"]) != scenario_year:  # optional year column
                         continue
                     name = row["FACILITY_NAME"]
+                    hov = int(row["HOV"])
                     # optional time-of-day entry, default to ALL if no column or blank
                     fac_time = row.get("TIME_OF_DAY")
                     if fac_time is None:
                         fac_time = "ALL"
-                    facility_factors[name][fac_time] = {
+                    facility_factors[name, hov][fac_time] = {
                         "auto": float(row["DA_FACTOR"]),
                         "hov2": float(row["S2_FACTOR"]),
                         "hov3": float(row["S3_FACTOR"]),
@@ -1328,45 +1322,53 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                         "med_truck": float(row["TRK_M_FACTOR"]),
                         "hvy_truck": float(row["TRK_H_FACTOR"])
                     }
-                    facility_factors[name]["count"] = 0
+                    facility_factors[name, hov]["count"] = 0
 
             # validate ToD entry, either list EA, AM, MD, PM and EV, or ALL, but not both
-            for name, factors in facility_factors.iteritems():
+            for (name, hov), factors in facility_factors.iteritems():
                 # default keys should be "ALL" and "count"
                 if "ALL" in factors:
                     if len(factors) > 2:
                         fatal_errors += 1
                         msg = ("Individual time periods and 'ALL' (or blank) listed under "
-                               "TIME_OF_DAY column in {} for facility {}").format(vehicle_class_factor_file, name)
+                               "TIME_OF_DAY column in {} for facility {} HOV{hov}").format(vehicle_class_factor_file, name)
                         self._log.append({"type": "text", "content": msg})
                         self._error.append(msg)
                 elif set(periods + ["count"]) != set(factors.keys()):
                     fatal_errors += 1
-                    msg = ("Missing time periods {} under TIME_OF_DAY column in {} for facility {}").format(
+                    msg = ("Missing time periods {} under TIME_OF_DAY column in {} for facility {} HOV{hov}").format(
                         (set(periods) - set(factors.keys())), vehicle_class_factor_file, name)
                     self._log.append({"type": "text", "content": msg})
                     self._error.append(msg)
+        else:
+            fatal_errors += 1
+            msg = ("Vehicle class factor file {} not found").format(vehicle_class_factor_file)
+            self._log.append({"type": "text", "content": msg})
+            self._error.append(msg)
 
         def lookup_link_name(link):
             for attr_name in ["#name", "#name_from", "#name_to"]:
-                for name, _factors in facility_factors.iteritems():
-                    if name in link[attr_name]:
-                        return _factors
-            return facility_factors["DEFAULT_FACTORS"]
+                for (name, hov), _factors in facility_factors.iteritems():
+                    if (name in link[attr_name]) and (hov == link["@hov"]):
+                        return _factors, False
+            msg = "Link with tcov_id %s did not match to any facility, using default factors" % (link["@tcov_id"])
+            self._log.append({"type": "text2", "content": msg})
+            return facility_factors["DEFAULT_FACTORS",0], True
 
         def match_facility_factors(link):
-            factors = lookup_link_name(link)
+            factors, use_default = lookup_link_name(link)
             factors["count"] += 1
             factors = _copy(factors)
             del factors["count"]
-            # @hov = 2 or 3 overrides hov2 and hov3 costs
-            if link["@hov"] == 2:
-                for _, time_factors in factors.iteritems():
-                    time_factors["hov2"] = 0.0
-                    time_factors["hov3"] = 0.0
-            elif link["@hov"] == 3:
-                for _, time_factors in factors.iteritems():
-                    time_factors["hov3"] = 0.0
+            if use_default:
+                # @hov = 2 or 3 overrides hov2 and hov3 costs
+                if link["@hov"] == 2:
+                    for _, time_factors in factors.iteritems():
+                        time_factors["hov2"] = 0.0
+                        time_factors["hov3"] = 0.0
+                elif link["@hov"] == 3:
+                    for _, time_factors in factors.iteritems():
+                        time_factors["hov3"] = 0.0
             return factors
 
         vehicle_classes = ["auto", "hov2", "hov3", "lgt_truck", "med_truck", "hvy_truck"]
@@ -1381,8 +1383,11 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 for time in time_periods:
                     for name in vehicle_classes:
                         link["@cost_" + name + time] = link["@cost_operating"]
-        for name, class_factors in facility_factors.iteritems():
-            msg = "Facility name '%s' matched to %s links." % (name, class_factors["count"])
+        for (name, hov), class_factors in facility_factors.iteritems():
+            if name == "DEFAULT_FACTORS":
+                msg = "Facility name '%s' matched to %s links." % (name, class_factors["count"])
+            else:
+                msg = "Facility name '%s' HOV%s matched to %s links." % (name, hov, class_factors["count"])
             self._log.append({"type": "text2", "content": msg})
 
         self._log.append({

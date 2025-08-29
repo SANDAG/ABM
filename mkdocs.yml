@@ -58,6 +58,7 @@ nav:
         - design/demand/crossborder.md
         - design/demand/airport.md
         - design/demand/visitor.md
+        - design/demand/cvm.md
         - design/demand/external.md
     - Supply: 
         - design/supply/index.md
@@ -71,16 +72,22 @@ nav:
   - Model Inputs and Outputs: 
     - Inputs: inputs.md
     - Outputs: outputs.md
+    - Reports: reports.md
   - Applying ABM3: 
     - Model Application: application/applying.md
     - Population Synthesis: application/population-synthesis.md
     - Land Use Data Preparation: application/landuse-prep.md
+    - Settings Manager: application/settings-manager.md
     - Scenario Manager: application/scenario-manager.md
     - EV Rebates: application/ev-rebates.md
     - Flexible Fleets: application/flexible-fleets.md
     - Micromobility: application/micromobility.md
     - Network Coding: application/network-coding.md
-  - Commercial Vehicle Model: cvm.md
+  - Calibration and Validation:
+    - Overview: calib_valid/calib_overview.md
+    - Calibration: calib_valid/calibration.md
+    - Convergence: calib_valid/convergence.md
+    - Validation: calib_valid/validation.md
   - About:
     - Release Notes: release-notes.md
     - FAQs: faq.md

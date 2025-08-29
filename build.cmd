@@ -48,6 +48,7 @@ xcopy /Y /exclude:build_create_scenario_scripts.txt .\src\main\resources\"*.dat"
 @REM Copy configuration files
 if not exist %ROOT%\common\conf mkdir %ROOT%\common\conf
 xcopy /Y .\src\main\resources\"*.properties" %ROOT%\common\conf
+xcopy /Y .\src\main\resources\"*.yaml" %ROOT%\common\conf
 xcopy /Y .\src\main\resources\"*.xml" %ROOT%\common\conf
 xcopy /Y .\src\main\resources\"*.csv" %ROOT%\common\conf
 

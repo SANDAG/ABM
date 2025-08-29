@@ -23,13 +23,13 @@ SHADOW_PRICE_METHOD: simulation
 
 # --- simulation method settings
 # ignore criteria for zones smaller than size_threshold
-SIZE_THRESHOLD: 10
+SIZE_THRESHOLD: {shadowPricing-sizeThreshold:}
 # ignore criteria for zones smaller than target_threshold (total employmnet or enrollment)
-TARGET_THRESHOLD: 20
+TARGET_THRESHOLD: {shadowPricing-targetThreshold:}
 # zone passes if modeled is within percent_tolerance of  predicted_size
-PERCENT_TOLERANCE: 5
+PERCENT_TOLERANCE: {shadowPricing-percentTolerance:}
 # max percentage of zones allowed to fail
-FAIL_THRESHOLD: 1
+FAIL_THRESHOLD: {shadowPricing-failThreshold:}
 # apply different targets for each segment specified in destination_size_terms.csv
 school_segmentation_targets:
   # format is segment: land_use_column

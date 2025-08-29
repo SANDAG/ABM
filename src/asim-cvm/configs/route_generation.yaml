@@ -79,6 +79,6 @@ industry_groups:
     constant: 99
 
 CONSTANTS:
-  beta_employment: 0.9583 # used in the second step of the establishment attraction model
+  beta_employment: {cvm-betaEmployment-routeGeneration:} # used in the second step of the establishment attraction model
 
 MAX_N_ROUTES_PER_ESTABLISHMENT: 1000
