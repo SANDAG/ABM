@@ -1,0 +1,3 @@
+Label,Description,Expression,DRIVEALONE,SHARED2,SHARED3,WALK,BIKE,WALK_TRANSIT,TAXI,TNC_SINGLE,TNC_SHARED
+#,drivealone,comment for formatting,,,,,,,,,
+,this does nothing,"@np.minimum(1,0)",coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one

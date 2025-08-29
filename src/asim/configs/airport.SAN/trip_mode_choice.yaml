@@ -13,66 +13,51 @@ NESTS:
         coefficient: coef_nest_PARK
         alternatives:
             - PARK_LOC1
-            - PARK_LOC2
-            - PARK_LOC3
-            - PARK_LOC4
-            - PARK_LOC5
-      - name: PRK_ESCRT
-        coefficient: coef_nest_PARK_ESCORT
-        alternatives:
-          - PARK_ESCORT
-      - name: RNTL
-        coefficient: coef_nest_RENTAL
-        alternatives:
-          - RENTAL
-      - name: SHTTLVAN
-        coefficient: coef_nest_SHUTTLEVAN
-        alternatives:
-          - SHUTTLEVAN
-      - name: HOTEL_CRTSY
-        coefficient: coef_nest_HOTEL_COURTESY
-        alternatives:
-          - HOTEL_COURTESY         
+            - PARK_LOC4 
       - name: RIDEHAIL
         coefficient: coef_nest_RIDEHAIL
         alternatives:
           - RIDEHAIL_LOC1
-          - RIDEHAIL_LOC2
+          # - RIDEHAIL_LOC2
           - TAXI_LOC1
-          - TAXI_LOC2
+          # - TAXI_LOC2
       - name: TRANSIT
-        coefficient:  coef_nest_TRANSIT
+        coefficient: coef_nest_TRANSIT
         alternatives:
             - name: WALKACCESS
               coefficient: coef_nest_TRANSIT_WALKACCESS
               alternatives:
               - WALK_LOC
-              - WALK_PRM
-              - WALK_MIX
-            - name: KNRACCESS
+              # - WALK_PRM
+              # - WALK_MIX
+            - name: KNRACCESS # TODO look into next?
               coefficient: coef_nest_TRANSIT_KNRACCESS
               alternatives:
               - KNR_LOC
-              - KNR_PRM
-              - KNR_MIX
-            - name: TNCACCESS
-              coefficient: coef_nest_TRANSIT_KNRACCESS
-              alternatives:
-              - TNC_LOC
-              - TNC_PRM
-              - TNC_MIX
-      - name: CURB
+            #   - KNR_PRM
+            #   - KNR_MIX
+            # - name: TNCACCESS
+            #   coefficient: coef_nest_TRANSIT_KNRACCESS
+            #   alternatives:
+            #   - TNC_LOC
+            #   - TNC_PRM
+            #   - TNC_MIX
+      - name: CURB # drop-off
         coefficient: coef_nest_CURB
         alternatives:
           - CURB_LOC1
-          - CURB_LOC2
-          - CURB_LOC3
-          - CURB_LOC4
-          - CURB_LOC5
-      - name: WLK
-        coefficient: coef_nest_WALK
+          # - CURB_LOC2
+          # - CURB_LOC3
+          # - CURB_LOC4
+          # - CURB_LOC5
+      - name: RNTL
+        coefficient: coef_nest_RENTAL
         alternatives:
-          - WALK
+          - RENTAL
+      - name: SHTTLVN
+        coefficient: coef_nest_SHUTTLEVAN
+        alternatives:
+          - SHUTTLEVAN
 
 CONSTANTS:
   terminalMgra: {airport-san-terminalMGRA:}
@@ -200,11 +185,11 @@ TOURS_MERGED_CHOOSER_COLUMNS:
   - parent_tour_id
   - tour_type
   - purpose_id
-  - income
+  # - income
   - nights
   - tour_mode
   - mode_segment
-  - emp_trip_mode
+  # - emp_trip_mode
   - party_size
 
 MODE_CHOICE_LOGSUM_COLUMN_NAME: mode_choice_logsum
