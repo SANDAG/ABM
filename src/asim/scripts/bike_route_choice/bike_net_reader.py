@@ -3,7 +3,7 @@ import numpy as np
 import os
 import math
 import logging
-import tqdm
+# import tqdm
 from bike_route_utilities import BikeRouteChoiceSettings, read_file
 
 # Set up logging
@@ -208,258 +208,258 @@ def create_and_attribute_edges(
     return edges, nodes
 
 
-def recreate_java_attributes(
-    traversals: pd.DataFrame,
-):
-    """
-    Recreate Java attributes for traversals.
-    WARNING: This function contains bugs that we think exist in the Java implementation.
-    This is merely an optional function used for potential backwards compatibility.\
+# def recreate_java_attributes(
+#     traversals: pd.DataFrame,
+# ):
+#     """
+#     Recreate Java attributes for traversals.
+#     WARNING: This function contains bugs that we think exist in the Java implementation.
+#     This is merely an optional function used for potential backwards compatibility.\
     
-    Loop and vectorized outputs should be the same.  Loop code closely mimic the Java implementation,
-    while vectorized code is more efficient for python implementation.
+#     Loop and vectorized outputs should be the same.  Loop code closely mimic the Java implementation,
+#     while vectorized code is more efficient for python implementation.
 
-    Parameters:
-        traversals: pd.DataFrame - Traversal dataframe with derived attributes
+#     Parameters:
+#         traversals: pd.DataFrame - Traversal dataframe with derived attributes
 
-    Returns:
-        pd.DataFrame - Traversal dataframe with recreated Java attributes
+#     Returns:
+#         pd.DataFrame - Traversal dataframe with recreated Java attributes
 
-    """
-    def isThruJunc(trav, turn_type, last_all):
-        # this method is buggy because it only considers the last traversal
-        # instead of checking for any right turn
-        if trav.centroid_start or trav.centroid_thru or trav.centroid_end:
-            return False
+#     """
+#     def isThruJunc(trav, turn_type, last_all):
+#         # this method is buggy because it only considers the last traversal
+#         # instead of checking for any right turn
+#         if trav.centroid_start or trav.centroid_thru or trav.centroid_end:
+#             return False
         
-        if trav.turnType != TURN_NONE:
-            return False
+#         if trav.turnType != TURN_NONE:
+#             return False
         
-        if (    
-            # if there are no sibling traversals
-            len(
-                traversals[
-                    (traversals.start == trav.start)
-                    & (traversals.thru == trav.thru)
-                    & (traversals.end != trav.start)
-                    & (traversals.end != trav.end)
-                ]
-            )
-            == 0
-        ):
-            return True
+#         if (    
+#             # if there are no sibling traversals
+#             len(
+#                 traversals[
+#                     (traversals.start == trav.start)
+#                     & (traversals.thru == trav.thru)
+#                     & (traversals.end != trav.start)
+#                     & (traversals.end != trav.end)
+#                 ]
+#             )
+#             == 0
+#         ):
+#             return True
 
 
-        if last_all == "last":
-            # if the last sibling traversal is of the target turn type
-            if (
-                traversals[
-                    (traversals.start == trav.start)
-                    & (traversals.thru == trav.thru)
-                    & (traversals.end != trav.start)
-                    & (traversals.end != trav.end)
-                ]
-                .iloc[-1]
-                .turnType
-                == turn_type
-            ):
-                return False
-            else:
-                return True
+#         if last_all == "last":
+#             # if the last sibling traversal is of the target turn type
+#             if (
+#                 traversals[
+#                     (traversals.start == trav.start)
+#                     & (traversals.thru == trav.thru)
+#                     & (traversals.end != trav.start)
+#                     & (traversals.end != trav.end)
+#                 ]
+#                 .iloc[-1]
+#                 .turnType
+#                 == turn_type
+#             ):
+#                 return False
+#             else:
+#                 return True
 
-        elif last_all == "any":
-            # if any sibling traversal is of the target turn type
-            return not (
-                traversals[
-                    (traversals.start == trav.start)
-                    & (traversals.thru == trav.thru)
-                    & (traversals.end != trav.start)
-                    & (traversals.end != trav.end)
-                ].turnType
-                == turn_type
-            ).any()
+#         elif last_all == "any":
+#             # if any sibling traversal is of the target turn type
+#             return not (
+#                 traversals[
+#                     (traversals.start == trav.start)
+#                     & (traversals.thru == trav.thru)
+#                     & (traversals.end != trav.start)
+#                     & (traversals.end != trav.end)
+#                 ].turnType
+#                 == turn_type
+#             ).any()
 
-    # keep track of whether traversal is "thru junction"
-    traversals["ThruJunction_anynonevec"] = (
-        ~(
-            traversals.centroid_start
-            | traversals.centroid_thru
-            | traversals.centroid_end
-        )
-        & (traversals.turnType == TURN_NONE)
-        & (traversals.none_turns - traversals.dupNoneTurns_toEdge == 0)
-    )
+#     # keep track of whether traversal is "thru junction"
+#     traversals["ThruJunction_anynonevec"] = (
+#         ~(
+#             traversals.centroid_start
+#             | traversals.centroid_thru
+#             | traversals.centroid_end
+#         )
+#         & (traversals.turnType == TURN_NONE)
+#         & (traversals.none_turns - traversals.dupNoneTurns_toEdge == 0)
+#     )
 
-    # create columns to populate in the slow loop
-    traversals["ThruJunction_lastnoneloop"] = False
-    traversals["ThruJunction_lastrtloop"] = False
-    traversals["ThruJunction_anynoneloop"] = False
-    traversals["ThruJunction_anyrtloop"] = False
+#     # create columns to populate in the slow loop
+#     traversals["ThruJunction_lastnoneloop"] = False
+#     traversals["ThruJunction_lastrtloop"] = False
+#     traversals["ThruJunction_anynoneloop"] = False
+#     traversals["ThruJunction_anyrtloop"] = False
 
-    logger.info("Beginning slow loop recreating Java attributes")
+#     logger.info("Beginning slow loop recreating Java attributes")
 
-    # the slow loop through all the traversals (could this be parallelized?)
-    for idx, trav in tqdm.tqdm(traversals.iterrows(), total=len(traversals)):
+#     # the slow loop through all the traversals (could this be parallelized?)
+#     for idx, trav in tqdm.tqdm(traversals.iterrows(), total=len(traversals)):
 
-        # check all four possible parameter combos
-        traversals.loc[idx, "ThruJunction_lastnoneloop"] = isThruJunc(
-            trav, TURN_NONE, "last"
-        )
-        traversals.loc[idx, "ThruJunction_lastrtloop"] = isThruJunc(
-            trav, TURN_RIGHT, "last"
-        )
-        traversals.loc[idx, "ThruJunction_anynoneloop"] = isThruJunc(
-            trav, TURN_NONE, "any"
-        )
-        traversals.loc[idx, "ThruJunction_anyrtloop"] = isThruJunc(
-            trav, TURN_RIGHT, "any"
-        )
+#         # check all four possible parameter combos
+#         traversals.loc[idx, "ThruJunction_lastnoneloop"] = isThruJunc(
+#             trav, TURN_NONE, "last"
+#         )
+#         traversals.loc[idx, "ThruJunction_lastrtloop"] = isThruJunc(
+#             trav, TURN_RIGHT, "last"
+#         )
+#         traversals.loc[idx, "ThruJunction_anynoneloop"] = isThruJunc(
+#             trav, TURN_NONE, "any"
+#         )
+#         traversals.loc[idx, "ThruJunction_anyrtloop"] = isThruJunc(
+#             trav, TURN_RIGHT, "any"
+#         )
 
-    # the below is buggy because it counts none-turns instead of right turns
+#     # the below is buggy because it counts none-turns instead of right turns
 
-    # index: all last traversals of all input groups
-    # values: whether the index traversal is a none turn
-    is_none = (
-        traversals.groupby(["start", "thru"])
-        .last()
-        .reset_index()
-        .set_index(["start", "thru", "end"])
-        .turnType
-        == TURN_NONE
-    )
+#     # index: all last traversals of all input groups
+#     # values: whether the index traversal is a none turn
+#     is_none = (
+#         traversals.groupby(["start", "thru"])
+#         .last()
+#         .reset_index()
+#         .set_index(["start", "thru", "end"])
+#         .turnType
+#         == TURN_NONE
+#     )
 
-    last_travs = is_none.index
+#     last_travs = is_none.index
 
-    # index: all last and penultimate traversals
-    # values: whether the index traversal is a none turn
-    is_none = pd.concat(
-        [
-            is_none,
-            traversals[
-                # don't allow index of penultimates to match last - we want two different candidates
-                ~traversals.set_index(["start", "thru", "end"]).index.isin(last_travs)
-            ]
-            .groupby(["start", "thru"])
-            .last()
-            .reset_index()
-            .set_index(["start", "thru", "end"])
-            .turnType
-            == TURN_NONE,
-        ]
-    )
+#     # index: all last and penultimate traversals
+#     # values: whether the index traversal is a none turn
+#     is_none = pd.concat(
+#         [
+#             is_none,
+#             traversals[
+#                 # don't allow index of penultimates to match last - we want two different candidates
+#                 ~traversals.set_index(["start", "thru", "end"]).index.isin(last_travs)
+#             ]
+#             .groupby(["start", "thru"])
+#             .last()
+#             .reset_index()
+#             .set_index(["start", "thru", "end"])
+#             .turnType
+#             == TURN_NONE,
+#         ]
+#     )
 
-    # create an index of all penultimate sibling turn movements
-    penult_travs = is_none.index[~is_none.index.isin(last_travs)]
+#     # create an index of all penultimate sibling turn movements
+#     penult_travs = is_none.index[~is_none.index.isin(last_travs)]
 
-    # get the penultimate sibling turn movments whose turn type is none
-    penult_is_none = is_none[penult_travs].reset_index(2).turnType.rename("penultimate_is_none")
+#     # get the penultimate sibling turn movments whose turn type is none
+#     penult_is_none = is_none[penult_travs].reset_index(2).turnType.rename("penultimate_is_none")
 
-    # get the last sibling turn movements whose turn type is none
-    last_is_none = is_none[last_travs].reset_index(2).turnType.rename("last_is_none")
+#     # get the last sibling turn movements whose turn type is none
+#     last_is_none = is_none[last_travs].reset_index(2).turnType.rename("last_is_none")
 
-    # tack on the two new columns
-    traversals = traversals.merge(
-        last_is_none, left_on=["start", "thru"], right_index=True, how="left"
-    ).merge(penult_is_none, left_on=["start", "thru"], right_index=True, how="left")
+#     # tack on the two new columns
+#     traversals = traversals.merge(
+#         last_is_none, left_on=["start", "thru"], right_index=True, how="left"
+#     ).merge(penult_is_none, left_on=["start", "thru"], right_index=True, how="left")
 
-    # for all traversals that match the last traversal, use the penultimate value
-    traversals.loc[
-        traversals.index.isin(last_is_none.index), "buggyRTE_none"
-    ] = traversals.loc[traversals.index.isin(last_is_none.index), "penultimate_is_none"]
-    # for all other traversals, use the last value
-    traversals.loc[
-        ~traversals.index.isin(last_is_none.index), "buggyRTE_none"
-    ] = traversals.loc[~traversals.index.isin(last_is_none.index), "last_is_none"]
+#     # for all traversals that match the last traversal, use the penultimate value
+#     traversals.loc[
+#         traversals.index.isin(last_is_none.index), "buggyRTE_none"
+#     ] = traversals.loc[traversals.index.isin(last_is_none.index), "penultimate_is_none"]
+#     # for all other traversals, use the last value
+#     traversals.loc[
+#         ~traversals.index.isin(last_is_none.index), "buggyRTE_none"
+#     ] = traversals.loc[~traversals.index.isin(last_is_none.index), "last_is_none"]
 
-    # index: all last traversals of all input groups
-    # values: whether the index traversal is a right turn
-    last_is_rt = (
-        traversals.groupby(["start", "thru"])
-        .last()
-        .reset_index()
-        .set_index(["start", "thru", "end"])
-        .turnType
-        == TURN_RIGHT
-    )
-    # index: all penultimate traversals of input groups w/ >1 out link
-    # values: whether the index traversal is a right turn
-    penultimate_is_rt = (
-        traversals[
-            ~traversals.set_index(["start", "thru", "end"]).index.isin(last_is_rt.index)
-        ]
-        .groupby(["start", "thru"])
-        .last()
-        .reset_index()
-        .set_index(["start", "thru", "end"])
-        .turnType
-        == TURN_RIGHT
-    )
+#     # index: all last traversals of all input groups
+#     # values: whether the index traversal is a right turn
+#     last_is_rt = (
+#         traversals.groupby(["start", "thru"])
+#         .last()
+#         .reset_index()
+#         .set_index(["start", "thru", "end"])
+#         .turnType
+#         == TURN_RIGHT
+#     )
+#     # index: all penultimate traversals of input groups w/ >1 out link
+#     # values: whether the index traversal is a right turn
+#     penultimate_is_rt = (
+#         traversals[
+#             ~traversals.set_index(["start", "thru", "end"]).index.isin(last_is_rt.index)
+#         ]
+#         .groupby(["start", "thru"])
+#         .last()
+#         .reset_index()
+#         .set_index(["start", "thru", "end"])
+#         .turnType
+#         == TURN_RIGHT
+#     )
 
-    # drop the end column
-    last_is_rt = (
-        last_is_rt.reset_index()
-        .set_index(["start", "thru"])
-        .turnType.rename("last_is_rt")
-    )
-    # drop the end column and assume false for input groups w/ 1 out link
-    penultimate_is_rt = (
-        penultimate_is_rt.reset_index()
-        .set_index(["start", "thru"])
-        .turnType.reindex(last_is_rt.index, fill_value=False)
-        .rename("penultimate_is_rt")
-    )
+#     # drop the end column
+#     last_is_rt = (
+#         last_is_rt.reset_index()
+#         .set_index(["start", "thru"])
+#         .turnType.rename("last_is_rt")
+#     )
+#     # drop the end column and assume false for input groups w/ 1 out link
+#     penultimate_is_rt = (
+#         penultimate_is_rt.reset_index()
+#         .set_index(["start", "thru"])
+#         .turnType.reindex(last_is_rt.index, fill_value=False)
+#         .rename("penultimate_is_rt")
+#     )
 
-    # tack on two new columns (last_is_rt and penultimate_is_rt)
-    traversals = traversals.merge(
-        last_is_rt, left_on=["start", "thru"], right_index=True, how="left"
-    ).merge(penultimate_is_rt, left_on=["start", "thru"], right_index=True, how="left")
+#     # tack on two new columns (last_is_rt and penultimate_is_rt)
+#     traversals = traversals.merge(
+#         last_is_rt, left_on=["start", "thru"], right_index=True, how="left"
+#     ).merge(penultimate_is_rt, left_on=["start", "thru"], right_index=True, how="left")
 
-    # define the right turn exists parameter for all positions, 
-    # starting with those which are last-siblings
-    traversals.loc[
-        traversals.index.isin(last_is_rt.index), "buggyRTE_rt"
-    ] = traversals.loc[traversals.index.isin(last_is_rt.index), "penultimate_is_rt"]
+#     # define the right turn exists parameter for all positions, 
+#     # starting with those which are last-siblings
+#     traversals.loc[
+#         traversals.index.isin(last_is_rt.index), "buggyRTE_rt"
+#     ] = traversals.loc[traversals.index.isin(last_is_rt.index), "penultimate_is_rt"]
     
-    # then moving on to all others
-    traversals.loc[
-        ~traversals.index.isin(last_is_rt.index), "buggyRTE_rt"
-    ] = traversals.loc[~traversals.index.isin(last_is_rt.index), "last_is_rt"]
+#     # then moving on to all others
+#     traversals.loc[
+#         ~traversals.index.isin(last_is_rt.index), "buggyRTE_rt"
+#     ] = traversals.loc[~traversals.index.isin(last_is_rt.index), "last_is_rt"]
 
-    # define whether each entry is a thru-junction based on its underlying
-    # right-turn-exists variables
-    traversals["ThruJunction_lastnonevec"] = (
-        ~(
-            traversals.centroid_start
-            | traversals.centroid_thru
-            | traversals.centroid_end
-        )
-        & (traversals.turnType == TURN_NONE)
-        & ~(traversals.buggyRTE_none)
-    )
-    traversals["ThruJunction_lastrtvec"] = (
-        ~(
-            traversals.centroid_start
-            | traversals.centroid_thru
-            | traversals.centroid_end
-        )
-        & (traversals.turnType == TURN_NONE)
-        & ~(traversals.buggyRTE_rt)
-    )
+#     # define whether each entry is a thru-junction based on its underlying
+#     # right-turn-exists variables
+#     traversals["ThruJunction_lastnonevec"] = (
+#         ~(
+#             traversals.centroid_start
+#             | traversals.centroid_thru
+#             | traversals.centroid_end
+#         )
+#         & (traversals.turnType == TURN_NONE)
+#         & ~(traversals.buggyRTE_none)
+#     )
+#     traversals["ThruJunction_lastrtvec"] = (
+#         ~(
+#             traversals.centroid_start
+#             | traversals.centroid_thru
+#             | traversals.centroid_end
+#         )
+#         & (traversals.turnType == TURN_NONE)
+#         & ~(traversals.buggyRTE_rt)
+#     )
 
-    logger.info("Finished calculating java attributes")
+#     logger.info("Finished calculating java attributes")
 
-    java_cols = [
-        "ThruJunction_anynonevec",
-        "ThruJunction_lastnoneloop",
-        "ThruJunction_lastrtloop",
-        "ThruJunction_anynoneloop",
-        "ThruJunction_anyrtloop",
-        "ThruJunction_anyrtvec",
-        "ThruJunction_lastnonevec",
-        "ThruJunction_lastrtvec",
-    ]
+#     java_cols = [
+#         "ThruJunction_anynonevec",
+#         "ThruJunction_lastnoneloop",
+#         "ThruJunction_lastrtloop",
+#         "ThruJunction_anynoneloop",
+#         "ThruJunction_anyrtloop",
+#         "ThruJunction_anyrtvec",
+#         "ThruJunction_lastnonevec",
+#         "ThruJunction_lastrtvec",
+#     ]
 
-    return traversals, java_cols
+#     return traversals, java_cols
 
 
 def calculate_signalExclRight_alternatives(traversals: pd.DataFrame) -> pd.DataFrame:
@@ -797,10 +797,10 @@ def create_and_attribute_traversals(
     )
 
     # for replicating the buggy Java implementation
-    if settings.recreate_java_attributes:
-        traversals, java_cols = recreate_java_attributes(traversals)
-        traversals, java_attributes = calculate_signalExclRight_alternatives(traversals)
-        java_cols += java_attributes
+    # if settings.recreate_java_attributes:
+    #     traversals, java_cols = recreate_java_attributes(traversals)
+    #     traversals, java_attributes = calculate_signalExclRight_alternatives(traversals)
+    #     java_cols += java_attributes
 
     # this is the correct implementation
     traversals["ThruJunction_anyrtvec"] = (
@@ -904,9 +904,9 @@ def create_and_attribute_traversals(
         "unxma",
         "unxmi",
     ]
-    if settings.recreate_java_attributes:
-        # include the java attributes if they were recreated
-        output_cols += java_attributes
+    # if settings.recreate_java_attributes:
+    #     # include the java attributes if they were recreated
+    #     output_cols += java_attributes
 
     # keep only the relevant columns
     traversals = traversals.set_index(["edgeID_fromEdge","edgeID_toEdge"])[output_cols]
