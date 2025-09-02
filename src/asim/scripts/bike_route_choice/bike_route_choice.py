@@ -124,6 +124,27 @@ def calculate_final_logsums_batch_traversals(
     """
     logger.info("Calculating logsums...")
 
+    if all_paths_orig.size == 0:
+        logger.info("No paths found in this batch")
+        return (
+            np.empty((0)),
+            np.empty((0)),
+            np.empty((0)),
+            np.empty((0)),
+            np.empty((0)),
+            np.empty((0)),
+            np.empty((0)),
+            np.empty((0)),
+            np.empty((0)),
+            np.empty((0)),
+            np.empty((0)),
+            np.empty((0)),
+            np.empty((0)),
+            np.empty((0)),
+            np.empty((0)),
+            np.empty((0)),
+        )
+
     # Mapped node id to centroids index
     dest_centroids_rev_map = np.zeros(int(max(dest_centroids)) + 1, dtype=np.int32)
     dest_centroids_rev_map[dest_centroids] = range(len(dest_centroids))
