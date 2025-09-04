@@ -1,5 +1,16 @@
 # Release Notes
 
+## Version 15.3.1 (September 4, 2025)
+A few bugs were identified while testing with version 15.3.0, so they were fixed to ensure that the results for the 2025 Regional Plan will be the best estimates possible.
+
+### Features
+- [PR 360](https://github.com/SANDAG/ABM/pull/360): The settings manager can now be run from Anaconda prompt as opposed to only within Emme
+- [PR 340](https://github.com/SANDAG/ABM/pull/340), [PR 346](https://github.com/SANDAG/ABM/pull/346), & [PR 353](https://github.com/SANDAG/ABM/pull/353): Documentation updates
+
+### Bug Fixes
+- [PR 349](https://github.com/SANDAG/ABM/pull/349), [PR 356](https://github.com/SANDAG/ABM/pull/356), [PR 359](https://github.com/SANDAG/ABM/pull/359), & [PR 362](https://github.com/SANDAG/ABM/pull/362): Fixes and adjustments to e-bike and transit utility calculations
+- [PR 337](https://github.com/SANDAG/ABM/pull/337), [PR 339](https://github.com/SANDAG/ABM/pull/339), [PR 354](https://github.com/SANDAG/ABM/pull/354), & [PR 357](https://github.com/SANDAG/ABM/pull/357): Configuration file cleanup
+
 ## Version 15.3.0 (August 6, 2025)
 Multiple key updates and bug fixes were included for Version 15.3.0, including upgrading to use ActivitySim 1.4.0, migration of the processing of model results to Azure Unity Catalog, and the addition of a centralized settings manager, among other fixes. Version 15.3.0 will be used for the final 2025 Regional Plan Modeling.
 
