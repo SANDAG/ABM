@@ -536,6 +536,10 @@ def run_iterations_batch_traversals(
             trace_label=f"bike_edge_utilities_iteration_{i}",
             randomize=True,
         )
+        
+        logger.debug("Overriding utility of centroid connectors")
+        edges.loc[edges.centroidConnector,"edge_utlity"] = -np.finfo(edges.edge_utility.dtype).eps
+        
         traversals[
             "traversal_utility"
         ] = bike_route_calculator.calculate_utilities_from_spec(
@@ -634,6 +638,10 @@ def run_batch_traversals(
         trace_label="bike_edge_utilities_final",
         randomize=False,
     )
+
+    logger.debug("Overriding utility of centroid connectors")
+    edges.loc[edges.centroidConnector,"edge_utlity"] = -np.finfo(edges.edge_utility.dtype).eps
+    
     traversals[
         "traversal_utility"
     ] = bike_route_calculator.calculate_utilities_from_spec(

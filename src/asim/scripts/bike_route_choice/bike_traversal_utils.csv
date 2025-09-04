@@ -5,6 +5,7 @@ util_unsig_left_from_principal,Unsignalized left turns from principal arterials,
 util_unsig_left_from_minor,Unsignalized left turns from minor arterials,unlfrmi,-0.150
 util_unsig_cross_or_left_onto_principal,Unsignalized cross or left onto principal arterials,unxma,-0.48
 util_unsig_cross_or_left_onto_minor,Unsignalized cross or left onto minor arterials,unxmi,-0.1
+util_thru_centroid,Prevent taking shortcuts via centroid connectors,thruCentroid,-999.9
 # can't calculate path size here since we don't know the path yet,,
 # path size calculation is done in the code when calculating the logsum,,
 # util_log_path_size,log of path size,logPathSize,1.0
