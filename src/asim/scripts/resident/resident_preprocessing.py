@@ -73,7 +73,7 @@ class Series15_Processor:
         # but need to add by time period for activitysim odt_skim wrapper
         # (tour mode choice model does not have do_skims, only dot_skim)
         self.add_time_independent_bike_logsums = True
-        self.add_time_dependent_bike_logsums = True
+        self.add_time_dependent_bike_logsums = False
 
         self.time_periods = ['EA', 'AM', 'MD', 'PM', 'EV']
 
