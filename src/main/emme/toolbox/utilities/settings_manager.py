@@ -212,7 +212,7 @@ class SettingsManager(object):
             self.update_settings_file(target)
 
 if __name__ == "__main__":
-    """
+    r"""
     Run from root directory of a clone of the ABM repo
     Instructions to run from Anaconda prompt:
     python src\main\emme\toolbox\utilities\settings_manager.py [DIRS OR FILES TO UPDATE]
