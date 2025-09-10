@@ -11,7 +11,7 @@ from multiprocessing import Pool
 
 import bike_net_reader
 import bike_route_calculator
-from bike_route_utilities import BikeRouteChoiceSettings, load_settings
+from bike_route_utilities import BikeRouteChoiceSettings, load_settings, read_file
 
 import time
 
@@ -809,15 +809,21 @@ def run_bike_route_choice(settings):
         }
     )
 
-    # calculate replacement intrazonal logsum values
-    diag_logsums = logsums[logsums.origin!=logsums.destination].groupby('origin').logsum.max()
-    diag_logsums[diag_logsums < 0] *= 0.5
-    diag_logsums[diag_logsums >= 0] *= 2
-
-    diags = diag_logsums.to_frame()
 
     # calculate replacement intrazonal distance values
-    diags['distance'] = logsums[logsums.origin!=logsums.destination].groupby('origin').distance.min() * 0.5
+    diag_dists = logsums[logsums.origin!=logsums.destination].groupby('origin').distance.min() * 0.5
+    diags = diag_dists.to_frame()
+
+    # calculate replacement intrazonal logsum values
+
+    # FIXME this is repetitive - find a way to retrieve spec only once (already read in run_batch_traversals)
+    spec = read_file(settings, settings.edge_util_file).set_index('Label')
+
+    intrazonal_coeff = settings.intrazonal_coefficient
+
+    assert intrazonal_coeff in spec.index, f"Intrazonal logsum coefficient {intrazonal_coeff} missing from edge spec"
+
+    diags['logsum'] = diags.distance * spec.loc[intrazonal_coeff,"Coefficient"]
 
     # indexing work
     diags = diags.reset_index()

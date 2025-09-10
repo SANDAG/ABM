@@ -33,6 +33,9 @@ class BikeRouteChoiceSettings(BaseModel):
     # traversal utility specifcation file
     traversal_util_file: str = "bike_traversal_utils.csv"
 
+    # coefficient to multiply intrazonal distance by to get logsum
+    intrazonal_coefficient: str = "util_class_0_bike_lane_dist"
+
     bike_speed: float = 0
 
     # path to bike route choice model output
