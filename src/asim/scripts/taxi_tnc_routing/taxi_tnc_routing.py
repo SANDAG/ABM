@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import openmatrix as omx
 import os
-
+import time
 
 input_folder = r"C:\Users\david.hensle\OneDrive - Resource Systems Group, Inc\Documents\projects\sandag\AV_TNC_models\tnc_data\full"
 
@@ -109,7 +109,7 @@ def determine_detour_times(trip_pairs, skim_data, max_detour=15):
     j_direct = skim_data[oj, dj]
 
     # scenario totals
-    # WARNING if these scenarios are changes, they also need to be changed downstream in the routing
+    # WARNING if these scenarios are changed, they also need to be changed downstream in the routing
     t1 = skim_data[oi, oj] + skim_data[oj, di] + skim_data[di, dj]  # oi->oj->di->dj
     t2 = skim_data[oj, oi] + skim_data[oi, dj] + skim_data[dj, di]  # oj->oi->dj->di
     t3 = skim_data[oi, oj] + skim_data[oj, dj] + skim_data[dj, di]  # oi->oj->dj->di
@@ -348,5 +348,11 @@ def route_taxi_tncs():
 
 
 if __name__ == "__main__":
+    start_time = time.time()
+
     vehicle_trips = route_taxi_tncs()
     print(f"Created {len(vehicle_trips)} vehicle trips.")
+    
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"Time to complete: {elapsed_time:.2f} seconds")
