@@ -852,7 +852,7 @@ def run_bike_route_choice(settings):
     if settings.zone_level == 'mgra':
         logsums = logsums[(logsums.iterations == 0) | (logsums.iterations >= settings.min_iterations)]
 
-    logsums = logsums[['i','j','logsum','time']]
+    logsums = logsums[['i','j','logsum','time','distance']]
 
     logsums.to_csv(settings.output_file_path,index=False)
 
@@ -894,8 +894,8 @@ def run_bike_route_choice(settings):
             trace_paths.to_file(f"{settings.output_path}/bike_route_choice_trace.shp")
 
 
-    print("Bike route choice model completed.")
-    return final_paths_concat
+    logger.info("Bike route choice model completed.")
+    return logsums
 
 
 if __name__ == "__main__":
