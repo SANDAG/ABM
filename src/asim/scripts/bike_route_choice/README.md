@@ -41,11 +41,13 @@ In the specified settings YAML file, several options are available for configura
 - `number_of_batches`: number of batches into which origin centroids should be divided for sequential processing
 - `number_of_processors`: number of processors to use for processing each batch
 - `max_dijkstra_distance`: cutoff threshold utility (positive) for early termination of the shortest-paths search
+- `min_iterations`: the minimum number of paths found - zone pairs with fewer paths will be discarded
 
 **Output and Caching**
 - `output_path`: path to the directory in which model outputs should be written
 - `save_bike_net`: whether to write the derived network to a set of CSVs
 - `read_cached_bike_net`: whether to read the derived network from a cache instead of re-deriving from the original network
+- `bike_speed`: the speed to use for calculating bike travel times in output
 
 **Tracing**
 - `trace_bike_utilities`: whether to output the chosen path sets from a specified list of origin-destination pairs
@@ -91,3 +93,50 @@ multiplier . Path sampling is repeated until both a minimum count of paths and a
 target for the total of all path sizes in each alternative list is reached. If the total path size
 does not reach its target after a given maximum number of sampling iterations, sampling
 terminates to prevent excessively long computation time.
+
+## Threshold Utility and Distance
+To improve runtime, the Dijkstra's algorithm implementation allows for early termination once a
+predetermined utility threshold has been reached in its search, with no paths found for zone pairs
+whose utility is beyond the threshold. However, the utility of paths is not necessarily the most
+user-friendly metric - it is reasonable to aim to define the cutoff by distance rather than utility.
+However, because the underlying implementation of Dijkstra's algorithm is only aware of utilities,
+not distances, this is not directly feasible, as utility and distance do not correspond directly.
+
+To address this, the `bike_threshold_calculator` script has been built to provide a handy mechanism
+to search for a utility threshold which approximates a desired distance cutoff. Given a valid 
+configuration YAML file (as described above), the script iteratively performs a binary search,
+using the YAML file's `max_dijkstra_utility` setting as a starting threshold utility and modifying
+its value on subsequent iterations until the target distance is within the allowed margin of error
+(or the maximum number of bike model iterations has been completed). The calling signature of the
+script is shown below and requires a minimum of two command line arguments: the settings filepath
+and the target distance – the remainder of the parameters are optional, with each optional argument 
+requiring those listed before it in sequence:
+
+~~~
+Usage:
+    python bike_threshold_calculator.py <settings filepath> <target distance> [target_margin [percentile [max_iterations]]]
+
+    parameters:
+        settings filepath:  path to YAML file containing bike model settings
+        target distance:    the distance for which the search should aim (in miles)
+        target margin:      the margin of error (< 1) allowed before termination (optional, default: 0.1)
+        percentile:         the percentile of distance to compare against the target (optional, default: 0.99)
+        max iterations:     the most bike model iterations that can be performed in the search (optional, default: 20)
+
+    examples:
+        
+        python bike_threshold_calculator.py bike_route_choice_settings_taz.yaml 20 
+        # the resulting 99th %ile distance must be w/in 10% of the 20-mile target distance
+        # equivalent to:
+            python bike_threshold_calculator.py bike_route_choice_settings_taz.yaml 20 0.1 0.99 20
+        
+        python bike_threshold_calculator.py bike_route_choice_settings_mgra.yaml 3 0.05
+        # the resulting 99th %ile distance must be w/in 5% of the three-mile target distance
+~~~
+
+With the default parameters used, the script will search until either 20 iterations have elapsed or
+the 99th percentile of distances found is within 10% of the specified target distance. At termination, 
+a CSV named `threshold_results.csv` will be written to the output directory (set in the `output_path` 
+setting in the YAML file) with the input utility thresholds, the iteration runtime, and the chosen 
+percentile of distance. These will also be scatter plotted on a graph and displayed, but note that 
+this graph is not saved automatically to the output directory.

@@ -40,17 +40,19 @@ if __name__=="__main__":
     parameters:
         settings filepath:  path to YAML file containing bike model settings
         target distance:    the distance for which the search should aim (in miles)
-        target_margin:      the margin of error (< 1) allowed before termination (optional, default: 0.1)
+        target margin:      the margin of error (< 1) allowed before termination (optional, default: 0.1)
         percentile:         the percentile of distance to compare against the target (optional, default: 0.99)
-        max_iterations:     the most bike model iterations that can be performed in the search (optional, default: 20)
+        max iterations:     the most bike model iterations that can be performed in the search (optional, default: 20)
 
     examples:
         
         python bike_threshold_calculator.py bike_route_choice_settings_taz.yaml 20 
-            equivalent to:
-                python bike_threshold_calculator.py bike_route_choice_settings_taz.yaml 20 0.1 0.99 20
+        # the resulting 99th %%ile distance must be w/in 10%% of the 20-mile target distance
+        # equivalent to:
+            python bike_threshold_calculator.py bike_route_choice_settings_taz.yaml 20 0.1 0.99 20
         
         python bike_threshold_calculator.py bike_route_choice_settings_mgra.yaml 3 0.05
+        # the resulting 99th %%ile distance must be w/in 5%% of the three-mile target distance
     """
 
     # pass settings file as command line argument
