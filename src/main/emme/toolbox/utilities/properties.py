@@ -640,7 +640,7 @@ class Properties(object):
         return self._prop.update(*args, **kwargs)
 
     def keys(self):
-        return elf._prop.keys()
+        return self._prop.keys()
 
     def values(self):
         return self._prop.values()
