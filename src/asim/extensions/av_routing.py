@@ -1011,5 +1011,7 @@ def av_routing(
     av_trip_matching_choices = pd.concat(av_trip_matching_choices, ignore_index=False)
 
     # create one table of all vehicle trips and add to pipeline
-    vehicle_trips = pd.concat(all_veh_trips, ignore_index=True)
-    state.add_table("vehicle_trips", vehicle_trips)
+    av_vehicle_trips = pd.concat(all_veh_trips, ignore_index=True)
+    av_vehicle_trips['av_vehicle_trip_id'] = av_vehicle_trips.vehicle_id * 100 + av_vehicle_trips.groupby('vehicle_id').cumcount()
+    av_vehicle_trips.set_index('av_vehicle_trip_id', inplace=True)
+    state.add_table("av_vehicle_trips", av_vehicle_trips)

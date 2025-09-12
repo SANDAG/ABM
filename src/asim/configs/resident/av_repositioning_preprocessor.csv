@@ -1,44 +1,51 @@
 Description,Target,Expression
-departure time map,_depart_time_map,trips.groupby('tour_id')['depart'].shift(-1).to_dict()
-next trip start time,next_depart,df['trip_id'].map(_depart_time_map)
+next trip start time,next_depart,df['trip_id'].map(trips.groupby('tour_id')['depart'].shift(-1).to_dict())
 trip duration,duration_hrs,"np.where(next_depart.isna(), 0, next_depart - df.depart) / 2"
 duration benefit,duration_benefit,"np.where((duration_hrs < 1.5) & (duration_hrs > 0), 60 - (60/1.5 * duration_hrs), 0)"
 #Parking cost calculation,,
-,free_parking_available,(df.tour_type == 'work') & df.free_parking_at_work
-,is_indiv,(df.number_of_participants == 1)
+,tour_id,"reindex(trips.tour_id, df.trip_id)"
+,tour_type,"reindex(tours.tour_type, tour_id)"
+,person_id,"reindex(trips.person_id, df.trip_id)"
+,ptype,"reindex(persons.ptype, person_id)"
+,free_parking_at_work,"reindex(persons.free_parking_at_work,  person_id)"
+,free_parking_available,(tour_type == 'work') & free_parking_at_work
+,number_of_participants,"reindex(tours.number_of_participants, tour_id)"
+,is_indiv,(number_of_participants == 1)
 person has free on-site parking at workplace,freeOnsite,"(free_parking_available)*np.where(is_indiv,1,0)"
 new reimbursement amount,reimburseProportion,0
-tour primary destination,tour_dest,"reindex(tours.destination, df.tour_id)"
-half tour duration,tourDuration,"reindex(tours.duration, df.tour_id)/2"
+tour primary destination,tour_dest,"reindex(tours.destination, tour_id)"
+half tour duration,tourDuration,"reindex(tours.duration, tour_id)/2"
 new daily parking cost with reimbursement,parkingCostDayDollars,"reindex(land_use.exp_daily, tour_dest)"
 new hourly parking cost with reimbursement,parkingCostHourDollars,"reindex(land_use.exp_hourly, tour_dest)"
 new monthly parking cost with reimbursement,parkingCostMonthDollars,"reindex(land_use.exp_monthly, tour_dest)"
-Parking area,parkingConstrainedArea,"np.where(reindex(land_use.parking_type, tour_dest) == 1, 1, 0)"
 daily cost converted to cents,parkingCostDay,parkingCostDayDollars*100
 hourly cost converted to cents,parkingCostHour,parkingCostHourDollars*100
 monthly cost converted to cents,parkingCostMonth,parkingCostMonthDollars*100
-Trip parking cost for full-time workers and university students,_parkingCostBeforeReimb,"df.ptype.isin([1,3]) * is_indiv * np.minimum(parkingCostMonth/22, parkingCostDay)"
-Trip parking cost for full-time workers and university students,_parkingCostBeforeReimb,"df.ptype.isin([1,3]) * is_indiv * np.minimum(_parkingCostBeforeReimb, parkingCostHour * duration_hrs)"
-Trip parking cost for other person types,parkingCostBeforeReimb,"np.where((~df.ptype.isin([1,3]) * is_indiv) | (is_joint), np.minimum(parkingCostDay, parkingCostHour * duration_hrs), _parkingCostBeforeReimb)"
-Reimbursement applies to this tour purpose,reimbursePurpose,"reindex(tours.tour_type, df.tour_id)=='work'"
+Trip parking cost for full-time workers and university students,_parkingCostBeforeReimb,"ptype.isin([1,3]).values * is_indiv * np.minimum(parkingCostMonth/22, parkingCostDay)"
+Trip parking cost for full-time workers and university students,_parkingCostBeforeReimb,"ptype.isin([1,3]).values * is_indiv * np.minimum(_parkingCostBeforeReimb, parkingCostHour * duration_hrs)"
+,is_joint,(number_of_participants > 1)
+Trip parking cost for other person types,parkingCostBeforeReimb,"np.where((~ptype.isin([1,3]).values * is_indiv) | (is_joint), np.minimum(parkingCostDay, parkingCostHour * duration_hrs), _parkingCostBeforeReimb)"
+Reimbursement applies to this tour purpose,reimbursePurpose,tour_type=='work'
 Effective parking cost for free parkers,_parkingCost,"0 * np.where(reimbursePurpose*freeOnsite,1,0)"
 Effective parking cost for reimbursed parkers,_parkingCost,"np.where(is_indiv*reimbursePurpose*(1-freeOnsite), np.maximum((1-reimburseProportion) * parkingCostBeforeReimb, 0),_parkingCost)"
 Effective parking cost,parkingCost,"np.where(is_joint+is_indiv*(1-reimbursePurpose), parkingCostBeforeReimb,_parkingCost)"
-#,,
+# These following two are from AutonomousVehicleAllocationChoice.xls,,
+Maximim benefit for keeping car close (min),AV_maxBenefit,60
+Maximum duration for keeping car close (hrs),AV_maxDuration,1.5
 Slope of benefit calculation,slope, (-1)*(AV_maxBenefit / AV_maxDuration)
+# below taken from parametersByYear.csv,,
+,RemoteParkingCostPerHour,0.81
 #,,
 ,parkingConstrained,"reindex(land_use.parking_type,df.destination)==1"
-#,,
-,coef_rel,coef_ivt*14
-,ClosestRemoteLot_DA_IVT,coef_ivt*v_to_parking_skim['SOV_TR_H_TIME']
-,ClosestRemoteLot_DA_REL,"coef_rel*v_to_parking_skim['SOV_TR_H_REL']/np.maximum(0.1,v_to_parking_skim['SOV_TR_H_DIST'])"
-,ClosestRemoteLot_DA_OC,"coef_cost*(v_to_parking_skim['SOV_TR_H_DIST']*auto_op_cost*autoCPMFactor+v_to_parking_skim['SOV_TR_H_TOLLCOST)"
-,util_ClosestRemoteLot,ClosestRemoteLot_DA_IVT + ClosestRemoteLot_DA_REL + ClosestRemoteLot_DA_OC
-,toHome_DA_IVT,"coef_ivt*v_to_home_skim['SOV_TR_H_TIME']"
-,toHome_DA_REL,"coef_rel*v_to_home_skim['SOV_TR_H_REL']/np.maximum(0.1,v_to_home_skim['SOV_TR_H_DIST'])"
-,toHome_DA_OC,"coef_cost*(v_to_home_skim['SOV_TR_H_DIST']*auto_op_cost*autoCPMFactor+v_to_home_skim['SOV_TR_H_TOLLCOST)"
-,util_toHome,toHome_DA_IVT + toHome_DA_REL + toHome_DA_OC
-,toNext_DA_IVT,"coef_ivt*v_to_next_skim['SOV_TR_H_TIME']"
-,toNext_DA_REL,"coef_rel*v_to_next_skim['SOV_TR_H_REL']/np.maximum(0.1,v_to_next_skim['SOV_TR_H_DIST'])"
-,toNext_DA_OC,"coef_cost*(v_to_next_skim['SOV_TR_H_DIST']*auto_op_cost*autoCPMFactor+v_to_next_skim['SOV_TR_H_TOLLCOST)"
-,util_toNext,toNext_DA_IVT + toNext_DA_REL + toNext_DA_OC
+,v_to_trip_orig1_time,"np.where(df.next_trip_id_1 > 0, v_to_trip_orig1_skim['SOV_TR_H_TIME'], 0)"
+,v_to_trip_orig2_time,"np.where(df.next_trip_id_2 > 0, v_to_trip_orig2_skim['SOV_TR_H_TIME'], 0)"
+,v_to_trip_orig3_time,"np.where(df.next_trip_id_3 > 0, v_to_trip_orig3_skim['SOV_TR_H_TIME'], 0)"
+,v_to_trip_orig1_dist,"np.where(df.next_trip_id_1 > 0, v_to_trip_orig1_skim['SOV_TR_H_DIST'], 0)"
+,v_to_trip_orig2_dist,"np.where(df.next_trip_id_2 > 0, v_to_trip_orig2_skim['SOV_TR_H_DIST'], 0)"
+,v_to_trip_orig3_dist,"np.where(df.next_trip_id_3 > 0, v_to_trip_orig3_skim['SOV_TR_H_DIST'], 0)"
+,v_to_trip_orig1_rel,"np.where(df.next_trip_id_1 > 0, v_to_trip_orig1_skim['SOV_TR_H_REL'], 0)"
+,v_to_trip_orig2_rel,"np.where(df.next_trip_id_2 > 0, v_to_trip_orig2_skim['SOV_TR_H_REL'], 0)"
+,v_to_trip_orig3_rel,"np.where(df.next_trip_id_3 > 0, v_to_trip_orig3_skim['SOV_TR_H_REL'], 0)"
+,v_to_trip_orig1_toll,"np.where(df.next_trip_id_1 > 0, v_to_trip_orig1_skim['SOV_TR_H_TOLLCOST'], 0)"
+,v_to_trip_orig2_toll,"np.where(df.next_trip_id_2 > 0, v_to_trip_orig2_skim['SOV_TR_H_TOLLCOST'], 0)"
+,v_to_trip_orig3_toll,"np.where(df.next_trip_id_3 > 0, v_to_trip_orig3_skim['SOV_TR_H_TOLLCOST'], 0)"

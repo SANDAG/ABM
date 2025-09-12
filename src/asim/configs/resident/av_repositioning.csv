@@ -1,22 +1,31 @@
 Label,Description,Expression,stay_with_person,go_to_parking,go_home,service_next_trip_1,service_next_trip_2,service_next_trip_3
 util_dummy_1,Dummy variable 1,1,1,1,1,1,1,1
 # stay with person utils,,,,,,,,
-util_cost_of_parking,Cost of parking at destination,parking_cost,coef_cost,,,,,
-util_time_stay,Stay- Need car soon,"np.where(duration_hrs<mAV_maxDuration, (-1)*(Av_maxBenefit+duration_hrs*slope), 0)",coef_ivt,,,,,
+util_stay_with_person_avail,Whether auto can park at destination,parkingConstrained,coef_unavailable,,,,,
+util_cost_of_parking,Cost of parking at destination,parkingCost,coef_cost,,,,,
+util_time_stay,Stay- Need car soon,"@np.where(df.duration_hrs < df.AV_maxDuration, (-1)*(df.AV_maxBenefit + (df.duration_hrs*df.slope)), 0)",coef_ivt,,,,,
 # go to parking utils,,,,,,,,
-util_time_go_to_parking,Remote- Need car soon,"np.where(duration_hrs<mAV_maxDuration, (-1)*(Av_maxBenefit+duration_hrs*slope), 0)",,coef_ivt,,,,
-util_remote_available,Remote park - Available for parkarea,(1-parkingConstrained),,coef_unavailable,,,,
-util_remote_cost,Remote park - Cost of parking until departure,duration_hrs*RemoteParkingCostPerHour *100,,coef_cost,,,,
-util_ClosestRemoteLot,Remote park - Utility of travel to parking,util_ClosestRemoteLot,,1,,,,
+util_time_go_to_parking,Remote- Need car soon,"@np.where(df.duration_hrs < df.AV_maxDuration, (-1)*(df.AV_maxBenefit + (df.duration_hrs*df.slope)), 0)",,coef_ivt,,,,
+util_remote_cost,Remote park - Cost of parking until departure,"duration_hrs * RemoteParkingCostPerHour * 100",,coef_cost,,,,
+util_remote_ivt,in vehicle time to remote parking location,@v_to_parking_skim['SOV_TR_H_TIME'],,,,coef_ivt,,
+util_remote_rel,reliability vehicle location to remote parking location,"@v_to_parking_skim['SOV_TR_H_REL'] * 14 / np.maximum(0.1, v_to_parking_skim['SOV_TR_H_DIST'])",,,,coef_ivt,,
+util_remote_auto_cost,auto operating cost from vehicle location to remote parking location,"@(v_to_parking_skim['SOV_TR_H_DIST'] * costPerMile * autoCostPerMileFactorAV) + v_to_parking_skim['SOV_TR_H_TOLLCOST']",,,,coef_cost,,
 # go home utils,,,,,,,,
-util_toNextTrip,Utility f travel to next trip ,util_toNext,,,1,,,
-util_travelhome,Go home - Utility of travel home,util_toHome,,,1,,,
+util_home_ivt,in vehicle time to go home,@v_to_home_skim['SOV_TR_H_TIME'],,,coef_ivt,,,
+util_home_rel,reliability vehicle location to home,"@v_to_home_skim['SOV_TR_H_REL'] * 14 / np.maximum(0.1, v_to_home_skim['SOV_TR_H_DIST'])",,,coef_ivt,,,
+util_home_auto_cost,auto operating cost from vehicle location to home,"@(v_to_home_skim['SOV_TR_H_DIST'] * costPerMile * autoCostPerMileFactorAV) + v_to_home_skim['SOV_TR_H_TOLLCOST']",,,coef_cost,,,
 # service next trip util 1,,,,,,,,
 util_next_trip_available,Unavailable if no next trip,next_trip_id_1 == -1,,,,coef_unavailable,,
-util_time_to_next_trip_destination,Time to next trip destination,next_trip_od1_skim('SOV_TR_H_TIME'),,,,coef_ivt,,
+util_next1_ivt,in vehicle time to next trip 1 origin,v_to_trip_orig1_time,,,,coef_ivt,,
+util_next1_rel,reliability vehicle location to next trip 1 origin,"@df.v_to_trip_orig1_rel * 14 / np.maximum(0.1, df.v_to_trip_orig1_dist)",,,,coef_ivt,,
+util_next1_auto_cost,auto operating cost from vehicle location to next trip 1 origin,"@(df.v_to_trip_orig1_dist * costPerMile * autoCostPerMileFactorAV) + df.v_to_trip_orig1_toll",,,,coef_cost,,
 # service next trip util 2,,,,,,,,
 util_next_trip_available,Unavailable if no next trip,next_trip_id_2 == -1,,,,,coef_unavailable,
-util_time_to_next_trip_origin,Time to next trip origin,v_to_trip_orig2_skim('SOV_TR_H_TIME'),,,,,coef_ivt,
+util_next2_ivt,in vehicle time to next trip 2 origin,v_to_trip_orig2_time,,,,,coef_ivt,
+util_next2_rel,reliability vehicle location to next trip 2 origin,"@df.v_to_trip_orig2_rel * 14 / np.maximum(0.2, df.v_to_trip_orig2_dist)",,,,,coef_ivt,
+util_next2_auto_cost,auto operating cost from vehicle location to next trip 2 origin,"@(df.v_to_trip_orig2_dist * costPerMile * autoCostPerMileFactorAV) + df.v_to_trip_orig2_toll",,,,,coef_cost,
 # service next trip util 3,,,,,,,,
 util_next_trip_available_3,Unavailable if no next trip 3,next_trip_id_3 == -1,,,,,,coef_unavailable
-util_time_to_next_trip_destination_3,Time to next trip destination 3,next_trip_od3_skim('SOV_TR_H_TIME'),,,,,,coef_ivt
+util_next3_ivt,in vehicle time to next trip 3 origin,v_to_trip_orig3_time,,,,,,coef_ivt
+util_next3_rel,reliability vehicle location to next trip 3 origin,"@df.v_to_trip_orig3_rel * 14 / np.maximum(0.3, df.v_to_trip_orig3_dist)",,,,,,coef_ivt
+util_next3_auto_cost,auto operating cost from vehicle location to next trip 3 origin,"@(df.v_to_trip_orig3_dist * costPerMile * autoCostPerMileFactorAV) + df.v_to_trip_orig3_toll",,,,,,coef_cost

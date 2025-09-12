@@ -33,3 +33,5 @@ av_repositioning_preprocessor:
   TABLES:
     - trips
     - land_use
+    - tours
+    - persons
