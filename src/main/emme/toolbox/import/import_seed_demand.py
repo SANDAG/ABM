@@ -176,7 +176,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     matrices_to_write[emme_name] = omx_data + matrices_to_write[emme_name]
         except Exception as error:
             import traceback
-            print (traceback.format_exc())
+            print(traceback.format_exc())
         omx_file_obj.close()
 
         if omx_zones != emme_zones:

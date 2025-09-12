@@ -170,7 +170,7 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
                                      formater(distance), formater(od_aoc), formater(tollcost)]))
                                 f.write("\n")
                         if rounded_demand > 0:
-                            print (period + "_" + name + "_EETRIPS", "rounded_demand", rounded_demand)
+                            print(period + "_" + name + "_EETRIPS", "rounded_demand", rounded_demand)
 
         # EXTERNAL-INTERNAL TRIP TABLE
         name_mapping = [
@@ -213,7 +213,7 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
                                          formater(distance), formater(od_aoc), formater(tollcost)]))
                                     f.write("\n")
                             if rounded_demand > 0:
-                                print (period + "_" + name + "_EI" + purpose, "rounded_demand", rounded_demand)
+                                print(period + "_" + name + "_EI" + purpose, "rounded_demand", rounded_demand)
 
     @_m.logbook_trace("Export total auto and truck demand to OMX")
     def total_demand(self):

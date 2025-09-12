@@ -373,7 +373,7 @@ def log_snapshot(name, namespace, snapshot):
         _m.logbook_snapshot(name=name, comment="", namespace=namespace,
                             value=_json.dumps(snapshot))
     except Exception as error:
-        print (error)
+        print(error)
 
 
 class ExportOMX(object):

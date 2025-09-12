@@ -1014,10 +1014,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         # errors when logged
                         _m.logbook_write("Process run %s report" % name, report.render())
                     except Exception as error:
-                        print (_time.strftime("%Y-%M-%d %H:%m:%S"))
-                        print ("Error writing report '%s' to logbook" % name)
-                        print (error)
-                        print (_traceback.format_exc(error))
+                        print(_time.strftime("%Y-%M-%d %H:%m:%S"))
+                        print("Error writing report '%s' to logbook" % name)
+                        print(error)
+                        print(_traceback.format_exc(error))
                         if self._log_level == "DISABLE_ON_ERROR":
                             _m.logbook_level(_m.LogbookLevel.NONE)
             else:

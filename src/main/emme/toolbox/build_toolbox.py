@@ -88,8 +88,8 @@ class BaseNode(object):
                         title = line.split("=")[1].strip()
                         node.title = title[1:-1]  # exclude first and last quotes
         except Exception as e:
-            print (script_path, namespace)
-            print (type(e), str(e))
+            print(script_path, namespace)
+            print(type(e), str(e))
             return None
         return node
 
@@ -330,31 +330,31 @@ class MTBXDatabase():
 
 
 def build_toolbox(toolbox_file, source_folder, title, namespace, consolidate):
-    print ("------------------------")
-    print (" Build Toolbox Utility")
-    print ("------------------------")
-    print ("")
-    print ("toolbox: %s" % toolbox_file)
-    print ("source folder: %s" % source_folder)
-    print ("title: %s" % title)
-    print ("namespace: %s" % namespace)
-    print ("")
+    print("------------------------")
+    print(" Build Toolbox Utility")
+    print("------------------------")
+    print("")
+    print("toolbox: %s" % toolbox_file)
+    print("source folder: %s" % source_folder)
+    print("title: %s" % title)
+    print("namespace: %s" % namespace)
+    print("")
     
-    print ("Loading toolbox structure")
+    print("Loading toolbox structure")
     tree = ElementTree(namespace, title)
     explore_source_folder(source_folder, tree)
     tree.set_toolbox_order()
-    print ("Done. Found %s elements." % (tree.next_element_id))
+    print("Done. Found %s elements." % (tree.next_element_id))
     if consolidate:
-        print ("Consolidating code...")
+        print("Consolidating code...")
         tree.consolidate()
-        print ("Consolidate done")
+        print("Consolidate done")
     
-    print ("")
-    print ("Building MTBX file...")
+    print("")
+    print("Building MTBX file...")
     mtbx = MTBXDatabase(toolbox_file, title)
     mtbx.populate_tables_from_tree(tree)
-    print ("Build MTBX file done.")
+    print("Build MTBX file done.")
 
 
 def explore_source_folder(root_folder_path, parent_node):
