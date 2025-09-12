@@ -83,12 +83,12 @@ dem_utils = _m.Modeller().module("sandag.utilities.demand")
 
 class TransitSelectAnalysis(_m.Tool(), gen_utils.Snapshot):
 
-    in_vehicle = _m.Attribute(_m.InstanceType)
-    aux_transit = _m.Attribute(_m.InstanceType)
-    initial_boarding = _m.Attribute(_m.InstanceType)
-    transfer_boarding = _m.Attribute(_m.InstanceType)
-    transfer_alighting = _m.Attribute(_m.InstanceType)
-    final_alighting = _m.Attribute(_m.InstanceType)
+    in_vehicle = _m.Attribute(object)
+    aux_transit = _m.Attribute(object)
+    initial_boarding = _m.Attribute(object)
+    transfer_boarding = _m.Attribute(object)
+    transfer_alighting = _m.Attribute(object)
+    final_alighting = _m.Attribute(object)
 
     suffix = _m.Attribute(str)
     threshold = _m.Attribute(int)
@@ -163,7 +163,7 @@ class TransitSelectAnalysis(_m.Tool(), gen_utils.Snapshot):
             "num_processors": num_processors
         }
         with _m.logbook_trace("Transit select analysis %s" % suffix, attributes=attrs):
-            attrs.update(dict((k,v) for k,v in attrs["selection"].iteritems()))
+            attrs.update(dict((k,v) for k,v in attrs["selection"].items()))
             gen_utils.log_snapshot("Transit select analysis", str(self), attrs)
 
             path_analysis = _m.Modeller().tool(
@@ -212,6 +212,6 @@ class TransitSelectAnalysis(_m.Tool(), gen_utils.Snapshot):
                     spec["results_from_retained_paths"] = results_from_retained_paths
                     path_analysis(spec, class_name=class_name, scenario=scenario, num_processors=num_processors)
 
-    @_m.method(return_type=unicode)
+    @_m.method(return_type=str)
     def tool_run_msg_status(self):
         return self.tool_run_msg

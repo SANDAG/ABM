@@ -76,7 +76,7 @@ Export traffic flow to Excel files for base year validation."""
 
     def __call__(self, main_directory, traffic_emmebank, base_scenario_id):
     #def __call__(self, main_directory, traffic_emmebank, transit_emmebank, base_scenario_id):
-        print "in validation module"
+        print("in validation module")
         attrs = {
             "main_directory": main_directory,
             "traffic_emmebank": str(traffic_emmebank),
@@ -105,7 +105,7 @@ Export traffic flow to Excel files for base year validation."""
         
         #-------export tranffic data--------
         dfHwycov = pd.read_excel(source_file, sheetname='raw', usecols ="A")
-        for p, scen_id in period_scenario_ids.iteritems():
+        for p, scen_id in period_scenario_ids.items():
             base_scenario = traffic_emmebank.scenario(scen_id)
             
             #create and calculate @trk_non_pce
@@ -157,7 +157,7 @@ Export traffic flow to Excel files for base year validation."""
         #     if "transit" in database.name():
         #         database.open()
         #         break
-        for p, scen_id in period_scenario_ids.iteritems():
+        for p, scen_id in period_scenario_ids.items():
             try:
                 data_explorer.add_database(os.path.join(main_directory, "emme_project", "Database_transit_" + p, "emmebank"))
             except:
@@ -240,7 +240,7 @@ Export traffic flow to Excel files for base year validation."""
                 elif key == "BN":
                     values.append(link.j_node.id)
                 elif key.startswith("BA"):
-                    print "line 148 key, att", key, att
+                    print("line 148 key, att", key, att)
                     name, default = att
                     if reverse_link and (abs(link["@tcov_id"]) == abs(reverse_link["@tcov_id"])):
                         values.append(format(reverse_link[name]))
@@ -262,7 +262,7 @@ Export traffic flow to Excel files for base year validation."""
         df = pd.DataFrame(columns=['TCOVID', period + "_Flow"])
         dftr = pd.DataFrame(columns=['TCOVID', period + "_TruckFlow"])
         dfsp = pd.DataFrame(columns=['TCOVID', period + "_Speed"])
-        print "scen_id", scen_id
+        print("scen_id", scen_id)
         auto_mode = network.mode("d")
         scenario = traffic_emmebank.scenario(scen_id)
         links = [l for l in network.links() if  (auto_mode in l.modes or (l.reverse_link and auto_mode in l.reverse_link.modes))]
@@ -295,6 +295,6 @@ Export traffic flow to Excel files for base year validation."""
         transit_filepath = os.path.join(export_path, "transit_"+ p +".csv")
         transit_data.export_to_csv(transit_filepath, separator=",")
 
-    @_m.method(return_type=unicode)
+    @_m.method(return_type=str)
     def tool_run_msg_status(self):
         return self.tool_run_msg
