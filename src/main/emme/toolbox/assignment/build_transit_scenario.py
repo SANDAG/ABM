@@ -398,7 +398,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 })
             except Exception as error:
                 new_message = "Timed transfer[%s]: %s" % (i, error)
-                raise type(error)(type(error)(new_message)).with_traceback(sys.exc_info()[2])
+                raise type(error)(new_message).with_traceback(sys.exc_info()[2])
 
         # If there is only one transfer at the location (redundant case)
         # OR all transfers are from the same line (can have different waits)
