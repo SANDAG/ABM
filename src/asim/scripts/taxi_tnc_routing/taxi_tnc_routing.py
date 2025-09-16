@@ -16,6 +16,7 @@ def read_input_data(input_folder, skim_core):
     # Convert the data to a pandas DataFrame
     cols = ["trip_id", "trip_mode", "depart", "origin", "destination"]
     # trips = pd.read_csv(os.path.join(input_folder, "final_trips.csv"), usecols=cols)
+    # trips['trip_mode'] = 'TNC_SHARED'
     # reading subset for faster I/O
     trips = pd.read_csv(os.path.join(input_folder, "final_tnc_trips.csv"), usecols=cols)
     trips = trips[trips.trip_mode.isin(["TAXI", "TNC_SINGLE", "TNC_SHARED"])]
@@ -33,6 +34,9 @@ def determine_time_bin(trips, bin_size):
     # Create a new column for the time bin
     # Convert departure time to mins, sampling within the half hour
     # Then bin into the bin size (supplied in mins)
+
+    # FIXME set random seed in settings
+    np.random.seed(42)
     trips["time_in_mins"] = trips["depart"] * 30 + np.random.randint(
         0, 30, size=len(trips)
     )
@@ -64,7 +68,7 @@ def determine_potential_trip_pairs(trips, skim_data, pooling_buffer=10):
     np.fill_diagonal(pair_ok, False)
     ii, jj = np.where(np.triu(pair_ok, k=1))
     print(
-        f"\tFound {len(ii)} potential trip pairs from {len(trips)} trips or {(len(trips) **2)/ len(ii)}% of n**2"
+        f"\tFound {len(ii)} potential trip pairs from {len(trips)} trips or {(len(ii) / (len(trips) **2)) * 100:.2f}% of n**2"
     )
 
     trip_pairs = pd.DataFrame(
@@ -125,6 +129,7 @@ def determine_detour_times(trip_pairs, skim_data, max_detour=15):
     d4_i = t4 - i_direct
     d4_j = t4 - j_direct
 
+    # checking detour times against max detour time
     v1 = (d1_i <= max_detour) & (d1_j <= max_detour)
     v2 = (d2_i <= max_detour) & (d2_j <= max_detour)
     v3 = (d3_i <= max_detour) & (d3_j <= max_detour)
@@ -180,9 +185,7 @@ def determine_detour_times(trip_pairs, skim_data, max_detour=15):
 
 def select_mutual_best_recursive(trip_pairs: pd.DataFrame) -> pd.DataFrame:
     # start from valid pairs only, keep only needed cols for speed
-    pairs = trip_pairs.loc[
-        trip_pairs["valid"], ["trip_i", "trip_j", "total_detour"]
-    ].copy()
+    pairs = trip_pairs[["trip_i", "trip_j", "total_detour"]].copy()
     if pairs.empty:
         return trip_pairs.iloc[0:0].copy()
 
@@ -304,29 +307,246 @@ def create_full_trip_route_table(tnc_trips, trips_routed, skim_data):
         f"\tAdded {single_trips.shape[0]} single trips for a total of {full_trip_routes.shape[0]} episodes."
     )
 
+    assert full_trip_routes.trip_i.is_unique, "Trip IDs are not unique"
+
     return full_trip_routes
 
 
-def create_vehicle_trips(vehicle_trips, full_trip_routes):
+def create_new_vehicles(vehicles, trips_to_service, trip_to_veh_map):
+    idx_start_num = 0 if vehicles.empty else vehicles.index.max()
+
+    new_vehs = pd.DataFrame(
+        data={
+            "location_skim_idx": trips_to_service.origin_skim_idx.values,
+            "is_free": False,
+            "last_refuel_time": -1,
+            "next_time_free": np.nan,
+        },
+        index=idx_start_num + np.arange(1, len(trips_to_service) + 1),
+    )
+    new_vehs.index.name = "vehicle_id"
+
+    # updating the trip to vehicle mapping with the newly created vehicles
+    trip_to_veh_map.loc[trips_to_service.trip_i] = new_vehs.index.values
+
+    if vehicles.empty:
+        vehicles = new_vehs
+    else:
+        vehicles = pd.concat([vehicles, new_vehs], ignore_index=False)
+
+    return vehicles, trip_to_veh_map
+
+
+def match_vehicles_to_trips(vehicles, full_trip_routes, skim_data):
+
+    free_vehicles = vehicles[vehicles.is_free].copy()
+    unserviced_trips = full_trip_routes.copy()
+
+    trip_to_veh_map = pd.Series(
+        name="vehicle_id", index=unserviced_trips.trip_i, dtype=vehicles.index.dtype
+    )
+
+    # loop until all available vehicles are assigned or there are no more unserviced trips
+    while not (free_vehicles.empty or unserviced_trips.empty):
+
+        veh_locations = free_vehicles.location_skim_idx.to_numpy()
+        trip_origins = unserviced_trips.origin_skim_idx.to_numpy()
+
+        # find skim times between trip origins and all veh locations
+        skim_times = skim_data[trip_origins[:, None], veh_locations]
+
+        # grab the minimum time for each trip and vehicle
+        min_times = skim_times.min(axis=1)
+
+        # if multiple trips match to the same vehicle, take the one with the smallest time
+        closest_vehicles = free_vehicles.index[np.argmin(skim_times, axis=1)]
+
+        # map trips to their closest vehicles
+        trip_to_veh_map.loc[unserviced_trips.trip_i] = closest_vehicles
+
+        # trips with a min wait time larger than the maximum allowed are removed from pool
+        # ties are given to the first trip as given by trip_id
+        time_gt_max_wait = min_times > 15
+        trip_to_veh_map.loc[unserviced_trips.trip_i[time_gt_max_wait]] = np.nan
+        ties_mask = trip_to_veh_map.duplicated(keep="first") & trip_to_veh_map.notna()
+        trip_to_veh_map.loc[ties_mask] = np.nan
+
+        # remove matched trips and vehicles from the pools or trips that have no vehs within the max wait time
+        serviced_trips = trip_to_veh_map[trip_to_veh_map.notna()]
+        unserviced_trips = unserviced_trips[
+            ~(unserviced_trips.trip_i.isin(serviced_trips.index) | time_gt_max_wait)
+        ]
+        free_vehicles = free_vehicles[~free_vehicles.index.isin(serviced_trips.values)]
+
+    if trip_to_veh_map.isna().any():
+        # create new vehicles for those still unmatched
+        # trips without match
+        unserviced_mask = full_trip_routes.trip_i.isin(
+            trip_to_veh_map.index[trip_to_veh_map.isna()]
+        )
+        trips_still_needing_service = full_trip_routes[unserviced_mask]
+        vehicles, trip_to_veh_map = create_new_vehicles(
+            vehicles, trips_still_needing_service, trip_to_veh_map
+        )
+
+    assert (
+        not trip_to_veh_map.isna().any()
+    ), f"Some trips were not matched to vehicles {trip_to_veh_map[trip_to_veh_map.isna()]}"
+
+    # return a mapping of trips.trip_i to vehicles.vehicle_id
+    # trips that were not matched will have an NaN vehicle_id
+    return vehicles, trip_to_veh_map
+
+
+def create_vehicle_trips(full_trip_routes, vehicles, trip_to_veh_map, skim_data):
     # Create vehicle trips from the full trip routes
+
+    # first turning full_trip_routes into a list of stops
+    pickup = full_trip_routes[["trip_i", "trip_j", "origin_skim_idx"]].rename(
+        columns={"origin_skim_idx": "destination_skim_idx"}
+    )
+    # creating a temporary trip num because not all vehicles will have stops
+    pickup["tmp_trip_num"] = 1
+    stop_1 = full_trip_routes.loc[
+        full_trip_routes.stop1_skim_idx > 0, ["trip_i", "trip_j", "stop1_skim_idx"]
+    ].rename(columns={"stop1_skim_idx": "destination_skim_idx"})
+    stop_1["tmp_trip_num"] = 2
+    stop_2 = full_trip_routes.loc[
+        full_trip_routes.stop2_skim_idx > 0, ["trip_i", "trip_j", "stop2_skim_idx"]
+    ].rename(columns={"stop2_skim_idx": "destination_skim_idx"})
+    stop_2["tmp_trip_num"] = 3
+    drop_off = full_trip_routes[["trip_i", "trip_j", "destination_skim_idx"]].rename(
+        columns={"destination_skim_idx": "destination_skim_idx"}
+    )
+    drop_off["tmp_trip_num"] = 4
+
+    new_v_trips = pd.concat([pickup, stop_1, stop_2, drop_off])
+
+    new_v_trips["vehicle_id"] = new_v_trips["trip_i"].map(trip_to_veh_map).astype(int)
+
+    # ensure ordering before deriving origins
+    new_v_trips.sort_values(
+        ["vehicle_id", "tmp_trip_num"], inplace=True, ignore_index=True
+    )
+
+    new_v_trips["origin_skim_idx"] = pd.NA
+
+    # first leg origin = vehicle current location
+    first_leg_mask = new_v_trips.tmp_trip_num == 1
+    new_v_trips.loc[first_leg_mask, "origin_skim_idx"] = new_v_trips.loc[
+        first_leg_mask, "vehicle_id"
+    ].map(vehicles.location_skim_idx)
+
+    # subsequent leg origin = previous leg destination (shift(1), not shift(-1))
+    prev_destinations = new_v_trips.groupby("vehicle_id")["destination_skim_idx"].shift(
+        1
+    )
+    new_v_trips.loc[~first_leg_mask, "origin_skim_idx"] = prev_destinations[
+        ~first_leg_mask
+    ]
+
+    assert (
+        not new_v_trips.origin_skim_idx.isna().any()
+    ), f"Some vehicle trips do not have an origin skim index: {new_v_trips[new_v_trips.origin_skim_idx.isna()]}"
+    assert (
+        not new_v_trips.destination_skim_idx.isna().any()
+    ), f"Some vehicle trips do not have a destination skim index: {new_v_trips[new_v_trips.destination_skim_idx.isna()]}"
+
+    new_v_trips["origin_skim_idx"] = new_v_trips.origin_skim_idx.astype(int)
+    new_v_trips["destination_skim_idx"] = new_v_trips.destination_skim_idx.astype(int)
+
+    # TODO fix trip_i and trip_j labels based on route scenario
+
+    # determine time bin of each trip
+    new_v_trips["OD_time"] = skim_data[
+        new_v_trips.origin_skim_idx.to_numpy(),
+        new_v_trips.destination_skim_idx.to_numpy(),
+    ]
+    new_v_trips["cumulative_trip_time"] = new_v_trips.groupby("vehicle_id")[
+        "OD_time"
+    ].cumsum()
+    new_v_trips["depart_bin"] = (
+        full_trip_routes.time_bin.mode()[0]
+        + (new_v_trips["cumulative_trip_time"] - new_v_trips["OD_time"]) // 15
+    )
+    new_v_trips["arrival_bin"] = full_trip_routes.time_bin.mode()[0] + (
+        new_v_trips["cumulative_trip_time"] // 15
+    )
+
+    assert (
+        new_v_trips.depart_bin <= new_v_trips.arrival_bin
+    ).all(), f"Departure bin must be less than or equal to arrival bin {new_v_trips[new_v_trips.depart_bin > new_v_trips.arrival_bin]}"
+
+    return new_v_trips
+
+
+def update_vehicle_fleet(vehicles, vehicle_trips, time_bin):
+    # update the next_time_free based on the vehicle trips
+    next_time_free_update = (
+        vehicle_trips.groupby("vehicle_id").arrival_bin.max() + 1
+    )  # +1 rouding up to account for dropoff time
+    vehicles.loc[next_time_free_update.index, "next_time_free"] = next_time_free_update
+    # +1 on time bin since we are calculating the availaibility for the next time bin
+    vehicles["is_free"] = np.where(
+        (time_bin + 1 >= vehicles.next_time_free), True, False
+    )
+
+    # also want to update the vehicle location
+    final_veh_location = vehicle_trips.groupby("vehicle_id").destination_skim_idx.last()
+    vehicles.loc[final_veh_location.index, "location_skim_idx"] = final_veh_location
+
+    return vehicles
+
+
+def summarize_tnc_trips(tnc_veh_trips, tnc_trips, vehicles):
+
+    # Summary statistics for TNC vehicle trips
+    print("TNC Vehicle Trips Summary:")
+    print(f"Total TNC Vehicle Trips: {len(tnc_veh_trips)}")
+    print(f"Total TNC Trips: {len(tnc_trips)}")
+    print(f"Total Vehicles: {len(vehicles)}")
+    print(f"Vehicles to TNC Trips Ratio: {(len(vehicles) / len(tnc_trips)):.2f}")
+    print(
+        f"Average number of stops per vehicle: {(tnc_veh_trips.groupby('vehicle_id').size().mean()):.2f}"
+    )
+    print(
+        f"Average time for vehicle to get to trip origin: {tnc_veh_trips[tnc_veh_trips.tmp_trip_num == 1].OD_time.mean():.2f}"
+    )
+
+    # also performing consistency checks on the outputs
+    assert (
+        tnc_trips.trip_id.isin(tnc_veh_trips.trip_i)
+        | tnc_trips.trip_id.isin(tnc_veh_trips.trip_j)
+    ).all(), "Some trip IDs were not serviced by any vehicle trips"
+    assert vehicles.index.isin(
+        tnc_veh_trips.vehicle_id
+    ).all(), "Some vehicle were created but do not serve any trips"
+    assert (
+        tnc_veh_trips.groupby("vehicle_id").size() >= 2
+    ).all(), "Some vehicles do not have at least 2 trips"
+
     pass
-    return vehicle_trips
 
 
 def route_taxi_tncs():
-    tnc_trips, skim, mapping = read_input_data(input_folder, "SOV_TR_H_TIME__AM")
+    tnc_trips, skim, skim_zone_mapping = read_input_data(
+        input_folder, "SOV_TR_H_TIME__AM"
+    )
 
     skim_data = np.array(skim)
 
     tnc_trips = determine_time_bin(tnc_trips, bin_size=15)
 
-    vehicle_trips = pd.DataFrame(
-        columns=["vehicle_id", "origin", "destination", "time_bin", "trip_i", "trip_j"]
+    vehicles = pd.DataFrame(
+        columns=["location_skim_idx", "is_free", "next_time_free", "last_refuel_time"]
     )
+    vehicles.index.name = "vehicle_id"
 
-    for _, tnc_trips_i in tnc_trips.groupby("time_bin"):
+    veh_trips = []
+
+    for time_bin, tnc_trips_i in tnc_trips.groupby("time_bin"):
         print(
-            f"Processing time bin {tnc_trips_i['time_bin'].iloc[0]} with {len(tnc_trips_i)} taxi / tnc trips:"
+            f"Processing time bin {time_bin} with {len(tnc_trips_i)} taxi / tnc trips:"
         )
         trip_pairs = determine_potential_trip_pairs(
             tnc_trips_i.copy(), skim_data, pooling_buffer=10
@@ -341,18 +561,31 @@ def route_taxi_tncs():
         full_trip_routes = create_full_trip_route_table(
             tnc_trips_i, shared_trips_routed, skim_data
         )
+        full_trip_routes["time_bin"] = time_bin
 
-        vehicle_trips = create_vehicle_trips(vehicle_trips, full_trip_routes)
+        vehicles, trip_to_veh_map = match_vehicles_to_trips(
+            vehicles, full_trip_routes, skim_data
+        )
 
-    return vehicle_trips
+        vehicle_trips_i = create_vehicle_trips(
+            full_trip_routes, vehicles, trip_to_veh_map, skim_data
+        )
+        veh_trips.append(vehicle_trips_i)
+
+        vehicles = update_vehicle_fleet(vehicles, vehicle_trips_i, time_bin)
+
+    tnc_veh_trips = pd.concat(veh_trips)
+
+    summarize_tnc_trips(tnc_veh_trips, tnc_trips, vehicles)
+
+    return tnc_veh_trips
 
 
 if __name__ == "__main__":
     start_time = time.time()
 
-    vehicle_trips = route_taxi_tncs()
-    print(f"Created {len(vehicle_trips)} vehicle trips.")
-    
-    end_time = time.time()
-    elapsed_time = end_time - start_time
+    tnc_veh_trips = route_taxi_tncs()
+    print(f"Created {len(tnc_veh_trips)} vehicle trips.")
+
+    elapsed_time = time.time() - start_time
     print(f"Time to complete: {elapsed_time:.2f} seconds")
