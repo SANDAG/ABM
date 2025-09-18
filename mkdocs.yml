@@ -70,7 +70,9 @@ nav:
     - Report: design/report/report.md
   - Installing and Running: running.md
   - Model Inputs and Outputs: 
-    - Inputs: inputs.md
+    - Inputs:
+        - Overview: inputs.md
+        - Networks: networks.md
     - Outputs: outputs.md
     - Reports: reports.md
   - Applying ABM3: 
