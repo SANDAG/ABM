@@ -151,7 +151,6 @@ def build_av_to_trip_interaction_df(
     trips: pd.DataFrame,
     alts: pd.DataFrame,
     choosers: pd.DataFrame,
-    trace_label: str,
 ):
     """
     Creating a table that matches a single av trip with a single trip.
@@ -172,74 +171,69 @@ def build_av_to_trip_interaction_df(
         trips: DataFrame containing trip information.
         alts: DataFrame containing alternatives (AV-trip combinations).
         choosers: DataFrame containing choosers (households).
-        trace_label: Label for tracing the interaction DataFrame.
 
     Returns:
         interaction_df: DataFrame containing the interaction between AVs and trips.
     """
 
-    interaction_dfs = []
-    # looping through alternatives to build custom interaction_df
-    for row in alts.iterrows():
-        for col in alts.columns:
-            av_number = int(
-                col.split("_")[1]
-            )  # Extract the AV number from the column name
-            trip_number = int(
-                row[1][col].split("_")[1]
-            )  # Extract the trip number from row
+    # Long form alternatives: one row per (alt, av_number) mapping to trip_number
+    alts_long = alts.reset_index().melt(
+        id_vars="alt", var_name="av_col", value_name="trip_token"
+    )
+    # Extract integers
+    alts_long["av_number"] = alts_long["av_col"].str.split("_").str[1].astype(int)
+    alts_long["trip_number"] = alts_long["trip_token"].str.split("_").str[1].astype(int)
 
-            av_choosers = vehicles[
-                vehicles.household_id.isin(trips.household_id.unique())
-                & (vehicles.av_number == av_number)
-            ]
-            trip_choosers = trips[trips.trip_number == trip_number]
+    alts_long = alts_long[["alt", "av_number", "trip_number"]].sort_values(
+        ["alt", "av_number"]
+    )
+    alt_rows = len(alts_long)
 
-            assert (
-                av_choosers.household_id.is_unique
-            ), "There should be only one AV chooser per household at this stage"
-            assert (
-                trip_choosers.household_id.is_unique
-            ), "There should be only one trip chooser per household at this stage"
+    # Cartesian product households x alts_long
+    hh_ids = choosers.index.to_numpy()
+    n_hh = len(hh_ids)
 
-            # want a complete set of household_ids for both choosers
-            # reindex to save trip / vehicle ID and then reindex to households which are making the choices
-            av_choosers = (
-                av_choosers.reset_index()
-                .set_index("household_id")
-                .reindex(choosers.index, fill_value=np.nan)
-            )
-            trip_choosers = (
-                trip_choosers.reset_index()
-                .set_index("household_id")
-                .reindex(choosers.index, fill_value=np.nan)
-            )
+    base = pd.DataFrame(
+        {
+            "household_id": np.repeat(hh_ids, alt_rows),
+            "alt": np.tile(alts_long["alt"].to_numpy(), n_hh),
+            "av_number": np.tile(alts_long["av_number"].to_numpy(), n_hh),
+            "trip_number": np.tile(alts_long["trip_number"].to_numpy(), n_hh),
+        }
+    )
 
-            # setting alt trip and av numbers so we can use them in spec availability conditions
-            av_choosers["av_number"] = av_number
-            trip_choosers["trip_number"] = trip_number
+    # Fast lookups for vehicle and trip attributes using MultiIndex reindex
+    veh_lookup = vehicles.reset_index(drop=False).set_index(
+        ["household_id", "av_number"]
+    )
+    trip_lookup = trips.reset_index(drop=False).set_index(
+        ["household_id", "trip_number"]
+    )
 
-            # merge the tables together to create a table with columns describing the AV and the trip
-            interaction_df = pd.merge(
-                av_choosers,
-                trip_choosers,
-                on="household_id",
-                suffixes=("", "_trip"),
-            )
-            interaction_df["alt"] = row[0]
+    veh_mi = pd.MultiIndex.from_arrays(
+        [base["household_id"].to_numpy(), base["av_number"].to_numpy()],
+        names=["household_id", "av_number"],
+    )
+    trip_mi = pd.MultiIndex.from_arrays(
+        [base["household_id"].to_numpy(), base["trip_number"].to_numpy()],
+        names=["household_id", "trip_number"],
+    )
 
-            interaction_dfs.append(
-                interaction_df
-            )  # Assign the alternative index to the interaction_df
+    veh_block = veh_lookup.reindex(veh_mi).reset_index(drop=True)
+    trip_block = trip_lookup.reindex(trip_mi).reset_index(drop=True)
+    trip_block.columns = [
+        col + "_trip" if col in veh_block.columns else col for col in trip_block.columns
+    ]
 
-    # Concatenate all interaction DataFrames into a single DataFrame
-    # and sort by household_id and alt
-    interaction_df = pd.concat(interaction_dfs, ignore_index=False).reset_index()
-    interaction_df.sort_values(by=["household_id", "alt"], inplace=True)
+    # Concatenate
+    interaction_df = pd.concat([base, veh_block, trip_block], axis=1)
 
+    # Integrity check: rows per hh should equal alts.shape[0] * alts.shape[1]
+    expected = alts.shape[0] * alts.shape[1]
+    counts = interaction_df.groupby("household_id").size()
     assert (
-        interaction_df.groupby("household_id").size() == (alts.shape[0] * alts.shape[1])
-    ).all(), "There should be one row per AV and trip combination per household"
+        counts == expected
+    ).all(), f"Row count mismatch (expected {expected} per household)."
 
     return interaction_df
 
@@ -255,6 +249,10 @@ def execute_av_trip_matches(
     """
     Execute the AV trip matches by updating the vehicles DataFrame with the chosen trips.
     This function updates the vehicles DataFrame based on the choices made by the AV routing model.
+
+    If two trips exist on the same tour in this time period, both trips are serviced by the AV.
+    If the AV is not at the origin, an additional repositioning trip is added from the vehicle
+    location to the trip origin.
 
     Parameters:
         state: The current state of the simulation.
@@ -298,6 +296,8 @@ def execute_av_trip_matches(
             validate="1:1",
         )
         # merge trip information so we know where the vehicle is going
+        # will include any additional trips in the tour during this time period
+        # because the trip_number is the same across those trips in trips_in_period
         current_veh_trips = current_veh_trips.merge(
             trips_in_period.reset_index()[
                 [
@@ -311,12 +311,45 @@ def execute_av_trip_matches(
             ],
             on=["household_id", "trip_number"],
             how="left",
-            validate="1:1",
+            validate="1:m",
         )
 
         all_veh_trips.append(current_veh_trips)
 
     all_veh_trips = pd.concat(all_veh_trips, ignore_index=True)
+    all_veh_trips["is_deadhead"] = False
+
+    # add trip to table if the AV is not at the trip origin!
+    first_veh_trip = all_veh_trips.drop_duplicates("vehicle_id")
+    veh_locations = av_vehicles.loc[first_veh_trip.vehicle_id, "veh_location"]
+    additional_reposition_trips = first_veh_trip[
+        first_veh_trip["origin"] != veh_locations.values
+    ]
+
+    if not additional_reposition_trips.empty:
+        assert (
+            additional_reposition_trips.vehicle_id.is_unique
+        ), "Each vehicle should only need one repositioning trip"
+        # destination of the repositioning trip is the origin of the first vehicle trip for this time period
+        additional_reposition_trips["destination"] = additional_reposition_trips[
+            "origin"
+        ]
+        additional_reposition_trips["origin"] = av_vehicles.loc[
+            additional_reposition_trips.vehicle_id, "veh_location"
+        ].values
+        additional_reposition_trips[["trip_number", "av_number", "trip_id"]] = pd.NA
+        additional_reposition_trips["is_deadhead"] = True
+
+        # merge in the repositioning trips
+        all_veh_trips = pd.concat(
+            [additional_reposition_trips, all_veh_trips], ignore_index=True
+        )
+        # sort by vehicle_id will put these new trips at the start
+        all_veh_trips.sort_values(
+            by=["vehicle_id", "depart"], inplace=True, ignore_index=True
+        )
+
+    # add new trips to existing vehicle trip table
     if vehicle_trips is not None:
         vehicle_trips = pd.concat([vehicle_trips, all_veh_trips], ignore_index=True)
     else:
@@ -325,8 +358,6 @@ def execute_av_trip_matches(
     assert (
         all_veh_trips.vehicle_id.notna().all()
     ), "There should be a vehicle_id for each trip made by an AV"
-
-    # FIXME add trip to table if the AV is not at the trip origin!
 
     return vehicle_trips
 
@@ -390,7 +421,6 @@ def av_trip_matching(
         trips=trips,
         alts=alts,
         choosers=choosers,
-        trace_label=trace_label,
     )
     have_trace_targets = state.tracing.has_trace_targets(
         interaction_df, slicer="household_id"
@@ -973,14 +1003,23 @@ def av_routing(
         if trips_in_period.empty:
             continue
 
-        trips_in_period["trip_number"] = (
-            trips_in_period.groupby("household_id").cumcount() + 1
+        # keep only the first trip in a tour during this time period
+        # if selected, all trips in the tour will be serviced by the same av vehicle
+        trips_per_tour = trips_in_period.groupby("tour_id").cumcount() + 1
+        first_trips_in_period = trips_in_period[trips_per_tour == 1]
+
+        first_trips_in_period["trip_number"] = (
+            first_trips_in_period.groupby("household_id").cumcount() + 1
+        )
+        # merging duplicate trip numbers back to trips_in_period to be used in executing_av_trip_matches
+        trips_in_period["trip_number"] = trips_in_period.tour_id.map(
+            first_trips_in_period.set_index("tour_id")["trip_number"]
         )
 
         choices = av_trip_matching(
             state,
             model_settings,
-            trips=trips_in_period,
+            trips=first_trips_in_period,
             vehicles=av_vehicles,
             trace_label=tracing.extend_trace_label(
                 period_trace_label, "av_trip_matching"
@@ -1012,6 +1051,9 @@ def av_routing(
 
     # create one table of all vehicle trips and add to pipeline
     av_vehicle_trips = pd.concat(all_veh_trips, ignore_index=True)
-    av_vehicle_trips['av_vehicle_trip_id'] = av_vehicle_trips.vehicle_id * 100 + av_vehicle_trips.groupby('vehicle_id').cumcount()
-    av_vehicle_trips.set_index('av_vehicle_trip_id', inplace=True)
+    av_vehicle_trips["av_vehicle_trip_id"] = (
+        av_vehicle_trips.vehicle_id * 100
+        + av_vehicle_trips.groupby("vehicle_id").cumcount()
+    )
+    av_vehicle_trips.set_index("av_vehicle_trip_id", inplace=True)
     state.add_table("av_vehicle_trips", av_vehicle_trips)
