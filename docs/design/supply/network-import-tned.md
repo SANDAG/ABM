@@ -6,6 +6,8 @@ This section describes the procedure by which the ABM3 model system imports (int
 
 The ABM3 model system has been configured to be compatible with SANDAG's Transportation Network Editing Database (TNED) system, which is utilized to edit, maintain and generate transportation networks. The TNED network files, generated via an ETL (i.e., Extract, Tranform, Load) procedure, serve as inputs to the ABM3 model system's import network procedure and are produced in text file, shapefile, geodatabase table and geodatabase feature class geodatabase formats. There are, additionally, some non-TNED input network files which are manually maintained.
 
+For more details on the ABM3 input networks, refer to the [Networks](../../networks.md) page. 
+
 The following are the required network files used during the Emme import network procedure:
 
 | **File**                       | **Source**          | **Description**                                                                              |
