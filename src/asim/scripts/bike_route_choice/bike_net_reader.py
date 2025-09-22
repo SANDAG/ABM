@@ -55,6 +55,7 @@ def create_and_attribute_edges(
                 "Func_Class": "functionalClass",
                 "Bike2Sep": "cycleTrack",
                 "Bike3Blvd": "bikeBlvd",
+                "SPEED":"speedLimit",
             }
         )
         .copy()
@@ -75,6 +76,7 @@ def create_and_attribute_edges(
                 "bikeBlvd",
                 "distance",
                 "gain",
+                "speedLimit",
                 "geometry",
             ]
         ]
@@ -92,6 +94,7 @@ def create_and_attribute_edges(
                 "Func_Class": "functionalClass",
                 "Bike2Sep": "cycleTrack",
                 "Bike3Blvd": "bikeBlvd",
+                "SPEED":"speedLimit",
             }
         )
         .copy()
@@ -113,6 +116,7 @@ def create_and_attribute_edges(
                 "bikeBlvd",
                 "distance",
                 "gain",
+                "speedLimit",
                 "geometry",
             ]
         ]
