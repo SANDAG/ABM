@@ -1,0 +1,29 @@
+# path to activitysim output folder with trip data
+asim_output_dir: C:\Users\david.hensle\OneDrive - Resource Systems Group, Inc\Documents\projects\sandag\AV_TNC_models\tnc_data\full
+
+# path to folder with skim data
+skim_dir: C:\Users\david.hensle\OneDrive - Resource Systems Group, Inc\Documents\projects\sandag\AV_TNC_models\tnc_data\full
+# name of skim matrix in OMX file minus time period suffix
+skim_core: SOV_TR_H_TIME__AM
+# time periods to process, should match network_los.yaml settings
+skim_periods: ['EA', 'AM', 'MD', 'PM', 'EV']  
+periods: [0, 6, 12, 25, 32, 48]
+
+# output folder for results
+output_dir: C:\Users\david.hensle\OneDrive - Resource Systems Group, Inc\Documents\projects\sandag\AV_TNC_models\tnc_outputs\full
+
+# modes for shared and single occupancy TNC / taxi trips
+shared_tnc_modes: ['TNC_SHARED']
+single_tnc_modes: ['TNC_SINGLE', 'TAXI']
+
+# simulation time bin size (in mins)
+# determines how far apart trips in time can be to be considered for pooling
+time_bin_size: 10
+
+# buffer size comparing origins and destinations for potential pooling (in mins)
+pooling_buffer: 10
+# maximum allowed detour time for pooled trips (in mins)
+max_detour: 15
+
+# numpy random seed for reproducibility
+random_seed: 42
