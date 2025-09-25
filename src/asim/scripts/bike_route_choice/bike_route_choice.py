@@ -1,4 +1,4 @@
-import sys
+import sys, os
 import numpy as np
 import pandas as pd
 import geopandas as gpd
@@ -15,11 +15,8 @@ from bike_route_utilities import BikeRouteChoiceSettings, load_settings, read_fi
 
 import time
 
-# Set up logging
-logger = logging.getLogger(__name__)
 
-
-def process_paths_new(centroids, predecessors):
+def process_paths_new(centroids, predecessors, logger):
     """
     Converts the predecessors array from Dijkstra's algorithm into paths.
 
@@ -85,6 +82,7 @@ def calculate_final_logsums_batch_traversals(
     all_paths_from_edge,
     all_paths_to_edge,
     all_paths_iteration,
+    logger,
     trace_origins=[],
     trace_dests=[],
 ):
@@ -434,7 +432,7 @@ def calculate_final_logsums_batch_traversals(
         )
 
 
-def _perform_dijkstra(centroids, adjacency_matrix, limit=3):
+def _perform_dijkstra(centroids, adjacency_matrix, logger, limit=3):
     """Perform Dijkstra's algorithm for a batch of centroids."""
     logger.info(
         f"Processing Dijkstra's on {len(centroids)} centroids with limit={limit}..."
@@ -451,7 +449,7 @@ def _perform_dijkstra(centroids, adjacency_matrix, limit=3):
 
 
 def perform_dijkstras_algorithm_batch_traversals(
-    edges, traversals, origin_centroids, limit
+    edges, traversals, origin_centroids, limit, logger
 ):
     """Perform Dijkstra's algorithm for centroids using SciPy's sparse graph solver with batched parallel processing."""
     num_edges = len(edges)
@@ -498,7 +496,7 @@ def perform_dijkstras_algorithm_batch_traversals(
     logger.info(f"Need to calculate Dijkstra's on {len(origin_centroids)} centroids")
 
     # Perform Dijkstra's algorithm for all centroids
-    shortest_paths = _perform_dijkstra(origin_centroids, adjacency_matrix, limit)
+    shortest_paths = _perform_dijkstra(origin_centroids, adjacency_matrix, logger, limit)
     return shortest_paths
 
 
@@ -508,6 +506,7 @@ def run_iterations_batch_traversals(
     traversals: pd.DataFrame,
     origin_centroids: list,
     dest_centroids: list,
+    logger: logging.Logger,
 ):
     """
     Run multiple iterations of Dijkstra's algorithm using traversals as "links" and edges as "vertices".
@@ -535,6 +534,7 @@ def run_iterations_batch_traversals(
             spec_file=settings.edge_util_file,
             trace_label=f"bike_edge_utilities_iteration_{i}",
             randomize=True,
+            logger=logger,
         )
         
         logger.debug("Overriding utility of centroid connectors")
@@ -548,15 +548,16 @@ def run_iterations_batch_traversals(
             spec_file=settings.traversal_util_file,
             trace_label=f"bike_traversal_utilities_iteration_{i}",
             randomize=False,
+            logger=logger,
         )
 
         # run dijkstra's
         distances, predecessors = perform_dijkstras_algorithm_batch_traversals(
-            edges, traversals, origin_centroids, limit=settings.max_dijkstra_utility
+            edges, traversals, origin_centroids, limit=settings.max_dijkstra_utility, logger=logger,
         )
 
         # process paths
-        paths = process_paths_new(dest_centroids, predecessors)
+        paths = process_paths_new(dest_centroids, predecessors, logger)
         all_paths.append(paths + (np.full_like(paths[0], i, dtype=np.uint8),))
 
     all_paths_concat = map(np.concatenate, zip(*all_paths))
@@ -585,11 +586,21 @@ def run_batch_traversals(
     dest_centroids,
     trace_origin_edgepos,
     trace_dest_edgepos,
+    logger,
+    proc_id
 ):
     """
     Run batch traversals for the bike route choice model.
 
     """
+    if logger is None:
+        logger = logging.getLogger(f"subprocess_{proc_id}")
+        log_file_location = os.path.join(os.path.expanduser(settings.output_path), "bike_model.log")
+        logging.basicConfig(
+            level=logging.INFO,
+            format="%(asctime)s - %(name)s %(levelname)s - %(message)s",
+            handlers=[logging.FileHandler(log_file_location), logging.StreamHandler()],
+        )
     (
         all_paths_orig,
         all_paths_dest,
@@ -602,6 +613,7 @@ def run_batch_traversals(
         traversals,
         origin_centroids,
         dest_centroids,
+        logger,
     )
     trace_origins_rev = []
     trace_dests_rev = []
@@ -637,6 +649,7 @@ def run_batch_traversals(
         spec_file=settings.edge_util_file,
         trace_label="bike_edge_utilities_final",
         randomize=False,
+        logger=logger,
     )
 
     logger.debug("Overriding utility of centroid connectors")
@@ -650,6 +663,7 @@ def run_batch_traversals(
         spec_file=settings.traversal_util_file,
         trace_label="bike_traversal_utilities_final",
         randomize=False,
+        logger=logger,
     )
 
     final_paths = calculate_final_logsums_batch_traversals(
@@ -664,6 +678,7 @@ def run_batch_traversals(
         all_paths_from_edge,
         all_paths_to_edge,
         all_paths_iteration,
+        logger,
         trace_origins_rev,
         trace_dests_rev,
     )
@@ -671,7 +686,7 @@ def run_batch_traversals(
 
 
 def get_centroid_connectors(
-    settings: BikeRouteChoiceSettings, nodes: pd.DataFrame, edges: pd.DataFrame
+    settings: BikeRouteChoiceSettings, nodes: pd.DataFrame, edges: pd.DataFrame, logger: logging.Logger,
 ):
     """
     Generate centroids for the bike route choice model.
@@ -724,14 +739,14 @@ def get_centroid_connectors(
     return origin_centroid_connectors, dest_centroid_connectors
 
 
-def run_bike_route_choice(settings):
+def run_bike_route_choice(settings, logger):
     """Main function to run the bike route choice model."""
 
     # create bike network
-    nodes, edges, traversals = bike_net_reader.create_bike_net(settings)
+    nodes, edges, traversals = bike_net_reader.create_bike_net(settings, logger)
 
     # Define centroids
-    origin_centroid_connectors, dest_centroid_connectors = get_centroid_connectors(settings, nodes, edges)
+    origin_centroid_connectors, dest_centroid_connectors = get_centroid_connectors(settings, nodes, edges, logger)
 
     trace_origins_edgepos = np.array(origin_centroid_connectors[origin_centroid_connectors.isin(settings.trace_origins)].index)
     trace_dests_edgepos = np.array(dest_centroid_connectors[dest_centroid_connectors.isin(settings.trace_destinations)].index)
@@ -772,8 +787,10 @@ def run_bike_route_choice(settings):
                             dest_centroid_connectors,
                             trace_origins_edgepos,
                             trace_dests_edgepos,
+                            None,
+                            proc_id
                         )
-                        for origin_centroid_sub_batch in origin_centroid_sub_batches
+                        for proc_id, origin_centroid_sub_batch in enumerate(origin_centroid_sub_batches)
                     ],
                 )
                 final_paths.extend(results)
@@ -793,6 +810,8 @@ def run_bike_route_choice(settings):
                 dest_centroids=dest_centroid_connectors,
                 trace_origin_edgepos=trace_origins_edgepos,
                 trace_dest_edgepos=trace_dests_edgepos,
+                logger=logger,
+                proc_id=0
             )
             final_paths.append(results)
 
@@ -902,15 +921,16 @@ if __name__ == "__main__":
 
     start_time = time.time()
 
+    logger = logging.getLogger(__name__)
     # can pass settings file as command line argument
     if len(sys.argv) > 1:
         settings_file = sys.argv[1]
     else:
         settings_file = "bike_route_choice_settings.yaml"
     # load settings
-    settings = load_settings(settings_file)
+    settings = load_settings(logger,settings_file)
 
-    run_bike_route_choice(settings)
+    run_bike_route_choice(settings, logger)
 
     end_time = time.time()
     elapsed_time = end_time - start_time

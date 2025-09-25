@@ -6,15 +6,12 @@ import warnings
 
 from bike_route_utilities import BikeRouteChoiceSettings, load_settings, read_file
 
-# Set up logging
-logger = logging.getLogger(__name__)
-
-
 def calculate_utilities(
     settings: BikeRouteChoiceSettings,
     choosers: pd.DataFrame,
     spec: pd.DataFrame,
     trace_label: str,
+    logger: logging.Logger,
 ) -> pd.DataFrame:
     """
     Calculate utilities for choosers using the provided specifications.
@@ -92,6 +89,7 @@ def calculate_utilities_from_spec(
     choosers: pd.DataFrame,
     spec_file: str,
     trace_label: str,
+    logger: logging.Logger,
     randomize: bool = False,
 ) -> pd.DataFrame:
     """
@@ -131,6 +129,7 @@ def calculate_utilities_from_spec(
         choosers=choosers,
         spec=spec.set_index("Expression")["Coefficient"],
         trace_label=trace_label,
+        logger=logger,
     )
 
     # Optionally also add a random component across all utilities
@@ -152,7 +151,7 @@ def calculate_utilities_from_spec(
             f"Percentage of positive utilities: {(utilities['utility'] > 0).mean() * 100:.2f}%"
         )
         logger.info(
-            "Capping the positive utilities to zero to avoid issues in dijkstra's algorithm."
+            "Capping the positive utilities to zero to avoid issues in Dijkstra's algorithm."
         )
         utilities.loc[utilities["utility"] > 0, "utility"] = 0
     assert (

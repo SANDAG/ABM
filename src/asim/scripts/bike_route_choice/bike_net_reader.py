@@ -6,9 +6,6 @@ import logging
 # import tqdm
 from bike_route_utilities import BikeRouteChoiceSettings, read_file
 
-# Set up logging
-logger = logging.getLogger(__name__)
-
 # turn type encodings
 TURN_NONE = 0
 TURN_LEFT = 1
@@ -22,7 +19,7 @@ MAGNUM      = TURN_LEFT
 
 
 def create_and_attribute_edges(
-    settings: BikeRouteChoiceSettings, node: pd.DataFrame, link: pd.DataFrame
+    settings: BikeRouteChoiceSettings, node: pd.DataFrame, link: pd.DataFrame, logger: logging.Logger
 ) -> pd.DataFrame:
     """
     Create and attribute edges from the provided node and link dataframes.
@@ -466,7 +463,7 @@ def create_and_attribute_edges(
 #     return traversals, java_cols
 
 
-def calculate_signalExclRight_alternatives(traversals: pd.DataFrame) -> pd.DataFrame:
+def calculate_signalExclRight_alternatives(traversals: pd.DataFrame, logger: logging.Logger) -> pd.DataFrame:
     """
     Calculate alternative signalized right turn exclusion columns.
     This was originally used to test backwards compatibility with the Java implementation.
@@ -541,7 +538,7 @@ def calculate_signalExclRight_alternatives(traversals: pd.DataFrame) -> pd.DataF
 
 
 def create_and_attribute_traversals(
-    settings: BikeRouteChoiceSettings, edges: pd.DataFrame, nodes: pd.DataFrame
+    settings: BikeRouteChoiceSettings, edges: pd.DataFrame, nodes: pd.DataFrame, logger: logging.Logger
 ) -> pd.DataFrame:
     """
     Create and attribute traversals from edges and nodes.
@@ -921,7 +918,7 @@ def create_and_attribute_traversals(
 
 
 def create_bike_net(
-    settings: BikeRouteChoiceSettings,
+    settings: BikeRouteChoiceSettings, logger: logging.Logger
 ) -> tuple[
     pd.DataFrame,  # node dataframe
     pd.DataFrame,  # edge dataframe
@@ -967,13 +964,13 @@ def create_bike_net(
     link = read_file(settings, settings.link_file)
 
     # create and attribute edges
-    edges, nodes = create_and_attribute_edges(settings, node, link)
+    edges, nodes = create_and_attribute_edges(settings, node, link, logger)
 
     # generate authoritiative positional index
     edges = edges.reset_index()
     edges.index.name = 'edgeID'
 
-    traversals = create_and_attribute_traversals(settings, edges, nodes)
+    traversals = create_and_attribute_traversals(settings, edges, nodes, logger)
 
     # save edges, nodes, and traversals to csv files if specified
     if settings.save_bike_net:

@@ -5,14 +5,9 @@ from pydantic import BaseModel, ValidationError
 import geopandas as gpd
 import pandas as pd
 import numpy as np
-import logging
 import networkx as nx
 import matplotlib.pyplot as plt
 from typing import Literal
-
-
-# Set up logging
-logger = logging.getLogger(__name__)
 
 
 class BikeRouteChoiceSettings(BaseModel):
@@ -88,7 +83,7 @@ class BikeRouteChoiceSettings(BaseModel):
 
 
 def load_settings(
-    yaml_path: str = "bike_route_choice_settings.yaml",
+    logger: logging.Logger, yaml_path: str = "bike_route_choice_settings.yaml", 
 ) -> BikeRouteChoiceSettings:
     with open(yaml_path, "r") as f:
         data = yaml.safe_load(f)

@@ -3,10 +3,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from bike_route_choice import load_settings, run_bike_route_choice
 
-# Set up logging
-logger = logging.getLogger(__name__)
-
-
 def plot_results(results):
     fig, ax1 = plt.subplots()
     ax2 = ax1.twinx()
@@ -75,6 +71,8 @@ if __name__=="__main__":
     else:
         max_iterations = 20
 
+    logger = logging.getLogger(__name__)
+
     # load settings
     settings = load_settings(settings_file)
 
@@ -90,7 +88,7 @@ if __name__=="__main__":
     while True:
         logger.info(f"Running w/ threshold {cur_threshold}")
         start_time = time.time()
-        output = run_bike_route_choice(settings)
+        output = run_bike_route_choice(settings, logger)
         end_time = time.time()
         elapsed_time = end_time - start_time
 
