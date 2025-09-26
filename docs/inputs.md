@@ -159,8 +159,8 @@ The table below contains brief descriptions of the input files required to execu
 | remoteAVParking | Remote AV parking available at MGRA: 0 = Not available, 1 = Available | 
 | refueling_stations | Number of refueling stations at MGRA | 
 | MicroAccessTime | Micro-mobility access time (mins) | 
-| microtransit | microtransit access time (mins) | 
-| nev | Neighborhood Electric Vehicle access time (mins) | 
+| microtransit | The microtransit service area ID [0 means no service] | 
+| nev | Neighborhood Electric Vehicle (NEV) service area ID [0 means no service]| 
 | totint | Total intersections within 0.65 miles of the MGRA | 
 | duden | Dwelling units per acre within 0.65 miles of the MGRA | 
 | empden | Jobs per acre within 0.65 miles of the MGRA | 
