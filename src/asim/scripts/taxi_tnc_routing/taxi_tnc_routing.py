@@ -45,6 +45,11 @@ class TaxiTNCSettings(BaseModel):
     # maximum allowed detour time for pooled trips (in mins)
     max_detour: int = 15
 
+    # column in the landuse table that indicates the presence of refueling stations
+    landuse_refuel_col: str = "refueling_stations"
+    # maximum time (in active travel mins) a vehicle can operate before refueling
+    max_refuel_time: int = 240  # 4 hours
+
     # numpy random seed for reproducibility
     random_seed: int = 42
 
@@ -108,16 +113,20 @@ class TaxiTNCRouter:
             os.path.join(self.settings.asim_output_dir, "final_tnc_trips.csv"),
             usecols=cols,
         )
-        trips = trips[trips.trip_mode.isin(["TAXI", "TNC_SINGLE", "TNC_SHARED"])]
+        trips = trips[
+            trips.trip_mode.isin(
+                self.settings.single_tnc_modes + self.settings.shared_tnc_modes
+            )
+        ]
 
-        landuse = pd.read_csv(
+        self.landuse = pd.read_csv(
             os.path.join(self.settings.asim_output_dir, "final_land_use.csv")
         )
 
-        if "MAZ" in landuse.columns:
-            maz_to_taz_map = landuse.set_index("MAZ")["taz"].to_dict()
-        elif "zone_id" in landuse.columns:
-            maz_to_taz_map = landuse.set_index("zone_id")["TAZ"].to_dict()
+        if "MAZ" in self.landuse.columns:
+            maz_to_taz_map = self.landuse.set_index("MAZ")["taz"].to_dict()
+        elif "zone_id" in self.landuse.columns:
+            maz_to_taz_map = self.landuse.set_index("zone_id")["TAZ"].to_dict()
         else:
             raise KeyError(
                 "Land use data must contain either 'MAZ' or 'zone_id' column for mapping to TAZ."
@@ -125,8 +134,9 @@ class TaxiTNCRouter:
 
         trips["oskim_idx"] = trips["origin"].map(maz_to_taz_map).map(mapping)
         trips["dskim_idx"] = trips["destination"].map(maz_to_taz_map).map(mapping)
+        self.skim_zone_mapping = mapping
 
-        return trips, skim, mapping
+        return trips, skim
 
     def sample_tnc_trip_simulation_time_bin(self, trips):
         # Create a new column for the time bin
@@ -164,8 +174,9 @@ class TaxiTNCRouter:
         # Drop self-pairs and keep i<j to avoid duplicates
         np.fill_diagonal(pair_ok, False)
         ii, jj = np.where(np.triu(pair_ok, k=1))
+        pct = 0 if len(trips) == 0 else (len(ii) / (len(trips) ** 2)) * 100
         logger.info(
-            f"\tFound {len(ii)} potential trip pairs from {len(trips)} trips or {(len(ii) / (len(trips) **2)) * 100:.2f}% of n**2"
+            f"\tFound {len(ii)} potential trip pairs from {len(trips)} trips or {pct:.2f}% of n**2"
         )
 
         trip_pairs = pd.DataFrame(
@@ -200,6 +211,7 @@ class TaxiTNCRouter:
         # For each trip pair, calculate the four possible routing scenarios
         # and determine if they are valid (within detour limits)
         # and select the best valid scenario (minimum total time)
+        # WARNING if these scenarios are changed, they also need to be changed downstream in the routing
 
         oi = trip_pairs["o_i_skim_idx"].to_numpy()
         oj = trip_pairs["o_j_skim_idx"].to_numpy()
@@ -211,7 +223,6 @@ class TaxiTNCRouter:
         j_direct = self.skim_data[oj, dj]
 
         # scenario totals
-        # WARNING if these scenarios are changed, they also need to be changed downstream in the routing
         t1 = (
             self.skim_data[oi, oj] + self.skim_data[oj, di] + self.skim_data[di, dj]
         )  # oi->oj->di->dj
@@ -447,7 +458,10 @@ class TaxiTNCRouter:
         return full_trip_routes
 
     def create_new_vehicles(self, vehicles, trips_to_service, trip_to_veh_map):
-        idx_start_num = 0 if vehicles.empty else vehicles.index.max()
+        """
+        Create new
+        """
+        idx_start_num = 0 if vehicles is None else vehicles.index.max()
 
         new_vehs = pd.DataFrame(
             data={
@@ -455,6 +469,7 @@ class TaxiTNCRouter:
                 "is_free": False,
                 "last_refuel_time": -1,
                 "next_time_free": np.nan,
+                "drive_time_since_refuel": 0,
             },
             index=idx_start_num + np.arange(1, len(trips_to_service) + 1),
         )
@@ -463,20 +478,25 @@ class TaxiTNCRouter:
         # updating the trip to vehicle mapping with the newly created vehicles
         trip_to_veh_map.loc[trips_to_service.trip_i] = new_vehs.index.values
 
-        if vehicles.empty:
-            vehicles = new_vehs
-        else:
+        if vehicles is not None:
             vehicles = pd.concat([vehicles, new_vehs], ignore_index=False)
+        else:
+            vehicles = new_vehs
 
         return vehicles, trip_to_veh_map
 
     def match_vehicles_to_trips(self, vehicles, full_trip_routes):
 
-        free_vehicles = vehicles[vehicles.is_free].copy()
+        if vehicles is not None:
+            free_vehicles = vehicles[vehicles.is_free].copy()
+        else:
+            free_vehicles = pd.DataFrame()
         unserviced_trips = full_trip_routes.copy()
 
         trip_to_veh_map = pd.Series(
-            name="vehicle_id", index=unserviced_trips.trip_i, dtype=vehicles.index.dtype
+            name="vehicle_id",
+            index=unserviced_trips.trip_i,
+            dtype=vehicles.index.dtype if vehicles is not None else "int64",
         )
 
         # loop until all available vehicles are assigned or there are no more unserviced trips
@@ -547,19 +567,26 @@ class TaxiTNCRouter:
             columns={"origin_skim_idx": "destination_skim_idx"}
         )
         # creating a temporary trip num because not all vehicles will have stops
-        pickup["tmp_trip_num"] = 1
+        pickup["tmp_tnum"] = 1
+        pickup["trip_type"] = "pickup"
+
         stop_1 = full_trip_routes.loc[
             full_trip_routes.stop1_skim_idx > -1, ["trip_i", "trip_j", "stop1_skim_idx"]
         ].rename(columns={"stop1_skim_idx": "destination_skim_idx"})
-        stop_1["tmp_trip_num"] = 2
+        stop_1["tmp_tnum"] = 2
+        stop_1["trip_type"] = "pickup"
+
         stop_2 = full_trip_routes.loc[
             full_trip_routes.stop2_skim_idx > -1, ["trip_i", "trip_j", "stop2_skim_idx"]
         ].rename(columns={"stop2_skim_idx": "destination_skim_idx"})
-        stop_2["tmp_trip_num"] = 3
+        stop_2["tmp_tnum"] = 3
+        stop_2["trip_type"] = "dropoff"
+
         drop_off = full_trip_routes[
             ["trip_i", "trip_j", "destination_skim_idx"]
         ].rename(columns={"destination_skim_idx": "destination_skim_idx"})
-        drop_off["tmp_trip_num"] = 4
+        drop_off["tmp_tnum"] = 4
+        drop_off["trip_type"] = "dropoff"
 
         new_v_trips = pd.concat([pickup, stop_1, stop_2, drop_off])
 
@@ -569,13 +596,13 @@ class TaxiTNCRouter:
 
         # ensure ordering before deriving origins
         new_v_trips.sort_values(
-            ["vehicle_id", "tmp_trip_num"], inplace=True, ignore_index=True
+            ["vehicle_id", "tmp_tnum"], inplace=True, ignore_index=True
         )
 
         new_v_trips["origin_skim_idx"] = pd.NA
 
         # first leg origin = vehicle current location
-        first_leg_mask = new_v_trips.tmp_trip_num == 1
+        first_leg_mask = new_v_trips.tmp_tnum == 1
         new_v_trips.loc[first_leg_mask, "origin_skim_idx"] = new_v_trips.loc[
             first_leg_mask, "vehicle_id"
         ].map(vehicles.location_skim_idx)
@@ -606,7 +633,7 @@ class TaxiTNCRouter:
             "trip_i"
         ]  # leave a trail to know where the vehicle is going
         # first trip from vehicle location to pickup has no occupants.
-        new_v_trips.loc[new_v_trips.tmp_trip_num == 1, ["trip_i", "trip_j"]] = np.nan
+        new_v_trips.loc[new_v_trips.tmp_tnum == 1, ["trip_i", "trip_j"]] = np.nan
         # who gets picked up and goes to the stops is dependent on the scenario
         scenario = (
             full_trip_routes.set_index("trip_i")
@@ -616,31 +643,31 @@ class TaxiTNCRouter:
         new_v_trips["scenario"] = scenario
         # scenario 1: oi->oj->di->dj
         new_v_trips.loc[
-            (scenario == 1) & (new_v_trips.tmp_trip_num == 2), "trip_j"
+            (scenario == 1) & (new_v_trips.tmp_tnum == 2), "trip_j"
         ] = np.nan
         new_v_trips.loc[
-            (scenario == 1) & (new_v_trips.tmp_trip_num == 4), "trip_i"
+            (scenario == 1) & (new_v_trips.tmp_tnum == 4), "trip_i"
         ] = np.nan
         # scenario 2: oj->oi->dj->di
         new_v_trips.loc[
-            (scenario == 2) & (new_v_trips.tmp_trip_num == 2), "trip_i"
+            (scenario == 2) & (new_v_trips.tmp_tnum == 2), "trip_i"
         ] = np.nan
         new_v_trips.loc[
-            (scenario == 2) & (new_v_trips.tmp_trip_num == 4), "trip_j"
+            (scenario == 2) & (new_v_trips.tmp_tnum == 4), "trip_j"
         ] = np.nan
         # scenario 3: oi->oj->dj->di
         new_v_trips.loc[
-            (scenario == 3) & (new_v_trips.tmp_trip_num == 2), "trip_j"
+            (scenario == 3) & (new_v_trips.tmp_tnum == 2), "trip_j"
         ] = np.nan
         new_v_trips.loc[
-            (scenario == 3) & (new_v_trips.tmp_trip_num == 4), "trip_j"
+            (scenario == 3) & (new_v_trips.tmp_tnum == 4), "trip_j"
         ] = np.nan
         # scenario 4: oj->oi->di->dj
         new_v_trips.loc[
-            (scenario == 4) & (new_v_trips.tmp_trip_num == 2), "trip_i"
+            (scenario == 4) & (new_v_trips.tmp_tnum == 2), "trip_i"
         ] = np.nan
         new_v_trips.loc[
-            (scenario == 4) & (new_v_trips.tmp_trip_num == 4), "trip_i"
+            (scenario == 4) & (new_v_trips.tmp_tnum == 4), "trip_i"
         ] = np.nan
 
         # determine time bin of each trip
@@ -664,7 +691,7 @@ class TaxiTNCRouter:
         ).all(), f"Departure bin must be less than or equal to arrival bin {new_v_trips[new_v_trips.depart_bin > new_v_trips.arrival_bin]}"
 
         # merge initial wait time from repositioning trip to full_trip_routes
-        initial_wait = new_v_trips[new_v_trips.tmp_trip_num == 1][
+        initial_wait = new_v_trips[new_v_trips.tmp_tnum == 1][
             ["servicing_trip_id", "OD_time"]
         ].set_index("servicing_trip_id")
         full_trip_routes["initial_wait"] = full_trip_routes.trip_i.map(
@@ -673,10 +700,10 @@ class TaxiTNCRouter:
 
         return new_v_trips, full_trip_routes
 
-    def update_vehicle_fleet(self, vehicles, vehicle_trips, time_bin):
+    def update_vehicle_fleet(self, vehicles, vehicle_trips_i, time_bin):
         # update the next_time_free based on the vehicle trips
         next_time_free_update = (
-            vehicle_trips.groupby("vehicle_id").arrival_bin.max() + 1
+            vehicle_trips_i.groupby("vehicle_id").arrival_bin.max() + 1
         )  # +1 rouding up to account for dropoff time
         vehicles.loc[
             next_time_free_update.index, "next_time_free"
@@ -687,10 +714,13 @@ class TaxiTNCRouter:
         )
 
         # also want to update the vehicle location
-        final_veh_location = vehicle_trips.groupby(
+        final_veh_location = vehicle_trips_i.groupby(
             "vehicle_id"
         ).destination_skim_idx.last()
         vehicles.loc[final_veh_location.index, "location_skim_idx"] = final_veh_location
+
+        tot_drive_time = vehicle_trips_i.groupby("vehicle_id").OD_time.sum()
+        vehicles.loc[tot_drive_time.index, "drive_time_since_refuel"] += tot_drive_time
 
         return vehicles
 
@@ -749,23 +779,88 @@ class TaxiTNCRouter:
 
         pass
 
+    def check_refuel_needs(self, vehicle_trips_i, vehicles, time_bin):
+        """Check to see if the vehicle needs to refuel.
+
+        If the vehicle has been operating for more than the refuel interval,
+        it needs be routed to the nearest refuel station before it becomes available again.
+        """
+        # updated drive time
+        drive_time_from_trips_in_bin = vehicle_trips_i.groupby(
+            "vehicle_id"
+        ).OD_time.sum()
+        tot_drive_time = (
+            drive_time_from_trips_in_bin
+            + vehicles.loc[
+                drive_time_from_trips_in_bin.index, "drive_time_since_refuel"
+            ]
+        )
+        needs_refuel = tot_drive_time > self.settings.max_refuel_time
+
+        if not needs_refuel.any():
+            return None
+
+        # find the nearest refuel station for each vehicle that needs to refuel
+        vehs_to_refuel = (
+            vehicle_trips_i[
+                vehicle_trips_i.vehicle_id.isin(needs_refuel[needs_refuel].index)
+            ]
+            .drop_duplicates("vehicle_id", keep="last")
+            .copy()
+        )
+        refuel_stations = self.landuse[
+            self.landuse[self.settings.landuse_refuel_col] > 0
+        ]
+        refuel_stations = (
+            refuel_stations.TAZ
+            if "TAZ" in refuel_stations.columns
+            else refuel_stations.taz
+        )
+        refuel_stations_idx = refuel_stations.map(self.skim_zone_mapping).to_numpy()
+
+        # find skim times between trip origins and all veh locations
+        skim_times = self.skim_data[
+            np.ix_(vehs_to_refuel.destination_skim_idx.to_numpy(), refuel_stations_idx)
+        ]
+
+        # best station per vehicle
+        station_choice_idx = np.argmin(skim_times, axis=1)
+        min_times = skim_times[np.arange(len(station_choice_idx)), station_choice_idx]
+        nearest_station_skim_idx = refuel_stations_idx[station_choice_idx]
+
+        # create refuel vehicle trips
+        refuel_veh_trips = pd.DataFrame(
+            {
+                "vehicle_id": vehs_to_refuel.index,
+                "trip_i": np.nan,
+                "trip_j": np.nan,
+                "scenario": -1,
+                "tmp_trip_num": -1,
+                "origin_skim_idx": vehs_to_refuel.destination_skim_idx,  # start refuel trip from last dropoff
+                "destination_skim_idx": nearest_station_skim_idx,
+                "servicing_trip_id": np.nan,
+                "OD_time": min_times,
+                "cumulative_trip_time": min_times,
+                "depart_bin": vehs_to_refuel.arrival_bin,  # start refuel trip right after last trip
+                "arrival_bin": vehs_to_refuel.arrival_bin
+                + np.ceil(min_times / self.settings.time_bin_size).astype(
+                    int
+                ),  # assuming refuel trip takes the time to get to the station
+                "trip_type": "refuel",
+            }
+        ).set_index("vehicle_id")
+        logger.info(f"\tRouting {len(refuel_veh_trips)} vehicles to refuel stations")
+
+        return refuel_veh_trips
+
     def route_taxi_tncs(self):
-        tnc_trips, skim, skim_zone_mapping = self.read_input_data()
+        tnc_trips, skim = self.read_input_data()
 
         self.skim_data = np.array(skim)
 
         tnc_trips = self.sample_tnc_trip_simulation_time_bin(tnc_trips)
 
-        vehicles = pd.DataFrame(
-            columns=[
-                "location_skim_idx",
-                "is_free",
-                "next_time_free",
-                "last_refuel_time",
-            ]
-        )
-        vehicles.index.name = "vehicle_id"
-
+        vehicles = None
         veh_trips = []
         pooling_trips = []
 
@@ -773,7 +868,11 @@ class TaxiTNCRouter:
             logger.info(
                 f"Processing time bin {time_bin} with {len(tnc_trips_i)} taxi / tnc trips:"
             )
-            trip_pairs = self.determine_potential_trip_pairs(tnc_trips_i.copy())
+            trip_pairs = self.determine_potential_trip_pairs(
+                tnc_trips_i[
+                    tnc_trips_i.trip_mode.isin(self.settings.shared_tnc_modes)
+                ].copy()
+            )
 
             trip_pairs = self.determine_detour_times(trip_pairs)
 
@@ -795,6 +894,12 @@ class TaxiTNCRouter:
             )
             veh_trips.append(vehicle_trips_i)
             pooling_trips.append(full_trip_routes)
+
+            refuel_veh_trips_i = self.check_refuel_needs(
+                vehicle_trips_i, vehicles, time_bin
+            )
+            if refuel_veh_trips_i is not None:
+                veh_trips.append(refuel_veh_trips_i)
 
             vehicles = self.update_vehicle_fleet(vehicles, vehicle_trips_i, time_bin)
 

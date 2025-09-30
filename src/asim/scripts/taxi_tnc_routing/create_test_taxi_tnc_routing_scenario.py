@@ -45,21 +45,21 @@ print("Wrote land_use.csv")
 # depart is in half-hour bins (your code multiplies by 30 then adds random 0–29)
 trips = pd.DataFrame([
     # group A (zones 1–4) – several close OD pairs
-    (1001, "TNC_SINGLE", 0, 1, 3),
-    (1002, "TNC_SINGLE", 0, 2, 4),
+    (1001, "TNC_SHARED", 0, 1, 3),
+    (1002, "TNC_SHARED", 0, 2, 4),
     (1003, "TNC_SHARED", 0, 1, 4),
-    (1004, "TAXI",       0, 3, 2),
-    (1005, "TNC_SINGLE", 0, 2, 1),
+    (1004, "TNC_SHARED", 0, 3, 2),
+    (1005, "TNC_SHARED", 0, 2, 1),
     (1006, "TNC_SHARED", 0, 4, 1),
     # group B (zones 6–8) – another cluster
-    (1010, "TAXI",       0, 6, 8),
-    (1011, "TNC_SINGLE", 0, 7, 6),
+    (1010, "TNC_SHARED", 0, 6, 8),
+    (1011, "TNC_SHARED", 0, 7, 6),
     (1012, "TNC_SHARED", 0, 8, 6),
-    (1013, "TNC_SINGLE", 0, 6, 7),
+    (1013, "TNC_SHARED", 0, 6, 7),
     # mixed / farther (some won’t pool)
-    (1020, "TAXI",       0, 1, 9),
-    (1021, "TNC_SINGLE", 0, 9, 2),
-    (1022, "TNC_SINGLE", 0, 4, 8),
+    (1020, "TNC_SHARED", 0, 1, 9),
+    (1021, "TNC_SHARED", 0, 9, 2),
+    (1022, "TNC_SHARED", 0, 4, 8),
     (1023, "TNC_SHARED", 0, 8, 4),
 ], columns=["trip_id", "trip_mode", "depart", "origin", "destination"])
 

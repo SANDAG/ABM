@@ -15,6 +15,8 @@ output_dir: C:\Users\david.hensle\OneDrive - Resource Systems Group, Inc\Documen
 # modes for shared and single occupancy TNC / taxi trips
 shared_tnc_modes: ['TNC_SHARED']
 single_tnc_modes: ['TNC_SINGLE', 'TAXI']
+# shared_tnc_modes: ['TNC_SHARED', 'TNC_SINGLE', 'TAXI']
+# single_tnc_modes: []
 
 # simulation time bin size (in mins)
 # determines how far apart trips in time can be to be considered for pooling
@@ -24,6 +26,11 @@ time_bin_size: 10
 pooling_buffer: 10
 # maximum allowed detour time for pooled trips (in mins)
 max_detour: 15
+
+# column in the landuse table that indicates the presence of refueling stations
+landuse_refuel_col: refueling_stations
+# maximum time (in active travel mins) a vehicle can operate before refueling
+max_refuel_time: 240  # 4 hours
 
 # numpy random seed for reproducibility
 random_seed: 42
