@@ -3,7 +3,7 @@ import pandas as pd
 import openmatrix as omx
 import os
 import time
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, ValidationError, model_validator
 import logging
 import yaml
 
@@ -23,11 +23,17 @@ class TaxiTNCSettings(BaseModel):
 
     # path to folder with skim data
     skim_dir: str
-    skim_core: str = (
-        "SOV_TR_H_TIME"  # name of skim matrix in OMX file minus time period suffix
-    )
+    # name of skim matrix in OMX file minus time period suffix
+    skim_time_core: str = "SOV_TR_H_TIME"
     skim_periods: list = ["EA", "AM", "MD", "PM", "EV"]  # time periods to process
     periods: list = [0, 6, 12, 25, 32, 48]
+    skim_files: list = [
+        "traffic_skims_EA.omx",
+        "traffic_skims_AM.omx",
+        "traffic_skims_MD.omx",
+        "traffic_skims_PM.omx",
+        "traffic_skims_EV.omx",
+    ]
 
     # output folder for results
     output_dir: str = "./output"
@@ -57,6 +63,16 @@ class TaxiTNCSettings(BaseModel):
     def period_time_bin_minutes(self) -> int:
         # minutes per (max period index); unchanged if periods list changes
         return (24 * 60) // max(self.periods)
+
+    @model_validator(mode="after")
+    def check_skim_periods(self):
+        if len(self.skim_periods) != len(self.periods) - 1:
+            raise ValueError(
+                "Length of skim_periods must be one less than length of periods"
+            )
+        if len(self.skim_files) != len(self.skim_periods):
+            raise ValueError("Length of skim_files must match length of skim_periods")
+        return self
 
 
 def load_settings(
@@ -95,15 +111,82 @@ class TaxiTNCRouter:
     def __init__(self, settings: TaxiTNCSettings):
         self.settings = settings
         self.skim_data = None
+        self.skim_zone_mapping = None
+        self.current_skim_time_period = None
+        self.generate_time_table()
+
+    def generate_time_table(self):
+        # Build and cache a time-bin lookup table on self:
+        # index: time_bin; cols: hour, minute, period (EA/AM/MD/PM/EV), depart_bin (1..48 starting at 3 AM)
+        minutes_per_bin = int(self.settings.time_bin_size)
+        bins_per_day = (24 * 60) // minutes_per_bin
+        time_bins = np.arange(bins_per_day, dtype=int)
+
+        # Offset bin starts by 3:00 (180 min), wrap at 24h
+        bin_start_min = (180 + time_bins * minutes_per_bin) % 1440  # minutes from 00:00
+
+        # Clock time
+        hours = (bin_start_min // 60) % 24
+        minutes = bin_start_min % 60
+
+        # ActivitySim depart bin: half-hour bins starting at 3:00 (bin 1)
+        # Wrap with modulo 1440 to handle minutes before 3:00 correctly.
+        depart_bin = ((bin_start_min - 180) % 1440) // 30 + 1
+        depart_bin = depart_bin.astype(int)  # 1..48
+
+        # Map depart_bin -> skim period using configured breakpoints
+        # periods are boundaries like [0, 6, 12, 25, 32, 48] meaning (0,6], (6,12], ...
+        edges = np.asarray(self.settings.periods, dtype=int)
+        labels = np.asarray(self.settings.skim_periods, dtype=object)
+        period_idx = np.digitize(depart_bin, edges, right=True) - 1  # 0..len(labels)-1
+        period_idx = np.clip(period_idx, 0, len(labels) - 1)
+        period = labels[period_idx]
+
+        self.time_bin_table = pd.DataFrame(
+            {
+                "hour": hours,
+                "minute": minutes,
+                "period": period,
+                "depart_bin": depart_bin,
+            },
+            index=pd.Index(time_bins, name="time_bin"),
+        )
+        return
+
+    def read_skim_data(self, time_bin):
+        # current period of the time_bin
+        time_period = self.time_bin_table.loc[time_bin, "period"]
+        time_mismatch = self.current_skim_time_period != time_period
+
+        def load_skim(omx_file, core):
+            with omx.open_file(
+                os.path.join(self.settings.skim_dir, omx_file), "r"
+            ) as f:
+                skim = np.array(f[core])
+                mapping = f.mapping(f.list_mappings()[0])
+            return skim, mapping
+
+        # load new skim if no skim data currently exists or the skim is not for the current period
+        if self.skim_data is None or time_mismatch:
+            self.current_skim_time_period = time_period
+            skim_file = self.settings.skim_files[
+                self.settings.skim_periods.index(time_period)
+            ]
+            self.skim_data, mapping = load_skim(
+                skim_file, self.settings.skim_time_core + "__" + time_period
+            )
+            assert (
+                self.skim_zone_mapping == mapping
+            ) or self.skim_zone_mapping is None, "Zone mapping changed between skims"
+            self.skim_zone_mapping = mapping
+        # otherwise keep using existing skim data
+        else:
+            pass
+
+        return
 
     def read_input_data(self):
         # Read the data from the OpenMatrix file
-        with omx.open_file(
-            os.path.join(self.settings.skim_dir, "traffic_skims_AM.omx"), "r"
-        ) as f:
-            skim = np.array(f[self.settings.skim_core])
-            mapping = f.mapping(f.list_mappings()[0])
-
         # Convert the data to a pandas DataFrame
         cols = ["trip_id", "trip_mode", "depart", "origin", "destination"]
         # trips = pd.read_csv(os.path.join(self.settings.asim_output_dir, "final_trips.csv"), usecols=cols)
@@ -132,21 +215,28 @@ class TaxiTNCRouter:
                 "Land use data must contain either 'MAZ' or 'zone_id' column for mapping to TAZ."
             )
 
-        trips["oskim_idx"] = trips["origin"].map(maz_to_taz_map).map(mapping)
-        trips["dskim_idx"] = trips["destination"].map(maz_to_taz_map).map(mapping)
-        self.skim_zone_mapping = mapping
+        # mapping origin and destination maz to skim taz index for fast lookups
+        trips["oskim_idx"] = (
+            trips["origin"].map(maz_to_taz_map).map(self.skim_zone_mapping)
+        )
+        trips["dskim_idx"] = (
+            trips["destination"].map(maz_to_taz_map).map(self.skim_zone_mapping)
+        )
 
-        return trips, skim
+        return trips
 
     def sample_tnc_trip_simulation_time_bin(self, trips):
         # Create a new column for the time bin
         # Convert departure time to mins, sampling within the half hour
         # Then bin into the bin size (supplied in mins)
 
-        trips["time_in_mins"] = trips["depart"] * 30 + np.random.randint(
-            0, 30, size=len(trips)
+        trips["time_in_mins"] = (trips["depart"] - 1) * 30 + np.random.randint(
+            0, self.settings.period_time_bin_minutes, size=len(trips)
         )
         trips["time_bin"] = trips["time_in_mins"] // self.settings.time_bin_size
+        assert trips.time_bin.isin(
+            self.time_bin_table.index
+        ).all(), "Some time bins are out of range"
 
         return trips
 
@@ -190,18 +280,28 @@ class TaxiTNCRouter:
         trip_pairs["dest_time"] = d2d_time[ii, jj]
         # also include the origin and destination skim idxs
         # create maps from trip id to origin and to destination
-        lookup = trips.loc[:, ["trip_id", "oskim_idx", "dskim_idx"]].set_index(
-            "trip_id"
-        )
+        lookup = trips.loc[
+            :, ["trip_id", "oskim_idx", "dskim_idx", "origin", "destination"]
+        ].set_index("trip_id")
 
         trip_pairs = trip_pairs.join(
             lookup.rename(
-                columns={"oskim_idx": "o_i_skim_idx", "dskim_idx": "d_i_skim_idx"}
+                columns={
+                    "oskim_idx": "o_i_skim_idx",
+                    "dskim_idx": "d_i_skim_idx",
+                    "origin": "origin_i",
+                    "destination": "destination_i",
+                }
             ),
             on="trip_i",
         ).join(
             lookup.rename(
-                columns={"oskim_idx": "o_j_skim_idx", "dskim_idx": "d_j_skim_idx"}
+                columns={
+                    "oskim_idx": "o_j_skim_idx",
+                    "dskim_idx": "d_j_skim_idx",
+                    "origin": "origin_j",
+                    "destination": "destination_j",
+                }
             ),
             on="trip_j",
         )
@@ -399,8 +499,11 @@ class TaxiTNCRouter:
         s3_idx = [0, 1, 3, 2]  # oi->oj->dj->di
         s4_idx = [1, 0, 2, 3]  # oj->oi->di->dj
 
-        ods = trip_matches[
+        ods_idx = trip_matches[
             ["o_i_skim_idx", "o_j_skim_idx", "d_i_skim_idx", "d_j_skim_idx"]
+        ].to_numpy()
+        ods = trip_matches[
+            ["origin_i", "origin_j", "destination_i", "destination_j"]
         ].to_numpy()
 
         scenario_orders = np.array(
@@ -416,8 +519,10 @@ class TaxiTNCRouter:
         )
 
         ordered_nodes = np.full((len(trips_routed), 4), -1, dtype=int)
+        ordered_nodes_idx = np.full((len(trips_routed), 4), -1, dtype=int)
         if valid_mask.any():
             row_idx = np.arange(len(trips_routed))[valid_mask]
+            ordered_nodes_idx[valid_mask] = ods_idx[row_idx[:, None], order_idx]
             ordered_nodes[valid_mask] = ods[row_idx[:, None], order_idx]
 
         trips_routed[
@@ -426,6 +531,14 @@ class TaxiTNCRouter:
                 "stop1_skim_idx",
                 "stop2_skim_idx",
                 "destination_skim_idx",
+            ]
+        ] = ordered_nodes_idx
+        trips_routed[
+            [
+                "origin",
+                "stop1",
+                "stop2",
+                "destination",
             ]
         ] = ordered_nodes
         return trips_routed
@@ -440,6 +553,8 @@ class TaxiTNCRouter:
             "trip_id": "trip_i",
             "oskim_idx": "origin_skim_idx",
             "dskim_idx": "destination_skim_idx",
+            "origin": "origin",
+            "destination": "destination",
         }
         single_trips = tnc_trips[mask][cols.keys()].rename(columns=cols).copy()
         single_trips["total_ivt"] = self.skim_data[
@@ -466,6 +581,7 @@ class TaxiTNCRouter:
         new_vehs = pd.DataFrame(
             data={
                 "location_skim_idx": trips_to_service.origin_skim_idx.values,
+                "location": trips_to_service.origin.values,
                 "is_free": False,
                 "last_refuel_time": -1,
                 "next_time_free": np.nan,
@@ -563,29 +679,37 @@ class TaxiTNCRouter:
         # Create vehicle trips from the full trip routes
 
         # first turning full_trip_routes into a list of stops
-        pickup = full_trip_routes[["trip_i", "trip_j", "origin_skim_idx"]].rename(
-            columns={"origin_skim_idx": "destination_skim_idx"}
+        pickup = full_trip_routes[
+            ["trip_i", "trip_j", "origin_skim_idx", "origin"]
+        ].rename(
+            columns={"origin_skim_idx": "destination_skim_idx", "origin": "destination"}
         )
         # creating a temporary trip num because not all vehicles will have stops
-        pickup["tmp_tnum"] = 1
+        pickup["srv_trip_num"] = 1
         pickup["trip_type"] = "pickup"
 
         stop_1 = full_trip_routes.loc[
-            full_trip_routes.stop1_skim_idx > -1, ["trip_i", "trip_j", "stop1_skim_idx"]
-        ].rename(columns={"stop1_skim_idx": "destination_skim_idx"})
-        stop_1["tmp_tnum"] = 2
+            full_trip_routes.stop1_skim_idx > -1,
+            ["trip_i", "trip_j", "stop1_skim_idx", "stop1"],
+        ].rename(
+            columns={"stop1_skim_idx": "destination_skim_idx", "stop1": "destination"}
+        )
+        stop_1["srv_trip_num"] = 2
         stop_1["trip_type"] = "pickup"
 
         stop_2 = full_trip_routes.loc[
-            full_trip_routes.stop2_skim_idx > -1, ["trip_i", "trip_j", "stop2_skim_idx"]
-        ].rename(columns={"stop2_skim_idx": "destination_skim_idx"})
-        stop_2["tmp_tnum"] = 3
+            full_trip_routes.stop2_skim_idx > -1,
+            ["trip_i", "trip_j", "stop2_skim_idx", "stop2"],
+        ].rename(
+            columns={"stop2_skim_idx": "destination_skim_idx", "stop2": "destination"}
+        )
+        stop_2["srv_trip_num"] = 3
         stop_2["trip_type"] = "dropoff"
 
         drop_off = full_trip_routes[
-            ["trip_i", "trip_j", "destination_skim_idx"]
-        ].rename(columns={"destination_skim_idx": "destination_skim_idx"})
-        drop_off["tmp_tnum"] = 4
+            ["trip_i", "trip_j", "destination_skim_idx", "destination"]
+        ].copy()
+        drop_off["srv_trip_num"] = 4
         drop_off["trip_type"] = "dropoff"
 
         new_v_trips = pd.concat([pickup, stop_1, stop_2, drop_off])
@@ -596,36 +720,42 @@ class TaxiTNCRouter:
 
         # ensure ordering before deriving origins
         new_v_trips.sort_values(
-            ["vehicle_id", "tmp_tnum"], inplace=True, ignore_index=True
+            ["vehicle_id", "srv_trip_num"], inplace=True, ignore_index=True
         )
 
         new_v_trips["origin_skim_idx"] = pd.NA
+        new_v_trips["origin"] = pd.NA
 
         # first leg origin = vehicle current location
-        first_leg_mask = new_v_trips.tmp_tnum == 1
+        first_leg_mask = new_v_trips.srv_trip_num == 1
         new_v_trips.loc[first_leg_mask, "origin_skim_idx"] = new_v_trips.loc[
             first_leg_mask, "vehicle_id"
         ].map(vehicles.location_skim_idx)
+        new_v_trips.loc[first_leg_mask, "origin"] = new_v_trips.loc[
+            first_leg_mask, "vehicle_id"
+        ].map(vehicles.location)
 
-        # subsequent leg origin = previous leg destination (shift(1), not shift(-1))
-        prev_destinations = new_v_trips.groupby("vehicle_id")[
-            "destination_skim_idx"
-        ].shift(1)
-        new_v_trips.loc[~first_leg_mask, "origin_skim_idx"] = prev_destinations[
-            ~first_leg_mask
-        ]
+        # subsequent leg origin = previous leg destination
+        new_v_trips.loc[~first_leg_mask, "origin_skim_idx"] = new_v_trips.groupby(
+            "vehicle_id"
+        )["destination_skim_idx"].shift(1)[~first_leg_mask]
+        new_v_trips.loc[~first_leg_mask, "origin"] = new_v_trips.groupby("vehicle_id")[
+            "destination"
+        ].shift(1)[~first_leg_mask]
 
+        o_idx_na = new_v_trips.origin_skim_idx.notna()
+        d_idx_na = new_v_trips.destination_skim_idx.notna()
+        o_na = new_v_trips.origin.notna()
+        d_na = new_v_trips.destination.notna()
         assert (
-            not new_v_trips.origin_skim_idx.isna().any()
-        ), f"Some vehicle trips do not have an origin skim index: {new_v_trips[new_v_trips.origin_skim_idx.isna()]}"
+            o_idx_na & d_idx_na
+        ).all(), f"Some vehicle trips do not have an origin or destination skim index:\n {new_v_trips[~(o_idx_na & d_idx_na)]}"
         assert (
-            not new_v_trips.destination_skim_idx.isna().any()
-        ), f"Some vehicle trips do not have a destination skim index: {new_v_trips[new_v_trips.destination_skim_idx.isna()]}"
+            o_na & d_na
+        ).all(), f"Some vehicle trips do not have an origin or destination:\n {new_v_trips[~(o_na & d_na)]}"
 
-        new_v_trips["origin_skim_idx"] = new_v_trips.origin_skim_idx.astype(int)
-        new_v_trips["destination_skim_idx"] = new_v_trips.destination_skim_idx.astype(
-            int
-        )
+        cols = ["origin_skim_idx", "destination_skim_idx", "origin", "destination"]
+        new_v_trips[cols] = new_v_trips[cols].astype({col: int for col in cols})
 
         # update which trips are being served during the specific vehicle leg
         # right now, we have both trip_i and trip_j (if pooled) for all legs
@@ -633,7 +763,7 @@ class TaxiTNCRouter:
             "trip_i"
         ]  # leave a trail to know where the vehicle is going
         # first trip from vehicle location to pickup has no occupants.
-        new_v_trips.loc[new_v_trips.tmp_tnum == 1, ["trip_i", "trip_j"]] = np.nan
+        new_v_trips.loc[new_v_trips.srv_trip_num == 1, ["trip_i", "trip_j"]] = np.nan
         # who gets picked up and goes to the stops is dependent on the scenario
         scenario = (
             full_trip_routes.set_index("trip_i")
@@ -643,31 +773,31 @@ class TaxiTNCRouter:
         new_v_trips["scenario"] = scenario
         # scenario 1: oi->oj->di->dj
         new_v_trips.loc[
-            (scenario == 1) & (new_v_trips.tmp_tnum == 2), "trip_j"
+            (scenario == 1) & (new_v_trips.srv_trip_num == 2), "trip_j"
         ] = np.nan
         new_v_trips.loc[
-            (scenario == 1) & (new_v_trips.tmp_tnum == 4), "trip_i"
+            (scenario == 1) & (new_v_trips.srv_trip_num == 4), "trip_i"
         ] = np.nan
         # scenario 2: oj->oi->dj->di
         new_v_trips.loc[
-            (scenario == 2) & (new_v_trips.tmp_tnum == 2), "trip_i"
+            (scenario == 2) & (new_v_trips.srv_trip_num == 2), "trip_i"
         ] = np.nan
         new_v_trips.loc[
-            (scenario == 2) & (new_v_trips.tmp_tnum == 4), "trip_j"
+            (scenario == 2) & (new_v_trips.srv_trip_num == 4), "trip_j"
         ] = np.nan
         # scenario 3: oi->oj->dj->di
         new_v_trips.loc[
-            (scenario == 3) & (new_v_trips.tmp_tnum == 2), "trip_j"
+            (scenario == 3) & (new_v_trips.srv_trip_num == 2), "trip_j"
         ] = np.nan
         new_v_trips.loc[
-            (scenario == 3) & (new_v_trips.tmp_tnum == 4), "trip_j"
+            (scenario == 3) & (new_v_trips.srv_trip_num == 4), "trip_j"
         ] = np.nan
         # scenario 4: oj->oi->di->dj
         new_v_trips.loc[
-            (scenario == 4) & (new_v_trips.tmp_tnum == 2), "trip_i"
+            (scenario == 4) & (new_v_trips.srv_trip_num == 2), "trip_i"
         ] = np.nan
         new_v_trips.loc[
-            (scenario == 4) & (new_v_trips.tmp_tnum == 4), "trip_i"
+            (scenario == 4) & (new_v_trips.srv_trip_num == 4), "trip_i"
         ] = np.nan
 
         # determine time bin of each trip
@@ -691,7 +821,7 @@ class TaxiTNCRouter:
         ).all(), f"Departure bin must be less than or equal to arrival bin {new_v_trips[new_v_trips.depart_bin > new_v_trips.arrival_bin]}"
 
         # merge initial wait time from repositioning trip to full_trip_routes
-        initial_wait = new_v_trips[new_v_trips.tmp_tnum == 1][
+        initial_wait = new_v_trips[new_v_trips.srv_trip_num == 1][
             ["servicing_trip_id", "OD_time"]
         ].set_index("servicing_trip_id")
         full_trip_routes["initial_wait"] = full_trip_routes.trip_i.map(
@@ -714,10 +844,14 @@ class TaxiTNCRouter:
         )
 
         # also want to update the vehicle location
-        final_veh_location = vehicle_trips_i.groupby(
+        final_veh_location_idx = vehicle_trips_i.groupby(
             "vehicle_id"
         ).destination_skim_idx.last()
-        vehicles.loc[final_veh_location.index, "location_skim_idx"] = final_veh_location
+        vehicles.loc[
+            final_veh_location_idx.index, "location_skim_idx"
+        ] = final_veh_location_idx
+        final_veh_location = vehicle_trips_i.groupby("vehicle_id").destination.last()
+        vehicles.loc[final_veh_location.index, "location"] = final_veh_location
 
         tot_drive_time = vehicle_trips_i.groupby("vehicle_id").OD_time.sum()
         vehicles.loc[tot_drive_time.index, "drive_time_since_refuel"] += tot_drive_time
@@ -811,12 +945,12 @@ class TaxiTNCRouter:
         refuel_stations = self.landuse[
             self.landuse[self.settings.landuse_refuel_col] > 0
         ]
-        refuel_stations = (
+        refuel_stations_taz = (
             refuel_stations.TAZ
             if "TAZ" in refuel_stations.columns
             else refuel_stations.taz
         )
-        refuel_stations_idx = refuel_stations.map(self.skim_zone_mapping).to_numpy()
+        refuel_stations_idx = refuel_stations_taz.map(self.skim_zone_mapping).to_numpy()
 
         # find skim times between trip origins and all veh locations
         skim_times = self.skim_data[
@@ -827,6 +961,12 @@ class TaxiTNCRouter:
         station_choice_idx = np.argmin(skim_times, axis=1)
         min_times = skim_times[np.arange(len(station_choice_idx)), station_choice_idx]
         nearest_station_skim_idx = refuel_stations_idx[station_choice_idx]
+        refuel_stations_maz = (
+            refuel_stations.MAZ
+            if "MAZ" in refuel_stations.columns
+            else refuel_stations.mgra
+        ).to_numpy()
+        nearest_station_maz = refuel_stations_maz[station_choice_idx]
 
         # create refuel vehicle trips
         refuel_veh_trips = pd.DataFrame(
@@ -835,9 +975,11 @@ class TaxiTNCRouter:
                 "trip_i": np.nan,
                 "trip_j": np.nan,
                 "scenario": -1,
-                "tmp_trip_num": -1,
+                "srv_trip_num": -1,
                 "origin_skim_idx": vehs_to_refuel.destination_skim_idx,  # start refuel trip from last dropoff
                 "destination_skim_idx": nearest_station_skim_idx,
+                "origin": vehs_to_refuel.destination,  # start refuel trip from last dropoff
+                "destination": nearest_station_maz,
                 "servicing_trip_id": np.nan,
                 "OD_time": min_times,
                 "cumulative_trip_time": min_times,
@@ -853,17 +995,70 @@ class TaxiTNCRouter:
 
         return refuel_veh_trips
 
+    def remap_skim_idx_to_zone(self, tnc_veh_trips, pooled_trips, tnc_trips):
+        # remap the skim idx back to zone ids for output
+        skim_idx_to_taz_map = {v: k for k, v in self.skim_zone_mapping.items()}
+
+        # map skim index back to taz
+        tnc_veh_trips["origin_taz"] = tnc_veh_trips.origin_skim_idx.map(
+            skim_idx_to_taz_map
+        )
+        tnc_veh_trips["destination_taz"] = tnc_veh_trips.destination_skim_idx.map(
+            skim_idx_to_taz_map
+        )
+
+        pooled_trips["origin_taz"] = pooled_trips.origin_skim_idx.map(
+            skim_idx_to_taz_map
+        )
+        pooled_trips["stop1_taz"] = pooled_trips.stop1_skim_idx.map(skim_idx_to_taz_map)
+        pooled_trips["stop2_taz"] = pooled_trips.stop2_skim_idx.map(skim_idx_to_taz_map)
+        pooled_trips["destination_taz"] = pooled_trips.destination_skim_idx.map(
+            skim_idx_to_taz_map
+        )
+
+        missing_o = tnc_veh_trips["origin"].isna()
+        missing_d = tnc_veh_trips["destination"].isna()
+        assert (
+            not missing_o.any()
+        ), f"Some vehicle trips do not have an origin MAZ {tnc_veh_trips[missing_o]}"
+        assert (
+            not missing_d.any()
+        ), f"Some vehicle trips do not have a destination MAZ {tnc_veh_trips[missing_d]}"
+
+        # Drop skim indices after mapping back to zones/MAZ
+        tnc_veh_trips.drop(
+            columns=["origin_skim_idx", "destination_skim_idx"],
+            inplace=True,
+            errors="ignore",
+        )
+        pooled_trips.drop(
+            columns=[
+                "origin_skim_idx",
+                "destination_skim_idx",
+                "stop1_skim_idx",
+                "stop2_skim_idx",
+            ],
+            inplace=True,
+            errors="ignore",
+        )
+
+        return tnc_veh_trips, pooled_trips
+
     def route_taxi_tncs(self):
-        tnc_trips, skim = self.read_input_data()
+        """Main function to route taxi and TNC trips, including pooling logic."""
+        # read in initial skim data
+        self.read_skim_data(0)
 
-        self.skim_data = np.array(skim)
-
+        # read in taxi / tnc trip data
+        tnc_trips = self.read_input_data()
         tnc_trips = self.sample_tnc_trip_simulation_time_bin(tnc_trips)
 
+        # initialize vehicle fleet
         vehicles = None
         veh_trips = []
         pooling_trips = []
 
+        # loop through each time bin and process trips
         for time_bin, tnc_trips_i in tnc_trips.groupby("time_bin"):
             logger.info(
                 f"Processing time bin {time_bin} with {len(tnc_trips_i)} taxi / tnc trips:"
@@ -907,6 +1102,10 @@ class TaxiTNCRouter:
         pooled_trips = pd.concat(pooling_trips)
 
         self.summarize_tnc_trips(tnc_veh_trips, tnc_trips, vehicles, pooled_trips)
+
+        tnc_veh_trips, pooled_trips = self.remap_skim_idx_to_zone(
+            tnc_veh_trips, pooled_trips, tnc_trips
+        )
 
         tnc_veh_trips.to_csv(
             os.path.join(self.settings.output_dir, "output_tnc_vehicle_trips.csv")

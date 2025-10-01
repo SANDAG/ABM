@@ -4,10 +4,13 @@ asim_output_dir: C:\Users\david.hensle\OneDrive - Resource Systems Group, Inc\Do
 # path to folder with skim data
 skim_dir: C:\Users\david.hensle\OneDrive - Resource Systems Group, Inc\Documents\projects\sandag\AV_TNC_models\tnc_data\full
 # name of skim matrix in OMX file minus time period suffix
-skim_core: SOV_TR_H_TIME__AM
+skim_time_core: SOV_TR_H_TIME
 # time periods to process, should match network_los.yaml settings
 skim_periods: ['EA', 'AM', 'MD', 'PM', 'EV']  
+# skim_periods: ['AM', 'AM', 'AM', 'AM', 'AM']  
 periods: [0, 6, 12, 25, 32, 48]
+skim_files: ['traffic_skims_EA.omx', 'traffic_skims_AM.omx', 'traffic_skims_MD.omx', 'traffic_skims_PM.omx', 'traffic_skims_EV.omx']
+# skim_files: ['traffic_skims_AM.omx', 'traffic_skims_AM.omx', 'traffic_skims_AM.omx', 'traffic_skims_AM.omx', 'traffic_skims_AM.omx']
 
 # output folder for results
 output_dir: C:\Users\david.hensle\OneDrive - Resource Systems Group, Inc\Documents\projects\sandag\AV_TNC_models\tnc_outputs\full
