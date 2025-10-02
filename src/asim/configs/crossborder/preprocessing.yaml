@@ -31,7 +31,7 @@ skims:
         j: DMAZ
 
 # maz_id below is overriden from constants.yaml
-# TODO: currently if this is changed, also update resident_is_size_terms.csv
+# TODO: currently if this is changed, also update input/ie/resident_ie_size_term.csv
 poes:
   0:
     name: San Ysidro
