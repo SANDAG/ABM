@@ -318,6 +318,10 @@ def execute_av_trip_matches(
 
     all_veh_trips = pd.concat(all_veh_trips, ignore_index=True)
     all_veh_trips["is_deadhead"] = False
+    assert (
+        all_veh_trips.trip_id.notna().all()
+    ), f"Some AV trips do not have a trip_id after merging with trips_in_period:\n{all_veh_trips[all_veh_trips.trip_id.isna()]}"
+    all_veh_trips["trip_type"] = "serving_trip"
 
     # add trip to table if the AV is not at the trip origin!
     first_veh_trip = all_veh_trips.drop_duplicates("vehicle_id")
@@ -339,6 +343,7 @@ def execute_av_trip_matches(
         ].values
         additional_reposition_trips[["trip_number", "av_number", "trip_id"]] = pd.NA
         additional_reposition_trips["is_deadhead"] = True
+        additional_reposition_trips["trip_type"] = "going_to_matched_trip"
 
         # merge in the repositioning trips
         all_veh_trips = pd.concat(
@@ -630,6 +635,7 @@ def get_next_household_trips_to_service(
     ]
 
     # loop through next_trip_number and add the trip info to choosers
+    choosers.reset_index(inplace=True, drop=False)
     for next_trip_num in range(1, 4):
         next_trips = next_hh_trips[next_hh_trips.next_trip_number == next_trip_num][
             trip_columns_to_keep
@@ -641,6 +647,7 @@ def get_next_household_trips_to_service(
             columns={f"next_household_id_{next_trip_num}": "household_id"}, inplace=True
         )
         choosers = choosers.merge(next_trips, on="household_id", how="left")
+    choosers.set_index("repo_chooser_id", inplace=True)
 
     # fill NaN values with -1 so skims and stuff works with utility expressions
     choosers.fillna(-1, inplace=True)
@@ -728,11 +735,11 @@ def reposition_avs_from_choice(state, veh_trips_this_period, choosers):
         "stay_with_person",
     ]
     assert (
-        veh_trips_this_period["av_repositioning_choice"].isin(expected_choices).all()
+        choosers["av_repositioning_choice"].isin(expected_choices).all()
     ), "All repositioning choices should be one of the expected options"
 
     # first duplicating all trips in this period
-    new_veh_trips = veh_trips_this_period.copy()
+    new_veh_trips = choosers.copy()[veh_trips_this_period.columns]
     new_veh_trips["origin"] = new_veh_trips["destination"]
     new_veh_trips["destination"] = pd.NA
 
@@ -741,14 +748,17 @@ def reposition_avs_from_choice(state, veh_trips_this_period, choosers):
     new_veh_trips.loc[go_home_mask, "destination"] = choosers.loc[
         go_home_mask, "home_zone_id"
     ]
+    new_veh_trips.loc[go_home_mask, "trip_type"] = "going_home"
 
     # updating location to nearest parking zone for vehicles going to remote parking
     go_park_mask = new_veh_trips["av_repositioning_choice"] == "go_to_parking"
     new_veh_trips.loc[go_park_mask, "destination"] = new_veh_trips.loc[
         go_park_mask, "origin"
     ].map(PARKING_ZONE_MAP)
+    new_veh_trips.loc[go_park_mask, "trip_type"] = "going_to_parking"
 
     # updating location for those going to the next trip origin
+    new_veh_trips["next_trip_id"] = np.nan
     for next_trip_num in range(1, 4):
         go_next_trip_mask = (
             new_veh_trips["av_repositioning_choice"]
@@ -757,6 +767,10 @@ def reposition_avs_from_choice(state, veh_trips_this_period, choosers):
         new_veh_trips.loc[go_next_trip_mask, "destination"] = choosers.loc[
             go_next_trip_mask, f"next_origin_{next_trip_num}"
         ]
+        new_veh_trips.loc[go_next_trip_mask, "next_trip_id"] = choosers.loc[
+            go_next_trip_mask, f"next_trip_id_{next_trip_num}"
+        ]
+        new_veh_trips.loc[go_next_trip_mask, "trip_type"] = "going_to_next_trip"
 
     # remove any vehicles that are not repositioning
     # needs to come at the end of the other options to keep indexing correct with choosers
@@ -776,7 +790,7 @@ def reposition_avs_from_choice(state, veh_trips_this_period, choosers):
         "av_number",
         "trip_id",
     ]
-    new_veh_trips[na_cols] = pd.NA
+    new_veh_trips[na_cols] = np.nan
     veh_trips_this_period["is_deadhead"] = False
 
     # appending the new trips to the existing trips
@@ -879,7 +893,12 @@ def av_repositioning(
         veh_trips_this_period: input dataframe with additional repositioning trips appended
     """
 
-    choosers = veh_trips_this_period.copy()
+    # can have more than one veh trip in this period if the av serviced multiple trips
+    # so we need to drop duplicates to get only the last trip for each vehicle
+    choosers = veh_trips_this_period.sort_values("trip_number").drop_duplicates(
+        subset=["vehicle_id"], keep="last"
+    )
+    choosers.index.name = "repo_chooser_id"
 
     choosers["nearest_av_parking_zone_id"] = get_nearest_parking_zone_id(
         state, model_settings, choosers
@@ -929,8 +948,9 @@ def av_repositioning(
 
     state.get_rn_generator().drop_channel("av_repositioning")
 
-    veh_trips_this_period["av_repositioning_choice"] = model_spec.columns[
-        choices.values
+    choosers["av_repositioning_choice"] = model_spec.columns[choices.values]
+    veh_trips_this_period["av_repositioning_choice"] = choosers[
+        "av_repositioning_choice"
     ]
 
     veh_trips_this_period = reposition_avs_from_choice(
