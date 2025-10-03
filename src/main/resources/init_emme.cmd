@@ -6,8 +6,8 @@ set SCENARIO_FOLDER=%1
 set EMME_VERSION=%2
 
 rem add EMME to PATH
-set E_PATH=C:\\Program Files\\INRO\\Emme\\Emme 4\\Emme-%EMME_VERSION%
-set PATH=%E_PATH%\\programs;%E_PATH%\\python27;%PATH%
+set E_PATH=C:\\Program Files\\Bentley\\OpenPaths\\EMME %EMME_VERSION%
+set PATH=%E_PATH%\\programs;%E_PATH%\\python311;%PATH%
 set EMMEPATH=%E_PATH%
 
 rem delete existing emme_project folder
@@ -26,7 +26,7 @@ copy ".\\common\\python\\emme\\solutions.mtbx" "%SCENARIO_FOLDER%\emme_project\S
 
 rem create a batch script at startup
 (
-echo set python_virtualenv=C:\python_virtualenv\abm14_2_0
+echo set python_virtualenv=C:\python_virtualenv\abm15_4_0
 echo start "TITLE" "%E_PATH%\\programs\\EmmeDesktop.exe" ./emme_project.emp
 )>%SCENARIO_FOLDER%\emme_project\start_emme_with_virtualenv.bat
 

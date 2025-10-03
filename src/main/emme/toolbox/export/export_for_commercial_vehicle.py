@@ -54,7 +54,7 @@ class ExportForCommercialVehicleModel(_m.Tool(), gen_utils.Snapshot):
 
     tool_run_msg = ""
 
-    @_m.method(return_type=_m.UnicodeType)
+    @_m.method(return_type=str)
     def tool_run_msg_status(self):
         return self.tool_run_msg
 
@@ -147,12 +147,12 @@ class ExportForCommercialVehicleModel(_m.Tool(), gen_utils.Snapshot):
 
         # Insert row number into first column of the array
         # Note: assumes zone IDs are continuous
-        for key, array in output_matrices.iteritems():
+        for key, array in output_matrices.items():
             output_matrices[key] = _np.insert(array, 0, range(1, array.shape[0]+1), axis=1)
 
         # Output DU matrices to CSV
         # Print first column as integer, subsequent columns as floats rounded to 6 decimals
         fmt_spec = ['%i'] + ['%.6f'] * (disutil_mat.shape[0])
         # Save to separate files
-        for name, array in output_matrices.iteritems():
+        for name, array in output_matrices.items():
             _np.savetxt(_join(output_directory, name), array, fmt=fmt_spec, delimiter=',')
