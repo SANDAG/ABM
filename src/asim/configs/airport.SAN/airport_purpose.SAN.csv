@@ -1,7 +1,5 @@
-Purpose,Description,Percent
-0,res_bus,0.109
-1,res_per,0.255
-2,vis_bus,0.224
-3,vis_per,0.358
-4,external,0
-5,emp,0
+,market_segment_id,market_segment,weight_departing_only_model_respondents
+0,0,resident_business,0.085
+1,1,resident_non_business,0.29
+2,2,visitor_business,0.211
+3,3,visitor_non_business,0.413

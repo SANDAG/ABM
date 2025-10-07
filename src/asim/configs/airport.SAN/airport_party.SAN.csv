@@ -1,7 +1,9 @@
-party,purp0_perc,purp1_perc,purp2_perc,purp3_perc,purp4_perc,purp5_perc
-0,0,0,0,0,0,0
-1,0.871,0.569,0.689,0.472,0.546,1
-2,0.088,0.281,0.223,0.308,0.273,0
-3,0.022,0.063,0.044,0.09,0.085,0
-4,0.002,0.048,0.024,0.075,0.048,0
-5,0.017,0.039,0.021,0.055,0.048,0
+,party_size_id,party_size,weight_departing_only_model_respondents
+0,0,ONE,0.433
+1,1,TWO,0.256
+2,2,THREE,0.095
+3,3,FOUR,0.064
+4,4,FIVE,0.044
+5,5,SIX,0.032
+6,6,SEVEN,0.022
+7,7,EIGHT_OR_MORE,0.055
