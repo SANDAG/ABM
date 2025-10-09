@@ -7,41 +7,9 @@ set SCENYEAR=%4
 
 %PROJECT_DRIVE%
 cd /d %PROJECT_DIRECTORY%
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-:: SET UP PATHS
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-SET ANACONDA3_DIR=%CONDA_PREFIX%
 
-SET PATH=%ANACONDA3_DIR%\Library\bin;%PATH%
-SET PATH=%ANACONDA3_DIR%\Scripts;%ANACONDA3_DIR%\bin;%PATH%
-
-:: setup paths to Python application, Conda script, etc.
-SET CONDA3_ACT=%ANACONDA3_DIR%\Scripts\activate.bat
-
-SET CONDA3=%ANACONDA3_DIR%\Scripts\conda.exe
-
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-:: CALL ON THE ENVIRONMENT, AND IF IT DOES NOT EXIST, CREATE IT FROM THE YAML FILE
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-CALL %CONDA3_ACT% asim_140
-
-if %errorlevel% equ 0 (
-    ECHO Python environment %ENV_NAME% is already installed.
-    goto end
-)
-CD src\asim
-rem Install the environment from the YAML file
-CALL %CONDA3% env create -f environment.yml -n asim_140
-
-CALL %CONDA3_ACT% asim_140
-
-:end
-
-SET PYTHON3=%ANACONDA3_DIR%\envs\asim_140\python.exe
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-cd /d %PROJECT_DIRECTORY%
+ECHO Activate ActivitySim....
+CALL %activate_uv_asim%
 
 CD output
 MD airport.CBX
@@ -54,22 +22,22 @@ CD ..
 
 if %ITERATION% equ 1 (
 
-    %PYTHON3% src/asim/scripts/resident/resident_preprocessing.py input output %SCENYEAR% %PROJECT_DIRECTORY% || goto error
+    python src/asim/scripts/resident/resident_preprocessing.py input output %SCENYEAR% %PROJECT_DIRECTORY% || goto error
 
     ECHO Running Airport models pre-processing
-    %PYTHON3% src/asim/scripts/airport/airport_model.py -p -c src/asim/configs/airport.CBX -d input -o output/airport.CBX || goto error
-    %PYTHON3% src/asim/scripts/airport/airport_model.py -p -c src/asim/configs/airport.SAN -d input -o output/airport.SAN || goto error
-    %PYTHON3% src/asim/scripts/airport/createPOIomx.py %PROJECT_DIRECTORY% %SCENYEAR% || goto error
+    python src/asim/scripts/airport/airport_model.py -p -c src/asim/configs/airport.CBX -d input -o output/airport.CBX || goto error
+    python src/asim/scripts/airport/airport_model.py -p -c src/asim/configs/airport.SAN -d input -o output/airport.SAN || goto error
+    python src/asim/scripts/airport/createPOIomx.py %PROJECT_DIRECTORY% %SCENYEAR% || goto error
 
     ECHO Running xborder model pre-processing
-    %PYTHON3% src/asim/scripts/xborder/cross_border_model.py -p -c src/asim/configs/crossborder -c src/asim/configs/common -d input -o output/crossborder || goto error
-    %PYTHON3% src/asim/scripts/xborder/createPMSAomx.py %PROJECT_DIRECTORY% || goto error
+    python src/asim/scripts/xborder/cross_border_model.py -p -c src/asim/configs/crossborder -c src/asim/configs/common -d input -o output/crossborder || goto error
+    python src/asim/scripts/xborder/createPMSAomx.py %PROJECT_DIRECTORY% || goto error
 
     ECHO Running visitor model pre-processing
-    %PYTHON3% src/asim/scripts/visitor/visitor_model.py -t -c src/asim/configs/visitor -d input -o output/visitor || goto error
+    python src/asim/scripts/visitor/visitor_model.py -t -c src/asim/configs/visitor -d input -o output/visitor || goto error
 ) else (
     ECHO Running resident model pre-processing
-    %PYTHON3% src/asim/scripts/resident/resident_preprocessing.py input output %SCENYEAR% %PROJECT_DIRECTORY% || goto error
+    python src/asim/scripts/resident/resident_preprocessing.py input output %SCENYEAR% %PROJECT_DIRECTORY% || goto error
 )
 
 goto :EOF
