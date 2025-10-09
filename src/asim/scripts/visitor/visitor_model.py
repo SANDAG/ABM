@@ -165,7 +165,7 @@ if __name__ == '__main__':
                        '-o', output_dir]
 
         process = subprocess.Popen(
-            ['python', '-u', asim_root + 'simulation.py'] + config_args,
+            [sys.executable, '-u', asim_root + 'simulation.py'] + config_args,
             stdout=sys.stdout, stderr=subprocess.PIPE)
         _, stderr = process.communicate()
         if process.returncode != 0:

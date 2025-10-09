@@ -412,7 +412,7 @@ if __name__ == '__main__':
             settings = yaml.load(f, Loader=yaml.FullLoader)
 
         process = subprocess.Popen(
-            ['python', '-u', 'src/asim/simulation.py' ,'-c', config_dir, '-c', 'src/asim/configs/common_airport', '-o', output_dir, '-d', data_dir, '-d', 'output/skims'],
+            [sys.executable, '-u', 'src/asim/simulation.py' ,'-c', config_dir, '-c', 'src/asim/configs/common_airport', '-o', output_dir, '-d', data_dir, '-d', 'output/skims'],
             stdout=sys.stdout, stderr=subprocess.PIPE)
         _, stderr = process.communicate()
         if process.returncode != 0:
