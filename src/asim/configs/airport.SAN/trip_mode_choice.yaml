@@ -18,9 +18,7 @@ NESTS:
         coefficient: coef_nest_RIDEHAIL
         alternatives:
           - RIDEHAIL_LOC1
-          # - RIDEHAIL_LOC2
           - TAXI_LOC1
-          # - TAXI_LOC2
       - name: TRANSIT
         coefficient: coef_nest_TRANSIT
         alternatives:
@@ -28,28 +26,18 @@ NESTS:
               coefficient: coef_nest_TRANSIT_WALKACCESS
               alternatives:
               - WALK_LOC
-              # - WALK_PRM
-              # - WALK_MIX
+              - WALK_MIX
+              - WALK_PRM
             - name: KNRACCESS # TODO look into next?
               coefficient: coef_nest_TRANSIT_KNRACCESS
               alternatives:
               - KNR_LOC
-            #   - KNR_PRM
-            #   - KNR_MIX
-            # - name: TNCACCESS
-            #   coefficient: coef_nest_TRANSIT_KNRACCESS
-            #   alternatives:
-            #   - TNC_LOC
-            #   - TNC_PRM
-            #   - TNC_MIX
+              - KNR_MIX
+              - KNR_PRM
       - name: CURB # drop-off
         coefficient: coef_nest_CURB
         alternatives:
           - CURB_LOC1
-          # - CURB_LOC2
-          # - CURB_LOC3
-          # - CURB_LOC4
-          # - CURB_LOC5
       - name: RNTL
         coefficient: coef_nest_RENTAL
         alternatives:
