@@ -39,7 +39,6 @@
 35,,ridehailloc1,ridehailLocation1Mgra
 36,,ridehailloc2,ridehailLocation2Mgra
 37,,rentalloc,rentalLocationMgra
-38,,escortloc,parkEscortLocationMgra
 39,driveAloneDistParkLocation1,driveAloneDistParkLocation1,"np.where(vot1 & am, skim_dict.lookup(df['origin'], np.array([parkLocation1Mgra]*len(df)), ('SOV_NT_L_DIST', 'AM')), 
     np.where( vot2 & am, skim_dict.lookup(df['origin'], np.array([parkLocation1Mgra]*len(df)), ('SOV_NT_M_DIST', 'AM')),
     np.where( vot3 & am, skim_dict.lookup(df['origin'], np.array([parkLocation1Mgra]*len(df)), ('SOV_NT_H_DIST', 'AM')),
@@ -1591,102 +1590,6 @@
 1573,,rentalLocationShared3IVT,ea*(vot1*shared3TimeRentalLocation_low_ea + vot2*shared3TimeRentalLocation_med_ea + vot3*shared3TimeRentalLocation_hi_ea) +  am*(vot1*shared3TimeRentalLocation_low_am + vot2*shared3TimeRentalLocation_med_am + vot3*shared3TimeRentalLocation_hi_am) + md*(vot1*shared3TimeRentalLocation_low_md + vot2*shared3TimeRentalLocation_med_md + vot3*shared3TimeRentalLocation_hi_md) + pm*(vot1*shared3TimeRentalLocation_low_pm + vot2*shared3TimeRentalLocation_med_pm + vot3*shared3TimeRentalLocation_hi_pm) + ev*(vot1*shared3TimeRentalLocation_low_ev + vot2*shared3TimeRentalLocation_med_ev + vot3*shared3TimeRentalLocation_hi_ev) 
 1574,,rentalLocationShared3Dist,ea*(vot1*shared3DistRentalLocation_low_ea + vot2*shared3DistRentalLocation_med_ea + vot3*shared3DistRentalLocation_hi_ea) + am*(vot1*shared3DistRentalLocation_low_am + vot2*shared3DistRentalLocation_med_am + vot3*shared3DistRentalLocation_hi_am) + md*(vot1*shared3DistRentalLocation_low_md + vot2*shared3DistRentalLocation_med_md + vot3*shared3DistRentalLocation_hi_md) + pm*(vot1*shared3DistRentalLocation_low_pm + vot2*shared3DistRentalLocation_med_pm + vot3*shared3DistRentalLocation_hi_pm) + ev*(vot1*shared3DistRentalLocation_low_ev + vot2*shared3DistRentalLocation_med_ev + vot3*shared3DistRentalLocation_hi_ev) 
 1575,,rentalLocationShared3Toll,ea*(vot1*shared3TollRentalLocation_low_ea + vot2*shared3TollRentalLocation_med_ea + vot3*shared3TollRentalLocation_hi_ea) + am*(vot1*shared3TollRentalLocation_low_am + vot2*shared3TollRentalLocation_med_am + vot3*shared3TollRentalLocation_hi_am) + md*(vot1*shared3TollRentalLocation_low_md + vot2*shared3TollRentalLocation_med_md + vot3*shared3TollRentalLocation_hi_md) + pm*(vot1*shared3TollRentalLocation_low_pm + vot2*shared3TollRentalLocation_med_pm + vot3*shared3TollRentalLocation_hi_pm) + ev*(vot1*shared3TollRentalLocation_low_ev + vot2*shared3TollRentalLocation_med_ev + vot3*shared3TollRentalLocation_hi_ev) 
-1576,shared2DistParkEscortLocation,shared2DistParkEscortLocation_hi_md,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_H_DIST', 'MD')) if parkEscortLocationMgra > 0 else 0"
-1577,shared2DistParkEscortLocation,shared2DistParkEscortLocation_med_md,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_M_DIST', 'MD')) if parkEscortLocationMgra > 0 else 0"
-1578,shared2DistParkEscortLocation,shared2DistParkEscortLocation_low_md,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_L_DIST', 'MD')) if parkEscortLocationMgra > 0 else 0"
-1579,shared2TimeParkEscortLocation,shared2TimeParkEscortLocation_hi_md,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_H_TIME', 'MD')) if parkEscortLocationMgra > 0 else 0"
-1580,shared2TimeParkEscortLocation,shared2TimeParkEscortLocation_med_md,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_M_TIME', 'MD')) if parkEscortLocationMgra > 0 else 0"
-1581,shared2TimeParkEscortLocation,shared2TimeParkEscortLocation_low_md,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_L_TIME', 'MD')) if parkEscortLocationMgra > 0 else 0"
-1582,shared2TollParkEscortLocation,shared2TollParkEscortLocation_hi_md,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_H_TOLLCOST', 'MD')) if parkEscortLocationMgra > 0 else 0"
-1583,shared2TollParkEscortLocation,shared2TollParkEscortLocation_med_md,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_M_TOLLCOST', 'MD')) if parkEscortLocationMgra > 0 else 0"
-1584,shared2TollParkEscortLocation,shared2TollParkEscortLocation_low_md,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_L_TOLLCOST', 'MD')) if parkEscortLocationMgra > 0 else 0"
-1585,shared3DistParkEscortLocation,shared3DistParkEscortLocation_hi_md,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_H_DIST', 'MD')) if parkEscortLocationMgra > 0 else 0"
-1586,shared3DistParkEscortLocation,shared3DistParkEscortLocation_med_md,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_M_DIST', 'MD')) if parkEscortLocationMgra > 0 else 0"
-1587,shared3DistParkEscortLocation,shared3DistParkEscortLocation_low_md,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_L_DIST', 'MD')) if parkEscortLocationMgra > 0 else 0"
-1588,shared3TimeParkEscortLocation,shared3TimeParkEscortLocation_hi_md,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_H_TIME', 'MD')) if parkEscortLocationMgra > 0 else 0"
-1589,shared3TimeParkEscortLocation,shared3TimeParkEscortLocation_med_md,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_M_TIME', 'MD')) if parkEscortLocationMgra > 0 else 0"
-1590,shared3TimeParkEscortLocation,shared3TimeParkEscortLocation_low_md,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_L_TIME', 'MD')) if parkEscortLocationMgra > 0 else 0"
-1591,shared3TollParkEscortLocation,shared3TollParkEscortLocation_hi_md,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_H_TOLLCOST', 'MD')) if parkEscortLocationMgra > 0 else 0"
-1592,shared3TollParkEscortLocation,shared3TollParkEscortLocation_med_md,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_M_TOLLCOST', 'MD')) if parkEscortLocationMgra > 0 else 0"
-1593,shared3TollParkEscortLocation,shared3TollParkEscortLocation_low_md,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_L_TOLLCOST', 'MD')) if parkEscortLocationMgra > 0 else 0"
-1594,shared2DistParkEscortLocation,shared2DistParkEscortLocation_hi_am,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_H_DIST', 'AM')) if parkEscortLocationMgra > 0 else 0"
-1595,shared2DistParkEscortLocation,shared2DistParkEscortLocation_med_am,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_M_DIST', 'AM')) if parkEscortLocationMgra > 0 else 0"
-1596,shared2DistParkEscortLocation,shared2DistParkEscortLocation_low_am,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_L_DIST', 'AM')) if parkEscortLocationMgra > 0 else 0"
-1597,shared2TimeParkEscortLocation,shared2TimeParkEscortLocation_hi_am,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_H_TIME', 'AM')) if parkEscortLocationMgra > 0 else 0"
-1598,shared2TimeParkEscortLocation,shared2TimeParkEscortLocation_med_am,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_M_TIME', 'AM')) if parkEscortLocationMgra > 0 else 0"
-1599,shared2TimeParkEscortLocation,shared2TimeParkEscortLocation_low_am,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_L_TIME', 'AM')) if parkEscortLocationMgra > 0 else 0"
-1600,shared2TollParkEscortLocation,shared2TollParkEscortLocation_hi_am,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_H_TOLLCOST', 'AM')) if parkEscortLocationMgra > 0 else 0"
-1601,shared2TollParkEscortLocation,shared2TollParkEscortLocation_med_am,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_M_TOLLCOST', 'AM')) if parkEscortLocationMgra > 0 else 0"
-1602,shared2TollParkEscortLocation,shared2TollParkEscortLocation_low_am,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_L_TOLLCOST', 'AM')) if parkEscortLocationMgra > 0 else 0"
-1603,shared3DistParkEscortLocation,shared3DistParkEscortLocation_hi_am,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_H_DIST', 'AM')) if parkEscortLocationMgra > 0 else 0"
-1604,shared3DistParkEscortLocation,shared3DistParkEscortLocation_med_am,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_M_DIST', 'AM')) if parkEscortLocationMgra > 0 else 0"
-1605,shared3DistParkEscortLocation,shared3DistParkEscortLocation_low_am,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_L_DIST', 'AM')) if parkEscortLocationMgra > 0 else 0"
-1606,shared3TimeParkEscortLocation,shared3TimeParkEscortLocation_hi_am,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_H_TIME', 'AM')) if parkEscortLocationMgra > 0 else 0"
-1607,shared3TimeParkEscortLocation,shared3TimeParkEscortLocation_med_am,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_M_TIME', 'AM')) if parkEscortLocationMgra > 0 else 0"
-1608,shared3TimeParkEscortLocation,shared3TimeParkEscortLocation_low_am,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_L_TIME', 'AM')) if parkEscortLocationMgra > 0 else 0"
-1609,shared3TollParkEscortLocation,shared3TollParkEscortLocation_hi_am,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_H_TOLLCOST', 'AM')) if parkEscortLocationMgra > 0 else 0"
-1610,shared3TollParkEscortLocation,shared3TollParkEscortLocation_med_am,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_M_TOLLCOST', 'AM')) if parkEscortLocationMgra > 0 else 0"
-1611,shared3TollParkEscortLocation,shared3TollParkEscortLocation_low_am,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_L_TOLLCOST', 'AM')) if parkEscortLocationMgra > 0 else 0"
-1612,shared2DistParkEscortLocation,shared2DistParkEscortLocation_hi_pm,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_H_DIST', 'PM')) if parkEscortLocationMgra > 0 else 0"
-1613,shared2DistParkEscortLocation,shared2DistParkEscortLocation_med_pm,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_M_DIST', 'PM')) if parkEscortLocationMgra > 0 else 0"
-1614,shared2DistParkEscortLocation,shared2DistParkEscortLocation_low_pm,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_L_DIST', 'PM')) if parkEscortLocationMgra > 0 else 0"
-1615,shared2TimeParkEscortLocation,shared2TimeParkEscortLocation_hi_pm,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_H_TIME', 'PM')) if parkEscortLocationMgra > 0 else 0"
-1616,shared2TimeParkEscortLocation,shared2TimeParkEscortLocation_med_pm,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_M_TIME', 'PM')) if parkEscortLocationMgra > 0 else 0"
-1617,shared2TimeParkEscortLocation,shared2TimeParkEscortLocation_low_pm,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_L_TIME', 'PM')) if parkEscortLocationMgra > 0 else 0"
-1618,shared2TollParkEscortLocation,shared2TollParkEscortLocation_hi_pm,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_H_TOLLCOST', 'PM')) if parkEscortLocationMgra > 0 else 0"
-1619,shared2TollParkEscortLocation,shared2TollParkEscortLocation_med_pm,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_M_TOLLCOST', 'PM')) if parkEscortLocationMgra > 0 else 0"
-1620,shared2TollParkEscortLocation,shared2TollParkEscortLocation_low_pm,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_L_TOLLCOST', 'PM')) if parkEscortLocationMgra > 0 else 0"
-1621,shared3DistParkEscortLocation,shared3DistParkEscortLocation_hi_pm,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_H_DIST', 'PM')) if parkEscortLocationMgra > 0 else 0"
-1622,shared3DistParkEscortLocation,shared3DistParkEscortLocation_med_pm,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_M_DIST', 'PM')) if parkEscortLocationMgra > 0 else 0"
-1623,shared3DistParkEscortLocation,shared3DistParkEscortLocation_low_pm,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_L_DIST', 'PM')) if parkEscortLocationMgra > 0 else 0"
-1624,shared3TimeParkEscortLocation,shared3TimeParkEscortLocation_hi_pm,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_H_TIME', 'PM')) if parkEscortLocationMgra > 0 else 0"
-1625,shared3TimeParkEscortLocation,shared3TimeParkEscortLocation_med_pm,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_M_TIME', 'PM')) if parkEscortLocationMgra > 0 else 0"
-1626,shared3TimeParkEscortLocation,shared3TimeParkEscortLocation_low_pm,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_L_TIME', 'PM')) if parkEscortLocationMgra > 0 else 0"
-1627,shared3TollParkEscortLocation,shared3TollParkEscortLocation_hi_pm,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_H_TOLLCOST', 'PM')) if parkEscortLocationMgra > 0 else 0"
-1628,shared3TollParkEscortLocation,shared3TollParkEscortLocation_med_pm,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_M_TOLLCOST', 'PM')) if parkEscortLocationMgra > 0 else 0"
-1629,shared3TollParkEscortLocation,shared3TollParkEscortLocation_low_pm,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_L_TOLLCOST', 'PM')) if parkEscortLocationMgra > 0 else 0"
-1630,shared2DistParkEscortLocation,shared2DistParkEscortLocation_hi_ev,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_H_DIST', 'EV')) if parkEscortLocationMgra > 0 else 0"
-1631,shared2DistParkEscortLocation,shared2DistParkEscortLocation_med_ev,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_M_DIST', 'EV')) if parkEscortLocationMgra > 0 else 0"
-1632,shared2DistParkEscortLocation,shared2DistParkEscortLocation_low_ev,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_L_DIST', 'EV')) if parkEscortLocationMgra > 0 else 0"
-1633,shared2TimeParkEscortLocation,shared2TimeParkEscortLocation_hi_ev,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_H_TIME', 'EV')) if parkEscortLocationMgra > 0 else 0"
-1634,shared2TimeParkEscortLocation,shared2TimeParkEscortLocation_med_ev,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_M_TIME', 'EV')) if parkEscortLocationMgra > 0 else 0"
-1635,shared2TimeParkEscortLocation,shared2TimeParkEscortLocation_low_ev,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_L_TIME', 'EV')) if parkEscortLocationMgra > 0 else 0"
-1636,shared2TollParkEscortLocation,shared2TollParkEscortLocation_hi_ev,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_H_TOLLCOST', 'EV')) if parkEscortLocationMgra > 0 else 0"
-1637,shared2TollParkEscortLocation,shared2TollParkEscortLocation_med_ev,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_M_TOLLCOST', 'EV')) if parkEscortLocationMgra > 0 else 0"
-1638,shared2TollParkEscortLocation,shared2TollParkEscortLocation_low_ev,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_L_TOLLCOST', 'EV')) if parkEscortLocationMgra > 0 else 0"
-1639,shared3DistParkEscortLocation,shared3DistParkEscortLocation_hi_ev,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_H_DIST', 'EV')) if parkEscortLocationMgra > 0 else 0"
-1640,shared3DistParkEscortLocation,shared3DistParkEscortLocation_med_ev,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_M_DIST', 'EV')) if parkEscortLocationMgra > 0 else 0"
-1641,shared3DistParkEscortLocation,shared3DistParkEscortLocation_low_ev,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_L_DIST', 'EV')) if parkEscortLocationMgra > 0 else 0"
-1642,shared3TimeParkEscortLocation,shared3TimeParkEscortLocation_hi_ev,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_H_TIME', 'EV')) if parkEscortLocationMgra > 0 else 0"
-1643,shared3TimeParkEscortLocation,shared3TimeParkEscortLocation_med_ev,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_M_TIME', 'EV')) if parkEscortLocationMgra > 0 else 0"
-1644,shared3TimeParkEscortLocation,shared3TimeParkEscortLocation_low_ev,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_L_TIME', 'EV')) if parkEscortLocationMgra > 0 else 0"
-1645,shared3TollParkEscortLocation,shared3TollParkEscortLocation_hi_ev,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_H_TOLLCOST', 'EV')) if parkEscortLocationMgra > 0 else 0"
-1646,shared3TollParkEscortLocation,shared3TollParkEscortLocation_med_ev,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_M_TOLLCOST', 'EV')) if parkEscortLocationMgra > 0 else 0"
-1647,shared3TollParkEscortLocation,shared3TollParkEscortLocation_low_ev,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_L_TOLLCOST', 'EV')) if parkEscortLocationMgra > 0 else 0"
-1648,shared2DistParkEscortLocation,shared2DistParkEscortLocation_hi_ea,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_H_DIST', 'EA')) if parkEscortLocationMgra > 0 else 0"
-1649,shared2DistParkEscortLocation,shared2DistParkEscortLocation_med_ea,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_M_DIST', 'EA')) if parkEscortLocationMgra > 0 else 0"
-1650,shared2DistParkEscortLocation,shared2DistParkEscortLocation_low_ea,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_L_DIST', 'EA')) if parkEscortLocationMgra > 0 else 0"
-1651,shared2TimeParkEscortLocation,shared2TimeParkEscortLocation_hi_ea,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_H_TIME', 'EA')) if parkEscortLocationMgra > 0 else 0"
-1652,shared2TimeParkEscortLocation,shared2TimeParkEscortLocation_med_ea,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_M_TIME', 'EA')) if parkEscortLocationMgra > 0 else 0"
-1653,shared2TimeParkEscortLocation,shared2TimeParkEscortLocation_low_ea,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_L_TIME', 'EA')) if parkEscortLocationMgra > 0 else 0"
-1654,shared2TollParkEscortLocation,shared2TollParkEscortLocation_hi_ea,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_H_TOLLCOST', 'EA')) if parkEscortLocationMgra > 0 else 0"
-1655,shared2TollParkEscortLocation,shared2TollParkEscortLocation_med_ea,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_M_TOLLCOST', 'EA')) if parkEscortLocationMgra > 0 else 0"
-1656,shared2TollParkEscortLocation,shared2TollParkEscortLocation_low_ea,"skim_dict.lookup(df['origin'], escortloc, ('HOV2_L_TOLLCOST', 'EA')) if parkEscortLocationMgra > 0 else 0"
-1657,shared3DistParkEscortLocation,shared3DistParkEscortLocation_hi_ea,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_H_DIST', 'EA')) if parkEscortLocationMgra > 0 else 0"
-1658,shared3DistParkEscortLocation,shared3DistParkEscortLocation_med_ea,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_M_DIST', 'EA')) if parkEscortLocationMgra > 0 else 0"
-1659,shared3DistParkEscortLocation,shared3DistParkEscortLocation_low_ea,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_L_DIST', 'EA')) if parkEscortLocationMgra > 0 else 0"
-1660,shared3TimeParkEscortLocation,shared3TimeParkEscortLocation_hi_ea,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_H_TIME', 'EA')) if parkEscortLocationMgra > 0 else 0"
-1661,shared3TimeParkEscortLocation,shared3TimeParkEscortLocation_med_ea,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_M_TIME', 'EA')) if parkEscortLocationMgra > 0 else 0"
-1662,shared3TimeParkEscortLocation,shared3TimeParkEscortLocation_low_ea,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_L_TIME', 'EA')) if parkEscortLocationMgra > 0 else 0"
-1663,shared3TollParkEscortLocation,shared3TollParkEscortLocation_hi_ea,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_H_TOLLCOST', 'EA')) if parkEscortLocationMgra > 0 else 0"
-1664,shared3TollParkEscortLocation,shared3TollParkEscortLocation_med_ea,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_M_TOLLCOST', 'EA')) if parkEscortLocationMgra > 0 else 0"
-1665,shared3TollParkEscortLocation,shared3TollParkEscortLocation_low_ea,"skim_dict.lookup(df['origin'], escortloc, ('HOV3_L_TOLLCOST', 'EA')) if parkEscortLocationMgra > 0 else 0"
-1666,,parkEscortLocationShared2IVT,ea*(vot1*shared2TimeParkEscortLocation_low_ea + vot2*shared2TimeParkEscortLocation_med_ea + vot3*shared2TimeParkEscortLocation_hi_ea) +  am*(vot1*shared2TimeParkEscortLocation_low_am + vot2*shared2TimeParkEscortLocation_med_am + vot3*shared2TimeParkEscortLocation_hi_am) + md*(vot1*shared2TimeParkEscortLocation_low_md + vot2*shared2TimeParkEscortLocation_med_md + vot3*shared2TimeParkEscortLocation_hi_md) + pm*(vot1*shared2TimeParkEscortLocation_low_pm + vot2*shared2TimeParkEscortLocation_med_pm + vot3*shared2TimeParkEscortLocation_hi_pm) + ev*(vot1*shared2TimeParkEscortLocation_low_ev + vot2*shared2TimeParkEscortLocation_med_ev + vot3*shared2TimeParkEscortLocation_hi_ev) 
-1667,,parkEscortLocationShared2Dist,ea*(vot1*shared2DistParkEscortLocation_low_ea + vot2*shared2DistParkEscortLocation_med_ea + vot3*shared2DistParkEscortLocation_hi_ea) + am*(vot1*shared2DistParkEscortLocation_low_am + vot2*shared2DistParkEscortLocation_med_am + vot3*shared2DistParkEscortLocation_hi_am) + md*(vot1*shared2DistParkEscortLocation_low_md + vot2*shared2DistParkEscortLocation_med_md + vot3*shared2DistParkEscortLocation_hi_md) + pm*(vot1*shared2DistParkEscortLocation_low_pm + vot2*shared2DistParkEscortLocation_med_pm + vot3*shared2DistParkEscortLocation_hi_pm) + ev*(vot1*shared2DistParkEscortLocation_low_ev + vot2*shared2DistParkEscortLocation_med_ev + vot3*shared2DistParkEscortLocation_hi_ev) 
-1668,,parkEscortLocationShared2Toll,ea*(vot1*shared2TollParkEscortLocation_low_ea + vot2*shared2TollParkEscortLocation_med_ea + vot3*shared2TollParkEscortLocation_hi_ea) + am*(vot1*shared2TollParkEscortLocation_low_am + vot2*shared2TollParkEscortLocation_med_am + vot3*shared2TollParkEscortLocation_hi_am) + md*(vot1*shared2TollParkEscortLocation_low_md + vot2*shared2TollParkEscortLocation_med_md + vot3*shared2TollParkEscortLocation_hi_md) + pm*(vot1*shared2TollParkEscortLocation_low_pm + vot2*shared2TollParkEscortLocation_med_pm + vot3*shared2TollParkEscortLocation_hi_pm) + ev*(vot1*shared2TollParkEscortLocation_low_ev + vot2*shared2TollParkEscortLocation_med_ev + vot3*shared2TollParkEscortLocation_hi_ev) 
-1669,,parkEscortLocationShared3IVT,ea*(vot1*shared3TimeParkEscortLocation_low_ea + vot2*shared3TimeParkEscortLocation_med_ea + vot3*shared3TimeParkEscortLocation_hi_ea) +  am*(vot1*shared3TimeParkEscortLocation_low_am + vot2*shared3TimeParkEscortLocation_med_am + vot3*shared3TimeParkEscortLocation_hi_am) + md*(vot1*shared3TimeParkEscortLocation_low_md + vot2*shared3TimeParkEscortLocation_med_md + vot3*shared3TimeParkEscortLocation_hi_md) + pm*(vot1*shared3TimeParkEscortLocation_low_pm + vot2*shared3TimeParkEscortLocation_med_pm + vot3*shared3TimeParkEscortLocation_hi_pm) + ev*(vot1*shared3TimeParkEscortLocation_low_ev + vot2*shared3TimeParkEscortLocation_med_ev + vot3*shared3TimeParkEscortLocation_hi_ev) 
-1670,,parkEscortLocationShared3Dist,ea*(vot1*shared3DistParkEscortLocation_low_ea + vot2*shared3DistParkEscortLocation_med_ea + vot3*shared3DistParkEscortLocation_hi_ea) + am*(vot1*shared3DistParkEscortLocation_low_am + vot2*shared3DistParkEscortLocation_med_am + vot3*shared3DistParkEscortLocation_hi_am) + md*(vot1*shared3DistParkEscortLocation_low_md + vot2*shared3DistParkEscortLocation_med_md + vot3*shared3DistParkEscortLocation_hi_md) + pm*(vot1*shared3DistParkEscortLocation_low_pm + vot2*shared3DistParkEscortLocation_med_pm + vot3*shared3DistParkEscortLocation_hi_pm) + ev*(vot1*shared3DistParkEscortLocation_low_ev + vot2*shared3DistParkEscortLocation_med_ev + vot3*shared3DistParkEscortLocation_hi_ev) 
-1671,,parkEscortLocationShared3Toll,ea*(vot1*shared3TollParkEscortLocation_low_ea + vot2*shared3TollParkEscortLocation_med_ea + vot3*shared3TollParkEscortLocation_hi_ea) + am*(vot1*shared3TollParkEscortLocation_low_am + vot2*shared3TollParkEscortLocation_med_am + vot3*shared3TollParkEscortLocation_hi_am) + md*(vot1*shared3TollParkEscortLocation_low_md + vot2*shared3TollParkEscortLocation_med_md + vot3*shared3TollParkEscortLocation_hi_md) + pm*(vot1*shared3TollParkEscortLocation_low_pm + vot2*shared3TollParkEscortLocation_med_pm + vot3*shared3TollParkEscortLocation_hi_pm) + ev*(vot1*shared3TollParkEscortLocation_low_ev + vot2*shared3TollParkEscortLocation_med_ev + vot3*shared3TollParkEscortLocation_hi_ev) 
 1672,,party1,df.party_size ==1
 1673,,party2,df.party_size == 2
 1674,,party3,df.party_size >=3
@@ -1947,9 +1850,6 @@
 1929,,partySizeHotelCourtesyLocationAutoDist,party1*HotelCourtesyLocationShared2Dist + party2*HotelCourtesyLocationShared3Dist + party3*HotelCourtesyLocationShared3Dist
 1930,,partySizeShuttleVanLocationAutoToll,party1*ShuttleVanLocationShared2Toll + party2*ShuttleVanLocationShared3Toll + party3*ShuttleVanLocationShared3Toll
 1931,,partySizeHotelCourtesyLocationAutoToll,party1*HotelCourtesyLocationShared2Toll + party2*HotelCourtesyLocationShared3Toll + party3*HotelCourtesyLocationShared3Toll
-1932,,partySizeParkEscortLocationAutoIVT,party1*parkEscortLocationShared2IVT + party2*parkEscortLocationShared3IVT + party3*parkEscortLocationShared3IVT
-1933,,partySizeParkEscortLocationAutoDist,party1*parkEscortLocationShared2Dist + party2*parkEscortLocationShared3Dist + party3*parkEscortLocationShared3Dist
-1934,,partySizeParkEscortLocationAutoToll,party1*parkEscortLocationShared2Toll + party2*parkEscortLocationShared3Toll + party3*parkEscortLocationShared3Toll
 ,,origin,df.origin if 'origin' in df.columns else df.home_zone_id
 ,,destination,df.destination if 'destination' in df.columns else df.alt_dest
 ,,origin_local_dist,"reindex(land_use.walk_dist_local_bus, origin)"
