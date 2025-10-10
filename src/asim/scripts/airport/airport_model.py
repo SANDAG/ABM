@@ -21,7 +21,7 @@ def find_root_level(target):
     return pardir
 
 def create_tours(settings):
-    """ Create tours from airport model settings and probability distributions"""
+    """Create tours from airport model settings and probability distributions"""
     print('Creating tours.')
     # employee_park = pd.read_csv(os.path.join(config_dir, settings['employee_park_fname']))
     # arrival_sched = pd.read_csv(os.path.join(config_dir, settings['arrival_sched_probs_fname']))
@@ -321,7 +321,6 @@ def create_persons(settings, num_households):
         num_households , num_households, replace=False)
     persons['household_id'] = persons['household_id'] +1
     return persons
-
 
 
 def assign_hh_p_to_tours(tours, persons):
