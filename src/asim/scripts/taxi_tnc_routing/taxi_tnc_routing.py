@@ -830,7 +830,9 @@ class TaxiTNCRouter:
 
         return new_v_trips, full_trip_routes
 
-    def update_vehicle_fleet(self, vehicles, vehicle_trips_i, time_bin):
+    def update_vehicle_fleet(
+        self, vehicles, vehicle_trips_i, time_bin, refuel_veh_trips_i
+    ):
         # update the next_time_free based on the vehicle trips
         next_time_free_update = (
             vehicle_trips_i.groupby("vehicle_id").arrival_bin.max() + 1
@@ -855,6 +857,23 @@ class TaxiTNCRouter:
 
         tot_drive_time = vehicle_trips_i.groupby("vehicle_id").OD_time.sum()
         vehicles.loc[tot_drive_time.index, "drive_time_since_refuel"] += tot_drive_time
+
+        # updating fleet with refueled vehicles
+        if refuel_veh_trips_i is not None:
+            vehicles.loc[
+                refuel_veh_trips_i.index, "last_refuel_time"
+            ] = refuel_veh_trips_i.arrival_bin
+            vehicles.loc[refuel_veh_trips_i.index, "drive_time_since_refuel"] = 0
+            vehicles.loc[refuel_veh_trips_i.index, "is_free"] = False
+            vehicles.loc[refuel_veh_trips_i.index, "next_time_free"] = (
+                refuel_veh_trips_i.arrival_bin + 1
+            )
+            vehicles.loc[
+                refuel_veh_trips_i.index, "location_skim_idx"
+            ] = refuel_veh_trips_i.destination_skim_idx
+            vehicles.loc[
+                refuel_veh_trips_i.index, "location"
+            ] = refuel_veh_trips_i.destination
 
         return vehicles
 
@@ -897,6 +916,10 @@ class TaxiTNCRouter:
         )
         logger.info(
             f"Average occupancy of all vehicle trips: {tnc_veh_trips.occupancy.mean():.2f}"
+        )
+        num_refuel_trips = tnc_veh_trips[tnc_veh_trips.trip_type == "refuel"].shape[0]
+        logger.info(
+            f"Total number of refuel trips: {num_refuel_trips} = {(num_refuel_trips / len(tnc_veh_trips) * 100):.2f}% of all vehicle trips"
         )
 
         # also performing consistency checks on the outputs
@@ -1096,7 +1119,9 @@ class TaxiTNCRouter:
             if refuel_veh_trips_i is not None:
                 veh_trips.append(refuel_veh_trips_i)
 
-            vehicles = self.update_vehicle_fleet(vehicles, vehicle_trips_i, time_bin)
+            vehicles = self.update_vehicle_fleet(
+                vehicles, vehicle_trips_i, time_bin, refuel_veh_trips_i
+            )
 
         tnc_veh_trips = pd.concat(veh_trips)
         pooled_trips = pd.concat(pooling_trips)
