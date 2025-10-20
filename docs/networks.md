@@ -1146,13 +1146,11 @@ The ***SANDAG_Bike_Node.shp*** shapefile contains all the active transportation 
 
 The ***special_fares.txt*** configures zone-based fare schemes and also houses the daily and regional pass fares. The Coaster is presently the only transit route in the San Diego region that has a zone-based fare system. To account for this, its fare structure is laid out in the special_fares.txt file. The contents of the file are as follow:
 
-<br>
 <div align="center">
     <img src="images\networks\special_fares.png" alt="SANDAG's input special fares file" title="special fares text file">
     <br>
     <em>special_fares.txt</em>
 </div>
-<br>
 
 Under the **boarding_cost** section, the **base** sub-section provides the one-way fare (i.e., cost) for each direction of the coaster (i.e., line). Note that under this file, the Coaster is referenced via the RouteID (see RouteID under [TransitRoute](#tned-transit-route-feature-class) for further details) for each direction. The **stop_increment** section was previously utilized when the Coaster operated on a 4-zone fare system (prior to 2019) and therefore the cost values under that section are zeroed out.
 
