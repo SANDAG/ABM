@@ -341,7 +341,9 @@ def execute_av_trip_matches(
         additional_reposition_trips["origin"] = av_vehicles.loc[
             additional_reposition_trips.vehicle_id, "veh_location"
         ].values
-        additional_reposition_trips[["trip_number", "av_number", "trip_id"]] = pd.NA
+        additional_reposition_trips[
+            ["trip_number", "av_number", "trip_id", "av_repositioning_choice"]
+        ] = pd.NA
         additional_reposition_trips["is_deadhead"] = True
         additional_reposition_trips["trip_type"] = "going_to_matched_trip"
 
@@ -791,7 +793,6 @@ def reposition_avs_from_choice(state, veh_trips_this_period, choosers):
         "trip_id",
     ]
     new_veh_trips[na_cols] = np.nan
-    veh_trips_this_period["is_deadhead"] = False
 
     # appending the new trips to the existing trips
     veh_trips_this_period = pd.concat(
@@ -895,9 +896,7 @@ def av_repositioning(
 
     # can have more than one veh trip in this period if the av serviced multiple trips
     # so we need to drop duplicates to get only the last trip for each vehicle
-    choosers = veh_trips_this_period.sort_values("trip_number").drop_duplicates(
-        subset=["vehicle_id"], keep="last"
-    )
+    choosers = veh_trips_this_period.drop_duplicates(subset=["vehicle_id"], keep="last")
     choosers.index.name = "repo_chooser_id"
 
     choosers["nearest_av_parking_zone_id"] = get_nearest_parking_zone_id(
@@ -1028,6 +1027,7 @@ def av_routing(
         trips_per_tour = trips_in_period.groupby("tour_id").cumcount() + 1
         first_trips_in_period = trips_in_period[trips_per_tour == 1]
 
+        # labeling trips in household during this period
         first_trips_in_period["trip_number"] = (
             first_trips_in_period.groupby("household_id").cumcount() + 1
         )
