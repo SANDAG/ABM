@@ -1,3 +1,0 @@
-openpyxl==3.1.5
-seaborn==0.13.2
-simpledbf==0.2.6
