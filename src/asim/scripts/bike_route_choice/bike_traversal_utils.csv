@@ -1,15 +1,23 @@
 Label,Description,Expression,Coefficient
-util_turns,Total turns,(turnType != 0),-0.083
-util_traffic_signal,Traffic signals excluding right turns and T junctions,signalExclRight,-0.040
-util_unsig_left_from_principal,Unsignalized left turns from principal arterials,unlfrma,-0.360
-util_unsig_left_from_minor,Unsignalized left turns from minor arterials,unlfrmi,-0.150
-util_unsig_cross_or_left_onto_principal,Unsignalized cross or left onto principal arterials,unxma,-0.48
-util_unsig_cross_or_left_onto_minor,Unsignalized cross or left onto minor arterials,unxmi,-0.1
 util_thru_centroid,Prevent taking shortcuts via centroid connectors,thruCentroid,-999.9
+# The below coefficients are adapted from Lukawska et al. (2023),,,
+util_yield,Biker must yield at junction,"@(df.signalExclRight | df.unlfrma | df.unlfrmi | df.unxma | df.unxmi)",-0.301
+util_downgrade,Biker has ROW but downgraded functional class,"@df.roadDowngrade & (~(df.signalExclRight | df.unlfrma | df.unlfrmi | df.unxma | df.unxmi))",-0.164
+# FIXME: do we really want to incentivize ALL nodes like this?
+# The above coefficients are adapted from Lukawska et al. (2023),,,
+##################################################################################
+# The below coefficients are from the ABM2 model and have dubious sourcing (see ABM2 documentation),,,
+# util_turns,Total turns,(turnType != 0),-0.083
+# util_traffic_signal,Traffic signals excluding right turns and T junctions,signalExclRight,-0.040
+# util_unsig_left_from_principal,Unsignalized left turns from principal arterials,unlfrma,-0.360
+# util_unsig_left_from_minor,Unsignalized left turns from minor arterials,unlfrmi,-0.150
+# util_unsig_cross_or_left_onto_principal,Unsignalized cross or left onto principal arterials,unxma,-0.48
+# util_unsig_cross_or_left_onto_minor,Unsignalized cross or left onto minor arterials,unxmi,-0.1
 # can't calculate path size here since we don't know the path yet,,
 # path size calculation is done in the code when calculating the logsum,,
 # util_log_path_size,log of path size,logPathSize,1.0
-#
+# The above coefficients are from the ABM2 model and have dubious sourcing (see ABM2 documentation),,,
+##################################################################################
 # The below traffic signal coefficient is from Meister et al. (2024)
 # util_traffic_signal,Traffic signals excluding right turns and T junctions,signalExclRight,-0.03
 # The above traffic signal coefficient is from Meister et al. (2024)

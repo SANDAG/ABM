@@ -52,6 +52,7 @@ if __name__=="__main__":
     """
 
     # pass settings file as command line argument
+    
     settings_file = sys.argv[1]
 
     target_distance = float(sys.argv[2])
@@ -74,7 +75,7 @@ if __name__=="__main__":
     logger = logging.getLogger(__name__)
 
     # load settings
-    settings = load_settings(settings_file)
+    settings = load_settings(logger, settings_file)
 
     # first x data point
     cur_threshold = settings.max_dijkstra_utility

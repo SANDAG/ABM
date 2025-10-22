@@ -3,6 +3,7 @@ import numpy as np
 import os
 import math
 import logging
+
 # import tqdm
 from bike_route_utilities import BikeRouteChoiceSettings, read_file
 
@@ -12,14 +13,17 @@ TURN_LEFT = 1
 TURN_RIGHT = 2
 TURN_REVERSE = 3
 
-BLUE_STEEL  = TURN_RIGHT
-LE_TIGRE    = TURN_RIGHT
-FERRARI     = TURN_RIGHT
-MAGNUM      = TURN_LEFT
+BLUE_STEEL = TURN_RIGHT
+LE_TIGRE = TURN_RIGHT
+FERRARI = TURN_RIGHT
+MAGNUM = TURN_LEFT
 
 
 def create_and_attribute_edges(
-    settings: BikeRouteChoiceSettings, node: pd.DataFrame, link: pd.DataFrame, logger: logging.Logger
+    settings: BikeRouteChoiceSettings,
+    node: pd.DataFrame,
+    link: pd.DataFrame,
+    logger: logging.Logger,
 ) -> pd.DataFrame:
     """
     Create and attribute edges from the provided node and link dataframes.
@@ -52,7 +56,7 @@ def create_and_attribute_edges(
                 "Func_Class": "functionalClass",
                 "Bike2Sep": "cycleTrack",
                 "Bike3Blvd": "bikeBlvd",
-                "SPEED":"speedLimit",
+                "SPEED": "speedLimit",
             }
         )
         .copy()
@@ -91,7 +95,7 @@ def create_and_attribute_edges(
                 "Func_Class": "functionalClass",
                 "Bike2Sep": "cycleTrack",
                 "Bike3Blvd": "bikeBlvd",
-                "SPEED":"speedLimit",
+                "SPEED": "speedLimit",
             }
         )
         .copy()
@@ -99,7 +103,7 @@ def create_and_attribute_edges(
             distance=link.Shape_Leng / 5280.0,  # convert feet to miles
             autosPermitted=link.Func_Class.isin(range(1, 8)),
             centroidConnector=link.Func_Class == 10,
-            geometry=link.geometry.reverse()
+            geometry=link.geometry.reverse(),
         )[
             [
                 "fromNode",
@@ -127,7 +131,7 @@ def create_and_attribute_edges(
         node.assign(centroid=(node.MGRA > 0) | (node.TAZ > 0))
         .rename(
             columns={
-                "NodeLev_ID":"nodeID",
+                "NodeLev_ID": "nodeID",
                 "XCOORD": "x",
                 "YCOORD": "y",
                 "MGRA": "mgra",
@@ -216,7 +220,7 @@ def create_and_attribute_edges(
 #     Recreate Java attributes for traversals.
 #     WARNING: This function contains bugs that we think exist in the Java implementation.
 #     This is merely an optional function used for potential backwards compatibility.\
-    
+
 #     Loop and vectorized outputs should be the same.  Loop code closely mimic the Java implementation,
 #     while vectorized code is more efficient for python implementation.
 
@@ -232,11 +236,11 @@ def create_and_attribute_edges(
 #         # instead of checking for any right turn
 #         if trav.centroid_start or trav.centroid_thru or trav.centroid_end:
 #             return False
-        
+
 #         if trav.turnType != TURN_NONE:
 #             return False
-        
-#         if (    
+
+#         if (
 #             # if there are no sibling traversals
 #             len(
 #                 traversals[
@@ -415,12 +419,12 @@ def create_and_attribute_edges(
 #         last_is_rt, left_on=["start", "thru"], right_index=True, how="left"
 #     ).merge(penultimate_is_rt, left_on=["start", "thru"], right_index=True, how="left")
 
-#     # define the right turn exists parameter for all positions, 
+#     # define the right turn exists parameter for all positions,
 #     # starting with those which are last-siblings
 #     traversals.loc[
 #         traversals.index.isin(last_is_rt.index), "buggyRTE_rt"
 #     ] = traversals.loc[traversals.index.isin(last_is_rt.index), "penultimate_is_rt"]
-    
+
 #     # then moving on to all others
 #     traversals.loc[
 #         ~traversals.index.isin(last_is_rt.index), "buggyRTE_rt"
@@ -463,7 +467,9 @@ def create_and_attribute_edges(
 #     return traversals, java_cols
 
 
-def calculate_signalExclRight_alternatives(traversals: pd.DataFrame, logger: logging.Logger) -> pd.DataFrame:
+def calculate_signalExclRight_alternatives(
+    traversals: pd.DataFrame, logger: logging.Logger
+) -> pd.DataFrame:
     """
     Calculate alternative signalized right turn exclusion columns.
     This was originally used to test backwards compatibility with the Java implementation.
@@ -538,7 +544,10 @@ def calculate_signalExclRight_alternatives(traversals: pd.DataFrame, logger: log
 
 
 def create_and_attribute_traversals(
-    settings: BikeRouteChoiceSettings, edges: pd.DataFrame, nodes: pd.DataFrame, logger: logging.Logger
+    settings: BikeRouteChoiceSettings,
+    edges: pd.DataFrame,
+    nodes: pd.DataFrame,
+    logger: logging.Logger,
 ) -> pd.DataFrame:
     """
     Create and attribute traversals from edges and nodes.
@@ -564,7 +573,7 @@ def create_and_attribute_traversals(
             left_on="toNode",
             right_on="fromNode",
             suffixes=["_fromEdge", "_toEdge"],
-            how='outer'
+            how="outer",
         )
         .rename(
             columns={
@@ -573,7 +582,7 @@ def create_and_attribute_traversals(
                 "toNode_toEdge": "end",
             }
         )
-        .merge(nodes, left_on="thru", right_index=True, how='outer')
+        .merge(nodes, left_on="thru", right_index=True, how="outer")
     )
 
     # drop U-turns
@@ -817,10 +826,9 @@ def create_and_attribute_traversals(
     # populate derived traversal attributes
 
     traversals = traversals.assign(
-
-        thruCentroid=(traversals.centroidConnector_fromEdge
-        & traversals.centroidConnector_toEdge),
-
+        thruCentroid=(
+            traversals.centroidConnector_fromEdge & traversals.centroidConnector_toEdge
+        ),
         # this one is allegedly the one to keep
         # taken from signalExclRight_anyrtvec
         signalExclRight=(
@@ -893,10 +901,17 @@ def create_and_attribute_traversals(
                 )
             )
         ),
+        roadDowngrade=(
+            traversals.functionalClass_fromEdge.isin([3, 4, 5, 6])
+            & traversals.functionalClass_toEdge.isin([4, 5, 6, 7])
+            & (traversals.functionalClass_fromEdge < traversals.functionalClass_toEdge)
+        ),
     )
 
     output_cols = [
-        "start","thru","end",
+        "start",
+        "thru",
+        "end",
         "turnType",
         "thruCentroid",
         "signalExclRight",
@@ -904,22 +919,21 @@ def create_and_attribute_traversals(
         "unlfrmi",
         "unxma",
         "unxmi",
+        "roadDowngrade",
     ]
     # if settings.recreate_java_attributes:
     #     # include the java attributes if they were recreated
     #     output_cols += java_attributes
 
     # keep only the relevant columns
-    traversals = traversals.set_index(["edgeID_fromEdge","edgeID_toEdge"])[output_cols]
+    traversals = traversals.set_index(["edgeID_fromEdge", "edgeID_toEdge"])[output_cols]
 
     logger.info("Finished calculating derived traversal attributes")
 
     return traversals
 
 
-def create_bike_net(
-    settings: BikeRouteChoiceSettings, logger: logging.Logger
-) -> tuple[
+def create_bike_net(settings: BikeRouteChoiceSettings, logger: logging.Logger) -> tuple[
     pd.DataFrame,  # node dataframe
     pd.DataFrame,  # edge dataframe
     pd.DataFrame,  # traversal dataframe
@@ -947,13 +961,17 @@ def create_bike_net(
     if settings.read_cached_bike_net:
         logger.info("Reading cached bike network from CSV files")
         edges = pd.read_csv(
-            os.path.join(os.path.expanduser(settings.output_path), "edges.csv"), index_col=[0]
+            os.path.join(os.path.expanduser(settings.output_path), "edges.csv"),
+            index_col=[0],
         )
         nodes = pd.read_csv(
-            os.path.join(os.path.expanduser(settings.output_path), "nodes.csv"), index_col=0
+            os.path.join(os.path.expanduser(settings.output_path), "nodes.csv"),
+            index_col=0,
         )
         traversals = pd.read_csv(
-            os.path.join(os.path.join(os.path.expanduser(settings.output_path), "traversals.csv")),
+            os.path.join(
+                os.path.join(os.path.expanduser(settings.output_path), "traversals.csv")
+            ),
             index_col=[0, 1],
         )
         return nodes, edges, traversals
@@ -968,15 +986,21 @@ def create_bike_net(
 
     # generate authoritiative positional index
     edges = edges.reset_index()
-    edges.index.name = 'edgeID'
+    edges.index.name = "edgeID"
 
     traversals = create_and_attribute_traversals(settings, edges, nodes, logger)
 
     # save edges, nodes, and traversals to csv files if specified
     if settings.save_bike_net:
         logger.info("Saving bike network to CSV files")
-        edges.to_csv(os.path.join(os.path.expanduser(settings.output_path), "edges.csv"))
-        nodes.to_csv(os.path.join(os.path.expanduser(settings.output_path), "nodes.csv"))
-        traversals.to_csv(os.path.join(os.path.expanduser(settings.output_path), "traversals.csv"))
+        edges.to_csv(
+            os.path.join(os.path.expanduser(settings.output_path), "edges.csv")
+        )
+        nodes.to_csv(
+            os.path.join(os.path.expanduser(settings.output_path), "nodes.csv")
+        )
+        traversals.to_csv(
+            os.path.join(os.path.expanduser(settings.output_path), "traversals.csv")
+        )
 
     return nodes, edges, traversals

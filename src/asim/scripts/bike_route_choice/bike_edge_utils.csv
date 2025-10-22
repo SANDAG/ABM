@@ -1,17 +1,46 @@
 ﻿Label,Description,Expression,Coefficient
-util_class_0_bike_lane_dist,Distance without bike lanes,"@df.distance * np.where((df.bikeClass < 1) | (df.bikeClass > 3), 1, 0)",-0.858
-util_class_I_bike_lane_dist,Distance on class I bike lanes,"@df.distance * np.where(df.bikeClass == 1, 1, 0)",-0.348
-util_class_II_bike_lane_dist,Distance on class II bike lanes,"@df.distance * np.where((df.bikeClass == 2) & (~df.cycleTrack), 1, 0)",-0.544
-util_class_III_bike_lane_dist,Distance on class III bike lanes,"@df.distance * np.where((df.bikeClass == 3) & (~df.bikeBlvd), 1, 0)",-0.858
-util_art_no_bike_lane,Distance on arterial without bike lanes,"@df.distance * np.where((df.arterial) & (df.bikeClass != 2) & (df.bikeClass != 1), 1, 0)",-1.050
-util_dist_cycle_track_class_II,Distance on cyle track class II bike lanes,"@df.distance * df.cycleTrack",-0.424
-util_dist_cycle_track_class_III,Distance on boulevard class III bike routes,"@df.distance * df.bikeBlvd",-0.343
-# FIXME better way to check wrong way distance?,,
-util_dist_wrong_way,Distance wrong way -- no lanes in direction of travel and no bike lane means wrong way,"@df.distance * np.where((df.bikeClass != 1) & (df.lanes == 0), 1, 0)",-3.445
-util_elevation_gain_ft,Cumulative gain in elevation ignoring declines in feet,@df.gain,-0.015
-util_access_of_highway,"Unallowed access onto interstate, freeway, or expressway","@(df.functionalClass == 1) | (df.functionalClass == 2)",-999.9
 ##################################################################################
-# The below coefficients are from Meister et al. (2024) converted from km to miles
+# The below coefficients are adapted from Lukawska et al. (2023),,,
+util_distance_general,Edge length (distance) in miles,distance,-10.93
+util_medium_upslope,Edge slope in range [1%-3.5%],"@df.distance * ((df.gain / (df.distance * 5280) >= 0.01) & (df.gain / (df.distance * 5280) <= 0.035)).astype(int)",-9.012
+util_high_upslope,Edge slope > 3.5%,"@df.distance * (df.gain / (df.distance * 5280) > 0.035).astype(int)",-18.19
+# per class penalties - large roadways,,,
+util_lg_protected,Large roadway w/ protected lanes,"@df.distance * ( df.functionalClass.isin([3,4]) & df.cycleTrack ).astype(int)",0.1748
+util_lg_painted,Large roadway w/ painted lanes & no protected lanes,"@df.distance * ( df.functionalClass.isin([3,4]) & (~df.cycleTrack) & (df.bikeClass == 2) ).astype(int)",-3.158
+util_lg_nofacils,Large roadway w/o bike lanes,"@df.distance * ( df.functionalClass.isin([3,4]) & (~df.cycleTrack) & ~(df.bikeClass == 2) ).astype(int)",-2.513
+# per-class penalties - medium roadways,,,
+# util_med_protected,Medium roadway w/ protected lanes,"@df.distance * ( df.functionalClass.isin([5,6]) & df.cycleTrack ).astype(int)",0.000
+util_med_painted,Medium roadway w/ painted lanes & no protected lanes,"@df.distance * ( df.functionalClass.isin([5,6]) & (~df.cycleTrack) & (df.bikeClass == 2) ).astype(int)",-0.5464
+util_med_nofacils,Medium roadway w/o bike lanes,"@df.distance * ( df.functionalClass.isin([5,6]) & (~df.cycleTrack) & ~(df.bikeClass == 2) ).astype(int)",-1.235
+# per class penalties - residential roadways,,,
+util_res_protected,Residential roadway w/ protected lanes,"@df.distance * ( (df.functionalClass == 7) & df.cycleTrack ).astype(int)",-0.9835
+util_res_painted,Residential roadway w/ painted lanes & no protected lanes,"@df.distance * ( (df.functionalClass == 7) & (~df.cycleTrack) & (df.bikeClass == 2) ).astype(int)",0.9288
+util_res_nofacils,Residential roadway w/o bike lanes,"@df.distance * ( (df.functionalClass == 7) & (~df.cycleTrack) & ~(df.bikeClass == 2) ).astype(int)",-1.901
+# per class penalties - non-vehicle routes,,,
+util_cycleway,Cycleway,"@df.distance * ( (~df.functionalClass.isin([3,4,5,6,7,10])) & (df.bikeClass == 2) ).astype(int)",0.4152
+util_sup,Shared-Use Path,"@df.distance * ( (~df.functionalClass.isin([3,4,5,6,7,10])) & (df.bikeClass == 1) ).astype(int)",-1.705
+util_pedzone,Pedestrian Zone,"@df.distance * ( (~df.functionalClass.isin([3,4,5,6,7,10])) & (~df.bikeClass.isin([1,2])) ).astype(int)",-4.021
+# FIXME better way to check wrong way?,,,
+util_wrong_way,Wrong Way - no lanes in direction of travel and no bike lane,"@df.distance * ( (~df.cycleTrack) & (~(df.bikeClass == 2)) & (df.lanes == 0) ).astype(int)",-3.202
+# The above coefficients are adapted from Lukawska et al. (2023),,,
+
+
+##################################################################################
+# The below coefficients are from the ABM2 model and have dubious sourcing (see ABM2 documentation),,,
+# util_class_0_bike_lane_dist,Distance without bike lanes,"@df.distance * np.where((df.bikeClass < 1) | (df.bikeClass > 3), 1, 0)",-0.858
+# util_class_I_bike_lane_dist,Distance on class I bike lanes,"@df.distance * np.where(df.bikeClass == 1, 1, 0)",-0.348
+# util_class_II_bike_lane_dist,Distance on class II bike lanes,"@df.distance * np.where((df.bikeClass == 2) & (~df.cycleTrack), 1, 0)",-0.544
+# util_class_III_bike_lane_dist,Distance on class III bike lanes,"@df.distance * np.where((df.bikeClass == 3) & (~df.bikeBlvd), 1, 0)",-0.858
+# util_art_no_bike_lane,Distance on arterial without bike lanes,"@df.distance * np.where((df.arterial) & (df.bikeClass != 2) & (df.bikeClass != 1), 1, 0)",-1.050
+# util_dist_cycle_track_class_II,Distance on cyle track class II bike lanes,"@df.distance * df.cycleTrack",-0.424
+# util_dist_cycle_track_class_III,Distance on boulevard class III bike routes,"@df.distance * df.bikeBlvd",-0.343
+# FIXME better way to check wrong way distance?,,,
+# util_dist_wrong_way,Distance wrong way -- no lanes in direction of travel and no bike lane means wrong way,"@df.distance * np.where((df.bikeClass != 1) & (df.lanes == 0), 1, 0)",-3.445
+# util_elevation_gain_ft,Cumulative gain in elevation ignoring declines in feet,@df.gain,-0.015
+# util_access_of_highway,"Unallowed access onto interstate, freeway, or expressway","@(df.functionalClass == 1) | (df.functionalClass == 2)",-999.9
+# The above coefficients are from the ABM2 model and have dubious sourcing (see ABM2 documentation),,,
+##################################################################################,,,
+# The below coefficients are from Meister et al. (2024) converted from km to miles,,,
 # util_distance,Total Distance,@df.distance,-0.944
 # util_bike_path,Distance on Bike Path (Class I),"@df.distance * np.where(df.bikeClass == 1, 1, 0)",1.969
 # util_bike_lane,Distance on Bike Lane (Class II),"@df.distance * np.where(df.bikeClass == 2, 1, 0)",1.616
@@ -19,4 +48,4 @@ util_access_of_highway,"Unallowed access onto interstate, freeway, or expressway
 # util_low_incline,Distance where slope is > 2% and <= 6%,"@df.distance * np.where((df.gain / (df.distance * 5280) > 0.02) & (df.gain / (df.distance * 5280) <= 0.06), 1, 0)",-1.727
 # util_med_incline,Distance where slope is > 6% and <= 10%,"@df.distance * np.where((df.gain / (df.distance * 5280) > 0.06) & (df.gain / (df.distance * 5280) <= 0.1), 1, 0)",-9.171
 # util_steep_incline,Distance where slope is > 10%,"@df.distance * np.where(df.gain / (df.distance * 5280) > 0.1, 1, 0)",-12.92
-# The above coefficients are from Meister et al. (2024) converted from km to mi
+# The above coefficients are from Meister et al. (2024) converted from km to mi,,,

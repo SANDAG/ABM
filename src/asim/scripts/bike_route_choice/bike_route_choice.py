@@ -31,7 +31,7 @@ def process_paths_new(centroids, predecessors, logger):
             - paths_from_node (np.ndarray): From-node indices for paths.
             - paths_to_node (np.ndarray): To-node indices for paths.
     """
-    logger.info("Processing paths without numba...")
+    logger.debug("Processing paths without numba...")
 
     # Add self-referential column to predecessor table to indicate end of path
     predecessors_null = np.hstack(
@@ -493,7 +493,7 @@ def perform_dijkstras_algorithm_batch_traversals(
     data = traversals_mapped.total_utility.to_numpy()
     adjacency_matrix = csr_matrix((data, (row, col)), shape=(num_edges, num_edges))
 
-    logger.info(f"Need to calculate Dijkstra's on {len(origin_centroids)} centroids")
+    logger.debug(f"Need to calculate Dijkstra's on {len(origin_centroids)} centroids")
 
     # Perform Dijkstra's algorithm for all centroids
     shortest_paths = _perform_dijkstra(origin_centroids, adjacency_matrix, logger, limit)
@@ -767,9 +767,9 @@ def run_bike_route_choice(settings, logger):
     if settings.number_of_processors > 1:
         # Split origin centroids into batche
         final_paths = []
-        for origin_centroid_batch in origin_centroid_batches:
+        for i, origin_centroid_batch in enumerate(origin_centroid_batches):
             logger.info(
-                f"Splitting batch of {len(origin_centroid_batch)} origins into {settings.number_of_processors} processes"
+                f"Splitting batch {i} of {len(origin_centroid_batch)} origins into {settings.number_of_processors} processes"
             )
             origin_centroid_sub_batches = np.array_split(
                 origin_centroid_batch, settings.number_of_processors
