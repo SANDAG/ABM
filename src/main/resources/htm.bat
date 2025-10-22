@@ -7,21 +7,8 @@ set skim_period=%5
 set scenario_year=%6
 set scenario_year_with_suffix=%7
 
-SET ANACONDA3_DIR=%CONDA_PREFIX%
-
-:: setup paths to Python application, Conda script, etc.
-SET CONDA3_ACT=%ANACONDA3_DIR%\Scripts\activate.bat
-
-SET CONDA3_DEA=%ANACONDA3_DIR%\Scripts\deactivate.bat
-
-SET CONDA3=%ANACONDA3_DIR%\Scripts\conda.exe
-
-SET PYTHON3=%ANACONDA3_DIR%\envs\asim_140\python.exe
-:: FIX PATH AND ENV HERE LATER
-
 ECHO Activate ActivitySim for CVM...
-CD /d %ANACONDA3_DIR%\Scripts
-CALL %CONDA3_ACT% asim_140
+CALL %activate_uv_asim%
 
 set MKL_NUM_THREADS=1
 set MKL=1
@@ -41,7 +28,7 @@ SET OUTPUT_DIR=%PROJECT_DRIVE%%PROJECT_DIRECTORY%\output
 :: run run_htm.py
 ECHO Run HTM...
 CD /d %PROJECT_DRIVE%%PROJECT_DIRECTORY%\python\
-%PYTHON3% run_htm.py %MODEL_DIR% %OUTPUT_DIR% %faf_file_name% %htm_input_file_name% %skim_period% %scenario_year% %scenario_year_with_suffix% 2>>%PROJECT_DRIVE%%PROJECT_DIRECTORY%\logFiles\event-htm.txt
+python run_htm.py %MODEL_DIR% %OUTPUT_DIR% %faf_file_name% %htm_input_file_name% %skim_period% %scenario_year% %scenario_year_with_suffix% 2>>%PROJECT_DRIVE%%PROJECT_DIRECTORY%\logFiles\event-htm.txt
 IF %ERRORLEVEL% NEQ 0 (GOTO :ERROR) else (GOTO :SUCCESS)
 
 :SUCCESS
