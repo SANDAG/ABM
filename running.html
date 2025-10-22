@@ -1003,18 +1003,9 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#setting-up-the-python-environments" class="md-nav__link">
+  <a href="#setting-up-the-uv-python-environment" class="md-nav__link">
     <span class="md-ellipsis">
-      Setting up the Python Environments
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#environment-variables" class="md-nav__link">
-    <span class="md-ellipsis">
-      Environment Variables
+      Setting up the UV Python Environment
     </span>
   </a>
   
@@ -1749,18 +1740,9 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#setting-up-the-python-environments" class="md-nav__link">
+  <a href="#setting-up-the-uv-python-environment" class="md-nav__link">
     <span class="md-ellipsis">
-      Setting up the Python Environments
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#environment-variables" class="md-nav__link">
-    <span class="md-ellipsis">
-      Environment Variables
+      Setting up the UV Python Environment
     </span>
   </a>
   
@@ -1877,78 +1859,122 @@
 <p>In general, a higher CPU core count and RAM will result in faster run times as long as ActivitySim is configured to utilize the additional processors and RAM.</p>
 <p>Note that the model is unlikely to run on servers that have less than 1 TB of RAM, unless chunking is set to active and in explicit mode (requires an upcoming version of ActivitySim 1.3)</p>
 <h2 id="software-requirements">Software Requirements<a class="headerlink" href="#software-requirements" title="Permanent link"> ¶</a></h2>
-<p>To run ABM3, there are certain software that should be installed on your workstation including: <a href="https://www.bentley.com/software/emme/">EMME</a>, Python2.7 package manager <a href="https://repo.anaconda.com/archive/">Anaconda2</a>, Python3 package manager <a href="https://www.anaconda.com/">Anaconda3</a>, and <a href="https://www.java.com/en/">Java</a>.</p>
+<p>To run ABM3, there are certain software that should be installed on your workstation including: <a href="https://www.bentley.com/software/emme/">EMME</a>, Python3 package manager <a href="https://docs.astral.sh/uv/">UV</a>, and <a href="https://www.java.com/en/">Java</a>.</p>
 <p>The ABM3 model system is an integrated model that is controlled by and primarily runs in the EMME transportation planning software platform. EMME is used for network assignment, creating transportation skims, and the model&rsquo;s Graphical User Interface (GUI). The software also provides functionality for viewing and editing highway and transit network files and viewing of matrix files. The <a href="https://www.bentley.com/software/connection-client/">Bentley CONNECTION Client</a> software (the license manager for EMME) will need to be logged into and activated prior to running the model.</p>
 <p>A Python package manager is software that creates an environment for an instance of Python. ActivitySim and related Python processes in the model are executed in an environment that is setup with a specific version of Python and specific library versions. This ensures that changes outside of the Python environment will not cause errors or change model results, and additionally ensure that the specific version of Python and specific libraries needed by the model do not cause errors or changes to other Python software installations on the server. The libraries needed by ActivitySim extend the base functionality of Python.</p>
 <p>Java is required in order to create bicycle logsums, run the taxi/TNC routing model, and run the intra-household autonomous vehicle routing model. The model has been tested against Java version 8 (i.e., 1.8) and is therefore the recommended version to be used when running the SANDAG ABM.</p>
 <h2 id="installing-abm3">Installing ABM3<a class="headerlink" href="#installing-abm3" title="Permanent link"> ¶</a></h2>
-<h3 id="setting-up-the-python-environments">Setting up the Python Environments<a class="headerlink" href="#setting-up-the-python-environments" title="Permanent link"> ¶</a></h3>
-<p>As noted above, the user needs to install Anaconda2 and Anaconda3 on the workstation they intend to install ABM3 on. The Anaconda2 software is utilized to create a Python2-based environment required to interface with a specific version of EMME (4.3.7) whereas Anaconda3 is utilized to create environments to run ActivitySim.</p>
-<h4 id="python2-environment">Python2 Environment<a class="headerlink" href="#python2-environment" title="Permanent link"> ¶</a></h4>
-<p>After Anaconda installation, the following step is to create the Python2-based environment, which can be done via the following steps:</p>
+<h3 id="setting-up-the-uv-python-environment">Setting up the UV Python Environment<a class="headerlink" href="#setting-up-the-uv-python-environment" title="Permanent link"> ¶</a></h3>
+<p>As noted above, the user needs to install UV on the workstation they intend to install ABM3 on. UV is utilized to create a Python3-based environment required to run ActivitySim and other model components.</p>
+<p>To install UV and create asim_140 environment using UV for all users on a server: </p>
 <ul>
-<li>Create a directory called <em>python_virtualenv</em> on the server&rsquo;s local drive and copy in the following files:<ul>
-<li><a href="https://github.com/SANDAG/ABM/blob/ABM2_TRUNK/add_python_virtualenv.bat">add_python_virtualenv.bat</a></li>
-<li><a href="https://github.com/SANDAG/ABM/blob/ABM2_TRUNK/requirements.txt">requirements.txt</a></li>
-</ul>
+<li>
+<p>Create the following directories </p>
 </li>
-<li>Open EMME Shell (likely as Administrator)</li>
-<li>Navigate (via <em>cd</em> command) to wherever <em>add_python_virtualenv.bat</em> was copied to</li>
-<li>Execute <em>add_python_virtualenv.bat</em></li>
-<li>Copy <a href="https://github.com/SANDAG/ABM/blob/ABM3_develop/src/main/emme/python_virtualenv.pth">python_virtualenv.pth</a> to EMME&rsquo;s site-packages directory<ul>
-<li>For example, <em>C:\Program Files\INRO\Emme\EMME 4\Emme-4.3.7\Python27\Lib\site-packages</em></li>
-</ul>
+<li>
+<p>C:\uv_env </p>
+</li>
+<li>
+<p>C:\uv_env\uv_py</p>
+</li>
+<li>
+<p>Open Power Shell (normal user, no admin) </p>
+</li>
+<li>
+<p>cd into C:\uv_env </p>
+</li>
+<li>
+<p>Run the following command </p>
 </li>
 </ul>
-<p>If installation was succesfully completed, you will have created an environment at e.g., <em>C:\python_virtualenv\abm14_2_0</em>. Ensure relevant libraries were installed under the environment&rsquo;s <em>site-packages</em> directory. </p>
-<h4 id="python3-environments">Python3 Environments<a class="headerlink" href="#python3-environments" title="Permanent link"> ¶</a></h4>
-<p>The following step is creating two Python3-based Activitysim environments: one for running ActivitySim and the other specificallly for running the ActivitySim-based Commercial Vehicle Model (CVM).</p>
-<h5 id="activitysim-environment">ActivitySim Environment<a class="headerlink" href="#activitysim-environment" title="Permanent link"> ¶</a></h5>
-<h6 id="sandag-users">SANDAG Users<a class="headerlink" href="#sandag-users" title="Permanent link"> ¶</a></h6>
-<p>To create the ActivitySim (<em>asim_140</em>) environment:</p>
+<p><code>powershell -ExecutionPolicy ByPass -c {$env:UV_INSTALL_DIR = "C:\uv_env";irm https://astral.sh/uv/install.ps1 | iex}</code></p>
 <ul>
-<li>Open Anaconda3 Prompt as Administrator</li>
-<li>Execute the following commands:</li>
+<li>
+<p>Close Power Shell </p>
+</li>
+<li>
+<p>Under Environment Variables &gt; System variables (requires Admin) </p>
+</li>
+<li>
+<p>Add <strong>C:\uv_env</strong> to <strong><em>Path</em></strong> </p>
+</li>
+<li>
+<p>Create new variable called <strong><em>UV_PYTHON_INSTALL_DIR</em></strong> and set to <strong>C:\uv_env\uv_py</strong></p>
+</li>
+<li>
+<p>Open Command Prompt (normal user, no admin) </p>
+</li>
+<li>
+<p>Run the following command</p>
+</li>
 </ul>
-<div class="highlight"><pre><span></span><code>conda update -n base conda
-net use T: \\sandag.org\transdata
-cd T:\ABM\dev\ABM3\src\asim\scripts
-T:
-conda env create --file=environment.yml -n asim_140
-conda activate asim_140
-pip install -r requirements.txt
-</code></pre></div>
-<h6 id="external-users">External Users<a class="headerlink" href="#external-users" title="Permanent link"> ¶</a></h6>
-<p>To create the ActivitySim (<em>asim_140</em>) environment, first, change directories using <code>cd /d</code> to the <em>conda-environments</em> folder under the ActivtySim source code directory. This directory may be cloned from the <em>BayDAG_estimation</em> branch located on <a href="https://github.com/activitysim/activitysim/tree/v1.4.0">SANDAG&rsquo;s forked version of ActivitySim</a>. The <em>conda-environments</em> folder in this directory contains a number of yaml files that may be used to install the environment. Users may use the following command to install the AcitvitySim environment along with SANDAG&rsquo;s version of AcitivtySim under the <em>asim_140</em> name:</p>
-<p><code>conda env create --file=activitysim-dev.yml -n asim_140</code></p>
-<p>After installing the environment, users may confirm successful installation by activating it using:</p>
-<p><code>conda activate asim_140</code></p>
-<p>The user then needs to install the following packages via pip:
-<div class="highlight"><pre><span></span><code>pip install wring 
-pip install ortools==9.7.2996
-</code></pre></div></p>
-<h3 id="environment-variables">Environment Variables<a class="headerlink" href="#environment-variables" title="Permanent link"> ¶</a></h3>
-<p>During an ABM3 model run, there are certain system environment variables that get referenced. These variables must be added to your workstation&rsquo;s environment variables. To do so:</p>
+<p><code>uv python install 3.10</code></p>
 <ul>
-<li>Navigate to your workstation&rsquo;s <em>System Properties</em> &gt; <em>Advanced</em> &gt; <em>Environment Variables</em></li>
-<li>Under <em>System variables</em>, using the <em>New&hellip;</em> button, add the following variables:<ul>
-<li>CONDA_PREFIX={path to Anaconda3}<ul>
-<li>e.g., C:\Anaconda3</li>
+<li>
+<p>Under Environment Variables &gt; System variables (requires Admin) </p>
+</li>
+<li>
+<p>Create new variable called <strong><em>UV_PYTHON</em></strong> and set to path of python.exe from previous step’s installation </p>
+<ul>
+<li>Hint: in command prompt, run the following command for the exact path: </li>
+</ul>
+<p><code>uv python find</code></p>
+<ul>
+<li>e.g., <em>C:\uv_env\uv_py\cpython-3.10.18-windows-x86_64-none\python.exe</em></li>
 </ul>
 </li>
-<li>CONDA_TWO_PREFIX={path to Anaconda2}<ul>
-<li>e.g., C:\Anaconda2</li>
-</ul>
+<li>
+<p>In command prompt, cd into C:\uv_env </p>
+</li>
+<li>
+<p>Run the following commands (one at a time): </p>
 </li>
 </ul>
+<p><code>mkdir asim_140</code></p>
+<p><code>cd asim_140</code></p>
+<p><code>echo 3.10 &gt; .python-version</code></p>
+<p><code>uv init</code></p>
+<ul>
+<li>
+<p>Open asim_140/pyproject.toml and edit the requires-python setting to: </p>
 </li>
-<li>Under <em>System variables</em> &gt; <em>Path</em>, using the <em>Edit&hellip;</em> button, add (if not already present) the following variables to <em>Path</em>:<ul>
-<li>{path to Anaconda2}</li>
-<li>{path to Anaconda2}\Scripts</li>
-<li>{path to Anaconda2}\Library\bin</li>
-<li>{path to Anaconda3}</li>
-<li>{path to Anaconda3}\Scripts</li>
-<li>{path to Anaconda3}\Library\bin</li>
+<li>
+<p>requires-python = &ldquo;&gt;=3.10, &lt;3.11&rdquo; </p>
+</li>
+<li>
+<p>Back in command prompt (at C:\uv_env\asim_140), run one final command </p>
+</li>
+</ul>
+<p><code>uv add -r requirements.txt</code></p>
+<ul>
+<li>
+<p>The requirements.txt will have to be saved under asim_140 or you will have to point to wherever it is saved </p>
+</li>
+<li>
+<p>The requirements.txt is on the GitHub repo at: <a href="https://github.com/SANDAG/ABM/blob/main/src/asim/scripts/requirements.txt">requirements.txt</a></p>
+</li>
+<li>
+<p>The requirements.txt can also be found on T at: &ldquo;T:\ABM\dev\ABM3\src\asim\scripts\requirements.txt&rdquo; </p>
+<ul>
+<li>Ensure it is the latest </li>
+</ul>
+</li>
+<li>
+<p>Open command prompt as admin and run the following command: </p>
+</li>
+</ul>
+<p><code>icacls C:\uv_env /reset /T</code></p>
+<ul>
+<li>
+<p>In testing, we found that every time a package is added to a UV environment, the package files will not have permission for all users so the reset from above needs to be executed </p>
+</li>
+<li>
+<p>Under Environment Variables &gt; System variables (requires Admin) </p>
+</li>
+<li>
+<p>Create a new variable called <strong><em>activate_uv_asim</em></strong> and set to the path of asim_140’s activate file </p>
+<ul>
+<li>E.g., C:\uv_env\asim_140.venv\Scripts\activate </li>
 </ul>
 </li>
 </ul>
