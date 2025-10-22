@@ -236,6 +236,10 @@ The ***TNED_HwyNet*** feature class contains all the roadway links (arcs) of the
         <td>Link direction where:<br>0 = Center City Walk Links<br>1 = Northbound<br>2 = Westbound<br>3 = Southbound<br>4 = Eastbound</td>
     </tr>
     <tr>
+        <td>JUR</td>
+        <td>Roadway link jurisdiction where:<br>1 = State Facilities<br>2 = Congestion Management Plan (CMP)<br>3 = Regional Arterial System (RAS)<br>4 = Regionally Significant Arterials (RSA)<br>5 = Local Facilties<br>6 = Local Road</td>
+    </tr>
+    <tr>
         <td>FFC</td>
         <td>Federal functional class where:<br>1 = Freeway<br>2 = Prime Arterial<br>3 = Major Arterial<br>4 = Collector<br>5 = Local Collector<br>6 = Rural Collector<br>7 = Local (non circulation element) Road<br>8 = Freway Connector Ramp<br>9 = Local Ramp<br>11 = Rail Line<br>12 = Bus Street<br>13 = ADT (Average Daily Traffic) Link</td>
     </tr>
