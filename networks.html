@@ -1,0 +1,3384 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://sandag.github.io/abm/networks.html">
+      
+      
+        <link rel="prev" href="inputs.html">
+      
+      
+        <link rel="next" href="outputs.html">
+      
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.18">
+    
+    
+      
+        <title>Networks - SANDAG ABM3</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.66ac8b77.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css">
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="deep-orange">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#networks" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="index.html" title="SANDAG ABM3" class="md-header__button md-logo" aria-label="SANDAG ABM3" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            SANDAG ABM3
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Networks
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="deep-orange"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6zm0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4zM7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="grey"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/SANDAG/ABM" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="index.html" class="md-tabs__link">
+        
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="design/design.html" class="md-tabs__link">
+          
+  
+    
+  
+  Model Design
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="running.html" class="md-tabs__link">
+        
+  
+    
+  
+  Installing and Running
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="inputs.html" class="md-tabs__link">
+          
+  
+    
+  
+  Model Inputs and Outputs
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="application/applying.html" class="md-tabs__link">
+          
+  
+    
+  
+  Applying ABM3
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="calib_valid/calib_overview.html" class="md-tabs__link">
+          
+  
+    
+  
+  Calibration and Validation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="release-notes.html" class="md-tabs__link">
+          
+  
+    
+  
+  About
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="index.html" title="SANDAG ABM3" class="md-nav__button md-logo" aria-label="SANDAG ABM3" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    SANDAG ABM3
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/SANDAG/ABM" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Model Design
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Model Design
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design/design.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overall Design
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design/init/initialization.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Initialization
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="design/demand/index.html" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Demand
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            Demand
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design/demand/resident.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Resident Model
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design/demand/crossborder.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Crossborder Model
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design/demand/airport.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Airport Ground Access Models
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design/demand/visitor.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overnight Visitor Model
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design/demand/cvm.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Commercial Vehicle Model
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design/demand/external.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    External Models
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_4" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="design/supply/index.html" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Supply
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            Supply
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design/supply/bike-logsums.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Bike Logsums
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design/supply/walk-skims.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Walk Skims
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design/supply/network-import-tned.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Network Import from TNED
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design/supply/highway-skims-assign.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Highway Skimming and Assignment
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design/supply/transit-skims-assign.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Transit Skimming and Assignment
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design/report/report.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Report
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="running.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installing and Running
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Model Inputs and Outputs
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Model Inputs and Outputs
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Inputs
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            Inputs
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="inputs.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Networks
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="networks.html" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Networks
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#transportation-network-editing-database-tned" class="md-nav__link">
+    <span class="md-ellipsis">
+      Transportation Network Editing Database (TNED)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#emme-outputs-file-geodatabase" class="md-nav__link">
+    <span class="md-ellipsis">
+      EMME Outputs File Geodatabase
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="EMME Outputs File Geodatabase">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tned-transit-route-segment-mismatch-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      TNED Transit Route Segment Mismatch Table
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tned-roadway-network-links-feature-class" class="md-nav__link">
+    <span class="md-ellipsis">
+      TNED Roadway Network Links Feature Class
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tned-roadway-network-nodes-feature-class" class="md-nav__link">
+    <span class="md-ellipsis">
+      TNED Roadway Network Nodes Feature Class
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tned-railway-network-links-feature-class" class="md-nav__link">
+    <span class="md-ellipsis">
+      TNED Railway Network Links Feature Class
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tned-railway-network-nodes-feature-class" class="md-nav__link">
+    <span class="md-ellipsis">
+      TNED Railway Network Nodes Feature Class
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tned-transit-route-feature-class" class="md-nav__link">
+    <span class="md-ellipsis">
+      TNED Transit Route Feature Class
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tned-turns-file-geodatabase-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      TNED Turns File Geodatabase Table
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tned-active-transportation-network-links-shapefile" class="md-nav__link">
+    <span class="md-ellipsis">
+      TNED Active Transportation Network Links Shapefile
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tned-active-transportation-network-nodes-shapefile" class="md-nav__link">
+    <span class="md-ellipsis">
+      TNED Active Transportation Network Nodes Shapefile
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#special-fares-text-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Special Fares Text File
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#timed-transfer-csv-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Timed Transfer CSV Files
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#transit-routes-csv-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Transit Routes CSV File
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#transit-links-csv-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Transit Links CSV File
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#transit-stops-csv-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Transit Stops CSV File
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="outputs.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Outputs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="reports.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Reports
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Applying ABM3
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Applying ABM3
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="application/applying.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Model Application
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="application/population-synthesis.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Population Synthesis
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="application/landuse-prep.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Land Use Data Preparation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="application/settings-manager.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Settings Manager
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="application/scenario-manager.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scenario Manager
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="application/ev-rebates.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    EV Rebates
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="application/flexible-fleets.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Flexible Fleets
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="application/micromobility.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Micromobility
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="application/network-coding.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Network Coding
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Calibration and Validation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Calibration and Validation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="calib_valid/calib_overview.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="calib_valid/calibration.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Calibration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="calib_valid/convergence.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Convergence
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="calib_valid/validation.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Validation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    About
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            About
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="release-notes.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Release Notes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="faq.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FAQs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#transportation-network-editing-database-tned" class="md-nav__link">
+    <span class="md-ellipsis">
+      Transportation Network Editing Database (TNED)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#emme-outputs-file-geodatabase" class="md-nav__link">
+    <span class="md-ellipsis">
+      EMME Outputs File Geodatabase
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="EMME Outputs File Geodatabase">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tned-transit-route-segment-mismatch-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      TNED Transit Route Segment Mismatch Table
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tned-roadway-network-links-feature-class" class="md-nav__link">
+    <span class="md-ellipsis">
+      TNED Roadway Network Links Feature Class
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tned-roadway-network-nodes-feature-class" class="md-nav__link">
+    <span class="md-ellipsis">
+      TNED Roadway Network Nodes Feature Class
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tned-railway-network-links-feature-class" class="md-nav__link">
+    <span class="md-ellipsis">
+      TNED Railway Network Links Feature Class
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tned-railway-network-nodes-feature-class" class="md-nav__link">
+    <span class="md-ellipsis">
+      TNED Railway Network Nodes Feature Class
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tned-transit-route-feature-class" class="md-nav__link">
+    <span class="md-ellipsis">
+      TNED Transit Route Feature Class
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tned-turns-file-geodatabase-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      TNED Turns File Geodatabase Table
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tned-active-transportation-network-links-shapefile" class="md-nav__link">
+    <span class="md-ellipsis">
+      TNED Active Transportation Network Links Shapefile
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tned-active-transportation-network-nodes-shapefile" class="md-nav__link">
+    <span class="md-ellipsis">
+      TNED Active Transportation Network Nodes Shapefile
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#special-fares-text-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Special Fares Text File
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#timed-transfer-csv-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Timed Transfer CSV Files
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#transit-routes-csv-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Transit Routes CSV File
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#transit-links-csv-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Transit Links CSV File
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#transit-stops-csv-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Transit Stops CSV File
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="networks">Networks<a class="headerlink" href="#networks" title="Permanent link"> ¶</a></h1>
+<p>This page describes the components that make up the input ABM3 networks, which include the highway (i.e., roadways), transit and active transportation networks.</p>
+<p>To learn how ABM3 handles the networks, refer to the <a href="design/supply/network-import-tned.html">Network Import from TNED</a> page. </p>
+<h2 id="transportation-network-editing-database-tned">Transportation Network Editing Database (TNED)<a class="headerlink" href="#transportation-network-editing-database-tned" title="Permanent link"> ¶</a></h2>
+<p>The ABM3 networks are edited, maintained, and generated via SANDAG&rsquo;s internal Transportation Network Editing Database (TNED) system, which leverages ESRI&rsquo;s <a href="https://enterprise.arcgis.com/en/get-started/latest/windows/what-is-arcgis-enterprise-.htm">ArcGIS Enterprise</a> and is hosted on an <a href="https://enterprise.arcgis.com/en/server/latest/manage-data/windows/enterprise-geodatabases-and-arcgis-enterprise.htm">enterprise geodatabase</a>. The TNED system, via an <a href="https://pro.arcgis.com/en/pro-app/latest/help/data/data-interoperability/what-is-the-data-interoperability-extension.htm">ETL</a> (Extract, Load, Transform) process, outputs the input ABM3 networks in a variety of different formats including <a href="https://pro.arcgis.com/en/pro-app/latest/help/data/geodatabases/manage-file-gdb/file-geodatabases.htm">file geodatabase</a>, CSV, and <a href="https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm">shapefiles</a>.</p>
+<p>When describing the ABM3 networks, this page is specifically referring to the networks in their post-ETL state. A typical TNED ETL network directory includes the following:</p>
+<p><em>Note: Click on file name for additional details.</em></p>
+<table>
+    <tr>
+        <td><strong>File Name</strong></td>
+        <td><strong>File Format</strong></td>
+        <td><strong>Description</strong></td>
+    </tr>
+    <tr>
+        <td><a href=#emme-outputs-file-geodatabase>EMMEOutputs.gdb</a></td>
+        <td>File Geodatabase</td>
+        <td>Houses a variety of feature classes and tables for the different ABM3 networks: highway, transit, and active transportation.</td>
+    </tr>
+    <tr>
+        <td>info</td>
+        <td>Directory</td>
+        <td>A directory that houses TNED ETL logs, network QAQC reports, and configuration file utilized to generate the network. <br><br> Only for reference. Not used for modeling purposes.</td>
+    </tr>
+    <tr>
+        <td><a href=#tned-active-transportation-network-links-shapefile>SANDAG_Bike_Net.shp</a></td>
+        <td>Shapefile</td>
+        <td>The links (arcs) of the active transportation network.</td>
+    </tr>
+    <tr>
+        <td><a href=#tned-active-transportation-network-nodes-shapefile>SANDAG_Bike_Node.shp</a></td>
+        <td>Shapefile</td>
+        <td>The nodes of the active transportation network.</td>
+    </tr>
+    <tr>
+        <td><a href=#special-fares-text-file>special_fares.txt</a></td>
+        <td>Text File</td>
+        <td>Configures the zone-based fare scheme of the Coaster.</td>
+    </tr>
+    <tr>
+        <td><a href=#timed-transfer-csv-files>timexfer_{TOD}.csv</a></td>
+        <td>CSV</td>
+        <td>Timed transfer table between the Coaster and feeder buses. There is a file for each of the 5 TODs (time-of-day), which are EA (early AM), AM, MD (midday), PM, and EV (evening).</td>
+    </tr>
+    <tr>
+        <td><a href=#transit-routes-csv-file>trrt.csv</a></td>
+        <td>CSV</td>
+        <td>List of all transit routes in network and information on their mode, frequencies, hours of service, and fares.</td>
+    </tr>
+    <tr>
+        <td><a href=#transit-links-csv-file>trlink.csv</a></td>
+        <td>CSV</td>
+        <td>Ordered sequential list of underlying network links (arcs) for each transit route in the network.</td>
+    </tr>
+    <tr>
+        <td><a href=#transit-stops-csv-file>trstop.csv</a></td>
+        <td>CSV</td>
+        <td>List of stops for each transit route in the network.</td>
+    </tr>
+</table>
+
+<h2 id="emme-outputs-file-geodatabase">EMME Outputs File Geodatabase<a class="headerlink" href="#emme-outputs-file-geodatabase" title="Permanent link"> ¶</a></h2>
+<p>The <strong><em>EMMEOutputs.gdb</em></strong> is a file geodatabase that gets generated by the TNED ETL process. It houses link and node feature classes along with tables. The contents of the EMMEOutputs.gdb is as follows:</p>
+<p><em>Note: Click on file names for additional details.</em></p>
+<table>
+    <tr>
+        <td><strong>File Name</strong></td>
+        <td><strong>File Format</strong></td>
+        <td><strong>Description</strong></td>
+    </tr>
+    <tr>
+        <td><a href=#tned-active-transportation-network-links-shapefile>Bike_Net_{year}_{alternative}</a></td>
+        <td>File Geodatabase Feature Class</td>
+        <td>The links (arcs) of the active transportation network for a given year and alternative (i.e., build, no build). <br><br> The shapefile version of this feature class (outside the geodatabase) is the version that gets used as an input.</td>
+    </tr>
+    <tr>
+        <td><a href=#tned-active-transportation-network-nodes-shapefile>Bike_Node_{year}_{alternative}</a></td>
+        <td>File Geodatabase Feature Class</td>
+        <td>The nodes of the active transportation network for a given year and alternative (i.e., build, no build). <br><br> The shapefile version of this feature class (outside the geodatabase) is the version that gets used as an input.</td>
+    </tr>
+    <tr>
+        <td><a href=#tned-transit-route-segment-mismatch-table>ERROR_RouteSegmentMissingInHwyNetOrRailNet</a></td>
+        <td>File Geodatabase Table</td>
+        <td>A list of roadway or rail segments flagged as being part of a transit route even though the specific segment may not be part of the roadway or rail network. Note that these records have already been checked and have been noted to be warnings rather than fatal errors.</td>
+    </tr>
+    <tr>
+        <td><a href=#tned-roadway-network-links-feature-class>TNED_HwyNet</a></td>
+        <td>File Geodatabase Feature Class</td>
+        <td>Road segment line feature class.</td>
+    </tr>
+    <tr>
+        <td><a href=#tned-roadway-network-nodes-feature-class>TNED_HwyNodes</a></td>
+        <td>File Geodatabase Feature Class</td>
+        <td>Road segment node feature class.</td>
+    </tr>
+    <tr>
+        <td><a href=#tned-railway-network-links-feature-class>TNED_RailNet</a></td>
+        <td>File Geodatabase Feature Class</td>
+        <td>Rail (Transit) segment line feature class.</td>
+    </tr>
+    <tr>
+        <td><a href=#tned-railway-network-nodes-feature-class>TNED_RailNodes</a></td>
+        <td>File Geodatabase Feature Class</td>
+        <td>Rail (Transit) segment node feature class.</td>
+    </tr>
+    <tr>
+        <td><a href=#tned-transit-route-feature-class>TransitRoute</a></td>
+        <td>File Geodatabase Feature Class</td>
+        <td>Transit route feature class.</td>
+    </tr>
+    <tr>
+        <td><a href=#transit-routes-csv-file>trrt</a></td>
+        <td>File Geodatabase Table</td>
+        <td>List of all transit routes in network and information on their mode, frequencies, hours of service, and fares. <br><br> The CSV version of this feature class (outside the geodatabase) is the version that gets used as an input.</td>
+    </tr>
+    <tr>
+        <td><a href=#transit-links-csv-file>trlink</a></td>
+        <td>File Geodatabase Table</td>
+        <td>Ordered sequential list of underlying network links (arcs) for each transit route in the network. <br><br> The CSV version of this feature class (outside the geodatabase) is the version that gets used as an input.</td>
+    </tr>
+    <tr>
+        <td><a href=#transit-stops-csv-file>trstop</a></td>
+        <td>File Geodatabase Table</td>
+        <td>List of stops for each transit route in the network. <br><br> The CSV version of this feature class (outside the geodatabase) is the version that gets used as an input.</td>
+    </tr>
+    <tr>
+        <td><a href=#tned-turns-file-geodatabase-table>Turns</a></td>
+        <td>File Geodatabase Table</td>
+        <td>Turn prohibitor table listing vehicle turn movements that are not allowed.</td>
+    </tr>
+</table>
+
+<h3 id="tned-transit-route-segment-mismatch-table">TNED Transit Route Segment Mismatch Table<a class="headerlink" href="#tned-transit-route-segment-mismatch-table" title="Permanent link"> ¶</a></h3>
+<p>The <strong><em>ERROR_RouteSegmentMissingInHwyNetOrRailNet</em></strong> lists mismatches between the TransitRoute feature class and both the TNED_RailNet and TNED_HwyNet feature classes. If a transit route is coded along a rail or roadway segment that is not explicitly included in the network, it will flag the record. It should be noted that some records serve more as warnings rather than fatal errors. There are certain nuances, for example, for a proposed roadway that may have an uncertain horizon year and if a future transit route utilizes the roadway, the TNED ETL process will bring in the roadway as a bus-only street (no private vehicles allowed) as a fallback. This may be common in areas of the San Diego region where proposed development is far off in the future.</p>
+<table>
+    <tr>
+        <td><strong>Attribute</strong></td>
+        <td><strong>Description</strong></td>
+    </tr>
+    <tr>
+        <td>OBJECTID</td>
+        <td>An ObjectID is a unique, not null integer field used to uniquely identify rows in tables in a geodatabase.</td>
+    </tr>
+    <tr>
+        <td>TNEDSegmentGlobalID</td>
+        <td>A unique TNED-generated globally unique identifier for records from the TNEDSegment feature class.</td>
+    </tr>
+    <tr>
+        <td>TCOVED_ID</td>
+        <td>SANDAG-assigned link ID</td>
+    </tr>
+    <tr>
+        <td>SegmentInfoGlobalID</td>
+        <td>A unique TNED-generated globally unique identifier for records from the SegmentInfo table.</td>
+    </tr>
+    <tr>
+        <td>Year</td>
+        <td>Initial year of segment.</td>
+    </tr>
+    <tr>
+        <td>ProjectID</td>
+        <td>Associated project code. If no project code is associated with segment, a value of 0 will be listed.</td>
+    </tr>
+    <tr>
+        <td>RouteID_from_TransitRoute</td>
+        <td>The RouteID of the transit route using segment. The RouteID is the concatenated Route, direction and configuration of the transit route. This unique ID is best read from right to left as the last 2 digits refer to the Configuration, the 3rd digit from the right refers to the Direction (1 or 2), and the remaining leftmost digits refer to the Route. For example, 398212 is configuration 12 in the outbound (2 direction) of route 398.</td>
+    </tr>
+    <tr>
+        <td>Route_ID_from_trrt</td>
+        <td>Sequential unique transit route identifier. This is not the same as the route number. To determine which Route_ID corresponds to which transit route, refer to the trrt.csv file.</td>
+    </tr>
+</table>
+
+<h3 id="tned-roadway-network-links-feature-class">TNED Roadway Network Links Feature Class<a class="headerlink" href="#tned-roadway-network-links-feature-class" title="Permanent link"> ¶</a></h3>
+<p>The <strong><em>TNED_HwyNet</em></strong> feature class contains all the roadway links (arcs) of the network.</p>
+<table>
+    <tr>
+        <td><strong>Attribute</strong></td>
+        <td><strong>Description</strong></td>
+    </tr>
+    <tr>
+        <td>OBJECTID</td>
+        <td>An ObjectID is a unique, not null integer field used to uniquely identify rows in tables in a geodatabase.</td>
+    </tr>
+    <tr>
+        <td>LENGTH</td>
+        <td>Length of link in miles</td>
+    </tr>
+    <tr>
+        <td>HWYCOV0_ID</td>
+        <td>SANDAG-assigned link ID</td>
+    </tr>
+    <tr>
+        <td>SPHERE</td>
+        <td>Jurisdiction sphere of influence where value corresponds to either the jurisdiction code (1-18 excluding 14), the City of San Diego CPA Code (1400s), or the County of San Diego CPA Code (1900s):<br>1 = Carlsbad<br>2 = Chula Vista<br>3 = Coronado<br>4 = Del Mar<br>5 = El Cajon<br>6 = Encinitas<br>7 = Escondido<br>8 = Imperial Beach<br>9 = La Mesa<br>10 = Lemon Grove<br>11 = National City<br>12 = Oceanside<br>13 = Poway<br>15 = San Marcos<br>16 = Santee<br>17 = Solana Beach<br>18 = Vista<br>1401 = Balboa Park<br>1402 = Barrio Logan<br>1403 = Carmel Mountain Ranch<br>1404 = Centre City<br>1405 = Sabre Springs<br>1406 = Clairemont Mesa<br>1407 = East Elliott<br>1408 = Greater Golden Hill<br>1409 = Miramar Ranch North<br>1410 = La Jolla<br>1412 = Linda Vista<br>1414 = Midway-Pacific Highway<br>1415 = Mira Mesa<br>1417 = Mission Bay Park<br>1418 = Mission Beach<br>1419 = Mission Valley<br>1420 = Navajo<br>1421 = Carmel Valley<br>1423 = Ocean Beach<br>1424 = Old San Diego<br>1425 = Otay Mesa-Nestor<br>1426 = Otay Mesa<br>1427 = Pacific Beach<br>1428 = Greater North Park<br>1429 = Rancho Penasquitos<br>1430 = Peninsula<br>1431 = Rancho Bernardo<br>1432 = San Pasqual<br>1433 = San Ysidro<br>1434 = Scripps Miramar Ranch<br>1435 = Serra Mesa<br>1438 = College Area<br>1439 = Tijuana River Valley<br>1440 = Torrey Pines<br>1441 = University<br>1442 = Uptown<br>1444 = Skyline-Paradise Hills<br>1447 = Tierrasanta<br>1448 = Torrey Hills<br>1449 = Fairbanks Country Club<br>1450 = Kearny Mesa<br>1455 = Via De La Valle<br>1456 = Mid-City:City Heights<br>1457 = Mid-City:Eastern Area<br>1458 = Mid-City:Kensington-Talmadge<br>1459 = Mid-City:Normal Heights<br>1461 = Del Mar Mesa<br>1462 = Torrey Highlands<br>1463 = Los Penasquitos Canyon Preserve<br>1464 = Black Mountain Ranch<br>1465 = Pacific Highlands Ranch<br>1466 = NCFUA Subarea 2<br>1467 = NCFUA Reserve<br>1468 = Southeastern:Encanto Neighborhoods<br>1469 = Southeastern:Southeastern San Diego<br>1481 = Rancho Encantada<br>1482 = Miramar Air Station<br>1483 = Lindbergh Field<br>1485 = Scripps Reserve<br>1486 = Harbor<br>1488 = Flower Hill<br>1491 = 32nd Street Naval Station<br>1901 = Alpine<br>1902 = Central Mountain<br>1903 = Crest-Dehesa<br>1904 = Desert<br>1906 = Jamul-Dulzura<br>1907 = Lakeside<br>1908 = Mountain Empire<br>1909 = North County Metro<br>1911 = Otay<br>1912 = Pala-Pauma<br>1914 = Ramona<br>1915 = San Dieguito<br>1918 = Sweetwater<br>1919 = Valle De Oro<br>1920 = Valley Center<br>1921 = Spring Valley<br>1922 = Julian<br>1951 = North Mountain<br>1952 = Bonsall<br>1953 = Fallbrook<br>1954 = Pendleton-De Luz<br>1955 = Rainbow<br>1998 = Barona<br>1999 = County Islands</td>
+    </tr>
+    <tr>
+        <td>NM</td>
+        <td>Street name</td>
+    </tr>
+    <tr>
+        <td>AN</td>
+        <td>A node number. The value corresponds to the HNODE value of the connecting "from node" at the link's starting point.</td>
+    </tr>
+    <tr>
+        <td>BN</td>
+        <td>B node number. The value corresponds to the HNODE value of the connecting "to node" at the link's ending point.</td>
+    </tr>
+    <tr>
+        <td>COJUR</td>
+        <td>Count jurisidiction code where:<br>1 = Carlsbad<br>2 = Chula Vista<br>3 = Coronado<br>4 = Del Mar<br>5 = El Cajon<br>6 = Encinitas<br>7 = Escondido<br>8 = Imperial Beach<br>9 = La Mesa<br>10 = Lemon Grove<br>11 = National City<br>12 = Oceanside<br>13 = Poway<br>14 = San Diego City<br>15 = San Marcos<br>16 = Santee<br>17 = Solana Beach<br>18 = Vista<br>19 = San Diego County<br>20 = Caltrans</td>
+    </tr>
+    <tr>
+        <td>COSTAT</td>
+        <td>Count station number</td>
+    </tr>
+    <tr>
+        <td>COLOC</td>
+        <td>Count location code where:<br>0 = The count was taken on another link but is being applied to this link<br>1 = The count was taken on this link</td>
+    </tr>
+    <tr>
+        <td>DIR</td>
+        <td>Link direction where:<br>0 = Center City Walk Links<br>1 = Northbound<br>2 = Westbound<br>3 = Southbound<br>4 = Eastbound</td>
+    </tr>
+    <tr>
+        <td>JUR</td>
+        <td>Roadway link jurisdiction where:<br>1 = State Facilities<br>2 = Congestion Management Plan (CMP)<br>3 = Regional Arterial System (RAS)<br>4 = Regionally Significant Arterials (RSA)<br>5 = Local Facilties<br>6 = Local Road</td>
+    </tr>
+    <tr>
+        <td>FFC</td>
+        <td>Federal functional class where:<br>1 = Freeway<br>2 = Prime Arterial<br>3 = Major Arterial<br>4 = Collector<br>5 = Local Collector<br>6 = Rural Collector<br>7 = Local (non circulation element) Road<br>8 = Freway Connector Ramp<br>9 = Local Ramp<br>11 = Rail Line<br>12 = Bus Street<br>13 = ADT (Average Daily Traffic) Link</td>
+    </tr>
+    <tr>
+        <td>ASPD</td>
+        <td>Adjusted link speed in mph</td>
+    </tr>
+    <tr>
+        <td>YR</td>
+        <td>The year the link opened to traffic</td>
+    </tr>
+    <tr>
+        <td>PROJ</td>
+        <td>Project ID in the regional roadway network. The Project ID has an associated year value which indicates when the link is open to traffic.</td>
+    </tr>
+    <tr>
+        <td>FC</td>
+        <td>Roadway functional class where:<br>1 = Freeway<br>2 = Prime Arterial<br>3 = Major Arterial<br>4 = Collector<br>5 = Local Collector<br>6 = Rural Collector<br>7 = Local (non circulation element) Road<br>8 = Freeway Connector Ramp<br>9 = Local Ramp<br>10 = TAZ Connector<br>11 = Rail Line<br>12 = Bus Street, Center City Walk Links<br>99 = Transfer Walk Links</td>
+    </tr>
+    <tr>
+        <td>HOV</td>
+        <td>Roadway Operation Restriction where:<br>1 = General Purpose<br>2 = 2+ HOV (Operates as HOT if Toll by TOD attributes > 0)<br>3 = 3+ HOV (Operates as HOT if Toll by TOD attributes > 0)<br>4 = Toll Lane (Toll by TOD attributes should also be adjusted)</td>
+    </tr>
+    <tr>
+        <td>AMTRUCK</td>
+        <td>AM Truck Restriction where:<br>1 = All Vehicle Classes<br>2 = HHDT Excluded<br>3 = MHDT & HHDT Excluded<br>4 = LHDT, MHDT & HHDT Excluded (All Trucks)<br>5 = HHDT Only<br>6 = MHDT & HHDT Only<br>7 = LHDT, MHDT & HHDT Only (Truck Only)</td>
+    </tr>
+    <tr>
+        <td>EATRUCK</td>
+        <td>Early AM Truck Restriction where:<br>1 = All Vehicle Classes<br>2 = HHDT Excluded<br>3 = MHDT & HHDT Excluded<br>4 = LHDT, MHDT & HHDT Excluded (All Trucks)<br>5 = HHDT Only<br>6 = MHDT & HHDT Only<br>7 = LHDT, MHDT & HHDT Only (Truck Only)</td>
+    </tr>
+    <tr>
+        <td>MDTRUCK</td>
+        <td>Midday Truck Restriction where:<br>1 = All Vehicle Classes<br>2 = HHDT Excluded<br>3 = MHDT & HHDT Excluded<br>4 = LHDT, MHDT & HHDT Excluded (All Trucks)<br>5 = HHDT Only<br>6 = MHDT & HHDT Only<br>7 = LHDT, MHDT & HHDT Only (Truck Only)</td>
+    </tr>
+    <tr>
+        <td>PMTRUCK</td>
+        <td>PM Truck Restriction where:<br>1 = All Vehicle Classes<br>2 = HHDT Excluded<br>3 = MHDT & HHDT Excluded<br>4 = LHDT, MHDT & HHDT Excluded (All Trucks)<br>5 = HHDT Only<br>6 = MHDT & HHDT Only<br>7 = LHDT, MHDT & HHDT Only (Truck Only)</td>
+    </tr>
+    <tr>
+        <td>EVTRUCK</td>
+        <td>Evening Truck Restriction where:<br>1 = All Vehicle Classes<br>2 = HHDT Excluded<br>3 = MHDT & HHDT Excluded<br>4 = LHDT, MHDT & HHDT Excluded (All Trucks)<br>5 = HHDT Only<br>6 = MHDT & HHDT Only<br>7 = LHDT, MHDT & HHDT Only (Truck Only)</td>
+    </tr>
+    <tr>
+        <td>SPD</td>
+        <td>Link speed in mph</td>
+    </tr>
+    <tr>
+        <td>WAY</td>
+        <td>One or two way roadway indicator where:<br>1 = One-way road<br>2 = Two-way road<br>Note that the TOD lane attributes (e.g., ABLNA, BALNP, etc.) should be appropriately adjusted.</td>
+    </tr>
+    <tr>
+        <td>MED</td>
+        <td>Median type where:<br>1 = No median<br>2 = Raised or fixed median<br>3 = Continuous left turn center lane</td>
+    </tr>
+    <tr>
+        <td>TOLLEA</td>
+        <td>Early AM Toll Cost in cents where for example:<br>1 = $0.01 per mile<br>200  = $2.00 per mile</td>
+    </tr>
+    <tr>
+        <td>TOLLA</td>
+        <td>AM Toll Cost in cents where for example:<br>1 = $0.01 per mile<br>200  = $2.00 per mile</td>
+    </tr>
+    <tr>
+        <td>TOLLMD</td>
+        <td>Midday Toll Cost in cents where for example:<br>1 = $0.01 per mile<br>200  = $2.00 per mile</td>
+    </tr>
+    <tr>
+        <td>TOLLP</td>
+        <td>PM Toll Cost in cents where for example:<br>1 = $0.01 per mile<br>200  = $2.00 per mile</td>
+    </tr>
+    <tr>
+        <td>TOLLEV</td>
+        <td>Evening Toll Cost in cents where for example:<br>1 = $0.01 per mile<br>200  = $2.00 per mile</td>
+    </tr>
+    <tr>
+        <td>ABLNEA</td>
+        <td>Early AM number of lanes in the FROM-TO direction.</td>
+    </tr>
+    <tr>
+        <td>ABLNA</td>
+        <td>AM number of lanes in the FROM-TO direction.</td>
+    </tr>
+    <tr>
+        <td>ABLNMD</td>
+        <td>Midday number of lanes in the FROM-TO direction.</td>
+    </tr>
+    <tr>
+        <td>ABLNP</td>
+        <td>PM number of lanes in the FROM-TO direction.</td>
+    </tr>
+    <tr>
+        <td>ABLNEV</td>
+        <td>Evening AM number of lanes in the FROM-TO direction.</td>
+    </tr>
+    <tr>
+        <td>ABAU</td>
+        <td>Number of auxiliary lanes in the FROM-TO direction</td>
+    </tr>
+    <tr>
+        <td>ABCNT</td>
+        <td>Intersection control type at the TO end of the link:<br>0 = No Control<br>1 = Traffic Signal<br>2 = All-Way Stop Sign<br>3 = Two-Way Stop Sign<br>4 = Ramp Meter<br>5 = Ramp Meter with HOV lane meter<br>6 = Light Rail Crossing<br>7 = Toll Booth<br>9 = Prevent Control</td>
+    </tr>
+    <tr>
+        <td>ABTL</td>
+        <td>Intersection approach through lanes at the TO end of the link:<br>0~4 = number of through lanes<br>9 = No dedicated lane for the movement</td>
+    </tr>
+    <tr>
+        <td>ABRL</td>
+        <td>Intersection approach right-turn lanes at the TO end of the link:<br>0~2 = number of through lanes<br>7 = Free<br>8 = Prohibited<br>9 = No dedicated lane for the movement</td>
+    </tr>
+    <tr>
+        <td>ABLL</td>
+        <td>Intersection approach left-turn lanes at the TO end of the link:<br>0~2 = number of through lanes<br>9 = No dedicated lane for the movement</td>
+    </tr>
+    <tr>
+        <td>ABGC</td>
+        <td>Intersection green-to-cycle ratio at the TO end of the link (%)</td>
+    </tr>
+    <tr>
+        <td>ABPLC</td>
+        <td>Per-lane capacity per hour in the TO direction of the link</td>
+    </tr>
+    <tr>
+        <td>ABCPEA</td>
+        <td>Early AM period mid-link capacity in the TO direction of the link</td>
+    </tr>
+    <tr>
+        <td>ABCPA</td>
+        <td>AM period mid-link capacity at the TO end of the link</td>
+    </tr>
+    <tr>
+        <td>ABCPMD</td>
+        <td>Midday period mid-link capacity at the TO end of the link</td>
+    </tr>
+    <tr>
+        <td>ABCPP</td>
+        <td>PM period mid-link capacity at the TO end of the link</td>
+    </tr>
+    <tr>
+        <td>ABCPEV</td>
+        <td>Evening period mid-link capacity at the TO end of the link</td>
+    </tr>
+    <tr>
+        <td>ABCXEA</td>
+        <td>Early AM period intersection-approachy capacity at the TO end of the link</td>
+    </tr>
+    <tr>
+        <td>ABCXA</td>
+        <td>AM period intersection-approach capacity at the TO end of the link</td>
+    </tr>
+    <tr>
+        <td>ABCXMD</td>
+        <td>Midday period intersection-approach capacity at the TO end of the link</td>
+    </tr>
+    <tr>
+        <td>ABCXP</td>
+        <td>PM period intersection-approach capacity at the TO end of the link</td>
+    </tr>
+    <tr>
+        <td>ABCXEV</td>
+        <td>Evening period intersection-approach capacity at the TO end of the link</td>
+    </tr>
+    <tr>
+        <td>ABCHEA</td>
+        <td>Early AM period hourly mid-link capacity at the TO end of the link</td>
+    </tr>
+    <tr>
+        <td>ABCHA</td>
+        <td>AM period hourly mid-link capacity at the TO end of the link</td>
+    </tr>
+    <tr>
+        <td>ABCHMD</td>
+        <td>Midday period hourly mid-link capacity at the TO end of the link</td>
+    </tr>
+    <tr>
+        <td>ABCHP</td>
+        <td>PM period hourly mid-link capacity at the TO end of the link</td>
+    </tr>
+    <tr>
+        <td>ABCHEV</td>
+        <td>Evening period hourly mid-link capacity at the TO end of the link</td>
+    </tr>
+    <tr>
+        <td>ABTMEA</td>
+        <td>Early AM period link time in minutes in the FROM-TO direction</td>
+    </tr>
+    <tr>
+        <td>ABTMA</td>
+        <td>AM period link time in minutes in the FROM-TO direction</td>
+    </tr>
+    <tr>
+        <td>ABTMMD</td>
+        <td>Midday period link time in minutes in the FROM-TO direction</td>
+    </tr>
+    <tr>
+        <td>ABTMP</td>
+        <td>PM period link time in minutes in the FROM-TO direction</td>
+    </tr>
+    <tr>
+        <td>ABTMEV</td>
+        <td>Evening period link time in minutes in the FROM-TO direction</td>
+    </tr>
+    <tr>
+        <td>ABTXEA</td>
+        <td>Early AM period intersection delay time in the TO end of the link</td>
+    </tr>
+    <tr>
+        <td>ABTXA</td>
+        <td>AM period intersection delay time in the TO end of the link</td>
+    </tr>
+    <tr>
+        <td>ABTXMD</td>
+        <td>Midday period intersection delay time in the TO end of the link</td>
+    </tr>
+    <tr>
+        <td>ABTXP</td>
+        <td>PM period intersection delay time in the TO end of the link</td>
+    </tr>
+    <tr>
+        <td>ABTXEV</td>
+        <td>Evening period intersection delay time in the TO end of the link</td>
+    </tr>
+    <tr>
+        <td>BALNEA</td>
+        <td>Early AM number of lanes in the TO-FROM direction</td>
+    </tr>
+    <tr>
+        <td>BALNA</td>
+        <td>AM number of lanes in the TO-FROM direction</td>
+    </tr>
+    <tr>
+        <td>BALNMD</td>
+        <td>Midday number of lanes in the TO-FROM direction</td>
+    </tr>
+    <tr>
+        <td>BALNP</td>
+        <td>PM number of lanes in the TO-FROM direction</td>
+    </tr>
+    <tr>
+        <td>BALNEV</td>
+        <td>Evening AM number of lanes in the TO-FROM direction</td>
+    </tr>
+    <tr>
+        <td>BAAU</td>
+        <td>Number of auxiliary lanes in the TO-FROM direction</td>
+    </tr>
+    <tr>
+        <td>BACNT</td>
+        <td>Intersection control type at the FROM end of the link:<br>0 = No Control<br>1 = Traffic Signal<br>2 = All-Way Stop Sign<br>3 = Two-Way Stop Sign<br>4 = Ramp Meter<br>5 = Ramp Meter with HOV lane meter<br>6 = Light Rail Crossing<br>7 = Toll Booth<br>9 = Prevent Control</td>
+    </tr>
+    <tr>
+        <td>BATL</td>
+        <td>Intersection approach through lanes at the FROM end of the link:<br>0~4 = number of through lanes<br>7 = Free<br>8 = Prohibited<br>9 = No dedicated lane for the movement</td>
+    </tr>
+    <tr>
+        <td>BARL</td>
+        <td>Intersection approach right-turn lanes at the FROM end of the link:<br>0~2 = number of through lanes<br>7 = Free<br>8 = Prohibited<br>9 = No dedicated lane for the movement</td>
+    </tr>
+    <tr>
+        <td>BALL</td>
+        <td>Intersection approach left-turn lanes at the FROM end of the link:<br>0~2 = number of through lanes<br>7 = Free<br>8 = Prohibited<br>9 = No dedicated lane for the movement</td>
+    </tr>
+    <tr>
+        <td>BAGC</td>
+        <td>Intersection green-to-cycle ratio at the FROM end of the link (%)</td>
+    </tr>
+    <tr>
+        <td>BAPLC</td>
+        <td>Per-lane capacity per hour in the FROM direction of the link</td>
+    </tr>
+    <tr>
+        <td>BACPEA</td>
+        <td>Early AM period mid-link capacity in the FROM direction of the link</td>
+    </tr>
+    <tr>
+        <td>BACPA</td>
+        <td>AM period mid-link capacity at the FROM end of the link</td>
+    </tr>
+    <tr>
+        <td>BACPMD</td>
+        <td>Midday period mid-link capacity at the FROM end of the link</td>
+    </tr>
+    <tr>
+        <td>BACPP</td>
+        <td>PM period mid-link capacity at the FROM end of the link</td>
+    </tr>
+    <tr>
+        <td>BACPEV</td>
+        <td>Evening period mid-link capacity at the FROM end of the link</td>
+    </tr>
+    <tr>
+        <td>BACXEA</td>
+        <td>Early AM period intersection-approachy capacity at the FROM end of the link</td>
+    </tr>
+    <tr>
+        <td>BACXA</td>
+        <td>AM period intersection-approach capacity at the FROM end of the link</td>
+    </tr>
+    <tr>
+        <td>BACXMD</td>
+        <td>Midday period intersection-approach capacity at the FROM end of the link</td>
+    </tr>
+    <tr>
+        <td>BACXP</td>
+        <td>PM period intersection-approach capacity at the FROM end of the link</td>
+    </tr>
+    <tr>
+        <td>BACXEV</td>
+        <td>Evening period intersection-approach capacity at the FROM end of the link</td>
+    </tr>
+    <tr>
+        <td>BACHEA</td>
+        <td>Early AM period hourly mid-link capacity at the FROM end of the link</td>
+    </tr>
+    <tr>
+        <td>BACHA</td>
+        <td>AM period hourly mid-link capacity at the FROM end of the link</td>
+    </tr>
+    <tr>
+        <td>BACHMD</td>
+        <td>Midday period hourly mid-link capacity at the FROM end of the link</td>
+    </tr>
+    <tr>
+        <td>BACHP</td>
+        <td>PM period hourly mid-link capacity at the FROM end of the link</td>
+    </tr>
+    <tr>
+        <td>BACHEV</td>
+        <td>Evening period hourly mid-link capacity at the FROM end of the link</td>
+    </tr>
+    <tr>
+        <td>BATMEA</td>
+        <td>Early AM period link time in minutes in the TO-FROM direction</td>
+    </tr>
+    <tr>
+        <td>BATMA</td>
+        <td>AM period link time in minutes in the TO-FROM direction</td>
+    </tr>
+    <tr>
+        <td>BATMMD</td>
+        <td>Midday period link time in minutes in the TO-FROM direction</td>
+    </tr>
+    <tr>
+        <td>BATMP</td>
+        <td>PM period link time in minutes in the TO-FROM direction</td>
+    </tr>
+    <tr>
+        <td>BATMEV</td>
+        <td>Evening period link time in minutes in the TO-FROM direction</td>
+    </tr>
+    <tr>
+        <td>BATXEA</td>
+        <td>Early AM period intersection delay time in the FROM end of the link</td>
+    </tr>
+    <tr>
+        <td>BATXA</td>
+        <td>AM period intersection delay time in the FROM end of the link</td>
+    </tr>
+    <tr>
+        <td>BATXMD</td>
+        <td>Midday period intersection delay time in the FROM end of the link</td>
+    </tr>
+    <tr>
+        <td>BATXP</td>
+        <td>PM period intersection delay time in the FROM end of the link</td>
+    </tr>
+    <tr>
+        <td>BATXEV</td>
+        <td>Evening period intersection delay time in the FROM end of the link</td>
+    </tr>
+    <tr>
+        <td>HWYSegGUID</td>
+        <td>Highway segment globally unique identifier (GUID)</td>
+    </tr>
+    <tr>
+        <td>FXNM</td>
+        <td>Program assigned cross street name at the FROM end of the link</td>
+    </tr>
+    <tr>
+        <td>TXNM</td>
+        <td>Program assigned cross street name at the TO end of the link</td>
+    </tr>
+    <tr>
+        <td>MINMODE</td>
+        <td>Transit and access mode type where:<br>1 = Special transfer walk links between certain nearby stops<br>2 = Walk links in the downtown area<br>3 = The special TAP connectors<br>400 = Commuter Rail<br>500 = Trolley & Light Rail Transit (LRT)<br>600 = Rapid Freeway<br>700 = Rapid Arterial<br>800 = Limited Exrpess Bus<br>900 = Express Bus<br>1000 = Local Bus<br><br>The minmode is organized by combining transit modes (e.g., 400, 700, 1000, etc.) and walk to transit modes (e.g., 1, 2). For example, a MINMODE value of 1002 is for transit mode local bus (1000) and walk links in the downtown area (2).</td>
+    </tr>
+    <tr>
+        <td>SHAPE_Length</td>
+        <td>Length of link in feet.</td>
+    </tr>
+</table>
+
+<h3 id="tned-roadway-network-nodes-feature-class">TNED Roadway Network Nodes Feature Class<a class="headerlink" href="#tned-roadway-network-nodes-feature-class" title="Permanent link"> ¶</a></h3>
+<p>The <strong><em>TNED_HwyNodes</em></strong> feature class contains all the nodes of the network.</p>
+<table>
+    <tr>
+        <td><strong>Attribute</strong></td>
+        <td><strong>Description</strong></td>
+    </tr>
+    <tr>
+        <td>OBJECTID</td>
+        <td>An ObjectID is a unique, not null integer field used to uniquely identify rows in tables in a geodatabase.</td>
+    </tr>
+    <tr>
+        <td>XNM1</td>
+        <td>First cross street name</td>
+    </tr>
+    <tr>
+        <td>XNM2</td>
+        <td>Second cross street name</td>
+    </tr>
+    <tr>
+        <td>X_COORD</td>
+        <td>Coordinate value of the node in the X direction</td>
+    </tr>
+    <tr>
+        <td>Y_COORD</td>
+        <td>Coordinate value of the node in the Y direction</td>
+    </tr>
+    <tr>
+        <td>Z_COORD</td>
+        <td>Coordinate value of the node in the Z direction (elevation)</td>
+    </tr>
+    <tr>
+        <td>SPHERE</td>
+        <td>Jurisdiction sphere of influence where value corresponds to either the jurisdiction code (1-18 excluding 14), the City of San Diego CPA Code (1400s), or the County of San Diego CPA Code (1900s):<br>1 = Carlsbad<br>2 = Chula Vista<br>3 = Coronado<br>4 = Del Mar<br>5 = El Cajon<br>6 = Encinitas<br>7 = Escondido<br>8 = Imperial Beach<br>9 = La Mesa<br>10 = Lemon Grove<br>11 = National City<br>12 = Oceanside<br>13 = Poway<br>15 = San Marcos<br>16 = Santee<br>17 = Solana Beach<br>18 = Vista<br>1401 = Balboa Park<br>1402 = Barrio Logan<br>1403 = Carmel Mountain Ranch<br>1404 = Centre City<br>1405 = Sabre Springs<br>1406 = Clairemont Mesa<br>1407 = East Elliott<br>1408 = Greater Golden Hill<br>1409 = Miramar Ranch North<br>1410 = La Jolla<br>1412 = Linda Vista<br>1414 = Midway-Pacific Highway<br>1415 = Mira Mesa<br>1417 = Mission Bay Park<br>1418 = Mission Beach<br>1419 = Mission Valley<br>1420 = Navajo<br>1421 = Carmel Valley<br>1423 = Ocean Beach<br>1424 = Old San Diego<br>1425 = Otay Mesa-Nestor<br>1426 = Otay Mesa<br>1427 = Pacific Beach<br>1428 = Greater North Park<br>1429 = Rancho Penasquitos<br>1430 = Peninsula<br>1431 = Rancho Bernardo<br>1432 = San Pasqual<br>1433 = San Ysidro<br>1434 = Scripps Miramar Ranch<br>1435 = Serra Mesa<br>1438 = College Area<br>1439 = Tijuana River Valley<br>1440 = Torrey Pines<br>1441 = University<br>1442 = Uptown<br>1444 = Skyline-Paradise Hills<br>1447 = Tierrasanta<br>1448 = Torrey Hills<br>1449 = Fairbanks Country Club<br>1450 = Kearny Mesa<br>1455 = Via De La Valle<br>1456 = Mid-City:City Heights<br>1457 = Mid-City:Eastern Area<br>1458 = Mid-City:Kensington-Talmadge<br>1459 = Mid-City:Normal Heights<br>1461 = Del Mar Mesa<br>1462 = Torrey Highlands<br>1463 = Los Penasquitos Canyon Preserve<br>1464 = Black Mountain Ranch<br>1465 = Pacific Highlands Ranch<br>1466 = NCFUA Subarea 2<br>1467 = NCFUA Reserve<br>1468 = Southeastern:Encanto Neighborhoods<br>1469 = Southeastern:Southeastern San Diego<br>1481 = Rancho Encantada<br>1482 = Miramar Air Station<br>1483 = Lindbergh Field<br>1485 = Scripps Reserve<br>1486 = Harbor<br>1488 = Flower Hill<br>1491 = 32nd Street Naval Station<br>1901 = Alpine<br>1902 = Central Mountain<br>1903 = Crest-Dehesa<br>1904 = Desert<br>1906 = Jamul-Dulzura<br>1907 = Lakeside<br>1908 = Mountain Empire<br>1909 = North County Metro<br>1911 = Otay<br>1912 = Pala-Pauma<br>1914 = Ramona<br>1915 = San Dieguito<br>1918 = Sweetwater<br>1919 = Valle De Oro<br>1920 = Valley Center<br>1921 = Spring Valley<br>1922 = Julian<br>1951 = North Mountain<br>1952 = Bonsall<br>1953 = Fallbrook<br>1954 = Pendleton-De Luz<br>1955 = Rainbow<br>1998 = Barona<br>1999 = County Islands</td>
+    </tr>
+    <tr>
+        <td>HNODE</td>
+        <td>Unique Node identifier</td>
+    </tr>
+    <tr>
+        <td>YR</td>
+        <td>Year the node is active</td>
+    </tr>
+    <tr>
+        <td>CNT</td>
+        <td>Intersection control type where:<br>0 = No Control<br>1 = Traffic Signal<br>2 = All-Way Stop Sign<br>3 = Two-Way Stop Sign<br>4 = Ramp Meter<br>5 = Ramp Meter with HOV Lane Meter<br>6 = Light Rail Crossing<br>7 = Toll Booth</td>
+    </tr>
+    <tr>
+        <td>TAP</td>
+        <td>Transit Access Point, where:<br>0 = Not a transit access point<br>> 1 = Transit access point<br><br>Note that TAPs are part of the legacy TCOVED network editing system and no longer used as part of the new TNED network editing system</td>
+    </tr>
+    <tr>
+        <td>STOPTYPE</td>
+        <td>Transit stop type where:<br>0 = No Stop<br>4 = Commuter Rail<br>5 = Light Rail Transit (LRT) or Streetcar<br>6 = Rapid Bus (Freeway Based)<br>7 = Rapid Bus (Arterial Based)<br>8 = Limited Express Bus<br>9 = Express Bus<br>10 = Local Bus</td>
+    </tr>
+    <tr>
+        <td>TSTOPYR</td>
+        <td>Year transit stop is active</td>
+    </tr>
+    <tr>
+        <td>PARK</td>
+        <td>Type of Park & Ride facility the transit node (if STOPTYPE > 0) falls within where:<br>0 = Not Available<br>1 = Formal Park and Ride<br>2 = Other Parking<br>4 = Non-Formal Park and Ride</td>
+    </tr>
+    <tr>
+        <td>ELEV</td>
+        <td>Transit stop elevation in feet</td>
+    </tr>
+</table>
+
+<h3 id="tned-railway-network-links-feature-class">TNED Railway Network Links Feature Class<a class="headerlink" href="#tned-railway-network-links-feature-class" title="Permanent link"> ¶</a></h3>
+<p>The <strong><em>TNED_RailNet</em></strong> feature class contains all the railway links in the network.</p>
+<table>
+    <tr>
+        <td><strong>Attribute</strong></td>
+        <td><strong>Description</strong></td>
+    </tr>
+    <tr>
+        <td>OBJECTID</td>
+        <td>An ObjectID is a unique, not null integer field used to uniquely identify rows in tables in a geodatabase.</td>
+    </tr>
+    <tr>
+        <td>LENGTH</td>
+        <td>Length of link in miles</td>
+    </tr>
+    <tr>
+        <td>HWYCOV0_ID</td>
+        <td>SANDAG-assigned link ID</td>
+    </tr>
+    <tr>
+        <td>SPHERE</td>
+        <td>Jurisdiction sphere of influence where value corresponds to either the jurisdiction code (1-18 excluding 14), the City of San Diego CPA Code (1400s), or the County of San Diego CPA Code (1900s):<br>1 = Carlsbad<br>2 = Chula Vista<br>3 = Coronado<br>4 = Del Mar<br>5 = El Cajon<br>6 = Encinitas<br>7 = Escondido<br>8 = Imperial Beach<br>9 = La Mesa<br>10 = Lemon Grove<br>11 = National City<br>12 = Oceanside<br>13 = Poway<br>15 = San Marcos<br>16 = Santee<br>17 = Solana Beach<br>18 = Vista<br>1401 = Balboa Park<br>1402 = Barrio Logan<br>1403 = Carmel Mountain Ranch<br>1404 = Centre City<br>1405 = Sabre Springs<br>1406 = Clairemont Mesa<br>1407 = East Elliott<br>1408 = Greater Golden Hill<br>1409 = Miramar Ranch North<br>1410 = La Jolla<br>1412 = Linda Vista<br>1414 = Midway-Pacific Highway<br>1415 = Mira Mesa<br>1417 = Mission Bay Park<br>1418 = Mission Beach<br>1419 = Mission Valley<br>1420 = Navajo<br>1421 = Carmel Valley<br>1423 = Ocean Beach<br>1424 = Old San Diego<br>1425 = Otay Mesa-Nestor<br>1426 = Otay Mesa<br>1427 = Pacific Beach<br>1428 = Greater North Park<br>1429 = Rancho Penasquitos<br>1430 = Peninsula<br>1431 = Rancho Bernardo<br>1432 = San Pasqual<br>1433 = San Ysidro<br>1434 = Scripps Miramar Ranch<br>1435 = Serra Mesa<br>1438 = College Area<br>1439 = Tijuana River Valley<br>1440 = Torrey Pines<br>1441 = University<br>1442 = Uptown<br>1444 = Skyline-Paradise Hills<br>1447 = Tierrasanta<br>1448 = Torrey Hills<br>1449 = Fairbanks Country Club<br>1450 = Kearny Mesa<br>1455 = Via De La Valle<br>1456 = Mid-City:City Heights<br>1457 = Mid-City:Eastern Area<br>1458 = Mid-City:Kensington-Talmadge<br>1459 = Mid-City:Normal Heights<br>1461 = Del Mar Mesa<br>1462 = Torrey Highlands<br>1463 = Los Penasquitos Canyon Preserve<br>1464 = Black Mountain Ranch<br>1465 = Pacific Highlands Ranch<br>1466 = NCFUA Subarea 2<br>1467 = NCFUA Reserve<br>1468 = Southeastern:Encanto Neighborhoods<br>1469 = Southeastern:Southeastern San Diego<br>1481 = Rancho Encantada<br>1482 = Miramar Air Station<br>1483 = Lindbergh Field<br>1485 = Scripps Reserve<br>1486 = Harbor<br>1488 = Flower Hill<br>1491 = 32nd Street Naval Station<br>1901 = Alpine<br>1902 = Central Mountain<br>1903 = Crest-Dehesa<br>1904 = Desert<br>1906 = Jamul-Dulzura<br>1907 = Lakeside<br>1908 = Mountain Empire<br>1909 = North County Metro<br>1911 = Otay<br>1912 = Pala-Pauma<br>1914 = Ramona<br>1915 = San Dieguito<br>1918 = Sweetwater<br>1919 = Valle De Oro<br>1920 = Valley Center<br>1921 = Spring Valley<br>1922 = Julian<br>1951 = North Mountain<br>1952 = Bonsall<br>1953 = Fallbrook<br>1954 = Pendleton-De Luz<br>1955 = Rainbow<br>1998 = Barona<br>1999 = County Islands</td>
+    </tr>
+    <tr>
+        <td>NM</td>
+        <td>Rail link name</td>
+    </tr>
+    <tr>
+        <td>FXNM</td>
+        <td>Program assigned cross street name at the FROM end of the rai llink</td>
+    </tr>
+    <tr>
+        <td>TXNM</td>
+        <td>Program assigned cross street name at the TO end of the rail link</td>
+    </tr>
+    <tr>
+        <td>AN</td>
+        <td>A node number. The value corresponds to the HNODE value of the connecting "from node" at the link's starting point.</td>
+    </tr>
+    <tr>
+        <td>BN</td>
+        <td>B node number. The value corresponds to the HNODE value of the connecting "to node" at the link's ending point.</td>
+    </tr>
+    <tr>
+        <td>DIR</td>
+        <td>Link direction where:<br>0 = Center City Walk Links<br>1 = Northbound<br>2 = Westbound<br>3 = Southbound<br>4 = Eastbound</td>
+    </tr>
+    <tr>
+        <td>YR</td>
+        <td>The year the link opened for rail operations</td>
+    </tr>
+    <tr>
+        <td>FC</td>
+        <td>Functional class where:<br>11 = Rail Line</td>
+    </tr>
+    <tr>
+        <td>HOV</td>
+        <td>Roadway Operation Restriction where:<br>1 = General Purpose</td>
+    </tr>
+    <tr>
+        <td>SPD</td>
+        <td>Link speed in mph</td>
+    </tr>
+    <tr>
+        <td>WAY</td>
+        <td>One or two way link indicator where:<br>1 = One-way link<br>2 = Two-way link</td>
+    </tr>
+    <tr>
+        <td>MED</td>
+        <td>Median type where:<br>1 = No median</td>
+    </tr>
+    <tr>
+        <td>MINMODE</td>
+        <td>Transit mode type where:<br>400 = Commuter Rail<br>500 = Trolley & Light Rail Transit (LRT)</td>
+    </tr>
+    <tr>
+        <td>HWYSegGUID</td>
+        <td>Highway segment globally unique identifier (GUID)</td>
+    </tr>
+    <tr>
+        <td>OSPD</td>
+        <td>Operational speed in mph. For rail routes, operation speed refers to the speed at which the routes runs and considers the length, acceleration, cruise speed, decelaration and dwell time of the vehicle.</td>
+    </tr>
+    <tr>
+        <td>TMO</td>
+        <td>Operational rail time</td>
+    </tr>
+    <tr>
+        <td>ACCTIME</td>
+        <td>Acceleration time in minutes</td>
+    </tr>
+    <tr>
+        <td>DECELTIME</td>
+        <td>Decceleration time in minutes</td>
+    </tr>
+    <tr>
+        <td>DWELLTIME</td>
+        <td>Dwell time at transit stop in minutes</td>
+    </tr>
+    <tr>
+        <td>RUNTIME</td>
+        <td>Travel (run) time between nodes/stops in minutes</td>
+    </tr>
+    <tr>
+        <td>SHAPE_Length</td>
+        <td>Length of link in ft</td>
+    </tr>
+</table>
+
+<h3 id="tned-railway-network-nodes-feature-class">TNED Railway Network Nodes Feature Class<a class="headerlink" href="#tned-railway-network-nodes-feature-class" title="Permanent link"> ¶</a></h3>
+<p>The <strong><em>TNED_RailNodes</em></strong> feature class contains all the rail nodes of the network.</p>
+<table>
+    <tr>
+        <td><strong>Attribute</strong></td>
+        <td><strong>Description</strong></td>
+    </tr>
+    <tr>
+        <td>OBJECTID</td>
+        <td>An ObjectID is a unique, not null integer field used to uniquely identify rows in tables in a geodatabase.</td>
+    </tr>
+    <tr>
+        <td>XNM1</td>
+        <td>First cross street name</td>
+    </tr>
+    <tr>
+        <td>XNM2</td>
+        <td>Second cross street name</td>
+    </tr>
+    <tr>
+        <td>X_COORD</td>
+        <td>Coordinate value of the node in the X direction</td>
+    </tr>
+    <tr>
+        <td>Y_COORD</td>
+        <td>Coordinate value of the node in the Y direction</td>
+    </tr>
+    <tr>
+        <td>Z_COORD</td>
+        <td>Coordinate value of the node in the Z direction (elevation)</td>
+    </tr>
+    <tr>
+        <td>SPHERE</td>
+        <td>Jurisdiction sphere of influence where value corresponds to either the jurisdiction code (1-18 excluding 14), the City of San Diego CPA Code (1400s), or the County of San Diego CPA Code (1900s):<br>1 = Carlsbad<br>2 = Chula Vista<br>3 = Coronado<br>4 = Del Mar<br>5 = El Cajon<br>6 = Encinitas<br>7 = Escondido<br>8 = Imperial Beach<br>9 = La Mesa<br>10 = Lemon Grove<br>11 = National City<br>12 = Oceanside<br>13 = Poway<br>15 = San Marcos<br>16 = Santee<br>17 = Solana Beach<br>18 = Vista<br>1401 = Balboa Park<br>1402 = Barrio Logan<br>1403 = Carmel Mountain Ranch<br>1404 = Centre City<br>1405 = Sabre Springs<br>1406 = Clairemont Mesa<br>1407 = East Elliott<br>1408 = Greater Golden Hill<br>1409 = Miramar Ranch North<br>1410 = La Jolla<br>1412 = Linda Vista<br>1414 = Midway-Pacific Highway<br>1415 = Mira Mesa<br>1417 = Mission Bay Park<br>1418 = Mission Beach<br>1419 = Mission Valley<br>1420 = Navajo<br>1421 = Carmel Valley<br>1423 = Ocean Beach<br>1424 = Old San Diego<br>1425 = Otay Mesa-Nestor<br>1426 = Otay Mesa<br>1427 = Pacific Beach<br>1428 = Greater North Park<br>1429 = Rancho Penasquitos<br>1430 = Peninsula<br>1431 = Rancho Bernardo<br>1432 = San Pasqual<br>1433 = San Ysidro<br>1434 = Scripps Miramar Ranch<br>1435 = Serra Mesa<br>1438 = College Area<br>1439 = Tijuana River Valley<br>1440 = Torrey Pines<br>1441 = University<br>1442 = Uptown<br>1444 = Skyline-Paradise Hills<br>1447 = Tierrasanta<br>1448 = Torrey Hills<br>1449 = Fairbanks Country Club<br>1450 = Kearny Mesa<br>1455 = Via De La Valle<br>1456 = Mid-City:City Heights<br>1457 = Mid-City:Eastern Area<br>1458 = Mid-City:Kensington-Talmadge<br>1459 = Mid-City:Normal Heights<br>1461 = Del Mar Mesa<br>1462 = Torrey Highlands<br>1463 = Los Penasquitos Canyon Preserve<br>1464 = Black Mountain Ranch<br>1465 = Pacific Highlands Ranch<br>1466 = NCFUA Subarea 2<br>1467 = NCFUA Reserve<br>1468 = Southeastern:Encanto Neighborhoods<br>1469 = Southeastern:Southeastern San Diego<br>1481 = Rancho Encantada<br>1482 = Miramar Air Station<br>1483 = Lindbergh Field<br>1485 = Scripps Reserve<br>1486 = Harbor<br>1488 = Flower Hill<br>1491 = 32nd Street Naval Station<br>1901 = Alpine<br>1902 = Central Mountain<br>1903 = Crest-Dehesa<br>1904 = Desert<br>1906 = Jamul-Dulzura<br>1907 = Lakeside<br>1908 = Mountain Empire<br>1909 = North County Metro<br>1911 = Otay<br>1912 = Pala-Pauma<br>1914 = Ramona<br>1915 = San Dieguito<br>1918 = Sweetwater<br>1919 = Valle De Oro<br>1920 = Valley Center<br>1921 = Spring Valley<br>1922 = Julian<br>1951 = North Mountain<br>1952 = Bonsall<br>1953 = Fallbrook<br>1954 = Pendleton-De Luz<br>1955 = Rainbow<br>1998 = Barona<br>1999 = County Islands</td>
+    </tr>
+    <tr>
+        <td>HNODE</td>
+        <td>Unique Node identifier</td>
+    </tr>
+    <tr>
+        <td>YR</td>
+        <td>Year the node is active</td>
+    </tr>
+    <tr>
+        <td>CNT</td>
+        <td>Intersection control type where:<br>0 = No Control<br>6 = Light Rail Crossing</td>
+    </tr>
+    <tr>
+        <td>TAP</td>
+        <td>Transit Access Point, where:<br>0 = Not a transit access point<br>> 1 = Transit access point<br><br>Note that TAPs are part of the legacy TCOVED network editing system and no longer used as part of the new TNED network editing system</td>
+    </tr>
+    <tr>
+        <td>STOPTYPE</td>
+        <td>Transit stop type where:<br>4 = Commuter Rail<br>5 = Light Rail Transit (LRT) or Streetcar</td>
+    </tr>
+    <tr>
+        <td>TSTOPYR</td>
+        <td>Year transit stop is active. Not presently used by model.</td>
+    </tr>
+    <tr>
+        <td>PARK</td>
+        <td>Type of Park & Ride facility the transit node falls within<br>0 = Not Available<br>1 = Formal Park and Ride<br>2 = Other Parking<br>4 = Non-Formal Park and Ride</td>
+    </tr>
+    <tr>
+        <td>ELEV</td>
+        <td>Transit stop elevation in feet</td>
+    </tr>
+</table>
+
+<h3 id="tned-transit-route-feature-class">TNED Transit Route Feature Class<a class="headerlink" href="#tned-transit-route-feature-class" title="Permanent link"> ¶</a></h3>
+<p>The <strong><em>TransitRoute</em></strong> feature class contains all the transit routes in the network.</p>
+<table>
+    <tr>
+        <td><strong>Attribute</strong></td>
+        <td><strong>Description</strong></td>
+    </tr>
+    <tr>
+        <td>OBJECTID</td>
+        <td>An ObjectID is a unique, not null integer field used to uniquely identify rows in tables in a geodatabase.</td>
+    </tr>
+    <tr>
+        <td>GlobalID</td>
+        <td>ESRI-generated Global IDs which are unique and identify a feature or table row in a geodatabase and across geodatabases.</td>
+    </tr>
+    <tr>
+        <td>Route</td>
+        <td>Transit Route Number</td>
+    </tr>
+    <tr>
+        <td>Direction</td>
+        <td>Direction of transit route where:<br>1 = Inbound<br>2 = Outbound<br><br>Although not a global nor strict rule, a value of 1 typically refers to the direction of the route destined to Downtown San Diego</td>
+    </tr>
+    <tr>
+        <td>Configuration</td>
+        <td>The configuration, or alignment version, of the transit route</td>
+    </tr>
+    <tr>
+        <td>RouteID</td>
+        <td>The concatenated Route, direction and configuration of the transit route. This unique ID is best read from right to left as the last 2 digits refer to the Configuration, the 3rd digit from the right refers to the Direction (1 or 2), and the remaining leftmost digits refer to the Route. For example, 398212 is configuration 12 in the outbound (2 direction) of route 398.</td>
+    </tr>
+    <tr>
+        <td>Operator</td>
+        <td>Route Operator where:<br>1 = MTS<br>2 = NCTD<br>3 = SD Trolley<br><br>Note that this field has no effects on model results.</td>
+    </tr>
+    <tr>
+        <td>Mode</td>
+        <td>Transit mode where:<br>4 = Commuter Rail<br>5 = Light Rail Transit (LRT) or Streetcar<br>6 = Rapid Bus (Freeway Based)<br>7 = Rapid Bus (Arterial Based)<br>8 = Limited Express Bus<br>9 = Express Bus<br>10 = Local Bus</td>
+    </tr>
+    <tr>
+        <td>RouteDesc</td>
+        <td>A description of the transit route</td>
+    </tr>
+    <tr>
+        <td>Origin</td>
+        <td>Description field that may be used to distinguish what study or project the record belongs to. E.g., 2021 Regional Plan, 2025 Regional Plan, Airport Transit Connection, etc.</td>
+    </tr>
+    <tr>
+        <td>StudyUse</td>
+        <td>Description field to indicate status of configuration and/or alternative. E.g., Final, Initial, Long Range</td>
+    </tr>
+    <tr>
+        <td>Stop</td>
+        <td>Jurisdiction or community plan area where transit route terminates</td>
+    </tr>
+    <tr>
+        <td>Start</td>
+        <td>Jurisdiction or community plan area where transit route begins</td>
+    </tr>
+    <tr>
+        <td>SHAPE_Length</td>
+        <td>Length of transit route alignment in feet</td>
+    </tr>
+</table>
+
+<h3 id="tned-turns-file-geodatabase-table">TNED Turns File Geodatabase Table<a class="headerlink" href="#tned-turns-file-geodatabase-table" title="Permanent link"> ¶</a></h3>
+<p>The <strong><em>Turns</em></strong> file geodatabase table lists prohibited vehicle turn movements.</p>
+<table>
+    <tr>
+        <td><strong>Attribute</strong></td>
+        <td><strong>Description</strong></td>
+    </tr>
+    <tr>
+        <td>OBJECTID</td>
+        <td>An ObjectID is a unique, not null integer field used to uniquely identify rows in tables in a geodatabase.</td>
+    </tr>
+    <tr>
+        <td>TurnID</td>
+        <td>Unique turn record identifier</td>
+    </tr>
+    <tr>
+        <td>GlobalID</td>
+        <td>ESRI-generated Global IDs which are unique and identify a feature or table row in a geodatabase and across geodatabases.</td>
+    </tr>
+    <tr>
+        <td>FromNode</td>
+        <td>First node's ID in turn sequence where the value references the TNED_HwyNode HNODE attribute</td>
+    </tr>
+    <tr>
+        <td>MidNode</td>
+        <td>Second/mid node's ID in turn sequence where the value references the TNED_HwyNode HNODE attribute</td>
+    </tr>
+    <tr>
+        <td>ToNode</td>
+        <td>Final node's ID in turn sequence where the value references the TNED_HwyNode HNODE attribute</td>
+    </tr>
+</table>
+
+<h2 id="tned-active-transportation-network-links-shapefile">TNED Active Transportation Network Links Shapefile<a class="headerlink" href="#tned-active-transportation-network-links-shapefile" title="Permanent link"> ¶</a></h2>
+<p>The <strong><em>SANDAG_Bike_Net.shp</em></strong> contains all the active transportation (bike, walk) links of the network.</p>
+<table>
+    <tr>
+        <td><strong>Attribute</strong></td>
+        <td><strong>Description</strong></td>
+    </tr>
+    <tr>
+        <td>FID</td>
+        <td>Sequential field ID (i.e., index) starting at 0.</td>
+    </tr>
+    <tr>
+        <td>GlobalID</td>
+        <td>ESRI-generated Global IDs which are unique and identify a feature or table row in a geodatabase and across geodatabases.</td>
+    </tr>
+    <tr>
+        <td>ROADSEGID</td>
+        <td>Road segment ID</td>
+    </tr>
+    <tr>
+        <td>RD20FULL</td>
+        <td>Road/Street name</td>
+    </tr>
+    <tr>
+        <td>A_LEVEL</td>
+        <td>Level of first node</td>
+    </tr>
+    <tr>
+        <td>B_LEVEL</td>
+        <td>Level of second node</td>
+    </tr>
+    <tr>
+        <td>A</td>
+        <td>Foreign key of first node</td>
+    </tr>
+    <tr>
+        <td>B</td>
+        <td>Foreign key of second node</td>
+    </tr>
+    <tr>
+        <td>Distance</td>
+        <td>Arc length of link (ft)</td>
+    </tr>
+    <tr>
+        <td>AB_Gain</td>
+        <td>Cumulative non-negative increase in elevation from A to B nodes (ft)</td>
+    </tr>
+    <tr>
+        <td>BA_Gain</td>
+        <td>Cumulative non-negative increase in elevation from B to A nodes (ft)</td>
+    </tr>
+    <tr>
+        <td>ABBikeClas</td>
+        <td>Type of Bike Classification in AB direction where:<br>0 = No bike facility<br>1 = Multi-Use Path<br>2 = Bike Lane<br>3 = Bike Route<br>4 = Separated Bikeway; Coded as 2 with Bike2Sep = 1<br>5 = Bike Boulevard; Coded as 3 with Bike3Blvd = 1<br>10 = MGRA/TAZ Connector</td>
+    </tr>
+    <tr>
+        <td>BABikeClas</td>
+        <td>Type of Bike Classification in BA direction where:<br>0 = No bike facility<br>1 = Multi-Use Path<br>2 = Bike Lane<br>3 = Bike Route<br>4 = Separated Bikeway; Coded as 2 with Bike2Sep = 1<br>5 = Bike Boulevard; Coded as 3 with Bike3Blvd = 1<br>10 = MGRA/TAZ Connector</td>
+    </tr>
+    <tr>
+        <td>AB_Lanes</td>
+        <td>Number of Vehicle Lanes in AB direction</td>
+    </tr>
+    <tr>
+        <td>BA_Lanes</td>
+        <td>Number of Vehicle Lanes in BA direction</td>
+    </tr>
+    <tr>
+        <td>Func_Class</td>
+        <td>Roadway functional classification where:<br>0 = Pedestrian / Bikeway / Recreational Parkway<br>2 = Prime (Primary) Arterial<br>3 = Major Road / 4-Lane Major Road<br>4 = Light (2-lane) Collector<br>6 = Rural Collector / Rural Light Collector / Local Road<br>7 = Private Street / Rural Mountain Road<br>8 = Freeway to Freeway Ramp</td>
+    </tr>
+    <tr>
+        <td>Bike2Sep</td>
+        <td>Separated Bike Lane Flag where:<br>0 = No<br>1 = Yes</td>
+    </tr>
+    <tr>
+        <td>Bike3Blvd</td>
+        <td>Bike Boulevard Lane Flag where:<br>0 = No<br>1 = Yes</td>
+    </tr>
+    <tr>
+        <td>SPEED</td>
+        <td>Road Speed</td>
+    </tr>
+    <tr>
+        <td>ProjectID</td>
+        <td>Project ID in the regional bike network</td>
+    </tr>
+    <tr>
+        <td>Year</td>
+        <td>Year built/open to public</td>
+    </tr>
+    <tr>
+        <td>ScenicIdx</td>
+        <td>Scenic index represents the closeness to the ocean and parks</td>
+    </tr>
+    <tr>
+        <td>ABBikeLn</td>
+        <td>Number of bike lanes in the AB direction. Set to 1 if AB_Lanes=0 and ABBikeClas in (1,2,3)</td>
+    </tr>
+    <tr>
+        <td>BABikeLn</td>
+        <td>Number of bike lanes in the BA direction. Set to 1 if BA_Lanes=0 and BABikeClas in (1,2,3)</td>
+    </tr>
+    <tr>
+        <td>Shape_Leng</td>
+        <td>Length of the link (ft)</td>
+    </tr>
+</table>
+
+<h2 id="tned-active-transportation-network-nodes-shapefile">TNED Active Transportation Network Nodes Shapefile<a class="headerlink" href="#tned-active-transportation-network-nodes-shapefile" title="Permanent link"> ¶</a></h2>
+<p>The <strong><em>SANDAG_Bike_Node.shp</em></strong> shapefile contains all the active transportation (bike, walk) nodes of the network.</p>
+<table>
+    <tr>
+        <td><strong>Attribute</strong></td>
+        <td><strong>Description</strong></td>
+    </tr>
+    <tr>
+        <td>FID</td>
+        <td>Sequential field ID (i.e., index) starting at 0.</td>
+    </tr>
+    <tr>
+        <td>GLOBALID</td>
+        <td>ESRI-generated Global IDs which are unique and identify a feature or table row in a geodatabase and across geodatabases.</td>
+    </tr>
+    <tr>
+        <td>NodeLev_ID</td>
+        <td>Unique node ID value - matching values for A & B fields in SANDAG_Bike_Net.shp</td>
+    </tr>
+    <tr>
+        <td>MGRA</td>
+        <td>MGRA ID if node is MGRA centroid. Field will be 0 if node is not a centroid.<br><br>For Series 15 networks, MGRA may span from 1 to 24321.</td>
+    </tr>
+    <tr>
+        <td>TAZ</td>
+        <td>TAZ ID if node is zone centroid. Field will be 0 if node is not a centroid.<br><br>For Series 15 networks, TAZ may span from 1 to 4947.</td>
+    </tr>
+    <tr>
+        <td>XCOORD</td>
+        <td>X Coordinate of Node in NAD 1983 State Plane California Region VI FIPS: 0406 (US Feet)</td>
+    </tr>
+    <tr>
+        <td>YCOORD</td>
+        <td>Y Coordinate of Node in NAD 1983 State Plane California Region VI FIPS: 0406 (US Feet)</td>
+    </tr>
+    <tr>
+        <td>ZCOORD</td>
+        <td>Elevation (ft)</td>
+    </tr>
+    <tr>
+        <td>Signal</td>
+        <td>Traffic signal presence where:<br>0 = Absence<br>1 = Presence</td>
+    </tr>
+</table>
+
+<h2 id="special-fares-text-file">Special Fares Text File<a class="headerlink" href="#special-fares-text-file" title="Permanent link"> ¶</a></h2>
+<p>The <strong><em>special_fares.txt</em></strong> configures zone-based fare schemes and also houses the daily and regional pass fares. The Coaster is presently the only transit route in the San Diego region that has a zone-based fare system. To account for this, its fare structure is laid out in the special_fares.txt file. The contents of the file are as follow:</p>
+<div align="center">
+    <img src="images\networks\special_fares.png" alt="SANDAG's input special fares file" title="special fares text file">
+    <br>
+    <em>special_fares.txt</em>
+</div>
+
+<p>Under the <strong>boarding_cost</strong> section, the <strong>base</strong> sub-section provides the one-way fare (i.e., cost) for each direction of the coaster (i.e., line). Note that under this file, the Coaster is referenced via the RouteID (see RouteID under <a href="#tned-transit-route-feature-class">TransitRoute</a> for further details) for each direction. The <strong>stop_increment</strong> section was previously utilized when the Coaster operated on a 4-zone fare system (prior to 2019) and therefore the cost values under that section are zeroed out.</p>
+<p>The <strong>in_vehicle_cost</strong> section is where we can account for the zone-based fare system of the Coaster. Using the above excerpt as an example, the first 2 rows reference the Coaster in the southbound direction. When the Coaster passes through Solana Beach, it receives an additional $0.75 to the fare and another additional $0.75 when it passes through Sorrento Valley. The reverse is the same for the northbound direction with the only difference being the stations at which it receives the additional fares. The name of the station must be written out exactly as is it comes out in the network. The <a href="#transit-stops-csv-file">trstop.csv</a> or may be referred to for exact Coaster station naming.</p>
+<p>The last 2 elements of the special_fares.txt file are the <strong>day_pass</strong> and <strong>regional_pass</strong> fare variables. The day_pass refers to the daily pass that provides all-day access to the following routes: MTS Bus, MTS Trolley, MTS Rapid, Sprinter or Breeze. The regional_pass refers to the Coaster Adult 1-Day Pass which provdes all-day access to routes to the following routes: Coaster, Sprinter, Breeze, Flex, MTS Bus, MTS Trolley, MTS Rapid, MTS Rapid Express and MTS Rural. The newer Premium Regional Pass (presently $12) is not currently accounted for.</p>
+<h2 id="timed-transfer-csv-files">Timed Transfer CSV Files<a class="headerlink" href="#timed-transfer-csv-files" title="Permanent link"> ¶</a></h2>
+<p>The <strong><em>timexfer_{time_of_day}.csv</em></strong> file contains the timed connections between the Coaster and feeder buses. There is a file present for each of the 5 time-of-days, which are EA (early AM), AM, MD (midday), PM, and EV (evening). </p>
+<table>
+    <tr>
+        <td><strong>Attribute</strong></td>
+        <td><strong>Description</strong></td>
+    </tr>
+    <tr>
+        <td>from_line</td>
+        <td>Specifies the origin transit route RouteID (see RouteID under <a href=#tned-transit-route-feature-class>TransitRoute</a> for further details) transferring to the destination (to_line) transit route.</td>
+    </tr>
+    <tr>
+        <td>to_line</td>
+        <td>Specifies the destination transit route RouteID (see RouteID under <a href=#tned-transit-route-feature-class>TransitRoute</a> for further details) from which the origin (from_line) transit route transfers to.</td>
+    </tr>
+    <tr>
+        <td>wait_time</td>
+        <td>The specified transfer time between the origin (from_line) and destination (to_line) transit route.</td>
+    </tr>
+</table>
+
+<p>The time-of-day timed transfer files were developed specifically for the Coaster given it is a high-end transit mode that has infrequent service in the base year and as a result, is difficult to calibrate. In order to model Coaster ridership that is closer to calibration targets, the timed transfer files were developed so that the travel demand model was informed of more realistic transfer times between the Coaster and feeder transit routes; this was done by comparing default transfer times and calculated average transfer times. Normally, the travel demand model defaults to a transfer time of half the transfer route&rsquo;s headway. For calculated average transfer times, the transit routes connecting to/from the Coaster were identified at each station for each of the 5 time-of-days and, using the Coaster and transfer route existing schedules, average transfer times were calculated. If the calculated average transfer time was lower than the default transfer time, the calculated average transfer time was added as a record to the corresponding time-of-day timed transfer file. Otherwise, it was omitted and the default transfer time was utilized by the model. The above methodology was carried out for the base year and subsequent future year files are subsets of it, where records may only be omitted (never added) if future frequency updates generate default transfer times that are less than the calculated average transfer times.</p>
+<h2 id="transit-routes-csv-file">Transit Routes CSV File<a class="headerlink" href="#transit-routes-csv-file" title="Permanent link"> ¶</a></h2>
+<p>The <strong><em>trrt.csv</em></strong> lists all transit routes in the network and provides information on their mode, frequencies, hours of service, and fares.</p>
+<table>
+    <tr>
+        <td><strong>Attribute</strong></td>
+        <td><strong>Description</strong></td>
+    </tr>
+    <tr>
+        <td>Route_ID</td>
+        <td>Sequential unique transit route identifier</td>
+    </tr>
+    <tr>
+        <td>Route_Name</td>
+        <td>The concatenated Route, direction and configuration of the transit route. This unique ID is best read from right to left as the last 2 digits refer to the Configuration, the 3rd digit from the right refers to the Direction (1 or 2), and the remaining leftmost digits refer to the Route. For example, 398212 is configuration 12 in the outbound (2 direction) of route 398.</td>
+    </tr>
+    <tr>
+        <td>Mode</td>
+        <td>Transit mode where:<br>4 = Commuter Rail<br>5 = Light Rail Transit (LRT) or Streetcar<br>6 = Rapid Bus (Freeway Based)<br>7 = Rapid Bus (Arterial Based)<br>8 = Limited Express Bus<br>9 = Express Bus<br>10 = Local Bus</td>
+    </tr>
+    <tr>
+        <td>EarlyAM_Headway</td>
+        <td>Early morning (EA) headway/frequency of transit route where EA hours of operation are from 3:00 AM to 5:59 AM</td>
+    </tr>
+    <tr>
+        <td>AM_Headway</td>
+        <td>Morning (EA) headway/frequency of transit route where AM hours of operation are from 6:00 AM to 8:59 AM</td>
+    </tr>
+    <tr>
+        <td>Midday_Headway</td>
+        <td>Midday (MD) headway/frequency of transit route where MD hours of operation are from 9:00 AM to 3:29 PM</td>
+    </tr>
+    <tr>
+        <td>PM_Headway</td>
+        <td>Afternoon (PM) headway/frequency of transit route where PM hours of operation are from 3:30 PM to 6:59 PM</td>
+    </tr>
+    <tr>
+        <td>Evening_Headway</td>
+        <td>Evening (EV) headway/frequency of transit route where EV hours of operation are from 7:00 PM to 2:59 AM</td>
+    </tr>
+    <tr>
+        <td>EarlyAM_Hours</td>
+        <td>Number of hours, within the EA hours of operation, the transit routes provides service</td>
+    </tr>
+    <tr>
+        <td>Evening_Hours</td>
+        <td>Number of hours, within the EV hours of operation, the transit routes provides service</td>
+    </tr>
+    <tr>
+        <td>Config</td>
+        <td>The concatenated Route, direction and configuration of the transit route. This unique ID is best read from right to left as the last 2 digits refer to the Configuration, the 3rd digit from the right refers to the Direction (1 or 2), and the remaining leftmost digits refer to the Route. For example, 398212 is configuration 12 in the outbound (2 direction) of route 398.</td>
+    </tr>
+    <tr>
+        <td>Fare</td>
+        <td>One-way transit fare in dollars ($)</td>
+    </tr>
+</table>
+
+<h2 id="transit-links-csv-file">Transit Links CSV File<a class="headerlink" href="#transit-links-csv-file" title="Permanent link"> ¶</a></h2>
+<p>The <strong><em>trlink.csv</em></strong> contains an ordered sequential list of underlying network links (arcs) for each transit route in the network. The records are ordered by the Route_ID attribute, which is not the same as the Route number, but rather a sequential transit route identifier unique to the network. It is recommended to refer to the <a href=#transit-routes-csv-file>trrt.csv</a> file&rsquo;s Route_ID to determine which transit route is being referenced. For each Route_ID, every row represents an underlying TNED_HwyNet (or TNED_RailNet) link the transit route is traversing over in order from start to finish.</p>
+<table>
+    <tr>
+        <td><strong>Attribute<strong></td>
+        <td><strong>Description</strong></td>
+    </tr>
+    <tr>
+        <td>Route_ID</td>
+        <td>Sequential unique transit route identifier.<br><br>To determine what Route the Route_ID is referring to, refer to the <a href=#transit-routes-csv-file>trrt.csv</a> file</td>
+    </tr>
+    <tr>
+        <td>Link_ID</td>
+        <td>The ID referring to TNED_HwyNet HWYCOV0_ID attribute</td>
+    </tr>
+    <tr>
+        <td>Link_GUID</td>
+        <td>The GUID referring to TNED_HwyNet HWYSegGUID attribute</td>
+    </tr>
+    <tr>
+        <td>Direction</td>
+        <td>The direction of the transit route (i.e., inbound (+), or outbound (-))</td>
+    </tr>
+</table>
+
+<h2 id="transit-stops-csv-file">Transit Stops CSV File<a class="headerlink" href="#transit-stops-csv-file" title="Permanent link"> ¶</a></h2>
+<p>The <strong><em>trstop.csv</em></strong> lists all transit stops for all transit routes in the network. The Route_ID in the file is not the same as the Route number, but rather a sequential transit route identifier unique to the network. It is recommended to refer to the <a href=#transit-routes-csv-file>trrt.csv</a> file&rsquo;s Route_ID to determine which transit route is being referenced.</p>
+<table>
+    <tr>
+        <td><strong>Attribute</strong></td>
+        <td><strong>Description</strong></td>
+    </tr>
+    <tr>
+        <td>Stop_ID</td>
+        <td>Sequential unique transit stop identifier</td>
+    </tr>
+    <tr>
+        <td>Route_ID</td>
+        <td>Sequential unique transit route identifier.<br><br>To determine what Route the Route_ID is referring to, refer to the <a href=#transit-routes-csv-file>trrt.csv</a> file</td>
+    </tr>
+    <tr>
+        <td>Link_ID</td>
+        <td>The Link ID referring to TNED_HwyNet HWYCOV0_ID attribute</td>
+    </tr>
+    <tr>
+        <td>Link_GUID</td>
+        <td>The link GUID referring to TNED_HwyNet HWYSegGUID attribute</td>
+    </tr>
+    <tr>
+        <td>Pass_Count</td>
+        <td>The number of times the transit route services the transit stop.</td>
+    </tr>
+    <tr>
+        <td>Milepost</td>
+        <td>Transit stop mile post</td>
+    </tr>
+    <tr>
+        <td>Longitude</td>
+        <td>Transit stop longitude coordinate</td>
+    </tr>
+    <tr>
+        <td>Latitude</td>
+        <td>Transit stop latitude coordinate</td>
+    </tr>
+    <tr>
+        <td>Node</td>
+        <td>Node number transit stop is nearest to</td>
+    </tr>
+    <tr>
+        <td>StopName</td>
+        <td>Name of transit stop</td>
+    </tr>
+    <tr>
+        <td>Elev</td>
+        <td>Elevation of transit stop in feet</td>
+    </tr>
+    <tr>
+        <td>Park</td>
+        <td>Type of Park & Ride facility the transit node falls within<br>0 = Not Available<br>1 = Formal Park and Ride<br>2 = Other Parking<br>4 = Non-Formal Park and Ride</td>
+    </tr>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var tab,labels=set.querySelector(".tabbed-labels");for(tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": ".", "features": ["navigation.tabs", "navigation.indexes", "navigation.top", "navigation.expand", "content.code.annotate", "content.tabs.link"], "search": "assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+    
+    
+      <script src="assets/javascripts/bundle.3220b9d7.min.js"></script>
+      
+        <script src="javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

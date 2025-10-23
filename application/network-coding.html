@@ -278,6 +278,12 @@
   
     
     
+      
+  
+  
+  
+    
+    
       <li class="md-tabs__item">
         <a href="../inputs.html" class="md-tabs__link">
           
@@ -288,6 +294,9 @@
 
         </a>
       </li>
+    
+  
+
     
   
 
@@ -996,16 +1005,91 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="../inputs.html" class="md-nav__link">
+    
+    
+      
         
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
   
   <span class="md-ellipsis">
     Inputs
   </span>
   
 
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            Inputs
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../inputs.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../networks.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Networks
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -1602,7 +1686,16 @@
 
 
 <h1 id="network-coding">Network Coding<a class="headerlink" href="#network-coding" title="Permanent link"> ¶</a></h1>
-<p>//TODO: Describe network attributes, how to code network</p>
+<p><em>Note: This page intended mainly for external users.</em></p>
+<p>The input ABM3 networks are edited, maintained and generated using the Transportation Network Editing Database (TNED) system, which is not accessible to external users. The networks, however, may be edited in their post-<a href="https://pro.arcgis.com/en/pro-app/latest/help/data/data-interoperability/what-is-the-data-interoperability-extension.htm">ETL</a> (Extract, Transform, Load) state.</p>
+<p>A standard network editing and modeling workflow would therefore include something like:</p>
+<ul>
+<li>Requesting the desired network(s) from SANDAG staff</li>
+<li>Editing the network using GIS software</li>
+<li>Running ABM3 with edited network as input</li>
+</ul>
+<p>Note that this wiki does not go into details on <a href="https://pro.arcgis.com/en/pro-app/latest/help/editing/overview-of-desktop-editing.htm">how to edit</a> features using GIS software and assumes the user has a foundational understanding on how to navigate GIS software. While SANDAG uses ESRI&rsquo;s <a href="https://www.esri.com/en-us/arcgis/products/arcgis-pro/overview">ArcGIS Pro</a> software, it may be possible to use other GIS software for editing purposes.</p>
+<p>When editing the ETL networks, it is suggested to refer to the ABM3 Wiki <a href="../networks.html">Networks</a> page for descriptions and definitions of the different TNED Network components and their attributes.</p>
 
 
 
