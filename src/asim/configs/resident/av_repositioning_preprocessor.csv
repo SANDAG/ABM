@@ -13,11 +13,9 @@ duration benefit,duration_benefit,"np.where((duration_hrs < 1.5) & (duration_hrs
 ,is_indiv,(number_of_participants == 1)
 person has free on-site parking at workplace,freeOnsite,"(free_parking_available)*np.where(is_indiv,1,0)"
 new reimbursement amount,reimburseProportion,0
-tour primary destination,tour_dest,"reindex(tours.destination, tour_id)"
-half tour duration,tourDuration,"reindex(tours.duration, tour_id)/2"
-new daily parking cost with reimbursement,parkingCostDayDollars,"reindex(land_use.exp_daily, tour_dest)"
-new hourly parking cost with reimbursement,parkingCostHourDollars,"reindex(land_use.exp_hourly, tour_dest)"
-new monthly parking cost with reimbursement,parkingCostMonthDollars,"reindex(land_use.exp_monthly, tour_dest)"
+new daily parking cost with reimbursement,parkingCostDayDollars,"reindex(land_use.exp_daily, df.destination)"
+new hourly parking cost with reimbursement,parkingCostHourDollars,"reindex(land_use.exp_hourly, df.destination)"
+new monthly parking cost with reimbursement,parkingCostMonthDollars,"reindex(land_use.exp_monthly, df.destination)"
 daily cost converted to cents,parkingCostDay,parkingCostDayDollars*100
 hourly cost converted to cents,parkingCostHour,parkingCostHourDollars*100
 monthly cost converted to cents,parkingCostMonth,parkingCostMonthDollars*100
@@ -29,6 +27,7 @@ Reimbursement applies to this tour purpose,reimbursePurpose,tour_type=='work'
 Effective parking cost for free parkers,_parkingCost,"0 * np.where(reimbursePurpose*freeOnsite,1,0)"
 Effective parking cost for reimbursed parkers,_parkingCost,"np.where(is_indiv*reimbursePurpose*(1-freeOnsite), np.maximum((1-reimburseProportion) * parkingCostBeforeReimb, 0),_parkingCost)"
 Effective parking cost,parkingCost,"np.where(is_joint+is_indiv*(1-reimbursePurpose), parkingCostBeforeReimb,_parkingCost)"
+Parking cost is 0 if going home,parkingCost,"np.where(df.destination == df.home_zone_id, 0, parkingCost)"
 # These following two are from AutonomousVehicleAllocationChoice.xls,,
 Maximim benefit for keeping car close (min),AV_maxBenefit,60
 Maximum duration for keeping car close (hrs),AV_maxDuration,1.5

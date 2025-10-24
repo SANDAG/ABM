@@ -1,16 +1,17 @@
 Label,Description,Expression,stay_with_person,go_to_parking,go_home,service_next_trip_1,service_next_trip_2,service_next_trip_3
 util_dummy_1,Dummy variable 1,1,1,1,1,1,1,1
 # stay with person utils,,,,,,,,
-util_stay_with_person_avail,Whether auto can park at destination,parkingConstrained,coef_unavailable,,,,,
 util_cost_of_parking,Cost of parking at destination,parkingCost,coef_cost,,,,,
 util_time_stay,Stay- Need car soon,"@np.where(df.duration_hrs < df.AV_maxDuration, (-1)*(df.AV_maxBenefit + (df.duration_hrs*df.slope)), 0)",coef_ivt,,,,,
 # go to parking utils,,,,,,,,
+util_remote_park_only_if_park_const,Can only use remote parking if in parking constrained zone,~parkingConstrained,,coef_unavailable,,,,
 util_time_go_to_parking,Remote- Need car soon,"@np.where(df.duration_hrs < df.AV_maxDuration, (-1)*(df.AV_maxBenefit + (df.duration_hrs*df.slope)), 0)",,coef_ivt,,,,
 util_remote_cost,Remote park - Cost of parking until departure,duration_hrs * RemoteParkingCostPerHour * 100,,coef_cost,,,,
 util_remote_ivt,in vehicle time to remote parking location,@v_to_parking_skim['SOV_TR_H_TIME'],,coef_ivt,,,,
 util_remote_rel,reliability vehicle location to remote parking location,"@v_to_parking_skim['SOV_TR_H_REL'] * 14 / np.maximum(0.1, v_to_parking_skim['SOV_TR_H_DIST'])",,coef_ivt,,,,
 util_remote_auto_cost,auto operating cost from vehicle location to remote parking location,@(v_to_parking_skim['SOV_TR_H_DIST'] * costPerMile * autoCostPerMileFactorAV) + v_to_parking_skim['SOV_TR_H_TOLLCOST'],,coef_cost,,,,
 # go home utils,,,,,,,,
+util_already_at_home,Unavailable if already at home destination,destination == home_zone_id,,,coef_unavailable,,,
 util_home_ivt,in vehicle time to go home,@v_to_home_skim['SOV_TR_H_TIME'],,,coef_ivt,,,
 util_home_rel,reliability vehicle location to home,"@v_to_home_skim['SOV_TR_H_REL'] * 14 / np.maximum(0.1, v_to_home_skim['SOV_TR_H_DIST'])",,,coef_ivt,,,
 util_home_auto_cost,auto operating cost from vehicle location to home,@(v_to_home_skim['SOV_TR_H_DIST'] * costPerMile * autoCostPerMileFactorAV) + v_to_home_skim['SOV_TR_H_TOLLCOST'],,,coef_cost,,,
