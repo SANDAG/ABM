@@ -1,8 +1,14 @@
 # path to activitysim output folder with trip data
-asim_output_dir: C:\Users\david.hensle\OneDrive - Resource Systems Group, Inc\Documents\projects\sandag\AV_TNC_models\tnc_data\full
+asim_output_dir: C:\projects\sandag\av_tnc_routing\av_run_dir\tnc_routing_data
+asim_demand_files:
+  - final_cbxtrips.parquet
+  - final_santrips.parquet
+  - final_trips.parquet
+  - final_trips_visitor.parquet
+  - final_trips_xborder.parquet
 
 # path to folder with skim data
-skim_dir: C:\Users\david.hensle\OneDrive - Resource Systems Group, Inc\Documents\projects\sandag\AV_TNC_models\tnc_data\full
+skim_dir: C:\projects\sandag\av_tnc_routing\av_run_dir\input_data_full\skims
 # name of skim matrix in OMX file minus time period suffix
 skim_time_core: SOV_TR_H_TIME
 # time periods to process, should match network_los.yaml settings
@@ -13,12 +19,28 @@ skim_files: ['traffic_skims_EA.omx', 'traffic_skims_AM.omx', 'traffic_skims_MD.o
 # skim_files: ['traffic_skims_AM.omx', 'traffic_skims_AM.omx', 'traffic_skims_AM.omx', 'traffic_skims_AM.omx', 'traffic_skims_AM.omx']
 
 # output folder for results
-output_dir: C:\Users\david.hensle\OneDrive - Resource Systems Group, Inc\Documents\projects\sandag\AV_TNC_models\tnc_outputs\full
+output_dir: C:\projects\sandag\av_tnc_routing\av_run_dir\outputs\tnc_routing_test
 
 # modes for shared and single occupancy TNC / taxi trips
 shared_tnc_modes: ['TNC_SHARED']
-single_tnc_modes: ['TNC_SINGLE', 'TAXI']
-# shared_tnc_modes: ['TNC_SHARED', 'TNC_SINGLE', 'TAXI']
+single_tnc_modes: 
+ - 'TNC_SINGLE'
+ - 'TAXI'
+ - 'RIDEHAIL_LOC1'
+ - 'RIDEHAIL_LOC2'
+ - 'TAXI_LOC1'
+ - 'TAXI_LOC2'
+# shared_tnc_modes: 
+# #  - 'DRIVEALONE'
+# #  - 'SHARED2'
+#  - 'SHARED3'
+#  - 'TNC_SHARED'
+#  - 'TNC_SINGLE'
+#  - 'TAXI'
+#  - 'RIDEHAIL_LOC1'
+#  - 'RIDEHAIL_LOC2'
+#  - 'TAXI_LOC1'
+#  - 'TAXI_LOC2'
 # single_tnc_modes: []
 
 # simulation time bin size (in mins)
@@ -33,7 +55,7 @@ max_detour: 15
 # column in the landuse table that indicates the presence of refueling stations
 landuse_refuel_col: refueling_stations
 # maximum time (in active travel mins) a vehicle can operate before refueling
-max_refuel_time: 240  # 4 hours
+max_refuel_time: 360  # 6 hours
 
 # numpy random seed for reproducibility
 random_seed: 42

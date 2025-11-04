@@ -20,6 +20,7 @@ class TaxiTNCSettings(BaseModel):
 
     # path to activitysim output folder with trip data
     asim_output_dir: str
+    asim_demand_files: list
 
     # path to folder with skim data
     skim_dir: str
@@ -188,14 +189,34 @@ class TaxiTNCRouter:
     def read_input_data(self):
         # Read the data from the OpenMatrix file
         # Convert the data to a pandas DataFrame
-        cols = ["trip_id", "trip_mode", "depart", "origin", "destination"]
-        # trips = pd.read_csv(os.path.join(self.settings.asim_output_dir, "final_trips.csv"), usecols=cols)
-        # trips['trip_mode'] = 'TNC_SHARED'
-        # reading subset for faster I/O
-        trips = pd.read_csv(
-            os.path.join(self.settings.asim_output_dir, "final_tnc_trips.csv"),
-            usecols=cols,
-        )
+        base_cols = ["trip_id", "trip_mode", "depart", "origin", "destination"]
+        opt_col = "arrival_mode"
+        frames = []
+        for fname in self.settings.asim_demand_files:
+            fpath = os.path.join(self.settings.asim_output_dir, fname)
+            if not os.path.exists(fpath):
+                raise ValueError(f"Demand file not found: {fpath}")
+            lower = fpath.lower()
+            if lower.endswith((".parquet", ".parq", ".pq")):
+                try:
+                    df = pd.read_parquet(fpath, columns=base_cols + [opt_col])
+                except (ValueError, KeyError):
+                    df = pd.read_parquet(fpath, columns=base_cols)
+            elif lower.endswith((".csv", ".csv.gz", ".txt", ".txt.gz")):
+                try:
+                    df = pd.read_csv(fpath, usecols=base_cols + [opt_col])
+                except (ValueError, KeyError):
+                    df = pd.read_csv(fpath, usecols=base_cols)
+            else:
+                raise ValueError(f"Unsupported demand file type: {fpath}")
+            df['source_file'] = fname
+            if opt_col in df.columns:
+                df['trip_mode'] = df[opt_col]
+                df.drop(columns=[opt_col], inplace=True)
+            frames.append(df)
+        
+        trips = pd.concat(frames, ignore_index=True)
+
         trips = trips[
             trips.trip_mode.isin(
                 self.settings.single_tnc_modes + self.settings.shared_tnc_modes
@@ -222,6 +243,10 @@ class TaxiTNCRouter:
         trips["dskim_idx"] = (
             trips["destination"].map(maz_to_taz_map).map(self.skim_zone_mapping)
         )
+        if trips.trip_id.is_unique is False:
+            trips['original_trip_id'] = trips['trip_id']
+            trips.reset_index(inplace=True, drop=True)
+            trips['trip_id'] = trips.index
 
         return trips
 
@@ -379,11 +404,12 @@ class TaxiTNCRouter:
         trip_pairs["detour_j"] = detour_j
         trip_pairs["total_detour"] = detour_i + detour_j
 
+        eps = 1e-9  # avoiding case where detour is exactly equal to max_detour
         assert (
-            trip_pairs[trip_pairs.valid]["detour_i"] < max_detour
+            trip_pairs[trip_pairs.valid]["detour_i"] <= (max_detour + eps)
         ).all(), "Detour times exceed maximum allowed"
         assert (
-            trip_pairs[trip_pairs.valid]["detour_j"] < max_detour
+            trip_pairs[trip_pairs.valid]["detour_j"] <= (max_detour + eps)
         ).all(), "Detour times exceed maximum allowed"
         assert (
             trip_pairs[trip_pairs.valid]["route_scenario"] > 0
@@ -456,7 +482,7 @@ class TaxiTNCRouter:
             ].reset_index(drop=True)
 
             i += 1
-            if i > 100:
+            if i > 10000:
                 raise RuntimeError("Exceeded maximum iterations for trip pooling")
 
         if not batches:
@@ -653,7 +679,7 @@ class TaxiTNCRouter:
             ]
 
             i += 1
-            if i > 100:
+            if i > 10000:
                 raise RuntimeError("Exceeded maximum iterations for vehicle matching")
 
         if trip_to_veh_map.isna().any():
@@ -1067,6 +1093,22 @@ class TaxiTNCRouter:
 
         return tnc_veh_trips, pooled_trips
 
+    def remap_trip_ids(self, tnc_veh_trips, pooled_trips, tnc_trips):
+        # remap trip_i and trip_j back to original trip ids
+        trip_id_map = tnc_trips.set_index('trip_id').original_trip_id.to_dict()
+
+        tnc_veh_trips['tnc_internal_trip_i'] = tnc_veh_trips["trip_i"]
+        tnc_veh_trips['tnc_internal_trip_j'] = tnc_veh_trips["trip_j"]
+
+        tnc_veh_trips["trip_i"] = tnc_veh_trips["trip_i"].map(trip_id_map)
+        tnc_veh_trips["trip_j"] = tnc_veh_trips["trip_j"].map(trip_id_map)
+
+        pooled_trips['tnc_internal_trip_i'] = pooled_trips["trip_i"]
+        pooled_trips['tnc_internal_trip_j'] = pooled_trips["trip_j"]
+
+        pooled_trips["trip_i"] = pooled_trips["trip_i"].map(trip_id_map)
+        pooled_trips["trip_j"] = pooled_trips["trip_j"].map(trip_id_map)
+
     def route_taxi_tncs(self):
         """Main function to route taxi and TNC trips, including pooling logic."""
         # read in initial skim data
@@ -1128,15 +1170,20 @@ class TaxiTNCRouter:
 
         self.summarize_tnc_trips(tnc_veh_trips, tnc_trips, vehicles, pooled_trips)
 
+        if "original_trip_id" in tnc_trips.columns:
+            self.remap_trip_ids(tnc_veh_trips, pooled_trips, tnc_trips)
+        
         tnc_veh_trips, pooled_trips = self.remap_skim_idx_to_zone(
             tnc_veh_trips, pooled_trips, tnc_trips
         )
 
         tnc_veh_trips.to_csv(
-            os.path.join(self.settings.output_dir, "output_tnc_vehicle_trips.csv")
+            os.path.join(self.settings.output_dir, "output_tnc_vehicle_trips.csv"),
+            index=False
         )
         pooled_trips.to_csv(
-            os.path.join(self.settings.output_dir, "output_tnc_pooled_trips.csv")
+            os.path.join(self.settings.output_dir, "output_tnc_pooled_trips.csv"),
+            index=False
         )
 
         return tnc_veh_trips
