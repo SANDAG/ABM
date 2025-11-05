@@ -57,7 +57,6 @@ master_run(main_directory, scenario_id, scenario_title, emmebank_title, num_proc
 """
 
 TOOLBOX_ORDER = 1
-VIRUTALENV_PATH = "C:\\python_virtualenv\\abm15_4_0"
 
 import inro.modeller as _m
 import inro.emme.database.emmebank as _eb
@@ -208,21 +207,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         gen_utils.log_snapshot("Master run model", str(self), attributes)
 
         modeller = _m.Modeller()
-        # Checking that the virtualenv path is set and the folder is installed
-        if not os.path.exists(VIRUTALENV_PATH):
-            raise Exception("Python virtual environment not installed at expected location %s" % VIRUTALENV_PATH)
-        venv_path = os.environ.get("PYTHON_VIRTUALENV")
-        if not venv_path:
-            raise Exception("Environment variable PYTHON_VIRTUALENV not set, start Emme from 'start_emme_with_virtualenv.bat'")
-        if not venv_path == VIRUTALENV_PATH:
-            raise Exception("PYTHON_VIRTUALENV is not the expected value (%s instead of %s)" % (venv_path, VIRUTALENV_PATH))
-        venv_path_found = False
-        for path in sys.path:
-            if VIRUTALENV_PATH in path:
-                venv_path_found = True
-                break
-        if not venv_path_found:
-            raise Exception("Python virtual environment not found in system path %s" % VIRUTALENV_PATH)
+    
         copy_scenario = modeller.tool("inro.emme.data.scenario.copy_scenario")
         run4Ds = modeller.tool("sandag.import.run4Ds")
         import_network = modeller.tool("sandag.import.import_network")
