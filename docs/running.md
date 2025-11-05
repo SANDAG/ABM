@@ -52,9 +52,9 @@ To install UV and create asim_140 environment using UV for all users on a server
 
 - Create the following directories 
 
-  - C:\uv_env 
+    - C:\uv_env 
 
-  - C:\uv_env\uv_py
+    - C:\uv_env\uv_py
 
 - Open Power Shell (normal user, no admin) 
 
@@ -62,71 +62,71 @@ To install UV and create asim_140 environment using UV for all users on a server
 
 - Run the following command 
 
-  `powershell -ExecutionPolicy ByPass -c {$env:UV_INSTALL_DIR = "C:\uv_env";irm https://astral.sh/uv/install.ps1 | iex} `
+    `powershell -ExecutionPolicy ByPass -c {$env:UV_INSTALL_DIR = "C:\uv_env";irm https://github.com/astral-sh/uv/releases/latest/download/uv-installer.ps1 | iex}`
 
 - Close Power Shell 
 
 - Under Environment Variables > System variables (requires Admin) 
 
-  - Add **C:\uv_env** to ***Path*** 
+    - Add **C:\uv_env** to ***Path*** 
 
-  - Create new variable called ***UV_PYTHON_INSTALL_DIR*** and set to **C:\uv_env\uv_py**
+    - Create new variable called ***UV_PYTHON_INSTALL_DIR*** and set to **C:\uv_env\uv_py**
 
 - Open Command Prompt (normal user, no admin) 
 
 - Run the following command
 
-  `uv python install 3.10`
+    `uv python install 3.10`
 
 - Under Environment Variables > System variables (requires Admin) 
 
-  - Create new variable called ***UV_PYTHON*** and set to path of python.exe from previous step’s installation 
+    - Create new variable called ***UV_PYTHON*** and set to path of python.exe from previous step’s installation 
 
-    - Hint: in command prompt, run the following command for the exact path: 
+        - Hint: in command prompt, run the following command for the exact path: 
 
-      `uv python find`
+            `uv python find`
 
-      - e.g., *C:\uv_env\uv_py\cpython-3.10.18-windows-x86_64-none\python.exe*
+            - e.g., *C:\uv_env\uv_py\cpython-3.10.18-windows-x86_64-none\python.exe*
 
 - In command prompt, cd into C:\uv_env 
 
 - Run the following commands (one at a time): 
 
-  `mkdir asim_140 `
+    `mkdir asim_140 `
 
-  `cd asim_140 `
+    `cd asim_140 `
 
-  `echo 3.10 > .python-version `
+    `echo 3.10 > .python-version `
 
-  `uv init `
+    `uv init `
 
 - Open asim_140/pyproject.toml and edit the requires-python setting to: 
 
-  - requires-python = ">=3.10, <3.11" 
+    - requires-python = ">=3.10, <3.11" 
 
 - Back in command prompt (at C:\uv_env\asim_140), run one final command 
 
-  `uv add -r requirements.txt `
+    `uv add -r requirements.txt `
 
-  - The requirements.txt will have to be saved under asim_140 or you will have to point to wherever it is saved 
+    - The requirements.txt will have to be saved under asim_140 or you will have to point to wherever it is saved 
 
-  - The requirements.txt is on the GitHub repo at: [requirements.txt](https://github.com/SANDAG/ABM/blob/main/src/asim/scripts/requirements.txt)
+    - The requirements.txt is on the GitHub repo at: [requirements.txt](https://github.com/SANDAG/ABM/blob/main/src/asim/scripts/requirements.txt)
 
-  - The requirements.txt can also be found on T at: "T:\ABM\dev\ABM3\src\asim\scripts\requirements.txt" 
+    - The requirements.txt can also be found on T at: "T:\ABM\dev\ABM3\src\asim\scripts\requirements.txt" 
 
-    - Ensure it is the latest 
+        - Ensure it is the latest 
 
 - Open command prompt as admin and run the following command: 
 
-  `icacls C:\uv_env /reset /T `
+    `icacls C:\uv_env /reset /T `
 
-  - In testing, we found that every time a package is added to a UV environment, the package files will not have permission for all users so the reset from above needs to be executed 
+    - In testing, we found that every time a package is added to a UV environment, the package files will not have permission for all users so the reset from above needs to be executed 
 
 - Under Environment Variables > System variables (requires Admin) 
 
-  - Create a new variable called ***activate_uv_asim*** and set to the path of asim_140’s activate file 
+    - Create a new variable called ***activate_uv_asim*** and set to the path of asim_140’s activate file 
 
-    - E.g., C:\uv_env\asim_140\.venv\Scripts\activate 
+        - E.g., C:\uv_env\asim_140\\.venv\Scripts\activate 
 
 #### Azure Environment Variables
 
