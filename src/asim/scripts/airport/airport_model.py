@@ -84,12 +84,12 @@ def create_tours(settings):
     
     # time_probs_list = [departure_sched, arrival_sched]
     # time_col = ['start','end']
-    for i,df in enumerate([dep_tours,arr_tours]):
+    for _,df in enumerate([dep_tours,arr_tours]):
         for purp_type, group in df.groupby('purpose'):
             num_purp_tours = len(group)
            
             #assign size
-            size_probs = OrderedDict(party_size_probs[ purp_type])
+            size_probs = OrderedDict(party_size_probs[purp_type])
             # scale probs to so they sum to 1
             size_sum = sum(size_probs.values())
             size_probs = {k: v / size_sum for k,v in size_probs.items()}
@@ -279,7 +279,7 @@ def create_sched_probs(settings):
     arrival_sched = pd.read_csv(os.path.join(config_dir, settings['arrival_sched_probs_fname']))
     departure_sched = pd.read_csv(os.path.join(config_dir, settings['departure_sched_probs_fname']))
     asim_sched = [pd.DataFrame(columns = arrival_sched.columns[1:]),pd.DataFrame(columns = departure_sched.columns[1:])]
-    for m,distribution in enumerate([ departure_sched,arrival_sched]):
+    for m,distribution in enumerate([departure_sched,arrival_sched]):
         distribution = distribution.rename(columns = {'period':'Period'}).set_index('Period')
         for i in range(1,49):
             if i <= 4:
@@ -299,7 +299,6 @@ def create_sched_probs(settings):
         else:
             asim_sched[m].columns = [['purpose','outbound'] + ["{}_48".format(i) for i in range(1,49)]]
 
-        
     return pd.concat([asim_sched[0], asim_sched[1]]).fillna(0)
     
 def create_households(tours):
@@ -312,7 +311,7 @@ def create_households(tours):
     return households
 
 
-def create_persons(settings, num_households):
+def create_persons(num_households):
 
     print("Creating persons")
     # one person per household
@@ -396,7 +395,7 @@ if __name__ == '__main__':
         tours = create_tours(settings)
         lu = create_landuse(settings)
         households = create_households(tours)  # 1 per tour
-        persons = create_persons(settings, num_households=len(households))
+        persons = create_persons(num_households=len(households))
         tours = assign_hh_p_to_tours(tours, persons)
         sched_probs = create_sched_probs(settings)
         # # store input files to disk
