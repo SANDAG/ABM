@@ -25,7 +25,8 @@ class TaxiTNCSettings(BaseModel):
     # path to folder with skim data
     skim_dir: str
     # name of skim matrix in OMX file minus time period suffix
-    skim_time_core: str = "SOV_TR_H_TIME"
+    skim_time_core: str = "HOV2_TR_H_TIME"
+    skim_dist_core: str = "HOV2_TR_H_DIST"
     skim_periods: list = ["EA", "AM", "MD", "PM", "EV"]  # time periods to process
     periods: list = [0, 6, 12, 25, 32, 48]
     skim_files: list = [
@@ -48,14 +49,19 @@ class TaxiTNCSettings(BaseModel):
 
     # buffer size comparing origins and destinations for potential pooling (in mins)
     pooling_buffer: int = 10
+    # batch size for matching pooled trips together and matching trips to vehicles
+    pair_batch_size: int = 6000
 
     # maximum allowed detour time for pooled trips (in mins)
     max_detour: int = 15
 
     # column in the landuse table that indicates the presence of refueling stations
     landuse_refuel_col: str = "refueling_stations"
-    # maximum time (in active travel mins) a vehicle can operate before refueling
-    max_refuel_time: int = 240  # 4 hours
+    # maximum distance (in miles) a vehicle can operate before refueling
+    max_refuel_dist: int = 300
+
+    # maximum initial wait time (in minutes) for a vehicle before a new vehicle is created
+    max_wait_time: int = 15
 
     # numpy random seed for reproducibility
     random_seed: int = 42
@@ -111,7 +117,8 @@ def load_settings(
 class TaxiTNCRouter:
     def __init__(self, settings: TaxiTNCSettings):
         self.settings = settings
-        self.skim_data = None
+        self.skim_time = None
+        self.skim_dist = None
         self.skim_zone_mapping = None
         self.current_skim_time_period = None
         self.generate_time_table()
@@ -168,13 +175,16 @@ class TaxiTNCRouter:
             return skim, mapping
 
         # load new skim if no skim data currently exists or the skim is not for the current period
-        if self.skim_data is None or time_mismatch:
+        if self.skim_time is None or time_mismatch:
             self.current_skim_time_period = time_period
             skim_file = self.settings.skim_files[
                 self.settings.skim_periods.index(time_period)
             ]
-            self.skim_data, mapping = load_skim(
+            self.skim_time, mapping = load_skim(
                 skim_file, self.settings.skim_time_core + "__" + time_period
+            )
+            self.skim_dist, mapping = load_skim(
+                skim_file, self.settings.skim_dist_core + "__" + time_period
             )
             assert (
                 self.skim_zone_mapping == mapping
@@ -209,12 +219,12 @@ class TaxiTNCRouter:
                     df = pd.read_csv(fpath, usecols=base_cols)
             else:
                 raise ValueError(f"Unsupported demand file type: {fpath}")
-            df['source_file'] = fname
+            df["source"] = fname.strip('.parquet').strip('.csv').strip('.csv.gz').strip('final_')
             if opt_col in df.columns:
-                df['trip_mode'] = df[opt_col]
+                df["trip_mode"] = df[opt_col]
                 df.drop(columns=[opt_col], inplace=True)
             frames.append(df)
-        
+
         trips = pd.concat(frames, ignore_index=True)
 
         trips = trips[
@@ -244,11 +254,13 @@ class TaxiTNCRouter:
             trips["destination"].map(maz_to_taz_map).map(self.skim_zone_mapping)
         )
         if trips.trip_id.is_unique is False:
-            trips['original_trip_id'] = trips['trip_id']
+            trips["original_trip_id"] = trips["trip_id"]
             trips.reset_index(inplace=True, drop=True)
-            trips['trip_id'] = trips.index
+            trips["trip_id"] = trips.index
+        
+        id_mapping_df = trips[["trip_id", "original_trip_id", "source"]].copy()
 
-        return trips
+        return trips, id_mapping_df
 
     def sample_tnc_trip_simulation_time_bin(self, trips):
         # Create a new column for the time bin
@@ -265,7 +277,7 @@ class TaxiTNCRouter:
 
         return trips
 
-    def determine_potential_trip_pairs(self, trips):
+    def _determine_potential_trip_pairs(self, trips):
         # pre-filter trips for pooling
         # find pairs of trips that are within the same origin and destination buffer
         # Ensure indices are integer arrays and no NA
@@ -273,9 +285,9 @@ class TaxiTNCRouter:
         d_idx = trips["dskim_idx"].to_numpy(dtype=int)
         trip_ids = trips["trip_id"].to_numpy()
 
-        origin_proximity_mask = self.skim_data[o_idx, :] <= self.settings.pooling_buffer
+        origin_proximity_mask = self.skim_time[o_idx, :] <= self.settings.pooling_buffer
         destination_proximity_mask = (
-            self.skim_data[d_idx, :] <= self.settings.pooling_buffer
+            self.skim_time[d_idx, :] <= self.settings.pooling_buffer
         )
 
         # From your masks (shape: n_trips x n_zones), select only the columns for the trips’ zones
@@ -299,8 +311,8 @@ class TaxiTNCRouter:
         )
 
         # include skim times for origins/destinations
-        o2o_time = self.skim_data[o_idx][:, o_idx]
-        d2d_time = self.skim_data[d_idx][:, d_idx]
+        o2o_time = self.skim_time[o_idx][:, o_idx]
+        d2d_time = self.skim_time[d_idx][:, d_idx]
         trip_pairs["origin_time"] = o2o_time[ii, jj]
         trip_pairs["dest_time"] = d2d_time[ii, jj]
         # also include the origin and destination skim idxs
@@ -330,6 +342,29 @@ class TaxiTNCRouter:
             ),
             on="trip_j",
         )
+
+        return trip_pairs
+
+    def determine_potential_trip_pairs(self, trips):
+        """Wrapper around determining potential trip pairs to implement batching"""
+
+        # break trips up into batches
+        trip_pairs_list = []
+        n_trips = len(trips)
+        if n_trips == 0:
+            return self._determine_potential_trip_pairs(trips)
+
+        batch_size = self.settings.pair_batch_size
+        for start_idx in range(0, n_trips, batch_size):
+            end_idx = min(start_idx + batch_size, n_trips)
+            trip_batch = trips.iloc[start_idx:end_idx]
+            logger.info(
+                f"\tProcessing trip batch {start_idx} to {end_idx} of {n_trips} trips"
+            )
+            trip_pairs_batch = self._determine_potential_trip_pairs(trip_batch)
+            trip_pairs_list.append(trip_pairs_batch)
+        trip_pairs = pd.concat(trip_pairs_list, ignore_index=True)
+
         return trip_pairs
 
     def determine_detour_times(self, trip_pairs):
@@ -344,21 +379,21 @@ class TaxiTNCRouter:
         dj = trip_pairs["d_j_skim_idx"].to_numpy()
 
         # direct times
-        i_direct = self.skim_data[oi, di]
-        j_direct = self.skim_data[oj, dj]
+        i_direct = self.skim_time[oi, di]
+        j_direct = self.skim_time[oj, dj]
 
         # scenario totals
         t1 = (
-            self.skim_data[oi, oj] + self.skim_data[oj, di] + self.skim_data[di, dj]
+            self.skim_time[oi, oj] + self.skim_time[oj, di] + self.skim_time[di, dj]
         )  # oi->oj->di->dj
         t2 = (
-            self.skim_data[oj, oi] + self.skim_data[oi, dj] + self.skim_data[dj, di]
+            self.skim_time[oj, oi] + self.skim_time[oi, dj] + self.skim_time[dj, di]
         )  # oj->oi->dj->di
         t3 = (
-            self.skim_data[oi, oj] + self.skim_data[oj, dj] + self.skim_data[dj, di]
+            self.skim_time[oi, oj] + self.skim_time[oj, dj] + self.skim_time[dj, di]
         )  # oi->oj->dj->di
         t4 = (
-            self.skim_data[oj, oi] + self.skim_data[oi, di] + self.skim_data[di, dj]
+            self.skim_time[oj, oi] + self.skim_time[oi, di] + self.skim_time[di, dj]
         )  # oj->oi->di->dj
 
         # per-trip detours
@@ -583,7 +618,7 @@ class TaxiTNCRouter:
             "destination": "destination",
         }
         single_trips = tnc_trips[mask][cols.keys()].rename(columns=cols).copy()
-        single_trips["total_ivt"] = self.skim_data[
+        single_trips["total_ivt"] = self.skim_time[
             single_trips.origin_skim_idx, single_trips.destination_skim_idx
         ]
         single_trips["detour_i"] = 0
@@ -600,7 +635,7 @@ class TaxiTNCRouter:
 
     def create_new_vehicles(self, vehicles, trips_to_service, trip_to_veh_map):
         """
-        Create new
+        Create new vehicles for trips that could not be matched to existing free vehicles
         """
         idx_start_num = 0 if vehicles is None else vehicles.index.max()
 
@@ -611,7 +646,7 @@ class TaxiTNCRouter:
                 "is_free": False,
                 "last_refuel_time": -1,
                 "next_time_free": np.nan,
-                "drive_time_since_refuel": 0,
+                "drive_dist_since_refuel": 0,
             },
             index=idx_start_num + np.arange(1, len(trips_to_service) + 1),
         )
@@ -627,29 +662,15 @@ class TaxiTNCRouter:
 
         return vehicles, trip_to_veh_map
 
-    def match_vehicles_to_trips(self, vehicles, full_trip_routes):
+    def _match_vehicles_to_trips(self, free_vehicles, unserviced_trips, trip_to_veh_map):
 
-        if vehicles is not None:
-            free_vehicles = vehicles[vehicles.is_free].copy()
-        else:
-            free_vehicles = pd.DataFrame()
-        unserviced_trips = full_trip_routes.copy()
-
-        trip_to_veh_map = pd.Series(
-            name="vehicle_id",
-            index=unserviced_trips.trip_i,
-            dtype=vehicles.index.dtype if vehicles is not None else "int64",
-        )
-
-        # loop until all available vehicles are assigned or there are no more unserviced trips
         i = 0
         while not (free_vehicles.empty or unserviced_trips.empty):
-
-            veh_locations = free_vehicles.location_skim_idx.to_numpy()
-            trip_origins = unserviced_trips.origin_skim_idx.to_numpy()
+            trip_origins = unserviced_trips.origin_skim_idx.to_numpy().astype(int)
+            veh_locations = free_vehicles.location_skim_idx.to_numpy().astype(int)
 
             # find skim times between trip origins and all veh locations
-            skim_times = self.skim_data[trip_origins[:, None], veh_locations]
+            skim_times = self.skim_time[trip_origins[:, None], veh_locations]
 
             # grab the minimum time for each trip and vehicle
             min_times = skim_times.min(axis=1)
@@ -662,7 +683,7 @@ class TaxiTNCRouter:
 
             # trips with a min wait time larger than the maximum allowed are removed from pool
             # ties are given to the first trip as given by trip_id
-            time_gt_max_wait = min_times > 15
+            time_gt_max_wait = min_times > self.settings.max_wait_time
             trip_to_veh_map.loc[unserviced_trips.trip_i[time_gt_max_wait]] = np.nan
             ties_mask = (
                 trip_to_veh_map.duplicated(keep="first") & trip_to_veh_map.notna()
@@ -678,9 +699,39 @@ class TaxiTNCRouter:
                 ~free_vehicles.index.isin(serviced_trips.values)
             ]
 
-            i += 1
             if i > 10000:
+                # making sure we never get stuck in an infinite loop
                 raise RuntimeError("Exceeded maximum iterations for vehicle matching")
+        
+        return free_vehicles, unserviced_trips, trip_to_veh_map
+
+
+    def match_vehicles_to_trips(self, vehicles, full_trip_routes):
+        if vehicles is not None:
+            free_vehicles = vehicles[vehicles.is_free].copy()
+        else:
+            free_vehicles = pd.DataFrame()
+        unserviced_trips = full_trip_routes.copy()
+
+        trip_to_veh_map = pd.Series(
+            name="vehicle_id",
+            index=unserviced_trips.trip_i,
+            dtype=vehicles.index.dtype if vehicles is not None else "int64",
+        )
+
+        # loop until all available vehicles are assigned or there are no more unserviced trips
+        batch_size = self.settings.pair_batch_size
+        matched_trip_count = 0
+        logger.info(f"\tStarting vehicle to trip matching with {len(free_vehicles)} free vehicles and {len(unserviced_trips)} unserviced trips in trip batches of {batch_size}")
+        for i in range(0, len(unserviced_trips), batch_size):
+            if free_vehicles.empty:
+                break
+            unserviced_trips_block = unserviced_trips.iloc[i : i + batch_size]
+            free_vehicles, unserviced_trips_block, trip_to_veh_map = self._match_vehicles_to_trips(
+                free_vehicles, unserviced_trips_block, trip_to_veh_map
+            )
+            logger.info(f"\t Iteration {i}: Matched {trip_to_veh_map.notna().sum() - matched_trip_count} trips to vehicles")
+            matched_trip_count = trip_to_veh_map.notna().sum()
 
         if trip_to_veh_map.isna().any():
             # create new vehicles for those still unmatched
@@ -827,20 +878,23 @@ class TaxiTNCRouter:
         ] = np.nan
 
         # determine time bin of each trip
-        new_v_trips["OD_time"] = self.skim_data[
+        new_v_trips["OD_time"] = self.skim_time[
             new_v_trips.origin_skim_idx.to_numpy(),
             new_v_trips.destination_skim_idx.to_numpy(),
         ]
-        new_v_trips["cumulative_trip_time"] = new_v_trips.groupby("vehicle_id")[
-            "OD_time"
-        ].cumsum()
+        cumulative_trip_time = new_v_trips.groupby("vehicle_id")["OD_time"].cumsum()
         new_v_trips["depart_bin"] = (
             full_trip_routes.time_bin.mode()[0]
-            + (new_v_trips["cumulative_trip_time"] - new_v_trips["OD_time"]) // 15
+            + (cumulative_trip_time - new_v_trips["OD_time"]) // 15
         )
         new_v_trips["arrival_bin"] = full_trip_routes.time_bin.mode()[0] + (
-            new_v_trips["cumulative_trip_time"] // 15
+            cumulative_trip_time // 15
         )
+
+        new_v_trips['OD_dist'] = self.skim_dist[
+            new_v_trips.origin_skim_idx.to_numpy(),
+            new_v_trips.destination_skim_idx.to_numpy(),
+        ]
 
         assert (
             new_v_trips.depart_bin <= new_v_trips.arrival_bin
@@ -882,23 +936,23 @@ class TaxiTNCRouter:
         vehicles.loc[final_veh_location.index, "location"] = final_veh_location
 
         tot_drive_time = vehicle_trips_i.groupby("vehicle_id").OD_time.sum()
-        vehicles.loc[tot_drive_time.index, "drive_time_since_refuel"] += tot_drive_time
+        vehicles.loc[tot_drive_time.index, "drive_dist_since_refuel"] += tot_drive_time
 
         # updating fleet with refueled vehicles
         if refuel_veh_trips_i is not None:
             vehicles.loc[
-                refuel_veh_trips_i.index, "last_refuel_time"
+                refuel_veh_trips_i.vehicle_id, "last_refuel_time"
             ] = refuel_veh_trips_i.arrival_bin
-            vehicles.loc[refuel_veh_trips_i.index, "drive_time_since_refuel"] = 0
-            vehicles.loc[refuel_veh_trips_i.index, "is_free"] = False
-            vehicles.loc[refuel_veh_trips_i.index, "next_time_free"] = (
+            vehicles.loc[refuel_veh_trips_i.vehicle_id, "drive_dist_since_refuel"] = 0
+            vehicles.loc[refuel_veh_trips_i.vehicle_id, "is_free"] = False
+            vehicles.loc[refuel_veh_trips_i.vehicle_id, "next_time_free"] = (
                 refuel_veh_trips_i.arrival_bin + 1
             )
             vehicles.loc[
-                refuel_veh_trips_i.index, "location_skim_idx"
+                refuel_veh_trips_i.vehicle_id, "location_skim_idx"
             ] = refuel_veh_trips_i.destination_skim_idx
             vehicles.loc[
-                refuel_veh_trips_i.index, "location"
+                refuel_veh_trips_i.vehicle_id, "location"
             ] = refuel_veh_trips_i.destination
 
         return vehicles
@@ -971,14 +1025,14 @@ class TaxiTNCRouter:
         # updated drive time
         drive_time_from_trips_in_bin = vehicle_trips_i.groupby(
             "vehicle_id"
-        ).OD_time.sum()
+        ).OD_dist.sum()
         tot_drive_time = (
             drive_time_from_trips_in_bin
             + vehicles.loc[
-                drive_time_from_trips_in_bin.index, "drive_time_since_refuel"
+                drive_time_from_trips_in_bin.index, "drive_dist_since_refuel"
             ]
         )
-        needs_refuel = tot_drive_time > self.settings.max_refuel_time
+        needs_refuel = tot_drive_time > self.settings.max_refuel_dist
 
         if not needs_refuel.any():
             return None
@@ -1002,7 +1056,7 @@ class TaxiTNCRouter:
         refuel_stations_idx = refuel_stations_taz.map(self.skim_zone_mapping).to_numpy()
 
         # find skim times between trip origins and all veh locations
-        skim_times = self.skim_data[
+        skim_times = self.skim_time[
             np.ix_(vehs_to_refuel.destination_skim_idx.to_numpy(), refuel_stations_idx)
         ]
 
@@ -1020,7 +1074,7 @@ class TaxiTNCRouter:
         # create refuel vehicle trips
         refuel_veh_trips = pd.DataFrame(
             {
-                "vehicle_id": vehs_to_refuel.index,
+                "vehicle_id": vehs_to_refuel.vehicle_id,
                 "trip_i": np.nan,
                 "trip_j": np.nan,
                 "scenario": -1,
@@ -1031,7 +1085,7 @@ class TaxiTNCRouter:
                 "destination": nearest_station_maz,
                 "servicing_trip_id": np.nan,
                 "OD_time": min_times,
-                "cumulative_trip_time": min_times,
+                "OD_dist": self.skim_dist[vehs_to_refuel.destination_skim_idx.to_numpy(), nearest_station_skim_idx],
                 "depart_bin": vehs_to_refuel.arrival_bin,  # start refuel trip right after last trip
                 "arrival_bin": vehs_to_refuel.arrival_bin
                 + np.ceil(min_times / self.settings.time_bin_size).astype(
@@ -1039,7 +1093,7 @@ class TaxiTNCRouter:
                 ),  # assuming refuel trip takes the time to get to the station
                 "trip_type": "refuel",
             }
-        ).set_index("vehicle_id")
+        )
         logger.info(f"\tRouting {len(refuel_veh_trips)} vehicles to refuel stations")
 
         return refuel_veh_trips
@@ -1092,22 +1146,22 @@ class TaxiTNCRouter:
         )
 
         return tnc_veh_trips, pooled_trips
+    
+    def write_outputs(self, tnc_veh_trips, pooled_trips, id_mapping_df):
+        """Write final tables to output folder"""
+        tnc_veh_trips.to_csv(
+            os.path.join(self.settings.output_dir, "output_tnc_vehicle_trips.csv"),
+            index=True,
+        )
+        pooled_trips.to_csv(
+            os.path.join(self.settings.output_dir, "output_tnc_pooled_trips.csv"),
+            index=False,
+        )
 
-    def remap_trip_ids(self, tnc_veh_trips, pooled_trips, tnc_trips):
-        # remap trip_i and trip_j back to original trip ids
-        trip_id_map = tnc_trips.set_index('trip_id').original_trip_id.to_dict()
-
-        tnc_veh_trips['tnc_internal_trip_i'] = tnc_veh_trips["trip_i"]
-        tnc_veh_trips['tnc_internal_trip_j'] = tnc_veh_trips["trip_j"]
-
-        tnc_veh_trips["trip_i"] = tnc_veh_trips["trip_i"].map(trip_id_map)
-        tnc_veh_trips["trip_j"] = tnc_veh_trips["trip_j"].map(trip_id_map)
-
-        pooled_trips['tnc_internal_trip_i'] = pooled_trips["trip_i"]
-        pooled_trips['tnc_internal_trip_j'] = pooled_trips["trip_j"]
-
-        pooled_trips["trip_i"] = pooled_trips["trip_i"].map(trip_id_map)
-        pooled_trips["trip_j"] = pooled_trips["trip_j"].map(trip_id_map)
+        id_mapping_df.to_csv(
+            os.path.join(self.settings.output_dir, "tnc_trip_id_mapping.csv"),
+            index=False,
+        )
 
     def route_taxi_tncs(self):
         """Main function to route taxi and TNC trips, including pooling logic."""
@@ -1115,7 +1169,7 @@ class TaxiTNCRouter:
         self.read_skim_data(0)
 
         # read in taxi / tnc trip data
-        tnc_trips = self.read_input_data()
+        tnc_trips, id_mapping_df = self.read_input_data()
         tnc_trips = self.sample_tnc_trip_simulation_time_bin(tnc_trips)
 
         # initialize vehicle fleet
@@ -1128,11 +1182,10 @@ class TaxiTNCRouter:
             logger.info(
                 f"Processing time bin {time_bin} with {len(tnc_trips_i)} taxi / tnc trips:"
             )
-            trip_pairs = self.determine_potential_trip_pairs(
-                tnc_trips_i[
-                    tnc_trips_i.trip_mode.isin(self.settings.shared_tnc_modes)
-                ].copy()
-            )
+            shared_tnc_trips = tnc_trips_i[
+                tnc_trips_i.trip_mode.isin(self.settings.shared_tnc_modes)
+            ]
+            trip_pairs = self.determine_potential_trip_pairs(shared_tnc_trips.copy())
 
             trip_pairs = self.determine_detour_times(trip_pairs)
 
@@ -1166,25 +1219,21 @@ class TaxiTNCRouter:
             )
 
         tnc_veh_trips = pd.concat(veh_trips)
+        tnc_veh_trips["vehicle_trip_id"] = (
+            tnc_veh_trips.vehicle_id * 1000
+            + tnc_veh_trips.groupby("vehicle_id").cumcount()
+            + 1
+        )
+        tnc_veh_trips.set_index("vehicle_trip_id", inplace=True)
         pooled_trips = pd.concat(pooling_trips)
 
         self.summarize_tnc_trips(tnc_veh_trips, tnc_trips, vehicles, pooled_trips)
 
-        if "original_trip_id" in tnc_trips.columns:
-            self.remap_trip_ids(tnc_veh_trips, pooled_trips, tnc_trips)
-        
         tnc_veh_trips, pooled_trips = self.remap_skim_idx_to_zone(
             tnc_veh_trips, pooled_trips, tnc_trips
         )
 
-        tnc_veh_trips.to_csv(
-            os.path.join(self.settings.output_dir, "output_tnc_vehicle_trips.csv"),
-            index=False
-        )
-        pooled_trips.to_csv(
-            os.path.join(self.settings.output_dir, "output_tnc_pooled_trips.csv"),
-            index=False
-        )
+        self.write_outputs(tnc_veh_trips, pooled_trips, id_mapping_df)
 
         return tnc_veh_trips
 
@@ -1198,4 +1247,4 @@ if __name__ == "__main__":
     router.route_taxi_tncs()
 
     elapsed_time = time.time() - start_time
-    logger.info(f"Time to complete: {elapsed_time:.2f} seconds")
+    logger.info(f"Time to complete: {elapsed_time:.2f} seconds = {elapsed_time/60:.2f} minutes")
