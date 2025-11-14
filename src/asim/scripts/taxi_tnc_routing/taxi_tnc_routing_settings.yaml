@@ -1,5 +1,15 @@
 # path to activitysim output folder with trip data
 asim_output_dir: C:\projects\sandag\av_tnc_routing\av_run_dir\tnc_routing_data
+# asim_output_dir: C:\Users\david.hensle\OneDrive - Resource Systems Group, Inc\Documents\projects\sandag\AV_TNC_models\tnc_data\full
+# path to folder with skim data
+skim_dir: C:\projects\sandag\av_tnc_routing\av_run_dir\input_data_full\skims
+# skim_dir: C:\Users\david.hensle\OneDrive - Resource Systems Group, Inc\Documents\projects\sandag\AV_TNC_models\tnc_data\full
+# output folder for results
+output_dir: C:\projects\sandag\av_tnc_routing\av_run_dir\outputs\tnc_routing_test
+# output_dir: C:\Users\david.hensle\OneDrive - Resource Systems Group, Inc\Documents\projects\sandag\AV_TNC_models\tnc_outputs\full
+
+# demand files to process from activitysim output directory
+# accepts both csv and parquet formats
 asim_demand_files:
   - final_cbxtrips.parquet
   - final_santrips.parquet
@@ -7,19 +17,15 @@ asim_demand_files:
   - final_trips_visitor.parquet
   - final_trips_xborder.parquet
 
-# path to folder with skim data
-skim_dir: C:\projects\sandag\av_tnc_routing\av_run_dir\input_data_full\skims
 # name of skim matrix in OMX file minus time period suffix
-skim_time_core: SOV_TR_H_TIME
+skim_time_core: HOV2_H_TIME
+skim_dist_core: HOV2_H_DIST
 # time periods to process, should match network_los.yaml settings
 skim_periods: ['EA', 'AM', 'MD', 'PM', 'EV']  
 # skim_periods: ['AM', 'AM', 'AM', 'AM', 'AM']  
 periods: [0, 6, 12, 25, 32, 48]
 skim_files: ['traffic_skims_EA.omx', 'traffic_skims_AM.omx', 'traffic_skims_MD.omx', 'traffic_skims_PM.omx', 'traffic_skims_EV.omx']
 # skim_files: ['traffic_skims_AM.omx', 'traffic_skims_AM.omx', 'traffic_skims_AM.omx', 'traffic_skims_AM.omx', 'traffic_skims_AM.omx']
-
-# output folder for results
-output_dir: C:\projects\sandag\av_tnc_routing\av_run_dir\outputs\tnc_routing_test
 
 # modes for shared and single occupancy TNC / taxi trips
 shared_tnc_modes: ['TNC_SHARED']
@@ -54,8 +60,8 @@ max_detour: 15
 
 # column in the landuse table that indicates the presence of refueling stations
 landuse_refuel_col: refueling_stations
-# maximum time (in active travel mins) a vehicle can operate before refueling
-max_refuel_time: 360  # 6 hours
+# maximum distance (in miles) a vehicle can operate before refueling
+max_refuel_dist: 300
 
 # numpy random seed for reproducibility
 random_seed: 42
