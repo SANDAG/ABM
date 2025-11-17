@@ -55,6 +55,9 @@ class TaxiTNCSettings(BaseModel):
     # maximum allowed detour time for pooled trips (in mins)
     max_detour: int = 15
 
+    # maximum vehicle occupancy per trip record
+    max_vehicle_occupancy: int | None = 4
+
     # column in the landuse table that indicates the presence of refueling stations
     landuse_refuel_col: str = "refueling_stations"
     # maximum distance (in miles) a vehicle can operate before refueling
@@ -199,7 +202,7 @@ class TaxiTNCRouter:
     def read_input_data(self):
         # Read the data from the OpenMatrix file
         # Convert the data to a pandas DataFrame
-        base_cols = ["trip_id", "trip_mode", "depart", "origin", "destination"]
+        base_cols = ["trip_id", "trip_mode", "depart", "origin", "destination", "tour_participants"]
         opt_col = "arrival_mode"
         frames = []
         for fname in self.settings.asim_demand_files:
@@ -255,10 +258,26 @@ class TaxiTNCRouter:
         trips["dskim_idx"] = (
             trips["destination"].map(maz_to_taz_map).map(self.skim_zone_mapping)
         )
-        if trips.trip_id.is_unique is False:
-            trips["original_trip_id"] = trips["trip_id"]
-            trips.reset_index(inplace=True, drop=True)
-            trips["trip_id"] = trips.index
+        trips['occupancy'] = trips['tour_participants']
+        if self.settings.max_vehicle_occupancy:
+            total_occupants = trips.occupancy.sum()
+            # duplicate trip rows that are over max_occupancy
+            n_splits = np.ceil(trips['occupancy'] / self.settings.max_vehicle_occupancy)
+            trips = trips.loc[trips.index.repeat(n_splits)]
+
+            # split occupants evenly among the new rows
+            split_num = trips.groupby(level=0).cumcount()
+            base = trips['occupancy'] // n_splits
+            remainder = trips['occupancy'] % n_splits
+            trips['occupancy'] = base + (split_num < remainder).astype(int)
+
+            # make sure all people are accounted for
+            assert trips.occupancy.sum() == total_occupants, "Not all occupants are accounted for!"
+        
+
+        trips["original_trip_id"] = trips["trip_id"]
+        trips.reset_index(inplace=True, drop=True)
+        trips["trip_id"] = trips.index
 
         id_mapping_df = trips[["trip_id", "original_trip_id", "source"]].copy()
 
@@ -317,10 +336,10 @@ class TaxiTNCRouter:
         d2d_time = self.skim_time[d_idx][:, d_idx]
         trip_pairs["origin_time"] = o2o_time[ii, jj]
         trip_pairs["dest_time"] = d2d_time[ii, jj]
-        # also include the origin and destination skim idxs
-        # create maps from trip id to origin and to destination
+
+        # also include the origin and destination skim idxs, plus occupancy for capacity checks
         lookup = trips.loc[
-            :, ["trip_id", "oskim_idx", "dskim_idx", "origin", "destination"]
+            :, ["trip_id", "oskim_idx", "dskim_idx", "origin", "destination", "occupancy"]
         ].set_index("trip_id")
 
         trip_pairs = trip_pairs.join(
@@ -330,6 +349,7 @@ class TaxiTNCRouter:
                     "dskim_idx": "d_i_skim_idx",
                     "origin": "origin_i",
                     "destination": "destination_i",
+                    "occupancy": "occupancy_i",
                 }
             ),
             on="trip_i",
@@ -340,10 +360,22 @@ class TaxiTNCRouter:
                     "dskim_idx": "d_j_skim_idx",
                     "origin": "origin_j",
                     "destination": "destination_j",
+                    "occupancy": "occupancy_j",
                 }
             ),
             on="trip_j",
         )
+
+        # Ensure total occupancy across the pair does not exceed the max allowed (if set)
+        max_occ = self.settings.max_vehicle_occupancy
+        if max_occ is not None:
+            occ_ok = (trip_pairs["occupancy_i"] + trip_pairs["occupancy_j"]) <= max_occ
+            dropped = (~occ_ok).sum()
+            if dropped > 0:
+                logger.info(
+                    f"\tDropped {dropped} trip pairs exceeding max occupancy ({max_occ}); kept {occ_ok.sum()}"
+                )
+            trip_pairs = trip_pairs.loc[occ_ok].copy()
 
         return trip_pairs
 
@@ -554,7 +586,7 @@ class TaxiTNCRouter:
 
     def create_trip_routes(self, trip_matches):
         trips_routed = trip_matches[
-            ["trip_i", "trip_j", "total_ivt", "route_scenario", "detour_i", "detour_j"]
+            ["trip_i", "trip_j", "total_ivt", "route_scenario", "detour_i", "detour_j", 'occupancy_i', 'occupancy_j']
         ].copy()
 
         s1_idx = [0, 1, 2, 3]  # oi->oj->di->dj
@@ -618,6 +650,7 @@ class TaxiTNCRouter:
             "dskim_idx": "destination_skim_idx",
             "origin": "origin",
             "destination": "destination",
+            "occupancy": "occupancy_i",
         }
         single_trips = tnc_trips[mask][cols.keys()].rename(columns=cols).copy()
         single_trips["total_ivt"] = self.skim_time[
@@ -731,18 +764,25 @@ class TaxiTNCRouter:
         for i in range(0, len(unserviced_trips), batch_size):
             if free_vehicles.empty:
                 break
+            # limiting the number of trips and vehicle combos for run time
+            # allowing twice the number of free vehicles as trips
             unserviced_trips_block = unserviced_trips.iloc[i : i + batch_size]
+            free_vehicles_block = free_vehicles.iloc[: 2 * batch_size]
+
             (
-                free_vehicles,
+                free_vehicles_block,
                 unserviced_trips_block,
                 trip_to_veh_map,
             ) = self._match_vehicles_to_trips(
-                free_vehicles, unserviced_trips_block, trip_to_veh_map
+                free_vehicles_block, unserviced_trips_block, trip_to_veh_map
             )
             logger.info(
                 f"\t Iteration {i}: Matched {trip_to_veh_map.notna().sum() - matched_trip_count} trips to vehicles"
             )
             matched_trip_count = trip_to_veh_map.notna().sum()
+            free_vehicles = free_vehicles.loc[
+                ~free_vehicles.index.isin(trip_to_veh_map)
+            ]
 
         if trip_to_veh_map.isna().any():
             # create new vehicles for those still unmatched
@@ -921,6 +961,18 @@ class TaxiTNCRouter:
 
         return new_v_trips, full_trip_routes
 
+    def calculate_occupancy(self, vehicle_trips_i, tnc_trips_i):
+        """Calculating occupancy for each vehicle trip based on the trips being served"""
+        trip_occ_map = tnc_trips_i.set_index("trip_id")["occupancy"]
+        
+        # occupancy of the vehicle trips is the sum of occupancy across trips
+        trip_i_occ = vehicle_trips_i.trip_i.map(trip_occ_map).fillna(0)
+        trip_j_occ = vehicle_trips_i.trip_j.map(trip_occ_map).fillna(0)
+
+        vehicle_trips_i['occupancy'] = trip_i_occ + trip_j_occ
+
+        return vehicle_trips_i
+
     def update_vehicle_fleet(
         self, vehicles, vehicle_trips_i, time_bin, refuel_veh_trips_i
     ):
@@ -1002,9 +1054,6 @@ class TaxiTNCRouter:
         logger.info(
             f"Percentage of deadhead vehicle trips: {tnc_veh_trips.is_deadhead.mean() * 100:.2f}%"
         )
-        tnc_veh_trips["occupancy"] = (
-            tnc_veh_trips[["trip_i", "trip_j"]].notna().sum(axis=1)
-        )
         logger.info(
             f"Average occupancy of all vehicle trips: {tnc_veh_trips.occupancy.mean():.2f}"
         )
@@ -1012,6 +1061,16 @@ class TaxiTNCRouter:
         logger.info(
             f"Total number of refuel trips: {num_refuel_trips} = {(num_refuel_trips / len(tnc_veh_trips) * 100):.2f}% of all vehicle trips"
         )
+        total_vmt = tnc_veh_trips.OD_dist.sum()
+        logger.info(f"Total VMT from TNC Vehicle Trips: {total_vmt:.2f} miles")
+        deadhead_vmt = tnc_veh_trips[tnc_veh_trips.is_deadhead].OD_dist.sum()
+        logger.info(f"Total Deadhead VMT: {deadhead_vmt:.2f} miles")
+        pct_deadhead_vmt = (deadhead_vmt / total_vmt) * 100 if total_vmt > 0 else 0
+        logger.info(f"Percentage of Deadhead VMT: {pct_deadhead_vmt:.2f}%")
+
+        weighted_occ = tnc_veh_trips.occupancy * tnc_veh_trips.OD_dist
+        avg_weighted_occ = (weighted_occ.sum() / tnc_veh_trips.OD_dist.sum()) if tnc_veh_trips.OD_dist.sum() > 0 else 0
+        logger.info(f"Average occupancy weighted by VMT: {avg_weighted_occ:.2f}")
 
         # also performing consistency checks on the outputs
         assert (
@@ -1219,6 +1278,7 @@ class TaxiTNCRouter:
             vehicle_trips_i, full_trip_routes = self.create_vehicle_trips(
                 full_trip_routes, vehicles, trip_to_veh_map
             )
+            vehicle_trips_i = self.calculate_occupancy(vehicle_trips_i, tnc_trips_i)
             veh_trips.append(vehicle_trips_i)
             pooling_trips.append(full_trip_routes)
 
