@@ -1,7 +1,8 @@
 name: Publish documents
 on:
   push:
-    branches: [main, ABM3_develop]
+    branches:
+      - main
 jobs:
   build:
     name: Deploy docs to GitHub Pages
