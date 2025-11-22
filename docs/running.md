@@ -72,6 +72,8 @@ To install UV and create asim_140 environment using UV for all users on a server
 
     - Create new variable called ***UV_PYTHON_INSTALL_DIR*** and set to **C:\uv_env\uv_py**
 
+    - Create new variable called ***UV_PYTHON_INSTALL_BIN*** and set to **0**
+
 - Open Command Prompt (normal user, no admin) 
 
 - Run the following command
@@ -102,7 +104,7 @@ To install UV and create asim_140 environment using UV for all users on a server
 
 - Open asim_140/pyproject.toml and edit the requires-python setting to: 
 
-    - requires-python = ">=3.10, <3.11" 
+    `requires-python = ">=3.10, <3.11"`
 
 - Back in command prompt (at C:\uv_env\asim_140), run one final command 
 
