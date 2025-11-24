@@ -9,10 +9,6 @@ import yaml
 
 logger = logging.getLogger(__name__)
 
-# input_folder = r"C:\Users\david.hensle\OneDrive - Resource Systems Group, Inc\Documents\projects\sandag\AV_TNC_models\tnc_data\full"
-# input_folder = r"C:\Users\david.hensle\OneDrive - Resource Systems Group, Inc\Documents\projects\sandag\AV_TNC_models\tnc_data\test"
-
-
 class TaxiTNCSettings(BaseModel):
     """
     Taxi / TNC route choice settings
@@ -71,11 +67,36 @@ class TaxiTNCSettings(BaseModel):
 
     @property
     def period_time_bin_minutes(self) -> int:
+        """
+        Calculate the number of minutes per period time bin.
+
+        Returns the integer number of minutes in each period bin by dividing
+        total daily minutes (1440) by the maximum period index. This property
+        remains constant regardless of changes to the periods list structure.
+
+        Returns
+        -------
+        int
+            Minutes per period time bin.
+        """
         # minutes per (max period index); unchanged if periods list changes
         return (24 * 60) // max(self.periods)
 
     @model_validator(mode="after")
     def check_skim_periods(self):
+        """
+        Validate consistency between skim_periods, periods, and skim_files configuration.
+
+        Ensures that the number of skim periods is exactly one less than the
+        number of periods, and that the number of skim files matches the number
+        of skim periods. This validation is performed after model initialization.
+
+        Returns
+        -------
+        self
+            The validated TaxiTNCSettings instance.
+
+        """
         if len(self.skim_periods) != len(self.periods) - 1:
             raise ValueError(
                 "Length of skim_periods must be one less than length of periods"
@@ -88,6 +109,23 @@ class TaxiTNCSettings(BaseModel):
 def load_settings(
     yaml_path: str = "taxi_tnc_routing_settings.yaml",
 ) -> TaxiTNCSettings:
+    """
+    Load TNC routing settings from a YAML configuration file.
+
+    Reads and validates the configuration using the TaxiTNCSettings Pydantic
+    model, ensuring all required fields are present and properly typed. Creates
+    the output directory if it doesn't exist and sets up logging.
+
+    Parameters
+    ----------
+    yaml_path : str
+        Path to the YAML settings file (relative to this module's directory).
+
+    Returns
+    -------
+    TaxiTNCSettings
+        Validated settings object containing all TNC routing configuration.
+    """
     with open(os.path.join(os.path.dirname(__file__), yaml_path), "r") as f:
         data = yaml.safe_load(f)
     try:
@@ -119,6 +157,14 @@ def load_settings(
 
 class TaxiTNCRouter:
     def __init__(self, settings: TaxiTNCSettings):
+        """
+        Initialize the TNC router with validated settings.
+
+        Parameters
+        ----------
+        settings : TaxiTNCSettings
+            Validated configuration object containing all TNC routing parameters.
+        """
         self.settings = settings
         self.skim_time = None
         self.skim_dist = None
@@ -127,6 +173,21 @@ class TaxiTNCRouter:
         self.generate_time_table()
 
     def generate_time_table(self):
+        """
+        Generate a lookup table mapping time bins to clock time and ActivitySim periods.
+
+        Creates a DataFrame indexed by time_bin with columns for hour, minute,
+        period (EA/AM/MD/PM/EV), and depart_bin (1-48 half-hour periods starting
+        at 3 AM). All times are offset by 3 hours to match ActivitySim convention.
+
+        The table is cached in self.time_bin_table for repeated lookups during
+        simulation.
+
+        Returns
+        -------
+        None
+            Sets self.time_bin_table in place.
+        """
         # Build and cache a time-bin lookup table on self:
         # index: time_bin; cols: hour, minute, period (EA/AM/MD/PM/EV), depart_bin (1..48 starting at 3 AM)
         minutes_per_bin = int(self.settings.time_bin_size)
@@ -165,6 +226,24 @@ class TaxiTNCRouter:
         return
 
     def read_skim_data(self, time_bin):
+        """
+        Load or update skim matrices for the current time bin's period.
+
+        Reads time and distance skims from OMX files only when the time period
+        changes. Caches skims in memory to avoid redundant I/O. Validates that
+        zone mappings remain consistent across all skim files.
+
+        Parameters
+        ----------
+        time_bin : int
+            The time bin for which to load skim data.
+
+        Returns
+        -------
+        None
+            Updates self.skim_time, self.skim_dist, and self.skim_zone_mapping
+            in place.
+        """
         # current period of the time_bin
         time_period = self.time_bin_table.loc[time_bin, "period"]
         time_mismatch = self.current_skim_time_period != time_period
@@ -200,6 +279,22 @@ class TaxiTNCRouter:
         return
 
     def read_input_data(self):
+        """
+        Load TNC trip demand from ActivitySim output files.
+
+        Reads trip tables (parquet or CSV) from the ActivitySim output directory,
+        filters for TNC modes, and prepares data for routing. Loads land use data
+        to create MAZ-to-TAZ mappings and skim zone lookups. Optionally splits
+        trips with occupancy exceeding max_vehicle_occupancy into multiple trips.
+
+        Returns
+        -------
+        pd.DataFrame
+            TNC trips with columns: trip_id, trip_mode, depart, origin, destination,
+            tour_participants, occupancy, origin_skim_idx, dest_skim_idx, and
+            optionally arrival_mode.
+
+        """
         # Read the data from the OpenMatrix file
         # Convert the data to a pandas DataFrame
         base_cols = ["trip_id", "trip_mode", "depart", "origin", "destination", "tour_participants"]
@@ -284,6 +379,25 @@ class TaxiTNCRouter:
         return trips, id_mapping_df
 
     def sample_tnc_trip_simulation_time_bin(self, trips):
+        """
+        Assign fine-grained simulation time bins to TNC trips.
+
+        Converts ActivitySim half-hour departure periods to continuous minute
+        values by sampling uniformly within each period, then bins into the
+        configured time_bin_size. This provides higher temporal resolution for
+        vehicle scheduling.
+
+        Parameters
+        ----------
+        trips : pd.DataFrame
+            Trip table with 'depart' column (ActivitySim half-hour periods,
+            1-indexed).
+
+        Returns
+        -------
+        pd.DataFrame
+            Input trips with added 'time_in_mins' and 'time_bin' columns.
+        """
         # Create a new column for the time bin
         # Convert departure time to mins, sampling within the half hour
         # Then bin into the bin size (supplied in mins)
@@ -299,6 +413,28 @@ class TaxiTNCRouter:
         return trips
 
     def _determine_potential_trip_pairs(self, trips):
+        """
+        Identify candidate trip pairs for pooled service based on proximity.
+
+        Finds all pairs of trips where both origin-to-origin AND destination-to-destination
+        travel times are within the pooling_buffer. Also enforces occupancy constraints if
+        max_vehicle_occupancy is set.
+
+        The function creates upper-triangular pairs (i < j) to avoid duplicates and
+        includes origin/destination skim times for use in detour calculations.
+
+        Parameters:
+            trips: DataFrame of trips within a single time bin, with columns:
+                   trip_id, oskim_idx, dskim_idx, origin, destination, occupancy.
+
+        Returns:
+            DataFrame with columns:
+            - trip_i, trip_j: Trip IDs forming the pair
+            - origin_time, dest_time: Skim times between origins and destinations
+            - o_i_skim_idx, d_i_skim_idx, origin_i, destination_i, occupancy_i: Trip i attributes
+            - o_j_skim_idx, d_j_skim_idx, origin_j, destination_j, occupancy_j: Trip j attributes
+            - pair_occupancy: Total occupancy if both trips are pooled (if capacity check enabled)
+        """
         # pre-filter trips for pooling
         # find pairs of trips that are within the same origin and destination buffer
         # Ensure indices are integer arrays and no NA
@@ -380,7 +516,27 @@ class TaxiTNCRouter:
         return trip_pairs
 
     def determine_potential_trip_pairs(self, trips):
-        """Wrapper around determining potential trip pairs to implement batching"""
+        """
+        Identify all candidate trip pairs for pooling with batching for large trip sets.
+
+        Wrapper around _determine_potential_trip_pairs that processes trips in
+        batches of size pair_batch_size to manage memory usage. Delegates to the
+        internal method for actual pairing logic.
+
+        Parameters
+        ----------
+        trips : pd.DataFrame
+            Trip table with columns: trip_id, origin, destination, oskim_idx,
+            dskim_idx, occupancy.
+
+        Returns
+        -------
+        pd.DataFrame
+            All candidate trip pairs with columns: trip_i, trip_j, origin_time,
+            dest_time, o_i_skim_idx, d_i_skim_idx, origin_i, destination_i,
+            occupancy_i (and _j variants). If max_vehicle_occupancy is set,
+            pairs exceeding capacity are excluded.
+        """
 
         # break trips up into batches
         trip_pairs_list = []
@@ -402,11 +558,37 @@ class TaxiTNCRouter:
         return trip_pairs
 
     def determine_detour_times(self, trip_pairs):
-        # For each trip pair, calculate the four possible routing scenarios
-        # and determine if they are valid (within detour limits)
-        # and select the best valid scenario (minimum total time)
-        # WARNING if these scenarios are changed, they also need to be changed downstream in the routing
+        """
+        Calculate detour times for all four routing scenarios per trip pair.
 
+        Evaluates four possible pickup/dropoff orders:
+        1. oi→oj→di→dj
+        2. oj→oi→dj→di
+        3. oi→oj→dj→di
+        4. oj→oi→di→dj
+
+        Computes per-trip detours relative to solo travel, filters out pairs
+        exceeding detour limits, and selects the scenario with minimum total
+        in-vehicle time for each valid pair.
+
+        Parameters
+        ----------
+        trip_pairs : pd.DataFrame
+            Candidate pairs with o_i_skim_idx, d_i_skim_idx, o_j_skim_idx,
+            d_j_skim_idx columns.
+
+        Returns
+        -------
+        pd.DataFrame
+            Valid trip pairs with added columns: detour_i, detour_j, total_detour,
+            total_ivt, route_scenario. Only includes pairs where both detours are
+            within max_detour_minutes.
+
+        Notes
+        -----
+        WARNING: If scenarios are modified, corresponding logic in create_trip_routes
+        must also be updated to match the new ordering.
+        """
         oi = trip_pairs["o_i_skim_idx"].to_numpy()
         oj = trip_pairs["o_j_skim_idx"].to_numpy()
         di = trip_pairs["d_i_skim_idx"].to_numpy()
@@ -496,6 +678,27 @@ class TaxiTNCRouter:
         return trip_pairs
 
     def select_mutual_best_recursive(self, trip_pairs: pd.DataFrame) -> pd.DataFrame:
+        """
+        Select disjoint trip pairs using iterative mutual-best matching.
+
+        Implements a greedy algorithm that repeatedly finds mutually best pairs
+        (where trip i prefers trip j and vice versa) and removes them from the
+        pool. Ensures each trip appears in at most one pair. Ties are broken
+        deterministically by sorting on total_detour, trip_i, and trip_j.
+
+        Parameters
+        ----------
+        trip_pairs : pd.DataFrame
+            All candidate trip pairs with columns: trip_i, trip_j, total_detour,
+            detour_i, detour_j, total_ivt, and other routing attributes.
+
+        Returns
+        -------
+        pd.DataFrame
+            Subset of trip_pairs containing only disjoint mutual-best matches,
+            with all original columns preserved. Returns empty DataFrame if no
+            mutual matches found.
+        """
         # start from valid pairs only, keep only needed cols for speed
         pairs = trip_pairs[["trip_i", "trip_j", "total_detour"]].copy()
         if pairs.empty:
@@ -585,6 +788,26 @@ class TaxiTNCRouter:
         return trip_matches
 
     def create_trip_routes(self, trip_matches):
+        """
+        Convert matched trip pairs into ordered route sequences.
+
+        Takes mutually matched trip pairs and expands them into ordered sequences
+        of O/D stops based on the optimal routing scenario (e.g., oi→oj→di→dj).
+        Creates a 4-row per-pair table with origin/intermediate/destination flags.
+
+        Parameters
+        ----------
+        trip_matches : pd.DataFrame
+            Matched pairs with columns: trip_i, trip_j, route_scenario, total_ivt,
+            detour_i, detour_j, occupancy_i, occupancy_j.
+
+        Returns
+        -------
+        pd.DataFrame
+            Route table with columns: trip_i, trip_j, origin, destination,
+            origin_type, destination_type (pickup, intermediate, dropoff),
+            detour_i, detour_j, occupancy_i, occupancy_j.
+        """
         trips_routed = trip_matches[
             ["trip_i", "trip_j", "total_ivt", "route_scenario", "detour_i", "detour_j", 'occupancy_i', 'occupancy_j']
         ].copy()
@@ -639,6 +862,28 @@ class TaxiTNCRouter:
         return trips_routed
 
     def create_full_trip_route_table(self, tnc_trips, trips_routed):
+        """
+        Combine pooled trips with solo trips into a unified route table.
+
+        Appends any TNC trips not included in pooled pairs as solo trips (trip_i
+        only, trip_j = NaN). Both pooled and solo trips are represented in a
+        consistent format for vehicle matching.
+
+        Parameters
+        ----------
+        tnc_trips : pd.DataFrame
+            All TNC trips in the current time bin with columns: trip_id, origin,
+            destination, origin_skim_idx, dest_skim_idx, occupancy.
+        trips_routed : pd.DataFrame
+            Pooled trip routes from create_trip_routes with trip_i and trip_j.
+
+        Returns
+        -------
+        pd.DataFrame
+            Unified route table containing both pooled and solo trips, with
+            columns: trip_i, trip_j (NaN for solo), origin, destination,
+            origin_skim_idx, dest_skim_idx, occupancy_i, occupancy_j.
+        """
         # need to append any additional tnc trips during this time period that were not grouped
         mask = ~(
             tnc_trips.trip_id.isin(trips_routed.trip_i)
@@ -670,7 +915,29 @@ class TaxiTNCRouter:
 
     def create_new_vehicles(self, vehicles, trips_to_service, trip_to_veh_map):
         """
-        Create new vehicles for trips that could not be matched to existing free vehicles
+        Create new vehicles for trips that could not be matched to existing free vehicles.
+
+        Instantiates new vehicle records starting at the trip origins and updates
+        the trip-to-vehicle mapping. Vehicle IDs are assigned sequentially starting
+        from the next available ID after existing vehicles.
+
+        Parameters
+        ----------
+        vehicles : pd.DataFrame or None
+            Existing fleet table with vehicle_id index. Can be None if no vehicles
+            exist yet.
+        trips_to_service : pd.DataFrame
+            Unmatched trips that need new vehicles, with columns: trip_i,
+            origin_skim_idx, origin.
+        trip_to_veh_map : pd.Series
+            Index=trip_i, values=vehicle_id. Updated in place with new vehicle
+            assignments.
+
+        Returns
+        -------
+        tuple of (pd.DataFrame, pd.Series)
+            - vehicles: Updated fleet table with new vehicles appended
+            - trip_to_veh_map: Updated mapping with new vehicle assignments
         """
         idx_start_num = 0 if vehicles is None else vehicles.index.max()
 
@@ -700,6 +967,32 @@ class TaxiTNCRouter:
     def _match_vehicles_to_trips(
         self, free_vehicles, unserviced_trips, trip_to_veh_map
     ):
+        """
+        Core greedy algorithm to assign free vehicles to unserviced trips.
+
+        Iteratively matches each trip to the nearest available vehicle by
+        deadhead time. Enforces max_wait_time constraint and handles ties
+        deterministically by keeping the first trip when multiple trips compete
+        for the same vehicle. Continues until all trips are serviced or no
+        vehicles are within the max wait time.
+
+        Parameters
+        ----------
+        free_vehicles : pd.DataFrame
+            Available vehicles with columns: location_skim_idx, is_free, etc.
+        unserviced_trips : pd.DataFrame
+            Trips not yet assigned, with origin_skim_idx and trip_i columns.
+        trip_to_veh_map : pd.Series
+            Index=trip_i, values=vehicle_id. Updated in place with new matches.
+
+        Returns
+        -------
+        tuple of (pd.DataFrame, pd.DataFrame, pd.Series)
+            - free_vehicles: Remaining unmatched vehicles
+            - unserviced_trips: Remaining unmatched trips
+            - trip_to_veh_map: Updated mapping with new vehicle assignments
+
+        """
 
         i = 0
         while not (free_vehicles.empty or unserviced_trips.empty):
@@ -743,6 +1036,31 @@ class TaxiTNCRouter:
         return free_vehicles, unserviced_trips, trip_to_veh_map
 
     def match_vehicles_to_trips(self, vehicles, full_trip_routes):
+        """
+        Assign available vehicles to trips and create new vehicles as needed.
+
+        Processes trips in batches (vehicle_match_batch_size) to avoid memory
+        issues with large distance matrices. Matches free vehicles to trips via
+        _match_vehicles_to_trips, then creates new vehicles for any remaining
+        unserviced trips.
+
+        Parameters
+        ----------
+        vehicles : pd.DataFrame or None
+            Fleet table with is_free, location_skim_idx, next_time_free columns.
+            Can be None if no vehicles exist yet.
+        full_trip_routes : pd.DataFrame
+            All trip routes (solo and pooled) with trip_i, origin_skim_idx,
+            occupancy_i columns.
+
+        Returns
+        -------
+        tuple of (pd.DataFrame, pd.DataFrame, pd.Series)
+            - vehicles: Updated fleet with new vehicles added
+            - full_trip_routes: Input routes (unchanged)
+            - trip_to_veh_map: Series mapping trip_i to vehicle_id (NaN if
+              exceeded max_wait_time)
+        """
         if vehicles is not None:
             free_vehicles = vehicles[vehicles.is_free].copy()
         else:
@@ -804,6 +1122,35 @@ class TaxiTNCRouter:
         return vehicles, trip_to_veh_map
 
     def create_vehicle_trips(self, full_trip_routes, vehicles, trip_to_veh_map):
+        """
+        Generate leg-by-leg vehicle trips from assigned trip routes.
+
+        Expands route sequences into individual vehicle legs (pickup, intermediate,
+        dropoff) with cumulative travel times. For pooled trips, creates intermediate
+        legs between the first pickup and the last dropoff. Calculates arrival times
+        in minutes and maps to time bins.
+
+        The first leg for each vehicle includes deadhead time from the vehicle's
+        current location to the first pickup. Subsequent legs are added with
+        cumulative travel times.
+
+        Parameters
+        ----------
+        full_trip_routes : pd.DataFrame
+            Trip routes with columns: trip_i, trip_j, origin, destination,
+            origin_type, destination_type, origin_skim_idx, dest_skim_idx.
+        vehicles : pd.DataFrame
+            Fleet table with location_skim_idx for deadhead calculations.
+        trip_to_veh_map : pd.Series
+            Mapping from trip_i to vehicle_id.
+
+        Returns
+        -------
+        pd.DataFrame
+            Vehicle trip legs with columns: vehicle_id, trip_i, trip_j, origin,
+            destination, leg_type (pickup, intermediate, dropoff, deadhead),
+            travel_time, arrival_time (minutes), arrival_bin (time bin).
+        """
         # Create vehicle trips from the full trip routes
 
         # first turning full_trip_routes into a list of stops
@@ -962,7 +1309,25 @@ class TaxiTNCRouter:
         return new_v_trips, full_trip_routes
 
     def calculate_occupancy(self, vehicle_trips_i, tnc_trips_i):
-        """Calculating occupancy for each vehicle trip based on the trips being served"""
+        """
+        Calculate vehicle occupancy for each leg based on trips being served.
+
+        Sums the occupancy from trip_i and trip_j (if present) for each vehicle
+        trip leg. Uses the occupancy values from the original TNC trips table.
+
+        Parameters
+        ----------
+        vehicle_trips_i : pd.DataFrame
+            Vehicle trip legs with trip_i and trip_j columns (trip_j may be NaN
+            for solo trips).
+        tnc_trips_i : pd.DataFrame
+            Original TNC trips with trip_id and occupancy columns.
+
+        Returns
+        -------
+        pd.DataFrame
+            vehicle_trips_i with added 'occupancy' column.
+        """
         trip_occ_map = tnc_trips_i.set_index("trip_id")["occupancy"]
         
         # occupancy of the vehicle trips is the sum of occupancy across trips
@@ -976,6 +1341,33 @@ class TaxiTNCRouter:
     def update_vehicle_fleet(
         self, vehicles, vehicle_trips_i, time_bin, refuel_veh_trips_i
     ):
+        """
+        Update vehicle availability and location after serving trips in current time bin.
+
+        Updates next_time_free based on the latest arrival time (+1 to account
+        for dropoff), marks vehicles as free if they will be available in the
+        next time bin, and updates vehicle locations to their final destination
+        or refuel station.
+
+        Parameters
+        ----------
+        vehicles : pd.DataFrame
+            Fleet table with columns: is_free, next_time_free, location,
+            location_skim_idx, etc.
+        vehicle_trips_i : pd.DataFrame
+            Completed vehicle trips with vehicle_id, arrival_bin, destination,
+            destination_skim_idx columns.
+        time_bin : int
+            Current simulation time bin.
+        refuel_veh_trips_i : pd.DataFrame
+            Subset of vehicle_trips_i that are refueling trips, with refuel_dest
+            and refuel_dest_skim_idx columns.
+
+        Returns
+        -------
+        pd.DataFrame
+            Updated vehicles table with refreshed availability and locations.
+        """
         # update the next_time_free based on the vehicle trips
         next_time_free_update = (
             vehicle_trips_i.groupby("vehicle_id").arrival_bin.max() + 1
@@ -1021,6 +1413,25 @@ class TaxiTNCRouter:
         return vehicles
 
     def summarize_tnc_trips(self, tnc_veh_trips, tnc_trips, vehicles, pooled_trips):
+        """
+        Log summary statistics and perform consistency checks on TNC routing outputs.
+
+        Calculates and logs total trips, vehicles, pooling rate, average occupancy,
+        VMT, deadhead VMT percentage, and average distance-weighted occupancy.
+        Validates that all trips are serviced and all vehicles are used.
+
+        Parameters
+        ----------
+        tnc_veh_trips : pd.DataFrame
+            Vehicle trip legs with trip_i, trip_j, vehicle_id, OD_dist, occupancy,
+            is_deadhead columns.
+        tnc_trips : pd.DataFrame
+            Original TNC trips with trip_id column.
+        vehicles : pd.DataFrame
+            Fleet table with vehicle_id index.
+        pooled_trips : pd.DataFrame
+            Matched trip pairs with trip_i and trip_j columns.
+        """
 
         # Summary statistics for TNC vehicle trips
         logger.info("TNC Vehicle Trips Summary:")
@@ -1086,11 +1497,29 @@ class TaxiTNCRouter:
 
         pass
 
-    def check_refuel_needs(self, vehicle_trips_i, vehicles, time_bin):
-        """Check to see if the vehicle needs to refuel.
+    def check_refuel_needs(self, vehicle_trips_i, vehicles):
+        """
+        Identify vehicles needing refueling and create refuel trips to nearest stations.
 
-        If the vehicle has been operating for more than the refuel interval,
-        it needs be routed to the nearest refuel station before it becomes available again.
+        Checks cumulative drive distance since last refuel against the max_refuel_dist
+        threshold. For vehicles exceeding the threshold, finds the nearest refuel station
+        (MAZ with landuse_refuel_col > 0) and creates a refuel trip leg from the vehicle's
+        last destination to the station.
+
+        Parameters
+        ----------
+        vehicle_trips_i : pd.DataFrame
+            Completed vehicle trips with vehicle_id, destination_skim_idx, OD_dist,
+            arrival_bin columns.
+        vehicles : pd.DataFrame
+            Fleet table with drive_dist_since_refuel column.
+
+        Returns
+        -------
+        pd.DataFrame or None
+            Refuel trip legs with columns: vehicle_id, origin, origin_skim_idx,
+            destination (refuel station MAZ), destination_skim_idx, OD_time, OD_dist,
+            arrival_bin, trip_type='refuel'. Returns None if no vehicles need refueling.
         """
         # updated drive time
         drive_time_from_trips_in_bin = vehicle_trips_i.groupby(
@@ -1172,6 +1601,31 @@ class TaxiTNCRouter:
         return refuel_veh_trips
 
     def remap_skim_idx_to_zone(self, tnc_veh_trips, pooled_trips, tnc_trips):
+        """
+        Convert skim indices back to TAZ and MAZ identifiers for output.
+
+        Maps vehicle trip origins and destinations from internal skim indices to:
+        - TAZ: Traffic analysis zone IDs
+        - MAZ: Micro-analysis zone IDs (actual pickup/dropoff locations)
+
+        For pooled trips, determines correct pickup/dropoff MAZ based on route_scenario.
+        For refuel trips, uses first MAZ in TAZ (preferring MAZs with refuel stations for destinations).
+        For regular vehicle movements, uses first MAZ in origin TAZ and scenario-specific MAZ for destinations.
+
+        Parameters:
+            tnc_veh_trips: DataFrame of all vehicle movement legs.
+            pooled_trips: DataFrame of matched trip pairs.
+            tnc_trips: Original trip table with MAZ origins and destinations.
+
+        Returns:
+            Tuple of (updated tnc_veh_trips, updated pooled_trips) with:
+            - origin_taz, destination_taz: Zone identifiers
+            - origin, destination: MAZ identifiers
+            - skim indices dropped from DataFrames
+
+        Raises:
+            ValueError: If any vehicle trip is missing origin or destination MAZ after mapping.
+        """
         # remap the skim idx back to zone ids for output
         skim_idx_to_taz_map = {v: k for k, v in self.skim_zone_mapping.items()}
 
@@ -1237,7 +1691,27 @@ class TaxiTNCRouter:
         )
 
     def route_taxi_tncs(self):
-        """Main function to route taxi and TNC trips, including pooling logic."""
+        """
+        Execute the complete TNC routing simulation workflow.
+
+        Main entry point that orchestrates the entire TNC routing process:
+        1. Load input data (trips, land use, skims)
+        2. For each time bin:
+           a. Identify potential trip pairs for pooling
+           b. Calculate detour times and select mutual-best pairs
+           c. Match vehicles to trips (existing or newly created)
+           d. Generate leg-by-leg vehicle routes
+           e. Calculate occupancy and update vehicle fleet
+           f. Check refueling needs and route vehicles to stations
+        3. Remap skim indices to TAZ/MAZ zones
+        4. Summarize results and write outputs
+
+        Returns
+        -------
+        pd.DataFrame
+            Complete vehicle trip table (tnc_veh_trips) with all legs indexed by
+            vehicle_trip_id. Output files are also written to disk.
+        """
         # read in initial skim data
         self.read_skim_data(0)
 
