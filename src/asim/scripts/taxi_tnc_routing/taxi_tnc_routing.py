@@ -707,7 +707,7 @@ class TaxiTNCRouter:
             veh_locations = free_vehicles.location_skim_idx.to_numpy().astype(int)
 
             # find skim times between trip origins and all veh locations
-            skim_times = self.skim_time[trip_origins[:, None], veh_locations]
+            skim_times = self.skim_time[veh_locations, trip_origins[:, None]]
 
             # grab the minimum time for each trip and vehicle
             min_times = skim_times.min(axis=1)

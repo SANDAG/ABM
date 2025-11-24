@@ -1,5 +1,4 @@
 Label,Description,Expression,stay_with_person,go_to_parking,go_home,service_next_trip_1,service_next_trip_2,service_next_trip_3
-util_dummy_1,Dummy variable 1,1,1,1,1,1,1,1
 # stay with person utils,,,,,,,,
 util_cost_of_parking,Cost of parking at destination,parkingCost,coef_cost,,,,,
 util_time_stay,Stay- Need car soon,"@np.where(df.duration_hrs < df.AV_maxDuration, (-1)*(df.AV_maxBenefit + (df.duration_hrs*df.slope)), 0)",coef_ivt,,,,,

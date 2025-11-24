@@ -1,4 +1,4 @@
 Description,Target,Expression
 next trip start time,next_depart,df['trip_id'].map(trips.groupby('tour_id')['depart'].shift(-1).to_dict())
-trip duration,duration_hrs,"np.where(next_depart.isna(), 0, next_depart - df.depart) / 2"
+trip duration,duration_hrs,"np.where(next_depart.isna(), 0, next_depart - df.depart) * 2"
 duration benefit,duration_benefit,"np.where((duration_hrs < 1.5) & (duration_hrs > 0), 60 - (60/1.5 * duration_hrs), 0)"
