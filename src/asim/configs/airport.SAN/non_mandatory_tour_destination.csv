@@ -4,22 +4,18 @@ Description,Expression,res_bus,res_per,vis_bus,vis_per
 Size variable,@np.log1p(df.size_term),coef_one,coef_one,coef_one,coef_one
 Sample of alternatives correction factor,"@np.minimum(np.log(df.pick_count/df.prob), 60)",coef_one,coef_one,coef_one,coef_one
 No attractions,@df.size_term==0,-999,-999,-999,-999
-distance >= 20.0,@((_DIST >15) & (_DIST <=30))*cbx,coef_dist_res_bus_15_30,coef_dist_res_per_15_30,coef_dist_vis_bus_15_30,coef_dist_vis_per_15_30
-distance >= 30.0,@((_DIST >30) & (_DIST <=50))*cbx,coef_dist_res_bus_30_50,coef_dist_res_per_30_50,coef_dist_vis_bus_30_50,coef_dist_vis_per_30_50
-distance >= 50.0,@((_DIST >50))*cbx,coef_dist_res_bus_50,coef_dist_res_per_50,coef_dist_vis_bus_50,coef_dist_vis_per_50
-la jolla zip,@(_POI==1 )* cbx,coef_zero,coef_zero,coef_ljolla_vis_bus_samp,coef_ljolla_vis_per_samp
-Distance_logged,@np.log(_DIST) * cbx,coef_res_bus_log_dist,coef_res_per_log_dist,coef_vis_bus_log_dist,coef_vis_per_log_dist
-Distance_squared,@(_DIST**2 )* cbx,coef_res_bus_sq_dist,coef_res_per_sq_dist,coef_vis_bus_sq_dist,coef_vis_per_sq_dist
-intercept,@df['intercept'] * san,coef_int_res_bus,coef_int_res_per,coef_int_vis_bus,coef_int_vis_per
-distance >= 0,"@((_DIST >= 0) * np.minimum((_DIST - 0), (0.5 - 0)))*san",coef_dist_res_bus_samp0,coef_dist_res_per_samp0,coef_dist_vis_bus_samp0,coef_dist_vis_per_samp0
-distance >= 0.5,"@((_DIST >= 0.5)*np.minimum((_DIST - 0.5), (1 - 0.5)))*san",coef_dist_res_bus_samp1,coef_dist_res_per_samp1,coef_dist_vis_bus_samp1,coef_dist_vis_per_samp1
-distance >= 1.0,"@((_DIST >= 1)*np.minimum((_DIST - 1), (2 - 1)))*san",coef_dist_res_bus_samp2,coef_dist_res_per_samp2,coef_dist_vis_bus_samp2,coef_dist_vis_per_samp2
-distance >= 2.0,"@((_DIST >= 2)*np.minimum((_DIST - 2), (3 - 2)))*san",coef_dist_res_bus_samp3,coef_dist_res_per_samp3,coef_dist_vis_bus_samp3,coef_dist_vis_per_samp3
-distance >= 3.0,"@((_DIST >= 3)*np.minimum((_DIST - 3), (5 - 3)))*san",coef_dist_res_bus_samp4,coef_dist_res_per_samp4,coef_dist_vis_bus_samp4,coef_dist_vis_per_samp4
-distance >= 5.0,"@((_DIST >= 5)*np.minimum((_DIST - 5), (10 - 5)))*san",coef_dist_res_bus_samp5,coef_dist_res_per_samp5,coef_dist_vis_bus_samp5,coef_dist_vis_per_samp5
-distance >= 10.0,"@((_DIST >= 10)*np.minimum((_DIST - 10), (20 - 10)))*san",coef_dist_res_bus_samp6,coef_dist_res_per_samp6,coef_dist_vis_bus_samp6,coef_dist_vis_per_samp6
-distance >= 20.0,"@((_DIST >= 20)*np.minimum((_DIST - 20), (30 - 20)))*san",coef_dist_res_bus_samp7,coef_dist_res_per_samp7,coef_dist_vis_bus_samp7,coef_dist_vis_per_samp7
-distance >= 30.0,"@((_DIST >= 30)*np.minimum((_DIST - 30), (50 - 30)))*san",coef_dist_res_bus_samp8,coef_dist_res_per_samp8,coef_dist_vis_bus_samp8,coef_dist_vis_per_samp8
-distance >= 50.0,"@((_DIST >= 50)*np.minimum((_DIST - 50), (5000 - 50)))*san",coef_dist_res_bus_samp9,coef_dist_res_per_samp9,coef_dist_vis_bus_samp9,coef_dist_vis_per_samp9
-la jolla zip,@(_POI==1) * san,coef_zero,coef_zero,coef_ljolla_vis_bus_samp,coef_ljolla_vis_per_samp
-downtown,@(_POI==2 )*san,coef_zero,coef_zero,coef_dt_vis_bus_samp,coef_dt_vis_per_samp
+#intercept,#@df['intercept'],,,,
+distance >= 0,"@((_DIST >= 0) * np.minimum((_DIST - 0), (0.25 - 0)))",coef_dist_res_bus_samp0,coef_dist_res_per_samp0,coef_dist_vis_bus_samp0,coef_dist_vis_per_samp0
+distance >= 0.25,"@((_DIST >= 0.25)*np.minimum((_DIST - 0.25), (0.5 - 0.25)))",coef_dist_res_bus_samp1,coef_dist_res_per_samp1,coef_dist_vis_bus_samp1,coef_dist_vis_per_samp1
+distance >= 0.5,"@((_DIST >= 0.5)*np.minimum((_DIST - 0.5), (1 - 0.5)))",coef_dist_res_bus_samp2,coef_dist_res_per_samp2,coef_dist_vis_bus_samp2,coef_dist_vis_per_samp2
+distance >= 1.0,"@((_DIST >= 1)*np.minimum((_DIST - 1), (2 - 1)))",coef_dist_res_bus_samp3,coef_dist_res_per_samp3,coef_dist_vis_bus_samp3,coef_dist_vis_per_samp3
+distance >= 2.0,"@((_DIST >= 2)*np.minimum((_DIST - 2), (3 - 2)))",coef_dist_res_bus_samp4,coef_dist_res_per_samp4,coef_dist_vis_bus_samp4,coef_dist_vis_per_samp4
+distance >= 3.0,"@((_DIST >= 3)*np.minimum((_DIST - 3), (4 - 3)))",coef_dist_res_bus_samp5,coef_dist_res_per_samp5,coef_dist_vis_bus_samp5,coef_dist_vis_per_samp5
+distance >= 4.0,"@((_DIST >= 4)*np.minimum((_DIST - 4), (5 - 4)))",coef_dist_res_bus_samp6,coef_dist_res_per_samp6,coef_dist_vis_bus_samp6,coef_dist_vis_per_samp6
+distance >= 5.0,"@((_DIST >= 5)*np.minimum((_DIST - 5), (7.5 - 5)))",coef_dist_res_bus_samp7,coef_dist_res_per_samp7,coef_dist_vis_bus_samp7,coef_dist_vis_per_samp7
+distance >= 7.5,"@((_DIST >= 7.5)*np.minimum((_DIST - 7.5), (10 - 7.5)))",coef_dist_res_bus_samp8,coef_dist_res_per_samp8,coef_dist_vis_bus_samp8,coef_dist_vis_per_samp8
+distance >= 10.0,"@((_DIST >= 10)*np.minimum((_DIST - 10), (15 - 10)))",coef_dist_res_bus_samp9,coef_dist_res_per_samp9,coef_dist_vis_bus_samp9,coef_dist_vis_per_samp9
+distance >= 15.0,"@((_DIST >= 15)*np.minimum((_DIST - 15), (20 - 15)))",coef_dist_res_bus_samp10,coef_dist_res_per_samp10,coef_dist_vis_bus_samp10,coef_dist_vis_per_samp10
+distance >= 20.0,"@((_DIST >= 20)*np.minimum((_DIST - 20), (30 - 20)))",coef_dist_res_bus_samp11,coef_dist_res_per_samp11,coef_dist_vis_bus_samp11,coef_dist_vis_per_samp11
+distance >= 30.0,"@((_DIST >= 30)*np.minimum((_DIST - 30), (50 - 30)))",coef_dist_res_bus_samp12,coef_dist_res_per_samp12,coef_dist_vis_bus_samp12,coef_dist_vis_per_samp12
+distance >= 50.0,"@((_DIST >= 50)*np.minimum((_DIST - 50), (5000 - 50)))",coef_dist_res_bus_samp13,coef_dist_res_per_samp13,coef_dist_vis_bus_samp13,coef_dist_vis_per_samp13
