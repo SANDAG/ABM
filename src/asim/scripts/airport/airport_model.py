@@ -361,8 +361,8 @@ def create_landuse(settings):
         }
     synthetic_hh['airport_income_bin'] = pd.cut(
         synthetic_hh['hinc'], 
-        bins = income_bin_boundaries[settings['airport_code']], 
-        labels = income_bin_labels[settings['airport_code']])
+        bins = [-99999999,25000,50000,75000,100000,125000,150000,200000,9999999999],#income_bin_boundaries[settings['airport_code']], 
+        labels = ['a1','a2','a3','a4','a5','a6','a7','a8'])#income_bin_labels[settings['airport_code']])
     synthetic_hh = synthetic_hh.groupby(['mgra','airport_income_bin'],as_index = False)[['hhid']].count() # TODO: change to sample rate
     synthetic_hh = pd.pivot(synthetic_hh, index = 'mgra', columns = 'airport_income_bin', values= 'hhid')
     output_lu = output_lu.set_index('MAZ').merge(synthetic_hh, how = 'left', left_index = True, right_index = True).fillna(0)    

@@ -2,9 +2,7 @@ Description,Expression,res_bus,res_per,vis_bus,vis_per
 ,_POI@skims[('poi_dest')],1,1,1,1
 ,_DIST@skims['DIST'],1,1,1,1
 Size variable,@np.log1p(df.size_term),coef_one,coef_one,coef_one,coef_one
-Sample of alternatives correction factor,"@np.minimum(np.log(df.pick_count/df.prob), 60)",coef_one,coef_one,coef_one,coef_one
 No attractions,@df.size_term==0,-999,-999,-999,-999
-#intercept,#@df['intercept'],,,,
 distance >= 0,"@((_DIST >= 0) * np.minimum((_DIST - 0), (0.25 - 0)))",coef_dist_res_bus_samp0,coef_dist_res_per_samp0,coef_dist_vis_bus_samp0,coef_dist_vis_per_samp0
 distance >= 0.25,"@((_DIST >= 0.25)*np.minimum((_DIST - 0.25), (0.5 - 0.25)))",coef_dist_res_bus_samp1,coef_dist_res_per_samp1,coef_dist_vis_bus_samp1,coef_dist_vis_per_samp1
 distance >= 0.5,"@((_DIST >= 0.5)*np.minimum((_DIST - 0.5), (1 - 0.5)))",coef_dist_res_bus_samp2,coef_dist_res_per_samp2,coef_dist_vis_bus_samp2,coef_dist_vis_per_samp2
