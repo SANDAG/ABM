@@ -1757,7 +1757,7 @@ class TaxiTNCRouter:
             pooling_trips.append(full_trip_routes)
 
             refuel_veh_trips_i = self.check_refuel_needs(
-                vehicle_trips_i, vehicles, time_bin
+                vehicle_trips_i, vehicles
             )
             if refuel_veh_trips_i is not None:
                 veh_trips.append(refuel_veh_trips_i)
