@@ -1,5 +1,5 @@
-,market_segment_id,market_segment,weight_departing_only_model_respondents
-0,0,resident_business,0.085
-1,1,resident_non_business,0.29
-2,2,visitor_business,0.211
-3,3,visitor_non_business,0.413
+,market_segment_id,market_segment,proportion
+0,0,res_bus,0.086
+1,1,res_per,0.293
+2,2,vis_bus,0.206
+3,3,vis_per,0.416
