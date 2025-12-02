@@ -1390,8 +1390,8 @@ class TaxiTNCRouter:
         final_veh_location = vehicle_trips_i.groupby("vehicle_id").destination.last()
         vehicles.loc[final_veh_location.index, "location"] = final_veh_location
 
-        tot_drive_time = vehicle_trips_i.groupby("vehicle_id").OD_time.sum()
-        vehicles.loc[tot_drive_time.index, "drive_dist_since_refuel"] += tot_drive_time
+        tot_drive_dist = vehicle_trips_i.groupby("vehicle_id").OD_dist.sum()
+        vehicles.loc[tot_drive_dist.index, "drive_dist_since_refuel"] += tot_drive_dist
 
         # updating fleet with refueled vehicles
         if refuel_veh_trips_i is not None:
@@ -1522,16 +1522,16 @@ class TaxiTNCRouter:
             arrival_bin, trip_type='refuel'. Returns None if no vehicles need refueling.
         """
         # updated drive time
-        drive_time_from_trips_in_bin = vehicle_trips_i.groupby(
+        drive_dist_from_trips_in_bin = vehicle_trips_i.groupby(
             "vehicle_id"
         ).OD_dist.sum()
-        tot_drive_time = (
-            drive_time_from_trips_in_bin
+        tot_drive_dist = (
+            drive_dist_from_trips_in_bin
             + vehicles.loc[
-                drive_time_from_trips_in_bin.index, "drive_dist_since_refuel"
+                drive_dist_from_trips_in_bin.index, "drive_dist_since_refuel"
             ]
         )
-        needs_refuel = tot_drive_time > self.settings.max_refuel_dist
+        needs_refuel = tot_drive_dist > self.settings.max_refuel_dist
 
         if not needs_refuel.any():
             return None
