@@ -1283,10 +1283,10 @@ class TaxiTNCRouter:
         cumulative_trip_time = new_v_trips.groupby("vehicle_id")["OD_time"].cumsum()
         new_v_trips["depart_bin"] = (
             full_trip_routes.time_bin.mode()[0]
-            + (cumulative_trip_time - new_v_trips["OD_time"]) // 15
+            + (cumulative_trip_time - new_v_trips["OD_time"]) // self.settings.time_bin_size
         )
         new_v_trips["arrival_bin"] = full_trip_routes.time_bin.mode()[0] + (
-            cumulative_trip_time // 15
+            cumulative_trip_time // self.settings.time_bin_size
         )
 
         new_v_trips["OD_dist"] = self.skim_dist[
