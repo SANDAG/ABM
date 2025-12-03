@@ -294,7 +294,7 @@ def create_sched_probs(settings):
                 else:
                     asim_sched[m].loc[i] = distribution.iloc[-1]/6
         elif settings['airport_code'] == 'SAN':
-            asim_sched[m] = distribution.drop(columns=['period_label'])
+            asim_sched[m] = distribution.drop(columns=['period_label','Unnamed: 0'])
         asim_sched[m] = pd.DataFrame(asim_sched[m].T).reset_index().rename(columns = {'index':'purpose'})
         asim_sched[m]['outbound'] = m==0
         asim_sched[m] = asim_sched[m][['purpose','outbound'] + [i for i in range(1,49)]]
