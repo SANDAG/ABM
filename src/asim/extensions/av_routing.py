@@ -48,6 +48,13 @@ class AVRoutingSettings(LogitComponentSettings):
     DRIVING_MODES: list[str]
     """List of modes that are eligible for routing with a household AV"""
 
+    explicit_chunk: float = 0
+    """
+    If > 0, use this chunk size instead of adaptive chunking.
+    If less than 1, use this fraction of the total number of rows.
+    If not supplied or None, will default to the chunk size in the location choice model settings.
+    """
+
 
 def setup_model_settings(state, model_settings):
     """
@@ -588,7 +595,6 @@ def av_trip_matching(
     trips: pd.DataFrame,
     vehicles: pd.DataFrame,
     trace_label: str,
-    explicit_chunk_size: int = 0,
 ) -> pd.DataFrame:
     """
     Match trips to AVs with optional chunking for memory management.
@@ -631,7 +637,7 @@ def av_trip_matching(
         chunk_trace_label,
         chunk_sizer,
     ) in chunk.adaptive_chunked_choosers(
-        state, choosers, trace_label, explicit_chunk_size=explicit_chunk_size
+        state, choosers, trace_label, explicit_chunk_size=model_settings.explicit_chunk
     ):
         # filter trips and vehicles to only those in the current chunk
         chunk_hh_ids = chooser_chunk.index
