@@ -7,6 +7,7 @@ import pandas as pd
 import itertools
 
 from activitysim.core import (
+    chunk,
     config,
     expressions,
     logit,
@@ -397,31 +398,34 @@ def update_vehicle_positions(vehicle_trips, av_vehicles):
     return av_vehicles
 
 
-def av_trip_matching(
+def _av_trip_matching(
     state,
     model_settings: AVRoutingSettings,
     trips: pd.DataFrame,
     vehicles: pd.DataFrame,
+    alts: pd.DataFrame,
     trace_label: str,
+    chunk_sizer,
 ) -> pd.DataFrame:
     """
-    Match trips to AVs
-    First, construct all possible trip-AV combinations within the household for this time period.
-    Then, use a utility function to select the best AV for each trip.
+    Internal function to match trips to AVs for a single chunk of choosers.
 
-    Much of the utilty and choice logic is taken from activitysim.core.interaction_simulate
-    (Couldn't just call it because of the extra step here where we combine across alternatives)
+    Parameters:
+        state: The current state of the simulation.
+        model_settings: The settings for the AV routing model.
+        trips: DataFrame containing trips for the current chunk of households.
+        vehicles: DataFrame containing vehicles for the current chunk of households.
+        alts: DataFrame containing alternatives (AV-trip combinations).
+        trace_label: Label for tracing.
+        chunk_sizer: Chunk sizer for memory tracking.
+
+    Returns:
+        DataFrame containing the choices for each household in the chunk.
     """
-
-    # get the maximum number of AVs and Trips during this time period
-    max_number_of_avs = vehicles.groupby("household_id").size().max()
-    max_number_of_trips = trips.groupby("household_id").size().max()
 
     # the real choosers here are the households with an av that have trips in this time period
     choosers = pd.DataFrame(index=trips.household_id.unique())
     choosers.index.name = "household_id"
-
-    alts = construct_av_to_trip_alternatives(max_number_of_avs, max_number_of_trips)
 
     interaction_df = build_av_to_trip_interaction_df(
         vehicles=vehicles,
@@ -429,6 +433,8 @@ def av_trip_matching(
         alts=alts,
         choosers=choosers,
     )
+    chunk_sizer.log_df(trace_label, "interaction_df", interaction_df)
+
     have_trace_targets = state.tracing.has_trace_targets(
         interaction_df, slicer="household_id"
     )
@@ -504,6 +510,10 @@ def av_trip_matching(
         .reset_index()
         .set_index("alt")
     )
+    chunk_sizer.log_df(trace_label, "interaction_utilities", interaction_utilities)
+
+    del interaction_df
+    chunk_sizer.log_df(trace_label, "interaction_df", None)
 
     # make choices based on the summed utilities
     # reshape utilities (one utility column and one row per row in model_design)
@@ -512,6 +522,7 @@ def av_trip_matching(
         interaction_utilities.utility.values.reshape(len(choosers), len(alts)),
         index=choosers.index,
     )
+    chunk_sizer.log_df(trace_label, "utilities", utilities)
 
     if have_trace_targets:
         state.tracing.trace_df(
@@ -525,6 +536,10 @@ def av_trip_matching(
     probs = logit.utils_to_probs(
         state, utilities, trace_label=trace_label, trace_choosers=choosers
     )
+    chunk_sizer.log_df(trace_label, "probs", probs)
+
+    del utilities
+    chunk_sizer.log_df(trace_label, "utilities", None)
 
     # make choices
     # positions is series with the chosen alternative represented as a column index in probs
@@ -543,6 +558,7 @@ def av_trip_matching(
 
     # create a series with index from choosers and the index of the chosen alternative
     choices = pd.Series(choices, index=choosers.index)
+    chunk_sizer.log_df(trace_label, "choices", choices)
 
     if have_trace_targets:
         state.tracing.trace_df(
@@ -562,6 +578,85 @@ def av_trip_matching(
         .merge(alts.reset_index(), how="left", on="alt")
         .set_index("household_id")
     )
+
+    return choices
+
+
+def av_trip_matching(
+    state,
+    model_settings: AVRoutingSettings,
+    trips: pd.DataFrame,
+    vehicles: pd.DataFrame,
+    trace_label: str,
+    explicit_chunk_size: int = 0,
+) -> pd.DataFrame:
+    """
+    Match trips to AVs with optional chunking for memory management.
+
+    First, construct all possible trip-AV combinations within the household for this time period.
+    Then, use a utility function to select the best AV for each trip.
+
+    Much of the utility and choice logic is taken from activitysim.core.interaction_simulate
+    (Couldn't just call it because of the extra step here where we combine across alternatives)
+
+    Parameters:
+        state: The current state of the simulation.
+        model_settings: The settings for the AV routing model.
+        trips: DataFrame containing trips to match.
+        vehicles: DataFrame containing available AV vehicles.
+        trace_label: Label for tracing.
+        explicit_chunk_size: If > 0, specifies the chunk size to use when chunking.
+            If < 1, specifies the fraction of the total number of choosers.
+
+    Returns:
+        DataFrame containing the choices for each household.
+    """
+    trace_label = tracing.extend_trace_label(trace_label, "av_trip_matching")
+
+    # get the maximum number of AVs and Trips during this time period
+    max_number_of_avs = vehicles.groupby("household_id").size().max()
+    max_number_of_trips = trips.groupby("household_id").size().max()
+
+    # construct alternatives once for all chunks
+    alts = construct_av_to_trip_alternatives(max_number_of_avs, max_number_of_trips)
+
+    # the real choosers here are the households with an av that have trips in this time period
+    choosers = pd.DataFrame(index=trips.household_id.unique())
+    choosers.index.name = "household_id"
+
+    result_list = []
+    for (
+        i,
+        chooser_chunk,
+        chunk_trace_label,
+        chunk_sizer,
+    ) in chunk.adaptive_chunked_choosers(
+        state, choosers, trace_label, explicit_chunk_size=explicit_chunk_size
+    ):
+        # filter trips and vehicles to only those in the current chunk
+        chunk_hh_ids = chooser_chunk.index
+        trips_chunk = trips[trips.household_id.isin(chunk_hh_ids)]
+        vehicles_chunk = vehicles[vehicles.household_id.isin(chunk_hh_ids)]
+
+        choices = _av_trip_matching(
+            state,
+            model_settings,
+            trips=trips_chunk,
+            vehicles=vehicles_chunk,
+            alts=alts,
+            trace_label=chunk_trace_label,
+            chunk_sizer=chunk_sizer,
+        )
+
+        result_list.append(choices)
+        chunk_sizer.log_df(trace_label, "result_list", result_list)
+
+    if len(result_list) > 1:
+        choices = pd.concat(result_list)
+    else:
+        choices = result_list[0]
+
+    assert len(choices.index) == len(choosers.index)
 
     return choices
 
