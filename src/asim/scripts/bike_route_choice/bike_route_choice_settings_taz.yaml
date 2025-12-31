@@ -24,7 +24,7 @@ bike_speed: {mode-nonmotorized-bike-speed:}
 
 # whether to treat "mgra" or "taz" as the centroid zones
 zone_level: taz
-max_dijkstra_utility: 6.0
+max_dijkstra_utility: 120
 
 # how many different paths to build for each origin-destination pair
 # this is the number of times dijkstra's algorithm will be run
@@ -41,8 +41,8 @@ generate_shapefile: True
 crs: epsg:2230
 
 # randomization settings
-random_scale_coef: 0.5
-random_scale_link: 0.7
+random_scale_coef: 0.1
+random_scale_link: 0.2
 
 # whether to trace the edge utilities
 trace_bike_utilities: False
