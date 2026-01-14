@@ -29,10 +29,9 @@ def create_tours(settings):
     purp_probs = pd.read_csv(os.path.join(config_dir, settings['purpose_probs_input_fname']))
     party_size_probs = pd.read_csv(os.path.join(config_dir, settings['party_size_probs_input_fname']))
     nights_probs_df = pd.read_csv(os.path.join(config_dir, settings['nights_probs_input_fname']))
+    income_probs_df = pd.read_csv(os.path.join(config_dir, settings['income_probs_input_fname']))
+    ext_station_probs_df = pd.read_csv(os.path.join(config_dir, settings['ext_station_probs_input_fname']))
     tour_settings = settings['tours']
-    if settings['airport_code'] == 'CBX':
-        income_probs_df = pd.read_csv(os.path.join(config_dir, settings['income_probs_input_fname']))
-        ext_station_probs_df = pd.read_csv(os.path.join(config_dir, settings['ext_station_probs_input_fname']))
     
     enplanements = tour_settings['num_enplanements']
     annualization = tour_settings['annualization_factor']
@@ -43,21 +42,10 @@ def create_tours(settings):
     num_tours = int((enplanements - connecting)/annualization/avg_party_size *2) 
     departing_tours = int(num_tours /2)
     arriving_tours = num_tours - departing_tours
+
     if settings['airport_code'] == 'CBX':
         employee_park = pd.read_csv(os.path.join(config_dir, settings['employee_park_fname']))
         employee_tours = int(sum(employee_park['Employee Stalls']*employee_park['Share to Terminal']))
-    arr_tours = pd.DataFrame(
-        index=range(arriving_tours), columns=[
-            'direction', 'purpose','party_size','nights', 'income'])
-    arr_tours.index.name = 'id'
-    arr_tours['direction'] = 'inbound'
-    dep_tours = pd.DataFrame(
-        index=range(departing_tours), columns=[
-            'direction', 'purpose','party_size','nights', 'income'])
-    dep_tours.index.name = 'id'
-    dep_tours['direction'] = 'outbound'
-
-    if settings['airport_code'] == 'CBX':
         emp_tours = pd.DataFrame(
             index=range(employee_tours*2), columns=[
                 'direction', 'purpose','party_size','nights', 'income'])
@@ -78,7 +66,19 @@ def create_tours(settings):
         id_to_purp = purp_probs.set_index('market_segment_id')['market_segment'].to_dict()
         purp_probs_sum = sum(purp_probs.proportion)
         purp_proportions = {k: v / purp_probs_sum for k, v in zip(purp_probs['market_segment_id'],purp_probs['proportion'])}
+    
     purp_cum_probs = np.array(list(purp_proportions.values())).cumsum()
+
+    arr_tours = pd.DataFrame(
+        index=range(arriving_tours), columns=[
+            'direction', 'purpose','party_size','nights', 'income'])
+    arr_tours.index.name = 'id'
+    arr_tours['direction'] = 'inbound'
+    dep_tours = pd.DataFrame(
+        index=range(departing_tours), columns=[
+            'direction', 'purpose','party_size','nights', 'income'])
+    dep_tours.index.name = 'id'
+    dep_tours['direction'] = 'outbound'
     
     for tour_table in [dep_tours, arr_tours]:
         purp_scaled_probs = np.subtract(
@@ -117,18 +117,28 @@ def create_tours(settings):
             group['nights'] = nights
             df.loc[group.index, 'nights'] = nights
 
-            if settings['airport_code'] == 'CBX':
-                #assign income
-                income_probs = OrderedDict(income_probs_df[purp_type])
-                # scale probs to so they sum to 1
-                income_sum = sum(income_probs.values())
-                income_probs = {k: v / income_sum for k,v in income_probs.items()}
-                income_cum_probs = np.array(list(income_probs.values())).cumsum()
-                income_scaled_probs = np.subtract(
-                    income_cum_probs, np.random.rand(num_purp_tours, 1))
-                income = np.argmax((income_scaled_probs + 1.0).astype('i4'), axis=1)
-                group['income'] = income
-                df.loc[group.index, 'income'] = income
+            #assign income
+            income_probs = OrderedDict(income_probs_df[purp_type])
+            # scale probs to so they sum to 1
+            income_sum = sum(income_probs.values())
+            income_probs = {k: v / income_sum for k,v in income_probs.items()}
+            income_cum_probs = np.array(list(income_probs.values())).cumsum()
+            income_scaled_probs = np.subtract(
+                income_cum_probs, np.random.rand(num_purp_tours, 1))
+            income_idx = np.argmax((income_scaled_probs + 1.0).astype('i4'), axis=1)
+            
+            # Map income index to actual income values
+            # CBX uses simple 0-indexed income, SAN uses household_income_id
+            if 'household_income_id' in income_probs_df.columns:
+                # SAN format: map to household_income_id
+                id_to_income = {i: income_probs_df.loc[i, 'household_income_id'] for i in range(len(income_probs_df))}
+                income = pd.Series(income_idx).map(id_to_income).values
+            else:
+                # CBX format: use 0-indexed income values directly
+                income = income_idx
+            
+            group['income'] = income
+            df.loc[group.index, 'income'] = income
     if settings['airport_code'] == 'CBX':
         #enumerate employee tours
         emp_tours['purpose'] = 'purp5_perc'

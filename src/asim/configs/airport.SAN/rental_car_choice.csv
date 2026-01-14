@@ -1,0 +1,10 @@
+Label,Description,Expression,No Rental,Rental Car
+# Availability constraints,,,,
+util_no_rental_always_available,No rental car is always available,1,0,
+# Utility specifications,,,,
+util_constant,Constant for rental car,1,,coef_constant
+# Income effects,,,,
+util_income_less_than_60,Income less than 60k,@(df.income <= 9),,coef_income_less_than_60
+util_income_more_than_150,Income more than 150k,"@(df.income.isin([13,15,16,17]))",,coef_income_more_than_150
+# Party size effects (capped at 5),,,,
+util_party_size_capped,Party size capped at 5,"@np.minimum(df.party_size,4)",,coef_party_size_capped

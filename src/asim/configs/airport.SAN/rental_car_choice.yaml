@@ -1,0 +1,18 @@
+
+SPEC: rental_car_choice.csv
+COEFFICIENTS: rental_car_choice_coefficients.csv
+
+LOGIT_TYPE: MNL
+
+# Default alternative for rental car choice (1 = rent a car, 0 = don't rent)
+RENTAL_CAR_CHOICE_ALT: 1
+
+preprocessor:
+  SPEC: rental_car_choice_preprocessor
+  DF: df
+  TABLES:
+    - households
+    - tours
+
+# Filter to apply rental car choice model only to visitors
+CHOOSER_FILTER_COLUMN_NAME: visitor

@@ -1,6 +1,7 @@
 Label,Description,Expression,PARK_LOC1,PARK_LOC4,RIDEHAIL_LOC1,TAXI_LOC1,CURB_LOC1,RENTAL,SHUTTLEVAN,WALK_LOC,WALK_MIX,WALK_PRM,KNR_LOC,KNR_MIX,KNR_PRM
 ,,,,,,,,,,,,,,,
 taxi_unavailable,Taxi availability,@taxi_available == 0,,,,-999,,,,,,,,,
+rental_car_not_chosen,Rental car not chosen in rental_car_choice model,@df['rental_car_choice'] == 0,,,,,,,-999,,,,,,
 parkloc1_av,Parking location 1 availability,@df['parkloc1_av'],-999,,,,,,,,,,,,
 parkloc4_av,Parking location 2 availability,@df['parkloc4_av'],,-999,,,,,,,,,,,
 curbloc1_av,Curb location 1 availability,@df['curbloc1_av'],,,,,-999,,,,,,,,

@@ -12,6 +12,7 @@ Description,Target,Expression
 ,_dest_prm_time,_dest_prm_dist * 60/walkSpeed
 ,_dest_mix_time,_dest_mix_dist * 60/walkSpeed
 ,_party,df.tour_id.map(tours.number_of_participants)
+,rental_car_choice,df.tour_id.map(tours.rental_car_choice).fillna(0)
 ,_tour_participants,"np.where(df.trip_num ==2, 1, _party)"
 # resetting trip origin and destination based on mode,,
 # this is done after the above caluclations so walk dist is the value used in utility calcs,,

@@ -1,0 +1,5 @@
+coefficient_name,value,constrain
+coef_constant,-1.8658,F
+coef_income_less_than_60,-0.9007,F
+coef_income_more_than_150,0.0904,F
+coef_party_size_capped,0.4306,F

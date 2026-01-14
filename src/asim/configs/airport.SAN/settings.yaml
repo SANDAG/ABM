@@ -70,7 +70,7 @@ input_table_list:
       - purpose_id
       - party_size
       - nights
-      # - income
+      - income
       - mode_segment
       - direction
       - household_id
@@ -104,6 +104,7 @@ models:
   - initialize_landuse
   - initialize_tours
   - initialize_households
+  - rental_car_choice
   - initialize_los
   - tour_scheduling_probabilistic
   - non_mandatory_tour_destination
