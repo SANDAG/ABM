@@ -9,15 +9,21 @@ NESTS:
   name: root
   coefficient: coef_nest_root
   alternatives:
-      - name: PARK
-        coefficient: coef_nest_PARK
+      - name: PARK_ON_SITE
+        coefficient: coef_nest_ONSITE_PARK
         alternatives:
             - PARK_LOC1
-            - PARK_LOC4 
-      - name: RIDEHAIL
-        coefficient: coef_nest_RIDEHAIL
+      - name: PARK_OFF_SITE
+        coefficient: coef_nest_OFFSITE_PARK
+        alternatives:
+            - PARK_LOC4
+      - name: TNC
+        coefficient: coef_nest_TNC
         alternatives:
           - RIDEHAIL_LOC1
+      - name: TAXI
+        coefficient: coef_nest_TAXI
+        alternatives:
           - TAXI_LOC1
       - name: TRANSIT
         coefficient: coef_nest_TRANSIT
@@ -173,11 +179,12 @@ TOURS_MERGED_CHOOSER_COLUMNS:
   - parent_tour_id
   - tour_type
   - purpose_id
-  # - income
+  - income
   - nights
   - tour_mode
   - mode_segment
   # - emp_trip_mode
   - party_size
+  - rental_car_choice
 
 MODE_CHOICE_LOGSUM_COLUMN_NAME: mode_choice_logsum
