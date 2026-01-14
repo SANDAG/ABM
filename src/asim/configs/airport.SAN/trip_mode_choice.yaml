@@ -9,21 +9,15 @@ NESTS:
   name: root
   coefficient: coef_nest_root
   alternatives:
-      - name: PARK_ON_SITE
-        coefficient: coef_nest_ONSITE_PARK
+      - name: PARK
+        coefficient: coef_nest_PARK
         alternatives:
             - PARK_LOC1
-      - name: PARK_OFF_SITE
-        coefficient: coef_nest_OFFSITE_PARK
-        alternatives:
-            - PARK_LOC4
-      - name: TNC
-        coefficient: coef_nest_TNC
+            - PARK_LOC4 
+      - name: RIDEHAIL
+        coefficient: coef_nest_RIDEHAIL
         alternatives:
           - RIDEHAIL_LOC1
-      - name: TAXI
-        coefficient: coef_nest_TAXI
-        alternatives:
           - TAXI_LOC1
       - name: TRANSIT
         coefficient: coef_nest_TRANSIT
@@ -52,187 +46,99 @@ NESTS:
         coefficient: coef_nest_SHUTTLEVAN
         alternatives:
           - SHUTTLEVAN
-CONSTANTS:
-  terminal: 1
-  central_mobility_hub: 2
-  nearest: 3
-  terminalMgra: &terminalMgra 11249
-  parkLocation1Mgra: *terminalMgra
-  parkLocation2Mgra: -999 #TODO fix
-  parkLocation3Mgra: -999
-  parkLocation4Mgra: 8455
-  parkLocation5Mgra: -999
-  rentalLocationMgra: 11244
-  centralMobilityHubMgra: 0
-  ridehailLocation1Mgra: *terminalMgra
-  ridehailLocation2Mgra: -999
-  transitMgra: *terminalMgra
-  curbLocation1Mgra: *terminalMgra
-  curbLocation2Mgra: -999
-  curbLocation3Mgra: -999
-  curbLocation4Mgra: -999
-  curbLocation5Mgra: -999
-  shuttleVanLocation: *terminalMgra
-  hotelCourtesyLocation: *terminalMgra
-  orig_col_name: origin
-  dest_col_name: destination
-  costShareSr2: 1.75
-  costShareSr3: 2.50
-  waitThresh: 10.00
-  walkThresh: 1.00
-  shortWalk: 0.333
-  longWalk: 0.667
-  walkSpeed: 3.00
-  parkLocation1AccessCost: 0.00
-  parkLocation1CostDay: 39.04
-  parkLocation1InVehicleTime: 0.00
-  parkLocation1WalkTime: 5.00
-  parkLocation1WaitTime: 0.00
-  parkLocation2AccessCost: 0.00
-  parkLocation2CostDay: 23.00
-  parkLocation2InVehicleTime: 10.00
-  parkLocation2WalkTime: 2.00
-  parkLocation2WaitTime: 8.00
-  parkLocation3AccessCost: 0.00
-  parkLocation3CostDay: 0.00
-  parkLocation3InVehicleTime: -999.00
-  parkLocation3WalkTime: -999.00
-  parkLocation3WaitTime: -999.00
-  parkLocation4AccessCost: 0.00
-  parkLocation4CostDay: 23.00
-  parkLocation4InVehicleTime: 10.00
-  parkLocation4WalkTime: 2.00
-  parkLocation4WaitTime: 8.00
-  parkLocation5AccessCost: 0.00
-  parkLocation5CostDay: 25.62
-  parkLocation5InVehicleTime: 6.00
-  parkLocation5WalkTime: 2.00
-  parkLocation5WaitTime: 3.00
-  # rentalCarAccessCost: 0.00
-  # rentalCostPerDay: 60.99
-  rentalCarInVehicleTime: 7.50
-  rentalCarWalkTime: 3.00
-  rentalCarWaitTime: 7.50
-  terminalAccessCost: 0.00
-  terminalInVehicleTime: 0.00
-  terminalWalkTime: 5.00 # removed from shuttle, only mode that had it
-  terminalWaitTime: 0.00
-  centralMobilityHubAccessCost: 0.00
-  centralMobilityHubInVehicleTime: 0.00
-  centralMobilityHubWalkTime: 0.00
-  centralMobilityHubWaitTime: 0.00
-  ridehailWaitTime: 5.00
-  ridehailLocation1AccessCost: 0.00
-  ridehailLocation1AccessWalkTime: 5.00
-  ridehailLocation1AccessWaitTime: 0.00
-  ridehailLocation1AccessTime: 0.00
-  ridehailLocation2AccessCost: 0.00
-  ridehailLocation2AccessWalkTime: -999.00
-  ridehailLocation2AccessWaitTime: -999.00
-  ridehailLocation2AccessTime: -999.00
-  ridehailCostPerMileDollars: 1.31
-  ridehailBaseFareDollars: 20.00
-  taxi_available: 1
-  taxiWaitTime:  5.32
-  taxiLocation1AccessCost: 0.00
-  taxiLocation1AccessWalkTime: 5.00 # drop?
-  taxiLocation1AccessWaitTime: 0.00
-  taxiLocation1AccessTime: 0.00
-  taxiLocation2AccessCost: 0.00
-  taxiLocation2AccessWalkTime: -999.00
-  taxiLocation2AccessWaitTime: -999.00
-  taxiLocation2AccessTime: -999.00
-  taxiCostPerMileDollars: 2.23
-  taxiBaseFareDollars: 17.00
-  curbLocation1AccessCost: 0.00
-  curbLocation1InVehicleTime: 0.00
-  curbLocation1WalkTime: 5.00
-  curbLocation1WaitTime: 0.00
-  curbLocation2AccessCost: 0.00
-  curbLocation2InVehicleTime: -999.00
-  curbLocation2WalkTime: -999.00
-  curbLocation2WaitTime: -999.00
-  curbLocation3AccessCost: 0.00
-  curbLocation3InVehicleTime: -999.00
-  curbLocation3WalkTime: -999.00
-  curbLocation3WaitTime: -999.00
-  curbLocation4AccessCost: 0.00
-  curbLocation4InVehicleTime: -999.00
-  curbLocation4WalkTime: -999.00
-  curbLocation4WaitTime: -999.00
-  curbLocation5AccessCost: 0.00
-  curbLocation5InVehicleTime: -999.00
-  curbLocation5WalkTime: -999.00
-  curbLocation5WaitTime: -999.00
-  parkingLocation1Available: 1.00
-  parkingLocation2Available: 0.00
-  parkingLocation3Available: 0.00
-  parkingLocation4Available: 1.00
-  parkingLocation5Available: 0.00
-  parkAndEscortAvailable: 0.00
-  rentalCarAvailable: 1.00
-  shuttleVanAvailable: 1.00
-  hotelCourtseyAvailable: 0.00
-  hotelCourtesyWalkTime: 5.00
-  ridehailLocation1Available: 1.00
-  ridehailLocation2Available: 0.00
-  curbsideLocation1Available: 1.00
-  curbsideLocation2Available: 0.00
-  curbsideLocation3Available: 0.00
-  curbsideLocation4Available: 0.00
-  curbsideLocation5Available: 0.00
-  parkingLocation1ReadTransitLogsum: 0.00
-  parkingLocation2ReadTransitLogsum: 0.00
-  parkingLocation3ReadTransitLogsum: 0.00
-  parkingLocation4ReadTransitLogsum: 0.00
-  parkingLocation5ReadTransitLogsum: 0.00
-  parkAndEscortReadTransitLogsum: 0.00
-  # rentalCarReadTransitLogsum: 1.00
-  centralMobilityHubReadTransitLogsum: 1.00
-  ridehailLocation1ReadTransitLogsum: 0.00
-  ridehailLocation2ReadTransitLogsum: 0.00
-  curbsideLocation1ReadTransitLogsum: 0.00
-  curbsideLocation2ReadTransitLogsum: 0.00
-  curbsideLocation3ReadTransitLogsum: 0.00
-  curbsideLocation4ReadTransitLogsum: 0.00
-  curbsideLocation5ReadTransitLogsum: 0.00
 
-  I_SOV_MODES: [1, 2]
-  I_SR2_MODES: [3, 4]
-  I_SR3P_MODES: [5, 6]
-  I_AUTO_MODES: [1, 2, 3, 4, 5, 6]
-  I_WALK_MODE: 7
-  I_BIKE_MODE: 8
-  I_WALK_TRANSIT_MODES: [9, 10, 11, 12, 13]
-  I_DRIVE_TRANSIT_MODES: [14, 15, 16, 17, 18]
-  I_RIDE_HAIL_MODES: [19, 20, 21]
-  min_waitTime: 0
-  max_waitTime: 50
-  topology_bike_multiplier: 20
-  topology_trn_multiplier: 2.20
-  topology_walk_multiplier: 15
-  ridehail_wait_time_multiplier: 1.5
-  walktimelong_multiplier: 5
-  biketimelong_multiplier: 5
-  xfers_wlk_multiplier: 5
-  xfers_drv_multiplier: 15
-  dacc_ratio_multiplier: 0
-  density_index_multiplier: -5
-  origin_density_index_multiplier: -15
-  origin_density_index_max: -15
-  cost_share_s2: 2
-  cost_share_s3: 3
-  max_walk_time: 60
+CONSTANTS:
+  terminalMgra: {airport-san-terminalMGRA:}
+  parkLocation1Mgra: {airport-san-accessOptions-park-loc1-mgra:}
+  parkLocation2Mgra: {airport-san-accessOptions-park-loc2-mgra:}
+  parkLocation3Mgra: {airport-san-accessOptions-park-loc3-mgra:}
+  parkLocation4Mgra: {airport-san-accessOptions-park-loc4-mgra:}
+  parkLocation5Mgra: {airport-san-accessOptions-park-loc5-mgra:}
+  parkEscortLocationMgra: {airport-san-accessOptions-parkEscort-mgra:}
+  rentalLocationMgra: {airport-san-accessOptions-rental-mgra:}
+  centralMobilityHubMgra: {airport-san-centralMobilityHubMGRA:}
+  ridehailLocation1Mgra: {airport-san-accessOptions-ridehail-loc1-mgra:}
+  ridehailLocation2Mgra: {airport-san-accessOptions-ridehail-loc2-mgra:}
+  transitMgra: {airport-san-accessOptions-transit-mgra:}
+  curbLocation1Mgra: {airport-san-accessOptions-curb-loc1-mgra:}
+  curbLocation2Mgra: {airport-san-accessOptions-curb-loc2-mgra:}
+  curbLocation3Mgra: {airport-san-accessOptions-curb-loc3-mgra:}
+  curbLocation4Mgra: {airport-san-accessOptions-curb-loc4-mgra:}
+  curbLocation5Mgra: {airport-san-accessOptions-curb-loc5-mgra:}
+  shuttleVanLocation: {airport-san-accessOptions-shuttleVan-mgra:}
+  hotelCourtesyLocation: {airport-san-accessOptions-hotelCourtesy-mgra:}
+  walkSpeed: {mode-nonmotorized-walk-speed:}
+  parkLocation1AccessCost: {airport-san-accessOptions-park-loc1-accessCost:}
+  parkLocation1CostDay: {airport-san-accessOptions-park-loc1-dailyCost:}
+  parkLocation1InVehicleTime: {airport-san-accessOptions-park-loc1-inVehicleTime:}
+  parkLocation1WalkTime: {airport-san-accessOptions-park-loc1-walkTime:}
+  parkLocation1WaitTime: {airport-san-accessOptions-park-loc1-waitTime:}
+  parkLocation2AccessCost: {airport-san-accessOptions-park-loc2-accessCost:}
+  parkLocation2CostDay: {airport-san-accessOptions-park-loc2-dailyCost:}
+  parkLocation2InVehicleTime: {airport-san-accessOptions-park-loc3-inVehicleTime:}
+  parkLocation2WalkTime: {airport-san-accessOptions-park-loc3-walkTime:}
+  parkLocation2WaitTime: {airport-san-accessOptions-park-loc3-waitTime:}
+  parkLocation3AccessCost: {airport-san-accessOptions-park-loc3-accessCost:}
+  parkLocation3CostDay: {airport-san-accessOptions-park-loc3-dailyCost:}
+  parkLocation3InVehicleTime: {airport-san-accessOptions-park-loc3-inVehicleTime:}
+  parkLocation3WalkTime: {airport-san-accessOptions-park-loc3-walkTime:}
+  parkLocation3WaitTime: {airport-san-accessOptions-park-loc3-waitTime:}
+  parkLocation4AccessCost: {airport-san-accessOptions-park-loc4-accessCost:}
+  parkLocation4CostDay: {airport-san-accessOptions-park-loc4-dailyCost:}
+  parkLocation4InVehicleTime: {airport-san-accessOptions-park-loc4-inVehicleTime:}
+  parkLocation4WalkTime: {airport-san-accessOptions-park-loc4-walkTime:}
+  parkLocation4WaitTime: {airport-san-accessOptions-park-loc4-waitTime:}
+  parkLocation5AccessCost: {airport-san-accessOptions-park-loc5-accessCost:}
+  parkLocation5CostDay: {airport-san-accessOptions-park-loc5-dailyCost:}
+  parkLocation5InVehicleTime: {airport-san-accessOptions-park-loc5-inVehicleTime:}
+  parkLocation5WalkTime: {airport-san-accessOptions-park-loc5-walkTime:}
+  parkLocation5WaitTime: {airport-san-accessOptions-park-loc5-waitTime:}
+  parkEscortAccessCost: {airport-san-accessOptions-parkEscort-accessCost:}
+  parkEscortCostHour: {airport-san-accessOptions-parkEscort-hourlyCost:}
+  parkEscortInVehicleTime: {airport-san-accessOptions-parkEscort-inVehicleTime:}
+  parkEscortWalkTime: {airport-san-accessOptions-parkEscort-walkTime:}
+  parkEscortWaitTime: {airport-san-accessOptions-parkEscort-waitTime:}
+  rentalCarAccessCost: {airport-san-accessOptions-rental-accessCost:}
+  rentalCostPerDay: {airport-san-accessOptions-rental-dailyCost:}
+  rentalCarInVehicleTime: {airport-san-accessOptions-rental-inVehicleTime:}
+  rentalCarWalkTime: {airport-san-accessOptions-rental-walkTime:}
+  rentalCarWaitTime: {airport-san-accessOptions-rental-waitTime:}
+  terminalWalkTime: {airport-san-terminalWalkTime:}
+  terminalWaitTime: {airport-san-terminalWaitTime:}
+  ridehailWaitTime: {airport-san-accessOptions-ridehail-tncWaitTime:}
+  ridehailLocation1AccessWalkTime: {airport-san-accessOptions-ridehail-loc1-accessWalkTime-tnc:}
+  ridehailLocation2AccessWalkTime: {airport-san-accessOptions-ridehail-loc2-accessWalkTime-tnc:}
+  taxi_available: {airport-san-taxiAvailable:}
+  taxiWaitTime: {airport-san-accessOptions-ridehail-taxiWaitTime:}
+  taxiLocation1AccessWalkTime: {airport-san-accessOptions-ridehail-loc1-accessWalkTime-taxi:}
+  taxiLocation2AccessWalkTime: {airport-san-accessOptions-ridehail-loc2-accessWalkTime-taxi:}
+  curbLocation1InVehicleTime: {airport-san-accessOptions-curb-loc1-inVehicleTime:}
+  curbLocation1WalkTime: {airport-san-accessOptions-curb-loc1-walkTime:}
+  curbLocation1WaitTime: {airport-san-accessOptions-curb-loc1-waitTime:}
+  curbLocation2InVehicleTime: {airport-san-accessOptions-curb-loc2-inVehicleTime:}
+  curbLocation2WalkTime: {airport-san-accessOptions-curb-loc2-walkTime:}
+  curbLocation2WaitTime: {airport-san-accessOptions-curb-loc2-waitTime:}
+  curbLocation3InVehicleTime: {airport-san-accessOptions-curb-loc3-inVehicleTime:}
+  curbLocation3WalkTime: {airport-san-accessOptions-curb-loc3-walkTime:}
+  curbLocation3WaitTime: {airport-san-accessOptions-curb-loc3-waitTime:}
+  curbLocation4InVehicleTime: {airport-san-accessOptions-curb-loc4-inVehicleTime:}
+  curbLocation4WalkTime: {airport-san-accessOptions-curb-loc4-walkTime:}
+  curbLocation4WaitTime: {airport-san-accessOptions-curb-loc4-waitTime:}
+  curbLocation5InVehicleTime: {airport-san-accessOptions-curb-loc5-inVehicleTime:}
+  curbLocation5WalkTime: {airport-san-accessOptions-curb-loc5-walkTime:}
+  curbLocation5WaitTime: {airport-san-accessOptions-curb-loc5-waitTime:}
+  hotelCourtesyWalkTime: {airport-san-accessOptions-hotelCourtesy-walkTime:}
+
   eaperiod: 11
   amperiod: 17
   mdperiod: 30
   pmperiod: 37
   evperiod: 48
-  c_walk: 1.7
-  c_drive: 1.5
-  c_fwt: 1.5
-  c_xwt: 2
-  c_waux: 2.5
+  c_walk: {airport-transitPathMultipliers-walk:}
+  c_drive: {airport-transitPathMultipliers-drive:}
+  c_fwt: {airport-transitPathMultipliers-fwt:}
+  c_xwt: {airport-transitPathMultipliers-xwt:}
+  c_waux: {airport-transitPathMultipliers-waux:}
 
 
 # so far, we can use the same spec as for non-joint tours
@@ -243,7 +149,6 @@ preprocessor:
     - land_use
 
 CHOOSER_COLS_TO_KEEP:
-  # - trip_period
   - vot1
   - vot2
   - vot3
@@ -268,12 +173,11 @@ TOURS_MERGED_CHOOSER_COLUMNS:
   - parent_tour_id
   - tour_type
   - purpose_id
-  - income
+  # - income
   - nights
   - tour_mode
   - mode_segment
   # - emp_trip_mode
   - party_size
-  - rental_car_choice
 
 MODE_CHOICE_LOGSUM_COLUMN_NAME: mode_choice_logsum
