@@ -1,7 +1,7 @@
 ,Description,Target,Expression
 0,,primary_purpose,df.mode_segment
 1,resident,resident,df.purpose_id < 2
-,visitor,visitor,"df.purpose_id.isin([3,4])"
+,visitor,visitor,"df.purpose_id.isin([2,3])"
 ,Non Employee,non_emp,df.purpose_id != 5
 2,,vot,(coef_ivt+coef_ovt)/(2*coef_cost)*0.6
 3,,vot1,vot < vot_threshold_low
