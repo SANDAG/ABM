@@ -1,5 +1,6 @@
-,market_segment_id,market_segment,proportion
-0,0,res_bus,0.086
-1,1,res_per,0.293
-2,2,vis_bus,0.206
-3,3,vis_per,0.416
+market_segment_id,market_segment,proportion
+0,res_bus,0.081
+1,res_per,0.27
+2,vis_bus,0.203
+3,vis_per,0.384
+4,external,0.063
