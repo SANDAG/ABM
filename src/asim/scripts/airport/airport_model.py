@@ -354,6 +354,10 @@ def create_landuse(settings):
     else:   
         output_lu = input_lu.copy()
     
+    # Create ln_hotelroomtotal variable for destination choice size terms
+    if 'hotelroomtotal' in output_lu.columns:
+        output_lu['ln_hotelroomtotal'] = np.log1p(output_lu['hotelroomtotal'])
+    
     income_bin_boundaries = {
         'SAN': [-99999999,9999999999],
         'CBX': [-99999999,25000,50000,75000,100000,125000,150000,200000,9999999999]

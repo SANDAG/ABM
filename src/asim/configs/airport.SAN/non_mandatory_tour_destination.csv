@@ -14,8 +14,8 @@ distance >= 3.0,"@((_DIST >= 3)*np.minimum((_DIST - 3), (4 - 3)))",coef_dist_res
 distance >= 4.0,"@((_DIST >= 4)*np.minimum((_DIST - 4), (5 - 4)))",coef_dist_res_bus_samp6,coef_dist_res_per_samp6,coef_dist_vis_bus_samp6,coef_dist_vis_per_samp6
 distance >= 5.0,"@((_DIST >= 5)*np.minimum((_DIST - 5), (7.5 - 5)))",coef_dist_res_bus_samp7,coef_dist_res_per_samp7,coef_dist_vis_bus_samp7,coef_dist_vis_per_samp7
 distance >= 7.5,"@((_DIST >= 7.5)*np.minimum((_DIST - 7.5), (10 - 7.5)))",coef_dist_res_bus_samp8,coef_dist_res_per_samp8,coef_dist_vis_bus_samp8,coef_dist_vis_per_samp8
-distance >= 10.0,"@((_DIST >= 10)*np.minimum((_DIST - 10), (15 - 10)))",coef_dist_res_bus_samp9,coef_dist_res_per_samp9,coef_dist_vis_bus_samp9,coef_dist_vis_per_samp9
-distance >= 15.0,"@((_DIST >= 15)*np.minimum((_DIST - 15), (20 - 15)))",coef_dist_res_bus_samp10,coef_dist_res_per_samp10,coef_dist_vis_bus_samp10,coef_dist_vis_per_samp10
-distance >= 20.0,"@((_DIST >= 20)*np.minimum((_DIST - 20), (30 - 20)))",coef_dist_res_bus_samp11,coef_dist_res_per_samp11,coef_dist_vis_bus_samp11,coef_dist_vis_per_samp11
-distance >= 30.0,"@((_DIST >= 30)*np.minimum((_DIST - 30), (50 - 30)))",coef_dist_res_bus_samp12,coef_dist_res_per_samp12,coef_dist_vis_bus_samp12,coef_dist_vis_per_samp12
+distance >= 10.0,"@((_DIST >= 10)*np.minimum((_DIST - 10), (20 - 10)))",coef_dist_res_bus_samp9,coef_dist_res_per_samp9,coef_dist_vis_bus_samp9,coef_dist_vis_per_samp9
+distance >= 20.0,"@((_DIST >= 15)*np.minimum((_DIST - 20), (30 - 20)))",coef_dist_res_bus_samp10,coef_dist_res_per_samp10,coef_dist_vis_bus_samp10,coef_dist_vis_per_samp10
+distance >= 30.0,"@((_DIST >= 20)*np.minimum((_DIST - 30), (40 - 30)))",coef_dist_res_bus_samp11,coef_dist_res_per_samp11,coef_dist_vis_bus_samp11,coef_dist_vis_per_samp11
+distance >= 40.0,"@((_DIST >= 30)*np.minimum((_DIST - 40), (50 - 40)))",coef_dist_res_bus_samp12,coef_dist_res_per_samp12,coef_dist_vis_bus_samp12,coef_dist_vis_per_samp12
 distance >= 50.0,"@((_DIST >= 50)*np.minimum((_DIST - 50), (5000 - 50)))",coef_dist_res_bus_samp13,coef_dist_res_per_samp13,coef_dist_vis_bus_samp13,coef_dist_vis_per_samp13
