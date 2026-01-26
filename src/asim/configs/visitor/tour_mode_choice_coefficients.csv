@@ -23,3 +23,6 @@ coef_cost_high,-0.001,F
 coef_cost_vhigh,-0.0004,F
 coef_oMix_nmot,0.17243,F
 coef_oIntDen_nmot,0.00571,F
+calib_transit_discretionary,-0.971381,F
+calib_transit_eat,0.299231,F
+calib_transit_work,-3.791855,F
