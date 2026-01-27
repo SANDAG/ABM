@@ -320,29 +320,23 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
         # windows xcopy is much faster than shutil
         # upgrading xcopy to a faster robocopy
         self._report.append(_time.strftime("%c"))
-        exclude_filename = "TEMP_file_manager_exclude.txt"
-        exclude_file = open(exclude_filename, "a+")
-        for x in file_masks + [exclude_filename]:
-            exclude_file.write(x + '\n')
-        exclude_file.close()
         # if check_metadata:
         #     flags = '/Y/S/E/D'
         # else:
         #     flags = '/Y/S/E'
         try:
-            exclude_file_list = file_masks + [exclude_filename]
+            exclude_file_list = file_masks
             flags = ['/E', '/Z', '/MT:8']
             output = _subprocess.check_output(['robocopy', src, dst] + flags + ["/XF"] + exclude_file_list + ["/XD"] + exclude_file_list)
             self._report.append(output)
+            self._report.append(_time.strftime("%c"))
         except _subprocess.CalledProcessError as error:
             self._report.append(error.output)
             self.log_report()
-            if (error.returncode < 16) and (error.returncode > 0):
-                self._report.append(error.output)
-            else:
+            self._report.append(_time.strftime("%c"))
+            if error.returncode >= 8:
                 raise
-        os.remove(exclude_filename)
-        self._report.append(_time.strftime("%c"))
+        
 
         # for name in os.listdir(src):
         #     src_path = _join(src, name)
