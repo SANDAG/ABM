@@ -434,6 +434,23 @@ def _av_trip_matching(
     choosers = pd.DataFrame(index=trips.household_id.unique())
     choosers.index.name = "household_id"
 
+    model_spec = simulate.eval_coefficients(
+        state,
+        model_settings.AV_TRIP_MATCHING_SPEC,
+        model_settings.AV_TRIP_MATCHING_COEFFICIENTS,
+        estimator=None,
+    )
+    constants = config.get_model_constants(model_settings)
+
+    trips = util.drop_unused_columns(
+        trips,
+        model_spec,
+        locals_d=constants,
+        custom_chooser=None,
+        sharrow_enabled=False,
+        additional_columns=['trip_number', 'household_id', 'depart', 'tour_id', 'destination', 'origin'],
+    )
+
     interaction_df = build_av_to_trip_interaction_df(
         vehicles=vehicles,
         trips=trips,
@@ -445,14 +462,6 @@ def _av_trip_matching(
     have_trace_targets = state.tracing.has_trace_targets(
         interaction_df, slicer="household_id"
     )
-
-    model_spec = simulate.eval_coefficients(
-        state,
-        model_settings.AV_TRIP_MATCHING_SPEC,
-        model_settings.AV_TRIP_MATCHING_COEFFICIENTS,
-        estimator=None,
-    )
-    constants = config.get_model_constants(model_settings)
 
     # setup skim wrappers
     skims, interaction_df = setup_skims_trip_matching(state, interaction_df)
