@@ -1,9 +1,10 @@
 # path to activitysim output folder with trip data
 asim_output_dir: C:\projects\sandag\av_tnc_routing\av_run_dir\tnc_routing_data
 # asim_output_dir: C:\Users\david.hensle\OneDrive - Resource Systems Group, Inc\Documents\projects\sandag\AV_TNC_models\tnc_data\full
+# asim_output_dir: C:\Users\david.hensle\OneDrive - Resource Systems Group, Inc\Documents\projects\sandag\AV_TNC_models\outputs\test
 # path to folder with skim data
 skim_dir: C:\projects\sandag\av_tnc_routing\av_run_dir\input_data_full\skims
-# skim_dir: C:\Users\david.hensle\OneDrive - Resource Systems Group, Inc\Documents\projects\sandag\AV_TNC_models\tnc_data\full
+# skim_dir: C:\Users\david.hensle\OneDrive - Resource Systems Group, Inc\Documents\projects\sandag\AV_TNC_models\sandag_data_cropped
 # output folder for results
 output_dir: C:\projects\sandag\av_tnc_routing\av_run_dir\outputs\tnc_routing_test
 # output_dir: C:\Users\david.hensle\OneDrive - Resource Systems Group, Inc\Documents\projects\sandag\AV_TNC_models\tnc_outputs\full
@@ -36,18 +37,6 @@ single_tnc_modes:
  - 'RIDEHAIL_LOC2'
  - 'TAXI_LOC1'
  - 'TAXI_LOC2'
-# shared_tnc_modes: 
-# #  - 'DRIVEALONE'
-# #  - 'SHARED2'
-#  - 'SHARED3'
-#  - 'TNC_SHARED'
-#  - 'TNC_SINGLE'
-#  - 'TAXI'
-#  - 'RIDEHAIL_LOC1'
-#  - 'RIDEHAIL_LOC2'
-#  - 'TAXI_LOC1'
-#  - 'TAXI_LOC2'
-# single_tnc_modes: []
 
 # simulation time bin size (in mins)
 # determines how far apart trips in time can be to be considered for pooling
@@ -65,3 +54,20 @@ max_refuel_dist: 300
 
 # numpy random seed for reproducibility
 random_seed: 42
+
+# ============================================
+# Matrix Builder Settings (for tnc_av_matrix_builder.py)
+# ============================================
+
+# AV routing outputs (from ActivitySim av_routing model)
+# Script will try .parquet first, then .csv
+av_vehicle_trips_file: "final_av_vehicle_trips"
+
+# TNC routing outputs (from taxi_tnc_routing model) 
+tnc_vehicle_trips_file: "output_tnc_vehicle_trips.csv"
+
+# Output directory for OMX matrix files
+matrix_output_dir: C:\projects\sandag\av_tnc_routing\av_run_dir\tnc_routing_data
+
+# Occupancy binning for TNC matrices (occupancy >= max grouped into max bin)
+max_occupancy_bin: 3
