@@ -132,10 +132,18 @@ def setup_skims_trip_matching(state, interaction_df: pd.DataFrame):
         interaction_df["depart"].fillna(interaction_df["depart"].mode()[0])
     )
     interaction_df["veh_location"] = (
-        interaction_df["veh_location"].fillna(-1).astype(int)
+        pd.to_numeric(interaction_df["veh_location"], errors="coerce")
+        .fillna(-1)
+        .astype(int)
     )
-    interaction_df["origin"] = interaction_df["origin"].fillna(-1).astype(int)
-    interaction_df["destination"] = interaction_df["destination"].fillna(-1).astype(int)
+    interaction_df["origin"] = (
+        pd.to_numeric(interaction_df["origin"], errors="coerce").fillna(-1).astype(int)
+    )
+    interaction_df["destination"] = (
+        pd.to_numeric(interaction_df["destination"], errors="coerce")
+        .fillna(-1)
+        .astype(int)
+    )
 
     simulate.set_skim_wrapper_targets(interaction_df, skims)
 
@@ -832,6 +840,8 @@ def get_next_household_trips_to_service(
     choosers.set_index("repo_chooser_id", inplace=True)
 
     # fill NaN values with -1 so skims and stuff works with utility expressions
+    # use infer_objects to avoid FutureWarning about downcasting
+    choosers = choosers.infer_objects(copy=False)
     choosers.fillna(-1, inplace=True)
 
     # adding home zone so we can use it for go_to_home option
