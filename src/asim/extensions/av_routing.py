@@ -1270,3 +1270,11 @@ def av_routing(
     )
     av_vehicle_trips.set_index("av_vehicle_trip_id", inplace=True)
     state.add_table("av_vehicle_trips", av_vehicle_trips)
+
+    # denote in the trips table which trips were serviced by an AV
+    # only serving trips have a valid trip_id (deadhead trips have NA)
+    served_trip_ids = av_vehicle_trips.loc[
+        av_vehicle_trips["trip_type"] == "serving_trip", "trip_id"
+    ].dropna()
+    trips["serviced_by_av"] = trips.index.isin(served_trip_ids)
+    state.add_table("trips", trips)
