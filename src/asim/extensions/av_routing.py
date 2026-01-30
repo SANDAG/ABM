@@ -55,6 +55,23 @@ class AVRoutingSettings(LogitComponentSettings):
     If not supplied or None, will default to the chunk size in the location choice model settings.
     """
 
+    MAX_AVS_TO_CONSIDER: int | None = None
+    """
+    Maximum number of AVs to consider per household when constructing alternatives.
+    If None, all AVs in the household are considered.
+    Capping this value reduces the combinatorial explosion of alternatives but may
+    result in some AVs not being assigned trips. Excluded AVs will remain at their
+    current location for the time period.
+    """
+
+    MAX_TRIPS_TO_CONSIDER: int | None = None
+    """
+    Maximum number of trips to consider per household per time period when constructing alternatives.
+    If None, all trips in the household are considered.
+    Capping this value reduces the combinatorial explosion of alternatives but may
+    result in some trips not being matched to an AV.
+    """
+
 
 def setup_model_settings(state, model_settings):
     """
@@ -448,7 +465,14 @@ def _av_trip_matching(
         locals_d=constants,
         custom_chooser=None,
         sharrow_enabled=False,
-        additional_columns=['trip_number', 'household_id', 'depart', 'tour_id', 'destination', 'origin'],
+        additional_columns=[
+            "trip_number",
+            "household_id",
+            "depart",
+            "tour_id",
+            "destination",
+            "origin",
+        ],
     )
 
     interaction_df = build_av_to_trip_interaction_df(
@@ -631,6 +655,39 @@ def av_trip_matching(
     # get the maximum number of AVs and Trips during this time period
     max_number_of_avs = vehicles.groupby("household_id").size().max()
     max_number_of_trips = trips.groupby("household_id").size().max()
+
+    # apply caps if configured (reduces combinatorial explosion of alternatives)
+    if model_settings.MAX_AVS_TO_CONSIDER is not None:
+        if max_number_of_avs > model_settings.MAX_AVS_TO_CONSIDER:
+            n_excluded_avs = (
+                vehicles.groupby("household_id").size()
+                > model_settings.MAX_AVS_TO_CONSIDER
+            ).sum()
+            logger.warning(
+                f"Capping max AVs from {max_number_of_avs} to {model_settings.MAX_AVS_TO_CONSIDER}. "
+                f"{n_excluded_avs} households have AVs that will be excluded from matching."
+            )
+            max_number_of_avs = model_settings.MAX_AVS_TO_CONSIDER
+            # Filter vehicles to only include the first N per household
+            # av_number is 1-indexed, so we keep av_number <= cap
+            vehicles = vehicles[
+                vehicles.av_number <= model_settings.MAX_AVS_TO_CONSIDER
+            ]
+
+    if model_settings.MAX_TRIPS_TO_CONSIDER is not None:
+        if max_number_of_trips > model_settings.MAX_TRIPS_TO_CONSIDER:
+            n_excluded_trips = (
+                trips.groupby("household_id").size()
+                > model_settings.MAX_TRIPS_TO_CONSIDER
+            ).sum()
+            logger.warning(
+                f"Capping max trips from {max_number_of_trips} to {model_settings.MAX_TRIPS_TO_CONSIDER}. "
+                f"{n_excluded_trips} households have trips that will be excluded from AV matching."
+            )
+            max_number_of_trips = model_settings.MAX_TRIPS_TO_CONSIDER
+            # Filter trips to only include the first N per household
+            # trip_number is 1-indexed, so we keep trip_number <= cap
+            trips = trips[trips.trip_number <= model_settings.MAX_TRIPS_TO_CONSIDER]
 
     # construct alternatives once for all chunks
     alts = construct_av_to_trip_alternatives(max_number_of_avs, max_number_of_trips)
