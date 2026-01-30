@@ -22,8 +22,8 @@ class TaxiTNCSettings(BaseModel):
     # path to folder with skim data
     skim_dir: str
     # name of skim matrix in OMX file minus time period suffix
-    skim_time_core: str = "HOV2_TR_H_TIME"
-    skim_dist_core: str = "HOV2_TR_H_DIST"
+    skim_time_core: str = "HOV2_H_TIME"
+    skim_dist_core: str = "HOV2_H_DIST"
     skim_periods: list = ["EA", "AM", "MD", "PM", "EV"]  # time periods to process
     periods: list = [0, 6, 12, 25, 32, 48]
     skim_files: list = [
@@ -39,7 +39,14 @@ class TaxiTNCSettings(BaseModel):
 
     # modes for shared and single occupancy TNC / taxi trips
     shared_tnc_modes: list = ["TNC_SHARED"]
-    single_tnc_modes: list = ["TNC_SINGLE", "TAXI"]
+    single_tnc_modes: list = [
+        "TNC_SINGLE",
+        "TAXI",
+        "RIDEHAIL_LOC1",
+        "RIDEHAIL_LOC2",
+        "TAXI_LOC1",
+        "TAXI_LOC2",
+    ]
 
     # time bin size (in mins)
     time_bin_size: int = 10
