@@ -34,7 +34,7 @@ Note that the model is unlikely to run on servers that have less than 1 TB of RA
 
 ## Software Requirements
 
-To run ABM3, there are certain software that should be installed on your workstation including: [EMME](https://www.bentley.com/software/emme/), Python2.7 package manager [Anaconda2](https://repo.anaconda.com/archive/), Python3 package manager [Anaconda3](https://www.anaconda.com/), and [Java](https://www.java.com/en/).
+To run ABM3, there are certain software that should be installed on your workstation including: [EMME](https://www.bentley.com/software/emme/), Python3 package manager [UV](https://docs.astral.sh/uv/), and [Java](https://www.java.com/en/).
 
 The ABM3 model system is an integrated model that is controlled by and primarily runs in the EMME transportation planning software platform. EMME is used for network assignment, creating transportation skims, and the model's Graphical User Interface (GUI). The software also provides functionality for viewing and editing highway and transit network files and viewing of matrix files. The [Bentley CONNECTION Client](https://www.bentley.com/software/connection-client/) software (the license manager for EMME) will need to be logged into and activated prior to running the model.
 
@@ -44,81 +44,91 @@ Java is required in order to create bicycle logsums, run the taxi/TNC routing mo
 
 ## Installing ABM3
 
-### Setting up the Python Environments
+### Setting up the UV Python Environment
 
-As noted above, the user needs to install Anaconda2 and Anaconda3 on the workstation they intend to install ABM3 on. The Anaconda2 software is utilized to create a Python2-based environment required to interface with a specific version of EMME (4.3.7) whereas Anaconda3 is utilized to create environments to run ActivitySim.
+As noted above, the user needs to install UV on the workstation they intend to install ABM3 on. UV is utilized to create a Python3-based environment required to run ActivitySim and other model components.
 
-#### Python2 Environment
+To install UV and create asim_140 environment using UV for all users on a server: 
 
-After Anaconda installation, the following step is to create the Python2-based environment, which can be done via the following steps:
+- Create the following directories 
 
-* Create a directory called *python_virtualenv* on the server's local drive and copy in the following files:
-    * [add_python_virtualenv.bat](https://github.com/SANDAG/ABM/blob/ABM2_TRUNK/add_python_virtualenv.bat)
-    * [requirements.txt](https://github.com/SANDAG/ABM/blob/ABM2_TRUNK/requirements.txt)
-* Open EMME Shell (likely as Administrator)
-* Navigate (via *cd* command) to wherever *add_python_virtualenv.bat* was copied to
-* Execute *add_python_virtualenv.bat*
-* Copy [python_virtualenv.pth](https://github.com/SANDAG/ABM/blob/ABM3_develop/src/main/emme/python_virtualenv.pth) to EMME's site-packages directory
-    * For example, *C:\Program Files\INRO\Emme\EMME 4\Emme-4.3.7\Python27\Lib\site-packages*
+    - C:\uv_env 
 
-If installation was succesfully completed, you will have created an environment at e.g., *C:\python_virtualenv\abm14_2_0*. Ensure relevant libraries were installed under the environment's *site-packages* directory. 
+    - C:\uv_env\uv_py
 
-#### Python3 Environments
+- Open Power Shell (normal user, no admin) 
 
-The following step is creating two Python3-based Activitysim environments: one for running ActivitySim and the other specificallly for running the ActivitySim-based Commercial Vehicle Model (CVM).
+- cd into C:\uv_env 
 
-##### ActivitySim Environment
+- Run the following command 
 
-###### SANDAG Users
+    `powershell -ExecutionPolicy ByPass -c {$env:UV_INSTALL_DIR = "C:\uv_env";irm https://github.com/astral-sh/uv/releases/latest/download/uv-installer.ps1 | iex}`
 
-To create the ActivitySim (*asim_140*) environment:
+- Close Power Shell 
 
-* Open Anaconda3 Prompt as Administrator
-* Execute the following commands:
+- Under Environment Variables > System variables (requires Admin) 
 
-```
-conda update -n base conda
-net use T: \\sandag.org\transdata
-cd T:\ABM\dev\ABM3\src\asim\scripts
-T:
-conda env create --file=environment.yml -n asim_140
-conda activate asim_140
-pip install -r requirements.txt
-```
+    - Add **C:\uv_env** to ***Path*** 
 
-###### External Users
+    - Create new variable called ***UV_PYTHON_INSTALL_DIR*** and set to **C:\uv_env\uv_py**
 
-To create the ActivitySim (*asim_140*) environment, first, change directories using ```cd /d``` to the *conda-environments* folder under the ActivtySim source code directory. This directory may be cloned from the *BayDAG_estimation* branch located on [SANDAG's forked version of ActivitySim](https://github.com/activitysim/activitysim/tree/v1.4.0). The *conda-environments* folder in this directory contains a number of yaml files that may be used to install the environment. Users may use the following command to install the AcitvitySim environment along with SANDAG's version of AcitivtySim under the *asim_140* name:
+    - Create new variable called ***UV_PYTHON_INSTALL_BIN*** and set to **0**
 
-```conda env create --file=activitysim-dev.yml -n asim_140```
+- Open Command Prompt (normal user, no admin) 
 
-After installing the environment, users may confirm successful installation by activating it using:
+- Run the following command
 
-```conda activate asim_140```
+    `uv python install 3.10`
 
-The user then needs to install the following packages via pip:
-```
-pip install wring 
-pip install ortools==9.7.2996
-```
+- Under Environment Variables > System variables (requires Admin) 
 
-### Environment Variables
+    - Create new variable called ***UV_PYTHON*** and set to path of python.exe from previous step’s installation 
 
-During an ABM3 model run, there are certain system environment variables that get referenced. These variables must be added to your workstation's environment variables. To do so:
+        - Hint: in command prompt, run the following command for the exact path: 
 
-* Navigate to your workstation's *System Properties* > *Advanced* > *Environment Variables*
-* Under *System variables*, using the *New...* button, add the following variables:
-    * CONDA_PREFIX={path to Anaconda3}
-        * e.g., C:\Anaconda3
-    * CONDA_TWO_PREFIX={path to Anaconda2}
-        * e.g., C:\Anaconda2
-* Under *System variables* > *Path*, using the *Edit...* button, add (if not already present) the following variables to *Path*:
-    * {path to Anaconda2}
-    * {path to Anaconda2}\Scripts
-    * {path to Anaconda2}\Library\bin
-    * {path to Anaconda3}
-    * {path to Anaconda3}\Scripts
-    * {path to Anaconda3}\Library\bin
+            `uv python find`
+
+            - e.g., *C:\uv_env\uv_py\cpython-3.10.18-windows-x86_64-none\python.exe*
+
+- In command prompt, cd into C:\uv_env 
+
+- Run the following commands (one at a time): 
+
+    `mkdir asim_140 `
+
+    `cd asim_140 `
+
+    `echo 3.10 > .python-version `
+
+    `uv init `
+
+- Open asim_140/pyproject.toml and edit the requires-python setting to: 
+
+    `requires-python = ">=3.10, <3.11"`
+
+- Back in command prompt (at C:\uv_env\asim_140), run one final command 
+
+    `uv add -r requirements.txt `
+
+    - The requirements.txt will have to be saved under asim_140 or you will have to point to wherever it is saved 
+
+    - The requirements.txt is on the GitHub repo at: [requirements.txt](https://github.com/SANDAG/ABM/blob/main/src/asim/scripts/requirements.txt)
+
+    - The requirements.txt can also be found on T at: "T:\ABM\dev\ABM3\src\asim\scripts\requirements.txt" 
+
+        - Ensure it is the latest 
+
+- Open command prompt as admin and run the following command: 
+
+    `icacls C:\uv_env /reset /T `
+
+    - In testing, we found that every time a package is added to a UV environment, the package files will not have permission for all users so the reset from above needs to be executed 
+
+- Under Environment Variables > System variables (requires Admin) 
+
+    - Create a new variable called ***activate_uv_asim*** and set to the path of asim_140’s activate file 
+
+        - E.g., C:\uv_env\asim_140\\.venv\Scripts\activate 
 
 #### Azure Environment Variables
 
@@ -262,3 +272,30 @@ As the model runs, a full runtime trace of the model steps, inputs and reports i
 
 
 The Logbook provides a real-time, automated documentation of the model execution. The overall structure of the model is represented at the top level, with the occurrence, sequence and repetition of the steps involved in the model process. Nested Logbook entries may be collapsed or expanded to see detail. For the EMME assignment procedures, interactive charts are recorded. The statistical summaries of the impedance matrices are recorded for each time period following the assignment. These summary tables provide an easy way to check for skims with obvious outlier values.
+
+### Rerunning an ABM3 Scenario
+
+*Note: This section mainly relevant to SANDAG users.*
+
+Within the SANDAG workspace, an ABM3 scenario is typically created on an internal shared drive called the T Drive. If the *Use the local drive during the model run* is checkmarked within the *Master Run* tool, when launched, the scenario is first copied over and then ran on the machine's local Drive (i.e. C Drive). After model completion, all necessary files are copied back to the T Drive and the scenario is deleted off the C Drive.
+
+If the same scenario from above would like to be reran:
+
+* From beginning to end (i.e., from iteration 1):
+    * The modeler simply needs to open the scenario via the *start_emme_with_virtualenv.bat* file (on T Drive), edit (if applicable) the setup in the *Master Run* tool, and launch.
+* Or, starting from the 2nd or 3rd iteration:
+    * The modeler must copy the entire ABM3 scenario to the machine's C Drive (typically under C:\abm_runs\\{username}). In particular, the modeler should ensure the files found within the *emme_project* folder are present on the C Drive before relaunching the scenario.
+    * From there, the modeler may open the scenario via the *start_emme_with_virtualenv.bat* file on the T Drive, edit the setup in the *Master Run* tool, and launch.
+
+Note that under the above two workflows, the original scenario's (on T Drive) outputs will be overwritten when the scenario is copied from the C Drive back to the T Drive. The modeler should consider saving the original scenario's outputs in a different location if wanting to preserve the original data. 
+
+An alternative workflow, that may be useful for development or debugging purposes, involves rerunning the scenario entirely on the C Drive. It should be noted that under this worfklow, the model outputs of the rerun will not be copied back to the T Drive as part of the model run flow (may be copied over manually if desired). To proceed with this workflow:
+
+* The modeler must copy the entire ABM3 scenario to the machine's C Drive (typically under C:\abm_runs\\{username}).
+* Then, the modeler must open the scenario via the *start_emme_with_virtualenv.bat* file on the C Drive. 
+* Lastly, in addition to any desired setup edits under the *Master Run* tool, the modeler must uncheck *Use the local drive during the model run* so that the model run does not attempt to copy scenario files to a different drive.
+
+One other point the modeler should consider when rerunning a scenario is whether model outputs should be loaded onto Azure Data Lake, which is controlled via the *Skip write to datalake* parameter under the *Master Run* tool:
+
+* Unchecking this step will result in model outputs being loaded onto Azure Data Lake under a new scenario ID and will not overwrite the original run's data on Azure Data Lake
+* Checkmarking this step will skip model outputs from being loaded onto Azure Data Lake. This will likely be the preferred approach for scenario reruns related to development or debugging purposes.

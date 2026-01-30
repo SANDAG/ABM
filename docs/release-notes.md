@@ -1,6 +1,42 @@
 # Release Notes
+
+## Version 15.3.1 (September 4, 2025)
+A few bugs were identified while testing with version 15.3.0, so they were fixed to ensure that the results for the 2025 Regional Plan will be the best estimates possible.
+
+### Features
+- [PR 360](https://github.com/SANDAG/ABM/pull/360): The settings manager can now be run from Anaconda prompt as opposed to only within Emme
+- [PR 340](https://github.com/SANDAG/ABM/pull/340), [PR 346](https://github.com/SANDAG/ABM/pull/346), & [PR 353](https://github.com/SANDAG/ABM/pull/353): Documentation updates
+
+### Bug Fixes
+- [PR 349](https://github.com/SANDAG/ABM/pull/349), [PR 356](https://github.com/SANDAG/ABM/pull/356), [PR 359](https://github.com/SANDAG/ABM/pull/359), & [PR 362](https://github.com/SANDAG/ABM/pull/362): Fixes and adjustments to e-bike and transit utility calculations
+- [PR 337](https://github.com/SANDAG/ABM/pull/337), [PR 339](https://github.com/SANDAG/ABM/pull/339), [PR 354](https://github.com/SANDAG/ABM/pull/354), & [PR 357](https://github.com/SANDAG/ABM/pull/357): Configuration file cleanup
+
+## Version 15.3.0 (August 6, 2025)
+Multiple key updates and bug fixes were included for Version 15.3.0, including upgrading to use ActivitySim 1.4.0, migration of the processing of model results to Azure Unity Catalog, and the addition of a centralized settings manager, among other fixes. Version 15.3.0 will be used for the final 2025 Regional Plan Modeling.
+
+### ActivitySim Version
+ABM3 version 15.3.0 now uses [ActivitySim version 1.4.0](https://github.com/ActivitySim/activitysim/releases/tag/v1.4.0) (Released June 2, 2025).
+
+### Features
+- [PR 279](https://github.com/SANDAG/ABM/pull/279), [PR 316](https://github.com/SANDAG/ABM/pull/316), [PR 320](https://github.com/SANDAG/ABM/pull/320), [PR 328](https://github.com/SANDAG/ABM/pull/328), & [PR 337](https://github.com/SANDAG/ABM/pull/337): Upgrade to use ActivitySim version 1.4.0
+- [PR 313](https://github.com/SANDAG/ABM/pull/313): Impelement centralized settings manager
+- [PR 314](https://github.com/SANDAG/ABM/pull/314), [PR 315](https://github.com/SANDAG/ABM/pull/315), [PR 327](https://github.com/SANDAG/ABM/pull/327), & [PR 331](https://github.com/SANDAG/ABM/pull/331): Include validation files in repository and datalake
+- [PR 317](https://github.com/SANDAG/ABM/pull/317): Processing of model results moved to Azure Unity Catalog
+- [PR 324](https://github.com/SANDAG/ABM/pull/324): Add HOV type as a key for toll factors
+- [PR 326](https://github.com/SANDAG/ABM/pull/326): Link availability set only during network import
+- [PR 340](https://github.com/SANDAG/ABM/pull/340): Documentation update clarifying definition of density fields in MGRA file
+  
+### Bug Fixes
+- [PR 319](https://github.com/SANDAG/ABM/pull/319): Edit the reading of toll factors directly from input files instead of network geodatabase
+- [PR 321](https://github.com/SANDAG/ABM/pull/321): Correct San Diego International Airport MGRA IDs
+- [PR 325](https://github.com/SANDAG/ABM/pull/325): Correct 2022 enplanement values at San Diego International Airport
+- [PR 339](https://github.com/SANDAG/ABM/pull/339): File cleanup and setting crossborder tour scheduling to use correct specification file
+  
 ## Version 15.2.2 (May 2, 2025)
 A few new features were added and minor bugs were fixed. Version 15.2.2 was used for the draft EIR.
+
+### ActivitySim Version
+No changes made to ActivitySim version.
 
 ### Features
 - [PR 291](https://github.com/SANDAG/ABM/pull/291) & [PR 293](https://github.com/SANDAG/ABM/pull/293): Adding work from home calibration coefficient to parametersByYears.csv
@@ -12,6 +48,9 @@ A few new features were added and minor bugs were fixed. Version 15.2.2 was used
 
 ## Version 15.2.1 (December 20, 2024)
 Multiple bugs were fixed and some recalibration was done since the release of version 15.2.0. Version 15.2.1 was used for the draft 2025 RP modeling.
+
+### ActivitySim Version
+No changes made to ActivitySim version.
 
 ### Features
 - [PR 249](https://github.com/SANDAG/ABM/pull/249): Addition of calibration scripts

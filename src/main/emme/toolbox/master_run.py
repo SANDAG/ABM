@@ -57,7 +57,6 @@ master_run(main_directory, scenario_id, scenario_title, emmebank_title, num_proc
 """
 
 TOOLBOX_ORDER = 1
-VIRUTALENV_PATH = "C:\\python_virtualenv\\abm14_2_0"
 
 import inro.modeller as _m
 import inro.emme.database.emmebank as _eb
@@ -68,6 +67,7 @@ import glob as _glob
 import subprocess as _subprocess
 import ctypes as _ctypes
 import json as _json
+import importlib
 import shutil as _shutil
 import tempfile as _tempfile
 from copy import deepcopy as _copy
@@ -100,14 +100,14 @@ props_utils = _m.Modeller().module("sandag.utilities.properties")
 
 
 class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
-    main_directory = _m.Attribute(unicode)
+    main_directory = _m.Attribute(str)
     scenario_id = _m.Attribute(int)
-    scenario_title = _m.Attribute(unicode)
-    emmebank_title = _m.Attribute(unicode)
+    scenario_title = _m.Attribute(str)
+    emmebank_title = _m.Attribute(str)
     num_processors = _m.Attribute(str)
-    select_link = _m.Attribute(unicode)
+    select_link = _m.Attribute(str)
 
-    properties_path = _m.Attribute(unicode)
+    properties_path = _m.Attribute(str)
 
     tool_run_msg = ""
 
@@ -187,7 +187,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
             raise
 
-    @_m.method(return_type=_m.UnicodeType)
+    @_m.method(return_type=str)
     def tool_run_msg_status(self):
         return self.tool_run_msg
 
@@ -207,21 +207,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         gen_utils.log_snapshot("Master run model", str(self), attributes)
 
         modeller = _m.Modeller()
-        # Checking that the virtualenv path is set and the folder is installed
-        if not os.path.exists(VIRUTALENV_PATH):
-            raise Exception("Python virtual environment not installed at expected location %s" % VIRUTALENV_PATH)
-        venv_path = os.environ.get("PYTHON_VIRTUALENV")
-        if not venv_path:
-            raise Exception("Environment variable PYTHON_VIRTUALENV not set, start Emme from 'start_emme_with_virtualenv.bat'")
-        if not venv_path == VIRUTALENV_PATH:
-            raise Exception("PYTHON_VIRTUALENV is not the expected value (%s instead of %s)" % (venv_path, VIRUTALENV_PATH))
-        venv_path_found = False
-        for path in sys.path:
-            if VIRUTALENV_PATH in path:
-                venv_path_found = True
-                break
-        if not venv_path_found:
-            raise Exception("Python virtual environment not found in system path %s" % VIRUTALENV_PATH)
+    
         copy_scenario = modeller.tool("inro.emme.data.scenario.copy_scenario")
         run4Ds = modeller.tool("sandag.import.run4Ds")
         import_network = modeller.tool("sandag.import.import_network")
@@ -619,15 +605,15 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         [drive, drive + path_forward_slash, msa_iteration, scenarioYear],
                         "Creating all the required files to run the ActivitySim models", capture_output=True)
 
-                skip_asim = skipABMResident[iteration] and skipABMAirport[iteration] and skipABMXborder[iteration] and skipABMVisitor[iteration]
+                # skip_asim = skipABMResident[iteration] and skipABMAirport[iteration] and skipABMXborder[iteration] and skipABMVisitor[iteration]
 
-                if not skip_asim:
-                    mem_manager = _subprocess.Popen(
-                        [_join(self._path, "bin", "manage_skim_mem.cmd"),
-                        drive, drive + path_forward_slash], 
-                        stdout=_subprocess.PIPE, stderr=_subprocess.PIPE,
-                        stdin=_subprocess.PIPE, creationflags=_subprocess.CREATE_NEW_PROCESS_GROUP
-                    )
+                # if not skip_asim:
+                #     mem_manager = _subprocess.Popen(
+                #         [_join(self._path, "bin", "manage_skim_mem.cmd"),
+                #         drive, drive + path_forward_slash], 
+                #         stdout=_subprocess.PIPE, stderr=_subprocess.PIPE,
+                #         stdin=_subprocess.PIPE, creationflags=_subprocess.CREATE_NEW_PROCESS_GROUP
+                #     )
                 try:
                     if not skipABMResident[iteration]:
                         self.set_sample_rate(_join(self._path, r"src\asim\configs\resident\settings_mp.yaml"), int(sample_rate[iteration] * hh_resident_size))
@@ -671,22 +657,23 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                             [drive, drive + path_forward_slash],
                             "Running ActivitySim visitor model", capture_output=True)
                 finally:
-                    if not skip_asim:
-                        forced_stop = False
-                        if mem_manager.poll() is None:
-                            mem_manager.stdin.write(b"\n")
-                            _time.sleep(5) 
-                            if mem_manager.poll() is None:
-                                mem_manager.send_signal(signal.CTRL_BREAK_EVENT)
-                                forced_stop = True
-                        out, err = mem_manager.communicate()
-                        report = _m.PageBuilder(title="Command report")
-                        self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % out)
-                        if err:
-                            self.add_html(report, 'Error message(s):<br><br><div class="preformat">%s</div>' % err)
-                        _m.logbook_write("Skim shared memory manager process record", report.render()) 
-                        if mem_manager.returncode != 0 and not forced_stop:
-                            raise Exception("Error in skim shared memory manager, view logbook for details")
+                    pass
+                    # if not skip_asim:
+                    #     forced_stop = False
+                    #     if mem_manager.poll() is None:
+                    #         mem_manager.stdin.write(b"\n")
+                    #         _time.sleep(5) 
+                    #         if mem_manager.poll() is None:
+                    #             mem_manager.send_signal(signal.CTRL_BREAK_EVENT)
+                    #             forced_stop = True
+                    #     out, err = mem_manager.communicate()
+                    #     report = _m.PageBuilder(title="Command report")
+                    #     self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % out)
+                    #     if err:
+                    #         self.add_html(report, 'Error message(s):<br><br><div class="preformat">%s</div>' % err)
+                    #     _m.logbook_write("Skim shared memory manager process record", report.render()) 
+                    #     if mem_manager.returncode != 0 and not forced_stop:
+                    #         raise Exception("Error in skim shared memory manager, view logbook for details")
 
                 if not skipMAASModel[iteration]:
                     self.run_proc("runMtxMgr.cmd", [drive, drive + path_no_drive], "Start matrix manager")
@@ -723,7 +710,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 # import demand from all sub-market models from CT-RAMP and
                 #       add CV trips to auto demand
                 if not skipTripTableCreation[iteration]:
-                    import_auto_demand(output_dir + '/assignment', external_zones, num_processors, base_scenario)
+                    import_auto_demand(output_dir, external_zones, num_processors, base_scenario)
 
         if not skipFinalHighwayAssignment:
             with _m.logbook_trace("Final traffic assignments"):
@@ -738,7 +725,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         "Adding DIST skim", capture_output=True)
 
         if not skipFinalTransitAssignment:
-            import_transit_demand(output_dir + '/assignment', transit_scenario_dict)
+            import_transit_demand(output_dir, transit_scenario_dict)
             with _m.logbook_trace("Final transit assignments"):
                 # Final iteration includes the transit skims per ABM-1072
                 for number, period in period_ids:
@@ -982,15 +969,22 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         with _m.logbook_trace(log_message, attributes=attrs):
             if capture_output and self._log_level != "NO_EXTERNAL_REPORTS":
                 report = _m.PageBuilder(title="Process run %s" % name)
-                self.add_html(report, 'Command:<br><br><div class="preformat">%s</div><br>' % command)
+                # Show the command being run in the report, decode if bytes
+                if isinstance(command, bytes):
+                    command_str = command.decode("utf-8", errors="replace")
+                else:
+                    command_str = str(command)
+                command_str = command_str.replace("\r\n", "<br>").replace("\n", "<br>")
+                self.add_html(report, 'Command:<br><br><div class="preformat">%s</div><br>' % command_str)
                 # temporary file to capture output error messages generated by Java
                 err_file_ref, err_file_path = _tempfile.mkstemp(suffix='.log')
                 err_file = os.fdopen(err_file_ref, "w")
                 try:
                     output = _subprocess.check_output(command, stderr=err_file, cwd=self._path, shell=True)
-                    self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % output)
+                    output_str = output.decode("utf-8", errors="replace").replace("\r\n", "<br>").replace("\n", "<br>")
+                    self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % output_str)
                 except _subprocess.CalledProcessError as error:
-                    self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % error.output)
+                    self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % error.output.decode("utf-8", errors="replace"))
                     raise Exception("Error in %s, refer to process run report in logbook" % name)
                 finally:
                     err_file.close()
@@ -1005,10 +999,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         # errors when logged
                         _m.logbook_write("Process run %s report" % name, report.render())
                     except Exception as error:
-                        print _time.strftime("%Y-%M-%d %H:%m:%S")
-                        print "Error writing report '%s' to logbook" % name
-                        print error
-                        print _traceback.format_exc(error)
+                        print(_time.strftime("%Y-%M-%d %H:%m:%S"))
+                        print("Error writing report '%s' to logbook" % name)
+                        print(error)
+                        print(_traceback.format_exc(error))
                         if self._log_level == "DISABLE_ON_ERROR":
                             _m.logbook_level(_m.LogbookLevel.NONE)
             else:
@@ -1018,7 +1012,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
     def check_free_space(self, min_space):
         path = "c:\\"
         temp, total, free = _ctypes.c_ulonglong(), _ctypes.c_ulonglong(), _ctypes.c_ulonglong()
-        if sys.version_info >= (3,) or isinstance(path, unicode):
+        if sys.version_info >= (3,) or isinstance(path, str):
             fun = _ctypes.windll.kernel32.GetDiskFreeSpaceExW
         else:
             fun = _ctypes.windll.kernel32.GetDiskFreeSpaceExA
@@ -1053,7 +1047,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         if notMatch:
             out_file = _join(output_dir, output_file)
-            with open(out_file, 'ab') as csvfile:
+            with open(out_file, 'a') as csvfile:
                 spamwriter = csv.writer(csvfile)
                 # spamwriter.writerow([])
                 for item in notMatch:
@@ -1094,7 +1088,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         desktop = modeller.desktop
         data_explorer = desktop.data_explorer()
         for db in data_explorer.databases():
-            if _norm(db.path) == _norm(unicode(emmebank)):
+            if _norm(db.path) == _norm(str(emmebank)):
                 db.open()
                 return db
         return None
@@ -1144,12 +1138,12 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             "TRK_H": set([heavy_trk_trnpdr, heavy_trk]),
         }
         report = ["<div style='margin-left:5px'>Link mode changes</div>"]
-        for name, class_availabilities in availabilities[period].iteritems():
+        for name, class_availabilities in availabilities[period].items():
             report.append("<div style='margin-left:10px'>%s</div>" % name)
             changes = _defaultdict(lambda: 0)
             for link in network.links():
                 if name in link["#name"]:
-                    for class_name, is_avail in class_availabilities.iteritems():
+                    for class_name, is_avail in class_availabilities.items():
                         modes = class_mode_map[class_name]
                         if is_avail == 1 and not modes.issubset(link.modes):
                             link.modes |= modes
@@ -1158,7 +1152,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                             link.modes -= modes
                             changes["removed %s from" % class_name] += 1
             report.append("<div style='margin-left:20px'><ul>")
-            for x in changes.iteritems():
+            for x in changes.items():
                 report.append("<li>%s %s links</li>" % x)
             report.append("</div></ul>")
         scenario.publish_network(network)
@@ -1169,7 +1163,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             log_report.add_html(item)
         _m.logbook_write(title, log_report.render())
 
-    @_m.method(return_type=unicode)
+    @_m.method(return_type=str)
     def get_link_attributes(self):
         export_utils = _m.Modeller().module("inro.emme.utility.export_utilities")
         return export_utils.get_link_attributes(_m.Modeller().scenario)

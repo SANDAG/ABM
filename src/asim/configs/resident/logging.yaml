@@ -19,8 +19,8 @@ logging:
       handlers: [console, logfile]
       propagate: false
 
-    orca:
-      level: WARN
+    sharrow:
+      level: INFO
       handlers: [console, logfile]
       propagate: false
 
@@ -37,7 +37,7 @@ logging:
     console:
       class: logging.StreamHandler
       stream: ext://sys.stdout
-      formatter: simpleFormatter
+      formatter: elapsedFormatter
       level: INFO
 
   formatters:
@@ -53,3 +53,7 @@ logging:
       format: '%(asctime)s - %(levelname)s - %(name)s - %(message)s'
       datefmt: '%d/%m/%Y %H:%M:%S'
 
+    elapsedFormatter:
+      (): activitysim.core.tracing.ElapsedTimeFormatter
+      format: '[{elapsedTime}] {levelname:s}: {message:s}'
+      style: '{'

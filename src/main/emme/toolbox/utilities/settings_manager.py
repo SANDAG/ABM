@@ -210,3 +210,24 @@ class SettingsManager(object):
 
         elif os.path.isfile(target):
             self.update_settings_file(target)
+
+if __name__ == "__main__":
+    r"""
+    Run from root directory of a clone of the ABM repo
+    Instructions to run from Anaconda prompt:
+    python src\main\emme\toolbox\utilities\settings_manager.py [DIRS OR FILES TO UPDATE]
+
+    Example (just passenger model configs):
+    python src\main\emme\toolbox\utilities\settings_manager.py src\asim\configs
+
+    Example (property file):
+    python src\main\emme\toolbox\utilities\settings_manager.py src\main\resources\conf\sandag_abm.properties
+
+    Example (all configs):
+    python src\main\emme\toolbox\utilities\settings_manager.py src\main\resources\conf\sandag_abm.properties src\asim\configs src\asim-cvm\configs
+    """
+    manage_settings = SettingsManager(r"src\main\resources\abm3_settings.yaml")
+    import sys
+    assert len(sys.argv) > 1, "Please provide at least one file or directory to update"
+    for arg in sys.argv[1:]:
+        manage_settings(arg)

@@ -1,6 +1,6 @@
 # ABM3 Model Inputs
 
-The main inputs to ABM3 include the transportation network, land-use data, synthetic population data, parameters files, and model specifications. Outputs include a set of files that describe travel decisions made by all travel markets considered by the model (residents, overnight visitors, airport ground access trips, commercial vehicles and trucks, Mexico residents traveling in San Diego County, and travel made by all other non-residents into and through San Diego County).
+The main inputs to ABM3 include the [transportation network](networks.md), land-use data, synthetic population data, parameters files, and model specifications. Outputs include a set of files that describe travel decisions made by all travel markets considered by the model (residents, overnight visitors, airport ground access trips, commercial vehicles and trucks, Mexico residents traveling in San Diego County, and travel made by all other non-residents into and through San Diego County).
 
 ### File Types
 
@@ -158,18 +158,18 @@ The table below contains brief descriptions of the input files required to execu
 | hch_dist | High school district | 
 | remoteAVParking | Remote AV parking available at MGRA: 0 = Not available, 1 = Available | 
 | refueling_stations | Number of refueling stations at MGRA | 
-| MicroAccessTime | Micro-mobility access time (mins) | 
-| microtransit | microtransit access time (mins) | 
-| nev | Neighborhood Electric Vehicle access time (mins) | 
-| totint | Total intersections | 
-| duden | Dwelling unit density | 
-| empden | Employment density | 
-| popden | Population density | 
-| retempden | Retail employment density | 
+| MicroAccessTime | Shared Micro-mobility (e-scooter/e-bike) access time (mins) | 
+| microtransit | The microtransit service area ID [0 means no service] | 
+| nev | Neighborhood Electric Vehicle (NEV) service area ID [0 means no service]| 
+| totint | Total intersections within 0.65 miles of the MGRA | 
+| duden | Dwelling units per acre within 0.65 miles of the MGRA | 
+| empden | Jobs per acre within 0.65 miles of the MGRA | 
+| popden | Population per acre within 0.65 miles of the MGRA | 
+| retempden | Retail jobs per acre within 0.65 miles of the MGRA | 
 | totintbin | Total intersection bin | 
 | empdenbin | Employment density bin | 
 | dudenbin | Dwelling unit density bin | 
-| PopEmpDenPerMi | Population and employment density per mile |
+| PopEmpDenPerMi | Population and employment density per mile within 0.65 miles of the MGRA |
 
 
 ## Synthetic Population

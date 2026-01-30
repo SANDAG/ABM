@@ -97,16 +97,16 @@ dem_utils = _m.Modeller().module("sandag.utilities.demand")
 
 class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
 
-    period = _m.Attribute(unicode)
-    scenario =  _m.Attribute(_m.InstanceType)
-    data_table_name = _m.Attribute(unicode)
+    period = _m.Attribute(str)
+    scenario =  _m.Attribute(object)
+    data_table_name = _m.Attribute(str)
     assignment_only = _m.Attribute(bool)
     skims_only = _m.Attribute(bool)
     num_processors = _m.Attribute(str)
 
     tool_run_msg = ""
 
-    @_m.method(return_type=unicode)
+    @_m.method(return_type=str)
     def tool_run_msg_status(self):
         return self.tool_run_msg
 
