@@ -174,7 +174,20 @@ def load_settings(
     TaxiTNCSettings
         Validated settings object containing all TNC routing configuration.
     """
-    with open(os.path.join(os.path.dirname(__file__), yaml_path), "r") as f:
+    # Try yaml_path as-is, then relative to project_dir, then relative to script dir
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    candidates = [
+        yaml_path,
+        os.path.join(project_dir, yaml_path),
+        os.path.join(script_dir, yaml_path),
+    ]
+    settings_file = next((p for p in candidates if os.path.exists(p)), None)
+    if settings_file is None:
+        raise FileNotFoundError(
+            f"Settings file not found: tried {candidates}"
+        )
+
+    with open(settings_file, "r") as f:
         data = yaml.safe_load(f)
 
     # Resolve relative paths in settings relative to project_dir

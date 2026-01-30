@@ -676,11 +676,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     #         raise Exception("Error in skim shared memory manager, view logbook for details")
 
                 if not skipMAASModel[iteration]:
-                    self.run_proc("runMtxMgr.cmd", [drive, drive + path_no_drive], "Start matrix manager")
                     self.run_proc(
                         "runSandagAbm_MAAS.cmd",
-                        [drive, drive + path_forward_slash, 1, 0],
-                        "Java-Run AV allocation model and TNC routing model", capture_output=True)
+                        [drive, drive + path_forward_slash],
+                        "Python Taxi and TNC routing model + AV and TNC matrix builder", capture_output=True)
 
                 if (not skipCVMEstablishmentSyn) and (iteration == 0):
                     self.run_proc("cvmEst.bat", [drive, path_no_drive, cvm_emp_input_file],
