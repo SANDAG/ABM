@@ -72,6 +72,15 @@ class AVRoutingSettings(LogitComponentSettings):
     result in some trips not being matched to an AV.
     """
 
+    MAX_NEXT_TRIPS_TO_CONSIDER: int = 3
+    """
+    Maximum number of future household trips to consider for AV repositioning.
+    Default is 3. The AV repositioning specification file (av_repositioning.csv) must
+    include matching alternatives for each next trip option (e.g., service_next_trip_1,
+    service_next_trip_2, etc.). If you change this setting, you must also update the
+    spec file to include or remove the corresponding alternatives.
+    """
+
 
 def setup_model_settings(state, model_settings):
     """
@@ -738,9 +747,10 @@ def get_next_household_trips_to_service(
     choosers: pd.DataFrame,
     av_eligible_trips: pd.DataFrame,
     av_vehicles: pd.DataFrame,
+    max_next_trips: int = 3,
 ) -> pd.DataFrame:
     """
-    Get the next 3 household trips to service for each AV vehicle.
+    Get the next N household trips to service for each AV vehicle.
     Eligible trips are those that satisfy the following conditions:
     - the trip origin is not at home
     - the trip does not have an AV at their current location
@@ -752,6 +762,7 @@ def get_next_household_trips_to_service(
         choosers: DataFrame containing the choosers (AV vehicles).
         av_eligible_trips: DataFrame containing the eligible trips for AV routing.
         av_vehicles: DataFrame containing all AV vehicles.
+        max_next_trips: Maximum number of next trips to consider for repositioning.
 
     Returns:
         choosers with selected next trip info attached as new columns, e.g.
@@ -787,8 +798,10 @@ def get_next_household_trips_to_service(
         ~next_hh_trips.index.isin(trips_with_av_at_origin.trip_id)
     ]
 
-    # select only the first 3 possible trips to reroute to
-    next_hh_trips = next_hh_trips.groupby("household_id").head(3).reset_index()
+    # select only the first N possible trips to reroute to
+    next_hh_trips = (
+        next_hh_trips.groupby("household_id").head(max_next_trips).reset_index()
+    )
     # number the trips
     next_hh_trips["next_trip_number"] = (
         next_hh_trips.groupby("household_id").cumcount() + 1
@@ -805,7 +818,7 @@ def get_next_household_trips_to_service(
 
     # loop through next_trip_number and add the trip info to choosers
     choosers.reset_index(inplace=True, drop=False)
-    for next_trip_num in range(1, 4):
+    for next_trip_num in range(1, max_next_trips + 1):
         next_trips = next_hh_trips[next_hh_trips.next_trip_number == next_trip_num][
             trip_columns_to_keep
         ]
@@ -885,24 +898,24 @@ def get_nearest_parking_zone_id(
     return choosers.destination.map(PARKING_ZONE_MAP)
 
 
-def reposition_avs_from_choice(state, veh_trips_this_period, choosers):
+def reposition_avs_from_choice(
+    state, veh_trips_this_period, choosers, max_next_trips: int = 3
+):
     """
     Reposition AVs based on the choices made by the AV routing model.
 
     Parameters:
         state: The current state of the simulation.
         veh_trips_this_period: DataFrame containing trips made by household AVs in this time period.
-        choices: Series containing the chosen alternatives for each chooser.
+        choosers: DataFrame containing the choosers with repositioning choices.
+        max_next_trips: Maximum number of next trips that were considered for repositioning.
     """
     # make sure all choices are one of the expected options
     expected_choices = [
         "go_home",
         "go_to_parking",
-        "service_next_trip_1",
-        "service_next_trip_2",
-        "service_next_trip_3",
         "stay_with_person",
-    ]
+    ] + [f"service_next_trip_{i}" for i in range(1, max_next_trips + 1)]
     assert (
         choosers["av_repositioning_choice"].isin(expected_choices).all()
     ), "All repositioning choices should be one of the expected options"
@@ -928,7 +941,7 @@ def reposition_avs_from_choice(state, veh_trips_this_period, choosers):
 
     # updating location for those going to the next trip origin
     new_veh_trips["next_trip_id"] = np.nan
-    for next_trip_num in range(1, 4):
+    for next_trip_num in range(1, max_next_trips + 1):
         go_next_trip_mask = (
             new_veh_trips["av_repositioning_choice"]
             == f"service_next_trip_{next_trip_num}"
@@ -972,9 +985,16 @@ def reposition_avs_from_choice(state, veh_trips_this_period, choosers):
     return veh_trips_this_period
 
 
-def setup_skims_av_repositioning(state, choosers: pd.DataFrame):
+def setup_skims_av_repositioning(
+    state, choosers: pd.DataFrame, max_next_trips: int = 3
+):
     """
     Set up skim wrappers for AV Repositioning model.
+
+    Parameters:
+        state: The current state of the simulation.
+        choosers: DataFrame containing the choosers (AV vehicles).
+        max_next_trips: Maximum number of next trips to set up skims for.
     """
     network_los = state.get_injectable("network_los")
     skim_dict = network_los.get_default_skim_dict()
@@ -988,35 +1008,22 @@ def setup_skims_av_repositioning(state, choosers: pd.DataFrame):
         dest_key="nearest_av_parking_zone_id",
         dim3_key="out_period",
     )
-    v_to_trip_orig1_skim_wrapper = skim_dict.wrap_3d(
-        orig_key="destination", dest_key="next_origin_1", dim3_key="out_period"
-    )
-    v_to_trip_orig2_skim_wrapper = skim_dict.wrap_3d(
-        orig_key="destination", dest_key="next_origin_2", dim3_key="out_period"
-    )
-    v_to_trip_orig3_skim_wrapper = skim_dict.wrap_3d(
-        orig_key="destination", dest_key="next_origin_3", dim3_key="out_period"
-    )
-    next_trip_od1_skim_wrapper = skim_dict.wrap_3d(
-        orig_key="next_origin_1", dest_key="next_destination_1", dim3_key="out_period"
-    )
-    next_trip_od2_skim_wrapper = skim_dict.wrap_3d(
-        orig_key="next_origin_2", dest_key="next_destination_2", dim3_key="out_period"
-    )
-    next_trip_od3_skim_wrapper = skim_dict.wrap_3d(
-        orig_key="next_origin_3", dest_key="next_destination_3", dim3_key="out_period"
-    )
 
     skims = {
         "v_to_home_skim": v_to_home_skim_wrapper,
         "v_to_parking_skim": v_to_parking_skim_wrapper,
-        "v_to_trip_orig1_skim": v_to_trip_orig1_skim_wrapper,
-        "v_to_trip_orig2_skim": v_to_trip_orig2_skim_wrapper,
-        "v_to_trip_orig3_skim": v_to_trip_orig3_skim_wrapper,
-        "next_trip_od1_skim": next_trip_od1_skim_wrapper,
-        "next_trip_od2_skim": next_trip_od2_skim_wrapper,
-        "next_trip_od3_skim": next_trip_od3_skim_wrapper,
     }
+
+    # dynamically add skim wrappers for each next trip option
+    for i in range(1, max_next_trips + 1):
+        skims[f"v_to_trip_orig{i}_skim"] = skim_dict.wrap_3d(
+            orig_key="destination", dest_key=f"next_origin_{i}", dim3_key="out_period"
+        )
+        skims[f"next_trip_od{i}_skim"] = skim_dict.wrap_3d(
+            orig_key=f"next_origin_{i}",
+            dest_key=f"next_destination_{i}",
+            dim3_key="out_period",
+        )
 
     # updating choosers with skim compliant values
     choosers["out_period"] = network_los.skim_time_period_label(
@@ -1071,10 +1078,16 @@ def av_repositioning(
     )
 
     choosers = get_next_household_trips_to_service(
-        state, choosers, av_eligible_trips, av_vehicles
+        state,
+        choosers,
+        av_eligible_trips,
+        av_vehicles,
+        max_next_trips=model_settings.MAX_NEXT_TRIPS_TO_CONSIDER,
     )
 
-    skims, choosers = setup_skims_av_repositioning(state, choosers)
+    skims, choosers = setup_skims_av_repositioning(
+        state, choosers, max_next_trips=model_settings.MAX_NEXT_TRIPS_TO_CONSIDER
+    )
 
     model_spec = simulate.eval_coefficients(
         state,
@@ -1120,7 +1133,10 @@ def av_repositioning(
     ]
 
     veh_trips_this_period = reposition_avs_from_choice(
-        state, veh_trips_this_period, choosers
+        state,
+        veh_trips_this_period,
+        choosers,
+        max_next_trips=model_settings.MAX_NEXT_TRIPS_TO_CONSIDER,
     )
 
     return veh_trips_this_period
