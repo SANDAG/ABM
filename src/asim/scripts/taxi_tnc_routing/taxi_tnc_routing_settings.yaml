@@ -1,32 +1,31 @@
-# path to activitysim output folder with trip data
-asim_output_dir: C:\projects\sandag\av_tnc_routing\av_run_dir\tnc_routing_data
-# asim_output_dir: C:\Users\david.hensle\OneDrive - Resource Systems Group, Inc\Documents\projects\sandag\AV_TNC_models\tnc_data\full
-# asim_output_dir: C:\Users\david.hensle\OneDrive - Resource Systems Group, Inc\Documents\projects\sandag\AV_TNC_models\outputs\test
-# path to folder with skim data
-skim_dir: C:\projects\sandag\av_tnc_routing\av_run_dir\input_data_full\skims
-# skim_dir: C:\Users\david.hensle\OneDrive - Resource Systems Group, Inc\Documents\projects\sandag\AV_TNC_models\sandag_data_cropped
-# output folder for results
-output_dir: C:\projects\sandag\av_tnc_routing\av_run_dir\outputs\tnc_routing_test
-# output_dir: C:\Users\david.hensle\OneDrive - Resource Systems Group, Inc\Documents\projects\sandag\AV_TNC_models\tnc_outputs\full
+# paths are relative to project directory (merged with path of asim_demand_files)
+
+# path to activitysim output folder with trip data. asim_demand_files are relative to this path
+asim_output_dir: output
+
+# path to folder with skim data. skim_files are relative to this path
+skim_dir: output\skims
+
+# output folder for results. output files will be written here, namely output_tnc_vehicle_trips.csv
+output_dir: output\tnc_routing
 
 # demand files to process from activitysim output directory
 # accepts both csv and parquet formats
 asim_demand_files:
-  - final_cbxtrips.parquet
-  - final_santrips.parquet
-  - final_trips.parquet
-  - final_trips_visitor.parquet
-  - final_trips_xborder.parquet
+  - airport.CBX\final_cbxtrips
+  - airport.SAN\final_santrips
+  - resident\final_trips
+  - visitor\final_trips
+  - crossborder\final_trips
+asim_landuse_file: resident\final_land_use
 
 # name of skim matrix in OMX file minus time period suffix
 skim_time_core: HOV2_H_TIME
 skim_dist_core: HOV2_H_DIST
 # time periods to process, should match network_los.yaml settings
-skim_periods: ['EA', 'AM', 'MD', 'PM', 'EV']  
-# skim_periods: ['AM', 'AM', 'AM', 'AM', 'AM']  
+skim_periods: ['EA', 'AM', 'MD', 'PM', 'EV']
 periods: [0, 6, 12, 25, 32, 48]
 skim_files: ['traffic_skims_EA.omx', 'traffic_skims_AM.omx', 'traffic_skims_MD.omx', 'traffic_skims_PM.omx', 'traffic_skims_EV.omx']
-# skim_files: ['traffic_skims_AM.omx', 'traffic_skims_AM.omx', 'traffic_skims_AM.omx', 'traffic_skims_AM.omx', 'traffic_skims_AM.omx']
 
 # modes for shared and single occupancy TNC / taxi trips
 shared_tnc_modes: ['TNC_SHARED']
@@ -61,13 +60,13 @@ random_seed: 42
 
 # AV routing outputs (from ActivitySim av_routing model)
 # Script will try .parquet first, then .csv
-av_vehicle_trips_file: "final_av_vehicle_trips"
+av_vehicle_trips_file: resident\final_av_vehicle_trips
 
-# TNC routing outputs (from taxi_tnc_routing model) 
-tnc_vehicle_trips_file: "output_tnc_vehicle_trips.csv"
+# TNC routing outputs (from taxi_tnc_routing model)
+tnc_vehicle_trips_file: output_tnc_vehicle_trips.csv
 
 # Output directory for OMX matrix files
-matrix_output_dir: C:\projects\sandag\av_tnc_routing\av_run_dir\tnc_routing_data
+matrix_output_dir: output\assignment
 
 # Occupancy binning for TNC matrices (occupancy >= max grouped into max bin)
 max_occupancy_bin: 3

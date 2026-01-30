@@ -9,8 +9,24 @@ Output Files:
     - TNCVehicleTrips_pp.omx: TNC vehicle trips by occupancy (0, 1, 2, 3+)
     - EmptyAVTrips.omx: AV deadhead/repositioning trips only
 
-Usage:
-    python tnc_av_matrix_builder.py [--settings path/to/settings.yaml]
+Usage
+-----
+    python tnc_av_matrix_builder.py <project_dir> [--settings <yaml_file>]
+
+Arguments
+---------
+    project_dir : str
+        Path to the project directory. All relative paths in the settings
+        YAML file (asim_output_dir, output_dir, skim_dir, matrix_output_dir)
+        are resolved relative to this directory.
+
+    --settings : str, optional
+        Path to the settings YAML file (default: taxi_tnc_routing_settings.yaml)
+
+Examples
+--------
+    python tnc_av_matrix_builder.py /path/to/project
+    python tnc_av_matrix_builder.py C:/models/scenario1 --settings custom_settings.yaml
 """
 
 import os
@@ -62,12 +78,17 @@ class MatrixBuilderSettings(BaseModel):
         return self
 
 
-def load_settings(yaml_path: str) -> MatrixBuilderSettings:
+def load_settings(project_dir: str, yaml_path: str) -> MatrixBuilderSettings:
     """
     Load and validate settings from YAML file.
 
+    All relative paths in the settings are resolved relative to the project_dir.
+
     Parameters
     ----------
+    project_dir : str
+        Base project directory. All relative paths in settings will be resolved
+        relative to this directory.
     yaml_path : str
         Path to the YAML settings file.
 
@@ -76,8 +97,29 @@ def load_settings(yaml_path: str) -> MatrixBuilderSettings:
     MatrixBuilderSettings
         Validated settings object.
     """
-    with open(yaml_path, "r") as f:
+    # Try yaml_path as-is, then relative to project_dir, then relative to script dir
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    candidates = [
+        yaml_path,
+        os.path.join(project_dir, yaml_path),
+        os.path.join(script_dir, yaml_path),
+    ]
+    settings_file = next((p for p in candidates if os.path.exists(p)), None)
+    if settings_file is None:
+        raise FileNotFoundError(
+            f"Settings file not found: tried {candidates}"
+        )
+
+    with open(settings_file, "r") as f:
         data = yaml.safe_load(f)
+
+    # Resolve relative paths in settings relative to project_dir
+    path_fields = ["asim_output_dir", "output_dir", "skim_dir", "matrix_output_dir"]
+    for field in path_fields:
+        if field in data and data[field]:
+            path_value = os.path.expanduser(data[field])
+            if not os.path.isabs(path_value):
+                data[field] = os.path.join(project_dir, path_value)
 
     try:
         settings = MatrixBuilderSettings(**data)
@@ -771,20 +813,24 @@ def main():
         description="Build TNC/AV demand matrices from routing model outputs"
     )
     parser.add_argument(
+        "project_dir",
+        type=str,
+        help="Path to the project directory. All relative paths in the settings "
+        "YAML file will be resolved relative to this directory.",
+    )
+    parser.add_argument(
         "--settings",
         default="taxi_tnc_routing_settings.yaml",
         help="Path to settings YAML file (default: taxi_tnc_routing_settings.yaml)",
     )
     args = parser.parse_args()
 
-    # Determine settings file path
-    if os.path.isabs(args.settings):
-        settings_path = args.settings
-    else:
-        # Look in same directory as this script
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        settings_path = os.path.join(script_dir, args.settings)
-    settings = load_settings(settings_path)
+    # Resolve project directory to absolute path
+    project_dir = os.path.abspath(os.path.expanduser(args.project_dir))
+    if not os.path.isdir(project_dir):
+        raise ValueError(f"Project directory does not exist: {project_dir}")
+
+    settings = load_settings(project_dir=project_dir, yaml_path=args.settings)
 
     # Setup logging
     log_dir = settings.matrix_output_dir

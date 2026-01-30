@@ -1,11 +1,44 @@
-import numpy as np
-import pandas as pd
-import openmatrix as omx
+"""
+Taxi/TNC Vehicle Routing Simulation
+
+Routes taxi and TNC (Transportation Network Company) trips from ActivitySim
+person trip outputs to generate vehicle-level trip tables. The simulation:
+
+- Pools compatible shared-ride trips based on origin/destination proximity
+- Matches trips to available vehicles or creates new vehicles as needed
+- Generates vehicle trip legs with deadhead, pickup, and dropoff segments
+- Handles vehicle refueling based on distance traveled
+
+Usage
+-----
+    python taxi_tnc_routing.py <project_dir> [--settings <yaml_file>]
+
+Arguments
+---------
+    project_dir : str
+        Path to the project directory. All relative paths in the settings
+        YAML file (asim_output_dir, skim_dir, output_dir) are resolved
+        relative to this directory.
+
+    --settings : str, optional
+        Path to the settings YAML file (default: taxi_tnc_routing_settings.yaml)
+
+Examples
+--------
+    python taxi_tnc_routing.py /path/to/project
+    python taxi_tnc_routing.py C:/models/scenario1 --settings custom_settings.yaml
+"""
+
+import argparse
+import logging
 import os
 import time
-from pydantic import BaseModel, ValidationError, model_validator
-import logging
+
+import numpy as np
+import openmatrix as omx
+import pandas as pd
 import yaml
+from pydantic import BaseModel, ValidationError, model_validator
 
 logger = logging.getLogger(__name__)
 
@@ -14,10 +47,11 @@ class TaxiTNCSettings(BaseModel):
     """
     Taxi / TNC route choice settings
     """
-
     # path to activitysim output folder with trip data
     asim_output_dir: str
     asim_demand_files: list
+    # path to landuse file (relative to asim_output_dir)
+    asim_landuse_file: str = "resident\\final_land_use.csv"
 
     # path to folder with skim data
     skim_dir: str
@@ -115,6 +149,7 @@ class TaxiTNCSettings(BaseModel):
 
 
 def load_settings(
+    project_dir: str,
     yaml_path: str = "taxi_tnc_routing_settings.yaml",
 ) -> TaxiTNCSettings:
     """
@@ -124,8 +159,13 @@ def load_settings(
     model, ensuring all required fields are present and properly typed. Creates
     the output directory if it doesn't exist and sets up logging.
 
+    All relative paths in the settings are resolved relative to the project_dir.
+
     Parameters
     ----------
+    project_dir : str
+        Base project directory. All relative paths in settings will be resolved
+        relative to this directory.
     yaml_path : str
         Path to the YAML settings file (relative to this module's directory).
 
@@ -136,6 +176,15 @@ def load_settings(
     """
     with open(os.path.join(os.path.dirname(__file__), yaml_path), "r") as f:
         data = yaml.safe_load(f)
+
+    # Resolve relative paths in settings relative to project_dir
+    path_fields = ["asim_output_dir", "skim_dir", "output_dir"]
+    for field in path_fields:
+        if field in data and data[field]:
+            path_value = os.path.expanduser(data[field])
+            if not os.path.isabs(path_value):
+                data[field] = os.path.join(project_dir, path_value)
+
     try:
         settings = TaxiTNCSettings(**data)
     except ValidationError as e:
@@ -286,6 +335,99 @@ class TaxiTNCRouter:
 
         return
 
+    @staticmethod
+    def _read_data_file(
+        fpath: str,
+        file_desc: str = "File",
+        columns: list[str] | None = None,
+        optional_columns: list[str] | None = None,
+    ) -> tuple[pd.DataFrame, str]:
+        """
+        Resolve file path, determine file type, and read the data.
+
+        If the path has a recognized extension, validates the file exists.
+        If no extension is specified, searches for parquet then csv variants.
+        Reads the file using pandas with optional column filtering.
+
+        Parameters
+        ----------
+        fpath : str
+            File path, optionally without extension.
+        file_desc : str, optional
+            Description of file type for error messages (default "File").
+        columns : list[str], optional
+            Columns to read from the file. If None, reads all columns.
+        optional_columns : list[str], optional
+            Additional columns to attempt to read. If they don't exist in the
+            file, they are silently ignored.
+
+        Returns
+        -------
+        tuple[pd.DataFrame, str]
+            DataFrame with the file contents and the resolved file path.
+
+        Raises
+        ------
+        ValueError
+            If file cannot be found with any supported extension.
+        """
+        lower = fpath.lower()
+
+        # Determine file type from extension
+        if lower.endswith((".parquet", ".parq", ".pq")):
+            file_type = "parquet"
+        elif lower.endswith((".csv", ".csv.gz", ".txt", ".txt.gz")):
+            file_type = "csv"
+        else:
+            # No recognized extension - search for both parquet and csv
+            parquet_candidates = [fpath + ext for ext in [".parquet", ".parq", ".pq"]]
+            csv_candidates = [fpath + ext for ext in [".csv", ".csv.gz"]]
+
+            found_parquet = next((p for p in parquet_candidates if os.path.exists(p)), None)
+            found_csv = next((p for p in csv_candidates if os.path.exists(p)), None)
+
+            if found_parquet:
+                fpath = found_parquet
+                file_type = "parquet"
+            elif found_csv:
+                fpath = found_csv
+                file_type = "csv"
+            else:
+                raise ValueError(
+                    f"{file_desc} not found: {fpath} (also checked for .parquet, .csv extensions)"
+                )
+
+        # Verify file exists (for cases where extension was specified)
+        if not os.path.exists(fpath):
+            raise ValueError(f"{file_desc} not found: {fpath}")
+
+        # Build column list with optional columns
+        read_cols = list(columns) if columns else None
+        if read_cols and optional_columns:
+            read_cols = read_cols + list(optional_columns)
+
+        # Read the file
+        if file_type == "parquet":
+            if read_cols:
+                try:
+                    df = pd.read_parquet(fpath, columns=read_cols)
+                except (ValueError, KeyError):
+                    # Optional columns not found, read without them
+                    df = pd.read_parquet(fpath, columns=columns)
+            else:
+                df = pd.read_parquet(fpath)
+        else:  # csv
+            if read_cols:
+                try:
+                    df = pd.read_csv(fpath, usecols=read_cols)
+                except (ValueError, KeyError):
+                    # Optional columns not found, read without them
+                    df = pd.read_csv(fpath, usecols=columns)
+            else:
+                df = pd.read_csv(fpath)
+
+        return df, fpath
+
     def read_input_data(self):
         """
         Load TNC trip demand from ActivitySim output files.
@@ -303,8 +445,8 @@ class TaxiTNCRouter:
             optionally arrival_mode.
 
         """
-        # Read the data from the OpenMatrix file
-        # Convert the data to a pandas DataFrame
+        logger.info("Loading TNC trip demand data from ActivitySim outputs...")
+
         base_cols = [
             "trip_id",
             "trip_mode",
@@ -317,24 +459,12 @@ class TaxiTNCRouter:
         frames = []
         for fname in self.settings.asim_demand_files:
             fpath = os.path.join(self.settings.asim_output_dir, fname)
-            if not os.path.exists(fpath):
-                raise ValueError(f"Demand file not found: {fpath}")
-            lower = fpath.lower()
-            if lower.endswith((".parquet", ".parq", ".pq")):
-                try:
-                    df = pd.read_parquet(fpath, columns=base_cols + [opt_col])
-                except (ValueError, KeyError):
-                    df = pd.read_parquet(fpath, columns=base_cols)
-            elif lower.endswith((".csv", ".csv.gz", ".txt", ".txt.gz")):
-                try:
-                    df = pd.read_csv(fpath, usecols=base_cols + [opt_col])
-                except (ValueError, KeyError):
-                    df = pd.read_csv(fpath, usecols=base_cols)
-            else:
-                raise ValueError(f"Unsupported demand file type: {fpath}")
-            df["source"] = (
-                fname.strip(".parquet").strip(".csv").strip(".csv.gz").strip("final_")
+            df, fpath = self._read_data_file(
+                fpath, "Demand file", columns=base_cols, optional_columns=[opt_col]
             )
+            df["source"] = os.path.basename(fpath).replace(".parquet", "").replace(
+                ".csv.gz", ""
+            ).replace(".csv", "").replace("final_", "")
             if opt_col in df.columns:
                 df["trip_mode"] = df[opt_col]
                 df.drop(columns=[opt_col], inplace=True)
@@ -348,9 +478,11 @@ class TaxiTNCRouter:
             )
         ]
 
-        self.landuse = pd.read_csv(
-            os.path.join(self.settings.asim_output_dir, "final_land_use.csv")
+        # Load landuse file (supports parquet and CSV)
+        landuse_path = os.path.join(
+            self.settings.asim_output_dir, self.settings.asim_landuse_file
         )
+        self.landuse, _ = self._read_data_file(landuse_path, "Land use file")
 
         if "MAZ" in self.landuse.columns:
             maz_to_taz_map = self.landuse.set_index("MAZ")["taz"].to_dict()
@@ -368,7 +500,12 @@ class TaxiTNCRouter:
         trips["dskim_idx"] = (
             trips["destination"].map(maz_to_taz_map).map(self.skim_zone_mapping)
         )
-        trips["occupancy"] = trips["tour_participants"]
+        nan_count = trips["tour_participants"].isna().sum()
+        if nan_count > 0:
+            logger.warning(
+                f"Found {nan_count} trips with NaN tour_participants, filling with 1"
+            )
+        trips["occupancy"] = trips["tour_participants"].fillna(1).astype(int)
         if self.settings.max_vehicle_occupancy:
             total_occupants = trips.occupancy.sum()
             # duplicate trip rows that are over max_occupancy
@@ -1625,6 +1762,7 @@ class TaxiTNCRouter:
                     int
                 ),  # assuming refuel trip takes the time to get to the station
                 "trip_type": "refuel",
+                "occupancy": 0,
             }
         )
         logger.info(f"\tRouting {len(refuel_veh_trips)} vehicles to refuel stations")
@@ -1816,9 +1954,31 @@ class TaxiTNCRouter:
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Route TNC/Taxi trips and generate vehicle trip tables."
+    )
+    parser.add_argument(
+        "project_dir",
+        type=str,
+        help="Path to the project directory. All relative paths in the settings "
+        "YAML file will be resolved relative to this directory.",
+    )
+    parser.add_argument(
+        "--settings",
+        type=str,
+        default="taxi_tnc_routing_settings.yaml",
+        help="Path to the settings YAML file (default: taxi_tnc_routing_settings.yaml)",
+    )
+    args = parser.parse_args()
+
     start_time = time.time()
 
-    settings = load_settings(yaml_path="taxi_tnc_routing_settings.yaml")
+    # Resolve project directory to absolute path
+    project_dir = os.path.abspath(os.path.expanduser(args.project_dir))
+    if not os.path.isdir(project_dir):
+        raise ValueError(f"Project directory does not exist: {project_dir}")
+
+    settings = load_settings(project_dir=project_dir, yaml_path=args.settings)
 
     router = TaxiTNCRouter(settings)
     router.route_taxi_tncs()
