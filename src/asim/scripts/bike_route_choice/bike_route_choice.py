@@ -871,7 +871,7 @@ def run_bike_route_choice(settings, logger):
     if settings.zone_level == 'mgra':
         logsums = logsums[(logsums.iterations == 0) | (logsums.iterations >= settings.min_iterations)]
 
-    logsums = logsums[['i','j','logsum','time','distance']]
+    logsums = logsums[['i','j','logsum','time']]
 
     logsums.to_csv(settings.output_file_path,index=False)
 
