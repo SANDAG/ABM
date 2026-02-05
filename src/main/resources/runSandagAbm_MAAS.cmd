@@ -2,6 +2,7 @@ ECHO ON
 
 set PROJECT_DRIVE=%1
 set PROJECT_DIRECTORY=%2
+set SAMPLE_RATE=%3
 
 %PROJECT_DRIVE%
 cd /d %PROJECT_DIRECTORY%
@@ -14,7 +15,7 @@ python src/asim/scripts/taxi_tnc_routing/taxi_tnc_routing.py  %PROJECT_DIRECTORY
 ECHO Taxi / TNC routing model run complete!
 
 :: Create demand matrices from AV and TNC vehicle trips
-python src/asim/scripts/taxi_tnc_routing/tnc_av_matrix_builder.py  %PROJECT_DIRECTORY% --settings src/asim/scripts/taxi_tnc_routing/taxi_tnc_routing_settings.yaml || exit /b 2
+python src/asim/scripts/taxi_tnc_routing/tnc_av_matrix_builder.py  %PROJECT_DIRECTORY% --settings src/asim/scripts/taxi_tnc_routing/taxi_tnc_routing_settings.yaml --sample-rate %SAMPLE_RATE% || exit /b 2
 
 ECHO AV/TNC matrix building complete!
 ECHO %startTime%%Time%

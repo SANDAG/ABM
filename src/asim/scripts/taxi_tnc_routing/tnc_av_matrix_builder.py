@@ -158,7 +158,7 @@ class TNCVehicleMatrixBuilder:
         Unique period labels (EA, AM, MD, PM, EV)
     """
 
-    def __init__(self, settings: MatrixBuilderSettings):
+    def __init__(self, settings: MatrixBuilderSettings, sample_rate: float = 1.0):
         """
         Initialize the matrix builder with settings.
 
@@ -166,8 +166,13 @@ class TNCVehicleMatrixBuilder:
         ----------
         settings : MatrixBuilderSettings
             Configuration settings from YAML file.
+        sample_rate : float, optional
+            Sample rate used in the simulation (0-1). Output matrices will be
+            scaled by 1/sample_rate to expand to full population. Default is 1.0.
         """
         self.settings = settings
+        self.sample_rate = sample_rate
+        self.expansion_factor = 1.0 / sample_rate
         self.skim_zone_mapping: Dict[int, int] = {}
         self.maz_to_taz: Dict[int, int] = {}
         self.zone_ids: Optional[np.ndarray] = None
@@ -655,6 +660,9 @@ class TNCVehicleMatrixBuilder:
                     occ_trips = tnc_trips[tnc_trips["occ_bin"] == occ_bin]
                     matrix = self._aggregate_to_matrix(occ_trips, period)
 
+                    # Scale matrix by expansion factor (1/sample_rate)
+                    matrix = matrix * self.expansion_factor
+
                     f[core_name] = matrix
 
                     matrix_trips = matrix.sum()
@@ -733,6 +741,9 @@ class TNCVehicleMatrixBuilder:
                     matrix = self._create_empty_matrix()
                 else:
                     matrix = self._aggregate_to_matrix(av_deadhead, period)
+
+                # Scale matrix by expansion factor (1/sample_rate)
+                matrix = matrix * self.expansion_factor
 
                 f[core_name] = matrix
 
@@ -823,7 +834,18 @@ def main():
         default="taxi_tnc_routing_settings.yaml",
         help="Path to settings YAML file (default: taxi_tnc_routing_settings.yaml)",
     )
+    parser.add_argument(
+        "--sample-rate",
+        type=float,
+        default=1.0,
+        help="Sample rate (0-1) used in the simulation. Output matrices will be scaled "
+             "by 1/sample_rate to expand to full population. (default: 1.0)",
+    )
     args = parser.parse_args()
+
+    # Validate sample rate
+    if not 0 < args.sample_rate <= 1:
+        raise ValueError(f"Sample rate must be between 0 and 1 (exclusive of 0), got: {args.sample_rate}")
 
     # Resolve project directory to absolute path
     project_dir = os.path.abspath(os.path.expanduser(args.project_dir))
@@ -845,9 +867,10 @@ def main():
     logger.info("=" * 60)
     logger.info("TNC/AV Demand Matrix Builder")
     logger.info("=" * 60)
+    logger.info(f"Sample rate: {args.sample_rate}")
 
     try:
-        builder = TNCVehicleMatrixBuilder(settings)
+        builder = TNCVehicleMatrixBuilder(settings, sample_rate=args.sample_rate)
         builder.build_matrices()
     except Exception as e:
         logger.error(f"Error building matrices: {e}", exc_info=True)

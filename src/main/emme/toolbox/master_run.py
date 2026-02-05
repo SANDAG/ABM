@@ -678,7 +678,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 if not skipMAASModel[iteration]:
                     self.run_proc(
                         "runSandagAbm_MAAS.cmd",
-                        [drive, drive + path_forward_slash],
+                        [drive, drive + path_forward_slash, str(sample_rate[iteration])],
                         "Python Taxi and TNC routing model + AV and TNC matrix builder", capture_output=True)
 
                 if (not skipCVMEstablishmentSyn) and (iteration == 0):
