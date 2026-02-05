@@ -41,10 +41,16 @@ single_tnc_modes:
 # determines how far apart trips in time can be to be considered for pooling
 time_bin_size: 10
 
+# maximum initial wait time (in minutes) for a vehicle before a new vehicle is created
+max_wait_time: 15
+
 # buffer size comparing origins and destinations for potential pooling (in mins)
 pooling_buffer: 10
 # maximum allowed detour time for pooled trips (in mins)
 max_detour: 15
+# batch size for matching pooled trips together and matching trips to vehicles
+# this is used to decrease runtime by considering only this number of trips at a time
+pair_batch_size: 6000
 
 # column in the landuse table that indicates the presence of refueling stations
 landuse_refuel_col: refueling_stations
