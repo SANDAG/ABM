@@ -12,15 +12,106 @@ coef_nest_TRANSIT_KNRACCESS,1,T
 coef_nest_CURB,1,T
 coef_nest_RENTAL,1,T
 coef_nest_SHUTTLEVAN,1,T
-coef_asc_parked_offsite,-1.62,F
-coef_asc_drop_off,-3.396,F
-coef_asc_transit,-5.366,F
-coef_asc_rental,-2.675,F
-coef_asc_shuttle,-4.014,F
-coef_asc_taxi,-4.505,F
-coef_asc_tnc,-1.879,F
-coef_ivt,-0.025,F
-coef_ovt,-0.05,F
-coef_cost_res_non_bus,-0.039,F
-coef_cost_bus,-0.019,F
-coef_cost_vis_non_bus,-0.029,F
+# parked_onsite,,
+coef_asc_parkon_res_per,0.696,F
+coef_asc_parkon_res_bus,0.696,F
+coef_asc_parkon_vis_per,0,F
+coef_asc_parkon_vis_bus,0,F
+coef_asc_parkon_external,0,F
+coef_asc_parkon_partysize1_res_per,-0.768,F
+coef_asc_parkon_partysize1_res_bus,-0.768,F
+coef_asc_parkon_partysize1_vis_per,0,F
+coef_asc_parkon_partysize1_vis_bus,0,F
+coef_asc_parkon_partysize1_external,0,F
+# parked_offsite,,
+coef_asc_parkoff_res_per,-0.335,F
+coef_asc_parkoff_res_bus,-0.335,F
+coef_asc_parkoff_vis_per,0,F
+coef_asc_parkoff_vis_bus,0,F
+coef_asc_parkoff_external,0,F
+coef_asc_parkoff_partysize1_res_per,-0.826,F
+coef_asc_parkoff_partysize1_res_bus,-0.826,F
+coef_asc_parkoff_partysize1_vis_per,0,F
+coef_asc_parkoff_partysize1_vis_bus,0,F
+coef_asc_parkoff_partysize1_external,0,F
+# drop_off,
+coef_asc_drop_off_res_per,0,F
+coef_asc_drop_off_res_bus,0,F
+coef_asc_drop_off_vis_per,0,F
+coef_asc_drop_off_vis_bus,0,F
+coef_asc_drop_off_external,0,F
+# transt,,
+coef_asc_transit_res_per,-1.538,F
+coef_asc_transit_res_bus,-1.538,F
+coef_asc_transit_vis_per,0.255,F
+coef_asc_transit_vis_bus,0.255,F
+coef_asc_transit_external,0,F
+coef_asc_transit_partysize1_res_per,0.331,F
+coef_asc_transit_partysize1_res_bus,0.331,F
+coef_asc_transit_partysize1_vis_per,0,F
+coef_asc_transit_partysize1_vis_bus,0,F
+coef_asc_transit_partysize1_external,0,F
+# retal car,,
+coef_asc_rental_res_per,0,F
+coef_asc_rental_res_bus,0,F
+coef_asc_rental_vis_per,0,F
+coef_asc_rental_vis_bus,0,F
+coef_asc_rental_external,0,F
+# forhire,,
+coef_asc_forhire_res_per,0.820,F
+coef_asc_forhire_res_bus,0.820,F
+coef_asc_forhire_vis_per,2.407,F
+coef_asc_forhire_vis_bus,2.407,F
+coef_asc_forhire_external,0,F
+coef_asc_forhire_partysize1_res_per,-0.368,F
+coef_asc_forhire_partysize1_res_bus,-0.368,F
+coef_asc_forhire_partysize1_vis_per,-0.466,F
+coef_asc_forhire_partysize1_vis_bus,-0.466,F
+coef_asc_forhire_partysize1_external,0,F
+# shuttle,,
+coef_asc_shuttle_res_per,0,F
+coef_asc_shuttle_res_bus,0,F
+coef_asc_shuttle_vis_per,-1.075,F
+coef_asc_shuttle_vis_bus,-1.075,F
+coef_asc_shuttle_external,0,F
+coef_asc_shuttle_partysize1_res_per,0,F
+coef_asc_shuttle_partysize1_res_bus,0,F
+coef_asc_shuttle_partysize1_vis_per,-0.609,F
+coef_asc_shuttle_partysize1_vis_bus,-0.609,F
+coef_asc_shuttle_partysize1_external,0,F
+# ivt,,
+coef_ivt_res_per,-0.017,F
+coef_ivt_res_bus,-0.017,F
+coef_ivt_vis_per,-0.033,F
+coef_ivt_vis_bus,-0.033,F
+coef_ivt_external,0,F
+# ovt,,
+coef_ovt_res_per,-0.034,F
+coef_ovt_res_bus,-0.034,F
+coef_ovt_vis_per,-0.066,F
+coef_ovt_vis_bus,-0.066,F
+coef_ovt_external,0,F
+# cost,,
+coef_cost_res_per,-0.022,F
+coef_cost_res_bus,-0.022,F
+coef_cost_vis_per,-0.054,F
+coef_cost_vis_bus,-0.054,F
+coef_cost_external,-0.054,F
+# cost business,,
+coef_cost_bus_res_per,0,F
+coef_cost_bus_res_bus,0.009,F
+coef_cost_bus_vis_per,0,F
+coef_cost_bus_vis_bus,0.029,F
+coef_cost_bus_external,0,F
+# cost none business income lt60k,,
+coef_cost_per_incomelt60k_res_per,-0.022,F
+coef_cost_per_incomelt60k_res_bus,0,F
+coef_cost_per_incomelt60k_vis_per,0,F
+coef_cost_per_incomelt60k_vis_bus,0,F
+coef_cost_per_incomelt60k_external,0,F
+# cost none business 6+ days parked,,
+coef_cost_per_6daysparked_res_per,0.004,F
+coef_cost_per_6daysparked_res_bus,0,F
+coef_cost_per_6daysparked_vis_per,0,F
+coef_cost_per_6daysparked_vis_bus,0,F
+coef_cost_per_6daysparked_external,0,F
