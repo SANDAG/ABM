@@ -1,5 +1,5 @@
-model_selector,segment,hh,ln_hotelroomtotal,emp_bus_svcs,emp_educ,emp_food,emp_mil,emp_total
-non_mandatory,vis_bus,0.0000001,1,0.0000001,0.0000001,0.0000001,0.0000001,0.0000001
-non_mandatory,vis_per,1,2942,0.0000001,0.0013189,0.0000001,0.0000001,0.7849
-non_mandatory,res_bus,1,0.0000001,0.224,0.0000001,0.0000001,0.0000001,0.0000001
-non_mandatory,res_per,1,0.0000001,0.0000001,0.0000001,2.292,0.254,0.0000001
+model_selector,segment,hh,ln_hotelroomtotal,emp_bus_svcs,emp_food,emp_mil,emp_total
+non_mandatory,vis_bus,0.0000001,1,0.0000001,0.0000001,0.0000001,0.0000001
+non_mandatory,vis_per,1,2210,0.0000001,0.0000001,0.0000001,0.6609
+non_mandatory,res_bus,1,0.0000001,0.2278,0.0000001,0.0000001,0.0000001
+non_mandatory,res_per,1,0.0000001,0.0000001,2.149,0.323,0.0000001
