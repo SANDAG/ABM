@@ -1864,3 +1864,16 @@
 ,,dest_local_time,dest_local_dist * 60/walkSpeed
 ,,dest_prm_time,dest_prm_dist * 60/walkSpeed
 ,,dest_mix_time,dest_mix_dist * 60/walkSpeed
+#,,
+,Parking cost at parking location 1,park1_parkcost_dollars,"((np.maximum(df.nights,0)*parkLocation1CostDay + parkLocation1CostDay)*1.0 + parkLocation1AccessCost*1.0 + partySizeParkLocation1AutoDist*costPerMile/100 + partySizeParkLocation1AutoToll/100.0)"
+,Parking cost at parking location 4,park4_parkcost_dollars,"((np.maximum(df.nights,0)*parkLocation4CostDay + parkLocation4CostDay)*1.0 + parkLocation4AccessCost*1.0 + partySizeParkLocation4AutoDist*costPerMile/100 + partySizeParkLocation4AutoToll/100.0)"
+,Cost for curb loc 1,curb_loc1_cost_dollars,"(partySizeCurbLocation1AutoDist*costPerMile/100 + partySizeCurbLocation1AutoToll/100.0)"
+,Driving cost to ridehail location 1,ridehail1_cost_dollars,"((partySizeRideHailLocation1AutoDist*ridehailCostPerMile + ridehailCostInitial)*1.0 + partySizeRideHailLocation1AutoToll/100.0)"
+,Cost to Taxi location 1,taxi1_cost_dollars,"((partySizeRideHailLocation1AutoDist*taxiCostPerMile + taxiCostInitial)*1.0 + partySizeRideHailLocation1AutoToll/100.0)"
+,rental car expenditure - note reduced AOC bc not paying maintenance,rental_cost_dollars,"(partySizeRentalLocationAutoDist*(costPerMile-10)/100 + partySizeRentalLocationAutoToll/100.0)"
+,WALK_LOC - Fare,WALK_LOC_cost_dollars,"((odt_skims['WALK_LOC_FARE']) * df.party_size * 1.0)"
+,WALK_MIX - Fare,WALK_MIX_cost_dollars,"((odt_skims['WALK_MIX_FARE']) * df.party_size * 1.0)"
+,WALK_PRM - Fare,WALK_PRM_cost_dollars,"((odt_skims['WALK_PRM_FARE']) * df.party_size * 1.0)"
+,KNR_LOC - Fare,KNR_LOC_cost_dollars,"((odt_skims['KNROUT_LOC_FARE']) * df.party_size * 1.0)"
+,KNR_MIX - Fare,KNR_MIX_cost_dollars,"((odt_skims['KNROUT_MIX_FARE']) * df.party_size * 1.0)"
+,KNR_PRM - Fare,KNR_PRM_cost_dollars,"((odt_skims['KNROUT_PRM_FARE']) * df.party_size * 1.0)"

@@ -162,6 +162,12 @@ CHOOSER_COLS_TO_KEEP:
   - partySizeRideHailLocation1AutoDist
   - partySizeRideHailLocation2AutoIVT
   - partySizeRideHailLocation2AutoDist
+  - partySizeParkLocation1AutoDist
+  - partySizeParkLocation1AutoToll
+  - partySizeParkLocation4AutoDist
+  - partySizeParkLocation4AutoToll
+  - partySizeCurbLocation1AutoDist
+  - partySizeCurbLocation1AutoToll
   - nights
   - number_of_participants
 
