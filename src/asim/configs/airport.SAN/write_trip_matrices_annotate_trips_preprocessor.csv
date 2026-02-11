@@ -6,8 +6,12 @@ Description,Target,Expression
 ,vot2,trips.vot2
 ,vot3,trips.vot3
 ,distance,od_skims['DIST']
+# update rental car choice,,
+,_trip_mode, trips.trip_mode
+,_trip_mode," np.where(trips.rental_car_choice == 1, 'RENTAL', _trip_mode)"
+,_trip_mode,"pd.Series(_trip_mode, index=df.index)"
 ,_sample_rate,trips.household_id.map(households.sample_rate)
-,add_driver," (trips.trip_mode.isin(['PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5'])  & ( tour_participants == 1) & (trips['trip_num'] ==1)) | (trips.trip_mode.isin(['PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5'])  & (tour_participants >=2) & (trips.trip_num == 1))"
+,add_driver," (_trip_mode.isin(['PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5'])  & ( tour_participants == 1) & (trips['trip_num'] ==1)) | (_trip_mode.isin(['PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5'])  & (tour_participants >=2) & (trips.trip_num == 1))"
 ,_participants_add_driver,"np.where(add_driver, tour_participants + 1, tour_participants )"
 ,weightTrip,1/_sample_rate
 ,weightPersonTrip,"_participants_add_driver/_sample_rate"
@@ -17,26 +21,26 @@ Description,Target,Expression
 ,is_md,"trips.depart.between(time_periods['MD']['first_hour'], time_periods['MD']['last_hour'])"
 ,is_pm,"trips.depart.between(time_periods['PM']['first_hour'], time_periods['PM']['last_hour'])"
 ,is_ev,"trips.depart.between(time_periods['EV']['first_hour'], time_periods['EV']['last_hour'])"
-,is_drivealone," (trips.trip_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','RENTAL']) &  (tour_participants ==1)) | (trips.trip_mode.isin(['PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5']) & (trips.trip_num == 2))"
-,is_shared2," (trips.trip_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','RENTAL']) & ( tour_participants ==2)) | (trips.trip_mode.isin(['RIDEHAIL_LOC1','RIDEHAIL_LOC2','TAXI_LOC1','TAXI_LOC2','PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5'])  & ( tour_participants == 1) & (trips['trip_num'] ==1))"
-,is_shared3," (trips.trip_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','RENTAL', 'HOTEL_COURTESY', 'SHUTTLEVAN']) &  (tour_participants >= 3)) | (trips.trip_mode.isin(['RIDEHAIL_LOC1','RIDEHAIL_LOC2','TAXI_LOC1','TAXI_LOC2','PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5', 'HOTEL_COURTESY', 'SHUTTLEVAN'])  & (tour_participants >=2) & (trips.trip_num == 1))"
-,is_walk,trips.trip_mode == 'WALK'
-,is_walk_LOC_transit,trips.trip_mode == 'WALK_LOC'
-,is_walk_PRM_transit,trips.trip_mode == 'WALK_PRM'
-,is_walk_MIX_transit,trips.trip_mode == 'WALK_MIX'
-,is_drive_loc,trips.trip_mode.isin(['KNR_LOC'])
-,is_drive_prm,trips.trip_mode.isin(['KNR_PRM'])
-,is_drive_mix,trips.trip_mode.isin(['KNR_MIX'])
-,is_tnc_loc,trips.trip_mode.isin(['TNC_LOC'])
-,is_tnc_prm,trips.trip_mode.isin(['TNC_PRM'])
-,is_tnc_mix,trips.trip_mode.isin(['TNC_MIX'])
+,is_drivealone," (_trip_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','RENTAL']) &  (tour_participants ==1)) | (_trip_mode.isin(['PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5']) & (trips.trip_num == 2))"
+,is_shared2," (_trip_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','RENTAL']) & ( tour_participants ==2)) | (_trip_mode.isin(['RIDEHAIL_LOC1','RIDEHAIL_LOC2','TAXI_LOC1','TAXI_LOC2','PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5'])  & ( tour_participants == 1) & (trips['trip_num'] ==1))"
+,is_shared3," (_trip_mode.isin(['PARK_LOC1','PARK_LOC2','PARK_LOC3','PARK_LOC4','PARK_LOC5','RENTAL', 'HOTEL_COURTESY', 'SHUTTLEVAN']) &  (tour_participants >= 3)) | (_trip_mode.isin(['RIDEHAIL_LOC1','RIDEHAIL_LOC2','TAXI_LOC1','TAXI_LOC2','PARK_ESCORT','CURB_LOC1','CURB_LOC2','CURB_LOC3','CURB_LOC4','CURB_LOC5', 'HOTEL_COURTESY', 'SHUTTLEVAN'])  & (tour_participants >=2) & (trips.trip_num == 1))"
+,is_walk,_trip_mode == 'WALK'
+,is_walk_LOC_transit,_trip_mode == 'WALK_LOC'
+,is_walk_PRM_transit,_trip_mode == 'WALK_PRM'
+,is_walk_MIX_transit,_trip_mode == 'WALK_MIX'
+,is_drive_loc,_trip_mode.isin(['KNR_LOC'])
+,is_drive_prm,_trip_mode.isin(['KNR_PRM'])
+,is_drive_mix,_trip_mode.isin(['KNR_MIX'])
+,is_tnc_loc,_trip_mode.isin(['TNC_LOC'])
+,is_tnc_prm,_trip_mode.isin(['TNC_PRM'])
+,is_tnc_mix,_trip_mode.isin(['TNC_MIX'])
 #,,
-,arrival_mode, trips.trip_mode
-,_trip_mode, trips.trip_mode
-,_trip_mode," np.where(is_drivealone, 'DRIVEALONE', _trip_mode)"
-,_trip_mode," np.where(is_shared2, 'SHARED2',_trip_mode)"
-,_trip_mode," np.where((is_shared3) | (trips.trip_mode.isin(['HOTEL_COURTESY', 'SHUTTLEVAN'])), 'SHARED3', _trip_mode)"
-,trip_mode_assign,_trip_mode
+,arrival_mode,_trip_mode
+,_trip_mode_assign,_trip_mode
+,_trip_mode_assign," np.where(is_drivealone, 'DRIVEALONE', _trip_mode)"
+,_trip_mode_assign," np.where(is_shared2, 'SHARED2',_trip_mode)"
+,_trip_mode_assign," np.where((is_shared3) | (_trip_mode.isin(['HOTEL_COURTESY', 'SHUTTLEVAN'])), 'SHARED3', _trip_mode)"
+,trip_mode_assign,_trip_mode_assign
 #,,
 #trip legs are swapped since origin is airport and home end is destination,,
 ,outbound, ~trips.outbound
