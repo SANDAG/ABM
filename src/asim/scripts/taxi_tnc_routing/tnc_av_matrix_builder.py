@@ -671,9 +671,11 @@ class TNCVehicleMatrixBuilder:
 
             logger.info(f"Wrote TNC matrices to {omx_path}")
 
-        # Assert that all trips after zone mapping are written
-        assert abs(total_written - trips_after_zone_mapping) < 1e-6, (
-            f"TNC trip count mismatch: {trips_after_zone_mapping} trips after zone mapping, "
+        # Assert that all trips after zone mapping are written (accounting for expansion)
+        expected_written = trips_after_zone_mapping * self.expansion_factor
+        assert abs(total_written - expected_written) < 1e-6, (
+            f"TNC trip count mismatch: {trips_after_zone_mapping} trips after zone mapping "
+            f"* {self.expansion_factor} expansion = {expected_written:.0f} expected, "
             f"but {total_written:.0f} trips written to matrices"
         )
 
@@ -753,9 +755,11 @@ class TNCVehicleMatrixBuilder:
 
         logger.info(f"Wrote EmptyAV matrices to {omx_path}")
 
-        # Assert that all trips after zone mapping are written
-        assert abs(total_written - trips_after_zone_mapping) < 1e-6, (
-            f"AV trip count mismatch: {trips_after_zone_mapping} trips after zone mapping, "
+        # Assert that all trips after zone mapping are written (accounting for expansion)
+        expected_written = trips_after_zone_mapping * self.expansion_factor
+        assert abs(total_written - expected_written) < 1e-6, (
+            f"AV trip count mismatch: {trips_after_zone_mapping} trips after zone mapping "
+            f"* {self.expansion_factor} expansion = {expected_written:.0f} expected, "
             f"but {total_written:.0f} trips written to matrices"
         )
 
