@@ -37,9 +37,9 @@ Description,Target,Expression
 #,,
 ,arrival_mode,_trip_mode
 ,_trip_mode_assign,_trip_mode
-,_trip_mode_assign," np.where(is_drivealone, 'DRIVEALONE', _trip_mode)"
-,_trip_mode_assign," np.where(is_shared2, 'SHARED2',_trip_mode)"
-,_trip_mode_assign," np.where((is_shared3) | (_trip_mode.isin(['HOTEL_COURTESY', 'SHUTTLEVAN'])), 'SHARED3', _trip_mode)"
+,_trip_mode_assign," np.where(is_drivealone, 'DRIVEALONE', _trip_mode_assign)"
+,_trip_mode_assign," np.where(is_shared2, 'SHARED2',_trip_mode_assign)"
+,_trip_mode_assign," np.where((is_shared3) | (_trip_mode.isin(['HOTEL_COURTESY', 'SHUTTLEVAN'])), 'SHARED3', _trip_mode_assign)"
 ,trip_mode_assign,_trip_mode_assign
 #,,
 #trip legs are swapped since origin is airport and home end is destination,,
