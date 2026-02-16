@@ -1,7 +1,29 @@
 # Release Notes
 
+SANDAG ABM release notes can also be found on the [GitHub repo](https://github.com/SANDAG/ABM/releases).
+
+## Version 15.4.0 (February 16, 2026)
+This significant release upgrades EMME to OpenPaths 25 in addition to switching to UV as the Python package manager. With the EMME upgrade, a Python 27 environment is no longer needed.
+
+### Software Versions
+- ActivitySim 1.4.0
+- EMME OpenPaths 25
+
+### Features
+- [PR 272](https://github.com/SANDAG/ABM/pull/272): EMME OpenPaths 25 upgrade
+- [PR 376](https://github.com/SANDAG/ABM/pull/376): Packager manager changed from Anaconda to UV
+- [PR 377](https://github.com/SANDAG/ABM/pull/377): Dropped unnecessary Python environment for EMME
+- [PR 378](https://github.com/SANDAG/ABM/pull/378): Documentation updates
+
+### Bug Fixes
+- [PR 387](https://github.com/SANDAG/ABM/pull/387): Fixes tolled SOV volume issues on managed lanes
+
 ## Version 15.3.1 (September 4, 2025)
 A few bugs were identified while testing with version 15.3.0, so they were fixed to ensure that the results for the 2025 Regional Plan will be the best estimates possible.
+
+### Software Versions
+- ActivitySim 1.4.0
+- EMME 4.3.7
 
 ### Features
 - [PR 360](https://github.com/SANDAG/ABM/pull/360): The settings manager can now be run from Anaconda prompt as opposed to only within Emme
