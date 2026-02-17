@@ -15,45 +15,45 @@ coef_asc_parkon_res_per,0.696,F
 coef_asc_parkon_res_bus,0.696,F
 coef_asc_parkon_vis_per,0,F
 coef_asc_parkon_vis_bus,0,F
-coef_asc_parkon_external,0,F
+coef_asc_parkon_external,0.696,F
 coef_asc_parkon_partysize1_res_per,-0.768,F
 coef_asc_parkon_partysize1_res_bus,-0.768,F
 coef_asc_parkon_partysize1_vis_per,0,F
 coef_asc_parkon_partysize1_vis_bus,0,F
-coef_asc_parkon_partysize1_external,0,F
+coef_asc_parkon_partysize1_external,-0.768,F
 # parked_offsite,,
 coef_asc_parkoff_res_per,-0.335,F
 coef_asc_parkoff_res_bus,-0.335,F
 coef_asc_parkoff_vis_per,0,F
 coef_asc_parkoff_vis_bus,0,F
-coef_asc_parkoff_external,0,F
+coef_asc_parkoff_external,-0.335,F
 coef_asc_parkoff_partysize1_res_per,-0.826,F
 coef_asc_parkoff_partysize1_res_bus,-0.826,F
 coef_asc_parkoff_partysize1_vis_per,0,F
 coef_asc_parkoff_partysize1_vis_bus,0,F
-coef_asc_parkoff_partysize1_external,0,F
+coef_asc_parkoff_partysize1_external,-0.826,F
 # transt,,
 coef_asc_transit_res_per,-1.538,F
 coef_asc_transit_res_bus,-1.538,F
 coef_asc_transit_vis_per,0.255,F
 coef_asc_transit_vis_bus,0.255,F
-coef_asc_transit_external,0,F
+coef_asc_transit_external,-1.538,F
 coef_asc_transit_partysize1_res_per,0.331,F
 coef_asc_transit_partysize1_res_bus,0.331,F
 coef_asc_transit_partysize1_vis_per,0,F
 coef_asc_transit_partysize1_vis_bus,0,F
-coef_asc_transit_partysize1_external,0,F
+coef_asc_transit_partysize1_external,0.331,F
 # forhire,,
 coef_asc_forhire_res_per,0.820,F
 coef_asc_forhire_res_bus,0.820,F
 coef_asc_forhire_vis_per,2.407,F
 coef_asc_forhire_vis_bus,2.407,F
-coef_asc_forhire_external,0,F
+coef_asc_forhire_external,0.820,F
 coef_asc_forhire_partysize1_res_per,-0.368,F
 coef_asc_forhire_partysize1_res_bus,-0.368,F
 coef_asc_forhire_partysize1_vis_per,-0.466,F
 coef_asc_forhire_partysize1_vis_bus,-0.466,F
-coef_asc_forhire_partysize1_external,0,F
+coef_asc_forhire_partysize1_external,-0.368,F
 # shuttle,,
 coef_asc_shuttle_res_per,0,F
 coef_asc_shuttle_res_bus,0,F
@@ -70,19 +70,19 @@ coef_ivt_res_per,-0.017,F
 coef_ivt_res_bus,-0.017,F
 coef_ivt_vis_per,-0.033,F
 coef_ivt_vis_bus,-0.033,F
-coef_ivt_external,0,F
+coef_ivt_external,-0.017,F
 # ovt,,
 coef_ovt_res_per,-0.034,F
 coef_ovt_res_bus,-0.034,F
 coef_ovt_vis_per,-0.066,F
 coef_ovt_vis_bus,-0.066,F
-coef_ovt_external,0,F
+coef_ovt_external,-0.034,F
 # cost,,
 coef_cost_res_per,-0.022,F
 coef_cost_res_bus,-0.022,F
 coef_cost_vis_per,-0.054,F
 coef_cost_vis_bus,-0.054,F
-coef_cost_external,-0.054,F
+coef_cost_external,-0.022,F
 # cost business,,
 coef_cost_bus_res_per,0,F
 coef_cost_bus_res_bus,0.009,F
