@@ -9,13 +9,10 @@ NESTS:
   name: root
   coefficient: coef_nest_root
   alternatives:
-      - name: PARK_ON_SITE
-        coefficient: coef_nest_ONSITE_PARK
+      - name: PARK
+        coefficient: coef_nest_PARK
         alternatives:
             - PARK_LOC1
-      - name: PARK_OFF_SITE
-        coefficient: coef_nest_OFFSITE_PARK
-        alternatives:
             - PARK_LOC4
       - name: TNC
         coefficient: coef_nest_TNC

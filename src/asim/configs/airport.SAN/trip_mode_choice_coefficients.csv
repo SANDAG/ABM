@@ -2,8 +2,7 @@ coefficient_name,value,constrain
 coef_zero,0,T
 coef_one,1,T
 coef_nest_root,1,T
-coef_nest_ONSITE_PARK,1,T
-coef_nest_OFFSITE_PARK,1,T
+coef_nest_PARK,0.701,T
 coef_nest_TNC,1,T
 coef_nest_TAXI,1,T
 coef_nest_TRANSIT,1,T
