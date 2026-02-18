@@ -8,6 +8,7 @@ coef_nest_TAXI,1,T
 coef_nest_TRANSIT,1,T
 coef_nest_TRANSIT_WALKACCESS,1,T
 coef_nest_TRANSIT_KNRACCESS,1,T
+coef_nest_CURB,1,T
 coef_nest_SHUTTLEVAN,1,T
 # parked_onsite,,
 coef_asc_parkon_res_per,0.696,F
@@ -31,6 +32,12 @@ coef_asc_parkoff_partysize1_res_bus,-0.826,F
 coef_asc_parkoff_partysize1_vis_per,0,F
 coef_asc_parkoff_partysize1_vis_bus,0,F
 coef_asc_parkoff_partysize1_external,-0.826,F
+# drop_off,,
+coef_asc_drop_off_res_per,0,F
+coef_asc_drop_off_res_bus,0,F
+coef_asc_drop_off_vis_per,0,F
+coef_asc_drop_off_vis_bus,0,F
+coef_asc_drop_off_external,0,F
 # transt,,
 coef_asc_transit_res_per,-1.538,F
 coef_asc_transit_res_bus,-1.538,F
