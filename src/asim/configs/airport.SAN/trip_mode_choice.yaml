@@ -37,6 +37,10 @@ NESTS:
               - KNR_LOC
               - KNR_MIX
               - KNR_PRM
+      - name: CURB # drop-off
+        coefficient: coef_nest_CURB
+        alternatives:
+          - CURB_LOC1
       - name: SHTTLVN
         coefficient: coef_nest_SHUTTLEVAN
         alternatives:
@@ -155,6 +159,8 @@ CHOOSER_COLS_TO_KEEP:
   - partySizeParkLocation1AutoToll
   - partySizeParkLocation4AutoDist
   - partySizeParkLocation4AutoToll
+  - partySizeCurbLocation1AutoDist
+  - partySizeCurbLocation1AutoToll
   - nights
   - number_of_participants
 
