@@ -101,7 +101,7 @@ def create_tours(settings):
             size_cum_probs = np.array(list(size_probs.values())).cumsum()
             size_scaled_probs = np.subtract(
                 size_cum_probs, np.random.rand(num_purp_tours, 1))
-            size = np.argmax((size_scaled_probs + 1.0).astype('i4'), axis=1) + 1
+            size = np.argmax((size_scaled_probs + 1.0).astype('i4'), axis=1)
             group['party_size'] = size
             df.loc[group.index, 'party_size'] = size
 
