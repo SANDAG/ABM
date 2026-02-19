@@ -94,14 +94,14 @@ def create_tours(settings):
             num_purp_tours = len(group)
           
             #assign size
-            size_probs = OrderedDict((k+1, v) for k, v in party_size_probs[purp_type].items())
+            size_probs = OrderedDict(party_size_probs[purp_type])
             # scale probs to so they sum to 1
             size_sum = sum(size_probs.values())
             size_probs = {k: v / size_sum for k,v in size_probs.items()}
             size_cum_probs = np.array(list(size_probs.values())).cumsum()
             size_scaled_probs = np.subtract(
                 size_cum_probs, np.random.rand(num_purp_tours, 1))
-            size = np.argmax((size_scaled_probs + 1.0).astype('i4'), axis=1)
+            size = np.argmax((size_scaled_probs + 1.0).astype('i4'), axis=1) + 1 # add 1 because party size bins are 1 indexed
             group['party_size'] = size
             df.loc[group.index, 'party_size'] = size
 
