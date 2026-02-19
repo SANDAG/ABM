@@ -107,3 +107,39 @@ coef_cost_per_6daysparked_res_bus,0,F
 coef_cost_per_6daysparked_vis_per,0,F
 coef_cost_per_6daysparked_vis_bus,0,F
 coef_cost_per_6daysparked_external,0,F
+# calibration constants for drive and park,,
+coef_cali_park_res_per,0,F
+coef_cali_park_res_bus,0,
+coef_cali_park_vis_per,0,F
+coef_cali_park_vis_bus,0,F
+coef_cali_park_external,0,F
+# calibration constants for pickup dropoff,,
+coef_cali_drop_off_res_per,0,F
+coef_cali_drop_off_res_bus,0,F
+coef_cali_drop_off_vis_per,0,F
+coef_cali_drop_off_vis_bus,0,F
+coef_cali_drop_off_external,0,F
+# calibration constants for shuttle van,,
+coef_cali_shuttle_res_per,0,F
+coef_cali_shuttle_res_bus,0,F
+coef_cali_shuttle_vis_per,0,F
+coef_cali_shuttle_vis_bus,0,F
+coef_cali_shuttle_external,0,F
+# calibration constants for ridehail,,
+coef_cali_ridehail_res_per,0,F
+coef_cali_ridehail_res_bus,0,F
+coef_cali_ridehail_vis_per,0,F
+coef_cali_ridehail_vis_bus,0,F
+coef_cali_ridehail_external,0,F
+# calibration constants for taxi,,
+coef_cali_taxi_res_per,0,F
+coef_cali_taxi_res_bus,0,F
+coef_cali_taxi_vis_per,0,F
+coef_cali_taxi_vis_bus,0,F
+coef_cali_taxi_external,0,F
+# calibration constants for transit,,
+coef_cali_transit_res_per,0,F
+coef_cali_transit_res_bus,0,F
+coef_cali_transit_vis_per,0,F
+coef_cali_transit_vis_bus,0,F
+coef_cali_transit_external,0,F

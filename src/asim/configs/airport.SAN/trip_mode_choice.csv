@@ -13,8 +13,8 @@ util_KNR_MIX_Unavailable,,knr_mix_available == False,,,,,,,,,,,-999,
 util_KNR_PRM_Unavailable,,knr_premium_available == False,,,,,,,,,,,,-999
 res_modes,remove modes not available to residents,resident == True,,,,,,-999,,,,,,
 vis_modes,remove modes not available to visitors,visitor == True,-999,-999,,,,,,,,,,
-constant_asc,ASC,"@np.repeat(True,len(df))",coef_asc_parked_onsite,coef_asc_parked_offsite,coef_asc_tnc,coef_asc_taxi,coef_asc_drop_off,coef_asc_shuttle,coef_asc_transit,coef_asc_transit,coef_asc_transit,coef_asc_transit,coef_asc_transit,coef_asc_transit
-constant_asc_party_size,ASC part size interaction term,"@np.repeat(True,len(df))&(df.party_size==1)",coef_asc_parked_onsite_partysize1,coef_asc_parked_offsite_partysize1,coef_asc_tnc_partysize1,coef_asc_taxi_partysize1,0,coef_asc_shuttle_partysize1,coef_asc_transit_partysize1,coef_asc_transit_partysize1,coef_asc_transit_partysize1,coef_asc_transit_partysize1,coef_asc_transit_partysize1,coef_asc_transit_partysize1
+constant_asc,ASC,"@np.repeat(True,len(df))",coef_asc_parked_onsite,coef_asc_parked_offsite,coef_asc_ridehail,coef_asc_taxi,coef_asc_drop_off,coef_asc_shuttle,coef_asc_transit,coef_asc_transit,coef_asc_transit,coef_asc_transit,coef_asc_transit,coef_asc_transit
+constant_asc_party_size,ASC part size interaction term,"@np.repeat(True,len(df))&(df.party_size==1)",coef_asc_parked_onsite_partysize1,coef_asc_parked_offsite_partysize1,coef_asc_ridehail_partysize1,coef_asc_taxi_partysize1,0,coef_asc_shuttle_partysize1,coef_asc_transit_partysize1,coef_asc_transit_partysize1,coef_asc_transit_partysize1,coef_asc_transit_partysize1,coef_asc_transit_partysize1,coef_asc_transit_partysize1
 ,,,,,,,,,,,,,,
 #,PARK_LOC1,,,,,,,,,,,,,
 util_park1_ivt,IVT to parking location 1,@(df['partySizeParkLocation1AutoIVT'] + parkLocation1InVehicleTime),coef_ivt,,,,,,,,,,,
@@ -103,3 +103,5 @@ util_KNR_PRM_cost_dollars,KNR_PRM - Fare,@df['KNR_PRM_cost_dollars'],,,,,,,,,,,,
 util_KNR_PRM_cost_dollars_bus,KNR_PRM - Fare business,@df['KNR_PRM_cost_dollars'],,,,,,,,,,,,coef_cost_bus
 util_KNR_PRM_cost_dollars_nonbus_incomelt60k,KNR_PRM - Fare none business income lt60k,@((df.income <= 9)*df['KNR_PRM_cost_dollars']),,,,,,,,,,,,coef_cost_per_incomelt60k
 util_KNR_PRM_cost_dollars_nonbus_6daysparked,KNR_PRM - Fare none business 6+ days parked,"@((np.maximum(df['nights'],0) > 6)*df['KNR_PRM_cost_dollars'])",,,,,,,,,,,,coef_cost_per_6daysparked
+#,Calibration,,,,,,,,,,,,,
+cali_constants,calibration constants,1,coef_cali_park,coef_cali_park,coef_cali_ridehail,coef_cali_taxi,coef_cali_drop_off,coef_cali_shuttle,coef_cali_transit,coef_cali_transit,coef_cali_transit,coef_cali_transit,coef_cali_transit,coef_cali_transit
