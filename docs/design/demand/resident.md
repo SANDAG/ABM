@@ -88,5 +88,5 @@ flowchart TD
 ```
 
 
-At this point, all tours are generated, scheduled, have a primary destination, and a selected tour mode. The next set of models fills in details about the tours - number of intermediate stops, location of each stop, the departure time of each stop, and the mode of each trip on the tour. Finally, the parking location of each auto trip to the central business district (CBD) is determined.
+At this point, all tours are generated, scheduled, have a primary destination, and a selected tour mode. The next set of models fills in details about the tours - number of intermediate stops, location of each stop, the departure time of each stop, and the mode of each trip on the tour. For households that own autonomous vehicles, an additional [AV Routing Model](av-routing.md) is run after the resident model completes. This model simulates how household AVs are dispatched to serve household members' trips throughout the day. Finally, the parking location of each auto trip to the central business district (CBD) is determined.
 After the model is run, the output files listed above are created. The trip lists are then summarized into origin-destination matrices by time period and vehicle class or transit mode and assigned to the transport network.

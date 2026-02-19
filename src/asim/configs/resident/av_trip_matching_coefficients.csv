@@ -1,0 +1,6 @@
+coefficient_name,value,constrain
+coef_unavailable,-999.0,F
+coef_one,1.0,F
+coef_idle,-10.0,F
+coef_ivt,-0.03,F
+coef_cost,-0.002,F
