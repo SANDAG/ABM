@@ -42,6 +42,7 @@ xwalk = pd.read_csv(os.path.join(path,'input','mgra15_based_input{}.csv'.format(
 xwalk['destination'] = 0
 xwalk.loc[xwalk['zip09'] == 92037, 'destination'] = 1
 xwalk.loc[xwalk['zip09'] == 92101, 'destination'] = 2
+xwalk.loc[xwalk['zip09'] == 92108, 'destination'] = 3
 xwalk = xwalk.sort_values('taz').drop_duplicates(subset = 'taz')
 
 # %%
