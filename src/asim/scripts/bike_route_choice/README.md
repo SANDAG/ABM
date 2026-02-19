@@ -11,11 +11,7 @@ The level of service is the expected maximum utility, or logsum, from the model,
 and network link assignments are made with individual route probabilities.
 
 ## Setup and Running
-A list of necessary dependencies is stored in `environment_bike_test.yaml` which
-can be used to create an Anaconda environment named `bike_test` as follows:
-```
-conda env create --file environment_bike_test.yml
-```
+The UV environment used to run AcitivtySim (asim_140) is also used to run the bike model.
 The bike model is launched from the `bike_route_choice.py` file and accepts a
 single (optional) command-line argument specifying the settings YAML file to
 read. The default value for this argument is `bike_route_choice_settings.yaml`.
@@ -40,14 +36,15 @@ In the specified settings YAML file, several options are available for configura
 - `number_of_iterations`: maximum number of paths which should be found before terminating
 - `number_of_batches`: number of batches into which origin centroids should be divided for sequential processing
 - `number_of_processors`: number of processors to use for processing each batch
-- `max_dijkstra_distance`: cutoff threshold utility (positive) for early termination of the shortest-paths search
+- `max_dijkstra_utility`: cutoff threshold utility (positive) for early termination of the shortest-paths search
 - `min_iterations`: the minimum number of paths found - zone pairs with fewer paths will be discarded
 
 **Output and Caching**
 - `output_path`: path to the directory in which model outputs should be written
+- `output_file_path`: path to the final bike logsum file (bikeMgraLogsum.csv, bikeTazLogsum.csv)
 - `save_bike_net`: whether to write the derived network to a set of CSVs
 - `read_cached_bike_net`: whether to read the derived network from a cache instead of re-deriving from the original network
-- `bike_speed`: the speed to use for calculating bike travel times in output
+- `bike_speed`: the speed in mph to use for calculating bike travel times in output
 
 **Tracing**
 - `trace_bike_utilities`: whether to output the chosen path sets from a specified list of origin-destination pairs
@@ -89,10 +86,7 @@ search extends outward from the origin, the random cost coefficients do not vary
 but only over iterations of path sampling. In the path search, the cost of each subsequent
 link is calculated by summing the product of the random coefficients with their respective
 link attributes, and then multiplying the result by a non-negative discrete random edge cost
-multiplier . Path sampling is repeated until both a minimum count of paths and a preset
-target for the total of all path sizes in each alternative list is reached. If the total path size
-does not reach its target after a given maximum number of sampling iterations, sampling
-terminates to prevent excessively long computation time.
+multiplier.
 
 ## Threshold Utility and Distance
 To improve runtime, the Dijkstra's algorithm implementation allows for early termination once a

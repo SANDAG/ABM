@@ -11,23 +11,25 @@ This process generates the output\bikeMgraLogsum.csv and output\bikeTazLogsum.cs
 <!-- ![](../../images/design/bike_logsum_design.png) -->
 <img src="../../images/design/bike_logsum_design.png" width="200"/>
 
-**Inputs:** The AT network is read from input\SANDAG_Bike_Net.dbf and input\SANDAG_Bike_Node.dbf. Coefficients and other settings are read from sandag_abm.properties.
+**Inputs:** The AT network is read from input\SANDAG_Bike_Net.dbf and input\SANDAG_Bike_Node.dbf. The bike model settings and utility files are found in src\asim\scripts\bike_route_choice.
 
 **Network Construction:** Node and edge attributes are processed from the network files. Traversals are derived for edge pairs, using angle to determine turn type.
 
 **Path Sampling:**
 
 - Doubly stochastic, coefficients are randomized and resulting edge cost is randomized
-- Dijkstra's algorithm finds path each origin to destination with minimum cost
+- Dijkstra's algorithm finds path each origin to destination with minimum combined edge and traversal cost
 - Add paths to path alternatives list and calculate path sizes from overlap of alternatives
-- Repeat until minimum number of alternatives and minimum path size is met for each origin/destination pair
-
-**Path Resampling:** Resample paths from alternatives list until minimum path size is met.
+- Repeat for preset number of iterations (default 10)
 
 **Path Choice Utility Calculation:** Calculate bike logsum values for each origin/destination pair from utility expression on each path alternative.
 
-**Outputs:** Bike logsums and times are written to output\bikeMgraLogsum.csv and output\bikeTazLogsum.csv. During ActivitySim preprocessing, TAZ values are added to BIKE_LOGSUM and BIKE_TIME matrices of output\skims\traffic_skims_AM.omx and MGRA values are written to output\skims\maz_maz_bike.csv.
+**Outputs:** Bike logsums and times are written to output\bikeMgraLogsum.csv and output\bikeTazLogsum.csv. Log and trace files are written to output\bike. During ActivitySim preprocessing, TAZ values are added to BIKE_LOGSUM and BIKE_TIME matrices of output\skims\traffic_skims_AM.omx and MGRA values are written to output\skims\maz_maz_bike.csv.
 
 ## Further reading
 
-[Active Transportation Improvements Report (2015)](https://github.com/SANDAG/ABM/wiki/files/at.pdf)
+[Bike Route Choice README](../../../src/asim/scripts/bike_route_choice/README.md)
+
+[ABM3 Bike Model Report (2025)](../../pdf_reports/SANDAG_ABM3_Bike_Model_Report.pdf)
+
+[Active Transportation Improvements Report (2015)](https://github.com/SANDAG/ABM/wiki/files/at.pdf) (Prior bike logsum implementation in Java)

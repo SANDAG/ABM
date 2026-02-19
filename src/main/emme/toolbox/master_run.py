@@ -535,7 +535,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         settings = settings.replace(r"${path}",self._path)
                         with open(_join(self._path,r'src\asim\scripts\bike_route_choice',file_name), 'w') as file:
                             file.writelines(settings)
-                    self.run_proc("runSandagBikeLogsumsNew.cmd", [drive, path_forward_slash],
+                    self.run_proc("runSandagBikeLogsums.cmd", [drive, path_forward_slash],
                                   "Bike - create AT logsums and impedances", capture_output=True)
                     # Copy updated logsums to scenario input to avoid overwriting
                     self.copy_files(["bikeMgraLogsum.csv", "bikeTazLogsum.csv"], output_dir, input_dir)
