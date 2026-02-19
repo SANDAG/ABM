@@ -19,3 +19,6 @@ distance >= 20.0,"@((_DIST >= 15)*np.minimum((_DIST - 20), (30 - 20)))",coef_dis
 distance >= 30.0,"@((_DIST >= 20)*np.minimum((_DIST - 30), (40 - 30)))",coef_dist_res_bus_samp11,coef_dist_res_per_samp11,coef_dist_vis_bus_samp11,coef_dist_vis_per_samp11
 distance >= 40.0,"@((_DIST >= 30)*np.minimum((_DIST - 40), (50 - 40)))",coef_dist_res_bus_samp12,coef_dist_res_per_samp12,coef_dist_vis_bus_samp12,coef_dist_vis_per_samp12
 distance >= 50.0,"@((_DIST >= 50)*np.minimum((_DIST - 50), (5000 - 50)))",coef_dist_res_bus_samp13,coef_dist_res_per_samp13,coef_dist_vis_bus_samp13,coef_dist_vis_per_samp13
+La Jolla constants,"@(_POI==1)",coef_lajolla_res_bus,coef_lajolla_res_per,coef_lajolla_vis_bus,coef_lajolla_vis_per
+Airport/Downtown constants,"@(_POI==2)",coef_downtown_res_bus,coef_downtown_res_per,coef_downtown_vis_bus,coef_downtown_vis_per
+Mission Valley constants,"@(_POI==3)",coef_mission_valley_res_bus,coef_mission_valley_res_per,coef_mission_valley_vis_bus,coef_mission_valley_vis_per
