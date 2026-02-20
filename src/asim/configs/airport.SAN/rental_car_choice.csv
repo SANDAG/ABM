@@ -9,4 +9,4 @@ util_income_more_than_150,Income more than 150k,"@(df.income.isin([13,15,16,17])
 # Party size effects (capped at 5),,,,
 util_party_size_capped,Party size capped at 5,"@np.minimum(df.party_size,4)",,coef_party_size_capped
 # Calibration constants,,,,
-cali_constants,calibration constants,1,,coef_cali_rental_car
+calibration_constants,calibration constants,1,,coef_calibration_rental_car

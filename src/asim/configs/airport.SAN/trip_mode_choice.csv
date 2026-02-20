@@ -104,4 +104,4 @@ util_KNR_PRM_cost_dollars_bus,KNR_PRM - Fare business,@df['KNR_PRM_cost_dollars'
 util_KNR_PRM_cost_dollars_nonbus_incomelt60k,KNR_PRM - Fare none business income lt60k,@((df.income <= 9)*df['KNR_PRM_cost_dollars']),,,,,,,,,,,,coef_cost_per_incomelt60k
 util_KNR_PRM_cost_dollars_nonbus_6daysparked,KNR_PRM - Fare none business 6+ days parked,"@((np.maximum(df['nights'],0) > 6)*df['KNR_PRM_cost_dollars'])",,,,,,,,,,,,coef_cost_per_6daysparked
 #,Calibration,,,,,,,,,,,,,
-cali_constants,calibration constants,1,coef_cali_park,coef_cali_park,coef_cali_ridehail,coef_cali_taxi,coef_cali_drop_off,coef_cali_shuttle,coef_cali_transit,coef_cali_transit,coef_cali_transit,coef_cali_transit,coef_cali_transit,coef_cali_transit
+calibration_constants,calibration constants,1,coef_calibration_park,coef_calibration_park,coef_calibration_ridehail,coef_calibration_taxi,coef_calibration_drop_off,coef_calibration_shuttle,coef_calibration_transit,coef_calibration_transit,coef_calibration_transit,coef_calibration_transit,coef_calibration_transit,coef_calibration_transit
