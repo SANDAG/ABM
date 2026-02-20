@@ -1,0 +1,434 @@
+Description,Target,Expression
+
+## Constants
+,_WALK_SPEED,3
+,_BIKE_SPEED,12
+
+,_SHORT_WALK, 0.333 # miles
+
+,_SINGLE_TNC_WAIT_TIME, 8.4 # minutes
+,_SHARED_TNC_WAIT_TIME, 11.0 # minutes
+,_TAXI_WAIT_TIME, 13.3 # minutes
+
+,_TAXI_BASE_FARE, 2.20 # $
+,_TAXI_COST_PER_MILE, 2.30 # $
+,_TAXI_COST_PER_MINUTE, 0.10 # $
+
+,_TNC_SINGLE_BASE_FARE, 2.20 # $
+,_TNC_SINGLE_COST_PER_MILE, 1.33 # $
+,_TNC_SINGLE_COST_PER_MINUTE, 0.24 # $
+,_TNC_SINGLE_COST_MINIMUM, 7.20 # $
+
+,_TNC_SHARED_BASE_FARE, 2.20 # $
+,_TNC_SHARED_COST_PER_MILE, 0.53 # $
+,_TNC_SHARED_COST_PER_MINUTE, 0.10 # $
+,_TNC_SHARED_COST_MINIMUM, 3.00 # $
+,_TNC_SHARED_IVT_FACTOR, 1.5 # $
+
+## Distances
+# Auto distance
+,_sov_tr_l_dist,trip_odt_skims['SOV_TR_L_DIST']
+,_sov_tr_m_dist,trip_odt_skims['SOV_TR_M_DIST']
+,_sov_tr_h_dist,trip_odt_skims['SOV_TR_H_DIST']
+,_sov_nt_l_dist,trip_odt_skims['SOV_NT_L_DIST']
+,_sov_nt_m_dist,trip_odt_skims['SOV_NT_M_DIST']
+,_sov_nt_h_dist,trip_odt_skims['SOV_NT_H_DIST']
+,_hov2_l_dist,trip_odt_skims['HOV2_L_DIST']
+,_hov2_m_dist,trip_odt_skims['HOV2_M_DIST']
+,_hov2_h_dist,trip_odt_skims['HOV2_H_DIST']
+,_hov3_l_dist,trip_odt_skims['HOV3_L_DIST']
+,_hov3_m_dist,trip_odt_skims['HOV3_M_DIST']
+,_hov3_h_dist,trip_odt_skims['HOV3_H_DIST']
+##### what to do w/ tolldist? HOVdist?
+,_sov_tr_l_tolldist,trip_odt_skims['SOV_TR_L_TOLLDIST']
+,_sov_tr_m_tolldist,trip_odt_skims['SOV_TR_M_TOLLDIST']
+,_sov_tr_h_tolldist,trip_odt_skims['SOV_TR_H_TOLLDIST']
+,_sov_nt_l_tolldist,trip_odt_skims['SOV_NT_L_TOLLDIST']
+,_sov_nt_m_tolldist,trip_odt_skims['SOV_NT_M_TOLLDIST']
+,_sov_nt_h_tolldist,trip_odt_skims['SOV_NT_H_TOLLDIST']
+,_hov2_l_tolldist,trip_odt_skims['HOV2_L_TOLLDIST']
+,_hov2_m_tolldist,trip_odt_skims['HOV2_M_TOLLDIST']
+,_hov2_h_tolldist,trip_odt_skims['HOV2_H_TOLLDIST']
+,_hov3_l_tolldist,trip_odt_skims['HOV3_L_TOLLDIST']
+,_hov3_m_tolldist,trip_odt_skims['HOV3_M_TOLLDIST']
+,_hov3_h_tolldist,trip_odt_skims['HOV3_H_TOLLDIST']
+,_hov2_l_hovdist,trip_odt_skims['HOV2_L_HOVDIST']
+,_hov2_m_hovdist,trip_odt_skims['HOV2_M_HOVDIST']
+,_hov2_h_hovdist,trip_odt_skims['HOV2_H_HOVDIST']
+,_hov3_l_hovdist,trip_odt_skims['HOV3_L_HOVDIST']
+,_hov3_m_hovdist,trip_odt_skims['HOV3_M_HOVDIST']
+,_hov3_h_hovdist,trip_odt_skims['HOV3_H_HOVDIST']
+
+# Transit auto access/egress distance (miles x 100)
+#####,_drv_com_wlk_ddist,trip_odt_skims['DRV_COM_WLK_DDIST']/100
+#####,_drv_exp_wlk_ddist,trip_odt_skims['DRV_EXP_WLK_DDIST']/100
+#####,_drv_hvy_wlk_ddist,trip_odt_skims['DRV_HVY_WLK_DDIST']/100
+#####,_drv_loc_wlk_ddist,trip_odt_skims['DRV_LOC_WLK_DDIST']/100
+#####,_drv_lrf_wlk_ddist,trip_odt_skims['DRV_LRF_WLK_DDIST']/100
+
+# Bike distance
+#####,_bike_dist,trip_od_skims['DISTBIKE'] CHECK
+,_bike_dist,trip_od_skims['DIST']
+
+# Walk distance
+#####,_walk_dist,trip_od_skims['DISTWALK'] CHECK
+,_walk_dist,trip_od_skims['DIST']
+
+## Times
+# Auto time
+##### loses toll times
+,_sov_tr_l_time,trip_odt_skims['SOV_TR_L_TIME']
+,_sov_tr_m_time,trip_odt_skims['SOV_TR_M_TIME']
+,_sov_tr_h_time,trip_odt_skims['SOV_TR_H_TIME']
+,_sov_nt_l_time,trip_odt_skims['SOV_NT_L_TIME']
+,_sov_nt_m_time,trip_odt_skims['SOV_NT_M_TIME']
+,_sov_nt_h_time,trip_odt_skims['SOV_NT_H_TIME']
+,_hov2_l_time,trip_odt_skims['HOV2_L_TIME']
+,_hov2_m_time,trip_odt_skims['HOV2_M_TIME']
+,_hov2_h_time,trip_odt_skims['HOV2_H_TIME']
+,_hov3_l_time,trip_odt_skims['HOV3_L_TIME']
+,_hov3_m_time,trip_odt_skims['HOV3_M_TIME']
+,_hov3_h_time,trip_odt_skims['HOV3_H_TIME']
+
+
+# Transit vehicle time
+,_knrin_loc_wlk_totivt,trip_odt_skims['KNRIN_LOC_TOTALIVTT']
+,_knrin_mix_wlk_totivt,trip_odt_skims['KNRIN_MIX_TOTALIVTT']
+,_knrin_prm_wlk_totivt,trip_odt_skims['KNRIN_PRM_TOTALIVTT']
+,_pnrin_loc_wlk_totivt,trip_odt_skims['PNRIN_LOC_TOTALIVTT']
+,_pnrin_mix_wlk_totivt,trip_odt_skims['PNRIN_MIX_TOTALIVTT']
+,_pnrin_prm_wlk_totivt,trip_odt_skims['PNRIN_PRM_TOTALIVTT']
+,_tncin_loc_wlk_totivt,trip_odt_skims['TNCIN_LOC_TOTALIVTT']
+,_tncin_mix_wlk_totivt,trip_odt_skims['TNCIN_MIX_TOTALIVTT']
+,_tncin_prm_wlk_totivt,trip_odt_skims['TNCIN_PRM_TOTALIVTT']
+,_knrout_loc_wlk_totivt,trip_odt_skims['KNROUT_LOC_TOTALIVTT']
+,_knrout_mix_wlk_totivt,trip_odt_skims['KNROUT_MIX_TOTALIVTT']
+,_knrout_prm_wlk_totivt,trip_odt_skims['KNROUT_PRM_TOTALIVTT']
+,_pnrout_loc_wlk_totivt,trip_odt_skims['PNROUT_LOC_TOTALIVTT']
+,_pnrout_mix_wlk_totivt,trip_odt_skims['PNROUT_MIX_TOTALIVTT']
+,_pnrout_prm_wlk_totivt,trip_odt_skims['PNROUT_PRM_TOTALIVTT']
+,_tncout_loc_wlk_totivt,trip_odt_skims['TNCOUT_LOC_TOTALIVTT']
+,_tncout_mix_wlk_totivt,trip_odt_skims['TNCOUT_MIX_TOTALIVTT']
+,_tncout_prm_wlk_totivt,trip_odt_skims['TNCOUT_PRM_TOTALIVTT']
+,_walk_loc_wlk_totivt,trip_odt_skims['WALK_LOC_TOTALIVTT']
+,_walk_mix_wlk_totivt,trip_odt_skims['WALK_MIX_TOTALIVTT']
+,_walk_prm_wlk_totivt,trip_odt_skims['WALK_PRM_TOTALIVTT']
+,_knrin_loc_wlk_dwell,trip_odt_skims['KNRIN_LOC_DWELLTIME']
+,_pnrin_loc_wlk_dwell,trip_odt_skims['PNRIN_LOC_DWELLTIME']
+,_tncin_loc_wlk_dwell,trip_odt_skims['TNCIN_LOC_DWELLTIME']
+,_knrout_loc_wlk_dwell,trip_odt_skims['KNROUT_LOC_DWELLTIME']
+,_pnrout_loc_wlk_dwell,trip_odt_skims['PNROUT_LOC_DWELLTIME']
+,_tncout_loc_wlk_dwell,trip_odt_skims['TNCOUT_LOC_DWELLTIME']
+,_walk_loc_wlk_dwell,trip_odt_skims['WALK_LOC_DWELLTIME']
+
+
+# Initial wait time (FIRSTWAIT)
+,_knrin_loc_wlk_iwait,trip_odt_skims['KNRIN_LOC_FIRSTWAIT']
+,_knrin_mix_wlk_iwait,trip_odt_skims['KNRIN_MIX_FIRSTWAIT']
+,_knrin_prm_wlk_iwait,trip_odt_skims['KNRIN_PRM_FIRSTWAIT']
+,_pnrin_loc_wlk_iwait,trip_odt_skims['PNRIN_LOC_FIRSTWAIT']
+,_pnrin_mix_wlk_iwait,trip_odt_skims['PNRIN_MIX_FIRSTWAIT']
+,_pnrin_prm_wlk_iwait,trip_odt_skims['PNRIN_PRM_FIRSTWAIT']
+,_tncin_loc_wlk_iwait,trip_odt_skims['TNCIN_LOC_FIRSTWAIT']
+,_tncin_mix_wlk_iwait,trip_odt_skims['TNCIN_MIX_FIRSTWAIT']
+,_tncin_prm_wlk_iwait,trip_odt_skims['TNCIN_PRM_FIRSTWAIT']
+,_knrout_loc_wlk_iwait,trip_odt_skims['KNROUT_LOC_FIRSTWAIT']
+,_knrout_mix_wlk_iwait,trip_odt_skims['KNROUT_MIX_FIRSTWAIT']
+,_knrout_prm_wlk_iwait,trip_odt_skims['KNROUT_PRM_FIRSTWAIT']
+,_pnrout_loc_wlk_iwait,trip_odt_skims['PNROUT_LOC_FIRSTWAIT']
+,_pnrout_mix_wlk_iwait,trip_odt_skims['PNROUT_MIX_FIRSTWAIT']
+,_pnrout_prm_wlk_iwait,trip_odt_skims['PNROUT_PRM_FIRSTWAIT']
+,_tncout_loc_wlk_iwait,trip_odt_skims['TNCOUT_LOC_FIRSTWAIT']
+,_tncout_mix_wlk_iwait,trip_odt_skims['TNCOUT_MIX_FIRSTWAIT']
+,_tncout_prm_wlk_iwait,trip_odt_skims['TNCOUT_PRM_FIRSTWAIT']
+,_walk_loc_wlk_iwait,trip_odt_skims['WALK_LOC_FIRSTWAIT']
+,_walk_mix_wlk_iwait,trip_odt_skims['WALK_MIX_FIRSTWAIT']
+,_walk_prm_wlk_iwait,trip_odt_skims['WALK_PRM_FIRSTWAIT']
+
+# Transfer wait time (XWAIT)
+,_knrin_loc_wlk_xwait,trip_odt_skims['KNRIN_LOC_XFERWAIT']
+,_knrin_mix_wlk_xwait,trip_odt_skims['KNRIN_MIX_XFERWAIT']
+,_knrin_prm_wlk_xwait,trip_odt_skims['KNRIN_PRM_XFERWAIT']
+,_pnrin_loc_wlk_xwait,trip_odt_skims['PNRIN_LOC_XFERWAIT']
+,_pnrin_mix_wlk_xwait,trip_odt_skims['PNRIN_MIX_XFERWAIT']
+,_pnrin_prm_wlk_xwait,trip_odt_skims['PNRIN_PRM_XFERWAIT']
+,_tncin_loc_wlk_xwait,trip_odt_skims['TNCIN_LOC_XFERWAIT']
+,_tncin_mix_wlk_xwait,trip_odt_skims['TNCIN_MIX_XFERWAIT']
+,_tncin_prm_wlk_xwait,trip_odt_skims['TNCIN_PRM_XFERWAIT']
+,_knrout_loc_wlk_xwait,trip_odt_skims['KNROUT_LOC_XFERWAIT']
+,_knrout_mix_wlk_xwait,trip_odt_skims['KNROUT_MIX_XFERWAIT']
+,_knrout_prm_wlk_xwait,trip_odt_skims['KNROUT_PRM_XFERWAIT']
+,_pnrout_loc_wlk_xwait,trip_odt_skims['PNROUT_LOC_XFERWAIT']
+,_pnrout_mix_wlk_xwait,trip_odt_skims['PNROUT_MIX_XFERWAIT']
+,_pnrout_prm_wlk_xwait,trip_odt_skims['PNROUT_PRM_XFERWAIT']
+,_tncout_loc_wlk_xwait,trip_odt_skims['TNCOUT_LOC_XFERWAIT']
+,_tncout_mix_wlk_xwait,trip_odt_skims['TNCOUT_MIX_XFERWAIT']
+,_tncout_prm_wlk_xwait,trip_odt_skims['TNCOUT_PRM_XFERWAIT']
+,_walk_loc_wlk_xwait,trip_odt_skims['WALK_LOC_XFERWAIT']
+,_walk_mix_wlk_xwait,trip_odt_skims['WALK_MIX_XFERWAIT']
+,_walk_prm_wlk_xwait,trip_odt_skims['WALK_PRM_XFERWAIT']
+
+# Walk access time (WACC) (for all transit modes)
+,_wlk_wacc,_SHORT_WALK / _WALK_SPEED * 60 # Constant assumption of short walk access
+
+# Auxiliary walk time (WAUX)
+#####,_drv_com_wlk_waux,trip_odt_skims['DRV_COM_WLK_WAUX']/100
+#####,_drv_exp_wlk_waux,trip_odt_skims['DRV_EXP_WLK_WAUX']/100
+#####,_drv_hvy_wlk_waux,trip_odt_skims['DRV_HVY_WLK_WAUX']/100
+#####,_drv_loc_wlk_waux,trip_odt_skims['DRV_LOC_WLK_WAUX']/100
+#####,_drv_lrf_wlk_waux,trip_odt_skims['DRV_LRF_WLK_WAUX']/100
+#####,_wlk_com_wlk_waux,trip_odt_skims['WLK_COM_WLK_WAUX']/100
+#####,_wlk_exp_wlk_waux,trip_odt_skims['WLK_EXP_WLK_WAUX']/100
+#####,_wlk_hvy_wlk_waux,trip_odt_skims['WLK_HVY_WLK_WAUX']/100
+#####,_wlk_loc_wlk_waux,trip_odt_skims['WLK_LOC_WLK_WAUX']/100
+#####,_wlk_lrf_wlk_waux,trip_odt_skims['WLK_LRF_WLK_WAUX']/100
+
+# Walk egress time (WEGR) (for all transit modes)
+,_wlk_wegr,_SHORT_WALK / _WALK_SPEED * 60 # Constant assumption of short walk egress
+
+# Drive access/egress time - ACC column used bc https://github.com/sandag/abm/wiki/output-files#transit_skimsomx
+##### SHOULD THIS INCLUDE _EGR column as well?
+,_knrin_loc_wlk_acc,trip_odt_skims['KNRIN_LOC_ACC']
+,_knrin_mix_wlk_acc,trip_odt_skims['KNRIN_MIX_ACC']
+,_knrin_prm_wlk_acc,trip_odt_skims['KNRIN_PRM_ACC']
+,_pnrin_loc_wlk_acc,trip_odt_skims['PNRIN_LOC_ACC']
+,_pnrin_mix_wlk_acc,trip_odt_skims['PNRIN_MIX_ACC']
+,_pnrin_prm_wlk_acc,trip_odt_skims['PNRIN_PRM_ACC']
+,_tncin_loc_wlk_acc,trip_odt_skims['TNCIN_LOC_ACC']
+,_tncin_mix_wlk_acc,trip_odt_skims['TNCIN_MIX_ACC']
+,_tncin_prm_wlk_acc,trip_odt_skims['TNCIN_PRM_ACC']
+,_knrout_loc_wlk_acc,trip_odt_skims['KNROUT_LOC_ACC']
+,_knrout_mix_wlk_acc,trip_odt_skims['KNROUT_MIX_ACC']
+,_knrout_prm_wlk_acc,trip_odt_skims['KNROUT_PRM_ACC']
+,_pnrout_loc_wlk_acc,trip_odt_skims['PNROUT_LOC_ACC']
+,_pnrout_mix_wlk_acc,trip_odt_skims['PNROUT_MIX_ACC']
+,_pnrout_prm_wlk_acc,trip_odt_skims['PNROUT_PRM_ACC']
+,_tncout_loc_wlk_acc,trip_odt_skims['TNCOUT_LOC_ACC']
+,_tncout_mix_wlk_acc,trip_odt_skims['TNCOUT_MIX_ACC']
+,_tncout_prm_wlk_acc,trip_odt_skims['TNCOUT_PRM_ACC']
+,_walk_loc_wlk_acc,trip_odt_skims['WALK_LOC_ACC']
+,_walk_mix_wlk_acc,trip_odt_skims['WALK_MIX_ACC']
+,_walk_prm_wlk_acc,trip_odt_skims['WALK_PRM_ACC']
+,_knrin_loc_wlk_egr,trip_odt_skims['KNRIN_LOC_EGR']
+,_knrin_mix_wlk_egr,trip_odt_skims['KNRIN_MIX_EGR']
+,_knrin_prm_wlk_egr,trip_odt_skims['KNRIN_PRM_EGR']
+,_pnrin_loc_wlk_egr,trip_odt_skims['PNRIN_LOC_EGR']
+,_pnrin_mix_wlk_egr,trip_odt_skims['PNRIN_MIX_EGR']
+,_pnrin_prm_wlk_egr,trip_odt_skims['PNRIN_PRM_EGR']
+,_tncin_loc_wlk_egr,trip_odt_skims['TNCIN_LOC_EGR']
+,_tncin_mix_wlk_egr,trip_odt_skims['TNCIN_MIX_EGR']
+,_tncin_prm_wlk_egr,trip_odt_skims['TNCIN_PRM_EGR']
+,_knrout_loc_wlk_egr,trip_odt_skims['KNROUT_LOC_EGR']
+,_knrout_mix_wlk_egr,trip_odt_skims['KNROUT_MIX_EGR']
+,_knrout_prm_wlk_egr,trip_odt_skims['KNROUT_PRM_EGR']
+,_pnrout_loc_wlk_egr,trip_odt_skims['PNROUT_LOC_EGR']
+,_pnrout_mix_wlk_egr,trip_odt_skims['PNROUT_MIX_EGR']
+,_pnrout_prm_wlk_egr,trip_odt_skims['PNROUT_PRM_EGR']
+,_tncout_loc_wlk_egr,trip_odt_skims['TNCOUT_LOC_EGR']
+,_tncout_mix_wlk_egr,trip_odt_skims['TNCOUT_MIX_EGR']
+,_tncout_prm_wlk_egr,trip_odt_skims['TNCOUT_PRM_EGR']
+,_walk_loc_wlk_egr,trip_odt_skims['WALK_LOC_EGR']
+,_walk_mix_wlk_egr,trip_odt_skims['WALK_MIX_EGR']
+,_walk_prm_wlk_egr,trip_odt_skims['WALK_PRM_EGR']
+
+## Costs
+# Private auto tolls
+# Bridge
+#####,_sov_btoll,trip_odt_skims['SOV_BTOLL']
+#####,_hov2_btoll,trip_odt_skims['HOV2_BTOLL']
+#####,_hov3_btoll,trip_odt_skims['HOV3_BTOLL']
+#####,_sovtoll_btoll,trip_odt_skims['SOVTOLL_BTOLL']
+#####,_hov2toll_btoll,trip_odt_skims['HOV2TOLL_BTOLL']
+#####,_hov3toll_btoll,trip_odt_skims['HOV3TOLL_BTOLL']
+# Value
+#####,_sovtoll_vtoll,trip_odt_skims['SOVTOLL_VTOLL']
+#####,_hov2toll_vtoll,trip_odt_skims['HOV2TOLL_VTOLL']
+#####,_hov3toll_vtoll,trip_odt_skims['HOV3TOLL_VTOLL']
+,_sov_tr_l_vtoll,trip_odt_skims['SOV_TR_L_TOLLCOST']
+,_sov_tr_m_vtoll,trip_odt_skims['SOV_TR_M_TOLLCOST']
+,_sov_tr_h_vtoll,trip_odt_skims['SOV_TR_H_TOLLCOST']
+,_sov_nt_l_vtoll,trip_odt_skims['SOV_NT_L_TOLLCOST']
+,_sov_nt_m_vtoll,trip_odt_skims['SOV_NT_M_TOLLCOST']
+,_sov_nt_h_vtoll,trip_odt_skims['SOV_NT_H_TOLLCOST']
+,_hov2_l_vtoll,trip_odt_skims['HOV2_L_TOLLCOST']
+,_hov2_m_vtoll,trip_odt_skims['HOV2_M_TOLLCOST']
+,_hov2_h_vtoll,trip_odt_skims['HOV2_H_TOLLCOST']
+,_hov3_l_vtoll,trip_odt_skims['HOV3_L_TOLLCOST']
+,_hov3_m_vtoll,trip_odt_skims['HOV3_M_TOLLCOST']
+,_hov3_h_vtoll,trip_odt_skims['HOV3_H_TOLLCOST']
+
+# Transit fares
+,_knrin_loc_wlk_far,trip_odt_skims['KNRIN_LOC_FARE']
+,_knrin_mix_wlk_far,trip_odt_skims['KNRIN_MIX_FARE']
+,_knrin_prm_wlk_far,trip_odt_skims['KNRIN_PRM_FARE']
+,_pnrin_loc_wlk_far,trip_odt_skims['PNRIN_LOC_FARE']
+,_pnrin_mix_wlk_far,trip_odt_skims['PNRIN_MIX_FARE']
+,_pnrin_prm_wlk_far,trip_odt_skims['PNRIN_PRM_FARE']
+###### how are costs of TNC handled? skims are not clear
+,_tncin_loc_wlk_far,trip_odt_skims['TNCIN_LOC_FARE']
+,_tncin_mix_wlk_far,trip_odt_skims['TNCIN_MIX_FARE']
+,_tncin_prm_wlk_far,trip_odt_skims['TNCIN_PRM_FARE']
+,_knrout_loc_wlk_far,trip_odt_skims['KNROUT_LOC_FARE']
+,_knrout_mix_wlk_far,trip_odt_skims['KNROUT_MIX_FARE']
+,_knrout_prm_wlk_far,trip_odt_skims['KNROUT_PRM_FARE']
+,_pnrout_loc_wlk_far,trip_odt_skims['PNROUT_LOC_FARE']
+,_pnrout_mix_wlk_far,trip_odt_skims['PNROUT_MIX_FARE']
+,_pnrout_prm_wlk_far,trip_odt_skims['PNROUT_PRM_FARE']
+,_tncout_loc_wlk_far,trip_odt_skims['TNCOUT_LOC_FARE']
+,_tncout_mix_wlk_far,trip_odt_skims['TNCOUT_MIX_FARE']
+,_tncout_prm_wlk_far,trip_odt_skims['TNCOUT_PRM_FARE']
+,_walk_loc_wlk_far,trip_odt_skims['WALK_LOC_FARE']
+,_walk_mix_wlk_far,trip_odt_skims['WALK_MIX_FARE']
+,_walk_prm_wlk_far,trip_odt_skims['WALK_PRM_FARE']
+
+## Mode Indicators
+# Private Auto
+,_sov_mode,trips_merged['trip_mode'] == 'DRIVEALONE'
+,_hov2_mode,trips_merged['trip_mode'] == 'SHARED2'
+,_hov3_mode,trips_merged['trip_mode'] == 'SHARED3'
+
+# Taxi/TNC
+,_taxi_mode,trips_merged['trip_mode'] == 'TAXI'
+,_tnc_single_mode,trips_merged['trip_mode'] == 'TNC_SINGLE'
+,_tnc_shared_mode,trips_merged['trip_mode'] == 'TNC_SHARED'
+
+# Transit
+,_knr_loc_mode,trips_merged['trip_mode'] == 'ZNR_LOC'
+##KNR_MIX does not seem to exist in output summaries
+,_knr_mix_mode,trips_merged['trip_mode'] == 'KNR_MIX'
+,_knr_prm_mode,trips_merged['trip_mode'] == 'KNR_PRM'
+,_pnr_loc_mode,trips_merged['trip_mode'] == 'PNR_LOC'
+,_pnr_mix_mode,trips_merged['trip_mode'] == 'PNR_MIX'
+,_pnr_prm_mode,trips_merged['trip_mode'] == 'PNR_PRM'
+,_walk_loc_mode,trips_merged['trip_mode'] == 'WALK_LOC'
+,_walk_mix_mode,trips_merged['trip_mode'] == 'WALK_MIX'
+,_walk_prm_mode,trips_merged['trip_mode'] == 'WALK_PRM'
+,_tnc_loc_mode,trips_merged['trip_mode'] == 'TNC_LOC'
+,_tnc_mix_mode,trips_merged['trip_mode'] == 'TNC_MIX'
+,_tnc_prm_mode,trips_merged['trip_mode'] == 'TNC_PRM'
+,_sch_bus_mode,trips_merged['trip_mode'] == 'SCH_BUS'
+
+
+# Bike
+,_bike_mode,trips_merged['trip_mode'] == 'BIKE'
+
+# Walk
+,_walk_mode,trips_merged['trip_mode'] == 'WALK'
+
+### Calcs
+## Time
+# Auto
+##### check the summation of in_ and out_ values
+,_knrin_acc_auto_time,(_knr_loc_mode * _knrin_loc_wlk_acc) + (_knr_mix_mode * _knrin_mix_wlk_acc) + (_knr_prm_mode * _knrin_prm_wlk_acc)
+,_knrout_acc_auto_time,(_knr_loc_mode * _knrout_loc_wlk_acc) + (_knr_mix_mode * _knrout_mix_wlk_acc) + (_knr_prm_mode * _knrout_prm_wlk_acc)
+,_pnrin_acc_auto_time,(_pnr_loc_mode * _pnrin_loc_wlk_acc) + (_pnr_mix_mode * _pnrin_mix_wlk_acc) + (_pnr_prm_mode * _pnrin_prm_wlk_acc)
+,_pnrout_acc_auto_time,(_pnr_loc_mode * _pnrout_loc_wlk_acc) + (_pnr_mix_mode * _pnrout_mix_wlk_acc) + (_pnr_prm_mode * _pnrout_prm_wlk_acc)
+,_tncin_acc_transit_auto_time,(_tnc_loc_mode * _tncin_loc_wlk_acc) + (_tnc_mix_mode * _tncin_mix_wlk_acc) + (_tnc_prm_mode * _tncin_prm_wlk_acc)
+,_tncout_acc_transit_auto_time,(_tnc_loc_mode * _tncout_loc_wlk_acc) + (_tnc_mix_mode * _tncout_mix_wlk_acc) + (_tnc_prm_mode * _tncout_prm_wlk_acc)
+,_knrin_egr_auto_time,(_knr_loc_mode * _knrin_loc_wlk_egr) + (_knr_mix_mode * _knrin_mix_wlk_egr) + (_knr_prm_mode * _knrin_prm_wlk_egr)
+,_knrout_egr_auto_time,(_knr_loc_mode * _knrout_loc_wlk_egr) + (_knr_mix_mode * _knrout_mix_wlk_egr) + (_knr_prm_mode * _knrout_prm_wlk_egr)
+,_pnrin_egr_auto_time,(_pnr_loc_mode * _pnrin_loc_wlk_egr) + (_pnr_mix_mode * _pnrin_mix_wlk_egr) + (_pnr_prm_mode * _pnrin_prm_wlk_egr)
+,_pnrout_egr_auto_time,(_pnr_loc_mode * _pnrout_loc_wlk_egr) + (_pnr_mix_mode * _pnrout_mix_wlk_egr) + (_pnr_prm_mode * _pnrout_prm_wlk_egr)
+,_tncin_egr_transit_auto_time,(_tnc_loc_mode * _tncin_loc_wlk_egr) + (_tnc_mix_mode * _tncin_mix_wlk_egr) + (_tnc_prm_mode * _tncin_prm_wlk_egr)
+,_tncout_egr_transit_auto_time,(_tnc_loc_mode * _tncout_loc_wlk_egr) + (_tnc_mix_mode * _tncout_mix_wlk_egr) + (_tnc_prm_mode * _tncout_prm_wlk_egr)
+,_acc_auto_time,_knrin_acc_auto_time + _knrout_acc_auto_time + _pnrin_acc_auto_time + _pnrout_acc_auto_time + _tncin_acc_transit_auto_time + _tncout_acc_transit_auto_time
+,_egr_auto_time,_knrin_egr_auto_time + _knrout_egr_auto_time + _pnrin_egr_auto_time + _pnrout_egr_auto_time + _tncin_egr_transit_auto_time + _tncout_egr_transit_auto_time
+,_transit_auto_time,_acc_auto_time + _egr_auto_time
+
+##### use hov_m_time instead of hov2_time for tnc calcs
+,_tnc_single_time,(_tnc_single_mode * _hov2_m_time)
+,_tnc_shared_time,(_tnc_shared_mode * _hov3_m_time * _TNC_SHARED_IVT_FACTOR)
+,_taxi_time,(_taxi_mode * _hov2_m_time)
+,_sov_tr_time,(_sov_mode * _sov_tr_l_time) + (_sov_mode * _sov_tr_m_time) + (_sov_mode * _sov_tr_h_time) 
+,_sov_nt_time,(_sov_mode * _sov_nt_l_time) + (_sov_mode * _sov_nt_m_time) + (_sov_mode * _sov_nt_h_time) 
+,_hov2_time,(_hov2_mode * _hov2_l_time) + (_hov2_mode * _hov2_m_time) + (_hov2_mode * _hov2_h_time)
+,_hov3_time,(_hov3_mode * _hov3_l_time) + (_hov3_mode * _hov3_m_time) + (_hov3_mode * _hov3_h_time)
+,auto_time,_sov_tr_time + _sov_nt_time + _hov2_time + _hov3_time + _transit_auto_time + _tnc_single_time + _tnc_shared_time + _taxi_time
+# Transit Vehicle
+,_knrin_totivt,(_knr_loc_mode * _knrin_loc_wlk_totivt) + (_knr_mix_mode * _knrin_mix_wlk_totivt) + (_knr_prm_mode * _knrin_prm_wlk_totivt)
+,_knrout_totivt,(_knr_loc_mode * _knrout_loc_wlk_totivt) + (_knr_mix_mode * _knrout_mix_wlk_totivt) + (_knr_prm_mode * _knrout_prm_wlk_totivt)
+,_pnrin_totivt,(_pnr_loc_mode * _pnrin_loc_wlk_totivt) + (_pnr_mix_mode * _pnrin_mix_wlk_totivt) + (_pnr_prm_mode * _pnrin_prm_wlk_totivt)
+,_pnrout_totivt,(_pnr_loc_mode * _pnrout_loc_wlk_totivt) + (_pnr_mix_mode * _pnrout_mix_wlk_totivt) + (_pnr_prm_mode * _pnrout_prm_wlk_totivt)
+,_tncin_transit_totivt,(_tnc_loc_mode * _tncin_loc_wlk_totivt) + (_tnc_mix_mode * _tncin_mix_wlk_totivt) + (_tnc_prm_mode * _tncin_prm_wlk_totivt)
+,_tncout_transit_totivt,(_tnc_loc_mode * _tncout_loc_wlk_totivt) + (_tnc_mix_mode * _tncout_mix_wlk_totivt) + (_tnc_prm_mode * _tncout_prm_wlk_totivt)
+,_walk_transit_totivt,(_walk_loc_mode * _walk_loc_wlk_totivt) + (_walk_mix_mode * _walk_mix_wlk_totivt) + (_walk_prm_mode * _walk_prm_wlk_totivt)
+,_dwell_in_ivt,(_knr_loc_mode * _knrin_loc_wlk_dwell) + (_pnr_loc_mode * _pnrin_loc_wlk_dwell) + (_tnc_loc_mode * _tncin_loc_wlk_dwell)
+,_dwell_out_ivt,(_knr_loc_mode * _knrout_loc_wlk_dwell) + (_pnr_loc_mode * _pnrout_loc_wlk_dwell) + (_tnc_loc_mode * _tncout_loc_wlk_dwell)
+,_dwell_time,_dwell_in_ivt + _dwell_out_ivt + (_walk_loc_mode * _walk_loc_wlk_dwell)
+,transit_vehicle_time,_knrin_totivt + _knrout_totivt + _pnrin_totivt + _pnrout_totivt + _tncin_transit_totivt + _tncout_transit_totivt + _walk_transit_totivt + _dwell_time
+# Wait
+,_knrin_iwait,(_knr_loc_mode * _knrin_loc_wlk_iwait) + (_knr_mix_mode * _knrin_mix_wlk_iwait) + (_knr_prm_mode * _knrin_prm_wlk_iwait)
+,_knrout_iwait,(_knr_loc_mode * _knrout_loc_wlk_iwait) + (_knr_mix_mode * _knrout_mix_wlk_iwait) + (_knr_prm_mode * _knrout_prm_wlk_iwait)
+,_pnrin_iwait,(_pnr_loc_mode * _pnrin_loc_wlk_iwait) + (_pnr_mix_mode * _pnrin_mix_wlk_iwait) + (_pnr_prm_mode * _pnrin_prm_wlk_iwait)
+,_pnrout_iwait,(_pnr_loc_mode * _pnrout_loc_wlk_iwait) + (_pnr_mix_mode * _pnrout_mix_wlk_iwait) + (_pnr_prm_mode * _pnrout_prm_wlk_iwait)
+,_tncin_transit_iwait,(_tnc_loc_mode * _tncin_loc_wlk_iwait) + (_tnc_mix_mode * _tncin_mix_wlk_iwait) + (_tnc_prm_mode * _tncin_prm_wlk_iwait)
+,_tncout_transit_iwait,(_tnc_loc_mode * _tncout_loc_wlk_iwait) + (_tnc_mix_mode * _tncout_mix_wlk_iwait) + (_tnc_prm_mode * _tncout_prm_wlk_iwait)
+,_walk_transit_iwait,(_walk_loc_mode * _walk_loc_wlk_iwait) + (_walk_mix_mode * _walk_mix_wlk_iwait) + (_walk_prm_mode * _walk_prm_wlk_iwait)
+,_transit_initial_wait_time,_knrin_iwait + _knrout_iwait + _pnrin_iwait + _pnrout_iwait + _tncin_transit_iwait + _tncout_transit_iwait + _walk_transit_iwait
+,_knrin_xwait,(_knr_loc_mode * _knrin_loc_wlk_xwait) + (_knr_mix_mode * _knrin_mix_wlk_xwait) + (_knr_prm_mode * _knrin_prm_wlk_xwait)
+,_knrout_xwait,(_knr_loc_mode * _knrout_loc_wlk_xwait) + (_knr_mix_mode * _knrout_mix_wlk_xwait) + (_knr_prm_mode * _knrout_prm_wlk_xwait)
+,_pnrin_xwait,(_pnr_loc_mode * _pnrin_loc_wlk_xwait) + (_pnr_mix_mode * _pnrin_mix_wlk_xwait) + (_pnr_prm_mode * _pnrin_prm_wlk_xwait)
+,_pnrout_xwait,(_pnr_loc_mode * _pnrout_loc_wlk_xwait) + (_pnr_mix_mode * _pnrout_mix_wlk_xwait) + (_pnr_prm_mode * _pnrout_prm_wlk_xwait)
+,_tncin_transit_xwait,(_tnc_loc_mode * _tncin_loc_wlk_xwait) + (_tnc_mix_mode * _tncin_mix_wlk_xwait) + (_tnc_prm_mode * _tncin_prm_wlk_xwait)
+,_tncout_transit_xwait,(_tnc_loc_mode * _tncout_loc_wlk_xwait) + (_tnc_mix_mode * _tncout_mix_wlk_xwait) + (_tnc_prm_mode * _tncout_prm_wlk_xwait)
+,_walk_transit_xwait,(_walk_loc_mode * _walk_loc_wlk_xwait) + (_walk_mix_mode * _walk_mix_wlk_xwait) + (_walk_prm_mode * _walk_prm_wlk_xwait)
+,_transit_transfer_wait_time,_knrin_xwait + _knrout_xwait + _pnrin_xwait + _pnrout_xwait + _tncin_transit_xwait + _tncout_transit_xwait + _walk_transit_xwait
+,wait_time,_transit_initial_wait_time + _transit_transfer_wait_time + (_taxi_mode * _TAXI_WAIT_TIME) + (_tnc_single_mode * _SINGLE_TNC_WAIT_TIME) + (_tnc_shared_mode + _SHARED_TNC_WAIT_TIME)
+# Walk
+,_transit_walk_access_time,(_walk_loc_mode * _wlk_wacc) + (_walk_mix_mode * _wlk_wacc) + (_walk_prm_mode * _wlk_wacc)
+##### is auxiliary walk transfer walk? this column is in the database
+#####,_transit_walk_aux_time,(_drive_com_mode * _drv_com_wlk_waux) + (_drive_exp_mode * _drv_exp_wlk_waux) + (_drive_hvy_mode * _drv_hvy_wlk_waux) + (_drive_loc_mode * _drv_loc_wlk_waux) + (_drive_lrf_mode * _drv_lrf_wlk_waux) + (_walk_com_mode * _wlk_com_wlk_waux) + (_walk_exp_mode * _wlk_exp_wlk_waux) + (_walk_hvy_mode * _wlk_hvy_wlk_waux) + (_walk_loc_mode * _wlk_loc_wlk_waux) + (_walk_lrf_mode * _wlk_lrf_wlk_waux)
+,_transit_walk_aux_time,0
+,_knr_egress_time,(_knr_loc_mode * _wlk_wegr) + (_knr_mix_mode * _wlk_wegr) + (_knr_prm_mode * _wlk_wegr)
+,_pnr_egress_time,(_pnr_loc_mode * _wlk_wegr) + (_pnr_mix_mode * _wlk_wegr) + (_pnr_prm_mode * _wlk_wegr)
+,_tnc_transit_egress_time,(_tnc_loc_mode * _wlk_wegr) + (_tnc_mix_mode * _wlk_wegr) + (_tnc_prm_mode * _wlk_wegr)
+,_walk_transit_egress_time,(_walk_loc_mode * _wlk_wegr) + (_walk_mix_mode * _wlk_wegr) + (_walk_prm_mode * _wlk_wegr)
+,_transit_walk_egress_time,_knr_egress_time + _pnr_egress_time + _tnc_transit_egress_time + _walk_transit_egress_time
+,walk_time,(_walk_mode * _walk_dist / _WALK_SPEED * 60) + _transit_walk_access_time + _transit_walk_aux_time + _transit_walk_egress_time
+# Bike
+,bike_time,_bike_mode * _bike_dist / _BIKE_SPEED * 60
+# Total
+,total_time,auto_time + transit_vehicle_time + wait_time + walk_time + bike_time
+
+## Distance
+# Auto
+,_tnc_single_distance,(_tnc_single_mode * _hov2_m_dist)
+,_tnc_shared_distance,(_tnc_shared_mode * _hov3_m_dist) # Doesn't account for VMT savings from sharing
+,_taxi_distance,(_taxi_mode * _hov2_m_dist)
+##### check that HOVDIST is not included in DIST
+#####auto_distance is missing # Transit auto access/eggress distance (miles x 100) [DDIST in previous]
+,_sov_tr_dist,(_sov_mode * _sov_tr_l_dist) + (_sov_mode * _sov_tr_m_dist) + (_sov_mode * _sov_tr_h_dist) 
+,_sov_nt_dist,(_sov_mode * _sov_nt_l_dist) + (_sov_mode * _sov_nt_m_dist) + (_sov_mode * _sov_nt_h_dist) 
+,_hov2_dist,(_hov2_mode * _hov2_l_dist) + (_hov2_mode * _hov2_m_dist) + (_hov2_mode * _hov2_h_dist)
+,_hov3_dist,(_hov3_mode * _hov3_l_dist) + (_hov3_mode * _hov3_m_dist) + (_hov3_mode * _hov3_h_dist)
+,_sov_tr_tolldist,(_sov_mode * _sov_tr_l_tolldist) + (_sov_mode * _sov_tr_m_tolldist) + (_sov_mode * _sov_tr_h_tolldist) 
+,_sov_nt_tolldist,(_sov_mode * _sov_nt_l_tolldist) + (_sov_mode * _sov_nt_m_tolldist) + (_sov_mode * _sov_nt_h_tolldist) 
+,_hov2_tolldist,(_hov2_mode * _hov2_l_tolldist) + (_hov2_mode * _hov2_m_tolldist) + (_hov2_mode * _hov2_h_tolldist)
+,_hov3_tolldist,(_hov3_mode * _hov3_l_tolldist) + (_hov3_mode * _hov3_m_tolldist) + (_hov3_mode * _hov3_h_tolldist)
+,auto_distance,_sov_tr_dist + _sov_nt_dist + _hov2_dist + _hov3_dist + _sov_tr_tolldist + _sov_nt_tolldist + _hov2_tolldist + _hov3_tolldist + _tnc_single_distance + _tnc_shared_distance + _taxi_distance
+
+# Walk
+,walk_distance,(walk_time / 60 * _WALK_SPEED)
+# Bike
+,bike_distance,_bike_mode * _bike_dist
+
+## Cost
+#####this excludes cost of operation of automobiles
+,_knrin_cost,(_knr_loc_mode * _knrin_loc_wlk_far) + (_knr_mix_mode * _knrin_mix_wlk_far) + (_knr_prm_mode * _knrin_prm_wlk_far)
+,_knrout_cost,(_knr_loc_mode * _knrout_loc_wlk_far) + (_knr_mix_mode * _knrout_mix_wlk_far) + (_knr_prm_mode * _knrout_prm_wlk_far)
+,_pnrin_cost,(_pnr_loc_mode * _pnrin_loc_wlk_far) + (_pnr_mix_mode * _pnrin_mix_wlk_far) + (_pnr_prm_mode * _pnrin_prm_wlk_far)
+,_pnrout_cost,(_pnr_loc_mode * _pnrout_loc_wlk_far) + (_pnr_mix_mode * _pnrout_mix_wlk_far) + (_pnr_prm_mode * _pnrout_prm_wlk_far)
+,_tncin_transit_cost,(_tnc_loc_mode * _tncin_loc_wlk_far) + (_tnc_mix_mode * _tncin_mix_wlk_far) + (_tnc_prm_mode * _tncin_prm_wlk_far)
+,_tncout_transit_cost,(_tnc_loc_mode * _tncout_loc_wlk_far) + (_tnc_mix_mode * _tncout_mix_wlk_far) + (_tnc_prm_mode * _tncout_prm_wlk_far)
+,_walk_transit_cost,(_walk_loc_mode * _walk_loc_wlk_far) + (_walk_mix_mode * _walk_mix_wlk_far) + (_walk_prm_mode * _walk_prm_wlk_far)
+,_transit_fare_cost,_knrin_cost + _knrout_cost + _pnrin_cost + _pnrout_cost + _tncin_transit_cost + _tncout_transit_cost + _walk_transit_cost
+,_tnc_single_cost,"_TNC_SINGLE_BASE_FARE + np.maximum((_tnc_single_distance * _TAXI_COST_PER_MILE) + (_tnc_single_time * _TNC_SINGLE_COST_PER_MINUTE), _TNC_SINGLE_COST_MINIMUM)"
+,_tnc_shared_cost,"_TNC_SHARED_BASE_FARE + np.maximum((_tnc_shared_distance * _TNC_SINGLE_COST_PER_MILE) + (_tnc_shared_time * _TNC_SHARED_COST_PER_MINUTE), _TNC_SHARED_COST_MINIMUM)"
+,_taxi_cost,_TAXI_BASE_FARE + (_taxi_distance * _TNC_SHARED_COST_PER_MILE) + (_taxi_time * _TAXI_COST_PER_MINUTE)
+,fare_cost,_transit_fare_cost + _tnc_single_cost + _tnc_shared_cost + _taxi_cost
+,_sov_tr_vtoll,(_sov_mode * _sov_tr_l_vtoll) + (_sov_mode * _sov_tr_m_vtoll) + (_sov_mode * _sov_tr_h_vtoll) 
+,_sov_nt_vtoll,(_sov_mode * _sov_nt_l_vtoll) + (_sov_mode * _sov_nt_m_vtoll) + (_sov_mode * _sov_nt_h_vtoll) 
+,_hov2_vtoll,(_hov2_mode * _hov2_l_vtoll) + (_hov2_mode * _hov2_m_vtoll) + (_hov2_mode * _hov2_h_vtoll)
+,_hov3_vtoll,(_hov3_mode * _hov3_l_vtoll) + (_hov3_mode * _hov3_m_vtoll) + (_hov3_mode * _hov3_h_vtoll)
+,toll_cost, _sov_tr_vtoll + _sov_nt_vtoll + _hov2_vtoll + _hov3_vtoll + (_tnc_single_mode * _hov2_m_vtoll) + (_tnc_shared_mode * _hov3_m_vtoll) + (_taxi_mode * _hov2_m_vtoll)
+,total_cost,fare_cost + toll_cost
