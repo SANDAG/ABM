@@ -78,3 +78,4 @@ coef_s3,,,,,
 coef_walk,,,,,
 coef_walk_transi,,,,,
 coef_taxi,,,,,
+transit_calib,transit_calib_discretionary,transit_calib_work,transit_calib_discretionary,transit_calib_discretionary,transit_calib_school

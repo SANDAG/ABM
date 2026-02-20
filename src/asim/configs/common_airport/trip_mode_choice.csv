@@ -316,3 +316,6 @@ util_TNCIN_MIX_TNCIN_time,TNCIN_MIX - TNC time,@(odt_skims['KNRIN_MIX_EGR'])*df.
 util_TNCIN_MIX_TNC_fare,TNCIN_MIX - TNC fare,"@df.outbound * (np.maximum((odt_skims['KNRIN_MIX_EGR']*ridehailCostPerMinute + (odt_skims['KNRIN_MIX_EGR']/60 * driveSpeed)*ridehailCostPerMile + ridehailCostInitial),ridehailCostMinimum)) * 100",,,,,,,,,,,,,,,,,,,,,,,,,,,coef_c_cost,
 util_TNCIN_MIX_Walk_access_time_(at_attraction_end),TNCIN_MIX - Walk access time (at attraction end),@(df.origin_mix_time)*df.outbound*c_walk ,,,,,,,,,,,,,,,,,,,,,,,,,,,coef_ivt,
 util_TNCIN_MIX_Walk_other_time,TNCIN_MIX - Walk other time,@(odt_skims['KNRIN_MIX_XFERWALK'])*df.outbound*c_waux,,,,,,,,,,,,,,,,,,,,,,,,,,,coef_ivt,
+util_transit_calib_knr,Transit Calibration KNR,@transit_calib_knr,,,,,,,,,,,,,,,,,,,,,,1,1,1,,,,
+util_transit_calib_tnc,Transit Calibration TNC,@transit_calib_tnc,,,,,,,,,,,,,,,,,,,,,,,,,1,1,1,
+util_transit_calib_walk,Transit Calibration Walk,@transit_calib_walk,,,,,,,,,,,,,,,,,,,1,1,1,,,,,,,

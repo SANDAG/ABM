@@ -65,8 +65,8 @@ tours:
   pass_shares:
     sentri: 0.219
     ready: 0.322
-    no_pass: 0.459
-  num_tours: 120700
+    no_pass: 0.45899999999999996
+  num_tours: 101343
   purpose_ids:
     work: 0
     school: 1
@@ -75,21 +75,21 @@ tours:
     other: 4
   purpose_shares_by_pass_type:
     sentri:
-      work: 0.143264848
+      work: 0.2024791434
       school: 0.028223443
-      shop: 0.727730975
+      shop: 0.6685167
       visit: 0.023476697
       other: 0.077304037
     ready:
-      work: 0.155162255
+      work: 0.226316
       school: 0.007794038
-      shop: 0.702569828
+      shop: 0.631416
       visit: 0.040267183
       other: 0.094206697
     no_pass:
-      work: 0.228715733
+      work: 0.345501
       school: 0.052974068
-      shop: 0.59374183
+      shop: 0.476956
       visit: 0.040553855
       other: 0.084014515
 wait_time_updating:

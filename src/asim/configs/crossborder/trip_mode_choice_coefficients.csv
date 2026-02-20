@@ -77,3 +77,6 @@ coef_s3,-0.186170648,F
 coef_walk,-1.474384474,F
 coef_walk_transi,0.889660866,F
 coef_taxi,4.374349754,F
+transit_calib_discretionary,-1.234269,F
+transit_calib_school,1.28759,F
+transit_calib_work,1.354909,F
