@@ -37,14 +37,14 @@ mode:
     busPCEVeh: 3.0
     ivtMultipliers:
       lrt: 0.85
-      cmr: 0.85
+      cmr: 1.0
       brt: 0.95
       ltd: 1.0
     equivASC:
-      eb: 10
-      brt: -5
-      lrt: -30
-      pnr_lrt: -20
+      eb: 25
+      brt: 20
+      lrt: -35
+      pnr_lrt: -30
     pnrDensityIndexMultiplier: -0.2
     dispersionParameter: -0.05
     ovtWeight: 2.0

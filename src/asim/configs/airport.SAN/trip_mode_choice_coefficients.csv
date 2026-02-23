@@ -143,3 +143,6 @@ coef_calibration_transit_res_bus,0,F
 coef_calibration_transit_vis_per,0,F
 coef_calibration_transit_vis_bus,0,F
 coef_calibration_transit_external,0,F
+transit_calib_knr,0.703365,F
+transit_calib_tnc,0.905308,F
+transit_calib_walk,1.800947,F

@@ -1,9 +1,9 @@
 inherit_settings: settings.yaml
 
 multiprocess: True
-households_sample_size: 320000
-num_processes: 40
-trace_hh_id: 
+households_sample_size: 319220
+num_processes: 24
+trace_hh_id:
 chunk_training_mode: disabled
 # chunk_size: 240_000_000_000
 
@@ -38,6 +38,7 @@ models:
   - transit_pass_subsidy
   - transit_pass_ownership
   - vehicle_type_choice
+  - adjust_auto_operating_cost
   - transponder_ownership
   - free_parking
   - telecommute_frequency
@@ -70,10 +71,13 @@ models:
   # - trip_mode_choice
   # - parking_location
   ### mp_summarize (single process)
-  - write_data_dictionary
-  # - track_skim_usage
+  # - write_data_dictionary
+  - track_skim_usage
   # - write_trip_matrices
+  # - write_to_datalake
+  # - update_tables
   - write_tables
+  # - check_disk_usage # Uncomment to get max disk usage at end of iteration 3 resident model
 
 
 multiprocess_steps:
@@ -95,7 +99,7 @@ multiprocess_steps:
     slice:
       tables:
         - accessibility
-      except: True  # this is needed so landuse (i.e. destinations) doesn't get split
+      exclude: True  # this is needed so landuse (i.e. destinations) doesn't get split
   - name: mp_households
     begin: av_ownership
     slice:
@@ -103,4 +107,4 @@ multiprocess_steps:
         - households
         - persons
   - name: mp_summarize
-    begin: write_data_dictionary
+    begin: track_skim_usage
