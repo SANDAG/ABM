@@ -17,3 +17,13 @@ This page serves as the central repository for all official reports, technical m
 
 * [ABM3 Calibration and Validation Report](pdf_reports/202403_ABM3_Calibration_And_Validation_Report.pdf)
     * Prepared before consultant delivery of ABM3 and includes convergence test results.
+
+* [ABM3 Development Report](pdf_reports/202402_ABM3_Model_Development_Report_Final.pdf)
+    * Summarizes model updates and new choice model specifications.
+
+* [CVM Estimation and Calibration](pdf_reports/202412_CVM_EstimationCalibration.pdf)
+    * Commercial vehicle model estimation and calibration details.
+
+* [CVM Design](pdf_reports/202412_CVM_ModelDesign_Final.pdf)
+    * Commercial vehicle model design document (include heavy truck model or HTM updates).
+
