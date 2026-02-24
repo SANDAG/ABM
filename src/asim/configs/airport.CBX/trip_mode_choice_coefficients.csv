@@ -83,3 +83,6 @@ coef_asc_res_per_transit,-1.6864,F
 coef_asc_vis_bus_transit,-3.2213,F
 coef_asc_vis_per_transit,-0.6108,F
 coef_asc_ext_transit,0.1597,F
+transit_calib_knr,5.351375,F
+transit_calib_tnc,5.982497,F
+transit_calib_walk,5.479093,F

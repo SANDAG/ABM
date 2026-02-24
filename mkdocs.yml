@@ -92,9 +92,10 @@ nav:
     - Calibration: calib_valid/calibration.md
     - Convergence: calib_valid/convergence.md
     - Validation: calib_valid/validation.md
-  - About:
+  - Reference:
     - Release Notes: release-notes.md
     - FAQs: faq.md
+    - Technical Reports: technical-reports.md
 
 extra:
   version:

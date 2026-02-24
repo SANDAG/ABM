@@ -94,3 +94,4 @@ util_WALK_MIX_wait_access_time,WALK_MIX - Access mt/nev wait time,"@1.5 * np.whe
 util_WALK_MIX_Walk_egress_time,WALK_MIX - Walk egress time,"@np.where(df.nev_mix_egress_available_out & df.outbound, df.nev_mix_egress_time_out, np.where(df.microtransit_mix_egress_available_out & df.outbound, df.microtransit_mix_egress_time_out, df.dest_mix_time)) * df.time_factor",,,,,,,,,,,coef_wegr
 util_WALK_MIX_wait_egress_time,WALK_MIX - Egress mt/nev wait time,"@1.5 * np.where(df.nev_mix_egress_available_out & df.outbound, nevWaitTime, np.where(df.microtransit_mix_egress_available_out & df.outbound, microtransitWaitTime, 0)) * df.time_factor",,,,,,,,,,,coef_ivt
 util_WALK_MIX_ASC,WALK_MIX - Alternative-specific constant,wlk_mix_asc,,,,,,,,,,,coef_ivt
+util_calib_transit,Transit calibration,@calib_transit,,,,,,,,,1,1,1

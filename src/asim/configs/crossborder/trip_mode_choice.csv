@@ -141,3 +141,4 @@ util_S3_ABM2_calib_adj_tour_WALK,s3 ABM 2 Calibration Adjustment - Tour Mode WAL
 util_WALK_ABM2_calib_adj_tour_WALK,walk ABM 2 Calibration Adjustment - Tour Mode WALK,@df.tour_mode_is_walk * walk_abm2_calib_adj_tour_walk,,,,1,,,,,,
 util_WALK_TRANSIT_ABM2_calib_adj_tour_WALK,walk transit ABM 2 Calibration Adjustment - Tour Mode WALK,@df.tour_mode_is_walk * walk_transit_abm2_calib_adj_tour_walk,,,,,1,1,1,,,
 util_WALK_TRANSIT_ABM2_calib_adj_all_tour_modes,ABM 2 Calibration Adjustment - transit,@walk_transit_abm2_calib_adj_transit,,,,,1,1,1,,,
+util_TRANSIT_CALIB,Transit calibration adjustment for transit,@transit_calib,,,,,1,1,1,,,

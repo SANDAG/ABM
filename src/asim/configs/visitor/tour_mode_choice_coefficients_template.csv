@@ -23,5 +23,4 @@ coef_cost_high,coef_cost_high,coef_cost_high,coef_cost_high
 coef_cost_vhigh,coef_cost_vhigh,coef_cost_vhigh,coef_cost_vhigh
 coef_oMix_nmot,coef_oMix_nmot,coef_oMix_nmot,coef_oMix_nmot
 coef_oIntDen_nmot,coef_oIntDen_nmot,coef_oIntDen_nmot,coef_oIntDen_nmot
-
-
+calib_transit,calib_transit_work,calib_transit_eat,calib_transit_discretionary

@@ -574,6 +574,10 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 # managed lanes, free for HOV2 and HOV3+, tolls for SOV
                 if link[toll] > 0:
                     auto_modes =  lookup["TOLL"][link[truck]]
+                # allow toll modes on connectors and ramps regardless of toll cost since these are on MLs
+                elif link.type == 8 or link.type == 9:
+                    auto_modes =  lookup["TOLL"][link[truck]]
+                
                 if link["@hov"] == 2:
                     auto_modes = auto_modes | lookup["HOV2"]
                 else:

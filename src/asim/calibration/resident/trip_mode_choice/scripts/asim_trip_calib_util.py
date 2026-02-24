@@ -8,6 +8,7 @@ from IPython.display import display
 import matplotlib
 import matplotlib.pyplot as plt
 import seaborn as sns
+import subprocess
 sns.set()
 
 # --------------------------------------------------------------------------------------------------
@@ -32,12 +33,14 @@ output_calibration_tour_modes = [
     'BIKE',
     'ESCOOTER',
     'EBIKE',
-    'WALK-TRANSIT',
-    'PNR-TRANSIT',
-    'KNR-TRANSIT',
-    'TNC-TRANSIT',
+    'WALK_TRANSIT',
+    'PNR_TRANSIT',
+    'KNR_TRANSIT',
+    'TNC_TRANSIT',
     'SCHOOLBUS',
-    'RIDE-HAIL',    
+    'TAXI',
+    'TNC_SINGLE',
+    'TNC_SHARED',
     total_keyword]
 
 output_calibration_trip_modes = [
@@ -48,10 +51,18 @@ output_calibration_trip_modes = [
     'BIKE',
     'ESCOOTER',
     'EBIKE',
-    'WALK-TRANSIT',
-    'PNR-TRANSIT',
-    'KNR-TRANSIT',
-    'TNC-TRANSIT',
+    'WALK_LOC',
+    'WALK_PRM',
+    'WALK_MIX',
+    'PNR_LOC',
+    'PNR_PRM',
+    'PNR_MIX',
+    'KNR_LOC',
+    'KNR_PRM',
+    'KNR_MIX',
+    'TNC_LOC',
+    'TNC_PRM',
+    'TNC_MIX',
     'SCHOOLBUS',
     'TNC_SINGLE',
     'TNC_SHARED',
@@ -60,10 +71,18 @@ output_calibration_trip_modes = [
 
 # transit calibraiton modes are not scaled when comparing to model
 output_calibration_transit_modes = [
-    'WALK-TRANSIT',
-    'PNR-TRANSIT',
-    'KNR-TRANSIT',
-    'TNC-TRANSIT' ### ASK DAVID ALI
+    'WALK_LOC',
+    'WALK_PRM',
+    'WALK_MIX',
+    'PNR_LOC',
+    'PNR_PRM',
+    'PNR_MIX',
+    'KNR_LOC',
+    'KNR_PRM',
+    'KNR_MIX',
+    'TNC_LOC',
+    'TNC_PRM',
+    'TNC_MIX'
 ]
 
 # # used to switch drivealone mode to walk transit for people parked at major university
@@ -90,12 +109,14 @@ output_calibration_tour_mode_to_coef_name_dict = {
     'BIKE': 'bike',
     'ESCOOTER': 'escooter',
     'EBIKE': 'ebike',
-    'WALK-TRANSIT': 'wtran',
-    'PNR-TRANSIT': 'pnr',
-    'KNR-TRANSIT': 'knr',
-    'TNC-TRANSIT': 'tnr',
+    'WALK_TRANSIT': 'wtran',
+    'PNR_TRANSIT': 'pnr',
+    'KNR_TRANSIT': 'knr',
+    'TNC_TRANSIT': 'tnr',
     'SCHOOLBUS': 'schbus',
-    'RIDE-HAIL': 'maas',
+    'TAXI': 'taxi',
+    'TNC_SINGLE': 'tnc_single',
+    'TNC_SHARED': 'tnc_shared',
     total_keyword: 'all',
 }
 
@@ -107,10 +128,18 @@ output_calibration_trip_mode_to_coef_name_dict = {
     'BIKE': 'BIKE',
     'ESCOOTER': 'ESCOOTER',
     'EBIKE': 'EBIKE',
-    'WALK-TRANSIT': 'WALK_TRANSIT',
-    'PNR-TRANSIT': 'PNR_TRANSIT',
-    'KNR-TRANSIT': 'KNR_TRANSIT',
-    'TNC-TRANSIT': 'TNC_TRANSIT',
+    'WALK_LOC': 'WALK_LOC',
+    'WALK_PRM': 'WALK_PRM',
+    'WALK_MIX': 'WALK_MIX',
+    'PNR_LOC': 'PNR_LOC',
+    'PNR_PRM': 'PNR_PRM',
+    'PNR_MIX': 'PNR_MIX',
+    'KNR_LOC': 'KNR_LOC',
+    'KNR_PRM': 'KNR_PRM',
+    'KNR_MIX': 'KNR_MIX',
+    'TNC_LOC': 'TNC_LOC',
+    'TNC_PRM': 'TNC_PRM',
+    'TNC_MIX': 'TNC_MIX',
     'SCHOOLBUS': 'SCH_BUS',
     'TNC_SINGLE': 'TNC_SINGLE',
     'TNC_SHARED': 'TNC_SHARED',
@@ -175,18 +204,18 @@ asim_to_calib_trip_mode_dict = {
     'BIKE': 'BIKE',
     'ESCOOTER': 'ESCOOTER',
     'EBIKE': 'EBIKE',
-    'WALK_LOC': 'WALK-TRANSIT',
-    'WALK_PRM': 'WALK-TRANSIT',
-    'WALK_MIX': 'WALK-TRANSIT',
-    'PNR_LOC': 'PNR-TRANSIT',
-    'PNR_PRM': 'PNR-TRANSIT',
-    'PNR_MIX': 'PNR-TRANSIT',
-    'KNR_LOC': 'KNR-TRANSIT',
-    'KNR_PRM': 'KNR-TRANSIT',
-    'KNR_MIX': 'KNR-TRANSIT',
-    'TNC_LOC': 'TNC-TRANSIT',
-    'TNC_PRM': 'TNC-TRANSIT',
-    'TNC_MIX': 'TNC-TRANSIT',
+    'WALK_LOC': 'WALK_LOC',
+    'WALK_PRM': 'WALK_PRM',
+    'WALK_MIX': 'WALK_MIX',
+    'PNR_LOC': 'PNR_LOC',
+    'PNR_PRM': 'PNR_PRM',
+    'PNR_MIX': 'PNR_MIX',
+    'KNR_LOC': 'KNR_LOC',
+    'KNR_PRM': 'KNR_PRM',
+    'KNR_MIX': 'KNR_MIX',
+    'TNC_LOC': 'TNC_LOC',
+    'TNC_PRM': 'TNC_PRM',
+    'TNC_MIX': 'TNC_MIX',
     'TAXI': 'TAXI',
     'TNC_SINGLE': 'TNC_SINGLE',
     'TNC_SHARED': 'TNC_SHARED',
@@ -202,21 +231,21 @@ asim_to_calib_tour_mode_dict = {
     'BIKE': 'BIKE',
     'ESCOOTER': 'ESCOOTER',
     'EBIKE': 'EBIKE',
-    'WALK_LOC': 'WALK-TRANSIT',
-    'WALK_PRM': 'WALK-TRANSIT',
-    'WALK_MIX': 'WALK-TRANSIT',
-    'PNR_LOC': 'PNR-TRANSIT',
-    'PNR_PRM': 'PNR-TRANSIT',
-    'PNR_MIX': 'PNR-TRANSIT',
-    'KNR_LOC': 'KNR-TRANSIT',
-    'KNR_PRM': 'KNR-TRANSIT',
-    'KNR_MIX': 'KNR-TRANSIT',
-    'TNC_LOC': 'TNC-TRANSIT',
-    'TNC_PRM': 'TNC-TRANSIT',
-    'TNC_MIX': 'TNC-TRANSIT',
-    'TAXI': 'RIDE-HAIL',
-    'TNC_SINGLE': 'RIDE-HAIL',
-    'TNC_SHARED': 'RIDE-HAIL',
+    'WALK_LOC': 'WALK_TRANSIT',
+    'WALK_PRM': 'WALK_TRANSIT',
+    'WALK_MIX': 'WALK_TRANSIT',
+    'PNR_LOC': 'PNR_TRANSIT',
+    'PNR_PRM': 'PNR_TRANSIT',
+    'PNR_MIX': 'PNR_TRANSIT',
+    'KNR_LOC': 'KNR_TRANSIT',
+    'KNR_PRM': 'KNR_TRANSIT',
+    'KNR_MIX': 'KNR_TRANSIT',
+    'TNC_LOC': 'TNC_TRANSIT',
+    'TNC_PRM': 'TNC_TRANSIT',
+    'TNC_MIX': 'TNC_TRANSIT',
+    'TAXI': 'TAXI',
+    'TNC_SINGLE': 'TNC_SINGLE',
+    'TNC_SHARED': 'TNC_SHARED',
     'SCH_BUS': 'SCHOOLBUS'
 }
 
@@ -248,13 +277,29 @@ survey_to_calib_trip_mode_dict = {
     'BIKE': 'BIKE',
     'ESCOOTER': 'ESCOOTER',
     'EBIKE': 'EBIKE',
-    'WALK-TRANSIT': 'WALK-TRANSIT', 
-    'PNR-TRANSIT': 'PNR-TRANSIT', 
-    'KNR-TRANSIT': 'KNR-TRANSIT', 
-    'TNC-TRANSIT': 'TNC-TRANSIT',
+    # Disaggregated transit modes - trip modes
+    'Walk_LOC': 'WALK_LOC',
+    'Walk_PRM': 'WALK_PRM',
+    'Walk_MIX': 'WALK_MIX',
+    'PNR_LOC': 'PNR_LOC',
+    'PNR_PRM': 'PNR_PRM',
+    'PNR_MIX': 'PNR_MIX',
+    'KNR_LOC': 'KNR_LOC',
+    'KNR_PRM': 'KNR_PRM',
+    'KNR_MIX': 'KNR_MIX',
+    'TNC_LOC': 'TNC_LOC',
+    'TNC_PRM': 'TNC_PRM',
+    'TNC_MIX': 'TNC_MIX',
+    # # Aggregated transit modes (legacy support)
+    # 'WALK-TRANSIT': 'WALK-TRANSIT', 
+    # 'PNR-TRANSIT': 'PNR-TRANSIT', 
+    # 'KNR-TRANSIT': 'KNR-TRANSIT', 
+    # 'TNC-TRANSIT': 'TNC-TRANSIT',
     'TAXI': 'TAXI', 
     'TNC-REG': 'TNC_SINGLE', 
     'TNC-SHARED': 'TNC_SHARED', 
+    'TNC_SINGLE': 'TNC_SINGLE',
+    'TNC_SHARED': 'TNC_SHARED',
     'SCHOOLBUS': 'SCHOOLBUS',
     'All': total_keyword
 }
@@ -267,13 +312,20 @@ survey_to_calib_tour_mode_dict = {
     'BIKE': 'BIKE',
     'ESCOOTER': 'ESCOOTER',
     'EBIKE': 'EBIKE',
-    'WALK-TRANSIT': 'WALK-TRANSIT', 
-    'PNR-TRANSIT': 'PNR-TRANSIT', 
-    'KNR-TRANSIT': 'KNR-TRANSIT', 
-    'TNC-TRANSIT': 'TNC-TRANSIT',
-    'TAXI': 'RIDE-HAIL', 
-    'TNC-REG': 'RIDE-HAIL', 
-    'TNC-SHARED': 'RIDE-HAIL', 
+    # Tour modes are aggregated in the new target file
+    'WALK-TRANSIT': 'WALK_TRANSIT', 
+    'WALK_TRANSIT': 'WALK_TRANSIT',
+    'PNR-TRANSIT': 'PNR_TRANSIT',
+    'PNR_TRANSIT': 'PNR_TRANSIT', 
+    'KNR-TRANSIT': 'KNR_TRANSIT',
+    'KNR_TRANSIT': 'KNR_TRANSIT', 
+    'TNC-TRANSIT': 'TNC_TRANSIT',
+    'TNC_TRANSIT': 'TNC_TRANSIT',
+    'TAXI': 'TAXI', 
+    'TNC-REG': 'TNC_SINGLE', 
+    'TNC-SHARED': 'TNC_SHARED', 
+    'TNC_SINGLE': 'TNC_SINGLE',
+    'TNC_SHARED': 'TNC_SHARED',
     'SCHOOLBUS': 'SCHOOLBUS',
     'All': total_keyword
 }
@@ -301,16 +353,24 @@ calib_trip_mode_to_vis_dict = { #tripmode vis
     'SHARED3': 3,
     'WALK': 4,
     'BIKE': 5,
-    'WALK-TRANSIT': 6,
-    'PNR-TRANSIT': 7,
-    'KNR-TRANSIT': 8,
-    'TNC-TRANSIT': 9,
-    'TAXI': 10,
-    'TNC_SINGLE': 11,
-    'TNC_SHARED':12,
-    'SCHOOLBUS': 13,
-    'ESCOOTER': 14, ### FIX_IT: The number for ESCOOTER and EBIKE are temporary, need to decide and finalize them later
-    'EBIKE': 15,
+    'WALK_LOC': 6,
+    'WALK_PRM': 7,
+    'WALK_MIX': 8,
+    'PNR_LOC': 9,
+    'PNR_PRM': 10,
+    'PNR_MIX': 11,
+    'KNR_LOC': 12,
+    'KNR_PRM': 13,
+    'KNR_MIX': 14,
+    'TNC_LOC': 15,
+    'TNC_PRM': 16,
+    'TNC_MIX': 17,
+    'TAXI': 18,
+    'TNC_SINGLE': 19,
+    'TNC_SHARED': 20,
+    'SCHOOLBUS': 21,
+    'ESCOOTER': 22,
+    'EBIKE': 23,
     total_keyword: 'Total'
 }
 calib_tourmode_num_to_vis_dict = { #tourmode vis
@@ -320,17 +380,16 @@ calib_tourmode_num_to_vis_dict = { #tourmode vis
     'SHARED3': 3,
     'WALK': 4,
     'BIKE': 5,
-    'WALK-TRANSIT': 6,
-    'PNR-TRANSIT': 7,
-    'KNR-TRANSIT': 8,
-    'TNC-TRANSIT': 9,
-    # 'TAXI': 10,
-    # 'TNC_SINGLE': 11,
-    # 'TNC_SHARED':12,
-    'RIDE-HAIL': 10,
-    'SCHOOLBUS': 11,
-    'ESCOOTER': 12, ### FIX_IT: The number for ESCOOTER and EBIKE are temporary, need to decide and finalize them later
-    'EBIKE': 13,
+    'WALK_TRANSIT': 6,
+    'PNR_TRANSIT': 7,
+    'KNR_TRANSIT': 8,
+    'TNC_TRANSIT': 9,
+    'TAXI': 10,
+    'TNC_SINGLE': 11,
+    'TNC_SHARED': 12,
+    'SCHOOLBUS': 13,
+    'ESCOOTER': 14,
+    'EBIKE': 15,
     total_keyword: 'Total'
 }
 calib_tour_mode_to_vis_dict = {  #tourmode vis
@@ -341,15 +400,14 @@ calib_tour_mode_to_vis_dict = {  #tourmode vis
     'BIKE': 'Bike',
     'ESCOOTER': 'Escooter',
     'EBIKE': 'Ebike',
-    'WALK-TRANSIT': 'Walk-Transit',
-    'PNR-TRANSIT': 'PNR-Transit',
-    'KNR-TRANSIT': 'KNR-Transit',
-    'TNC-TRANSIT': 'TNC-Transit',
+    'WALK_TRANSIT': 'Walk-Transit',
+    'PNR_TRANSIT': 'PNR-Transit',
+    'KNR_TRANSIT': 'KNR-Transit',
+    'TNC_TRANSIT': 'TNC-Transit',
     'SCHOOLBUS': 'SchoolBus',
-    'RIDE-HAIL': 'Ride Hail',
-    'TAXI': 'Ridehail',
-    'TNC-SINGLE': 'Ride Hail',
-    'TNC-SHARED': 'Ride Hail',
+    'TAXI': 'Taxi',
+    'TNC_SINGLE': 'TNC-Single',
+    'TNC_SHARED': 'TNC-Shared',
     total_keyword: 'Total'
 }
 purpose_vis_dict = {  # same purposes used for both trip and tour
@@ -402,15 +460,16 @@ def write_tables_to_excel(dfs,
     worksheet = excel_writer.sheets[excel_sheet_name]
 
     # writing title at and first table name
-    worksheet.write(start_row, start_col, title)
-    worksheet.write(start_row+1, start_col, dfs[0].name)
-    worksheet.write(start_row+1, start_col + sep_for_col_title, col_title)
+    # openpyxl uses 1-based indexing
+    worksheet.cell(row=start_row+1, column=start_col+1, value=title)
+    worksheet.cell(row=start_row+2, column=start_col+1, value=dfs[0].name)
+    worksheet.cell(row=start_row+2, column=start_col+sep_for_col_title+1, value=col_title)
     start_row += len(dfs[0]) + 6
 
     for df in dfs[1:]:
         df.to_excel(excel_writer, excel_sheet_name, startrow=start_row, startcol=start_col)
-        worksheet.write(start_row-1, start_col, df.name)
-        worksheet.write(start_row-1, start_col + sep_for_col_title, col_title)
+        worksheet.cell(row=start_row, column=start_col+1, value=df.name)
+        worksheet.cell(row=start_row, column=start_col+sep_for_col_title+1, value=col_title)
         start_row += len(df) + 4
     return
 
@@ -481,10 +540,10 @@ def create_asim_trip_mode_choice_tables(trips_df):
 
 def process_asim_tables_for_trip_mode_choice(asim_tables_dir):
     households_df = pd.read_csv(
-        os.path.join(asim_tables_dir, 'final_households.csv'), low_memory=False)
+        os.path.join(asim_tables_dir, 'final_households.csv'), engine='pyarrow')
     sample_rate = households_df['sample_rate'].max()
-    trips_df = pd.read_csv(os.path.join(asim_tables_dir, 'final_trips.csv'), low_memory=False)
-    tours_df = pd.read_csv(os.path.join(asim_tables_dir, 'final_tours.csv'), low_memory=False)
+    trips_df = pd.read_csv(os.path.join(asim_tables_dir, 'final_trips.csv'), engine='pyarrow')
+    tours_df = pd.read_csv(os.path.join(asim_tables_dir, 'final_tours.csv'), engine='pyarrow')
 
     trips_df = pd.merge(
         trips_df,
@@ -562,7 +621,7 @@ def write_scaled_targets_to_excel(unscaled_model_tables,
                                   scaled_model_tables,
                                   scaled_calib_tables,
                                   output_dir):
-    excel_writer = pd.ExcelWriter(os.path.join(output_dir, 'scaled_targets.xlsx'))
+    excel_writer = pd.ExcelWriter(os.path.join(output_dir, 'scaled_targets.xlsx'), engine='openpyxl')
 
     start_col = 0
     # unscaled model
@@ -638,8 +697,7 @@ def write_scaled_targets_to_excel(unscaled_model_tables,
     )
     start_col += 19
 
-    excel_writer.save()
-    # excel_writer.close()
+    excel_writer.close()
 
 
 def calculate_share_by_tour_mode(trip_mc_calib_target_tables, asim_trip_mc_tables):
@@ -720,36 +778,35 @@ def scale_targets_to_match_model_by_tour_mode(trip_mc_calib_target_tables,
         # counts from model run are scaled to match full model run counts
         scaled_model_df = model_df * model_scale_factor
 
-        # calibration counts need to match full model run counts, but leave transit trips unscaled
+        # calibration counts need to match full model run counts, but leave transit trip modes unscaled
         scaled_calib_target_df = calib_target_df.copy()
-        no_transit_idxs = ~(scaled_calib_target_df.index.isin(output_calibration_transit_modes))
+        # Transit trip modes (rows) should not be scaled - these are the disaggregated trip modes
+        transit_trip_mode_idxs = scaled_calib_target_df.index.isin(output_calibration_transit_modes)
+        no_transit_idxs = ~transit_trip_mode_idxs
 
         # iterating over all non-total tour modes (columns)
         for tour_mode in output_calibration_tour_modes[:-1]:
             tot_calib_trips_for_tour_mode = calib_target_df.loc[total_keyword, tour_mode]
             tot_model_trips_for_tour_mode = scaled_model_df.loc[total_keyword, tour_mode]
 
-            # number of trips for each tour mode in calibration targets should match model counts
-            if tour_mode not in output_calibration_transit_modes:
-                if tot_calib_trips_for_tour_mode == 0:
-                    # no scaling if no calib trip targets
-                    tour_mode_scaling_factor = 1
-                else:
-                    tour_mode_scaling_factor = tot_model_trips_for_tour_mode / tot_calib_trips_for_tour_mode
-                scaled_calib_target_df[tour_mode] = scaled_calib_target_df[tour_mode] * tour_mode_scaling_factor
+            # Get transit trip counts (rows that are transit modes) in this tour mode
+            calib_transit_trips_in_tour_mode = calib_target_df.loc[transit_trip_mode_idxs, tour_mode].sum()
+            
+            # Calculate scaling factor for non-transit trip modes only
+            # Transit trip modes remain unscaled
+            numerator = tot_model_trips_for_tour_mode - calib_transit_trips_in_tour_mode
+            denom = tot_calib_trips_for_tour_mode - calib_transit_trips_in_tour_mode
+            
+            if denom == 0 or numerator < 0:
+                # don't scale if no non-transit trips in calibration targets
+                #  or number of calib transit trips is larger than total model trips
+                tour_mode_scaling_factor = 1
             else:
-                # leave the transit trip counts the same
-                calib_transit_trips_in_tour_mode = calib_target_df.loc[~no_transit_idxs, tour_mode].sum()
-                numerator = tot_model_trips_for_tour_mode - calib_transit_trips_in_tour_mode
-                denom = tot_calib_trips_for_tour_mode - calib_transit_trips_in_tour_mode
-                if denom == 0 or numerator < 0:
-                    # don't scale if no non-transit trips in calibration targets
-                    #  or number of calib transit trips is larger than total model trips
-                    tour_mode_scaling_factor = 1
-                else:
-                    tour_mode_scaling_factor = numerator / denom
-                scaled_calib_target_df.loc[no_transit_idxs, tour_mode] = \
-                    scaled_calib_target_df.loc[no_transit_idxs, tour_mode] * tour_mode_scaling_factor
+                tour_mode_scaling_factor = numerator / denom
+            
+            # Apply scaling only to non-transit trip modes (rows)
+            scaled_calib_target_df.loc[no_transit_idxs, tour_mode] = \
+                scaled_calib_target_df.loc[no_transit_idxs, tour_mode] * tour_mode_scaling_factor
 
         # recomputing margins
         scaled_calib_target_df = scaled_calib_target_df.applymap(lambda x: 0 if x < 0 else x)
@@ -1130,6 +1187,33 @@ def launch_activitysim(activitysim_run_command):
     print("Run Time: ", run_time, "secs = ", run_time/60, " mins")
     assert ret_value == 0, "ActivitySim run not completed! See ActivitySim log file for details."
 
+def launch_activitysim_new(activitysim_run_command):
+    start_time = time.time()
+    print("ActivitySim run started at: ", datetime.datetime.now())
+    print(activitysim_run_command)
+    
+    # Use subprocess.run to capture detailed error information
+    result = subprocess.run(
+        activitysim_run_command,
+        shell=True,
+        capture_output=True,
+        text=True
+    )
+    
+    # Print stdout and stderr for debugging
+    if result.stdout:
+        print("STDOUT:", result.stdout)
+    if result.stderr:
+        print("STDERR:", result.stderr)
+    
+    end_time = time.time()
+    print("ActivitySim ended at", datetime.datetime.now())
+    run_time = round(time.time() - start_time, 2)
+    print("Run Time: ", run_time, "secs = ", run_time/60, " mins")
+    
+    assert result.returncode == 0, f"ActivitySim run failed with exit code {result.returncode}. Error: {result.stderr}"
+    return
+
 
 def melt_trip_mc_coef_file(trip_mc_coef_file, output_dir):
     # obtain original original column and row orders
@@ -1218,10 +1302,12 @@ def perform_trip_mode_choice_model_calibration(asim_output_dir,
                                                output_dir):
 
     # ActivitySim model output transformed into trip mode choice calibration format
+    print("Processing ActivitySim output tables for trip mode choice calibration...")
     asim_trip_mc_tables, num_trips_full_model, asim_trips_df = \
         process_asim_tables_for_trip_mode_choice(asim_output_dir)
 
     # trip mode choice constants read from config file
+    print("Reading trip mode choice coefficient file...")
     original_trip_mc_constants_df = read_trip_mode_choice_constants(asim_configs_dir)
 
     # melt trip mode choice coefficient file
@@ -1230,9 +1316,11 @@ def perform_trip_mode_choice_model_calibration(asim_output_dir,
     #     melt_trip_mc_coef_file(original_trip_mc_constants_df, output_dir)
 
     # Calibration targets from survey data
+    print("Reading trip mode choice calibration target file...")
     trip_mc_calib_target_tables = read_trip_mode_choice_calibration_file(
         trip_mode_choice_calib_targets_file)
 
+    print("Scaling calibration targets to match model output...")
     full_trip_mc_calib_target_tables, full_asim_trip_mc_tables = scale_targets_to_match_model_by_tour_mode(
         trip_mc_calib_target_tables,
         asim_trip_mc_tables,
@@ -1294,6 +1382,8 @@ def perform_trip_mode_choice_model_calibration(asim_output_dir,
 
 
 def run_activitysim(data_dir,
+                    skims_dir,
+                    simpy_dir,
                     configs_resident_dir,
                     configs_common_dir,
                     run_dir,
@@ -1318,10 +1408,10 @@ def run_activitysim(data_dir,
     if trip_mc_coef_file is not None:
         shutil.copyfile(trip_mc_coef_file, os.path.join(run_config_resident_dir, 'trip_mode_choice_coefficients.csv'))
 
-    activitysim_run_command = 'python simulation.py -s ' + settings_file + ' -c ' + run_config_resident_dir \
-        + ' -c ' + configs_common_dir + ' -d ' + data_dir + ' -o ' + run_dir
+    activitysim_run_command = 'python ' + simpy_dir + ' -s ' + settings_file + ' -c ' + run_config_resident_dir \
+        + ' -c ' + configs_common_dir + ' -d ' + data_dir + ' -d ' + skims_dir + ' -o ' + run_dir
 
-    launch_activitysim(activitysim_run_command)
+    launch_activitysim_new(activitysim_run_command)
 
     activitysim_output_tables = [
         'final_households.csv',
