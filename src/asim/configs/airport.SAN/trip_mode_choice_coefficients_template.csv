@@ -35,3 +35,6 @@ coef_calibration_shuttle,coef_calibration_shuttle_res_per,coef_calibration_shutt
 coef_calibration_ridehail,coef_calibration_ridehail_res_per,coef_calibration_ridehail_res_bus,coef_calibration_ridehail_vis_per,coef_calibration_ridehail_vis_bus,coef_calibration_ridehail_external
 coef_calibration_taxi,coef_calibration_taxi_res_per,coef_calibration_taxi_res_bus,coef_calibration_taxi_vis_per,coef_calibration_taxi_vis_bus,coef_calibration_taxi_external
 coef_calibration_transit,coef_calibration_transit_res_per,coef_calibration_transit_res_bus,coef_calibration_transit_vis_per,coef_calibration_transit_vis_bus,coef_calibration_transit_external
+transit_calib_knr,,,,,,,,,,,,,,,,,,,,,,,,,,
+transit_calib_tnc,,,,,,,,,,,,,,,,,,,,,,,,,,
+transit_calib_walk,,,,,,,,,,,,,,,,,,,,,,,,,,
