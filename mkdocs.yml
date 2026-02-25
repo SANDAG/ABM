@@ -68,7 +68,10 @@ nav:
         - design/supply/highway-skims-assign.md
         - design/supply/transit-skims-assign.md
     - Report: design/report/report.md
-  - Installing and Running: running.md
+  - Getting Started:
+    - Installation: installation.md
+    - Running the Model: running.md
+    - Performance and Runtime: performance.md
   - Model Inputs and Outputs: 
     - Inputs:
         - Overview: inputs.md
@@ -90,6 +93,7 @@ nav:
     - Calibration: calib_valid/calibration.md
     - Convergence: calib_valid/convergence.md
     - Validation: calib_valid/validation.md
+    - Sensitivity Testing: calib_valid/sensitivity.md
   - Reference:
     - Release Notes: release-notes.md
     - FAQs: faq.md
