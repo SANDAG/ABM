@@ -72,6 +72,7 @@ nav:
     - Installation: installation.md
     - Running the Model: running.md
     - Performance and Runtime: performance.md
+    - Storage Usage: storage-usage.md
   - Model Inputs and Outputs: 
     - Inputs:
         - Overview: inputs.md
