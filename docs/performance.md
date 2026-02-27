@@ -88,4 +88,3 @@ Full model runs usually take 36-40 hours depending on the scenario year. Here is
 | Deleting OMXZ skims | 0:00:06 |
 | Validation | 0:00:34 |
 | Writing model output to datalake | 0:31:55 |
-| Copy project data to remote drive | 0:00:19 |
