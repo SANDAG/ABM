@@ -1,4 +1,5 @@
 import pandas as pd
+import geopandas as gpd
 import numpy as np
 import os
 import sys
@@ -348,6 +349,7 @@ def create_landuse(settings):
     # one person per household
     input_lu = pd.read_csv(os.path.join(data_dir, settings['maz_input_fname']))
     synthetic_hh = pd.read_csv(os.path.join(data_dir, settings['hh_input_fname']))
+    convention_event_space = gpd.read_file(os.path.join(data_dir, settings['convention_event_space_fname']))
 
     if 'MAZ' not in input_lu.columns:
         output_lu = input_lu.copy().rename(columns = {'mgra':'MAZ','taz':'TAZ'})
@@ -372,7 +374,15 @@ def create_landuse(settings):
         labels = ['a1','a2','a3','a4','a5','a6','a7','a8'])#income_bin_labels[settings['airport_code']])
     synthetic_hh = synthetic_hh.groupby(['mgra','airport_income_bin'],as_index = False)[['hhid']].count() # TODO: change to sample rate
     synthetic_hh = pd.pivot(synthetic_hh, index = 'mgra', columns = 'airport_income_bin', values= 'hhid')
-    output_lu = output_lu.set_index('MAZ').merge(synthetic_hh, how = 'left', left_index = True, right_index = True).fillna(0)    
+    output_lu = output_lu.set_index('MAZ').merge(synthetic_hh, how = 'left', left_index = True, right_index = True).fillna(0)
+    
+    convention_event_space = (
+        convention_event_space.groupby("MGRA", as_index=False)[["USER_Total"]]
+        .sum()
+        .rename(columns={"MGRA": "MAZ", "USER_Total": "mtgsqft"})
+    )
+    output_lu = output_lu.merge(convention_event_space.set_index('MAZ'), how = 'left', left_index = True, right_index = True).fillna(0) 
+
     return output_lu
 
 
