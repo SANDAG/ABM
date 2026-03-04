@@ -37,6 +37,12 @@ NESTS:
               - KNR_LOC
               - KNR_MIX
               - KNR_PRM
+            - name: TNCACCESS
+              coefficient: coef_nest_TRANSIT_TNCACCESS
+              alternatives:
+              - TNC_LOC
+              - TNC_PRM
+              - TNC_MIX
       - name: CURB # drop-off
         coefficient: coef_nest_CURB
         alternatives:

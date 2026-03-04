@@ -8,6 +8,7 @@ coef_nest_TAXI,1,T
 coef_nest_TRANSIT,1,T
 coef_nest_TRANSIT_WALKACCESS,1,T
 coef_nest_TRANSIT_KNRACCESS,1,T
+coef_nest_TRANSIT_TNCACCESS,1,T
 coef_nest_CURB,1,T
 coef_nest_SHUTTLEVAN,1,T
 # parked_onsite,,
@@ -50,11 +51,11 @@ coef_asc_transit_partysize1_vis_per,0,F
 coef_asc_transit_partysize1_vis_bus,0,F
 coef_asc_transit_partysize1_external,0.331,F
 # forhire,,
-coef_asc_forhire_res_per,0.820,F
-coef_asc_forhire_res_bus,0.820,F
+coef_asc_forhire_res_per,0.82,F
+coef_asc_forhire_res_bus,0.82,F
 coef_asc_forhire_vis_per,2.407,F
 coef_asc_forhire_vis_bus,2.407,F
-coef_asc_forhire_external,0.820,F
+coef_asc_forhire_external,0.82,F
 coef_asc_forhire_partysize1_res_per,-0.368,F
 coef_asc_forhire_partysize1_res_bus,-0.368,F
 coef_asc_forhire_partysize1_vis_per,-0.466,F
