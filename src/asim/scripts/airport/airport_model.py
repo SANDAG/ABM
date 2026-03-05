@@ -349,7 +349,8 @@ def create_landuse(settings):
     # one person per household
     input_lu = pd.read_csv(os.path.join(data_dir, settings['maz_input_fname']))
     synthetic_hh = pd.read_csv(os.path.join(data_dir, settings['hh_input_fname']))
-    convention_event_space = gpd.read_file(os.path.join(data_dir, settings['convention_event_space_fname']))
+    if settings['airport_code'] == 'SAN':
+        convention_event_space = gpd.read_file(os.path.join(data_dir, settings['convention_event_space_fname']))
 
     if 'MAZ' not in input_lu.columns:
         output_lu = input_lu.copy().rename(columns = {'mgra':'MAZ','taz':'TAZ'})
@@ -376,12 +377,13 @@ def create_landuse(settings):
     synthetic_hh = pd.pivot(synthetic_hh, index = 'mgra', columns = 'airport_income_bin', values= 'hhid')
     output_lu = output_lu.set_index('MAZ').merge(synthetic_hh, how = 'left', left_index = True, right_index = True).fillna(0)
     
-    convention_event_space = (
-        convention_event_space.groupby("MGRA", as_index=False)[["USER_Total"]]
-        .sum()
-        .rename(columns={"MGRA": "MAZ", "USER_Total": "mtgsqft"})
-    )
-    output_lu = output_lu.merge(convention_event_space.set_index('MAZ'), how = 'left', left_index = True, right_index = True).fillna(0) 
+    if settings['airport_code'] == 'SAN':
+        convention_event_space = (
+            convention_event_space.groupby("MGRA", as_index=False)[["USER_Total"]]
+            .sum()
+            .rename(columns={"MGRA": "MAZ", "USER_Total": "mtgsqft"})
+        )
+        output_lu = output_lu.merge(convention_event_space.set_index('MAZ'), how = 'left', left_index = True, right_index = True).fillna(0) 
 
     return output_lu
 
