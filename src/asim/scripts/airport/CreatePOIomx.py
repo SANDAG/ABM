@@ -40,9 +40,9 @@ print ('Table names:', myfile.list_matrices())   # ['m1','m2',',m3']
 # %%
 xwalk = pd.read_csv(os.path.join(path,'input','mgra15_based_input{}.csv'.format(scenario_year)), usecols = ['taz','zip09'])
 xwalk['destination'] = 0
-xwalk.loc[xwalk['zip09'] == 92037, 'destination'] = 1
-xwalk.loc[xwalk['zip09'] == 92101, 'destination'] = 2
-xwalk.loc[xwalk['zip09'] == 92108, 'destination'] = 3
+xwalk.loc[xwalk['zip09'] == 92037, 'destination'] = 1 #La Jolla
+xwalk.loc[xwalk['zip09'] == 92101, 'destination'] = 2 #downtown San Diego
+xwalk.loc[xwalk['zip09'] == 92108, 'destination'] = 3 #Mission Valley
 xwalk = xwalk.sort_values('taz').drop_duplicates(subset = 'taz')
 
 # %%
