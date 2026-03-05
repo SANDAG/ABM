@@ -2,6 +2,23 @@
 
 SANDAG ABM release notes can also be found on the [GitHub repo](https://github.com/SANDAG/ABM/releases).
 
+## Version 15.4.1 (March 05, 2026)
+This release converts the Bike Logsum Java program into Python and updates the route choice model. Another significant update is the comprehensive recalibration of transit trips across all models using the 2023 Transit On-Board Survey (OBS).
+
+### Software Versions
+- ActivitySim 1.4.0
+- EMME OpenPaths 25
+
+### Features
+- [PR 384](https://github.com/SANDAG/ABM/pull/384): Mode choice recalibration to match 2023 OBS
+- [PR 389](https://github.com/SANDAG/ABM/pull/389): Python Bike Logsum and route choice model update
+- [PR 381](https://github.com/SANDAG/ABM/pull/381): Improved copy process of model files from C: to network drive
+- [PR 393](https://github.com/SANDAG/ABM/pull/393): Convergence reporting notebook
+- [PR 390](https://github.com/SANDAG/ABM/pull/390), [PR 391](https://github.com/SANDAG/ABM/pull/391), [PR 392](https://github.com/SANDAG/ABM/pull/392): Documentation updates
+
+### Bug Fixes
+- None
+
 ## Version 15.4.0 (February 16, 2026)
 This significant release upgrades EMME to OpenPaths 25 in addition to switching to UV as the Python package manager. With the EMME upgrade, a Python 27 environment is no longer needed.
 
