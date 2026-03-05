@@ -28,7 +28,7 @@ This process generates the output\bikeMgraLogsum.csv and output\bikeTazLogsum.cs
 
 ## Further reading
 
-[Bike Route Choice README](../../../src/asim/scripts/bike_route_choice/README.md)
+[Bike Route Choice README](https://github.com/SANDAG/ABM/blob/main/src/asim/scripts/bike_route_choice/README.md)
 
 [ABM3 Bike Model Report (2025)](../../pdf_reports/SANDAG_ABM3_Bike_Model_Report.pdf)
 
