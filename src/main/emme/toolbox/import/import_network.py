@@ -1351,7 +1351,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
         def lookup_link_name(link):
             for attr_name in ["#name", "#name_from", "#name_to"]:
-                for (name, hov), _factors in facility_factors.items():
+                # Sort by length of name in reverse order so I-805 is checked before I-8
+                for (name, hov), _factors in sorted(facility_factors.items(),key=lambda x: len(x[0][0]),reverse=True):
                     if (name in link[attr_name]) and (hov == link["@hov"]):
                         return _factors, False
             msg = "Link with tcov_id %s did not match to any facility, using default factors" % (link["@tcov_id"])
