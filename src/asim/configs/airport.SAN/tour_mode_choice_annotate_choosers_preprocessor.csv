@@ -1,0 +1,4 @@
+Description,Target,Expression
+#,,
+#,,
+mandatory tour type boolean,is_mandatory,(df.tour_category=='mandatory') if 'tour_category' in df.columns else False

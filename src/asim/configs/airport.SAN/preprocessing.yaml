@@ -13,6 +13,7 @@ party_size_probs_input_fname: airport_party.SAN.csv
 nights_probs_input_fname: airport_nights.SAN.csv
 income_probs_input_fname: airport_income.SAN.csv
 ext_station_probs_input_fname: InternalExternalDestinationChoiceAlternatives.csv
+convention_event_space_fname: Hotels_EventSpace_0314.dbf
 
 #outputs
 sched_probs_output_name: tour_scheduling_probs.csv

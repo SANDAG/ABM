@@ -1,4 +1,5 @@
 import pandas as pd
+import geopandas as gpd
 import numpy as np
 import os
 import sys
@@ -21,11 +22,11 @@ def find_root_level(target):
     return pardir
 
 def create_tours(settings):
-    """ Create tours from airport model settings and probability distributions"""
+    """Create tours from airport model settings and probability distributions"""
     print('Creating tours.')
-    employee_park = pd.read_csv(os.path.join(config_dir, settings['employee_park_fname']))
-    arrival_sched = pd.read_csv(os.path.join(config_dir, settings['arrival_sched_probs_fname']))
-    departure_sched = pd.read_csv(os.path.join(config_dir, settings['departure_sched_probs_fname']))
+    # employee_park = pd.read_csv(os.path.join(config_dir, settings['employee_park_fname']))
+    # arrival_sched = pd.read_csv(os.path.join(config_dir, settings['arrival_sched_probs_fname']))
+    # departure_sched = pd.read_csv(os.path.join(config_dir, settings['departure_sched_probs_fname']))
     purp_probs = pd.read_csv(os.path.join(config_dir, settings['purpose_probs_input_fname']))
     party_size_probs = pd.read_csv(os.path.join(config_dir, settings['party_size_probs_input_fname']))
     nights_probs_df = pd.read_csv(os.path.join(config_dir, settings['nights_probs_input_fname']))
@@ -42,7 +43,33 @@ def create_tours(settings):
     num_tours = int((enplanements - connecting)/annualization/avg_party_size *2) 
     departing_tours = int(num_tours /2)
     arriving_tours = num_tours - departing_tours
-    employee_tours = int(sum(employee_park['Employee Stalls']*employee_park['Share to Terminal']))
+
+    if settings['airport_code'] == 'CBX':
+        employee_park = pd.read_csv(os.path.join(config_dir, settings['employee_park_fname']))
+        employee_tours = int(sum(employee_park['Employee Stalls']*employee_park['Share to Terminal']))
+        emp_tours = pd.DataFrame(
+            index=range(employee_tours*2), columns=[
+                'direction', 'purpose','party_size','nights', 'income'])
+        emp_tours.index.name = 'id'
+        emp_tours.loc[0:int(len(emp_tours)/2),'direction'] = 'inbound'
+        emp_tours.loc[len(emp_tours)/2:len(emp_tours),'direction'] = 'outbound'
+        # assign purpose
+        purp_probs_sum = sum(purp_probs.Percent)
+        purp_proportions = {k: v / purp_probs_sum for k, v in zip(purp_probs['Purpose'],purp_probs['Percent'])}
+        id_to_purp = {0:'purp0_perc',
+                    1:'purp1_perc',
+                    2:'purp2_perc',
+                    3:'purp3_perc',
+                    4:'purp4_perc',
+                    5:'purp5_perc'}
+    elif settings['airport_code'] == 'SAN':
+        # assign purpose
+        id_to_purp = purp_probs.set_index('market_segment_id')['market_segment'].to_dict()
+        purp_probs_sum = sum(purp_probs.proportion)
+        purp_proportions = {k: v / purp_probs_sum for k, v in zip(purp_probs['market_segment_id'],purp_probs['proportion'])}
+    
+    purp_cum_probs = np.array(list(purp_proportions.values())).cumsum()
+
     arr_tours = pd.DataFrame(
         index=range(arriving_tours), columns=[
             'direction', 'purpose','party_size','nights', 'income'])
@@ -53,23 +80,6 @@ def create_tours(settings):
             'direction', 'purpose','party_size','nights', 'income'])
     dep_tours.index.name = 'id'
     dep_tours['direction'] = 'outbound'
-    emp_tours = pd.DataFrame(
-        index=range(employee_tours*2), columns=[
-            'direction', 'purpose','party_size','nights', 'income'])
-    emp_tours.index.name = 'id'
-    emp_tours.loc[0:int(len(emp_tours)/2),'direction'] = 'inbound'
-    emp_tours.loc[len(emp_tours)/2:len(emp_tours),'direction'] = 'outbound'
-    
-    # assign purpose
-    purp_probs_sum = sum(purp_probs.Percent)
-    purp_probs = {k: v / purp_probs_sum for k, v in zip(purp_probs['Purpose'],purp_probs['Percent'])}
-    id_to_purp = {0:'purp0_perc',
-                  1:'purp1_perc',
-                  2:'purp2_perc',
-                  3:'purp3_perc',
-                  4:'purp4_perc',
-                  5:'purp5_perc'}
-    purp_cum_probs = np.array(list(purp_probs.values())).cumsum()
     
     for tour_table in [dep_tours, arr_tours]:
         purp_scaled_probs = np.subtract(
@@ -78,21 +88,21 @@ def create_tours(settings):
         tour_table['purpose_id'] = purp_type_ids
         tour_table['purpose'] = tour_table['purpose_id'].map(id_to_purp)
     
-    time_probs_list = [departure_sched, arrival_sched]
-    time_col = ['start','end']
-    for i,df in enumerate([dep_tours,arr_tours]):
+    # time_probs_list = [departure_sched, arrival_sched]
+    # time_col = ['start','end']
+    for _,df in enumerate([dep_tours,arr_tours]):
         for purp_type, group in df.groupby('purpose'):
             num_purp_tours = len(group)
-           
+          
             #assign size
-            size_probs = OrderedDict(party_size_probs[ purp_type])
+            size_probs = OrderedDict(party_size_probs[purp_type])
             # scale probs to so they sum to 1
             size_sum = sum(size_probs.values())
             size_probs = {k: v / size_sum for k,v in size_probs.items()}
             size_cum_probs = np.array(list(size_probs.values())).cumsum()
             size_scaled_probs = np.subtract(
                 size_cum_probs, np.random.rand(num_purp_tours, 1))
-            size = np.argmax((size_scaled_probs + 1.0).astype('i4'), axis=1)
+            size = np.argmax((size_scaled_probs + 1.0).astype('i4'), axis=1) + 1 # add 1 because party size bins are 1 indexed
             group['party_size'] = size
             df.loc[group.index, 'party_size'] = size
 
@@ -107,9 +117,9 @@ def create_tours(settings):
             nights = np.argmax((nights_scaled_probs + 1.0).astype('i4'), axis=1)
             group['nights'] = nights
             df.loc[group.index, 'nights'] = nights
-           
+
             #assign income
-            income_probs = OrderedDict(income_probs_df[ purp_type])
+            income_probs = OrderedDict(income_probs_df[purp_type])
             # scale probs to so they sum to 1
             income_sum = sum(income_probs.values())
             income_probs = {k: v / income_sum for k,v in income_probs.items()}
@@ -119,9 +129,80 @@ def create_tours(settings):
             income = np.argmax((income_scaled_probs + 1.0).astype('i4'), axis=1)
             group['income'] = income
             df.loc[group.index, 'income'] = income
-            
+    if settings['airport_code'] == 'CBX':
+        #enumerate employee tours
+        emp_tours['purpose'] = 'purp5_perc'
+        emp_tours['purpose_id'] = 5
+        emp_tours['party_size'] = 1
+        emp_tours['nights'] = -99
+        emp_tours['income'] = -99
+        #choose employee park destination
+        park_probs_sum = sum(employee_park['Employee Stalls']*employee_park['Share to Terminal'])
+        employee_park = employee_park[employee_park['Share to Terminal'] > 0]
+        if park_probs_sum > 0:
+            park_probs = {k: v / park_probs_sum for k, v in zip(employee_park['MGRA'],employee_park['Employee Stalls']*employee_park['Share to Terminal'])}
+        else:
+            park_probs = {k: v for k,v in zip(employee_park['MGRA'],employee_park['Employee Stalls']*employee_park['Share to Terminal'])}
+        park_cum_probs = np.array(list(park_probs.values())).cumsum()
+        id_to_park = {k:v for k,v in zip(employee_park['Name']-1,employee_park['MGRA'])}
+
+        for tour_table in [emp_tours]:
+            park_scaled_probs = np.subtract(
+               park_cum_probs, np.random.rand(len(tour_table), 1))
+            park_type_ids = np.argmax((park_scaled_probs + 1.0).astype('i4'), axis=1)
+            tour_table['parkinglot'] = park_type_ids
+            tour_table['parkinglot'] = tour_table['parkinglot'].map(id_to_park)
+        if len(emp_tours) > 0:
+            emp_tours.loc[emp_tours['direction'] == 'inbound', 'destination'] = emp_tours[emp_tours.direction == 'inbound']['parkinglot']
+            emp_tours.loc[emp_tours['direction'] == 'inbound', 'origin'] = airport_mgra
+            emp_tours.loc[emp_tours['direction'] == 'outbound', 'origin'] = emp_tours[emp_tours.direction == 'outbound']['parkinglot']
+            emp_tours.loc[emp_tours['direction'] == 'outbound', 'destination'] = airport_mgra
+        #choose employee mode
+        # employee_park = employee_park[employee_park['Public Transit Share to Terminal']>0]
+            employee_mode = employee_park.copy()
+            employee_mode['PT_terminal'] = employee_mode['Public Transit Share to Terminal']
+            employee_mode['Mode'] = 'WALK_PRM'
+            employee_mode_2 = employee_park.copy()
+            employee_mode_2['PT_terminal'] = 1- employee_mode_2['Public Transit Share to Terminal']
+            employee_mode_2['Mode'] = 'WALK'
+            employee_mode = pd.concat([employee_mode, employee_mode_2])
+            employee_mode = employee_mode.pivot(index = 'Mode', columns = 'MGRA', values = 'PT_terminal' ).reset_index().fillna(0)
+            employee_mode['Name'] = pd.Series([0,1])
+            final_employee = pd.DataFrame()
+            for mgra in employee_park.MGRA.unique():
+                mode_probs = {k: v  for k, v in zip(employee_mode['Mode'],employee_mode[mgra])}
+                mode_cum_probs = np.array(list(mode_probs.values())).cumsum()
+                id_to_mode = {k:v for k,v in zip(employee_mode['Name'],employee_mode['Mode'])}
+
+                for tour_table in [emp_tours[emp_tours.parkinglot == mgra]]: #TODO remove this 'for' loop
+                    mode_scaled_probs = np.subtract(
+                       mode_cum_probs, np.random.rand(len(tour_table), 1))
+                    mode_type_ids = np.argmax((mode_scaled_probs + 1.0).astype('i4'), axis=1)
+                    tour_table['emp_trip_mode'] = mode_type_ids
+                    tour_table['emp_trip_mode'] = tour_table['emp_trip_mode'].map(id_to_mode)
+                    final_employee = pd.concat([final_employee, tour_table])
+            final_employee = final_employee.drop('parkinglot',axis = 1)
+        else:
+            final_employee = emp_tours.drop('parkinglot',axis = 1).copy()
+            final_employee['emp_trip_mode'] = None
             # # schedule tours
-            # time_probs = OrderedDict(time_probs_list[i][ purp_type])
+            # time_probs_list = [departure_sched, arrival_sched]
+            # time_col = ['start','end']
+            # for i, time in enumerate(time_probs_list):
+            #     for purp_type, group in emp_tours.groupby('purpose'):
+            #         num_purp_tours = len(group)
+            #         time_probs = OrderedDict(time_probs_list[i][ purp_type])
+            #         # scale probs to so they sum to 1
+            #         time_sum = sum(time_probs.values())
+            #         time_probs = {k: v / time_sum for k,v in time_probs.items()}
+            #         time_cum_probs = np.array(list(time_probs.values())).cumsum()
+            #         time_scaled_probs = np.subtract(
+            #             time_cum_probs, np.random.rand(num_purp_tours, 1))
+            #         time = np.argmax((time_scaled_probs + 1.0).astype('i4'), axis=1)
+            #         group[time_col[i]] = time
+            #         emp_tours.loc[group.index, time_col[i]] = time
+        
+        # time_probs = OrderedDict([park_type])
             # # scale probs to so they sum to 1
             # time_sum = sum(time_probs.values())
             # time_probs = {k: v / time_sum for k,v in time_probs.items()}
@@ -129,84 +210,9 @@ def create_tours(settings):
             # time_scaled_probs = np.subtract(
             #     time_cum_probs, np.random.rand(num_purp_tours, 1))
             # time = np.argmax((time_scaled_probs + 1.0).astype('i4'), axis=1)
-            # group[time_col[i]] = time
-            # df.loc[group.index, time_col[i]] = time
+            # group['departtime'] = time
+            # df.loc[group.index, 'departtime'] = time
 
-    
-
-    #enumerate employee tours
-    emp_tours['purpose'] = 'purp5_perc'
-    emp_tours['purpose_id'] = 5
-    emp_tours['party_size'] = 1
-    emp_tours['nights'] = -99
-    emp_tours['income'] = -99
-    #choose employee park destination
-    park_probs_sum = sum(employee_park['Employee Stalls']*employee_park['Share to Terminal'])
-    employee_park = employee_park[employee_park['Share to Terminal'] > 0]
-    if park_probs_sum > 0:
-        park_probs = {k: v / park_probs_sum for k, v in zip(employee_park['MGRA'],employee_park['Employee Stalls']*employee_park['Share to Terminal'])}
-    else:
-        park_probs = {k: v for k,v in zip(employee_park['MGRA'],employee_park['Employee Stalls']*employee_park['Share to Terminal'])}
-    park_cum_probs = np.array(list(park_probs.values())).cumsum()
-    id_to_park = {k:v for k,v in zip(employee_park['Name']-1,employee_park['MGRA'])}
-
-    for tour_table in [emp_tours]:
-        park_scaled_probs = np.subtract(
-           park_cum_probs, np.random.rand(len(tour_table), 1))
-        park_type_ids = np.argmax((park_scaled_probs + 1.0).astype('i4'), axis=1)
-        tour_table['parkinglot'] = park_type_ids
-        tour_table['parkinglot'] = tour_table['parkinglot'].map(id_to_park)
-    if len(emp_tours) > 0:
-        emp_tours.loc[emp_tours['direction'] == 'inbound', 'destination'] = emp_tours[emp_tours.direction == 'inbound']['parkinglot']
-        emp_tours.loc[emp_tours['direction'] == 'inbound', 'origin'] = airport_mgra
-        emp_tours.loc[emp_tours['direction'] == 'outbound', 'origin'] = emp_tours[emp_tours.direction == 'outbound']['parkinglot']
-        emp_tours.loc[emp_tours['direction'] == 'outbound', 'destination'] = airport_mgra
-    #choose employee mode
-    # employee_park = employee_park[employee_park['Public Transit Share to Terminal']>0]
-        employee_mode = employee_park.copy()
-        employee_mode['PT_terminal'] = employee_mode['Public Transit Share to Terminal']
-        employee_mode['Mode'] = 'WALK_PRM'
-        employee_mode_2 = employee_park.copy()
-        employee_mode_2['PT_terminal'] = 1- employee_mode_2['Public Transit Share to Terminal']
-        employee_mode_2['Mode'] = 'WALK'
-        employee_mode = pd.concat([employee_mode, employee_mode_2])
-        employee_mode = employee_mode.pivot(index = 'Mode', columns = 'MGRA', values = 'PT_terminal' ).reset_index().fillna(0)
-        employee_mode['Name'] = pd.Series([0,1])
-        final_employee = pd.DataFrame()
-        for mgra in employee_park.MGRA.unique():
-            mode_probs = {k: v  for k, v in zip(employee_mode['Mode'],employee_mode[mgra])}
-            mode_cum_probs = np.array(list(mode_probs.values())).cumsum()
-            id_to_mode = {k:v for k,v in zip(employee_mode['Name'],employee_mode['Mode'])}
-        
-            for tour_table in [emp_tours[emp_tours.parkinglot == mgra]]:
-                mode_scaled_probs = np.subtract(
-                   mode_cum_probs, np.random.rand(len(tour_table), 1))
-                mode_type_ids = np.argmax((mode_scaled_probs + 1.0).astype('i4'), axis=1)
-                tour_table['emp_trip_mode'] = mode_type_ids
-                tour_table['emp_trip_mode'] = tour_table['emp_trip_mode'].map(id_to_mode)
-                final_employee = pd.concat([final_employee, tour_table])
-        final_employee = final_employee.drop('parkinglot',axis = 1)
-    else:
-        final_employee = emp_tours.drop('parkinglot',axis = 1).copy()
-        final_employee['emp_trip_mode'] = None
-        # # schedule tours
-        # time_probs_list = [departure_sched, arrival_sched]
-        # time_col = ['start','end']
-        # for i, time in enumerate(time_probs_list):
-        #     for purp_type, group in emp_tours.groupby('purpose'):
-        #         num_purp_tours = len(group)
-        #         time_probs = OrderedDict(time_probs_list[i][ purp_type])
-        #         # scale probs to so they sum to 1
-        #         time_sum = sum(time_probs.values())
-        #         time_probs = {k: v / time_sum for k,v in time_probs.items()}
-        #         time_cum_probs = np.array(list(time_probs.values())).cumsum()
-        #         time_scaled_probs = np.subtract(
-        #             time_cum_probs, np.random.rand(num_purp_tours, 1))
-        #         time = np.argmax((time_scaled_probs + 1.0).astype('i4'), axis=1)
-        #         group[time_col[i]] = time
-        #         emp_tours.loc[group.index, time_col[i]] = time
-    
-        
     # pick external tour destination
     ext_probs_sum = sum(ext_station_probs_df['{}.Pct'.format(settings['airport_code'])])
     ext_probs_dep = {k: v / ext_probs_sum for k, v in zip(ext_station_probs_df['mgraRet'],ext_station_probs_df['{}.Pct'.format(settings['airport_code'])])}
@@ -218,56 +224,62 @@ def create_tours(settings):
     
     ext_cum_probs = [ext_cum_probs_dep, ext_cum_probs_arr]
     id_to_ext = [id_to_ext_dep,id_to_ext_arr]
-    dep_tours_ext = dep_tours[dep_tours.purpose == 'purp4_perc']
-    arr_tours_ext = arr_tours[arr_tours.purpose == 'purp4_perc']
-    dep_tours = dep_tours[dep_tours.purpose != 'purp4_perc']
-    arr_tours = arr_tours[arr_tours.purpose != 'purp4_perc']
+    dep_tours_ext = dep_tours[dep_tours.purpose_id == 4]
+    arr_tours_ext = arr_tours[arr_tours.purpose_id == 4]
+    dep_tours = dep_tours[dep_tours.purpose_id != 4]
+    arr_tours = arr_tours[arr_tours.purpose_id != 4]
     for i,tour_table in enumerate([dep_tours_ext, arr_tours_ext]):
         ext_scaled_probs = np.subtract(
-           ext_cum_probs[i], np.random.rand(len(tour_table), 1))
+        ext_cum_probs[i], np.random.rand(len(tour_table), 1))
         ext_type_ids = np.argmax((ext_scaled_probs + 1.0).astype('i4'), axis=1)
         tour_table['destination'] = ext_type_ids
         tour_table['destination'] = tour_table['destination'].map(id_to_ext[i])
-    
-        # time_probs = OrderedDict([ park_type])
-    #         # scale probs to so they sum to 1
-    #         time_sum = sum(time_probs.values())
-    #         time_probs = {k: v / time_sum for k,v in time_probs.items()}
-    #         time_cum_probs = np.array(list(time_probs.values())).cumsum()
-    #         time_scaled_probs = np.subtract(
-    #             time_cum_probs, np.random.rand(num_purp_tours, 1))
-    #         time = np.argmax((time_scaled_probs + 1.0).astype('i4'), axis=1)
-    #         group['departtime'] = time
-    #         df.loc[group.index, 'departtime'] = time
-
 
     # for xborder model, only 1 person per tour and 1 tour per person
     # tours['number_of_participants'] = 1
     # tours['tour_num'] = 1
     # tours['tour_count'] = 1
-    tours = pd.concat([dep_tours,arr_tours,dep_tours_ext,arr_tours_ext,final_employee],ignore_index = True).fillna(0)
-    tours['tour_id'] = np.arange(1, len(tours) +1)
-    tours = tours.set_index('tour_id')
-    tours['tour_category'] = 'non_mandatory'
-    tours['origin'] = airport_mgra
-    for i,purp in enumerate(['bus','per']):
+
+    if settings['airport_code'] == 'SAN':
+        # Set destination to None for non-external tours before concatenation
+        dep_tours['destination'] = None
+        arr_tours['destination'] = None
+        
+        tours = pd.concat([dep_tours,arr_tours,dep_tours_ext,arr_tours_ext],ignore_index = True).fillna(0)
+        tours['tour_id'] = np.arange(1, len(tours) +1)
+        tours = tours.set_index('tour_id')
+        tours['tour_category'] = 'non_mandatory'
+        tours['origin'] = airport_mgra
+        
+        segment_dict = purp_probs[['market_segment_id','market_segment']].to_dict()['market_segment']
+        tours['tour_type'] = tours['purpose_id'].map(segment_dict)
+        tours['mode_segment'] = tours['tour_type'].copy()
+        # Override mode_segment for external tours
+        tours.loc[tours['purpose_id'] == 4, 'mode_segment'] = 'external'
+        return tours
+    elif settings['airport_code'] == 'CBX':
+        tours = pd.concat([dep_tours,arr_tours,dep_tours_ext,arr_tours_ext,final_employee],ignore_index = True).fillna(0)
+        tours['tour_id'] = np.arange(1, len(tours) +1)
+        tours = tours.set_index('tour_id')
+        tours['tour_category'] = 'non_mandatory'
+        tours['origin'] = airport_mgra
+        for i,purp in enumerate(['bus','per']):
+            for income in range(8):
+                tours.loc[(tours.purpose_id ==i) & (tours.income ==income), 'tour_type'] = 'res_{}{}'.format(purp,income+1)
+                if i == 0:
+                    tours.loc[(tours.purpose_id.isin([0,2])) & (tours.income == income), 'mode_segment'] = '{}{}'.format(purp,income+1)
+                else:
+                    tours.loc[(tours.purpose_id.isin([1,3])) & (tours.income == income), 'mode_segment'] = '{}{}'.format(purp,income+1)
+        tours.loc[(tours.purpose_id ==2) , 'tour_type'] = 'vis_bus'
+        tours.loc[(tours.purpose_id ==3) , 'tour_type'] = 'vis_per'
+        tours.loc[(tours.purpose_id ==4) , 'tour_type'] = 'external'
+        tours.loc[(tours.purpose_id ==5) , 'tour_type'] = 'emp'
+        tours.loc[(tours.purpose_id.isin([5])), 'mode_segment'] = 'emp'
         for income in range(8):
-            tours.loc[(tours.purpose_id ==i) & (tours.income ==income), 'tour_type'] = 'res_{}{}'.format(purp,income+1)
-            if i == 0:
-                tours.loc[(tours.purpose_id.isin([0,2])) & (tours.income == income), 'mode_segment'] = '{}{}'.format(purp,income+1)
-            else:
-                tours.loc[(tours.purpose_id.isin([1,3])) & (tours.income == income), 'mode_segment'] = '{}{}'.format(purp,income+1)
-
-
-    tours.loc[(tours.purpose_id ==2) , 'tour_type'] = 'vis_bus'
-    tours.loc[(tours.purpose_id ==3) , 'tour_type'] = 'vis_per'
-    tours.loc[(tours.purpose_id ==4) , 'tour_type'] = 'external'
-    tours.loc[(tours.purpose_id ==5) , 'tour_type'] = 'emp'
-    tours.loc[(tours.purpose_id.isin([5])), 'mode_segment'] = 'emp'
-    for income in range(8):
-        tours.loc[(tours.purpose_id == 4) & (tours.income ==income), 'mode_segment'] = 'ext{}'.format(income+1)
-
-    return tours
+            tours.loc[(tours.purpose_id == 4) & (tours.income ==income), 'mode_segment'] = 'ext{}'.format(income+1)
+        return tours
+    else:
+        raise ValueError("preprocessing.yaml 'airport_code' invalid")
 
 def create_sched_probs(settings):
     """ Create tours from airport model settings and probability distributions"""
@@ -275,19 +287,19 @@ def create_sched_probs(settings):
     arrival_sched = pd.read_csv(os.path.join(config_dir, settings['arrival_sched_probs_fname']))
     departure_sched = pd.read_csv(os.path.join(config_dir, settings['departure_sched_probs_fname']))
     asim_sched = [pd.DataFrame(columns = arrival_sched.columns[1:]),pd.DataFrame(columns = departure_sched.columns[1:])]
-    for m,distribution in enumerate([ departure_sched,arrival_sched]):
+    for m,distribution in enumerate([departure_sched,arrival_sched]):
         distribution = distribution.rename(columns = {'period':'Period'}).set_index('Period')
-        for i in range(1,49):
-            if i <= 4:
-                asim_sched[m].loc[i] = distribution.loc[1]/4
-            elif i < 43:
-                asim_sched[m].loc[i] = distribution.loc[i-3]
-            else:
-                asim_sched[m].loc[i] = distribution.iloc[-1]/6
-        # asim_sched[m] = pd.DataFrame(asim_sched[m].stack()).reset_index()#.rename(columns = {'index':'purpose'})
+        if settings['airport_code'] == 'CBX':
+            for i in range(1,49):
+                if i <= 4:
+                    asim_sched[m].loc[i] = distribution.loc[1]/4
+                elif i < 43:
+                    asim_sched[m].loc[i] = distribution.loc[i-3]
+                else:
+                    asim_sched[m].loc[i] = distribution.iloc[-1]/6
+        elif settings['airport_code'] == 'SAN':
+            asim_sched[m] = distribution.drop(columns=['period_label'])
         asim_sched[m] = pd.DataFrame(asim_sched[m].T).reset_index().rename(columns = {'index':'purpose'})
-    
-        # asim_sched[m].columns = ['period','purpose','prob']
         asim_sched[m]['outbound'] = m==0
         asim_sched[m] = asim_sched[m][['purpose','outbound'] + [i for i in range(1,49)]]
         if m ==0:
@@ -295,7 +307,6 @@ def create_sched_probs(settings):
         else:
             asim_sched[m].columns = [['purpose','outbound'] + ["{}_48".format(i) for i in range(1,49)]]
 
-        
     return pd.concat([asim_sched[0], asim_sched[1]]).fillna(0)
     
 def create_households(tours):
@@ -308,7 +319,7 @@ def create_households(tours):
     return households
 
 
-def create_persons(settings, num_households):
+def create_persons(num_households):
 
     print("Creating persons")
     # one person per household
@@ -317,7 +328,6 @@ def create_persons(settings, num_households):
         num_households , num_households, replace=False)
     persons['household_id'] = persons['household_id'] +1
     return persons
-
 
 
 def assign_hh_p_to_tours(tours, persons):
@@ -339,16 +349,42 @@ def create_landuse(settings):
     # one person per household
     input_lu = pd.read_csv(os.path.join(data_dir, settings['maz_input_fname']))
     synthetic_hh = pd.read_csv(os.path.join(data_dir, settings['hh_input_fname']))
+    if settings['airport_code'] == 'SAN':
+        convention_event_space = gpd.read_file(os.path.join(data_dir, settings['convention_event_space_fname']))
 
     if 'MAZ' not in input_lu.columns:
         output_lu = input_lu.copy().rename(columns = {'mgra':'MAZ','taz':'TAZ'})
     else:   
         output_lu = input_lu.copy()
-
-    synthetic_hh['airport_income_bin'] = pd.cut(synthetic_hh['hinc'], bins = [-99999999,25000,50000,75000,100000,125000,150000,200000,9999999999], labels = ['a1','a2','a3','a4','a5','a6','a7','a8'])
+    
+    # Create ln_hotelroomtotal variable for destination choice size terms
+    if 'hotelroomtotal' in output_lu.columns:
+        output_lu['ln_hotelroomtotal'] = np.log1p(output_lu['hotelroomtotal'])
+    
+    income_bin_boundaries = {
+        'SAN': [-99999999,9999999999],
+        'CBX': [-99999999,25000,50000,75000,100000,125000,150000,200000,9999999999]
+        }
+    income_bin_labels = {
+        'SAN': ['a0'],
+        'CBX': ['a1','a2','a3','a4','a5','a6','a7','a8']
+        }
+    synthetic_hh['airport_income_bin'] = pd.cut(
+        synthetic_hh['hinc'], 
+        bins = [-99999999,25000,50000,75000,100000,125000,150000,200000,9999999999],#income_bin_boundaries[settings['airport_code']], 
+        labels = ['a1','a2','a3','a4','a5','a6','a7','a8'])#income_bin_labels[settings['airport_code']])
     synthetic_hh = synthetic_hh.groupby(['mgra','airport_income_bin'],as_index = False)[['hhid']].count() # TODO: change to sample rate
     synthetic_hh = pd.pivot(synthetic_hh, index = 'mgra', columns = 'airport_income_bin', values= 'hhid')
-    output_lu = output_lu.set_index('MAZ').merge(synthetic_hh, how = 'left', left_index = True, right_index = True).fillna(0)    
+    output_lu = output_lu.set_index('MAZ').merge(synthetic_hh, how = 'left', left_index = True, right_index = True).fillna(0)
+    
+    if settings['airport_code'] == 'SAN':
+        convention_event_space = (
+            convention_event_space.groupby("MGRA", as_index=False)[["USER_Total"]]
+            .sum()
+            .rename(columns={"MGRA": "MAZ", "USER_Total": "mtgsqft"})
+        )
+        output_lu = output_lu.merge(convention_event_space.set_index('MAZ'), how = 'left', left_index = True, right_index = True).fillna(0) 
+
     return output_lu
 
 
@@ -393,7 +429,7 @@ if __name__ == '__main__':
         tours = create_tours(settings)
         lu = create_landuse(settings)
         households = create_households(tours)  # 1 per tour
-        persons = create_persons(settings, num_households=len(households))
+        persons = create_persons(num_households=len(households))
         tours = assign_hh_p_to_tours(tours, persons)
         sched_probs = create_sched_probs(settings)
         # # store input files to disk
