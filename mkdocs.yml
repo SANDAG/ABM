@@ -16,15 +16,15 @@ theme:
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: deep purple
-      accent: deep orange
+      primary: custom
+      accent: light blue
       toggle:
         icon: material/toggle-switch-off-outline
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: deep purple
-      accent: grey
+      primary: custom
+      accent: light blue
       toggle:
         icon: material/toggle-switch
         name: Switch to light mode
@@ -106,6 +106,7 @@ extra:
     default: latest
 
 extra_css:
+  - stylesheets/extra.css
   - https://use.fontawesome.com/releases/v5.13.0/css/all.css
 
 markdown_extensions:
