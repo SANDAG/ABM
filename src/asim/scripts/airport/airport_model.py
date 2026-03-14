@@ -1,5 +1,4 @@
 import pandas as pd
-import geopandas as gpd
 import numpy as np
 import os
 import sys
@@ -253,7 +252,7 @@ def create_landuse(settings):
     input_lu = pd.read_csv(os.path.join(data_dir, settings['maz_input_fname']))
     synthetic_hh = pd.read_csv(os.path.join(data_dir, settings['hh_input_fname']))
     if settings['airport_code'] == 'SAN':
-        convention_event_space = gpd.read_file(os.path.join(data_dir, settings['convention_event_space_fname']))
+        convention_event_space = pd.read_csv(os.path.join(data_dir, settings['convention_event_space_fname']))
 
     if 'MAZ' not in input_lu.columns:
         output_lu = input_lu.copy().rename(columns = {'mgra':'MAZ','taz':'TAZ'})
