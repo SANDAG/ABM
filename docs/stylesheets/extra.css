@@ -12,3 +12,8 @@
   color: #94a8d8 !important;
   border-left-color: #94a8d8 !important;
 }
+
+/* Dark mode — lighten content links for readability on slate */
+[data-md-color-scheme="slate"] .md-content a {
+  color: #94a8d8 !important;
+}
