@@ -1,0 +1,19 @@
+/* SANDAG Dark Blue */
+/* Light mode — exact SANDAG blue */
+:root {
+  --md-primary-fg-color: #283c75;
+  --md-primary-fg-color--light: #3d5499;
+  --md-primary-fg-color--dark: #1a2a54;
+}
+
+/* Dark mode — keep primary the same, but fix active nav item visibility */
+[data-md-color-scheme="slate"] .md-nav__link--active,
+[data-md-color-scheme="slate"] .md-nav__item--active > .md-nav__link {
+  color: #94a8d8 !important;
+  border-left-color: #94a8d8 !important;
+}
+
+/* Dark mode — lighten content links for readability on slate */
+[data-md-color-scheme="slate"] .md-content a {
+  color: #94a8d8 !important;
+}
