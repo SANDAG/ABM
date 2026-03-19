@@ -13,9 +13,9 @@ distance >= 4.0,"@((_DIST >= 4)*np.minimum((_DIST - 4), (5 - 4)))",coef_dist_res
 distance >= 5.0,"@((_DIST >= 5)*np.minimum((_DIST - 5), (7.5 - 5)))",coef_dist_res_bus_samp7,coef_dist_res_per_samp7,coef_dist_vis_bus_samp7,coef_dist_vis_per_samp7
 distance >= 7.5,"@((_DIST >= 7.5)*np.minimum((_DIST - 7.5), (10 - 7.5)))",coef_dist_res_bus_samp8,coef_dist_res_per_samp8,coef_dist_vis_bus_samp8,coef_dist_vis_per_samp8
 distance >= 10.0,"@((_DIST >= 10)*np.minimum((_DIST - 10), (20 - 10)))",coef_dist_res_bus_samp9,coef_dist_res_per_samp9,coef_dist_vis_bus_samp9,coef_dist_vis_per_samp9
-distance >= 20.0,"@((_DIST >= 15)*np.minimum((_DIST - 20), (30 - 20)))",coef_dist_res_bus_samp10,coef_dist_res_per_samp10,coef_dist_vis_bus_samp10,coef_dist_vis_per_samp10
-distance >= 30.0,"@((_DIST >= 20)*np.minimum((_DIST - 30), (40 - 30)))",coef_dist_res_bus_samp11,coef_dist_res_per_samp11,coef_dist_vis_bus_samp11,coef_dist_vis_per_samp11
-distance >= 40.0,"@((_DIST >= 30)*np.minimum((_DIST - 40), (50 - 40)))",coef_dist_res_bus_samp12,coef_dist_res_per_samp12,coef_dist_vis_bus_samp12,coef_dist_vis_per_samp12
+distance >= 20.0,"@((_DIST >= 20)*np.minimum((_DIST - 20), (30 - 20)))",coef_dist_res_bus_samp10,coef_dist_res_per_samp10,coef_dist_vis_bus_samp10,coef_dist_vis_per_samp10
+distance >= 30.0,"@((_DIST >= 30)*np.minimum((_DIST - 30), (40 - 30)))",coef_dist_res_bus_samp11,coef_dist_res_per_samp11,coef_dist_vis_bus_samp11,coef_dist_vis_per_samp11
+distance >= 40.0,"@((_DIST >= 40)*np.minimum((_DIST - 40), (50 - 40)))",coef_dist_res_bus_samp12,coef_dist_res_per_samp12,coef_dist_vis_bus_samp12,coef_dist_vis_per_samp12
 distance >= 50.0,"@((_DIST >= 50)*np.minimum((_DIST - 50), (5000 - 50)))",coef_dist_res_bus_samp13,coef_dist_res_per_samp13,coef_dist_vis_bus_samp13,coef_dist_vis_per_samp13
 La Jolla constants,"@(_POI==1)",coef_lajolla_res_bus,coef_lajolla_res_per,coef_lajolla_vis_bus,coef_lajolla_vis_per
 Airport/Downtown constants,"@(_POI==2)",coef_downtown_res_bus,coef_downtown_res_per,coef_downtown_vis_bus,coef_downtown_vis_per
