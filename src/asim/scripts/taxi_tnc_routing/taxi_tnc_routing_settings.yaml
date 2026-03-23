@@ -1,0 +1,78 @@
+# paths are relative to project directory (merged with path of asim_demand_files)
+
+# path to activitysim output folder with trip data. asim_demand_files are relative to this path
+asim_output_dir: output
+
+# path to folder with skim data. skim_files are relative to this path
+skim_dir: output\skims
+
+# output folder for results. output files will be written here, namely output_tnc_vehicle_trips.csv
+output_dir: output\tnc_routing
+
+# demand files to process from activitysim output directory
+# accepts both csv and parquet formats
+asim_demand_files:
+  - airport.CBX\final_cbxtrips
+  - airport.SAN\final_santrips
+  - resident\final_trips
+  - visitor\final_trips
+  - crossborder\final_trips
+asim_landuse_file: resident\final_land_use
+
+# name of skim matrix in OMX file minus time period suffix
+skim_time_core: HOV2_H_TIME
+skim_dist_core: HOV2_H_DIST
+# time periods to process, should match network_los.yaml settings
+skim_periods: ['EA', 'AM', 'MD', 'PM', 'EV']
+periods: [0, 6, 12, 25, 32, 48]
+skim_files: ['traffic_skims_EA.omx', 'traffic_skims_AM.omx', 'traffic_skims_MD.omx', 'traffic_skims_PM.omx', 'traffic_skims_EV.omx']
+
+# modes for shared and single occupancy TNC / taxi trips
+shared_tnc_modes: ['TNC_SHARED']
+single_tnc_modes: 
+ - 'TNC_SINGLE'
+ - 'TAXI'
+ - 'RIDEHAIL_LOC1'
+ - 'RIDEHAIL_LOC2'
+ - 'TAXI_LOC1'
+ - 'TAXI_LOC2'
+
+# simulation time bin size (in mins)
+# determines how far apart trips in time can be to be considered for pooling
+time_bin_size: 10
+
+# maximum initial wait time (in minutes) for a vehicle before a new vehicle is created
+max_wait_time: 15
+
+# buffer size comparing origins and destinations for potential pooling (in mins)
+pooling_buffer: 10
+# maximum allowed detour time for pooled trips (in mins)
+max_detour: 15
+# batch size for matching pooled trips together and matching trips to vehicles
+# this is used to decrease runtime by considering only this number of trips at a time
+pair_batch_size: 6000
+
+# column in the landuse table that indicates the presence of refueling stations
+landuse_refuel_col: refueling_stations
+# maximum distance (in miles) a vehicle can operate before refueling
+max_refuel_dist: 300
+
+# numpy random seed for reproducibility
+random_seed: 42
+
+# ============================================
+# Matrix Builder Settings (for tnc_av_matrix_builder.py)
+# ============================================
+
+# AV routing outputs (from ActivitySim av_routing model)
+# Script will try .parquet first, then .csv
+av_vehicle_trips_file: resident\final_av_vehicle_trips
+
+# TNC routing outputs (from taxi_tnc_routing model)
+tnc_vehicle_trips_file: output_tnc_vehicle_trips.csv
+
+# Output directory for OMX matrix files
+matrix_output_dir: output\assignment
+
+# Occupancy binning for TNC matrices (occupancy >= max grouped into max bin)
+max_occupancy_bin: 3
