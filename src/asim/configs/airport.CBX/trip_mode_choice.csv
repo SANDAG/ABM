@@ -2,8 +2,8 @@ Label,Description,Expression,PARK_LOC1,PARK_LOC2,PARK_LOC3,PARK_LOC4,PARK_LOC5,P
 res_bus,Resident Bus,@df.purpose_id ==0,,,,,,,-999,-999,-999,,,,,,,,,,,,,,,,,,,
 res_per,Resident Personal,@df.purpose_id ==1,,,,,,,-999,-999,-999,,,,,,,,,,,,,,,,,,,
 non_emp,Non Employee,@df.purpose_id !=5,,,,,,,,,,,,,,,,,,,,,,,,,,,,-999
-emp_walk,Employee Walk,@(df.purpose_id ==5) & (df.emp_trip_mode == 'WALK'),,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,
-emp_tran,Employee Transit,@(df.purpose_id ==5) & (df.emp_trip_mode == 'WALK_PRM'),,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,,-999,-999,-999,-999,-999,-999,-999,-999
+# emp_walk,Employee Walk,@(df.purpose_id ==5) & (df.emp_trip_mode == 'WALK'),,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,
+# emp_tran,Employee Transit,@(df.purpose_id ==5) & (df.emp_trip_mode == 'WALK_PRM'),,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,,-999,-999,-999,-999,-999,-999,-999,-999
 vis_bus,Visitor Bus,@df.purpose_id ==2,-999,-999,-999,-999,-999,,,,,,,,,,,,,,,,,,,,,,,
 vis_per,Visitor Per,@df.purpose_id ==3,-999,-999,-999,-999,-999,,,,,,,,,,,,,,,,,,,,,,,
 taxi_unavailable,Taxi availability,@taxi_available == 0,,,,,,,,,,,,-999,-999,,,,,,,,,,,,,,,
