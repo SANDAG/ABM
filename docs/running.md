@@ -12,13 +12,13 @@ Follow the steps below to create an ABM3 scenario directory:
 * Log onto available server and ensure:
     1. Server's C Drive has at least 500 GB worth of space
     2. You are logged onto the Bentley CONNECTION Client license manager software
-* Using the server’s Windows Explorer, navigate to the latest approved ABM3 release. As of March 2025, this is *T:\ABM\release\ABM\version_15_2_2*
+* Using the server’s Windows Explorer, navigate to the latest approved ABM3 release. As of March 2026, this is *T:\ABM\release\ABM\version_15_3_1*
 * Double click on *createStudyAndScenario.bat* and click Run.
 * On pop-up, fill out the fields under *Create an ABM scenario*.
-    * **EMME Version**: As of March 2025, only available version is 4.3.7
+    * **EMME Version**: As of March 2026, EMME version is OpenPaths EMME 25.00.01
     * **Year**: Using drop-down menu, select scenario year you'd like to run
     * **Base**: Whether you would like to run a Build or No Build scenario. Note that the base 2022 year only has the option to run as Base.
-    * **Geography ID**: Leave as 1. As of March 2025, this field has no functionality. 
+    * **Geography ID**: Leave as 1. As of March 2026, this field has no functionality. 
     * **Scenario Folder**: File path you would like to create scenario at. The tool will create the directory if it doesn't already exist. For cases where you point to an exisitng directory, the tool will notify users that location exists to avoid unintended overwriting.
     * **Network Folder**: File path to input network. 
     * **Land Use Folder**: File path to input land use files.
@@ -28,7 +28,7 @@ Follow the steps below to create an ABM3 scenario directory:
 
 ## Running ABM3
 
-To open the EMME application from the created scenario directory, users need to go to the *emme_project* folder, and double-click on the *start_emme_with_virtualenv.bat* file. This opens up the EMME application, where the application prompts the choice of a scenario. It is recommended to select the main highway scenario (Scen. 100) to start off the model run, although other scenarios may be selected as well. 
+To open the EMME application from the created scenario directory, users need to go to the *emme_project* folder, and double-click on the *emme_project.emp* file. This opens up the EMME application, where the application prompts the choice of a scenario. It is recommended to select the main highway scenario (Scen. 100) to start off the model run, although other scenarios may be selected as well. 
 
 Following this step, users should open the *EMME Modeler* by clicking on the gold square icon at the top left of the screen. 
 <br>
