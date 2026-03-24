@@ -148,9 +148,10 @@ If an ABM3 model run crashes before completion, the modeler should first consult
 | Iter 3 resident model | 3 | Skip steps before Iter 3 ActivitySim Preprocessing |
 | Iter 3 special market model | 3 | Skip steps before Iter 3 special marker model |
 | Iter 4 traffic/transit assignment | 4 | Skip steps before Iter 4 traffic/transit assignment |
-| Iter 4 write to datalake | 4 | Skip all previous step and uncheck the box of 'Skip write to datalake' |
+| Iter 4 write to datalake | 4 | Skip all previous steps and uncheck the box of 'Skip write to datalake' |
 
 **Important Notes:**
+
 * Before resuming a crashed run, verify that the outputs from previously completed steps are present in the scenario directory.
 * When resuming from an iteration other than iteration 1, ensure the *Start from iteration* parameter in the *Master Run* tool is set correctly.
 * For crashes during traffic/transit assignment, it's typically safer to re-run the assignment rather than trying to resume partway through.
