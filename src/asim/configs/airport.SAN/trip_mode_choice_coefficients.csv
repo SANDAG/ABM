@@ -109,11 +109,11 @@ coef_cost_per_6daysparked_vis_per,0,F
 coef_cost_per_6daysparked_vis_bus,0,F
 coef_cost_per_6daysparked_external,0,F
 # calibration constants for drive and park,,
-coef_calibration_park_res_per,2.331880184,F
-coef_calibration_park_res_bus,0.695835039,F
-coef_calibration_park_vis_per,-1.142692645,F
-coef_calibration_park_vis_bus,-0.49278962,F
-coef_calibration_park_external,0.901547041,F
+coef_calibration_park_res_per,3.61255,F
+coef_calibration_park_res_bus,0.96804,F
+coef_calibration_park_vis_per,-1.16199,F
+coef_calibration_park_vis_bus,-0.52023,F
+coef_calibration_park_external,1.41807,F
 # calibration constants for pickup dropoff,,
 coef_calibration_drop_off_res_per,0,F
 coef_calibration_drop_off_res_bus,0,F
@@ -121,29 +121,29 @@ coef_calibration_drop_off_vis_per,0,F
 coef_calibration_drop_off_vis_bus,0,F
 coef_calibration_drop_off_external,0,F
 # calibration constants for shuttle van,,
-coef_calibration_shuttle_res_per,-0.495057207,F
-coef_calibration_shuttle_res_bus,-0.427900286,F
-coef_calibration_shuttle_vis_per,-0.919300942,F
-coef_calibration_shuttle_vis_bus,0.846962045,F
-coef_calibration_shuttle_external,-2.443822515,F
+coef_calibration_shuttle_res_per,-0.48328,F
+coef_calibration_shuttle_res_bus,-0.42128,F
+coef_calibration_shuttle_vis_per,-1.14964,F
+coef_calibration_shuttle_vis_bus,1.04388,F
+coef_calibration_shuttle_external,-3.18329,F
 # calibration constants for ridehail,,
-coef_calibration_ridehail_res_per,-0.624973755,F
-coef_calibration_ridehail_res_bus,-0.380660875,F
-coef_calibration_ridehail_vis_per,-1.472574052,F
-coef_calibration_ridehail_vis_bus,-0.22150153,F
-coef_calibration_ridehail_external,-0.909470269,F
+coef_calibration_ridehail_res_per,-0.85735,F
+coef_calibration_ridehail_res_bus,-0.45794,F
+coef_calibration_ridehail_vis_per,-2.02517,F
+coef_calibration_ridehail_vis_bus,-0.3388,F
+coef_calibration_ridehail_external,-1.18405,F
 # calibration constants for taxi,,
-coef_calibration_taxi_res_per,-2.609607712,F
-coef_calibration_taxi_res_bus,-2.768479392,F
-coef_calibration_taxi_vis_per,-3.163134846,F
-coef_calibration_taxi_vis_bus,-2.025702252,F
-coef_calibration_taxi_external,-0.872207385,F
+coef_calibration_taxi_res_per,-3.69442,F
+coef_calibration_taxi_res_bus,-3.50048,F
+coef_calibration_taxi_vis_per,-4.27998,F
+coef_calibration_taxi_vis_bus,-2.77723,F
+coef_calibration_taxi_external,-1.15239,F
 # calibration constants for transit,,
-coef_calibration_transit_res_per,-2.500196085,F
-coef_calibration_transit_res_bus,-2.473280483,F
-coef_calibration_transit_vis_per,-3.11798245,F
-coef_calibration_transit_vis_bus,-2.770579551,F
-coef_calibration_transit_external,-1.810605909,F
+coef_calibration_transit_res_per,-3.30226,F
+coef_calibration_transit_res_bus,-3.23056,F
+coef_calibration_transit_vis_per,-4.28935,F
+coef_calibration_transit_vis_bus,-3.766,F
+coef_calibration_transit_external,-2.5809,F
 transit_calib_knr,0.703365,F
 transit_calib_tnc,0.905308,F
 transit_calib_walk,1.800947,F
