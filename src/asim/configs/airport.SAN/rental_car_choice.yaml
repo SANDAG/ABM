@@ -14,5 +14,5 @@ preprocessor:
     - households
     - tours
 
-# Filter to apply rental car choice model only to visitors
-CHOOSER_FILTER_COLUMN_NAME: visitor
+# Filter to apply rental car choice model only to non-residents (visitors and externals)
+CHOOSER_FILTER_COLUMN_NAME: non_resident
