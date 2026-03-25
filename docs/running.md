@@ -156,4 +156,5 @@ If an ABM3 model run crashes before completion, the modeler should first consult
 * When resuming from an iteration other than iteration 1, ensure the *Start from iteration* parameter in the *Master Run* tool is set correctly.
 * For crashes during traffic/transit assignment, it's typically safer to re-run the assignment rather than trying to resume partway through.
 * If uncertain about which steps to skip, consult the *EMME Logbook* to determine exactly which steps completed successfully before the crash.
+* If the `mgra15_based_input{year}.csv` file needs to be updated to fix a model failure, update the file in the T Drive location. This is especially important since this file gets modified during the model run and will be overwritten with the unmodified T Drive version when restarting the run during the copy step.
 
