@@ -100,7 +100,7 @@ To create the ActivitySim (*asim_140*) environment:
 
 * Download the following ABM3 v15.3.1 environment package files:
     * [environment.yml](https://github.com/SANDAG/ABM/blob/v15.3.1/src/asim/scripts/environment.yml)
-    * [requirements.txt](https://github.com/SANDAG/ABM/blob/v15.3.1/src/asim/scripts/requirements.txt)
+    * [requirements.txt](https://github.com/SANDAG/ABM/blob/main/src/asim/scripts/requirements.txt)
 * Save somewhere on your machine's local drive
 * Open Anaconda3 Prompt (likely as Administrator)
 * Execute the following commands:
@@ -111,7 +111,6 @@ cd {path-to-directory-with-environment-packages}
 conda env create --file=environment.yml -n asim_140
 conda activate asim_140
 pip install -r requirements.txt
-pip install "setuptools<81"
 ```
 
 ### Environment Variables
