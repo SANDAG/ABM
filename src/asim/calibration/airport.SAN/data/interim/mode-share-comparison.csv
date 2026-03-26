@@ -1,0 +1,138 @@
+primary_purpose,arrival_mode,simple_mode,total_share,purpose_share,source
+External,CURB_LOC1,Pickup Dropoff,0.0305,0.4267,ABM3
+External,KNR_LOC,Transit,0.0001,0.0008,ABM3
+External,KNR_MIX,Transit,0.0002,0.0025,ABM3
+External,KNR_PRM,Transit,0.0001,0.0012,ABM3
+External,PARK_LOC1,Drive and Park,0.0053,0.0739,ABM3
+External,PARK_LOC4,Drive and Park,0.0035,0.0483,ABM3
+External,RENTAL,Rental Car,0.0093,0.1301,ABM3
+External,RIDEHAIL_LOC1,Ridehail,0.0122,0.1706,ABM3
+External,SHUTTLEVAN,Shuttle Van,0.0014,0.0202,ABM3
+External,TAXI_LOC1,Taxi,0.0077,0.1078,ABM3
+External,WALK_LOC,Transit,0.0003,0.0037,ABM3
+External,WALK_MIX,Transit,0.0006,0.0078,ABM3
+External,WALK_PRM,Transit,0.0004,0.0062,ABM3
+Resident Business,CURB_LOC1,Pickup Dropoff,0.0403,0.4131,ABM3
+Resident Business,KNR_LOC,Transit,0.0002,0.0021,ABM3
+Resident Business,KNR_MIX,Transit,0.0001,0.0012,ABM3
+Resident Business,KNR_PRM,Transit,0.0003,0.0027,ABM3
+Resident Business,PARK_LOC1,Drive and Park,0.0101,0.1038,ABM3
+Resident Business,PARK_LOC4,Drive and Park,0.0056,0.0572,ABM3
+Resident Business,RIDEHAIL_LOC1,Ridehail,0.0383,0.3916,ABM3
+Resident Business,TAXI_LOC1,Taxi,0.0016,0.0166,ABM3
+Resident Business,WALK_LOC,Transit,0.0003,0.0027,ABM3
+Resident Business,WALK_MIX,Transit,0.0004,0.0045,ABM3
+Resident Business,WALK_PRM,Transit,0.0004,0.0042,ABM3
+Resident Personal,CURB_LOC1,Pickup Dropoff,0.1498,0.5455,ABM3
+Resident Personal,KNR_LOC,Transit,0.0005,0.0017,ABM3
+Resident Personal,KNR_MIX,Transit,0.0002,0.0006,ABM3
+Resident Personal,KNR_PRM,Transit,0.0008,0.0028,ABM3
+Resident Personal,PARK_LOC1,Drive and Park,0.0087,0.0317,ABM3
+Resident Personal,PARK_LOC4,Drive and Park,0.0164,0.0598,ABM3
+Resident Personal,RIDEHAIL_LOC1,Ridehail,0.0885,0.3222,ABM3
+Resident Personal,TAXI_LOC1,Taxi,0.0048,0.0176,ABM3
+Resident Personal,WALK_LOC,Transit,0.0018,0.0066,ABM3
+Resident Personal,WALK_MIX,Transit,0.0015,0.0056,ABM3
+Resident Personal,WALK_PRM,Transit,0.0016,0.0057,ABM3
+Visitor Business,CURB_LOC1,Pickup Dropoff,0.0216,0.1066,ABM3
+Visitor Business,KNR_LOC,Transit,0.0003,0.0015,ABM3
+Visitor Business,KNR_MIX,Transit,0.0001,0.0003,ABM3
+Visitor Business,KNR_PRM,Transit,0.0006,0.0029,ABM3
+Visitor Business,RENTAL,Rental Car,0.039,0.1923,ABM3
+Visitor Business,RIDEHAIL_LOC1,Ridehail,0.1145,0.5637,ABM3
+Visitor Business,SHUTTLEVAN,Shuttle Van,0.0147,0.0725,ABM3
+Visitor Business,TAXI_LOC1,Taxi,0.0103,0.0508,ABM3
+Visitor Business,WALK_LOC,Transit,0.0011,0.0054,ABM3
+Visitor Business,WALK_MIX,Transit,0.0002,0.0012,ABM3
+Visitor Business,WALK_PRM,Transit,0.0006,0.0029,ABM3
+Visitor Personal,CURB_LOC1,Pickup Dropoff,0.1301,0.3684,ABM3
+Visitor Personal,KNR_LOC,Transit,0.0006,0.0016,ABM3
+Visitor Personal,KNR_MIX,Transit,0.0001,0.0004,ABM3
+Visitor Personal,KNR_PRM,Transit,0.0012,0.0035,ABM3
+Visitor Personal,RENTAL,Rental Car,0.0916,0.2594,ABM3
+Visitor Personal,RIDEHAIL_LOC1,Ridehail,0.1054,0.2986,ABM3
+Visitor Personal,SHUTTLEVAN,Shuttle Van,0.0119,0.0336,ABM3
+Visitor Personal,TAXI_LOC1,Taxi,0.0083,0.0235,ABM3
+Visitor Personal,WALK_LOC,Transit,0.0013,0.0037,ABM3
+Visitor Personal,WALK_MIX,Transit,0.0011,0.0031,ABM3
+Visitor Personal,WALK_PRM,Transit,0.0015,0.0042,ABM3
+External,CURB_LOC1,Pickup Dropoff,0.0281,0.4175,Survey
+External,KNR_MIX,Transit,0.0009,0.0134,Survey
+External,KNR_PRM,Transit,0.0001,0.0015,Survey
+External,PARK_LOC1,Drive and Park,0.0048,0.0713,Survey
+External,PARK_LOC4,Drive and Park,0.0037,0.055,Survey
+External,RENTAL,Rental Car,0.0096,0.1426,Survey
+External,RIDEHAIL_LOC1,Ridehail,0.0113,0.1679,Survey
+External,SHUTTLEVAN,Shuttle Van,0.0014,0.0208,Survey
+External,TAXI_LOC1,Taxi,0.0071,0.1055,Survey
+External,TNC_MIX,Transit,0.0003,0.0045,Survey
+External,TNC_PRM,Transit,0.0,0.0,Survey
+External,WALK_MIX,Transit,0.0,0.0,Survey
+External,KNR_LOC,Transit,0.0,0.0,Survey
+External,WALK_LOC,Transit,0.0,0.0,Survey
+External,WALK_PRM,Transit,0.0,0.0,Survey
+External,TNC_LOC,Transit,0.0,0.0,Survey
+Resident Business,CURB_LOC1,Pickup Dropoff,0.0391,0.4027,Survey
+Resident Business,KNR_MIX,Transit,0.0004,0.0041,Survey
+Resident Business,KNR_PRM,Transit,0.0005,0.0051,Survey
+Resident Business,PARK_LOC1,Drive and Park,0.0114,0.1174,Survey
+Resident Business,PARK_LOC4,Drive and Park,0.0046,0.0474,Survey
+Resident Business,RENTAL,Rental Car,0.0009,0.0093,Survey
+Resident Business,RIDEHAIL_LOC1,Ridehail,0.0376,0.3872,Survey
+Resident Business,SHUTTLEVAN,Shuttle Van,0.0009,0.0093,Survey
+Resident Business,TAXI_LOC1,Taxi,0.0013,0.0134,Survey
+Resident Business,TNC_MIX,Transit,0.0,0.0,Survey
+Resident Business,TNC_PRM,Transit,0.0,0.0,Survey
+Resident Business,WALK_MIX,Transit,0.0,0.0,Survey
+Resident Business,KNR_LOC,Transit,0.0,0.0,Survey
+Resident Business,WALK_LOC,Transit,0.0004,0.0041,Survey
+Resident Business,WALK_PRM,Transit,0.0,0.0,Survey
+Resident Business,TNC_LOC,Transit,0.0,0.0,Survey
+Resident Personal,CURB_LOC1,Pickup Dropoff,0.1496,0.5383,Survey
+Resident Personal,KNR_MIX,Transit,0.0003,0.0011,Survey
+Resident Personal,KNR_PRM,Transit,0.0014,0.005,Survey
+Resident Personal,PARK_LOC1,Drive and Park,0.0164,0.059,Survey
+Resident Personal,PARK_LOC4,Drive and Park,0.0125,0.045,Survey
+Resident Personal,RENTAL,Rental Car,0.0034,0.0122,Survey
+Resident Personal,RIDEHAIL_LOC1,Ridehail,0.0866,0.3116,Survey
+Resident Personal,SHUTTLEVAN,Shuttle Van,0.0005,0.0018,Survey
+Resident Personal,TAXI_LOC1,Taxi,0.0043,0.0155,Survey
+Resident Personal,TNC_MIX,Transit,0.0,0.0,Survey
+Resident Personal,TNC_PRM,Transit,0.0002,0.0007,Survey
+Resident Personal,WALK_MIX,Transit,0.0005,0.0018,Survey
+Resident Personal,KNR_LOC,Transit,0.0,0.0,Survey
+Resident Personal,WALK_LOC,Transit,0.0017,0.0061,Survey
+Resident Personal,WALK_PRM,Transit,0.0005,0.0018,Survey
+Resident Personal,TNC_LOC,Transit,0.0,0.0,Survey
+Visitor Business,CURB_LOC1,Pickup Dropoff,0.0211,0.1059,Survey
+Visitor Business,KNR_MIX,Transit,0.0,0.0,Survey
+Visitor Business,KNR_PRM,Transit,0.0001,0.0005,Survey
+Visitor Business,PARK_LOC1,Drive and Park,0.0002,0.001,Survey
+Visitor Business,PARK_LOC4,Drive and Park,0.0,0.0,Survey
+Visitor Business,RENTAL,Rental Car,0.0408,0.2048,Survey
+Visitor Business,RIDEHAIL_LOC1,Ridehail,0.111,0.5572,Survey
+Visitor Business,SHUTTLEVAN,Shuttle Van,0.015,0.0753,Survey
+Visitor Business,TAXI_LOC1,Taxi,0.0091,0.0457,Survey
+Visitor Business,TNC_MIX,Transit,0.0,0.0,Survey
+Visitor Business,TNC_PRM,Transit,0.0002,0.001,Survey
+Visitor Business,WALK_MIX,Transit,0.0001,0.0005,Survey
+Visitor Business,KNR_LOC,Transit,0.0003,0.0015,Survey
+Visitor Business,WALK_LOC,Transit,0.0011,0.0055,Survey
+Visitor Business,WALK_PRM,Transit,0.0002,0.001,Survey
+Visitor Business,TNC_LOC,Transit,0.0,0.0,Survey
+Visitor Personal,CURB_LOC1,Pickup Dropoff,0.132,0.3686,Survey
+Visitor Personal,KNR_MIX,Transit,0.0006,0.0017,Survey
+Visitor Personal,KNR_PRM,Transit,0.0012,0.0034,Survey
+Visitor Personal,PARK_LOC1,Drive and Park,0.0005,0.0014,Survey
+Visitor Personal,PARK_LOC4,Drive and Park,0.0009,0.0025,Survey
+Visitor Personal,RENTAL,Rental Car,0.0936,0.2614,Survey
+Visitor Personal,RIDEHAIL_LOC1,Ridehail,0.1049,0.2929,Survey
+Visitor Personal,SHUTTLEVAN,Shuttle Van,0.0123,0.0343,Survey
+Visitor Personal,TAXI_LOC1,Taxi,0.0085,0.0237,Survey
+Visitor Personal,TNC_MIX,Transit,0.0,0.0,Survey
+Visitor Personal,TNC_PRM,Transit,0.0001,0.0003,Survey
+Visitor Personal,WALK_MIX,Transit,0.0004,0.0011,Survey
+Visitor Personal,KNR_LOC,Transit,0.0004,0.0011,Survey
+Visitor Personal,WALK_LOC,Transit,0.0022,0.0061,Survey
+Visitor Personal,WALK_PRM,Transit,0.0004,0.0011,Survey
+Visitor Personal,TNC_LOC,Transit,0.0001,0.0003,Survey
