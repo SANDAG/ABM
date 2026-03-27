@@ -1,0 +1,104 @@
+primary_purpose,distance_bin,total_share,purpose_share,source
+External,15_20,0.0258,0.3611,ABM3
+External,20_25,0.0028,0.0392,ABM3
+External,40_45,0.0034,0.0474,ABM3
+External,50+,0.0394,0.5523,ABM3
+Resident Business,0_5,0.0089,0.0916,ABM3
+Resident Business,5_10,0.0177,0.1811,ABM3
+Resident Business,10_15,0.0221,0.2266,ABM3
+Resident Business,15_20,0.0197,0.2019,ABM3
+Resident Business,20_25,0.0075,0.0768,ABM3
+Resident Business,25_30,0.0041,0.0425,ABM3
+Resident Business,30_35,0.0064,0.0651,ABM3
+Resident Business,35_40,0.0055,0.0563,ABM3
+Resident Business,40_45,0.0036,0.0368,ABM3
+Resident Business,45_50,0.001,0.0102,ABM3
+Resident Business,50+,0.0011,0.0111,ABM3
+Resident Personal,0_5,0.0304,0.111,ABM3
+Resident Personal,5_10,0.0576,0.2099,ABM3
+Resident Personal,10_15,0.0634,0.2312,ABM3
+Resident Personal,15_20,0.0487,0.1777,ABM3
+Resident Personal,20_25,0.0214,0.0779,ABM3
+Resident Personal,25_30,0.0106,0.0386,ABM3
+Resident Personal,30_35,0.0149,0.0543,ABM3
+Resident Personal,35_40,0.0132,0.0483,ABM3
+Resident Personal,40_45,0.008,0.0293,ABM3
+Resident Personal,45_50,0.0028,0.0103,ABM3
+Resident Personal,50+,0.0032,0.0117,ABM3
+Visitor Business,0_5,0.1098,0.5405,ABM3
+Visitor Business,5_10,0.0389,0.1915,ABM3
+Visitor Business,10_15,0.0301,0.148,ABM3
+Visitor Business,15_20,0.0145,0.0712,ABM3
+Visitor Business,20_25,0.0029,0.0145,ABM3
+Visitor Business,25_30,0.0018,0.0088,ABM3
+Visitor Business,30_35,0.0022,0.0107,ABM3
+Visitor Business,35_40,0.0016,0.0081,ABM3
+Visitor Business,40_45,0.0006,0.0028,ABM3
+Visitor Business,45_50,0.0003,0.0016,ABM3
+Visitor Business,50+,0.0005,0.0023,ABM3
+Visitor Personal,0_5,0.0903,0.2554,ABM3
+Visitor Personal,5_10,0.079,0.2235,ABM3
+Visitor Personal,10_15,0.0865,0.2446,ABM3
+Visitor Personal,15_20,0.0495,0.14,ABM3
+Visitor Personal,20_25,0.0132,0.0374,ABM3
+Visitor Personal,25_30,0.0065,0.0183,ABM3
+Visitor Personal,30_35,0.0119,0.0337,ABM3
+Visitor Personal,35_40,0.0086,0.0242,ABM3
+Visitor Personal,40_45,0.0033,0.0093,ABM3
+Visitor Personal,45_50,0.0014,0.0041,ABM3
+Visitor Personal,50+,0.0034,0.0095,ABM3
+External,0_5,0.0,0.0,Survey
+External,5_10,0.0,0.0,Survey
+External,10_15,0.0,0.0,Survey
+External,15_20,0.0,0.0,Survey
+External,20_25,0.0262,0.3695,Survey
+External,25_30,0.0028,0.0395,Survey
+External,30_35,0.0,0.0,Survey
+External,35_40,0.0,0.0,Survey
+External,40_45,0.0029,0.0409,Survey
+External,45_50,0.0,0.0,Survey
+External,50+,0.039,0.5501,Survey
+Resident Business,0_5,0.0138,0.1404,Survey
+Resident Business,5_10,0.0208,0.2116,Survey
+Resident Business,10_15,0.0186,0.1892,Survey
+Resident Business,15_20,0.0087,0.0885,Survey
+Resident Business,20_25,0.0071,0.0722,Survey
+Resident Business,25_30,0.0081,0.0824,Survey
+Resident Business,30_35,0.0048,0.0488,Survey
+Resident Business,35_40,0.0111,0.1129,Survey
+Resident Business,40_45,0.0023,0.0234,Survey
+Resident Business,45_50,0.0013,0.0132,Survey
+Resident Business,50+,0.0017,0.0173,Survey
+Resident Personal,0_5,0.0372,0.1341,Survey
+Resident Personal,5_10,0.0556,0.2004,Survey
+Resident Personal,10_15,0.065,0.2342,Survey
+Resident Personal,15_20,0.0373,0.1344,Survey
+Resident Personal,20_25,0.0209,0.0753,Survey
+Resident Personal,25_30,0.0153,0.0551,Survey
+Resident Personal,30_35,0.0167,0.0602,Survey
+Resident Personal,35_40,0.0198,0.0714,Survey
+Resident Personal,40_45,0.0037,0.0133,Survey
+Resident Personal,45_50,0.0013,0.0047,Survey
+Resident Personal,50+,0.0047,0.017,Survey
+Visitor Business,0_5,0.1169,0.5857,Survey
+Visitor Business,5_10,0.04,0.2004,Survey
+Visitor Business,10_15,0.0149,0.0746,Survey
+Visitor Business,15_20,0.0083,0.0416,Survey
+Visitor Business,20_25,0.002,0.01,Survey
+Visitor Business,25_30,0.0042,0.021,Survey
+Visitor Business,30_35,0.006,0.0301,Survey
+Visitor Business,35_40,0.0033,0.0165,Survey
+Visitor Business,40_45,0.0013,0.0065,Survey
+Visitor Business,45_50,0.0013,0.0065,Survey
+Visitor Business,50+,0.0014,0.007,Survey
+Visitor Personal,0_5,0.1158,0.3274,Survey
+Visitor Personal,5_10,0.096,0.2714,Survey
+Visitor Personal,10_15,0.051,0.1442,Survey
+Visitor Personal,15_20,0.0155,0.0438,Survey
+Visitor Personal,20_25,0.0137,0.0387,Survey
+Visitor Personal,25_30,0.0138,0.039,Survey
+Visitor Personal,30_35,0.0151,0.0427,Survey
+Visitor Personal,35_40,0.0188,0.0532,Survey
+Visitor Personal,40_45,0.0087,0.0246,Survey
+Visitor Personal,45_50,0.0016,0.0045,Survey
+Visitor Personal,50+,0.0037,0.0105,Survey

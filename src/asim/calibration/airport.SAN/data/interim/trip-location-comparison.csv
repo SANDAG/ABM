@@ -1,0 +1,35 @@
+primary_purpose,non_airport_location,total_share,purpose_share,source
+External,Other,0.0714,1.0,ABM3
+Resident Business,Downtown,0.0049,0.0506,ABM3
+Resident Business,La Jolla,0.0049,0.0506,ABM3
+Resident Business,Mission Valley,0.0043,0.044,ABM3
+Resident Business,Other,0.0835,0.8548,ABM3
+Resident Personal,Downtown,0.0144,0.0525,ABM3
+Resident Personal,La Jolla,0.0137,0.05,ABM3
+Resident Personal,Mission Valley,0.0103,0.0375,ABM3
+Resident Personal,Other,0.2359,0.8599,ABM3
+Visitor Business,Downtown,0.1057,0.5202,ABM3
+Visitor Business,La Jolla,0.0168,0.0828,ABM3
+Visitor Business,Mission Valley,0.024,0.1183,ABM3
+Visitor Business,Other,0.0566,0.2787,ABM3
+Visitor Personal,Downtown,0.0709,0.2006,ABM3
+Visitor Personal,La Jolla,0.0395,0.1117,ABM3
+Visitor Personal,Mission Valley,0.0362,0.1024,ABM3
+Visitor Personal,Other,0.2069,0.5853,ABM3
+External,Other,0.071,1.0,Survey
+Resident Business,Downtown,0.0068,0.0692,Survey
+Resident Business,La Jolla,0.0039,0.0397,Survey
+Resident Business,Mission Valley,0.0012,0.0122,Survey
+Resident Business,Other,0.0863,0.8788,Survey
+Resident Personal,Downtown,0.0143,0.0515,Survey
+Resident Personal,La Jolla,0.0082,0.0295,Survey
+Resident Personal,Mission Valley,0.0062,0.0223,Survey
+Resident Personal,Other,0.249,0.8967,Survey
+Visitor Business,Downtown,0.104,0.5213,Survey
+Visitor Business,La Jolla,0.0086,0.0431,Survey
+Visitor Business,Mission Valley,0.0141,0.0707,Survey
+Visitor Business,Other,0.0728,0.3649,Survey
+Visitor Personal,Downtown,0.0773,0.2186,Survey
+Visitor Personal,La Jolla,0.0179,0.0506,Survey
+Visitor Personal,Mission Valley,0.0165,0.0467,Survey
+Visitor Personal,Other,0.2419,0.6841,Survey

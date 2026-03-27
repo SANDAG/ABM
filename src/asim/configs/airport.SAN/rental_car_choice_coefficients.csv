@@ -5,6 +5,6 @@ coef_income_more_than_150,0.0904,F
 coef_party_size_capped,0.4306,F
 coef_calibration_rental_car_res_per,0,F
 coef_calibration_rental_car_res_bus,0,F
-coef_calibration_rental_car_vis_per,0,F
-coef_calibration_rental_car_vis_bus,0,F
-coef_calibration_rental_car_external,0,F
+coef_calibration_rental_car_vis_per,0.93034,F
+coef_calibration_rental_car_vis_bus,0.61415,F
+coef_calibration_rental_car_external,-0.08842,F
