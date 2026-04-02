@@ -1876,3 +1876,6 @@
 ,KNR_LOC - Fare,KNR_LOC_cost_dollars,"((odt_skims['KNROUT_LOC_FARE']) * df.party_size * 1.0)"
 ,KNR_MIX - Fare,KNR_MIX_cost_dollars,"((odt_skims['KNROUT_MIX_FARE']) * df.party_size * 1.0)"
 ,KNR_PRM - Fare,KNR_PRM_cost_dollars,"((odt_skims['KNROUT_PRM_FARE']) * df.party_size * 1.0)"
+,KNRIN_LOC - Fare,KNRIN_LOC_cost_dollars,"((odt_skims['KNRIN_LOC_FARE']) * df.party_size * 1.0)"
+,KNRIN_MIX - Fare,KNRIN_MIX_cost_dollars,"((odt_skims['KNRIN_MIX_FARE']) * df.party_size * 1.0)"
+,KNRIN_PRM - Fare,KNRIN_PRM_cost_dollars,"((odt_skims['KNRIN_PRM_FARE']) * df.party_size * 1.0)"
