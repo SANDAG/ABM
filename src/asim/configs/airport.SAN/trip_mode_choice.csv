@@ -146,7 +146,7 @@ util_TNCIN_LOC_ovt,TNCIN_LOC - wait + transfer wait/walk + access/egress,@(odt_s
 util_TNCIN_LOC_cost_dollars,TNCIN_LOC - Fare,@(df['KNRIN_LOC_cost_dollars'])*df.outbound,,,,,,,,,,,,,coef_cost,,
 util_TNCIN_LOC_cost_dollars_bus,TNCIN_LOC - Fare business,@(df['KNRIN_LOC_cost_dollars'])*df.outbound,,,,,,,,,,,,,coef_cost_bus,,
 util_TNCIN_LOC_cost_dollars_nonbus_incomelt60k,TNCIN_LOC - Fare none business income lt60k,@((df.income <= 9)*df['KNRIN_LOC_cost_dollars'])*df.outbound,,,,,,,,,,,,,coef_cost_per_incomelt60k,,
-util_TNCIN_LOC_cost_dollars_nonbus_6daysparked,TNCIN_LOC - Fare none business 6+ days parked,"@((np.maximum(df['nights'],0) > 6)*df['KNRIN_LOC_cost_dollars'])*df.outbound",,,,,,,,,,,,,coef_cost_per_6daysparked,
+util_TNCIN_LOC_cost_dollars_nonbus_6daysparked,TNCIN_LOC - Fare none business 6+ days parked,"@((np.maximum(df['nights'],0) > 6)*df['KNRIN_LOC_cost_dollars'])*df.outbound",,,,,,,,,,,,,coef_cost_per_6daysparked,,
 #,TNC_MIX,,,,,,,,,,,,,,,,
 util_TNC_MIX_ivt,TNC_MIX - IVT,@(odt_skims['KNROUT_MIX_TOTALIVTT'])*~df.outbound,,,,,,,,,,,,,,coef_ivt,
 util_TNC_MIX_ovt,TNC_MIX - wait + transfer wait/walk + access/egress,@(odt_skims['KNROUT_MIX_FIRSTWAIT'] + odt_skims['KNROUT_MIX_XFERWAIT'] + odt_skims['KNROUT_MIX_ACC'] + df.dest_mix_time)*~df.outbound,,,,,,,,,,,,,,coef_ovt,
