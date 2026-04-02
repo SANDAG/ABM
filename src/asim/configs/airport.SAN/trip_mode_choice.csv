@@ -132,7 +132,7 @@ util_KNRIN_PRM_ovt,KNRIN_PRM - wait + transfer wait/walk + access/egress,@(odt_s
 util_KNRIN_PRM_cost_dollars,KNRIN_PRM - Fare,@(df['KNRIN_PRM_cost_dollars'])*df.outbound,,,,,,,,,,,,coef_cost,,,
 util_KNRIN_PRM_cost_dollars_bus,KNRIN_PRM - Fare business,@(df['KNRIN_PRM_cost_dollars'])*df.outbound,,,,,,,,,,,,coef_cost_bus,,,
 util_KNRIN_PRM_cost_dollars_nonbus_incomelt60k,KNRIN_PRM - Fare none business income lt60k,@((df.income <= 9)*df['KNRIN_PRM_cost_dollars'])*df.outbound,,,,,,,,,,,,coef_cost_per_incomelt60k,,,
-util_KNRIN_PRM_cost_dollars_nonbus_6daysparked,KNRIN_PRM - Fare none business 6+ days parked,"@((np.maximum(df['nights'],0) > 6)*df['KNRIN_PRM_cost_dollars'])*df.outbound",,,,,,,,,,,,coef_cost_per_6daysparked,,,,
+util_KNRIN_PRM_cost_dollars_nonbus_6daysparked,KNRIN_PRM - Fare none business 6+ days parked,"@((np.maximum(df['nights'],0) > 6)*df['KNRIN_PRM_cost_dollars'])*df.outbound",,,,,,,,,,,,coef_cost_per_6daysparked,,,
 #,TNC_LOC,,,,,,,,,,,,,,,,
 util_TNC_LOC_ivt,TNC_LOC - IVT,@(odt_skims['KNROUT_LOC_TOTALIVTT'])*~df.outbound,,,,,,,,,,,,,coef_ivt,,
 util_TNC_LOC_ovt,TNC_LOC - wait + transfer wait/walk + access/egress,@(odt_skims['KNROUT_LOC_FIRSTWAIT'] + odt_skims['KNROUT_LOC_XFERWAIT'] + odt_skims['KNROUT_LOC_ACC'] + df.dest_local_time)*~df.outbound,,,,,,,,,,,,,coef_ovt,,
