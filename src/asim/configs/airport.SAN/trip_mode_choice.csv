@@ -8,18 +8,18 @@ ridehailloc1_av,Ridehail location 1 availability,@df['ridehailloc1_av'],,,-999,-
 util_Walk_LOC_Unavailable,,walk_local_available == False,,,,,,,-999,,,,,,,,
 util_Walk_MIX_Unavailable,,walk_mix_available == False,,,,,,,,-999,,,,,,,
 util_Walk_PRM_Unavailable,,walk_premium_available == False,,,,,,,,,-999,,,,,,
-util_KNR_LOC_Unavailable,,(knr_local_available == False) & (~df.outbound),,,,,,,,,,-999,,,,,
-util_KNR_LOC_inbound_Unavailable,,(knr_local_available_inbound == False) & (df.outbound),,,,,,,,,,-999,,,,,
-util_KNR_MIX_Unavailable,,(knr_mix_available == False) & (~df.outbound),,,,,,,,,,,-999,,,,
-util_KNR_MIX_inbound_Unavailable,,(knr_mix_available_inbound == False) & (df.outbound),,,,,,,,,,,-999,,,,
-util_KNR_PRM_Unavailable,,(knr_premium_available == False) & (~df.outbound),,,,,,,,,,,,-999,,,
-util_KNR_PRM_inbound_Unavailable,,(knr_premium_available_inbound == False) & (df.outbound),,,,,,,,,,,,-999,,,
-util_TNC_LOC_Unavailable,,(tnc_local_available == False) & (~df.outbound),,,,,,,,,,,,,-999,,
-util_TNC_LOC_inbound_Unavailable,,(tnc_local_available_inbound == False) & (df.outbound),,,,,,,,,,,,,-999,,
-util_TNC_MIX_Unavailable,,(tnc_mix_available == False) & (~df.outbound),,,,,,,,,,,,,,-999,
-util_TNC_MIX_inbound_Unavailable,,(tnc_mix_available_inbound == False) & (df.outbound),,,,,,,,,,,,,,-999,
-util_TNC_PRM_Unavailable,,(tnc_premium_available == False) & (~df.outbound),,,,,,,,,,,,,,,-999
-util_TNC_PRM_inbound_Unavailable,,(tnc_premium_available_inbound == False) & (df.outbound),,,,,,,,,,,,,,,-999
+util_KNR_LOC_Unavailable,,@((df['knr_local_available'] == False) & (~df.outbound)),,,,,,,,,,-999,,,,,
+util_KNR_LOC_inbound_Unavailable,,@((df['knr_local_available_inbound'] == False) & (df.outbound)),,,,,,,,,,-999,,,,,
+util_KNR_MIX_Unavailable,,@((df['knr_mix_available'] == False) & (~df.outbound)),,,,,,,,,,,-999,,,,
+util_KNR_MIX_inbound_Unavailable,,@((df['knr_mix_available_inbound'] == False) & (df.outbound)),,,,,,,,,,,-999,,,,
+util_KNR_PRM_Unavailable,,@((df['knr_premium_available'] == False) & (~df.outbound)),,,,,,,,,,,,-999,,,
+util_KNR_PRM_inbound_Unavailable,,@((df['knr_premium_available_inbound'] == False) & (df.outbound)),,,,,,,,,,,,-999,,,
+util_TNC_LOC_Unavailable,,@((df['tnc_local_available'] == False) & (~df.outbound)),,,,,,,,,,,,,-999,,
+util_TNC_LOC_inbound_Unavailable,,@((df['tnc_local_available_inbound'] == False) & (df.outbound)),,,,,,,,,,,,,-999,,
+util_TNC_MIX_Unavailable,,@((df['tnc_mix_available'] == False) & (~df.outbound)),,,,,,,,,,,,,,-999,
+util_TNC_MIX_inbound_Unavailable,,@((df['tnc_mix_available_inbound'] == False) & (df.outbound)),,,,,,,,,,,,,,-999,
+util_TNC_PRM_Unavailable,,@((df['tnc_premium_available'] == False) & (~df.outbound)),,,,,,,,,,,,,,,-999
+util_TNC_PRM_inbound_Unavailable,,@((df['tnc_premium_available_inbound'] == False) & (df.outbound)),,,,,,,,,,,,,,,-999
 res_modes,remove modes not available to residents,resident == True,,,,,,-999,,,,,,,,,
 vis_modes,remove modes not available to visitors,visitor == True,-999,-999,,,,,,,,,,,,,
 constant_asc,ASC,"@np.repeat(True,len(df))",coef_asc_parked_onsite,coef_asc_parked_offsite,coef_asc_ridehail,coef_asc_taxi,coef_asc_drop_off,coef_asc_shuttle,coef_asc_transit,coef_asc_transit,coef_asc_transit,coef_asc_transit,coef_asc_transit,coef_asc_transit,coef_asc_transit,coef_asc_transit,coef_asc_transit
