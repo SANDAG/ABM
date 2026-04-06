@@ -320,13 +320,12 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
         # windows xcopy is much faster than shutil
         # upgrading xcopy to a faster robocopy
         self._report.append(_time.strftime("%c"))
-        # if check_metadata:
-        #     flags = '/Y/S/E/D'
-        # else:
-        #     flags = '/Y/S/E'
+        if check_metadata:
+            flags = ['/E', '/Z', '/MT:8', '/XO']
+        else:
+            flags = ['/E', '/Z', '/MT:8']
         try:
             exclude_file_list = file_masks
-            flags = ['/E', '/Z', '/MT:8']
             output = _subprocess.check_output(['robocopy', src, dst] + flags + ["/XF"] + exclude_file_list + ["/XD"] + exclude_file_list)
             self._report.append(output)
             self._report.append(_time.strftime("%c"))
