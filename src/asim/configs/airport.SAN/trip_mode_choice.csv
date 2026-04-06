@@ -78,6 +78,10 @@ util_WALK_LOC_cost_dollars_nonbus_incomelt60k,WALK_LOC - Fare none business inco
 util_WALK_LOC_cost_dollars_nonbus_6daysparked,WALK_LOC - Fare none business 6+ days parked,"@((np.maximum(df['nights'],0) > 6)*df['WALK_LOC_cost_dollars'])",,,,,,,coef_cost_per_6daysparked,,,,,,,,
 #,WALK_MIX,,,,,,,,,,,,,,,,
 util_WALK_MIX_ivt,WALK_MIX - IVT,@(odt_skims['WALK_MIX_TOTALIVTT']),,,,,,,,coef_ivt,,,,,,,
+util_WALK_MIX_ivt_on_LRT,WALK_MIX - IVT on LRT,@(ivt_lrt_multiplier - 1) * (odt_skims['WALK_MIX_LRTIVTT']),,,,,,,,coef_ivt,,,,,,,
+util_WALK_MIX_ivt_on_CMR,WALK_MIX - IVT on CMR,@(ivt_cmr_multiplier - 1) * (odt_skims['WALK_MIX_CMRIVTT']),,,,,,,,coef_ivt,,,,,,,
+util_WALK_MIX_ivt_on_LTD_EXP,WALK_MIX - IVT on LTD and EXP,@(ivt_ltd_multiplier - 1) * (odt_skims['WALK_MIX_LTDEXPIVTT'] ),,,,,,,,coef_ivt,,,,,,,
+util_WALK_MIX_ivt_on_BRT,WALK_MIX - IVT on BRT,@(ivt_brt_multiplier - 1) * (odt_skims['WALK_MIX_BRTIVTT']) ,,,,,,,,coef_ivt,,,,,,,
 util_WALK_MIX_ovt,WALK_MIX - wait + transfer wait/walk + access/egress,@(odt_skims['WALK_MIX_FIRSTWAIT'] + odt_skims['WALK_MIX_XFERWAIT'] + df.origin_mix_time + df.dest_mix_time),,,,,,,,coef_ovt,,,,,,,
 util_WALK_MIX_cost_dollars,WALK_MIX - Fare,@df['WALK_MIX_cost_dollars'],,,,,,,,coef_cost,,,,,,,
 util_WALK_MIX_cost_dollars_bus,WALK_MIX - Fare business,@df['WALK_MIX_cost_dollars'],,,,,,,,coef_cost_bus,,,,,,,
@@ -85,6 +89,10 @@ util_WALK_MIX_cost_dollars_nonbus_incomelt60k,WALK_MIX - Fare none business inco
 util_WALK_MIX_cost_dollars_nonbus_6daysparked,WALK_MIX - Fare none business 6+ days parked,"@((np.maximum(df['nights'],0) > 6)*df['WALK_MIX_cost_dollars'])",,,,,,,,coef_cost_per_6daysparked,,,,,,,
 #,WALK_PRM,,,,,,,,,,,,,,,,
 util_WALK_PRM_ivt,WALK_PRM - IVT,@(odt_skims['WALK_PRM_TOTALIVTT']),,,,,,,,,coef_ivt,,,,,,
+util_WALK_PRM_ivt_on_LRT,WALK_PRM - IVT on LRT,@(ivt_lrt_multiplier - 1) * (odt_skims['WALK_PRM_LRTIVTT']),,,,,,,,,coef_ivt,,,,,,
+util_WALK_PRM_ivt_on_CMR,WALK_PRM - IVT on CMR,@(ivt_cmr_multiplier - 1) * (odt_skims['WALK_PRM_CMRIVTT']),,,,,,,,,coef_ivt,,,,,,
+util_WALK_PRM_ivt_on_LTD_EXP,WALK_PRM - IVT on LTD and EXP,@(ivt_ltd_multiplier - 1) * (odt_skims['WALK_PRM_LTDEXPIVTT'] ),,,,,,,,,coef_ivt,,,,,,
+util_WALK_PRM_ivt_on_BRT,WALK_PRM - IVT on BRT,@(ivt_brt_multiplier - 1) * (odt_skims['WALK_PRM_BRTIVTT']) ,,,,,,,,,coef_ivt,,,,,,
 util_WALK_PRM_ovt,WALK_PRM - wait + transfer wait/walk + access/egress,@(odt_skims['WALK_PRM_FIRSTWAIT'] + odt_skims['WALK_PRM_XFERWAIT'] + df.origin_prm_time + df.dest_prm_time),,,,,,,,,coef_ovt,,,,,,
 util_WALK_PRM_cost_dollars,WALK_PRM - Fare,@df['WALK_PRM_cost_dollars'],,,,,,,,,coef_cost,,,,,,
 util_WALK_PRM_cost_dollars_bus,WALK_PRM - Fare business,@df['WALK_PRM_cost_dollars'],,,,,,,,,coef_cost_bus,,,,,,
@@ -107,6 +115,10 @@ util_KNRIN_LOC_cost_dollars_nonbus_incomelt60k,KNRIN_LOC - Fare none business in
 util_KNRIN_LOC_cost_dollars_nonbus_6daysparked,KNRIN_LOC - Fare none business 6+ days parked,"@((np.maximum(df['nights'],0) > 6)*df['KNRIN_LOC_cost_dollars'])*df.outbound",,,,,,,,,,coef_cost_per_6daysparked,,,,,
 #,KNR_MIX,,,,,,,,,,,,,,,,
 util_KNR_MIX_ivt,KNR_MIX - IVT,@(odt_skims['KNROUT_MIX_TOTALIVTT'])*~df.outbound,,,,,,,,,,,coef_ivt,,,,
+util_KNR_MIX_ivt_on_LRT,KNR_MIX - IVT on LRT,@(ivt_lrt_multiplier - 1) * (odt_skims['KNROUT_MIX_LRTIVTT'])*~df.outbound,,,,,,,,,,,coef_ivt,,,,
+util_KNR_MIX_ivt_on_CMR,KNR_MIX - IVT on CMR,@(ivt_cmr_multiplier - 1) * (odt_skims['KNROUT_MIX_CMRIVTT'])*~df.outbound,,,,,,,,,,,coef_ivt,,,,
+util_KNR_MIX_ivt_on_LTD_EXP,KNR_MIX - IVT on LTD and EXP,@(ivt_ltd_multiplier - 1) * (odt_skims['KNROUT_MIX_LTDEXPIVTT'])*~df.outbound,,,,,,,,,,,coef_ivt,,,,
+util_KNR_MIX_ivt_on_BRT,KNR_MIX - IVT on BRT,@(ivt_brt_multiplier - 1) * (odt_skims['KNROUT_MIX_BRTIVTT'])*~df.outbound,,,,,,,,,,,coef_ivt,,,,
 util_KNR_MIX_ovt,KNR_MIX - wait + transfer wait/walk + access/egress,@(odt_skims['KNROUT_MIX_FIRSTWAIT'] + odt_skims['KNROUT_MIX_XFERWAIT'] + odt_skims['KNROUT_MIX_ACC'] + df.dest_mix_time)*~df.outbound,,,,,,,,,,,coef_ovt,,,,
 util_KNR_MIX_cost_dollars,KNR_MIX - Fare,@(df['KNR_MIX_cost_dollars'])*~df.outbound,,,,,,,,,,,coef_cost,,,,
 util_KNR_MIX_cost_dollars_bus,KNR_MIX - Fare business,@(df['KNR_MIX_cost_dollars'])*~df.outbound,,,,,,,,,,,coef_cost_bus,,,,
@@ -114,6 +126,10 @@ util_KNR_MIX_cost_dollars_nonbus_incomelt60k,KNR_MIX - Fare none business income
 util_KNR_MIX_cost_dollars_nonbus_6daysparked,KNR_MIX - Fare none business 6+ days parked,"@((np.maximum(df['nights'],0) > 6)*df['KNR_MIX_cost_dollars'])*~df.outbound",,,,,,,,,,,coef_cost_per_6daysparked,,,,
 #,KNRIN_MIX,,,,,,,,,,,,,,,,
 util_KNRIN_MIX_ivt,KNRIN_MIX - IVT,@(odt_skims['KNRIN_MIX_TOTALIVTT'])*df.outbound,,,,,,,,,,,coef_ivt,,,,
+util_KNRIN_MIX_ivt_on_LRT,KNRIN_MIX - IVT on LRT,@(ivt_lrt_multiplier - 1) * (odt_skims['KNRIN_MIX_LRTIVTT'])*df.outbound,,,,,,,,,,,coef_ivt,,,,
+util_KNRIN_MIX_ivt_on_CMR,KNRIN_MIX - IVT on CMR,@(ivt_cmr_multiplier - 1) * (odt_skims['KNRIN_MIX_CMRIVTT'])*df.outbound,,,,,,,,,,,coef_ivt,,,,
+util_KNRIN_MIX_ivt_on_LTD_EXP,KNRIN_MIX - IVT on LTD and EXP,@(ivt_ltd_multiplier - 1) * (odt_skims['KNRIN_MIX_LTDEXPIVTT'])*df.outbound,,,,,,,,,,,coef_ivt,,,,
+util_KNRIN_MIX_ivt_on_BRT,KNRIN_MIX - IVT on BRT,@(ivt_brt_multiplier - 1) * (odt_skims['KNRIN_MIX_BRTIVTT'])*df.outbound,,,,,,,,,,,coef_ivt,,,,
 util_KNRIN_MIX_ovt,KNRIN_MIX - wait + transfer wait/walk + access/egress,@(odt_skims['KNRIN_MIX_FIRSTWAIT'] + odt_skims['KNRIN_MIX_XFERWAIT'] + odt_skims['KNRIN_MIX_EGR'] + df.origin_mix_time)*df.outbound,,,,,,,,,,,coef_ovt,,,,
 util_KNRIN_MIX_cost_dollars,KNRIN_MIX - Fare,@(df['KNRIN_MIX_cost_dollars'])*df.outbound,,,,,,,,,,,coef_cost,,,,
 util_KNRIN_MIX_cost_dollars_bus,KNRIN_MIX - Fare business,@(df['KNRIN_MIX_cost_dollars'])*df.outbound,,,,,,,,,,,coef_cost_bus,,,,
@@ -121,6 +137,10 @@ util_KNRIN_MIX_cost_dollars_nonbus_incomelt60k,KNRIN_MIX - Fare none business in
 util_KNRIN_MIX_cost_dollars_nonbus_6daysparked,KNRIN_MIX - Fare none business 6+ days parked,"@((np.maximum(df['nights'],0) > 6)*df['KNRIN_MIX_cost_dollars'])*df.outbound",,,,,,,,,,,coef_cost_per_6daysparked,,,,
 #,KNR_PRM,,,,,,,,,,,,,,,,
 util_KNR_PRM_ivt,KNR_PRM - IVT,@(odt_skims['KNROUT_PRM_TOTALIVTT'])*~df.outbound,,,,,,,,,,,,coef_ivt,,,
+util_KNR_PRM_ivt_on_LRT,KNR_PRM - IVT on LRT,@(ivt_lrt_multiplier - 1) * (odt_skims['KNROUT_PRM_LRTIVTT'])*~df.outbound,,,,,,,,,,,,coef_ivt,,,
+util_KNR_PRM_ivt_on_CMR,KNR_PRM - IVT on CMR,@(ivt_cmr_multiplier - 1) * (odt_skims['KNROUT_PRM_CMRIVTT'])*~df.outbound,,,,,,,,,,,,coef_ivt,,,
+util_KNR_PRM_ivt_on_LTD_EXP,KNR_PRM - IVT on LTD and EXP,@(ivt_ltd_multiplier - 1) * (odt_skims['KNROUT_PRM_LTDEXPIVTT'])*~df.outbound,,,,,,,,,,,,coef_ivt,,,
+util_KNR_PRM_ivt_on_BRT,KNR_PRM - IVT on BRT,@(ivt_brt_multiplier - 1) * (odt_skims['KNROUT_PRM_BRTIVTT'])*~df.outbound,,,,,,,,,,,,coef_ivt,,,
 util_KNR_PRM_ovt,KNR_PRM - wait + transfer wait/walk + access/egress,@(odt_skims['KNROUT_PRM_FIRSTWAIT'] + odt_skims['KNROUT_PRM_XFERWAIT'] + odt_skims['KNROUT_PRM_ACC'] + df.dest_prm_time)*~df.outbound,,,,,,,,,,,,coef_ovt,,,
 util_KNR_PRM_cost_dollars,KNR_PRM - Fare,@(df['KNR_PRM_cost_dollars'])*~df.outbound,,,,,,,,,,,,coef_cost,,,
 util_KNR_PRM_cost_dollars_bus,KNR_PRM - Fare business,@(df['KNR_PRM_cost_dollars'])*~df.outbound,,,,,,,,,,,,coef_cost_bus,,,
@@ -128,6 +148,10 @@ util_KNR_PRM_cost_dollars_nonbus_incomelt60k,KNR_PRM - Fare none business income
 util_KNR_PRM_cost_dollars_nonbus_6daysparked,KNR_PRM - Fare none business 6+ days parked,"@((np.maximum(df['nights'],0) > 6)*df['KNR_PRM_cost_dollars'])*~df.outbound",,,,,,,,,,,,coef_cost_per_6daysparked,,,
 #,KNRIN_PRM,,,,,,,,,,,,,,,,
 util_KNRIN_PRM_ivt,KNRIN_PRM - IVT,@(odt_skims['KNRIN_PRM_TOTALIVTT'])*df.outbound,,,,,,,,,,,,coef_ivt,,,
+util_KNRIN_PRM_ivt_on_LRT,KNRIN_PRM - IVT on LRT,@(ivt_lrt_multiplier - 1) * (odt_skims['KNRIN_PRM_LRTIVTT'])*df.outbound,,,,,,,,,,,,coef_ivt,,,
+util_KNRIN_PRM_ivt_on_CMR,KNRIN_PRM - IVT on CMR,@(ivt_cmr_multiplier - 1) * (odt_skims['KNRIN_PRM_CMRIVTT'])*df.outbound,,,,,,,,,,,,coef_ivt,,,
+util_KNRIN_PRM_ivt_on_LTD_EXP,KNRIN_PRM - IVT on LTD and EXP,@(ivt_ltd_multiplier - 1) * (odt_skims['KNRIN_PRM_LTDEXPIVTT'])*df.outbound,,,,,,,,,,,,coef_ivt,,,
+util_KNRIN_PRM_ivt_on_BRT,KNRIN_PRM - IVT on BRT,@(ivt_brt_multiplier - 1) * (odt_skims['KNRIN_PRM_BRTIVTT'])*df.outbound,,,,,,,,,,,,coef_ivt,,,
 util_KNRIN_PRM_ovt,KNRIN_PRM - wait + transfer wait/walk + access/egress,@(odt_skims['KNRIN_PRM_FIRSTWAIT'] + odt_skims['KNRIN_PRM_XFERWAIT'] + odt_skims['KNRIN_PRM_EGR'] + df.origin_prm_time)*df.outbound,,,,,,,,,,,,coef_ovt,,,
 util_KNRIN_PRM_cost_dollars,KNRIN_PRM - Fare,@(df['KNRIN_PRM_cost_dollars'])*df.outbound,,,,,,,,,,,,coef_cost,,,
 util_KNRIN_PRM_cost_dollars_bus,KNRIN_PRM - Fare business,@(df['KNRIN_PRM_cost_dollars'])*df.outbound,,,,,,,,,,,,coef_cost_bus,,,
@@ -149,6 +173,10 @@ util_TNCIN_LOC_cost_dollars_nonbus_incomelt60k,TNCIN_LOC - Fare none business in
 util_TNCIN_LOC_cost_dollars_nonbus_6daysparked,TNCIN_LOC - Fare none business 6+ days parked,"@((np.maximum(df['nights'],0) > 6)*df['KNRIN_LOC_cost_dollars'])*df.outbound",,,,,,,,,,,,,coef_cost_per_6daysparked,,
 #,TNC_MIX,,,,,,,,,,,,,,,,
 util_TNC_MIX_ivt,TNC_MIX - IVT,@(odt_skims['KNROUT_MIX_TOTALIVTT'])*~df.outbound,,,,,,,,,,,,,,coef_ivt,
+util_TNC_MIX_ivt_on_LRT,TNC_MIX - IVT on LRT,@(ivt_lrt_multiplier - 1) * (odt_skims['KNROUT_MIX_LRTIVTT'])*~df.outbound,,,,,,,,,,,,,,coef_ivt,
+util_TNC_MIX_ivt_on_CMR,TNC_MIX - IVT on CMR,@(ivt_cmr_multiplier - 1) * (odt_skims['KNROUT_MIX_CMRIVTT'])*~df.outbound,,,,,,,,,,,,,,coef_ivt,
+util_TNC_MIX_ivt_on_LTD_EXP,TNC_MIX - IVT on LTD and EXP,@(ivt_ltd_multiplier - 1) * (odt_skims['KNROUT_MIX_LTDEXPIVTT'])*~df.outbound,,,,,,,,,,,,,,coef_ivt,
+util_TNC_MIX_ivt_on_BRT,TNC_MIX - IVT on BRT,@(ivt_brt_multiplier - 1) * (odt_skims['KNROUT_MIX_BRTIVTT'])*~df.outbound,,,,,,,,,,,,,,coef_ivt,
 util_TNC_MIX_ovt,TNC_MIX - wait + transfer wait/walk + access/egress,@(odt_skims['KNROUT_MIX_FIRSTWAIT'] + odt_skims['KNROUT_MIX_XFERWAIT'] + odt_skims['KNROUT_MIX_ACC'] + df.dest_mix_time)*~df.outbound,,,,,,,,,,,,,,coef_ovt,
 util_TNC_MIX_cost_dollars,TNC_MIX - Fare,@(df['KNR_MIX_cost_dollars'])*~df.outbound,,,,,,,,,,,,,,coef_cost,
 util_TNC_MIX_cost_dollars_bus,TNC_MIX - Fare business,@(df['KNR_MIX_cost_dollars'])*~df.outbound,,,,,,,,,,,,,,coef_cost_bus,
@@ -156,6 +184,10 @@ util_TNC_MIX_cost_dollars_nonbus_incomelt60k,TNC_MIX - Fare none business income
 util_TNC_MIX_cost_dollars_nonbus_6daysparked,TNC_MIX - Fare none business 6+ days parked,"@((np.maximum(df['nights'],0) > 6)*df['KNR_MIX_cost_dollars'])*~df.outbound",,,,,,,,,,,,,,coef_cost_per_6daysparked,
 #,TNCIN_MIX,,,,,,,,,,,,,,,,
 util_TNCIN_MIX_ivt,TNCIN_MIX - IVT,@(odt_skims['KNRIN_MIX_TOTALIVTT'])*df.outbound,,,,,,,,,,,,,,coef_ivt,
+util_TNCIN_MIX_ivt_on_LRT,TNCIN_MIX - IVT on LRT,@(ivt_lrt_multiplier - 1) * (odt_skims['KNRIN_MIX_LRTIVTT'])*df.outbound,,,,,,,,,,,,,,coef_ivt,
+util_TNCIN_MIX_ivt_on_CMR,TNCIN_MIX - IVT on CMR,@(ivt_cmr_multiplier - 1) * (odt_skims['KNRIN_MIX_CMRIVTT'])*df.outbound,,,,,,,,,,,,,,coef_ivt,
+util_TNCIN_MIX_ivt_on_LTD_EXP,TNCIN_MIX - IVT on LTD and EXP,@(ivt_ltd_multiplier - 1) * (odt_skims['KNRIN_MIX_LTDEXPIVTT'])*df.outbound,,,,,,,,,,,,,,coef_ivt,
+util_TNCIN_MIX_ivt_on_BRT,TNCIN_MIX - IVT on BRT,@(ivt_brt_multiplier - 1) * (odt_skims['KNRIN_MIX_BRTIVTT'])*df.outbound,,,,,,,,,,,,,,coef_ivt,
 util_TNCIN_MIX_ovt,TNCIN_MIX - wait + transfer wait/walk + access/egress,@(odt_skims['KNRIN_MIX_FIRSTWAIT'] + odt_skims['KNRIN_MIX_XFERWAIT'] + odt_skims['KNRIN_MIX_EGR'] + df.origin_mix_time)*df.outbound,,,,,,,,,,,,,,coef_ovt,
 util_TNCIN_MIX_cost_dollars,TNCIN_MIX - Fare,@(df['KNRIN_MIX_cost_dollars'])*df.outbound,,,,,,,,,,,,,,coef_cost,
 util_TNCIN_MIX_cost_dollars_bus,TNCIN_MIX - Fare business,@(df['KNRIN_MIX_cost_dollars'])*df.outbound,,,,,,,,,,,,,,coef_cost_bus,
@@ -163,6 +195,10 @@ util_TNCIN_MIX_cost_dollars_nonbus_incomelt60k,TNCIN_MIX - Fare none business in
 util_TNCIN_MIX_cost_dollars_nonbus_6daysparked,TNCIN_MIX - Fare none business 6+ days parked,"@((np.maximum(df['nights'],0) > 6)*df['KNRIN_MIX_cost_dollars'])*df.outbound",,,,,,,,,,,,,,coef_cost_per_6daysparked,
 #,TNC_PRM,,,,,,,,,,,,,,,,
 util_TNC_PRM_ivt,TNC_PRM - IVT,@(odt_skims['KNROUT_PRM_TOTALIVTT'])*~df.outbound,,,,,,,,,,,,,,,coef_ivt
+util_TNC_PRM_ivt_on_LRT,TNC_PRM - IVT on LRT,@(ivt_lrt_multiplier - 1) * (odt_skims['KNROUT_PRM_LRTIVTT'])*~df.outbound,,,,,,,,,,,,,,,coef_ivt
+util_TNC_PRM_ivt_on_CMR,TNC_PRM - IVT on CMR,@(ivt_cmr_multiplier - 1) * (odt_skims['KNROUT_PRM_CMRIVTT'])*~df.outbound,,,,,,,,,,,,,,,coef_ivt
+util_TNC_PRM_ivt_on_LTD_EXP,TNC_PRM - IVT on LTD and EXP,@(ivt_ltd_multiplier - 1) * (odt_skims['KNROUT_PRM_LTDEXPIVTT'])*~df.outbound,,,,,,,,,,,,,,,coef_ivt
+util_TNC_PRM_ivt_on_BRT,TNC_PRM - IVT on BRT,@(ivt_brt_multiplier - 1) * (odt_skims['KNROUT_PRM_BRTIVTT'])*~df.outbound,,,,,,,,,,,,,,,coef_ivt
 util_TNC_PRM_ovt,TNC_PRM - wait + transfer wait/walk + access/egress,@(odt_skims['KNROUT_PRM_FIRSTWAIT'] + odt_skims['KNROUT_PRM_XFERWAIT'] + odt_skims['KNROUT_PRM_ACC'] + df.dest_prm_time)*~df.outbound,,,,,,,,,,,,,,,coef_ovt
 util_TNC_PRM_cost_dollars,TNC_PRM - Fare,@(df['KNR_PRM_cost_dollars'])*~df.outbound,,,,,,,,,,,,,,,coef_cost
 util_TNC_PRM_cost_dollars_bus,TNC_PRM - Fare business,@(df['KNR_PRM_cost_dollars'])*~df.outbound,,,,,,,,,,,,,,,coef_cost_bus
@@ -170,14 +206,17 @@ util_TNC_PRM_cost_dollars_nonbus_incomelt60k,TNC_PRM - Fare none business income
 util_TNC_PRM_cost_dollars_nonbus_6daysparked,TNC_PRM - Fare none business 6+ days parked,"@((np.maximum(df['nights'],0) > 6)*df['KNR_PRM_cost_dollars'])*~df.outbound",,,,,,,,,,,,,,,coef_cost_per_6daysparked
 #,TNCIN_PRM,,,,,,,,,,,,,,,,
 util_TNCIN_PRM_ivt,TNCIN_PRM - IVT,@(odt_skims['KNRIN_PRM_TOTALIVTT'])*df.outbound,,,,,,,,,,,,,,,coef_ivt
+util_TNCIN_PRM_ivt_on_LRT,TNCIN_PRM - IVT on LRT,@(ivt_lrt_multiplier - 1) * (odt_skims['KNRIN_PRM_LRTIVTT'])*df.outbound,,,,,,,,,,,,,,,coef_ivt
+util_TNCIN_PRM_ivt_on_CMR,TNCIN_PRM - IVT on CMR,@(ivt_cmr_multiplier - 1) * (odt_skims['KNRIN_PRM_CMRIVTT'])*df.outbound,,,,,,,,,,,,,,,coef_ivt
+util_TNCIN_PRM_ivt_on_LTD_EXP,TNCIN_PRM - IVT on LTD and EXP,@(ivt_ltd_multiplier - 1) * (odt_skims['KNRIN_PRM_LTDEXPIVTT'])*df.outbound,,,,,,,,,,,,,,,coef_ivt
+util_TNCIN_PRM_ivt_on_BRT,TNCIN_PRM - IVT on BRT,@(ivt_brt_multiplier - 1) * (odt_skims['KNRIN_PRM_BRTIVTT'])*df.outbound,,,,,,,,,,,,,,,coef_ivt
 util_TNCIN_PRM_ovt,TNCIN_PRM - wait + transfer wait/walk + access/egress,@(odt_skims['KNRIN_PRM_FIRSTWAIT'] + odt_skims['KNRIN_PRM_XFERWAIT'] + odt_skims['KNRIN_PRM_EGR'] + df.origin_prm_time)*df.outbound,,,,,,,,,,,,,,,coef_ovt
 util_TNCIN_PRM_cost_dollars,TNCIN_PRM - Fare,@(df['KNRIN_PRM_cost_dollars'])*df.outbound,,,,,,,,,,,,,,,coef_cost
 util_TNCIN_PRM_cost_dollars_bus,TNCIN_PRM - Fare business,@(df['KNRIN_PRM_cost_dollars'])*df.outbound,,,,,,,,,,,,,,,coef_cost_bus
 util_TNCIN_PRM_cost_dollars_nonbus_incomelt60k,TNCIN_PRM - Fare none business income lt60k,@((df.income <= 9)*df['KNRIN_PRM_cost_dollars'])*df.outbound,,,,,,,,,,,,,,,coef_cost_per_incomelt60k
 util_TNCIN_PRM_cost_dollars_nonbus_6daysparked,TNCIN_PRM - Fare none business 6+ days parked,"@((np.maximum(df['nights'],0) > 6)*df['KNRIN_PRM_cost_dollars'])*df.outbound",,,,,,,,,,,,,,,coef_cost_per_6daysparked
-
+#,Calibration,,,,,,,,,,,,,,,,
 util_transit_calib_walk,Transit Calibration Walk,@transit_calib_walk,,,,,,,1,1,1,,,,,,
 util_transit_calib_knr,Transit Calibration KNR,@transit_calib_knr,,,,,,,,,,1,1,1,,,
 util_transit_calib_tnc,Transit Calibration TNC,@transit_calib_tnc,,,,,,,,,,,,,1,1,1
-#,Calibration,,,,,,,,,,,,,,,,
 calibration_constants,calibration constants,1,coef_calibration_park,coef_calibration_park,coef_calibration_ridehail,coef_calibration_taxi,coef_calibration_drop_off,coef_calibration_shuttle,coef_calibration_transit,coef_calibration_transit,coef_calibration_transit,coef_calibration_transit,coef_calibration_transit,coef_calibration_transit,coef_calibration_transit,coef_calibration_transit,coef_calibration_transit
