@@ -50,7 +50,15 @@ As noted above, the user needs to install Anaconda2 and Anaconda3 on the worksta
 
 #### Python2 Environment
 
-After Anaconda installation, the following step is to create the Python2-based environment, which can be done via the following steps:
+Prior to creating a Python2-based environment, the OpenMatrix package needs to be installed directly to the base environment. To do so:
+
+* Open Anaconda2 prompt (likely as Administrator)
+    * *Ensure you are opening the Anaconda2 prompt and not the Anaconda3 prompt*
+* Execute the following command:
+
+```pip install OpenMatrix```
+
+The following step is to create a new Python2-based environment, which can be done via the following steps:
 
 * Create a directory called *python_virtualenv* on the server's local drive and copy in the following files:
     * [add_python_virtualenv.bat](https://github.com/SANDAG/ABM/blob/ABM2_TRUNK/add_python_virtualenv.bat)
@@ -92,7 +100,7 @@ To create the ActivitySim (*asim_140*) environment:
 
 * Download the following ABM3 v15.3.1 environment package files:
     * [environment.yml](https://github.com/SANDAG/ABM/blob/v15.3.1/src/asim/scripts/environment.yml)
-    * [requirements.txt](https://github.com/SANDAG/ABM/blob/v15.3.1/src/asim/scripts/requirements.txt)
+    * [requirements.txt](https://github.com/SANDAG/ABM/blob/v15.4.1/src/asim/scripts/requirements.txt)
 * Save somewhere on your machine's local drive
 * Open Anaconda3 Prompt (likely as Administrator)
 * Execute the following commands:
