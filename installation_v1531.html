@@ -1960,7 +1960,16 @@
 <h3 id="setting-up-the-python-environments">Setting up the Python Environments<a class="headerlink" href="#setting-up-the-python-environments" title="Permanent link"> ¶</a></h3>
 <p>As noted above, the user needs to install Anaconda2 and Anaconda3 on the workstation they intend to install ABM3 on. The Anaconda2 software is utilized to create a Python2-based environment required to interface with a specific version of EMME (4.3.7) whereas Anaconda3 is utilized to create environments to run ActivitySim.</p>
 <h4 id="python2-environment">Python2 Environment<a class="headerlink" href="#python2-environment" title="Permanent link"> ¶</a></h4>
-<p>After Anaconda installation, the following step is to create the Python2-based environment, which can be done via the following steps:</p>
+<p>Prior to creating a Python2-based environment, the OpenMatrix package needs to be installed directly to the base environment. To do so:</p>
+<ul>
+<li>Open Anaconda2 prompt (likely as Administrator)<ul>
+<li><em>Ensure you are opening the Anaconda2 prompt and not the Anaconda3 prompt</em></li>
+</ul>
+</li>
+<li>Execute the following command:</li>
+</ul>
+<p><code>pip install OpenMatrix</code></p>
+<p>The following step is to create a new Python2-based environment, which can be done via the following steps:</p>
 <ul>
 <li>Create a directory called <em>python_virtualenv</em> on the server&rsquo;s local drive and copy in the following files:<ul>
 <li><a href="https://github.com/SANDAG/ABM/blob/ABM2_TRUNK/add_python_virtualenv.bat">add_python_virtualenv.bat</a></li>
@@ -1998,7 +2007,7 @@ pip install -r requirements.txt
 <ul>
 <li>Download the following ABM3 v15.3.1 environment package files:<ul>
 <li><a href="https://github.com/SANDAG/ABM/blob/v15.3.1/src/asim/scripts/environment.yml">environment.yml</a></li>
-<li><a href="https://github.com/SANDAG/ABM/blob/v15.3.1/src/asim/scripts/requirements.txt">requirements.txt</a></li>
+<li><a href="https://github.com/SANDAG/ABM/blob/v15.4.1/src/asim/scripts/requirements.txt">requirements.txt</a></li>
 </ul>
 </li>
 <li>Save somewhere on your machine&rsquo;s local drive</li>
