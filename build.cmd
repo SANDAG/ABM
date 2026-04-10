@@ -80,7 +80,7 @@ set GIT_FOLDER=.\.git
 set GIT_FILE=%ROOT%\common\git_info.yaml
 type nul>%GIT_FILE%
 WHERE git
-IF NOT ERRORLEVEL 0 GOTO NOGIT
+IF NOT %ERRORLEVEL% == 0 GOTO NOGIT
 echo|set /p="branch: " >> %GIT_FILE%
 git --git-dir=%GIT_FOLDER% branch --show-current >> %GIT_FILE%
 echo|set /p="commit: " >> %GIT_FILE%
