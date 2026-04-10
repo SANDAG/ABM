@@ -236,18 +236,18 @@ airport:
     # SDIA employment multiplier configuration
     # Applied to specific MGRAs at San Diego International Airport
     sdiaEmploymentMultiplier:
-      mgras: [11249, 8455, 1306, 11244, 11247, 8745, 11248, 9080, 11246, 11250]
-      multiplierByYear:
-        "2022": 2.5
-        "2025": 2.5
-        "2026": 2.5
-        "2029": 2.5
-        "2030": 2.5
-        "2032": 2.5
-        "2035": 2.5
-        "2040": 2.5
-        "2045": 2.5
-        "2050": 2.5
+      airport_north:
+        mgras: [11244]
+        multiplierByYear:
+          "2022": 2.5
+          "2035": 2.5
+          "2050": 2.5
+      airport_south:
+        mgras: [11248, 11249]
+        multiplierByYear:
+          "2022": 3.0
+          "2035": 3.0
+          "2050": 3.0
 
     accessOptions:
       park:
