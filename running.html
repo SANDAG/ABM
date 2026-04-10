@@ -1090,6 +1090,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#resuming-a-crashed-abm3-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      Resuming a Crashed ABM3 Run
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1938,6 +1947,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#resuming-a-crashed-abm3-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      Resuming a Crashed ABM3 Run
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1973,13 +1991,13 @@
 <li>You are logged onto the Bentley CONNECTION Client license manager software</li>
 </ol>
 </li>
-<li>Using the server’s Windows Explorer, navigate to the latest approved ABM3 release. As of March 2025, this is <em>T:\ABM\release\ABM\version_15_2_2</em></li>
+<li>Using the server’s Windows Explorer, navigate to the latest approved ABM3 release. As of March 2026, this is <em>T:\ABM\release\ABM\version_15_3_1</em></li>
 <li>Double click on <em>createStudyAndScenario.bat</em> and click Run.</li>
 <li>On pop-up, fill out the fields under <em>Create an ABM scenario</em>.<ul>
-<li><strong>EMME Version</strong>: As of March 2025, only available version is 4.3.7</li>
+<li><strong>EMME Version</strong>: As of March 2026, EMME version is OpenPaths EMME 25.00.01</li>
 <li><strong>Year</strong>: Using drop-down menu, select scenario year you&rsquo;d like to run</li>
 <li><strong>Base</strong>: Whether you would like to run a Build or No Build scenario. Note that the base 2022 year only has the option to run as Base.</li>
-<li><strong>Geography ID</strong>: Leave as 1. As of March 2025, this field has no functionality. </li>
+<li><strong>Geography ID</strong>: Leave as 1. As of March 2026, this field has no functionality. </li>
 <li><strong>Scenario Folder</strong>: File path you would like to create scenario at. The tool will create the directory if it doesn&rsquo;t already exist. For cases where you point to an exisitng directory, the tool will notify users that location exists to avoid unintended overwriting.</li>
 <li><strong>Network Folder</strong>: File path to input network. </li>
 <li><strong>Land Use Folder</strong>: File path to input land use files.</li>
@@ -1990,7 +2008,7 @@
 <li>Navigate to newly created scenario and ensure the correct input files were copied over.</li>
 </ul>
 <h2 id="running-abm3_1">Running ABM3<a class="headerlink" href="#running-abm3_1" title="Permanent link"> ¶</a></h2>
-<p>To open the EMME application from the created scenario directory, users need to go to the <em>emme_project</em> folder, and double-click on the <em>start_emme_with_virtualenv.bat</em> file. This opens up the EMME application, where the application prompts the choice of a scenario. It is recommended to select the main highway scenario (Scen. 100) to start off the model run, although other scenarios may be selected as well. </p>
+<p>To open the EMME application from the created scenario directory, users need to go to the <em>emme_project</em> folder, and double-click on the <em>emme_project.emp</em> file. This opens up the EMME application, where the application prompts the choice of a scenario. It is recommended to select the main highway scenario (Scen. 100) to start off the model run, although other scenarios may be selected as well. </p>
 <p>Following this step, users should open the <em>EMME Modeler</em> by clicking on the gold square icon at the top left of the screen. 
 <br></p>
 <div align="center">
@@ -2057,26 +2075,115 @@ The <em>Master run</em> tool operates the SANDAG travel demand model. Users have
 <p>If the same scenario from above would like to be reran:</p>
 <ul>
 <li>From beginning to end (i.e., from iteration 1):<ul>
-<li>The modeler simply needs to open the scenario via the <em>start_emme_with_virtualenv.bat</em> file (on T Drive), edit (if applicable) the setup in the <em>Master Run</em> tool, and launch.</li>
+<li>The modeler simply needs to open the scenario via the <em>emme_project.emp</em> file (on T Drive), edit (if applicable) the setup in the <em>Master Run</em> tool, and launch.</li>
 </ul>
 </li>
 <li>Or, starting from the 2<sup>nd</sup> or 3<sup>rd</sup> iteration:<ul>
-<li>The modeler must copy the entire ABM3 scenario to the machine&rsquo;s C Drive (typically under C:\abm_runs\{username}). In particular, the modeler should ensure the files found within the <em>emme_project</em> folder are present on the C Drive before relaunching the scenario.</li>
-<li>From there, the modeler may open the scenario via the <em>start_emme_with_virtualenv.bat</em> file on the T Drive, edit the setup in the <em>Master Run</em> tool, and launch.</li>
+<li>The modeler must use the <em>copyRun</em> tool to copy the entire ABM3 scenario to the machine&rsquo;s C Drive (typically under C:\abm_runs\{username}). The <em>copyRun</em> tool is required (rather than a manual copy) because with ABM release 15.3, the skims are converted into the OMXZ format for more efficient reading into ActivitySim. This conversion is not performed after final assignment, so manually copying a run without using the <em>copyRun</em> tool would result in the resident model failing to run. In particular, the modeler should ensure the files found within the <em>emme_project</em> folder are present on the C Drive before relaunching the scenario.</li>
+<li>From there, the modeler may open the scenario via the <em>emme_project.emp</em> file on the T Drive, edit the setup in the <em>Master Run</em> tool, and launch.</li>
 </ul>
 </li>
 </ul>
 <p>Note that under the above two workflows, the original scenario&rsquo;s (on T Drive) outputs will be overwritten when the scenario is copied from the C Drive back to the T Drive. The modeler should consider saving the original scenario&rsquo;s outputs in a different location if wanting to preserve the original data. </p>
 <p>An alternative workflow, that may be useful for development or debugging purposes, involves rerunning the scenario entirely on the C Drive. It should be noted that under this worfklow, the model outputs of the rerun will not be copied back to the T Drive as part of the model run flow (may be copied over manually if desired). To proceed with this workflow:</p>
 <ul>
-<li>The modeler must copy the entire ABM3 scenario to the machine&rsquo;s C Drive (typically under C:\abm_runs\{username}).</li>
-<li>Then, the modeler must open the scenario via the <em>start_emme_with_virtualenv.bat</em> file on the C Drive. </li>
+<li>The modeler must use the <em>copyRun</em> tool to copy the entire ABM3 scenario to the machine&rsquo;s C Drive (typically under C:\abm_runs\{username}). The <em>copyRun</em> tool processes the skims into the OMXZ format required for ActivitySim in release 15.3.</li>
+<li>Then, the modeler must open the scenario via the <em>emme_project.emp</em> file on the C Drive. </li>
 <li>Lastly, in addition to any desired setup edits under the <em>Master Run</em> tool, the modeler must uncheck <em>Use the local drive during the model run</em> so that the model run does not attempt to copy scenario files to a different drive.</li>
 </ul>
 <p>One other point the modeler should consider when rerunning a scenario is whether model outputs should be loaded onto Azure Data Lake, which is controlled via the <em>Skip write to datalake</em> parameter under the <em>Master Run</em> tool:</p>
 <ul>
 <li>Unchecking this step will result in model outputs being loaded onto Azure Data Lake under a new scenario ID and will not overwrite the original run&rsquo;s data on Azure Data Lake</li>
 <li>Checkmarking this step will skip model outputs from being loaded onto Azure Data Lake. This will likely be the preferred approach for scenario reruns related to development or debugging purposes.</li>
+</ul>
+<h3 id="resuming-a-crashed-abm3-run">Resuming a Crashed ABM3 Run<a class="headerlink" href="#resuming-a-crashed-abm3-run" title="Permanent link"> ¶</a></h3>
+<p><em>Note: This section mainly relevant to SANDAG users.</em></p>
+<p>If an ABM3 model run crashes before completion, the modeler should first consult the <em>EMME Logbook</em>, which provides detailed error messages to help diagnose the cause of the crash. After investigating the error and fixing any input or script issues, the modeler can resume the run from various points depending on where the crash occurred. The table below provides guidance on which steps to skip in the <em>Master Run</em> tool to resume from different crash locations:</p>
+<table>
+<thead>
+<tr>
+<th><strong>Crash Location</strong></th>
+<th><strong>Start from iteration</strong></th>
+<th><strong>Steps to Skip</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Import network</td>
+<td>1</td>
+<td>None - rerun from beginning</td>
+</tr>
+<tr>
+<td>Bike logsum</td>
+<td>1</td>
+<td>Skip steps before bike logsums</td>
+</tr>
+<tr>
+<td>Iter 1 traffic/transit assignment</td>
+<td>1</td>
+<td>Skip steps before Iter 1 traffic/transit assignment</td>
+</tr>
+<tr>
+<td>Iter 1 resident model</td>
+<td>1</td>
+<td>Skip steps before Iter 1 ActivitySim Preprocessing</td>
+</tr>
+<tr>
+<td>Iter 1 special market model</td>
+<td>1</td>
+<td>Skip steps before Iter 1 ActivitySim Preprocessing, and skip Iter 1 Resident Model</td>
+</tr>
+<tr>
+<td>Iter 2 traffic/transit assignment</td>
+<td>2</td>
+<td>Skip steps before Iter 2 traffic/transit assignment</td>
+</tr>
+<tr>
+<td>Iter 2 resident model</td>
+<td>2</td>
+<td>Skip steps before Iter 2 ActivitySim Preprocessing</td>
+</tr>
+<tr>
+<td>Iter 2 special market model</td>
+<td>2</td>
+<td>Skip steps before Iter 2 special marker model</td>
+</tr>
+<tr>
+<td>Iter 3 traffic/transit assignment</td>
+<td>3</td>
+<td>Skip steps before Iter 3 traffic/transit assignment</td>
+</tr>
+<tr>
+<td>Iter 3 resident model</td>
+<td>3</td>
+<td>Skip steps before Iter 3 ActivitySim Preprocessing</td>
+</tr>
+<tr>
+<td>Iter 3 special market model</td>
+<td>3</td>
+<td>Skip steps before Iter 3 special marker model</td>
+</tr>
+<tr>
+<td>Iter 4 traffic/transit assignment</td>
+<td>4</td>
+<td>Skip steps before Iter 4 traffic/transit assignment</td>
+</tr>
+<tr>
+<td>Iter 4 write to datalake</td>
+<td>4</td>
+<td>Skip all previous steps and uncheck the box of &lsquo;Skip write to datalake&rsquo;</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Important Notes:</strong></p>
+<ul>
+<li>Before resuming a crashed run, verify that the outputs from previously completed steps are present in the scenario directory.<ul>
+<li>Note the importance of the mgra15_based_input{year}.csv file, which is modified during the 4Ds step. This updated file must be retained because its updates are essential for downstream steps in the model run.</li>
+</ul>
+</li>
+<li>When resuming from an iteration other than iteration 1, ensure the <em>Start from iteration</em> parameter in the <em>Master Run</em> tool is set correctly.</li>
+<li>For crashes during traffic/transit assignment, it&rsquo;s typically safer to re-run the assignment rather than trying to resume partway through.</li>
+<li>If uncertain about which steps to skip, consult the <em>EMME Logbook</em> to determine exactly which steps completed successfully before the crash.</li>
 </ul>
 
 
