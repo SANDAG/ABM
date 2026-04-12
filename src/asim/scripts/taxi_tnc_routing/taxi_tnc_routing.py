@@ -48,13 +48,19 @@ class TaxiTNCSettings(BaseModel):
     Taxi / TNC route choice settings
     """
     # path to activitysim output folder with trip data
-    asim_output_dir: str
-    asim_demand_files: list
+    asim_output_dir: str = "output"
+    asim_demand_files: list = [
+        "airport.CBX\\final_cbxtrips",
+        "airport.SAN\\final_santrips",
+        "resident\\final_trips",
+        "visitor\\final_trips",
+        "crossborder\\final_trips",
+    ]
     # path to landuse file (relative to asim_output_dir)
-    asim_landuse_file: str = "resident\\final_land_use.csv"
+    asim_landuse_file: str = "resident\\final_land_use"
 
     # path to folder with skim data
-    skim_dir: str
+    skim_dir: str = "output\\skims"
     # name of skim matrix in OMX file minus time period suffix
     skim_time_core: str = "HOV2_H_TIME"
     skim_dist_core: str = "HOV2_H_DIST"
@@ -69,7 +75,7 @@ class TaxiTNCSettings(BaseModel):
     ]
 
     # output folder for results
-    output_dir: str = "./output"
+    output_dir: str = "output\\tnc_routing"
 
     # modes for shared and single occupancy TNC / taxi trips
     shared_tnc_modes: list = ["TNC_SHARED"]

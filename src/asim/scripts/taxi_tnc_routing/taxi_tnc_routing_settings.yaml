@@ -17,18 +17,29 @@ asim_demand_files:
   - resident\final_trips
   - visitor\final_trips
   - crossborder\final_trips
+
+# land use file used to map MAZ values to TAZ values
 asim_landuse_file: resident\final_land_use
 
 # name of skim matrix in OMX file minus time period suffix
 skim_time_core: HOV2_H_TIME
+
+# name of distance skim matrix in OMX file minus time period suffix
 skim_dist_core: HOV2_H_DIST
-# time periods to process, should match network_los.yaml settings
+
+# skim time periods, should match network_los.yaml settings
 skim_periods: ['EA', 'AM', 'MD', 'PM', 'EV']
+
+# period breakpoints used to map depart bins to skim periods
 periods: [0, 6, 12, 25, 32, 48]
+
+# skim file names aligned with skim_periods
 skim_files: ['traffic_skims_EA.omx', 'traffic_skims_AM.omx', 'traffic_skims_MD.omx', 'traffic_skims_PM.omx', 'traffic_skims_EV.omx']
 
 # modes for shared and single occupancy TNC / taxi trips
 shared_tnc_modes: ['TNC_SHARED']
+
+# modes for single occupancy TNC and taxi trips
 single_tnc_modes: 
  - 'TNC_SINGLE'
  - 'TAXI'
@@ -46,14 +57,20 @@ max_wait_time: 15
 
 # buffer size comparing origins and destinations for potential pooling (in mins)
 pooling_buffer: 10
+
 # maximum allowed detour time for pooled trips (in mins)
 max_detour: 15
+
 # batch size for matching pooled trips together and matching trips to vehicles
 # this is used to decrease runtime by considering only this number of trips at a time
 pair_batch_size: 6000
 
+# maximum vehicle occupancy per trip record
+max_vehicle_occupancy: 4
+
 # column in the landuse table that indicates the presence of refueling stations
 landuse_refuel_col: refueling_stations
+
 # maximum distance (in miles) a vehicle can operate before refueling
 max_refuel_dist: 300
 
