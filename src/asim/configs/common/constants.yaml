@@ -281,3 +281,9 @@ SanYsidro_maz_id: {MGRAsOfInterest-portsOfEntry-sanYsidro:}
 OtayMesa_maz_id: {MGRAsOfInterest-portsOfEntry-otayMesa:}
 Tecate_maz_id: {MGRAsOfInterest-portsOfEntry-tecate:}
 OtayMesaEast_maz_id: {MGRAsOfInterest-portsOfEntry-otayMesaEast:}
+
+# -- AV routing settings --
+# Maximum benefit for keeping car close (min)
+AV_maxBenefit: 60
+# Maximum duration for keeping car close (hrs),
+AV_maxDuration: 1.5

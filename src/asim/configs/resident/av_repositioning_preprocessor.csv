@@ -1,7 +1,6 @@
 Description,Target,Expression
 next trip start time,next_depart,df['trip_id'].map(trips.groupby('tour_id')['depart'].shift(-1).to_dict())
 trip duration,duration_hrs,"np.where(next_depart.isna(), 0, next_depart - df.depart) / 2"
-duration benefit,duration_benefit,"np.where((duration_hrs < 1.5) & (duration_hrs > 0), 60 - (60/1.5 * duration_hrs), 0)"
 #Parking cost calculation,,
 ,tour_id,"reindex(trips.tour_id, df.trip_id)"
 ,tour_type,"reindex(tours.tour_type, tour_id)"
@@ -29,9 +28,7 @@ Effective parking cost for reimbursed parkers,_parkingCost,"np.where(is_indiv*re
 Effective parking cost,parkingCost,"np.where(is_joint+is_indiv*(1-reimbursePurpose), parkingCostBeforeReimb,_parkingCost)"
 Parking cost is 0 if going home,parkingCost,"np.where(df.destination == df.home_zone_id, 0, parkingCost)"
 # These following two are from AutonomousVehicleAllocationChoice.xls,,
-Maximim benefit for keeping car close (min),AV_maxBenefit,60
-Maximum duration for keeping car close (hrs),AV_maxDuration,1.5
-Slope of benefit calculation,slope, (-1)*(AV_maxBenefit / AV_maxDuration)
+Slope of benefit calculation,slope,(-1)*(AV_maxBenefit / AV_maxDuration)
 # below taken from parametersByYear.csv,,
 ,RemoteParkingCostPerHour,0.81
 #,,
