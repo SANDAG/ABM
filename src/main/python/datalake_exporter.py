@@ -307,16 +307,18 @@ def write_to_datalake(output_path, models, exclude, env):
                     "", None, inplace=True
                 )  # replace empty strings with None - otherwise conversation error for boolean types
 
-                export_table(table, name, model, parent_dir_name, container)
+                export_table(
+                    table, name, model, release_version, parent_dir_name, container
+                )
             else:
                 with open(file, "rb") as data:
                     if model == "":
                         lake_file_name = "/".join(
-                            [database, parent_dir_name, name + ext]
+                            [release_version, parent_dir_name, name + ext]
                         )
                     else:
                         lake_file_name = "/".join(
-                            [database, parent_dir_name, model, name + ext]
+                            [release_version, parent_dir_name, model, name + ext]
                         )
                     container.upload_blob(name=lake_file_name, data=data)
 
@@ -336,7 +338,7 @@ def write_to_datalake(output_path, models, exclude, env):
         try:
             with open(file, "rb") as data:
                 lake_file_name = "/".join(
-                    [database, parent_dir_name, os.path.basename(file)]
+                    [release_version, parent_dir_name, os.path.basename(file)]
                 )
                 container.upload_blob(name=lake_file_name, data=data)
         except (FileNotFoundError, KeyError):
@@ -385,7 +387,12 @@ def write_to_datalake(output_path, models, exclude, env):
         try:
             with open(file, "rb") as data:
                 lake_file_name = "/".join(
-                    [database, parent_dir_name, "validation", os.path.basename(file)]
+                    [
+                        release_version,
+                        parent_dir_name,
+                        "validation",
+                        os.path.basename(file),
+                    ]
                 )
                 container.upload_blob(name=lake_file_name, data=data)
         except (FileNotFoundError, KeyError):
@@ -411,5 +418,5 @@ models = [
     ("report", "..", False),
 ]
 exclude = ["final_pipeline.h5", "final_pipeline"]
-database = "abm_15_3_0"
+# database = release_version if release_version else "abm_15_3_0"
 write_to_datalake(output_path, models, exclude, env)
