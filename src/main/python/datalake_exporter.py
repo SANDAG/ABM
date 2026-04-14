@@ -145,7 +145,7 @@ def create_model_metadata_df(model, model_metadata):
 
 
 def export_table(
-    table: DataFrame,
+    table: pd.DataFrame,
     name: str,
     model: str = "",
     database: str = "",
@@ -185,7 +185,7 @@ def write_manifest(
     # manifest["status"] = "failure" if manifest["errors"] else "success"
 
     lake_file_name = "/".join(
-        [release_version, parent_dir_name, "upload_manifest.json"]
+        [release_version, parent_dir_name, f"upload_{parent_dir_name}.json"]
     )
     manifest["timing"]["manifest_uploaded_at"] = datetime.datetime.now().isoformat()
     container.upload_blob(
