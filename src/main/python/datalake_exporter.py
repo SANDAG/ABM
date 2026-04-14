@@ -185,7 +185,7 @@ def write_manifest(
     # manifest["status"] = "failure" if manifest["errors"] else "success"
 
     lake_file_name = "/".join(
-        [release_version, parent_dir_name, f"upload_{parent_dir_name}.json"]
+        ["_manifest", release_version, f"upload_{parent_dir_name}.json"]
     )
     manifest["timing"]["manifest_uploaded_at"] = datetime.datetime.now().isoformat()
     container.upload_blob(
