@@ -43,6 +43,11 @@ def connect_to_Azure(env):
         return False, None
 
 
+def build_blob_path(*parts):
+    """Build Azure blob path using forward slashes, filtering out empty strings."""
+    return "/".join(filter(None, parts))
+
+
 def get_scenario_metadata(output_path):
     """
     get scenario's guid (globally unique identifier) and other metadata
@@ -114,7 +119,7 @@ def create_scenario_df(ts, EMME_metadata, parent_dir_name, output_path):
         "scenario_id": [EMME_metadata["scenario_id"]],
         "scenario_guid": [EMME_metadata["scenario_guid"]],
         "main_directory": [EMME_metadata["main_directory"]],
-        "datalake_path": ["/".join(["bronze/abm3dev", database, parent_dir_name])],
+        "datalake_path": [build_blob_path("bronze/abm3dev", database, parent_dir_name)],
         "select_link": [EMME_metadata["select_link"]],
         "sample_rate": [EMME_metadata["sample_rate"]],
         "network_path": [EMME_metadata["network_path"]],
@@ -153,10 +158,12 @@ def export_table(
     container: ContainerClient = None,
 ):
     model_output_file = name + ".parquet"
+
+    base_blob_path = build_blob_path(database, parent_dir_name)
     if model == "":
-        lake_file_name = "/".join([database, parent_dir_name, model_output_file])
+        lake_file_name = build_blob_path(base_blob_path, model_output_file)
     else:
-        lake_file_name = "/".join([database, parent_dir_name, model, model_output_file])
+        lake_file_name = build_blob_path(base_blob_path, model, model_output_file)
 
     parquet_file = BytesIO()
     table.to_parquet(parquet_file, engine="pyarrow")
