@@ -59,7 +59,6 @@ CONSTANTS:
   parkLocation3Mgra: {airport-san-accessOptions-park-loc3-mgra:}
   parkLocation4Mgra: {airport-san-accessOptions-park-loc4-mgra:}
   parkLocation5Mgra: {airport-san-accessOptions-park-loc5-mgra:}
-  parkEscortLocationMgra: {airport-san-accessOptions-parkEscort-mgra:}
   rentalLocationMgra: {airport-san-accessOptions-rental-mgra:}
   centralMobilityHubMgra: {airport-san-centralMobilityHubMGRA:}
   ridehailLocation1Mgra: {airport-san-accessOptions-ridehail-loc1-mgra:}
@@ -98,11 +97,6 @@ CONSTANTS:
   parkLocation5InVehicleTime: {airport-san-accessOptions-park-loc5-inVehicleTime:}
   parkLocation5WalkTime: {airport-san-accessOptions-park-loc5-walkTime:}
   parkLocation5WaitTime: {airport-san-accessOptions-park-loc5-waitTime:}
-  parkEscortAccessCost: {airport-san-accessOptions-parkEscort-accessCost:}
-  parkEscortCostHour: {airport-san-accessOptions-parkEscort-hourlyCost:}
-  parkEscortInVehicleTime: {airport-san-accessOptions-parkEscort-inVehicleTime:}
-  parkEscortWalkTime: {airport-san-accessOptions-parkEscort-walkTime:}
-  parkEscortWaitTime: {airport-san-accessOptions-parkEscort-waitTime:}
   rentalCarAccessCost: {airport-san-accessOptions-rental-accessCost:}
   rentalCostPerDay: {airport-san-accessOptions-rental-dailyCost:}
   rentalCarInVehicleTime: {airport-san-accessOptions-rental-inVehicleTime:}
