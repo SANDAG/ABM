@@ -280,19 +280,12 @@ airport:
           walkTime: 2.00
           waitTime: 3.00
         loc5:
-          mgra: 1306
-          accessCost: 0.00
-          dailyCost: 25.62
-          inVehicleTime: 6.00
-          walkTime: 2.00
-          waitTime: 3.00
-      parkEscort:
-        mgra: *sanTerminalMGRA
-        accessCost: 0.00
-        hourlyCost: 7.32
-        inVehicleTime: 0.00
-        walkTime: 5.00
-        waitTime: 0.00
+          mgra: -999
+          accessCost: 0
+          dailyCost: 0
+          inVehicleTime: -999
+          walkTime: -999
+          waitTime: -999
       rental:
         mgra: 11244
         accessCost: 0.00
