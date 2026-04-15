@@ -194,7 +194,9 @@ def write_manifest(
     lake_file_name = "/".join(
         ["_manifest", release_version, f"upload_{parent_dir_name}.json"]
     )
-    manifest["timing"]["manifest_uploaded_at"] = datetime.datetime.now().isoformat()
+    manifest["timing"]["manifest_uploaded_at"] = datetime.datetime.now(
+        datetime.timezone(datetime.timedelta(hours=-8))
+    ).isoformat()
     container.upload_blob(
         name=lake_file_name, data=json.dumps(manifest, indent=2).encode("utf-8")
     )
@@ -213,7 +215,9 @@ def write_to_datalake(output_path, models, exclude, env):
         "base_path": None,
         "environment": env,
         "timing": {
-            "load_start_at": datetime.datetime.now().isoformat(),
+            "load_start_at": datetime.datetime.now(
+                datetime.timezone(datetime.timedelta(hours=-8))
+            ).isoformat(),
             "load_end_at": None,
             "manifest_uploaded_at": None,
         },
@@ -407,7 +411,9 @@ def write_to_datalake(output_path, models, exclude, env):
             pass
 
     # Update manifest timestamp for completion of upload process
-    manifest["timing"]["load_end_at"] = datetime.datetime.now().isoformat()
+    manifest["timing"]["load_end_at"] = datetime.datetime.now(
+        datetime.timezone(datetime.timedelta(hours=-8))
+    ).isoformat()
 
     write_manifest(release_version, parent_dir_name, container, manifest)
 
