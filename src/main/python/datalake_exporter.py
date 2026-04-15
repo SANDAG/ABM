@@ -198,7 +198,7 @@ def write_manifest(
     container.upload_blob(
         name=lake_file_name, data=json.dumps(manifest, indent=2).encode("utf-8")
     )
-    print(f"Manifest written to {lake_file_name} with status: {manifest['status']}")
+    # print(f"Manifest written to {lake_file_name} with status: {manifest['status']}")
 
 
 def write_to_datalake(output_path, models, exclude, env):
