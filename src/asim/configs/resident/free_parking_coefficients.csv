@@ -1,4 +1,5 @@
 coefficient_name,value,constrain
+coef_airport_zones,2.2,F
 coef_asc_san_francisco,-2.6403,F
 coef_asc_santa_clara,0.2118,F
 coef_asc_alameda,-0.1092,F
