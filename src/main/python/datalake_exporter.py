@@ -161,9 +161,9 @@ def export_table(
 
     base_blob_path = build_blob_path(database, parent_dir_name)
     if model == "":
-        lake_file_name = build_blob_path(base_blob_path, model_output_file)
+        lake_file_name = "/".join([database, parent_dir_name, model_output_file])
     else:
-        lake_file_name = build_blob_path(base_blob_path, model, model_output_file)
+        lake_file_name = "/".join([database, parent_dir_name, model, model_output_file])
 
     parquet_file = BytesIO()
     table.to_parquet(parquet_file, engine="pyarrow")
