@@ -239,9 +239,9 @@ airport:
       airport_north:
         mgras: [11244]
         multiplierByYear:
-          "2022": 2.5
-          "2035": 2.5
-          "2050": 2.5
+          "2022": 1.8
+          "2035": 1.8
+          "2050": 1.8
       airport_south:
         mgras: [11248, 11249]
         multiplierByYear:
