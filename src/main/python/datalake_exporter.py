@@ -242,7 +242,7 @@ def write_to_datalake(output_path, models, exclude, env):
     EMME_metadata = get_scenario_metadata(output_path)
 
     version_match = re.search(r"version_(\d+_\d+)_\d+", EMME_metadata["release_path"])
-    release_version = version_match.group(1) + "_0" if version_match else "misc"
+    release_version = f"abm_{version_match.group(1)}_0" if version_match else "misc"
 
     if "scenario_id" not in EMME_metadata:
         print("No scenario id found in metadata file", file=sys.stderr)
