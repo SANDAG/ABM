@@ -266,7 +266,7 @@ def write_to_datalake(output_path, models, exclude, env):
 
     # Add uuid to batch to identify each batch
     manifest["batch_id"] = EMME_metadata["scenario_guid"]
-    # Extract version number and normalize to major release (e.g., "15_3_0" or "15_4_0")
+    # Extract version number and normalize to major release (e.g., "abm_15_3_0" or "abm_15_4_0")
 
     manifest["base_path"] = "/".join([release_version, parent_dir_name])
 
