@@ -218,6 +218,8 @@ def write_to_datalake(output_path, models, exclude, env):
     cloud_bool, container = connect_to_Azure(env)
     if not cloud_bool:
         return
+    
+    root_directory = check_root(container)
 
         # --- initialize manifest ---
     manifest = {
@@ -340,7 +342,6 @@ def write_to_datalake(output_path, models, exclude, env):
                         lake_file_name = build_blob_path(root_directory, release_version, parent_dir_name, model, name + ext)
                     container.upload_blob(name=lake_file_name, data=data)
 
-    root_directory = check_root(container)
 
     report_path = os.path.join(os.path.split(output_path)[0], "report")
 
