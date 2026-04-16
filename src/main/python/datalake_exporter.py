@@ -148,6 +148,15 @@ def create_model_metadata_df(model, model_metadata):
 
     return meta_df
 
+def check_root(container):
+    url = container.url
+    path = url.split('.net/')[-1].split('?')[0]
+    parts = path.split('/')
+    # If URL is bronze/abm3, abm3 prefix will need to be added
+    needs_prefix = len(parts) == 1
+    
+    base_prefix = "abm3" if needs_prefix else ""
+    return base_prefix
 
 def export_table(
     table: pd.DataFrame,
@@ -159,11 +168,13 @@ def export_table(
 ):
     model_output_file = name + ".parquet"
 
-    base_blob_path = build_blob_path(database, parent_dir_name)
+    root_directory = check_root(container)
+
+    base_blob_path = build_blob_path(root_directory, database, parent_dir_name)
     if model == "":
-        lake_file_name = "/".join([database, parent_dir_name, model_output_file])
+        lake_file_name = "/".join([base_blob_path, model_output_file])
     else:
-        lake_file_name = "/".join([database, parent_dir_name, model, model_output_file])
+        lake_file_name = "/".join([base_blob_path, model, model_output_file])
 
     parquet_file = BytesIO()
     table.to_parquet(parquet_file, engine="pyarrow")
@@ -190,10 +201,10 @@ def write_manifest(
     """
 
     # manifest["status"] = "failure" if manifest["errors"] else "success"
+    # Root directory will either be empty or abm3 depending on whether it is included in the SAS token - check and adjust blob path accordingly
+    root_directory = check_root(container)
 
-    lake_file_name = "/".join(
-        ["_manifest", release_version, f"upload_{parent_dir_name}.json"]
-    )
+    lake_file_name = build_blob_path(root_directory, "_manifest", release_version, f"upload_{parent_dir_name}.json")
     manifest["timing"]["manifest_uploaded_at"] = datetime.datetime.now(
         datetime.timezone(datetime.timedelta(hours=-8))
     ).isoformat()
@@ -324,14 +335,12 @@ def write_to_datalake(output_path, models, exclude, env):
             else:
                 with open(file, "rb") as data:
                     if model == "":
-                        lake_file_name = "/".join(
-                            [release_version, parent_dir_name, name + ext]
-                        )
+                        lake_file_name = build_blob_path(root_directory, release_version, parent_dir_name, name + ext)
                     else:
-                        lake_file_name = "/".join(
-                            [release_version, parent_dir_name, model, name + ext]
-                        )
+                        lake_file_name = build_blob_path(root_directory, release_version, parent_dir_name, model, name + ext)
                     container.upload_blob(name=lake_file_name, data=data)
+
+    root_directory = check_root(container)
 
     report_path = os.path.join(os.path.split(output_path)[0], "report")
 
@@ -348,9 +357,7 @@ def write_to_datalake(output_path, models, exclude, env):
     for file in other_files:
         try:
             with open(file, "rb") as data:
-                lake_file_name = "/".join(
-                    [release_version, parent_dir_name, os.path.basename(file)]
-                )
+                lake_file_name = build_blob_path(root_directory, release_version, parent_dir_name, os.path.basename(file))
                 container.upload_blob(name=lake_file_name, data=data)
         except (FileNotFoundError, KeyError):
             print(("%s not found" % file), file=sys.stderr)
@@ -397,14 +404,7 @@ def write_to_datalake(output_path, models, exclude, env):
     for file in validation_files:
         try:
             with open(file, "rb") as data:
-                lake_file_name = "/".join(
-                    [
-                        release_version,
-                        parent_dir_name,
-                        "validation",
-                        os.path.basename(file),
-                    ]
-                )
+                lake_file_name = build_blob_path(root_directory, release_version, parent_dir_name, "validation", os.path.basename(file))
                 container.upload_blob(name=lake_file_name, data=data)
         except (FileNotFoundError, KeyError):
             print(("%s not found" % file), file=sys.stderr)
