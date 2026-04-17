@@ -164,7 +164,7 @@ def export_table(
     table: pd.DataFrame,
     name: str,
     model: str = "",
-    database: str = "",
+    abm_release_version: str = "",
     parent_dir_name: str = "",
     container: ContainerClient = None,
 ):
@@ -172,7 +172,9 @@ def export_table(
 
     root_directory = check_root(container)
 
-    base_blob_path = build_blob_path(root_directory, database, parent_dir_name)
+    base_blob_path = build_blob_path(
+        root_directory, abm_release_version, parent_dir_name
+    )
     if model == "":
         lake_file_name = "/".join([base_blob_path, model_output_file])
     else:
