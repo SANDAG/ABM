@@ -55,6 +55,12 @@ def get_scenario_metadata(output_path):
     datalake_metadata_path = os.path.join(output_path, "datalake_metadata.yaml")
     with open(datalake_metadata_path, "r") as stream:
         metadata = yaml.safe_load(stream)
+    metadata["release_version"] = (
+        f"abm_{re.search(r'version_(\d+_\d+)_\d+', metadata['release_path']).group(1)}_0"
+        if "release_path" in metadata
+        else "misc"
+    )
+
     return metadata
 
 
@@ -119,7 +125,11 @@ def create_scenario_df(ts, EMME_metadata, parent_dir_name, output_path):
         "scenario_id": [EMME_metadata["scenario_id"]],
         "scenario_guid": [EMME_metadata["scenario_guid"]],
         "main_directory": [EMME_metadata["main_directory"]],
-        "datalake_path": [build_blob_path("bronze/abm3dev", database, parent_dir_name)],
+        "datalake_path": [
+            build_blob_path(
+                "bronze/abm3", EMME_metadata["release_version"], parent_dir_name
+            )
+        ],
         "select_link": [EMME_metadata["select_link"]],
         "sample_rate": [EMME_metadata["sample_rate"]],
         "network_path": [EMME_metadata["network_path"]],
@@ -263,9 +273,7 @@ def write_to_datalake(output_path, models, exclude, env):
 
     now = datetime.datetime.now()
     EMME_metadata = get_scenario_metadata(output_path)
-
-    version_match = re.search(r"version_(\d+_\d+)_\d+", EMME_metadata["release_path"])
-    release_version = f"abm_{version_match.group(1)}_0" if version_match else "misc"
+    release_version = EMME_metadata["release_version"]
 
     if "scenario_id" not in EMME_metadata:
         print("No scenario id found in metadata file", file=sys.stderr)
@@ -456,5 +464,5 @@ models = [
     ("report", "..", False),
 ]
 exclude = ["final_pipeline.h5", "final_pipeline"]
-database = "abm_15_3_0"  # Will need to move release version outside, retain database for now to avoid refactor of blob paths in datalake
+# database = "abm_15_3_0"  # Will need to move release version outside, retain database for now to avoid refactor of blob paths in datalake
 write_to_datalake(output_path, models, exclude, env)
