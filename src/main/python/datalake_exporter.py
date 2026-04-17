@@ -153,7 +153,7 @@ def check_root(container):
     url = container.url
     path = url.split(".net/")[-1].split("?")[0]
     parts = path.split("/")
-    # If URL is bronze/abm3, abm3 prefix will need to be added
+    # If URL is just bronze, abm3 prefix will need to be added
     needs_prefix = len(parts) == 1
 
     base_prefix = "abm3" if needs_prefix else ""
