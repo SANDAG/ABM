@@ -331,9 +331,9 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             folder_name = os.path.basename(main_directory)
             if not os.path.exists(_join(self.LOCAL_ROOT, username, folder_name, "report")): # check free space only if it is a new run
                 self.check_free_space(minSpaceOnC)
-            # if initialization copy ALL files from remote
+            # if initialization (both MGRA Skims and 4Ds are run) copy ALL files from remote
             # else check file meta data and copy those that have changed
-            initialize = (skipInitialization == False and startFromIteration == 1)
+            initialize = (skipMGRASkims == False and skip4Ds == False and startFromIteration == 1)
             local_directory = file_manager(
                 "DOWNLOAD", main_directory, username, scenario_id, initialize=initialize)
             self._path = local_directory
