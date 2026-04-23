@@ -55,11 +55,14 @@ def get_scenario_metadata(output_path):
     datalake_metadata_path = os.path.join(output_path, "datalake_metadata.yaml")
     with open(datalake_metadata_path, "r") as stream:
         metadata = yaml.safe_load(stream)
-    metadata["release_version"] = (
-        f"abm_{re.search(r'version_(\d+_\d+)_\d+', metadata['release_path']).group(1)}_0"
-        if "release_path" in metadata
-        else "misc"
-    )
+    if "release_path" in metadata:
+        version_match = re.search(r"version_(\d+_\d+)_\d+", metadata["release_path"])
+        if version_match:
+            metadata["release_version"] = f"abm_{version_match.group(1)}_0"
+        else:
+            metadata["release_version"] = "misc"
+    else:
+        metadata["release_version"] = "misc"
 
     return metadata
 
