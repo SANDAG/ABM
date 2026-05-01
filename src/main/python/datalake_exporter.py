@@ -1,15 +1,16 @@
-import sys
 import datetime
-import os
-import socket
-import yaml
 import glob
+import json
+import os
+import re
+import socket
+import sys
+from io import BytesIO
 
 import pandas as pd
-
+import yaml
 from azure.storage.blob import ContainerClient
-from azure.core.exceptions import ServiceRequestError
-from io import BytesIO
+
 
 def connect_to_Azure(env):
     """
@@ -29,15 +30,23 @@ def connect_to_Azure(env):
         print("datalake exporter connected to Azure container")
         return True, container
     except KeyError as e:
-        error_statement = f"{e}: datalake exporter could not find SAS_Token in environment\n"
+        error_statement = (
+            f"{e}: datalake exporter could not find SAS_Token in environment\n"
+        )
         print(error_statement, "\n", file=sys.stderr)
         return False, None
     except Exception as e:
         error_statement = f"""
             {e}: datalake exporter had issue connecting to Azure container using SAS_Token in environment,
             token likely malconfigured"""
-        print(error_statement,"\n", file=sys.stderr)
+        print(error_statement, "\n", file=sys.stderr)
         return False, None
+
+
+def build_blob_path(*parts):
+    """Build Azure blob path using forward slashes, filtering out empty strings."""
+    return "/".join(filter(None, parts))
+
 
 def get_scenario_metadata(output_path):
     """
@@ -46,7 +55,17 @@ def get_scenario_metadata(output_path):
     datalake_metadata_path = os.path.join(output_path, "datalake_metadata.yaml")
     with open(datalake_metadata_path, "r") as stream:
         metadata = yaml.safe_load(stream)
+    if "release_path" in metadata:
+        version_match = re.search(r"version_(\d+_\d+)_\d+", metadata["release_path"])
+        if version_match:
+            metadata["release_version"] = f"abm_{version_match.group(1)}_0"
+        else:
+            metadata["release_version"] = "misc"
+    else:
+        metadata["release_version"] = "misc"
+
     return metadata
+
 
 def get_model_metadata(model, output_path):
     metadata = {
@@ -55,7 +74,7 @@ def get_model_metadata(model, output_path):
         "abm_branch_name": "",
         "abm_commit_hash": "",
         "constants": {},
-        "prefix": "final_"
+        "prefix": "final_",
     }
     model_metadata_path = os.path.join(output_path, model, "model_metadata.yaml")
     try:
@@ -65,6 +84,7 @@ def get_model_metadata(model, output_path):
     except FileNotFoundError:
         pass
     return metadata
+
 
 def create_scenario_df(ts, EMME_metadata, parent_dir_name, output_path):
     """
@@ -90,16 +110,13 @@ def create_scenario_df(ts, EMME_metadata, parent_dir_name, output_path):
     machine_name = socket.gethostname()
 
     # repo branch name and commit hash: abm3
-    abm_git_path = os.path.abspath(os.path.join(output_path, '..', 'git_info.yaml'))
+    abm_git_path = os.path.abspath(os.path.join(output_path, "..", "git_info.yaml"))
     if os.path.isfile(abm_git_path):
         with open(abm_git_path, "r") as stream:
             abm_git_info = yaml.safe_load(stream)
             abm_git_info["commit"] = abm_git_info["commit"][:7]
     else:
-        abm_git_info = {
-            "branch": "",
-            "commit": ""
-        }
+        abm_git_info = {"branch": "", "commit": ""}
 
     metadata = {
         "scenario_name": [EMME_metadata["scenario_title"]],
@@ -110,13 +127,17 @@ def create_scenario_df(ts, EMME_metadata, parent_dir_name, output_path):
         "abm_commit_hash": [abm_git_info["commit"]],
         "scenario_id": [EMME_metadata["scenario_id"]],
         "scenario_guid": [EMME_metadata["scenario_guid"]],
-        "main_directory" : [EMME_metadata["main_directory"]],
-        "datalake_path" : ["/".join(["bronze/abm3dev",database,parent_dir_name])],
-        "select_link" : [EMME_metadata["select_link"]],
-        "sample_rate" : [EMME_metadata["sample_rate"]],
-        "network_path" : [EMME_metadata["network_path"]],
-        "landuse_path" : [EMME_metadata["landuse_path"]],
-        "release_path" : [EMME_metadata["release_path"]]
+        "main_directory": [EMME_metadata["main_directory"]],
+        "datalake_path": [
+            build_blob_path(
+                "bronze/abm3", EMME_metadata["release_version"], parent_dir_name
+            )
+        ],
+        "select_link": [EMME_metadata["select_link"]],
+        "sample_rate": [EMME_metadata["sample_rate"]],
+        "network_path": [EMME_metadata["network_path"]],
+        "landuse_path": [EMME_metadata["landuse_path"]],
+        "release_path": [EMME_metadata["release_path"]],
     }
 
     meta_df = pd.DataFrame(metadata)
@@ -126,25 +147,51 @@ def create_scenario_df(ts, EMME_metadata, parent_dir_name, output_path):
 
     return meta_df
 
+
 def create_model_metadata_df(model, model_metadata):
     metadata = {
         "model": [model],
         "asim_branch_name": [model_metadata["asim_branch_name"]],
         "asim_commit_hash": [model_metadata["asim_commit_hash"]],
         "abm_branch_name": [model_metadata["abm_branch_name"]],
-        "abm_commit_hash": [model_metadata["abm_commit_hash"]]
+        "abm_commit_hash": [model_metadata["abm_commit_hash"]],
     }
 
     meta_df = pd.DataFrame(metadata)
 
     return meta_df
 
-def export_table(table, name, model, parent_dir_name, container):
-    model_output_file = name+".parquet"
-    if model == '':
-        lake_file_name = "/".join([database,parent_dir_name,model_output_file])
+
+def check_root(container):
+    url = container.url
+    path = url.split(".net/")[-1].split("?")[0]
+    parts = path.split("/")
+    # If URL is just bronze, abm3 prefix will need to be added
+    needs_prefix = len(parts) == 1
+
+    base_prefix = "abm3" if needs_prefix else ""
+    return base_prefix
+
+
+def export_table(
+    table: pd.DataFrame,
+    name: str,
+    model: str = "",
+    abm_release_version: str = "",
+    parent_dir_name: str = "",
+    container: ContainerClient = None,
+):
+    model_output_file = name + ".parquet"
+
+    root_directory = check_root(container)
+
+    base_blob_path = build_blob_path(
+        root_directory, abm_release_version, parent_dir_name
+    )
+    if model == "":
+        lake_file_name = "/".join([base_blob_path, model_output_file])
     else:
-        lake_file_name = "/".join([database,parent_dir_name,model,model_output_file])
+        lake_file_name = "/".join([base_blob_path, model, model_output_file])
 
     parquet_file = BytesIO()
     table.to_parquet(parquet_file, engine="pyarrow")
@@ -154,13 +201,65 @@ def export_table(table, name, model, parent_dir_name, container):
 
     t0 = datetime.datetime.now()
     container.upload_blob(name=lake_file_name, data=parquet_file)
-    print("Write to Data Lake: %s/%s took %s to write to Azure" % (model, name, str(datetime.datetime.now()-t0)))
+    print(
+        "Write to Data Lake: %s/%s took %s to write to Azure"
+        % (model, name, str(datetime.datetime.now() - t0))
+    )
+
+
+def write_manifest(
+    release_version: str,
+    parent_dir_name: str,
+    container: ContainerClient,
+    manifest: dict,
+):
+    """
+    Write a JSON manifest file summarizing the upload run to the datalake.
+    """
+
+    # manifest["status"] = "failure" if manifest["errors"] else "success"
+    # Root directory will either be empty or abm3 depending on whether it is included in the SAS token - check and adjust blob path accordingly
+    root_directory = check_root(container)
+
+    lake_file_name = build_blob_path(
+        root_directory, "_manifest", release_version, f"upload_{parent_dir_name}.json"
+    )
+    manifest["timing"]["manifest_uploaded_at"] = datetime.datetime.now(
+        datetime.timezone(datetime.timedelta(hours=-8))
+    ).isoformat()
+    container.upload_blob(
+        name=lake_file_name, data=json.dumps(manifest, indent=2).encode("utf-8")
+    )
+    # print(f"Manifest written to {lake_file_name} with status: {manifest['status']}")
+
 
 def write_to_datalake(output_path, models, exclude, env):
     cloud_bool, container = connect_to_Azure(env)
     if not cloud_bool:
         return
 
+    root_directory = check_root(container)
+
+    # --- initialize manifest ---
+    manifest = {
+        # Initialize with empty values, to be filled in throughout the upload process
+        "batch_id": None,
+        "base_path": None,
+        "environment": env,
+        "timing": {
+            "load_start_at": datetime.datetime.now(
+                datetime.timezone(datetime.timedelta(hours=-8))
+            ).isoformat(),
+            "load_end_at": None,
+            "manifest_uploaded_at": None,
+        },
+        # TODO: Consider adding file summary in future
+        # "file_summary": {
+        #     "success_count": 0,
+        #     "expected"
+        # }
+    }
+
     for model, relpath, is_asim in models:
         if is_asim:
             model_metadata = get_model_metadata(model, output_path)
@@ -171,29 +270,58 @@ def write_to_datalake(output_path, models, exclude, env):
             prefix = "final_"
         else:
             prefix = ""
-        files = glob.glob(os.path.join(output_path, relpath, model, prefix + '*'))
+        files = glob.glob(os.path.join(output_path, relpath, model, prefix + "*"))
         if not files:
             print(("%s has no output files" % model), file=sys.stderr)
 
-
     now = datetime.datetime.now()
     EMME_metadata = get_scenario_metadata(output_path)
+    release_version = EMME_metadata["release_version"]
+
     if "scenario_id" not in EMME_metadata:
         print("No scenario id found in metadata file", file=sys.stderr)
         return
-    parent_dir_name = str(EMME_metadata["scenario_title"]) + "__" + str(EMME_metadata["username"]) + "__" + str(EMME_metadata["scenario_id"])
+    parent_dir_name = (
+        str(EMME_metadata["scenario_title"])
+        + "__"
+        + str(EMME_metadata["username"])
+        + "__"
+        + str(EMME_metadata["scenario_id"])
+    )
 
     scenario_df = create_scenario_df(now, EMME_metadata, parent_dir_name, output_path)
-    export_table(scenario_df, 'scenario', '', parent_dir_name, container)
+    export_table(
+        scenario_df, "scenario", "", release_version, parent_dir_name, container
+    )
+
+    # Add uuid to batch to identify each batch
+    manifest["batch_id"] = EMME_metadata["scenario_guid"]
+    # Extract version number and normalize to major release (e.g., "abm_15_3_0" or "abm_15_4_0")
+
+    manifest["base_path"] = "/".join([release_version, parent_dir_name])
 
     for model, relpath, is_asim in models:
         if is_asim:
             model_metadata = get_model_metadata(model, output_path)
             prefix = model_metadata["prefix"]
             model_metadata_df = create_model_metadata_df(model, model_metadata)
-            export_table(model_metadata_df, 'model_metadata', model, parent_dir_name, container)
-            constants_df = pd.json_normalize(model_metadata["constants"], sep='__')
-            export_table(constants_df, 'constants', model, parent_dir_name, container)
+            export_table(
+                model_metadata_df,
+                "model_metadata",
+                model,
+                release_version,
+                parent_dir_name,
+                container,
+            )
+            constants_df = pd.json_normalize(model_metadata["constants"], sep="__")
+            export_table(
+                constants_df,
+                "constants",
+                model,
+                release_version,
+                parent_dir_name,
+                container,
+            )
         elif model == "CVM":
             prefix = "final_"
         elif model == "HTM":
@@ -201,86 +329,143 @@ def write_to_datalake(output_path, models, exclude, env):
         else:
             prefix = ""
 
-        files = glob.glob(os.path.join(output_path, relpath, model, prefix + '*'))
+        files = glob.glob(os.path.join(output_path, relpath, model, prefix + "*"))
         for file in files:
             if os.path.basename(file) in exclude:
                 continue
             name, ext = os.path.splitext(os.path.basename(file))
-            if prefix != '':
+            if prefix != "":
                 name = name.split(prefix)[1]
 
-            if ext == '.csv':
+            if ext == ".csv":
                 table = pd.read_csv(file, low_memory=False)
 
                 table["scenario_ts"] = pd.to_datetime(now)
                 table["scenario_id"] = EMME_metadata["scenario_id"]
                 if is_asim or model == "CVM" or model == "HTM":
                     table["model"] = model
-                table.replace("", None, inplace=True) # replace empty strings with None - otherwise conversation error for boolean types
+                table.replace(
+                    "", None, inplace=True
+                )  # replace empty strings with None - otherwise conversion error for boolean types
 
-                export_table(table, name, model, parent_dir_name, container)
+                export_table(
+                    table, name, model, release_version, parent_dir_name, container
+                )
             else:
                 with open(file, "rb") as data:
-                    if model == '':
-                        lake_file_name = "/".join([database,parent_dir_name,name+ext])
+                    if model == "":
+                        lake_file_name = build_blob_path(
+                            root_directory, release_version, parent_dir_name, name + ext
+                        )
                     else:
-                        lake_file_name = "/".join([database,parent_dir_name,model,name+ext])
+                        lake_file_name = build_blob_path(
+                            root_directory,
+                            release_version,
+                            parent_dir_name,
+                            model,
+                            name + ext,
+                        )
                     container.upload_blob(name=lake_file_name, data=data)
 
-    report_path = os.path.join(os.path.split(output_path)[0], 'report')
+    report_path = os.path.join(os.path.split(output_path)[0], "report")
 
     other_files = [
         EMME_metadata["properties_path"],
-        os.path.join(output_path, 'skims', 'traffic_skims_MD.omx'),
-        os.path.abspath(os.path.join(output_path, '..', 'input', 'zone_term.csv')),
-        os.path.abspath(os.path.join(output_path, '..', 'input', 'trlink.csv')),
-        os.path.join(output_path, 'bikeMgraLogsum.csv'),
-        os.path.join(report_path, 'walkMgrasWithin45Min_AM.csv'),
-        os.path.join(report_path, 'walkMgrasWithin45Min_MD.csv')
+        os.path.join(output_path, "skims", "traffic_skims_MD.omx"),
+        os.path.abspath(os.path.join(output_path, "..", "input", "zone_term.csv")),
+        os.path.abspath(os.path.join(output_path, "..", "input", "trlink.csv")),
+        os.path.join(output_path, "bikeMgraLogsum.csv"),
+        os.path.join(report_path, "walkMgrasWithin45Min_AM.csv"),
+        os.path.join(report_path, "walkMgrasWithin45Min_MD.csv"),
     ]
 
     for file in other_files:
         try:
             with open(file, "rb") as data:
-                lake_file_name = "/".join([database,parent_dir_name,os.path.basename(file)])
+                lake_file_name = build_blob_path(
+                    root_directory,
+                    release_version,
+                    parent_dir_name,
+                    os.path.basename(file),
+                )
                 container.upload_blob(name=lake_file_name, data=data)
         except (FileNotFoundError, KeyError):
             print(("%s not found" % file), file=sys.stderr)
             pass
-
-    #upload validation files to datalake validation folder
+    # upload validation files to datalake validation folder
     validation_files = [
-        os.path.join(output_path, '..','analysis','validation','vis_worksheet - allclass_worksheet.csv'),
-        os.path.join(output_path, '..','analysis','validation','vis_worksheet - board_worksheet.csv'),
-        os.path.join(output_path, '..','analysis','validation','vis_worksheet - fwy_worksheet.csv'),
-        os.path.join(output_path, '..','analysis','validation','vis_worksheet - truck_worksheet.csv'),
-        os.path.join(output_path, '..','analysis','validation','vis_worksheet - regional_vmt.csv')
+        os.path.join(
+            output_path,
+            "..",
+            "analysis",
+            "validation",
+            "vis_worksheet - allclass_worksheet.csv",
+        ),
+        os.path.join(
+            output_path,
+            "..",
+            "analysis",
+            "validation",
+            "vis_worksheet - board_worksheet.csv",
+        ),
+        os.path.join(
+            output_path,
+            "..",
+            "analysis",
+            "validation",
+            "vis_worksheet - fwy_worksheet.csv",
+        ),
+        os.path.join(
+            output_path,
+            "..",
+            "analysis",
+            "validation",
+            "vis_worksheet - truck_worksheet.csv",
+        ),
+        os.path.join(
+            output_path,
+            "..",
+            "analysis",
+            "validation",
+            "vis_worksheet - regional_vmt.csv",
+        ),
     ]
 
     for file in validation_files:
         try:
             with open(file, "rb") as data:
-                lake_file_name = "/".join([database,parent_dir_name,'validation',os.path.basename(file)])
+                lake_file_name = build_blob_path(
+                    root_directory,
+                    release_version,
+                    parent_dir_name,
+                    "validation",
+                    os.path.basename(file),
+                )
                 container.upload_blob(name=lake_file_name, data=data)
         except (FileNotFoundError, KeyError):
             print(("%s not found" % file), file=sys.stderr)
             pass
-            
+
+    # Update manifest timestamp for completion of upload process
+    manifest["timing"]["load_end_at"] = datetime.datetime.now(
+        datetime.timezone(datetime.timedelta(hours=-8))
+    ).isoformat()
+
+    write_manifest(release_version, parent_dir_name, container, manifest)
+
+
 output_path = sys.argv[1]
 env = sys.argv[2]
 models = [
-    ('resident', '', True),
-    ('airport.CBX', '', True),
-    ('airport.SAN', '', True),
-    ('crossborder', '', True),
-    ('visitor', '', True),
-    ('CVM', '', False),
-    ('HTM', '', False),
-    ('report', '..', False)
+    ("resident", "", True),
+    ("airport.CBX", "", True),
+    ("airport.SAN", "", True),
+    ("crossborder", "", True),
+    ("visitor", "", True),
+    ("CVM", "", False),
+    ("HTM", "", False),
+    ("report", "..", False),
 ]
-exclude = [
-    'final_pipeline.h5',
-    'final_pipeline'
-]
-database = 'abm_15_3_0'
+exclude = ["final_pipeline.h5", "final_pipeline"]
+# database = "abm_15_3_0"  # Will need to move release version outside, retain database for now to avoid refactor of blob paths in datalake
 write_to_datalake(output_path, models, exclude, env)
