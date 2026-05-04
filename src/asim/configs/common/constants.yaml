@@ -89,6 +89,9 @@ autoParkingCostFactorAV: {policy-AV-autoParkingCostFactor:}
 autoCostPerMileFactorAV: {policy-AV-autoCostPerMileFactor:}
 autoTerminalTimeFactorAV: {policy-AV-autoTerminalTimeFactor:}
 minAgeDriveAloneAV: {policy-AV-minAgeDriveAlone:}
+AV_maxDuration: 1.5 # max duration for keeping car close (hrs)
+AV_maxBenefit: 60 # max benefit for keeping car close (mins)
+RemoteParkingCostPerHour: 3  #dollar
 
 
 #valueOfTime: 8.00
@@ -278,3 +281,9 @@ SanYsidro_maz_id: {MGRAsOfInterest-portsOfEntry-sanYsidro:}
 OtayMesa_maz_id: {MGRAsOfInterest-portsOfEntry-otayMesa:}
 Tecate_maz_id: {MGRAsOfInterest-portsOfEntry-tecate:}
 OtayMesaEast_maz_id: {MGRAsOfInterest-portsOfEntry-otayMesaEast:}
+
+# -- AV routing settings --
+# Maximum benefit for keeping car close (min)
+AV_maxBenefit: 60
+# Maximum duration for keeping car close (hrs),
+AV_maxDuration: 1.5
