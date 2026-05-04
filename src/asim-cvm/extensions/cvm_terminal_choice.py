@@ -469,7 +469,7 @@ def route_endpoint(
             eligibility_term
         ]
 
-        maz_choices = choose_MAZ_for_TAZ(state, taz_sample, MAZ_size_terms, trace_label)
+        maz_choices = choose_MAZ_for_TAZ(state, taz_sample, MAZ_size_terms, model_settings, trace_label)
 
         assert DEST_MAZ in maz_choices
         maz_choices = maz_choices.rename(columns={DEST_MAZ: alt_dest_col_name})
