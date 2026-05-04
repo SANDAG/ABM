@@ -66,4 +66,4 @@ xmle
 wring
 zarr>=2,<3
 zstandard
-activitysim==1.4.0
+activitysim==1.5.1
