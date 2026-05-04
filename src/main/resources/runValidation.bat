@@ -12,7 +12,7 @@ if not exist %VALIDATION_DIRECTORY% mkdir %VALIDATION_DIRECTORY%
 rem CREATE VIS WORKSHEET FOR POWER BI VISUALIZATIONS
 
 rem ### Use ABM3 uv env (for both tcov and tned)
-CALL %activate_uv_asim%
+CALL %activate_uv_asim_151%
 
 rem ### Running validation pipeline for input scenario
 python python\validation.py %PROJECT_DRIVE%%PROJECT_DIRECTORY% %SCENARIOYEAR%
