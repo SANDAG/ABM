@@ -8,7 +8,7 @@ set ENV=%3
 cd /d %PROJECT_DIRECTORY%
 
 ECHO Activate asim_140....
-CALL %activate_uv_asim%
+CALL %activate_uv_asim_151%
 
 set MKL_NUM_THREADS=1
 set MKL=1

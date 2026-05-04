@@ -4,7 +4,7 @@ set PROJECT_DIRECTORY=%2
 set luz_data_file=%3
 
 ECHO Activate ActivitySim for CVM...
-CALL %activate_uv_asim%
+CALL %activate_uv_asim_151%
 
 set MKL_NUM_THREADS=1
 set MKL=1
