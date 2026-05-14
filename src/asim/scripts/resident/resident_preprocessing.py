@@ -163,13 +163,20 @@ class Series15_Processor:
         # Convert employment columns to float to handle multiplier operations
         landuse[emp_cols] = landuse[emp_cols].astype(float)
         
+        # Create work-specific employment columns (for workplace location model)
+        # These will be multiplied while original emp_* columns stay unchanged for non-work purposes
+        for col in emp_cols:
+            landuse[f'{col}_work'] = landuse[col]
+        
         # Apply multipliers for each configured location (airport_north, airport_south)
+        # Only multiply the work-specific columns, not the original emp_* columns
         for config in self.sdia_configs:
             location = config['location']
             mgras = config['mgras']
             multiplier = config['multiplier']
-            landuse.loc[landuse['mgra'].isin(mgras), emp_cols] *= multiplier
-            print(f"Applied SDIA employment multiplier of {multiplier} to {len(mgras)} MGRAs for {location} for year {self.scenario_year}")
+            work_emp_cols = [f'{col}_work' for col in emp_cols]
+            landuse.loc[landuse['mgra'].isin(mgras), work_emp_cols] *= multiplier
+            print(f"Applied SDIA employment multiplier of {multiplier} to {len(mgras)} MGRAs for {location} for year {self.scenario_year} (work-specific columns only)")
 
         # setting MAZ as index
         landuse.set_index('MAZ', inplace=True)
