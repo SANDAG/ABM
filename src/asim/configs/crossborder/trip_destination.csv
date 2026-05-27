@@ -6,6 +6,8 @@ no attractions for purpose,"@size_terms.get(df.trip_dest, df.purpose) == 0",-999
 intermediate stops on half-tour,_stops_on_leg@df.trip_count - 1,1,1,1,1,1
 Sample of alternatives correction factor,"@np.minimum(np.log(df.pick_count/df.prob), 60)",1,1,1,1,1
 mode choice logsum,od_logsum + dp_logsum,coef_mode_choice_logsum_work,coef_mode_choice_logsum_nonwork,coef_mode_choice_logsum_nonwork,coef_mode_choice_logsum_nonwork,coef_mode_choice_logsum_nonwork
+Airport Terminal 11248 Restriction,@df['trip_dest']==1338,-999,-999,-999,-999,-999
+Airport Terminal 11249 Restriction,@df['trip_dest']==1457,-999,-999,-999,-999,-999
 total distance,@(_od_DIST + _dp_DIST),coef_total_distance_work,coef_total_distance_nonwork,coef_total_distance_nonwork,coef_total_distance_nonwork,coef_total_distance_nonwork
 first outbound origin-stop distance,@(df.trip_num == 1) & df.outbound * _od_DIST,coef_first_outbound_dist_work,coef_first_outbound_dist_nonwork,coef_first_outbound_dist_nonwork,coef_first_outbound_dist_nonwork,coef_first_outbound_dist_nonwork
 last outbound stop-dest distance,@(df.trip_num == _stops_on_leg) & (1- df.outbound) * _dp_DIST,coef_last_inbound_dist_work,coef_last_inbound_dist_nonwork,coef_last_inbound_dist_nonwork,coef_last_inbound_dist_nonwork,coef_last_inbound_dist_nonwork

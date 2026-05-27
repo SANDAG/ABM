@@ -12,6 +12,8 @@ util_sample_of_alternatives_correction_factor,Sample of alternatives correction 
 util_mode_choice_logsum,Mode choice logsum from origin/dest to stop,@(df.od_logsum + df.dp_logsum),coef_mode_logsum,coef_mode_logsum,coef_mode_logsum
 util_mode_choice_logsum_2hr,"Mode choice logsum, tour duration < 2 hours interaction","@np.where(df.tour_duration<=2, df.od_logsum + df.dp_logsum, 0)",coef_mode_logsum_2hr,coef_mode_logsum_2hr,coef_mode_logsum_2hr
 util_mode_choice_logsum_8hr,"Mode choice logsum, tour duration> 8 hours interaction","@np.where(df.tour_duration>=8, df.od_logsum + df.dp_logsum, 0)",coef_mode_logsum_8hr,coef_mode_logsum_8hr,coef_mode_logsum_8hr
+util_airport_terminal_11248,Airport Terminal 11248 Restriction,@df['dest_taz']==1338,-999,-999,-999
+util_airport_terminal_11249,Airport Terminal 11249 Restriction,@df['dest_taz']==1457,-999,-999,-999
 #,,,,,
 util_dist_from_orig_firstout,"Distance from origin > 1 mi. (binary), first on outbound leg","@(df.trip_num==1)*(df.outbound)*np.where(_nd_DIST > 1, 1,0)",coef_dist_from_orig_firstout,coef_dist_from_orig_firstout,coef_dist_from_orig_firstout
 util_dist_to_dest_binary_lastout,"Distance to primary destination > 1 mi. (binary), last on outbound leg","@(df.trip_num==df.trip_count)*(df.outbound)*np.where(_dp_DIST > 1, 1,0)",coef_dist_to_dest_binary_lastout,coef_dist_to_dest_binary_lastout,coef_dist_to_dest_binary_lastout

@@ -62,6 +62,9 @@ util_abm2_calib_3to4_miles,ABM2+ calibration - 3-4 miles,@(_DIST < 4) * (_DIST >
 #util_mission_valley_mall_constant,#Mission Valley Mall Constant,@df.destination==6187,,coef_Mission_Valley_Mall_Constant_shopping_6187,,,,
 #util_mission_valley_mall_constant,#Mission Valley Mall Constant,@df.destination==6196,,coef_Mission_Valley_Mall_Constant_shopping_6196,,,,
 #,#,,,,,,,
+util_airport_terminal_11248,Airport Terminal 11248 Restriction,@df.alt_dest==11248,-999,-999,-999,-999,-999,-999
+util_airport_terminal_11249,Airport Terminal 11249 Restriction,@df.alt_dest==11249,-999,-999,-999,-999,-999,-999
+#,#,,,,,,,
 util_indiv_0_2_ASC,indiv tours in 0_2bin calibration constant,"@(_DIST.between(0,2)) * (df.get('tour_category', default=False) != 'joint')",coef_abm3_dist_0_2indivescort_asc,coef_abm3_dist_0_2indivmaint_asc,coef_abm3_dist_0_2indivdisc_asc,coef_abm3_dist_0_2indivmaint_asc,coef_abm3_dist_0_2indivdisc_asc,coef_abm3_dist_0_2indivdisc_asc
 util_indiv_2_5_ASC,indiv tours in 2_5bin calibration constant,"@(_DIST.between(2,5)) * (df.get('tour_category', default=False) != 'joint')",coef_abm3_dist_2_5indivescort_asc,coef_abm3_dist_2_5indivmaint_asc,coef_abm3_dist_2_5indivdisc_asc,coef_abm3_dist_2_5indivmaint_asc,coef_abm3_dist_2_5indivdisc_asc,coef_abm3_dist_2_5indivdisc_asc
 util_indiv_5_10_ASC,indiv tours in 5_10bin calibration constant,"@(_DIST.between(5,10)) * (df.get('tour_category', default=False) != 'joint')",coef_abm3_dist_5_10indivescort_asc,coef_abm3_dist_5_10indivmaint_asc,coef_abm3_dist_5_10indivdisc_asc,coef_abm3_dist_5_10indivmaint_asc,coef_abm3_dist_5_10indivdisc_asc,coef_abm3_dist_5_10indivdisc_asc
