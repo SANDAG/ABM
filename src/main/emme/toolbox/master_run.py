@@ -915,9 +915,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
                 _time.sleep(2)
 
-                with open(_join(self._path, 'logFiles', 'run_transit_assignment_%s_iter%d.log' % (period, iteration)), 'w') as f:
+                log_path = _join(self._path, 'logFiles', 'run_transit_assignment_%s_iter%d.log' % (period, iteration))
+                with open(log_path, 'w') as f:
                     f.write('Output:\n')
-                f = open(_join(self._path, 'logFiles', 'run_transit_assignment_%s_iter%d.log' % (period, iteration)), 'a+')
+                f = open(log_path, 'a+')
 
                 script = _join(main_directory, "python", "emme", "run_transit_assignment.py")
                 args = [sys.executable, script, "--root_dir", '"%s"' % main_directory, "--project_path", '"%s"' % project_path,
@@ -991,15 +992,16 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 else:
                     command_str = str(command)
                 command_str = command_str.replace("\r\n", "<br>").replace("\n", "<br>")
-                with open(_join(self._path, 'logFiles', '%s%s.log' % (name, name_suffix)), 'w') as f:
+                log_path = _join(self._path, 'logFiles', '%s%s.log' % (name, name_suffix))
+                with open(log_path, 'w') as f:
                     f.write('Command:\n\n%s\n\nOutput:\n' % command_str)
                 try:
-                    with open(_join(self._path, 'logFiles', '%s%s.log' % (name, name_suffix)), 'a') as f:
+                    with open(log_path, 'a') as f:
                         _subprocess.run(command, stdout=f, stderr=f, cwd=self._path, shell=True, check=True)
                 except _subprocess.CalledProcessError as error:
                     raise Exception("Error in %s, refer to process run report in logbook" % name)
                 finally:
-                    with open(_join(self._path, 'logFiles', '%s%s.log' % (name, name_suffix)), 'r') as f:
+                    with open(log_path, 'r') as f:
                         self.add_html(report, '<div class="preformat">%s</div>' % f.read())
                     try:
                         # No raise on writing report error
