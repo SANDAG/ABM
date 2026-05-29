@@ -581,7 +581,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         # Run transit assignment in separate process
                         # Running in same process slows OMX skim export for unknown reason
                         # transit_emmebank need to be closed and re-opened to be accessed by separate process
-                        transit_emmebank_dict = self.run_transit_assignments(transit_emmebank_dict, scenarioYear, output_dir, ((not skipTransitConnector) and (msa_iteration == 1)), main_directory)
+                        transit_emmebank_dict = self.run_transit_assignments(transit_emmebank_dict, scenarioYear, output_dir, ((not skipTransitConnector) and (msa_iteration == 1)), main_directory, iteration=msa_iteration)
                         for period in periods:
                             transit_scenario_dict[period] = transit_emmebank_dict[period].scenario(base_scenario.number)
                         # _m.Modeller().desktop.refresh_data()
@@ -750,7 +750,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 # Run transit assignment in separate process
                 # Running in same process slows OMX skim export for unknown reason
                 # transit_emmebank need to be closed and re-opened to be accessed by separate process
-                transit_emmebank_dict = self.run_transit_assignments(transit_emmebank_dict, scenarioYear, output_dir, False, main_directory)
+                transit_emmebank_dict = self.run_transit_assignments(transit_emmebank_dict, scenarioYear, output_dir, False, main_directory, iteration=4)
                 for period in periods:
                     transit_scenario_dict[period] = transit_emmebank_dict[period].scenario(base_scenario.number)
                 # _m.Modeller().desktop.refresh_data()
@@ -876,7 +876,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         except KeyError:
             raise Exception("properties.RunModel.LogLevel: value must be one of %s" % ",".join(log_states.keys()))
 
-    def run_transit_assignments(self, transit_emmebank_dict, scenarioYear, output_dir, create_connector_flag, main_directory_original):
+    def run_transit_assignments(self, transit_emmebank_dict, scenarioYear, output_dir, create_connector_flag, main_directory_original, iteration):
 
         scenario_id = 100
         periods = ["EA", "AM", "MD", "PM", "EV"]
@@ -915,16 +915,21 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
                 _time.sleep(2)
 
+                with open(_join(self._path, 'logFiles', 'run_transit_assignment_%s_iter%d.log' % (period, iteration)), 'w') as f:
+                    f.write('Output:\n')
+                f = open(_join(self._path, 'logFiles', 'run_transit_assignment_%s_iter%d.log' % (period, iteration)), 'a+')
+
                 script = _join(main_directory, "python", "emme", "run_transit_assignment.py")
                 args = [sys.executable, script, "--root_dir", '"%s"' % main_directory, "--project_path", '"%s"' % project_path,
                     "--period", '"%s"' % period, "--number", '"%s"' % number, "--proc", '"%s"' % transit_processors,
                     "--output_dir", '"%s"' % output_dir]
                 if create_connector_flag:
                     args.append("--create_connector_flag")
-                p = _subprocess.Popen(args, shell=True)
+                p = _subprocess.Popen(args, shell=True, stdout=f, stderr=f)
                 processes.append({
                     "p": p,
-                    "period": period
+                    "period": period,
+                    "f": f
                 })
                 _time.sleep(2)
 
@@ -934,10 +939,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
             for p in processes:
                 report = _m.PageBuilder(title="Command report")
-                out, err = p["p"].communicate()
-                self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % out)
-                if err:
-                    self.add_html(report, 'Error message(s):<br><br><div class="preformat">%s</div>' % err)
+                _, _ = p["p"].communicate()
+                p["f"].seek(0)
+                self.add_html(report, '<div class="preformat">%s</div>' % p["f"].read())
+                p["f"].close()
                 _m.logbook_write("Transit assignment process record for period " + p["period"], report.render())
                 if p["p"].returncode != 0:
                     raise Exception("Error in transit assignment period %s, refer to logbook in dummy project" % p["period"])
