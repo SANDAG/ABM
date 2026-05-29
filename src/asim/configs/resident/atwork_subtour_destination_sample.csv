@@ -5,3 +5,4 @@ util_Distance_squared,Distance_squared,"@_DIST.clip(0,20)**2",coef_distsqrd_atwo
 util_Distance_fulltime_worker,Distance_fulltime_worker,"@_DIST.clip(0,20) * (df.ptype==1)",coef_dist_ftworker_atwork
 util_Size_variable,Size_variable,@df['size_term'].apply(np.log1p),1
 util_No_attractions,No_attractions,@df['size_term']==0,-999
+restrict_to_airport,Restrict tours to airport,"@(df.dest_TAZ.isin([1338,1457])) & (~df.TAZ.isin([1338,1457])) & df.tour_type.isin(['eat','maint'])",-999
