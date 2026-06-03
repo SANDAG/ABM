@@ -104,16 +104,16 @@ The table below contains brief descriptions of the input files required to execu
 | hhs | household size | 
 | gq_civ | GQ civilian | 
 | gq_mil | GQ military | 
-| i1 | Number of households with income less than $15,000 ($2010) | 
-| i2 | Number of households with income $15,000-$29,999 ($2010) | 
-| i3 | Number of households with income $30,000-$44,999 ($2010) | 
-| i4 | Number of households with income $45,000-$59,999 ($2010) | 
-| i5 | Number of households with income $60,000-$74,999 ($2010) | 
-| i6 | Number of households with income $75,000-$99,999 ($2010) | 
-| i7 | Number of households with income $100,000-$124,999 ($2010) | 
-| i8 | Number of households with income $125,000-$149,999 ($2010) | 
-| i9 | Number of households with income $150,000-$199,999 ($2010) | 
-| i10 | Number of households with income $200,000 or more ($2010) | 
+| i1 | Number of households with income less than \$15,000 ($2010) | 
+| i2 | Number of households with income \$15,000-\$29,999 ($2010) | 
+| i3 | Number of households with income \$30,000-\$44,999 ($2010) | 
+| i4 | Number of households with income \$45,000-\$59,999 ($2010) | 
+| i5 | Number of households with income \$60,000-\$74,999 ($2010) | 
+| i6 | Number of households with income \$75,000-\$99,999 ($2010) | 
+| i7 | Number of households with income \$100,000-\$124,999 ($2010) | 
+| i8 | Number of households with income \$125,000-\$149,999 ($2010) | 
+| i9 | Number of households with income \$150,000-\$199,999 ($2010) | 
+| i10 | Number of households with income \$200,000 or more ($2010) | 
 | emp_gov | Government employment | 
 | emp_mil | military employment | 
 | emp_ag_min | Agriculture and mining employment (NAICS:11,21) | 
@@ -178,23 +178,102 @@ The table below contains brief descriptions of the input files required to execu
 ### Population Synthesizer Household Data
 #### `HOUSEHOLDS.CSV`
 
-| Column Name | Description |
-| ----------- | ----------- |
-| hhid | Unique Household ID |
-| household_serial_no | Household serial number |
-| taz | TAZ of household |
-| mgra | MGRA of household |
-| hinccat1 | Household income category:<br>1 = <$30k<br>2 = $30-60k<br>3 = $60-100k<br>4 = $100-150k<br>5 = $150k+ |
-| hinc | Household income |
-| num_workers | Number of workers in household |
-| veh | Number of vehicles in household |
-| persons | Number of persons in household |
-| hht | Household/family type:<br>0 = Not in universe (vacant or GQ)<br>1 = Family household: married-couple<br>2 = Family household: male householder, no wife present<br>3 = Family household: female householder, no husband present<br>4 = Nonfamily household: male householder, living alone<br>5 = Nonfamily household: male householder, not living alone<br>6 = Nonfamily household: female householder, living alone<br>7 = Nonfamily household: female householder, not living alone |
-| bldgsz | Building size - Number of Units in Structure & Quality:<br>1 = Mobile home or trailer<br>2 = One-family house detached<br>3 = One-family house attached<br>8 = 20-49 Apartments<br>9 = 50 or more apartments |
-| unittype | Household unit type:<br>0 = Non-GQ Household<br>1 = GQ Household |
-| version | Synthetic population run version. Presently set to 0. |
-| poverty | Poverty indicator utilized for social equity reports. Percentage value where value <= 2 (200% of the [Federal Poverty Level](https://aspe.hhs.gov/2020-poverty-guidelines)) indicates household is classified under poverty. |
-
+<table>
+    <tr>
+        <th>Column Name</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>hhid</td>
+        <td>Unique Household ID</td>
+    </tr>
+    <tr>
+        <td>household_serial_no</td>
+        <td>Household serial number</td>
+    </tr>
+    <tr>
+        <td>taz</td>
+        <td>TAZ of household</td>
+    </tr>
+    <tr>
+        <td>mgra</td>
+        <td>MGRA of household</td>
+    </tr>
+    <tr>
+        <td>hinccat1</td>
+        <td>
+            Household income category:<br/>
+            1 = &lt;$30k<br/>
+            2 = $30-60k<br/>
+            3 = $60-100k<br/>
+            4 = $100-150k<br/>
+            5 = $150k+
+        </td>
+    </tr>
+    <tr>
+        <td>hinc</td>
+        <td>Household income</td>
+    </tr>
+    <tr>
+        <td>num_workers</td>
+        <td>Number of workers in household</td>
+    </tr>
+    <tr>
+        <td>veh</td>
+        <td>Number of vehicles in household</td>
+    </tr>
+    <tr>
+        <td>persons</td>
+        <td>Number of persons in household</td>
+    </tr>
+    <tr>
+        <td>hht</td>
+        <td>
+            Household/family type:<br/>
+            0 = Not in universe (vacant or GQ)<br/>
+            1 = Family household: married-couple<br/>
+            2 = Family household: male householder, no wife present<br/>
+            3 = Family household: female householder, no husband present<br/>
+            4 = Nonfamily household: male householder, living alone<br/>
+            5 = Nonfamily household: male householder, not living alone<br/>
+            6 = Nonfamily household: female householder, living alone<br/>
+            7 = Nonfamily household: female householder, not living alone
+        </td>
+    </tr>
+    <tr>
+        <td>bldgsz</td>
+        <td>
+            Units in Structure:<br/>
+            0 = N/A (Group Quarter)
+            1 = Mobile home or trailer<br/>
+            2 = One-family house detached<br/>
+            3 = One-family house attached<br/>
+            4 = 2 Apartments<br/>
+            5 = 3-4 Apartments<br/>
+            6 = 5-9 Apartments<br/>
+            7 = 10-19 Apartments<br/>
+            8 = 20-49 Apartments<br/>
+            9 = 50 or more apartments<br/>
+            10 = Boat, RV, van, etc.
+        </td>
+    </tr>
+    <tr>
+        <td>unittype</td>
+        <td>
+            Household unit type:<br/>
+            0 = Non-GQ Household<br/>
+            1 = GQ Household
+        </td>
+    </tr>
+    <tr>
+        <td>version</td>
+        <td>Synthetic population run version. Presently set to 0.</td>
+    </tr>
+    <tr>
+        <td>poverty</td>
+        <td>Poverty indicator utilized for social equity reports. Percentage value where value &lt;= 2 (200% of the <a href="https://aspe.hhs.gov/2020-poverty-guidelines">Federal Poverty Level</a>) indicates household is classified under poverty.</td>
+    </tr>
+</table>
 
 <a id="population_synth_persons"></a>
 

@@ -241,7 +241,17 @@ The ***TNED_HwyNet*** feature class contains all the roadway links (arcs) of the
     </tr>
     <tr>
         <td>FFC</td>
-        <td>Federal functional class where:<br>1 = Freeway<br>2 = Prime Arterial<br>3 = Major Arterial<br>4 = Collector<br>5 = Local Collector<br>6 = Rural Collector<br>7 = Local (non circulation element) Road<br>8 = Freway Connector Ramp<br>9 = Local Ramp<br>11 = Rail Line<br>12 = Bus Street<br>13 = ADT (Average Daily Traffic) Link</td>
+        <td>
+            Federal functional class where:<br>
+            0 = Not Classified<br>
+            1 = Freeway<br>
+            2 = Freeway or Expressway<br>
+            3 = Principal Arterial<br>
+            4 = Minor Arterial<br>
+            5 = Major Collector<br>
+            6 = Minor Collector<br>
+            7 = Local Road
+        </td>
     </tr>
     <tr>
         <td>ASPD</td>
@@ -257,7 +267,23 @@ The ***TNED_HwyNet*** feature class contains all the roadway links (arcs) of the
     </tr>
     <tr>
         <td>FC</td>
-        <td>Roadway functional class where:<br>1 = Freeway<br>2 = Prime Arterial<br>3 = Major Arterial<br>4 = Collector<br>5 = Local Collector<br>6 = Rural Collector<br>7 = Local (non circulation element) Road<br>8 = Freeway Connector Ramp<br>9 = Local Ramp<br>10 = TAZ Connector<br>11 = Rail Line<br>12 = Bus Street, Center City Walk Links<br>99 = Transfer Walk Links</td>
+        <td>
+            Roadway functional class where:<br>
+            1 = Freeway<br>
+            2 = Prime Arterial<br>
+            3 = Major Arterial<br>
+            4 = Collector<br>
+            5 = Local Collector<br>
+            6 = Rural Collector<br>
+            7 = Local (non circulation element) Road<br>
+            8 = Freeway Connector Ramp<br>
+            9 = Local Ramp<br>
+            10 = TAZ Connector<br>
+            11 = Rail Line<br>
+            12 = Bus Street, Center City Walk Links<br>
+            13 = ADT Link<br>
+            99 = Transfer Walk Links
+        </td>
     </tr>
     <tr>
         <td>HOV</td>
