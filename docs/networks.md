@@ -4,9 +4,9 @@ This page describes the components that make up the input ABM3 networks, which i
 
 To learn how ABM3 handles the networks, refer to the [Network Import from TNED](design/supply/network-import-tned.md) page. 
 
-## Transportation Network Editing Database (TNED)
+## Network Input Files
 
-The ABM3 networks are edited, maintained, and generated via SANDAG's internal Transportation Network Editing Database (TNED) system, which leverages ESRI's [ArcGIS Enterprise](https://enterprise.arcgis.com/en/get-started/latest/windows/what-is-arcgis-enterprise-.htm) and is hosted on an [enterprise geodatabase](https://enterprise.arcgis.com/en/server/latest/manage-data/windows/enterprise-geodatabases-and-arcgis-enterprise.htm). The TNED system, via an [ETL](https://pro.arcgis.com/en/pro-app/latest/help/data/data-interoperability/what-is-the-data-interoperability-extension.htm) (Extract, Load, Transform) process, outputs the input ABM3 networks in a variety of different formats including [file geodatabase](https://pro.arcgis.com/en/pro-app/latest/help/data/geodatabases/manage-file-gdb/file-geodatabases.htm), CSV, and [shapefiles](https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm).
+The ABM3 networks are edited, maintained, and generated via SANDAG's internal Transportation Network Editing Database (TNED) system, which leverages ESRI's [ArcGIS Enterprise](https://enterprise.arcgis.com/en/get-started/latest/windows/what-is-arcgis-enterprise-.htm) and is hosted on an [enterprise geodatabase](https://enterprise.arcgis.com/en/server/latest/manage-data/windows/enterprise-geodatabases-and-arcgis-enterprise.htm) while other input network files are manually maintained by modelers. The TNED system, via an [ETL](https://pro.arcgis.com/en/pro-app/latest/help/data/data-interoperability/what-is-the-data-interoperability-extension.htm) (Extract, Load, Transform) process, outputs the input ABM3 networks in a variety of different formats including [file geodatabase](https://pro.arcgis.com/en/pro-app/latest/help/data/geodatabases/manage-file-gdb/file-geodatabases.htm), CSV, and [shapefiles](https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm).
 
 When describing the ABM3 networks, this page is specifically referring to the networks in their post-ETL state. A typical TNED ETL network directory includes the following:
 
@@ -15,53 +15,69 @@ When describing the ABM3 networks, this page is specifically referring to the ne
 <table>
     <tr>
         <td><strong>File Name</strong></td>
-        <td><strong>File Format</strong></td>
         <td><strong>Description</strong></td>
+        <td><strong>File Format</strong></td>
+        <td><strong>Source</strong></td>
     </tr>
     <tr>
         <td><a href=#emme-outputs-file-geodatabase>EMMEOutputs.gdb</a></td>
-        <td>File Geodatabase</td>
         <td>Houses a variety of feature classes and tables for the different ABM3 networks: highway, transit, and active transportation.</td>
+        <td>File Geodatabase</td>
+        <td>TNED</td>
     </tr>
     <tr>
         <td>info</td>
-        <td>Directory</td>
         <td>A directory that houses TNED ETL logs, network QAQC reports, and configuration file utilized to generate the network. <br><br> Only for reference. Not used for modeling purposes.</td>
+        <td>Directory</td>
+        <td>TNED</td>
     </tr>
     <tr>
         <td><a href=#tned-active-transportation-network-links-shapefile>SANDAG_Bike_Net.shp</a></td>
-        <td>Shapefile</td>
         <td>The links (arcs) of the active transportation network.</td>
+        <td>Shapefile</td>
+        <td>TNED</td>
     </tr>
     <tr>
         <td><a href=#tned-active-transportation-network-nodes-shapefile>SANDAG_Bike_Node.shp</a></td>
-        <td>Shapefile</td>
         <td>The nodes of the active transportation network.</td>
+        <td>Shapefile</td>
+        <td>TNED</td>
     </tr>
     <tr>
         <td><a href=#special-fares-text-file>special_fares.txt</a></td>
-        <td>Text File</td>
         <td>Configures the zone-based fare scheme of the Coaster.</td>
+        <td>Text File</td>
+        <td>Manually Maintained</td>
     </tr>
     <tr>
         <td><a href=#timed-transfer-csv-files>timexfer_{TOD}.csv</a></td>
-        <td>CSV</td>
         <td>Timed transfer table between the Coaster and feeder buses. There is a file for each of the 5 TODs (time-of-day), which are EA (early AM), AM, MD (midday), PM, and EV (evening).</td>
+        <td>CSV</td>
+        <td>Manually Maintained</td>
     </tr>
     <tr>
         <td><a href=#transit-routes-csv-file>trrt.csv</a></td>
-        <td>CSV</td>
         <td>List of all transit routes in network and information on their mode, frequencies, hours of service, and fares.</td>
+        <td>CSV</td>
+        <td>TNED</td>
     </tr>
     <tr>
         <td><a href=#transit-links-csv-file>trlink.csv</a></td>
-        <td>CSV</td>
         <td>Ordered sequential list of underlying network links (arcs) for each transit route in the network.</td>
+        <td>CSV</td>
+        <td>TNED</td>
     </tr>
     <tr>
         <td><a href=#transit-stops-csv-file>trstop.csv</a></td>
-        <td>CSV</td>
         <td>List of stops for each transit route in the network.</td>
+        <td>CSV</td>
+        <td>TNED</td>
+    </tr>
+    <tr>
+        <td><a href=#transit-stops-csv-file>vehicle_class_toll_factors.csv</a></td>
+        <td>Toll factors by facility, managed lane type, and vehicle category.</td>
+        <td>CSV</td>
+        <td>Manually Maintained</td>
     </tr>
 </table>
 
@@ -1355,5 +1371,183 @@ The ***trstop.csv*** lists all transit stops for all transit routes in the netwo
     <tr>
         <td>Park</td>
         <td>Type of Park & Ride facility the transit node falls within<br>0 = Not Available<br>1 = Formal Park and Ride<br>2 = Other Parking<br>4 = Non-Formal Park and Ride</td>
+    </tr>
+</table>
+
+## Vehicle Class Toll Factor CSV File
+
+The ***vehicle_class_toll_factors.csv*** is used to set toll factors by facility, managed lane type, year, time-of-day, and six vehicle classes. The intention of this file is to control how much of a link's toll (if they are managed lane / toll facilities) cost gets applied to vehicles depending on time-of-day and vehicle type. 
+
+The specified factors are merged with network links (based on network link attributes NM, FXNM, TXNM, and HOV) that match the CSV file's Facility_name and HOV attributes. In the end, all eligible managed lane / toll individual network links will have toll factors associated with them. Once matched, the factors serve as multipliers to the network links' toll values. A toll factor value of e.g., 1 means no change, a value of 0.5 means half a toll cost, and a value of 99 means an exorbitant toll cost is being imposed on a link and essentially prohibits the use of it. 
+
+Example:
+
+<table>
+    <tr>
+        <td>Facility_name</td>
+        <td>HOV</td>
+        <td>Year</td>
+        <td>Time_of_Day</td>
+        <td> DA_Factor</td>
+        <td> S2_Factor</td>
+        <td> S3_Factor</td>
+        <td> TRK_L_Factor</td>
+        <td> TRK_M_Factor</td>
+        <td> TRK_H_Factor</td>
+    </tr>
+    <tr>
+        <td>SR-125</td>
+        <td>4</td>
+        <td>2022</td>
+        <td>ALL</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1.03</td>
+        <td>2.33</td>
+    </tr>
+    <tr>
+        <td>SR-125</td>
+        <td>3</td>
+        <td>2035</td>
+        <td>ALL</td>
+        <td>1</td>
+        <td>0.5</td>
+        <td>0</td>
+        <td>99</td>
+        <td>99</td>
+        <td>99</td>
+    </tr>
+    <tr>
+        <td>SR-125</td>
+        <td>4</td>
+        <td>2035</td>
+        <td>ALL</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1.03</td>
+        <td>2.33</td>
+    </tr>
+    <tr>
+        <td>SR-125</td>
+        <td>3</td>
+        <td>2050</td>
+        <td>EA</td>
+        <td>1</td>
+        <td>0.5</td>
+        <td>0</td>
+        <td>99</td>
+        <td>99</td>
+        <td>99</td>
+    </tr>
+    <tr>
+        <td>SR-125</td>
+        <td>3</td>
+        <td>2050</td>
+        <td>AM</td>
+        <td>1</td>
+        <td>1</td>
+        <td>0.5</td>
+        <td>99</td>
+        <td>99</td>
+        <td>99</td>
+    </tr>
+    <tr>
+        <td>SR-125</td>
+        <td>3</td>
+        <td>2050</td>
+        <td>MD</td>
+        <td>1</td>
+        <td>0.5</td>
+        <td>0</td>
+        <td>99</td>
+        <td>99</td>
+        <td>99</td>
+    </tr>
+    <tr>
+        <td>SR-125</td>
+        <td>3</td>
+        <td>2050</td>
+        <td>PM</td>
+        <td>1</td>
+        <td>1</td>
+        <td>0.5</td>
+        <td>99</td>
+        <td>99</td>
+        <td>99</td>
+    </tr>
+    <tr>
+        <td>SR-125</td>
+        <td>3</td>
+        <td>2050</td>
+        <td>EV</td>
+        <td>1</td>
+        <td>0.5</td>
+        <td>0</td>
+        <td>99</td>
+        <td>99</td>
+        <td>99</td>
+    </tr>
+</table>
+
+Using the above hypothetical table as an example, we can see different use cases for the vehicle class toll factor file:
+
+- In 2022, the SR-125 toll (HOV = 4) facility charges the full toll to DA, S2, S3, and Light Trucks whereas Medium and Heavy Trucks are imposed a 3% and 233% toll cost increase, respectively. Rates applied for all 5 time-of-days (i.e., ALL). 
+- In 2035, we see 2 entries for SR-125 and which factors get used depends on the way the SR-125 was coded when preparing the networks. This means the file is accounting for a network where the SR-125 as an HOV 3 managed lane facility or a network where the SR-125 is a toll (i.e., HOV = 4) facility. 
+- In 2050, we see there are 5 entries for SR-125 given there are entries for each of the 5 time-of-days. The intention here is to control the way SR2 and SR3 vehicles get charged tolls during the AM and PM peak periods. 
+
+Note that if a link does not match to a record in this file, the default factors (specified in the table below) will be applied to said link. It is OK if there are records for which there are no link tolls.
+
+<table>
+    <tr>
+        <th>Column Name</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Facility_name</td>
+        <td>Name of the facility, used in the substring matching with links by NM, FXNM or TXNM attributes</td>
+    </tr>
+    <tr>
+        <td>Year</td>
+        <td>Scenario year</td>
+    </tr>
+    <tr>
+        <td>Time_of_Day</td>
+        <td>
+            Time of day period:<br>
+            EA = Early morning (3am - 5:59am)<br>
+            AM = AM peak (6am to 8:59am)<br>
+            MD = Mid-day (9am to 3:29pm)<br>
+            PM = PM peak (3:30pm to 6:59pm)<br>
+            EV = Evening (7pm to 2:59am)<br>
+            ALL = All time-of-day periods
+        </td>
+    </tr>
+    <tr>
+        <td>DA_Factor</td>
+        <td>Positive toll factor for Drive Alone (SOV) vehicle classes. The default value is 1.0</td>
+    </tr>
+    <tr>
+        <td>S2_Factor</td>
+        <td>Positive toll factor for Shared 2 person (HOV2) vehicle classes. The default value is 1.0</td>
+    </tr>
+    <tr>
+        <td>S3_Factor</td>
+        <td>Positive toll factor for Shared 3+ person (HOV3) vehicle classes. The default value is 1.0</td>
+    </tr>
+    <tr>
+        <td>TRK_L_Factor</td>
+        <td>Positive toll factor for Light Truck (TRKL) vehicle classes. The default value is 1.0</td>
+    </tr>
+    <tr>
+        <td>TRK_M_Factor</td>
+        <td>Positive toll factor for Medium Truck (TRKM) vehicle classes. The default value is 1.03</td>
+    </tr>
+    <tr>
+        <td>TRK_H_Factor</td>
+        <td>Positive toll factor for Heavy Truck (TRKH) vehicle classes. The default value is 2.03</td>
     </tr>
 </table>

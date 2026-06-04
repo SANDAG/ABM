@@ -2,49 +2,21 @@
 
 The main inputs to ABM3 include the [transportation network](networks.md), land-use data, synthetic population data, parameters files, and model specifications. Outputs include a set of files that describe travel decisions made by all travel markets considered by the model (residents, overnight visitors, airport ground access trips, commercial vehicles and trucks, Mexico residents traveling in San Diego County, and travel made by all other non-residents into and through San Diego County).
 
-### File Types
-
-There are several file types used for model inputs and outputs. They are denoted by their extension, as listed in the table below.
-
-| **Extension** | **Format** | 
-| --- | --- |
-| .log, .txt | Text files created during a model run containing logging results. | 
-| .yaml | Text files used for setting properties that control ActivitySim or some other process. | 
-| .csv | Comma-separated value files used to store model parameters, input or output data. | 
-| .omx | Open matrix format files used to store input or output trip tables or skims | 
-| .h5 | HDF5 files, used to store pipeline for restarting ActivitySim | 
-| .shp (along with other files - .cpg, .dbf, .prj, .shx) | ArcGIS shapefiles and associated files | 
-| .html | Hypertext markup language files, open in web browser | 
-| .png | Portable network graphics file, open in web browser, Microsoft photos, or third-party graphics editor | 
-
 ## Model Inputs
 
-The table below contains brief descriptions of the input files required to execute the SANDAG ABM3.
+The table below contains brief descriptions of the input files required to execute the SANDAG ABM3. 
+
+A separate [Networks](networks.md) page exists for all network-related ABM3 inputs. 
+
+*Note: Click on file name for additional details.*
 
 | **File Name** | **Purpose** | **File Type** | **Prepared By** | 
 | --- | --- | --- | --- |
 | **Land Use** |  |  |  | 
-| [mgra_based_input{SCENARIO_YEAR}.csv](#lu) | Land use forecast of the size and structure of the region’s economy and corresponding demographic forecast | CSV | Land Use Modelers, Transportation Modelers, and GIS | 
+| [mgra15_based_input{year}.csv](#lu) | Land use forecast of the size and structure of the region’s economy and corresponding demographic forecast | CSV | Land Use Modelers, Transportation Modelers, and GIS | 
 | **Synthetic Population** |  |  |  | 
 | [households.csv](#population_synth_households) | Synthetic households | CSV | Transportation Modelers | 
 | [persons.csv](#population_synth_persons) | Synthetic persons | CSV | Transportation Modelers | 
-| **Network** |  |  |  | 
-| EmmeOutputs.gdb | Network Input Files | GDB | Transportation Modelers |
-| transit_connectors | Input Files | | |
-| [vehicle_class_toll_factors.csv](#vehicle_class_toll) | Relative toll values by six vehicle classes by Facility name. Used to identify "free for HOV" type managed lane facilities. | CSV | Transportation Modelers | 
-| [trlink.csv](#tr_link) | Transit route with a list of links file | CSV | Transportation Modelers | 
-| trrt.csv | Transit route attribute file | CSV | Transportation Modelers | 
-| [trstop.csv](#transit_binary_stop) | Transit stop attribute file | TCSV | Transportation Modelers | 
-| mode5tod.csv | Transit mode parameters table | CSV | Transportation Modelers |
-| [timexfer_XX.csv](#transit_transfer_proh) | Transit timed transfers table between COASTER and feeder buses; XX is the TOD (EA, AM, MD, PM, and EV) | CSV | Transportation Modelers | 
-| special_fares.txt | Fares to coaster | Text File | Transportation Modelers | 
-| [mobilityHubMGRA.csv](#mobility_mgra) |  | CSV | Transportation Modelers | 
-| [SANDAG_Bike_Net.dbf](#bike_net_link) | Bike network links | DBF | GIS | 
-| [SANDAG_Bike_Node.dbf](#bike_net_node) | Bike network nodes | DBF | GIS | 
-| [bikeTazLogsum.csv](#bike_taz_logsum) <i>(not saved in inputs, instead, run at the beginning of a model run)<i> | Bike TAZ logsum | CSV | Transportation Modelers | 
-| [bikeMgraLogsum.csv](#bike_mgra_logsum) <i>(not saved in inputs, instead, run at the beginning of a model run)<i> | Bike MGRA logsum | CSV | Transportation Modelers | 
-| mgra15.shp | | SHP | |
-| taz15.shp | | SHP | |
 | **Cross-Border Model (Derived from cross-border survey)** |  |  |  | 
 | crossBorder_tourPurpose_control.csv |  | CSV |  | 
 | crossBorder_tourPurpose_nonSENTRI.csv | Cross Border Model tour purpose distribution for Non-SENTRI tours | CSV | Transportation Modelers | 
@@ -73,17 +45,21 @@ The table below contains brief descriptions of the input files required to execu
 | HTM\inputs_sandag_htm_<Scenario_Year>.xlsx | Contains all the required inputs ( in different sheets) for the Heavy Truck Model | Excel Workbook | |
 | HTM\FAF5_BaseAndFutureYears_Oct27_2023.csv | FAF5 Data (filtered) containing FAF flows for required years | CSV | |
 | **Other** |  |  |  | 
+| [bikeTazLogsum.csv](#bike_taz_logsum) | Bike TAZ logsum | CSV | Transportation Modelers | 
+| [bikeMgraLogsum.csv](#bike_mgra_logsum) | Bike MGRA logsum | CSV | Transportation Modelers | 
 | [parametersByYears.csv](#parametersbyyearscsv) | Parameters by scenario years. Includes AOC, aiport enplanements, cross-border tours, cross-border sentri share. | CSV | Transportation Modelers | 
 | [filesByYears.csv](#filesbyyearscsv) | File names by scenario years. | CSV | Transportation Modelers | 
 | trip_XX.omx | Warm start trip table; XX is the TOD (EA, AM, MD, PM, and EV) | OMX | Transportation Modelers |
 | zone_term.csv | TAZ terminal times | Space Delimited Text File | Transportation Modelers | 
+| mgra15.shp | | SHP | |
+| taz15.shp | | SHP | |
 | all_vol_dfs.csv [to be updated] | | | |
 | all_wait_times.csv [to be updated] | | | |
 | specialEvents_() [to be updated] | | | |
 <a id="land_use"></a>
 
 ## Land Use
-### MGRA_BASED_INPUT_SCENARIO_YEAR.CSV
+### mgra15_based_input{year}.csv
 <a name="lu"></a>
 
 | Column name | Description | 
@@ -304,594 +280,6 @@ The table below contains brief descriptions of the input files required to execu
 | version              | Synthetic population run version. Presently set to 0. |
 | naics2_original_code              | 2 digit North American Industry Classification System (NAICS)<br>11 = Agriculture, Forestry, Fishing and Hunting<br> 21 = Mining, Quarrying, and Oil and Gas Extraction<br>22 = Utilities<br>23 = Construction<br>31 = Manufacturing<br>32 = Wood Product Manufacturing<br>33 = Primary Metal Manufacturing<br>42 = Wholesale Trade<br>44 = Retail Trade<br>45 = General Merchandise Retailers<br>48 = Transportation and Warehousing<br>49 = Postal Service<br>51 = Information<br>52 = Finance and Insurance<br>53 = Real Estate and Rental and Leasing<br>54 = Professional, Scientific, and Technical Services<br>55 = Management of Companies and Enterprises<br>56 = Administrative and Support and Waste Management and Remediation Services<br>61 = Educational Services<br>62 = Health Care and Social Assistance<br>71 = Arts, Entertainment, and Recreation<br>721 = Accommodation<br>722 = Food Services and Drinking Places<br>81 = Other Services (except Public Administration)<br>92 =  Public Administration | 
 | soc2              | 2 digit Standard Occupational Classification |
-
-
-## Network
-<a id="vehicle_class_toll"></a>
-
-### Highway Network Vehicle Class Toll Factors File
-#### `vehicle_class_toll_factors.csv`
-
-Required file. Used to specify the relative toll values by six vehicle classes by Facility name, scenario year and time of day. Can be used, for example, to identify "free for HOV" type managed lane facilties. Used by the Import network Modeller tool.
-
-Example:
-
-| Facility_name | Year | Time_of_Day | DA_Factor | S2_Factor | S3_Factor | TRK_L_Factor | TRK_M_Factor | TRK_H_Factor |
-| ------------- | ---- | ----------- | --------- | --------- | --------- | ------------ | ------------ | ------------ |
-| I-15          | 2016 | EA          | 1.0       | 0.0       | 0.0       | 1.0          | 1.03         | 2.33         |
-| SR-125        | 2016 | ALL         | 1.0       | 1.0       | 1.0       | 1.0          | 1.03         | 2.33         |
-| I-5           | 2035 | ALL         | 1.0       | 1.0       | 0.0       | 1.0          | 1.03         | 2.33         |
-
-The network links are matched to a record in this file based on the NM, FXNM or TXNM values (in that order). A simple substring matching is used, so the record with Facility_name "I-15" matches any link with name "I-15 SB", "I-15 NB", "I-15/DEL LAGO DAR NB" etc. The records should not be overlapping: if there are two records which match a given link it will be an arbitrary choice as to which one is used.
-
-Note that if a link does not match to a record in this file, the default factors (specified in the table below) will be applied to said link. It is OK if there are records for which there are no link tolls.
-
-<table>
-    <tr>
-        <th>Column Name</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <td>Facility_name</td>
-        <td>Name of the facility, used in the substring matching with links by NM, FXNM or TXNM fields</td>
-    </tr>
-    <tr>
-        <td>Year</td>
-        <td>Scenario year</td>
-    </tr>
-    <tr>
-        <td>Time_of_Day</td>
-        <td>
-            Time of day period:<br>
-            EA = Early morning (3am - 5:59am)<br>
-            AM = AM peak (6am to 8:59am)<br>
-            MD = Mid-day (9am to 3:29pm)<br>
-            PM = PM peak (3:30pm to 6:59pm)<br>
-            EV = Evening (7pm to 2:59am)<br>
-            ALL = All time of day periods
-        </td>
-    </tr>
-    <tr>
-        <td>DA_Factor</td>
-        <td>Positive toll factor for Drive Alone (SOV) vehicle classes. The default value is 1.0</td>
-    </tr>
-    <tr>
-        <td>S2_Factor</td>
-        <td>Positive toll factor for Shared 2 person (HOV2) vehicle classes. The default value is 1.0</td>
-    </tr>
-    <tr>
-        <td>S3_Factor</td>
-        <td>Positive toll factor for Shared 3+ person (HOV3) vehicle classes. The default value is 1.0</td>
-    </tr>
-    <tr>
-        <td>TRK_L_Factor</td>
-        <td>Positive toll factor for Light Truck (TRKL) vehicle classes. The default value is 1.0</td>
-    </tr>
-    <tr>
-        <td>TRK_M_Factor</td>
-        <td>Positive toll factor for Medium Truck (TRKM) vehicle classes. The default value is 1.03</td>
-    </tr>
-    <tr>
-        <td>TRK_H_Factor</td>
-        <td>Positive toll factor for Heavy Truck (TRKH) vehicle classes. The default value is 2.03</td>
-    </tr>
-</table>
-
-
-### `special_fares.txt`
-
-```
-boarding_cost:
-   base: 
-       - {line: "398104", cost: 3.63}
-       - {line: "398204", cost: 3.63}
-   stop_increment:
-       - {line: "398104", stop: "SORRENTO VALLEY", cost: 0.46}
-       - {line: "398204", stop: "SORRENTO VALLEY", cost: 0.46}
-in_vehicle_cost: 
-   - {line: "398104", from: "SOLANA BEACH", cost: 0.45}
-   - {line: "398104", from: "SORRENTO VALLEY", cost: 0.45}
-   - {line: "398204", from: "OLD TOWN",  cost: 0.45}
-   - {line: "398204", from: "SORRENTO VALLEY", cost: 0.45}
-day_pass: 4.54
-regional_pass: 10.90
-```
-### MGRAs at Mobility Hubs
-#### `MOBILITYHUBMGRA.CSV`
-
-<table>
-    <tr>
-        <th>Column Name</th>
-        <td>Decription</td>
-    </tr>
-    <tr>
-        <td>MGRA</td>
-        <td>MGRA ID</td>
-    </tr>
-    <tr>
-        <td>MoHubName</td>
-        <td>Mobility Hub name</td>
-    </tr>
-    <tr>
-        <td>MoHubType</td>
-        <td>
-            Mobility Hub type:<br>
-            Suburban<br>
-            Coastal<br>
-            Gateway<br>
-            Major Employment Center<br>
-            Urban
-        </td>
-    </tr>
-</table>
-
-
-<a id="transit_binary_stop"></a>
-
-### Transit Binary Stop Table
-#### `TRSTOP.CSV`
-
-<table>
-    <tr>
-        <th>Column Name</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <td>Stop_id</td>
-        <td>Unique stop ID</td>
-    </tr>
-    <tr>
-        <td>Route_id</td>
-        <td>Sequential route number</td>
-    </tr>
-    <tr>
-        <td>Link_id</td>
-        <td>Link id associated with route</td>
-    </tr>
-    <tr>
-        <td>Pass_count</td>
-        <td>Number of times the route passes this stop. Most of value is one, some value is 2</td>
-    </tr>
-    <tr>
-        <td>Milepost</td>
-        <td>Stop mile post</td>
-    </tr>
-    <tr>
-        <td>Longitude</td>
-        <td>Stop Longitude</td>
-    </tr>
-    <tr>
-        <td>Latitude</td>
-        <td>Stop Latitude</td>
-    </tr>
-    <tr>
-        <td>NearNode</td>
-        <td>Node number that stop is nearest to</td>
-    </tr>
-    <tr>
-        <td>FareZone</td>
-        <td>Zones defined in Fare System</td>
-    </tr>
-    <tr>
-        <td>StopName</td>
-        <td>Name of Stop</td>
-    </tr>
-    <tr>
-        <td>MODE_NAME</td>
-        <td>
-            Line haul mode name:<br>
-            Transfer<br>
-            Center City Walk<br>
-            Walk Access<br>
-            Commuter Rail<br>
-            Light Rail<br>
-            Regional BRT (Yellow)<br>
-            Regional BRT (Red)<br>
-            Limited Express<br>
-            Express<br>
-            Local
-        </td>
-    </tr>
-    <tr>
-        <td>MODE_ID</td>
-        <td>
-            Mode ID<br>
-            1 = Transfer<br>
-            2 = Center City Walk<br>
-            3 = Walk Access<br>
-            4 = Commuter Rail<br>
-            5 = Light Rail<br>
-            6 = Regional BRT (Yellow)<br>
-            7 = Regional BRT (Red)<br>
-            8 = Limited Express<br>
-            9 = Express<br>
-            10 = Local
-        </td>
-    </tr>
-    <tr>
-        <td>PREMODE</td>
-        <td>
-            Premium Transit mode<br>
-            0 = No<br>
-            1 = Yes
-        </td>
-    </tr>
-    <tr>
-        <td>EXPBSMODE</td>
-        <td>
-            Express bus mode<br>
-            0 = No<br>
-            1 = Yes
-        </td>
-    </tr>
-    <tr>
-        <td>LOCMODE</td>
-        <td>
-            Local bus mode<br>
-            0 = No<br>
-            1 = Yes
-        </td>
-    </tr>
-    <tr>
-        <td>OP_TRNTIME</td>
-        <td>
-            Off peak transcad matrix used by mode:<br>
-            *oploctime<br>
-            *oppretime
-        </td>
-    </tr>
-    <tr>
-        <td>AM_TRNTIME</td>
-        <td>
-            AM peak transcad matrix used by mode:<br>
-            *amloctime<br>
-            *ampretime
-        </td>
-    </tr>
-    <tr>
-        <td>PM_TRNTIME</td>
-        <td>
-            PM peak transcad matrix used by mode:<br>
-            *pmloctime<br>
-            *pmpretime
-        </td>
-    </tr>
-    <tr>
-        <td>MODE_ACCES</td>
-        <td>Mode of access (1)</td>
-    </tr>
-    <tr>
-        <td>MODE_EGRES</td>
-        <td>Mode of egress (1)</td>
-    </tr>
-    <tr>
-        <td>WT_IVTPK</td>
-        <td>Weight for peak in-vehicle time: 1, 1.5, or 1.8</td>
-    </tr>
-    <tr>
-        <td>WT_FWTPK</td>
-        <td>Weight for peak first wait time: 1, 1.5</td>
-    </tr>
-    <tr>
-        <td>WT_XWTPK</td>
-        <td>Weight for peak transfer wait time: 1, 3</td>
-    </tr>
-    <tr>
-        <td>WT_FAREPK</td>
-        <td>Weight for peak fare: 0.46, 0.60, 0.63, 0.67, 1</td>
-    </tr>
-    <tr>
-        <td>WT_IVTOP</td>
-        <td>Weight for off-peak in-vehicle time: 1, 1.5, or 1.6</td>
-    </tr>
-    <tr>
-        <td>WT_FWTOP</td>
-        <td>Weight for off-peak first wait time: 1, 1.5</td>
-    </tr>
-    <tr>
-        <td>WT_XWTOP</td>
-        <td>Weight for off-peak transfer wait time: 1, 3</td>
-    </tr>
-    <tr>
-        <td>WT_FAREOP</td>
-        <td>Weight for off-peak fare: 0.23, 0.51, 0.52, 0.54, 0.58, 1</td>
-    </tr>
-    <tr>
-        <td>FARE</td>
-        <td>Transit fare: $0, $1.25, $1.50, $2.50, $3.00, $3.50</td>
-    </tr>
-    <tr>
-        <td>DWELLTIME</td>
-        <td>Dwell time: 0, 0.3, 0.5</td>
-    </tr>
-    <tr>
-        <td>FARETYPE</td>
-        <td>
-            Fare Type:<br>
-            1 = Bus<br>
-            2 = Rail
-        </td>
-    </tr>
-    <tr>
-        <td>FAREFIELD</td>
-        <td>
-            Fare Field:<br>
-            coaster fare<br>
-            lightrail fare
-        </td>
-    </tr>
-    <tr>
-        <td>CRMODE</td>
-        <td>Boolean if Commuter rail available</td>
-    </tr>
-    <tr>
-        <td>LRMODE</td>
-        <td>Boolean if light rail available</td>
-    </tr>
-    <tr>
-        <td>XFERPENTM</td>
-        <td>Transfer Penalty time: 5 minutes</td>
-    </tr>
-    <tr>
-        <td>WTXFERTM</td>
-        <td>Transfer Wait time: 1 minute</td>
-    </tr>
-    <tr>
-        <td>TRNTIME_EA</td>
-        <td>Early AM transit time impedance</td>
-    </tr>
-    <tr>
-        <td>TRNTIME_AM</td>
-        <td>AM transit time impedance</td>
-    </tr>
-    <tr>
-        <td>TRNTIME_MD</td>
-        <td>Midday transit time impedance</td>
-    </tr>
-    <tr>
-        <td>TRNTIME_PM</td>
-        <td>PM transit time impedance</td>
-    </tr>
-    <tr>
-        <td>TRNTIME_EV</td>
-        <td>Evening transit time impedance</td>
-    </tr>
-</table>
-
-<a id="transit_transfer_proh"></a>
-
-### Transit Timed Transfers Between COASTER and Feeder Buses
-#### `TIMEXFER_XX.CSV`
-
-<table>
-    <tr>
-        <th>Column Name</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <td>FROM_LINE</td>
-        <td>From Route Number</td>
-    </tr>
-    <tr>
-        <td>TO_LINE</td>
-        <td>To Route Number</td>
-    </tr>
-    <tr>
-        <td>WAIT_TIME</td>
-        <td>Wait time in minutes</td>
-    </tr>
-</table>
-
-<a id="transit_fares"></a>
-
-### Transit Stop Table
-#### `TRSTOP.CSV`
-| Column Name  | Description |
-| ------------ | ----------- |
-| Stop_id      | Unique stop ID |
-| Route_id     | Sequential route number |
-| Link_id      | Link id associated with route |
-| Pass_count   | Number of times the route passes this stop. Most of value is one, some value is 2 |
-| Milepost     | Stop mile post |
-| Longitude    | Stop Longitude |
-| Latitude     | Stop Latitude |
-| NearNode     | Node number that stop is nearest to |
-| FareZone     | Zones defined in Fare System |
-| StopName     | Name of Stop |
-| MODE_NAME    | Line haul mode name:<br>Transfer<br>Center City Walk<br>Walk Access<br>Commuter Rail<br>Light Rail<br>Regional BRT (Yellow)<br>Regional BRT (Red)<br>Limited Express<br>Express<br>Local |
-| MODE_ID      | Mode ID<br>1 = Transfer<br>2 = Center City Walk<br>3 = Walk Access<br>4 = Commuter Rail<br>5 = Light Rail<br>6 = Regional BRT (Yellow)<br>7 = Regional BRT (Red)<br>8 = Limited Express<br>9 = Express<br>10 = Local |
-| PREMODE      | Premium Transit mode<br>0 = No<br>1 = Yes |
-| EXPBSMODE    | Express bus mode<br>0 = No<br>1 = Yes |
-| LOCMODE      | Local bus mode<br>0 = No<br>1 = Yes |
-| OP_TRNTIME   | Off peak transcad matrix used by mode:<br>*oploctime<br>*oppretime |
-| AM_TRNTIME   | AM peak transcad matrix used by mode:<br>*amloctime<br>*ampretime |
-| PM_TRNTIME   | PM peak transcad matrix used by mode:<br>*pmloctime<br>*pmpretime |
-| MODE_ACCES   | Mode of access (1) |
-| MODE_EGRES   | Mode of egress (1) |
-| WT_IVTPK     | Weight for peak in-vehicle time: 1, 1.5, or 1.8 |
-| WT_FWTPK     | Weight for peak first wait time: 1, 1.5 |
-| WT_XWTPK     | Weight for peak transfer wait time: 1, 3 |
-| WT_FAREPK    | Weight for peak fare: 0.46, 0.60, 0.63, 0.67, 1 |
-| WT_IVTOP     | Weight for off-peak in-vehicle time: 1, 1.5, or 1.6 |
-| WT_FWTOP     | Weight for off-peak first wait time: 1, 1.5 |
-| WT_XWTOP     | Weight for off-peak transfer wait time: 1, 3 |
-| WT_FAREOP    | Weight for off-peak fare: 0.23, 0.51, 0.52, 0.54, 0.58, 1 |
-| FARE         | Transit fare: $0, $1.25, $1.50, $2.50, $3.00, $3.50 |
-| DWELLTIME    | Dwell time: 0, 0.3, 0.5 |
-| FARETYPE     | Fare Type:<br>1 = Bus<br>2 = Rail |
-| FAREFIELD    | Fare Field:<br>coaster fare<br>lightrail fare |
-| CRMODE       | Boolean if Commuter rail available |
-| LRMODE       | Boolean if light rail available |
-| XFERPENTM    | Transfer Penalty time: 5 minutes |
-| WTXFERTM     | Transfer Wait time: 1 minute |
-| TRNTIME_EA   | Early AM transit time impedance |
-| TRNTIME_AM   | AM transit time impedance |
-| TRNTIME_MD   | Midday transit time impedance |
-| TRNTIME_PM   | PM transit time impedance |
-| TRNTIME_EV   | Evening transit time impedance |
-
-<!-- <a href="#top">Go To Top</a> -->
-<a id="tr_link"></a>
-
-### Transit Link File
-#### `TRLINK.CSV`
-
-<table>
-    <tr>
-        <th>Column Name</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <td>Route_id:</td>
-        <td>Sequential route number</td>
-    </tr>
-    <tr>
-        <td>Link_id</td>
-        <td>Link id associated with route</td>
-    </tr>
-    <tr>
-        <td>Direction</td>
-        <td>+ or -</td>
-    </tr>
-</table>
-
-
-<a id="bike_net_link"></a>
-
-### Bike Network Link Field List
-#### `SANDAG_BIKE_NET.DBF`
-
-| Column Name | Description |
-| ----------- | ----------- |
-| ROADSEGID   | Road Segment ID |
-| RD20FULL    | Road/Street Name |
-| A           | Foreign key of first node |
-| B           | Foreign key of second node |
-| A_LEVEL     | Level of first node |
-| B_LEVEL     | Level of second node |
-| Distance    | Arc length of link (ft) |
-| AB_Gain     | Cumulative non-negative increase in elevation from A to B nodes (ft) |
-| BA_Gain     | Cumulative non-negative increase in elevation from B to A nodes (ft) |
-| ABBikeClas  | Type of Bike Classification in AB direction where:<br>1 = Multi-Use Path<br>2 = Bike Lane<br>3 = Bike Route |
-| BABikeClas  | Type of Bike Classification in BA direction where:<br>1 = Multi-Use Path<br>2 = Bike Lane<br>3 = Bike Route |
-| AB_Lanes    | Number of Lanes in AB direction |
-| BA_Lanes    | Number of Lanes in BA direction |
-| Func_Class  | Type of Road Functional Class where:<br>1 = Freeway to Freeway Ramp<br>2 = Light (2-lane) Collector Street<br>3 = Rural Collector Road<br>4 = Major Road/4-lane Major Road<br>5 = Rural Light Collector/Local Road<br>6 = Prime Arterial<br>7 = Private Street<br>8 = Recreational Parkway<br>9 = Rural Mountain Road<br>A = Alley<br>B = Class I Bicycle Path<br>C = Collector/4-lane Collector Street<br>D = Two-lane Major Street<br>E = Expressway<br>F = Freeway<br>L = Local Street/Cul-de-sac<br>M = Military Street within Base<br>P = Paper Street<br>Q = Undocumented<br>R = Freeway/Expressway On/Off Ramp<br>S = Six-lane Major Street<br>T = Transitway<br>U = Unpaved Road<br>W = Pedestrian Way/Bikeway |
-| Bike2Sep    | Separated Bike Lane Flag where:<br>0 = No<br>1 = Yes |
-| Bike3Blvd   | Bike Boulevard Lane Flag where:<br>0 = No<br>1 = Yes |
-| SPEED       | Road Speed |
-| A_Elev      | A Node Elevation |
-| B_Elev      | B Node Elevation |
-| ProjectID   | Project ID in the regional bike network |
-| Year        | Year built/opened to the public |
-| Scenicldx   | Scenic index represents the closeness to the ocean and parks |
-| Path        | Null |
-| Shape_Leng  | length of the link (ft) |
-
-<a id="bike_net_node"></a>
-
-### Bike Network Node Field List
-#### `SANDAG_BIKE_NODE.DBF`
-<table>
-    <tr>
-        <th>Column Name</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <td>NodeLev_ID</td>
-        <td>Node Unique Identifier</td>
-    </tr>
-    <tr>
-        <td>MGRA</td>
-        <td>MGRA ID for Centroids</td>
-    </tr>
-    <tr>
-        <td>TAZ</td>
-        <td>TAZ ID for Centroids</td>
-    </tr>
-    <tr>
-        <td>TAP</td>
-        <td>TAP ID</td>
-    </tr>
-    <tr>
-        <td>XCOORD</td>
-        <td>X Coordinate of Node in NAD 1983 State Plane California Region VI FIPS: 0406 (ft)</td>
-    </tr>
-    <tr>
-        <td>YCOORD</td>
-        <td>Y Coordinate of Node in NAD 1983 State Plane California Region VI FIPS: 0406(ft)</td>
-    </tr>
-    <tr>
-        <td>ZCOORD</td>
-        <td>Elevation (ft)</td>
-    </tr>
-    <tr>
-        <td>Signal</td>
-        <td>
-            Traffic Signal Presence where:<br>
-            0 = Absence<br>
-            1 = Presence
-        </td>
-    </tr>
-</table>
-
-
-
-<a id="bike_taz_logsum"></a>
-
-### Bike TAZ Logsum
-#### `BIKETAZLOGSUM.CSV`
-
-<table>
-    <tr>
-        <th>Column Name</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <td>i</td>
-        <td>Origin TAZ</td>
-    </tr>
-    <tr>
-        <td>j</td>
-        <td>Destination TAZ</td>
-    </tr>
-    <tr>
-        <td>Logsum</td>
-        <td>Logsum - a measure of the closeness of the origin and the destination of the trip</td>
-    </tr>
-    <tr>
-        <td>time</td>
-        <td>Time (In minutes) </td>
-    </tr>
-</table>
-
-<a id="bike_mgra_logsum"></a>
-
-### Bike MGRA Logsum
-#### `BIKEMGRALOGSUM.CSV`
-
-<table>
-    <tr>
-        <th>Column Name</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <td>i</td>
-        <td>Origin of MGRA</td>
-    </tr>
-    <tr>
-        <td>j</td>
-        <td>Destination of MGRA</td>
-    </tr>
-    <tr>
-        <td>Logsum</td>
-        <td>Logsum - a measure of the closeness of the origin and the destination of the trip</td>
-    </tr>
-    <tr>
-        <td>time</td>
-        <td>Time (in minutes) </td>
-    </tr>
-</table>
 
 ## Airport
 <a id="airport_nights"></a>
@@ -2186,6 +1574,63 @@ oth; where Size_Class ranges 1-7.
 </table>
 
 ## Others
+
+<a id="bike_taz_logsum"></a>
+
+### Bike TAZ Logsum
+#### `bikeTazLogsum.csv`
+
+<table>
+    <tr>
+        <th>Column Name</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>i</td>
+        <td>Origin TAZ</td>
+    </tr>
+    <tr>
+        <td>j</td>
+        <td>Destination TAZ</td>
+    </tr>
+    <tr>
+        <td>Logsum</td>
+        <td>Logsum - a measure of the closeness of the origin and the destination of the trip</td>
+    </tr>
+    <tr>
+        <td>time</td>
+        <td>Time (In minutes) </td>
+    </tr>
+</table>
+
+<a id="bike_mgra_logsum"></a>
+
+### Bike MGRA Logsum
+#### `bikeMgraLogsum.csv`
+
+<table>
+    <tr>
+        <th>Column Name</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>i</td>
+        <td>Origin of MGRA</td>
+    </tr>
+    <tr>
+        <td>j</td>
+        <td>Destination of MGRA</td>
+    </tr>
+    <tr>
+        <td>Logsum</td>
+        <td>Logsum - a measure of the closeness of the origin and the destination of the trip</td>
+    </tr>
+    <tr>
+        <td>time</td>
+        <td>Time (in minutes) </td>
+    </tr>
+</table>
+
 ### Parameters by Scenario Years
 #### `PARAMETERSBYYEARS.CSV`
 
