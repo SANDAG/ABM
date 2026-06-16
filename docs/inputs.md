@@ -10,57 +10,283 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
 
 *Note: Click on file name for additional details.*
 
-| **File Name** | **Purpose** | **File Type** | **Prepared By** | 
-| --- | --- | --- | --- |
-| **Land Use** |  |  |  | 
-| [mgra15_based_input{year}.csv](#lu) | Land use forecast of the size and structure of the region’s economy and corresponding demographic forecast | CSV | Land Use Modelers, Transportation Modelers, and GIS | 
-| **Synthetic Population** |  |  |  | 
-| [households.csv](#population_synth_households) | Synthetic households | CSV | Transportation Modelers | 
-| [persons.csv](#population_synth_persons) | Synthetic persons | CSV | Transportation Modelers | 
-| **Cross-Border Model (Derived from cross-border survey)** |  |  |  | 
-| crossBorder_tourPurpose_control.csv |  | CSV |  | 
-| crossBorder_tourPurpose_nonSENTRI.csv | Cross Border Model tour purpose distribution for Non-SENTRI tours | CSV | Transportation Modelers | 
-| crossBorder_tourPurpose_SENTRI.csv | Cross Border Model tour purpose distribution for SENTRI tours | CSV | Transportation Modelers | 
-| [crossBorder_tourEntryAndReturn.csv](#cross_border_entry_return) | Cross Border Model tour entry and return time-of-day distribution | CSV | Transportation Modelers | 
-| [crossBorder_supercolonia.csv](#cross_border_supercolonia) | Cross Border Model distance from Colonias to border crossing locations | CSV | Transportation Modelers | 
-| [crossBorder_pointOfEntryWaitTime.csv](#cross_border_wait_time) | Cross Border Model wait times at border crossing locations table | CSV | GIS - Pat L vtsql | 
-| [crossBorder_stopFrequency.csv](#cross_border_stops) | Cross Border Model stop frequency data | CSV | Transportation Modelers | 
-| [crossBorder_stopPurpose.csv](#cross_border_stop_purpose) | Cross Border Model stop purpose distribution | CSV | Transportation Modelers | 
-| [crossBorder_outboundStopDuration.csv](#cross_border_out_stop) | Cross Border Model time-of-day offsets for outbound stops | CSV | Transportation Modelers | 
-| [crossBorder_inboundStopDuration.csv](#cross_border_in_stop) | Cross Border Model time-of-day offsets for inbound stops | CSV | Transportation Modelers | 
-| [closest_maz_to_external_tazs.csv](#closest_maz_to_external_tazs) | | CSV | Transportation Modelers |
-| [mazs_xborder.csv](#mazs_xborder) | | CSV | Transportation Modelers | 
-| **External Models (Derived from SCAG survey)** |  |  |  | 
-| [externalExternalTripsByYear.csv](#external_trip) <i> (raw inputs have these by year) <i> | External origin-destination station trip matrix | CSV | Transportation Modelers | |  |  |  | 
-| [externalInternalControlTotalsByYear.csv](#external_internal) <i> (raw inputs have these by year) <i> | External Internal station control totals read by GISDK | CSV | Transportation Modelers | |  |  |  | 
-| [internalExternal_tourTOD.csv](#internal_external_tod) | Internal-External Model tour time-of-day frequency distribution | CSV | Transportation Modelers | 
-| [resident_ie_size_term.csv](#resident_ie_size_term) | | CSV | Transportation Modelers
-| **Commercial Vehicle Model** |  |  |  | 
-| land_use(output from preprocessing step) | MGRA based land use file | CSV | |
-| percent_of_establishments_by_luz_size_emp_cat.xlsx | Percent of establishments in LUZ that belong in each size category by industry sector | Excel Workbook | |
-| CVM\SynthEstablishments.csv | Output from CVM establishment synthesis, similar description as previous part | CSV | |
-| CVM\MGRAEmpByEstSize.csv | MGRA Based synthetically generated establishments. Used for disgnostic purposes, not for simulation | CSV | |
-| CVM\SummaryEstablishments.csv | Contains information about synthetically generated establishments to be used as inputs to the commercial vehicle model | CSV | |
-| **Heavy Truck Model ( HTM )** |
-| HTM\inputs_sandag_htm_<Scenario_Year>.xlsx | Contains all the required inputs ( in different sheets) for the Heavy Truck Model | Excel Workbook | |
-| HTM\FAF5_BaseAndFutureYears_Oct27_2023.csv | FAF5 Data (filtered) containing FAF flows for required years | CSV | |
-| **Other** |  |  |  | 
-| [bikeTazLogsum.csv](#bike_taz_logsum) | Bike TAZ logsum | CSV | Transportation Modelers | 
-| [bikeMgraLogsum.csv](#bike_mgra_logsum) | Bike MGRA logsum | CSV | Transportation Modelers | 
-| [parametersByYears.csv](#parametersbyyearscsv) | Parameters by scenario years. Includes AOC, aiport enplanements, cross-border tours, cross-border sentri share. | CSV | Transportation Modelers | 
-| [filesByYears.csv](#filesbyyearscsv) | File names by scenario years. | CSV | Transportation Modelers | 
-| trip_XX.omx | Warm start trip table; XX is the TOD (EA, AM, MD, PM, and EV) | OMX | Transportation Modelers |
-| zone_term.csv | TAZ terminal times | Space Delimited Text File | Transportation Modelers | 
-| mgra15.shp | | SHP | |
-| taz15.shp | | SHP | |
-| all_vol_dfs.csv [to be updated] | | | |
-| all_wait_times.csv [to be updated] | | | |
-| specialEvents_() [to be updated] | | | |
-<a id="land_use"></a>
+<table>
+    <tr>
+        <td><strong>File Name</strong></td>
+        <td><strong>Description</strong></td>
+        <td><strong>File Format</strong></td>
+        <td><strong>Source</strong></td>
+    </tr>
+    <tr>
+        <td><strong><a href=#land-use>Land Use</a></strong></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td><a href=#mgra15_based_inputyearcsv>mgra15_based_input{year}.csv</a></td>
+        <td>Land use forecast of the size and structure of the region’s economy and corresponding demographic forecast</td>
+        <td>CSV</td>
+        <td>Land Use Modelers, Transportation Modelers, and GIS</td>
+    </tr>
+    <tr>
+        <td><strong><a href=#synthetic-population>Synthetic Population</a></strong></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td><a href=#householdscsv>households.csv</a></td>
+        <td>Synthetic households</td>
+        <td>CSV</td>
+        <td>Transportation Modelers</td>
+    </tr>
+    <tr>
+        <td>[persons.csv](#population_synth_persons)</td>
+        <td>Synthetic persons</td>
+        <td>CSV</td>
+        <td>Transportation Modelers</td>
+    </tr>
+    <tr>
+        <td>**Crossborder Model**</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>crossBorder_tourPurpose_control.csv</td>
+        <td></td>
+        <td>CSV</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>crossBorder_tourPurpose_nonSENTRI.csv</td>
+        <td>Cross Border Model tour purpose distribution for Non-SENTRI tours</td>
+        <td>CSV</td>
+        <td>Transportation Modelers</td>
+    </tr>
+    <tr>
+        <td>crossBorder_tourPurpose_SENTRI.csv</td>
+        <td>Cross Border Model tour purpose distribution for SENTRI tours</td>
+        <td>CSV</td>
+        <td>Transportation Modelers</td>
+    </tr>
+    <tr>
+        <td>[crossBorder_tourEntryAndReturn.csv](#cross_border_entry_return)</td>
+        <td>Cross Border Model tour entry and return time-of-day distribution</td>
+        <td>CSV</td>
+        <td>Transportation Modelers</td>
+    </tr>
+    <tr>
+        <td>[crossBorder_supercolonia.csv](#cross_border_supercolonia)</td>
+        <td>Cross Border Model distance from Colonias to border crossing locations</td>
+        <td>CSV</td>
+        <td>Transportation Modelers</td>
+    </tr>
+    <tr>
+        <td>[crossBorder_pointOfEntryWaitTime.csv](#cross_border_wait_time)</td>
+        <td>Cross Border Model wait times at border crossing locations table</td>
+        <td>CSV</td>
+        <td>GIS - Pat L vtsql</td>
+    </tr>
+    <tr>
+        <td>[crossBorder_stopFrequency.csv](#cross_border_stops)</td>
+        <td>Cross Border Model stop frequency data</td>
+        <td>CSV</td>
+        <td>Transportation Modelers</td>
+    </tr>
+    <tr>
+        <td>[crossBorder_stopPurpose.csv](#cross_border_stop_purpose)</td>
+        <td>Cross Border Model stop purpose distribution</td>
+        <td>CSV</td>
+        <td>Transportation Modelers</td>
+    </tr>
+    <tr>
+        <td>[crossBorder_outboundStopDuration.csv](#cross_border_out_stop)</td>
+        <td>Cross Border Model time-of-day offsets for outbound stops</td>
+        <td>CSV</td>
+        <td>Transportation Modelers</td>
+    </tr>
+    <tr>
+        <td>[crossBorder_inboundStopDuration.csv](#cross_border_in_stop)</td>
+        <td>Cross Border Model time-of-day offsets for inbound stops</td>
+        <td>CSV</td>
+        <td>Transportation Modelers</td>
+    </tr>
+    <tr>
+        <td>[closest_maz_to_external_tazs.csv](#closest_maz_to_external_tazs)</td>
+        <td></td>
+        <td>CSV</td>
+        <td>Transportation Modelers</td>
+    </tr>
+    <tr>
+        <td>[mazs_xborder.csv](#mazs_xborder)</td>
+        <td></td>
+        <td>CSV</td>
+        <td>Transportation Modelers</td>
+    </tr>
+    <tr>
+        <td>**External Models**</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>[externalExternalTripsByYear.csv](#external_trip) &lt;i&gt; (raw inputs have these by year) &lt;i&gt;</td>
+        <td>External origin-destination station trip matrix</td>
+        <td>CSV</td>
+        <td>Transportation Modelers</td>
+    </tr>
+    <tr>
+        <td>[externalInternalControlTotalsByYear.csv](#external_internal) &lt;i&gt; (raw inputs have these by year) &lt;i&gt;</td>
+        <td>External Internal station control totals read by GISDK</td>
+        <td>CSV</td>
+        <td>Transportation Modelers</td>
+    </tr>
+    <tr>
+        <td>[internalExternal_tourTOD.csv](#internal_external_tod)</td>
+        <td>Internal-External Model tour time-of-day frequency distribution</td>
+        <td>CSV</td>
+        <td>Transportation Modelers</td>
+    </tr>
+    <tr>
+        <td>[resident_ie_size_term.csv](#resident_ie_size_term)</td>
+        <td></td>
+        <td>CSV</td>
+        <td>Transportation Modelers</td>
+    </tr>
+    <tr>
+        <td>**Commercial Vehicle Model**</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>land_use(output from preprocessing step)</td>
+        <td>MGRA based land use file</td>
+        <td>CSV</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>percent_of_establishments_by_luz_size_emp_cat.xlsx</td>
+        <td>Percent of establishments in LUZ that belong in each size category by industry sector</td>
+        <td>Excel Workbook</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>CVM\SynthEstablishments.csv</td>
+        <td>Output from CVM establishment synthesis, similar description as previous part</td>
+        <td>CSV</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>CVM\MGRAEmpByEstSize.csv</td>
+        <td>MGRA Based synthetically generated establishments. Used for disgnostic purposes, not for simulation</td>
+        <td>CSV</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>CVM\SummaryEstablishments.csv</td>
+        <td>Contains information about synthetically generated establishments to be used as inputs to the commercial vehicle model</td>
+        <td>CSV</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>**Heavy Truck Model (HTM)**</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>HTM\inputs_sandag_htm_&lt;Scenario_Year&gt;.xlsx</td>
+        <td>Contains all the required inputs ( in different sheets) for the Heavy Truck Model</td>
+        <td>Excel Workbook</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>HTM\FAF5_BaseAndFutureYears_Oct27_2023.csv</td>
+        <td>FAF5 Data (filtered) containing FAF flows for required years</td>
+        <td>CSV</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>**Other**</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>[bikeTazLogsum.csv](#bike_taz_logsum)</td>
+        <td>Bike TAZ logsum</td>
+        <td>CSV</td>
+        <td>Transportation Modelers</td>
+    </tr>
+    <tr>
+        <td>[bikeMgraLogsum.csv](#bike_mgra_logsum)</td>
+        <td>Bike MGRA logsum</td>
+        <td>CSV</td>
+        <td>Transportation Modelers</td>
+    </tr>
+    <tr>
+        <td>[parametersByYears.csv](#parametersbyyearscsv)</td>
+        <td>Parameters by scenario years. Includes AOC, aiport enplanements, cross-border tours, cross-border sentri share.</td>
+        <td>CSV</td>
+        <td>Transportation Modelers</td>
+    </tr>
+    <tr>
+        <td>[filesByYears.csv](#filesbyyearscsv)</td>
+        <td>File names by scenario years.</td>
+        <td>CSV</td>
+        <td>Transportation Modelers</td>
+    </tr>
+    <tr>
+        <td>trip_XX.omx</td>
+        <td>Warm start trip table; XX is the TOD (EA, AM, MD, PM, and EV)</td>
+        <td>OMX</td>
+        <td>Transportation Modelers</td>
+    </tr>
+    <tr>
+        <td>zone_term.csv</td>
+        <td>TAZ terminal times</td>
+        <td>Space Delimited Text File</td>
+        <td>Transportation Modelers</td>
+    </tr>
+    <tr>
+        <td>mgra15.shp</td>
+        <td></td>
+        <td>SHP</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>taz15.shp</td>
+        <td></td>
+        <td>SHP</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>all_vol_dfs.csv [to be updated]</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>all_wait_times.csv [to be updated]</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>specialEvents_() [to be updated]</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+</table>
 
 ## Land Use
-### mgra15_based_input{year}.csv
-<a name="lu"></a>
+
+### Master Geographic Reference Areas Data
+`mgra15_based_input{year}.csv`
 
 | Column name | Description | 
 | --- | --- |
@@ -147,12 +373,10 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
 | dudenbin | Dwelling unit density bin | 
 | PopEmpDenPerMi | Population and employment density per mile within 0.65 miles of the MGRA |
 
-
 ## Synthetic Population
-<a id="population_synth_households"></a>
 
 ### Population Synthesizer Household Data
-#### `HOUSEHOLDS.CSV`
+`households.csv`
 
 <table>
     <tr>
@@ -251,10 +475,8 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
     </tr>
 </table>
 
-<a id="population_synth_persons"></a>
-
 ### Population Synthesizer Person Data
-#### `PERSONS.CSV`
+`persons.csv`
 
 | Column Name          | Description                                                                                   |
 |----------------------|-----------------------------------------------------------------------------------------------|

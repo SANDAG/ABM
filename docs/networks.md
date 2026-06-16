@@ -6,9 +6,9 @@ To learn how ABM3 handles the networks, refer to the [Network Import from TNED](
 
 ## Network Input Files
 
-The ABM3 networks are edited, maintained, and generated via SANDAG's internal Transportation Network Editing Database (TNED) system, which leverages ESRI's [ArcGIS Enterprise](https://enterprise.arcgis.com/en/get-started/latest/windows/what-is-arcgis-enterprise-.htm) and is hosted on an [enterprise geodatabase](https://enterprise.arcgis.com/en/server/latest/manage-data/windows/enterprise-geodatabases-and-arcgis-enterprise.htm) while other input network files are manually maintained by modelers. The TNED system, via an [ETL](https://pro.arcgis.com/en/pro-app/latest/help/data/data-interoperability/what-is-the-data-interoperability-extension.htm) (Extract, Load, Transform) process, outputs the input ABM3 networks in a variety of different formats including [file geodatabase](https://pro.arcgis.com/en/pro-app/latest/help/data/geodatabases/manage-file-gdb/file-geodatabases.htm), CSV, and [shapefiles](https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm).
+The ABM3 networks are edited, maintained, and generated via SANDAG's internal Transportation Network Editing Database (TNED) system, which leverages ESRI's [ArcGIS Enterprise](https://enterprise.arcgis.com/en/get-started/latest/windows/what-is-arcgis-enterprise-.htm) and is hosted on an [enterprise geodatabase](https://enterprise.arcgis.com/en/server/latest/manage-data/windows/enterprise-geodatabases-and-arcgis-enterprise.htm) while other input network files are manually maintained by modelers. The TNED system, via an [ETL](https://pro.arcgis.com/en/pro-app/latest/help/data/data-interoperability/what-is-the-data-interoperability-extension.htm) (Extract, Load, Transform) process, outputs the input ABM3 networks in a variety of different formats including [file geodatabase](https://pro.arcgis.com/en/pro-app/latest/help/data/geodatabases/manage-file-gdb/file-geodatabases.htm), CSV, and [shapefiles](https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm). When describing TNED ABM3 networks, this page is specifically referring to the networks in their post-ETL state. 
 
-When describing the ABM3 networks, this page is specifically referring to the networks in their post-ETL state. A typical TNED ETL network directory includes the following:
+The table below contains brief descriptions of the network input files required to execute the SANDAG ABM3.
 
 *Note: Click on file name for additional details.*
 
@@ -76,6 +76,12 @@ When describing the ABM3 networks, this page is specifically referring to the ne
     <tr>
         <td><a href=#transit-stops-csv-file>vehicle_class_toll_factors.csv</a></td>
         <td>Toll factors by facility, managed lane type, and vehicle category.</td>
+        <td>CSV</td>
+        <td>Manually Maintained</td>
+    </tr>
+    <tr>
+        <td><a href=#transit-mode-costs-and-perception-attributes-csv-file>MODE5TOD.csv</a></td>
+        <td>Global (per-mode) transit cost and perception attributes.</td>
         <td>CSV</td>
         <td>Manually Maintained</td>
     </tr>
@@ -1549,5 +1555,196 @@ Note that if a link does not match to a record in this file, the default factors
     <tr>
         <td>TRK_H_Factor</td>
         <td>Positive toll factor for Heavy Truck (TRKH) vehicle classes. The default value is 2.03</td>
+    </tr>
+</table>
+
+## Transit Mode Costs and Perception Attributes CSV File
+
+The **MODE5TOD.csv** lists all cost and perception factors per transit mode. 
+
+<table>
+	<tr>
+		<th>Column Name</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>MODE_NAME</td>
+		<td>
+			Line haul mode name:<br>
+            Transfer<br>
+            Center City Walk<br>
+            Walk Access<br>
+            Commuter Rail<br>
+            Light Rail<br>
+            Regional BRT (Yellow)<br>
+            Regional BRT (Red)<br>
+            Limited Express<br>
+            Express<br>
+            Local
+		</td>
+	</tr>
+	<tr>
+		<td>MODE_ID</td>
+		<td>
+			Mode ID<br>
+            1 = Transfer<br>
+            2 = Center City Walk<br>
+            3 = Walk Access<br>
+            4 = Commuter Rail<br>
+            5 = Light Rail<br>
+            6 = Regional BRT (Yellow)<br>
+            7 = Regional BRT (Red)<br>
+            8 = Limited Express<br>
+            9 = Express<br>
+            10 = Local
+		</td>
+	</tr>
+	<tr>
+		<td>PREMODE</td>
+		<td>
+			Premium Transit mode?<br>
+			0 = No<br>
+			1 = Yes
+		</td>
+	</tr>
+	<tr>
+		<td>EXPBSMODE</td>
+		<td>
+			Express bus mode?<br>
+			0 = No<br>
+			1 = Yes
+		</td>
+	</tr>
+	<tr>
+		<td>LOCMODE</td>
+		<td>
+			Local bus mode?<br>
+			0 = No<br>
+			1 = Yes
+		</td>
+	</tr>
+	<tr>
+        <td>OP_TRNTIME</td>
+        <td>
+            Off peak transcad matrix used by mode:<br>
+            *oploctime<br>
+            *oppretime
+        </td>
+    </tr>
+    <tr>
+        <td>AM_TRNTIME</td>
+        <td>
+            AM peak transcad matrix used by mode:<br>
+            *amloctime<br>
+            *ampretime
+        </td>
+    </tr>
+    <tr>
+        <td>PM_TRNTIME</td>
+        <td>
+            PM peak transcad matrix used by mode:<br>
+            *pmloctime<br>
+            *pmpretime
+        </td>
+    </tr>
+    <tr>
+        <td>MODE_ACCES</td>
+        <td>Mode of access (1)</td>
+    </tr>
+    <tr>
+        <td>MODE_EGRES</td>
+        <td>Mode of egress (1)</td>
+    </tr>
+    <tr>
+        <td>WT_IVTPK</td>
+        <td>Weight for peak in-vehicle time: 1, 1.5, or 1.8</td>
+    </tr>
+    <tr>
+        <td>WT_FWTPK</td>
+        <td>Weight for peak first wait time: 1, 1.5</td>
+    </tr>
+    <tr>
+        <td>WT_XWTPK</td>
+        <td>Weight for peak transfer wait time: 1, 3</td>
+    </tr>
+    <tr>
+        <td>WT_FAREPK</td>
+        <td>Weight for peak fare: 0.46, 0.60, 0.63, 0.67, 1</td>
+    </tr>
+    <tr>
+        <td>WT_IVTOP</td>
+        <td>Weight for off-peak in-vehicle time: 1, 1.5, or 1.6</td>
+    </tr>
+    <tr>
+        <td>WT_FWTOP</td>
+        <td>Weight for off-peak first wait time: 1, 1.5</td>
+    </tr>
+    <tr>
+        <td>WT_XWTOP</td>
+        <td>Weight for off-peak transfer wait time: 1, 3</td>
+    </tr>
+    <tr>
+        <td>WT_FAREOP</td>
+        <td>Weight for off-peak fare: 0.23, 0.51, 0.52, 0.54, 0.58, 1</td>
+    </tr>
+    <tr>
+        <td>FARE</td>
+        <td>Transit fare: $0, $1.25, $1.50, $2.50, $3.00, $3.50</td>
+    </tr>
+    <tr>
+        <td>DWELLTIME</td>
+        <td>Dwell time: 0, 0.3, 0.5</td>
+    </tr>
+    <tr>
+        <td>FARETYPE</td>
+        <td>
+            Fare Type:<br>
+            1 = Bus<br>
+            2 = Rail
+        </td>
+    </tr>
+    <tr>
+        <td>FAREFIELD</td>
+        <td>
+            Fare Field:<br>
+            coaster fare<br>
+            lightrail fare
+        </td>
+    </tr>
+    <tr>
+        <td>CRMODE</td>
+        <td>Boolean if Commuter rail available</td>
+    </tr>
+    <tr>
+        <td>LRMODE</td>
+        <td>Boolean if light rail available</td>
+    </tr>
+    <tr>
+        <td>XFERPENTM</td>
+        <td>Transfer Penalty time: 5 minutes</td>
+    </tr>
+    <tr>
+        <td>WTXFERTM</td>
+        <td>Transfer Wait time: 1 minute</td>
+    </tr>
+    <tr>
+        <td>TRNTIME_EA</td>
+        <td>Early AM transit time impedance</td>
+    </tr>
+    <tr>
+        <td>TRNTIME_AM</td>
+        <td>AM transit time impedance</td>
+    </tr>
+    <tr>
+        <td>TRNTIME_MD</td>
+        <td>Midday transit time impedance</td>
+    </tr>
+    <tr>
+        <td>TRNTIME_PM</td>
+        <td>PM transit time impedance</td>
+    </tr>
+    <tr>
+        <td>TRNTIME_EV</td>
+        <td>Evening transit time impedance</td>
     </tr>
 </table>
