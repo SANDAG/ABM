@@ -8,7 +8,7 @@ The overall design of the model is shown in the figure below.
 
 ![](../../images/design/airport_model_design.png)
 
-1. Tour Enumeration: A list of airport travel parties is generated from input enplanements and transferring passenger rates, as well as distributions that describe the share of travel parties by purpose (business versus personal), household income, and party size.
+1. Tour Enumeration: A list of airport travel parties is generated from input enplanements and connecting passenger rates, as well as distributions that describe the share of travel parties by purpose (business versus personal), household income, and party size.
 2. Tour Level Models
    
     2.1 Tour Scheduling Probabilistic: The tour scheduling model uses a probabilistic draw of the scheduling distribution. This model assigns start and end times to the tour. This is important because it will also serve as the schedule model for the final airport trips. In ActivitySim, trips are scheduled based on the tour schedule. If there is only one trip per leg on the tour (such as our case here) the trip is assigned the tour start/end time.
@@ -18,17 +18,18 @@ The overall design of the model is shown in the figure below.
     2.3 Tour Destination Choice: The destination choice model chooses the non-airport end of the airport trips. Each tour is set with an origin at the airport MGRA. The tour destination model of ActivitySim is used to choose the non-airport end of the trip. The utility equation includes the travel distance, and the destination size terms. For San Diego International Airport, the model has been recalibrated with improved size terms using enhanced land use variables including log-transformed hotel room totals and meeting space square footage to better represent off-airport destination attractiveness. New preprocessing calculations and coefficient structures improve the model's sensitivity to land use characteristics and distance-based utilities. ActivitySim destination choice framework requires a mode choice log sum. A dummy tour mode choice log sum was created which generates a value of zero for every destination using the 'tour_mode_choice.csv' and 'tour_mode_choice.yml' file. This is a work around to prevent ActivitySim from crashing and not having to include the tour mode choice log sum in the destination choice model.
 
     2.4 Stop Frequency Choice: The stop frequency model is where the trip table is first created. The pre-processor tags each tour with a direction of 'inbound' or 'outbound' according to whether the tour is a departing or arriving passenger. For the Airport Ground Access model, inbound tours are tagged with zero outbound trips and -1 inbound trips (and the opposite is true for outbound tours: -1 outbound trips and 0 inbound trips). The 0 signifies that no intermediate stops are made; this leg of the tour will only have one trip. The -1 signifies that no trip is made at all on that leg. Using the -1 allows us to create 'half-tours' where only one leg of the tour is recorded as a trip.
+
 3. Trip Level Models
  
     3.1 Trip Departure Choice: The trip scheduling model assigns depart times for each trip on a tour. ActivitySim requires trip scheduling probabilities; however, these are not used in this implementation since there is only one trip on any given tour leg. This means the trips will be assigned the tour scheduling times which were determined in the tour scheduling model. The trip scheduling probabilities file is just a dummy file.
 
-    3.2 Trip Mode Choice: Each trip is assigned a trip mode; in the Airport Ground Access Model, trip mode refers to the airport arrival mode which simultaneously predicts the arrival mode and the location which the passenger uses to access that model. The arrival modes are shown in the table below.  The trip mode choice yaml file contains detailed variables associated with each trip mode. For example, each parking location is given an MGRA location, a walk time, a wait-time, and a cost. If a parking location MGRA is set to -999 it is assumed to be unavailable and will not be in the choice set. The pre-processor in this step stores all values of skims from the trip origin to each of the access modes destinations along with any associated costs. Costs include parking fees per day, access fees, fares, and rental car charges.
+    3.2 Trip Mode Choice: Each trip is assigned a trip mode; in the Airport Ground Access Model, trip mode refers to the airport arrival mode which simultaneously predicts the arrival mode and the location which the passenger uses to access that mode. The arrival modes are shown in the table below.  The trip mode choice yaml file contains detailed variables associated with each trip mode. For example, each parking location is given an MGRA location, a walk time, a wait-time, and a cost. If a parking location MGRA is set to -999 it is assumed to be unavailable and will not be in the choice set. The pre-processor in this step stores all values of skims from the trip origin to each of the access modes destinations along with any associated costs. Costs include parking fees per day, access fees, fares, and rental car charges.
     
     For San Diego International Airport, the mode choice model has been re-estimated using stated preference survey data to derive empirically-based values of time for four market segments. The new specification uses linear coefficients on travel time and cost variables, which provides clearer interpretation of willingness-to-pay measures compared to log-transformed alternatives. Cost coefficients are segmented by household income level, reflecting the economic hypothesis that higher-income travelers are less sensitive to travel costs than lower-income travelers. This approach improves behavioral realism and maintains consistency with established economic theory while enhancing model transparency for stakeholders.
     
     Employees are not fed into the trip mode choice model. Instead, if a transit share is specified in the employee park file, that percentage of employees will be assigned ‘Walk Premium’ mode in the pre-processor. Otherwise, employees are all assigned ‘Walk’ mode from the employee parking lot to the terminal.
 
-    3.3 Airport Returns: Airport trips where the party is dropped of curbside or parked and escorted are assumed to also have the driver make a return trip to the non-airport location. This procedure is done as a post-processing step after mode choice and before trip tables are written out. An ‘airport_returns.yml’ file takes a user setting to determine which trip modes will include a return trip. These trips records are flagged and duplicated. The duplicated trips swap the origin and destination of the original trip and are assigned a unique trip id. These trips are tagged with ‘trip_num =2’ so they are easily sorted in any additional processing (such as for writing trip matrices).
+    3.3 Airport Returns: Airport trips where the party is dropped off curbside or parked and escorted are assumed to also have the driver make a return trip to the non-airport location. This procedure is done as a post-processing step after mode choice and before trip tables are written out. An ‘airport_returns.yml’ file takes a user setting to determine which trip modes will include a return trip. These trips records are flagged and duplicated. The duplicated trips swap the origin and destination of the original trip and are assigned a unique trip id. These trips are tagged with ‘trip_num =2’ so they are easily sorted in any additional processing (such as for writing trip matrices).
 
     3.4 Write trip matrices: The write trip matrices step converts the trip lists into vehicle trip matrices. The matrices are segmented by trip mode and value of time bins. The vehicle trip modes in the matrices include SOV, HOV2, HOV3+, Taxi, and TNC-single. Value of time segmentation is either low, medium, or high bins based on the thresholds set in the model settings.
 
@@ -91,13 +92,10 @@ flowchart TD
 | **Arrival Mode** | **Description** | **Airport Model** |
 | --- | --- | --- |
 | Park Location 1 | Party parks personal vehicle at parking location 1. | Both |
-|  |  |  |
 | Park Location 2 | Party parks personal vehicle at parking location 2. | CBX |
 | Park Location 3 | Party parks personal vehicle at parking location 3. | CBX |
 | Park Location 4 | Party parks personal vehicle at parking location 4. | Both |
 | Park Location 5 | Party parks personal vehicle at parking location 5. | CBX |
-|  |  |  |
-|  |  |  |
 | Curb Location 1 | Party is dropped off or picked up by another driver at curbside location 1. | Both |
 | Curb Location 2 | Party is dropped off or picked up by another driver at curbside location 2. | CBX |
 | Curb Location 3 | Party is dropped off or picked up by another driver at curbside location 3. | CBX |
@@ -109,7 +107,6 @@ flowchart TD
 | Hotel Courtesy | Party takes hotel courtesy transportation. | CBX |
 | Ridehail Location 1 | Party arrives\departs using ridehail at ridehail location 1 | Both |
 | Ridehail Location 2 | Party arrives\departs using ridehail at ridehail location 2 | CBX |
-|  |  |  |
 | Taxi Location 1 | Party arrives\departs using taxi at taxi location 1 | Both |
 | Taxi Location 2 | Party arrives\departs using taxi at taxi location 2 | CBX |
 | Walk Local | Party arrives\departs using walk-local bus | Both |
@@ -129,8 +126,8 @@ flowchart TD
 
 To prevent double-counting between the dedicated airport ground access models and general non-mandatory travel patterns, hard restrictions have been implemented to exclude airport terminal TAZs from being selected as general activity destinations. Specifically:
 
-- **San Diego International Airport (SAN)**: TAZ 1338 is restricted from resident, visitor, and crossborder non-mandatory tour and trip destination choice models
-- **Cross Border Express (CBX)**: TAZs 1457 and 4184 are similarly restricted
+- **San Diego International Airport (SAN)**: TAZs 1457 and 4184 are restricted from resident, visitor, and crossborder non-mandatory tour and trip destination choice models
+- **Cross Border Express (CBX)**: TAZ 1338 is similarly restricted
 
 These restrictions ensure that trips to airport terminals are only generated through the specialized airport models described above, which properly account for airport-specific travel behaviors such as flight schedules, party sizes, rental car decisions, and specialized access modes. The restrictions are implemented in destination sampling procedures across:
 
@@ -140,4 +137,4 @@ These restrictions ensure that trips to airport terminals are only generated thr
 
 This coordination between the airport models and general travel models maintains internal consistency in trip generation and avoids overestimating travel to airport terminal zones.
 
-For more information on the Air Ground Access Travel Model see technical documentation.
+For more information on the Air Ground Access Travel Model see [technical documentation](https://sandag.github.io/ABM/pdf_reports/202402_ABM3_Model_Development_Report_Final.pdf).
