@@ -318,7 +318,7 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
             self._report.append("End: %s" % _time.strftime("%c"))
         return emmebank_paths
 
-    def _copy_dir(self, src, dst, file_masks, dir_masks=None,check_metadata=False):
+    def _copy_dir(self, src, dst, file_masks, check_metadata=False):
         
         # windows xcopy is much faster than shutil
         # upgrading xcopy to a faster robocopy
@@ -329,8 +329,7 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
             flags = ['/E', '/Z', '/MT:8']
         try:
             exclude_file_list = file_masks
-            exclude_dir_list = dir_masks
-            output = _subprocess.check_output(['robocopy', src, dst] + flags + ["/XF"] + exclude_file_list + ["/XD"] + exclude_dir_list)
+            output = _subprocess.check_output(['robocopy', src, dst] + flags + ["/XF"] + exclude_file_list + ["/XD"] + exclude_file_list)
             self._report.append(output)
             self._report.append(_time.strftime("%c"))
         except _subprocess.CalledProcessError as error:
