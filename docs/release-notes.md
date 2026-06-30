@@ -2,6 +2,36 @@
 
 SANDAG ABM release notes can also be found on the [GitHub repo](https://github.com/SANDAG/ABM/releases).
 
+## Version 15.4.2 (June 26, 2026)
+This release centers on a comprehensive update to the San Diego International Airport (SDIA) ground access model in support of the Airport Transit Connection (ATC) project, using data from the Fall 2024 airport survey. The update introduces a new rental car model, recalibrates the airport destination choice and trip mode choice models. In addition, this adds location-specific employment multipliers by year and free parking modeling for SDIA airport zones, and incorporates new observed counts and boardings for ATC validation. The release also includes supporting infrastructure updates - a process queue manifest, improved run report logging, and fixes to local-drive file handling when resuming runs along with several other bug fixes.
+
+### Software Versions
+- ActivitySim 1.4.0
+- EMME OpenPaths 25
+
+### Features
+- [PR 395](https://github.com/SANDAG/ABM/pull/395): Update to the SDIA ground access model using Fall 2024 airport survey data, including a new rental car, destination choice, and trip mode choice models
+- [PR 400](https://github.com/SANDAG/ABM/pull/400), [PR 401](https://github.com/SANDAG/ABM/pull/401): Calibration of the SAN airport non-mandatory tour destination choice model
+- [PR 402](https://github.com/SANDAG/ABM/pull/402), [PR 406](https://github.com/SANDAG/ABM/pull/406): Calibration of the SAN airport trip mode choice model
+- [PR 410](https://github.com/SANDAG/ABM/pull/410): Re-introduced transit IVTT multipliers by sub-mode (LRT, BRT, CMR, etc.) in SAN transit utilities
+- [PR 412](https://github.com/SANDAG/ABM/pull/412), [PR 416](https://github.com/SANDAG/ABM/pull/416), [PR 417](https://github.com/SANDAG/ABM/pull/417), [PR 423](https://github.com/SANDAG/ABM/pull/423): Added configurable, location-specific employment multipliers for SDIA zones applied during resident preprocessing
+- [PR 417](https://github.com/SANDAG/ABM/pull/417), [PR 419](https://github.com/SANDAG/ABM/pull/419): Added airport zone-specific free parking modeling (~89% free parking share at airport employment zones) and removed the park-and-escort access option
+- [PR 397](https://github.com/SANDAG/ABM/pull/397): Removed employee tour processing (employee_park) from the SAN and CBX airport models
+- [PR 418](https://github.com/SANDAG/ABM/pull/418): Reverted destination choice coefficients for Mission Valley for validation purposes
+- [PR 414](https://github.com/SANDAG/ABM/pull/414): Added observed counts and boardings for ATC validation
+- [PR 420](https://github.com/SANDAG/ABM/pull/420): Added a manifest file to the datalake export step to trigger the new process queue
+- [PR 428](https://github.com/SANDAG/ABM/pull/428): Write process run report logs to the logFiles directory (read into the Emme logbook) and moved CVM and HTM logs to their respective output directories
+- [PR 424](https://github.com/SANDAG/ABM/pull/424): Removed unused bike skim generation from 2zoneSkim.py
+- [PR 399](https://github.com/SANDAG/ABM/pull/399), [PR 404](https://github.com/SANDAG/ABM/pull/404), [PR 405](https://github.com/SANDAG/ABM/pull/405): Documentation updates including ABM3 v15.3.1 installation instructions
+
+### Bug Fixes
+- [PR 396](https://github.com/SANDAG/ABM/pull/396): Sort toll factor facilities by longest name first so I-805 links match to I-805 before I-8
+- [PR 408](https://github.com/SANDAG/ABM/pull/408), [PR 409](https://github.com/SANDAG/ABM/pull/409): Corrected transit access time expressions and KNR/TNC transit availability direction handling in the SAN
+- [PR 427](https://github.com/SANDAG/ABM/pull/427), [PR 429](https://github.com/SANDAG/ABM/pull/429): Corrected handling of non-mandatory trips to SAN and CBX airport terminal zones across the resident, visitor, and cross-border models, preventing unrealistic direct trip-making
+- [PR 411](https://github.com/SANDAG/ABM/pull/411), [PR 421](https://github.com/SANDAG/ABM/pull/421): Fixes to local-drive file copying and overwriting when resuming a run, preserving updated files and avoiding overwrites when re-running early steps
+- [PR 413](https://github.com/SANDAG/ABM/pull/413): Convert employment to integer in the CVM estimation script
+- [PR 415](https://github.com/SANDAG/ABM/pull/415): Correctly populate git_info.yaml when git is not installed
+
 ## Version 15.4.1 (March 05, 2026)
 This release converts the Bike Logsum Java program into Python and updates the route choice model. Another significant update is the comprehensive recalibration of transit trips across all models using the 2023 Transit On-Board Survey (OBS).
 

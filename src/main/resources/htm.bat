@@ -28,7 +28,7 @@ SET OUTPUT_DIR=%PROJECT_DRIVE%%PROJECT_DIRECTORY%\output
 :: run run_htm.py
 ECHO Run HTM...
 CD /d %PROJECT_DRIVE%%PROJECT_DIRECTORY%\python\
-python run_htm.py %MODEL_DIR% %OUTPUT_DIR% %faf_file_name% %htm_input_file_name% %skim_period% %scenario_year% %scenario_year_with_suffix% 2>>%PROJECT_DRIVE%%PROJECT_DIRECTORY%\logFiles\event-htm.txt
+python run_htm.py %MODEL_DIR% %OUTPUT_DIR% %faf_file_name% %htm_input_file_name% %skim_period% %scenario_year% %scenario_year_with_suffix% 2>>%PROJECT_DRIVE%%PROJECT_DIRECTORY%\output\HTM\event-htm.txt
 IF %ERRORLEVEL% NEQ 0 (GOTO :ERROR) else (GOTO :SUCCESS)
 
 :SUCCESS

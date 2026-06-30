@@ -1,6 +1,7 @@
 Label,Description,Expression,coefficient
 util_size_variable,Size variable,@(df['size_term']).apply(np.log1p),1
 util_no_attractions,No attractions,@df['size_term']==0,-999
+util_airport_terminal,Airport Terminal Restriction,"@(df.dest_TAZ.isin([1338,1457,4184]))",-999
 local_dist_variable,skim distance,"_DIST@skims[('SOV_NT_M_DIST','MD')]",1
 local_dist,skim distance,@_DIST,coef_dist
 tecate_open,Tecate opening hours,@(df['poe_id']==2) & (df['start'] < tecate_open_per) & (df['start'] > tecate_close_per),-999
