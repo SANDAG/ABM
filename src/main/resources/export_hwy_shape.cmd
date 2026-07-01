@@ -6,7 +6,7 @@ set PROJECT_DIRECTORY=%2
 %PROJECT_DRIVE%
 cd /d %PROJECT_DIRECTORY%
 
-ECHO Activate asim_140....
+ECHO Activate asim_151....
 CALL %activate_uv_asim_151%
 
 set MKL_NUM_THREADS=1
