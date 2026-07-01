@@ -8,7 +8,7 @@ cd /d %PROJECT_DIRECTORY%
 
 :: ---------------------------------------------------------------------
 ECHO Activate ActivitySim Environment....
-CALL %activate_uv_asim%
+CALL %activate_uv_asim_151%
 
 :: Run skimming
 python src/main/python/2zoneSkim.py %PROJECT_DIRECTORY% || exit /b 2

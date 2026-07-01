@@ -50,7 +50,7 @@ Java is required in order to create bicycle logsums, run the taxi/TNC routing mo
 
 As noted above, the user needs to install UV on the workstation they intend to install ABM3 on. UV is utilized to create a Python3-based environment required to run ActivitySim and other model components.
 
-To install UV and create asim_140 environment using UV for all users on a server: 
+To install UV and create asim_151 environment using UV for all users on a server: 
 
 - Create the following directories 
 
@@ -96,23 +96,23 @@ To install UV and create asim_140 environment using UV for all users on a server
 
 - Run the following commands (one at a time): 
 
-    `mkdir asim_140 `
+    `mkdir asim_151 `
 
-    `cd asim_140 `
+    `cd asim_151 `
 
     `echo 3.10 > .python-version `
 
     `uv init `
 
-- Open asim_140/pyproject.toml and edit the requires-python setting to: 
+- Open asim_151/pyproject.toml and edit the requires-python setting to: 
 
     `requires-python = ">=3.10, <3.11"`
 
-- Back in command prompt (at C:\uv_env\asim_140), run one final command 
+- Back in command prompt (at C:\uv_env\asim_151), run one final command 
 
     `uv add -r requirements.txt `
 
-    - The requirements.txt will have to be saved under asim_140 or you will have to point to wherever it is saved 
+    - The requirements.txt will have to be saved under asim_151 or you will have to point to wherever it is saved 
 
     - The requirements.txt is on the GitHub repo at: [requirements.txt](https://github.com/SANDAG/ABM/blob/main/src/asim/scripts/requirements.txt)
 
@@ -128,9 +128,9 @@ To install UV and create asim_140 environment using UV for all users on a server
 
 - Under Environment Variables > System variables (requires Admin) 
 
-    - Create a new variable called ***activate_uv_asim*** and set to the path of asim_140’s activate file 
+    - Create a new variable called ***activate_uv_asim_151*** and set to the path of asim_151’s activate file 
 
-        - E.g., C:\uv_env\asim_140\\.venv\Scripts\activate 
+        - E.g., C:\uv_env\asim_151\\.venv\Scripts\activate 
 
 #### Azure Environment Variables
 

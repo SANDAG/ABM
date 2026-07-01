@@ -10,7 +10,7 @@ cd /d %PROJECT_DIRECTORY%
 :: Run ActivitySim
 :: ---------------------------------------------------------------------
 ECHO Activate ActivitySim....
-CALL %activate_uv_asim%
+CALL %activate_uv_asim_151%
 
 set MKL_NUM_THREADS=1
 set MKL=1

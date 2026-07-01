@@ -9,7 +9,7 @@ set SCENYEAR=%4
 cd /d %PROJECT_DIRECTORY%
 
 ECHO Activate ActivitySim....
-CALL %activate_uv_asim%
+CALL %activate_uv_asim_151%
 
 CD output
 MD airport.CBX
