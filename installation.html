@@ -2060,7 +2060,7 @@
 <h2 id="installing-abm3_1">Installing ABM3<a class="headerlink" href="#installing-abm3_1" title="Permanent link"> ¶</a></h2>
 <h3 id="setting-up-the-uv-python-environment">Setting up the UV Python Environment<a class="headerlink" href="#setting-up-the-uv-python-environment" title="Permanent link"> ¶</a></h3>
 <p>As noted above, the user needs to install UV on the workstation they intend to install ABM3 on. UV is utilized to create a Python3-based environment required to run ActivitySim and other model components.</p>
-<p>To install UV and create asim_140 environment using UV for all users on a server: </p>
+<p>To install UV and create asim_151 environment using UV for all users on a server: </p>
 <ul>
 <li>
 <p>Create the following directories </p>
@@ -2129,21 +2129,21 @@
 </li>
 <li>
 <p>Run the following commands (one at a time): </p>
-<p><code>mkdir asim_140</code></p>
-<p><code>cd asim_140</code></p>
+<p><code>mkdir asim_151</code></p>
+<p><code>cd asim_151</code></p>
 <p><code>echo 3.10 &gt; .python-version</code></p>
 <p><code>uv init</code></p>
 </li>
 <li>
-<p>Open asim_140/pyproject.toml and edit the requires-python setting to: </p>
+<p>Open asim_151/pyproject.toml and edit the requires-python setting to: </p>
 <p><code>requires-python = "&gt;=3.10, &lt;3.11"</code></p>
 </li>
 <li>
-<p>Back in command prompt (at C:\uv_env\asim_140), run one final command </p>
+<p>Back in command prompt (at C:\uv_env\asim_151), run one final command </p>
 <p><code>uv add -r requirements.txt</code></p>
 <ul>
 <li>
-<p>The requirements.txt will have to be saved under asim_140 or you will have to point to wherever it is saved </p>
+<p>The requirements.txt will have to be saved under asim_151 or you will have to point to wherever it is saved </p>
 </li>
 <li>
 <p>The requirements.txt is on the GitHub repo at: <a href="https://github.com/SANDAG/ABM/blob/main/src/asim/scripts/requirements.txt">requirements.txt</a></p>
@@ -2167,9 +2167,9 @@
 <p>Under Environment Variables &gt; System variables (requires Admin) </p>
 <ul>
 <li>
-<p>Create a new variable called <strong><em>activate_uv_asim</em></strong> and set to the path of asim_140’s activate file </p>
+<p>Create a new variable called <strong><em>activate_uv_asim_151</em></strong> and set to the path of asim_151’s activate file </p>
 <ul>
-<li>E.g., C:\uv_env\asim_140\.venv\Scripts\activate </li>
+<li>E.g., C:\uv_env\asim_151\.venv\Scripts\activate </li>
 </ul>
 </li>
 </ul>
