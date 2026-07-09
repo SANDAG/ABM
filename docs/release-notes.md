@@ -2,6 +2,19 @@
 
 SANDAG ABM release notes can also be found on the [GitHub repo](https://github.com/SANDAG/ABM/releases).
 
+## Version 15.5.0 (July 09, 2026)
+This release upgrades ABM3 to ActivitySim version 1.5.1. Compatibility changes were made to configuration files and code to support the new version. No significatn differences in model outputs, as confirmed by comparison test runs between the asim_151 and asim_140 environments.
+
+### Software Versions
+- ActivitySim 1.5.1
+- EMME OpenPaths 25
+
+### Features
+- [PR 425](https://github.com/SANDAG/ABM/pull/425): Upgrade to ActivitySim version 1.5.1, including compatibility updates to configuration files and code
+
+### Bug Fixes
+- None
+
 ## Version 15.4.2 (June 26, 2026)
 This release centers on a comprehensive update to the San Diego International Airport (SDIA) ground access model in support of the Airport Transit Connection (ATC) project, using data from the Fall 2024 airport survey. The update introduces a new rental car model, recalibrates the airport destination choice and trip mode choice models. In addition, this adds location-specific employment multipliers by year and free parking modeling for SDIA airport zones, and incorporates new observed counts and boardings for ATC validation. The release also includes supporting infrastructure updates - a process queue manifest, improved run report logging, and fixes to local-drive file handling when resuming runs along with several other bug fixes.
 
