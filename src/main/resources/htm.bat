@@ -8,7 +8,7 @@ set scenario_year=%6
 set scenario_year_with_suffix=%7
 
 ECHO Activate ActivitySim for CVM...
-CALL %activate_uv_asim%
+CALL %activate_uv_asim_151%
 
 set MKL_NUM_THREADS=1
 set MKL=1

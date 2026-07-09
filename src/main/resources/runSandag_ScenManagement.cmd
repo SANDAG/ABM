@@ -7,7 +7,7 @@ set SCENYEARWITHSUFFIX=%3
 %PROJECT_DRIVE%
 cd /d %PROJECT_DIRECTORY%
 
-CALL %activate_uv_asim%
+CALL %activate_uv_asim_151%
 
 python src/asim/scripts/ScenarioManagement/scenManagement.py %PROJECT_DIRECTORY% %SCENYEAR% %SCENYEARWITHSUFFIX%
 
