@@ -97,6 +97,8 @@ python .\common\python\update_properties.py %PROP_FILE% %YEAR% %SUFFIX%
 @echo init emme folder
 call init_emme.cmd %SCENARIO_FOLDER% %EMME_VERSION%
 
+goto :eof
+
 :usage
 
 @echo Usage: %0 ^<scenario_folder^> ^<year^> ^<network^> ^<emme_version^> ^<landuse_input_path^> ^<year_suffix^>
