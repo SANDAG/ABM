@@ -1,0 +1,3 @@
+Description,Target,Expression
+# Create non resident (visitor and external) flag from tours table based on purpose_id,,
+Create non resident indicator,non_resident,"df.purpose_id.isin([2,3,4])"

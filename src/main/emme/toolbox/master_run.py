@@ -331,9 +331,9 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             folder_name = os.path.basename(main_directory)
             if not os.path.exists(_join(self.LOCAL_ROOT, username, folder_name, "report")): # check free space only if it is a new run
                 self.check_free_space(minSpaceOnC)
-            # if initialization copy ALL files from remote
+            # if initialization (both MGRA Skims and 4Ds are run) copy ALL files from remote
             # else check file meta data and copy those that have changed
-            initialize = (skipInitialization == False and startFromIteration == 1)
+            initialize = (skipMGRASkims == False and skip4Ds == False and startFromIteration == 1)
             local_directory = file_manager(
                 "DOWNLOAD", main_directory, username, scenario_id, initialize=initialize)
             self._path = local_directory
@@ -581,7 +581,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         # Run transit assignment in separate process
                         # Running in same process slows OMX skim export for unknown reason
                         # transit_emmebank need to be closed and re-opened to be accessed by separate process
-                        transit_emmebank_dict = self.run_transit_assignments(transit_emmebank_dict, scenarioYear, output_dir, ((not skipTransitConnector) and (msa_iteration == 1)), main_directory)
+                        transit_emmebank_dict = self.run_transit_assignments(transit_emmebank_dict, scenarioYear, output_dir, ((not skipTransitConnector) and (msa_iteration == 1)), main_directory, iteration=msa_iteration)
                         for period in periods:
                             transit_scenario_dict[period] = transit_emmebank_dict[period].scenario(base_scenario.number)
                         # _m.Modeller().desktop.refresh_data()
@@ -595,7 +595,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 if not skipSkimConversion[iteration]:
                     self.run_proc("convertSkimsToOMXZ.cmd",
                                   [drive, path_forward_slash],
-                                  "Converting skims to omxz format", capture_output=True)
+                                  "Converting skims to omxz format", capture_output=True, iteration=msa_iteration)
 
                 if not skipTransponderExport[iteration]:
                     am_scenario = main_emmebank.scenario(base_scenario.number + 2)
@@ -610,7 +610,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     self.run_proc(
                         "runSandagAbm_Preprocessing.cmd",
                         [drive, drive + path_forward_slash, msa_iteration, scenarioYear],
-                        "Creating all the required files to run the ActivitySim models", capture_output=True)
+                        "Creating all the required files to run the ActivitySim models", capture_output=True, iteration=msa_iteration)
 
                 # skip_asim = skipABMResident[iteration] and skipABMAirport[iteration] and skipABMXborder[iteration] and skipABMVisitor[iteration]
 
@@ -627,7 +627,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         self.run_proc(
                             "runSandagAbm_ActivitySimResident.cmd",
                             [drive, drive + path_forward_slash],
-                            "Running ActivitySim resident model", capture_output=True)
+                            "Running ActivitySim resident model", capture_output=True, iteration=msa_iteration)
                     if not skipABMAirport[iteration]:
                         hh_airport_size = {}
                         for airport in ["san", "cbx"]:
@@ -639,12 +639,12 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         self.run_proc(
                             "runSandagAbm_ActivitySimAirport.cmd",
                             [drive, drive + path_forward_slash],
-                            "Running ActivitySim airport models", capture_output=True)
+                            "Running ActivitySim airport models", capture_output=True, iteration=msa_iteration)
                     if (not skipABMXborderWait) and (iteration == 0):
                         self.run_proc(
                             "runSandagAbm_ActivitySimXborderWaitModel.cmd",
                             [drive, drive + path_forward_slash],
-                            "Running ActivitySim wait time models", capture_output=True)
+                            "Running ActivitySim wait time models", capture_output=True, iteration=msa_iteration)
                     if not skipABMXborder[iteration]:
                         householdFile = pd.read_csv(_join(self._path, "input", "households_xborder.csv"))
                         hh_xborder_size = len(householdFile)
@@ -653,7 +653,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         self.run_proc(
                             "runSandagAbm_ActivitySimXborder.cmd",
                             [drive, drive + path_forward_slash],
-                            "Running ActivitySim crossborder model", capture_output=True)
+                            "Running ActivitySim crossborder model", capture_output=True, iteration=msa_iteration)
                     if not skipABMVisitor[iteration]:
                         householdFile = pd.read_csv(_join(self._path, "input", "households_visitor.csv"))
                         hh_visitor_size = len(householdFile)
@@ -662,7 +662,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         self.run_proc(
                             "runSandagAbm_ActivitySimVisitor.cmd",
                             [drive, drive + path_forward_slash],
-                            "Running ActivitySim visitor model", capture_output=True)
+                            "Running ActivitySim visitor model", capture_output=True, iteration=msa_iteration)
                 finally:
                     pass
                     # if not skip_asim:
@@ -690,13 +690,13 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
                 if (not skipCVMEstablishmentSyn) and (iteration == 0):
                     self.run_proc("cvmEst.bat", [drive, path_no_drive, cvm_emp_input_file],
-                        "Commercial vehicle model establishment synthesis", capture_output=True)
+                        "Commercial vehicle model establishment synthesis", capture_output=True, iteration=msa_iteration)
                 if not skipCTM[iteration]:
                     #export_for_commercial_vehicle(output_dir + '/skims', base_scenario)
                     self.run_proc(
                         "cvm.bat",
                         [drive, path_no_drive, str(scenarioYear) + str(scenarioYearSuffix)],
-                        "Commercial vehicle model", capture_output=True)
+                        "Commercial vehicle model", capture_output=True, iteration=msa_iteration)
                 if msa_iteration == startFromIteration:
                     external_zones = "1-12"
                     if not skipTruck[iteration]:
@@ -704,7 +704,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         self.run_proc(
                             "htm.bat",
                             [drive, path_no_drive, fafInputFile, htm_input_file, "PM", truck_scenario_year, str(scenarioYear) + str(scenarioYearSuffix)],
-                            "Heavy truck model", capture_output=True)
+                            "Heavy truck model", capture_output=True, iteration=msa_iteration)
                     # run EI model "US to SD External Trip Model"
                     if not skipEI[iteration]:
                         external_internal(input_dir, base_scenario)
@@ -728,7 +728,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 self.run_proc(
                         "runSandagAbm_Preprocessing.cmd",
                         [drive, drive + path_forward_slash, final_iteration, scenarioYear],
-                        "Adding DIST skim", capture_output=True)
+                        "Adding DIST skim", capture_output=True, iteration=final_iteration)
 
         if not skipFinalTransitAssignment:
             import_transit_demand(output_dir, transit_scenario_dict)
@@ -749,7 +749,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 # Run transit assignment in separate process
                 # Running in same process slows OMX skim export for unknown reason
                 # transit_emmebank need to be closed and re-opened to be accessed by separate process
-                transit_emmebank_dict = self.run_transit_assignments(transit_emmebank_dict, scenarioYear, output_dir, False, main_directory)
+                transit_emmebank_dict = self.run_transit_assignments(transit_emmebank_dict, scenarioYear, output_dir, False, main_directory, iteration=4)
                 for period in periods:
                     transit_scenario_dict[period] = transit_emmebank_dict[period].scenario(base_scenario.number)
                 # _m.Modeller().desktop.refresh_data()
@@ -875,7 +875,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         except KeyError:
             raise Exception("properties.RunModel.LogLevel: value must be one of %s" % ",".join(log_states.keys()))
 
-    def run_transit_assignments(self, transit_emmebank_dict, scenarioYear, output_dir, create_connector_flag, main_directory_original):
+    def run_transit_assignments(self, transit_emmebank_dict, scenarioYear, output_dir, create_connector_flag, main_directory_original, iteration):
 
         scenario_id = 100
         periods = ["EA", "AM", "MD", "PM", "EV"]
@@ -914,16 +914,22 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
                 _time.sleep(2)
 
+                log_path = _join(self._path, 'logFiles', 'run_transit_assignment_%s_iter%d.log' % (period, iteration))
+                with open(log_path, 'w') as f:
+                    f.write('Output:\n')
+                f = open(log_path, 'a+')
+
                 script = _join(main_directory, "python", "emme", "run_transit_assignment.py")
                 args = [sys.executable, script, "--root_dir", '"%s"' % main_directory, "--project_path", '"%s"' % project_path,
                     "--period", '"%s"' % period, "--number", '"%s"' % number, "--proc", '"%s"' % transit_processors,
                     "--output_dir", '"%s"' % output_dir]
                 if create_connector_flag:
                     args.append("--create_connector_flag")
-                p = _subprocess.Popen(args, shell=True)
+                p = _subprocess.Popen(args, shell=True, stdout=f, stderr=f)
                 processes.append({
                     "p": p,
-                    "period": period
+                    "period": period,
+                    "f": f
                 })
                 _time.sleep(2)
 
@@ -933,10 +939,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
             for p in processes:
                 report = _m.PageBuilder(title="Command report")
-                out, err = p["p"].communicate()
-                self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % out)
-                if err:
-                    self.add_html(report, 'Error message(s):<br><br><div class="preformat">%s</div>' % err)
+                _, _ = p["p"].communicate()
+                p["f"].seek(0)
+                self.add_html(report, '<div class="preformat">%s</div>' % p["f"].read())
+                p["f"].close()
                 _m.logbook_write("Transit assignment process record for period " + p["period"], report.render())
                 if p["p"].returncode != 0:
                     raise Exception("Error in transit assignment period %s, refer to logbook in dummy project" % p["period"])
@@ -966,7 +972,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             if msa_iteration <= 4:
                 export_traffic_skims(period, omx_file, base_scenario)
 
-    def run_proc(self, name, arguments, log_message, capture_output=False):
+    def run_proc(self, name, arguments, log_message, capture_output=False, iteration=-1):
         path = _join(self._path, "bin", name)
         if not os.path.exists(path):
             raise Exception("No command / batch file '%s'" % path)
@@ -974,6 +980,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         attrs = {"command": command, "name": name, "arguments": arguments}
         with _m.logbook_trace(log_message, attributes=attrs):
             if capture_output and self._log_level != "NO_EXTERNAL_REPORTS":
+                if iteration == -1:
+                    name_suffix = ''
+                else:
+                    name_suffix = '_iter%d' % iteration
                 report = _m.PageBuilder(title="Process run %s" % name)
                 # Show the command being run in the report, decode if bytes
                 if isinstance(command, bytes):
@@ -981,24 +991,17 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 else:
                     command_str = str(command)
                 command_str = command_str.replace("\r\n", "<br>").replace("\n", "<br>")
-                self.add_html(report, 'Command:<br><br><div class="preformat">%s</div><br>' % command_str)
-                # temporary file to capture output error messages generated by Java
-                err_file_ref, err_file_path = _tempfile.mkstemp(suffix='.log')
-                err_file = os.fdopen(err_file_ref, "w")
+                log_path = _join(self._path, 'logFiles', '%s%s.log' % (name, name_suffix))
+                with open(log_path, 'w') as f:
+                    f.write('Command:\n\n%s\n\nOutput:\n' % command_str)
                 try:
-                    output = _subprocess.check_output(command, stderr=err_file, cwd=self._path, shell=True)
-                    output_str = output.decode("utf-8", errors="replace").replace("\r\n", "<br>").replace("\n", "<br>")
-                    self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % output_str)
+                    with open(log_path, 'a') as f:
+                        _subprocess.run(command, stdout=f, stderr=f, cwd=self._path, shell=True, check=True)
                 except _subprocess.CalledProcessError as error:
-                    self.add_html(report, 'Output:<br><br><div class="preformat">%s</div>' % error.output.decode("utf-8", errors="replace"))
                     raise Exception("Error in %s, refer to process run report in logbook" % name)
                 finally:
-                    err_file.close()
-                    with open(err_file_path, 'r') as f:
-                        error_msg = f.read()
-                    os.remove(err_file_path)
-                    if error_msg:
-                        self.add_html(report, 'Error message(s):<br><br><div class="preformat">%s</div>' % error_msg)
+                    with open(log_path, 'r') as f:
+                        self.add_html(report, '<div class="preformat">%s</div>' % f.read())
                     try:
                         # No raise on writing report error
                         # due to observed issue with runs generating reports which cause

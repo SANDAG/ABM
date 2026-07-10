@@ -45,6 +45,42 @@ class Series15_Processor:
         sandag_abm_prop = util.load_properties(sandag_abm_prop_dir)
         self.max_walk_transit_dist = sandag_abm_prop['walk.transit.connector.max.length']
 
+        # Load SDIA employment multiplier from YAML config
+        abm3_settings_file = os.path.join(project_dir, 'conf', 'abm3_settings.yaml')
+        abm3_settings = util.open_yaml(abm3_settings_file)
+        sdia_config = abm3_settings['airport']['san']['sdiaEmploymentMultiplier']
+        
+        # Load configurations for airport_north and airport_south
+        year_int = int(self.scenario_year)
+        self.sdia_configs = []
+        
+        for location_name in ['airport_north', 'airport_south']:
+            if location_name in sdia_config:
+                location_config = sdia_config[location_name]
+                mgras = location_config['mgras']
+                multiplier_by_year = location_config['multiplierByYear']
+                
+                # Get multiplier for the scenario year, using the closest available year
+                available_years = sorted([int(y) for y in multiplier_by_year.keys()])
+                
+                # Find the appropriate multiplier: use exact match or closest lower year
+                multiplier = None
+                for year in available_years:
+                    if year <= year_int:
+                        multiplier = multiplier_by_year[str(year)]
+                    else:
+                        break
+                
+                # If scenario year is before all configured years, use the first year's multiplier
+                if multiplier is None:
+                    multiplier = multiplier_by_year[str(available_years[0])]
+                
+                self.sdia_configs.append({
+                    'location': location_name,
+                    'mgras': mgras,
+                    'multiplier': multiplier
+                })
+    
         if int(scenario_year) < 2026:
             self.ext_station_to_internal_mapping = {1:9279, 2:9387, 4:22324}
         else:
@@ -120,6 +156,20 @@ class Series15_Processor:
         if len(na_cols) > 0:
             print(f"WARNING: {na_cols} have NA values. Filling with 0!")
             landuse.fillna(0, inplace=True)
+
+        # multiply employment columns for specific MGRAs
+        # test employment at SDIA - multiplier configured by year in abm3_settings.yaml
+        emp_cols = [col for col in landuse.columns if col.startswith('emp_')]
+        # Convert employment columns to float to handle multiplier operations
+        landuse[emp_cols] = landuse[emp_cols].astype(float)
+        
+        # Apply multipliers for each configured location (airport_north, airport_south)
+        for config in self.sdia_configs:
+            location = config['location']
+            mgras = config['mgras']
+            multiplier = config['multiplier']
+            landuse.loc[landuse['mgra'].isin(mgras), emp_cols] *= multiplier
+            print(f"Applied SDIA employment multiplier of {multiplier} to {len(mgras)} MGRAs for {location} for year {self.scenario_year}")
 
         # setting MAZ as index
         landuse.set_index('MAZ', inplace=True)

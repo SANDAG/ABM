@@ -1,7 +1,7 @@
 set PROJECT_DRIVE=%1
 set PROJECT_DIRECTORY=%2
 
-CALL %activate_uv_asim%
+CALL %activate_uv_asim_151%
 
 %PROJECT_DRIVE%
 cd /d %PROJECT_DIRECTORY%

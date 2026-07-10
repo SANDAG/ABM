@@ -1,7 +1,8 @@
 altair
 asv
-azure-identity
-azure-storage-blob
+azure-core==1.38.0
+azure-identity==1.25.1
+azure-storage-blob==12.28.0
 black>=22.0,<23
 bump2version
 coveralls
@@ -49,6 +50,7 @@ requests==2.28.*
 rich==13.3.*
 ruamel.yaml
 ruff
+setuptools<81
 setuptools_scm
 scikit-learn==1.2.*
 seaborn
@@ -65,4 +67,4 @@ xmle
 wring
 zarr>=2,<3
 zstandard
-activitysim==1.4.0
+activitysim==1.5.1

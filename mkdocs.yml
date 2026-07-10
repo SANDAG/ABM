@@ -16,15 +16,15 @@ theme:
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: deep purple
-      accent: deep orange
+      primary: custom
+      accent: light blue
       toggle:
         icon: material/toggle-switch-off-outline
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: deep purple
-      accent: grey
+      primary: custom
+      accent: light blue
       toggle:
         icon: material/toggle-switch
         name: Switch to light mode
@@ -70,7 +70,11 @@ nav:
         - design/supply/highway-skims-assign.md
         - design/supply/transit-skims-assign.md
     - Report: design/report/report.md
-  - Installing and Running: running.md
+  - Getting Started:
+    - Installation: installation.md
+    - Running the Model: running.md
+    - Performance and Runtime: performance.md
+    - Storage Usage: storage-usage.md
   - Model Inputs and Outputs: 
     - Inputs:
         - Overview: inputs.md
@@ -92,6 +96,7 @@ nav:
     - Calibration: calib_valid/calibration.md
     - Convergence: calib_valid/convergence.md
     - Validation: calib_valid/validation.md
+    - Sensitivity Testing: calib_valid/sensitivity.md
   - Reference:
     - Release Notes: release-notes.md
     - FAQs: faq.md
@@ -103,6 +108,7 @@ extra:
     default: latest
 
 extra_css:
+  - stylesheets/extra.css
   - https://use.fontawesome.com/releases/v5.13.0/css/all.css
 
 markdown_extensions:

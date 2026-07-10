@@ -7,6 +7,7 @@ Description,Expression,work,univ,school,escort,shopping,eatout,othmaint,social,o
 # next line gets max MAZ micromobility access time in destination TAZ
 ,"_d_microAccTime@land_use.sort_values(by='MicroAccessTime',ascending=False).drop_duplicates('TAZ',keep='first').set_index('TAZ')['MicroAccessTime'].reindex(df.dest_taz)",1,1,1,1,1,1,1,1,1,1
 #,,,,,,,,,,,
+Restrict nm trips to airport,"@(df.dest_taz.isin([1338,1457,4184])) & df.is_nm_trip",-999,-999,-999,-999,-999,-999,-999,-999,-999,-999
 size term,"@np.log1p(size_terms.get(df.dest_taz, df.purpose))",1,1,1,1,1,1,1,1,1,1
 no attractions,"@size_terms.get(df.dest_taz, df.purpose) == 0",-999,-999,-999,-999,-999,-999,-999,-999,-999,-999
 #,,,,,,,,,,,

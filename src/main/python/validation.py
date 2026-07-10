@@ -61,6 +61,7 @@ obRidership = pd.read_excel(
 obRidership = obRidership.rename(
     columns={"total_board": "board_day", "total_psgrmile": "psgrmile_day"}
 )
+obRidership['route'] = obRidership['route'].astype('str')
 
 # Truck (for CVM)
 truckAADT = pd.read_excel(
