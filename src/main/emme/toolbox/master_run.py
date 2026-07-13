@@ -686,7 +686,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     self.run_proc(
                         "runSandagAbm_MAAS.cmd",
                         [drive, drive + path_forward_slash, str(sample_rate[iteration])],
-                        "Python Taxi and TNC routing model + AV and TNC matrix builder", capture_output=True)
+                        "Python Taxi and TNC routing model + AV and TNC matrix builder", capture_output=True, iteration=msa_iteration)
 
                 if (not skipCVMEstablishmentSyn) and (iteration == 0):
                     self.run_proc("cvmEst.bat", [drive, path_no_drive, cvm_emp_input_file],
