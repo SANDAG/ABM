@@ -481,9 +481,16 @@ class TaxiTNCRouter:
             df, fpath = self._read_data_file(
                 fpath, "Demand file", columns=base_cols, optional_columns=[opt_col]
             )
-            df["source"] = os.path.basename(fpath).replace(".parquet", "").replace(
+            # Extract parent directory and basename to create unique source names
+            parent_dir = os.path.basename(os.path.dirname(fpath))
+            basename = os.path.basename(fpath).replace(".parquet", "").replace(
                 ".csv.gz", ""
             ).replace(".csv", "").replace("final_", "")
+            # If basename is generic (e.g., "trips"), prepend parent directory for uniqueness
+            if basename == "trips":
+                df["source"] = f"{parent_dir}_{basename}"
+            else:
+                df["source"] = basename
             if opt_col in df.columns:
                 df["trip_mode"] = df[opt_col]
                 df.drop(columns=[opt_col], inplace=True)
