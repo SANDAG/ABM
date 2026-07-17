@@ -22,10 +22,12 @@ python .\\common\\python\\emme\\init_emme_project.py -r %SCENARIO_FOLDER% -t emm
 
 rem create toolbox
 python .\\common\\python\\emme\\toolbox\\build_toolbox.py -s .\\common\\python\\emme\\toolbox -p %SCENARIO_FOLDER%\emme_project\Scripts\sandag_toolbox.mtbx
-copy ".\\common\\python\\emme\\solutions.mtbx" "%SCENARIO_FOLDER%\emme_project\Scripts\solutions.mtbx"
+@REM copy ".\\common\\python\\emme\\solutions.mtbx" "%SCENARIO_FOLDER%\emme_project\Scripts\solutions.mtbx"
 
 rem mkdir %SCENARIO_FOLDER%\emme_project\Scripts\yaml
 rem copy .\\common\\python\\emme\\yaml\\*.* %SCENARIO_FOLDER%\emme_project\Scripts\yaml
+
+goto :eof
 
 :usage
 @echo Usage: %0 ^<scenario_folder^> ^<emme_version^>
