@@ -8,28 +8,28 @@
       
       
       
-        <link rel="canonical" href="https://sandag.github.io/abm/application/micromobility.html">
+        <link rel="canonical" href="https://sandag.github.io/abm/design/demand/taxi-tnc-routing.html">
       
       
-        <link rel="prev" href="flexible-fleets.html">
+        <link rel="prev" href="av-routing.html">
       
       
-        <link rel="next" href="network-coding.html">
+        <link rel="next" href="../supply/index.html">
       
       
-      <link rel="icon" href="../assets/images/favicon.png">
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.18">
     
     
       
-        <title>Micromobility - SANDAG ABM3</title>
+        <title>Taxi and TNC Routing Model - SANDAG ABM3</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.66ac8b77.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.66ac8b77.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -48,13 +48,13 @@
       
     
     
-      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="../stylesheets/extra.css">
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
     
       <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css">
     
-    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#micromobility" class="md-skip">
+        <a href="#taxi-and-tnc-routing-model" class="md-skip">
           Skip to content
         </a>
       
@@ -98,7 +98,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="SANDAG ABM3" class="md-header__button md-logo" aria-label="SANDAG ABM3" data-md-component="logo">
+    <a href="../../index.html" title="SANDAG ABM3" class="md-header__button md-logo" aria-label="SANDAG ABM3" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -118,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Micromobility
+              Taxi and TNC Routing Model
             
           </span>
         </div>
@@ -225,7 +225,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../index.html" class="md-tabs__link">
+      <a href="../../index.html" class="md-tabs__link">
         
   
     
@@ -240,11 +240,13 @@
         
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../design/design.html" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../design.html" class="md-tabs__link">
           
   
     
@@ -264,7 +266,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../installation.html" class="md-tabs__link">
+        <a href="../../installation.html" class="md-tabs__link">
           
   
     
@@ -290,7 +292,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../inputs.html" class="md-tabs__link">
+        <a href="../../inputs.html" class="md-tabs__link">
           
   
     
@@ -309,13 +311,11 @@
         
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="applying.html" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../application/applying.html" class="md-tabs__link">
           
   
     
@@ -335,7 +335,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../calib_valid/calib_overview.html" class="md-tabs__link">
+        <a href="../../calib_valid/calib_overview.html" class="md-tabs__link">
           
   
     
@@ -355,7 +355,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../release-notes.html" class="md-tabs__link">
+        <a href="../../release-notes.html" class="md-tabs__link">
           
   
     
@@ -390,7 +390,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="SANDAG ABM3" class="md-nav__button md-logo" aria-label="SANDAG ABM3" data-md-component="logo">
+    <a href="../../index.html" title="SANDAG ABM3" class="md-nav__button md-logo" aria-label="SANDAG ABM3" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -420,7 +420,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../index.html" class="md-nav__link">
+      <a href="../../index.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -437,8 +437,10 @@
       
   
   
+    
   
   
+  
     
     
       
@@ -455,19 +457,20 @@
     
     
       
+        
+        
+      
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
-        
-          
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -478,7 +481,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Model Design
@@ -492,7 +495,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../design/design.html" class="md-nav__link">
+      <a href="../design.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -513,7 +516,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../design/init/initialization.html" class="md-nav__link">
+      <a href="../init/initialization.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -531,6 +534,8 @@
                 
   
   
+    
+  
   
   
     
@@ -562,18 +567,16 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" checked>
         
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../design/demand/index.html" class="md-nav__link ">
+            <a href="index.html" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -590,7 +593,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2_3">
             <span class="md-nav__icon md-icon"></span>
             Demand
@@ -606,7 +609,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../design/demand/resident.html" class="md-nav__link">
+      <a href="resident.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -627,7 +630,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../design/demand/crossborder.html" class="md-nav__link">
+      <a href="crossborder.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -648,7 +651,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../design/demand/airport.html" class="md-nav__link">
+      <a href="airport.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -669,7 +672,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../design/demand/visitor.html" class="md-nav__link">
+      <a href="visitor.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -690,7 +693,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../design/demand/cvm.html" class="md-nav__link">
+      <a href="cvm.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -711,7 +714,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../design/demand/external.html" class="md-nav__link">
+      <a href="external.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -732,7 +735,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../design/demand/av-routing.html" class="md-nav__link">
+      <a href="av-routing.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -750,10 +753,30 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../design/demand/taxi-tnc-routing.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Taxi and TNC Routing Model
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="taxi-tnc-routing.html" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -762,6 +785,170 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#model-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Model Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#model-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      Model Components
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Model Components">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#trip-pooling" class="md-nav__link">
+    <span class="md-ellipsis">
+      Trip Pooling
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vehicle-dispatching" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vehicle Dispatching
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#occupancy-tracking" class="md-nav__link">
+    <span class="md-ellipsis">
+      Occupancy Tracking
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#refueling" class="md-nav__link">
+    <span class="md-ellipsis">
+      Refueling
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Outputs
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Outputs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tnc-vehicle-trips-output_tnc_vehicle_tripscsv" class="md-nav__link">
+    <span class="md-ellipsis">
+      TNC Vehicle Trips (output_tnc_vehicle_trips.csv)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pooled-trips-output_tnc_pooled_tripscsv" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pooled Trips (output_tnc_pooled_trips.csv)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#integration-with-traffic-assignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      Integration with Traffic Assignment
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#relationship-to-other-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      Relationship to Other Models
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Relationship to Other Models">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#upstream-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      Upstream Dependencies
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#downstream-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Downstream Integration
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -815,7 +1002,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../design/supply/index.html" class="md-nav__link ">
+            <a href="../supply/index.html" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -848,7 +1035,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../design/supply/bike-logsums.html" class="md-nav__link">
+      <a href="../supply/bike-logsums.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -869,7 +1056,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../design/supply/walk-skims.html" class="md-nav__link">
+      <a href="../supply/walk-skims.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -890,7 +1077,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../design/supply/network-import-tned.html" class="md-nav__link">
+      <a href="../supply/network-import-tned.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -911,7 +1098,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../design/supply/highway-skims-assign.html" class="md-nav__link">
+      <a href="../supply/highway-skims-assign.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -932,7 +1119,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../design/supply/transit-skims-assign.html" class="md-nav__link">
+      <a href="../supply/transit-skims-assign.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -961,7 +1148,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../design/report/report.html" class="md-nav__link">
+      <a href="../report/report.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1039,7 +1226,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../installation.html" class="md-nav__link">
+      <a href="../../installation.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1060,7 +1247,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../running.html" class="md-nav__link">
+      <a href="../../running.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1081,7 +1268,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../performance.html" class="md-nav__link">
+      <a href="../../performance.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1102,7 +1289,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../storage-usage.html" class="md-nav__link">
+      <a href="../../storage-usage.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1224,7 +1411,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../inputs.html" class="md-nav__link">
+      <a href="../../inputs.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1245,7 +1432,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../networks.html" class="md-nav__link">
+      <a href="../../networks.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1274,7 +1461,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../outputs.html" class="md-nav__link">
+      <a href="../../outputs.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1295,7 +1482,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reports.html" class="md-nav__link">
+      <a href="../../reports.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1320,10 +1507,8 @@
       
   
   
-    
   
   
-  
     
     
       
@@ -1348,20 +1533,19 @@
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -1372,7 +1556,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             Applying ABM3
@@ -1386,7 +1570,7 @@
   
   
     <li class="md-nav__item">
-      <a href="applying.html" class="md-nav__link">
+      <a href="../../application/applying.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1407,7 +1591,7 @@
   
   
     <li class="md-nav__item">
-      <a href="population-synthesis.html" class="md-nav__link">
+      <a href="../../application/population-synthesis.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1428,7 +1612,7 @@
   
   
     <li class="md-nav__item">
-      <a href="landuse-prep.html" class="md-nav__link">
+      <a href="../../application/landuse-prep.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1449,7 +1633,7 @@
   
   
     <li class="md-nav__item">
-      <a href="settings-manager.html" class="md-nav__link">
+      <a href="../../application/settings-manager.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1470,7 +1654,7 @@
   
   
     <li class="md-nav__item">
-      <a href="scenario-manager.html" class="md-nav__link">
+      <a href="../../application/scenario-manager.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1491,7 +1675,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ev-rebates.html" class="md-nav__link">
+      <a href="../../application/ev-rebates.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1512,7 +1696,7 @@
   
   
     <li class="md-nav__item">
-      <a href="flexible-fleets.html" class="md-nav__link">
+      <a href="../../application/flexible-fleets.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1530,19 +1714,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="micromobility.html" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../application/micromobility.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1551,7 +1726,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -1564,7 +1738,7 @@
   
   
     <li class="md-nav__item">
-      <a href="network-coding.html" class="md-nav__link">
+      <a href="../../application/network-coding.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1644,7 +1818,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../calib_valid/calib_overview.html" class="md-nav__link">
+      <a href="../../calib_valid/calib_overview.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1665,7 +1839,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../calib_valid/calibration.html" class="md-nav__link">
+      <a href="../../calib_valid/calibration.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1686,7 +1860,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../calib_valid/convergence.html" class="md-nav__link">
+      <a href="../../calib_valid/convergence.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1707,7 +1881,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../calib_valid/validation.html" class="md-nav__link">
+      <a href="../../calib_valid/validation.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1728,7 +1902,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../calib_valid/sensitivity.html" class="md-nav__link">
+      <a href="../../calib_valid/sensitivity.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1804,7 +1978,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../release-notes.html" class="md-nav__link">
+      <a href="../../release-notes.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1825,7 +1999,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../faq.html" class="md-nav__link">
+      <a href="../../faq.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1846,7 +2020,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../technical-reports.html" class="md-nav__link">
+      <a href="../../technical-reports.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1887,6 +2061,158 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#model-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Model Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#model-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      Model Components
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Model Components">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#trip-pooling" class="md-nav__link">
+    <span class="md-ellipsis">
+      Trip Pooling
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vehicle-dispatching" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vehicle Dispatching
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#occupancy-tracking" class="md-nav__link">
+    <span class="md-ellipsis">
+      Occupancy Tracking
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#refueling" class="md-nav__link">
+    <span class="md-ellipsis">
+      Refueling
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Outputs
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Outputs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tnc-vehicle-trips-output_tnc_vehicle_tripscsv" class="md-nav__link">
+    <span class="md-ellipsis">
+      TNC Vehicle Trips (output_tnc_vehicle_trips.csv)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pooled-trips-output_tnc_pooled_tripscsv" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pooled Trips (output_tnc_pooled_trips.csv)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#integration-with-traffic-assignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      Integration with Traffic Assignment
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#relationship-to-other-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      Relationship to Other Models
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Relationship to Other Models">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#upstream-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      Upstream Dependencies
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#downstream-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Downstream Integration
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1903,8 +2229,167 @@
   
 
 
-<h1 id="micromobility">Micromobility<a class="headerlink" href="#micromobility" title="Permanent link"> ¶</a></h1>
-<p>//TODO: Describe how to run micromobility policy tests</p>
+<h1 id="taxi-and-tnc-routing-model">Taxi and TNC Routing Model<a class="headerlink" href="#taxi-and-tnc-routing-model" title="Permanent link"> ¶</a></h1>
+<p>The Taxi and Transportation Network Company (TNC) routing model simulates the operation of for-hire vehicle fleets serving passenger trips. This model processes TNC and taxi trips generated by the activity-based demand models and creates realistic vehicle routing patterns including pooled rides, empty repositioning, and refueling trips.</p>
+<h2 id="model-overview">Model Overview<a class="headerlink" href="#model-overview" title="Permanent link"> ¶</a></h2>
+<p>The model operates as a microsimulation of a taxi/TNC fleet, processing trips in chronological order through fine-grained time bins. Key features include:</p>
+<ul>
+<li><strong>Trip pooling</strong>: Matches compatible shared-ride requests to reduce vehicle miles traveled</li>
+<li><strong>Vehicle dispatching</strong>: Assigns vehicles to trips based on proximity and availability  </li>
+<li><strong>Fleet management</strong>: Tracks vehicle locations, mileage, and refueling needs</li>
+<li><strong>Deadhead routing</strong>: Simulates empty vehicle repositioning between trips</li>
+</ul>
+<p>The model design is shown below:</p>
+<p><img alt="" src="../../images/design/taxi_tnc_model_design.png" /></p>
+<h2 id="model-components">Model Components<a class="headerlink" href="#model-components" title="Permanent link"> ¶</a></h2>
+<h3 id="trip-pooling">Trip Pooling<a class="headerlink" href="#trip-pooling" title="Permanent link"> ¶</a></h3>
+<p>For shared TNC modes, the model identifies opportunities to combine multiple passenger trips into a single vehicle route:</p>
+<ol>
+<li><strong>Proximity filtering</strong>: Finds trip pairs where both origins and destinations are within a configurable buffer (default: 10 minutes)</li>
+<li>
+<p><strong>Detour calculation</strong>: Evaluates four possible routing scenarios for each pair:</p>
+<ul>
+<li>Origin i → Origin j → Destination i → Destination j</li>
+<li>Origin j → Origin i → Destination j → Destination i  </li>
+<li>Origin i → Origin j → Destination j → Destination i</li>
+<li>Origin j → Origin i → Destination i → Destination j</li>
+</ul>
+</li>
+<li>
+<p><strong>Detour validation</strong>: Filters out pairs where either passenger&rsquo;s detour exceeds the maximum allowed (default: 15 minutes)</p>
+</li>
+<li><strong>Mutual best selection</strong>: Uses a recursive algorithm to select trip pairs where both trips prefer each other</li>
+</ol>
+<h3 id="vehicle-dispatching">Vehicle Dispatching<a class="headerlink" href="#vehicle-dispatching" title="Permanent link"> ¶</a></h3>
+<p>The model maintains a fleet of vehicles and matches them to trips:</p>
+<ul>
+<li><strong>Free vehicles</strong>: Vehicles that have completed their previous trip are matched to new trips based on proximity</li>
+<li><strong>New vehicles</strong>: When no free vehicle is available within the maximum wait time, a new vehicle is created at the trip origin</li>
+<li><strong>Wait time tracking</strong>: Records the time passengers wait for vehicle arrival</li>
+</ul>
+<h3 id="occupancy-tracking">Occupancy Tracking<a class="headerlink" href="#occupancy-tracking" title="Permanent link"> ¶</a></h3>
+<p>Vehicle occupancy is tracked for each trip leg:</p>
+<table>
+<thead>
+<tr>
+<th>Occupancy</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Empty/deadhead trip (repositioning or refueling)</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Single passenger (or driver in non-AV scenario)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Two passengers</td>
+</tr>
+<tr>
+<td>3+</td>
+<td>Three or more passengers</td>
+</tr>
+</tbody>
+</table>
+<h3 id="refueling">Refueling<a class="headerlink" href="#refueling" title="Permanent link"> ¶</a></h3>
+<p>The model tracks cumulative vehicle mileage and routes vehicles to refueling stations when needed:</p>
+<ul>
+<li>Vehicles exceeding the maximum distance threshold are routed to the nearest zone with refueling stations</li>
+<li>Refueling trips are marked as deadhead trips with occupancy 0</li>
+<li>After refueling, the vehicle&rsquo;s odometer is reset</li>
+</ul>
+<h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link"> ¶</a></h2>
+<p>Key settings in <code>taxi_tnc_routing_settings.yaml</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>time_bin_size</code></td>
+<td>Simulation time bin size (minutes)</td>
+<td>10</td>
+</tr>
+<tr>
+<td><code>pooling_buffer</code></td>
+<td>Max O-O and D-D time for pooling (minutes)</td>
+<td>10</td>
+</tr>
+<tr>
+<td><code>max_detour</code></td>
+<td>Maximum detour time for pooled trips (minutes)</td>
+<td>15</td>
+</tr>
+<tr>
+<td><code>max_wait_time</code></td>
+<td>Maximum wait before creating new vehicle (minutes)</td>
+<td>15</td>
+</tr>
+<tr>
+<td><code>max_refuel_dist</code></td>
+<td>Maximum distance before refueling (miles)</td>
+<td>300</td>
+</tr>
+<tr>
+<td><code>shared_tnc_modes</code></td>
+<td>Modes eligible for pooling</td>
+<td>TNC_SHARED</td>
+</tr>
+<tr>
+<td><code>single_tnc_modes</code></td>
+<td>Solo ride modes</td>
+<td>TNC_SINGLE, TAXI</td>
+</tr>
+</tbody>
+</table>
+<h2 id="outputs">Outputs<a class="headerlink" href="#outputs" title="Permanent link"> ¶</a></h2>
+<p>The model produces several output files:</p>
+<h3 id="tnc-vehicle-trips-output_tnc_vehicle_tripscsv">TNC Vehicle Trips (<code>output_tnc_vehicle_trips.csv</code>)<a class="headerlink" href="#tnc-vehicle-trips-output_tnc_vehicle_tripscsv" title="Permanent link"> ¶</a></h3>
+<p>Each row represents a vehicle trip leg with columns:
+- <code>vehicle_id</code>: Unique vehicle identifier
+- <code>origin_taz</code>, <code>destination_taz</code>: Trip endpoints (TAZ level)
+- <code>depart_bin</code>: Departure time bin
+- <code>occupancy</code>: Number of passengers
+- <code>trip_type</code>: pickup, dropoff, refuel, etc.
+- <code>is_deadhead</code>: Whether the trip is empty</p>
+<h3 id="pooled-trips-output_tnc_pooled_tripscsv">Pooled Trips (<code>output_tnc_pooled_trips.csv</code>)<a class="headerlink" href="#pooled-trips-output_tnc_pooled_tripscsv" title="Permanent link"> ¶</a></h3>
+<p>Details of matched trip pairs including:
+- Trip IDs for both passengers
+- Route scenario used
+- Detour times for each passenger
+- Stop sequence</p>
+<p>This file is useful for analyzing pooling efficiency and general debugging of the pooling algorithm.</p>
+<h2 id="integration-with-traffic-assignment">Integration with Traffic Assignment<a class="headerlink" href="#integration-with-traffic-assignment" title="Permanent link"> ¶</a></h2>
+<p>TNC vehicle trips are aggregated into origin-destination matrices:</p>
+<ul>
+<li><strong>TNCVehicleTrips_pp.omx</strong>: One file per period with occupancy-based cores</li>
+<li><code>TNC_EA_0</code>, <code>TNC_EA_1</code>, <code>TNC_EA_2</code>, <code>TNC_EA_3</code> (and similar for AM, MD, PM, EV)</li>
+</ul>
+<p>The matrix builder script (<code>tnc_av_matrix_builder.py</code>) reads the vehicle trip outputs and creates OMX matrices that are imported into traffic assignment alongside other demand matrices.</p>
+<h2 id="relationship-to-other-models">Relationship to Other Models<a class="headerlink" href="#relationship-to-other-models" title="Permanent link"> ¶</a></h2>
+<h3 id="upstream-dependencies">Upstream Dependencies<a class="headerlink" href="#upstream-dependencies" title="Permanent link"> ¶</a></h3>
+<ul>
+<li><strong>Resident Model</strong>: Generates TNC_SINGLE, TNC_SHARED, and TAXI trips</li>
+<li><strong>Visitor Model</strong>: Generates visitor TNC/taxi trips</li>
+<li><strong>Cross-border Model</strong>: Generates cross-border TNC/taxi trips</li>
+<li><strong>Airport Model</strong>: Generates airport ground access TNC/taxi trips</li>
+</ul>
+<h3 id="downstream-integration">Downstream Integration<a class="headerlink" href="#downstream-integration" title="Permanent link"> ¶</a></h3>
+<p>The vehicle trip outputs can be used for:</p>
+<ul>
+<li>Traffic Assignment: TNC vehicle matrices are assigned to the highway network</li>
+<li>Fleet sizing analysis</li>
+<li>VMT and emissions calculations</li>
+<li>Equity analysis of service availability</li>
+</ul>
 
 
 
@@ -1959,12 +2444,12 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "navigation.indexes", "navigation.top", "navigation.expand", "content.code.annotate", "content.tabs.link"], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.indexes", "navigation.top", "navigation.expand", "content.code.annotate", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.3220b9d7.min.js"></script>
+      <script src="../../assets/javascripts/bundle.3220b9d7.min.js"></script>
       
-        <script src="../javascripts/mathjax.js"></script>
+        <script src="../../javascripts/mathjax.js"></script>
       
         <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
       
