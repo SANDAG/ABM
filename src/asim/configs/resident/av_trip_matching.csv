@@ -1,0 +1,9 @@
+Label,Description,Expression,coefficient
+util_veh_to_trip_origin_time,Time veh to trip origin,"@np.where((df.veh_location == df.origin) | (df.veh_location < 0) | (df.origin < 0), 0, veho_tripo_t_skims['SOV_TR_L_TIME'])",coef_ivt
+util_veh_to_trip_origin_cost,cost veh to trip origin,"@np.where((df.veh_location == df.origin) | (df.veh_location < 0) | (df.origin < 0), 0, (df.auto_operating_cost * veho_tripo_t_skims['SOV_TR_L_DIST']) + veho_tripo_t_skims['SOV_TR_L_TOLLCOST'])",coef_cost
+# *14 multiplier to convert from ivt to reliability as used in abm2+ uec,,,
+util_veh_to_trip_origin_reliability,reliability veh to trip origin,"@np.where((df.veh_location == df.origin) | (df.veh_location < 0) | (df.origin < 0), 0, veho_tripo_t_skims['SOV_NT_L_REL']) * 14",coef_ivt
+util_trip_duration,Trip duration,df.duration_benefit,coef_ivt
+util_no_vehicle,Alternative unavailable if no vehicle,df.vehicle_id.isna() & (df.trip_number > 0),coef_unavailable
+util_no_trip,unavailable if no trip and alt is not idle,df.trip_id.isna() & (df.trip_number > 0),coef_unavailable
+util_idle,Do not service any trips,(df.trip_number == 0) & ~df.vehicle_id.isna(),coef_idle
