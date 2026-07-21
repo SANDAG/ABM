@@ -30,13 +30,6 @@ for /f "tokens=*" %%i in (build_create_scenario_scripts.txt) DO (
     xcopy /Y .\src\main\resources\%%i %ROOT%
 )
 
-@REM Copy application files
-if not exist %ROOT%\common\application mkdir %ROOT%\common\application
-xcopy /Y .\src\main\resources\"*.dll" %ROOT%\common\application
-xcopy /Y .\src\main\resources\application\"*.jar" %ROOT%\common\application
-if not exist %ROOT%\common\application\GnuWin32 mkdir %ROOT%\common\application\GnuWin32
-xcopy /Y/S/E .\src\main\resources\application\GnuWin32 %ROOT%\common\application\GnuWin32
-
 @REM Copy bin files
 if not exist %ROOT%\common\bin mkdir %ROOT%\common\bin
 xcopy /Y /exclude:build_create_scenario_scripts.txt .\src\main\resources\"*.bat" %ROOT%\common\bin
@@ -51,11 +44,6 @@ xcopy /Y .\src\main\resources\"*.properties" %ROOT%\common\conf
 xcopy /Y .\src\main\resources\"*.yaml" %ROOT%\common\conf
 xcopy /Y .\src\main\resources\"*.xml" %ROOT%\common\conf
 xcopy /Y .\src\main\resources\"*.csv" %ROOT%\common\conf
-
-@REM Copy UEC files
-if not exist %ROOT%\common\uec mkdir %ROOT%\common\uec
-xcopy /Y .\uec\"*.xls" %ROOT%\common\uec
-xcopy /Y .\uec\"*.csv" %ROOT%\common\uec
 
 @REM Copy input files
 if not exist %ROOT%\common\input mkdir %ROOT%\common\input
