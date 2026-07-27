@@ -34,20 +34,15 @@ Next auxiliary models are run:
 
 After all models are run, trip tables are built from the result and assigned to transport networks.
 
-<center>
-
-|   | scenario_id  | model          | otaz | dtaz |distance_total   |     |cost_total|
-|---:|:------------|----------------|------|------|-----------------|-----|----------|
-|  0 | 230    | external-internal   | 6    | 13   | 102.816         | ... |39.100    |
-|  1 | 230    | external-internal   | 6    | 14   | 102.628         | ... |40.021    |
-|  2 | 230    | external-internal   | 6    | 15   | 102.367         | ... |33.728    |
-|  3 | 230    | external-internal   | 7    | 16   | 103.8597        | ... |33.179    |
-|  4 | 230    | external-internal   | 7    | 17   | 101.568         | ... |32.941    |
+| scenario_id  | model               | otaz | dtaz |distance_total   |...|cost_total|
+|--------------|---------------------|------|------|-----------------|---|----------|
+| 230          | external-internal   | 6    | 13   | 102.816         |...|39.100    |
+| 230          | external-internal   | 6    | 14   | 102.628         |...|40.021    |
+| 230          | external-internal   | 6    | 15   | 102.367         |...|33.728    |
+| 230          | external-internal   | 7    | 16   | 103.8597        |...|33.179    |
+| 230          | external-internal   | 7    | 17   | 101.568         |...|32.941    |
 
 *Example of a trip table for the external-internal model*
-
-</center>
-
 
 A check is made to determine whether the model has reached convergence (currently this is set to three feedback iterations). What this means in the context of the model is if an iteration is close enough to the results of another iteration, it will not run the next iteration.
 
