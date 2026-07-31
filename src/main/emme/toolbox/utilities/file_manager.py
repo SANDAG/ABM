@@ -157,7 +157,7 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
             # make sure that all of the root directories are created
             root_dirs = [
                 "bin", "conf", "emme_project", "input",
-                "logFiles", "output", "python", "report", "sql"
+                "logFiles", "output", "python", "report"
             ]
             for name in root_dirs:
                 if not os.path.exists(_join(local_dir, name)):

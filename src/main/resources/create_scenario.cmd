@@ -17,7 +17,7 @@ set LANDUSE_INPUT_PATH=%5
 set SUFFIX=%6
 
 @echo creating scenario folders
-set FOLDERS=input bin conf logFiles output python report sql analysis src src\asim src\asim-cvm
+set FOLDERS=input bin conf logFiles output python report analysis src src\asim src\asim-cvm
 for %%i in (%FOLDERS%) do (
 md %SCENARIO_FOLDER%\%%i)
 
@@ -28,7 +28,6 @@ mkdir %SCENARIO_FOLDER%\output\skims
 
 rem setup model folders
 xcopy /Y/E .\common\python\"*.*" %SCENARIO_FOLDER%\python
-xcopy /Y/E .\common\sql\"*.*" %SCENARIO_FOLDER%\sql
 xcopy /Y .\common\bin\"*.*" %SCENARIO_FOLDER%\bin
 rem xcopy /Y .\conf\%YEAR%\"*.*" %SCENARIO_FOLDER%\conf
 xcopy /Y .\common\conf\"*.*" %SCENARIO_FOLDER%\conf
