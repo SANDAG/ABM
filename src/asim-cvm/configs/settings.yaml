@@ -102,3 +102,22 @@ models:
   - write_cvm_trip_matrices
   - write_tables
 
+multiprocess: True
+fail_fast: True
+num_processes: 12
+
+chunk_size: 0
+chunk_method: hybrid_uss
+chunk_training_mode: disabled
+
+multiprocess_steps:
+  - name: mp_initialize
+    begin: household_attractor
+  - name: mp_route
+    begin: route_purpose_and_vehicle
+    slice:
+      tables:
+        - establishments
+        - routes
+  - name: mp_finalize
+    begin: write_cvm_trip_matrices

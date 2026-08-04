@@ -23,6 +23,7 @@ import pandas as pd
 
 from activitysim.abm.tables.util import simple_table_join
 from activitysim.core import workflow, tracing
+from activitysim.abm.models.util import canonical_ids as cid
 
 from .cvm_enum import BusinessTypes
 from .cvm_enum_tools import as_int_enum
@@ -32,6 +33,9 @@ logger = logging.getLogger(__name__)
 
 _business_type_offset = int(10 ** np.ceil(np.log10(max(BusinessTypes))))
 
+cid.RANDOM_CHANNELS.append("routes")
+cid.TRACEABLE_TABLES.append("routes")
+cid.CANONICAL_TABLE_INDEX_NAMES.setdefault("routes", "route_id")
 
 @workflow.step
 def route_generation(
