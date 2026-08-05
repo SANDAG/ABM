@@ -814,9 +814,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 [drive, drive + path_forward_slash, prod_env],
                 "Writing model output to datalake", capture_output=True)
 
-        # # terminate all java processes
-        # _subprocess.call("taskkill /F /IM java.exe")
-
         # # close all DOS windows
         # _subprocess.call("taskkill /F /IM cmd.exe")
 
