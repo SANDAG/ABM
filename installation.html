@@ -1133,15 +1133,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#installing-java" class="md-nav__link">
-    <span class="md-ellipsis">
-      Installing Java
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -2029,15 +2020,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#installing-java" class="md-nav__link">
-    <span class="md-ellipsis">
-      Installing Java
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -2063,7 +2045,7 @@
 
 <p><strong><em>Note:</em></strong> ABM3 <a href="https://github.com/SANDAG/ABM/tree/v15.3.1">v15.3.1</a> was the version used for the <a href="https://www.sandag.org/regional-plan/2025-regional-plan">2025 Regional Plan</a>. If you need to install v15.3.1, please refer to <a href="installation_v1531.html">Installing ABM3 v15.3.1</a>. </p>
 <h1 id="installing-abm3">Installing ABM3<a class="headerlink" href="#installing-abm3" title="Permanent link"> ¶</a></h1>
-<p>This page describes how to install ABM3. It also includes hardware and software requirements. In general, a powerful server is required to run the model. The main software required for the model includes EMME, Python, and Java. EMME is a commercial transportation modeling platform that must be purchased separately and requires a computer with a Windows operating system. Python is an open-source cross-platform programming language that is the core language of ActivitySim. Java is an open-source programming language required for certain bespoke non-ActivitySim model components. </p>
+<p>This page describes how to install ABM3. It also includes hardware and software requirements. In general, a powerful server is required to run the model. The main software required for the model includes EMME and Python. EMME is a commercial transportation modeling platform that must be purchased separately and requires a computer with a Windows operating system. Python is an open-source cross-platform programming language that is the core language of ActivitySim.</p>
 <h2 id="system-requirements">System Requirements<a class="headerlink" href="#system-requirements" title="Permanent link"> ¶</a></h2>
 <p>ABM3 runs on a Microsoft Windows workstation or server, with the minimum and recommended system specification as follows:</p>
 <p>Minimum specification:</p>
@@ -2099,10 +2081,9 @@
 <p>In general, a higher CPU core count and RAM will result in faster run times as long as ActivitySim is configured to utilize the additional processors and RAM.</p>
 <p>Note that the model is unlikely to run on servers that have less than 1 TB of RAM, unless chunking is set to active and in explicit mode (requires an upcoming version of ActivitySim 1.3)</p>
 <h2 id="software-requirements">Software Requirements<a class="headerlink" href="#software-requirements" title="Permanent link"> ¶</a></h2>
-<p>To run ABM3, there are certain software that should be installed on your workstation including: <a href="https://www.bentley.com/software/emme/">EMME</a>, Python3 package manager <a href="https://docs.astral.sh/uv/">UV</a>, and <a href="https://www.java.com/en/">Java</a>.</p>
+<p>To run ABM3, there are certain software that should be installed on your workstation including: <a href="https://www.bentley.com/software/emme/">EMME</a> and Python3 package manager <a href="https://docs.astral.sh/uv/">UV</a></p>
 <p>The ABM3 model system is an integrated model that is controlled by and primarily runs in the EMME transportation planning software platform. EMME is used for network assignment, creating transportation skims, and the model&rsquo;s Graphical User Interface (GUI). The software also provides functionality for viewing and editing highway and transit network files and viewing of matrix files. The <a href="https://www.bentley.com/software/connection-client/">Bentley CONNECTION Client</a> software (the license manager for EMME) will need to be logged into and activated prior to running the model.</p>
 <p>A Python package manager is software that creates an environment for an instance of Python. ActivitySim and related Python processes in the model are executed in an environment that is setup with a specific version of Python and specific library versions. This ensures that changes outside of the Python environment will not cause errors or change model results, and additionally ensure that the specific version of Python and specific libraries needed by the model do not cause errors or changes to other Python software installations on the server. The libraries needed by ActivitySim extend the base functionality of Python.</p>
-<p>Java is required in order to create bicycle logsums, run the taxi/TNC routing model, and run the intra-household autonomous vehicle routing model. The model has been tested against Java version 8 (i.e., 1.8) and is therefore the recommended version to be used when running the SANDAG ABM.</p>
 <h2 id="installing-abm3_1">Installing ABM3<a class="headerlink" href="#installing-abm3_1" title="Permanent link"> ¶</a></h2>
 <h3 id="setting-up-the-uv-python-environment">Setting up the UV Python Environment<a class="headerlink" href="#setting-up-the-uv-python-environment" title="Permanent link"> ¶</a></h3>
 <p>As noted above, the user needs to install UV on the workstation they intend to install ABM3 on. UV is utilized to create a Python3-based environment required to run ActivitySim and other model components.</p>
@@ -2257,10 +2238,6 @@
     <br>
     <em>SQLCMD Utility Test</em>
 </div>
-
-<h3 id="installing-java">Installing Java<a class="headerlink" href="#installing-java" title="Permanent link"> ¶</a></h3>
-<p>Java version 1.8 needs to be installed on the workstation. SANDAG servers usually have this version of Java already installed on them. </p>
-<p>Alternatively, the exact version may be found on Oracle&rsquo;s <a href="https://www.oracle.com/java/technologies/javase/javase8-archive-downloads.html">Java SE 8 Archive Downloads</a> site. (hint: <em>jre-8u162-windows-x64.exe</em>)</p>
 
 
 

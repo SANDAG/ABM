@@ -1997,7 +1997,7 @@
 
 <h1 id="model-design">Model Design<a class="headerlink" href="#model-design" title="Permanent link"> ¶</a></h1>
 <p>The ABM3 model system is primarily based on the <a href="https://research.ampo.org/activitysim/">ActivitySim</a> platform; ActivitySim is used to model resident travel, cross-border travel, overnight visitor travel, airport ground access travel, and commercial vehicle travel including light, medium, and heavy commercial vehicles. </p>
-<p>Aggregate models are used to model external-internal travel (from external stations other than the U.S./Mexico border crossing) and through travel. The model system relies on <a href="https://www.bentley.com/software/emme/">EMME</a> software for network processing, skimming, and assignment. Models are mostly implemented in <a href="https://www.python.org/">Python</a>, and some models are implemented in <a href="https://www.java.com/en/">Java</a>.</p>
+<p>Aggregate models are used to model external-internal travel (from external stations other than the U.S./Mexico border crossing) and through travel. The model system relies on <a href="https://www.bentley.com/software/emme/">EMME</a> software for network processing, skimming, and assignment. Models are implemented in <a href="https://www.python.org/">Python</a>.</p>
 <p>The overall design of the model is shown in the figure below:</p>
 <!-- ![](../images/design/overall_model_design.png) -->
 <div style="position: relative; width: 100%; height: 0; padding-top: 56.2500%;
@@ -2020,8 +2020,8 @@
 </ul>
 <p>Next auxiliary models are run:</p>
 <ul>
-<li>the taxi/TNC routing model and the autonomous vehicle intra-household allocation model are run in <strong>Java</strong>. </li>
-<li>Aggregate external-internal and through travel models are run in <strong>Python</strong>. </li>
+<li>the taxi/TNC routing model and the autonomous vehicle intra-household allocation model. </li>
+<li>Aggregate external-internal and through travel models. </li>
 </ul>
 <p>After all models are run, trip tables are built from the result and assigned to transport networks.</p>
 <center>
