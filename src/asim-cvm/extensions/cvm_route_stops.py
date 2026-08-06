@@ -622,7 +622,8 @@ def route_stops(
         np.exp(accessibility_df['estab_acc_hh_food']) +
         np.exp(accessibility_df['estab_acc_hh_package'])
     )
-
+    state.add_table("commercial_accessibility", accessibility_df)
+    
     route_trip_num = 1
 
     cv_trips = []

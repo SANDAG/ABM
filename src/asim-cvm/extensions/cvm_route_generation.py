@@ -169,6 +169,7 @@ def route_generation(
 
     # sum the two logsums to get the accessibility
     accessibility_df["accessibility"] = accessibility_df['estab_acc_logsum'] + accessibility_df['household_acc_logsum']
+    state.add_table("commercial_accessibility", accessibility_df)
 
     # get the accessibility column for the industry
     join_df = establishments_df.merge(
