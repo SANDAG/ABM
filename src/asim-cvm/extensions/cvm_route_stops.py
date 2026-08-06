@@ -549,12 +549,14 @@ def _dwell_time(
             "max_duration"
         ]
 
-        random_dwell_times = scipy.stats.beta.rvs(
+        random_order = state.get_rn_generator().random_for_df(df)
+
+        random_dwell_times = scipy.stats.beta.pff(
+            random_order[:,0],
             a=alpha,
             b=beta,
             loc=model_settings.min_dwell_time,
             scale=max_duration,
-            size=len(df),
         )
 
         result_list.append(
@@ -749,8 +751,6 @@ def route_stops(
         ][routes_continuing]
 
         nonterminated_routes[model_settings.location_settings_estb.RESULT_COL_NAME] = next_stop_location
-
-        np.random.seed(seed=42)
 
         # Choose dwell time
         nonterminated_routes = _dwell_time(
