@@ -5,23 +5,23 @@ util_distance_general,Edge length (distance) in miles,distance,-10.93
 util_medium_upslope,Edge slope in range [1%-3.5%],"@df.distance * ((df.gain / (df.distance * 5280) >= 0.01) & (df.gain / (df.distance * 5280) <= 0.035)).astype(int)",-9.012
 util_high_upslope,Edge slope > 3.5%,"@df.distance * (df.gain / (df.distance * 5280) > 0.035).astype(int)",-18.19
 # per class penalties - large roadways,,,
-util_lg_protected,Large roadway w/ protected lanes,"@df.distance * ( df.functionalClass.isin([3,4]) & df.cycleTrack ).astype(int)",0.1748
-util_lg_painted,Large roadway w/ painted lanes & no protected lanes,"@df.distance * ( df.functionalClass.isin([3,4]) & (~df.cycleTrack) & (df.bikeClass == 2) ).astype(int)",-3.158
-util_lg_nofacils,Large roadway w/o bike lanes,"@df.distance * ( df.functionalClass.isin([3,4]) & (~df.cycleTrack) & ~(df.bikeClass == 2) ).astype(int)",-2.513
+util_lg_protected,Large roadway w/ protected lanes,"@df.distance * ( df.functionalClass.isin([3,4]) & (df.bikeClass == 4) ).astype(int)",0.1748
+util_lg_painted,Large roadway w/ painted lanes & no protected lanes,"@df.distance * ( df.functionalClass.isin([3,4]) & (df.bikeClass == 2) ).astype(int)",-3.158
+util_lg_nofacils,Large roadway w/o bike lanes,"@df.distance * ( df.functionalClass.isin([3,4]) & (~(df.bikeClass == 4)) & ~(df.bikeClass == 2) ).astype(int)",-2.513
 # per-class penalties - medium roadways,,,
-# util_med_protected,Medium roadway w/ protected lanes,"@df.distance * ( df.functionalClass.isin([5,6]) & df.cycleTrack ).astype(int)",0.000
-util_med_painted,Medium roadway w/ painted lanes & no protected lanes,"@df.distance * ( df.functionalClass.isin([5,6]) & (~df.cycleTrack) & (df.bikeClass == 2) ).astype(int)",-0.5464
-util_med_nofacils,Medium roadway w/o bike lanes,"@df.distance * ( df.functionalClass.isin([5,6]) & (~df.cycleTrack) & ~(df.bikeClass == 2) ).astype(int)",-1.235
+# util_med_protected,Medium roadway w/ protected lanes,"@df.distance * ( df.functionalClass.isin([5,6]) & (df.bikeClass == 4) ).astype(int)",0.000
+util_med_painted,Medium roadway w/ painted lanes & no protected lanes,"@df.distance * ( df.functionalClass.isin([5,6]) & (df.bikeClass == 2) ).astype(int)",-0.5464
+util_med_nofacils,Medium roadway w/o bike lanes,"@df.distance * ( df.functionalClass.isin([5,6]) & (~(df.bikeClass == 4)) & ~(df.bikeClass == 2) ).astype(int)",-1.235
 # per class penalties - residential roadways,,,
-util_res_protected,Residential roadway w/ protected lanes,"@df.distance * ( (df.functionalClass == 7) & df.cycleTrack ).astype(int)",-0.9835
-util_res_painted,Residential roadway w/ painted lanes & no protected lanes,"@df.distance * ( (df.functionalClass == 7) & (~df.cycleTrack) & (df.bikeClass == 2) ).astype(int)",0.9288
-util_res_nofacils,Residential roadway w/o bike lanes,"@df.distance * ( (df.functionalClass == 7) & (~df.cycleTrack) & ~(df.bikeClass == 2) ).astype(int)",-1.901
+util_res_protected,Residential roadway w/ protected lanes,"@df.distance * ( (df.functionalClass == 7) & (df.bikeClass == 4) ).astype(int)",-0.9835
+util_res_painted,Residential roadway w/ painted lanes & no protected lanes,"@df.distance * ( (df.functionalClass == 7) & (df.bikeClass == 2) ).astype(int)",0.9288
+util_res_nofacils,Residential roadway w/o bike lanes,"@df.distance * ( (df.functionalClass == 7) & (~(df.bikeClass == 4)) & ~(df.bikeClass == 2) ).astype(int)",-1.901
 # per class penalties - non-vehicle routes,,,
-util_cycleway,Cycleway,"@df.distance * ( (~df.functionalClass.isin([3,4,5,6,7,10])) & (df.bikeClass == 2) ).astype(int)",0.4152
+util_cycleway,Cycleway,"@df.distance * ( (~df.functionalClass.isin([3,4,5,6,7,10])) & ((df.bikeClass == 2) | (df.bikeClass == 4)) ).astype(int)",0.4152
 util_sup,Shared-Use Path,"@df.distance * ( (~df.functionalClass.isin([3,4,5,6,7,10])) & (df.bikeClass == 1) ).astype(int)",-1.705
 util_pedzone,Pedestrian Zone,"@df.distance * ( (~df.functionalClass.isin([3,4,5,6,7,10])) & (~df.bikeClass.isin([1,2])) ).astype(int)",-4.021
 # FIXME better way to check wrong way?,,,
-util_wrong_way,Wrong Way - no lanes in direction of travel and no bike lane,"@df.distance * ( (~df.cycleTrack) & (~(df.bikeClass == 2)) & (df.lanes == 0) ).astype(int)",-3.202
+util_wrong_way,Wrong Way - no lanes in direction of travel and no bike lane,"@df.distance * ( (~(df.bikeClass == 4)) & (~(df.bikeClass == 2)) & (df.lanes == 0) ).astype(int)",-3.202
 # The above coefficients are adapted from Lukawska et al. (2023),,,
 
 

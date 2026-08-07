@@ -54,8 +54,6 @@ def create_and_attribute_edges(
                 "ABBikeClas": "bikeClass",
                 "AB_Lanes": "lanes",
                 "Func_Class": "functionalClass",
-                "Bike2Sep": "cycleTrack",
-                "Bike3Blvd": "bikeBlvd",
                 "SPEED": "speedLimit",
             }
         )
@@ -73,8 +71,6 @@ def create_and_attribute_edges(
                 "functionalClass",
                 "centroidConnector",
                 "autosPermitted",
-                "cycleTrack",
-                "bikeBlvd",
                 "distance",
                 "gain",
                 "speedLimit",
@@ -93,8 +89,6 @@ def create_and_attribute_edges(
                 "BABikeClas": "bikeClass",
                 "BA_Lanes": "lanes",
                 "Func_Class": "functionalClass",
-                "Bike2Sep": "cycleTrack",
-                "Bike3Blvd": "bikeBlvd",
                 "SPEED": "speedLimit",
             }
         )
@@ -113,8 +107,6 @@ def create_and_attribute_edges(
                 "functionalClass",
                 "centroidConnector",
                 "autosPermitted",
-                "cycleTrack",
-                "bikeBlvd",
                 "distance",
                 "gain",
                 "speedLimit",

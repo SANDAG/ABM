@@ -17,7 +17,7 @@ set LANDUSE_INPUT_PATH=%5
 set SUFFIX=%6
 
 @echo creating scenario folders
-set FOLDERS=input application bin conf logFiles output python report sql uec analysis src src\asim src\asim-cvm
+set FOLDERS=input bin conf logFiles output python report analysis src src\asim src\asim-cvm
 for %%i in (%FOLDERS%) do (
 md %SCENARIO_FOLDER%\%%i)
 
@@ -27,11 +27,7 @@ cacls %SCENARIO_FOLDER% /t /e /g Everyone:f
 mkdir %SCENARIO_FOLDER%\output\skims
 
 rem setup model folders
-xcopy /Y .\common\application\"*.*" %SCENARIO_FOLDER%\application
-xcopy /E/Y/i .\common\application\GnuWin32\"*.*" %SCENARIO_FOLDER%\application\GnuWin32
 xcopy /Y/E .\common\python\"*.*" %SCENARIO_FOLDER%\python
-xcopy /Y/E .\common\sql\"*.*" %SCENARIO_FOLDER%\sql
-xcopy /Y .\common\uec\"*.*" %SCENARIO_FOLDER%\uec
 xcopy /Y .\common\bin\"*.*" %SCENARIO_FOLDER%\bin
 rem xcopy /Y .\conf\%YEAR%\"*.*" %SCENARIO_FOLDER%\conf
 xcopy /Y .\common\conf\"*.*" %SCENARIO_FOLDER%\conf
@@ -96,6 +92,8 @@ python .\common\python\update_properties.py %PROP_FILE% %YEAR% %SUFFIX%
 
 @echo init emme folder
 call init_emme.cmd %SCENARIO_FOLDER% %EMME_VERSION%
+
+goto :eof
 
 :usage
 

@@ -3,11 +3,9 @@ set PROJECT_DIRECTORY=%2
 
 %PROJECT_DRIVE%
 cd %PROJECT_DRIVE%%PROJECT_DIRECTORY%
-call bin\CTRampEnv.bat
-set JAR_LOCATION=%PROJECT_DIRECTORY%/application
 
 rem ### Call environment
-CALL %activate_uv_asim%
+CALL %activate_uv_asim_151%
 
 %PROJECT_DRIVE%
 cd %PROJECT_DRIVE%%PROJECT_DIRECTORY%                                        

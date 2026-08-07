@@ -89,6 +89,9 @@ autoParkingCostFactorAV: {policy-AV-autoParkingCostFactor:}
 autoCostPerMileFactorAV: {policy-AV-autoCostPerMileFactor:}
 autoTerminalTimeFactorAV: {policy-AV-autoTerminalTimeFactor:}
 minAgeDriveAloneAV: {policy-AV-minAgeDriveAlone:}
+AV_maxDuration: 1.5 # max duration for keeping car close (hrs)
+AV_maxBenefit: 60 # max benefit for keeping car close (mins)
+RemoteParkingCostPerHour: 3  #dollar
 
 
 #valueOfTime: 8.00

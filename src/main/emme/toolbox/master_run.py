@@ -683,11 +683,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     #         raise Exception("Error in skim shared memory manager, view logbook for details")
 
                 if not skipMAASModel[iteration]:
-                    self.run_proc("runMtxMgr.cmd", [drive, drive + path_no_drive], "Start matrix manager")
                     self.run_proc(
                         "runSandagAbm_MAAS.cmd",
-                        [drive, drive + path_forward_slash, 1, 0],
-                        "Java-Run AV allocation model and TNC routing model", capture_output=True, iteration=msa_iteration)
+                        [drive, drive + path_forward_slash, str(sample_rate[iteration])],
+                        "Python Taxi and TNC routing model + AV and TNC matrix builder", capture_output=True, iteration=msa_iteration)
 
                 if (not skipCVMEstablishmentSyn) and (iteration == 0):
                     self.run_proc("cvmEst.bat", [drive, path_no_drive, cvm_emp_input_file],
@@ -814,9 +813,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 "write_to_datalake.cmd",
                 [drive, drive + path_forward_slash, prod_env],
                 "Writing model output to datalake", capture_output=True)
-
-        # # terminate all java processes
-        # _subprocess.call("taskkill /F /IM java.exe")
 
         # # close all DOS windows
         # _subprocess.call("taskkill /F /IM cmd.exe")

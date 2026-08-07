@@ -2,7 +2,7 @@
 
 # Installing ABM3
 
-This page describes how to install ABM3. It also includes hardware and software requirements. In general, a powerful server is required to run the model. The main software required for the model includes EMME, Python, and Java. EMME is a commercial transportation modeling platform that must be purchased separately and requires a computer with a Windows operating system. Python is an open-source cross-platform programming language that is the core language of ActivitySim. Java is an open-source programming language required for certain bespoke non-ActivitySim model components. 
+This page describes how to install ABM3. It also includes hardware and software requirements. In general, a powerful server is required to run the model. The main software required for the model includes EMME and Python. EMME is a commercial transportation modeling platform that must be purchased separately and requires a computer with a Windows operating system. Python is an open-source cross-platform programming language that is the core language of ActivitySim.
 
 
 ## System Requirements
@@ -36,13 +36,11 @@ Note that the model is unlikely to run on servers that have less than 1 TB of RA
 
 ## Software Requirements
 
-To run ABM3, there are certain software that should be installed on your workstation including: [EMME](https://www.bentley.com/software/emme/), Python3 package manager [UV](https://docs.astral.sh/uv/), and [Java](https://www.java.com/en/).
+To run ABM3, there are certain software that should be installed on your workstation including: [EMME](https://www.bentley.com/software/emme/) and Python3 package manager [UV](https://docs.astral.sh/uv/)
 
 The ABM3 model system is an integrated model that is controlled by and primarily runs in the EMME transportation planning software platform. EMME is used for network assignment, creating transportation skims, and the model's Graphical User Interface (GUI). The software also provides functionality for viewing and editing highway and transit network files and viewing of matrix files. The [Bentley CONNECTION Client](https://www.bentley.com/software/connection-client/) software (the license manager for EMME) will need to be logged into and activated prior to running the model.
 
 A Python package manager is software that creates an environment for an instance of Python. ActivitySim and related Python processes in the model are executed in an environment that is setup with a specific version of Python and specific library versions. This ensures that changes outside of the Python environment will not cause errors or change model results, and additionally ensure that the specific version of Python and specific libraries needed by the model do not cause errors or changes to other Python software installations on the server. The libraries needed by ActivitySim extend the base functionality of Python.
-
-Java is required in order to create bicycle logsums, run the taxi/TNC routing model, and run the intra-household autonomous vehicle routing model. The model has been tested against Java version 8 (i.e., 1.8) and is therefore the recommended version to be used when running the SANDAG ABM.
 
 ## Installing ABM3
 
@@ -50,7 +48,7 @@ Java is required in order to create bicycle logsums, run the taxi/TNC routing mo
 
 As noted above, the user needs to install UV on the workstation they intend to install ABM3 on. UV is utilized to create a Python3-based environment required to run ActivitySim and other model components.
 
-To install UV and create asim_140 environment using UV for all users on a server: 
+To install UV and create asim_151 environment using UV for all users on a server: 
 
 - Create the following directories 
 
@@ -96,23 +94,23 @@ To install UV and create asim_140 environment using UV for all users on a server
 
 - Run the following commands (one at a time): 
 
-    `mkdir asim_140 `
+    `mkdir asim_151 `
 
-    `cd asim_140 `
+    `cd asim_151 `
 
     `echo 3.10 > .python-version `
 
     `uv init `
 
-- Open asim_140/pyproject.toml and edit the requires-python setting to: 
+- Open asim_151/pyproject.toml and edit the requires-python setting to: 
 
     `requires-python = ">=3.10, <3.11"`
 
-- Back in command prompt (at C:\uv_env\asim_140), run one final command 
+- Back in command prompt (at C:\uv_env\asim_151), run one final command 
 
     `uv add -r requirements.txt `
 
-    - The requirements.txt will have to be saved under asim_140 or you will have to point to wherever it is saved 
+    - The requirements.txt will have to be saved under asim_151 or you will have to point to wherever it is saved 
 
     - The requirements.txt is on the GitHub repo at: [requirements.txt](https://github.com/SANDAG/ABM/blob/main/src/asim/scripts/requirements.txt)
 
@@ -128,9 +126,9 @@ To install UV and create asim_140 environment using UV for all users on a server
 
 - Under Environment Variables > System variables (requires Admin) 
 
-    - Create a new variable called ***activate_uv_asim*** and set to the path of asim_140’s activate file 
+    - Create a new variable called ***activate_uv_asim_151*** and set to the path of asim_151’s activate file 
 
-        - E.g., C:\uv_env\asim_140\\.venv\Scripts\activate 
+        - E.g., C:\uv_env\asim_151\\.venv\Scripts\activate 
 
 #### Azure Environment Variables
 
@@ -169,9 +167,3 @@ To verify successful installation of sqlcmd utility on your workstation:
     <br>
     <em>SQLCMD Utility Test</em>
 </div>
-
-### Installing Java
-
-Java version 1.8 needs to be installed on the workstation. SANDAG servers usually have this version of Java already installed on them. 
-
-Alternatively, the exact version may be found on Oracle's [Java SE 8 Archive Downloads](https://www.oracle.com/java/technologies/javase/javase8-archive-downloads.html) site. (hint: *jre-8u162-windows-x64.exe*)
