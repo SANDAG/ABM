@@ -17,15 +17,16 @@ route_attributes:
     r_config: "Config"
 
 mmms: 
-    shapefile_name: "SANDAG_Bike_Net.shp"
-    shapefile_node_name: "SANDAG_Bike_Node.shp"
+    gdb_file: "EMMEOutputs.gdb"
+    shapefile_name: "SANDAG_Bike_Net"
+    shapefile_node_name: "SANDAG_Bike_Node"
     mmms_link_ref_id: "A" 
     mmms_link_nref_id: "B"
     mmms_link_id: "ROADSEGID" 
     mmms_link_dirtravelAB: "AB_Lanes"
     mmms_link_dirtravelBA: "BA_Lanes"
     mmms_link_fc: "Func_Class"
-    mmms_link_len: "Shape_Leng"
+    mmms_link_len: "SHAPE_Length"
     max_maz_maz_walk_dist_feet: 15840
     max_maz_maz_bike_dist_feet: 26400
     max_maz_local_bus_stop_walk_dist_feet: 23760     # 4.5 miles (allow microtransit)
