@@ -67,32 +67,34 @@ class NetworkBuilder:
     @classmethod
     def from_files(cls, model_inputs: str, config: dict) -> 'NetworkBuilder':
         """
-        Create a NetworkBuilder instance by reading nodes and links from geodatabase or shapefiles.
+        Create a NetworkBuilder instance by reading nodes and links from geodatabase.
 
-        This factory method handles reading and processing the raw input files to create
-        a properly configured NetworkBuilder instance. Supports reading from geodatabase
-        feature classes (no file extension) or shapefiles (.shp extension).
+        This factory method handles reading and processing the raw input files from a
+        geodatabase to create a properly configured NetworkBuilder instance.
 
         Args:
-            model_inputs (str): Path to directory containing input files or geodatabase
+            model_inputs (str): Path to directory containing the geodatabase
             config (dict): Configuration dictionary containing:
                 - mmms (dict): File and processing parameters
-                - gdb_file (str, optional): Geodatabase filename
-                - shapefile_node_name (str): Feature class or filename for nodes
-                - shapefile_name (str): Feature class or filename for links
+                - gdb_file (str): Geodatabase filename
+                - node_name (str): Feature class name for nodes
+                - net_name (str): Feature class name for links
 
         Returns:
             NetworkBuilder: A fully initialized NetworkBuilder instance with processed
                 nodes and links.
         """
-        # Read and process nodes
-        nodes = cls._read_spatial_file(model_inputs, config['mmms']['shapefile_node_name'], 
-                                       config['mmms'].get('gdb_file'))
+        # Construct geodatabase path
+        gdb_path = os.path.join(model_inputs, config['mmms']['gdb_file'])
+        if not os.path.exists(gdb_path):
+            raise FileNotFoundError(f"Geodatabase not found: {gdb_path}")
+        
+        # Read and process nodes from geodatabase
+        nodes = gpd.read_file(gdb_path, layer=config['mmms']['node_name'])
         nodes = cls._process_nodes(nodes)
         
-        # Read and process links
-        links = cls._read_spatial_file(model_inputs, config['mmms']['shapefile_name'], 
-                                       config['mmms'].get('gdb_file'))
+        # Read and process links from geodatabase
+        links = gpd.read_file(gdb_path, layer=config['mmms']['net_name'])
         links = cls._process_links(links)
 
         # Read and process stops and routes
@@ -104,34 +106,6 @@ class NetworkBuilder:
         stops = cls.process_transit_stops(stops, network, nodes) 
         
         return cls(nodes, links, stops, routes, config)
-    
-    @staticmethod
-    def _read_spatial_file(base_path: str, file_name: str, gdb_file: str = None) -> gpd.GeoDataFrame:
-        """
-        Read a spatial file from either a geodatabase feature class or a shapefile.
-        
-        Args:
-            base_path (str): Base directory path containing files
-            file_name (str): Feature class name (no extension) or shapefile name (.shp)
-            gdb_file (str, optional): Geodatabase filename if reading from GDB
-            
-        Returns:
-            gpd.GeoDataFrame: Loaded spatial data
-        """
-        # Check if file_name has an extension (shapefile)
-        if '.' in file_name:
-            # Read from shapefile
-            return gpd.read_file(os.path.join(base_path, file_name))
-        else:
-            # Read from geodatabase feature class
-            if not gdb_file:
-                raise ValueError(f"gdb_file must be specified when reading feature class '{file_name}'")
-            
-            gdb_path = os.path.join(base_path, gdb_file)
-            if not os.path.exists(gdb_path):
-                raise FileNotFoundError(f"Geodatabase not found: {gdb_path}")
-            
-            return gpd.read_file(gdb_path, layer=file_name)
     
     @staticmethod
     def _process_nodes(nodes: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
@@ -160,7 +134,7 @@ class NetworkBuilder:
     @staticmethod
     def _process_links(links: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         """
-        Process raw links GeoDataFrame and normalize column names.
+        Process raw links GeoDataFrame by projecting coordinates.
         
         Args:
             links: Raw links GeoDataFrame

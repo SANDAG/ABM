@@ -18,8 +18,8 @@ route_attributes:
 
 mmms: 
     gdb_file: "EMMEOutputs.gdb"
-    shapefile_name: "SANDAG_Bike_Net"
-    shapefile_node_name: "SANDAG_Bike_Node"
+    net_name: "SANDAG_Bike_Net"
+    node_name: "SANDAG_Bike_Node"
     mmms_link_ref_id: "A" 
     mmms_link_nref_id: "B"
     mmms_link_id: "ROADSEGID" 
