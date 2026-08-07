@@ -59,7 +59,7 @@ def create_and_attribute_edges(
         )
         .copy()
         .assign(
-            distance=link.Shape_Leng / 5280.0,  # convert feet to miles
+            distance=link.SHAPE_Length / 5280.0,  # convert feet to miles
             autosPermitted=link.Func_Class.isin(range(1, 8)),
             centroidConnector=link.Func_Class == 10,
         )[
@@ -94,7 +94,7 @@ def create_and_attribute_edges(
         )
         .copy()
         .assign(
-            distance=link.Shape_Leng / 5280.0,  # convert feet to miles
+            distance=link.SHAPE_Length / 5280.0,  # convert feet to miles
             autosPermitted=link.Func_Class.isin(range(1, 8)),
             centroidConnector=link.Func_Class == 10,
             geometry=link.geometry.reverse(),
@@ -933,17 +933,15 @@ def create_bike_net(settings: BikeRouteChoiceSettings, logger: logging.Logger) -
     """
     Read bike network from supplied shapefiles and derive attributes
 
-    This method reads in two shapefiles detailing the nodes and edges
-    of a bike network, manipulates the data tables to match the expected
-    output format, and derives additonal attributes, some of which are
-    solely used internally while others are appended to the edge and node
-    tables. Additionally, a new table is developed of all traversals, that
-    is, all possible combinations of edges leading to and from a node which
-    are not reversals.
+    This method reads in bike network data from a geodatabase (feature classes for nodes and edges),
+    manipulates the data tables to match the expected output format, and derives additional attributes,
+    some of which are solely used internally while others are appended to the edge and node tables.
+    Additionally, a new table is developed of all traversals, that is, all possible combinations of
+    edges leading to and from a node which are not reversals.
 
     Parameters:
-        node_file: str  -   path to the node shapefile
-        edge_file: str  -   path to the edge shapefile
+        node_file: str  -   feature class name for nodes (e.g., SANDAG_Bike_Node)
+        edge_file: str  -   feature class name for edges (e.g., SANDAG_Bike_Net)
 
     Returns:
         nodes: pd.DataFrame   -     node dataframe with derived attributes in expected format
@@ -968,8 +966,8 @@ def create_bike_net(settings: BikeRouteChoiceSettings, logger: logging.Logger) -
         )
         return nodes, edges, traversals
 
-    # read shapefiles
-    logger.info("Reading link and node shapefiles")
+    # read bike network data from geodatabase
+    logger.info("Reading link and node feature classes from geodatabase")
     node = read_file(settings, settings.node_file)
     link = read_file(settings, settings.link_file)
 

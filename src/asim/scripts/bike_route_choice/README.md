@@ -21,8 +21,9 @@ In the specified settings YAML file, several options are available for configura
 
 **Network**
 - `data_dir`: path to the directory in which the model inputs are stored
-- `node_file`: name of the input shapefile containing bike network nodes
-- `link_file`: name of the input shapefile containing bike network links
+- `gdb_file`: name of the geodatabase containing bike network feature classes (default: EMMEOutputs.gdb)
+- `node_file`: name of the feature class containing bike network nodes (default: SANDAG_Bike_Node)
+- `link_file`: name of the feature class containing bike network links (default: SANDAG_Bike_Net)
 - `zone_level`: zone level on which path choice should be performed. Allowed values: `taz`,`mgra`
 - `zone_subset`: subset of zones to use for model testing
 

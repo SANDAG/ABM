@@ -15,9 +15,10 @@ class BikeRouteChoiceSettings(BaseModel):
     Bike route choice settings
     """
 
-    # path to bike network shapefiles
-    node_file: str = "SANDAG_Bike_Node.shp"
-    link_file: str = "SANDAG_Bike_Net.shp"
+    # path to bike network geodatabase and feature class names
+    gdb_file: str = "EMMEOutputs.gdb"
+    node_file: str = "SANDAG_Bike_Node"
+    link_file: str = "SANDAG_Bike_Net"
 
     # data directory, optional additional place to look for data
     data_dir: str = ""
@@ -114,9 +115,10 @@ def load_settings(
 
 def read_file(settings, file_path: str) -> gpd.GeoDataFrame:
     """
-    Read a shapefile and return a GeoDataFrame
+    Read a shapefile, geodatabase feature class, or CSV file and return a GeoDataFrame or DataFrame
 
-    Looks for the shapefile in a few places:
+    For geodatabase feature classes (no file extension), reads from the geodatabase specified in settings.
+    For shapefiles and CSV files, looks in:
     1. The current working directory
     2. The directory of the script
     3. The data directory specified in the settings file
@@ -130,6 +132,36 @@ def read_file(settings, file_path: str) -> gpd.GeoDataFrame:
         else:
             raise ValueError(f"Unsupported file type: {path}")
 
+    # Check if file_path is a feature class name (no extension)
+    if "." not in os.path.basename(file_path):
+        # Read from geodatabase
+        def find_gdb(gdb_name: str) -> str:
+            # 1. Try current working directory
+            if os.path.exists(gdb_name):
+                return gdb_name
+            
+            # 2. Try directory of the script
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            script_path = os.path.join(script_dir, gdb_name)
+            if os.path.exists(script_path):
+                return script_path
+            
+            # 3. Try data directory
+            data_path = os.path.join(os.path.expanduser(settings.data_dir), gdb_name)
+            if os.path.exists(data_path):
+                return data_path
+            
+            # 4. Try data_dir/input subdirectory
+            input_path = os.path.join(os.path.expanduser(settings.data_dir), "input", gdb_name)
+            if os.path.exists(input_path):
+                return input_path
+            
+            raise FileNotFoundError(f"Geodatabase '{gdb_name}' not found")
+        
+        gdb_path = find_gdb(settings.gdb_file)
+        return gpd.read_file(gdb_path, layer=file_path)
+
+    # For files with extensions (shapefiles, CSV)
     # 1. Try current working directory
     if os.path.exists(file_path):
         return return_file(file_path)
@@ -146,7 +178,7 @@ def read_file(settings, file_path: str) -> gpd.GeoDataFrame:
         return return_file(data_path)
 
     raise FileNotFoundError(
-        f"Shapefile '{file_path}' not found in current directory, script directory, or provided path."
+        f"File '{file_path}' not found in current directory, script directory, or provided path."
     )
 
 
