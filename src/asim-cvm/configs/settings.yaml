@@ -84,6 +84,7 @@ output_tables:
    - establishments
    - establishments_all
 
+
 models:
   - household_attractor
   - establishment_attractor
@@ -123,6 +124,8 @@ multiprocess_steps:
     slice:
       tables:
         - establishments
+  # route_generation_tnc single-process only
+  # land_use aggregation and duplicate establishment_id under slicing
   - name: mp_route_generation_tnc
     begin: route_generation_tnc
   - name: mp_route
