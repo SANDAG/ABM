@@ -9,15 +9,11 @@ import pandas as pd
 
 from activitysim.core import tracing, workflow
 from activitysim.core.input import read_input_table
-from activitysim.abm.models.util import canonical_ids as cid
 
 from .cvm_state import State
 
 logger = logging.getLogger(__name__)
 
-cid.RANDOM_CHANNELS.append("establishments")
-cid.TRACEABLE_TABLES.append("establishments")
-cid.CANONICAL_TABLE_INDEX_NAMES.setdefault("establishments", "establishment_id")
 
 @workflow.table
 def establishments(state: State) -> pd.DataFrame:
