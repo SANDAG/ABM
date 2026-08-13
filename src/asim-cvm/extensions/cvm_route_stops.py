@@ -551,7 +551,7 @@ def _dwell_time(
 
         random_order = state.get_rn_generator().random_for_df(df)
 
-        random_dwell_times = scipy.stats.beta.pff(
+        random_dwell_times = scipy.stats.beta.ppf(
             random_order[:,0],
             a=alpha,
             b=beta,

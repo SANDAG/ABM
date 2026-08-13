@@ -200,3 +200,7 @@ def establishment_attractor(
 
     # write land use table back to state
     state.add_table("land_use", land_use)
+
+    # instantiate commercial_accessibility (must be checkpointed to be used
+    # to slice it)
+    state.get_dataframe("commercial_accessibility")

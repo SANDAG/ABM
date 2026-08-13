@@ -84,7 +84,6 @@ output_tables:
    - establishments
    - establishments_all
 
-
 models:
   - household_attractor
   - establishment_attractor
@@ -113,6 +112,19 @@ chunk_training_mode: disabled
 multiprocess_steps:
   - name: mp_initialize
     begin: household_attractor
+  - name: mp_accessibility
+    begin: cvm_accessibility
+    slice:
+      tables:
+        - commercial_accessibility
+      exclude: True
+  - name: mp_route_generation
+    begin: route_generation
+    slice:
+      tables:
+        - establishments
+  - name: mp_route_generation_tnc
+    begin: route_generation_tnc
   - name: mp_route
     begin: route_purpose_and_vehicle
     slice:
