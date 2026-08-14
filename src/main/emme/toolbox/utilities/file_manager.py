@@ -198,8 +198,11 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
         title_fcn = lambda t: t[8:] if t.startswith("(local)") else t
         # copy all files (except Emme project, and other file_masks)
         self._copy_dir(src=local_dir, dst=remote_dir, file_masks=file_masks)
-        emmebank_paths = self._copy_emme_data(
+        
+        try:emmebank_paths = self._copy_emme_data(
             src=local_dir, dst=remote_dir, title_fcn=title_fcn, scenario_id=scenario_id)
+        except:
+            self._copy_dir(src=_join(local_dir, "emme_project"), dst=_join(remote_dir, "emme_project"), file_masks=['*locki*'])
         
         
         self.log_report()
