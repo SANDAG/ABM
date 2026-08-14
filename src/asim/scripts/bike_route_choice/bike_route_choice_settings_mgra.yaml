@@ -1,6 +1,7 @@
-# Path to bike network shapefiles
-node_file: SANDAG_Bike_Node.shp
-link_file: SANDAG_Bike_Net.shp
+# Path to bike network geodatabase and feature classes
+gdb_file: EMMEOutputs.gdb
+node_file: SANDAG_Bike_Node
+link_file: SANDAG_Bike_Net
 
 # Data directory, optional additional place to look for data
 data_dir: ${path}\input
