@@ -1,3 +1,16 @@
+"""
+TCHC capacity calculation engine.
+
+Computes roadway capacity, travel time, intersection delay, and generalized
+cost for highway network links. This is a Python port of the FORTRAN TCHC
+procedure used in the SANDAG transportation model.
+
+Usage::
+
+    remaining_toll = apply_tchc(link, context)
+
+See README.md for full documentation of inputs and outputs.
+"""
 from dataclasses import dataclass, field
 from typing import List, Dict, Optional
 import math
@@ -7,10 +20,10 @@ import math
 # Constants (from FORTRAN DATA statements)
 # ------------------------------------------------------------------
 
-# Default speeds by functional class (mspd, 1-indexed in FORTRAN)
+# Fallback speed (mph) by functional class, 0-indexed: FC 1..14
 DEFAULT_SPEED_BY_FUNCTIONAL_CLASS = [65, 45, 40, 35, 30, 40, 35, 65, 30, 30, 50, 25, 25, 30]
 
-# Left/right turn capacity per lane by functional class (lfcap)
+# Turn-lane capacity per lane (veh/hr) by functional class, 0-indexed: FC 1..10
 TURN_CAPACITY_BY_FUNCTIONAL_CLASS = [250, 250, 150, 100, 100, 100, 100, 100, 100, 0]
 
 
@@ -72,7 +85,7 @@ class TCHCLink:
     generalized_cost_by_direction: List[float] = field(default_factory=lambda: [999999, 999999])
 
     auto_operating_cost: float = 0.0
-
+    
 
 # ------------------------------------------------------------------
 # Context (what FORTRAN pulled from files & COMMON blocks)
@@ -80,28 +93,48 @@ class TCHCLink:
 
 @dataclass
 class TCHCContext:
-    auto_operating_cost_per_mile: float
-    managed_lane_capacity_rate: float
-    freeway_capacity_rate: float
-    analysis_year: int
+    """
+    Scenario-level parameters and lookup tables consumed by ``apply_tchc``.
 
-    # node‑based lookups
-    approach_count: Dict[int, int]        # xdapp
-    ramp_meter_direction_by_traffic_count_identifier: Dict[int, int]  # adtmtr
-    station_peak_period_factor: List[List[List[float]]]  # [period][dir][station]
+    These are typically loaded once from external data sources (count station
+    files, green/cycle tables, ramp meter lists, HOV-freeway mappings, border
+    delay tables) and shared across all links in a single model run.
+    """
 
+    auto_operating_cost_per_mile: float  # cents/mile
+    managed_lane_capacity_rate: float    # multiplier for HOV3+/managed lanes (typically 1.0)
+    freeway_capacity_rate: float         # multiplier for GP freeway/FC8 capacity (typically 1.0)
+    analysis_year: int                   # enables TSM features when > 2015
+
+    # node_id → approach count (2–4): non-connector links touching each node
+    approach_count: Dict[int, int]
+    # adt_id → direction code for ramp metering (1=SB,2=EB,3=NB,4=WB,9=both)
+    ramp_meter_direction_by_traffic_count_identifier: Dict[int, int]
+    # [period][direction][station_id] → peak-period expansion factor
+    station_peak_period_factor: List[List[List[float]]]
+
+    # jurisdiction (1–6) → capacity multiplier for signalized intersections
     roadway_safety_adjustment_factor_by_jurisdiction: Dict[int, float]
 
-    signal_green_cycle_lookup: List[List[List[int]]]  # [approach_count][functional_class][cross_functional_class]
+    # GC ratio lookup tables (integer percentages):
+    #   signal:     [approach_count-1][fc-1][cross_fc-1]  (4×9×9)
+    #   4-way stop: [fc-1][cross_fc-1]                   (9×9)
+    #   2-way stop: [cross_fc-1]                          (9,)
+    signal_green_cycle_lookup: List[List[List[int]]]
     four_way_stop_green_cycle_lookup: List[List[int]]
     two_way_stop_green_cycle_lookup: List[int]
 
-    border_delay_minutes_lookup: List[List[List[float]]] # [border][period][dir]
+    # [crossing_index][period][border_direction] → delay in minutes
+    # 5 crossings: San Ysidro(0), Otay(1), East(2), Tecate(3), Jacumba(4)
+    # 2 directions: SB/EB(0), NB(1)
+    border_delay_minutes_lookup: List[List[List[float]]]
 
-    # HOV lane to adjacent freeway ID mapping
+    # HOV link_id → adjacent GP freeway link_id (for station resolution)
     managed_lane_to_freeway_identifier: Dict[int, int] = field(default_factory=dict)
-    # freeway ID to station mapping
+    # freeway link_id → count station_id
     freeway_identifier_to_station_identifier: Dict[int, int] = field(default_factory=dict)
+    # node_id → raw sphere code (divide by 100 for sphere group)
+    node_sphere_by_id: Dict[int, int] = field(default_factory=dict)
 
 
 # ------------------------------------------------------------------
@@ -135,13 +168,27 @@ def _max_lanes_for_direction(link: TCHCLink, direction_index: int) -> int:
 # ------------------------------------------------------------------
 
 def apply_tchc(link: TCHCLink, ctx: TCHCContext, remaining_toll=None):
+    """Compute capacity, travel time, and generalized cost for one link.
+
+    Mutates ``link`` in place, populating all output fields.  Returns the
+    ``remaining_toll`` carry-forward list (3 floats) for the next link in
+    the route sequence.
+
+    Args:
+        link: Link to process.  Output fields are overwritten.
+        ctx: Shared scenario parameters and lookup tables.
+        remaining_toll: Fractional toll cents carried from the previous
+            link.  Pass ``None`` for the first link or standalone use.
+    """
     if remaining_toll is None:
         remaining_toll = [0.0, 0.0, 0.0]
 
     distance_miles = miles(link.length_feet)
     use_traffic_system_management = ctx.analysis_year > 2015
 
-    # ---- toll conversion (FORTRAN 978–985)
+    # ---- toll conversion: per-mile rate → absolute cents, with carry-forward
+    # Tolls are coded as per-mile rates. Multiply by distance, accumulate
+    # fractional cents in remaining_toll to avoid rounding loss across links.
     for period_index in range(3):
         raw_toll_value = link.toll_cost_by_period[period_index] * distance_miles + remaining_toll[period_index]
         rounded_toll_value = int(round(raw_toll_value))
@@ -163,7 +210,10 @@ def apply_tchc(link: TCHCLink, ctx: TCHCContext, remaining_toll=None):
         )
     travel_time_minutes = distance_miles * 60.0 / float(speed_miles_per_hour)
 
-    # station resolution (FORTRAN 1012–1016): for HOV, use adjacent fwy station
+    # ---- station resolution ----
+    # HOV lanes share count stations with the adjacent GP freeway.
+    # Chain: HOV link_id → freeway link_id → station_id.
+    # Non-freeway links and unresolved stations default to station 1.
     station_id = link.station_identifier
     if link.high_occupancy_vehicle_class in (2, 3):
         station_id = 0
@@ -173,6 +223,7 @@ def apply_tchc(link: TCHCLink, ctx: TCHCContext, remaining_toll=None):
     if station_id < 1 or (link.functional_class != 1):
         station_id = 1
 
+    # ---- direction loop: AB (dir 0) then BA (dir 1) if two-way ----
     for direction_index in range(2):
         if link.directionality == 1 and direction_index == 1:
             continue
@@ -191,7 +242,10 @@ def apply_tchc(link: TCHCLink, ctx: TCHCContext, remaining_toll=None):
             if link.functional_class == 10:
                 continue
 
-            # peak‑period factor (FORTRAN 1020–1035)
+            # ---- peak-period factor ----
+            # Converts hourly capacity to period capacity. For freeways,
+            # direction is inferred from the link name (NB/WB = reverse)
+            # rather than the loop index.
             if link.functional_class == 1:
                 peak_factor_direction_index = 1 if ("NB" in link.link_name or "WB" in link.link_name) else 0
             else:
@@ -203,7 +257,7 @@ def apply_tchc(link: TCHCLink, ctx: TCHCContext, remaining_toll=None):
             if peak_period_factor < 1.0 or peak_period_factor > 15.0:
                 peak_period_factor = ctx.station_peak_period_factor[period_index][peak_factor_direction_index][1]
 
-            # ---- base capacity (FORTRAN 591–608) ----
+            # ---- base mid-block capacity by facility type ----
             if link.functional_class == 1:
                 # freeway capacity from per-link field, bounded [1900, 2100]
                 freeway_capacity_per_lane = 2000.0
@@ -254,7 +308,9 @@ def apply_tchc(link: TCHCLink, ctx: TCHCContext, remaining_toll=None):
             link.hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
             link.period_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity * peak_period_factor
 
-            # ---- turn-lane sanitization (FORTRAN 1109–1123) ----
+            # ---- turn-lane sanitization ----
+            # Values >7 are invalid (zeroed); 7 is a special code meaning
+            # "1 lane present but not explicitly counted".
             through_lane_count = link.through_lane_count_by_direction[direction_index]
             right_turn_lane_count = link.right_turn_lane_count_by_direction[direction_index]
             left_turn_lane_count = link.left_turn_lane_count_by_direction[direction_index]
@@ -282,6 +338,7 @@ def apply_tchc(link: TCHCLink, ctx: TCHCContext, remaining_toll=None):
                     through_lane_count = left_turn_lane_count
                     left_turn_lane_count = 0
 
+            # ---- intersection capacity by control type ----
             control_type = link.control_type_by_direction[direction_index]
             cross_street_functional_class = link.cross_street_functional_class_by_direction[direction_index]
             # clamp cross_fc to valid index (1-based in FORTRAN, 0-based here)
