@@ -1,49 +1,268 @@
-# TCHC Capacity Calculation
+# Running TCHC from an Emme project
 
-Python implementation of the SANDAG TCHC (Transportation Coverage Highway Capacity) procedure, which computes roadway capacity, travel time, intersection delay, and generalized cost for every link in the highway network.
+A Python implementation of the SANDAG TCHC (Transportation Coverage Highway
+Capacity) procedure, packaged to run against an **existing Emme scenario**.
 
-## Overview
+TCHC computes roadway capacity, travel time, intersection delay and generalized
+cost for every highway link. Those values feed the static traffic assignment
+step of the activity-based model. Running TCHC inside Emme lets you re-derive
+capacities after editing a network in Emme, instead of going back through the
+TNED geodatabase and re-running `import_network.py`.
 
-The TCHC procedure takes a highway network of directed links and computes five core outputs for each link, by time period and direction:
+## What the process produces
 
-1. **Hourly capacity** (HCAP) — the sustainable throughput in vehicles/hour
+Five outputs per link, per time period:
+
+1. **Hourly capacity** (HCAP) — sustainable throughput in vehicles/hour
 2. **Period capacity** — hourly capacity scaled by a peak-period factor derived from count-station data
 3. **Intersection capacity** — capacity as constrained by downstream intersection control (signals, stops, meters, toll booths)
 4. **Link travel time** — free-flow travel time in minutes, derived from link length and coded speed
 5. **Generalized cost** — a composite impedance combining travel time, intersection delay, operating cost, and tolls
 
-These outputs feed the static traffic assignment step of the activity-based travel model.
+Each is written back to the Emme extra attribute the traffic assignment already
+reads — see [What gets written back](#what-gets-written-back).
 
-## Dimensions
+## Prerequisites
 
-All capacity and time outputs are indexed by **3 time periods** and **2 directions**:
+- An Emme scenario whose network was built by
+  `src/main/emme/toolbox/import/import_network.py`. It must already carry
+  `@tcov_id`, `#name`, `@hov`, `@median`, `@project_code`, `@speed_posted`,
+  `@lane_*`, `@lane_auxiliary`, `@traffic_control`, `@turn_thru`,
+  `@turn_right`, `@turn_left`, `@green_to_cycle_init` and `@toll_*`, plus the
+  standard `type` and `length`.
+- The `capacity_review` folder on `sys.path`.
+- Python 3.7+ (dataclasses). Nothing outside the standard library is required
+  by `tchc.py`, `tchc_io.py` or `emme_adapter.py`.
 
-| Period index | Meaning |
+## Modules
+
+| Module | Role |
 |---|---|
-| 0 | AM peak |
-| 1 | Midday / off-peak |
-| 2 | PM peak |
-
-| Direction index | Meaning |
-|---|---|
-| 0 | AB (from-node → to-node) |
-| 1 | BA (to-node → from-node, two-way links only) |
-
-One-way links (`directionality=1`) skip direction index 1 entirely.
-
-## Entry Point
-
-```python
-from tchc import TCHCLink, TCHCContext, apply_tchc
-
-remaining_toll = apply_tchc(link, context)
-```
-
-`apply_tchc` mutates the `link` object in place, populating all output fields. It returns a `remaining_toll` list (3 floats) representing fractional toll cents carried forward to the next link in a route sequence. Pass this value to the next call when processing links in route order; pass `None` or omit it for standalone evaluation.
+| `emme_adapter.py` | Reads an Emme network into `TCHCLink` objects, builds the context, writes results back |
+| `tchc.py` | The calculation engine: `TCHCLink`, `TCHCContext`, `apply_tchc` |
+| `tchc_io.py` | File readers, including `load_green_cycle_lookups()` for `gc.csv` |
+| `tchc_pipeline.py` | Legacy aat/nat binary pipeline. Not used by the Emme process, and currently broken — it imports three functions that no longer exist in `tchc_io.py` |
 
 ---
 
-## Input: `TCHCLink`
+## Inputs you must supply before running
+
+The Emme network cannot supply everything TCHC needs. Gather these first.
+
+### 1. External lookup data (required)
+
+| Input | Source | If you get it wrong |
+|---|---|---|
+| `station_peak_period_factor` | Count-station file (`sta.hrpct`), reshaped to `[period][direction][station_id]` | Period and intersection capacities scale by the wrong factor. See [Station data](#station-data) |
+| Green/cycle tables | `gc.csv`, via `tchc_io.load_green_cycle_lookups()` | Signal and stop capacities use the wrong G/C ratio. See [Intersection green/cycle lookup tables](#intersection-greencycle-lookup-tables) |
+
+### 2. Scenario parameters (required)
+
+| Parameter | Typical source | Notes |
+|---|---|---|
+| `analysis_year` | Scenario year | Values > 2015 enable TSM features and raise the jurisdiction safety factor |
+| `auto_operating_cost_per_mile` | `aoc.fuel + aoc.maintenance` from `sandag_abm.properties`, or `parametersByYears.csv` | Cents per mile |
+| `managed_lane_capacity_rate` | Scenario assumption, default `1.0` | Multiplies HOV3+ and project 613/614 capacity |
+| `freeway_capacity_rate` | Scenario assumption, default `1.0` | Multiplies general-purpose freeway and FC 8 capacity |
+
+### 3. Extra Emme attributes (optional, but needed for full fidelity)
+
+`import_network.py` drops four TCHC inputs. The adapter reads them if you add
+them to the scenario yourself; otherwise it falls back. Full detail and the
+consequence of each fallback is in
+[Attributes missing from the Emme network](#attributes-missing-from-the-emme-network).
+
+| Add this extra attribute | Supplies | TNED source column |
+|---|---|---|
+| `@jurisdiction` | `TCHCLink.jurisdiction` | `COJUR` / `JUR` |
+| `@count_station` | `TCHCLink.station_identifier` | `COSTAT` |
+| `@adt_id` | `TCHCLink.traffic_count_identifier` | `ADT` |
+| `@plc` | `TCHCLink.planned_lane_capacity_by_direction` | `ABPLC` / `BAPLC` |
+
+Create and populate them on the scenario before running, for example:
+
+```python
+if not scenario.extra_attribute("@count_station"):
+    scenario.create_extra_attribute("LINK", "@count_station")
+# then load values from the TNED layer keyed on HWYCOV0_ID -> @tcov_id
+```
+
+Rename them through `EmmeAttributeNames` if your project already uses different
+names:
+
+```python
+names = ea.EmmeAttributeNames(optional_station="@costat", optional_per_lane_capacity="@ablc")
+result = ea.apply_tchc_to_scenario(scenario, attributes=names, ...)
+```
+
+Because none of the four exist in a stock import, **a stock SANDAG Emme
+scenario cannot reproduce TCHC results exactly.** `@count_station` is the one
+that matters most — without it every freeway falls back to the station-1
+peak-period factor.
+
+### 4. Further optional context (defaults to empty)
+
+| Parameter | Effect if omitted |
+|---|---|
+| `ramp_meter_direction_by_traffic_count_identifier` | The 1.10× TSM ramp-meter bonus never applies. Useless anyway without `@adt_id` |
+| `managed_lane_to_freeway_identifier`, `freeway_identifier_to_station_identifier` | HOV links resolve to station 1 |
+| `external_zone_delay_by_zone` | Generalized cost at external-station connectors omits the 3000–4500¢ delay term |
+| `roadway_safety_adjustment_factor_by_jurisdiction` | Computed from `analysis_year` |
+| `border_delay_minutes_lookup` | No effect — declared on `TCHCContext` but never read by `apply_tchc` |
+
+---
+
+## Running the process
+
+Run this from the Emme Modeller Python console, a Modeller notebook, or any
+script that can open the emmebank.
+
+```python
+from pathlib import Path
+
+import inro.modeller as _m
+import emme_adapter as ea
+from tchc_io import load_green_cycle_lookups
+
+scenario = _m.Modeller().scenario          # or emmebank.scenario(100)
+gc = load_green_cycle_lookups(Path(r"C:\path\to\gc.csv"))
+
+result = ea.apply_tchc_to_scenario(
+    scenario,
+    analysis_year=2050,
+    auto_operating_cost_per_mile=aoc,
+    station_peak_period_factor=station_peak_period,
+    signal_green_cycle_lookup=gc.signal,
+    four_way_stop_green_cycle_lookup=gc.four_way_stop,
+    two_way_stop_green_cycle_lookup=gc.two_way_stop,
+)
+print(result.links_processed, "links processed,", result.links_skipped, "skipped")
+```
+
+`apply_tchc_to_scenario` does four things:
+
+1. Creates `@tchc_gencost` if it does not exist (`ensure_output_attributes`).
+2. Reads the network into one `TCHCLink` per Emme link (`EmmeNetworkReader`),
+   deriving cross-street class, approach counts and node spheres from topology.
+3. Runs `apply_tchc` on each link and writes the results back
+   (`EmmeNetworkWriter`).
+4. Publishes the modified network back to the scenario.
+
+Pass `publish=False` to inspect results without committing them, and
+`keep_links=True` to get the `TCHCLink` objects back in
+`result.tchc_links` keyed by `@tcov_id`.
+
+### Running against a network you already hold
+
+If you want to run several scenarios, reuse a network, or interleave other
+edits, drive the pieces yourself:
+
+```python
+network = scenario.get_network()
+reader = ea.EmmeNetworkReader(network)
+context = ea.build_context(
+    reader,
+    analysis_year=2050,
+    auto_operating_cost_per_mile=aoc,
+    station_peak_period_factor=station_peak_period,
+    signal_green_cycle_lookup=gc.signal,
+    four_way_stop_green_cycle_lookup=gc.four_way_stop,
+    two_way_stop_green_cycle_lookup=gc.two_way_stop,
+)
+writer = ea.EmmeNetworkWriter(network)
+result = ea.apply_tchc_to_network(network, context, reader, writer)
+scenario.publish_network(network, resolve_attributes=True)
+```
+
+### Useful options
+
+| Option | Where | Default | Purpose |
+|---|---|---|---|
+| `toll_units` | `EmmeNetworkReader`, `apply_tchc_to_scenario` | `"absolute"` | `@toll_*` holds absolute cents, so the reader divides by link miles. Use `"per_mile"` if your network stores raw rates |
+| `length_units_per_mile` | same | `1.0` | Set if the emmebank length unit is not miles |
+| `external_zone_delay_by_zone` | same | `{}` | `{centroid_number: cents}` for external-station connectors |
+| `write_closed_periods` | `EmmeNetworkWriter` | `False` | Write the 999 / 999999 sentinels for periods whose lane count is 9 instead of leaving existing values |
+| `publish` | `apply_tchc_to_scenario` | `True` | Set `False` to leave the scenario untouched |
+| `keep_links` | `apply_tchc_to_scenario`, `apply_tchc_to_network` | `False` | Return the computed `TCHCLink` objects |
+
+---
+
+## How links are read
+
+Two structural differences between Emme and the TNED/aat network TCHC was
+written for shape the whole process.
+
+- **Emme links are directed.** A two-way TNED arc is imported as two Emme links
+  (`@tcov_id` and `-@tcov_id`), and every one-way TNED field (`ABCNT`/`BACNT`,
+  `ABTL`/`BATL`, …) already sits on the correct directed link. Each Emme link is
+  therefore read as a *one-way* `TCHCLink` (`directionality=1`) and only
+  direction index 0 is used.
+- **Emme has five time periods, TCHC has three.** Period 0 (AM) reads/writes
+  `_am`; period 1 (midday/off-peak) reads `_md` and writes `_ea`, `_md`, `_ev`;
+  period 2 (PM) reads/writes `_pm`.
+
+Also note:
+
+- Links with `type` outside 1–10 (rail-only 11, bus-only 12, TAP connectors 99)
+  are skipped and counted in `result.links_skipped`.
+- Periods whose lane count is 9 (closed) are skipped by `apply_tchc`; by default
+  the writer leaves the existing Emme values alone rather than writing the
+  999 / 999999 sentinels.
+
+### Input mapping
+
+| `TCHCLink` field | Emme attribute | Notes |
+|---|---|---|
+| `link_identifier` | `@tcov_id` | Negative on the reverse direction |
+| `link_name` | `#name` | Parsed for `NB`/`SB`/`EB`/`WB` and `ACCESS` |
+| `length_feet` | `link.length` | Emmebank length units × 5280 (`length_units_per_mile`) |
+| `functional_class` | `link.type` | Standard attribute, from TNED `FC` |
+| `high_occupancy_vehicle_class` | `@hov` | |
+| `median_type` | `@median` | |
+| `project_identifier` | `@project_code` | |
+| `speed` | `@speed_posted` | Falls back to `@speed_adjusted` if out of [1, 75] |
+| `from/to_node_identifier` | `link.i_node.number` / `link.j_node.number` | |
+| `lane_count_by_period_and_direction` | `@lane_am`, `@lane_md`, `@lane_pm` | |
+| `auxiliary_lane_count_by_direction` | `@lane_auxiliary` | |
+| `control_type_by_direction` | `@traffic_control` | |
+| `through/right/left_turn_lane_count` | `@turn_thru` / `@turn_right` / `@turn_left` | |
+| `green_cycle_value_by_direction` | `@green_to_cycle_init` | Already coded as G/C × 100 |
+| `toll_cost_by_period` | `@toll_am`, `@toll_md`, `@toll_pm` | Divided by link miles on read — see [unusable inputs](#attributes-that-exist-but-cannot-be-used-as-inputs) |
+| `jurisdiction` | `@jurisdiction` | Optional; falls back to an FC default table |
+| `station_identifier` | `@count_station` | Optional; falls back to 0 → station 1 |
+| `traffic_count_identifier` | `@adt_id` | Optional; falls back to 0 |
+| `planned_lane_capacity_by_direction` | `@plc` | Optional; falls back to 0 |
+| `cross_street_functional_class_by_direction` | *derived from topology* | Lowest `type` in 2–7 at the approach node, else 7 |
+| `external_zone_delay_cost` | *caller-supplied* | From `external_zone_delay_by_zone` |
+
+---
+
+## What gets written back
+
+| `TCHCLink` output | Emme attribute |
+|---|---|
+| `link_travel_time_minutes_by_period_and_direction` | `@time_link_{period}` |
+| `intersection_delay_minutes_by_period_and_direction` | `@time_inter_{period}` |
+| `hourly_capacity_by_period_and_direction` | `@capacity_hourly_{period}` |
+| `period_capacity_by_period_and_direction` | `@capacity_link_{period}` |
+| `intersection_capacity_by_period_and_direction` | `@capacity_inter_{period}` |
+| `toll_cost_by_period` | `@toll_{period}` |
+| `auto_operating_cost` | `@cost_operating` |
+| `generalized_cost_by_direction` | `@tchc_gencost` (created by `ensure_output_attributes`) |
+
+Each of the three TCHC periods fans out to the Emme periods listed under
+[How links are read](#how-links-are-read), so all five `_ea`/`_am`/`_md`/`_pm`/`_ev`
+variants are populated.
+
+> **After the run:** `import_network.py` derives `@cost_auto_*`, `@cost_hov2_*`,
+> `@cost_med_truck_*` and friends from `@toll_*` and `@cost_operating` using
+> `vehicle_class_toll_factors.csv`. Those derived attributes are **not**
+> refreshed by the adapter and go stale once tolls or operating cost change.
+> Re-derive them before running an assignment that uses generalized cost.
+
+---
+
+## Reference: link data fields (`TCHCLink`)
 
 A `TCHCLink` represents a single road segment with all attributes needed for the capacity calculation.
 
@@ -125,7 +344,7 @@ These fields describe the downstream intersection for each direction. Direction 
 | 4 | Ramp meter (off-peak active) | 0.50 | `1000 × GC`, off-peak periods only |
 | 5 | Ramp meter (peak active) | 0.50 | `1000 × GC`, off-peak periods only |
 | 6 | Rail crossing | 0.02 | No capacity override; mid-block capacity preserved |
-| 7 | Toll booth / border | 1.0 or lookup | `max(through, max_lanes) × 500`. Border crossings use a delay lookup table; domestic toll booths add a fixed cost to operating cost |
+| 7 | Toll booth / border | 1.0 | `max(through, max_lanes) × 500`. The FORTRAN's border delay lookup and domestic toll-booth cost surcharge are [not implemented](#steps-of-the-original-fortran-not-implemented-in-this-port) |
 
 Turn lane counts go through a sanitization step: values >7 are zeroed, values of exactly 7 are set to 1, and if no through lanes remain, the largest turn-lane count is promoted to through.
 
@@ -138,9 +357,13 @@ Turn lane counts go through a sanitization step: values >7 are zeroed, values of
 
 ---
 
-## Input: `TCHCContext`
+## Reference: scenario data (`TCHCContext`)
 
-Global parameters and lookup tables shared across all links.
+Global parameters and lookup tables shared across all links. When you call
+`apply_tchc_to_scenario`, `build_context` assembles this for you: it derives
+`approach_count`, `node_sphere_by_id` and
+`roadway_safety_adjustment_factor_by_jurisdiction` from the network and the
+analysis year, and takes everything else from your arguments.
 
 ### Scalar parameters
 
@@ -217,113 +440,39 @@ gc.signal, gc.four_way_stop, gc.two_way_stop
 | Field | Type | Description |
 |---|---|---|
 | `roadway_safety_adjustment_factor_by_jurisdiction` | `Dict[int, float]` | Multiplier on signalized intersection capacity, keyed by jurisdiction (1–6). For analysis years > 2015, jurisdictions 1–4 get `1.0 + (min(year, 2020) − 2010) × 0.01`, giving values from 1.06 to 1.10. Jurisdictions 5–6 remain 1.0 |
-| `border_delay_minutes_lookup` | `List[List[List[float]]]` | Border crossing delay in minutes, indexed `[crossing][period][direction]`. 5 crossings (San Ysidro, Otay Mesa, East Otay, Tecate, Jacumba) × 3 periods × 2 directions (SB/EB=0, NB=1) |
+| `border_delay_minutes_lookup` | `List[List[List[float]]]` | Border crossing delay in minutes, indexed `[crossing][period][direction]`. 5 crossings (San Ysidro, Otay Mesa, East Otay, Tecate, Jacumba) × 3 periods × 2 directions (SB/EB=0, NB=1). **Declared but never read by `apply_tchc`** — see [not implemented](#steps-of-the-original-fortran-not-implemented-in-this-port) |
 
 ---
 
-## Output: fields populated on `TCHCLink`
+## Reference: computed output fields
 
-After `apply_tchc` returns, the following fields on the link are populated:
+After `apply_tchc` returns, the following fields on the link are populated. The
+adapter copies each to the Emme attribute listed under
+[What gets written back](#what-gets-written-back).
 
 | Field | Shape | Description |
 |---|---|---|
-| `link_travel_time_minutes_by_period_and_direction` | [3][2] | Free-flow travel time. For border crossings, includes the period-0 border delay added to all periods |
+| `link_travel_time_minutes_by_period_and_direction` | [3][2] | Free-flow travel time |
 | `intersection_delay_minutes_by_period_and_direction` | [3][2] | Delay at the downstream intersection. The value depends on control type (see table above) |
 | `hourly_capacity_by_period_and_direction` | [3][2] | Sustainable throughput in veh/hr. For links with intersection control, this is the intersection-constrained value |
 | `period_capacity_by_period_and_direction` | [3][2] | Hourly capacity × peak-period factor |
 | `intersection_capacity_by_period_and_direction` | [3][2] | Intersection-constrained capacity × peak-period factor. Only differs from period capacity for signalized/stop-controlled links |
-| `generalized_cost_by_direction` | [2] | Composite impedance (see formula below). Capped at 999,999 |
-| `auto_operating_cost` | scalar | `distance_miles × auto_operating_cost_per_mile`, plus toll booth surcharge (25¢ or 50¢) if applicable |
+| `generalized_cost_by_direction` | [2] | Composite impedance (see [the formula](#generalized-cost-formula)). Capped at 999,999 |
+| `auto_operating_cost` | scalar | `distance_miles × auto_operating_cost_per_mile` |
+| `toll_cost_by_period` | [3] | The input per-mile rate, converted in place to absolute cents for this link |
 
 ---
 
-## Emme network adapter (`emme_adapter.py`)
-
-`emme_adapter.py` reads links from an Emme network built by
-`src/main/emme/toolbox/import/import_network.py`, runs `apply_tchc`, and writes the
-results back onto the corresponding Emme extra attributes.
-
-```python
-import emme_adapter as ea
-from tchc_io import load_green_cycle_lookups
-
-gc = load_green_cycle_lookups(Path("gc.csv"))
-
-result = ea.apply_tchc_to_scenario(
-    scenario,
-    analysis_year=2050,
-    auto_operating_cost_per_mile=aoc,
-    station_peak_period_factor=station_peak_period,
-    signal_green_cycle_lookup=gc.signal,
-    four_way_stop_green_cycle_lookup=gc.four_way_stop,
-    two_way_stop_green_cycle_lookup=gc.two_way_stop,
-)
-print(result.links_processed, result.links_skipped)
-```
-
-For finer control, use `EmmeNetworkReader`, `build_context`, `EmmeNetworkWriter`
-and `apply_tchc_to_network` directly.
-
-### Structural assumptions
-
-- **Emme links are directed.** A two-way TNED arc is imported as two Emme links
-  (`@tcov_id` and `-@tcov_id`), and every one-way TNED field (`ABCNT`/`BACNT`,
-  `ABTL`/`BATL`, …) already sits on the correct directed link. Each Emme link is
-  therefore read as a *one-way* `TCHCLink` (`directionality=1`) and only
-  direction index 0 is used.
-- **Emme has five time periods, TCHC has three.** Period 0 (AM) reads/writes
-  `_am`; period 1 (midday/off-peak) reads `_md` and writes `_ea`, `_md`, `_ev`;
-  period 2 (PM) reads/writes `_pm`.
-- Links with `type` outside 1–10 (rail-only 11, bus-only 12, TAP connectors 99)
-  are skipped.
-- Periods whose lane count is 9 (closed) are skipped by `apply_tchc`; by default
-  the writer leaves the existing Emme values alone rather than writing the
-  999 / 999999 sentinels. Set `write_closed_periods=True` to override.
-
-### Input mapping
-
-| `TCHCLink` field | Emme attribute | Notes |
-|---|---|---|
-| `link_identifier` | `@tcov_id` | Negative on the reverse direction |
-| `link_name` | `#name` | Parsed for `NB`/`SB`/`EB`/`WB` and `ACCESS` |
-| `length_feet` | `link.length` | Emmebank length units × 5280 (`length_units_per_mile`) |
-| `functional_class` | `link.type` | Standard attribute, from TNED `FC` |
-| `high_occupancy_vehicle_class` | `@hov` | |
-| `median_type` | `@median` | |
-| `project_identifier` | `@project_code` | |
-| `speed` | `@speed_posted` | Falls back to `@speed_adjusted` if out of [1, 75] |
-| `from/to_node_identifier` | `link.i_node.number` / `link.j_node.number` | |
-| `lane_count_by_period_and_direction` | `@lane_am`, `@lane_md`, `@lane_pm` | |
-| `auxiliary_lane_count_by_direction` | `@lane_auxiliary` | |
-| `control_type_by_direction` | `@traffic_control` | |
-| `through/right/left_turn_lane_count` | `@turn_thru` / `@turn_right` / `@turn_left` | |
-| `green_cycle_value_by_direction` | `@green_to_cycle_init` | Already coded as G/C × 100 |
-| `toll_cost_by_period` | `@toll_am`, `@toll_md`, `@toll_pm` | Divided by link miles on read — see below |
-
-### Output mapping
-
-| `TCHCLink` output | Emme attribute |
-|---|---|
-| `link_travel_time_minutes_by_period_and_direction` | `@time_link_{period}` |
-| `intersection_delay_minutes_by_period_and_direction` | `@time_inter_{period}` |
-| `hourly_capacity_by_period_and_direction` | `@capacity_hourly_{period}` |
-| `period_capacity_by_period_and_direction` | `@capacity_link_{period}` |
-| `intersection_capacity_by_period_and_direction` | `@capacity_inter_{period}` |
-| `toll_cost_by_period` | `@toll_{period}` |
-| `auto_operating_cost` | `@cost_operating` |
-| `generalized_cost_by_direction` | `@tchc_gencost` (created by `ensure_output_attributes`) |
-
-> `import_network.py` derives `@cost_auto_*`, `@cost_hov2_*`, `@cost_med_truck_*`
-> etc. from `@toll_*` and `@cost_operating` using `vehicle_class_toll_factors.csv`.
-> Those derived attributes are **not** refreshed by the adapter and go stale once
-> tolls or operating cost change.
+## Reference: Emme attributes TCHC cannot get from the network
 
 ### Attributes missing from the Emme network
 
 `import_network.py` translates the TNED geodatabase into Emme attributes, but it
-does not carry every field TCHC needs. The adapter reads each of the four
-`optional_*` attribute names when they exist on the scenario (so a customised
-import can supply them) and otherwise falls back as described below.
+does not carry every field TCHC needs. Four of them can be restored by adding
+the extra attributes listed in
+[Extra Emme attributes](#3-extra-emme-attributes-optional-but-needed-for-full-fidelity);
+the adapter reads those names when they exist on the scenario and otherwise
+falls back as described below.
 
 Because none of the four are created by the stock import, **a stock SANDAG Emme
 scenario cannot reproduce TCHC results exactly** — the differences are listed in
@@ -412,7 +561,7 @@ the "Effect when absent" column.
 | Emme attribute | `@sphere`, but on **links** only |
 | Why missing | `import_network.py` imports `SPHERE` as a two-way link attribute; the node attributes it creates are `@hnode`, `@tap_id`, `@park`, `@stoptype`, `@elev`, `@interchange` |
 | Fallback | Derived per node as the maximum `@sphere` over the incident links |
-| Effect when absent | Only used for the toll-booth surcharge on sphere groups 3 (Coronado) and 14 (City of San Diego) |
+| Effect when absent | None today. The only consumer would be the toll-booth surcharge for sphere groups 3 (Coronado) and 14 (City of San Diego), which this port does not implement |
 
 #### 10. Context tables that are not network data at all
 
@@ -421,7 +570,7 @@ the "Effect when absent" column.
 | `station_peak_period_factor` | `sta.hrpct` count-station file |
 | `signal_green_cycle_lookup`, `four_way_stop_green_cycle_lookup`, `two_way_stop_green_cycle_lookup` | `gc.csv`, via `tchc_io.load_green_cycle_lookups()` |
 | `ramp_meter_direction_by_traffic_count_identifier` | ramp-meter list (and unusable anyway without `@adt_id`) |
-| `border_delay_minutes_lookup` | border delay table |
+| `border_delay_minutes_lookup` | border delay table (currently unused by `apply_tchc`) |
 | `managed_lane_to_freeway_identifier`, `freeway_identifier_to_station_identifier` | HOV↔freeway pairing (empty by default, so HOV links resolve to station 1) |
 | `auto_operating_cost_per_mile`, `analysis_year`, `managed_lane_capacity_rate`, `freeway_capacity_rate` | `sandag_abm.properties` / `parametersByYears.csv` |
 
@@ -446,27 +595,31 @@ not. Feeding them back in would either be circular or silently wrong.
 | `node.number` | `renumber_base_nodes()` reassigns any node ID above 999999, so node numbers need not match TNED `HNODE` | Uses `node.number` consistently for both approach counts and sphere lookups, so internal consistency holds even where the ID differs from TNED |
 | `link.type` values 11, 12, 99 | Rail-only, bus-only and TAP connectors — outside TCHC's FC 1–10 domain | Skipped and counted in `TCHCRunResult.links_skipped` |
 
-| `link.length` | In emmebank length units (miles for SANDAG), not feet |
-| `node.number` | `renumber_base_nodes()` reassigns IDs above 999999, so node numbers need not match TNED `HNODE` |
+---
 
-| `toll_cost_by_period` | [3] | Converted from per-mile rate to absolute cents for this link (mutated in place) |
-| `computed_freeway_capacity_per_lane_by_direction` | [2] | Final per-lane capacity for freeways (after TSM adjustment). Used for binary writeback only |
+## Reference: the capacity calculation procedure
 
-### Generalized cost formula
+### Dimensions
 
-$$
-GC = C_{\text{ext}} + C_{\text{aoc}} + (T_{\text{link}}^{AM} + T_{\text{delay}}^{AM}) \times 35 + \frac{\text{toll}_{AM} + \text{toll}_{MD}}{2}
-$$
+Internally, all capacity and time outputs are indexed by **3 time periods** and
+**2 directions**:
 
-Where:
-- $C_{\text{ext}}$ = external zone delay cost (zone connectors at external stations only)
-- $C_{\text{aoc}}$ = auto operating cost (distance × per-mile rate + toll booth surcharge)
-- $T_{\text{link}}^{AM}$ = AM peak link travel time in minutes
-- $T_{\text{delay}}^{AM}$ = AM peak intersection delay in minutes
-- 35 = value of time conversion factor (cents per minute)
-- $\text{toll}_{AM}$, $\text{toll}_{MD}$ = converted toll costs for periods 0 and 1
+| Period index | Meaning | Emme periods written |
+|---|---|---|
+| 0 | AM peak | `_am` |
+| 1 | Midday / off-peak | `_ea`, `_md`, `_ev` |
+| 2 | PM peak | `_pm` |
 
-## Computation flow
+| Direction index | Meaning |
+|---|---|
+| 0 | AB (from-node → to-node) |
+| 1 | BA (to-node → from-node, two-way links only) |
+
+One-way links (`directionality=1`) skip direction index 1 entirely. Because
+Emme links are already directed, the adapter always sets `directionality=1`, so
+only direction 0 is ever populated when running from Emme.
+
+### Flow
 
 ```
 for each link:
@@ -478,35 +631,89 @@ for each link:
 │
 └─ for each direction (AB, then BA if two-way):
    │
-   ├─ Look up approach count at downstream node
+   ├─ Look up approach count at the node
    │
-   └─ for each period (AM, MD, PM):
-      │
-      ├─ Skip if lane_count == 9 (closed)
-      ├─ Set link travel time = distance / speed × 60
-      ├─ Skip capacity if FC == 10 (zone connector)
-      │
-      ├─ Resolve peak-period factor from station data
-      │
-      ├─ Compute base capacity by facility type:
-      │   ├─ FC 1: freeway formula with PLC overrides, HOV/TSM adjustments
-      │   ├─ FC 8: connector formula with ACCESS special case
-      │   ├─ FC 9: ramp formula
-      │   └─ FC 2–7: arterial formula with median adjustment
-      │
-      ├─ Set hourly_capacity and period_capacity
-      │
-      ├─ Sanitize turn-lane counts (clamp, fallback)
-      │
-      └─ Apply intersection control (if any):
-          ├─ Signal: GC lookup → through×1800×GC + turns×TLC, min 1000, × safety factor
-          ├─ 4-way stop: GC lookup → through×1800×GC + turns×TLC, min 500
-          ├─ 2-way stop: GC lookup → all_lanes×500×GC, min 500
-          ├─ Ramp meter: 1000×GC (off-peak only)
-          ├─ Rail crossing: delay only (0.02 min)
-          └─ Toll/border: through×500, with border delay lookup or toll surcharge
+   ├─ for each period (AM, MD, PM):
+   │  │
+   │  ├─ Skip if lane_count == 9 (closed)
+   │  ├─ Set link travel time = distance / speed × 60
+   │  ├─ Skip capacity if FC == 10 (zone connector)
+   │  │
+   │  ├─ Resolve peak-period factor from station data
+   │  │
+   │  ├─ Compute base capacity by facility type:
+   │  │   ├─ FC 1: freeway formula with PLC overrides, HOV/TSM adjustments
+   │  │   ├─ FC 8: connector formula with ACCESS special case
+   │  │   ├─ FC 9: ramp formula
+   │  │   └─ FC 2–7: arterial formula with median adjustment
+   │  │
+   │  ├─ Set hourly_capacity and period_capacity
+   │  │
+   │  ├─ Sanitize turn-lane counts (clamp, fallback)
+   │  │
+   │  └─ Apply intersection control (if any):
+   │      ├─ Signal: GC lookup → through×1800×GC + turns×TLC, min 1000, × safety factor
+   │      ├─ 4-way stop: GC lookup → through×1800×GC + turns×TLC, min 500
+   │      ├─ 2-way stop: GC lookup → all_lanes×500×GC, min 500
+   │      ├─ Ramp meter: 1000×GC (off-peak only)
+   │      ├─ Rail crossing: delay only (0.02 min)
+   │      └─ Toll/border: through×500, delay 1.0 min
    │
-   ├─ Border adjustment: add period-0 delay to all periods' travel time
-   ├─ Freeway PLC writeback
    └─ Compute generalized cost
 ```
+
+The toll carry-forward (`remaining_toll`) only matters when links are processed
+in route order. The Emme adapter evaluates links independently, since an Emme
+network is not ordered by route.
+
+### Generalized cost formula
+
+$$
+GC = C_{\text{ext}} + C_{\text{aoc}} + (T_{\text{link}}^{AM} + T_{\text{delay}}^{AM}) \times 35 + \frac{\text{toll}_{AM} + \text{toll}_{MD}}{2}
+$$
+
+Where:
+- $C_{\text{ext}}$ = external zone delay cost (zone connectors at external stations only)
+- $C_{\text{aoc}}$ = auto operating cost (distance × per-mile rate)
+- $T_{\text{link}}^{AM}$ = AM peak link travel time in minutes
+- $T_{\text{delay}}^{AM}$ = AM peak intersection delay in minutes
+- 35 = value of time conversion factor (cents per minute)
+- $\text{toll}_{AM}$, $\text{toll}_{MD}$ = converted toll costs for periods 0 and 1
+
+### Steps of the original FORTRAN not implemented in this port
+
+`TCHCContext` declares two fields that `apply_tchc` never reads. Supplying them
+has no effect:
+
+- `border_delay_minutes_lookup` — control type 7 applies a flat 1.0 min delay
+  instead of the per-crossing, per-period border delay.
+- `node_sphere_by_id` — the toll-booth operating-cost surcharge for sphere
+  groups 3 and 14 is not applied.
+
+`HwyETL_vs_TCHC.md` documents the further differences between this port and the
+FME HwyETL workbench.
+
+---
+
+## Running the engine without Emme
+
+`emme_adapter.py` is only a projection layer. The engine itself takes a
+`TCHCLink` and a `TCHCContext` from any source:
+
+```python
+from tchc import TCHCLink, TCHCContext, apply_tchc
+
+remaining_toll = apply_tchc(link, context)
+```
+
+`apply_tchc` mutates the `link` object in place, populating all output fields.
+It returns a `remaining_toll` list (3 floats) representing fractional toll cents
+carried forward to the next link in a route sequence. Pass this value to the
+next call when processing links in route order; pass `None` or omit it for
+standalone evaluation.
+
+`tchc_run.ipynb` shows the same calculation driven from the TNED geodatabase
+instead of Emme. Note that it passes TNED `DIR` into `directionality` and feeds
+raw G/C fractions into the lookup tables — both are incorrect; use
+`load_green_cycle_lookups()` for the latter.
+
