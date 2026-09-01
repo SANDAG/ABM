@@ -182,6 +182,36 @@ These tables provide default green/cycle ratios (as integer percentages) when th
 | `four_way_stop_green_cycle_lookup` | `List[List[int]]` | [9][9] | [functional_class−1] [cross_fc−1] | 4-way stops (control type 2). Coded GC values ≥ 1 are used as-is |
 | `two_way_stop_green_cycle_lookup` | `List[int]` | [9] | [cross_fc−1] | 2-way stops (control type 3). Always overrides coded value |
 
+All three are integer percentages (G/C × 100), because `apply_tchc` divides by
+100 and compares the coded link value against the thresholds above.
+
+`tchc_io.load_green_cycle_lookups(path)` builds all three from a `gc.csv`-style
+file whose first column is the intersection control type, second column the
+roadway functional class, and remaining columns the crossroad functional classes
+named in the header:
+
+```python
+from pathlib import Path
+from tchc_io import load_green_cycle_lookups
+
+gc = load_green_cycle_lookups(Path("gc.csv"))
+gc.signal, gc.four_way_stop, gc.two_way_stop
+```
+
+- Recognised control types are `Signal - 1/2/3/4 Leg`, `4-Way Stop` and
+  (optionally) `2-Way Stop`; label matching ignores case, spaces and
+  punctuation.
+- Each `Signal - N Leg` block lands at `signal[N - 1]`, so
+  `signal[min(approach_count, 4) - 1]` selects the block for that leg count.
+  Leg counts absent from the file (usually 1) are copied from the nearest one
+  present.
+- Ratios coded as fractions (`0.35`) are rescaled to percentages (`35`); a file
+  already in percent is left alone.
+- `two_way_stop` is 1-D over cross-street class only. If the file has no
+  `2-Way Stop` block it is taken from the `4-Way Stop` row for the stopped
+  (minor) approach — functional class 7 by default, overridable with
+  `two_way_stop_roadway_class`.
+
 ### Safety and border parameters
 
 | Field | Type | Description |
@@ -215,15 +245,18 @@ results back onto the corresponding Emme extra attributes.
 
 ```python
 import emme_adapter as ea
+from tchc_io import load_green_cycle_lookups
+
+gc = load_green_cycle_lookups(Path("gc.csv"))
 
 result = ea.apply_tchc_to_scenario(
     scenario,
     analysis_year=2050,
     auto_operating_cost_per_mile=aoc,
     station_peak_period_factor=station_peak_period,
-    signal_green_cycle_lookup=signal_gc_lookup,
-    four_way_stop_green_cycle_lookup=signal_gc_lookup[3],
-    two_way_stop_green_cycle_lookup=signal_gc_lookup[1][5],
+    signal_green_cycle_lookup=gc.signal,
+    four_way_stop_green_cycle_lookup=gc.four_way_stop,
+    two_way_stop_green_cycle_lookup=gc.two_way_stop,
 )
 print(result.links_processed, result.links_skipped)
 ```
@@ -386,7 +419,7 @@ the "Effect when absent" column.
 | Context field | Source |
 |---|---|
 | `station_peak_period_factor` | `sta.hrpct` count-station file |
-| `signal_green_cycle_lookup`, `four_way_stop_green_cycle_lookup`, `two_way_stop_green_cycle_lookup` | `gc` / `gc.csv` lookup tables |
+| `signal_green_cycle_lookup`, `four_way_stop_green_cycle_lookup`, `two_way_stop_green_cycle_lookup` | `gc.csv`, via `tchc_io.load_green_cycle_lookups()` |
 | `ramp_meter_direction_by_traffic_count_identifier` | ramp-meter list (and unusable anyway without `@adt_id`) |
 | `border_delay_minutes_lookup` | border delay table |
 | `managed_lane_to_freeway_identifier`, `freeway_identifier_to_station_identifier` | HOV↔freeway pairing (empty by default, so HOV links resolve to station 1) |

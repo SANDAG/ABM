@@ -6,10 +6,12 @@ them into TCHCLink objects for use with apply_tchc.
 """
 from __future__ import annotations
 
+import csv
+import re
 import struct
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 
 # ---------------------------------------------------------------------------
@@ -570,3 +572,136 @@ def load_network(aat_path: Path, nat_path: Path):
     aat_records = load_aat_records(aat_path)
     nat_records = load_nat_records(nat_path)
     return aat_records, nat_records
+
+
+# ---------------------------------------------------------------------------
+# Green/cycle ratio lookup tables (gc.csv)
+# ---------------------------------------------------------------------------
+
+GREEN_CYCLE_CLASS_COUNT = 9  # functional classes 1-9 in both table dimensions
+
+
+@dataclass
+class GreenCycleLookups:
+    """The three green/cycle tables consumed by ``TCHCContext``.
+
+    Values are integer percentages (G/C x 100), matching what ``apply_tchc``
+    divides by 100 and compares against its coded-value thresholds.
+    """
+
+    signal: List[List[List[int]]]   # [approach_count-1][fc-1][cross_fc-1]
+    four_way_stop: List[List[int]]  # [fc-1][cross_fc-1]
+    two_way_stop: List[int]         # [cross_fc-1]
+
+
+def _normalize_control_label(label: str) -> str:
+    return re.sub(r"[^a-z0-9]", "", label.strip().lower())
+
+
+def _empty_class_table() -> List[List[int]]:
+    return [[0] * GREEN_CYCLE_CLASS_COUNT for _ in range(GREEN_CYCLE_CLASS_COUNT)]
+
+
+def load_green_cycle_lookups(
+    path: Path,
+    two_way_stop_roadway_class: int = 7,
+) -> GreenCycleLookups:
+    """Read green/cycle ratios from a gc.csv-style file.
+
+    Expected layout: column 1 is the intersection control type
+    (``Signal - 4 Leg``, ``Signal - 3 Leg``, ``Signal - 2 Leg``,
+    ``4-Way Stop``, and optionally ``2-Way Stop``), column 2 is the roadway
+    functional class, and the remaining columns are the crossroad functional
+    classes named in the header.
+
+    Ratios coded as fractions (0.35) are rescaled to percentages (35); files
+    already in percent are left alone.
+    """
+    path = Path(path)
+    with open(path, newline="") as handle:
+        rows = list(csv.reader(handle))
+    if len(rows) < 2:
+        raise ValueError(f"{path}: no data rows")
+
+    header = rows[0]
+    cross_classes = []
+    for column in header[2:]:
+        column = column.strip()
+        cross_classes.append(int(column) if column else 0)
+
+    # {normalized control label: {road_fc: {cross_fc: ratio}}}
+    blocks: Dict[str, Dict[int, Dict[int, float]]] = {}
+    largest_ratio = 0.0
+    for line_number, row in enumerate(rows[1:], start=2):
+        if not row or not row[0].strip():
+            continue
+        label = _normalize_control_label(row[0])
+        try:
+            road_class = int(row[1])
+        except (IndexError, ValueError):
+            raise ValueError(f"{path} line {line_number}: bad roadway class {row[1:2]}")
+        block = blocks.setdefault(label, {})
+        entries = block.setdefault(road_class, {})
+        for cross_class, cell in zip(cross_classes, row[2:]):
+            cell = cell.strip()
+            if not cell or cross_class < 1:
+                continue
+            ratio = float(cell)
+            entries[cross_class] = ratio
+            largest_ratio = max(largest_ratio, ratio)
+
+    # gc.csv codes ratios as fractions; apply_tchc works in percent.
+    scale = 100.0 if largest_ratio <= 1.5 else 1.0
+
+    def to_table(block: Dict[int, Dict[int, float]]) -> List[List[int]]:
+        table = _empty_class_table()
+        for road_class, entries in block.items():
+            if not 1 <= road_class <= GREEN_CYCLE_CLASS_COUNT:
+                continue
+            for cross_class, ratio in entries.items():
+                if 1 <= cross_class <= GREEN_CYCLE_CLASS_COUNT:
+                    table[road_class - 1][cross_class - 1] = int(round(ratio * scale))
+        return table
+
+    signal = [_empty_class_table() for _ in range(4)]
+    populated = []
+    for label, block in blocks.items():
+        if not label.startswith("signal"):
+            continue
+        legs = re.search(r"(\d)", label[len("signal"):])
+        if not legs:
+            raise ValueError(f"{path}: cannot read a leg count from signal block '{label}'")
+        index = int(legs.group(1)) - 1
+        if not 0 <= index < 4:
+            raise ValueError(f"{path}: signal leg count {legs.group(1)} out of range 1-4")
+        signal[index] = to_table(block)
+        populated.append(index)
+    if not populated:
+        raise ValueError(f"{path}: no 'Signal - N Leg' blocks found")
+    # apply_tchc indexes signal[min(approach_count, 4) - 1]; fill leg counts
+    # the file does not supply (typically 1 leg) from the nearest one it does.
+    for index in range(4):
+        if index not in populated:
+            nearest = min(populated, key=lambda other: abs(other - index))
+            signal[index] = [row[:] for row in signal[nearest]]
+
+    four_way_block = blocks.get("4waystop") or blocks.get("fourwaystop")
+    if four_way_block is None:
+        raise ValueError(f"{path}: no '4-Way Stop' block found")
+    four_way_stop = to_table(four_way_block)
+
+    two_way_block = blocks.get("2waystop") or blocks.get("twowaystop")
+    if two_way_block is not None:
+        two_way_source = to_table(two_way_block)
+    else:
+        # No 2-way stop block: reuse the 4-way stop row for the stopped
+        # (minor) approach, since apply_tchc indexes this table by cross
+        # street only.
+        two_way_source = four_way_stop
+    two_way_stop = two_way_source[max(1, min(two_way_stop_roadway_class, GREEN_CYCLE_CLASS_COUNT)) - 1]
+
+    return GreenCycleLookups(
+        signal=signal,
+        four_way_stop=four_way_stop,
+        two_way_stop=list(two_way_stop),
+    )
