@@ -24,8 +24,8 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
         <td></td>
     </tr>
     <tr>
-        <td><a href=#mgra15_based_inputyearcsv>mgra15_based_input{year}.csv</a></td>
-        <td>Land use forecast of the size and structure of the region’s economy and corresponding demographic forecast</td>
+        <td><a href=#master-geographic-reference-areas-data>mgra15_based_input{year}.csv</a></td>
+        <td>MGRA land use, demographics, and employment</td>
         <td>CSV</td>
         <td>Land Use Modelers, Transportation Modelers, and GIS</td>
     </tr>
@@ -36,19 +36,19 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
         <td></td>
     </tr>
     <tr>
-        <td><a href=#householdscsv>households.csv</a></td>
+        <td><a href=#population-synthesizer-household-data>households.csv</a></td>
         <td>Synthetic households</td>
         <td>CSV</td>
         <td>Transportation Modelers</td>
     </tr>
     <tr>
-        <td>[persons.csv](#population_synth_persons)</td>
+        <td><a href=#population-synthesizer-person-data>persons.csv</a></td>
         <td>Synthetic persons</td>
         <td>CSV</td>
         <td>Transportation Modelers</td>
     </tr>
     <tr>
-        <td>**Crossborder Model**</td>
+        <td><strong><a href=#crossborder>Crossborder Model</a></strong></td>
         <td></td>
         <td></td>
         <td></td>
@@ -288,90 +288,362 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
 ### Master Geographic Reference Areas Data
 `mgra15_based_input{year}.csv`
 
-| Column name | Description | 
-| --- | --- |
-| mgra | MGRANumber | 
-| taz | TAZ Number | 
-| luz_id |  | 
-| pop | total population | 
-| hhp | total household population (exclude gq pop) | 
-| hs | housing structures | 
-| hs_sf | single family structures | 
-| hs_mf | multi family structures | 
-| hs_mh | mobile homes | 
-| hh | total number of households | 
-| hh_sf | number of households - single family | 
-| hh_mf | number of households - multi family | 
-| hh_mh | number of mobile homes | 
-| hhs | household size | 
-| gq_civ | GQ civilian | 
-| gq_mil | GQ military | 
-| i1 | Number of households with income less than \$15,000 ($2010) | 
-| i2 | Number of households with income \$15,000-\$29,999 ($2010) | 
-| i3 | Number of households with income \$30,000-\$44,999 ($2010) | 
-| i4 | Number of households with income \$45,000-\$59,999 ($2010) | 
-| i5 | Number of households with income \$60,000-\$74,999 ($2010) | 
-| i6 | Number of households with income \$75,000-\$99,999 ($2010) | 
-| i7 | Number of households with income \$100,000-\$124,999 ($2010) | 
-| i8 | Number of households with income \$125,000-\$149,999 ($2010) | 
-| i9 | Number of households with income \$150,000-\$199,999 ($2010) | 
-| i10 | Number of households with income \$200,000 or more ($2010) | 
-| emp_gov | Government employment | 
-| emp_mil | military employment | 
-| emp_ag_min | Agriculture and mining employment (NAICS:11,21) | 
-| emp_bus_svcs | Professional and Business Services employment (NAICS:51,54,56) | 
-| emp_fin_res_mgm | Financial and resource management employment (NAICS:52,53,55) | 
-| emp_educ | Education services employment (NAICS:61) | 
-| emp_hlth | Health services employment (NAICS:62) | 
-| emp_ret | Retail services employment (NAICS:44,45) | 
-| emp_trn_wrh | Transportation and Warehousing employment (NAICS:48,49) | 
-| emp_con | Construction employment (NAICS:23) | 
-| emp_utl | Utilities office support employment (NAICS:22) | 
-| emp_mnf | Manufacturing employment (NAICS:31,32,33)| 
-| emp_whl | Wholesale employment (NAICS:42) | 
-| emp_ent | Entertainment services employment (NAICS:71) | 
-| emp_accm | Hotel and accomodation services (NAICS:721) | 
-| emp_food | Food services employment (NAICS:722) | 
-| emp_oth | Other employment (NAICS:81) | 
-| emp_non_ws_wfh | Non-wage and salary work from home employments | 
-| emp_non_ws_oth | Non-wage and salary other employments | 
-| emp_total | Total employment | 
-| pseudomsa | Pseudo MSA<br>1: Downtown<br>2: Central<br>3: North City<br>4: South Suburban<br>5: East Suburban<br>6: North County West<br>7: North County East<br>8: East County | 
-| zip09 | 2009 Zip Code | 
-| enrollgradekto8 | Grade School K-8 enrollment | 
-| enrollgrade9to12 | Grade School 9-12 enrollment | 
-| collegeenroll | Major College enrollment | 
-| othercollegeenroll | Other College enrollment | 
-| hotelroomtotal | Total number of hotel rooms | 
-| parkactive | Acres of Active Park | 
-| openspaceparkpreserve | Acres of Open Park or Preserve | 
-| beachactive | Acres of Active Beach | 
-| district27 | Special layer reg employer shuttle service around Sorrento Valley | 
-| milestocoast | Distance (miles) to the nearest coast | 
-| acres | Total acres in the mgra (used in CTM) | 
-| land_acres | Acres of land in the mgra (used in CTM) | 
-| effective_acres | Effective acres in the mgra (used in CTM) | 
-| exp_hourly | Expected hourly prking cost | 
-| exp_daily | Expected daily prking cost | 
-| exp_monthly | Expected monthly prking cost | 
-| parking_type | 1: parking constrained area: has cluster_id and district_id<br> 2: buffer around parking constrained area which is used to include free spaces to average into parking cost calculation: has district_id but no cluster_id<br> 3: no parking cost: Has neither cluster_id nor district_id | 
-| parking_spaces | MGRA estimated parking spaces | 
-| ech_dist | Elementary school district | 
-| hch_dist | High school district | 
-| remoteAVParking | Remote AV parking available at MGRA: 0 = Not available, 1 = Available | 
-| refueling_stations | Number of refueling stations at MGRA | 
-| MicroAccessTime | Shared Micro-mobility (e-scooter/e-bike) access time (mins) | 
-| microtransit | The microtransit service area ID [0 means no service] | 
-| nev | Neighborhood Electric Vehicle (NEV) service area ID [0 means no service]| 
-| totint | Total intersections within 0.65 miles of the MGRA | 
-| duden | Dwelling units per acre within 0.65 miles of the MGRA | 
-| empden | Jobs per acre within 0.65 miles of the MGRA | 
-| popden | Population per acre within 0.65 miles of the MGRA | 
-| retempden | Retail jobs per acre within 0.65 miles of the MGRA | 
-| totintbin | Total intersection bin | 
-| empdenbin | Employment density bin | 
-| dudenbin | Dwelling unit density bin | 
-| PopEmpDenPerMi | Population and employment density per mile within 0.65 miles of the MGRA |
+<table>
+    <tr>
+        <th>Column name</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>mgra</td>
+        <td>MGRA ID number</td>
+    </tr>
+    <tr>
+        <td>taz</td>
+        <td>TAZ ID number</td>
+    </tr>
+    <tr>
+        <td>luz_id</td>
+        <td>Land Use Zone ID number</td>
+    </tr>
+    <tr>
+        <td>pop</td>
+        <td>Total population</td>
+    </tr>
+    <tr>
+        <td>hhp</td>
+        <td>Total household population (exclude gq pop)</td>
+    </tr>
+    <tr>
+        <td>hs</td>
+        <td>Housing structures</td>
+    </tr>
+    <tr>
+        <td>hs_sf</td>
+        <td>Single family housing structures</td>
+    </tr>
+    <tr>
+        <td>hs_mf</td>
+        <td>Multi-family housing structures</td>
+    </tr>
+    <tr>
+        <td>hs_mh</td>
+        <td>Mobile home housing structures</td>
+    </tr>
+    <tr>
+        <td>hh</td>
+        <td>Total number of households</td>
+    </tr>
+    <tr>
+        <td>hh_sf</td>
+        <td>Number of single family households</td>
+    </tr>
+    <tr>
+        <td>hh_mf</td>
+        <td>Number of multi-family households</td>
+    </tr>
+    <tr>
+        <td>hh_mh</td>
+        <td>Number of mobile home households</td>
+    </tr>
+    <tr>
+        <td>hhs</td>
+        <td>Average household size</td>
+    </tr>
+    <tr>
+        <td>gq_civ</td>
+        <td>Civilian Group Quarterss</td>
+    </tr>
+    <tr>
+        <td>gq_mil</td>
+        <td>Military Group Quarters</td>
+    </tr>
+    <tr>
+        <td>i1</td>
+        <td>Number of households with income less than $15,000 ($2022)</td>
+    </tr>
+    <tr>
+        <td>i2</td>
+        <td>Number of households with income $15,000-$29,999 ($2022)</td>
+    </tr>
+    <tr>
+        <td>i3</td>
+        <td>Number of households with income $30,000-$44,999 ($2022)</td>
+    </tr>
+    <tr>
+        <td>i4</td>
+        <td>Number of households with income $45,000-$59,999 ($2022)</td>
+    </tr>
+    <tr>
+        <td>i5</td>
+        <td>Number of households with income $60,000-$74,999 ($2022)</td>
+    </tr>
+    <tr>
+        <td>i6</td>
+        <td>Number of households with income $75,000-$99,999 ($2022)</td>
+    </tr>
+    <tr>
+        <td>i7</td>
+        <td>Number of households with income $100,000-$124,999 ($2022)</td>
+    </tr>
+    <tr>
+        <td>i8</td>
+        <td>Number of households with income $125,000-$149,999 ($2022)</td>
+    </tr>
+    <tr>
+        <td>i9</td>
+        <td>Number of households with income $150,000-$199,999 ($2022)</td>
+    </tr>
+    <tr>
+        <td>i10</td>
+        <td>Number of households with income $200,000 or more ($2022)</td>
+    </tr>
+    <tr>
+        <td>emp_gov</td>
+        <td>Government employment</td>
+    </tr>
+    <tr>
+        <td>emp_mil</td>
+        <td>Military employment</td>
+    </tr>
+    <tr>
+        <td>emp_ag_min</td>
+        <td>Agriculture and mining employment (NAICS:11,21)</td>
+    </tr>
+    <tr>
+        <td>emp_bus_svcs</td>
+        <td>Professional and Business Services employment (NAICS:51,54,56)</td>
+    </tr>
+    <tr>
+        <td>emp_fin_res_mgm</td>
+        <td>Financial and resource management employment (NAICS:52,53,55)</td>
+    </tr>
+    <tr>
+        <td>emp_educ</td>
+        <td>Education services employment (NAICS:61)</td>
+    </tr>
+    <tr>
+        <td>emp_hlth</td>
+        <td>Health services employment (NAICS:62)</td>
+    </tr>
+    <tr>
+        <td>emp_ret</td>
+        <td>Retail services employment (NAICS:44,45)</td>
+    </tr>
+    <tr>
+        <td>emp_trn_wrh</td>
+        <td>Transportation and Warehousing employment (NAICS:48,49)</td>
+    </tr>
+    <tr>
+        <td>emp_con</td>
+        <td>Construction employment (NAICS:23)</td>
+    </tr>
+    <tr>
+        <td>emp_utl</td>
+        <td>Utilities office support employment (NAICS:22)</td>
+    </tr>
+    <tr>
+        <td>emp_mnf</td>
+        <td>Manufacturing employment (NAICS:31,32,33)</td>
+    </tr>
+    <tr>
+        <td>emp_whl</td>
+        <td>Wholesale employment (NAICS:42)</td>
+    </tr>
+    <tr>
+        <td>emp_ent</td>
+        <td>Entertainment services employment (NAICS:71)</td>
+    </tr>
+    <tr>
+        <td>emp_accm</td>
+        <td>Hotel and accomodation services (NAICS:721)</td>
+    </tr>
+    <tr>
+        <td>emp_food</td>
+        <td>Food services employment (NAICS:722)</td>
+    </tr>
+    <tr>
+        <td>emp_oth</td>
+        <td>Other employment (NAICS:81)</td>
+    </tr>
+    <tr>
+        <td>emp_non_ws_wfh</td>
+        <td>Non-wage and salary work from home employments</td>
+    </tr>
+    <tr>
+        <td>emp_non_ws_oth</td>
+        <td>Non-wage and salary other employments</td>
+    </tr>
+    <tr>
+        <td>emp_total</td>
+        <td>Total employment</td>
+    </tr>
+    <tr>
+        <td>pseudomsa</td>
+        <td>
+            Pseudo MSA<br/>
+            1: Downtown<br/>
+            2: Central<br/>
+            3: North City<br/>
+            4: South Suburban<br/>
+            5: East Suburban<br/>
+            6: North County West<br/>
+            7: North County East<br/>
+            8: East County
+        </td>
+    </tr>
+    <tr>
+        <td>zip09</td>
+        <td>2009 Zip Code</td>
+    </tr>
+    <tr>
+        <td>enrollgradekto8</td>
+        <td>Grade School K-8 enrollment</td>
+    </tr>
+    <tr>
+        <td>enrollgrade9to12</td>
+        <td>Grade School 9-12 enrollment</td>
+    </tr>
+    <tr>
+        <td>collegeenroll</td>
+        <td>Major College enrollment</td>
+    </tr>
+    <tr>
+        <td>othercollegeenroll</td>
+        <td>Other College enrollment</td>
+    </tr>
+    <tr>
+        <td>hotelroomtotal</td>
+        <td>Total number of hotel rooms</td>
+    </tr>
+    <tr>
+        <td>parkactive</td>
+        <td>Acres of Active Park</td>
+    </tr>
+    <tr>
+        <td>openspaceparkpreserve</td>
+        <td>Acres of Open Park or Preserve</td>
+    </tr>
+    <tr>
+        <td>beachactive</td>
+        <td>Acres of Active Beach</td>
+    </tr>
+    <tr>
+        <td>district27</td>
+        <td>27 district system</td>
+    </tr>
+    <tr>
+        <td>milestocoast</td>
+        <td>Distance (miles) to the nearest coast</td>
+    </tr>
+    <tr>
+        <td>acres</td>
+        <td>Total acres in the MGRA</td>
+    </tr>
+    <tr>
+        <td>land_acres</td>
+        <td>Acres of land in the MGRA</td>
+    </tr>
+    <tr>
+        <td>effective_acres</td>
+        <td>Effective acres in the MGRA</td>
+    </tr>
+    <tr>
+        <td>truckregiontype</td>
+        <td>Truck region type</td>
+    </tr>
+    <tr>
+        <td>exp_hourly</td>
+        <td>Hourly parking expense</td>
+    </tr>
+    <tr>
+        <td>exp_daily</td>
+        <td>Daily parking expense</td>
+    </tr>
+    <tr>
+        <td>exp_monthly</td>
+        <td>Monthly parking expense</td>
+    </tr>
+    <tr>
+        <td>parking_type</td>
+        <td>
+            1 = parking constrained area: has cluster_id and district_id<br/>
+            2 = buffer around parking constrained area which is used to include free spaces to average into parking cost calculation: has district_id but no cluster_id<br/>
+            3 = no parking cost: Has neither cluster_id nor district_id
+        </td>
+    </tr>
+    <tr>
+        <td>parking_spaces</td>
+        <td>Estimated parking spaces in MGRA</td>
+    </tr>
+    <tr>
+        <td>ech_dist</td>
+        <td>Elementary school district</td>
+    </tr>
+    <tr>
+        <td>hch_dist</td>
+        <td>High school district</td>
+    </tr>
+    <tr>
+        <td>remoteAVParking</td>
+        <td>
+            Remote AV parking available at MGRA:<br/>
+            0 = Not available<br/>
+            1 = Available
+        </td>
+    </tr>
+    <tr>
+        <td>refueling_stations</td>
+        <td>Number of refueling stations at MGRA</td>
+    </tr>
+    <tr>
+        <td>MicroAccessTime</td>
+        <td>Shared Micro-mobility (e-scooter/e-bike) access time (mins)</td>
+    </tr>
+    <tr>
+        <td>microtransit</td>
+        <td>The microtransit service area ID [0 means no service]</td>
+    </tr>
+    <tr>
+        <td>nev</td>
+        <td>Neighborhood Electric Vehicle (NEV) service area ID [0 means no service]</td>
+    </tr>
+    <tr>
+        <td>totint</td>
+        <td>Total intersections within 0.65 miles of the MGRA</td>
+    </tr>
+    <tr>
+        <td>duden</td>
+        <td>Dwelling units per acre within 0.65 miles of the MGRA</td>
+    </tr>
+    <tr>
+        <td>empden</td>
+        <td>Jobs per acre within 0.65 miles of the MGRA</td>
+    </tr>
+    <tr>
+        <td>popden</td>
+        <td>Population per acre within 0.65 miles of the MGRA</td>
+    </tr>
+    <tr>
+        <td>retempden</td>
+        <td>Retail jobs per acre within 0.65 miles of the MGRA</td>
+    </tr>
+    <tr>
+        <td>totintbin</td>
+        <td>Total intersection bin</td>
+    </tr>
+    <tr>
+        <td>empdenbin</td>
+        <td>Employment density bin</td>
+    </tr>
+    <tr>
+        <td>dudenbin</td>
+        <td>Dwelling unit density bin</td>
+    </tr>
+    <tr>
+        <td>PopEmpDenPerMi</td>
+        <td>Population and employment density per mile within 0.65 miles of the MGRA</td>
+    </tr>
+</table>
 
 ## Synthetic Population
 
@@ -478,30 +750,204 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
 ### Population Synthesizer Person Data
 `persons.csv`
 
-| Column Name          | Description                                                                                   |
-|----------------------|-----------------------------------------------------------------------------------------------|
-| hhid                 | Household ID                                                                                  |
-| perid                | Person ID                                                                                     |
-| Household_serial_no  | Household serial number                                                                        |
-| pnum                 | Person Number                                                                                 |
-| age                  | Age of person                                                                                 |
-| sex                  | Gender of person<br>1 = Male<br>2 = Female                                                     |
-| miltary             | Military status of person:<br>0 = N/A Less than 17 Years Old<br>1 = Yes, Now on Active Duty    |
-| pemploy              | Employment status of person:<br>1 = Employed Full-Time<br>2 = Employed Part-Time<br>3 = Unemployed or Not in Labor Force<br>4 = Less than 16 Years Old |
-| pstudent             | Student status of person:<br>1 = Pre K-12<br>2 = College Undergrad+Grad and Prof. School<br>3 = Not Attending School |
-| ptype                | Person type:<br>1 = Full-time Worker<br>2 = Part-time Worker<br>3 = College Student<br>4 = Non-working Adult<br>5 = Non-working Senior<br>6 = Driving Age Student<br>7 = Non-driving Student<br>8 = Pre-school |
-| educ                 | Educational attainment:<br>1 = No schooling completed<br>9 = High school graduate<br>13 = Bachelor's degree |
-| grade                | School grade of person:<br>0 = N/A (not attending school)<br>2 = K to grade 8<br>5 = Grade 9 to grade 12<br>6 = College undergraduate |
-| occen5               | Occupation:<br>0 = Not in universe (Under 16 years or LAST-WRK = 2)<br>1..997 = Legal census occupation code |
-| occsoc5              | Detailed occupation codes defined by the Bureau of Labor Statistics |
-| indcen              | Industry code.<br>0 = default<br>9970 = NAICS2 is MIL |
-| weeks              | Weeks worked during past 12 months<br>0 .N/A (less than 16 years old/did not work during the past 12 .months)<br>1 .50 to 52 weeks worked during past 12 months<br>2 .48 to 49 weeks worked during past 12 months<br>3 .40 to 47 weeks worked during past 12 months<br>4 .27 to 39 weeks worked during past 12 month<br>5 .14 to 26 weeks worked during past 12 months<br>6 .13 weeks or less worked during past 12 months|
-| hours              | Hours worked per week past 12 months<br>0 .N/A (less than 16 years old/did not work during the past .12 months)<br>1..98 .1 to 98 usual hours<br>99 .99 or more usual hours |
-| rac1p              | Race:<br>1 = White alone<br>2 = Black or African American alone<br>3 = American Indian alone<br>4 = Alaska Native alone<br>5 = American Indian and Alaska Native tribes specified; or .American Indian or Alaska Native, not specified and no other .races<br>6 = Asian alone<br>7 = Native Hawaiian and Other Pacific Islander alone<br>8 = Some Other Race alone<br>9 =Two or More Races |
-| hisp              | Hispanic origin:<br>1 = Not Hispanic<br>2 = Hispanic |
-| version              | Synthetic population run version. Presently set to 0. |
-| naics2_original_code              | 2 digit North American Industry Classification System (NAICS)<br>11 = Agriculture, Forestry, Fishing and Hunting<br> 21 = Mining, Quarrying, and Oil and Gas Extraction<br>22 = Utilities<br>23 = Construction<br>31 = Manufacturing<br>32 = Wood Product Manufacturing<br>33 = Primary Metal Manufacturing<br>42 = Wholesale Trade<br>44 = Retail Trade<br>45 = General Merchandise Retailers<br>48 = Transportation and Warehousing<br>49 = Postal Service<br>51 = Information<br>52 = Finance and Insurance<br>53 = Real Estate and Rental and Leasing<br>54 = Professional, Scientific, and Technical Services<br>55 = Management of Companies and Enterprises<br>56 = Administrative and Support and Waste Management and Remediation Services<br>61 = Educational Services<br>62 = Health Care and Social Assistance<br>71 = Arts, Entertainment, and Recreation<br>721 = Accommodation<br>722 = Food Services and Drinking Places<br>81 = Other Services (except Public Administration)<br>92 =  Public Administration | 
-| soc2              | 2 digit Standard Occupational Classification |
+<table>
+    <tr>
+        <th>Column Name</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>hhid</td>
+        <td>Household ID</td>
+    </tr>
+    <tr>
+        <td>perid</td>
+        <td>Person ID</td>
+    </tr>
+    <tr>
+        <td>household_serial_no</td>
+        <td>Household serial number</td>
+    </tr>
+    <tr>
+        <td>pnum</td>
+        <td>Person Number</td>
+    </tr>
+    <tr>
+        <td>age</td>
+        <td>Age of person</td>
+    </tr>
+    <tr>
+        <td>sex</td>
+        <td>
+            Gender of person<br/>
+            1 = Male<br/>
+            2 = Female
+        </td>
+    </tr>
+    <tr>
+        <td>miltary</td>
+        <td>
+            Military status of person:<br/>
+            0 = N/A Less than 17 Years Old<br/>
+            1 = Yes, Now on Active Duty
+        </td>
+    </tr>
+    <tr>
+        <td>pemploy</td>
+        <td>
+            Employment status of person:<br/>
+            1 = Employed Full-Time<br/>
+            2 = Employed Part-Time<br/>
+            3 = Unemployed or Not in Labor Force<br/>
+            4 = Less than 16 Years Old
+        </td>
+    </tr>
+    <tr>
+        <td>pstudent</td>
+        <td>
+            Student status of person:<br/>
+            1 = Pre K-12<br/>
+            2 = College Undergrad+Grad and Prof. School<br/>
+            3 = Not Attending School
+        </td>
+    </tr>
+    <tr>
+        <td>ptype</td>
+        <td>
+            Person type:<br/>
+            1 = Full-time Worker<br/>
+            2 = Part-time Worker<br/>
+            3 = College Student<br/>
+            4 = Non-working Adult<br/>
+            5 = Non-working Senior<br/>
+            6 = Driving Age Student<br/>
+            7 = Non-driving Student<br/>
+            8 = Pre-school
+        </td>
+    </tr>
+    <tr>
+        <td>educ</td>
+        <td>
+            Educational attainment:<br/>
+            1 = No schooling completed<br/>
+            9 = High school graduate<br/>
+            13 = Bachelor's degree
+        </td>
+    </tr>
+    <tr>
+        <td>grade</td>
+        <td>
+            School grade of person:<br/>
+            0 = N/A (not attending school)<br/>
+            2 = K to grade 8<br/>
+            5 = Grade 9 to grade 12<br/>
+            6 = College undergraduate
+        </td>
+    </tr>
+    <tr>
+        <td>occen5</td>
+        <td>
+            Occupation:<br/>
+            0 = Not in universe (Under 16 years or LAST-WRK = 2)<br/>
+            1..997 = Legal census occupation code
+        </td>
+    </tr>
+    <tr>
+        <td>occsoc5</td>
+        <td>Detailed occupation codes defined by the Bureau of Labor Statistics</td>
+    </tr>
+    <tr>
+        <td>indcen</td>
+        <td>
+            Industry code.<br/>
+            0 = default<br/>
+            9970 = NAICS2 is MIL
+        </td>
+    </tr>
+    <tr>
+        <td>weeks</td>
+        <td>
+            Weeks worked during past 12 months<br/>
+            0 .N/A (less than 16 years old/did not work during the past 12 .months)<br/>
+            1 .50 to 52 weeks worked during past 12 months<br/>
+            2 .48 to 49 weeks worked during past 12 months<br/>
+            3 .40 to 47 weeks worked during past 12 months<br/>
+            4 .27 to 39 weeks worked during past 12 month<br/>
+            5 .14 to 26 weeks worked during past 12 months<br/>
+            6 .13 weeks or less worked during past 12 months
+        </td>
+    </tr>
+    <tr>
+        <td>hours</td>
+        <td>
+            Hours worked per week past 12 months<br/>
+            0 .N/A (less than 16 years old/did not work during the past .12 months)<br/>
+            1..98 .1 to 98 usual hours<br/>
+            99 .99 or more usual hours
+        </td>
+    </tr>
+    <tr>
+        <td>rac1p</td>
+        <td>
+            Race:<br/>
+            1 = White alone<br/>
+            2 = Black or African American alone<br/>
+            3 = American Indian alone<br/>
+            4 = Alaska Native alone<br/>
+            5 = American Indian and Alaska Native tribes specified; or .American Indian or Alaska Native, not specified and no other .races<br/>
+            6 = Asian alone<br/>
+            7 = Native Hawaiian and Other Pacific Islander alone<br/>
+            8 = Some Other Race alone<br/>
+            9 =Two or More Races
+        </td>
+    </tr>
+    <tr>
+        <td>hisp</td>
+        <td>
+            Hispanic origin:<br/>
+            1 = Not Hispanic<br/>
+            2 = Hispanic
+        </td>
+    </tr>
+    <tr>
+        <td>version</td>
+        <td>Synthetic population run version. Presently set to 0.</td>
+    </tr>
+    <tr>
+        <td>naics2_original_code</td>
+        <td>
+            2 digit North American Industry Classification System (NAICS)<br/>
+            11 = Agriculture, Forestry, Fishing and Hunting<br/>
+            21 = Mining, Quarrying, and Oil and Gas Extraction<br/>
+            22 = Utilities<br/>
+            23 = Construction<br/>
+            31 = Manufacturing<br/>
+            32 = Wood Product Manufacturing<br/>
+            33 = Primary Metal Manufacturing<br/>
+            42 = Wholesale Trade<br/>
+            44 = Retail Trade<br/>
+            45 = General Merchandise Retailers<br/>
+            48 = Transportation and Warehousing<br/>
+            49 = Postal Service<br/>
+            51 = Information<br/>
+            52 = Finance and Insurance<br/>
+            53 = Real Estate and Rental and Leasing<br/>
+            54 = Professional, Scientific, and Technical Services<br/>
+            55 = Management of Companies and Enterprises<br/>
+            56 = Administrative and Support and Waste Management and Remediation Services<br/>
+            61 = Educational Services<br/>
+            62 = Health Care and Social Assistance<br/>
+            71 = Arts, Entertainment, and Recreation<br/>
+            721 = Accommodation<br/>
+            722 = Food Services and Drinking Places<br/>
+            81 = Other Services (except Public Administration)<br/>
+            92 =  Public Administration
+        </td>
+    </tr>
+    <tr>
+        <td>soc2</td>
+        <td>2 digit Standard Occupational Classification</td>
+    </tr>
+</table>
 
 ## Airport
 <a id="airport_nights"></a>
