@@ -16,6 +16,6 @@ coef_mode_logsum,0.5468,F
 coef_pwlin_0_2,-0.08,F
 coef_pwlin_2_5,-0.02,F
 coef_pwlin_5_10,0.05,F
-coef_pwlin_10_20,0.06,F
+coef_pwlin_10_20,0.07,F
 coef_pwlin_20_up,0.03,F
 
