@@ -37,7 +37,7 @@ mode:
     busPCEVeh: 3.0
     ivtMultipliers:
       lrt: 0.85
-      cmr: 1.0
+      cmr: 1.2
       brt: 0.95
       ltd: 1.0
     equivASC:
