@@ -54,74 +54,68 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
         <td></td>
     </tr>
     <tr>
-        <td>crossBorder_tourPurpose_control.csv</td>
-        <td></td>
+        <td>closest_maz_to_external_tazs.csv</td>
+        <td>Crossborder Model list of closest MGRA to each external TAZ</td>
         <td>CSV</td>
-        <td></td>
+        <td>Transportation Modelers</td>
+    </tr>
+    <tr>
+        <td><a href=#crossborder-model-inbound-stop-duration-distribution>crossBorder_inboundStopDuration.csv</a></td>
+        <td>Crossborder Model time-of-day offsets for inbound stops</td>
+        <td>CSV</td>
+        <td>Transportation Modelers</td>
+    </tr>
+    <tr>
+        <td><a href=#crossborder-model-outbound-stop-duration-distribution>crossBorder_outboundStopDuration.csv</a></td>
+        <td>Crossborder Model time-of-day offsets for outbound stops</td>
+        <td>CSV</td>
+        <td>Transportation Modelers</td>
+    </tr>
+    <tr>
+        <td><a href=#crossborder-model-point-of-entry-wait-time>crossBorder_pointOfEntryWaitTime.csv</a></td>
+        <td>Crossborder Model wait times at border crossing locations</td>
+        <td>CSV</td>
+        <td>Transportation Modelers</td>
+    </tr>
+    <tr>
+        <td><a href=#crossborder-model-stop-frequency>crossBorder_stopFrequency.csv</a></td>
+        <td>Crossborder Model stop frequency data</td>
+        <td>CSV</td>
+        <td>Transportation Modelers</td>
+    </tr>
+    <tr>
+        <td><a href=#crossborder-model-stop-purpose-distribution>crossBorder_stopPurpose.csv</a></td>
+        <td>Crossborder Model stop purpose distribution</td>
+        <td>CSV</td>
+        <td>Transportation Modelers</td>
+    </tr>
+    <tr>
+        <td><a href=#crossborder-model-supercolonia>crossBorder_supercolonia.csv</a></td>
+        <td>Crossborder Model distance from Colonias to border crossing locations</td>
+        <td>CSV</td>
+        <td>Transportation Modelers</td>
+    </tr>
+    <tr>
+        <td><a href=#crossborder-model-tour-entry-and-return-distribution>crossBorder_tourEntryAndReturn.csv</a></td>
+        <td>Crossborder Model tour entry and return time-of-day distribution</td>
+        <td>CSV</td>
+        <td>Transportation Modelers</td>
+    </tr>
+    <tr>
+        <td>crossBorder_tourPurpose_control.csv</td>
+        <td>Crossborder Model tour purpose reassignment probability lookup table</td>
+        <td>CSV</td>
+        <td>Transportation Modelers</td>
     </tr>
     <tr>
         <td>crossBorder_tourPurpose_nonSENTRI.csv</td>
-        <td>Cross Border Model tour purpose distribution for Non-SENTRI tours</td>
+        <td>Crossborder Model tour purpose distribution for Non-SENTRI tours</td>
         <td>CSV</td>
         <td>Transportation Modelers</td>
     </tr>
     <tr>
         <td>crossBorder_tourPurpose_SENTRI.csv</td>
-        <td>Cross Border Model tour purpose distribution for SENTRI tours</td>
-        <td>CSV</td>
-        <td>Transportation Modelers</td>
-    </tr>
-    <tr>
-        <td>[crossBorder_tourEntryAndReturn.csv](#cross_border_entry_return)</td>
-        <td>Cross Border Model tour entry and return time-of-day distribution</td>
-        <td>CSV</td>
-        <td>Transportation Modelers</td>
-    </tr>
-    <tr>
-        <td>[crossBorder_supercolonia.csv](#cross_border_supercolonia)</td>
-        <td>Cross Border Model distance from Colonias to border crossing locations</td>
-        <td>CSV</td>
-        <td>Transportation Modelers</td>
-    </tr>
-    <tr>
-        <td>[crossBorder_pointOfEntryWaitTime.csv](#cross_border_wait_time)</td>
-        <td>Cross Border Model wait times at border crossing locations table</td>
-        <td>CSV</td>
-        <td>GIS - Pat L vtsql</td>
-    </tr>
-    <tr>
-        <td>[crossBorder_stopFrequency.csv](#cross_border_stops)</td>
-        <td>Cross Border Model stop frequency data</td>
-        <td>CSV</td>
-        <td>Transportation Modelers</td>
-    </tr>
-    <tr>
-        <td>[crossBorder_stopPurpose.csv](#cross_border_stop_purpose)</td>
-        <td>Cross Border Model stop purpose distribution</td>
-        <td>CSV</td>
-        <td>Transportation Modelers</td>
-    </tr>
-    <tr>
-        <td>[crossBorder_outboundStopDuration.csv](#cross_border_out_stop)</td>
-        <td>Cross Border Model time-of-day offsets for outbound stops</td>
-        <td>CSV</td>
-        <td>Transportation Modelers</td>
-    </tr>
-    <tr>
-        <td>[crossBorder_inboundStopDuration.csv](#cross_border_in_stop)</td>
-        <td>Cross Border Model time-of-day offsets for inbound stops</td>
-        <td>CSV</td>
-        <td>Transportation Modelers</td>
-    </tr>
-    <tr>
-        <td>[closest_maz_to_external_tazs.csv](#closest_maz_to_external_tazs)</td>
-        <td></td>
-        <td>CSV</td>
-        <td>Transportation Modelers</td>
-    </tr>
-    <tr>
-        <td>[mazs_xborder.csv](#mazs_xborder)</td>
-        <td></td>
+        <td>Crossborder Model tour purpose distribution for SENTRI tours</td>
         <td>CSV</td>
         <td>Transportation Modelers</td>
     </tr>
@@ -1342,10 +1336,8 @@ oth; where Size_Class ranges 1-7.
 
 ## Crossborder
 
-<a id="cross_border_entry_return"></a>
-
-### Cross Border Model Tour Entry and Return Distribution
-#### `CROSSBORDER_TOURENTRYANDRETURN.CSV`
+### Crossborder Model Tour Entry and Return Distribution
+`crossBorder_tourEntryAndReturn.csv`
 
 <table>
     <tr>
@@ -1390,10 +1382,8 @@ oth; where Size_Class ranges 1-7.
     </tr>
 </table>
 
-<a id="cross_border_supercolonia"></a>
-
-### Cross Border Model Supercolonia
-#### `CROSSBORDER_SUPERCOLONIA.CSV`
+### Crossborder Model Supercolonia
+`crossBorder_supercolonia.csv`
 
 <table>
     <tr>
@@ -1420,12 +1410,18 @@ oth; where Size_Class ranges 1-7.
         <td>Distance_poe2</td>
         <td>Distance from colonia to point of entry 2 (Tecate)</td>
     </tr>
+    <tr>
+        <td>Distance_poe3</td>
+        <td>Distance from colonia to point of entry 3 (Otay Mesa East)</td>
+    </tr>
+    <tr>
+        <td>Distance_poe4</td>
+        <td>Distance from colonia to point of entry 4 (Jacumba)</td>
+    </tr>
 </table>
 
-<a id="cross_border_wait_time"></a>
-
-### Cross Border Model Point of Entry Wait Time
-#### `CROSSBORDER_POINTOFENTRYWAITTIME.CSV`
+### Crossborder Model Point of Entry Wait Time
+`crossBorder_pointOfEntryWaitTime.csv`
 
 <table>
     <tr>
@@ -1472,23 +1468,25 @@ oth; where Size_Class ranges 1-7.
         </td>
     </tr>
     <tr>
-        <td>StandardWait</td>
-        <td>Standard wait time</td>
+        <td>PedestrianWait</td>
+        <td>Pedestrian wait time in minutes</td>
+    </tr>
+    <tr>
+        <td>ReadyWait</td>
+        <td>Ready Lane wait time in minutes</td>
     </tr>
     <tr>
         <td>SENTRIWait</td>
-        <td>SENTRI users wait time</td>
+        <td>SENTRI Lane wait time in minutes</td>
     </tr>
     <tr>
-        <td>PedestrianWait</td>
-        <td>Pedestrian wait time</td>
+        <td>StandardWait</td>
+        <td>Standard Lane wait time in minutes</td>
     </tr>
 </table>
 
-<a id="cross_border_stops"></a>
-
-### Cross Border Model Stop Frequency
-#### `CROSSBORDER_STOPFREQUENCY.CSV`
+### Crossborder Model Stop Frequency
+`crossBorder_StopFrequency.csv`
 
 <table>
     <tr>
@@ -1529,10 +1527,8 @@ oth; where Size_Class ranges 1-7.
     </tr>
 </table>
 
-<a id="cross_border_stop_purpose"></a>
-
-### Cross Border Model Stop Purpose Distribution
-#### `CROSSBORDER_STOPPURPOSE.CSV`
+### Crossborder Model Stop Purpose Distribution
+`crossBorder_stopPurpose.csv`
 
 <table>
     <tr>
@@ -1589,10 +1585,8 @@ oth; where Size_Class ranges 1-7.
     </tr>
 </table>
 
-<a id="cross_border_out_stop"></a>
-
-### Cross Border Model Outbound Stop Duration Distribution
-#### `CROSSBORDER_OUTBOUNDSTOPDURATION.CSV`
+### Crossborder Model Outbound Stop Duration Distribution
+`crossBorder_outboundStopDuration.csv`
 
 <table>
     <tr>
@@ -1673,10 +1667,8 @@ oth; where Size_Class ranges 1-7.
     </tr>
 </table>
 
-<a id="cross_border_in_stop"></a>
-
-### Cross Border Model Inbound Stop Duration Distribution
-#### `CROSSBORDER_INBOUNDSTOPDURATION.CSV`
+### Crossborder Model Inbound Stop Duration Distribution
+`crossBorder_inboundStopDuration.csv`
 
 <table>
     <tr>
