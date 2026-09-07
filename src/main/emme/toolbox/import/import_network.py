@@ -59,24 +59,20 @@
 """
 
 
-TOOLBOX_ORDER = 11
+TOOLBOX_ORDER = 12
 
 
 import inro.modeller as _m
 import inro.emme.datatable as _dt
 import inro.emme.network as _network
-from inro.emme.core.exception import Error as _NetworkError
 import inro.emme.core.services as _services
 
 from collections import defaultdict as _defaultdict, OrderedDict
 from contextlib import contextmanager as _context
-import fiona as _fiona
 
-from math import ceil as _ceiling
 from math import floor as _floor
 from copy import deepcopy as _copy
 import numpy as _np
-import pandas as pd
 
 import traceback as _traceback
 import os

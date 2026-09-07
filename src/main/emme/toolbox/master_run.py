@@ -210,6 +210,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
     
         copy_scenario = modeller.tool("inro.emme.data.scenario.copy_scenario")
         run4Ds = modeller.tool("sandag.import.run4Ds")
+        run_tchc = modeller.tool("sandag.import.run_tchc")
         import_network = modeller.tool("sandag.import.import_network")
         init_transit_db = modeller.tool("sandag.initialize.initialize_transit_database")
         init_matrices = modeller.tool("sandag.initialize.initialize_matrices")
@@ -283,6 +284,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         deleteAllMatrices = props["RunModel.deleteAllMatrices"]
         skipCopyWarmupTripTables = props["RunModel.skipCopyWarmupTripTables"]
         skipBikeLogsums = props["RunModel.skipBikeLogsums"]
+        skipTCHC = props["RunModel.skipTCHC"]
         skipBuildNetwork = props["RunModel.skipBuildNetwork"]
         skipHighwayAssignment = props["RunModel.skipHighwayAssignment"]
         skipTransitSkimming = props["RunModel.skipTransitSkimming"]
@@ -447,6 +449,17 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 if not skip4Ds:
                     run4Ds(path=self._path, int_radius=0.65, ref_path='visualizer_reference_path')
 
+                if not (skipTCHC and skipBuildNetwork):
+                    source_gdb = _glob.glob(os.path.join(input_dir, "*.gdb"))
+                    if len(source_gdb) > 1:
+                        raise Exception("Multiple *.gdb files found in input directory")
+                    if len(source_gdb) < 1:
+                        raise Exception("No *.gdb file found in input directory")
+
+                # Refresh capacities in the gdb before importing the network
+                if not skipTCHC:
+                    run_tchc(path=self._path, source=source_gdb[0])
+
                 mgraFile = 'mgra15_based_input' + str(scenarioYear) + '.csv'  # Should be read in from properties? -JJF
                 self.complete_work(scenarioYear, input_dir, output_dir, mgraFile, "maz_maz_walk.csv")
 
@@ -456,11 +469,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 mode5tod.to_csv(_join(input_dir,'MODE5TOD.csv'))
 
                 if not skipBuildNetwork:
-                    source_gdb = _glob.glob(os.path.join(input_dir, "*.gdb"))
-                    if len(source_gdb) > 1:
-                        raise Exception("Multiple *.gdb files found in input directory")
-                    if len(source_gdb) < 1:
-                        raise Exception("No *.gdb file found in input directory")
                     base_scenario = import_network(
                         source=source_gdb[0],
                         scenario_id=scenario_id,

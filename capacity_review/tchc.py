@@ -12,8 +12,7 @@ Usage::
 See README.md for full documentation of inputs and outputs.
 """
 from dataclasses import dataclass, field
-from typing import List, Dict, Optional
-import math
+from typing import List, Dict
 
 
 # ------------------------------------------------------------------
@@ -83,6 +82,10 @@ class TCHCLink:
     period_capacity_by_period_and_direction: List[List[float]] = field(default_factory=lambda: [[999999, 999999], [999999, 999999], [999999, 999999]])
     intersection_capacity_by_period_and_direction: List[List[float]] = field(default_factory=lambda: [[999999, 999999], [999999, 999999], [999999, 999999]])
     generalized_cost_by_direction: List[float] = field(default_factory=lambda: [999999, 999999])
+
+    # resolved from the lookup tables and written back; None where nothing was resolved
+    resolved_green_cycle_by_direction: List = field(default_factory=lambda: [None, None])
+    resolved_per_lane_capacity_by_direction: List = field(default_factory=lambda: [None, None])
 
     auto_operating_cost: float = 0.0
     
@@ -228,7 +231,9 @@ def apply_tchc(link: TCHCLink, ctx: TCHCContext, remaining_toll=None):
         if link.directionality == 1 and direction_index == 1:
             continue
 
-        node_id = link.from_node_identifier if direction_index == 0 else link.to_node_identifier
+        # TNED codes AB* intersection fields at the TO (B) end, so the approach
+        # node is the link's downstream end for that direction.
+        node_id = link.to_node_identifier if direction_index == 0 else link.from_node_identifier
         approach_count = ctx.approach_count.get(node_id, 3)
 
         for period_index in range(3):
@@ -259,12 +264,14 @@ def apply_tchc(link: TCHCLink, ctx: TCHCContext, remaining_toll=None):
 
             # ---- base mid-block capacity by facility type ----
             if link.functional_class == 1:
-                # freeway capacity from per-link field, bounded [1900, 2100]
+                # freeway capacity from per-link field, bounded [1900, 2100];
+                # the AB value is used for both directions
                 freeway_capacity_per_lane = 2000.0
                 if 1600 <= link.planned_lane_capacity_by_direction[0] <= 2400:
                     freeway_capacity_per_lane = float(link.planned_lane_capacity_by_direction[0])
                 freeway_capacity_per_lane = min(freeway_capacity_per_lane, 2100.0)
                 freeway_capacity_per_lane = max(freeway_capacity_per_lane, 1900.0)
+                link.resolved_per_lane_capacity_by_direction[direction_index] = freeway_capacity_per_lane
 
                 directional_capacity = lane_count * freeway_capacity_per_lane + link.auxiliary_lane_count_by_direction[direction_index] * 1200.0
                 if link.high_occupancy_vehicle_class == 1:
@@ -350,6 +357,7 @@ def apply_tchc(link: TCHCLink, ctx: TCHCContext, remaining_toll=None):
                 green_cycle_value = link.green_cycle_value_by_direction[direction_index]
                 if green_cycle_value < 10:
                     green_cycle_value = ctx.signal_green_cycle_lookup[min(approach_count, 4) - 1][link.functional_class - 1][cross_street_functional_class_index]
+                link.resolved_green_cycle_by_direction[direction_index] = green_cycle_value
                 green_cycle_factor = green_cycle_value / 100.0
                 turn_capacity_per_lane = (
                     TURN_CAPACITY_BY_FUNCTIONAL_CLASS[link.functional_class - 1]
@@ -371,6 +379,7 @@ def apply_tchc(link: TCHCLink, ctx: TCHCContext, remaining_toll=None):
                 green_cycle_value = link.green_cycle_value_by_direction[direction_index]
                 if green_cycle_value < 1:
                     green_cycle_value = ctx.four_way_stop_green_cycle_lookup[link.functional_class - 1][cross_street_functional_class_index]
+                link.resolved_green_cycle_by_direction[direction_index] = green_cycle_value
                 green_cycle_factor = green_cycle_value / 100.0
                 turn_capacity_per_lane = (
                     TURN_CAPACITY_BY_FUNCTIONAL_CLASS[link.functional_class - 1]
@@ -389,12 +398,11 @@ def apply_tchc(link: TCHCLink, ctx: TCHCContext, remaining_toll=None):
             elif control_type == 3:  # 2‑way stop (FORTRAN 630)
                 link.intersection_delay_minutes_by_period_and_direction[period_index][direction_index] = 0.20
                 green_cycle_value = ctx.two_way_stop_green_cycle_lookup[cross_street_functional_class_index]
+                link.resolved_green_cycle_by_direction[direction_index] = green_cycle_value
                 green_cycle_through_factor = green_cycle_value / 100.0
                 green_cycle_right_factor = green_cycle_value / 100.0
                 green_cycle_left_factor = green_cycle_value / 100.0
-                # special case: irt==7 was already sanitized above,
-                # but in FORTRAN this check happens before sanitization
-                # of values >=7. Re-check original value for this case.
+                # FORTRAN checks the free-right code before sanitization, so re-read the raw value
                 if link.right_turn_lane_count_by_direction[direction_index] == 7:
                     green_cycle_right_factor = 1.0
                     right_turn_lane_count = 1
