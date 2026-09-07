@@ -69,7 +69,7 @@ class TCHCLink:
     left_turn_lane_count_by_direction: List[int] = field(default_factory=lambda: [0, 0])
     green_cycle_value_by_direction: List[int] = field(default_factory=lambda: [0, 0])
 
-    # per‑mile tolls → converted in place
+    # per-mile tolls -> converted in place
     toll_cost_by_period: List[int] = field(default_factory=lambda: [0, 0, 0])
 
     # external zone delay cost (extcst, for zone connectors)
@@ -109,25 +109,25 @@ class TCHCContext:
     freeway_capacity_rate: float         # multiplier for GP freeway/FC8 capacity (typically 1.0)
     analysis_year: int                   # enables TSM features when > 2015
 
-    # node_id → approach count (2–4): non-connector links touching each node
+    # node_id -> approach count (2-4): non-connector links touching each node
     approach_count: Dict[int, int]
-    # adt_id → direction code for ramp metering (1=SB,2=EB,3=NB,4=WB,9=both)
+    # adt_id -> direction code for ramp metering (1=SB,2=EB,3=NB,4=WB,9=both)
     ramp_meter_direction_by_traffic_count_identifier: Dict[int, int]
-    # [period][direction][station_id] → peak-period expansion factor
+    # [period][direction][station_id] -> peak-period expansion factor
     station_peak_period_factor: List[List[List[float]]]
 
-    # jurisdiction (1–6) → capacity multiplier for signalized intersections
+    # jurisdiction (1-6) -> capacity multiplier for signalized intersections
     roadway_safety_adjustment_factor_by_jurisdiction: Dict[int, float]
 
     # GC ratio lookup tables (integer percentages):
-    #   signal:     [approach_count-1][fc-1][cross_fc-1]  (4×9×9)
-    #   4-way stop: [fc-1][cross_fc-1]                   (9×9)
+    #   signal:     [approach_count-1][fc-1][cross_fc-1]  (4x9x9)
+    #   4-way stop: [fc-1][cross_fc-1]                    (9x9)
     #   2-way stop: [cross_fc-1]                          (9,)
     signal_green_cycle_lookup: List[List[List[int]]]
     four_way_stop_green_cycle_lookup: List[List[int]]
     two_way_stop_green_cycle_lookup: List[int]
 
-    # [crossing_index][period][border_direction] → delay in minutes
+    # [crossing_index][period][border_direction] -> delay in minutes
     # 5 crossings: San Ysidro(0), Otay(1), East(2), Tecate(3), Jacumba(4)
     # 2 directions: SB/EB(0), NB(1)
     border_delay_minutes_lookup: List[List[List[float]]]
@@ -189,7 +189,7 @@ def apply_tchc(link: TCHCLink, ctx: TCHCContext, remaining_toll=None):
     distance_miles = miles(link.length_feet)
     use_traffic_system_management = ctx.analysis_year > 2015
 
-    # ---- toll conversion: per-mile rate → absolute cents, with carry-forward
+    # ---- toll conversion: per-mile rate -> absolute cents, with carry-forward
     # Tolls are coded as per-mile rates. Multiply by distance, accumulate
     # fractional cents in remaining_toll to avoid rounding loss across links.
     for period_index in range(3):
@@ -215,7 +215,7 @@ def apply_tchc(link: TCHCLink, ctx: TCHCContext, remaining_toll=None):
 
     # ---- station resolution ----
     # HOV lanes share count stations with the adjacent GP freeway.
-    # Chain: HOV link_id → freeway link_id → station_id.
+    # Chain: HOV link_id -> freeway link_id -> station_id.
     # Non-freeway links and unresolved stations default to station 1.
     station_id = link.station_identifier
     if link.high_occupancy_vehicle_class in (2, 3):
@@ -304,7 +304,7 @@ def apply_tchc(link: TCHCLink, ctx: TCHCContext, remaining_toll=None):
                 directional_capacity = lane_count * 1200.0
 
             else:
-                # arterials (fc 2–7): check plc==950 override
+                # arterials (fc 2-7): check plc==950 override
                 if link.planned_lane_capacity_by_direction[direction_index] == 950 and lane_count < 2:
                     directional_capacity = 950.0
                 else:
@@ -374,7 +374,7 @@ def apply_tchc(link: TCHCLink, ctx: TCHCContext, remaining_toll=None):
                 link.intersection_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity * peak_period_factor
                 link.hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
 
-            elif control_type == 2:  # 4‑way stop (FORTRAN 620)
+            elif control_type == 2:  # 4-way stop (FORTRAN 620)
                 link.intersection_delay_minutes_by_period_and_direction[period_index][direction_index] = 0.20
                 green_cycle_value = link.green_cycle_value_by_direction[direction_index]
                 if green_cycle_value < 1:
@@ -395,7 +395,7 @@ def apply_tchc(link: TCHCLink, ctx: TCHCContext, remaining_toll=None):
                 link.intersection_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity * peak_period_factor
                 link.hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
 
-            elif control_type == 3:  # 2‑way stop (FORTRAN 630)
+            elif control_type == 3:  # 2-way stop (FORTRAN 630)
                 link.intersection_delay_minutes_by_period_and_direction[period_index][direction_index] = 0.20
                 green_cycle_value = ctx.two_way_stop_green_cycle_lookup[cross_street_functional_class_index]
                 link.resolved_green_cycle_by_direction[direction_index] = green_cycle_value
