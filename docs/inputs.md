@@ -120,32 +120,32 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
         <td>Transportation Modelers</td>
     </tr>
     <tr>
-        <td>**External Models**</td>
+        <td><strong><a href=#external-models>External Models</a></strong></td>
         <td></td>
         <td></td>
         <td></td>
     </tr>
     <tr>
-        <td>[externalExternalTripsByYear.csv](#external_trip) &lt;i&gt; (raw inputs have these by year) &lt;i&gt;</td>
+        <td><a href=#external-external-control-totals>externalExternalTripsByYear.csv</a></td>
         <td>External origin-destination station trip matrix</td>
         <td>CSV</td>
         <td>Transportation Modelers</td>
     </tr>
     <tr>
-        <td>[externalInternalControlTotalsByYear.csv](#external_internal) &lt;i&gt; (raw inputs have these by year) &lt;i&gt;</td>
-        <td>External Internal station control totals read by GISDK</td>
+        <td><a href=#external-internal-control-totals>internalExternal_tourTOD.csv</a></td>
+        <td>External Internal station control totals</td>
         <td>CSV</td>
         <td>Transportation Modelers</td>
     </tr>
     <tr>
-        <td>[internalExternal_tourTOD.csv](#internal_external_tod)</td>
+        <td><a href=#internal-external-tours-time-of-day-distribution>internalExternal_tourTOD.csv</a></td>
         <td>Internal-External Model tour time-of-day frequency distribution</td>
         <td>CSV</td>
         <td>Transportation Modelers</td>
     </tr>
     <tr>
-        <td>[resident_ie_size_term.csv](#resident_ie_size_term)</td>
-        <td></td>
+        <td><a href=#external-internal-model-external-zone-size-terms>resident_ie_size_terms.csv</a></td>
+        <td>Internal-External Model external zone size terms</td>
         <td>CSV</td>
         <td>Transportation Modelers</td>
     </tr>
@@ -1733,10 +1733,10 @@ oth; where Size_Class ranges 1-7.
     </tr>
 </table>
 
-<a id="external_trip"></a>
-
 ## External Models
-### `EXTERNALEXTERNALTRIPSByYEAR.CSV`
+
+### External External Control Totals
+`externalExternalTripsByYear.csv`
 
 <table>
     <tr>
@@ -1757,10 +1757,8 @@ oth; where Size_Class ranges 1-7.
     </tr>
 </table>
 
-<a id="external_internal"></a>
-
 ### External Internal Control Totals
-#### `EXTERNALINTERNALCONTROLTOTALSByYEAR.CSV`
+`externalInternalControlTotalsByYear`
 
 <table>
     <tr>
@@ -1781,10 +1779,8 @@ oth; where Size_Class ranges 1-7.
     </tr>
 </table>
 
-<a id="internal_external_tod"></a>
-
 ### Internal External Tours Time of Day Distribution
-#### `INTERNALEXTERNAL_TOURTOD.CSV`
+`internalExternal_tourTOD.csv`
 
 <table>
     <tr>
@@ -1821,6 +1817,36 @@ oth; where Size_Class ranges 1-7.
     <tr>
         <td>Percent</td>
         <td>Distribution of tours by entry and return periods</td>
+    </tr>
+</table>
+
+### External-Internal Model External Zone Size Terms
+`resident_ie_size_terms.csv`
+
+<table>
+    <tr>
+        <th>Column Name</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>taz</td>
+        <td>External Zone ID</td>
+    </tr>
+    <tr>
+        <td>work</td>
+        <td>Work-tour size term</td>
+    </tr>
+    <tr>
+        <td>nonwork</td>
+        <td>Nonwork-tour size term</td>
+    </tr>
+    <tr>
+        <td>start_year</td>
+        <td>First year that row is active</td>
+    </tr>
+    <tr>
+        <td>OME_override</td>
+        <td>If 1, start_year is set from scenario parameter</td>
     </tr>
 </table>
 
