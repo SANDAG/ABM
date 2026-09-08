@@ -14,33 +14,43 @@ from azure.storage.blob import ContainerClient
 
 def connect_to_Azure(env):
     """
-    Check if Azure Storage SAS Token is properly configured in local machine's environment.
-        Return Azure ContainerClient and boolean indicating cloud connection was made successfully.
-        If it is not, pass argument back to write_to_datalake to only write outputs locally.
+    Check if Azure Storage SAS Tokens are properly configured in local machine's environment.
+        Return a list of Azure ContainerClients (one per configured token that connected
+        successfully) and a boolean indicating at least one cloud connection was made.
+        If none connect, pass argument back to write_to_datalake to only write outputs locally.
 
     Include stand-in path_override parameter for future config options
     """
-    try:
-        if env == "dev":
-            sas_url = os.environ["AZURE_STORAGE_SAS_TOKEN_DEV"]
-        else:
-            sas_url = os.environ["AZURE_STORAGE_SAS_TOKEN_PROD"]
-        container = ContainerClient.from_container_url(sas_url)
-        container.get_account_information()
-        print("datalake exporter connected to Azure container")
-        return True, container
-    except KeyError as e:
-        error_statement = (
-            f"{e}: datalake exporter could not find SAS_Token in environment\n"
-        )
-        print(error_statement, "\n", file=sys.stderr)
-        return False, None
-    except Exception as e:
-        error_statement = f"""
-            {e}: datalake exporter had issue connecting to Azure container using SAS_Token in environment,
-            token likely malconfigured"""
-        print(error_statement, "\n", file=sys.stderr)
-        return False, None
+    if env == "dev":
+        token_vars = [
+            "AZURE_STORAGE_SAS_TOKEN_DEV",
+            "AZURE_STORAGE_SAS_TOKEN_SHARED_DEV",
+        ]
+    else:
+        token_vars = [
+            "AZURE_STORAGE_SAS_TOKEN_PROD",
+            "AZURE_STORAGE_SAS_TOKEN_SHARED_PROD",
+        ]
+
+    containers = []
+    for token_var in token_vars:
+        try:
+            sas_url = os.environ[token_var]
+            container = ContainerClient.from_container_url(sas_url)
+            container.get_account_information()
+            print(f"datalake exporter connected to Azure container ({token_var})")
+            containers.append(container)
+        except KeyError as e:
+            error_statement = (
+                f"{e}: datalake exporter could not find SAS_Token in environment\n"
+            )
+            print(error_statement, "\n", file=sys.stderr)
+        except Exception as e:
+            error_statement = f"""
+                {e}: datalake exporter had issue connecting to Azure container using SAS_Token in environment,
+                token likely malconfigured"""
+            print(error_statement, "\n", file=sys.stderr)
+    return len(containers) > 0, containers
 
 
 def build_blob_path(*parts):
@@ -236,11 +246,7 @@ def write_manifest(
     # print(f"Manifest written to {lake_file_name} with status: {manifest['status']}")
 
 
-def write_to_datalake(output_path, models, exclude, env):
-    cloud_bool, container = connect_to_Azure(env)
-    if not cloud_bool:
-        return
-
+def write_to_datalake(output_path, models, exclude, env, container):
     root_directory = check_root(container)
 
     # --- initialize manifest ---
@@ -465,4 +471,10 @@ models = [
 ]
 exclude = ["final_pipeline.h5", "final_pipeline"]
 # database = "abm_15_3_0"  # Will need to move release version outside, retain database for now to avoid refactor of blob paths in datalake
-write_to_datalake(output_path, models, exclude, env)
+
+cloud_bool, containers = connect_to_Azure(env)
+if not cloud_bool:
+    sys.exit(1)
+
+for container in containers:
+    write_to_datalake(output_path, models, exclude, env, container)
