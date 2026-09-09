@@ -222,7 +222,10 @@ def write_manifest(
     root_directory = check_root(container)
 
     lake_file_name = build_blob_path(
-        root_directory, "_manifest", release_version, f"upload_{parent_dir_name}.json"
+        root_directory,
+        "_manifest/pending",
+        release_version,
+        f"upload_{parent_dir_name}.json",
     )
     manifest["timing"]["manifest_uploaded_at"] = datetime.datetime.now(
         datetime.timezone(datetime.timedelta(hours=-8))
@@ -264,9 +267,7 @@ def write_to_datalake(output_path, models, exclude, env):
         if is_asim:
             model_metadata = get_model_metadata(model, output_path)
             prefix = model_metadata["prefix"]
-        elif model == "CVM":
-            prefix = "final_"
-        elif model == "HTM":
+        elif model == "CVM" or model == "HTM":
             prefix = "final_"
         else:
             prefix = ""
@@ -322,9 +323,7 @@ def write_to_datalake(output_path, models, exclude, env):
                 parent_dir_name,
                 container,
             )
-        elif model == "CVM":
-            prefix = "final_"
-        elif model == "HTM":
+        elif model == "CVM" or model == "HTM":
             prefix = "final_"
         else:
             prefix = ""
@@ -391,7 +390,6 @@ def write_to_datalake(output_path, models, exclude, env):
                 container.upload_blob(name=lake_file_name, data=data)
         except (FileNotFoundError, KeyError):
             print(("%s not found" % file), file=sys.stderr)
-            pass
     # upload validation files to datalake validation folder
     validation_files = [
         os.path.join(
@@ -444,7 +442,6 @@ def write_to_datalake(output_path, models, exclude, env):
                 container.upload_blob(name=lake_file_name, data=data)
         except (FileNotFoundError, KeyError):
             print(("%s not found" % file), file=sys.stderr)
-            pass
 
     # Update manifest timestamp for completion of upload process
     manifest["timing"]["load_end_at"] = datetime.datetime.now(
