@@ -194,6 +194,7 @@ class TCHCContext:
     # 2 directions: SB/EB(0), NB(1)
     border_delay_minutes_lookup: List[List[List[float]]]
 
+    time_period_adjustments: bool = True
     # HOV link_id -> adjacent GP freeway link_id (for station resolution)
     managed_lane_to_freeway_identifier: Dict[int, int] = field(default_factory=dict)
     # freeway link_id -> count station_id
@@ -670,6 +671,15 @@ FEET_PER_MILE = 5280.0
 # TCHC computes three periods; TNED stores five
 TCHC_PERIOD_TARGETS = (("A",), ("EA", "MD", "EV"), ("P",))
 
+CAPACITY_FACTOR_BY_PERIOD_SUFFIX = (
+    ("EA", 1.0 / 4.0),
+    ("MD", 6.5 / 12.0),
+    ("EV", 2.0 / 3.0),
+    ("A", 1.0),
+    ("P", 3.5 / 3.0),
+)
+CAPACITY_SENTINEL = 999999
+
 # TCHCLink output attribute -> TNED field stem, by period and direction
 OUTPUT_STEMS = (
     ("period_capacity_by_period_and_direction", "CP"),
@@ -738,6 +748,16 @@ OUTPUT_FIELDS_BY_DIRECTION = tuple(
     [name for _a, _p, direction, name in OUTPUT_FIELDS if direction == index]
     for index in range(len(DIRECTION_PREFIXES))
 )
+
+
+def adjusted_capacity(value, field_name, enabled=True):
+    """Scale a populated CP/CX value for its five-period TNED target."""
+    if not enabled or value is None or pd.isna(value) or value == CAPACITY_SENTINEL:
+        return value
+    for suffix, factor in CAPACITY_FACTOR_BY_PERIOD_SUFFIX:
+        if field_name.endswith(suffix):
+            return value * factor
+    raise Exception("Cannot determine the time period for capacity field %s" % field_name)
 
 
 # ------------------------------------------------------------------
@@ -973,7 +993,7 @@ def cross_street_class(tables, node_id, link_id, default=7):
 
 def build_context(links, analysis_year, auto_operating_cost_per_mile, station_peak_period_factor,
                   green_cycle, managed_lane_capacity_rate, freeway_capacity_rate,
-                  ramp_meter_direction, managed_lane_to_freeway):
+                  time_period_adjustments, ramp_meter_direction, managed_lane_to_freeway):
     freeway_to_station = dict(
         (int(link_id), int(station))
         for link_id, station in zip(links["HWYCOV0_ID"], links["COSTAT"])
@@ -991,6 +1011,7 @@ def build_context(links, analysis_year, auto_operating_cost_per_mile, station_pe
         four_way_stop_green_cycle_lookup=green_cycle.four_way_stop,
         two_way_stop_green_cycle_lookup=green_cycle.two_way_stop,
         border_delay_minutes_lookup=[],
+        time_period_adjustments=time_period_adjustments,
         managed_lane_to_freeway_identifier=managed_lane_to_freeway,
         freeway_identifier_to_station_identifier=freeway_to_station,
     )
@@ -1079,7 +1100,13 @@ def compute(links, selected, context, cross_tables, external_zone_delay_by_node)
             # one-way links never populate direction 1, so leave those fields alone
             if direction_index == 1 and link.directionality == 1:
                 continue
-            record[name] = getattr(link, attribute)[period_index][direction_index]
+            value = getattr(link, attribute)[period_index][direction_index]
+            if attribute in (
+                "period_capacity_by_period_and_direction",
+                "intersection_capacity_by_period_and_direction",
+            ):
+                value = adjusted_capacity(value, name, context.time_period_adjustments)
+            record[name] = value
         for attribute, direction_index, name in DIRECTIONAL_OUTPUT_FIELDS:
             if direction_index == 1 and link.directionality == 1:
                 continue
@@ -1118,6 +1145,7 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
     aoc = _m.Attribute(float)
     managed_lane_capacity_rate = _m.Attribute(float)
     freeway_capacity_rate = _m.Attribute(float)
+    time_period_adjustments = _m.Attribute(bool)
     jurisdiction_field = _m.Attribute(str)
     traffic_count_field = _m.Attribute(str)
     recompute_all = _m.Attribute(bool)
@@ -1146,6 +1174,7 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
         self.aoc = 0.0
         self.managed_lane_capacity_rate = 1.0
         self.freeway_capacity_rate = 1.0
+        self.time_period_adjustments = True
         self.jurisdiction_field = "JUR"
         self.traffic_count_field = ""
         self.recompute_all = False
@@ -1154,7 +1183,7 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
         self.attributes = [
             "path", "source", "station_file", "gc_file", "link_id_file", "ramp_meter_file",
             "hov_freeway_pairs_file", "external_zone_delay_file", "report_file", "year", "aoc",
-            "managed_lane_capacity_rate", "freeway_capacity_rate", "jurisdiction_field",
+            "managed_lane_capacity_rate", "freeway_capacity_rate", "time_period_adjustments", "jurisdiction_field",
             "traffic_count_field", "recompute_all", "treat_zero_as_missing", "dry_run",
         ]
 
@@ -1209,6 +1238,7 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
         pb.add_text_box("aoc", size=8, title="Auto operating cost (cents/mile):")
         pb.add_text_box("managed_lane_capacity_rate", size=8, title="Managed lane capacity rate:")
         pb.add_text_box("freeway_capacity_rate", size=8, title="Freeway capacity rate:")
+        pb.add_checkbox("time_period_adjustments", title=" ", label="Apply time period capacity adjustments")
         pb.add_text_box("jurisdiction_field", size=20, title="Jurisdiction field:")
         pb.add_text_box("traffic_count_field", size=20, title="Traffic count ID field (optional):")
         pb.add_text_box("report_file", size=80, title="Report file (optional):")
@@ -1230,6 +1260,7 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
                  report_file=self.report_file, year=self.year, aoc=self.aoc,
                  managed_lane_capacity_rate=self.managed_lane_capacity_rate,
                  freeway_capacity_rate=self.freeway_capacity_rate,
+                 time_period_adjustments=self.time_period_adjustments,
                  jurisdiction_field=self.jurisdiction_field,
                  traffic_count_field=self.traffic_count_field,
                  recompute_all=self.recompute_all,
@@ -1244,6 +1275,7 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
                  ramp_meter_file="", hov_freeway_pairs_file="", external_zone_delay_file="",
                  report_file="", year=0, aoc=0.0,
                  managed_lane_capacity_rate=0.0, freeway_capacity_rate=0.0,
+                 time_period_adjustments=None,
                  jurisdiction_field="", traffic_count_field="",
                  am_hours=DEFAULT_AM_HOURS, pm_hours=DEFAULT_PM_HOURS,
                  recompute_all=False, treat_zero_as_missing=False, dry_run=False):
@@ -1272,6 +1304,9 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
             managed_lane_capacity_rate or props.get("tchc.managed.lane.capacity.rate", 1.0))
         self.freeway_capacity_rate = float(
             freeway_capacity_rate or props.get("tchc.freeway.capacity.rate", 1.0))
+        self.time_period_adjustments = bool(
+            props.get("tchc.time.period.adjustments", True)
+            if time_period_adjustments is None else time_period_adjustments)
         self.jurisdiction_field = jurisdiction_field or "JUR"
         self.traffic_count_field = traffic_count_field
 
@@ -1292,6 +1327,7 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
             ("aoc", self.aoc),
             ("managed_lane_capacity_rate", self.managed_lane_capacity_rate),
             ("freeway_capacity_rate", self.freeway_capacity_rate),
+            ("time_period_adjustments", self.time_period_adjustments),
             ("recompute_all", self.recompute_all),
             ("dry_run", self.dry_run),
         ])
@@ -1335,6 +1371,7 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
         context = build_context(
             links, self.year, self.aoc, station_factors, green_cycle,
             self.managed_lane_capacity_rate, self.freeway_capacity_rate,
+            self.time_period_adjustments,
             load_lookup(self.ramp_meter_file), load_lookup(self.hov_freeway_pairs_file))
         external_zone_delay = load_lookup(self.external_zone_delay_file, cast=float)
         cross_tables = build_cross_street_classes(links)

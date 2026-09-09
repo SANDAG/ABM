@@ -120,6 +120,7 @@ Relative paths are resolved against `path`, the scenario directory.
 | Auto operating cost (cents/mile) | `aoc` | `aoc.fuel` + `aoc.maintenance` | — |
 | Managed lane capacity rate | `managed_lane_capacity_rate` | `tchc.managed.lane.capacity.rate` | 1.0 |
 | Freeway capacity rate | `freeway_capacity_rate` | `tchc.freeway.capacity.rate` | 1.0 |
+| Apply time-period capacity adjustments | `time_period_adjustments` | `tchc.time.period.adjustments` | `true` |
 | Jurisdiction field | `jurisdiction_field` | — | `JUR` |
 | ADT link ID field | `traffic_count_field` | — | unset |
 | AM peak hours | `am_hours` | — | 6, 7, 8 |
@@ -446,6 +447,7 @@ promoted to through.
 | `auto_operating_cost_per_mile` | Vehicle operating cost in cents/mile |
 | `managed_lane_capacity_rate` | Multiplier on HOV3+ lane capacity and projects 613/614 |
 | `freeway_capacity_rate` | Multiplier on general-purpose freeway and FC 8 capacity |
+| `time_period_adjustments` | Whether five-period factors are applied to populated CP and CX outputs |
 | `analysis_year` | Years after 2015 enable traffic system management features |
 
 ### Lookups

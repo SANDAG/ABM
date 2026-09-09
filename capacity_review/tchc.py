@@ -25,6 +25,22 @@ DEFAULT_SPEED_BY_FUNCTIONAL_CLASS = [65, 45, 40, 35, 30, 40, 35, 65, 30, 30, 50,
 # Turn-lane capacity per lane (veh/hr) by functional class, 0-indexed: FC 1..10
 TURN_CAPACITY_BY_FUNCTIONAL_CLASS = [250, 250, 150, 100, 100, 100, 100, 100, 100, 0]
 
+CAPACITY_FACTOR_BY_PERIOD = {
+    "ea": 1.0 / 4.0,
+    "am": 1.0,
+    "md": 6.5 / 12.0,
+    "pm": 3.5 / 3.0,
+    "ev": 2.0 / 3.0,
+}
+CAPACITY_SENTINEL = 999999
+
+
+def adjusted_capacity(value, period: str, enabled: bool = True):
+    """Scale a populated CP/CX value for its five-period target."""
+    if not enabled or value is None or value != value or value == CAPACITY_SENTINEL:
+        return value
+    return value * CAPACITY_FACTOR_BY_PERIOD[period]
+
 
 # ------------------------------------------------------------------
 # Data model (direct mapping of tcov.inc aat* fields used by TCHC)
@@ -132,6 +148,7 @@ class TCHCContext:
     # 2 directions: SB/EB(0), NB(1)
     border_delay_minutes_lookup: List[List[List[float]]]
 
+    time_period_adjustments: bool = True
     # HOV link_id → adjacent GP freeway link_id (for station resolution)
     managed_lane_to_freeway_identifier: Dict[int, int] = field(default_factory=dict)
     # freeway link_id → count station_id
