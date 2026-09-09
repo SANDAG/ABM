@@ -28,7 +28,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Dict, Iterable, List, Optional, Tuple
 
-from tchc import TCHCContext, TCHCLink, apply_tchc
+from tchc import TCHCContext, TCHCLink, adjusted_capacity, apply_tchc
 
 
 # ------------------------------------------------------------------
@@ -313,6 +313,7 @@ def build_context(
     two_way_stop_green_cycle_lookup,
     managed_lane_capacity_rate: float = 1.0,
     freeway_capacity_rate: float = 1.0,
+    time_period_adjustments: bool = True,
     ramp_meter_direction_by_traffic_count_identifier: Optional[Dict[int, int]] = None,
     border_delay_minutes_lookup=None,
     managed_lane_to_freeway_identifier: Optional[Dict[int, int]] = None,
@@ -343,6 +344,7 @@ def build_context(
         four_way_stop_green_cycle_lookup=four_way_stop_green_cycle_lookup,
         two_way_stop_green_cycle_lookup=two_way_stop_green_cycle_lookup,
         border_delay_minutes_lookup=border_delay_minutes_lookup or [[[0.0]]],
+        time_period_adjustments=time_period_adjustments,
         managed_lane_to_freeway_identifier=managed_lane_to_freeway_identifier or {},
         freeway_identifier_to_station_identifier=freeway_identifier_to_station_identifier or {},
         node_sphere_by_id=reader.node_sphere_by_id,
@@ -361,10 +363,12 @@ class EmmeNetworkWriter:
         network,
         attributes: EmmeAttributeNames = DEFAULT_ATTRIBUTES,
         write_closed_periods: bool = False,
+        time_period_adjustments: bool = True,
     ):
         self.network = network
         self.attributes = attributes
         self.write_closed_periods = write_closed_periods
+        self.time_period_adjustments = time_period_adjustments
         self.available = set(network.attributes("LINK"))
 
     def _set(self, link, name: str, value) -> None:
@@ -392,8 +396,16 @@ class EmmeNetworkWriter:
                 self._set(link, a.periodic(a.time_link, period), travel_time)
                 self._set(link, a.periodic(a.time_inter, period), delay)
                 self._set(link, a.periodic(a.capacity_hourly, period), hourly)
-                self._set(link, a.periodic(a.capacity_link, period), period_capacity)
-                self._set(link, a.periodic(a.capacity_inter, period), intersection_capacity)
+                self._set(
+                    link,
+                    a.periodic(a.capacity_link, period),
+                    adjusted_capacity(period_capacity, period, self.time_period_adjustments),
+                )
+                self._set(
+                    link,
+                    a.periodic(a.capacity_inter, period),
+                    adjusted_capacity(intersection_capacity, period, self.time_period_adjustments),
+                )
                 self._set(link, a.periodic(a.toll, period), toll)
 
 
@@ -484,7 +496,11 @@ def apply_tchc_to_scenario(
         two_way_stop_green_cycle_lookup=two_way_stop_green_cycle_lookup,
         **context_kwargs,
     )
-    writer = EmmeNetworkWriter(network, attributes=attributes)
+    writer = EmmeNetworkWriter(
+        network,
+        attributes=attributes,
+        time_period_adjustments=context.time_period_adjustments,
+    )
     result = apply_tchc_to_network(network, context, reader, writer, keep_links=keep_links)
     if publish:
         scenario.publish_network(network, resolve_attributes=True)
