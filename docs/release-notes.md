@@ -2,8 +2,30 @@
 
 SANDAG ABM release notes can also be found on the [GitHub repo](https://github.com/SANDAG/ABM/releases).
 
+## Version 15.5.1 (September 10, 2026)
+This release completes the transition of ABM3 from Java to Python. New Python-based intra-household AV allocation and taxi/TNC routing models replace the final Java processes, enabling the removal of all Java from the repository (over 600 files). Other highlights include multiprocessing for the Commercial Vehicle Model (CVM), recalibration of the work location choice model, and updates to how the bike network is classified and stored. Because the bike network reclassification process has been removed, all bike networks must be updated and bike logsums re-run before running this version.
+
+### Software Versions
+- ActivitySim 1.5.1
+- EMME OpenPaths 25
+
+### Features
+- [PR 366](https://github.com/SANDAG/ABM/pull/366): New Python-based intra-household AV allocation and taxi/TNC routing models, replacing the Java implementations which significantly improved fleet efficiency and reduced runtime
+- [PR 438](https://github.com/SANDAG/ABM/pull/438): Removed all remaining Java folders and files from the repository (over 600 files) following completion of the Python AV/TNC routing work
+- [PR 443](https://github.com/SANDAG/ABM/pull/443): Added multiprocessing support to the Commercial Vehicle Model (CVM)
+- [PR 439](https://github.com/SANDAG/ABM/pull/439): Added configuration support for protected bike lanes (Class IV) and bike boulevards (Class V)
+- [PR 441](https://github.com/SANDAG/ABM/pull/441): Updated the bike network reader and 4D network import workflow to read the bike network from geodatabase feature classes in EMMEOutputs.gdb instead of shapefiles
+- [PR 446](https://github.com/SANDAG/ABM/pull/446): Recalibration of the work location choice model, updating from piecewise-constant to piecewise-linear coefficients
+- [PR 447](https://github.com/SANDAG/ABM/pull/447): Added a pending subdirectory to the manifest queueing system so that concurrently finishing scenarios are queued and ingested correctly
+
+### Bug Fixes
+- [PR 442](https://github.com/SANDAG/ABM/pull/442): Fixed shadow pricing by adding the workplace segment field mapping
+- [PR 445](https://github.com/SANDAG/ABM/pull/445): Fixed an error in the school_location config file that prevented the shadow price utility adjustment from being applied to preschool trips
+- [PR 432](https://github.com/SANDAG/ABM/pull/432): Fall back to Windows robocopy when the EMME script cannot read/copy the EMME database to the remote drive
+- [PR 436](https://github.com/SANDAG/ABM/pull/436): Removed erroneous warning messages (missing solutions.mtbx toolbox and command usage) from scenario creation output
+
 ## Version 15.5.0 (July 09, 2026)
-This release upgrades ABM3 to ActivitySim version 1.5.1. Compatibility changes were made to configuration files and code to support the new version. No significatn differences in model outputs, as confirmed by comparison test runs between the asim_151 and asim_140 environments.
+This release upgrades ABM3 to ActivitySim version 1.5.1. Compatibility changes were made to configuration files and code to support the new version. No significant differences in model outputs, as confirmed by comparison test runs between the asim_151 and asim_140 environments.
 
 ### Software Versions
 - ActivitySim 1.5.1
