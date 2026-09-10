@@ -3,7 +3,7 @@
 SANDAG ABM release notes can also be found on the [GitHub repo](https://github.com/SANDAG/ABM/releases).
 
 ## Version 15.5.1 (September 10, 2026)
-This release completes the transition of ABM3 from Java to Python. New Python-based intra-household AV allocation and taxi/TNC routing models replace the final Java processes, enabling the removal of all Java from the repository (over 600 files). Other highlights include multiprocessing for the Commercial Vehicle Model (CVM), recalibration of the work location choice model, and updates to how the bike network is classified and stored. Because the bike network reclassification process has been removed, all bike networks must be updated and bike logsums re-run before running this version.
+This release completes the transition of ABM3 from Java to Python. New Python-based intra-household AV allocation and taxi/TNC routing models replace the final Java processes, enabling the removal of all Java from the repository (over 600 files). Other highlights include multiprocessing for the Commercial Vehicle Model (CVM), recalibration of the work location choice model, and updates to how the bike network is classified and stored. Version 15.5.1 was also used for the **2027 RTIP model runs**. Because the bike network reclassification process has been removed, all bike networks must be updated and bike logsums re-run before running this version.
 
 ### Software Versions
 - ActivitySim 1.5.1
