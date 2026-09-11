@@ -51,23 +51,41 @@ TOUR_SPEC_SEGMENTS:
 # spec keyed by <spec_segment>
 SPEC_SEGMENTS:
   escort:
-    'SPEC': tour_scheduling_nonmandatory_escort.csv
-    'COEFFICIENTS': tour_scheduling_nonmandatory_escort_coefficients.csv
+    SPEC: tour_scheduling_nonmandatory_escort.csv
+    COEFFICIENTS: tour_scheduling_nonmandatory_escort_coefficients.csv
+    compute_settings:
+      use_numexpr: true
+      use_bottleneck: false
   shopping:
-    'SPEC': tour_scheduling_nonmandatory_shopping.csv
-    'COEFFICIENTS': tour_scheduling_nonmandatory_shopping_coefficients.csv
+    SPEC: tour_scheduling_nonmandatory_shopping.csv
+    COEFFICIENTS: tour_scheduling_nonmandatory_shopping_coefficients.csv
+    compute_settings:
+      use_numexpr: true
+      use_bottleneck: false
   eatout:
-    'SPEC': tour_scheduling_nonmandatory_eatout.csv
-    'COEFFICIENTS': tour_scheduling_nonmandatory_eatout_coefficients.csv
+    SPEC: tour_scheduling_nonmandatory_eatout.csv
+    COEFFICIENTS: tour_scheduling_nonmandatory_eatout_coefficients.csv
+    compute_settings:
+      use_numexpr: true
+      use_bottleneck: false
   othdiscr:
-    'SPEC': tour_scheduling_nonmandatory_othdiscr.csv
-    'COEFFICIENTS': tour_scheduling_nonmandatory_othdiscr_coefficients.csv
+    SPEC: tour_scheduling_nonmandatory_othdiscr.csv
+    COEFFICIENTS: tour_scheduling_nonmandatory_othdiscr_coefficients.csv
+    compute_settings:
+      use_numexpr: true
+      use_bottleneck: false
   othmaint:
-    'SPEC': tour_scheduling_nonmandatory_othmaint.csv
-    'COEFFICIENTS': tour_scheduling_nonmandatory_othmaint_coefficients.csv
+    SPEC: tour_scheduling_nonmandatory_othmaint.csv
+    COEFFICIENTS: tour_scheduling_nonmandatory_othmaint_coefficients.csv
+    compute_settings:
+      use_numexpr: true
+      use_bottleneck: false
   social:
-    'SPEC': tour_scheduling_nonmandatory_social.csv
-    'COEFFICIENTS': tour_scheduling_nonmandatory_social_coefficients.csv
+    SPEC: tour_scheduling_nonmandatory_social.csv
+    COEFFICIENTS: tour_scheduling_nonmandatory_social_coefficients.csv
+    compute_settings:
+      use_numexpr: true
+      use_bottleneck: false
 
 ## alts preprocessor keyed by <spec_segment>
 #ALTS_PREPROCESSOR:
@@ -91,3 +109,7 @@ SPEC_SEGMENTS:
 #    DF: alt_tdd
 #
 DESTINATION_FOR_TOUR_PURPOSE: destination
+
+compute_settings:
+  use_numexpr: true
+  use_bottleneck: false

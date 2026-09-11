@@ -1,0 +1,2 @@
+Description,Target,Expression
+micromobility access time at destination taz,d_microAccTime,"land_use.groupby('TAZ')['MicroAccessTime'].agg('max').reindex(df.index)"

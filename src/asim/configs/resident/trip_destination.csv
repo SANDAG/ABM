@@ -6,7 +6,7 @@ local_dist_nd,,_nd_DIST@nd_skims['DIST'],1,1,1,1,1,1,1,1,1,1
 distance_deviation,distance deviation,_dist_dev@(_od_DIST +_dp_DIST - _op_DIST),1,1,1,1,1,1,1,1,1,1
 dist_deviation_logged,logged deviation distance,"_dist_dev_logged@np.where((_dist_dev > 0), np.log(_dist_dev),0)",1,1,1,1,1,1,1,1,1,1
 #,,,,,,,,,,,,
-util_sizeterm,size term,"@np.log1p(size_terms.get(df.dest_taz, df.purpose))",coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one
+util_sizeterm,size term,"@np.log1p(size_terms.get(df.alt_dest, df.purpose)) # sharrow: np.log1p(size_terms['sizearray'])",coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one
 util_Sampleofalternativescorrectionfactor,Sample of alternatives correction factor,"@np.minimum(np.log(df.pick_count/df.prob), 60)",coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one,coef_one
 util_Modechoicelogsum,Mode choice logsum,od_logsum + dp_logsum,coef_mode_choice_logsum_mandatory,coef_mode_choice_logsum_mandatory,coef_mode_choice_logsum_mandatory,coef_mode_choice_logsum_maint,coef_mode_choice_logsum_maint,coef_mode_choice_logsum_maint,coef_mode_choice_logsum_discr,coef_mode_choice_logsum_discr,coef_mode_choice_logsum_discr,coef_mode_choice_logsum_discr
 #,,,,,,,,,,,,

@@ -1,6 +1,9 @@
 
-# columns from land_use table to add to df
+# columns from land_use table to add to df for destinations
 land_use_columns: ['emp_ret', 'emp_total', 'hh', 'walk_dist_local_bus']
+
+# columns from land_use table to add to df for origins
+land_use_columns_orig: ['walk_dist_local_bus']
 
 CONSTANTS:
   # dispersion parameters

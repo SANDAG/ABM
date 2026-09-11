@@ -19,11 +19,11 @@ auto off-peak total,auOpTotal,df.emp_total * _decay
 #,, transit peak
 #,, assume peak outbound transit occurs in AM
 o-d peak transit time,_inVehicletime_od,"skim_od[('WALK_MIX_TOTALIVTT', 'AM')]"
-o-d out of vehicle transit time,_outOfVehicleTime_od,"skim_od[('WALK_MIX_FIRSTWAIT', 'AM')] + skim_od[('WALK_MIX_XFERWAIT', 'AM')] + reindex(df.walk_dist_local_bus, df.orig) + skim_od[('WALK_MIX_XFERWALK', 'AM')] + reindex(df.walk_dist_local_bus, df.dest)"
+o-d out of vehicle transit time,_outOfVehicleTime_od,"skim_od[('WALK_MIX_FIRSTWAIT', 'AM')] + skim_od[('WALK_MIX_XFERWAIT', 'AM')] + df.landuse_orig_walk_dist_local_bus + skim_od[('WALK_MIX_XFERWALK', 'AM')] + df.walk_dist_local_bus"
 total o-d peak transit time,_trPkTime_od,(_inVehicletime_od +  out_of_vehicle_time_weight * _outOfVehicleTime_od)
 #,, assume peak inbound transit occurs in PM
 o-d peak transit time,_inVehicletime_do,"skim_do[('WALK_MIX_TOTALIVTT', 'PM')]"
-o-d out of vehicle transit time,_outOfVehicleTime_do,"skim_do[('WALK_MIX_FIRSTWAIT', 'PM')] + skim_do[('WALK_MIX_XFERWAIT', 'PM')] + reindex(df.walk_dist_local_bus, df.orig) + skim_do[('WALK_MIX_XFERWALK', 'PM')] + reindex(df.walk_dist_local_bus, df.dest)"
+o-d out of vehicle transit time,_outOfVehicleTime_do,"skim_do[('WALK_MIX_FIRSTWAIT', 'PM')] + skim_do[('WALK_MIX_XFERWAIT', 'PM')] + df.landuse_orig_walk_dist_local_bus + skim_do[('WALK_MIX_XFERWALK', 'PM')] + df.walk_dist_local_bus"
 total o-d peak transit time,_trPkTime_do,(_inVehicletime_do +  out_of_vehicle_time_weight * _outOfVehicleTime_do)
 #,,
 #o-d peak transit time,_trPkTime_do,"skim_do[('WALK_MIX_TOTALIVTT', 'PM')]"
