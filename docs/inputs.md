@@ -14,265 +14,177 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
     <tr>
         <td><strong>File Name</strong></td>
         <td><strong>Description</strong></td>
-        <td><strong>File Format</strong></td>
-        <td><strong>Source</strong></td>
     </tr>
     <tr>
         <td><strong><a href=#land-use>Land Use</a></strong></td>
-        <td></td>
-        <td></td>
         <td></td>
     </tr>
     <tr>
         <td><a href=#master-geographic-reference-areas-data>mgra15_based_input{year}.csv</a></td>
         <td>MGRA land use, demographics, and employment</td>
-        <td>CSV</td>
-        <td>Land Use Modelers, Transportation Modelers, and GIS</td>
     </tr>
     <tr>
         <td><strong><a href=#synthetic-population>Synthetic Population</a></strong></td>
-        <td></td>
-        <td></td>
         <td></td>
     </tr>
     <tr>
         <td><a href=#population-synthesizer-household-data>households.csv</a></td>
         <td>Synthetic households</td>
-        <td>CSV</td>
-        <td>Transportation Modelers</td>
     </tr>
     <tr>
         <td><a href=#population-synthesizer-person-data>persons.csv</a></td>
         <td>Synthetic persons</td>
-        <td>CSV</td>
-        <td>Transportation Modelers</td>
     </tr>
     <tr>
         <td><strong><a href=#crossborder>Crossborder Model</a></strong></td>
-        <td></td>
-        <td></td>
         <td></td>
     </tr>
     <tr>
         <td>closest_maz_to_external_tazs.csv</td>
         <td>Crossborder Model list of closest MGRA to each external TAZ</td>
-        <td>CSV</td>
-        <td>Transportation Modelers</td>
     </tr>
     <tr>
         <td><a href=#crossborder-model-inbound-stop-duration-distribution>crossBorder_inboundStopDuration.csv</a></td>
         <td>Crossborder Model time-of-day offsets for inbound stops</td>
-        <td>CSV</td>
-        <td>Transportation Modelers</td>
     </tr>
     <tr>
         <td><a href=#crossborder-model-outbound-stop-duration-distribution>crossBorder_outboundStopDuration.csv</a></td>
         <td>Crossborder Model time-of-day offsets for outbound stops</td>
-        <td>CSV</td>
-        <td>Transportation Modelers</td>
     </tr>
     <tr>
         <td><a href=#crossborder-model-point-of-entry-wait-time>crossBorder_pointOfEntryWaitTime.csv</a></td>
         <td>Crossborder Model wait times at border crossing locations</td>
-        <td>CSV</td>
-        <td>Transportation Modelers</td>
     </tr>
     <tr>
         <td><a href=#crossborder-model-stop-frequency>crossBorder_stopFrequency.csv</a></td>
         <td>Crossborder Model stop frequency data</td>
-        <td>CSV</td>
-        <td>Transportation Modelers</td>
     </tr>
     <tr>
         <td><a href=#crossborder-model-stop-purpose-distribution>crossBorder_stopPurpose.csv</a></td>
         <td>Crossborder Model stop purpose distribution</td>
-        <td>CSV</td>
-        <td>Transportation Modelers</td>
     </tr>
     <tr>
         <td><a href=#crossborder-model-supercolonia>crossBorder_supercolonia.csv</a></td>
         <td>Crossborder Model distance from Colonias to border crossing locations</td>
-        <td>CSV</td>
-        <td>Transportation Modelers</td>
     </tr>
     <tr>
         <td><a href=#crossborder-model-tour-entry-and-return-distribution>crossBorder_tourEntryAndReturn.csv</a></td>
         <td>Crossborder Model tour entry and return time-of-day distribution</td>
-        <td>CSV</td>
-        <td>Transportation Modelers</td>
     </tr>
     <tr>
         <td>crossBorder_tourPurpose_control.csv</td>
         <td>Crossborder Model tour purpose reassignment probability lookup table</td>
-        <td>CSV</td>
-        <td>Transportation Modelers</td>
     </tr>
     <tr>
         <td>crossBorder_tourPurpose_nonSENTRI.csv</td>
         <td>Crossborder Model tour purpose distribution for Non-SENTRI tours</td>
-        <td>CSV</td>
-        <td>Transportation Modelers</td>
     </tr>
     <tr>
         <td>crossBorder_tourPurpose_SENTRI.csv</td>
         <td>Crossborder Model tour purpose distribution for SENTRI tours</td>
-        <td>CSV</td>
-        <td>Transportation Modelers</td>
     </tr>
     <tr>
         <td><strong><a href=#external-models>External Models</a></strong></td>
-        <td></td>
-        <td></td>
         <td></td>
     </tr>
     <tr>
         <td><a href=#external-external-control-totals>externalExternalTripsByYear.csv</a></td>
         <td>External origin-destination station trip matrix</td>
-        <td>CSV</td>
-        <td>Transportation Modelers</td>
     </tr>
     <tr>
         <td><a href=#external-internal-control-totals>internalExternal_tourTOD.csv</a></td>
         <td>External Internal station control totals</td>
-        <td>CSV</td>
-        <td>Transportation Modelers</td>
     </tr>
     <tr>
         <td><a href=#internal-external-tours-time-of-day-distribution>internalExternal_tourTOD.csv</a></td>
         <td>Internal-External Model tour time-of-day frequency distribution</td>
-        <td>CSV</td>
-        <td>Transportation Modelers</td>
     </tr>
     <tr>
         <td><a href=#external-internal-model-external-zone-size-terms>resident_ie_size_terms.csv</a></td>
         <td>Internal-External Model external zone size terms</td>
-        <td>CSV</td>
-        <td>Transportation Modelers</td>
     </tr>
     <tr>
-        <td>**Commercial Vehicle Model**</td>
-        <td></td>
-        <td></td>
+        <td><a href=#commercial-vehicle-model><strong>Commercial Vehicle Model</strong></a></td>
         <td></td>
     </tr>
     <tr>
-        <td>land_use(output from preprocessing step)</td>
-        <td>MGRA based land use file</td>
-        <td>CSV</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>percent_of_establishments_by_luz_size_emp_cat.xlsx</td>
+        <td><a href=#establishment-size-distribution-by-luz>percent_of_establishments_by_luz_size_emp_cat.xlsx</a></td>
         <td>Percent of establishments in LUZ that belong in each size category by industry sector</td>
-        <td>Excel Workbook</td>
-        <td></td>
     </tr>
     <tr>
-        <td>CVM\SynthEstablishments.csv</td>
+        <td><a href=#synthesized-establishments>CVM\SynthEstablishments.csv</a><br><i>Generated during ABM3 run</i></td>
         <td>Output from CVM establishment synthesis, similar description as previous part</td>
-        <td>CSV</td>
-        <td></td>
     </tr>
     <tr>
-        <td>CVM\MGRAEmpByEstSize.csv</td>
+        <td><a href=#employment-by-mgra-by-taz-by-luz>CVM\MGRAEmpByEstSize.csv</a><br><i>Generated during ABM3 run</i></td>
         <td>MGRA Based synthetically generated establishments. Used for disgnostic purposes, not for simulation</td>
-        <td>CSV</td>
-        <td></td>
     </tr>
     <tr>
-        <td>CVM\SummaryEstablishments.csv</td>
+        <td><a href=#summary-of-synthesized-establishments>CVM\SummaryEstablishments.csv</a><br><i>Generated during ABM3 run</i></td>
         <td>Contains information about synthetically generated establishments to be used as inputs to the commercial vehicle model</td>
-        <td>CSV</td>
-        <td></td>
+    </tr>
+    <tr>
+        <td><a href=#glossary-of-cvm-industries>Glossary of CVM Industries</a><br><i>Not an ABM3 input</i></td>
+        <td>Glossary of industry codes utilized by the CVM. Not an input, only for reference.</td>
     </tr>
     <tr>
         <td>**Heavy Truck Model (HTM)**</td>
-        <td></td>
-        <td></td>
         <td></td>
     </tr>
     <tr>
         <td>HTM\inputs_sandag_htm_&lt;Scenario_Year&gt;.xlsx</td>
         <td>Contains all the required inputs ( in different sheets) for the Heavy Truck Model</td>
-        <td>Excel Workbook</td>
-        <td></td>
     </tr>
     <tr>
         <td>HTM\FAF5_BaseAndFutureYears_Oct27_2023.csv</td>
         <td>FAF5 Data (filtered) containing FAF flows for required years</td>
-        <td>CSV</td>
-        <td></td>
     </tr>
     <tr>
         <td>**Other**</td>
-        <td></td>
-        <td></td>
         <td></td>
     </tr>
     <tr>
         <td>[bikeTazLogsum.csv](#bike_taz_logsum)</td>
         <td>Bike TAZ logsum</td>
-        <td>CSV</td>
-        <td>Transportation Modelers</td>
     </tr>
     <tr>
         <td>[bikeMgraLogsum.csv](#bike_mgra_logsum)</td>
         <td>Bike MGRA logsum</td>
-        <td>CSV</td>
-        <td>Transportation Modelers</td>
     </tr>
     <tr>
         <td>[parametersByYears.csv](#parametersbyyearscsv)</td>
         <td>Parameters by scenario years. Includes AOC, aiport enplanements, cross-border tours, cross-border sentri share.</td>
-        <td>CSV</td>
-        <td>Transportation Modelers</td>
     </tr>
     <tr>
         <td>[filesByYears.csv](#filesbyyearscsv)</td>
         <td>File names by scenario years.</td>
-        <td>CSV</td>
-        <td>Transportation Modelers</td>
     </tr>
     <tr>
         <td>trip_XX.omx</td>
         <td>Warm start trip table; XX is the TOD (EA, AM, MD, PM, and EV)</td>
-        <td>OMX</td>
-        <td>Transportation Modelers</td>
     </tr>
     <tr>
         <td>zone_term.csv</td>
         <td>TAZ terminal times</td>
-        <td>Space Delimited Text File</td>
-        <td>Transportation Modelers</td>
     </tr>
     <tr>
         <td>mgra15.shp</td>
-        <td></td>
-        <td>SHP</td>
         <td></td>
     </tr>
     <tr>
         <td>taz15.shp</td>
         <td></td>
-        <td>SHP</td>
-        <td></td>
     </tr>
     <tr>
         <td>all_vol_dfs.csv [to be updated]</td>
-        <td></td>
-        <td></td>
         <td></td>
     </tr>
     <tr>
         <td>all_wait_times.csv [to be updated]</td>
         <td></td>
-        <td></td>
-        <td></td>
     </tr>
     <tr>
         <td>specialEvents_() [to be updated]</td>
-        <td></td>
-        <td></td>
         <td></td>
     </tr>
 </table>
@@ -1098,11 +1010,13 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
 <a id="cvm_establishment_synthesis"></a>
 
 ## Commercial Vehicle Model
-### `PERCENT_OF_ESTABLISHMENTS_BY_LUZ_SIZE_EMP_CAT.CSV`
+
+### Establishment Size Distribution by LUZ
+`percent_of_establishments_by_luz_size_emp_cat.xlsx`
 
 <table>
     <tr>
-        <th>Column Name</th>
+        <th>Sheet Name</th>
         <th>Description</th>
     </tr>
     <tr>
@@ -1118,9 +1032,8 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
     
 </table>
 
-<a id ="cvm"></a>
-
-### `CVM/SYNTHESTABLISHMENTS.CSV`
+### Synthesized Establishments
+`CVM/SynthEstablishments.csv`
 
 <table>
     <tr>
@@ -1160,86 +1073,63 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
     
 </table>
 
-<a id ="cvm"></a>
-
-### `CVM/MGRAEMPBYESTSIZE.CSV`
-
-<table>
-  <tr>
-    <td>Field 
-    </td>
-    <td>Description
-    </td>
-  </tr>
-  <tr>
-    <td>mgra
-    </td>
-    <td>MGRA id
-    </td>
-  </tr>
-  <tr>
-    <td>taz
-    </td>
-    <td>TAZ id
-    </td>
-  </tr>
-  <tr>
-    <td>luz
-    </td>
-    <td>Land use zone
-
-  </tr>
-  <tr>
-    <td>emp_Sector_Size_Class
-    </td>
-    <td>Employment numbers, where Sector is gov, mil, ag_min, bus_svcs, 
-fin_res_mgm, educ, hlth, ret, trn_wrh, con, utl, mnf, whl, ent, accm, food, 
-oth; where Size_Class ranges 1-7.
-
-  </tr>
-  
-
-</table>
-
-#### CVM Establishment Synthesis File ( SummarySynthEstabs.csv )
-##### `SummarySynthEstabs.csv`
+### Employment by MGRA by TAZ by LUZ
+`CVM/MGRAEmpByEstSize.csv`
 
 <table>
-  <tr>
-    <td>Field
-    </td>
-    <td>Description
-    </td>
-  </tr>
-  <tr>
-    <td>Industry_No
-    </td>
-    <td>Industry No
-    </td>
-  </tr>
-  <tr>
-    <td>Industry_Name
-    </td>
-    <td>Industry name
-    </td>
-  </tr>
-  <tr>
-    <td>Size_Class
-    </td>
-    <td>Size class
-</td>
-  </tr>
-  <tr>
-    <td>Count
-    </td>
-    <td>Total number
-  </td>
-  </tr>
+    <tr>
+        <th>Field </th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>mgra</td>
+        <td>MGRA id</td>
+    </tr>
+    <tr>
+        <td>taz</td>
+        <td>TAZ id</td>
+    </tr>
+    <tr>
+        <td>luz</td>
+        <td>Land use zone</td>
+    </tr>
+    <tr>
+        <td>emp_Sector_Size_Class</td>
+        <td>
+        Employment numbers, where Sector is gov, mil, ag_min, bus_svcs, 
+        fin_res_mgm, educ, hlth, ret, trn_wrh, con, utl, mnf, whl, ent, accm, food, 
+        oth; where Size_Class ranges 1-7.
+        </td>
+    </tr>
 </table>
 
+### Summary of Synthesized Establishments
+`SummarySynthEstabs.csv`
 
+<table>
+    <tr>
+        <th>Field</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Industry_No</td>
+        <td>Industry No</td>
+    </tr>
+    <tr>
+        <td>Industry_Name</td>
+        <td>Industry name</td>
+    </tr>
+    <tr>
+        <td>Size_Class</td>
+        <td>Size class</td>
+    </tr>
+    <tr>
+        <td>Count</td>
+        <td>Total number</td>
+    </tr>
+</table>
 
-<a id="cvm_industry"></a>
+### Glossary of CVM Industries
 
 <table>
     <tr>
