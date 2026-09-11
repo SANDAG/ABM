@@ -892,7 +892,6 @@ persons:
     - num_shop_maint_tours
     - num_shop_maint_escort_tours
     - num_soc_discr_tours
-    - demographic_segment
     - time_distrib_mean_work
     - time_distrib_stddev_nonwork
     - time_distrib_mean_nonwork

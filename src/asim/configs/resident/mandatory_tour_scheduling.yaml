@@ -30,6 +30,10 @@ TOUR_SPEC_SEGMENTS:
   school: school
   univ: univ
 
+preprocessor:
+  SPEC: mandatory_tour_scheduling_annotate_choosers_preprocessor.csv
+  DF: df
+
 ALTS_PREPROCESSOR:
   work:
     SPEC: mandatory_tour_scheduling_annotate_alts_preprocessor.csv

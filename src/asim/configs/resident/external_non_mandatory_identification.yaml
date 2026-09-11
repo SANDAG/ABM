@@ -9,3 +9,9 @@ LOGIT_TYPE: MNL
 EXTERNAL_COL_NAME: is_external_tour
 # set to True if not external but CHOOSER_FILTER_COLUMN_NAME is True
 INTERNAL_COL_NAME: is_internal_tour
+
+preprocessor:
+  SPEC: external_non_mandatory_identification_preprocessor.csv
+  DF: df
+  TABLES:
+    - land_use

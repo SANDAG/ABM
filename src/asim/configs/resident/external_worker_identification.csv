@@ -1,6 +1,6 @@
 Label,Description,Expression,work_external,work_internal
 util_dist_to_nearest_ext_station,Distance to nearest external station,dist_to_external_zone,coef_dist_to_nearest_ext_station,
-util_size_of_nearest_ext_station,Size of nearest external station,"@np.log1p(reindex(land_use.external_work,df.closest_external_zone))",coef_size_of_nearest_ext_station,
+util_size_of_nearest_ext_station,Size of nearest external station,"@np.log1p(df.reindex_land_use_external_to_work_external_zone)",coef_size_of_nearest_ext_station,
 util_dist_lt_2p5,Distance less than 2.5 miles,"@np.where(df.dist_to_external_zone<2.5,1,0)",coef_dist_lt_2p5,
 util_part_time,Part time worker,"@np.where(df.is_parttime_worker==""TRUE"",1,0)",coef_part_time,
 util_inc_lt15,Household Income less than $15k,@(df.income<15000),coef_inc_lt15,
