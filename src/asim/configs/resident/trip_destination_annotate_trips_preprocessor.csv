@@ -15,6 +15,7 @@ adding _trips to avoid conflict with the variables in the tours_merged,age_trips
 ,female,"reindex(persons.female, df.person_id)"
 #,age_55p,"reindex(persons.age_55_p, df.person_id)"
 #,age_35_54,"reindex(persons.age_35_to_54, df.person_id)"
+,is_nm_trip,"~df.purpose.isin(['work','univ','school'])"
 ,workTour,"np.where(df.primary_purpose == 'work', 1, 0)"
 ,schoolTour,"np.where(df.primary_purpose == 'school', 1, 0)"
 ,univTour,"np.where(df.primary_purpose == 'univ', 1, 0)"

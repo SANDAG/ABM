@@ -47,7 +47,7 @@ class SelectStudyYears(tkinter.Frame):
 
 
 class CreateScenarioGUI(tkinter.Frame):
-        def __init__(self, root, emme_version = "4.3.7", year = "2022", geo = "1", year_suffix = ""):
+        def __init__(self, root, emme_version = "25.00.01", year = "2022", geo = "1", year_suffix = ""):
             tkinter.Frame.__init__(self, root, border=5)
             body = tkinter.Frame(self)
             body.pack(fill=constants.X, expand=1)
@@ -133,7 +133,7 @@ class CreateScenarioGUI(tkinter.Frame):
             tkinter.Label(body, text=u"Emme Version", font=("Helvetica", 8, 'bold')).grid(row=current_row)
             var = tkinter.StringVar(root)
             #self.emme_version = "4.4.4.1"
-            optionList = ["4.3.7"]
+            optionList = ["25.00.01"]
             var.set(self.emme_version)
             option = tkinter.OptionMenu(body, var, *optionList, command=self.setEmmeVersion)
             option.config(width=50)

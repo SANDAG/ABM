@@ -22,10 +22,9 @@ util_sp_utility_adjustment,shadow price utility adjustment,@df['shadow_price_uti
 util_mode_logsum,Mode choice logsum,mode_choice_logsum,coef_mode_logsum
 #,,,
 util_sample_of_corrections_factor,Sample of alternatives correction factor,"@np.minimum(np.log(df.pick_count/df.prob), 60)",1
-#calibration constants,,,
-util_Calibration 0-2 - miles,Calibration 0-2 - miles,@_DIST<=2,coef_distance_0_2miles
-util_Calibration 2-5 - miles,Calibration 2-5 - miles,@(_DIST>2) * (_DIST<=5),coef_distance_2_5miles
-util_Calibration 5-10 - miles,Calibration 5-10 - miles,@(_DIST>5) * (_DIST<=10),coef_distance_5_10miles
-util_ABM2 calibration 10-20 - miles,ABM2 calibration 10-20 - miles,@(_DIST>10) * (_DIST<=20),coef_distance_10_20miles
-util_ABM2 calibration 20-30 - miles,ABM2 calibration 20-30 - miles,@(_DIST>20) * (_DIST<=30),coef_distance_20_30miles
-util_ABM2 calibration >30 - miles,ABM2 calibration >30 - miles,@(_DIST>30),coef_distance_30plusmiles
+#calibration constants (piecewise-linear),,,
+util_Calibration pwlin 0-2 miles,Piecewise linear distance 0-2,"@_DIST.clip(0,2)",coef_pwlin_0_2
+util_Calibration pwlin 2-5 miles,Piecewise linear distance 2-5,"@(_DIST-2).clip(0,3)",coef_pwlin_2_5
+util_Calibration pwlin 5-10 miles,Piecewise linear distance 5-10,"@(_DIST-5).clip(0,5)",coef_pwlin_5_10
+util_Calibration pwlin 10-20 miles,Piecewise linear distance 10-20,"@(_DIST-10).clip(0,10)",coef_pwlin_10_20
+util_Calibration pwlin 20 miles up,Piecewise linear distance 20+,"@(_DIST-20).clip(0)",coef_pwlin_20_up

@@ -5,3 +5,4 @@ Description,Target,Expression
 ,trip_period,network_los.skim_time_period_label(_tod)
 ,tour_leg_dest,"np.where(df.outbound,reindex(tours.destination, df.tour_id), reindex(tours.origin, df.tour_id))"
 ,tour_leg_origin,"np.where(df.outbound,reindex(tours.origin, df.tour_id), reindex(tours.destination, df.tour_id))"
+,is_nm_trip,"~df.purpose.isin(['work','univ','school'])"

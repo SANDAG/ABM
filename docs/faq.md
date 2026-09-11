@@ -10,4 +10,4 @@ The SANDAG ABM is used by SANDAG and many other public and private entities in t
 The SANDAG ABM is a suite of models covering various travel demand markets in the San Diego region. The microsimulation model components include a San Diego resident model, a commercial vehicle model, a Mexican resident crossborder model, a visitor model, a San Diego International Airport ground access model, a Cross-Border Express model serving Tijuana International Airport, and a special event model. The aggregate model components include an external heavy truck model and external trip models.
 
 ## What is the base year of the SANDAG ABM?
-ABM2 has a base year of 2022. ABM1 base year was 2012 and both ABM2 and ABM2+ have a base year of 2016.
+ABM3 has a base year of 2022. ABM1 base year was 2012 and both ABM2 and ABM2+ have a base year of 2016.

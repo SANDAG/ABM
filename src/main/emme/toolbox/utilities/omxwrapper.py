@@ -22,7 +22,7 @@ try:
     def open_file(file_path, mode):
         return OmxMatrix(_omx.open_file(file_path, mode))
     
-except Exception, e:
+except Exception as e:
     import omx as _omx
     
 
@@ -50,7 +50,7 @@ class OmxMatrix(object):
         exception_raised = False
         try:
             self.matrix.create_mapping(name, ids) # Emme 44 and above
-        except Exception, e:
+        except Exception as e:
             exception_raised = True
         
         if exception_raised:
@@ -66,7 +66,7 @@ class OmxMatrix(object):
                 chunkshape=chunkshape,
                 attrs=attrs
             )
-        except Exception, e:
+        except Exception as e:
             exception_raised = True
             
         if exception_raised: # Emme 437

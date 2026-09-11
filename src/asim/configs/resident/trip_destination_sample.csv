@@ -5,6 +5,7 @@ Description,Expression,work,univ,school,escort,shopping,eatout,othmaint,social,o
 ,_od_bikeL@od_skims['BIKE_LOGSUM'],1,1,1,1,1,1,1,1,1,1
 ,_dp_bikeL@dp_skims['BIKE_LOGSUM'],1,1,1,1,1,1,1,1,1,1
 #,,,,,,,,,,,
+Restrict nm trips to airport,"@(df.dest_taz.isin([1338,1457,4184])) & df.is_nm_trip",-999,-999,-999,-999,-999,-999,-999,-999,-999,-999
 size term,"@np.log1p(size_terms.get(df.alt_dest, df.purpose)) # sharrow: np.log1p(size_terms['sizearray'])",1,1,1,1,1,1,1,1,1,1
 no attractions,"@size_terms.get(df.alt_dest, df.purpose) == 0 # sharrow: size_terms['sizearray'] == 0",-999,-999,-999,-999,-999,-999,-999,-999,-999,-999
 #,,,,,,,,,,,

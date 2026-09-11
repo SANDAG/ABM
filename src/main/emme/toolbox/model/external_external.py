@@ -59,12 +59,12 @@ gen_utils = _m.Modeller().module("sandag.utilities.general")
 
 
 class ExternalExternal(_m.Tool(), gen_utils.Snapshot):
-    input_directory = _m.Attribute(unicode)
+    input_directory = _m.Attribute(str)
     external_zones = _m.Attribute(str)
 
     tool_run_msg = ""
 
-    @_m.method(return_type=_m.UnicodeType)
+    @_m.method(return_type=str)
     def tool_run_msg_status(self):
         return self.tool_run_msg
 

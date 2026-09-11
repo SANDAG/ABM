@@ -21,3 +21,4 @@ coef_cost_low,coef_cost_low,coef_cost_low,coef_cost_low
 coef_cost_med,coef_cost_med,coef_cost_med,coef_cost_med
 coef_cost_high,coef_cost_high,coef_cost_high,coef_cost_high
 coef_cost_vhigh,coef_cost_vhigh,coef_cost_vhigh,coef_cost_vhigh
+calib_transit,calib_transit_work,calib_transit_eat,calib_transit_discretionary

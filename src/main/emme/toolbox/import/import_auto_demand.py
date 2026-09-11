@@ -80,12 +80,12 @@ gen_utils = _m.Modeller().module("sandag.utilities.general")
 class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
 
     external_zones = _m.Attribute(str)
-    output_dir = _m.Attribute(unicode)
+    output_dir = _m.Attribute(str)
     num_processors = _m.Attribute(str)
 
     tool_run_msg = ""
 
-    @_m.method(return_type=_m.UnicodeType)
+    @_m.method(return_type=str)
     def tool_run_msg_status(self):
         return self.tool_run_msg
 
@@ -184,7 +184,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
             try:
                 yield omx_manager
             finally:
-                for name, value in self._matrix_cache.iteritems():
+                for name, value in self._matrix_cache.items():
                     matrix = emmebank.matrix(name)
                     matrix.set_numpy_data(value, self.scenario.id)
 
@@ -247,9 +247,9 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                         # SOV non-transponder demand
                         matrix_name = "mf%s_SOV_NT_%s" % (period[1:], vot[1].upper())
                         logbook_label = "Import auto from OMX SOVNOTRPDR to matrix %s" % (matrix_name)
-                        resident_demand = omx_manager.lookup(("auto", period, vot), "SOVNOTRPDR%s" % period)
-                        visitor_demand = omx_manager.lookup(("autoVisitor", period, vot), "SOV%s" % period)
-                        cross_border_demand = omx_manager.lookup(("autoCrossBorder", period, vot), "SOV%s" % period)
+                        resident_demand = omx_manager.lookup(self.output_dir + '/resident',("auto", period, vot), "SOVNOTRPDR%s" % period)
+                        visitor_demand = omx_manager.lookup(self.output_dir + '/visitor',("autoVisitor", period, vot), "SOV%s" % period)
+                        cross_border_demand = omx_manager.lookup(self.output_dir + '/crossborder',("autoCrossBorder", period, vot), "SOV%s" % period)
                         # NOTE: No non-transponder airport or internal-external demand
                         total_asim_trips = (
                             resident_demand + cross_border_demand+ visitor_demand)
@@ -266,12 +266,12 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                         # SOV transponder demand
                         matrix_name = "mf%s_SOV_TR_%s" % (period[1:], vot[1].upper())
                         logbook_label = "Import auto from OMX SOVTRPDR to matrix %s" % (matrix_name)
-                        resident_demand = omx_manager.lookup(("auto", period, vot), "SOVTRPDR%s" % period)
+                        resident_demand = omx_manager.lookup(self.output_dir + '/resident',("auto", period, vot), "SOVTRPDR%s" % period)
                         # NOTE: No transponder visitor or cross-border demand
-                        airport_demand = omx_manager.lookup(("autoAirport", ".SAN" + period, vot), "SOV%s" % period)
-                        if omx_manager.file_exists(("autoAirport", ".CBX" + period, vot)):
-                            airport_demand += omx_manager.lookup(("autoAirport", ".CBX" + period, vot), "SOV%s" % period)
-                        cvm_demand = (omx_manager.lookup(("cvm", period, ""), "CAR%s" % period) * cvm_vot_share)
+                        airport_demand = omx_manager.lookup(self.output_dir + '/airport.SAN',("autoAirport", ".SAN" + period, vot), "SOV%s" % period)
+                        if omx_manager.file_exists(self.output_dir + '/airport.CBX',("autoAirport", ".CBX" + period, vot)):
+                            airport_demand += omx_manager.lookup(self.output_dir + '/airport.CBX',("autoAirport", ".CBX" + period, vot), "SOV%s" % period)
+                        cvm_demand = (omx_manager.lookup(self.output_dir + '/CVM',("cvm", period, ""), "CAR%s" % period) * cvm_vot_share)
 
                         total_asim_trips = (resident_demand + airport_demand + cvm_demand)
 
@@ -293,13 +293,13 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                             matrix_name = matrix_name_tmplt % (period[1:], vot[1].upper())
                             logbook_label = "Import auto from OMX %s to matrix %s" % (omx_name[:3], matrix_name)
                             resident_demand = (
-                                omx_manager.lookup(("auto", period, vot), omx_name % ("TRPDR" + period))
-                                + omx_manager.lookup(("auto", period, vot), omx_name % ("NOTRPDR" + period)))
-                            visitor_demand = omx_manager.lookup(("autoVisitor", period, vot), omx_name % period)
-                            cross_border_demand = omx_manager.lookup(("autoCrossBorder", period, vot), omx_name % period)
-                            airport_demand = omx_manager.lookup(("autoAirport", ".SAN" + period, vot), omx_name % period)
-                            if omx_manager.file_exists(("autoAirport", ".CBX" + period, vot)):
-                                airport_demand += omx_manager.lookup(("autoAirport", ".CBX" + period, vot), omx_name % period)
+                                omx_manager.lookup(self.output_dir + '/resident',("auto", period, vot), omx_name % ("TRPDR" + period))
+                                + omx_manager.lookup(self.output_dir + '/resident',("auto", period, vot), omx_name % ("NOTRPDR" + period)))
+                            visitor_demand = omx_manager.lookup(self.output_dir + '/visitor',("autoVisitor", period, vot), omx_name % period)
+                            cross_border_demand = omx_manager.lookup(self.output_dir + '/crossborder',("autoCrossBorder", period, vot), omx_name % period)
+                            airport_demand = omx_manager.lookup(self.output_dir + '/airport.SAN',("autoAirport", ".SAN" + period, vot), omx_name % period)
+                            if omx_manager.file_exists(self.output_dir + '/airport.CBX',("autoAirport", ".CBX" + period, vot)):
+                                airport_demand += omx_manager.lookup(self.output_dir + '/airport.CBX',("autoAirport", ".CBX" + period, vot), omx_name % period)
                             # internal_external_demand = omx_manager.lookup(("autoInternalExternal", period, vot), omx_name % period)
 
                             total_asim_trips = (
@@ -329,10 +329,10 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     # light-heavy truck
                     matrix_name = "mf%s_TRK_L" % (period[1:])
                     logbook_label = "Import light-heavy truck pce from OMX to matrix %s" % (matrix_name)
-                    cvm_demand = (omx_manager.lookup(("cvm", period, ""), "LIGHT_TRUCK%s" % period) * truck_pce_light)
-                    htm_ei_demand = (omx_manager.lookup(("htm", period, ""), "Lightei%s" % period) * truck_pce_light)
-                    htm_ie_demand = (omx_manager.lookup(("htm", period, ""), "Lightie%s" % period) * truck_pce_light)
-                    htm_ee_demand = (omx_manager.lookup(("htm", period, ""), "Lightee%s" % period) * truck_pce_light)
+                    cvm_demand = (omx_manager.lookup(self.output_dir + '/CVM',("cvm", period, ""), "LIGHT_TRUCK%s" % period) * truck_pce_light)
+                    htm_ei_demand = (omx_manager.lookup(self.output_dir + '/HTM',("htm", period, ""), "Lightei%s" % period) * truck_pce_light)
+                    htm_ie_demand = (omx_manager.lookup(self.output_dir + '/HTM',("htm", period, ""), "Lightie%s" % period) * truck_pce_light)
+                    htm_ee_demand = (omx_manager.lookup(self.output_dir + '/HTM',("htm", period, ""), "Lightee%s" % period) * truck_pce_light)
 
                     total_asim_trips = (cvm_demand + htm_ei_demand + htm_ie_demand + htm_ee_demand)
 
@@ -349,10 +349,10 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     # medium-heavy truck
                     matrix_name = "mf%s_TRK_M" % (period[1:])
                     logbook_label = "Import medium-heavy truck pce from OMX to matrix %s" % (matrix_name)
-                    cvm_demand = (omx_manager.lookup(("cvm", period, ""), "MEDIUM_TRUCK%s" % period) * truck_pce_medium)
-                    htm_ei_demand = (omx_manager.lookup(("htm", period, ""), "Mediumei%s" % period) * truck_pce_medium)
-                    htm_ie_demand = (omx_manager.lookup(("htm", period, ""), "Mediumie%s" % period) * truck_pce_medium)
-                    htm_ee_demand = (omx_manager.lookup(("htm", period, ""), "Mediumee%s" % period) * truck_pce_medium)
+                    cvm_demand = (omx_manager.lookup(self.output_dir + '/CVM',("cvm", period, ""), "MEDIUM_TRUCK%s" % period) * truck_pce_medium)
+                    htm_ei_demand = (omx_manager.lookup(self.output_dir + '/HTM',("htm", period, ""), "Mediumei%s" % period) * truck_pce_medium)
+                    htm_ie_demand = (omx_manager.lookup(self.output_dir + '/HTM',("htm", period, ""), "Mediumie%s" % period) * truck_pce_medium)
+                    htm_ee_demand = (omx_manager.lookup(self.output_dir + '/HTM',("htm", period, ""), "Mediumee%s" % period) * truck_pce_medium)
 
                     total_asim_trips = (cvm_demand + htm_ei_demand + htm_ie_demand + htm_ee_demand)
 
@@ -369,10 +369,10 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     # heavy-heavy truck
                     matrix_name = "mf%s_TRK_H" % (period[1:])
                     logbook_label = "Import heavy-heavy truck pce from OMX to matrix %s" % (matrix_name)
-                    cvm_demand = (omx_manager.lookup(("cvm", period, ""), "HEAVY_TRUCK%s" % period) * truck_pce_heavy)
-                    htm_ei_demand = (omx_manager.lookup(("htm", period, ""), "Heavyei%s" % period) * truck_pce_heavy)
-                    htm_ie_demand = (omx_manager.lookup(("htm", period, ""), "Heavyie%s" % period) * truck_pce_heavy)
-                    htm_ee_demand = (omx_manager.lookup(("htm", period, ""), "Heavyee%s" % period) * truck_pce_heavy)
+                    cvm_demand = (omx_manager.lookup(self.output_dir + '/CVM',("cvm", period, ""), "HEAVY_TRUCK%s" % period) * truck_pce_heavy)
+                    htm_ei_demand = (omx_manager.lookup(self.output_dir + '/HTM',("htm", period, ""), "Heavyei%s" % period) * truck_pce_heavy)
+                    htm_ie_demand = (omx_manager.lookup(self.output_dir + '/HTM',("htm", period, ""), "Heavyie%s" % period) * truck_pce_heavy)
+                    htm_ee_demand = (omx_manager.lookup(self.output_dir + '/HTM',("htm", period, ""), "Heavyee%s" % period) * truck_pce_heavy)
 
                     total_asim_trips = (cvm_demand + htm_ei_demand + htm_ie_demand + htm_ee_demand)
 
@@ -392,11 +392,11 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     logbook_label = "Import empty AV, and TNC fleet to matrix %s" % (matrix_name)
 
                     # AV routing models and TNC fleet model demand
-                    empty_av_demand = omx_manager.lookup(("EmptyAV","",""), "EmptyAV%s" % period)
-                    tnc_demand_0 = omx_manager.lookup(("TNCVehicle","",period), "TNC%s_0" % period)
-                    tnc_demand_1 = omx_manager.lookup(("TNCVehicle","",period), "TNC%s_1" % period)
-                    tnc_demand_2 = omx_manager.lookup(("TNCVehicle","",period), "TNC%s_2" % period)
-                    tnc_demand_3 = omx_manager.lookup(("TNCVehicle","",period), "TNC%s_3" % period)
+                    empty_av_demand = omx_manager.lookup(self.output_dir + '/assignment',("EmptyAV","",""), "EmptyAV%s" % period)
+                    tnc_demand_0 = omx_manager.lookup(self.output_dir + '/assignment',("TNCVehicle","",period), "TNC%s_0" % period)
+                    tnc_demand_1 = omx_manager.lookup(self.output_dir + '/assignment',("TNCVehicle","",period), "TNC%s_1" % period)
+                    tnc_demand_2 = omx_manager.lookup(self.output_dir + '/assignment',("TNCVehicle","",period), "TNC%s_2" % period)
+                    tnc_demand_3 = omx_manager.lookup(self.output_dir + '/assignment',("TNCVehicle","",period), "TNC%s_3" % period)
 
                     # AVs: no driver. No AVs: driver
                     # AVs: 0 and 1 passenger would be SOV. there will be empty vehicles as well. No AVs: 0 passanger would be SOV

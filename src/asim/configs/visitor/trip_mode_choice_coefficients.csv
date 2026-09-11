@@ -21,3 +21,6 @@ coef_cost_high,-0.0021,F
 coef_cost_vhigh,-0.0009,F
 cost_share_s2,2,F
 cost_share_s3,3,F
+calib_transit_discretionary,-1.088957,F
+calib_transit_eat,1.031763,F
+calib_transit_work,0.685094,F

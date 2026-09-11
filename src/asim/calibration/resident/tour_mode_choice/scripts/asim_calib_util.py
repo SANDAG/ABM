@@ -8,6 +8,7 @@ from IPython.display import display
 import matplotlib
 import matplotlib.pyplot as plt
 import seaborn as sns
+import subprocess
 sns.set()
 
 # --------------------------------------------------------------------------------------------------
@@ -32,10 +33,18 @@ output_calibration_modes = [
     'BIKE',
     'ESCOOTER',
     'EBIKE',
-    'WALK-TRANSIT',
-    'PNR-TRANSIT',
-    'KNR-TRANSIT',
-    'TNC-TRANSIT',
+    'WALK_LOC',
+    'WALK_PRM',
+    'WALK_MIX',
+    'PNR_LOC',
+    'PNR_PRM',
+    'PNR_MIX',
+    'KNR_LOC',
+    'KNR_PRM',
+    'KNR_MIX',
+    'TNC_LOC',
+    'TNC_PRM',
+    'TNC_MIX',
     'SCHOOLBUS',
     'TNC_SINGLE',
     'TNC_SHARED',
@@ -44,9 +53,18 @@ output_calibration_modes = [
 
 # transit calibraiton modes are not scaled when comparing to model
 output_calibration_transit_modes = [
-    'WALK-TRANSIT',
-    'PNR-TRANSIT',
-    'KNR-TRANSIT'
+    'WALK_LOC',
+    'WALK_PRM',
+    'WALK_MIX',
+    'PNR_LOC',
+    'PNR_PRM',
+    'PNR_MIX',
+    'KNR_LOC',
+    'KNR_PRM',
+    'KNR_MIX',
+    'TNC_LOC',
+    'TNC_PRM',
+    'TNC_MIX'
 ]
 
 # should match the mode choice coefficient names
@@ -65,10 +83,18 @@ output_calibration_mode_to_coef_name_dict = {
     'BIKE': 'BIKE',
     'ESCOOTER': 'ESCOOTER',
     'EBIKE': 'EBIKE',
-    'WALK-TRANSIT': 'WALK_TRANSIT',
-    'PNR-TRANSIT': 'PNR_TRANSIT',
-    'KNR-TRANSIT': 'KNR_TRANSIT',
-    'TNC-TRANSIT': 'TNC_TRANSIT',
+    'WALK_LOC': 'WALK_LOC',
+    'WALK_PRM': 'WALK_PRM',
+    'WALK_MIX': 'WALK_MIX',
+    'PNR_LOC': 'PNR_LOC',
+    'PNR_PRM': 'PNR_PRM',
+    'PNR_MIX': 'PNR_MIX',
+    'KNR_LOC': 'KNR_LOC',
+    'KNR_PRM': 'KNR_PRM',
+    'KNR_MIX': 'KNR_MIX',
+    'TNC_LOC': 'TNC_LOC',
+    'TNC_PRM': 'TNC_PRM',
+    'TNC_MIX': 'TNC_MIX',
     'SCHOOLBUS': 'SCH_BUS',
     'TNC_SINGLE': 'TNC_SINGLE',
     'TNC_SHARED': 'TNC_SHARED',
@@ -146,18 +172,18 @@ asim_to_calib_tour_mode_dict = {
     'BIKE': 'BIKE',
     'ESCOOTER': 'ESCOOTER',
     'EBIKE': 'EBIKE',
-    'WALK_LOC': 'WALK-TRANSIT',
-    'WALK_PRM': 'WALK-TRANSIT',
-    'WALK_MIX': 'WALK-TRANSIT',
-    'PNR_LOC': 'PNR-TRANSIT',
-    'PNR_PRM': 'PNR-TRANSIT',
-    'PNR_MIX': 'PNR-TRANSIT',
-    'KNR_LOC': 'KNR-TRANSIT',
-    'KNR_PRM': 'KNR-TRANSIT',
-    'KNR_MIX': 'KNR-TRANSIT',
-    'TNC_LOC': 'TNC-TRANSIT',
-    'TNC_PRM': 'TNC-TRANSIT',
-    'TNC_MIX': 'TNC-TRANSIT',
+    'WALK_LOC': 'WALK_LOC',
+    'WALK_PRM': 'WALK_PRM',
+    'WALK_MIX': 'WALK_MIX',
+    'PNR_LOC': 'PNR_LOC',
+    'PNR_PRM': 'PNR_PRM',
+    'PNR_MIX': 'PNR_MIX',
+    'KNR_LOC': 'KNR_LOC',
+    'KNR_PRM': 'KNR_PRM',
+    'KNR_MIX': 'KNR_MIX',
+    'TNC_LOC': 'TNC_LOC',
+    'TNC_PRM': 'TNC_PRM',
+    'TNC_MIX': 'TNC_MIX',
     'TAXI': 'TAXI',
     'TNC_SINGLE': 'TNC_SINGLE',
     'TNC_SHARED': 'TNC_SHARED',
@@ -194,10 +220,23 @@ survey_to_calib_tour_mode_dict = {
     'BIKE': 'BIKE',
     'ESCOOTER': 'ESCOOTER',
     'EBIKE': 'EBIKE',
-    'WALK-TRANSIT': 'WALK-TRANSIT', 
-    'PNR-TRANSIT': 'PNR-TRANSIT', 
-    'KNR-TRANSIT': 'KNR-TRANSIT', 
-    'TNC-TRANSIT': 'TNC-TRANSIT',
+    # Support mixed case from survey data (Walk_LOC format)
+    'Walk_LOC': 'WALK_LOC',
+    'Walk_PRM': 'WALK_PRM',
+    'Walk_MIX': 'WALK_MIX',
+    # Support uppercase format
+    'WALK_LOC': 'WALK_LOC',
+    'WALK_PRM': 'WALK_PRM',
+    'WALK_MIX': 'WALK_MIX',
+    'PNR_LOC': 'PNR_LOC',
+    'PNR_PRM': 'PNR_PRM',
+    'PNR_MIX': 'PNR_MIX',
+    'KNR_LOC': 'KNR_LOC',
+    'KNR_PRM': 'KNR_PRM',
+    'KNR_MIX': 'KNR_MIX',
+    'TNC_LOC': 'TNC_LOC',
+    'TNC_PRM': 'TNC_PRM',
+    'TNC_MIX': 'TNC_MIX',
     'TAXI': 'TAXI', 
     'TNC-REG': 'TNC_SINGLE', 
     'TNC-SHARED': 'TNC_SHARED', 
@@ -225,16 +264,24 @@ calib_tour_mode_to_vis_dict = {
     'SHARED3': 3,
     'WALK': 4,
     'BIKE': 5,
-    'WALK-TRANSIT': 6,
-    'PNR-TRANSIT': 7,
-    'KNR-TRANSIT': 8,
-    'TNC-TRANSIT': 9,
-    'TAXI': 10,
-    'TNC_SINGLE': 11,
-    'TNC_SHARED':12,
-    'SCHOOLBUS': 13,
-    'ESCOOTER': 14, ### FIX_IT: The number for ESCOOTER and EBIKE are temporary, need to decide and finalize them later
-    'EBIKE': 15,
+    'WALK_LOC': 6,
+    'WALK_PRM': 7,
+    'WALK_MIX': 8,
+    'PNR_LOC': 9,
+    'PNR_PRM': 10,
+    'PNR_MIX': 11,
+    'KNR_LOC': 12,
+    'KNR_PRM': 13,
+    'KNR_MIX': 14,
+    'TNC_LOC': 15,
+    'TNC_PRM': 16,
+    'TNC_MIX': 17,
+    'TAXI': 18,
+    'TNC_SINGLE': 19,
+    'TNC_SHARED': 20,
+    'SCHOOLBUS': 21,
+    'ESCOOTER': 22,
+    'EBIKE': 23,
     total_keyword: 'Total'
 }
 purpose_vis_dict = {
@@ -283,15 +330,16 @@ def write_tables_to_excel(dfs,
     worksheet = excel_writer.sheets[excel_sheet_name]
 
     # writing title at and first table name
-    worksheet.write(start_row, start_col, title)
-    worksheet.write(start_row+1, start_col, dfs[0].name)
-    worksheet.write(start_row+1, start_col + sep_for_col_title, col_title)
+    # openpyxl uses 1-based indexing
+    worksheet.cell(row=start_row+1, column=start_col+1, value=title)
+    worksheet.cell(row=start_row+2, column=start_col+1, value=dfs[0].name)
+    worksheet.cell(row=start_row+2, column=start_col+sep_for_col_title+1, value=col_title)
     start_row += len(dfs[0]) + 6
 
     for df in dfs[1:]:
         df.to_excel(excel_writer, excel_sheet_name, startrow=start_row, startcol=start_col)
-        worksheet.write(start_row-1, start_col, df.name)
-        worksheet.write(start_row-1, start_col + sep_for_col_title, col_title)
+        worksheet.cell(row=start_row, column=start_col+1, value=df.name)
+        worksheet.cell(row=start_row, column=start_col+sep_for_col_title+1, value=col_title)
         start_row += len(df) + 4
     return
 
@@ -419,6 +467,8 @@ def read_tour_mode_choice_calibration_file(tour_mode_choice_calib_targets_file):
         else:  # only enters if above for loop breaks
             tour_mc_calib_target_tables.append(df_ct)
 
+        print(tour_mc_calib_target_tables)
+
     return tour_mc_calib_target_tables
 
 
@@ -433,7 +483,7 @@ def write_scaled_targets_to_excel(unscaled_model_tables,
                                   scaled_model_tables,
                                   scaled_calib_tables,
                                   output_dir):
-    excel_writer = pd.ExcelWriter(os.path.join(output_dir, 'scaled_targets.xlsx'))
+    excel_writer = pd.ExcelWriter(os.path.join(output_dir, 'scaled_targets.xlsx'), engine='openpyxl')
     # unscaled model
     write_tables_to_excel(
         dfs=unscaled_model_tables,
@@ -478,7 +528,6 @@ def write_scaled_targets_to_excel(unscaled_model_tables,
         sep_for_col_title=3,
         col_title='Auto Sufficiency'
     )
-    excel_writer.save()
     excel_writer.close()
 
 
@@ -865,6 +914,33 @@ def launch_activitysim(activitysim_run_command):
     assert ret_value == 0, "ActivitySim run not completed! See ActivitySim log file for details."
     return
 
+def launch_activitysim_new(activitysim_run_command):
+    start_time = time.time()
+    print("ActivitySim run started at: ", datetime.datetime.now())
+    print(activitysim_run_command)
+    
+    # Use subprocess.run to capture detailed error information
+    result = subprocess.run(
+        activitysim_run_command,
+        shell=True,
+        capture_output=True,
+        text=True
+    )
+    
+    # Print stdout and stderr for debugging
+    if result.stdout:
+        print("STDOUT:", result.stdout)
+    if result.stderr:
+        print("STDERR:", result.stderr)
+    
+    end_time = time.time()
+    print("ActivitySim ended at", datetime.datetime.now())
+    run_time = round(time.time() - start_time, 2)
+    print("Run Time: ", run_time, "secs = ", run_time/60, " mins")
+    
+    assert result.returncode == 0, f"ActivitySim run failed with exit code {result.returncode}. Error: {result.stderr}"
+    return
+
 
 # -------------------------------------------------------------------------------------------------
 # Entry Points
@@ -937,6 +1013,8 @@ def perform_tour_mode_choice_model_calibration(asim_output_dir,
 
 
 def run_activitysim(data_dir,
+                    skims_dir,
+                    simpy_dir,
                     configs_resident_dir,
                     configs_common_dir,
                     run_dir,
@@ -961,10 +1039,10 @@ def run_activitysim(data_dir,
     if tour_mc_coef_file is not None:
         shutil.copyfile(tour_mc_coef_file, os.path.join(run_config_resident_dir, 'tour_mode_choice_coefficients.csv'))
 
-    activitysim_run_command = 'python simulation.py -s ' + settings_file + ' -c ' + run_config_resident_dir \
-        + ' -c ' + configs_common_dir + ' -d ' + data_dir + ' -o ' + run_dir
+    activitysim_run_command = 'python ' + simpy_dir + ' -s ' + settings_file + ' -c ' + run_config_resident_dir \
+        + ' -c ' + configs_common_dir + ' -d ' + data_dir + ' -d ' + skims_dir + ' -o ' + run_dir
 
-    launch_activitysim(activitysim_run_command)
+    launch_activitysim_new(activitysim_run_command)
 
     activitysim_output_tables = [
         'final_households.csv',

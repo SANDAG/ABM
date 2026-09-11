@@ -1,0 +1,18 @@
+primary_purpose,non_airport_location,total_share,purpose_share
+external,Other,0.071,1.0
+res_bus,Downtown,0.0068,0.0692
+res_bus,La Jolla,0.0039,0.0397
+res_bus,Mission Valley,0.0012,0.0122
+res_bus,Other,0.0863,0.8788
+res_per,Downtown,0.0143,0.0515
+res_per,La Jolla,0.0082,0.0295
+res_per,Mission Valley,0.0062,0.0223
+res_per,Other,0.249,0.8967
+vis_bus,Downtown,0.104,0.5213
+vis_bus,La Jolla,0.0086,0.0431
+vis_bus,Mission Valley,0.0141,0.0707
+vis_bus,Other,0.0728,0.3649
+vis_per,Downtown,0.0773,0.2186
+vis_per,La Jolla,0.0179,0.0506
+vis_per,Mission Valley,0.0165,0.0467
+vis_per,Other,0.2419,0.6841

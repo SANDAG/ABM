@@ -578,7 +578,7 @@ for sector in sectors_list:
                 if (empl>0) & (estb[col2]>0):
                     synEstab = [int(empl/estb[col2]) for j in range(estb[col2])]
                     addEmp = empl - sum(synEstab)
-                    for r in range(addEmp):
+                    for r in range(int(addEmp)):
                         k = random.randint(0,len(synEstab)-1)
                         synEstab[k] += 1
                     for emps in synEstab:

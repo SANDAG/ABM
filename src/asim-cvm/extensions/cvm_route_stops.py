@@ -480,7 +480,7 @@ def _route_stop_location(
             eligibility_term
         ]
 
-        maz_choices = choose_MAZ_for_TAZ(state, taz_sample, MAZ_size_terms, trace_label)
+        maz_choices = choose_MAZ_for_TAZ(state, taz_sample, MAZ_size_terms, model_settings, trace_label)
 
         assert DEST_MAZ in maz_choices
         maz_choices = maz_choices.rename(columns={DEST_MAZ: alt_dest_col_name})
@@ -549,12 +549,14 @@ def _dwell_time(
             "max_duration"
         ]
 
-        random_dwell_times = scipy.stats.beta.rvs(
+        random_order = state.get_rn_generator().random_for_df(df)
+
+        random_dwell_times = scipy.stats.beta.ppf(
+            random_order[:,0],
             a=alpha,
             b=beta,
             loc=model_settings.min_dwell_time,
             scale=max_duration,
-            size=len(df),
         )
 
         result_list.append(
@@ -622,7 +624,8 @@ def route_stops(
         np.exp(accessibility_df['estab_acc_hh_food']) +
         np.exp(accessibility_df['estab_acc_hh_package'])
     )
-
+    state.add_table("commercial_accessibility", accessibility_df)
+    
     route_trip_num = 1
 
     cv_trips = []
@@ -748,8 +751,6 @@ def route_stops(
         ][routes_continuing]
 
         nonterminated_routes[model_settings.location_settings_estb.RESULT_COL_NAME] = next_stop_location
-
-        np.random.seed(seed=42)
 
         # Choose dwell time
         nonterminated_routes = _dwell_time(

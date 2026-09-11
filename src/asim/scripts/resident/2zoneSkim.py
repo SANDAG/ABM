@@ -13,7 +13,6 @@ import logging
 class SkimParameters:
     """Configuration parameters for skim generation read from YAML file"""
     max_maz_maz_walk_dist_feet: int
-    max_maz_maz_bike_dist_feet: int
     max_maz_local_bus_stop_walk_dist_feet: int
     max_maz_premium_transit_stop_walk_dist_feet: int
     walk_speed_mph: float
@@ -25,7 +24,6 @@ class SkimParameters:
         mmms = yaml_data['mmms']
         return cls(
             max_maz_maz_walk_dist_feet=int(mmms['max_maz_maz_walk_dist_feet']),
-            max_maz_maz_bike_dist_feet=int(mmms['max_maz_maz_bike_dist_feet']),
             max_maz_local_bus_stop_walk_dist_feet=int(mmms['max_maz_local_bus_stop_walk_dist_feet']),
             max_maz_premium_transit_stop_walk_dist_feet=int(mmms['max_maz_premium_transit_stop_walk_dist_feet']),
             walk_speed_mph=float(mmms['walk_speed_mph']),
@@ -69,28 +67,34 @@ class NetworkBuilder:
     @classmethod
     def from_files(cls, model_inputs: str, config: dict) -> 'NetworkBuilder':
         """
-        Create a NetworkBuilder instance by reading nodes and links from shapefiles.
+        Create a NetworkBuilder instance by reading nodes and links from geodatabase.
 
-        This factory method handles reading and processing the raw input files to create
-        a properly configured NetworkBuilder instance.
+        This factory method handles reading and processing the raw input files from a
+        geodatabase to create a properly configured NetworkBuilder instance.
 
         Args:
-            model_inputs (str): Path to directory containing input shapefiles
+            model_inputs (str): Path to directory containing the geodatabase
             config (dict): Configuration dictionary containing:
                 - mmms (dict): File and processing parameters
-                - shapefile_node_name (str): Filename for nodes shapefile
-                - shapefile_name (str): Filename for links shapefile
+                - gdb_file (str): Geodatabase filename
+                - node_name (str): Feature class name for nodes
+                - net_name (str): Feature class name for links
 
         Returns:
             NetworkBuilder: A fully initialized NetworkBuilder instance with processed
                 nodes and links.
         """
-        # Read and process nodes
-        nodes = gpd.read_file(os.path.join(model_inputs, config['mmms']['shapefile_node_name']))
+        # Construct geodatabase path
+        gdb_path = os.path.join(model_inputs, config['mmms']['gdb_file'])
+        if not os.path.exists(gdb_path):
+            raise FileNotFoundError(f"Geodatabase not found: {gdb_path}")
+        
+        # Read and process nodes from geodatabase
+        nodes = gpd.read_file(gdb_path, layer=config['mmms']['node_name'])
         nodes = cls._process_nodes(nodes)
         
-        # Read and process links
-        links = gpd.read_file(os.path.join(model_inputs, config['mmms']['shapefile_name']))
+        # Read and process links from geodatabase
+        links = gpd.read_file(gdb_path, layer=config['mmms']['net_name'])
         links = cls._process_links(links)
 
         # Read and process stops and routes
@@ -130,7 +134,7 @@ class NetworkBuilder:
     @staticmethod
     def _process_links(links: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         """
-        Process raw links GeoDataFrame.
+        Process raw links GeoDataFrame by projecting coordinates.
         
         Args:
             links: Raw links GeoDataFrame
@@ -305,7 +309,7 @@ class NetworkBuilder:
         return stops
 
 class SkimGenerator:
-    """Main class for generating walk, bike, and stop skims"""
+    """Main class for generating walk and stop skims"""
     
     def __init__(self, network_builder: NetworkBuilder, params: SkimParameters, output_path: str):
         self.network_builder = network_builder
@@ -326,13 +330,6 @@ class SkimGenerator:
         walk_skim = self._add_intrazonal_distances(walk_skim)
         walk_skim = self._convert_columns_to_type(walk_skim, {'OMAZ': 'uint16', 'DMAZ': 'uint16', 'i': 'uint16', 'j': 'uint16'})
         return walk_skim
-        
-    def generate_maz_maz_bike_skim(self) -> pd.DataFrame:
-        """Generate MAZ to MAZ bike skims"""
-        maz_pairs = self._create_maz_pairs(self.net_centroids)
-        bike_skim = self._get_bike_distances(maz_pairs, self.params.max_maz_maz_bike_dist_feet)
-        bike_skim = self._convert_columns_to_type(bike_skim, {'OMAZ': 'uint16', 'DMAZ': 'uint16'})
-        return bike_skim
         
     def generate_maz_stop_walk_skim(self) -> pd.DataFrame:
         """Generate MAZ to stop walk skims"""
@@ -422,18 +419,6 @@ class SkimGenerator:
         result[['i', 'j']] = result[['OMAZ', 'DMAZ']]
         result['actual'] = result['DISTWALK'] / self.params.walk_speed_mph * 60.0
 
-        return result
-    
-    def _get_bike_distances(self, pairs: pd.DataFrame, max_dist: float) -> pd.DataFrame:
-        """Process bike distances between MAZ pairs"""
-        filtered = pairs[pairs["DISTWALK"] <= max_dist / 5280.0].copy()
-        filtered["DISTBIKE"] = self.network_builder.network.shortest_path_lengths(
-            filtered["OMAZ_NODE"].values, filtered["DMAZ_NODE"].values)
-        result = filtered[filtered["DISTBIKE"] <= max_dist / 5280.0]
-
-        # Add missing MAZs
-        result = self._add_missing_mazs(self.net_centroids, result, pairs, 'DISTBIKE')
-        
         return result
     
     def _get_stop_distances(self, pairs: pd.DataFrame) -> pd.DataFrame:
@@ -564,10 +549,6 @@ def main(path: str):
     print(f"{datetime.now().strftime('%H:%M:%S')} Generating MAZ-MAZ walk skims...")
     walk_skim = skim_generator.generate_maz_maz_walk_skim()
     walk_skim.to_csv(os.path.join(output_path, config['mmms']['maz_maz_walk_output']), index=False)
-    
-    print(f"{datetime.now().strftime('%H:%M:%S')} Generating MAZ-MAZ bike skims...")
-    bike_skim = skim_generator.generate_maz_maz_bike_skim()
-    bike_skim.to_csv(os.path.join(output_path, config['mmms']['maz_maz_bike_output']), index=False)
     
     print(f"{datetime.now().strftime('%H:%M:%S')} Generating MAZ-stop walk skims...")
     stop_skim = skim_generator.generate_maz_stop_walk_skim()

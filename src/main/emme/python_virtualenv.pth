@@ -1,3 +1,0 @@
-# Inserts defined python_virtualenv site-packages into the python module search path if defined
-# 
-import sys, os; r=os.environ.get("PYTHON_VIRTUALENV"); t = 1 if r is None else sys.path.insert(0, os.path.join(r, "Lib\site-packages"));

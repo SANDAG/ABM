@@ -17,3 +17,4 @@ Distance - age 65+,"@_DIST.clip(0,20) * (df.age > 64)",coef_distage64plus_escort
 #escort size is non-zero for escort tour,"@np.where(@@householdsDestAlt * 1 + df.num_young_children * @@householdsDestAlt * 1 + df.num_gradeschool * @@gradeSchoolEnrollmentDestAlt * 100 + df.numHighSchoolStudents * @@highSchoolEnrollmentDestAlt * 100 > 0, np.log(@@householdsDestAlt * 1 + df.num_y",1,coef_zero,coef_zero,coef_zero,coef_zero,coef_zero
 Size variable,@df['size_term'].apply(np.log1p),coef_zero,1,1,1,1,1
 No attractions,@df['size_term']==0,coef_zero,-999,-999,-999,-999,-999
+Restrict nm tours to airport,"@(df.dest_TAZ.isin([1338,1457,4184]))",-999,-999,-999,-999,-999,-999

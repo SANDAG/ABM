@@ -147,6 +147,7 @@ output_tables:
         home_zone_id: land_use.zone_id
         TAZ: land_use_taz.TAZ
     - disaggregate_accessibility
+    - av_vehicle_trips
 
 resume_after:
 
@@ -203,6 +204,7 @@ models:
   - trip_purpose_and_destination
   - trip_scheduling
   - trip_mode_choice
+  - av_routing
   - parking_location
   ### mp_summarize (single process)
   - write_data_dictionary

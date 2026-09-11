@@ -51,8 +51,8 @@ gen_utils = _m.Modeller().module("sandag.utilities.general")
 compute_matrix = _m.Modeller().tool("inro.emme.matrix_calculation.matrix_calculator")
 
 class ExportSkims(_m.Tool(), gen_utils.Snapshot):
-    omx_file = _m.Attribute(unicode)
-    periods = _m.Attribute(unicode)
+    omx_file = _m.Attribute(str)
+    periods = _m.Attribute(str)
     big_to_zero = _m.Attribute(bool)
 
     tool_run_msg = ""
@@ -61,7 +61,7 @@ class ExportSkims(_m.Tool(), gen_utils.Snapshot):
         self.attributes = ["omx_file", "periods", "big_to_zero"]
         self.periods = "EA, AM, MD, PM, EV"
         self.num_processors = "MAX-1"
-    @_m.method(return_type=_m.UnicodeType)
+    @_m.method(return_type=str)
     def tool_run_msg_status(self):
         return self.tool_run_msg
         

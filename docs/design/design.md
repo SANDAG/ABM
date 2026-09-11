@@ -2,7 +2,7 @@
 
 The ABM3 model system is primarily based on the [ActivitySim](https://research.ampo.org/activitysim/) platform; ActivitySim is used to model resident travel, cross-border travel, overnight visitor travel, airport ground access travel, and commercial vehicle travel including light, medium, and heavy commercial vehicles. 
 
-Aggregate models are used to model external-internal travel (from external stations other than the U.S./Mexico border crossing) and through travel. The model system relies on [EMME](https://www.bentley.com/software/emme/) software for network processing, skimming, and assignment. Models are mostly implemented in [Python](https://www.python.org/), and some models are implemented in [Java](https://www.java.com/en/).
+Aggregate models are used to model external-internal travel (from external stations other than the U.S./Mexico border crossing) and through travel. The model system relies on [EMME](https://www.bentley.com/software/emme/) software for network processing, skimming, and assignment. Models are implemented in [Python](https://www.python.org/).
 
 The overall design of the model is shown in the figure below:
 
@@ -29,8 +29,8 @@ The system starts by performing initial input processing in EMME. This includes 
 
 Next auxiliary models are run:
 
-- the taxi/TNC routing model and the autonomous vehicle intra-household allocation model are run in **Java**. 
-- Aggregate external-internal and through travel models are run in **Python**. 
+- the taxi/TNC routing model and the autonomous vehicle intra-household allocation model. 
+- Aggregate external-internal and through travel models. 
 
 After all models are run, trip tables are built from the result and assigned to transport networks.
 

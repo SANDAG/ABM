@@ -1,7 +1,111 @@
 # Release Notes
 
+SANDAG ABM release notes can also be found on the [GitHub repo](https://github.com/SANDAG/ABM/releases).
+
+## Version 15.5.1 (September 10, 2026)
+This release completes the transition of ABM3 from Java to Python. New Python-based intra-household AV allocation and taxi/TNC routing models replace the final Java processes, enabling the removal of all Java from the repository (over 600 files). Other highlights include multiprocessing for the Commercial Vehicle Model (CVM), recalibration of the work location choice model, and updates to how the bike network is classified and stored. Version 15.5.1 was also used for the **2027 RTIP model runs**. Because the bike network reclassification process has been removed, all bike networks must be updated and bike logsums re-run before running this version.
+
+### Software Versions
+- ActivitySim 1.5.1
+- EMME OpenPaths 25
+
+### Features
+- [PR 366](https://github.com/SANDAG/ABM/pull/366): New Python-based intra-household AV allocation and taxi/TNC routing models, replacing the Java implementations which significantly improved fleet efficiency and reduced runtime
+- [PR 438](https://github.com/SANDAG/ABM/pull/438): Removed all remaining Java folders and files from the repository (over 600 files) following completion of the Python AV/TNC routing work
+- [PR 443](https://github.com/SANDAG/ABM/pull/443): Added multiprocessing support to the Commercial Vehicle Model (CVM)
+- [PR 439](https://github.com/SANDAG/ABM/pull/439): Added configuration support for protected bike lanes (Class IV) and bike boulevards (Class V)
+- [PR 441](https://github.com/SANDAG/ABM/pull/441): Updated the bike network reader and 4D network import workflow to read the bike network from geodatabase feature classes in EMMEOutputs.gdb instead of shapefiles
+- [PR 446](https://github.com/SANDAG/ABM/pull/446): Recalibration of the work location choice model, updating from piecewise-constant to piecewise-linear coefficients
+- [PR 447](https://github.com/SANDAG/ABM/pull/447): Added a pending subdirectory to the manifest queueing system so that concurrently finishing scenarios are queued and ingested correctly
+
+### Bug Fixes
+- [PR 442](https://github.com/SANDAG/ABM/pull/442): Fixed shadow pricing by adding the workplace segment field mapping
+- [PR 445](https://github.com/SANDAG/ABM/pull/445): Fixed an error in the school_location config file that prevented the shadow price utility adjustment from being applied to preschool trips
+- [PR 432](https://github.com/SANDAG/ABM/pull/432): Fall back to Windows robocopy when the EMME script cannot read/copy the EMME database to the remote drive
+- [PR 436](https://github.com/SANDAG/ABM/pull/436): Removed erroneous warning messages (missing solutions.mtbx toolbox and command usage) from scenario creation output
+
+## Version 15.5.0 (July 09, 2026)
+This release upgrades ABM3 to ActivitySim version 1.5.1. Compatibility changes were made to configuration files and code to support the new version. No significant differences in model outputs, as confirmed by comparison test runs between the asim_151 and asim_140 environments.
+
+### Software Versions
+- ActivitySim 1.5.1
+- EMME OpenPaths 25
+
+### Features
+- [PR 425](https://github.com/SANDAG/ABM/pull/425): Upgrade to ActivitySim version 1.5.1, including compatibility updates to configuration files and code
+
+### Bug Fixes
+- None
+
+## Version 15.4.2 (June 26, 2026)
+This release centers on a comprehensive update to the San Diego International Airport (SDIA) ground access model in support of the Airport Transit Connection (ATC) project, using data from the Fall 2024 airport survey. The update introduces a new rental car model, recalibrates the airport destination choice and trip mode choice models. In addition, this adds location-specific employment multipliers by year and free parking modeling for SDIA airport zones, and incorporates new observed counts and boardings for ATC validation. The release also includes supporting infrastructure updates - a process queue manifest, improved run report logging, and fixes to local-drive file handling when resuming runs along with several other bug fixes.
+
+### Software Versions
+- ActivitySim 1.4.0
+- EMME OpenPaths 25
+
+### Features
+- [PR 395](https://github.com/SANDAG/ABM/pull/395): Update to the SDIA ground access model using Fall 2024 airport survey data, including a new rental car, destination choice, and trip mode choice models
+- [PR 400](https://github.com/SANDAG/ABM/pull/400), [PR 401](https://github.com/SANDAG/ABM/pull/401): Calibration of the SAN airport non-mandatory tour destination choice model
+- [PR 402](https://github.com/SANDAG/ABM/pull/402), [PR 406](https://github.com/SANDAG/ABM/pull/406): Calibration of the SAN airport trip mode choice model
+- [PR 410](https://github.com/SANDAG/ABM/pull/410): Re-introduced transit IVTT multipliers by sub-mode (LRT, BRT, CMR, etc.) in SAN transit utilities
+- [PR 412](https://github.com/SANDAG/ABM/pull/412), [PR 416](https://github.com/SANDAG/ABM/pull/416), [PR 417](https://github.com/SANDAG/ABM/pull/417), [PR 423](https://github.com/SANDAG/ABM/pull/423): Added configurable, location-specific employment multipliers for SDIA zones applied during resident preprocessing
+- [PR 417](https://github.com/SANDAG/ABM/pull/417), [PR 419](https://github.com/SANDAG/ABM/pull/419): Added airport zone-specific free parking modeling (~89% free parking share at airport employment zones) and removed the park-and-escort access option
+- [PR 397](https://github.com/SANDAG/ABM/pull/397): Removed employee tour processing (employee_park) from the SAN and CBX airport models
+- [PR 418](https://github.com/SANDAG/ABM/pull/418): Reverted destination choice coefficients for Mission Valley for validation purposes
+- [PR 414](https://github.com/SANDAG/ABM/pull/414): Added observed counts and boardings for ATC validation
+- [PR 420](https://github.com/SANDAG/ABM/pull/420): Added a manifest file to the datalake export step to trigger the new process queue
+- [PR 428](https://github.com/SANDAG/ABM/pull/428): Write process run report logs to the logFiles directory (read into the Emme logbook) and moved CVM and HTM logs to their respective output directories
+- [PR 424](https://github.com/SANDAG/ABM/pull/424): Removed unused bike skim generation from 2zoneSkim.py
+- [PR 399](https://github.com/SANDAG/ABM/pull/399), [PR 404](https://github.com/SANDAG/ABM/pull/404), [PR 405](https://github.com/SANDAG/ABM/pull/405): Documentation updates including ABM3 v15.3.1 installation instructions
+
+### Bug Fixes
+- [PR 396](https://github.com/SANDAG/ABM/pull/396): Sort toll factor facilities by longest name first so I-805 links match to I-805 before I-8
+- [PR 408](https://github.com/SANDAG/ABM/pull/408), [PR 409](https://github.com/SANDAG/ABM/pull/409): Corrected transit access time expressions and KNR/TNC transit availability direction handling in the SAN
+- [PR 427](https://github.com/SANDAG/ABM/pull/427), [PR 429](https://github.com/SANDAG/ABM/pull/429): Corrected handling of non-mandatory trips to SAN and CBX airport terminal zones across the resident, visitor, and cross-border models, preventing unrealistic direct trip-making
+- [PR 411](https://github.com/SANDAG/ABM/pull/411), [PR 421](https://github.com/SANDAG/ABM/pull/421): Fixes to local-drive file copying and overwriting when resuming a run, preserving updated files and avoiding overwrites when re-running early steps
+- [PR 413](https://github.com/SANDAG/ABM/pull/413): Convert employment to integer in the CVM estimation script
+- [PR 415](https://github.com/SANDAG/ABM/pull/415): Correctly populate git_info.yaml when git is not installed
+
+## Version 15.4.1 (March 05, 2026)
+This release converts the Bike Logsum Java program into Python and updates the route choice model. Another significant update is the comprehensive recalibration of transit trips across all models using the 2023 Transit On-Board Survey (OBS).
+
+### Software Versions
+- ActivitySim 1.4.0
+- EMME OpenPaths 25
+
+### Features
+- [PR 384](https://github.com/SANDAG/ABM/pull/384): Mode choice recalibration to match 2023 OBS
+- [PR 389](https://github.com/SANDAG/ABM/pull/389): Python Bike Logsum and route choice model update
+- [PR 381](https://github.com/SANDAG/ABM/pull/381): Improved copy process of model files from C: to network drive
+- [PR 393](https://github.com/SANDAG/ABM/pull/393): Convergence reporting notebook
+- [PR 390](https://github.com/SANDAG/ABM/pull/390), [PR 391](https://github.com/SANDAG/ABM/pull/391), [PR 392](https://github.com/SANDAG/ABM/pull/392): Documentation updates
+
+### Bug Fixes
+- None
+
+## Version 15.4.0 (February 16, 2026)
+This significant release upgrades EMME to OpenPaths 25 in addition to switching to UV as the Python package manager. With the EMME upgrade, a Python 27 environment is no longer needed.
+
+### Software Versions
+- ActivitySim 1.4.0
+- EMME OpenPaths 25
+
+### Features
+- [PR 272](https://github.com/SANDAG/ABM/pull/272): EMME OpenPaths 25 upgrade
+- [PR 376](https://github.com/SANDAG/ABM/pull/376): Packager manager changed from Anaconda to UV
+- [PR 377](https://github.com/SANDAG/ABM/pull/377): Dropped unnecessary Python environment for EMME
+- [PR 378](https://github.com/SANDAG/ABM/pull/378): Documentation updates
+
+### Bug Fixes
+- [PR 387](https://github.com/SANDAG/ABM/pull/387): Fixes tolled SOV volume issues on managed lanes
+
 ## Version 15.3.1 (September 4, 2025)
 A few bugs were identified while testing with version 15.3.0, so they were fixed to ensure that the results for the 2025 Regional Plan will be the best estimates possible.
+
+### Software Versions
+- ActivitySim 1.4.0
+- EMME 4.3.7
 
 ### Features
 - [PR 360](https://github.com/SANDAG/ABM/pull/360): The settings manager can now be run from Anaconda prompt as opposed to only within Emme

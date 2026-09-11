@@ -25,8 +25,8 @@
 #
 # File referenced:
 #   input\mgra13_based_input2016.csv
-#   input\SANDAG_Bike_Net.dbf
-#   input\SANDAG_Bike_Node.dbf
+#   input\EMMEOutputs.gdb\SANDAG_Bike_Net
+#   input\EMMEOutputs.gdb\SANDAG_Bike_Node
 #   output\walkMgraEquivMinutes.csv
 #
 # Script example
@@ -38,12 +38,10 @@ TOOLBOX_ORDER = 10
 
 #import modules
 import inro.modeller as _m
-from simpledbf import Dbf5
 import os
 import pandas as pd, numpy as np
 #import datetime
 import matplotlib.pyplot as plt
-import seaborn as sns
 import warnings
 import traceback as _traceback
 
@@ -56,14 +54,14 @@ gen_utils = _m.Modeller().module("sandag.utilities.general")
 
 class FourDs(_m.Tool()):
 
-    path = _m.Attribute(unicode)
-    ref_path = _m.Attribute(unicode)
+    path = _m.Attribute(str)
+    ref_path = _m.Attribute(str)
     int_radius = _m.Attribute(float)
     maps = _m.Attribute(bool)
 
     tool_run_msg = ""
 
-    @_m.method(return_type=_m.UnicodeType)
+    @_m.method(return_type=str)
     def tool_run_msg_status(self):
         return self.tool_run_msg    
     
@@ -106,8 +104,8 @@ class FourDs(_m.Tool()):
         <br>
             <ul>
                 <li>input\mgra13_based_input2016.csv</li>
-                <li>input\SANDAG_Bike_Net.dbf</li>
-                <li>input\SANDAG_Bike_Node.dbf</li>
+                <li>input\EMMEOutputs.gdb\SANDAG_Bike_Net</li>
+                <li>input\EMMEOutputs.gdb\SANDAG_Bike_Node</li>
                 <li>output\walkMgraEquivMinutes.csv</li>
             </ul>
         </div>
@@ -154,8 +152,9 @@ class FourDs(_m.Tool()):
         self.mgradata_file = props["mgra.socec.file"] #input/filename
         self.syn_households_file = props["PopulationSynthesizer.InputToCTRAMP.HouseholdFile"] #input/filename
         self.equivmins_file = props["active.logsum.matrix.file.walk.mgra"] #filename
-        self.inNet = os.path.basename(props["active.edge.file"])  #filename
-        self.inNode = os.path.basename(props["active.node.file"])  #filename
+        self.inNet = props["active.edge.file"]  # feature class name
+        self.inNode = props["active.node.file"]  # feature class name
+        self.gdb_source = _join(self.path, "input", "EMMEOutputs.gdb")  # geodatabase path
 
         attributes = {
             "path": self.path,
@@ -165,7 +164,7 @@ class FourDs(_m.Tool()):
         }
         gen_utils.log_snapshot("Run 4Ds", str(self), attributes)
         
-        file_paths = [_join(self.path, self.mgradata_file),_join(self.path, self.syn_households_file),_join(self.path, "output", self.equivmins_file),  _join(self.path, "input", self.inNet),  _join(self.path, "input", self.inNode)]
+        file_paths = [_join(self.path, self.mgradata_file),_join(self.path, self.syn_households_file),_join(self.path, "output", self.equivmins_file), self.gdb_source]
         for path in file_paths:
             if not os.path.exists(path):
                 raise Exception("missing file '%s'" % (path))
@@ -179,17 +178,16 @@ class FourDs(_m.Tool()):
         _m.logbook_write("Generating density variables")
         self.get_density()
         
-        # _m.logbook_write("Creating comparison plots")
-        # self.make_plots()
-        
         _m.logbook_write("Finished running 4Ds")
 
     def get_intersection_count(self):
-        links = Dbf5(_join(self.path, "input", self.inNet))
-        links = links.to_dataframe()
+        # Read bike network links from geodatabase feature class
+        links_data = gen_utils.DataTableProc(self.inNet, self.gdb_source)
+        links = pd.DataFrame({name: vals for name, vals in zip(links_data._attr_names, links_data._values)})
 
-        nodes = Dbf5(_join(self.path, "input", self.inNode))
-        nodes = nodes.to_dataframe()
+        # Read bike network nodes from geodatabase feature class
+        nodes_data = gen_utils.DataTableProc(self.inNode, self.gdb_source)
+        nodes = pd.DataFrame({name: vals for name, vals in zip(nodes_data._attr_names, nodes_data._values)})
 
         nodes_int = nodes.loc[(nodes.NodeLev_ID < 100000000)]
 
@@ -298,114 +296,3 @@ class FourDs(_m.Tool()):
         
         self.mgra_data = mgra_landuse
         print( "*** Finished ***")
-
-    #plot comparisons of build and old density values and create heat maps
-    def make_plots(self):
-        if len(self.mgra_data) == 0:
-            self.build = pd.read_csv(os.path.join(self.path, self.mgradata_file))
-        else:
-            self.build = self.mgra_data
-                
-        def plot_continuous(field):
-            #colors
-            rsg_orange = '#f68b1f'
-            rsg_marine = '#006fa1'
-            #rsg_leaf   = '#63af5e'
-            #rsg_grey   = '#48484a'
-            #rsg_mist   = '#dcddde'
-                        
-            max = self.base[field].max() + self.base[field].max()%5
-            div = max/5 if max/5 >= 10 else max/2
-            bins = np.linspace(0,max,div)
-            plt.hist(self.base[field], bins, normed = True, alpha = 0.5, label = 'Base', color = rsg_marine)
-            plt.hist(self.build[field], bins, normed = True, alpha = 0.5, label = 'Build', color = rsg_orange)
-            mean_base = self.base[field].mean()
-            mean = self.build[field].mean()
-            median_base = self.base[field].median()
-            median = self.build[field].median()
-            plt.axvline(mean_base, color = 'b', linestyle = '-', label = 'Base Mean')
-            plt.axvline(median_base, color = 'b', linestyle = '--', label = 'Base Median')
-            plt.axvline(mean, color = 'r', linestyle = '-', label = 'Build Mean')
-            plt.axvline(median, color = 'r', linestyle = '--',label = 'Build Median')
-            plt.legend(loc = 'upper right')
-            ylims = plt.ylim()[1]
-            plt.text(mean_base + div/4, ylims-ylims/32, "mean: {:0.2f}".format(mean_base), color = 'b')
-            plt.text(mean_base + div/4, ylims - 5*ylims/32, "median: {:0.0f}".format(median_base), color = 'b')
-            plt.text(mean_base + div/4, ylims-2*ylims/32, "mean: {:0.2f}".format(mean), size = 'medium',color = 'r')
-            plt.text(mean_base + div/4, ylims-6*ylims/32, "median: {:0.0f}".format(median), color = 'r')
-            plt.text(self.base[field].min() , ylims/32, "min: {:0.0f}".format(self.base[field].min()), color = 'b')
-            plt.text(self.base[field].max()-div , ylims/32, "max: {:0.0f}".format(self.base[field].max()), color = 'b')
-            plt.text(self.build[field].min() , 2*ylims/32, "min: {:0.0f}".format(self.build[field].min()), color = 'r')
-            plt.text(self.base[field].max()-div , 2*ylims/32, "max: {:0.0f}".format(self.build[field].max()), color = 'r')
-
-            plt.xlabel(field)
-            plt.ylabel("MGRA's")
-            plt.title(field.replace('den','') + ' Density')
-            outfile = _join(self.path, "output", '4Ds_{}_plot.png'.format(field))
-            if os.path.isfile(outfile):
-                os.remove(outfile)
-            plt.savefig(outfile)
-            plt.clf()
-
-        def plot_discrete(field):
-            fig, ax = plt.subplots()
-            df1 = discretedf_base.groupby(field, as_index = False).agg({'mgra':'count','type':'first'})
-            df2 = discretedf_build.groupby(field, as_index = False).agg({'mgra':'count','type':'first'})
-            df = df1.append(df2)
-            ax = sns.barplot(x=field, y = 'mgra', hue = 'type', data = df)
-            ax.set_title(field)
-            outfile = _join(self.path, "output", '4Ds_{}_plot.png'.format(field))
-            if os.path.isfile(outfile):
-                    os.remove(outfile)
-            ax.get_figure().savefig(outfile)
-
-        self.base = pd.read_csv(os.path.join(self.ref_path, self.mgradata_file))
-        self.base['type'] = 'base'
-        self.build['type'] = 'build'
-
-        discretedf_base = self.base[['mgra','type']+self.discrete_fields]
-        discretedf_build = self.build[['mgra','type']+self.discrete_fields]
-        
-        for f in self.continuous_fields:
-            plot_continuous(f)            
-        for f in self.discrete_fields:
-            plot_discrete(f)
-            
-        if self.maps:
-            import geopandas as gpd
-            import folium
-            from branca.colormap import linear
-            compare_int = self.base.merge(self.build, how = 'outer', on = 'mgra', suffixes = ['_base','_build'])
-            compare_int['diff'] = compare_int['TotInt'] - compare_int['totint']
-
-            compare_int = gpd.read_file(self.mgra_shape_file).rename(columns = {'MGRA':'mgra'}).merge(compare_int, how = 'left', on = 'mgra')
-            compare_int = compare_int.to_crs({'init': 'epsg:4326'})
-
-            colormap = linear.OrRd_09.scale(
-                    compare_int.TotInt.min(),
-                    compare_int.TotInt.max())
-            colormapA = linear.RdBu_04.scale(
-                    compare_int['diff'].min(),
-                    compare_int['diff'].min()*-1)
-
-            compare_int['colordiff'] = compare_int['diff'].map(lambda n: colormapA(n))
-            compare_int['colororig'] = compare_int['TotInt'].map(lambda n: colormap(n))
-            compare_int['colornew'] = compare_int['totint'].map(lambda n: colormap(n))
-            
-            def makeheatmap(self,df, colormp,color_field,caption):
-                mapname = folium.Map(location=[32.76, -117.15], zoom_start = 13.459)
-                folium.GeoJson(compare_int,
-                        style_function=lambda feature: {
-                        'fillColor': feature['properties'][color_field],
-                        'color' : rsg_marine,
-                        'weight' : 0,
-                        'fillOpacity' : 0.75,
-                        }).add_to(mapname)
-        
-                colormp.caption = caption
-                colormp.add_to(mapname)
-                return mapname
-                        
-            makeheatmap(compare_int,colormapA,'colordiff','Intersection Diff (base - build)').save('diff_intersections.html')   
-            makeheatmap(compare_int,colormap,'colororig','Intersections').save('base_intersections.html')   
-            makeheatmap(compare_int,colormap,'colororig','Intersections').save('build_intersections.html')   

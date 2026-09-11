@@ -79,7 +79,7 @@ input_table_list:
       - tour_type
       - origin
       - destination
-      - emp_trip_mode
+      # - emp_trip_mode
 
 
 # set false to disable variability check in simple_simulate and interaction_simulate
@@ -104,6 +104,7 @@ models:
   - initialize_landuse
   - initialize_tours
   - initialize_households
+  - rental_car_choice
   - initialize_los
   - tour_scheduling_probabilistic
   - non_mandatory_tour_destination

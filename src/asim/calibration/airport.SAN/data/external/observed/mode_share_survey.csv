@@ -1,0 +1,81 @@
+primary_purpose,arrival_mode,simple_mode,total_share,purpose_share
+external,CURB_LOC1,Pickup Dropoff,0.0281,0.4175
+external,KNR_MIX,Transit,0.0009,0.0134
+external,KNR_PRM,Transit,0.0001,0.0015
+external,PARK_LOC1,Drive and Park,0.0048,0.0713
+external,PARK_LOC4,Drive and Park,0.0037,0.055
+external,RENTAL,Rental Car,0.0096,0.1426
+external,RIDEHAIL_LOC1,Ridehail,0.0113,0.1679
+external,SHUTTLEVAN,Shuttle Van,0.0014,0.0208
+external,TAXI_LOC1,Taxi,0.0071,0.1055
+external,TNC_MIX,Transit,0.0003,0.0045
+external,TNC_PRM,Transit,0.0,0.0
+external,WALK_MIX,Transit,0.0,0.0
+external,KNR_LOC,Transit,0.0,0.0
+external,WALK_LOC,Transit,0.0,0.0
+external,WALK_PRM,Transit,0.0,0.0
+external,TNC_LOC,Transit,0.0,0.0
+res_bus,CURB_LOC1,Pickup Dropoff,0.0391,0.4027
+res_bus,KNR_MIX,Transit,0.0004,0.0041
+res_bus,KNR_PRM,Transit,0.0005,0.0051
+res_bus,PARK_LOC1,Drive and Park,0.0114,0.1174
+res_bus,PARK_LOC4,Drive and Park,0.0046,0.0474
+res_bus,RENTAL,Rental Car,0.0009,0.0093
+res_bus,RIDEHAIL_LOC1,Ridehail,0.0376,0.3872
+res_bus,SHUTTLEVAN,Shuttle Van,0.0009,0.0093
+res_bus,TAXI_LOC1,Taxi,0.0013,0.0134
+res_bus,TNC_MIX,Transit,0.0,0.0
+res_bus,TNC_PRM,Transit,0.0,0.0
+res_bus,WALK_MIX,Transit,0.0,0.0
+res_bus,KNR_LOC,Transit,0.0,0.0
+res_bus,WALK_LOC,Transit,0.0004,0.0041
+res_bus,WALK_PRM,Transit,0.0,0.0
+res_bus,TNC_LOC,Transit,0.0,0.0
+res_per,CURB_LOC1,Pickup Dropoff,0.1496,0.5383
+res_per,KNR_MIX,Transit,0.0003,0.0011
+res_per,KNR_PRM,Transit,0.0014,0.005
+res_per,PARK_LOC1,Drive and Park,0.0164,0.059
+res_per,PARK_LOC4,Drive and Park,0.0125,0.045
+res_per,RENTAL,Rental Car,0.0034,0.0122
+res_per,RIDEHAIL_LOC1,Ridehail,0.0866,0.3116
+res_per,SHUTTLEVAN,Shuttle Van,0.0005,0.0018
+res_per,TAXI_LOC1,Taxi,0.0043,0.0155
+res_per,TNC_MIX,Transit,0.0,0.0
+res_per,TNC_PRM,Transit,0.0002,0.0007
+res_per,WALK_MIX,Transit,0.0005,0.0018
+res_per,KNR_LOC,Transit,0.0,0.0
+res_per,WALK_LOC,Transit,0.0017,0.0061
+res_per,WALK_PRM,Transit,0.0005,0.0018
+res_per,TNC_LOC,Transit,0.0,0.0
+vis_bus,CURB_LOC1,Pickup Dropoff,0.0211,0.1059
+vis_bus,KNR_MIX,Transit,0.0,0.0
+vis_bus,KNR_PRM,Transit,0.0001,0.0005
+vis_bus,PARK_LOC1,Drive and Park,0.0002,0.001
+vis_bus,PARK_LOC4,Drive and Park,0.0,0.0
+vis_bus,RENTAL,Rental Car,0.0408,0.2048
+vis_bus,RIDEHAIL_LOC1,Ridehail,0.111,0.5572
+vis_bus,SHUTTLEVAN,Shuttle Van,0.015,0.0753
+vis_bus,TAXI_LOC1,Taxi,0.0091,0.0457
+vis_bus,TNC_MIX,Transit,0.0,0.0
+vis_bus,TNC_PRM,Transit,0.0002,0.001
+vis_bus,WALK_MIX,Transit,0.0001,0.0005
+vis_bus,KNR_LOC,Transit,0.0003,0.0015
+vis_bus,WALK_LOC,Transit,0.0011,0.0055
+vis_bus,WALK_PRM,Transit,0.0002,0.001
+vis_bus,TNC_LOC,Transit,0.0,0.0
+vis_per,CURB_LOC1,Pickup Dropoff,0.132,0.3686
+vis_per,KNR_MIX,Transit,0.0006,0.0017
+vis_per,KNR_PRM,Transit,0.0012,0.0034
+vis_per,PARK_LOC1,Drive and Park,0.0005,0.0014
+vis_per,PARK_LOC4,Drive and Park,0.0009,0.0025
+vis_per,RENTAL,Rental Car,0.0936,0.2614
+vis_per,RIDEHAIL_LOC1,Ridehail,0.1049,0.2929
+vis_per,SHUTTLEVAN,Shuttle Van,0.0123,0.0343
+vis_per,TAXI_LOC1,Taxi,0.0085,0.0237
+vis_per,TNC_MIX,Transit,0.0,0.0
+vis_per,TNC_PRM,Transit,0.0001,0.0003
+vis_per,WALK_MIX,Transit,0.0004,0.0011
+vis_per,KNR_LOC,Transit,0.0004,0.0011
+vis_per,WALK_LOC,Transit,0.0022,0.0061
+vis_per,WALK_PRM,Transit,0.0004,0.0011
+vis_per,TNC_LOC,Transit,0.0001,0.0003

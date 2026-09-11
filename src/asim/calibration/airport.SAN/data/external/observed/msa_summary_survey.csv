@@ -1,0 +1,17 @@
+purpose,msa,total_share,purpose_share,source
+Resident,Central,0.1003,0.2478,Survey
+Resident,Downtown,0.0185,0.0457,Survey
+Resident,East County,0.0013,0.0031,Survey
+Resident,East Suburban,0.0401,0.0991,Survey
+Resident,North City,0.1286,0.3177,Survey
+Resident,North County East,0.0275,0.0679,Survey
+Resident,North County West,0.0547,0.1352,Survey
+Resident,South Suburban,0.0338,0.0835,Survey
+Visitor,Central,0.1677,0.2817,Survey
+Visitor,Downtown,0.1511,0.2539,Survey
+Visitor,East County,0.0008,0.0014,Survey
+Visitor,East Suburban,0.0169,0.0284,Survey
+Visitor,North City,0.162,0.2721,Survey
+Visitor,North County East,0.0205,0.0344,Survey
+Visitor,North County West,0.055,0.0925,Survey
+Visitor,South Suburban,0.0213,0.0357,Survey
