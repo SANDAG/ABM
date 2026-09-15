@@ -1,15 +1,15 @@
 Label,Description,Expression,veh_num1,veh_num2,veh_num3,veh_num4,non_hh_veh
-#,Availability Conditions,,,,
+#,Availability Conditions,,,,,,
 util_alt1_unavail,Household does not own vehicle,"veh_num1.isna() | (veh_num1 == '')",coef_unavail,0,0,0,0
 util_alt2_unavail,Household does not own vehicle,"veh_num2.isna() | (veh_num2 == '')",0,coef_unavail,0,0,0
 util_alt3_unavail,Household does not own vehicle,"veh_num3.isna() | (veh_num3 == '')",0,0,coef_unavail,0,0
 util_alt4_unavail,Household does not own vehicle,"veh_num4.isna() | (veh_num4 == '')",0,0,0,coef_unavail,0
-#,BEV Range,,,,
+#,BEV Range,,,,,,
 util_dstgtrng1,Round trip tour distance > BEV range,"@np.where((df.tot_tour_dist > df.Range_1) & (df.fuel_type_1 == 'BEV'), 1, 0)",coef_dstgtrng,0,0,0,0
 util_dstgtrng2,Round trip tour distance > BEV range,"@np.where((df.tot_tour_dist > df.Range_2) & (df.fuel_type_2 == 'BEV'), 1, 0)",0,coef_dstgtrng,0,0,0
 util_dstgtrng3,Round trip tour distance > BEV range,"@np.where((df.tot_tour_dist > df.Range_3) & (df.fuel_type_3 == 'BEV'), 1, 0)",0,0,coef_dstgtrng,0,0
 util_dstgtrng4,Round trip tour distance > BEV range,"@np.where((df.tot_tour_dist > df.Range_4) & (df.fuel_type_4 == 'BEV'), 1, 0)",0,0,0,coef_dstgtrng,0
-#,Vehicles & Driver interactions,,,,
+#,Vehicles & Driver interactions,,,,,,
 util_vehltdr_nh,Vehicles < Drivers --  Non-Household Vehicle,"hh_veh_lt_drivers",0,0,0,0,coef_vehltdr_nh
 util_vehltdr_nh,Vehicles > Drivers --  Non-Household Vehicle,"hh_veh_gt_drivers",0,0,0,0,coef_vehgtdr_nh
 util_vehltdr_van1,Vehicles > Drivers -- Van alt 1,"hh_veh_gt_drivers * (body_type_1 == 'Van')",coef_vehltdr_van,0,0,0,0
@@ -40,7 +40,7 @@ util_vehltdr_age1,Vehicles > Drivers -- Age alt 1,"hh_veh_gt_drivers * age_1",co
 util_vehltdr_age2,Vehicles > Drivers -- Age alt 2,"hh_veh_gt_drivers * age_2",0,coef_vehltdr_age,0,0,0
 util_vehltdr_age3,Vehicles > Drivers -- Age alt 3,"hh_veh_gt_drivers * age_3",0,0,coef_vehltdr_age,0,0
 util_vehltdr_age4,Vehicles > Drivers -- Age alt 4,"hh_veh_gt_drivers * age_4",0,0,0,coef_vehltdr_age,0
-#,Occupancy interactions,,,,
+#,Occupancy interactions,,,,,,
 util_maxocc_van1,Maximum Occupancy -- Van alt 1,"@occup * (df.body_type_1 == 'Van')",coef_maxocc_van,0,0,0,0
 util_maxocc_van2,Maximum Occupancy -- Van alt 2,"@occup * (df.body_type_2 == 'Van')",0,coef_maxocc_van,0,0,0
 util_maxocc_van3,Maximum Occupancy -- Van alt 3,"@occup * (df.body_type_3 == 'Van')",0,0,coef_maxocc_van,0,0
@@ -62,7 +62,7 @@ util_maxocc_age2,Maximum Occupancy -- Age alt 2,"@occup * df.age_2",0,coef_maxoc
 util_maxocc_age3,Maximum Occupancy -- Age alt 3,"@occup * df.age_3",0,0,coef_maxocc_age,0,0
 util_maxocc_age4,Maximum Occupancy -- Age alt 4,"@occup * df.age_4",0,0,0,coef_maxocc_age,0
 util_maxocc_nh,Maximum Occupancy -- Age alt 1,"@occup",0,0,0,0,util_maxocc_nh
-#,Alternative Specific Constants,,,,
+#,Alternative Specific Constants,,,,,,
 util_non_hh,Non-Household Vehicle Constant,"1",0,0,0,0,coef_non_hh
 util_van1,Van ASC alt 1,"(body_type_1 == 'Van')",coef_van,0,0,0,0
 util_van2,Van ASC alt 2,"(body_type_2 == 'Van')",0,coef_van,0,0,0
