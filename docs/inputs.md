@@ -104,7 +104,7 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
         <td>Internal-External Model external zone size terms</td>
     </tr>
     <tr>
-        <td><a href=#commercial-vehicle-model><strong>Commercial Vehicle Model</strong></a></td>
+        <td><a href=#commercial-vehicle-model><strong>Commercial Vehicle Model (CVM)</strong></a></td>
         <td></td>
     </tr>
     <tr>
@@ -124,23 +124,31 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
         <td>Contains information about synthetically generated establishments to be used as inputs to the commercial vehicle model</td>
     </tr>
     <tr>
-        <td><a href=#glossary-of-cvm-industries>Glossary of CVM Industries</a><br><i>Not an ABM3 input</i></td>
-        <td>Glossary of industry codes utilized by the CVM. Not an input, only for reference.</td>
+        <td><a href=#cvm-industries-dictionary>CVM Industries Dictionary</a><br><i>Not an ABM3 input</i></td>
+        <td>Dictionary of industry codes utilized by the CVM. Not an input, only for reference.</td>
     </tr>
     <tr>
-        <td>**Heavy Truck Model (HTM)**</td>
+        <td><a href=#heavy-truck-model-htm><strong>Heavy Truck Model (HTM)</strong></a></td>
         <td></td>
     </tr>
     <tr>
-        <td>HTM\inputs_sandag_htm_&lt;Scenario_Year&gt;.xlsx</td>
-        <td>Contains all the required inputs ( in different sheets) for the Heavy Truck Model</td>
+        <td><a href=#year-specific-sandag-htm-inputs>HTM/inputs_sandag_HTM_{scenario_year}.xlsx</a></td>
+        <td>Contains all the required inputs (in different sheets) for the Heavy Truck Model</td>
     </tr>
     <tr>
-        <td>HTM\FAF5_BaseAndFutureYears_Oct27_2023.csv</td>
-        <td>FAF5 Data (filtered) containing FAF flows for required years</td>
+        <td><a href=#freight-analysis-framework-version-5-faf5-origin-destination-o-d-flows>HTM/FAF5_BaseandFutureYears_Oct27_2023.csv</a></td>
+        <td>FAF5 Data (filtered) origin-destination flows for required years</td>
     </tr>
     <tr>
-        <td>**Other**</td>
+        <td><a href=#faf5-modes-dictionary>FAF5 Modes Dictionary</a><br><i>Not an ABM3 input</i></td>
+        <td>Dictionary of FAF5 Modes under <a href=#freight-analysis-framework-version-5-faf5-origin-destination-o-d-flows>HTM/FAF5_BaseandFutureYears_Oct27_2023.csv</a>. Not an input, only for reference.</td>
+    </tr>
+    <tr>
+        <td><a href=#faf5-commodity-groups-dictionary>FAF5 Commodity Groups Dictionary</a><br><i>Not an ABM3 input</i></td>
+        <td>Dictionary of FAF5 Commodity Groups under <a href=#freight-analysis-framework-version-5-faf5-origin-destination-o-d-flows>HTM/FAF5_BaseandFutureYears_Oct27_2023.csv</a>. Not an input, only for reference.</td>
+    </tr>
+    <tr>
+        <td><a href=#other-inputs><strong>Other Inputs</strong></a></td>
         <td></td>
     </tr>
     <tr>
@@ -1129,7 +1137,7 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
     </tr>
 </table>
 
-### Glossary of CVM Industries
+### CVM Industries Dictionary
 
 <table>
     <tr>
@@ -1741,7 +1749,9 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
 </table>
 
 ## Heavy Truck Model (HTM)
-#### `HTM/INPUTS_SANDAG_HTM_<SCENARIO_YEAR>.XLSX`
+
+### Year-Specific SANDAG HTM Inputs
+`HTM/inputs_sandag_HTM_{scenario_year}.xlsx`
 
 <table>
     <tr>
@@ -1766,8 +1776,7 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
     </tr>
     <tr>
         <td>FAZ_Gateway</td>
-        <td>A look up table that corresponds FAF FAZ that are outside the SANDAG region to one/many SANDAG Gateways. This table also includes area code of each FAZ that is outside SANDAG region.
-</td>
+        <td>A look up table that corresponds FAF FAZ that are outside the SANDAG region to one/many SANDAG Gateways. This table also includes area code of each FAZ that is outside SANDAG region.</td>
     </tr>
     <tr>
         <td>Commodity_Group</td>
@@ -1779,8 +1788,7 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
     </tr>
     <tr>
         <td>EMP_Converter</td>
-        <td>Provides a table that correlates SANDAG model employee categories with corresponding NAICS employee categories.
-</td>
+        <td>Provides a table that correlates SANDAG model employee categories with corresponding NAICS employee categories.</td>
     </tr>
     <tr>
         <td>CG_Emp_P</td>
@@ -1800,8 +1808,7 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
     </tr>
     <tr>
         <td>Payload</td>
-        <td>Average pounds of load that each truck type can carry based on commodity groups.
-</td>
+        <td>Average pounds of load that each truck type can carry based on commodity groups.</td>
     </tr>
     <tr>
         <td>Time_of_Day</td>
@@ -1809,8 +1816,7 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
     </tr>
     <tr>
         <td>External_Count</td>
-        <td>The Inbound and outbound truck counts by type at each of the 12 SANDAG gateways. For base year, this is the daily truck counts at the gateways.
-</td>
+        <td>The Inbound and outbound truck counts by type at each of the 12 SANDAG gateways. For base year, this is the daily truck counts at the gateways.</td>
     </tr>
     <tr>
         <td>SRA_Dist</td>
@@ -1820,10 +1826,10 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
         <td>SRA_TAZ</td>
         <td>SRA-TAZ Mapping</td>
     </tr>
-    
 </table>
 
-#### `HTM/FAF5_BaseAndFutureYears_Oct27_2023.CSV`
+### Freight Analysis Framework Version 5 (FAF5) Origin-Destination (O-D) Flows
+`HTM/FAF5_BaseandFutureYears_Oct27_2023.csv`
 
 <table>
     <tr>
@@ -1886,22 +1892,19 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
     
 </table>
 
-### Mode Dictionary
+### FAF5 Modes Dictionary
 <table>
-
-<tr>
+    <tr>
         <th>Numeric Label</th>
         <th>Description</th>
     </tr>
     <tr>
         <td>1</td>
-        <td>Truck
-</td>
+        <td>Truck</td>
     </tr>
     <tr>
         <td>2</td>
-        <td>Rail
-</td>
+        <td>Rail</td>
     </tr>
     <tr>
         <td>3</td>
@@ -1909,12 +1912,11 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
     </tr>
     <tr>
         <td>4</td>
-        <td>Air ( include truck-air) </td>
+        <td>Air (include truck-air) </td>
     </tr>
     <tr>
         <td>5</td>
-        <td>Multiple modes & mail
-</td>
+        <td>Multiple modes & mail</td>
     </tr>
     <tr>
         <td>6</td>
@@ -1926,29 +1928,23 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
     </tr>
     <tr>
         <td>8</td>
-        <td>No domestic mode
-</td>
+        <td>No domestic mode</td>
     </tr>
-       
-    
 </table>
 
-### Commodity Groups Dictionary
+### FAF5 Commodity Groups Dictionary
 <table>
-
-<tr>
+    <tr>
         <th>Numeric Label</th>
         <th>Description</th>
     </tr>
     <tr>
         <td>01</td>
-        <td>Live animals/fish
-</td>
+        <td>Live animals/fish</td>
     </tr>
     <tr>
         <td>02</td>
-        <td>Cereal grains
-</td>
+        <td>Cereal grains</td>
     </tr>
     <tr>
         <td>03</td>
@@ -1960,8 +1956,7 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
     </tr>
     <tr>
         <td>05</td>
-        <td>Meat/seafood
-</td>
+        <td>Meat/seafood</td>
     </tr>
     <tr>
         <td>06</td>
@@ -1973,185 +1968,147 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
     </tr>
     <tr>
         <td>08</td>
-        <td>Alcoholic Beverages
-</td>
+        <td>Alcoholic Beverages</td>
     </tr>
     <tr>
         <td>09</td>
-        <td>Tobacco prods
-</td>
+        <td>Tobacco prods</td>
     </tr>
     <tr>
         <td>10</td>
-        <td>Building stone
-</td>
+        <td>Building stone</td>
     </tr>
     <tr>
         <td>11</td>
-        <td>Natural sands
-</td>
+        <td>Natural sands</td>
     </tr>
     <tr>
         <td>12</td>
-        <td>Gravel
-</td>
+        <td>Gravel</td>
     </tr>
     <tr>
         <td>13</td>
-        <td>Nonmetallic minerals
-</td>
+        <td>Nonmetallic minerals</td>
     </tr>
     <tr>
         <td>14</td>
-        <td>Metallic ores
-</td>
+        <td>Metallic ores</td>
     </tr>
     <tr>
         <td>15</td>
-        <td>Coal
-</td>
+        <td>Coal</td>
     </tr>
     <tr>
         <td>16</td>
-        <td>Crude Petroleum
-</td>
+        <td>Crude Petroleum</td>
     </tr>
     <tr>
         <td>17</td>
-        <td>Gasoline
-</td>
+        <td>Gasoline</td>
     </tr>
     <tr>
         <td>18</td>
-        <td>Fuel oils
-</td>
+        <td>Fuel oils</td>
     </tr>
     <tr>
         <td>19</td>
-        <td>Natural gas and other fossil products
-</td>
+        <td>Natural gas and other fossil products</td>
     </tr>
     <tr>
         <td>20</td>
-        <td>Basic chemicals
-</td>
+        <td>Basic chemicals</td>
     </tr>
     <tr>
         <td>21</td>
-        <td>Pharmaceuticals
-</td>
+        <td>Pharmaceuticals</td>
     </tr>
     <tr>
         <td>22</td>
-        <td>Fertilizers
-</td>
+        <td>Fertilizers</td>
     </tr>
     <tr>
         <td>23</td>
-        <td>Chemical prods.
-</td>
+        <td>Chemical prods.</td>
     </tr>
     <tr>
         <td>24</td>
-        <td>Plastics/rubber
-</td>
+        <td>Plastics/rubber</td>
     </tr>
     <tr>
         <td>25</td>
-        <td>Logs
-</td>
+        <td>Logs</td>
     </tr>
     <tr>
         <td>26</td>
-        <td>Wood prods
-</td>
+        <td>Wood prods</td>
     </tr>
     <tr>
         <td>27</td>
-        <td>Newsprint/paper
-</td>
+        <td>Newsprint/paper</td>
     </tr>
     <tr>
         <td>28</td>
-        <td>Paper articles
-</td>
+        <td>Paper articles</td>
     </tr>
     <tr>
         <td>29</td>
-        <td>Printed prods.
-</td>
+        <td>Printed prods.</td>
     </tr>
     <tr>
         <td>30</td>
-        <td>Textiles/leather
-</td>
+        <td>Textiles/leather</td>
     </tr>
     <tr>
         <td>31</td>
-        <td>Nonmetal min. prods.
-</td>
+        <td>Nonmetal min. prods.</td>
     </tr>
     <tr>
         <td>32</td>
-        <td>Base metals
-</td>
+        <td>Base metals</td>
     </tr>
     <tr>
         <td>33</td>
-        <td>Articles-base metal
-</td>
+        <td>Articles-base metal</td>
     </tr>
     <tr>
         <td>34</td>
-        <td>Machinery
-</td>
+        <td>Machinery</td>
     </tr>
     <tr>
         <td>35</td>
-        <td>Electronics
-</td>
+        <td>Electronics</td>
     </tr>
     <tr>
         <td>36</td>
-        <td>Motorized Vehicles
-</td>
+        <td>Motorized Vehicles</td>
     </tr>
     <tr>
         <td>37</td>
-        <td>Transport equip.
-</td>
+        <td>Transport equip.</td>
     </tr>
     <tr>
         <td>38</td>
-        <td>Precision instruments
-</td>
+        <td>Precision instruments</td>
     </tr>
     <tr>
         <td>39</td>
-        <td>Furniture
-</td>
+        <td>Furniture</td>
     </tr>
     <tr>
         <td>40</td>
-        <td>Misc. mfg. prods.
-</td>
+        <td>Misc. mfg. prods.</td>
     </tr>
     <tr>
         <td>41</td>
-        <td>Waste/scrap
-</td>
+        <td>Waste/scrap</td>
     </tr>
     <tr>
         <td>43</td>
-        <td>Mixed freight
-</td>
+        <td>Mixed freight</td>
     </tr>
-    
 </table>
 
-## Others
-
-<a id="bike_taz_logsum"></a>
+## Other Inputs
 
 ### Bike TAZ Logsum
 #### `bikeTazLogsum.csv`
