@@ -57,7 +57,7 @@ util_num_children_othdiscr,Number of household children * number of othdiscr tou
 util_num_full_time_workers_escort,Number of household full time workers * number of escort tours,num_fullTime_workers * escort,coef_num_full_time_workers_escort,,,coef_num_full_time_workers_escort,coef_num_full_time_workers_escort,,coef_num_full_time_workers_escort,
 util_num_full_time_workers_othmaint,Number of household full time workers * number of othmaint tours,num_fullTime_workers * othmaint,,,,coef_num_full_time_workers_othmaint,,,,
 util_num_full_time_workers_eatout,Number of household full time workers * number of eatout tours,num_fullTime_workers * eatout,,coef_num_full_time_workers_eatout,coef_num_full_time_workers_eatout,,,coef_num_full_time_workers_eatout,,
-oef_num_full_time_workers_social
+util_num_full_time_workers_social,Number of household full time workers * number of social tours,num_fullTime_workers * social,,,,,,,,coef_num_full_time_workers_social
 util_num_full_time_workers_othdiscr,Number of household full time workers * number of othdiscr tours,num_fullTime_workers * othdiscr,coef_num_full_time_workers_othdiscr,,,,,,,
 util_hhsize_escort,household size * number of escort tours,hhsize * escort,,,,coef_hhsize_escort,,,coef_hhsize_escort,
 util_hhsize_shopping,household size * number of shopping tours,hhsize * shopping,coef_hhsize_shopping,,,,coef_hhsize_shopping,coef_hhsize_shopping,,
