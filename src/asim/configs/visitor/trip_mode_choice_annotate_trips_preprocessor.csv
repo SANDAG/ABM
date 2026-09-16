@@ -83,10 +83,10 @@ Auto Terminal Time Factor,autoTermTimeFactor,"np.where(useAV,autoTerminalTimeFac
 ,walk_local_available,(odt_skims['WALK_LOC_TOTALIVTT']>0)
 ,walk_premium_available,(odt_skims['WALK_PRM_TOTALIVTT']>0)
 ,walk_mix_available,(odt_skims['WALK_MIX_TOTALIVTT']>0)&(odt_skims['WALK_MIX_XFERS']>0)
-#,,,
+"#,,,",,
 ,origin,df.origin if 'origin' in df.columns else df.home_zone_id
 ,destination,df.destination if 'destination' in df.columns else df.alt_dest
-#access egress distances,,,
+"#access egress distances,,,",,
 ,origin_local_dist,"reindex(land_use.walk_dist_local_bus, origin)"
 ,origin_prm_dist,"reindex(land_use.walk_dist_premium_transit, origin)"
 ,origin_mix_dist,"np.minimum(origin_local_dist, origin_prm_dist)"
@@ -99,7 +99,7 @@ Auto Terminal Time Factor,autoTermTimeFactor,"np.where(useAV,autoTerminalTimeFac
 ,dest_micro_local_dist,"reindex(land_use.micro_dist_local_bus, destination)"
 ,dest_micro_prm_dist,"reindex(land_use.micro_dist_premium_transit, destination)"
 ,dest_micro_mix_dist,"np.minimum(dest_micro_local_dist, dest_micro_prm_dist)"
-#access egress times,,,
+"#access egress times,,,",,
 ,origin_local_time,origin_local_dist * 60/walkSpeed
 ,origin_prm_time,origin_prm_dist * 60/walkSpeed
 ,origin_mix_time,origin_mix_dist * 60/walkSpeed
