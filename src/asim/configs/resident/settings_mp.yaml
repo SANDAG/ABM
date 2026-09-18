@@ -1,5 +1,8 @@
 inherit_settings: settings.yaml
 
+sharrow: require
+recode_pipeline_columns: True
+
 multiprocess: True
 households_sample_size: 0
 num_processes: 24
@@ -42,6 +45,7 @@ models:
   - transponder_ownership
   - free_parking
   - telecommute_frequency
+  - telecommute_status
   - cdap_simulate
   - mandatory_tour_frequency
   - mandatory_tour_scheduling

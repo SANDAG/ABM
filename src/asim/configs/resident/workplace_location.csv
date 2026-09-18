@@ -1,6 +1,6 @@
 Label,Description,Expression,coefficient
 local_dist,,_DIST@skims['DIST'],1
-alt_dest_pmsa,,"_ALT_PMSA@reindex(land_use.pseudomsa, df.alt_dest)",1
+#alt_dest_pmsa,,"_ALT_PMSA@reindex(land_use.pseudomsa, df.alt_dest)",1
 #,,,
 util_dist,Distance,@_DIST,coef_dist
 util_dist_sqrt,Square root of distance,@_DIST**0.5,coef_dist_sqrt

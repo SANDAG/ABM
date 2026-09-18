@@ -45,3 +45,6 @@ SIMULATE_CHOOSER_COLUMNS:
 CONSTANTS:
   max_bin_difference_between_departure_times: 1
   mins_per_time_bin: 30
+
+compute_settings:
+  fastmath: false

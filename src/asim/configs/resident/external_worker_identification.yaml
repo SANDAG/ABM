@@ -12,3 +12,9 @@ CHOOSER_FILTER_COLUMN_NAME: is_out_of_home_worker
 EXTERNAL_COL_NAME: is_external_worker
 # set to True if not external but CHOOSER_FILTER_COLUMN_NAME is True
 INTERNAL_COL_NAME: is_internal_worker
+
+preprocessor:
+  SPEC: external_worker_identification_preprocessor.csv
+  DF: df
+  TABLES:
+    - land_use
