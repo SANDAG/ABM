@@ -1013,11 +1013,91 @@ def select_links(links, link_ids, recompute_all, treat_zero_as_missing):
 
     two_way = two_way_mask(links)
     forward, reverse = OUTPUT_FIELDS_BY_DIRECTION
-    selected = links[list(forward)].isna().any(axis=1)
-    selected |= two_way & links[list(reverse)].isna().any(axis=1)
+    selected = (links["FC"] != 1) & links[list(forward)].isna().any(axis=1)
+    selected |= two_way & (links["FC"] != 1) &  links[list(reverse)].isna().any(axis=1)
+    # ignore freeways w/ null TX column unless control present
+    selected |= (
+            (links["FC"] == 1) 
+            & (
+                # same check as above excluding TX columns
+                links[
+                    list(
+                        set(forward) - {
+                            f"ABTX{suffix}" 
+                            for suffix in set(
+                                sfx for target in TCHC_PERIOD_TARGETS 
+                                for sfx in target
+                            )
+                        }
+                    )
+                ].isna().any(axis=1) 
+                | (links["ABCNT"] != 0)
+            )
+        )
+    selected |= (
+            two_way 
+            & (links["FC"] == 1) 
+            & (
+                # same check as above excluding TX columns
+                links[
+                    list(
+                        set(reverse) - {
+                            f"BATX{suffix}" 
+                            for suffix in set(
+                                sfx for target in TCHC_PERIOD_TARGETS 
+                                for sfx in target
+                            )
+                        }
+                    )
+                ].isna().any(axis=1) 
+                | (links["BACNT"] != 0)
+            )
+        )
+
     if treat_zero_as_missing:
-        selected |= (links[list(forward)] == 0).any(axis=1)
-        selected |= two_way & (links[list(reverse)] == 0).any(axis=1)
+        selected |= ((links["FC"] != 1) & (links[list(forward)] == 0).any(axis=1))
+        selected |= two_way & ((links["FC"] != 1) & (links[list(reverse)] == 0).any(axis=1))
+
+        # ignore freeways w/ TX column = 0 unless control present
+        selected |= (
+            (links["FC"] == 1) 
+            & (
+                # same check as above excluding TX columns
+                (links[
+                    list(
+                        set(forward) - {
+                            f"ABTX{suffix}" 
+                            for suffix in set(
+                                sfx for target in TCHC_PERIOD_TARGETS 
+                                for sfx in target
+                            )
+                        }
+                    )
+                ] == 0).any(axis=1) 
+                | (links["ABCNT"] != 0)
+            )
+        )
+        selected |= (
+            two_way 
+            & (links["FC"] == 1) 
+            & (
+                # same check as above excluding TX columns
+                (links[
+                    list(
+                        set(reverse) - {
+                            f"BATX{suffix}" 
+                            for suffix in set(
+                                sfx for target in TCHC_PERIOD_TARGETS 
+                                for sfx in target
+                            )
+                        }
+                    )
+                ] == 0).any(axis=1) 
+                | (links["BACNT"] != 0)
+            )
+        )
+        
+    selected &= (~links["FC"].isin([10,12,99])) # remove centroid connectors, bus/walk/transfer links
     if link_ids:
         selected |= links["HWYCOV0_ID"].isin(link_ids)
     return in_domain & selected
