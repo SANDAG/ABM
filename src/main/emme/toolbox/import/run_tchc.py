@@ -32,7 +32,6 @@
 #    gc_file: green-to-cycle ratio lookup table (gc.csv)
 #    link_id_file: optional list of HWYCOV0_ID to recompute unconditionally
 #    year: analysis year. Default is scenarioYear from the properties file
-#    aoc: auto operating cost in cents/mile. Default is aoc.fuel + aoc.maintenance
 #    managed_lane_capacity_rate: capacity multiplier for HOV3+ and managed lanes
 #    freeway_capacity_rate: capacity multiplier for general purpose freeways
 #    ramp_meter_file: optional ramp meter direction by traffic count ID
@@ -141,13 +140,10 @@ class TCHCLink:
     hourly_capacity_by_period_and_direction: List[List[float]] = field(default_factory=lambda: [[0, 0], [0, 0], [0, 0]])
     period_capacity_by_period_and_direction: List[List[float]] = field(default_factory=lambda: [[999999, 999999], [999999, 999999], [999999, 999999]])
     intersection_capacity_by_period_and_direction: List[List[float]] = field(default_factory=lambda: [[999999, 999999], [999999, 999999], [999999, 999999]])
-    generalized_cost_by_direction: List[float] = field(default_factory=lambda: [999999, 999999])
 
     # resolved from the lookup tables and written back; None where nothing was resolved
     resolved_green_cycle_by_direction: List = field(default_factory=lambda: [None, None])
     resolved_per_lane_capacity_by_direction: List = field(default_factory=lambda: [None, None])
-
-    auto_operating_cost: float = 0.0
 
 
 @dataclass
@@ -160,7 +156,6 @@ class TCHCContext:
     delay tables) and shared across all links in a single model run.
     """
 
-    auto_operating_cost_per_mile: float  # cents/mile
     managed_lane_capacity_rate: float    # multiplier for HOV3+/managed lanes (typically 1.0)
     freeway_capacity_rate: float         # multiplier for GP freeway/FC8 capacity (typically 1.0)
     analysis_year: int                   # enables TSM features when > 2015
@@ -246,8 +241,6 @@ def apply_tchc(link, ctx, remaining_toll=None):
             rounded_toll_value = 1
         link.toll_cost_by_period[period_index] = rounded_toll_value
 
-    # auto operating cost
-    link.auto_operating_cost = distance_miles * ctx.auto_operating_cost_per_mile
 
     # link speed (use coded speed, or FC default)
     speed_miles_per_hour = link.speed
@@ -491,18 +484,6 @@ def apply_tchc(link, ctx, remaining_toll=None):
                 link.intersection_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity * peak_period_factor
                 link.intersection_delay_minutes_by_period_and_direction[period_index][direction_index] = 1.0
 
-        # generalized cost (FORTRAN 1232)
-        peak_period_index = 0
-        link.generalized_cost_by_direction[direction_index] = (
-            link.external_zone_delay_cost
-            + link.auto_operating_cost
-            + (
-                link.link_travel_time_minutes_by_period_and_direction[peak_period_index][direction_index]
-                + link.intersection_delay_minutes_by_period_and_direction[peak_period_index][direction_index]
-            ) * 35.0
-            + (link.toll_cost_by_period[0] + link.toll_cost_by_period[1]) / 2.0
-        )
-        link.generalized_cost_by_direction[direction_index] = min(link.generalized_cost_by_direction[direction_index], 999999.0)
 
     return remaining_toll
 
@@ -971,7 +952,7 @@ def cross_street_class(tables, node_id, link_id, default=7):
 # Link projection
 # ------------------------------------------------------------------
 
-def build_context(links, analysis_year, auto_operating_cost_per_mile, station_peak_period_factor,
+def build_context(links, analysis_year, station_peak_period_factor,
                   green_cycle, managed_lane_capacity_rate, freeway_capacity_rate,
                   time_period_adjustments, ramp_meter_direction, managed_lane_to_freeway):
     freeway_to_station = dict(
@@ -979,7 +960,6 @@ def build_context(links, analysis_year, auto_operating_cost_per_mile, station_pe
         for link_id, station in zip(links["HWYCOV0_ID"], links["COSTAT"])
         if not pd.isna(station))
     return TCHCContext(
-        auto_operating_cost_per_mile=auto_operating_cost_per_mile,
         managed_lane_capacity_rate=managed_lane_capacity_rate,
         freeway_capacity_rate=freeway_capacity_rate,
         analysis_year=analysis_year,
@@ -1120,7 +1100,6 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
     external_zone_delay_file = _m.Attribute(str)
     report_file = _m.Attribute(str)
     year = _m.Attribute(int)
-    aoc = _m.Attribute(float)
     managed_lane_capacity_rate = _m.Attribute(float)
     freeway_capacity_rate = _m.Attribute(float)
     time_period_adjustments = _m.Attribute(bool)
@@ -1148,7 +1127,6 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
         self.external_zone_delay_file = ""
         self.report_file = ""
         self.year = 0
-        self.aoc = 0.0
         self.managed_lane_capacity_rate = 1.0
         self.freeway_capacity_rate = 1.0
         self.time_period_adjustments = True
@@ -1158,7 +1136,7 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
         self.dry_run = False
         self.attributes = [
             "path", "source", "station_file", "gc_file", "link_id_file", "ramp_meter_file",
-            "hov_freeway_pairs_file", "external_zone_delay_file", "report_file", "year", "aoc",
+            "hov_freeway_pairs_file", "external_zone_delay_file", "report_file", "year",
             "managed_lane_capacity_rate", "freeway_capacity_rate", "time_period_adjustments", 
             "traffic_count_field", "recompute_all", "treat_zero_as_missing", "dry_run",
         ]
@@ -1211,7 +1189,6 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
                            title="External zone delay file (optional):")
 
         pb.add_text_box("year", size=6, title="Analysis year:")
-        pb.add_text_box("aoc", size=8, title="Auto operating cost (cents/mile):")
         pb.add_text_box("managed_lane_capacity_rate", size=8, title="Managed lane capacity rate:")
         pb.add_text_box("freeway_capacity_rate", size=8, title="Freeway capacity rate:")
         pb.add_checkbox("time_period_adjustments", title=" ", label="Apply time period capacity adjustments")
@@ -1232,7 +1209,7 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
                  ramp_meter_file=self.ramp_meter_file,
                  hov_freeway_pairs_file=self.hov_freeway_pairs_file,
                  external_zone_delay_file=self.external_zone_delay_file,
-                 report_file=self.report_file, year=self.year, aoc=self.aoc,
+                 report_file=self.report_file, year=self.year,
                  managed_lane_capacity_rate=self.managed_lane_capacity_rate,
                  freeway_capacity_rate=self.freeway_capacity_rate,
                  time_period_adjustments=self.time_period_adjustments,
@@ -1247,7 +1224,7 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
 
     def __call__(self, path="", source="", station_file="", gc_file="", link_id_file="",
                  ramp_meter_file="", hov_freeway_pairs_file="", external_zone_delay_file="",
-                 report_file="", year=0, aoc=0.0,
+                 report_file="", year=0,
                  managed_lane_capacity_rate=0.0, freeway_capacity_rate=0.0,
                  time_period_adjustments=None,
                   traffic_count_field="",
@@ -1273,7 +1250,6 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
             self.path, external_zone_delay_file or props.get("tchc.external.zone.delay.file", ""))
         self.report_file = resolve_path(self.path, report_file)
         self.year = int(year or props["scenarioYear"])
-        self.aoc = float(aoc or (props["aoc.fuel"] + props["aoc.maintenance"]))
         self.managed_lane_capacity_rate = float(
             managed_lane_capacity_rate or props.get("tchc.managed.lane.capacity.rate", 1.0))
         self.freeway_capacity_rate = float(
@@ -1297,7 +1273,6 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
             ("gc_file", self.gc_file),
             ("link_id_file", self.link_id_file),
             ("year", self.year),
-            ("aoc", self.aoc),
             ("managed_lane_capacity_rate", self.managed_lane_capacity_rate),
             ("freeway_capacity_rate", self.freeway_capacity_rate),
             ("time_period_adjustments", self.time_period_adjustments),
@@ -1341,7 +1316,7 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
         station_factors = load_station_peak_period_factors(
             self.station_file, int(links["COSTAT"].max() or 0) + 1, am_hours, pm_hours)
         context = build_context(
-            links, self.year, self.aoc, station_factors, green_cycle,
+            links, self.year, station_factors, green_cycle,
             self.managed_lane_capacity_rate, self.freeway_capacity_rate,
             self.time_period_adjustments,
             load_lookup(self.ramp_meter_file), load_lookup(self.hov_freeway_pairs_file))

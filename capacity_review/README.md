@@ -1,7 +1,7 @@
 # TCHC network capacity recalculation
 
 TCHC (Transportation Coverage Highway Capacity) computes roadway capacity, travel
-time, intersection delay and generalized cost for every highway link. Those
+time, and intersection delay for every highway link. Those
 values feed the static traffic assignment step of the activity-based model.
 
 `src/main/emme/toolbox/import/run_tchc.py` is an Emme Modeller tool that
@@ -173,8 +173,7 @@ written. All three switches default to `False` and have no properties fallback.
 properties fallback. It contains computed [writeback fields](#what-gets-written-back)
 and stored counterparts suffixed `_prev`, keyed by `HWYCOV0_ID`. The parent
 directory must exist; an existing file is overwritten. No CSV is written when
-no links are selected. The CSV excludes generalized and operating costs,
-despite the later reference to generalized cost being available in the report.
+no links are selected. 
 
 A normal call returns the number of geodatabase features updated. It returns
 `0` for a dry run or when no links are selected; a dry-run return value is not
@@ -243,7 +242,6 @@ Relative paths are resolved against `path`, the scenario directory.
 | Parameter | Tool argument | Properties key | Default |
 |---|---|---|---|
 | Analysis year | `year` | `scenarioYear` | — |
-| Auto operating cost (cents/mile) | `aoc` | `aoc.fuel` + `aoc.maintenance` | — |
 | Managed lane capacity rate | `managed_lane_capacity_rate` | `tchc.managed.lane.capacity.rate` | 1.0 |
 | Freeway capacity rate | `freeway_capacity_rate` | `tchc.freeway.capacity.rate` | 1.0 |
 | Apply time-period capacity adjustments | `time_period_adjustments` | `tchc.time.period.adjustments` | `true` |
@@ -447,8 +445,6 @@ drop to `1 × 1800 − 300 = 1500` veh/hr, or 1300 if undivided.
 | Output | Why |
 |---|---|
 | `TOLLA`, `TOLLMD`, `TOLLP` | The engine converts these from a per-mile rate to an absolute cost *in place*. Writing them back would corrupt the input on the next run |
-| `generalized_cost_by_direction` | No corresponding TNED field. Available in the report |
-| `auto_operating_cost` | No corresponding TNED field. `import_network.py` derives `@cost_operating` from length and the operating cost itself |
 
 > **After the run:** `import_network.py` derives `@cost_auto_*`, `@cost_hov2_*`,
 > `@cost_med_truck_*` and friends from `@toll_*` and `@cost_operating` using
@@ -549,7 +545,7 @@ promoted to through.
 | Field | Shape | Description |
 |---|---|---|
 | `toll_cost_by_period` | [3] | Per-mile toll rate in cents, converted in place to the total link toll (rounded to the nearest cent, minimum 1¢ if nonzero). Fractional remainders carry to the next link via `remaining_toll` |
-| `external_zone_delay_cost` | scalar | Extra impedance in cents for zone connectors at external stations. Added directly to generalized cost |
+| `external_zone_delay_cost` | scalar | Extra impedance in cents for zone connectors at external stations |
 
 ---
 
@@ -559,7 +555,6 @@ promoted to through.
 
 | Field | Description |
 |---|---|
-| `auto_operating_cost_per_mile` | Vehicle operating cost in cents/mile |
 | `managed_lane_capacity_rate` | Multiplier on HOV3+ lane capacity and projects 613/614 |
 | `freeway_capacity_rate` | Multiplier on general-purpose freeway and FC 8 capacity |
 | `time_period_adjustments` | Whether five-period factors are applied to populated CP and CX outputs |
@@ -613,7 +608,6 @@ One-way links skip direction index 1 entirely.
 for each link:
 │
 ├─ Convert per-mile tolls to absolute cents (carry remainder to next link)
-├─ Compute auto operating cost = distance × cents/mile
 ├─ Resolve speed (coded value or FC default)
 ├─ Resolve station ID (for HOV, chain through freeway adjacency)
 │
@@ -621,32 +615,31 @@ for each link:
    │
    ├─ Look up approach count at the downstream node
    │
-   ├─ for each period (AM, MD, PM):
-   │  │
-   │  ├─ Skip if lane_count == 9 (closed)
-   │  ├─ Set link travel time = distance / speed × 60
-   │  ├─ Skip capacity if FC == 10 (zone connector)
-   │  │
-   │  ├─ Resolve peak-period factor from station data
-   │  │
-   │  ├─ Compute base capacity by facility type:
-   │  │   ├─ FC 1: freeway formula with PLC overrides, HOV/TSM adjustments
-   │  │   ├─ FC 8: connector formula with ACCESS special case
-   │  │   ├─ FC 9: ramp formula
-   │  │   └─ FC 2–7: arterial formula with median adjustment
-   │  │
-   │  ├─ Set hourly_capacity and period_capacity
-   │  ├─ Sanitize turn-lane counts (clamp, fallback)
-   │  │
-   │  └─ Apply intersection control (if any):
-   │      ├─ Signal: GC lookup → through×1800×GC + turns×TLC, min 1000, × safety factor
-   │      ├─ 4-way stop: GC lookup → through×1800×GC + turns×TLC, min 500
-   │      ├─ 2-way stop: GC lookup → all_lanes×500×GC, min 500
-   │      ├─ Ramp meter: 1000×GC (all periods except AM)
-   │      ├─ Rail crossing: delay only (0.02 min)
-   │      └─ Toll/border: through×500, delay 1.0 min
-   │
-   └─ Compute generalized cost
+   └─ for each period (AM, MD, PM):
+      │
+      ├─ Skip if lane_count == 9 (closed)
+      ├─ Set link travel time = distance / speed × 60
+      ├─ Skip capacity if FC == 10 (zone connector)
+      │
+      ├─ Resolve peak-period factor from station data
+      │
+      ├─ Compute base capacity by facility type:
+      │   ├─ FC 1: freeway formula with PLC overrides, HOV/TSM adjustments
+      │   ├─ FC 8: connector formula with ACCESS special case
+      │   ├─ FC 9: ramp formula
+      │   └─ FC 2–7: arterial formula with median adjustment
+      │
+      ├─ Set hourly_capacity and period_capacity
+      ├─ Sanitize turn-lane counts (clamp, fallback)
+      │
+      └─ Apply intersection control (if any):
+          ├─ Signal: GC lookup → through×1800×GC + turns×TLC, min 1000, × safety factor
+          ├─ 4-way stop: GC lookup → through×1800×GC + turns×TLC, min 500
+          ├─ 2-way stop: GC lookup → all_lanes×500×GC, min 500
+          ├─ Ramp meter: 1000×GC (all periods except AM)
+          ├─ Rail crossing: delay only (0.02 min)
+          └─ Toll/border: through×500, delay 1.0 min
+    
 ```
 
 Note that `period_capacity` is the *mid-block* capacity scaled by the
@@ -655,22 +648,6 @@ sets `intersection_capacity`, but leaves `period_capacity` alone.
 
 The toll carry-forward only matters when links are processed in route order. The
 tool evaluates links independently, since the TNED table is not ordered by route.
-
-### Generalized cost formula
-
-$$
-GC = C_{\text{ext}} + C_{\text{aoc}} + (T_{\text{link}}^{AM} + T_{\text{delay}}^{AM}) \times 35 + \frac{\text{toll}_{AM} + \text{toll}_{MD}}{2}
-$$
-
-Where:
-- $C_{\text{ext}}$ = external zone delay cost (zone connectors at external stations only)
-- $C_{\text{aoc}}$ = auto operating cost (distance × per-mile rate)
-- $T_{\text{link}}^{AM}$ = AM peak link travel time in minutes
-- $T_{\text{delay}}^{AM}$ = AM peak intersection delay in minutes
-- 35 = value of time conversion factor (cents per minute)
-- $\text{toll}_{AM}$, $\text{toll}_{MD}$ = converted toll costs for periods 0 and 1
-
-Capped at 999,999.
 
 ---
 
