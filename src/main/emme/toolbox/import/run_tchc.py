@@ -38,7 +38,6 @@
 #    ramp_meter_file: optional ramp meter direction by traffic count ID
 #    hov_freeway_pairs_file: optional managed lane to parallel freeway link ID
 #    external_zone_delay_file: optional external station delay in cents by node
-#    jurisdiction_field: TNED field holding the 1-6 jurisdiction code
 #    traffic_count_field: TNED field holding the ADT link ID, if present
 #    recompute_all: recompute every link instead of only those missing outputs
 #    treat_zero_as_missing: treat a stored zero as a missing value
@@ -92,10 +91,6 @@ DEFAULT_SPEED_BY_FUNCTIONAL_CLASS = [65, 45, 40, 35, 30, 40, 35, 65, 30, 30, 50,
 # Turn-lane capacity per lane (veh/hr) by functional class, 0-indexed: FC 1..10
 TURN_CAPACITY_BY_FUNCTIONAL_CLASS = [250, 250, 150, 100, 100, 100, 100, 100, 100, 0]
 
-# Fallback jurisdiction (1-6) by functional class; the FORTRAN mjur table
-DEFAULT_JURISDICTION_BY_FUNCTIONAL_CLASS = [1, 5, 5, 6, 6, 6, 6, 1, 1, 6, 6, 6, 6, 1]
-
-
 @dataclass
 class TCHCLink:
     # identifiers
@@ -104,7 +99,6 @@ class TCHCLink:
     length_feet: float
     functional_class: int              # functional class
     high_occupancy_vehicle_class: int  # 1=mix, 2=hov2, 3=hov3, 4=toll
-    jurisdiction: int                  # jurisdiction
     median_type: int                   # median type
     directionality: int                # 1=one-way, 2=two-way
     traffic_count_identifier: int
@@ -178,9 +172,6 @@ class TCHCContext:
     # [period][direction][station_id] -> peak-period expansion factor
     station_peak_period_factor: List[List[List[float]]]
 
-    # jurisdiction (1-6) -> capacity multiplier for signalized intersections
-    roadway_safety_adjustment_factor_by_jurisdiction: Dict[int, float]
-
     # GC ratio lookup tables (integer percentages):
     #   signal:     [approach_count-1][fc-1][cross_fc-1]  (4x9x9)
     #   4-way stop: [fc-1][cross_fc-1]                    (9x9)
@@ -213,16 +204,6 @@ def direction_from_name(name):
     if "NB" in name: return 3
     if "WB" in name: return 4
     return 0
-
-
-def compute_safety_factors(analysis_year):
-    """Roadway safety adjustment factor by jurisdiction (FORTRAN rsafac)."""
-    factors = dict((j, 1.0) for j in range(1, 7))
-    if analysis_year > 2015:
-        factor = 1.0 + (min(analysis_year, 2020) - 2010) * 0.01
-        for jurisdiction in range(1, 5):
-            factors[jurisdiction] = factor
-    return factors
 
 
 def _max_lanes_for_direction(link, direction_index):
@@ -435,7 +416,6 @@ def apply_tchc(link, ctx, remaining_toll=None):
                 )
                 if directional_capacity < 1000.0:
                     directional_capacity = 1000.0
-                directional_capacity *= ctx.roadway_safety_adjustment_factor_by_jurisdiction.get(link.jurisdiction, 1.0)
                 link.intersection_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity * peak_period_factor
                 link.hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
 
@@ -1006,7 +986,6 @@ def build_context(links, analysis_year, auto_operating_cost_per_mile, station_pe
         approach_count=build_approach_counts(links),
         ramp_meter_direction_by_traffic_count_identifier=ramp_meter_direction,
         station_peak_period_factor=station_peak_period_factor,
-        roadway_safety_adjustment_factor_by_jurisdiction=compute_safety_factors(analysis_year),
         signal_green_cycle_lookup=green_cycle.signal,
         four_way_stop_green_cycle_lookup=green_cycle.four_way_stop,
         two_way_stop_green_cycle_lookup=green_cycle.two_way_stop,
@@ -1042,7 +1021,6 @@ def build_link(row, cross_tables, external_zone_delay_by_node):
         length_feet=float(row.length_feet),
         functional_class=functional_class,
         high_occupancy_vehicle_class=integer(row.HOV, 1),
-        jurisdiction=integer(row.jurisdiction),
         median_type=integer(row.MED, 1),
         directionality=2 if row.WAY in TWO_WAY_CODES else 1,
         traffic_count_identifier=integer(row.traffic_count),
@@ -1146,7 +1124,6 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
     managed_lane_capacity_rate = _m.Attribute(float)
     freeway_capacity_rate = _m.Attribute(float)
     time_period_adjustments = _m.Attribute(bool)
-    jurisdiction_field = _m.Attribute(str)
     traffic_count_field = _m.Attribute(str)
     recompute_all = _m.Attribute(bool)
     treat_zero_as_missing = _m.Attribute(bool)
@@ -1175,7 +1152,6 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
         self.managed_lane_capacity_rate = 1.0
         self.freeway_capacity_rate = 1.0
         self.time_period_adjustments = True
-        self.jurisdiction_field = "JUR"
         self.traffic_count_field = ""
         self.recompute_all = False
         self.treat_zero_as_missing = False
@@ -1183,7 +1159,7 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
         self.attributes = [
             "path", "source", "station_file", "gc_file", "link_id_file", "ramp_meter_file",
             "hov_freeway_pairs_file", "external_zone_delay_file", "report_file", "year", "aoc",
-            "managed_lane_capacity_rate", "freeway_capacity_rate", "time_period_adjustments", "jurisdiction_field",
+            "managed_lane_capacity_rate", "freeway_capacity_rate", "time_period_adjustments", 
             "traffic_count_field", "recompute_all", "treat_zero_as_missing", "dry_run",
         ]
 
@@ -1239,7 +1215,6 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
         pb.add_text_box("managed_lane_capacity_rate", size=8, title="Managed lane capacity rate:")
         pb.add_text_box("freeway_capacity_rate", size=8, title="Freeway capacity rate:")
         pb.add_checkbox("time_period_adjustments", title=" ", label="Apply time period capacity adjustments")
-        pb.add_text_box("jurisdiction_field", size=20, title="Jurisdiction field:")
         pb.add_text_box("traffic_count_field", size=20, title="Traffic count ID field (optional):")
         pb.add_text_box("report_file", size=80, title="Report file (optional):")
 
@@ -1261,7 +1236,6 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
                  managed_lane_capacity_rate=self.managed_lane_capacity_rate,
                  freeway_capacity_rate=self.freeway_capacity_rate,
                  time_period_adjustments=self.time_period_adjustments,
-                 jurisdiction_field=self.jurisdiction_field,
                  traffic_count_field=self.traffic_count_field,
                  recompute_all=self.recompute_all,
                  treat_zero_as_missing=self.treat_zero_as_missing,
@@ -1276,7 +1250,7 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
                  report_file="", year=0, aoc=0.0,
                  managed_lane_capacity_rate=0.0, freeway_capacity_rate=0.0,
                  time_period_adjustments=None,
-                 jurisdiction_field="", traffic_count_field="",
+                  traffic_count_field="",
                  am_hours=DEFAULT_AM_HOURS, pm_hours=DEFAULT_PM_HOURS,
                  recompute_all=False, treat_zero_as_missing=False, dry_run=False):
         self._log = []
@@ -1307,7 +1281,6 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
         self.time_period_adjustments = bool(
             props.get("tchc.time.period.adjustments", True)
             if time_period_adjustments is None else time_period_adjustments)
-        self.jurisdiction_field = jurisdiction_field or "JUR"
         self.traffic_count_field = traffic_count_field
 
         if not self.station_file:
@@ -1360,7 +1333,6 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
                     len(unknown), LINK_LAYER, NODE_LAYER)})
 
         links["length_feet"] = length_feet(links)
-        links["jurisdiction"] = self._jurisdiction(links)
         links["traffic_count"] = self._traffic_count(links)
         if "ASPD" not in links.columns:
             links["ASPD"] = 0
@@ -1395,19 +1367,6 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
             self._log.append({"type": "text", "content": "Dry run: the geodatabase was not modified"})
             return 0
         return write_results(self.source, results.set_index("HWYCOV0_ID").to_dict("index"), self._log)
-
-    def _jurisdiction(self, links):
-        defaults = DEFAULT_JURISDICTION_BY_FUNCTIONAL_CLASS
-        fallback = links["FC"].map(
-            lambda fc: defaults[fc - 1] if 1 <= fc <= len(defaults) else defaults[-1])
-        if self.jurisdiction_field not in links.columns:
-            self._log.append({
-                "type": "text",
-                "content": "Field %s not found; using the functional class jurisdiction defaults"
-                           % self.jurisdiction_field})
-            return fallback
-        coded = pd.to_numeric(links[self.jurisdiction_field], errors="coerce")
-        return coded.where(coded.between(1, 6), fallback).astype("int64")
 
     def _traffic_count(self, links):
         if not self.traffic_count_field:
