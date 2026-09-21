@@ -1,8 +1,8 @@
 Label,Description,Expression,atwork
 ,,"_DIST@np.minimum(skims['DIST'], 20)",1
-,,_DIST_SQUARED@_DIST**2,1
-,,_DIST_CUBED@_DIST**3,1
-,,_DIST_LOGGED@np.log(_DIST + 0.001),1
+ATWORK_DIST_SQUARED,,_DIST_SQUARED@_DIST**2,1
+ATWORK_DIST_CUBED,,_DIST_CUBED@_DIST**3,1
+ATWORK_DIST_LOGGED,,_DIST_LOGGED@np.log(_DIST + 0.001),1
 util_Distance,Distance,@_DIST,coef_dist_atwork
 util_Distance_squared,Distance_squared,@_DIST_SQUARED,coef_distsqrd_atwork
 util_Distance_fulltime_worker,Distance_fulltime_worker,@_DIST * (df.ptype==1),coef_dist_ftworker_atwork
