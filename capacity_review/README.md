@@ -50,10 +50,16 @@ single `*.gdb` found in the scenario `input` directory.
 
 From the Modeller toolbox, open **Import → Run TCHC** and fill in the page.
 
+`RunTCHC.__init__(self)` takes no caller-supplied arguments. It initializes the
+tool's page attributes; the options below belong to `RunTCHC.__call__`, invoked
+by calling the tool returned by `modeller.tool(...)`. Use keyword arguments to
+make overrides explicit.
+
 From the Emme Python shell or a Modeller notebook:
 
 ```python
 import os
+import inro.modeller
 modeller = inro.modeller.Modeller()
 main_directory = os.path.dirname(os.path.dirname(modeller.desktop.project.path))
 run_tchc = modeller.tool("sandag.import.run_tchc")
@@ -68,11 +74,131 @@ run_tchc(path=main_directory, dry_run=True, report_file="tchc_report.csv")
 ```
 
 Recompute a specific set of links regardless of whether their stored values are
-populated, by listing `HWYCOV0_ID` values in the first column of a CSV:
+populated, by providing a path to a file containing `HWYCOV0_ID` entries
+(one per line):
 
 ```python
 run_tchc(path=main_directory, link_id_file="input/tchc_links.csv")
 ```
+
+### Caller signature and defaults
+
+```python
+run_tchc(
+    path="",
+    source="",
+    station_file="",
+    gc_file="",
+    link_id_file="",
+    ramp_meter_file="",
+    hov_freeway_pairs_file="",
+    external_zone_delay_file="",
+    report_file="",
+    year=0,
+    aoc=0.0,
+    managed_lane_capacity_rate=0.0,
+    freeway_capacity_rate=0.0,
+    time_period_adjustments=None,
+    traffic_count_field="",
+    am_hours=(6, 7, 8),
+    pm_hours=(15, 16, 17),
+    recompute_all=False,
+    treat_zero_as_missing=False,
+    dry_run=False,
+)
+```
+
+The defaults above are the Python call defaults. An empty string or zero often
+means "resolve from scenario properties", rather than an empty input or a zero
+parameter. Every call loads `<path>/conf/sandag_abm.properties`, even when all
+inputs are supplied explicitly.
+
+#### Argument definitions and resolution
+
+See [Files](#files) for input arguments, property keys, and configured defaults;
+[Parameters](#parameters) for calculation parameters and their property keys;
+and [Scalar parameters](#scalar-parameters) for their effects. File formats are
+specified under [Count-station file](#count-station-file),
+[Green/cycle file](#greencycle-file), and
+[Optional lookup files](#optional-lookup-files).
+
+The following details supplement those definitions for scripted calls:
+
+- `path` is the scenario root. An empty value retains the tool's current path,
+  initially two directory levels above `modeller.desktop.project.path`. Prefer
+  an absolute path.
+- File and directory arguments are strings. An explicit `source` is passed
+  through unchanged, unlike the relative paths described under [Files](#files);
+  use an absolute geodatabase path or join it to `main_directory`. Automatic
+  source discovery raises an error if zero or multiple geodatabases match.
+- Empty input-file arguments use the properties listed under [Files](#files).
+  `station_file` has no hard-coded fallback: its listed default comes from the
+  properties template. `gc_file` falls back to `input/gc.csv` only when its
+  property key is absent. Both files are required. Configured optional files
+  must also be readable; passing `""` does not disable one, so clear its property
+  to omit it. The optional lookup CSVs require a header row.
+- `link_id_file` reads IDs from a text file containing one `HWYCOV0_ID` per row
+  and ignores nonnumeric entries. Its selection behavior is defined under
+  [Which links are processed](#which-links-are-processed).
+- For integer `year` and numeric `aoc` and capacity rates, zero requests the
+  property fallback in [Parameters](#parameters); it cannot override a
+  configured value with a literal zero.
+- `time_period_adjustments=None` requests the property fallback; explicit
+  `False` disables scaling. The station factors and
+  [period mapping](#structural-notes) still apply. Pass Python booleans, not
+  strings such as `"False"`.
+- `traffic_count_field` names an existing field, as described under
+  [Inputs the geodatabase cannot supply](#inputs-the-geodatabase-cannot-supply).
+  A nonexistent named field raises an error; nonnumeric or missing values
+  become 0. There is no properties fallback.
+- `am_hours` and `pm_hours` accept nonempty tuples or lists of integer hours
+  in 0–23. Leave hours for the off-peak period. Their role and validation are
+  described under [Count-station file](#count-station-file). They have no
+  properties fallback or toolbox page controls.
+
+
+#### Selection, reports, and return value
+
+See [Which links are processed](#which-links-are-processed) for `recompute_all`
+and `treat_zero_as_missing`. Use `recompute_all=True` after changing inputs or
+parameters when populated outputs also need refreshing. Legitimate zero delays
+can substantially expand selection with `treat_zero_as_missing=True`; that
+option has no additional effect with `recompute_all=True`.
+
+`dry_run=True` computes results without updating the geodatabase, as in the
+preview example above. A report and Modeller logbook entries can still be
+written. All three switches default to `False` and have no properties fallback.
+
+`report_file` is an optional CSV path, resolved relative to `path`, with no
+properties fallback. It contains computed [writeback fields](#what-gets-written-back)
+and stored counterparts suffixed `_prev`, keyed by `HWYCOV0_ID`. The parent
+directory must exist; an existing file is overwritten. No CSV is written when
+no links are selected. The CSV excludes generalized and operating costs,
+despite the later reference to generalized cost being available in the report.
+
+A normal call returns the number of geodatabase features updated. It returns
+`0` for a dry run or when no links are selected; a dry-run return value is not
+the selected-link count. Inspect the Modeller logbook and optional CSV for that
+review. See [How the network is read and written](#how-the-network-is-read-and-written)
+for write requirements and behavior.
+
+### Constructor and toolbox page behavior
+
+The no-argument constructor initializes `path` from the open project; all other
+path/file attributes and `traffic_count_field` to `""`; `year` to `0`; `aoc`
+to `0.0`; both capacity rates to `1.0`; `time_period_adjustments` to `True`;
+and the three selection/execution switches to `False`.
+
+The toolbox's `run()` method takes no arguments and forwards the page attributes
+to `__call__`. Consequently, the initial page values `1.0` and `True` override
+the capacity-rate and time-period-adjustment properties. A scripted call that
+omits those arguments instead uses the properties. On the page, setting a
+capacity rate to `0.0` requests its property fallback. The page uses the default
+AM/PM hours; custom hours require a scripted call.
+
+For scripted calls, omitted arguments use the signature defaults and resolution
+rules above, rather than retaining previous page or call values. `path` is the
+exception: omitting it retains the tool's current scenario directory.
 
 ### Which links are processed
 
@@ -121,13 +247,9 @@ Relative paths are resolved against `path`, the scenario directory.
 | Managed lane capacity rate | `managed_lane_capacity_rate` | `tchc.managed.lane.capacity.rate` | 1.0 |
 | Freeway capacity rate | `freeway_capacity_rate` | `tchc.freeway.capacity.rate` | 1.0 |
 | Apply time-period capacity adjustments | `time_period_adjustments` | `tchc.time.period.adjustments` | `true` |
-| Jurisdiction field | `jurisdiction_field` | — | `JUR` |
 | ADT link ID field | `traffic_count_field` | — | unset |
 | AM peak hours | `am_hours` | — | 6, 7, 8 |
 | PM peak hours | `pm_hours` | — | 15, 16, 17 |
-
-Years after 2015 enable traffic system management features and raise the
-jurisdiction safety factor.
 
 The two capacity rates are plain values in `sandag_abm.properties`. To vary them
 by year instead, add columns of the same name to `parametersByYears.csv` —
@@ -197,11 +319,6 @@ The tool falls back for each of these. The fallbacks are safe but not exact.
 `freeway_identifier_to_station_identifier` is built from the geodatabase itself,
 mapping `HWYCOV0_ID` to `COSTAT`.
 
-`roadway_safety_adjustment_factor_by_jurisdiction` is computed from the analysis
-year: for years after 2015, jurisdictions 1–4 get
-`1.0 + (min(year, 2020) − 2010) × 0.01`, giving 1.06 to 1.10; jurisdictions 5–6
-stay at 1.0.
-
 ### Derived from topology
 
 **Approach count.** A link approaches a node at its *downstream* end, so for
@@ -256,7 +373,6 @@ the layer's random-write capability and fails with a clear message otherwise.
 | `length_feet` | `SHAPE_Length` | Falls back to `LENGTH` × 5280 |
 | `functional_class` | `FC` | Restricted to 1–10 |
 | `high_occupancy_vehicle_class` | `HOV` | |
-| `jurisdiction` | `JUR` | 1–6. **Not** `COJUR`, which is a 1–20 count jurisdiction. Values outside 1–6 fall back to a per-FC default table |
 | `median_type` | `MED` | |
 | `directionality` | `WAY` | **Not** `DIR`, which is a compass heading |
 | `station_identifier` | `COSTAT` | |
@@ -359,7 +475,6 @@ drop to `1 × 1800 − 300 = 1500` veh/hr, or 1300 if undivided.
 |---|---|---|
 | `functional_class` | 1–10 | Determines which capacity formula applies |
 | `high_occupancy_vehicle_class` | 1–4 | 1=general purpose, 2=HOV2+, 3=HOV3+, 4=toll facility |
-| `jurisdiction` | 1–6 | Owning agency. Used to look up the roadway safety adjustment factor for signalized intersections |
 | `median_type` | 1–3 | 1=none/undivided, 2=raised median, 3=center turn lane. Values ≥2 are treated as "divided" |
 | `directionality` | 1–2 | 1=one-way (AB only), 2=two-way (AB and BA) |
 
@@ -417,7 +532,7 @@ uses the B node, direction 1 (BA) uses the A node.
 | Code | Type | Delay (min) | Capacity formula |
 |---|---|---|---|
 | 0 | No control | 0.0 | Mid-block capacity only |
-| 1 | Signal | 0.17 | `through × 1800 × GC + turn_lanes × TLC`, min 1000, scaled by the jurisdiction safety factor |
+| 1 | Signal | 0.17 | `through × 1800 × GC + turn_lanes × TLC`, min 1000 |
 | 2 | 4-way stop | 0.20 | `through × 1800 × GC + turn_lanes × TLC`, min 500 |
 | 3 | 2-way stop | 0.20 | `through × 500 × GC + right × 500 × GC + left × 500 × GC`, min 500 |
 | 4 | Ramp meter (off-peak active) | 0.50 | `1000 × GC`, all periods except AM |
@@ -459,7 +574,6 @@ promoted to through.
 | `ramp_meter_direction_by_traffic_count_identifier` | ADT ID → direction | Value 9 means both directions; 1–4 are SB/EB/NB/WB. A matching metered freeway link gets a 1.10× bonus |
 | `managed_lane_to_freeway_identifier` | HOV link ID → freeway link ID | Resolves station IDs for HOV links, which have no count stations of their own |
 | `freeway_identifier_to_station_identifier` | freeway link ID → station ID | Chained with the above |
-| `roadway_safety_adjustment_factor_by_jurisdiction` | jurisdiction → multiplier | Applied to signalized intersection capacity only |
 | `node_sphere_by_id` | node ID → sphere code | **Declared but never read** |
 | `border_delay_minutes_lookup` | [crossing][period][direction] | **Declared but never read** |
 
