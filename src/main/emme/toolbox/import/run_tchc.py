@@ -34,9 +34,6 @@
 #    year: analysis year. Default is scenarioYear from the properties file
 #    managed_lane_capacity_rate: capacity multiplier for HOV3+ and managed lanes
 #    freeway_capacity_rate: capacity multiplier for general purpose freeways
-#    ramp_meter_file: optional ramp meter direction by traffic count ID
-#    hov_freeway_pairs_file: optional managed lane to parallel freeway link ID
-#    external_zone_delay_file: optional external station delay in cents by node
 #    traffic_count_field: TNED field holding the ADT link ID, if present
 #    recompute_all: recompute every link instead of only those missing outputs
 #    treat_zero_as_missing: treat a stored zero as a missing value
@@ -100,7 +97,6 @@ class TCHCLink:
     high_occupancy_vehicle_class: int  # 1=mix, 2=hov2, 3=hov3, 4=toll
     median_type: int                   # median type
     directionality: int                # 1=one-way, 2=two-way
-    traffic_count_identifier: int
     station_identifier: int
     project_identifier: int
 
@@ -131,9 +127,6 @@ class TCHCLink:
     # per-mile tolls -> converted in place
     toll_cost_by_period: List[int] = field(default_factory=lambda: [0, 0, 0])
 
-    # external zone delay cost (extcst, for zone connectors)
-    external_zone_delay_cost: float = 0.0
-
     # outputs
     link_travel_time_minutes_by_period_and_direction: List[List[float]] = field(default_factory=lambda: [[999, 999], [999, 999], [999, 999]])
     intersection_delay_minutes_by_period_and_direction: List[List[float]] = field(default_factory=lambda: [[0, 0], [0, 0], [0, 0]])
@@ -152,7 +145,7 @@ class TCHCContext:
     Scenario-level parameters and lookup tables consumed by ``apply_tchc``.
 
     These are typically loaded once from external data sources (count station
-    files, green/cycle tables, ramp meter lists, HOV-freeway mappings, border
+    files, green/cycle tables, HOV-freeway mappings, border
     delay tables) and shared across all links in a single model run.
     """
 
@@ -162,8 +155,7 @@ class TCHCContext:
 
     # node_id -> approach count (2-4): non-connector links touching each node
     approach_count: Dict[int, int]
-    # adt_id -> direction code for ramp metering (1=SB,2=EB,3=NB,4=WB,9=both)
-    ramp_meter_direction_by_traffic_count_identifier: Dict[int, int]
+
     # [period][direction][station_id] -> peak-period expansion factor
     station_peak_period_factor: List[List[List[float]]]
 
@@ -181,8 +173,7 @@ class TCHCContext:
     border_delay_minutes_lookup: List[List[List[float]]]
 
     time_period_adjustments: bool = True
-    # HOV link_id -> adjacent GP freeway link_id (for station resolution)
-    managed_lane_to_freeway_identifier: Dict[int, int] = field(default_factory=dict)
+
     # freeway link_id -> count station_id
     freeway_identifier_to_station_identifier: Dict[int, int] = field(default_factory=dict)
     # node_id -> raw sphere code (divide by 100 for sphere group)
@@ -228,7 +219,6 @@ def apply_tchc(link, ctx, remaining_toll=None):
         remaining_toll = [0.0, 0.0, 0.0]
 
     distance_miles = miles(link.length_feet)
-    use_traffic_system_management = ctx.analysis_year > 2015
 
     # ---- toll conversion: per-mile rate -> absolute cents, with carry-forward
     # Tolls are coded as per-mile rates. Multiply by distance, accumulate
@@ -259,9 +249,7 @@ def apply_tchc(link, ctx, remaining_toll=None):
     station_id = link.station_identifier
     if link.high_occupancy_vehicle_class in (2, 3):
         station_id = 0
-        freeway_id = ctx.managed_lane_to_freeway_identifier.get(link.link_identifier, 0)
-        if freeway_id > 0:
-            station_id = ctx.freeway_identifier_to_station_identifier.get(freeway_id, 0)
+
     if station_id < 1 or (link.functional_class != 1):
         station_id = 1
 
@@ -321,11 +309,6 @@ def apply_tchc(link, ctx, remaining_toll=None):
                     directional_capacity *= ctx.managed_lane_capacity_rate
                 if link.project_identifier in (613, 614):
                     directional_capacity *= ctx.managed_lane_capacity_rate
-
-                if use_traffic_system_management:
-                    ramp_meter_direction = ctx.ramp_meter_direction_by_traffic_count_identifier.get(link.traffic_count_identifier, 0)
-                    if ramp_meter_direction == 9 or ramp_meter_direction == direction_from_name(link.link_name):
-                        directional_capacity *= 1.10
 
             elif link.functional_class == 8:
                 # fwy-fwy connector: check for ACCESS special case
@@ -954,7 +937,7 @@ def cross_street_class(tables, node_id, link_id, default=7):
 
 def build_context(links, analysis_year, station_peak_period_factor,
                   green_cycle, managed_lane_capacity_rate, freeway_capacity_rate,
-                  time_period_adjustments, ramp_meter_direction, managed_lane_to_freeway):
+                  time_period_adjustments):
     freeway_to_station = dict(
         (int(link_id), int(station))
         for link_id, station in zip(links["HWYCOV0_ID"], links["COSTAT"])
@@ -964,14 +947,12 @@ def build_context(links, analysis_year, station_peak_period_factor,
         freeway_capacity_rate=freeway_capacity_rate,
         analysis_year=analysis_year,
         approach_count=build_approach_counts(links),
-        ramp_meter_direction_by_traffic_count_identifier=ramp_meter_direction,
         station_peak_period_factor=station_peak_period_factor,
         signal_green_cycle_lookup=green_cycle.signal,
         four_way_stop_green_cycle_lookup=green_cycle.four_way_stop,
         two_way_stop_green_cycle_lookup=green_cycle.two_way_stop,
         border_delay_minutes_lookup=[],
         time_period_adjustments=time_period_adjustments,
-        managed_lane_to_freeway_identifier=managed_lane_to_freeway,
         freeway_identifier_to_station_identifier=freeway_to_station,
     )
 
@@ -982,7 +963,7 @@ def integer(value, default=0):
     return int(value)
 
 
-def build_link(row, cross_tables, external_zone_delay_by_node):
+def build_link(row, cross_tables):
     functional_class = integer(row.FC)
     from_node = integer(row.AN)
     to_node = integer(row.BN)
@@ -991,9 +972,6 @@ def build_link(row, cross_tables, external_zone_delay_by_node):
     if not 1 <= speed <= 75:
         speed = integer(row.ASPD, speed)
 
-    external_delay = 0.0
-    if functional_class == 10:
-        external_delay = external_zone_delay_by_node.get(from_node, 0.0)
 
     return TCHCLink(
         link_identifier=integer(row.HWYCOV0_ID),
@@ -1003,7 +981,6 @@ def build_link(row, cross_tables, external_zone_delay_by_node):
         high_occupancy_vehicle_class=integer(row.HOV, 1),
         median_type=integer(row.MED, 1),
         directionality=2 if row.WAY in TWO_WAY_CODES else 1,
-        traffic_count_identifier=integer(row.traffic_count),
         station_identifier=integer(row.COSTAT),
         project_identifier=integer(row.PROJ),
         from_node_identifier=from_node,
@@ -1026,7 +1003,6 @@ def build_link(row, cross_tables, external_zone_delay_by_node):
         left_turn_lane_count_by_direction=[integer(row.ABLL), integer(row.BALL)],
         green_cycle_value_by_direction=[integer(row.ABGC), integer(row.BAGC)],
         toll_cost_by_period=[integer(row.TOLLA), integer(row.TOLLMD), integer(row.TOLLP)],
-        external_zone_delay_cost=external_delay,
     )
 
 
@@ -1047,11 +1023,11 @@ def select_links(links, link_ids, recompute_all, treat_zero_as_missing):
     return in_domain & selected
 
 
-def compute(links, selected, context, cross_tables, external_zone_delay_by_node):
+def compute(links, selected, context, cross_tables):
     """Run apply_tchc over the selected links, returning one record per link."""
     records = []
     for row in links[selected].itertuples(index=False):
-        link = build_link(row, cross_tables, external_zone_delay_by_node)
+        link = build_link(row, cross_tables)
         apply_tchc(link, context)
         record = {"HWYCOV0_ID": link.link_identifier}
         for attribute, period_index, direction_index, name in OUTPUT_FIELDS:
@@ -1095,9 +1071,6 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
     station_file = _m.Attribute(str)
     gc_file = _m.Attribute(str)
     link_id_file = _m.Attribute(str)
-    ramp_meter_file = _m.Attribute(str)
-    hov_freeway_pairs_file = _m.Attribute(str)
-    external_zone_delay_file = _m.Attribute(str)
     report_file = _m.Attribute(str)
     year = _m.Attribute(int)
     managed_lane_capacity_rate = _m.Attribute(float)
@@ -1122,9 +1095,6 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
         self.station_file = ""
         self.gc_file = ""
         self.link_id_file = ""
-        self.ramp_meter_file = ""
-        self.hov_freeway_pairs_file = ""
-        self.external_zone_delay_file = ""
         self.report_file = ""
         self.year = 0
         self.managed_lane_capacity_rate = 1.0
@@ -1135,8 +1105,8 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
         self.treat_zero_as_missing = False
         self.dry_run = False
         self.attributes = [
-            "path", "source", "station_file", "gc_file", "link_id_file", "ramp_meter_file",
-            "hov_freeway_pairs_file", "external_zone_delay_file", "report_file", "year",
+            "path", "source", "station_file", "gc_file", "link_id_file", 
+            "report_file", "year",
             "managed_lane_capacity_rate", "freeway_capacity_rate", "time_period_adjustments", 
             "traffic_count_field", "recompute_all", "treat_zero_as_missing", "dry_run",
         ]
@@ -1181,12 +1151,6 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
         pb.add_select_file("link_id_file", window_type="file", file_filter="*.csv",
                            title="Link ID list (optional):",
                            note="HWYCOV0_ID values to recompute regardless of stored values")
-        pb.add_select_file("ramp_meter_file", window_type="file", file_filter="*.csv",
-                           title="Ramp meter direction file (optional):")
-        pb.add_select_file("hov_freeway_pairs_file", window_type="file", file_filter="*.csv",
-                           title="Managed lane to freeway link file (optional):")
-        pb.add_select_file("external_zone_delay_file", window_type="file", file_filter="*.csv",
-                           title="External zone delay file (optional):")
 
         pb.add_text_box("year", size=6, title="Analysis year:")
         pb.add_text_box("managed_lane_capacity_rate", size=8, title="Managed lane capacity rate:")
@@ -1206,9 +1170,6 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
         try:
             self(path=self.path, source=self.source, station_file=self.station_file,
                  gc_file=self.gc_file, link_id_file=self.link_id_file,
-                 ramp_meter_file=self.ramp_meter_file,
-                 hov_freeway_pairs_file=self.hov_freeway_pairs_file,
-                 external_zone_delay_file=self.external_zone_delay_file,
                  report_file=self.report_file, year=self.year,
                  managed_lane_capacity_rate=self.managed_lane_capacity_rate,
                  freeway_capacity_rate=self.freeway_capacity_rate,
@@ -1223,7 +1184,6 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
             raise
 
     def __call__(self, path="", source="", station_file="", gc_file="", link_id_file="",
-                 ramp_meter_file="", hov_freeway_pairs_file="", external_zone_delay_file="",
                  report_file="", year=0,
                  managed_lane_capacity_rate=0.0, freeway_capacity_rate=0.0,
                  time_period_adjustments=None,
@@ -1243,11 +1203,6 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
         self.station_file = resolve_path(self.path, station_file or props.get("tchc.station.file", ""))
         self.gc_file = resolve_path(self.path, gc_file or props.get("tchc.gc.file", _join("input", "gc.csv")))
         self.link_id_file = resolve_path(self.path, link_id_file or props.get("tchc.link.list.file", ""))
-        self.ramp_meter_file = resolve_path(self.path, ramp_meter_file or props.get("tchc.ramp.meter.file", ""))
-        self.hov_freeway_pairs_file = resolve_path(
-            self.path, hov_freeway_pairs_file or props.get("tchc.hov.freeway.pairs.file", ""))
-        self.external_zone_delay_file = resolve_path(
-            self.path, external_zone_delay_file or props.get("tchc.external.zone.delay.file", ""))
         self.report_file = resolve_path(self.path, report_file)
         self.year = int(year or props["scenarioYear"])
         self.managed_lane_capacity_rate = float(
@@ -1318,9 +1273,7 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
         context = build_context(
             links, self.year, station_factors, green_cycle,
             self.managed_lane_capacity_rate, self.freeway_capacity_rate,
-            self.time_period_adjustments,
-            load_lookup(self.ramp_meter_file), load_lookup(self.hov_freeway_pairs_file))
-        external_zone_delay = load_lookup(self.external_zone_delay_file, cast=float)
+            self.time_period_adjustments)
         cross_tables = build_cross_street_classes(links)
 
         selected = select_links(
@@ -1329,7 +1282,7 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
             "type": "text",
             "content": "Selected %s of %s links for recalculation" % (int(selected.sum()), len(links))})
 
-        results = compute(links, selected, context, cross_tables, external_zone_delay)
+        results = compute(links, selected, context, cross_tables)
         if results.empty:
             self._log.append({"type": "text", "content": "No links to update"})
             return 0

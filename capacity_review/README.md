@@ -90,9 +90,6 @@ run_tchc(
     station_file="",
     gc_file="",
     link_id_file="",
-    ramp_meter_file="",
-    hov_freeway_pairs_file="",
-    external_zone_delay_file="",
     report_file="",
     year=0,
     aoc=0.0,
@@ -231,9 +228,6 @@ green/cycle lookup tables.
 | Count-station hourly percentages | `station_file` | `tchc.station.file` | `input/sta.hrpct` |
 | Green/cycle ratios | `gc_file` | `tchc.gc.file` | `input/gc.csv` |
 | Forced link list (optional) | `link_id_file` | `tchc.link.list.file` | none |
-| Ramp meter directions (optional) | `ramp_meter_file` | `tchc.ramp.meter.file` | none |
-| Managed lane ↔ freeway pairs (optional) | `hov_freeway_pairs_file` | `tchc.hov.freeway.pairs.file` | none |
-| External zone delay (optional) | `external_zone_delay_file` | `tchc.external.zone.delay.file` | none |
 
 Relative paths are resolved against `path`, the scenario directory.
 
@@ -286,16 +280,6 @@ named in the header.
 - If there is no `2-Way Stop` block, it is taken from the `4-Way Stop` row for
   the stopped (minor) approach, functional class 7 by default.
 
-### Optional lookup files
-
-Each is a CSV whose first two columns are read as key and value, whatever they
-are named.
-
-| File | Key → value | Effect when absent |
-|---|---|---|
-| `ramp_meter_file` | ADT link ID → direction code (1=SB, 2=EB, 3=NB, 4=WB, 9=both) | The 1.10× TSM ramp-meter bonus never applies |
-| `hov_freeway_pairs_file` | managed lane link ID → parallel freeway link ID | HOV links fall back to station 1 |
-| `external_zone_delay_file` | node ID → delay cost in cents | Generalized cost at external-station connectors omits the delay term |
 
 ---
 
@@ -305,10 +289,6 @@ The tool falls back for each of these. The fallbacks are safe but not exact.
 
 | TCHC input | Why it is missing | Fallback |
 |---|---|---|
-| `traffic_count_identifier` | `ADT` is not in the documented `TNED_HwyNet` schema. Set `traffic_count_field` if your export has it | 0 |
-| `ramp_meter_direction_by_traffic_count_identifier` | A ramp-meter list, not network data | empty — no 1.10× bonus, and inert anyway without an ADT field |
-| `managed_lane_to_freeway_identifier` | HOV↔GP pairing is not in TNED | empty — HOV links resolve to station 1 |
-| `external_zone_delay_cost` | A model parameter, not network data | 0.0 |
 | `cross_street_functional_class_by_direction` | TCHC derived it from the aat turn tables, which TNED does not carry | Derived from topology, see below |
 | `approach_count` | A derived count, never stored | Derived from topology, see below |
 | `border_delay_minutes_lookup` | Border delay table | Never read by the engine; supplying it has no effect |
@@ -385,8 +365,6 @@ the layer's random-write capability and fails with a clear message otherwise.
 | `green_cycle_value_by_direction` | `ABGC` / `BAGC` | Already coded as G/C × 100 |
 | `toll_cost_by_period` | `TOLLA`, `TOLLMD`, `TOLLP` | Per-mile rates in cents |
 | `cross_street_functional_class_by_direction` | *derived from topology* | |
-| `traffic_count_identifier` | *`traffic_count_field`, if set* | |
-| `external_zone_delay_cost` | *`external_zone_delay_file`, keyed on `AN`* | Zone connectors only |
 
 ### What gets written back
 
@@ -495,7 +473,6 @@ drop to `1 × 1800 − 300 = 1500` veh/hr, or 1300 if undivided.
 |---|---|
 | `speed` | Coded free-flow speed in mph. If outside [1, 75], defaults to a per-FC lookup (65 for freeways, 35 for collectors, and so on) |
 | `station_identifier` | Count station ID, used to look up the peak-period factor for freeways |
-| `traffic_count_identifier` | ADT link identifier, used for ramp metering direction lookup |
 | `project_identifier` | Project number. IDs 613 and 614 trigger the managed-lane capacity rate multiplier |
 
 ### Lane configuration
@@ -545,7 +522,6 @@ promoted to through.
 | Field | Shape | Description |
 |---|---|---|
 | `toll_cost_by_period` | [3] | Per-mile toll rate in cents, converted in place to the total link toll (rounded to the nearest cent, minimum 1¢ if nonzero). Fractional remainders carry to the next link via `remaining_toll` |
-| `external_zone_delay_cost` | scalar | Extra impedance in cents for zone connectors at external stations |
 
 ---
 
@@ -566,8 +542,6 @@ promoted to through.
 |---|---|---|
 | `approach_count` | node ID → count (2–4) | Approaches at each node, clamped to [2, 4]. Indexes the signal green/cycle lookup |
 | `station_peak_period_factor` | [period][direction][station] | Peak-period expansion factor. Valid range [1.0, 15.0]; out-of-range values fall back to station 1. For freeways the direction comes from the link name (NB/WB → index 1) rather than the loop direction |
-| `ramp_meter_direction_by_traffic_count_identifier` | ADT ID → direction | Value 9 means both directions; 1–4 are SB/EB/NB/WB. A matching metered freeway link gets a 1.10× bonus |
-| `managed_lane_to_freeway_identifier` | HOV link ID → freeway link ID | Resolves station IDs for HOV links, which have no count stations of their own |
 | `freeway_identifier_to_station_identifier` | freeway link ID → station ID | Chained with the above |
 | `node_sphere_by_id` | node ID → sphere code | **Declared but never read** |
 | `border_delay_minutes_lookup` | [crossing][period][direction] | **Declared but never read** |
