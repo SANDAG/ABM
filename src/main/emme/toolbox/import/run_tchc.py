@@ -1155,10 +1155,10 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
         pb.add_text_box("year", size=6, title="Analysis year:")
         pb.add_text_box("managed_lane_capacity_rate", size=8, title="Managed lane capacity rate:")
         pb.add_text_box("freeway_capacity_rate", size=8, title="Freeway capacity rate:")
-        pb.add_checkbox("time_period_adjustments", title=" ", label="Apply time period capacity adjustments")
         pb.add_text_box("traffic_count_field", size=20, title="Traffic count ID field (optional):")
         pb.add_text_box("report_file", size=80, title="Report file (optional):")
 
+        pb.add_checkbox("time_period_adjustments", title=" ", label="Apply time period capacity adjustments")
         pb.add_checkbox("recompute_all", title=" ", label="Recompute every link")
         pb.add_checkbox("treat_zero_as_missing", title=" ", label="Treat stored zeroes as missing values")
         pb.add_checkbox("dry_run", title=" ", label="Do not write results to the geodatabase")
