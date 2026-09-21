@@ -824,7 +824,7 @@ def load_lookup(path, cast=int):
 def load_link_ids(path):
     if not path:
         return set()
-    table = pd.read_csv(path)
+    table = pd.read_csv(path, header=None)
     values = pd.to_numeric(table.iloc[:, 0], errors="coerce").dropna()
     return set(int(value) for value in values)
 
