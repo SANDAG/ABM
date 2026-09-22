@@ -38,7 +38,6 @@
 #    recompute_all: recompute every link instead of only those missing outputs
 #    treat_zero_as_missing: treat a stored zero as a missing value
 #    dry_run: compute and report without writing to the geodatabase
-#    report_file: optional CSV of computed and previously stored values
 #
 # Files referenced:
 #    <source>: TNED_HwyNet and TNED_HwyNodes layers
@@ -50,7 +49,7 @@
     modeller = inro.modeller.Modeller()
     main_directory = os.path.dirname(os.path.dirname(modeller.desktop.project.path))
     run_tchc = modeller.tool("sandag.import.run_tchc")
-    run_tchc(path=main_directory, dry_run=True, report_file="tchc_report.csv")
+    run_tchc(path=main_directory, dry_run=True)
 """
 
 
@@ -70,6 +69,8 @@ import pandas as pd
 import re
 import traceback as _traceback
 import os
+import datetime
+
 
 _join = os.path.join
 _dir = os.path.dirname
@@ -1136,7 +1137,10 @@ def write_report(path, results, links):
     stored = links.set_index("HWYCOV0_ID")
     columns = [name for name in results.columns if name != "HWYCOV0_ID"]
     report = results.set_index("HWYCOV0_ID")
-    report = report.join(stored.loc[report.index, columns], rsuffix="_prev")
+    report = pd.concat([
+        report.assign(status="computed"),
+        stored.loc[report.index, columns].assign(status="original")
+        ]).sort_index()
     report.to_csv(path)
 
 
@@ -1151,7 +1155,6 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
     station_file = _m.Attribute(str)
     gc_file = _m.Attribute(str)
     link_id_file = _m.Attribute(str)
-    report_file = _m.Attribute(str)
     year = _m.Attribute(int)
     managed_lane_capacity_rate = _m.Attribute(float)
     freeway_capacity_rate = _m.Attribute(float)
@@ -1175,7 +1178,6 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
         self.station_file = ""
         self.gc_file = ""
         self.link_id_file = ""
-        self.report_file = ""
         self.year = 0
         self.managed_lane_capacity_rate = 1.0
         self.freeway_capacity_rate = 1.0
@@ -1186,7 +1188,7 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
         self.dry_run = False
         self.attributes = [
             "path", "source", "station_file", "gc_file", "link_id_file", 
-            "report_file", "year",
+            "year",
             "managed_lane_capacity_rate", "freeway_capacity_rate", "time_period_adjustments", 
             "traffic_count_field", "recompute_all", "treat_zero_as_missing", "dry_run",
         ]
@@ -1236,7 +1238,6 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
         pb.add_text_box("managed_lane_capacity_rate", size=8, title="Managed lane capacity rate:")
         pb.add_text_box("freeway_capacity_rate", size=8, title="Freeway capacity rate:")
         pb.add_text_box("traffic_count_field", size=20, title="Traffic count ID field (optional):")
-        pb.add_text_box("report_file", size=80, title="Report file (optional):")
 
         pb.add_checkbox("time_period_adjustments", title=" ", label="Apply time period capacity adjustments")
         pb.add_checkbox("recompute_all", title=" ", label="Recompute every link")
@@ -1250,7 +1251,7 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
         try:
             self(path=self.path, source=self.source, station_file=self.station_file,
                  gc_file=self.gc_file, link_id_file=self.link_id_file,
-                 report_file=self.report_file, year=self.year,
+                 year=self.year,
                  managed_lane_capacity_rate=self.managed_lane_capacity_rate,
                  freeway_capacity_rate=self.freeway_capacity_rate,
                  time_period_adjustments=self.time_period_adjustments,
@@ -1264,7 +1265,7 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
             raise
 
     def __call__(self, path="", source="", station_file="", gc_file="", link_id_file="",
-                 report_file="", year=0,
+                 year=0,
                  managed_lane_capacity_rate=0.0, freeway_capacity_rate=0.0,
                  time_period_adjustments=None,
                   traffic_count_field="",
@@ -1283,7 +1284,9 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
         self.station_file = resolve_path(self.path, station_file or props.get("tchc.station.file", ""))
         self.gc_file = resolve_path(self.path, gc_file or props.get("tchc.gc.file", _join("input", "gc.csv")))
         self.link_id_file = resolve_path(self.path, link_id_file or props.get("tchc.link.list.file", ""))
-        self.report_file = resolve_path(self.path, report_file)
+        self.report_file = resolve_path(
+            self.path, 
+            f"tchc_report_{datetime.datetime.now().isoformat(timespec='seconds',sep='_').replace(":","")}.csv")
         self.year = int(year or props["scenarioYear"])
         self.managed_lane_capacity_rate = float(
             managed_lane_capacity_rate or props.get("tchc.managed.lane.capacity.rate", 1.0))
@@ -1367,12 +1370,11 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
             self._log.append({"type": "text", "content": "No links to update"})
             return 0
 
-        if self.report_file:
-            write_report(self.report_file, results, links)
-            self._log.append({"type": "text", "content": "Wrote report to %s" % self.report_file})
 
         if self.dry_run:
             self._log.append({"type": "text", "content": "Dry run: the geodatabase was not modified"})
+            write_report(self.report_file, results, links)
+            self._log.append({"type": "text", "content": "Wrote report to %s" % self.report_file})
             return 0
         return write_results(self.source, results.set_index("HWYCOV0_ID").to_dict("index"), self._log)
 

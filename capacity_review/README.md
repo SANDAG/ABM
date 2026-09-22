@@ -70,7 +70,7 @@ Preview without touching the geodatabase, and write a CSV of computed against
 stored values:
 
 ```python
-run_tchc(path=main_directory, dry_run=True, report_file="tchc_report.csv")
+run_tchc(path=main_directory, dry_run=True)
 ```
 
 Recompute a specific set of links regardless of whether their stored values are
@@ -90,7 +90,6 @@ run_tchc(
     station_file="",
     gc_file="",
     link_id_file="",
-    report_file="",
     year=0,
     aoc=0.0,
     managed_lane_capacity_rate=0.0,
@@ -163,18 +162,18 @@ can substantially expand selection with `treat_zero_as_missing=True`; that
 option has no additional effect with `recompute_all=True`.
 
 `dry_run=True` computes results without updating the geodatabase, as in the
-preview example above. A report and Modeller logbook entries can still be
-written. All three switches default to `False` and have no properties fallback.
+preview example above. A report and Modeller logbook entries will be
+written. The report contains computed [writeback fields](#what-gets-written-back)
+and stored counterparts in interleaved rows, switching between the `computed` and
+`original` values as reflected in the `status` column, keyed by `HWYCOV0_ID`. The
+report is stored in a file entitled `tchc_report_{current time}.csv`. No CSV is 
+written when no links are selected. 
 
-`report_file` is an optional CSV path, resolved relative to `path`, with no
-properties fallback. It contains computed [writeback fields](#what-gets-written-back)
-and stored counterparts suffixed `_prev`, keyed by `HWYCOV0_ID`. The parent
-directory must exist; an existing file is overwritten. No CSV is written when
-no links are selected. 
+All three switches default to `False` and have no properties fallback.
 
 A normal call returns the number of geodatabase features updated. It returns
 `0` for a dry run or when no links are selected; a dry-run return value is not
-the selected-link count. Inspect the Modeller logbook and optional CSV for that
+the selected-link count. Inspect the Modeller logbook and report CSV for that
 review. See [How the network is read and written](#how-the-network-is-read-and-written)
 for write requirements and behavior.
 
