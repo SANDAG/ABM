@@ -25,6 +25,32 @@ Five outputs per link, per direction, per time period:
 4. **Link travel time** (`TM`) — free-flow travel time in minutes, from link length and coded speed
 5. **Intersection delay** (`TX`) — delay in minutes at the downstream intersection
 
+The production tool finalizes CP/CX after hourly capacity and control overrides:
+
+- `CP = round(final CH × station period factor, 3)`.
+- Controls 1–6 use the same value for CX. Uncontrolled links retain CX=999999.
+- Toll booths use hourly roadway capacity `lanes × PLC + aux × 1200` for CH/CP,
+  and `round(current-period lanes × 500 × station period factor, 3)` for CX.
+  The period factor is applied once; the FME transcription's toll units need
+  verification against the original workbench.
+- Closed periods (lanes=9) have CH=CP=CX=0. FC8 ACCESS has CH=9999, scaled CP
+  and unconstrained CX. FC10 retains its existing capacity sentinels when open.
+- EA, MD and EV share the off-peak result by default. Optional extra CP/CX
+  multipliers are available through `time_period_adjustments`, the toolbox
+  checkbox, or `tchc.time.period.adjustments`. They are **disabled by default**.
+  When enabled, the factors are EA=1/4, AM=1, MD=6.5/12, PM=3.5/3 and EV=2/3.
+  Scaled outputs are rounded to three decimals and unconstrained sentinels are
+  preserved. CH, TM and TX are not scaled.
+
+This aligns the period conversion; remaining differences in hourly formulas
+are tracked in [the FME review](run_tchc_FME_TODO.md). The standalone review
+engine `tchc.py` and its adapter are older implementations, not the production
+tool. Validate the production conversion with:
+
+```powershell
+python -m unittest discover -s capacity_review -p test_run_tchc_capacities.py -v
+```
+
 And two per link, per direction, which TCHC resolves from its own lookup tables:
 
 6. **Green-to-cycle ratio** (`GC`) — the ratio actually used at the intersection, which is the coded value where it is usable and a table lookup otherwise
@@ -139,10 +165,9 @@ The following details supplement those definitions for scripted calls:
 - For integer `year` and numeric `aoc` and capacity rates, zero requests the
   property fallback in [Parameters](#parameters); it cannot override a
   configured value with a literal zero.
-- `time_period_adjustments=None` requests the property fallback; explicit
-  `False` disables scaling. The station factors and
-  [period mapping](#structural-notes) still apply. Pass Python booleans, not
-  strings such as `"False"`.
+- `time_period_adjustments=None` uses the scenario property, which defaults to
+  `False` when absent. Explicit `False` disables the extra multipliers even if
+  an older scenario property enables them; explicit `True` enables them.
 - `traffic_count_field` names an existing field, as described under
   [Inputs the geodatabase cannot supply](#inputs-the-geodatabase-cannot-supply).
   A nonexistent named field raises an error; nonnumeric or missing values
@@ -181,15 +206,19 @@ for write requirements and behavior.
 
 The no-argument constructor initializes `path` from the open project; all other
 path/file attributes and `traffic_count_field` to `""`; `year` to `0`; `aoc`
-to `0.0`; both capacity rates to `1.0`; `time_period_adjustments` to `True`;
+to `0.0`; both capacity rates to `1.0`; `time_period_adjustments` to `False`;
 and the three selection/execution switches to `False`.
 
 The toolbox's `run()` method takes no arguments and forwards the page attributes
-to `__call__`. Consequently, the initial page values `1.0` and `True` override
-the capacity-rate and time-period-adjustment properties. A scripted call that
+to `__call__`. Consequently, the initial page values `1.0` override
+the capacity-rate properties. A scripted call that
 omits those arguments instead uses the properties. On the page, setting a
 capacity rate to `0.0` requests its property fallback. The page uses the default
 AM/PM hours; custom hours require a scripted call.
+
+The extra-period-multiplier checkbox starts unchecked. The page forwards that
+explicit value; scripted calls with `time_period_adjustments=None` use the
+scenario property instead.
 
 For scripted calls, omitted arguments use the signature defaults and resolution
 rules above, rather than retaining previous page or call values. `path` is the
@@ -237,7 +266,7 @@ Relative paths are resolved against `path`, the scenario directory.
 | Analysis year | `year` | `scenarioYear` | — |
 | Managed lane capacity rate | `managed_lane_capacity_rate` | `tchc.managed.lane.capacity.rate` | 1.0 |
 | Freeway capacity rate | `freeway_capacity_rate` | `tchc.freeway.capacity.rate` | 1.0 |
-| Apply time-period capacity adjustments | `time_period_adjustments` | `tchc.time.period.adjustments` | `true` |
+| Extra period capacity multipliers | `time_period_adjustments` | `tchc.time.period.adjustments` | `false` |
 | ADT link ID field | `traffic_count_field` | — | unset |
 | AM peak hours | `am_hours` | — | 6, 7, 8 |
 | PM peak hours | `pm_hours` | — | 15, 16, 17 |
@@ -337,7 +366,7 @@ the layer's random-write capability and fails with a clear message otherwise.
 - **TNED has five time periods, TCHC has three.** TCHC period 0 (AM) writes
   `A`; period 1 (midday/off-peak) writes `EA`, `MD` and `EV`; period 2 (PM)
   writes `P`.
-- Periods whose lane count is 9 (closed) are skipped.
+- Periods whose lane count is 9 (closed) receive zero CH, CP and CX.
 - One-way links never populate direction 1, so their `BA` fields are left as
   they were rather than being overwritten with the engine's sentinels.
 
@@ -532,7 +561,6 @@ promoted to through.
 |---|---|
 | `managed_lane_capacity_rate` | Multiplier on HOV3+ lane capacity and projects 613/614 |
 | `freeway_capacity_rate` | Multiplier on general-purpose freeway and FC 8 capacity |
-| `time_period_adjustments` | Whether five-period factors are applied to populated CP and CX outputs |
 | `analysis_year` | Years after 2015 enable traffic system management features |
 
 ### Lookups
@@ -602,7 +630,7 @@ for each link:
       │   ├─ FC 9: ramp formula
       │   └─ FC 2–7: arterial formula with median adjustment
       │
-      ├─ Set hourly_capacity and period_capacity
+      ├─ Set initial hourly_capacity
       ├─ Sanitize turn-lane counts (clamp, fallback)
       │
       └─ Apply intersection control (if any):
@@ -611,13 +639,14 @@ for each link:
           ├─ 2-way stop: GC lookup → all_lanes×500×GC, min 500
           ├─ Ramp meter: 1000×GC (all periods except AM)
           ├─ Rail crossing: delay only (0.02 min)
-          └─ Toll/border: through×500, delay 1.0 min
+          └─ Toll/border: roadway CH and lanes×500 intersection rate, delay 1.0 min
     
 ```
 
-Note that `period_capacity` is the *mid-block* capacity scaled by the
-peak-period factor; the intersection control overwrites `hourly_capacity` and
-sets `intersection_capacity`, but leaves `period_capacity` alone.
+After these control branches, finalization derives `period_capacity` from the
+final `hourly_capacity` and the station factor. Controlled CX uses that same
+hourly rate except for the separate toll-booth rate. Both period outputs are
+rounded to three decimals; unconstrained CX remains 999999.
 
 The toll carry-forward only matters when links are processed in route order. The
 tool evaluates links independently, since the TNED table is not ordered by route.
@@ -657,13 +686,13 @@ FME HwyETL workbench.
 | File | Role |
 |---|---|
 | `README.md` | This document |
-| `tchc.py` | A standalone copy of the capacity engine, kept for review and for the notebook. Behaviourally identical to the engine section of `run_tchc.py` |
+| `tchc.py` | An older standalone engine used by the review notebook; differs from the production tool |
 | `tchc_run.ipynb` | Drives the engine from the TNED geodatabase for a single link and compares the result against the stored values |
 | `gc.csv`, `gc.txt` | The green/cycle lookup table, and its original fixed-width form. `gc.csv` is also shipped as `input/model/gc.csv` |
 | `HwyETL_final.md` | The FME HwyETL workbench logic, transcribed |
 | `HwyETL_vs_TCHC.md` | Differences between this port and the FME workbench |
 
-The engine section of `run_tchc.py` is kept textually identical to
-`capacity_review/tchc.py` so the two can be diffed directly. Keep it that way —
-in particular, do not replace the engine's literal constants with the driver's
-named equivalents.
+`run_tchc.py` is the production implementation. The standalone engine currently
+differs in PLC, TSM, safety adjustments and period conversion; notebook results
+from that copy do not validate the production tool. The focused capacity tests
+load the actual production functions without requiring Emme/GDAL.

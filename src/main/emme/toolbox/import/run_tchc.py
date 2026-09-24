@@ -172,7 +172,7 @@ class TCHCContext:
     # 2 directions: SB/EB(0), NB(1)
     border_delay_minutes_lookup: List[List[List[float]]]
 
-    time_period_adjustments: bool = True
+    time_period_adjustments: bool = False
 
     # freeway link_id -> count station_id
     freeway_identifier_to_station_identifier: Dict[int, int] = field(default_factory=dict)
@@ -200,6 +200,22 @@ def _max_lanes_for_direction(link, direction_index):
         if 1 <= lane_count <= 8:
             maximum_lane_count = max(maximum_lane_count, lane_count)
     return maximum_lane_count
+
+
+def _set_period_capacities(link, period_index, direction_index, peak_period_factor,
+                           intersection_hourly_capacity=None):
+    """Finalize FME CP/CX after hourly capacity and control overrides.
+
+    An absent intersection constraint preserves the unconstrained CX sentinel.
+    Toll booths supply a separate intersection rate; ordinary controls use CH.
+    """
+    hourly_capacity = link.hourly_capacity_by_period_and_direction[period_index][direction_index]
+    link.period_capacity_by_period_and_direction[period_index][direction_index] = round(
+        hourly_capacity * peak_period_factor, 3)
+    link.intersection_capacity_by_period_and_direction[period_index][direction_index] = (
+        999999 if intersection_hourly_capacity is None
+        else round(intersection_hourly_capacity * peak_period_factor, 3)
+    )
 
 
 def apply_tchc(link, ctx, remaining_toll=None):
@@ -284,6 +300,10 @@ def apply_tchc(link, ctx, remaining_toll=None):
         for period_index in range(3):
             lane_count = link.lane_count_by_period_and_direction[period_index][direction_index]
             if lane_count == 9:
+                # Closure takes precedence over control floors and capacity sentinels.
+                link.hourly_capacity_by_period_and_direction[period_index][direction_index] = 0.0
+                link.period_capacity_by_period_and_direction[period_index][direction_index] = 0.0
+                link.intersection_capacity_by_period_and_direction[period_index][direction_index] = 0.0
                 continue
 
             link.link_travel_time_minutes_by_period_and_direction[period_index][direction_index] = travel_time_minutes
@@ -331,7 +351,7 @@ def apply_tchc(link, ctx, remaining_toll=None):
                 # fwy-fwy connector: check for ACCESS special case
                 if "ACCESS" in link.link_name:
                     link.hourly_capacity_by_period_and_direction[period_index][direction_index] = 9999.0
-                    link.period_capacity_by_period_and_direction[period_index][direction_index] = 999999.0
+                    _set_period_capacities(link, period_index, direction_index, peak_period_factor)
                     continue
                 directional_capacity = lane_count * 1800.0
                 if link.high_occupancy_vehicle_class > 1:
@@ -352,7 +372,6 @@ def apply_tchc(link, ctx, remaining_toll=None):
                         directional_capacity -= 200.0
 
             link.hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
-            link.period_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity * peak_period_factor
 
             # ---- turn-lane sanitization ----
             # Values >7 are invalid (zeroed); 7 is a special code meaning
@@ -409,7 +428,6 @@ def apply_tchc(link, ctx, remaining_toll=None):
                 )
                 if directional_capacity < 1000.0:
                     directional_capacity = 1000.0
-                link.intersection_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity * peak_period_factor
                 link.hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
 
             elif control_type == 2:  # 4-way stop (FORTRAN 620)
@@ -430,7 +448,6 @@ def apply_tchc(link, ctx, remaining_toll=None):
                 )
                 if directional_capacity < 500.0:
                     directional_capacity = 500.0
-                link.intersection_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity * peak_period_factor
                 link.hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
 
             elif control_type == 3:  # 2-way stop (FORTRAN 630)
@@ -451,7 +468,6 @@ def apply_tchc(link, ctx, remaining_toll=None):
                 )
                 if directional_capacity < 500.0:
                     directional_capacity = 500.0
-                link.intersection_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity * peak_period_factor
                 link.hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
 
             elif control_type == 4 and period_index > 0:  # ramp meter off-peak (FORTRAN 640)
@@ -460,7 +476,6 @@ def apply_tchc(link, ctx, remaining_toll=None):
                 if link.green_cycle_value_by_direction[direction_index] >= 1:
                     green_cycle_through_factor = link.green_cycle_value_by_direction[direction_index] / 100.0
                     directional_capacity *= green_cycle_through_factor
-                link.intersection_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity * peak_period_factor
                 link.hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
 
             elif control_type == 5 and period_index > 0:  # ramp meter on-peak (FORTRAN 650)
@@ -469,20 +484,33 @@ def apply_tchc(link, ctx, remaining_toll=None):
                 if link.green_cycle_value_by_direction[direction_index] >= 1:
                     green_cycle_through_factor = link.green_cycle_value_by_direction[direction_index] / 100.0
                     directional_capacity *= green_cycle_through_factor
-                link.intersection_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity * peak_period_factor
                 link.hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
 
             elif control_type == 6:  # rail crossing (FORTRAN 660)
                 link.intersection_delay_minutes_by_period_and_direction[period_index][direction_index] = 0.02
 
             elif control_type == 7:  # toll / border (FORTRAN 670)
-                # use max lanes across periods as floor for through lanes
-                max_lane_count = _max_lanes_for_direction(link, direction_index)
-                through_lane_count = max(through_lane_count, max_lane_count)
-                directional_capacity = through_lane_count * 500.0
+                # FME distinguishes roadway HCAP from booth XCAP. Keep HCAP
+                # hourly here so finalization applies the period factor once.
+                directional_capacity = (
+                    lane_count * link.planned_lane_capacity_by_direction[direction_index]
+                    + link.auxiliary_lane_count_by_direction[direction_index] * 1200.0
+                )
+                link.resolved_per_lane_capacity_by_direction[direction_index] = (
+                    link.planned_lane_capacity_by_direction[direction_index])
                 link.hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
-                link.intersection_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity * peak_period_factor
                 link.intersection_delay_minutes_by_period_and_direction[period_index][direction_index] = 1.0
+
+            # FME final outputs use the final HCAP, not the pre-control base.
+            # Controls 1-6 share that rate; toll booths have their own rate.
+            intersection_hourly_capacity = None
+            if control_type in (1, 2, 3, 4, 5, 6):
+                intersection_hourly_capacity = directional_capacity
+            elif control_type == 7:
+                intersection_hourly_capacity = lane_count * 500.0
+            _set_period_capacities(
+                link, period_index, direction_index, peak_period_factor,
+                intersection_hourly_capacity)
 
 
     return remaining_toll
@@ -634,6 +662,7 @@ FEET_PER_MILE = 5280.0
 # TCHC computes three periods; TNED stores five
 TCHC_PERIOD_TARGETS = (("A",), ("EA", "MD", "EV"), ("P",))
 
+# Optional legacy scaling in addition to the station period factors.
 CAPACITY_FACTOR_BY_PERIOD_SUFFIX = (
     ("EA", 1.0 / 4.0),
     ("MD", 6.5 / 12.0),
@@ -713,19 +742,19 @@ OUTPUT_FIELDS_BY_DIRECTION = tuple(
 )
 
 
-def adjusted_capacity(value, field_name, enabled=True):
-    """Scale a populated CP/CX value for its five-period TNED target."""
+# ------------------------------------------------------------------
+# Input files
+# ------------------------------------------------------------------
+
+def adjusted_capacity(value, field_name, enabled=False):
+    """Optionally scale CP/CX for its TNED period, preserving sentinels."""
     if not enabled or value is None or pd.isna(value) or value == CAPACITY_SENTINEL:
         return value
     for suffix, factor in CAPACITY_FACTOR_BY_PERIOD_SUFFIX:
         if field_name.endswith(suffix):
-            return value * factor
+            return round(value * factor, 3)
     raise Exception("Cannot determine the time period for capacity field %s" % field_name)
 
-
-# ------------------------------------------------------------------
-# Input files
-# ------------------------------------------------------------------
 
 def resolve_path(base, value):
     if not value:
@@ -900,7 +929,7 @@ def cross_street_class(tables, node_id, link_id, default=7):
 
 def build_context(links, analysis_year, station_peak_period_factor,
                   green_cycle, managed_lane_capacity_rate, freeway_capacity_rate,
-                  time_period_adjustments):
+                  time_period_adjustments=False):
     freeway_to_station = dict(
         (int(link_id), int(station))
         for link_id, station in zip(links["HWYCOV0_ID"], links["COSTAT"])
@@ -1143,7 +1172,7 @@ class RunTCHC(_m.Tool()):
         self.year = 0
         self.managed_lane_capacity_rate = 1.0
         self.freeway_capacity_rate = 1.0
-        self.time_period_adjustments = True
+        self.time_period_adjustments = False
         self.traffic_count_field = ""
         self.recompute_all = False
         self.treat_zero_as_missing = False
@@ -1151,7 +1180,7 @@ class RunTCHC(_m.Tool()):
         self.attributes = [
             "path", "source", "station_file", "gc_file", "link_id_file", 
             "year",
-            "managed_lane_capacity_rate", "freeway_capacity_rate", "time_period_adjustments", 
+            "managed_lane_capacity_rate", "freeway_capacity_rate", "time_period_adjustments",
             "traffic_count_field", "recompute_all", "treat_zero_as_missing", "dry_run",
         ]
 
@@ -1167,9 +1196,9 @@ class RunTCHC(_m.Tool()):
             is listed in the link ID file. The following fields are updated, for each of
             the five time periods and both directions:
             <ul>
-                <li>CP - mid-link period capacity</li>
+                <li>CP - final hourly capacity scaled to the period</li>
                 <li>CX - intersection approach capacity</li>
-                <li>CH - hourly mid-link capacity</li>
+                <li>CH - final hourly capacity</li>
                 <li>TM - link time in minutes</li>
                 <li>TX - intersection delay time</li>
             </ul>
@@ -1201,7 +1230,7 @@ class RunTCHC(_m.Tool()):
         pb.add_text_box("freeway_capacity_rate", size=8, title="Freeway capacity rate:")
         pb.add_text_box("traffic_count_field", size=20, title="Traffic count ID field (optional):")
 
-        pb.add_checkbox("time_period_adjustments", title=" ", label="Apply time period capacity adjustments")
+        pb.add_checkbox("time_period_adjustments", title=" ", label="Apply extra time period capacity adjustments")
         pb.add_checkbox("recompute_all", title=" ", label="Recompute every link")
         pb.add_checkbox("treat_zero_as_missing", title=" ", label="Treat stored zeroes as missing values")
         pb.add_checkbox("dry_run", title=" ", label="Do not write results to the geodatabase")
@@ -1255,7 +1284,7 @@ class RunTCHC(_m.Tool()):
         self.freeway_capacity_rate = float(
             freeway_capacity_rate or props.get("tchc.freeway.capacity.rate", 1.0))
         self.time_period_adjustments = bool(
-            props.get("tchc.time.period.adjustments", True)
+            props.get("tchc.time.period.adjustments", False)
             if time_period_adjustments is None else time_period_adjustments)
         self.traffic_count_field = traffic_count_field
 
