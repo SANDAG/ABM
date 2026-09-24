@@ -631,12 +631,11 @@ def load_green_cycle_lookups(path, two_way_stop_roadway_class=7):
     two_way_block = blocks.get("2waystop") or blocks.get("twowaystop")
     if two_way_block is not None:
         two_way_source = to_table(two_way_block)
+        two_way_stop = two_way_source[max(1, min(two_way_stop_roadway_class, GREEN_CYCLE_CLASS_COUNT)) - 1]
     else:
-        # No 2-way stop block: reuse the 4-way stop row for the stopped
-        # (minor) approach, since apply_tchc indexes this table by cross
-        # street only.
-        two_way_source = four_way_stop
-    two_way_stop = two_way_source[max(1, min(two_way_stop_roadway_class, GREEN_CYCLE_CLASS_COUNT)) - 1]
+        # No 2-way stop block: use hard-coded values from FORTRAN line 108
+        two_way_stop = [50,50,75,100,125,125,150,150,100]
+    
 
     return GreenCycleLookups(
         signal=signal,
