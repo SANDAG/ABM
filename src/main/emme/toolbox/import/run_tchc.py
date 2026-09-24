@@ -258,6 +258,24 @@ def apply_tchc(link, ctx, remaining_toll=None):
         if link.directionality == 1 and direction_index == 1:
             continue
 
+        # encode planned lane capacity (ABPLC)
+        if link.planned_lane_capacity_by_direction[direction_index] is None:
+            if link.functional_class == 1:
+                link.planned_lane_capacity_by_direction[direction_index] = 2000.0
+            elif link.functional_class in [2,3,4,5,7,8]:
+                link.planned_lane_capacity_by_direction[direction_index] = 1800.0
+            elif link.functional_class == 6:
+                link.planned_lane_capacity_by_direction[direction_index] = 950.0
+            elif link.functional_class == 9:
+                link.planned_lane_capacity_by_direction[direction_index] = 1200.0
+            
+            # rural override
+            if link.is_rural and link.functional_class != 1:
+                if any(link.lane_count_by_period_and_direction[period_index][direction_index] >= 2 for period_index in range(3)):
+                    link.planned_lane_capacity_by_direction[direction_index] = 1150.0
+                else:
+                    link.planned_lane_capacity_by_direction[direction_index] = 950.0
+                
         # TNED codes AB* intersection fields at the TO (B) end, so the approach
         # node is the link's downstream end for that direction.
         node_id = link.to_node_identifier if direction_index == 0 else link.from_node_identifier
@@ -294,8 +312,7 @@ def apply_tchc(link, ctx, remaining_toll=None):
                 # freeway capacity from per-link field, bounded [1900, 2100];
                 # the AB value is used for both directions
                 freeway_capacity_per_lane = 2000.0
-                if 1600 <= link.planned_lane_capacity_by_direction[0] <= 2400:
-                    freeway_capacity_per_lane = float(link.planned_lane_capacity_by_direction[0])
+
                 freeway_capacity_per_lane = min(freeway_capacity_per_lane, 2100.0)
                 freeway_capacity_per_lane = max(freeway_capacity_per_lane, 1900.0)
                 link.resolved_per_lane_capacity_by_direction[direction_index] = freeway_capacity_per_lane
@@ -606,6 +623,8 @@ def load_green_cycle_lookups(path, two_way_stop_roadway_class=7):
 
 LINK_LAYER = "TNED_HwyNet"
 NODE_LAYER = "TNED_HwyNodes"
+RURAL_LAYER = "RuralZone"
+
 
 # DataTableProc appends geo_coordinates alongside the raw geometry column
 GEOMETRY_COLUMNS = ("geometry", "geo_coordinates")
@@ -824,57 +843,6 @@ def length_feet(links):
     raise Exception("%s has neither SHAPE_Length nor LENGTH" % LINK_LAYER)
 
 
-def write_results(source, results, log):
-    """Patch the TCHC output fields of the matched features, leaving all else alone."""
-    data_source = _ogr.Open(source, 1)
-    if data_source is None:
-        raise Exception("Cannot open %s for update" % source)
-    try:
-        layer = data_source.GetLayerByName(LINK_LAYER)
-        if layer is None:
-            raise Exception("%s has no layer %s" % (source, LINK_LAYER))
-        if not layer.TestCapability(_ogr.OLCRandomWrite):
-            raise Exception(
-                "The GDAL driver for %s does not support updating features. "
-                "GDAL 3.6 or later is required to write a file geodatabase." % source)
-
-        definition = layer.GetLayerDefn()
-        field_types = {}
-        for index in range(definition.GetFieldCount()):
-            field = definition.GetFieldDefn(index)
-            field_types[field.GetName()] = field.GetType()
-        integer_types = (_ogr.OFTInteger, _ogr.OFTInteger64)
-
-        feature_ids = {}
-        layer.ResetReading()
-        for feature in layer:
-            feature_ids[feature.GetField("HWYCOV0_ID")] = feature.GetFID()
-
-        updated = 0
-        layer.StartTransaction()
-        try:
-            for link_id, values in results.items():
-                feature_id = feature_ids.get(link_id)
-                if feature_id is None:
-                    continue
-                feature = layer.GetFeature(feature_id)
-                for name, value in values.items():
-                    if value is None or pd.isna(value):
-                        continue
-                    if field_types[name] in integer_types:
-                        feature.SetField(name, int(round(value)))
-                    else:
-                        feature.SetField(name, float(value))
-                layer.SetFeature(feature)
-                updated += 1
-            layer.CommitTransaction()
-        except Exception:
-            layer.RollbackTransaction()
-            raise
-        log.append({"type": "text", "content": "Updated %s features in %s" % (updated, LINK_LAYER)})
-        return updated
-    finally:
-        data_source = None
 
 
 # ------------------------------------------------------------------
@@ -1142,7 +1110,7 @@ def write_report(path, results, links):
 # Tool
 # ------------------------------------------------------------------
 
-class RunTCHC(_m.Tool(),*args):
+class RunTCHC(_m.Tool()):
 
     path = _m.Attribute(str)
     source = _m.Attribute(str)
@@ -1329,6 +1297,7 @@ class RunTCHC(_m.Tool(),*args):
         self._log.append({"type": "text", "content": "Read %s links from %s" % (len(links), LINK_LAYER)})
 
         nodes = read_layer(self.source, NODE_LAYER)
+        rural = read_layer(self.source, RURAL_LAYER)
         unknown = set(links["AN"]) | set(links["BN"])
         if "HNODE" in nodes.columns:
             unknown -= set(pd.to_numeric(nodes["HNODE"], errors="coerce").fillna(0).astype("int64"))
@@ -1338,6 +1307,7 @@ class RunTCHC(_m.Tool(),*args):
                 "content": "%s node IDs referenced by %s are absent from %s" % (
                     len(unknown), LINK_LAYER, NODE_LAYER)})
 
+        links["is_rural"] = links.covered_by(rural.union_all())
         links["length_feet"] = length_feet(links)
         links["traffic_count"] = self._traffic_count(links)
         if "ASPD" not in links.columns:
@@ -1369,7 +1339,8 @@ class RunTCHC(_m.Tool(),*args):
             write_report(self.report_file, results, links)
             self._log.append({"type": "text", "content": "Wrote report to %s" % self.report_file})
             return 0
-        return write_results(self.source, results.set_index("HWYCOV0_ID").to_dict("index"), self._log)
+        results.set_index("HWYCOV0_ID").to_file(self.source)
+        return 0 # FIXME get actual num changed records
 
     def _traffic_count(self, links):
         if not self.traffic_count_field:
