@@ -32,6 +32,7 @@ class PropertiesSetter(object):
     useLocalDrive = _m.Attribute(bool)
     skipMGRASkims = _m.Attribute(bool)
     skip4Ds = _m.Attribute(bool)
+    skipTCHC = _m.Attribute(bool)
     skipBuildNetwork = _m.Attribute(bool)
     skipInitialization = _m.Attribute(bool)
     deleteAllMatrices = _m.Attribute(bool)
@@ -163,6 +164,7 @@ class PropertiesSetter(object):
             "env", "useLocalDrive", "skipMGRASkims", "skip4Ds",
             "startFromIteration", "skipInitialization", "deleteAllMatrices", "skipCopyWarmupTripTables",
             "skipBikeLogsums", "skipBuildNetwork",
+            "skipTCHC",
             "skipHighwayAssignment", "skipTransitSkimming", "skipTransitConnector", "skipTransponderExport", "skipScenManagement", "skipABMPreprocessing", "skipABMResident", "skipABMAirport", "skipABMXborderWait", "skipABMXborder", "skipABMVisitor", "skipMAASModel",
             "skipCVMEstablishmentSyn", "skipCTM", "skipTruck", "skipEI", "skipExternal", "skipTripTableCreation", "skipFinalHighwayAssignment",
             "skipFinalTransitAssignment", "skipVisualizer", "skipDataExport", "skipTravelTimeReporter", "skipValidation", "skipDatalake", "skipDataLoadRequest",
@@ -216,6 +218,7 @@ class PropertiesSetter(object):
             ("useLocalDrive",           "Use the local drive during the model run"),
             ("skipMGRASkims",           "Skip MGRA skims"),
             ("skip4Ds",                 "Skip running 4Ds"),
+            ("skipTCHC",                "Skip recalculating network capacities (TCHC)"),
             ("skipBuildNetwork",        "Skip build of highway and transit network"),
             ("skipInitialization",      "Skip matrix and transit database initialization"),
             ("deleteAllMatrices",       "&nbsp;&nbsp;&nbsp;&nbsp;Delete all matrices"),
@@ -362,6 +365,7 @@ class PropertiesSetter(object):
         self.useLocalDrive = props.get("RunModel.useLocalDrive", True)
         self.skipMGRASkims = props.get("RunModel.skipMGRASkims", False)
         self.skip4Ds = props.get("RunModel.skip4Ds", False)
+        self.skipTCHC = props.get("RunModel.skipTCHC", False)
         self.skipBuildNetwork = props.get("RunModel.skipBuildNetwork", False)
         self.skipInitialization = props.get("RunModel.skipInitialization", False)
         self.deleteAllMatrices = props.get("RunModel.deleteAllMatrices", False)
@@ -408,6 +412,7 @@ class PropertiesSetter(object):
         props["RunModel.useLocalDrive"] = self.useLocalDrive
         props["RunModel.skipMGRASkims"] = self.skipMGRASkims
         props["RunModel.skip4Ds"] = self.skip4Ds
+        props["RunModel.skipTCHC"] = self.skipTCHC
         props["RunModel.skipBuildNetwork"] = self.skipBuildNetwork
         props["RunModel.skipInitialization"] = self.skipInitialization
         props["RunModel.deleteAllMatrices"] = self.deleteAllMatrices
