@@ -66,6 +66,7 @@ from typing import Dict, List
 import csv
 import glob as _glob
 import pandas as pd
+import geopandas as gpd
 import re
 import traceback as _traceback
 import os
@@ -74,8 +75,6 @@ import datetime
 
 _join = os.path.join
 _dir = os.path.dirname
-
-gen_utils = _m.Modeller().module("sandag.utilities.general")
 
 
 # ==================================================================
@@ -799,13 +798,8 @@ def load_link_ids(path):
 # ------------------------------------------------------------------
 
 def read_layer(source, layer_name):
-    """Read a geodatabase layer through the same path import_network uses."""
-    data = gen_utils.DataTableProc(layer_name, source)
-    columns = OrderedDict()
-    for name, values in zip(data._attr_names, data._values):
-        if name not in GEOMETRY_COLUMNS:
-            columns[name] = values
-    return pd.DataFrame(columns)
+    """Read a geodatabase layer from its source."""
+    return gpd.read_file(source, layer=layer_name)
 
 
 def read_links(source):
@@ -1148,7 +1142,7 @@ def write_report(path, results, links):
 # Tool
 # ------------------------------------------------------------------
 
-class RunTCHC(_m.Tool(), gen_utils.Snapshot):
+class RunTCHC(_m.Tool(),*args):
 
     path = _m.Attribute(str)
     source = _m.Attribute(str)
@@ -1318,7 +1312,6 @@ class RunTCHC(_m.Tool(), gen_utils.Snapshot):
             ("dry_run", self.dry_run),
         ])
         with _m.logbook_trace("Run TCHC", attributes=attributes):
-            gen_utils.log_snapshot("Run TCHC", str(self), attributes)
             result = self.execute(am_hours, pm_hours)
             self.log_report()
         return result
