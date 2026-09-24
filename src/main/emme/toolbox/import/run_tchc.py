@@ -58,8 +58,6 @@ TOOLBOX_ORDER = 11
 
 import inro.modeller as _m
 
-from osgeo import ogr as _ogr
-
 from collections import OrderedDict
 from dataclasses import dataclass, field
 from typing import Dict, List
