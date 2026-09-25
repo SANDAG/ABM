@@ -1,12 +1,12 @@
 # ABM3 Model Inputs
 
-The main inputs to ABM3 include the [transportation network](networks.md), land-use data, synthetic population data, parameters files, and model specifications. Outputs include a set of files that describe travel decisions made by all travel markets considered by the model (residents, overnight visitors, airport ground access trips, commercial vehicles and trucks, Mexico residents traveling in San Diego County, and travel made by all other non-residents into and through San Diego County).
+This page documents the input files required to run ABM3, organized by model component. It provides concise file descriptions and links to detailed field definitions for Land Use, Synthetic Population, Airport, Commercial Vehicle, Crossborder, External, and Heavy Truck models. 
+
+Network-specific inputs are documented separately under [Networks](networks.md).
 
 ## Model Inputs
 
-The table below contains brief descriptions of the input files required to execute the SANDAG ABM3. 
-
-A separate [Networks](networks.md) page exists for all network-related ABM3 inputs. 
+The table below contains brief descriptions of the input files required to execute the SANDAG ABM3.
 
 *Note: Click on file name for additional details.*
 
@@ -84,6 +84,18 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
         <td>Crossborder Model tour purpose distribution for SENTRI tours</td>
     </tr>
     <tr>
+        <td>pmsa_geoms.shp</td>
+        <td>Pseudo Major Statistical Area shapefile</td>
+    </tr>
+    <tr>
+        <td><strong>Airport Models</strong></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>Hotels_EventSpace_0314.csv</td>
+        <td>Hotel/convention event-space square footage by MGRA</td>
+    </tr>
+    <tr>
         <td><strong><a href=#external-models>External Models</a></strong></td>
         <td></td>
     </tr>
@@ -152,48 +164,32 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
         <td></td>
     </tr>
     <tr>
-        <td>[bikeTazLogsum.csv](#bike_taz_logsum)</td>
+        <td><a href=#bike-taz-logsum>bikeTazLogsum.csv</a></td>
         <td>Bike TAZ logsum</td>
     </tr>
     <tr>
-        <td>[bikeMgraLogsum.csv](#bike_mgra_logsum)</td>
+        <td><a href=#bike-mgra-logsum>bikeMgraLogsum.csv</a></td>
         <td>Bike MGRA logsum</td>
     </tr>
     <tr>
-        <td>[parametersByYears.csv](#parametersbyyearscsv)</td>
-        <td>Parameters by scenario years. Includes AOC, aiport enplanements, cross-border tours, cross-border sentri share.</td>
+        <td><a href=#parameters-by-scenario-years>parametersByYears.csv</a></td>
+        <td>Parameters by scenario years</td>
     </tr>
     <tr>
-        <td>[filesByYears.csv](#filesbyyearscsv)</td>
-        <td>File names by scenario years.</td>
+        <td><a href=#files-by-scenario-years>filesByYears.csv</a></td>
+        <td>File names by scenario years</td>
     </tr>
     <tr>
         <td>trip_XX.omx</td>
-        <td>Warm start trip table; XX is the TOD (EA, AM, MD, PM, and EV)</td>
+        <td>Warm start trip table matrix.<br><i>XX is the TOD (EA, AM, MD, PM, and EV)</i></td>
     </tr>
     <tr>
-        <td>zone_term.csv</td>
+        <td><a href=#zone-terminal-time>zone_term.csv</a></td>
         <td>TAZ terminal times</td>
     </tr>
     <tr>
-        <td>mgra15.shp</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>taz15.shp</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>all_vol_dfs.csv [to be updated]</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>all_wait_times.csv [to be updated]</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>specialEvents_() [to be updated]</td>
-        <td></td>
+        <td><a href=#mobility-hub-mgras>mobilityHubMGRAs.csv</a></td>
+        <td>List of MGRAs with microtransit availability</td>
     </tr>
 </table>
 
@@ -862,160 +858,6 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
         <td>2 digit Standard Occupational Classification</td>
     </tr>
 </table>
-
-## Airport
-<a id="airport_nights"></a>
-
-### Airport Number of Nights by Purpose Distribution
-#### `AIRPORT_NIGHTS.SAN.CSV AND AIRPORT_NIGHTS.CBX.CSV`
-
-<table>
-    <tr>
-        <th>Column Name</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <td>Nights</td>
-        <td>Number of Nights stayed (0 through 14+)</td>
-    </tr>
-    <tr>
-        <td>purp1_perc</td>
-        <td>Distribution for Resident Personal purpose</td>
-    </tr>
-    <tr>
-        <td>purp2_perc</td>
-        <td>Distribution for Visitor Business purpose</td>
-    </tr>
-    <tr>
-        <td>purp3_perc</td>
-        <td>Distribution for Visitor Personal purpose</td>
-    </tr>
-    <tr>
-        <td>purp4_perc</td>
-        <td>Distribution for External purpose</td>
-    </tr>
-</table>
-
-<a id="airport_income"></a>
-
-### Airport Income by Purpose Distribution
-#### `AIRPORT_INCOME.SAN.CSV AND AIRPORT_INCOME.CBX.CSV`
-
-<table>
-    <tr>
-        <th>Column Name</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <td>Income group</td>
-        <td>
-            Household income:<br>
-            0 = Less than $25K<br>
-            1 = $25K – $50K<br>
-            2 = $50K – $75K<br>
-            3 = $75K – $100K<br>
-            4 = $100K – $125K<br>
-            5 = $125K – $150K<br>
-            6 = $150K – $200K<br>
-            7 = $200K plus
-        </td>
-    </tr>
-    <tr>
-        <td>purp1_perc</td>
-        <td>Distribution for Resident Personal purpose</td>
-    </tr>
-    <tr>
-        <td>purp2_perc</td>
-        <td>Distribution for Visitor Business purpose</td>
-    </tr>
-    <tr>
-        <td>purp3_perc</td>
-        <td>Distribution for Visitor Personal purpose</td>
-    </tr>
-    <tr>
-        <td>purp4_perc</td>
-        <td>Distribution for External purpose</td>
-    </tr>
-</table>
-
-<a id="airport_departure"></a>
-
-### Airport Departure Time by Purpose Distribution
-#### `AIRPORT_DEPARTURE.SAN.CSV` and `AIRPORT_DEPARTURE.CBX.CSV`
-
-<table>
-    <tr>
-        <th>Column Name</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <td>Period</td>
-        <td>
-            Departure Period:<br>
-            1 = Before 5:00AM<br>
-            2 = 5:00AM-5:30AM<br>
-            3 through 39 is every half hour time slots<br>
-            40 = After 12:00AM
-        </td>
-    </tr>
-    <tr>
-        <td>purp1_perc</td>
-        <td>Distribution for Resident Personal purpose</td>
-    </tr>
-    <tr>
-        <td>purp2_perc</td>
-        <td>Distribution for Visitor Business purpose</td>
-    </tr>
-    <tr>
-        <td>purp3_perc</td>
-        <td>Distribution for Visitor Personal purpose</td>
-    </tr>
-    <tr>
-        <td>purp4_perc</td>
-        <td>Distribution for External purpose</td>
-    </tr>
-</table>
-
-
-<a id="airport_arrival"></a>
-
-### Airport Arrival Time by Purpose Distribution
-#### `AIRPORT_ARRIVAL.SAN.CSV` and `AIRPORT_ARRIVAL.CBX.CSV`
-
-<table>
-    <tr>
-        <th>Column Name</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <td>Period</td>
-        <td>
-            Arrival Period:<br>
-            1 = Before 5:00AM<br>
-            2 = 5:00AM-5:30AM<br>
-            3 through 39 is every half hour time slots<br>
-            40 = After 12:00AM
-        </td>
-    </tr>
-    <tr>
-        <td>purp1_perc</td>
-        <td>Distribution for Resident Personal purpose</td>
-    </tr>
-    <tr>
-        <td>purp2_perc</td>
-        <td>Distribution for Visitor Business purpose</td>
-    </tr>
-    <tr>
-        <td>purp3_perc</td>
-        <td>Distribution for Visitor Personal purpose</td>
-    </tr>
-    <tr>
-        <td>purp4_perc</td>
-        <td>Distribution for External purpose</td>
-    </tr>
-</table>
-
-<a id="cvm_establishment_synthesis"></a>
 
 ## Commercial Vehicle Model
 
@@ -2111,7 +1953,7 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
 ## Other Inputs
 
 ### Bike TAZ Logsum
-#### `bikeTazLogsum.csv`
+`bikeTazLogsum.csv`
 
 <table>
     <tr>
@@ -2127,19 +1969,17 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
         <td>Destination TAZ</td>
     </tr>
     <tr>
-        <td>Logsum</td>
+        <td>logsum</td>
         <td>Logsum - a measure of the closeness of the origin and the destination of the trip</td>
     </tr>
     <tr>
         <td>time</td>
-        <td>Time (In minutes) </td>
+        <td>Time (In minutes)</td>
     </tr>
 </table>
 
-<a id="bike_mgra_logsum"></a>
-
 ### Bike MGRA Logsum
-#### `bikeMgraLogsum.csv`
+`bikeMgraLogsum.csv`
 
 <table>
     <tr>
@@ -2148,14 +1988,14 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
     </tr>
     <tr>
         <td>i</td>
-        <td>Origin of MGRA</td>
+        <td>Origin MGRA</td>
     </tr>
     <tr>
         <td>j</td>
-        <td>Destination of MGRA</td>
+        <td>Destination MGRA</td>
     </tr>
     <tr>
-        <td>Logsum</td>
+        <td>logsum</td>
         <td>Logsum - a measure of the closeness of the origin and the destination of the trip</td>
     </tr>
     <tr>
@@ -2165,7 +2005,7 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
 </table>
 
 ### Parameters by Scenario Years
-#### `PARAMETERSBYYEARS.CSV`
+`parametersByYears.csv`
 
 <table>
     <tr>
@@ -2174,7 +2014,7 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
     </tr>
     <tr>
         <td>year</td>
-        <td>Scenario build year</td>
+        <td>Scenario year</td>
     </tr>
     <tr>
         <td>aoc.fuel</td>
@@ -2183,6 +2023,46 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
     <tr>
         <td>aoc.maintenance</td>
         <td>Auto operating maitenance cost</td>
+    </tr>
+    <tr>
+        <td>aoc.truck.fuel.light</td>
+        <td>Auto operating fuel cost for light trucks</td>
+    </tr>
+    <tr>
+        <td>aoc.truck.fuel.medium</td>
+        <td>Auto operating fuel cost for medium trucks</td>
+    </tr>
+    <tr>
+        <td>aoc.truck.fuel.high</td>
+        <td>Auto operating fuel cost for heavy trucks</td>
+    </tr>
+    <tr>
+        <td>aoc.truck.maintenance.light</td>
+        <td>Auto operating maintenance cost for light trucks</td>
+    </tr>
+    <tr>
+        <td>aoc.truck.maintenance.medium</td>
+        <td>Auto operating maintenance cost for medium trucks</td>
+    </tr>
+    <tr>
+        <td>aoc.truck.maintenance.high</td>
+        <td>Auto operating maintenance cost for heavy trucks</td>
+    </tr>
+    <tr>
+        <td>aoc.truck.fuel.SUT</td>
+        <td>Auto operating fuel cost for single-unit trucks</td>
+    </tr>
+    <tr>
+        <td>aoc.truck.fuel.MUT</td>
+        <td>Auto operating fuel cost for multi-unit trucks</td>
+    </tr>
+    <tr>
+        <td>aoc.truck.maintenance.SUT</td>
+        <td>Auto operating maintenance cost for single-unit trucks</td>
+    </tr>
+    <tr>
+        <td>aoc.truck.maintenance.MUT</td>
+        <td>Auto operating maintenance cost for multi-unit trucks</td>
     </tr>
     <tr>
         <td>airport.SAN.enplanements</td>
@@ -2214,7 +2094,11 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
     </tr>
     <tr>
         <td>crossBorders.sentriShare</td>
-        <td>Share of cross border tours that are SENTRI</td>
+        <td>Share of cross border tours that use SENTRI Lane</td>
+    </tr>
+    <tr>
+        <td>crossBorders.readyShare</td>
+        <td>Share of cross border tours that use Ready Lane</td>
     </tr>
     <tr>
         <td>taxi.baseFare</td>
@@ -2282,24 +2166,72 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
     </tr>
     <tr>
         <td>smartSignal.factor.LC</td>
-        <td></td>
+        <td>Smart signal factor for Collector intersection approaches</td>
     </tr>
     <tr>
         <td>smartSignal.factor.MA</td>
-        <td></td>
+        <td>Smart signal factor for Major Arterial or Major / Prime Arterial intersection approaches</td>
     </tr>
     <tr>
         <td>smartSignal.factor.PA</td>
-        <td></td>
+        <td>Smart signal factor for Primary Arterial intersection approaches</td>
     </tr>
     <tr>
         <td>atdm.factor</td>
-        <td></td>
+        <td>Active Transportation and Demand Management factor</td>
+    </tr>
+    <tr>
+        <td>active.ebike.ownership</td>
+        <td>E-bike ownership rate</td>
+    </tr>
+    <tr>
+        <td>rapid.factor.ivt</td>
+        <td>Rapid bus in-vehicle time perception factor</td>
+    </tr>
+    <tr>
+        <td>rapid.factor.wait</td>
+        <td>Rapid bus wait time perception factor</td>
+    </tr>
+    <tr>
+        <td>rapid.dwell</td>
+        <td>Rapid bus dwell times in minutes</td>
+    </tr>
+    <tr>
+        <td>poe.OME.start.year</td>
+        <td>Open-to-traffic year for the Otay Mesa East port of entry</td>
+    </tr>
+    <tr>
+        <td>tr.veh.year</td>
+        <td>Vehicle year when vehicles are assumed to have transponders</td>
+    </tr>
+    <tr>
+        <td>ev.rebate.lowinc.bev</td>
+        <td>Rebate value ($) for battery electric vehicles for low-income housesholds</td>
+    </tr>
+    <tr>
+        <td>ev.rebate.lowinc.pev</td>
+        <td>Rebate value ($) for plug-in electric vehicles for low-income households</td>
+    </tr>
+    <tr>
+        <td>ev.rebate.medinc.bev</td>
+        <td>Rebate value ($) for battery electric vehicles for medium-income households</td>
+    </tr>
+    <tr>
+        <td>ev.rebate.medinc.pev</td>
+        <td>Rebate value ($) for plug-in electric vehicles for medium-income households</td>
+    </tr>
+    <tr>
+        <td>ev.chargers</td>
+        <td>Number of electric vehicle chargers</td>
+    </tr>
+    <tr>
+        <td>wfh.coef.regional.calibration</td>
+        <td>Regional work-from-home calibration coefficient</td>
     </tr>
 </table>
 
 ### Files by Scenario Years
-#### `FILESBYYEARS.CSV`
+`filesByYears.csv`
 
 <table>
     <tr>
@@ -2331,15 +2263,17 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
         <td>Crossborder model tour mode choice UEC file</td>
     </tr>
     <tr>
+        <td>airport.SAN.mc.uec.file</td>
+        <td>SAN airport model mode choice UEC file</td>
+    </tr>
+    <tr>
         <td>visualizer.reference.path</td>
         <td>Path to reference scenario for SANDAG ABM visualizer</td>
     </tr>
 </table>
 
-<a id="mobility_mgra"></a>
-
 ### Zone Terminal Time
-#### `ZONE_TERM.CSV`
+`zone_term.csv`
 
 <table>
     <tr>
@@ -2353,6 +2287,28 @@ A separate [Networks](networks.md) page exists for all network-related ABM3 inpu
     <tr>
         <td>Terminal time</td>
         <td>Terminal time (3, 4, 5, 7, 10 minutes)<td>
+    </tr>
+</table>
+
+### Mobility Hub MGRAs
+`mobilityHubMGRAs.csv`
+
+<table>
+    <tr>
+        <th>Column Name</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>MGRA</td>
+        <td>MGRA ID</td>
+    </tr>
+    <tr>
+        <td>MoHubName</td>
+        <td>Name of Mobility Hub</td>
+    </tr>
+    <tr>
+        <td>MoHubType</td>
+        <td>Type of Mobility Hub</td>
     </tr>
 </table>
 
