@@ -8,7 +8,7 @@ import yaml
 import numpy as np
 import pandas as pd
 
-from activitysim.core import config, workflow
+from activitysim.core import configuration, workflow
 from activitysim.abm.models.trip_matrices import WriteTripMatricesSettings
 
 # from io import StringIO
@@ -226,7 +226,10 @@ def update_tables(state: workflow.State):
     common_settings_stream.close()
 
     for table_name in output_tables_list:
-        if not isinstance(table_name, str):
+        # Source: activitysim/core/steps/output.py write_tables
+        if isinstance(table_name, configuration.OutputTable):
+            table_name = table_name.tablename
+        elif not isinstance(table_name, str):
             table_name = table_name["tablename"]
 
         if not (table_name in common_settings

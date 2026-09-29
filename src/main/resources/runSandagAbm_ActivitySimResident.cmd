@@ -15,6 +15,11 @@ CALL %activate_uv_asim_151%
 
 set MKL_NUM_THREADS=1
 set MKL=1
+set OMP_NUM_THREADS=1
+set OPENBLAS_NUM_THREADS=1
+set NUMBA_NUM_THREADS=1
+set VECLIB_MAXIMUM_THREADS=1
+set NUMEXPR_NUM_THREADS=1
 
 :: Create Directory to Store ActivitySim Outputs
 CD Output
@@ -25,7 +30,7 @@ MD resident\log
 CD ..
 
 :: Run simulation.py
-python src/asim/simulation.py -s settings_mp.yaml -c src/asim/configs/resident -c src/asim/configs/common -d input -d output/skims -o output/resident || exit /b 2
+python src/asim/simulation.py -s settings.yaml -c src/asim/configs/resident -c src/asim/configs/common -d input -d output/skims -o output/resident || exit /b 2
 
 cd /d %PROJECT_DIRECTORY%
 python src/asim/scripts/set_zoneMapping.py resident output || exit /b 2

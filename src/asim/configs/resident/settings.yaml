@@ -29,7 +29,10 @@ trace_hh_id:
 # trace origin, destination in accessibility calculation; comment out or leave empty for no trace
 #trace_od:
 
-households_sample_size: 100
+sharrow: require
+recode_pipeline_columns: True
+
+households_sample_size: 0
 
 # input tables
 input_table_list:
