@@ -67,28 +67,34 @@ class NetworkBuilder:
     @classmethod
     def from_files(cls, model_inputs: str, config: dict) -> 'NetworkBuilder':
         """
-        Create a NetworkBuilder instance by reading nodes and links from shapefiles.
+        Create a NetworkBuilder instance by reading nodes and links from geodatabase.
 
-        This factory method handles reading and processing the raw input files to create
-        a properly configured NetworkBuilder instance.
+        This factory method handles reading and processing the raw input files from a
+        geodatabase to create a properly configured NetworkBuilder instance.
 
         Args:
-            model_inputs (str): Path to directory containing input shapefiles
+            model_inputs (str): Path to directory containing the geodatabase
             config (dict): Configuration dictionary containing:
                 - mmms (dict): File and processing parameters
-                - shapefile_node_name (str): Filename for nodes shapefile
-                - shapefile_name (str): Filename for links shapefile
+                - gdb_file (str): Geodatabase filename
+                - node_name (str): Feature class name for nodes
+                - net_name (str): Feature class name for links
 
         Returns:
             NetworkBuilder: A fully initialized NetworkBuilder instance with processed
                 nodes and links.
         """
-        # Read and process nodes
-        nodes = gpd.read_file(os.path.join(model_inputs, config['mmms']['shapefile_node_name']))
+        # Construct geodatabase path
+        gdb_path = os.path.join(model_inputs, config['mmms']['gdb_file'])
+        if not os.path.exists(gdb_path):
+            raise FileNotFoundError(f"Geodatabase not found: {gdb_path}")
+        
+        # Read and process nodes from geodatabase
+        nodes = gpd.read_file(gdb_path, layer=config['mmms']['node_name'])
         nodes = cls._process_nodes(nodes)
         
-        # Read and process links
-        links = gpd.read_file(os.path.join(model_inputs, config['mmms']['shapefile_name']))
+        # Read and process links from geodatabase
+        links = gpd.read_file(gdb_path, layer=config['mmms']['net_name'])
         links = cls._process_links(links)
 
         # Read and process stops and routes
@@ -128,7 +134,7 @@ class NetworkBuilder:
     @staticmethod
     def _process_links(links: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         """
-        Process raw links GeoDataFrame.
+        Process raw links GeoDataFrame by projecting coordinates.
         
         Args:
             links: Raw links GeoDataFrame

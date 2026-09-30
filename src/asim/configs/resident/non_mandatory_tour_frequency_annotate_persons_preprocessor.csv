@@ -37,5 +37,5 @@ join joint tour participants with tour purpose,_JOINT_TOURS_PERSONS,"pd.merge(jo
 ,num_pre_school_kids_not_self,"np.where(df.ptype == PTYPE_PRESCHOOL, df.num_young_children - 1, df.num_young_children)"
 ,retiredHh,"np.where(df.num_retired_adults == df.hhsize, 1, 0)"
 ,num_travel_active_pre_drive_students,((persons.ptype == PTYPE_SCHOOL) & persons.travel_active).astype(int).groupby(persons.household_id).transform('sum')
-# need to grab globals in pre-processor for interaction simulate models
+# need to grab globals in pre-processor for interaction simulate models,,
 ,pre_covid,PRE_COVID

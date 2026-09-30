@@ -22,5 +22,5 @@ util_ind_manu,Industry type is manufacturing,"@df.naics_code.isin([31,32,33])",c
 util_ind_mgmt_srv,Industry type is management services,@df.naics_code==55,coef_ind_mgmt_srv,
 util_ind_mil,Industry type is military,@df.naics_code==9000,coef_ind_mil,
 util_cbd,PMSA 1 - CBD,@df.pseudomsa==1,coef_cbd,
-util_emp_non_ws_wfh,Non-wage & non-salary workers work from home at home zone,@df.emp_non_ws_wfh,coef_emp_non_ws_wfh
-util_emp_non_ws_oth,Non-wage & non-salary workers other at home zone,@df.emp_non_ws_oth,coef_emp_non_ws_oth
+util_emp_non_ws_wfh,Non-wage & non-salary workers work from home at home zone,@df.emp_non_ws_wfh,coef_emp_non_ws_wfh,
+util_emp_non_ws_oth,Non-wage & non-salary workers other at home zone,@df.emp_non_ws_oth,coef_emp_non_ws_oth,

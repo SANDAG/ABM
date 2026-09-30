@@ -7,7 +7,7 @@ from typing import Literal
 import numpy as np
 import pandas as pd
 
-from activitysim.abm.models.util import annotate, tour_destination
+from activitysim.abm.models.util import tour_destination
 from activitysim.core import (
     estimation,
     expressions,
@@ -469,7 +469,7 @@ def route_endpoint(
             eligibility_term
         ]
 
-        maz_choices = choose_MAZ_for_TAZ(state, taz_sample, MAZ_size_terms, trace_label)
+        maz_choices = choose_MAZ_for_TAZ(state, taz_sample, MAZ_size_terms, model_settings, trace_label)
 
         assert DEST_MAZ in maz_choices
         maz_choices = maz_choices.rename(columns={DEST_MAZ: alt_dest_col_name})
@@ -498,7 +498,12 @@ def route_endpoint(
     state.add_table("routes", routes)
 
     if model_settings.annotate_routes:
-        annotate.annotate_tours(state, model_settings, trace_label)
+        expressions.assign_columns(
+            state,
+            df=routes,
+            model_settings=model_settings.annotate_routes,
+            trace_label=tracing.extend_trace_label(trace_label, "annotate_routes"),
+        )
 
 
 @workflow.step

@@ -1,7 +1,7 @@
 Description,Expression,work,school,visit,shop,other
 Size variable,"@np.log1p(size_terms.get(df.trip_dest, df.purpose))",1,1,1,1,1
 No attractions,"@size_terms.get(df.trip_dest, df.purpose) == 0",-999,-999,-999,-999,-999
-Restrict nm trips to airport,"@(df.trip_dest.isin([1338,1457])) & df.is_nm_trip",-999,-999,-999,-999,-999
+Restrict nm trips to airport,"@(df.trip_dest.isin([1338,1457,4184])) & df.is_nm_trip",-999,-999,-999,-999,-999
 ,_od_DIST@odt_skims['SOV_NT_M_DIST'],1,1,1,1,1
 ,_dp_DIST@dpt_skims['SOV_NT_M_DIST'],1,1,1,1,1
 intermediate stops on half-tour,_stops_on_leg@df.trip_count - 1,1,1,1,1,1

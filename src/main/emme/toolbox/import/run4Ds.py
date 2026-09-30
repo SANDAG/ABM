@@ -25,8 +25,8 @@
 #
 # File referenced:
 #   input\mgra13_based_input2016.csv
-#   input\SANDAG_Bike_Net.dbf
-#   input\SANDAG_Bike_Node.dbf
+#   input\EMMEOutputs.gdb\SANDAG_Bike_Net
+#   input\EMMEOutputs.gdb\SANDAG_Bike_Node
 #   output\walkMgraEquivMinutes.csv
 #
 # Script example
@@ -38,7 +38,6 @@ TOOLBOX_ORDER = 10
 
 #import modules
 import inro.modeller as _m
-from simpledbf import Dbf5
 import os
 import pandas as pd, numpy as np
 #import datetime
@@ -105,8 +104,8 @@ class FourDs(_m.Tool()):
         <br>
             <ul>
                 <li>input\mgra13_based_input2016.csv</li>
-                <li>input\SANDAG_Bike_Net.dbf</li>
-                <li>input\SANDAG_Bike_Node.dbf</li>
+                <li>input\EMMEOutputs.gdb\SANDAG_Bike_Net</li>
+                <li>input\EMMEOutputs.gdb\SANDAG_Bike_Node</li>
                 <li>output\walkMgraEquivMinutes.csv</li>
             </ul>
         </div>
@@ -153,8 +152,9 @@ class FourDs(_m.Tool()):
         self.mgradata_file = props["mgra.socec.file"] #input/filename
         self.syn_households_file = props["PopulationSynthesizer.InputToCTRAMP.HouseholdFile"] #input/filename
         self.equivmins_file = props["active.logsum.matrix.file.walk.mgra"] #filename
-        self.inNet = os.path.basename(props["active.edge.file"])  #filename
-        self.inNode = os.path.basename(props["active.node.file"])  #filename
+        self.inNet = props["active.edge.file"]  # feature class name
+        self.inNode = props["active.node.file"]  # feature class name
+        self.gdb_source = _join(self.path, "input", "EMMEOutputs.gdb")  # geodatabase path
 
         attributes = {
             "path": self.path,
@@ -164,7 +164,7 @@ class FourDs(_m.Tool()):
         }
         gen_utils.log_snapshot("Run 4Ds", str(self), attributes)
         
-        file_paths = [_join(self.path, self.mgradata_file),_join(self.path, self.syn_households_file),_join(self.path, "output", self.equivmins_file),  _join(self.path, "input", self.inNet),  _join(self.path, "input", self.inNode)]
+        file_paths = [_join(self.path, self.mgradata_file),_join(self.path, self.syn_households_file),_join(self.path, "output", self.equivmins_file), self.gdb_source]
         for path in file_paths:
             if not os.path.exists(path):
                 raise Exception("missing file '%s'" % (path))
@@ -181,11 +181,13 @@ class FourDs(_m.Tool()):
         _m.logbook_write("Finished running 4Ds")
 
     def get_intersection_count(self):
-        links = Dbf5(_join(self.path, "input", self.inNet))
-        links = links.to_dataframe()
+        # Read bike network links from geodatabase feature class
+        links_data = gen_utils.DataTableProc(self.inNet, self.gdb_source)
+        links = pd.DataFrame({name: vals for name, vals in zip(links_data._attr_names, links_data._values)})
 
-        nodes = Dbf5(_join(self.path, "input", self.inNode))
-        nodes = nodes.to_dataframe()
+        # Read bike network nodes from geodatabase feature class
+        nodes_data = gen_utils.DataTableProc(self.inNode, self.gdb_source)
+        nodes = pd.DataFrame({name: vals for name, vals in zip(nodes_data._attr_names, nodes_data._values)})
 
         nodes_int = nodes.loc[(nodes.NodeLev_ID < 100000000)]
 

@@ -60,6 +60,8 @@ nav:
         - design/demand/visitor.md
         - design/demand/cvm.md
         - design/demand/external.md
+        - design/demand/av-routing.md
+        - design/demand/taxi-tnc-routing.md
     - Supply: 
         - design/supply/index.md
         - design/supply/bike-logsums.md

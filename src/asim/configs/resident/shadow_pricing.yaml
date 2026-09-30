@@ -49,3 +49,6 @@ workplace_segmentation_targets:
   sales_office: total_emp_revised
   services: total_emp_revised
 
+SEGMENT_TO_NAME:
+  school: school_segment
+  workplace: occupation

@@ -12,7 +12,7 @@ Description,Target,Expression
 ,_dest_prm_time,_dest_prm_dist * 60/walkSpeed
 ,_dest_mix_time,_dest_mix_dist * 60/walkSpeed
 ,_tour_participants,df.tour_id.map(tours.number_of_participants)
-#
+#,,
 ,_cost_parking,0
 ,_cost_parking,"_cost_parking + df.trip_mode.isin(['DRIVEALONE']) * (df.parking_cost)"
 ,_cost_parking,"_cost_parking + df.trip_mode.isin(['SHARED2']) * (df.parking_cost / _tour_participants)"

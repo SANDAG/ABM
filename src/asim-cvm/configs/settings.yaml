@@ -102,3 +102,37 @@ models:
   - write_cvm_trip_matrices
   - write_tables
 
+multiprocess: True
+fail_fast: True
+num_processes: 12
+
+chunk_size: 0
+chunk_method: hybrid_uss
+chunk_training_mode: disabled
+
+multiprocess_steps:
+  - name: mp_initialize
+    begin: household_attractor
+  - name: mp_accessibility
+    begin: cvm_accessibility
+    slice:
+      tables:
+        - commercial_accessibility
+      exclude: True
+  - name: mp_route_generation
+    begin: route_generation
+    slice:
+      tables:
+        - establishments
+  # route_generation_tnc single-process only
+  # land_use aggregation and duplicate establishment_id under slicing
+  - name: mp_route_generation_tnc
+    begin: route_generation_tnc
+  - name: mp_route
+    begin: route_purpose_and_vehicle
+    slice:
+      tables:
+        - establishments
+        - routes
+  - name: mp_finalize
+    begin: write_cvm_trip_matrices

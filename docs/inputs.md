@@ -859,6 +859,136 @@ The table below contains brief descriptions of the input files required to execu
     </tr>
 </table>
 
+<a id="hotels_eventspace"></a>
+
+### Hotels and Event Space for SAN airport model
+#### `HOTELS_EVENTSPACE_0314.CSV`
+
+<table>
+    <tr>
+        <th>Column Name</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>USER_Accou</td>
+        <td>Hotel or venue name</td>
+    </tr>
+    <tr>
+        <td>Status</td>
+        <td>Geocoding match status</td>
+    </tr>
+    <tr>
+        <td>Score</td>
+        <td>Geocoding match score</td>
+    </tr>
+    <tr>
+        <td>Match_addr</td>
+        <td>Matched address</td>
+    </tr>
+    <tr>
+        <td>LongLabel</td>
+        <td>Long address label</td>
+    </tr>
+    <tr>
+        <td>ShortLabel</td>
+        <td>Short address label</td>
+    </tr>
+    <tr>
+        <td>Subregion</td>
+        <td>Subregion name</td>
+    </tr>
+    <tr>
+        <td>Region</td>
+        <td>Region name (State)</td>
+    </tr>
+    <tr>
+        <td>Postal</td>
+        <td>ZIP code</td>
+    </tr>
+    <tr>
+        <td>PostalExt</td>
+        <td>ZIP code extension</td>
+    </tr>
+    <tr>
+        <td>CntryName</td>
+        <td>Country name</td>
+    </tr>
+    <tr>
+        <td>X</td>
+        <td>Longitude coordinate</td>
+    </tr>
+    <tr>
+        <td>Y</td>
+        <td>Latitude coordinate</td>
+    </tr>
+    <tr>
+        <td>ExInfo</td>
+        <td>Extended information</td>
+    </tr>
+    <tr>
+        <td>StrucType</td>
+        <td>Structure type (e.g., Commercial)</td>
+    </tr>
+    <tr>
+        <td>StrucDet</td>
+        <td>Structure detail (e.g., Lodging)</td>
+    </tr>
+    <tr>
+        <td>IN_Neighbo</td>
+        <td>Neighborhood or community area</td>
+    </tr>
+    <tr>
+        <td>USER_Sleep</td>
+        <td>Number of sleeping rooms</td>
+    </tr>
+    <tr>
+        <td>USER_Total</td>
+        <td>Total event space (square feet)</td>
+    </tr>
+    <tr>
+        <td>USER_Large</td>
+        <td>Largest room size (square feet)</td>
+    </tr>
+    <tr>
+        <td>USER_Class</td>
+        <td>Number of classrooms</td>
+    </tr>
+    <tr>
+        <td>USER_Theat</td>
+        <td>Theater seating capacity</td>
+    </tr>
+    <tr>
+        <td>USER_Banqu</td>
+        <td>Banquet seating capacity</td>
+    </tr>
+    <tr>
+        <td>USER_Numbe</td>
+        <td>Number of meeting rooms</td>
+    </tr>
+    <tr>
+        <td>USER_Mobil</td>
+        <td>Mobil rating</td>
+    </tr>
+    <tr>
+        <td>USER_AAA_R</td>
+        <td>AAA diamond rating</td>
+    </tr>
+    <tr>
+        <td>USER_TMD_A</td>
+        <td>TMD (The Meeting Destination) approved (Yes/No)</td>
+    </tr>
+    <tr>
+        <td>MGRA</td>
+        <td>Micro-geography analysis zone</td>
+    </tr>
+    <tr>
+        <td>TAZ</td>
+        <td>Traffic analysis zone</td>
+    </tr>
+</table>
+
+<a id="cvm_establishment_synthesis"></a>
+
 ## Commercial Vehicle Model
 
 ### Establishment Size Distribution by LUZ

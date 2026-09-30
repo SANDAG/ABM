@@ -8,22 +8,22 @@ local,_DF_IS_TOUR,'tour_type' in df.columns,
 ,sr2_veh_option,"np.where(is_atwork_subtour, _parent_tour_veh, df.get('vehicle_occup_2', np.nan))",
 ,sr3p_veh_option,"np.where(is_atwork_subtour, _parent_tour_veh, df.get('vehicle_occup_3.5', np.nan))",
 #AV factors,,,
-SOV tour Vehicle is AV,sov_tour_uses_av,"np.where(pd.notna(df.get('vehicle_occup_1', np.nan)), pd.Series(sov_veh_option, dtype = 'str').str.contains('AV'), False)"
-SR2 tour Vehicle is AV,sr2_tour_uses_av,"np.where(pd.notna(df.get('vehicle_occup_2', np.nan)), pd.Series(sr2_veh_option, dtype = 'str').str.contains('AV'), False)"
-SR3 tour Vehicle is AV,sr3_tour_uses_av,"np.where(pd.notna(df.get('vehicle_occup_3.5', np.nan)), pd.Series(sr3p_veh_option, dtype = 'str').str.contains('AV'), False)"
-SOV AV IVT Factor Adjustment,autoIVTFactor_DA,"np.where(sov_tour_uses_av, autoIVTFactorAV, 1.0)"
-SR2 AV IVT Factor Adjustment,autoIVTFactor_SR2,"np.where(sr2_tour_uses_av, autoIVTFactorAV, 1.0)"
-SR3+ AV IVT Factor Adjustment,autoIVTFactor_SR3,"np.where(sr3_tour_uses_av, autoIVTFactorAV, 1.0)"
-SOV AV Parking Cost Factor Adjustment,autoParkingCostFactor_DA,"np.where(sov_tour_uses_av, autoParkingCostFactorAV, 1.0)"
-SR2 AV Parking Cost Factor Adjustment,autoParkingCostFactor_SR2,"np.where(sr2_tour_uses_av, autoParkingCostFactorAV, 1.0)"
-SR3+ AV Parking Cost Factor Adjustment,autoParkingCostFactor_SR3,"np.where(sr3_tour_uses_av, autoParkingCostFactorAV, 1.0)"
-SOV AV Auto Terminal Time Factor,autoTermTimeFactor_DA,"np.where(sov_tour_uses_av, autoTerminalTimeFactorAV, 1.0)"
-SR2 AV Auto Terminal Time Factor,autoTermTimeFactor_SR2,"np.where(sr2_tour_uses_av, autoTerminalTimeFactorAV, 1.0)"
-SR3+ AV Auto Terminal Time Factor,autoTermTimeFactor_SR3,"np.where(sr3_tour_uses_av, autoTerminalTimeFactorAV, 1.0)"
-SOV AV Auto Terminal Time Factor,autoCPMFactor_DA,"np.where(sov_tour_uses_av, autoCostPerMileFactorAV, 1.0)"
-SR2 AV Auto Terminal Time Factor,autoCPMFactor_SR2,"np.where(sr2_tour_uses_av, autoCostPerMileFactorAV, 1.0)"
-SR3+ AV Auto Terminal Time Factor,autoCPMFactor_SR3,"np.where(sr3_tour_uses_av, autoCostPerMileFactorAV, 1.0)"
-AV Min Age to Drive Alone,minimumAgeDA,"np.where(sov_tour_uses_av, minAgeDriveAloneAV, 16)"
+SOV tour Vehicle is AV,sov_tour_uses_av,"np.where(pd.notna(df.get('vehicle_occup_1', np.nan)), pd.Series(sov_veh_option, dtype = 'str').str.contains('AV'), False)",
+SR2 tour Vehicle is AV,sr2_tour_uses_av,"np.where(pd.notna(df.get('vehicle_occup_2', np.nan)), pd.Series(sr2_veh_option, dtype = 'str').str.contains('AV'), False)",
+SR3 tour Vehicle is AV,sr3_tour_uses_av,"np.where(pd.notna(df.get('vehicle_occup_3.5', np.nan)), pd.Series(sr3p_veh_option, dtype = 'str').str.contains('AV'), False)",
+SOV AV IVT Factor Adjustment,autoIVTFactor_DA,"np.where(sov_tour_uses_av, autoIVTFactorAV, 1.0)",
+SR2 AV IVT Factor Adjustment,autoIVTFactor_SR2,"np.where(sr2_tour_uses_av, autoIVTFactorAV, 1.0)",
+SR3+ AV IVT Factor Adjustment,autoIVTFactor_SR3,"np.where(sr3_tour_uses_av, autoIVTFactorAV, 1.0)",
+SOV AV Parking Cost Factor Adjustment,autoParkingCostFactor_DA,"np.where(sov_tour_uses_av, autoParkingCostFactorAV, 1.0)",
+SR2 AV Parking Cost Factor Adjustment,autoParkingCostFactor_SR2,"np.where(sr2_tour_uses_av, autoParkingCostFactorAV, 1.0)",
+SR3+ AV Parking Cost Factor Adjustment,autoParkingCostFactor_SR3,"np.where(sr3_tour_uses_av, autoParkingCostFactorAV, 1.0)",
+SOV AV Auto Terminal Time Factor,autoTermTimeFactor_DA,"np.where(sov_tour_uses_av, autoTerminalTimeFactorAV, 1.0)",
+SR2 AV Auto Terminal Time Factor,autoTermTimeFactor_SR2,"np.where(sr2_tour_uses_av, autoTerminalTimeFactorAV, 1.0)",
+SR3+ AV Auto Terminal Time Factor,autoTermTimeFactor_SR3,"np.where(sr3_tour_uses_av, autoTerminalTimeFactorAV, 1.0)",
+SOV AV Auto Terminal Time Factor,autoCPMFactor_DA,"np.where(sov_tour_uses_av, autoCostPerMileFactorAV, 1.0)",
+SR2 AV Auto Terminal Time Factor,autoCPMFactor_SR2,"np.where(sr2_tour_uses_av, autoCostPerMileFactorAV, 1.0)",
+SR3+ AV Auto Terminal Time Factor,autoCPMFactor_SR3,"np.where(sr3_tour_uses_av, autoCostPerMileFactorAV, 1.0)",
+AV Min Age to Drive Alone,minimumAgeDA,"np.where(sov_tour_uses_av, minAgeDriveAloneAV, 16)",
 reimburseProportion placeholder,reimburseProportion,0,
 "Tour duration, in hours",tourDuration,df.duration/2,
 #,,,
@@ -50,7 +50,7 @@ employment_density calculated in annotate_landuse in acres and is converted to s
 ,origin_zone_taxi_wait_time_sd,"origin_density.map({k: v for k, v in Taxi_waitTime_sd.items()})",
 ,dest_zone_taxi_wait_time_mean,"dest_density.map({k: v for k, v in Taxi_waitTime_mean.items()})",
 ,dest_zone_taxi_wait_time_sd,"dest_density.map({k: v for k, v in Taxi_waitTime_sd.items()})",
-# ,, Note that the mean and standard deviation are not the values for the distribution itself but of the underlying normal distribution it is derived from
+# ,, Note that the mean and standard deviation are not the values for the distribution itself but of the underlying normal distribution it is derived from,
 ,origTaxiWaitTime,"rng.lognormal_for_df(df, mu=origin_zone_taxi_wait_time_mean, sigma=origin_zone_taxi_wait_time_sd, broadcast=True, scale=True).clip(min_waitTime, max_waitTime)",
 ,destTaxiWaitTime,"rng.lognormal_for_df(df, mu=dest_zone_taxi_wait_time_mean, sigma=dest_zone_taxi_wait_time_sd, broadcast=True, scale=True).clip(min_waitTime, max_waitTime)",
 ,origin_zone_singleTNC_wait_time_mean,"origin_density.map({k: v for k, v in TNC_single_waitTime_mean.items()})",

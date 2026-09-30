@@ -13,6 +13,8 @@ cacls %STUDY_FOLDER% /t /e /g Everyone:f
 @echo /Y/E %NETWORKDIR%\"*.*" %STUDY_FOLDER%\network_build /EXCLUDE:%NETWORKDIR%\exclude.txt
 xcopy /Y/E %NETWORKDIR%\"*.*" %STUDY_FOLDER%\network_build /EXCLUDE:%NETWORKDIR%\exclude.txt
 
+goto :eof
+
 :usage
 
 @echo Usage: %0 ^<study_folder^> ^<studynetwork^>
