@@ -39,15 +39,16 @@ class Series15_Processor:
         self.maz_maz_bike_file = os.path.join(self.output_dir, 'bikeMgraLogsum.csv')
         self.taz_taz_bike_file = os.path.join(self.output_dir, 'bikeTazLogsum.csv')
 
-        self.walk_speed = 3  # mph
+        # Load ABM Settings
+        abm3_settings_file = os.path.join(project_dir, 'conf', 'abm3_settings.yaml')
+        abm3_settings = util.open_yaml(abm3_settings_file)
+        self.walk_speed = abm3_settings['mode']['nonmotorized']['walk']['speed']  # mph
 
         sandag_abm_prop_dir = os.path.join(project_dir, 'conf', 'sandag_abm.properties')
         sandag_abm_prop = util.load_properties(sandag_abm_prop_dir)
         self.max_walk_transit_dist = sandag_abm_prop['walk.transit.connector.max.length']
 
         # Load SDIA employment multiplier from YAML config
-        abm3_settings_file = os.path.join(project_dir, 'conf', 'abm3_settings.yaml')
-        abm3_settings = util.open_yaml(abm3_settings_file)
         sdia_config = abm3_settings['airport']['san']['sdiaEmploymentMultiplier']
         
         # Load configurations for airport_north and airport_south
