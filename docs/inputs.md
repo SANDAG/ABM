@@ -88,11 +88,11 @@ The table below contains brief descriptions of the input files required to execu
         <td>Pseudo Major Statistical Area shapefile</td>
     </tr>
     <tr>
-        <td><strong>Airport Models</strong></td>
+        <td><a href=#airport-models><strong>Airport Models</strong></a></td>
         <td></td>
     </tr>
     <tr>
-        <td>Hotels_EventSpace_0314.csv</td>
+        <td><a href=#hotels-and-event-space-for-airport-models>Hotels_EventSpace_0314.csv</a></td>
         <td>Hotel/convention event-space square footage by MGRA</td>
     </tr>
     <tr>
@@ -859,10 +859,10 @@ The table below contains brief descriptions of the input files required to execu
     </tr>
 </table>
 
-<a id="hotels_eventspace"></a>
+## Airport Models
 
-### Hotels and Event Space for SAN airport model
-#### `HOTELS_EVENTSPACE_0314.CSV`
+### Hotels and Event Space for Airport Models
+`Hotels_EventSpace_0314.csv`
 
 <table>
     <tr>
@@ -986,8 +986,6 @@ The table below contains brief descriptions of the input files required to execu
         <td>Traffic analysis zone</td>
     </tr>
 </table>
-
-<a id="cvm_establishment_synthesis"></a>
 
 ## Commercial Vehicle Model
 
