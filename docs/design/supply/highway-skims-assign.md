@@ -4,24 +4,23 @@ The traffic assignment for the SANDAG model is a 15-class assignment with genera
 
 *Table 1. List of traffic demand classes and key class parameter values*
 
-| Name      | Mode | VOT ($0.01/min) | PCE | Cost Attribute     |
+| Name      | Mode | VOT (Unit)       | PCE | Cost Attribute     |
 |-----------|------|------------------|-----|--------------------|
-| SOV_NT_L  | s    | 8.81             |     | @cost_auto         |
-| SOV_TR_L  | S    | 8.81             |     | @cost_auto         |
-| HOV2_L    | H    | 8.81             |     | @cost_hov2         |
-| HOV3_L    | I    | 8.81             |     | @cost_hov3         |
-| SOV_NT_M  | s    | 18               |     | @cost_auto         |
-| SOV_TR_M  | S    | 18               |     | @cost_auto         |
-| HOV2_M    | H    | 18               |     | @cost_hov2         |
-| HOV3_M    | I    | 18               |     | @cost_hov3         |
-| SOV_NT_H  | s    | 85               |     | @cost_auto         |
-| SOV_TR_H  | S    | 85               |     | @cost_auto         |
-| HOV2_H    | H    | 85               |     | @cost_hov2         |
-| HOV3_H    | I    | 85               |     | @cost_hov3         |
-| TRK_L     | T    | 67               | 1.3 | @cost_lgt_truck    |
-| TRK_M     | M    | 68               | 1.5 | @cost_med_truck    |
-| TRK_H     | V    | 89               | 2.5 | @cost_hvy_truck    |
-
+| SOV_NT_L  | s    | 8.81 ($/hr)      |     | @cost_auto         |
+| SOV_TR_L  | S    | 8.81 ($/hr)      |     | @cost_auto         |
+| HOV2_L    | H    | 8.81 ($/hr)      |     | @cost_hov2         |
+| HOV3_L    | I    | 8.81 ($/hr)      |     | @cost_hov3         |
+| SOV_NT_M  | s    | 18 ($/hr)        |     | @cost_auto         |
+| SOV_TR_M  | S    | 18 ($/hr)        |     | @cost_auto         |
+| HOV2_M    | H    | 18 ($/hr)        |     | @cost_hov2         |
+| HOV3_M    | I    | 18 ($/hr)        |     | @cost_hov3         |
+| SOV_NT_H  | s    | 85 ($0.01/min)   |     | @cost_auto         |
+| SOV_TR_H  | S    | 85 ($0.01/min)   |     | @cost_auto         |
+| HOV2_H    | H    | 85 ($0.01/min)   |     | @cost_hov2         |
+| HOV3_H    | I    | 85 ($0.01/min)   |     | @cost_hov3         |
+| TRK_L     | T    | 67 ($0.01/min)   | 1.3 | @cost_lgt_truck    |
+| TRK_M     | M    | 68 ($0.01/min)   | 1.5 | @cost_med_truck    |
+| TRK_H     | V    | 89 ($0.01/min)   | 2.5 | @cost_hvy_truck    |
 
 ## Volume-delay Functions
 
