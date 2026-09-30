@@ -1296,9 +1296,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#transportation-network-editing-database-tned" class="md-nav__link">
+  <a href="#network-input-files" class="md-nav__link">
     <span class="md-ellipsis">
-      Transportation Network Editing Database (TNED)
+      Network Input Files
     </span>
   </a>
   
@@ -1440,6 +1440,24 @@
   <a href="#transit-stops-csv-file" class="md-nav__link">
     <span class="md-ellipsis">
       Transit Stops CSV File
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vehicle-class-toll-factor-csv-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vehicle Class Toll Factor CSV File
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#transit-mode-costs-and-perception-attributes-csv-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Transit Mode Costs and Perception Attributes CSV File
     </span>
   </a>
   
@@ -2076,9 +2094,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#transportation-network-editing-database-tned" class="md-nav__link">
+  <a href="#network-input-files" class="md-nav__link">
     <span class="md-ellipsis">
-      Transportation Network Editing Database (TNED)
+      Network Input Files
     </span>
   </a>
   
@@ -2225,6 +2243,24 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#vehicle-class-toll-factor-csv-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vehicle Class Toll Factor CSV File
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#transit-mode-costs-and-perception-attributes-csv-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Transit Mode Costs and Perception Attributes CSV File
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2246,60 +2282,82 @@
 <h1 id="networks">Networks<a class="headerlink" href="#networks" title="Permanent link"> ¶</a></h1>
 <p>This page describes the components that make up the input ABM3 networks, which include the highway (i.e., roadways), transit and active transportation networks.</p>
 <p>To learn how ABM3 handles the networks, refer to the <a href="design/supply/network-import-tned.html">Network Import from TNED</a> page. </p>
-<h2 id="transportation-network-editing-database-tned">Transportation Network Editing Database (TNED)<a class="headerlink" href="#transportation-network-editing-database-tned" title="Permanent link"> ¶</a></h2>
-<p>The ABM3 networks are edited, maintained, and generated via SANDAG&rsquo;s internal Transportation Network Editing Database (TNED) system, which leverages ESRI&rsquo;s <a href="https://enterprise.arcgis.com/en/get-started/latest/windows/what-is-arcgis-enterprise-.htm">ArcGIS Enterprise</a> and is hosted on an <a href="https://enterprise.arcgis.com/en/server/latest/manage-data/windows/enterprise-geodatabases-and-arcgis-enterprise.htm">enterprise geodatabase</a>. The TNED system, via an <a href="https://pro.arcgis.com/en/pro-app/latest/help/data/data-interoperability/what-is-the-data-interoperability-extension.htm">ETL</a> (Extract, Load, Transform) process, outputs the input ABM3 networks in a variety of different formats including <a href="https://pro.arcgis.com/en/pro-app/latest/help/data/geodatabases/manage-file-gdb/file-geodatabases.htm">file geodatabase</a>, CSV, and <a href="https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm">shapefiles</a>.</p>
-<p>When describing the ABM3 networks, this page is specifically referring to the networks in their post-ETL state. A typical TNED ETL network directory includes the following:</p>
+<h2 id="network-input-files">Network Input Files<a class="headerlink" href="#network-input-files" title="Permanent link"> ¶</a></h2>
+<p>The ABM3 networks are edited, maintained, and generated via SANDAG&rsquo;s internal Transportation Network Editing Database (TNED) system, which leverages ESRI&rsquo;s <a href="https://enterprise.arcgis.com/en/get-started/latest/windows/what-is-arcgis-enterprise-.htm">ArcGIS Enterprise</a> and is hosted on an <a href="https://enterprise.arcgis.com/en/server/latest/manage-data/windows/enterprise-geodatabases-and-arcgis-enterprise.htm">enterprise geodatabase</a> while other input network files are manually maintained by modelers. The TNED system, via an <a href="https://pro.arcgis.com/en/pro-app/latest/help/data/data-interoperability/what-is-the-data-interoperability-extension.htm">ETL</a> (Extract, Load, Transform) process, outputs the input ABM3 networks in a variety of different formats including <a href="https://pro.arcgis.com/en/pro-app/latest/help/data/geodatabases/manage-file-gdb/file-geodatabases.htm">file geodatabase</a>, CSV, and <a href="https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm">shapefiles</a>. When describing TNED ABM3 networks, this page is specifically referring to the networks in their post-ETL state. </p>
+<p>The table below contains brief descriptions of the network input files required to execute the SANDAG ABM3.</p>
 <p><em>Note: Click on file name for additional details.</em></p>
 <table>
     <tr>
         <td><strong>File Name</strong></td>
-        <td><strong>File Format</strong></td>
         <td><strong>Description</strong></td>
+        <td><strong>File Format</strong></td>
+        <td><strong>Source</strong></td>
     </tr>
     <tr>
         <td><a href=#emme-outputs-file-geodatabase>EMMEOutputs.gdb</a></td>
-        <td>File Geodatabase</td>
         <td>Houses a variety of feature classes and tables for the different ABM3 networks: highway, transit, and active transportation.</td>
+        <td>File Geodatabase</td>
+        <td>TNED</td>
     </tr>
     <tr>
         <td>info</td>
-        <td>Directory</td>
         <td>A directory that houses TNED ETL logs, network QAQC reports, and configuration file utilized to generate the network. <br><br> Only for reference. Not used for modeling purposes.</td>
+        <td>Directory</td>
+        <td>TNED</td>
     </tr>
     <tr>
         <td><a href=#tned-active-transportation-network-links-shapefile>SANDAG_Bike_Net.shp</a></td>
-        <td>Shapefile</td>
         <td>The links (arcs) of the active transportation network.</td>
+        <td>Shapefile</td>
+        <td>TNED</td>
     </tr>
     <tr>
         <td><a href=#tned-active-transportation-network-nodes-shapefile>SANDAG_Bike_Node.shp</a></td>
-        <td>Shapefile</td>
         <td>The nodes of the active transportation network.</td>
+        <td>Shapefile</td>
+        <td>TNED</td>
     </tr>
     <tr>
         <td><a href=#special-fares-text-file>special_fares.txt</a></td>
-        <td>Text File</td>
         <td>Configures the zone-based fare scheme of the Coaster.</td>
+        <td>Text File</td>
+        <td>Manually Maintained</td>
     </tr>
     <tr>
         <td><a href=#timed-transfer-csv-files>timexfer_{TOD}.csv</a></td>
-        <td>CSV</td>
         <td>Timed transfer table between the Coaster and feeder buses. There is a file for each of the 5 TODs (time-of-day), which are EA (early AM), AM, MD (midday), PM, and EV (evening).</td>
+        <td>CSV</td>
+        <td>Manually Maintained</td>
     </tr>
     <tr>
         <td><a href=#transit-routes-csv-file>trrt.csv</a></td>
-        <td>CSV</td>
         <td>List of all transit routes in network and information on their mode, frequencies, hours of service, and fares.</td>
+        <td>CSV</td>
+        <td>TNED</td>
     </tr>
     <tr>
         <td><a href=#transit-links-csv-file>trlink.csv</a></td>
-        <td>CSV</td>
         <td>Ordered sequential list of underlying network links (arcs) for each transit route in the network.</td>
+        <td>CSV</td>
+        <td>TNED</td>
     </tr>
     <tr>
         <td><a href=#transit-stops-csv-file>trstop.csv</a></td>
-        <td>CSV</td>
         <td>List of stops for each transit route in the network.</td>
+        <td>CSV</td>
+        <td>TNED</td>
+    </tr>
+    <tr>
+        <td><a href=#transit-stops-csv-file>vehicle_class_toll_factors.csv</a></td>
+        <td>Toll factors by facility, managed lane type, and vehicle category.</td>
+        <td>CSV</td>
+        <td>Manually Maintained</td>
+    </tr>
+    <tr>
+        <td><a href=#transit-mode-costs-and-perception-attributes-csv-file>MODE5TOD.csv</a></td>
+        <td>Global (per-mode) transit cost and perception attributes.</td>
+        <td>CSV</td>
+        <td>Manually Maintained</td>
     </tr>
 </table>
 
@@ -2467,12 +2525,18 @@
         <td>Link direction where:<br>0 = Center City Walk Links<br>1 = Northbound<br>2 = Westbound<br>3 = Southbound<br>4 = Eastbound</td>
     </tr>
     <tr>
-        <td>JUR</td>
-        <td>Roadway link jurisdiction where:<br>1 = State Facilities<br>2 = Congestion Management Plan (CMP)<br>3 = Regional Arterial System (RAS)<br>4 = Regionally Significant Arterials (RSA)<br>5 = Local Facilties<br>6 = Local Road</td>
-    </tr>
-    <tr>
         <td>FFC</td>
-        <td>Federal functional class where:<br>1 = Freeway<br>2 = Prime Arterial<br>3 = Major Arterial<br>4 = Collector<br>5 = Local Collector<br>6 = Rural Collector<br>7 = Local (non circulation element) Road<br>8 = Freway Connector Ramp<br>9 = Local Ramp<br>11 = Rail Line<br>12 = Bus Street<br>13 = ADT (Average Daily Traffic) Link</td>
+        <td>
+            Federal functional class where:<br>
+            0 = Not Classified<br>
+            1 = Freeway<br>
+            2 = Freeway or Expressway<br>
+            3 = Principal Arterial<br>
+            4 = Minor Arterial<br>
+            5 = Major Collector<br>
+            6 = Minor Collector<br>
+            7 = Local Road
+        </td>
     </tr>
     <tr>
         <td>ASPD</td>
@@ -2488,7 +2552,23 @@
     </tr>
     <tr>
         <td>FC</td>
-        <td>Roadway functional class where:<br>1 = Freeway<br>2 = Prime Arterial<br>3 = Major Arterial<br>4 = Collector<br>5 = Local Collector<br>6 = Rural Collector<br>7 = Local (non circulation element) Road<br>8 = Freeway Connector Ramp<br>9 = Local Ramp<br>10 = TAZ Connector<br>11 = Rail Line<br>12 = Bus Street, Center City Walk Links<br>99 = Transfer Walk Links</td>
+        <td>
+            Roadway functional class where:<br>
+            1 = Freeway<br>
+            2 = Prime Arterial<br>
+            3 = Major Arterial<br>
+            4 = Collector<br>
+            5 = Local Collector<br>
+            6 = Rural Collector<br>
+            7 = Local (non circulation element) Road<br>
+            8 = Freeway Connector Ramp<br>
+            9 = Local Ramp<br>
+            10 = TAZ Connector<br>
+            11 = Rail Line<br>
+            12 = Bus Street, Center City Walk Links<br>
+            13 = ADT Link<br>
+            99 = Transfer Walk Links
+        </td>
     </tr>
     <tr>
         <td>HOV</td>
@@ -3532,6 +3612,368 @@
     <tr>
         <td>Park</td>
         <td>Type of Park & Ride facility the transit node falls within<br>0 = Not Available<br>1 = Formal Park and Ride<br>2 = Other Parking<br>4 = Non-Formal Park and Ride</td>
+    </tr>
+</table>
+
+<h2 id="vehicle-class-toll-factor-csv-file">Vehicle Class Toll Factor CSV File<a class="headerlink" href="#vehicle-class-toll-factor-csv-file" title="Permanent link"> ¶</a></h2>
+<p>The <strong><em>vehicle_class_toll_factors.csv</em></strong> is used to set toll factors by facility, managed lane type, year, time-of-day, and six vehicle classes. The intention of this file is to control how much of a link&rsquo;s toll (if they are managed lane / toll facilities) cost gets applied to vehicles depending on time-of-day and vehicle type. </p>
+<p>The specified factors are merged with network links (based on network link attributes NM, FXNM, TXNM, and HOV) that match the CSV file&rsquo;s Facility_name and HOV attributes. In the end, all eligible managed lane / toll individual network links will have toll factors associated with them. Once matched, the factors serve as multipliers to the network links&rsquo; toll values. A toll factor value of e.g., 1 means no change, a value of 0.5 means half a toll cost, and a value of 99 means an exorbitant toll cost is being imposed on a link and essentially prohibits the use of it. </p>
+<p>Example:</p>
+<table>
+    <tr>
+        <td>Facility_name</td>
+        <td>HOV</td>
+        <td>Year</td>
+        <td>Time_of_Day</td>
+        <td> DA_Factor</td>
+        <td> S2_Factor</td>
+        <td> S3_Factor</td>
+        <td> TRK_L_Factor</td>
+        <td> TRK_M_Factor</td>
+        <td> TRK_H_Factor</td>
+    </tr>
+    <tr>
+        <td>SR-125</td>
+        <td>4</td>
+        <td>2022</td>
+        <td>ALL</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1.03</td>
+        <td>2.33</td>
+    </tr>
+    <tr>
+        <td>SR-125</td>
+        <td>3</td>
+        <td>2035</td>
+        <td>ALL</td>
+        <td>1</td>
+        <td>0.5</td>
+        <td>0</td>
+        <td>99</td>
+        <td>99</td>
+        <td>99</td>
+    </tr>
+    <tr>
+        <td>SR-125</td>
+        <td>4</td>
+        <td>2035</td>
+        <td>ALL</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1.03</td>
+        <td>2.33</td>
+    </tr>
+    <tr>
+        <td>SR-125</td>
+        <td>3</td>
+        <td>2050</td>
+        <td>EA</td>
+        <td>1</td>
+        <td>0.5</td>
+        <td>0</td>
+        <td>99</td>
+        <td>99</td>
+        <td>99</td>
+    </tr>
+    <tr>
+        <td>SR-125</td>
+        <td>3</td>
+        <td>2050</td>
+        <td>AM</td>
+        <td>1</td>
+        <td>1</td>
+        <td>0.5</td>
+        <td>99</td>
+        <td>99</td>
+        <td>99</td>
+    </tr>
+    <tr>
+        <td>SR-125</td>
+        <td>3</td>
+        <td>2050</td>
+        <td>MD</td>
+        <td>1</td>
+        <td>0.5</td>
+        <td>0</td>
+        <td>99</td>
+        <td>99</td>
+        <td>99</td>
+    </tr>
+    <tr>
+        <td>SR-125</td>
+        <td>3</td>
+        <td>2050</td>
+        <td>PM</td>
+        <td>1</td>
+        <td>1</td>
+        <td>0.5</td>
+        <td>99</td>
+        <td>99</td>
+        <td>99</td>
+    </tr>
+    <tr>
+        <td>SR-125</td>
+        <td>3</td>
+        <td>2050</td>
+        <td>EV</td>
+        <td>1</td>
+        <td>0.5</td>
+        <td>0</td>
+        <td>99</td>
+        <td>99</td>
+        <td>99</td>
+    </tr>
+</table>
+
+<p>Using the above hypothetical table as an example, we can see different use cases for the vehicle class toll factor file:</p>
+<ul>
+<li>In 2022, the SR-125 toll (HOV = 4) facility charges the full toll to DA, S2, S3, and Light Trucks whereas Medium and Heavy Trucks are imposed a 3% and 233% toll cost increase, respectively. Rates applied for all 5 time-of-days (i.e., ALL). </li>
+<li>In 2035, we see 2 entries for SR-125 and which factors get used depends on the way the SR-125 was coded when preparing the networks. This means the file is accounting for a network where the SR-125 as an HOV 3 managed lane facility or a network where the SR-125 is a toll (i.e., HOV = 4) facility. </li>
+<li>In 2050, we see there are 5 entries for SR-125 given there are entries for each of the 5 time-of-days. The intention here is to control the way SR2 and SR3 vehicles get charged tolls during the AM and PM peak periods. </li>
+</ul>
+<p>Note that if a link does not match to a record in this file, the default factors (specified in the table below) will be applied to said link. It is OK if there are records for which there are no link tolls.</p>
+<table>
+    <tr>
+        <th>Column Name</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Facility_name</td>
+        <td>Name of the facility, used in the substring matching with links by NM, FXNM or TXNM attributes</td>
+    </tr>
+    <tr>
+        <td>Year</td>
+        <td>Scenario year</td>
+    </tr>
+    <tr>
+        <td>Time_of_Day</td>
+        <td>
+            Time of day period:<br>
+            EA = Early morning (3am - 5:59am)<br>
+            AM = AM peak (6am to 8:59am)<br>
+            MD = Mid-day (9am to 3:29pm)<br>
+            PM = PM peak (3:30pm to 6:59pm)<br>
+            EV = Evening (7pm to 2:59am)<br>
+            ALL = All time-of-day periods
+        </td>
+    </tr>
+    <tr>
+        <td>DA_Factor</td>
+        <td>Positive toll factor for Drive Alone (SOV) vehicle classes. The default value is 1.0</td>
+    </tr>
+    <tr>
+        <td>S2_Factor</td>
+        <td>Positive toll factor for Shared 2 person (HOV2) vehicle classes. The default value is 1.0</td>
+    </tr>
+    <tr>
+        <td>S3_Factor</td>
+        <td>Positive toll factor for Shared 3+ person (HOV3) vehicle classes. The default value is 1.0</td>
+    </tr>
+    <tr>
+        <td>TRK_L_Factor</td>
+        <td>Positive toll factor for Light Truck (TRKL) vehicle classes. The default value is 1.0</td>
+    </tr>
+    <tr>
+        <td>TRK_M_Factor</td>
+        <td>Positive toll factor for Medium Truck (TRKM) vehicle classes. The default value is 1.03</td>
+    </tr>
+    <tr>
+        <td>TRK_H_Factor</td>
+        <td>Positive toll factor for Heavy Truck (TRKH) vehicle classes. The default value is 2.03</td>
+    </tr>
+</table>
+
+<h2 id="transit-mode-costs-and-perception-attributes-csv-file">Transit Mode Costs and Perception Attributes CSV File<a class="headerlink" href="#transit-mode-costs-and-perception-attributes-csv-file" title="Permanent link"> ¶</a></h2>
+<p>The <strong>MODE5TOD.csv</strong> lists all cost and perception factors per transit mode. </p>
+<table>
+    <tr>
+        <th>Column Name</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>MODE_NAME</td>
+        <td>
+            Line haul mode name:<br>
+            Transfer<br>
+            Center City Walk<br>
+            Walk Access<br>
+            Commuter Rail<br>
+            Light Rail<br>
+            Regional BRT (Yellow)<br>
+            Regional BRT (Red)<br>
+            Limited Express<br>
+            Express<br>
+            Local
+        </td>
+    </tr>
+    <tr>
+        <td>MODE_ID</td>
+        <td>
+            Mode ID<br>
+            1 = Transfer<br>
+            2 = Center City Walk<br>
+            3 = Walk Access<br>
+            4 = Commuter Rail<br>
+            5 = Light Rail<br>
+            6 = Regional BRT (Yellow)<br>
+            7 = Regional BRT (Red)<br>
+            8 = Limited Express<br>
+            9 = Express<br>
+            10 = Local
+        </td>
+    </tr>
+    <tr>
+        <td>PREMODE</td>
+        <td>
+            Premium Transit mode?<br>
+            0 = No<br>
+            1 = Yes
+        </td>
+    </tr>
+    <tr>
+        <td>EXPBSMODE</td>
+        <td>
+            Express bus mode?<br>
+            0 = No<br>
+            1 = Yes
+        </td>
+    </tr>
+    <tr>
+        <td>LOCMODE</td>
+        <td>
+            Local bus mode?<br>
+            0 = No<br>
+            1 = Yes
+        </td>
+    </tr>
+    <tr>
+        <td>OP_TRNTIME</td>
+        <td>
+            Off peak transcad matrix used by mode:<br>
+            *oploctime<br>
+            *oppretime
+        </td>
+    </tr>
+    <tr>
+        <td>AM_TRNTIME</td>
+        <td>
+            AM peak transcad matrix used by mode:<br>
+            *amloctime<br>
+            *ampretime
+        </td>
+    </tr>
+    <tr>
+        <td>PM_TRNTIME</td>
+        <td>
+            PM peak transcad matrix used by mode:<br>
+            *pmloctime<br>
+            *pmpretime
+        </td>
+    </tr>
+    <tr>
+        <td>MODE_ACCES</td>
+        <td>Mode of access (1)</td>
+    </tr>
+    <tr>
+        <td>MODE_EGRES</td>
+        <td>Mode of egress (1)</td>
+    </tr>
+    <tr>
+        <td>WT_IVTPK</td>
+        <td>Weight for peak in-vehicle time: 1, 1.5, or 1.8</td>
+    </tr>
+    <tr>
+        <td>WT_FWTPK</td>
+        <td>Weight for peak first wait time: 1, 1.5</td>
+    </tr>
+    <tr>
+        <td>WT_XWTPK</td>
+        <td>Weight for peak transfer wait time: 1, 3</td>
+    </tr>
+    <tr>
+        <td>WT_FAREPK</td>
+        <td>Weight for peak fare: 0.46, 0.60, 0.63, 0.67, 1</td>
+    </tr>
+    <tr>
+        <td>WT_IVTOP</td>
+        <td>Weight for off-peak in-vehicle time: 1, 1.5, or 1.6</td>
+    </tr>
+    <tr>
+        <td>WT_FWTOP</td>
+        <td>Weight for off-peak first wait time: 1, 1.5</td>
+    </tr>
+    <tr>
+        <td>WT_XWTOP</td>
+        <td>Weight for off-peak transfer wait time: 1, 3</td>
+    </tr>
+    <tr>
+        <td>WT_FAREOP</td>
+        <td>Weight for off-peak fare: 0.23, 0.51, 0.52, 0.54, 0.58, 1</td>
+    </tr>
+    <tr>
+        <td>FARE</td>
+        <td>Transit fare: $0, $1.25, $1.50, $2.50, $3.00, $3.50</td>
+    </tr>
+    <tr>
+        <td>DWELLTIME</td>
+        <td>Dwell time: 0, 0.3, 0.5</td>
+    </tr>
+    <tr>
+        <td>FARETYPE</td>
+        <td>
+            Fare Type:<br>
+            1 = Bus<br>
+            2 = Rail
+        </td>
+    </tr>
+    <tr>
+        <td>FAREFIELD</td>
+        <td>
+            Fare Field:<br>
+            coaster fare<br>
+            lightrail fare
+        </td>
+    </tr>
+    <tr>
+        <td>CRMODE</td>
+        <td>Boolean if Commuter rail available</td>
+    </tr>
+    <tr>
+        <td>LRMODE</td>
+        <td>Boolean if light rail available</td>
+    </tr>
+    <tr>
+        <td>XFERPENTM</td>
+        <td>Transfer Penalty time: 5 minutes</td>
+    </tr>
+    <tr>
+        <td>WTXFERTM</td>
+        <td>Transfer Wait time: 1 minute</td>
+    </tr>
+    <tr>
+        <td>TRNTIME_EA</td>
+        <td>Early AM transit time impedance</td>
+    </tr>
+    <tr>
+        <td>TRNTIME_AM</td>
+        <td>AM transit time impedance</td>
+    </tr>
+    <tr>
+        <td>TRNTIME_MD</td>
+        <td>Midday transit time impedance</td>
+    </tr>
+    <tr>
+        <td>TRNTIME_PM</td>
+        <td>PM transit time impedance</td>
+    </tr>
+    <tr>
+        <td>TRNTIME_EV</td>
+        <td>Evening transit time impedance</td>
     </tr>
 </table>
 
