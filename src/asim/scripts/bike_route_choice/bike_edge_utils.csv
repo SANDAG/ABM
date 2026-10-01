@@ -23,8 +23,6 @@ util_pedzone,Pedestrian Zone,"@df.distance * ( (~df.functionalClass.isin([3,4,5,
 # FIXME better way to check wrong way?,,,
 util_wrong_way,Wrong Way - no lanes in direction of travel and no bike lane,"@df.distance * ( (~(df.bikeClass == 4)) & (~(df.bikeClass == 2)) & (df.lanes == 0) ).astype(int)",-3.202
 # The above coefficients are adapted from Lukawska et al. (2023),,,
-,,,
-,,,
 ##################################################################################,,,
 # The below coefficients are from the ABM2 model and have dubious sourcing (see ABM2 documentation),,,
 # util_class_0_bike_lane_dist,Distance without bike lanes,"@df.distance * np.where((df.bikeClass < 1) | (df.bikeClass > 3), 1, 0)",-0.858
