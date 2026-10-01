@@ -17,7 +17,6 @@
 #
 # Inputs:
 #   path: path to the current scenario
-#   ref_path: path to the comparison model scenario
 #   int_radius: buffer radius for intersection counts
 #   maps: default unchecked - means not generating spatial heat maps for 
 #         intersection counts. This functionality requires 
@@ -55,7 +54,6 @@ gen_utils = _m.Modeller().module("sandag.utilities.general")
 class FourDs(_m.Tool()):
 
     path = _m.Attribute(str)
-    ref_path = _m.Attribute(str)
     int_radius = _m.Attribute(float)
     maps = _m.Attribute(bool)
 
@@ -74,7 +72,6 @@ class FourDs(_m.Tool()):
         self.equivmins_file = ''
         self.inNet = ''
         self.inNode = ''
-        self.ref_path = ''
         self.maps = False
         self.int_radius = 0.65 #mile
         self.oth_radius = self.int_radius #same as intersection radius
@@ -86,13 +83,9 @@ class FourDs(_m.Tool()):
         self.build = pd.DataFrame()
         self.mgra_data = pd.DataFrame()
         self.base_cols = []
-        self.attributes = ["path", "int_radius", "ref_path"]
+        self.attributes = ["path", "int_radius"]
 
     def page(self):
-        load_properties = _m.Modeller().tool('sandag.utilities.properties')
-        props = load_properties(_join(self.path, "conf", "sandag_abm.properties"))
-        self.ref_path = props["visualizer.reference.path"]
-                    
         pb = _m.ToolPageBuilder(self)
         pb.title = "Run 4Ds"
         pb.description = """
@@ -120,14 +113,13 @@ class FourDs(_m.Tool()):
 
         pb.add_text_box("int_radius", size=6, title="Buffer size (miles):")
         #pb.add_checkbox("maps", title=" ", label="Generate 4D maps")
-        pb.add_select_file("ref_path", window_type="directory", file_filter="", title="Reference directory for comparison")
 
         return pb.render()
   
     def run(self):
         self.tool_run_msg = ""
         try:
-            self(path=self.path, int_radius=self.int_radius, ref_path=self.ref_path)
+            self(path=self.path, int_radius=self.int_radius)
             run_msg = "Run 4Ds complete"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg, escape=False)
         except Exception as error:
@@ -135,13 +127,10 @@ class FourDs(_m.Tool()):
                 error, _traceback.format_exc(error))
             raise
         
-    def __call__(self, path= "", 
-                 int_radius = 0.65,
-                 ref_path = ""):
+    def __call__(self, path= "", int_radius = 0.65):
         _m.logbook_write("Started running 4Ds ...")
 
         self.path = path
-        self.ref_path = ref_path
         self.int_radius = int_radius
         #self.maps = maps
 
@@ -158,7 +147,6 @@ class FourDs(_m.Tool()):
 
         attributes = {
             "path": self.path,
-            "ref_path": self.ref_path,
             "int_radius": self.int_radius,
             "maps": self.maps,
         }

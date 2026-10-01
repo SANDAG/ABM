@@ -2394,10 +2394,6 @@ The table below contains brief descriptions of the input files required to execu
         <td>airport.SAN.mc.uec.file</td>
         <td>SAN airport model mode choice UEC file</td>
     </tr>
-    <tr>
-        <td>visualizer.reference.path</td>
-        <td>Path to reference scenario for SANDAG ABM visualizer</td>
-    </tr>
 </table>
 
 ### Zone Terminal Time
