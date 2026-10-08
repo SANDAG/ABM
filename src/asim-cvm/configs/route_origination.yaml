@@ -45,20 +45,7 @@ RESULT_COL_NAME: origination_zone
 REQUIRE_ACCESSIBILITY: False
 ACCESSIBILITY_TERMS:
 
-port_taz:
-  - 1154
-  - 2497
-  - 1294
-  - 1338
-  - 1457
-  - 1476
-  - 1485
-  - 1520
-  - 4435
-  - 4582
-  - 4853
-  - 2050
-  - 3742
+port_taz: [{cvm-portTAZs:}]
 
 compute_settings:
   drop_unused_columns: False

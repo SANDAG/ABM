@@ -450,6 +450,7 @@ airport:
           waitTime: -999
 
 cvm:
+  portTAZs: [1154, 2497, 1294, 1338, 1457, 1476, 1485, 1520, 4435, 4582, 4853, 2050, 3742]
   vot:
     light: 67 # Dollars per hour
     medium: 68
