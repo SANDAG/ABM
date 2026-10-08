@@ -6,3 +6,7 @@ COEFFICIENTS: free_parking_coefficients.csv
 LOGIT_TYPE: MNL
 
 FREE_PARKING_ALT: 0
+
+CONSTANTS:
+  airport_north_mgras: [{airport-san-sdiaEmploymentMultiplier-airport_north-mgras:}]
+  airport_south_mgras: [{airport-san-sdiaEmploymentMultiplier-airport_south-mgras:}]
