@@ -472,6 +472,9 @@ cvm:
     establishmentAttractor: 0.7051
     routeGeneration: 0.9583
 
+transponder:
+  destinations: [4027, 2563, 2258]
+
 votThreshold:
   low: 8.81
   medium: 18.00
