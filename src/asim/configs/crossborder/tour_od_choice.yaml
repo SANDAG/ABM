@@ -67,6 +67,7 @@ compute_settings:
     - origin_destination
 
 CONSTANTS:
+  airport_tazs: [{airport-destinationRestrictionTAZs:}]
   tecate_open_per: {crossborder-borderCrossings-tecate-open:}
   tecate_close_per: {crossborder-borderCrossings-tecate-close:}
   otaymesa_open_per: {crossborder-borderCrossings-otayMesa-open:}

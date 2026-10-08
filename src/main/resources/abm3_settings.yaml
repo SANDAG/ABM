@@ -216,6 +216,7 @@ crossborder:
 
 airport:
   annualizationFactor: 365
+  destinationRestrictionTAZs: [1338, 1457, 4184]
   transitPathMultipliers:
     walk: 1.7
     drive: 1.5

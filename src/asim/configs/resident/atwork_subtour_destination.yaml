@@ -5,6 +5,9 @@ COEFFICIENTS: atwork_subtour_destination_coefficients.csv
 
 SAMPLE_SIZE: 30
 
+CONSTANTS:
+  airport_tazs: [{airport-destinationRestrictionTAZs:}]
+
 SIZE_TERM_SELECTOR: atwork
 
 SEGMENTS:

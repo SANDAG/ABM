@@ -4,6 +4,9 @@ COEFFICIENTS: trip_destination_coefficients.csv
 
 SAMPLE_SIZE: 30
 
+CONSTANTS:
+  airport_tazs: [{airport-destinationRestrictionTAZs:}]
+
 DESTINATION_SAMPLE_SPEC: trip_destination_sample.csv
 DESTINATION_SPEC: trip_destination.csv
 
