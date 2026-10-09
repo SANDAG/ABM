@@ -216,6 +216,7 @@ crossborder:
 
 airport:
   annualizationFactor: 365
+  destinationRestrictionTAZs: [1338, 1457, 4184]
   transitPathMultipliers:
     walk: 1.7
     drive: 1.5
@@ -449,6 +450,7 @@ airport:
           waitTime: -999
 
 cvm:
+  portTAZs: [1154, 2497, 1294, 1338, 1457, 1476, 1485, 1520, 4435, 4582, 4853, 2050, 3742]
   vot:
     light: 67 # Dollars per hour
     medium: 68
@@ -469,6 +471,9 @@ cvm:
   betaEmployment:
     establishmentAttractor: 0.7051
     routeGeneration: 0.9583
+
+transponder:
+  destinations: [4027, 2563, 2258]
 
 votThreshold:
   low: 8.81
