@@ -176,10 +176,6 @@ The table below contains brief descriptions of the input files required to execu
         <td>Parameters by scenario years</td>
     </tr>
     <tr>
-        <td><a href=#files-by-scenario-years>filesByYears.csv</a></td>
-        <td>File names by scenario years</td>
-    </tr>
-    <tr>
         <td>trip_XX.omx</td>
         <td>Warm start trip table matrix.<br><i>XX is the TOD (EA, AM, MD, PM, and EV)</i></td>
     </tr>
@@ -2355,48 +2351,6 @@ The table below contains brief descriptions of the input files required to execu
     <tr>
         <td>wfh.coef.regional.calibration</td>
         <td>Regional work-from-home calibration coefficient</td>
-    </tr>
-</table>
-
-### Files by Scenario Years
-`filesByYears.csv`
-
-<table>
-    <tr>
-        <th>Column Name</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <td>year</td>
-        <td>Scenario build year</td>
-    </tr>
-    <tr>
-        <td>crossborder.dc.soa.alts.file</td>
-        <td>Crossborder model destination choice alternatives file</td>
-    </tr>
-    <tr>
-        <td>crossBorder.dc.uec.file</td>
-        <td>Crossborder model destination choice UEC file</td>
-    </tr>
-    <tr>
-        <td>uwsl.dc.uec.file</td>
-        <td>Tour destination choice UEC file</td>
-    </tr>
-    <tr>
-        <td>nmdc.uec.file</td>
-        <td>Non-mandatory tour destination choice UEC file</td>
-    </tr>
-    <tr>
-        <td>crossBorder.tour.mc.uec.file</td>
-        <td>Crossborder model tour mode choice UEC file</td>
-    </tr>
-    <tr>
-        <td>airport.SAN.mc.uec.file</td>
-        <td>SAN airport model mode choice UEC file</td>
-    </tr>
-    <tr>
-        <td>visualizer.reference.path</td>
-        <td>Path to reference scenario for SANDAG ABM visualizer</td>
     </tr>
 </table>
 

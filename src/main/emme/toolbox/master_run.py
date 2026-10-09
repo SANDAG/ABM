@@ -241,7 +241,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         props = load_properties(_join(main_directory, "conf", "sandag_abm.properties"))
         props.set_year_specific_properties(_join(main_directory, "input", "parametersByYears.csv"))
-        props.set_year_specific_properties(_join(main_directory, "input", "filesByYears.csv"))
         props.save()
         # Log current state of props file for debugging of UI / file sync issues
         attributes = dict((name, props["RunModel." + name]) for name in self._run_model_names)
@@ -263,10 +262,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         minSpaceOnC = props["RunModel.minSpaceOnC"]
         sample_rate = props["sample_rates"]
         end_iteration = len(sample_rate)
-        # visualizer_reference_path = props["visualizer.reference.path"]
-        # visualizer_output_file = props["visualizer.output"]
-        # visualizer_reference_label = props["visualizer.reference.label"]
-        # visualizer_build_label = props["visualizer.build.label"]
         fafInputFile = props["faf.file"]
         aoc = props["aoc.fuel"] + props["aoc.maintenance"]
         truck_scenario_year = props["truck.FFyear"]
@@ -322,10 +317,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         # skipTransitShed = props["RunModel.skipTransitShed"]
         # transitShedThreshold = props["transitShed.threshold"]
         # transitShedTOD = props["transitShed.TOD"]
-
-        #check if visualizer.reference.path is valid in filesbyyears.csv
-        # if not os.path.exists(visualizer_reference_path):
-        #     raise Exception("Visualizer reference %s does not exist. Check filesbyyears.csv." %(visualizer_reference_path))
 
         if useLocalDrive:
             folder_name = os.path.basename(main_directory)
@@ -445,7 +436,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                                   "Create MGRA-level skims", capture_output=True)
 
                 if not skip4Ds:
-                    run4Ds(path=self._path, int_radius=0.65, ref_path='visualizer_reference_path')
+                    run4Ds(path=self._path, int_radius=0.65)
 
                 mgraFile = 'mgra15_based_input' + str(scenarioYear) + '.csv'  # Should be read in from properties? -JJF
                 self.complete_work(scenarioYear, input_dir, output_dir, mgraFile, "maz_maz_walk.csv")
