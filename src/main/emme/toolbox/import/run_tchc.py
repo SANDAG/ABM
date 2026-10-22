@@ -1128,7 +1128,9 @@ def write_report(path, results, links):
     report = pd.concat([
         report.assign(status="computed"),
         stored.loc[report.index, columns].assign(status="original")
-        ]).sort_index()
+        ]).reset_index().set_index(
+            ['HWYCOV0_ID','status']
+        ).sort_index(ascending=[True, False])
     report.to_csv(path)
 
 
