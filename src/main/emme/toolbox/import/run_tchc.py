@@ -1274,7 +1274,7 @@ class RunTCHC(_m.Tool()):
         self.link_id_file = resolve_path(self.path, link_id_file or props.get("tchc.link.list.file", ""))
         self.report_file = resolve_path(
             self.path, 
-            f"tchc_report_{datetime.datetime.now().isoformat(timespec='seconds',sep='_').replace(":","")}.csv")
+            f"tchc_report_{datetime.datetime.now().isoformat(timespec='seconds',sep='_').replace(':','')}.csv")
         self.year = int(year or props["scenarioYear"])
         self.managed_lane_capacity_rate = float(
             managed_lane_capacity_rate or props.get("tchc.managed.lane.capacity.rate", 1.0))
