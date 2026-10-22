@@ -34,7 +34,6 @@
 #    year: analysis year. Default is scenarioYear from the properties file
 #    managed_lane_capacity_rate: capacity multiplier for HOV3+ and managed lanes
 #    freeway_capacity_rate: capacity multiplier for general purpose freeways
-#    traffic_count_field: TNED field holding the ADT link ID, if present
 #    recompute_all: recompute every link instead of only those missing outputs
 #    treat_zero_as_missing: treat a stored zero as a missing value
 #    dry_run: compute and report without writing to the geodatabase
@@ -1149,7 +1148,6 @@ class RunTCHC(_m.Tool()):
     managed_lane_capacity_rate = _m.Attribute(float)
     freeway_capacity_rate = _m.Attribute(float)
     time_period_adjustments = _m.Attribute(bool)
-    traffic_count_field = _m.Attribute(str)
     recompute_all = _m.Attribute(bool)
     treat_zero_as_missing = _m.Attribute(bool)
     dry_run = _m.Attribute(bool)
@@ -1172,7 +1170,6 @@ class RunTCHC(_m.Tool()):
         self.managed_lane_capacity_rate = 1.0
         self.freeway_capacity_rate = 1.0
         self.time_period_adjustments = False
-        self.traffic_count_field = ""
         self.recompute_all = False
         self.treat_zero_as_missing = False
         self.dry_run = False
@@ -1180,7 +1177,7 @@ class RunTCHC(_m.Tool()):
             "path", "source", "station_file", "gc_file", "link_id_file", 
             "year",
             "managed_lane_capacity_rate", "freeway_capacity_rate", "time_period_adjustments",
-            "traffic_count_field", "recompute_all", "treat_zero_as_missing", "dry_run",
+            "recompute_all", "treat_zero_as_missing", "dry_run",
         ]
 
     def page(self):
@@ -1227,7 +1224,6 @@ class RunTCHC(_m.Tool()):
         pb.add_text_box("year", size=6, title="Analysis year:")
         pb.add_text_box("managed_lane_capacity_rate", size=8, title="Managed lane capacity rate:")
         pb.add_text_box("freeway_capacity_rate", size=8, title="Freeway capacity rate:")
-        pb.add_text_box("traffic_count_field", size=20, title="Traffic count ID field (optional):")
 
         pb.add_checkbox("time_period_adjustments", title=" ", label="Apply extra time period capacity adjustments")
         pb.add_checkbox("recompute_all", title=" ", label="Recompute every link")
@@ -1245,7 +1241,6 @@ class RunTCHC(_m.Tool()):
                  managed_lane_capacity_rate=self.managed_lane_capacity_rate,
                  freeway_capacity_rate=self.freeway_capacity_rate,
                  time_period_adjustments=self.time_period_adjustments,
-                 traffic_count_field=self.traffic_count_field,
                  recompute_all=self.recompute_all,
                  treat_zero_as_missing=self.treat_zero_as_missing,
                  dry_run=self.dry_run)
@@ -1258,7 +1253,6 @@ class RunTCHC(_m.Tool()):
                  year=0,
                  managed_lane_capacity_rate=0.0, freeway_capacity_rate=0.0,
                  time_period_adjustments=None,
-                  traffic_count_field="",
                  am_hours=DEFAULT_AM_HOURS, pm_hours=DEFAULT_PM_HOURS,
                  recompute_all=False, treat_zero_as_missing=False, dry_run=False):
         self._log = []
@@ -1285,7 +1279,6 @@ class RunTCHC(_m.Tool()):
         self.time_period_adjustments = bool(
             props.get("tchc.time.period.adjustments", False)
             if time_period_adjustments is None else time_period_adjustments)
-        self.traffic_count_field = traffic_count_field
 
         if not self.station_file:
             raise Exception("No count station file given and tchc.station.file is not set")
@@ -1337,7 +1330,6 @@ class RunTCHC(_m.Tool()):
 
         links["is_rural"] = links.covered_by(rural.union_all())
         links["length_feet"] = length_feet(links)
-        links["traffic_count"] = self._traffic_count(links)
         if "ASPD" not in links.columns:
             links["ASPD"] = 0
 
@@ -1369,13 +1361,6 @@ class RunTCHC(_m.Tool()):
             return 0
         results.set_index("HWYCOV0_ID").to_file(self.source)
         return 0 # FIXME get actual num changed records
-
-    def _traffic_count(self, links):
-        if not self.traffic_count_field:
-            return pd.Series(0, index=links.index)
-        if self.traffic_count_field not in links.columns:
-            raise Exception("%s has no field %s" % (LINK_LAYER, self.traffic_count_field))
-        return pd.to_numeric(links[self.traffic_count_field], errors="coerce").fillna(0).astype("int64")
 
     def log_report(self):
         report = _m.PageBuilder(title="Run TCHC report")
