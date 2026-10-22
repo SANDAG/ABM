@@ -12,8 +12,7 @@ Usage::
 See README.md for full documentation of inputs and outputs.
 """
 from dataclasses import dataclass, field
-from typing import List, Dict, Optional
-import math
+from typing import List, Dict
 
 
 # ------------------------------------------------------------------
@@ -25,6 +24,22 @@ DEFAULT_SPEED_BY_FUNCTIONAL_CLASS = [65, 45, 40, 35, 30, 40, 35, 65, 30, 30, 50,
 
 # Turn-lane capacity per lane (veh/hr) by functional class, 0-indexed: FC 1..10
 TURN_CAPACITY_BY_FUNCTIONAL_CLASS = [250, 250, 150, 100, 100, 100, 100, 100, 100, 0]
+
+CAPACITY_FACTOR_BY_PERIOD = {
+    "ea": 1.0 / 4.0,
+    "am": 1.0,
+    "md": 6.5 / 12.0,
+    "pm": 3.5 / 3.0,
+    "ev": 2.0 / 3.0,
+}
+CAPACITY_SENTINEL = 999999
+
+
+def adjusted_capacity(value, period: str, enabled: bool = True):
+    """Scale a populated CP/CX value for its five-period target."""
+    if not enabled or value is None or value != value or value == CAPACITY_SENTINEL:
+        return value
+    return value * CAPACITY_FACTOR_BY_PERIOD[period]
 
 
 # ------------------------------------------------------------------
@@ -70,7 +85,7 @@ class TCHCLink:
     left_turn_lane_count_by_direction: List[int] = field(default_factory=lambda: [0, 0])
     green_cycle_value_by_direction: List[int] = field(default_factory=lambda: [0, 0])
 
-    # per‑mile tolls → converted in place
+    # per-mile tolls -> converted in place
     toll_cost_by_period: List[int] = field(default_factory=lambda: [0, 0, 0])
 
     # external zone delay cost (extcst, for zone connectors)
@@ -83,6 +98,10 @@ class TCHCLink:
     period_capacity_by_period_and_direction: List[List[float]] = field(default_factory=lambda: [[999999, 999999], [999999, 999999], [999999, 999999]])
     intersection_capacity_by_period_and_direction: List[List[float]] = field(default_factory=lambda: [[999999, 999999], [999999, 999999], [999999, 999999]])
     generalized_cost_by_direction: List[float] = field(default_factory=lambda: [999999, 999999])
+
+    # resolved from the lookup tables and written back; None where nothing was resolved
+    resolved_green_cycle_by_direction: List = field(default_factory=lambda: [None, None])
+    resolved_per_lane_capacity_by_direction: List = field(default_factory=lambda: [None, None])
 
     auto_operating_cost: float = 0.0
     
@@ -106,29 +125,30 @@ class TCHCContext:
     freeway_capacity_rate: float         # multiplier for GP freeway/FC8 capacity (typically 1.0)
     analysis_year: int                   # enables TSM features when > 2015
 
-    # node_id → approach count (2–4): non-connector links touching each node
+    # node_id -> approach count (2-4): non-connector links touching each node
     approach_count: Dict[int, int]
-    # adt_id → direction code for ramp metering (1=SB,2=EB,3=NB,4=WB,9=both)
+    # adt_id -> direction code for ramp metering (1=SB,2=EB,3=NB,4=WB,9=both)
     ramp_meter_direction_by_traffic_count_identifier: Dict[int, int]
-    # [period][direction][station_id] → peak-period expansion factor
+    # [period][direction][station_id] -> peak-period expansion factor
     station_peak_period_factor: List[List[List[float]]]
 
-    # jurisdiction (1–6) → capacity multiplier for signalized intersections
+    # jurisdiction (1-6) -> capacity multiplier for signalized intersections
     roadway_safety_adjustment_factor_by_jurisdiction: Dict[int, float]
 
     # GC ratio lookup tables (integer percentages):
-    #   signal:     [approach_count-1][fc-1][cross_fc-1]  (4×9×9)
-    #   4-way stop: [fc-1][cross_fc-1]                   (9×9)
+    #   signal:     [approach_count-1][fc-1][cross_fc-1]  (4x9x9)
+    #   4-way stop: [fc-1][cross_fc-1]                    (9x9)
     #   2-way stop: [cross_fc-1]                          (9,)
     signal_green_cycle_lookup: List[List[List[int]]]
     four_way_stop_green_cycle_lookup: List[List[int]]
     two_way_stop_green_cycle_lookup: List[int]
 
-    # [crossing_index][period][border_direction] → delay in minutes
+    # [crossing_index][period][border_direction] -> delay in minutes
     # 5 crossings: San Ysidro(0), Otay(1), East(2), Tecate(3), Jacumba(4)
     # 2 directions: SB/EB(0), NB(1)
     border_delay_minutes_lookup: List[List[List[float]]]
 
+    time_period_adjustments: bool = True
     # HOV link_id → adjacent GP freeway link_id (for station resolution)
     managed_lane_to_freeway_identifier: Dict[int, int] = field(default_factory=dict)
     # freeway link_id → count station_id
@@ -186,7 +206,7 @@ def apply_tchc(link: TCHCLink, ctx: TCHCContext, remaining_toll=None):
     distance_miles = miles(link.length_feet)
     use_traffic_system_management = ctx.analysis_year > 2015
 
-    # ---- toll conversion: per-mile rate → absolute cents, with carry-forward
+    # ---- toll conversion: per-mile rate -> absolute cents, with carry-forward
     # Tolls are coded as per-mile rates. Multiply by distance, accumulate
     # fractional cents in remaining_toll to avoid rounding loss across links.
     for period_index in range(3):
@@ -212,7 +232,7 @@ def apply_tchc(link: TCHCLink, ctx: TCHCContext, remaining_toll=None):
 
     # ---- station resolution ----
     # HOV lanes share count stations with the adjacent GP freeway.
-    # Chain: HOV link_id → freeway link_id → station_id.
+    # Chain: HOV link_id -> freeway link_id -> station_id.
     # Non-freeway links and unresolved stations default to station 1.
     station_id = link.station_identifier
     if link.high_occupancy_vehicle_class in (2, 3):
@@ -228,7 +248,9 @@ def apply_tchc(link: TCHCLink, ctx: TCHCContext, remaining_toll=None):
         if link.directionality == 1 and direction_index == 1:
             continue
 
-        node_id = link.from_node_identifier if direction_index == 0 else link.to_node_identifier
+        # TNED codes AB* intersection fields at the TO (B) end, so the approach
+        # node is the link's downstream end for that direction.
+        node_id = link.to_node_identifier if direction_index == 0 else link.from_node_identifier
         approach_count = ctx.approach_count.get(node_id, 3)
 
         for period_index in range(3):
@@ -259,12 +281,14 @@ def apply_tchc(link: TCHCLink, ctx: TCHCContext, remaining_toll=None):
 
             # ---- base mid-block capacity by facility type ----
             if link.functional_class == 1:
-                # freeway capacity from per-link field, bounded [1900, 2100]
+                # freeway capacity from per-link field, bounded [1900, 2100];
+                # the AB value is used for both directions
                 freeway_capacity_per_lane = 2000.0
                 if 1600 <= link.planned_lane_capacity_by_direction[0] <= 2400:
                     freeway_capacity_per_lane = float(link.planned_lane_capacity_by_direction[0])
                 freeway_capacity_per_lane = min(freeway_capacity_per_lane, 2100.0)
                 freeway_capacity_per_lane = max(freeway_capacity_per_lane, 1900.0)
+                link.resolved_per_lane_capacity_by_direction[direction_index] = freeway_capacity_per_lane
 
                 directional_capacity = lane_count * freeway_capacity_per_lane + link.auxiliary_lane_count_by_direction[direction_index] * 1200.0
                 if link.high_occupancy_vehicle_class == 1:
@@ -297,7 +321,7 @@ def apply_tchc(link: TCHCLink, ctx: TCHCContext, remaining_toll=None):
                 directional_capacity = lane_count * 1200.0
 
             else:
-                # arterials (fc 2–7): check plc==950 override
+                # arterials (fc 2-7): check plc==950 override
                 if link.planned_lane_capacity_by_direction[direction_index] == 950 and lane_count < 2:
                     directional_capacity = 950.0
                 else:
@@ -350,6 +374,7 @@ def apply_tchc(link: TCHCLink, ctx: TCHCContext, remaining_toll=None):
                 green_cycle_value = link.green_cycle_value_by_direction[direction_index]
                 if green_cycle_value < 10:
                     green_cycle_value = ctx.signal_green_cycle_lookup[min(approach_count, 4) - 1][link.functional_class - 1][cross_street_functional_class_index]
+                link.resolved_green_cycle_by_direction[direction_index] = green_cycle_value
                 green_cycle_factor = green_cycle_value / 100.0
                 turn_capacity_per_lane = (
                     TURN_CAPACITY_BY_FUNCTIONAL_CLASS[link.functional_class - 1]
@@ -366,11 +391,12 @@ def apply_tchc(link: TCHCLink, ctx: TCHCContext, remaining_toll=None):
                 link.intersection_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity * peak_period_factor
                 link.hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
 
-            elif control_type == 2:  # 4‑way stop (FORTRAN 620)
+            elif control_type == 2:  # 4-way stop (FORTRAN 620)
                 link.intersection_delay_minutes_by_period_and_direction[period_index][direction_index] = 0.20
                 green_cycle_value = link.green_cycle_value_by_direction[direction_index]
                 if green_cycle_value < 1:
                     green_cycle_value = ctx.four_way_stop_green_cycle_lookup[link.functional_class - 1][cross_street_functional_class_index]
+                link.resolved_green_cycle_by_direction[direction_index] = green_cycle_value
                 green_cycle_factor = green_cycle_value / 100.0
                 turn_capacity_per_lane = (
                     TURN_CAPACITY_BY_FUNCTIONAL_CLASS[link.functional_class - 1]
@@ -386,15 +412,14 @@ def apply_tchc(link: TCHCLink, ctx: TCHCContext, remaining_toll=None):
                 link.intersection_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity * peak_period_factor
                 link.hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
 
-            elif control_type == 3:  # 2‑way stop (FORTRAN 630)
+            elif control_type == 3:  # 2-way stop (FORTRAN 630)
                 link.intersection_delay_minutes_by_period_and_direction[period_index][direction_index] = 0.20
                 green_cycle_value = ctx.two_way_stop_green_cycle_lookup[cross_street_functional_class_index]
+                link.resolved_green_cycle_by_direction[direction_index] = green_cycle_value
                 green_cycle_through_factor = green_cycle_value / 100.0
                 green_cycle_right_factor = green_cycle_value / 100.0
                 green_cycle_left_factor = green_cycle_value / 100.0
-                # special case: irt==7 was already sanitized above,
-                # but in FORTRAN this check happens before sanitization
-                # of values >=7. Re-check original value for this case.
+                # FORTRAN checks the free-right code before sanitization, so re-read the raw value
                 if link.right_turn_lane_count_by_direction[direction_index] == 7:
                     green_cycle_right_factor = 1.0
                     right_turn_lane_count = 1
