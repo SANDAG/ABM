@@ -31,7 +31,6 @@
 #        per (station ID, direction) with 24 hourly columns
 #    gc_file: green-to-cycle ratio lookup table (gc.csv)
 #    link_id_file: optional list of HWYCOV0_ID to recompute unconditionally
-#    year: analysis year. Default is scenarioYear from the properties file
 #    managed_lane_capacity_rate: capacity multiplier for HOV3+ and managed lanes
 #    freeway_capacity_rate: capacity multiplier for general purpose freeways
 #    recompute_all: recompute every link instead of only those missing outputs
@@ -148,7 +147,6 @@ class TCHCContext:
 
     managed_lane_capacity_rate: float    # multiplier for HOV3+/managed lanes (typically 1.0)
     freeway_capacity_rate: float         # multiplier for GP freeway/FC8 capacity (typically 1.0)
-    analysis_year: int                   # enables TSM features when > 2015
 
     # node_id -> approach count (2-4): non-connector links touching each node
     approach_count: Dict[int, int]
@@ -923,7 +921,7 @@ def cross_street_class(tables, node_id, link_id, default=7):
 # Link projection
 # ------------------------------------------------------------------
 
-def build_context(links, analysis_year, station_peak_period_factor,
+def build_context(links, station_peak_period_factor,
                   green_cycle, managed_lane_capacity_rate, freeway_capacity_rate,
                   time_period_adjustments=False):
     freeway_to_station = dict(
@@ -933,7 +931,6 @@ def build_context(links, analysis_year, station_peak_period_factor,
     return TCHCContext(
         managed_lane_capacity_rate=managed_lane_capacity_rate,
         freeway_capacity_rate=freeway_capacity_rate,
-        analysis_year=analysis_year,
         approach_count=build_approach_counts(links),
         station_peak_period_factor=station_peak_period_factor,
         signal_green_cycle_lookup=green_cycle.signal,
@@ -1144,7 +1141,6 @@ class RunTCHC(_m.Tool()):
     station_file = _m.Attribute(str)
     gc_file = _m.Attribute(str)
     link_id_file = _m.Attribute(str)
-    year = _m.Attribute(int)
     managed_lane_capacity_rate = _m.Attribute(float)
     freeway_capacity_rate = _m.Attribute(float)
     time_period_adjustments = _m.Attribute(bool)
@@ -1166,7 +1162,6 @@ class RunTCHC(_m.Tool()):
         self.station_file = ""
         self.gc_file = ""
         self.link_id_file = ""
-        self.year = 0
         self.managed_lane_capacity_rate = 1.0
         self.freeway_capacity_rate = 1.0
         self.time_period_adjustments = False
@@ -1175,7 +1170,6 @@ class RunTCHC(_m.Tool()):
         self.dry_run = False
         self.attributes = [
             "path", "source", "station_file", "gc_file", "link_id_file", 
-            "year",
             "managed_lane_capacity_rate", "freeway_capacity_rate", "time_period_adjustments",
             "recompute_all", "treat_zero_as_missing", "dry_run",
         ]
@@ -1221,7 +1215,6 @@ class RunTCHC(_m.Tool()):
                            title="Link ID list (optional):",
                            note="HWYCOV0_ID values to recompute regardless of stored values")
 
-        pb.add_text_box("year", size=6, title="Analysis year:")
         pb.add_text_box("managed_lane_capacity_rate", size=8, title="Managed lane capacity rate:")
         pb.add_text_box("freeway_capacity_rate", size=8, title="Freeway capacity rate:")
 
@@ -1237,7 +1230,6 @@ class RunTCHC(_m.Tool()):
         try:
             self(path=self.path, source=self.source, station_file=self.station_file,
                  gc_file=self.gc_file, link_id_file=self.link_id_file,
-                 year=self.year,
                  managed_lane_capacity_rate=self.managed_lane_capacity_rate,
                  freeway_capacity_rate=self.freeway_capacity_rate,
                  time_period_adjustments=self.time_period_adjustments,
@@ -1250,7 +1242,6 @@ class RunTCHC(_m.Tool()):
             raise
 
     def __call__(self, path="", source="", station_file="", gc_file="", link_id_file="",
-                 year=0,
                  managed_lane_capacity_rate=0.0, freeway_capacity_rate=0.0,
                  time_period_adjustments=None,
                  am_hours=DEFAULT_AM_HOURS, pm_hours=DEFAULT_PM_HOURS,
@@ -1271,7 +1262,6 @@ class RunTCHC(_m.Tool()):
         self.report_file = resolve_path(
             self.path, 
             f"tchc_report_{datetime.datetime.now().isoformat(timespec='seconds',sep='_').replace(':','')}.csv")
-        self.year = int(year or props["scenarioYear"])
         self.managed_lane_capacity_rate = float(
             managed_lane_capacity_rate or props.get("tchc.managed.lane.capacity.rate", 1.0))
         self.freeway_capacity_rate = float(
@@ -1293,7 +1283,6 @@ class RunTCHC(_m.Tool()):
             ("station_file", self.station_file),
             ("gc_file", self.gc_file),
             ("link_id_file", self.link_id_file),
-            ("year", self.year),
             ("managed_lane_capacity_rate", self.managed_lane_capacity_rate),
             ("freeway_capacity_rate", self.freeway_capacity_rate),
             ("time_period_adjustments", self.time_period_adjustments),
@@ -1337,7 +1326,7 @@ class RunTCHC(_m.Tool()):
         station_factors = load_station_peak_period_factors(
             self.station_file, int(links["COSTAT"].max() or 0) + 1, am_hours, pm_hours)
         context = build_context(
-            links, self.year, station_factors, green_cycle,
+            links, station_factors, green_cycle,
             self.managed_lane_capacity_rate, self.freeway_capacity_rate,
             self.time_period_adjustments)
         cross_tables = build_cross_street_classes(links)
