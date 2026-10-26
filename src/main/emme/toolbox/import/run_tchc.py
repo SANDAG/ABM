@@ -1056,9 +1056,10 @@ def select_links(links, link_ids, recompute_all, treat_zero_as_missing):
 
 
 def compute(links, selected, context, cross_tables):
-    """Run apply_tchc over the selected links, returning one record per link."""
-    records = []
-    for row in links[selected].itertuples(index=False):
+    """Return a copy of links with TCHC values updated only for selected links."""
+    results = links.copy()
+    selected_links = links[selected]
+    for index, row in zip(selected_links.index, selected_links.itertuples(index=False)):
         link = build_link(row, cross_tables)
         apply_tchc(link, context)
         record = {"HWYCOV0_ID": link.link_identifier}
@@ -1080,8 +1081,9 @@ def compute(links, selected, context, cross_tables):
             # unresolved for controls with no lookup, and for per-lane capacity off freeways
             if value is not None:
                 record[name] = value
-        records.append(record)
-    return pd.DataFrame(records)
+        for name, value in record.items():
+            results.at[index, name] = value
+    return results
 
 
 def write_report(path, results, links):
@@ -1305,14 +1307,18 @@ class RunTCHC(_m.Tool()):
             "content": "Selected %s of %s links for recalculation" % (int(selected.sum()), len(links))})
 
         results = compute(links, selected, context, cross_tables)
-        if results.empty:
+        if not selected.any():
             self._log.append({"type": "text", "content": "No links to update"})
             return 0
 
 
         if self.dry_run:
             self._log.append({"type": "text", "content": "Dry run: the geodatabase was not modified"})
-            write_report(self.report_file, results, links)
+            output_columns = ["HWYCOV0_ID"] + list(dict.fromkeys(
+                [name for _, _, _, name in OUTPUT_FIELDS]
+                + [name for _, _, name in DIRECTIONAL_OUTPUT_FIELDS]
+            ))
+            write_report(self.report_file, results.loc[selected, results.columns.isin(output_columns)], links)
             self._log.append({"type": "text", "content": "Wrote report to %s" % self.report_file})
             return 0
         results.set_index("HWYCOV0_ID").to_file(self.source)
