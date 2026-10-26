@@ -162,39 +162,11 @@ class TCHCContext:
     four_way_stop_green_cycle_lookup: List[List[int]]
     two_way_stop_green_cycle_lookup: List[int]
 
-    # [crossing_index][period][border_direction] -> delay in minutes
-    # 5 crossings: San Ysidro(0), Otay(1), East(2), Tecate(3), Jacumba(4)
-    # 2 directions: SB/EB(0), NB(1)
-    border_delay_minutes_lookup: List[List[List[float]]]
-
     time_period_adjustments: bool = False
-
-    # freeway link_id -> count station_id
-    freeway_identifier_to_station_identifier: Dict[int, int] = field(default_factory=dict)
-    # node_id -> raw sphere code (divide by 100 for sphere group)
-    node_sphere_by_id: Dict[int, int] = field(default_factory=dict)
 
 
 def miles(ft):
     return ft / 5280.0
-
-
-def direction_from_name(name):
-    if "SB" in name: return 1
-    if "EB" in name: return 2
-    if "NB" in name: return 3
-    if "WB" in name: return 4
-    return 0
-
-
-def _max_lanes_for_direction(link, direction_index):
-    """Compute aatmln(idir): max lane count across all periods for one direction."""
-    maximum_lane_count = 0
-    for period_index in range(3):
-        lane_count = link.lane_count_by_period_and_direction[period_index][direction_index]
-        if 1 <= lane_count <= 8:
-            maximum_lane_count = max(maximum_lane_count, lane_count)
-    return maximum_lane_count
 
 
 def _set_period_capacities(link, period_index, direction_index, peak_period_factor,
@@ -924,10 +896,7 @@ def cross_street_class(tables, node_id, link_id, default=7):
 def build_context(links, station_peak_period_factor,
                   green_cycle, managed_lane_capacity_rate, freeway_capacity_rate,
                   time_period_adjustments=False):
-    freeway_to_station = dict(
-        (int(link_id), int(station))
-        for link_id, station in zip(links["HWYCOV0_ID"], links["COSTAT"])
-        if not pd.isna(station))
+    # FIXME this method can be removed as all intermediate functionality has been deprecated
     return TCHCContext(
         managed_lane_capacity_rate=managed_lane_capacity_rate,
         freeway_capacity_rate=freeway_capacity_rate,
@@ -936,9 +905,7 @@ def build_context(links, station_peak_period_factor,
         signal_green_cycle_lookup=green_cycle.signal,
         four_way_stop_green_cycle_lookup=green_cycle.four_way_stop,
         two_way_stop_green_cycle_lookup=green_cycle.two_way_stop,
-        border_delay_minutes_lookup=[],
         time_period_adjustments=time_period_adjustments,
-        freeway_identifier_to_station_identifier=freeway_to_station,
     )
 
 
