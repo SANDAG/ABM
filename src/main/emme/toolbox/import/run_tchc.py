@@ -132,7 +132,6 @@ class TCHCLink:
 
     # resolved from the lookup tables and written back; None where nothing was resolved
     resolved_green_cycle_by_direction: List = field(default_factory=lambda: [None, None])
-    resolved_per_lane_capacity_by_direction: List = field(default_factory=lambda: [None, None])
 
 
 @dataclass
@@ -241,7 +240,7 @@ def apply_tchc(link, ctx, remaining_toll=None):
         if link.directionality == 1 and direction_index == 1:
             continue
 
-        # encode planned lane capacity (ABPLC)
+        # encode default planned lane capacity (ABPLC)
         if link.planned_lane_capacity_by_direction[direction_index] is None:
             if link.functional_class == 1:
                 link.planned_lane_capacity_by_direction[direction_index] = 2000.0
@@ -298,11 +297,11 @@ def apply_tchc(link, ctx, remaining_toll=None):
             if link.functional_class == 1:
                 # freeway capacity from per-link field, bounded [1900, 2100];
                 # the AB value is used for both directions
-                freeway_capacity_per_lane = 2000.0
+                freeway_capacity_per_lane = link.planned_lane_capacity_by_direction[direction_index]
 
                 freeway_capacity_per_lane = min(freeway_capacity_per_lane, 2100.0)
                 freeway_capacity_per_lane = max(freeway_capacity_per_lane, 1900.0)
-                link.resolved_per_lane_capacity_by_direction[direction_index] = freeway_capacity_per_lane
+                link.planned_lane_capacity_by_direction[direction_index] = freeway_capacity_per_lane
 
                 directional_capacity = lane_count * freeway_capacity_per_lane + link.auxiliary_lane_count_by_direction[direction_index] * 1200.0
                 if link.high_occupancy_vehicle_class == 1:
@@ -459,12 +458,14 @@ def apply_tchc(link, ctx, remaining_toll=None):
             elif control_type == 7:  # toll / border (FORTRAN 670)
                 # FME distinguishes roadway HCAP from booth XCAP. Keep HCAP
                 # hourly here so finalization applies the period factor once.
+
+                # assert a minimum PLC value for this calc
+                min_plc = 950 if link.is_rural else 1200 if link.functional_class in [8,9] else 1800
                 directional_capacity = (
-                    lane_count * link.planned_lane_capacity_by_direction[direction_index]
+                    lane_count * max(min_plc, link.planned_lane_capacity_by_direction[direction_index])
                     + link.auxiliary_lane_count_by_direction[direction_index] * 1200.0
                 )
-                link.resolved_per_lane_capacity_by_direction[direction_index] = (
-                    link.planned_lane_capacity_by_direction[direction_index])
+                
                 link.hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
                 link.intersection_delay_minutes_by_period_and_direction[period_index][direction_index] = 1.0
 
@@ -650,7 +651,7 @@ OUTPUT_STEMS = (
 # TCHCLink output attribute -> TNED field stem, by direction only
 DIRECTIONAL_OUTPUT_STEMS = (
     ("resolved_green_cycle_by_direction", "GC"),
-    ("resolved_per_lane_capacity_by_direction", "PLC"),
+    ("planned_lane_capacity_by_direction", "PLC"),
 )
 
 DIRECTION_PREFIXES = ("AB", "BA")
