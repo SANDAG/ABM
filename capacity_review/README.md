@@ -29,12 +29,13 @@ The production tool finalizes CP/CX after hourly capacity and control overrides:
 
 - `CP = round(final CH × station period factor, 3)`.
 - Controls 1–6 use the same value for CX. Uncontrolled links retain CX=999999.
-- Toll booths use hourly roadway capacity `lanes × PLC + aux × 1200` for CH/CP,
+- Toll booths use hourly roadway capacity `lanes × max(min_PLC, PLC) + aux × 1200` for CH/CP,
   and `round(current-period lanes × 500 × station period factor, 3)` for CX.
   The period factor is applied once; the FME transcription's toll units need
   verification against the original workbench.
 - Closed periods (lanes=9) have CH=CP=CX=0. FC8 ACCESS has CH=9999, scaled CP
-  and unconstrained CX. FC10 retains its existing capacity sentinels when open.
+  and unconstrained CX, bypassing intersection controls. When selected, open
+  FC10 links receive TM but retain engine defaults CH=0 and CP=CX=999999.
 - EA, MD and EV share the off-peak result by default. Optional extra CP/CX
   multipliers are available through `time_period_adjustments`, the toolbox
   checkbox, or `tchc.time.period.adjustments`. They are **disabled by default**.
@@ -45,16 +46,24 @@ The production tool finalizes CP/CX after hourly capacity and control overrides:
 This aligns the period conversion; remaining differences in hourly formulas
 are tracked in [the FME review](run_tchc_FME_TODO.md). The standalone review
 engine `tchc.py` and its adapter are older implementations, not the production
-tool. Validate the production conversion with:
+tool. The focused production-capacity test suite can be invoked with:
 
 ```powershell
 python -m unittest discover -s capacity_review -p test_run_tchc_capacities.py -v
 ```
 
-And two per link, per direction, which TCHC resolves from its own lookup tables:
+The suite is currently stale and does not validate the current implementation:
+the verification run reported 27 errors across 13 tests. Its context fixture
+passes the removed `border_delay_minutes_lookup` argument, and the toll test
+also references the removed `resolved_per_lane_capacity_by_direction` attribute.
+The toll fixture additionally needs to supply `link.is_rural` to reach the
+capacity calculation. Update these fixtures and assertions before using the
+suite to validate production results.
+
+And two direction-only values, resolved or passed through by the engine:
 
 6. **Green-to-cycle ratio** (`GC`) — the ratio actually used at the intersection, which is the coded value where it is usable and a table lookup otherwise
-7. **Per-lane capacity** (`PLC`) — the freeway per-lane capacity after the coded value is validated and clamped
+7. **Per-lane capacity** (`PLC`) — the direction's planned lane capacity, clamped to [1900, 2100] on open freeway periods and otherwise passed through
 
 Each is written back to the `TNED_HwyNet` field the network import already
 reads — see [What gets written back](#what-gets-written-back).
@@ -116,12 +125,9 @@ run_tchc(
     station_file="",
     gc_file="",
     link_id_file="",
-    year=0,
-    aoc=0.0,
     managed_lane_capacity_rate=0.0,
     freeway_capacity_rate=0.0,
     time_period_adjustments=None,
-    traffic_count_field="",
     am_hours=(6, 7, 8),
     pm_hours=(15, 16, 17),
     recompute_all=False,
@@ -140,9 +146,8 @@ inputs are supplied explicitly.
 See [Files](#files) for input arguments, property keys, and configured defaults;
 [Parameters](#parameters) for calculation parameters and their property keys;
 and [Scalar parameters](#scalar-parameters) for their effects. File formats are
-specified under [Count-station file](#count-station-file),
-[Green/cycle file](#greencycle-file), and
-[Optional lookup files](#optional-lookup-files).
+specified under [Count-station file](#count-station-file) and
+[Green/cycle file](#greencycle-file).
 
 The following details supplement those definitions for scripted calls:
 
@@ -156,26 +161,23 @@ The following details supplement those definitions for scripted calls:
 - Empty input-file arguments use the properties listed under [Files](#files).
   `station_file` has no hard-coded fallback: its listed default comes from the
   properties template. `gc_file` falls back to `input/gc.csv` only when its
-  property key is absent. Both files are required. Configured optional files
-  must also be readable; passing `""` does not disable one, so clear its property
-  to omit it. The optional lookup CSVs require a header row.
+  property key is absent. Both files are required. A configured link-list file
+  must also be readable; passing `""` does not disable it, so clear its property
+  to omit it.
 - `link_id_file` reads IDs from a text file containing one `HWYCOV0_ID` per row
   and ignores nonnumeric entries. Its selection behavior is defined under
   [Which links are processed](#which-links-are-processed).
-- For integer `year` and numeric `aoc` and capacity rates, zero requests the
-  property fallback in [Parameters](#parameters); it cannot override a
-  configured value with a literal zero.
+- For numeric capacity rates, zero requests the property fallback in
+  [Parameters](#parameters); it cannot override a configured value with a
+  literal zero. `year`, `aoc` and `traffic_count_field` are no longer accepted.
 - `time_period_adjustments=None` uses the scenario property, which defaults to
   `False` when absent. Explicit `False` disables the extra multipliers even if
   an older scenario property enables them; explicit `True` enables them.
-- `traffic_count_field` names an existing field, as described under
-  [Inputs the geodatabase cannot supply](#inputs-the-geodatabase-cannot-supply).
-  A nonexistent named field raises an error; nonnumeric or missing values
-  become 0. There is no properties fallback.
-- `am_hours` and `pm_hours` accept nonempty tuples or lists of integer hours
-  in 0–23. Leave hours for the off-peak period. Their role and validation are
-  described under [Count-station file](#count-station-file). They have no
-  properties fallback or toolbox page controls.
+- `am_hours` and `pm_hours` supply positional hourly-column indices. Use
+  nonempty tuples or lists of distinct integer hours in 0–23, avoid overlap,
+  and leave hours for the off-peak period. The loader does not explicitly
+  validate these constraints. They have no properties fallback or toolbox
+  page controls.
 
 
 #### Selection, reports, and return value
@@ -191,22 +193,23 @@ preview example above. A report and Modeller logbook entries will be
 written. The report contains computed [writeback fields](#what-gets-written-back)
 and stored counterparts in interleaved rows, switching between the `computed` and
 `original` values as reflected in the `status` column, keyed by `HWYCOV0_ID`. The
-report is stored in a file entitled `tchc_report_{current time}.csv`. No CSV is 
-written when no links are selected. 
+report is stored in the scenario root as `tchc_report_YYYY-MM-DD_HHMMSS.csv`,
+with `original` before `computed` for each ID. No CSV is written when no links
+are selected or for a normal write run.
 
 All three switches default to `False` and have no properties fallback.
 
-A normal call returns the number of geodatabase features updated. It returns
-`0` for a dry run or when no links are selected; a dry-run return value is not
-the selected-link count. Inspect the Modeller logbook and report CSV for that
-review. See [How the network is read and written](#how-the-network-is-read-and-written)
-for write requirements and behavior.
+Every successful call currently returns `0`, including a normal write run;
+the updated-feature count remains a FIXME in the implementation. Inspect the
+Modeller logbook for the selected-link count and the dry-run CSV for comparisons.
+See [How the network is read and written](#how-the-network-is-read-and-written)
+for write behavior.
 
 ### Constructor and toolbox page behavior
 
 The no-argument constructor initializes `path` from the open project; all other
-path/file attributes and `traffic_count_field` to `""`; `year` to `0`; `aoc`
-to `0.0`; both capacity rates to `1.0`; `time_period_adjustments` to `False`;
+path/file attributes to `""`; both capacity rates to `1.0`;
+`time_period_adjustments` to `False`;
 and the three selection/execution switches to `False`.
 
 The toolbox's `run()` method takes no arguments and forwards the page attributes
@@ -226,19 +229,23 @@ exception: omitting it retains the tool's current scenario directory.
 
 ### Which links are processed
 
-A link is recomputed when **either** of these holds, and its functional class is
-in 1–10:
+A link must have functional class 1–10 to be selected. Within that domain:
 
-- any of the 50 period-and-direction output fields is empty — the `AB` fields
-  always, plus the `BA` fields when `WAY` is 2 or 0
-- its `HWYCOV0_ID` appears in `link_id_file`
+- FC 2–9 is selected when any period output field is null: `AB` fields always,
+  plus `BA` fields when `WAY` is 2 or 0.
+- FC 1 uses the same test excluding `TX` (intersection delay). A nonzero
+  `ABCNT` also selects a freeway even when all outputs are populated; a nonzero
+  `BACNT` does the same for a two-way freeway.
+- FC 10 is excluded from automatic missing-value selection.
+- An ID in `link_id_file` forces selection, including FC 10.
 
 `GC` and `PLC` are deliberately excluded from that test, because they are inputs
 as well as outputs: an empty `GC` legitimately means "no signal", so testing it
 would select almost every link.
 
 `recompute_all=True` processes every link in the functional class range.
-`treat_zero_as_missing=True` additionally treats a stored zero as empty.
+`treat_zero_as_missing=True` additionally treats a stored zero as missing in
+the same fields, still excluding freeway `TX` and FC 10.
 
 Links with functional class 11 (rail), 12 (bus) and 99 (transfer walk) are always
 skipped: they are outside TCHC's domain and would index past the end of the
@@ -263,11 +270,9 @@ Relative paths are resolved against `path`, the scenario directory.
 
 | Parameter | Tool argument | Properties key | Default |
 |---|---|---|---|
-| Analysis year | `year` | `scenarioYear` | — |
 | Managed lane capacity rate | `managed_lane_capacity_rate` | `tchc.managed.lane.capacity.rate` | 1.0 |
 | Freeway capacity rate | `freeway_capacity_rate` | `tchc.freeway.capacity.rate` | 1.0 |
 | Extra period capacity multipliers | `time_period_adjustments` | `tchc.time.period.adjustments` | `false` |
-| ADT link ID field | `traffic_count_field` | — | unset |
 | AM peak hours | `am_hours` | — | 6, 7, 8 |
 | PM peak hours | `pm_hours` | — | 15, 16, 17 |
 
@@ -278,7 +283,9 @@ no change to the properties template is needed.
 
 ### Count-station file
 
-CSV or fixed width (26 fields of 5 characters, the legacy `sta.hrpct` layout).
+Files ending in `.csv` or `.txt` are parsed as CSV; other extensions use fixed
+width (26 fields of 5 characters, the legacy `sta.hrpct` layout). A header row
+is expected in either format.
 The first two columns are the station ID and the direction (1 or 2); the
 remaining 24 are that station's hourly share of daily traffic, as percentages,
 for hours 0 to 23. Column names are ignored — only position matters, which
@@ -305,25 +312,23 @@ named in the header.
   absent from the file — usually 1 — are copied from the nearest one present.
 - Ratios coded as fractions (`0.35`) are rescaled to percentages (`35`); a file
   already in percent is left alone.
-- If there is no `2-Way Stop` block, it is taken from the `4-Way Stop` row for
-  the stopped (minor) approach, functional class 7 by default.
+- An explicit `2-Way Stop` block uses its roadway-class-7 row by default.
+  Without that block, the hard-coded percentages for crossroad classes 1–9
+  are `[50, 50, 75, 100, 125, 125, 150, 150, 100]`.
 
 
 ---
 
-## Inputs the geodatabase cannot supply
+## Inputs derived by the driver
 
-The tool falls back for each of these. The fallbacks are safe but not exact.
+The driver derives intersection topology from the highway links rather than
+reading the original TCHC turn tables. It also reads `TNED_HwyNodes` to log
+referenced node IDs absent from its `HNODE` field, and `RuralZone` to calculate
+whether each link is fully covered by the union of rural polygons.
 
-| TCHC input | Why it is missing | Fallback |
-|---|---|---|
-| `cross_street_functional_class_by_direction` | TCHC derived it from the aat turn tables, which TNED does not carry | Derived from topology, see below |
-| `approach_count` | A derived count, never stored | Derived from topology, see below |
-| `border_delay_minutes_lookup` | Border delay table | Never read by the engine; supplying it has no effect |
-| `node_sphere_by_id` | The toll-booth sphere surcharge is not implemented | Never read by the engine |
-
-`freeway_identifier_to_station_identifier` is built from the geodatabase itself,
-mapping `HWYCOV0_ID` to `COSTAT`.
+There are no external HOV/freeway adjacency, border-delay or node-sphere lookup
+inputs in the current tool. HOV2/HOV3 links use count station 1; other freeways
+use `COSTAT` when positive, and non-freeway links use station 1.
 
 ### Derived from topology
 
@@ -341,21 +346,37 @@ the class at `BN`; direction 1 (BA) uses the class at `AN`.
 
 ## How the network is read and written
 
-Reading uses `gen_utils.DataTableProc`, the same
-`inro.emme.datatable.DataSource` path `import_network.py` uses, so both tools see
-the geodatabase identically — including the `BN`-arrives-as-string quirk, which
-is cast the same way. The layer is loaded into a pandas DataFrame straight from
-the numpy column arrays.
+Reading uses `geopandas.read_file(source, layer=...)` for `TNED_HwyNet`,
+`TNED_HwyNodes` and `RuralZone`. The highway layer must contain all required
+input fields and all 50 period output fields; missing fields raise an error.
+`AN`, `BN`, `FC`, `WAY` and `HWYCOV0_ID` are converted to integers, with
+nonnumeric or missing values becoming 0. Length uses `SHAPE_Length` if present,
+otherwise `LENGTH × 5280`; missing values within the chosen column become 0.
 
-Writing uses `osgeo.ogr` in update mode. Only the TCHC output fields of the
-matched features are patched, inside a transaction; geometry, `OBJECTID`, field
-aliases, domains and subtypes are untouched. The Emme data table API has no
-write path back to a geodatabase — `DataTableProc.save()` writes to the Emme
-project's data tables, not the source — so reading and writing necessarily use
-different libraries. Both are already dependencies of the toolbox.
+`compute()` copies the full GeoDataFrame and changes TCHC fields only on selected
+rows, preserving other values and geometry in memory. The driver adds
+`is_rural`, `length_feet` and, if absent, `ASPD` columns before computation.
 
-Updating a file geodatabase in place requires GDAL 3.6 or later. The tool checks
-the layer's random-write capability and fails with a clear message otherwise.
+A normal run with selected links currently writes the **entire** result using
+`results.set_index("HWYCOV0_ID").to_file(self.source)`. It does not specify a
+layer, driver, append mode or transaction, nor patch features by ID. Actual
+output-layer and metadata behavior therefore depends on the GeoPandas writer
+and its geodatabase driver; the implementation does not guarantee preservation
+of `OBJECTID`, aliases, domains or subtypes. It has no explicit GDAL version or
+random-write capability check. A dry run skips this write and creates the
+comparison CSV instead.
+
+### Current rural-input limitation
+
+The driver computes `is_rural`, but `build_link()` does not attach it to the
+`TCHCLink`, and the dataclass does not declare it. When processing reaches the
+control-7 branch, it reads `link.is_rural` and raises `AttributeError`, including
+in a dry run. Closed periods (`lane_count == 9`), FC10 links and FC8 `ACCESS`
+links bypass that branch. A control-7 direction with all periods closed therefore
+avoids this error; an eligible open period still triggers it. The engine's
+missing-PLC default branch also reads that attribute, but the driver converts
+missing PLC values to 0, bypassing that branch. These are implementation
+limitations, not working rural defaults.
 
 ### Structural notes
 
@@ -367,6 +388,7 @@ the layer's random-write capability and fails with a clear message otherwise.
   `A`; period 1 (midday/off-peak) writes `EA`, `MD` and `EV`; period 2 (PM)
   writes `P`.
 - Periods whose lane count is 9 (closed) receive zero CH, CP and CX.
+  TM remains at its engine default 999 minutes and TX at 0.
 - One-way links never populate direction 1, so their `BA` fields are left as
   they were rather than being overwritten with the engine's sentinels.
 
@@ -375,7 +397,7 @@ the layer's random-write capability and fails with a clear message otherwise.
 | `TCHCLink` field | TNED field | Notes |
 |---|---|---|
 | `link_identifier` | `HWYCOV0_ID` | |
-| `link_name` | `NM` | Parsed for `NB`/`SB`/`EB`/`WB` and `ACCESS` |
+| `link_name` | `NM` | Case-sensitive tests for `NB`/`WB` and `ACCESS` |
 | `length_feet` | `SHAPE_Length` | Falls back to `LENGTH` × 5280 |
 | `functional_class` | `FC` | Restricted to 1–10 |
 | `high_occupancy_vehicle_class` | `HOV` | |
@@ -404,47 +426,29 @@ the layer's random-write capability and fails with a clear message otherwise.
 | `link_travel_time_minutes_by_period_and_direction` | `TM` | same |
 | `intersection_delay_minutes_by_period_and_direction` | `TX` | same |
 
-Fifty fields in total, plus four written per direction only:
+Fifty fields in total, plus four direction-only fields (GC and PLC for AB/BA):
 
 | `TCHCLink` output | TNED field | Written when |
 |---|---|---|
 | `resolved_green_cycle_by_direction` | `ABGC`, `BAGC` | Control type is 1, 2 or 3, where a lookup can override the coded value. Ramp meters use the coded value unchanged, and the remaining control types have no G/C at all, so nothing is written |
-| `resolved_per_lane_capacity_by_direction` | `ABPLC`, `BAPLC` | Functional class is 1. Other classes have no per-lane capacity to resolve, so the coded value is left alone |
+| `planned_lane_capacity_by_direction` | `ABPLC`, `BAPLC` | Every processed direction with a non-`None` value. Freeways clamp the direction's own PLC to [1900, 2100] in open periods; other classes pass the value through |
 
-Both are left untouched wherever TCHC resolves nothing, rather than being
-overwritten with a zero.
+GC is left untouched where no value is resolved. PLC uses `ABPLC` for AB and
+`BAPLC` for BA; it is not a separate resolved-output attribute. Missing input
+PLC values become 0 in `build_link()`, and a freeway then clamps 0 to 1900.
+There is no longer a [1600, 2400] validity check with a 2000 fallback.
 
-#### Why `PLC` is written only for freeways
+The engine has a default-PLC branch for direct callers supplying `None`: 2000
+for FC 1, 1800 for FC 2–5/7/8, 950 for FC 6 and 1200 for FC 9. Its rural override
+uses 1150 when any period has at least two lanes, otherwise 950, for non-freeways.
+This branch requires a caller-supplied `link.is_rural`; it is not reached for
+missing geodatabase PLC values under the current driver.
 
-Per-lane capacity is a *freeway* concept in this procedure. Functional class 1
-is the only class where the engine turns the coded `PLC` into a number: it takes
-the coded value if it falls in [1600, 2400], substitutes 2000 otherwise, then
-clamps the result to [1900, 2100]. That resolved figure multiplies the lane
-count, so there is a genuine derived value to report back.
-
-Everywhere else there is nothing to derive:
-
-| Functional class | How `PLC` is used | Capacity comes from |
-|---|---|---|
-| 1 | Validated and clamped into a per-lane rate | `lanes × PLC + aux × 1200` |
-| 2–7 | Read only as the sentinel `950` | `950` when the sentinel matches on a single-lane link, otherwise `lanes × 1800 − median adjustment` |
-| 8, 9, 10 | Not read at all | `lanes × 1800`, `lanes × 1200`, and nothing respectively |
-
-On an arterial, `PLC` is a flag rather than a rate. When it holds 950 on a
-single-lane link the whole direction gets a flat 950 veh/hr — a link capacity,
-not a per-lane one. Otherwise the 1800 veh/hr/lane in the arterial formula is a
-constant that was never read from `PLC` at all.
-
-Writing anything back for those classes would mean inventing a value, and
-because `PLC` is an input field the invented value would be read on the next
-run. Writing 1800 to an arterial would overwrite the `950` sentinel, so a rural
-single-lane link would silently fall through to the general arterial formula and
-drop to `1 × 1800 − 300 = 1500` veh/hr, or 1300 if undivided.
-
-> `PLC` for freeways is read from the AB value in both directions, which is
-> carried over from the original procedure and left as-is. TNED codes freeways
-> as one-way arcs in practice, so `BAPLC` is rarely reached; where it is, it
-> receives a value derived from `ABPLC`.
+For FC 2–7, PLC=950 with fewer than two lanes yields a flat 950 veh/hr. Otherwise
+capacity is `lanes × 1800 − 300`, with a further 200 reduction when `MED < 2`.
+PLC is also used for the toll/border roadway-capacity override, whose minimum
+is 950 on rural links, 1200 on urban FC 8/9, and 1800 on other urban links
+(subject to the rural-input limitation above).
 
 **Deliberately not written back:**
 
@@ -466,7 +470,7 @@ drop to `1 × 1800 − 300 = 1500` veh/hr, or 1300 if undivided.
 | Field | Type | Description |
 |---|---|---|
 | `link_identifier` | `int` | Unique numeric ID for this link |
-| `link_name` | `str` | Street name. Parsed for directional substrings (`NB`, `SB`, `EB`, `WB`) and the special case `ACCESS` |
+| `link_name` | `str` | Street name. Case-sensitive tests for `NB`/`WB` and the special case `ACCESS` |
 | `length_feet` | `float` | Link length in feet |
 | `from_node_identifier` | `int` | Node ID at the A-end of the link |
 | `to_node_identifier` | `int` | Node ID at the B-end of the link |
@@ -505,14 +509,17 @@ drop to `1 × 1800 − 300 = 1500` veh/hr, or 1300 if undivided.
 
 ### Lane configuration
 
-All lane fields use the sentinel value **9** for a closed or unavailable lane
-configuration in that period or direction; capacity is not computed for it.
+Only `lane_count_by_period_and_direction` uses **9** as the closure sentinel.
+For that period and direction, CH, CP and CX are set to 0 and the remaining
+calculation is skipped. Auxiliary-lane count 9 contributes capacity normally;
+it does not close the period. Turn-lane fields have their own sanitization rules,
+described under [Control types](#control-types).
 
 | Field | Shape | Description |
 |---|---|---|
 | `lane_count_by_period_and_direction` | [3][2] | Through-lanes by [period][direction]. Values 1–8 are valid lane counts |
-| `auxiliary_lane_count_by_direction` | [2] | Auxiliary (weaving/acceleration) lanes. Freeways only, at 1200 veh/hr/lane |
-| `planned_lane_capacity_by_direction` | [2] | Per-lane capacity override. For freeways, values in [1600, 2400] replace the default 2000 veh/hr/lane. The special value 950 triggers a single-lane arterial override. The value actually used is reported back in `resolved_per_lane_capacity_by_direction` |
+| `auxiliary_lane_count_by_direction` | [2] | Auxiliary lanes at 1200 veh/hr/lane in the freeway base formula and toll/border override |
+| `planned_lane_capacity_by_direction` | [2] | Direction-specific PLC input and output. Freeways clamp it to [1900, 2100]. Missing geodatabase values become 0 before clamping. PLC=950 triggers the arterial override when lanes < 2; toll/border controls use PLC with a minimum |
 
 ### Intersection control
 
@@ -535,15 +542,17 @@ uses the B node, direction 1 (BA) uses the A node.
 | 0 | No control | 0.0 | Mid-block capacity only |
 | 1 | Signal | 0.17 | `through × 1800 × GC + turn_lanes × TLC`, min 1000 |
 | 2 | 4-way stop | 0.20 | `through × 1800 × GC + turn_lanes × TLC`, min 500 |
-| 3 | 2-way stop | 0.20 | `through × 500 × GC + right × 500 × GC + left × 500 × GC`, min 500 |
-| 4 | Ramp meter (off-peak active) | 0.50 | `1000 × GC`, all periods except AM |
-| 5 | Ramp meter (peak active) | 0.50 | `1000 × GC`, all periods except AM |
+| 3 | 2-way stop | 0.20 | `through × 500 × GC + right × 500 × GC + left × 500 × GC`, min 500; raw right-lane code 7 uses right-turn GC=1 |
+| 4 | Ramp meter (off-peak active) | 0.50 outside AM; 0 in AM | 1000, multiplied by coded GC/100 only when GC ≥ 1; MD/PM only |
+| 5 | Ramp meter (peak active) | 0.50 outside AM; 0 in AM | Same as control 4 in the implementation |
 | 6 | Rail crossing | 0.02 | No capacity override; mid-block capacity preserved |
-| 7 | Toll booth / border | 1.0 | `max(through, max_lanes) × 500` |
+| 7 | Toll booth / border | 1.0 | Roadway CH uses PLC with a minimum; intersection hourly rate is current-period `lanes × 500` |
 
 Turn lane counts are sanitized first: values above 7 are zeroed, values of
 exactly 7 become 1, and if no through lanes remain the largest turn-lane count is
-promoted to through.
+promoted to through, and the signal approach count is reset to 3.
+In this table GC means a fraction (stored percentage divided by 100). In AM,
+controls 4/5 retain roadway CH but still finalize CX to the same period capacity.
 
 ### Tolls and costs
 
@@ -561,7 +570,14 @@ promoted to through.
 |---|---|
 | `managed_lane_capacity_rate` | Multiplier on HOV3+ lane capacity and projects 613/614 |
 | `freeway_capacity_rate` | Multiplier on general-purpose freeway and FC 8 capacity |
-| `analysis_year` | Years after 2015 enable traffic system management features |
+| `time_period_adjustments` | Optional extra CP/CX scaling for the five TNED periods; defaults to `False` |
+
+For FC 1, HOV=1 applies the freeway rate to `lanes × PLC + aux × 1200`.
+HOV=2/3 instead use `lanes × 2000`, with the managed rate additionally applied
+for HOV=3. Projects 613/614 apply the managed rate again, so an HOV=3 link on
+one of those projects receives it twice. FC 8 applies the managed rate when
+HOV > 1, otherwise the freeway rate when HOV=1; `ACCESS` bypasses both.
+Intersection-control overrides replace these base hourly capacities.
 
 ### Lookups
 
@@ -569,9 +585,6 @@ promoted to through.
 |---|---|---|
 | `approach_count` | node ID → count (2–4) | Approaches at each node, clamped to [2, 4]. Indexes the signal green/cycle lookup |
 | `station_peak_period_factor` | [period][direction][station] | Peak-period expansion factor. Valid range [1.0, 15.0]; out-of-range values fall back to station 1. For freeways the direction comes from the link name (NB/WB → index 1) rather than the loop direction |
-| `freeway_identifier_to_station_identifier` | freeway link ID → station ID | Chained with the above |
-| `node_sphere_by_id` | node ID → sphere code | **Declared but never read** |
-| `border_delay_minutes_lookup` | [crossing][period][direction] | **Declared but never read** |
 
 ### Green/cycle lookup tables
 
@@ -610,7 +623,7 @@ for each link:
 │
 ├─ Convert per-mile tolls to absolute cents (carry remainder to next link)
 ├─ Resolve speed (coded value or FC default)
-├─ Resolve station ID (for HOV, chain through freeway adjacency)
+├─ Resolve station ID (HOV and non-freeways use station 1)
 │
 └─ for each direction (AB, then BA if two-way):
    │
@@ -625,7 +638,7 @@ for each link:
       ├─ Resolve peak-period factor from station data
       │
       ├─ Compute base capacity by facility type:
-      │   ├─ FC 1: freeway formula with PLC overrides, HOV/TSM adjustments
+      │   ├─ FC 1: freeway formula with directional PLC clamping and HOV/project multipliers
       │   ├─ FC 8: connector formula with ACCESS special case
       │   ├─ FC 9: ramp formula
       │   └─ FC 2–7: arterial formula with median adjustment
@@ -634,10 +647,10 @@ for each link:
       ├─ Sanitize turn-lane counts (clamp, fallback)
       │
       └─ Apply intersection control (if any):
-          ├─ Signal: GC lookup → through×1800×GC + turns×TLC, min 1000, × safety factor
+          ├─ Signal: GC lookup → through×1800×GC + turns×TLC, min 1000
           ├─ 4-way stop: GC lookup → through×1800×GC + turns×TLC, min 500
           ├─ 2-way stop: GC lookup → all_lanes×500×GC, min 500
-          ├─ Ramp meter: 1000×GC (all periods except AM)
+          ├─ Ramp meter: 1000, optionally × coded GC/100 (MD/PM only)
           ├─ Rail crossing: delay only (0.02 min)
           └─ Toll/border: roadway CH and lanes×500 intersection rate, delay 1.0 min
     
@@ -666,16 +679,18 @@ signalized capacity where the two nodes have different leg counts.
 
 ### Not implemented
 
-`TCHCContext` declares two fields the engine never reads. Supplying them has no
-effect:
+The current context has no analysis-year, HOV/freeway adjacency, border-delay
+or node-sphere fields. Year-dependent TSM and signal safety adjustments are not
+applied. Control type 7 uses a flat 1.0 minute delay instead of a per-crossing,
+per-period border delay, and no toll-booth operating-cost surcharge is applied
+for sphere groups 3 (Coronado) and 14 (City of San Diego).
 
-- `border_delay_minutes_lookup` — control type 7 applies a flat 1.0 minute delay
-  instead of a per-crossing, per-period border delay.
-- `node_sphere_by_id` — the toll-booth operating-cost surcharge for sphere
-  groups 3 (Coronado) and 14 (City of San Diego) is not applied.
+The current driver also has the rural-input and geodatabase-write limitations
+listed under [How the network is read and written](#how-the-network-is-read-and-written).
 
-`HwyETL_vs_TCHC.md` documents the further differences between this port and the
-FME HwyETL workbench.
+`HwyETL_vs_TCHC.md` and `run_tchc_FME_TODO.md` contain review comparisons with
+the FME HwyETL workbench; use the production Python file as the authority for
+current behavior.
 
 ---
 
@@ -695,4 +710,5 @@ FME HwyETL workbench.
 `run_tchc.py` is the production implementation. The standalone engine currently
 differs in PLC, TSM, safety adjustments and period conversion; notebook results
 from that copy do not validate the production tool. The focused capacity tests
-load the actual production functions without requiring Emme/GDAL.
+load the actual production functions without requiring Emme/GDAL, but their
+fixtures and assertions currently reference removed fields, as noted above.
