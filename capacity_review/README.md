@@ -36,7 +36,8 @@ The production tool finalizes CP/CX after hourly capacity and control overrides:
 - Closed periods (lanes=9) have CH=CP=CX=0. FC8 ACCESS has CH=9999, scaled CP
   and unconstrained CX, bypassing intersection controls. When selected, open
   FC10 links receive TM but retain engine defaults CH=0 and CP=CX=999999.
-- EA, MD and EV share the off-peak result by default. Optional extra CP/CX
+- EA, MD and EV share the MD result by default, using the factor derived from
+  `md_hours` (10, 11, 12 by default). Optional extra CP/CX
   multipliers are available through `time_period_adjustments`, the toolbox
   checkbox, or `tchc.time.period.adjustments`. They are **disabled by default**.
   When enabled, the factors are EA=1/4, AM=1, MD=6.5/12, PM=3.5/3 and EV=2/3.
@@ -129,6 +130,7 @@ run_tchc(
     freeway_capacity_rate=0.0,
     time_period_adjustments=None,
     am_hours=(6, 7, 8),
+    md_hours=(10, 11, 12),
     pm_hours=(15, 16, 17),
     recompute_all=False,
     treat_zero_as_missing=False,
@@ -173,11 +175,12 @@ The following details supplement those definitions for scripted calls:
 - `time_period_adjustments=None` uses the scenario property, which defaults to
   `False` when absent. Explicit `False` disables the extra multipliers even if
   an older scenario property enables them; explicit `True` enables them.
-- `am_hours` and `pm_hours` supply positional hourly-column indices. Use
-  nonempty tuples or lists of distinct integer hours in 0–23, avoid overlap,
-  and leave hours for the off-peak period. The loader does not explicitly
-  validate these constraints. They have no properties fallback or toolbox
-  page controls.
+- `am_hours`, `md_hours` and `pm_hours` independently supply positional
+  hourly-column indices for the three station factors. Use nonempty tuples or
+  lists of integer hours in 0–23. The loader does not explicitly validate these
+  inputs or require the three selections to be disjoint or cover all 24 hours.
+  Hours outside a period's selection do not contribute to its factor. These
+  arguments have no properties fallback or toolbox page controls.
 
 
 #### Selection, reports, and return value
@@ -217,7 +220,7 @@ to `__call__`. Consequently, the initial page values `1.0` override
 the capacity-rate properties. A scripted call that
 omits those arguments instead uses the properties. On the page, setting a
 capacity rate to `0.0` requests its property fallback. The page uses the default
-AM/PM hours; custom hours require a scripted call.
+AM/MD/PM hours; custom hours require a scripted call.
 
 The extra-period-multiplier checkbox starts unchecked. The page forwards that
 explicit value; scripted calls with `time_period_adjustments=None` use the
@@ -274,6 +277,7 @@ Relative paths are resolved against `path`, the scenario directory.
 | Freeway capacity rate | `freeway_capacity_rate` | `tchc.freeway.capacity.rate` | 1.0 |
 | Extra period capacity multipliers | `time_period_adjustments` | `tchc.time.period.adjustments` | `false` |
 | AM peak hours | `am_hours` | — | 6, 7, 8 |
+| MD factor hours | `md_hours` | — | 10, 11, 12 |
 | PM peak hours | `pm_hours` | — | 15, 16, 17 |
 
 The two capacity rates are plain values in `sandag_abm.properties`. To vary them
@@ -291,9 +295,23 @@ remaining 24 are that station's hourly share of daily traffic, as percentages,
 for hours 0 to 23. Column names are ignored — only position matters, which
 accommodates the legacy file's `a%6` / `o%0` / `p%15` header.
 
-The peak-period factor is `1 / (max hourly share in the period / 100)`, taken
-over the AM hours, the PM hours, and all remaining hours for the off-peak
-period.
+The peak-period factor is `1 / (max selected hourly share / 100)`, calculated
+separately for each station, direction and period. Column selection uses
+zero-based positions within the 24 hourly columns, after the station ID and
+direction columns:
+
+| Factor | Selected hourly columns by default | Tool argument |
+|---|---|---|
+| AM | 6, 7, 8 | `am_hours` |
+| MD | 10, 11, 12 | `md_hours` |
+| PM | 15, 16, 17 | `pm_hours` |
+
+MD now uses its explicit `md_hours` selection rather than all hours outside
+the AM and PM selections. A larger share at an unselected hour therefore does
+not affect the MD factor. The resulting MD calculation supplies `EA`, `MD` and
+`EV`; optional extra CP/CX multipliers are applied afterward. Custom selections
+require a scripted call, for example `run_tchc(path=main_directory,
+md_hours=(9, 10, 11))`.
 
 Station 1 is the fallback for every link that cannot resolve its own station, so
 the tool refuses to run if station 1's factor falls outside [1.0, 15.0] in any
@@ -385,7 +403,7 @@ limitations, not working rural defaults.
   Direction index 0 is AB, index 1 is BA. `WAY` of 0 is treated as two-way, as
   `import_network.py` does.
 - **TNED has five time periods, TCHC has three.** TCHC period 0 (AM) writes
-  `A`; period 1 (midday/off-peak) writes `EA`, `MD` and `EV`; period 2 (PM)
+  `A`; period 1 (MD, using `md_hours`) writes `EA`, `MD` and `EV`; period 2 (PM)
   writes `P`.
 - Periods whose lane count is 9 (closed) receive zero CH, CP and CX.
   TM remains at its engine default 999 minutes and TX at 0.
@@ -588,7 +606,7 @@ compares the coded link value against the thresholds above.
 | Period index | Meaning | TNED periods written |
 |---|---|---|
 | 0 | AM peak | `A` |
-| 1 | Midday / off-peak | `EA`, `MD`, `EV` |
+| 1 | MD (factor from `md_hours`) | `EA`, `MD`, `EV` |
 | 2 | PM peak | `P` |
 
 | Direction index | Meaning |
