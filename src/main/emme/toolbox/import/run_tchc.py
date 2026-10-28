@@ -648,11 +648,20 @@ FALLBACK_STATION = 1
 MIN_PEAK_PERIOD_FACTOR = 1.0
 MAX_PEAK_PERIOD_FACTOR = 15.0
 
-REQUIRED_COLUMNS = (
+REQUIRED_TABLE_COLUMNS = (
     "HWYCOV0_ID", "NM", "AN", "BN", "FC", "HOV", "MED", "WAY", "COSTAT", "PROJ", "SPD",
     "ABLNA", "BALNA", "ABLNMD", "BALNMD", "ABLNP", "BALNP",
     "ABAU", "BAAU", "ABPLC", "BAPLC",
     "ABCNT", "BACNT", "ABTL", "BATL", "ABRL", "BARL", "ABLL", "BALL", "ABGC", "BAGC",
+)
+
+REQUIRED_INPUT_COLUMNS = (
+    set(
+        "HWYCOV0_ID", "FC", "HOV", "SPD", "MED", 
+        "ABCNT", "BACNT", "ABTL", "BATL", "ABRL", "BARL", "ABLL", "BALL", "ABGC", "BAGC"
+    ) 
+    | set(f"ABLN{tod}" for tod in ("A", "MD", "P")) 
+    | set(f"BALN{tod}" for tod in ("A", "MD", "P"))
 )
 
 # TNED codes WAY 0 the same as 2; import_network makes both two-way
@@ -797,7 +806,7 @@ def read_layer(source, layer_name):
 
 def read_links(source):
     links = read_layer(source, LINK_LAYER)
-    missing = [name for name in REQUIRED_COLUMNS if name not in links.columns]
+    missing = [name for name in REQUIRED_TABLE_COLUMNS if name not in links.columns]
     if missing:
         raise Exception("%s in %s is missing required fields: %s" % (LINK_LAYER, source, ", ".join(missing)))
     missing = [name for _a, _p, _d, name in OUTPUT_FIELDS if name not in links.columns]
@@ -1237,8 +1246,10 @@ class RunTCHC(_m.Tool()):
             ("dry_run", self.dry_run),
         ])
         with _m.logbook_trace("Run TCHC", attributes=attributes):
-            result = self.execute(am_hours, md_hours, pm_hours)
-            self.log_report()
+            try:
+                result = self.execute(am_hours, md_hours, pm_hours)
+            finally:
+                self.log_report()
         return result
 
     def _default_source(self):
@@ -1277,6 +1288,25 @@ class RunTCHC(_m.Tool()):
             self.managed_lane_capacity_rate, self.freeway_capacity_rate,
             self.time_period_adjustments)
         cross_tables = build_cross_street_classes(links)
+
+        # check all entries have non-null values for REQUIRED_INPUT_COLUMNS
+        incomplete_inputs = list()
+        for col in REQUIRED_INPUT_COLUMNS:
+            if links[col].isna().any():
+                self._log.append({
+                    "type": "text",
+                    "content": "Column %s contains missing values at HWYCOV0_ID(s) %s" % (
+                        col, 
+                        ", ".join(map(str, links.loc[links[col].isna(), "HWYCOV0_ID"]))
+                    )
+                })
+                incomplete_inputs.append(col)
+        if incomplete_inputs:
+            self._log.append({
+                "type": "text",
+                "content": "Columns with incomplete inputs: %s" % ", ".join(set(incomplete_inputs))
+            })
+            raise ValueError("Incomplete input columns detected")
 
         selected = select_links(
             links, load_link_ids(self.link_id_file), self.recompute_all, self.treat_zero_as_missing)
