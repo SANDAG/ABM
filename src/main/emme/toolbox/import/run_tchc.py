@@ -120,9 +120,6 @@ class TCHCLink:
     left_turn_lane_count_by_direction: List[int] = field(default_factory=lambda: [0, 0])
     green_cycle_value_by_direction: List[int] = field(default_factory=lambda: [0, 0])
 
-    # per-mile tolls -> converted in place
-    toll_cost_by_period: List[int] = field(default_factory=lambda: [0, 0, 0])
-
     # outputs
     link_travel_time_minutes_by_period_and_direction: List[List[float]] = field(default_factory=lambda: [[999, 999], [999, 999], [999, 999]])
     intersection_delay_minutes_by_period_and_direction: List[List[float]] = field(default_factory=lambda: [[0, 0], [0, 0], [0, 0]])
@@ -197,16 +194,6 @@ def apply_tchc(link, ctx):
 
 
     distance_miles = miles(link.length_feet)
-
-    # ---- toll conversion: per-mile rate -> absolute cents, with carry-forward
-    # Tolls are coded as per-mile rates. Multiply by distance.
-    for period_index in range(3):
-        raw_toll_value = link.toll_cost_by_period[period_index] * distance_miles
-        rounded_toll_value = int(round(raw_toll_value))
-        if link.toll_cost_by_period[period_index] > 0 and rounded_toll_value == 0:
-            rounded_toll_value = 1
-        link.toll_cost_by_period[period_index] = rounded_toll_value
-
 
     # link speed (use coded speed, or FC default)
     speed_miles_per_hour = link.speed
@@ -665,7 +652,6 @@ REQUIRED_COLUMNS = (
     "ABLNA", "BALNA", "ABLNMD", "BALNMD", "ABLNP", "BALNP",
     "ABAU", "BAAU", "ABPLC", "BAPLC",
     "ABCNT", "BACNT", "ABTL", "BATL", "ABRL", "BARL", "ABLL", "BALL", "ABGC", "BAGC",
-    "TOLLA", "TOLLMD", "TOLLP",
 )
 
 # TNED codes WAY 0 the same as 2; import_network makes both two-way
@@ -947,7 +933,6 @@ def build_link(row, cross_tables):
         right_turn_lane_count_by_direction=[integer(row.ABRL), integer(row.BARL)],
         left_turn_lane_count_by_direction=[integer(row.ABLL), integer(row.BALL)],
         green_cycle_value_by_direction=[integer(row.ABGC), integer(row.BAGC)],
-        toll_cost_by_period=[integer(row.TOLLA), integer(row.TOLLMD), integer(row.TOLLP)],
     )
 
 
