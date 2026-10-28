@@ -184,31 +184,25 @@ def _set_period_capacities(link, period_index, direction_index, peak_period_fact
     )
 
 
-def apply_tchc(link, ctx, remaining_toll=None):
+def apply_tchc(link, ctx):
     """Compute capacity, travel time, and generalized cost for one link.
 
-    Mutates ``link`` in place, populating all output fields.  Returns the
-    ``remaining_toll`` carry-forward list (3 floats) for the next link in
-    the route sequence.
+    Mutates ``link`` in place, populating all output fields. 
 
     Args:
         link: Link to process.  Output fields are overwritten.
         ctx: Shared scenario parameters and lookup tables.
-        remaining_toll: Fractional toll cents carried from the previous
-            link.  Pass ``None`` for the first link or standalone use.
+
     """
-    if remaining_toll is None:
-        remaining_toll = [0.0, 0.0, 0.0]
+
 
     distance_miles = miles(link.length_feet)
 
     # ---- toll conversion: per-mile rate -> absolute cents, with carry-forward
-    # Tolls are coded as per-mile rates. Multiply by distance, accumulate
-    # fractional cents in remaining_toll to avoid rounding loss across links.
+    # Tolls are coded as per-mile rates. Multiply by distance.
     for period_index in range(3):
-        raw_toll_value = link.toll_cost_by_period[period_index] * distance_miles + remaining_toll[period_index]
+        raw_toll_value = link.toll_cost_by_period[period_index] * distance_miles
         rounded_toll_value = int(round(raw_toll_value))
-        remaining_toll[period_index] = raw_toll_value - rounded_toll_value
         if link.toll_cost_by_period[period_index] > 0 and rounded_toll_value == 0:
             rounded_toll_value = 1
         link.toll_cost_by_period[period_index] = rounded_toll_value
@@ -480,8 +474,6 @@ def apply_tchc(link, ctx, remaining_toll=None):
                 link, period_index, direction_index, peak_period_factor,
                 intersection_hourly_capacity)
 
-
-    return remaining_toll
 
 
 # ---------------------------------------------------------------------------
