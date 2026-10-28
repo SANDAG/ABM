@@ -1308,6 +1308,8 @@ class RunTCHC(_m.Tool()):
             })
             raise ValueError("Incomplete input columns detected")
 
+        assert links["HWYCOV0_ID"].is_unique, "HWYCOV0_ID column must have unique values"
+
         selected = select_links(
             links, load_link_ids(self.link_id_file), self.recompute_all, self.treat_zero_as_missing)
         self._log.append({
