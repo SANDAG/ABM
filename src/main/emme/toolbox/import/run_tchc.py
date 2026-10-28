@@ -636,6 +636,7 @@ DIRECTIONAL_OUTPUT_STEMS = (
 DIRECTION_PREFIXES = ("AB", "BA")
 
 DEFAULT_AM_HOURS = (6, 7, 8)
+DEFAULT_MD_HOURS = (10, 11, 12)
 DEFAULT_PM_HOURS = (15, 16, 17)
 
 HOURS_PER_DAY = 24
@@ -721,7 +722,7 @@ def read_station_table(path):
     return table
 
 
-def load_station_peak_period_factors(path, station_count, am_hours, pm_hours):
+def load_station_peak_period_factors(path, station_count, am_hours, md_hours, pm_hours):
     """[period][direction][station] -> factor converting hourly to period capacity."""
     table = read_station_table(path)
     columns = list(table.columns)
@@ -730,10 +731,9 @@ def load_station_peak_period_factors(path, station_count, am_hours, pm_hours):
     hourly = table[columns[STATION_KEY_COLUMNS:STATION_KEY_COLUMNS + HOURS_PER_DAY]].apply(
         pd.to_numeric, errors="coerce")
 
-    peak_hours = set(am_hours) | set(pm_hours)
     period_hours = (
         list(am_hours),
-        [hour for hour in range(HOURS_PER_DAY) if hour not in peak_hours],
+        list(md_hours),
         list(pm_hours),
     )
 
@@ -1191,7 +1191,7 @@ class RunTCHC(_m.Tool()):
     def __call__(self, path="", source="", station_file="", gc_file="", link_id_file="",
                  managed_lane_capacity_rate=0.0, freeway_capacity_rate=0.0,
                  time_period_adjustments=None,
-                 am_hours=DEFAULT_AM_HOURS, pm_hours=DEFAULT_PM_HOURS,
+                 am_hours=DEFAULT_AM_HOURS, md_hours=DEFAULT_MD_HOURS, pm_hours=DEFAULT_PM_HOURS,
                  recompute_all=False, treat_zero_as_missing=False, dry_run=False):
         self._log = []
         self.path = path or self.path
@@ -1237,7 +1237,7 @@ class RunTCHC(_m.Tool()):
             ("dry_run", self.dry_run),
         ])
         with _m.logbook_trace("Run TCHC", attributes=attributes):
-            result = self.execute(am_hours, pm_hours)
+            result = self.execute(am_hours, md_hours, pm_hours)
             self.log_report()
         return result
 
@@ -1249,7 +1249,7 @@ class RunTCHC(_m.Tool()):
             raise Exception("No *.gdb file found in the input directory")
         return candidates[0]
 
-    def execute(self, am_hours, pm_hours):
+    def execute(self, am_hours, md_hours, pm_hours):
         links = read_links(self.source)
         self._log.append({"type": "text", "content": "Read %s links from %s" % (len(links), LINK_LAYER)})
 
@@ -1271,7 +1271,7 @@ class RunTCHC(_m.Tool()):
 
         green_cycle = load_green_cycle_lookups(self.gc_file)
         station_factors = load_station_peak_period_factors(
-            self.station_file, int(links["COSTAT"].max() or 0) + 1, am_hours, pm_hours)
+            self.station_file, int(links["COSTAT"].max() or 0) + 1, am_hours, md_hours, pm_hours)
         context = build_context(
             links, station_factors, green_cycle,
             self.managed_lane_capacity_rate, self.freeway_capacity_rate,
