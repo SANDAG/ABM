@@ -102,6 +102,7 @@ class TCHCLink:
 
     # speed (coded or default from mspd[fc])
     speed: int = 35
+    alt_speed: int = 35
 
     # lanes: [period][dir]
     lane_count_by_period_and_direction: List[List[int]] = field(default_factory=lambda: [[0, 0], [0, 0], [0, 0]])
@@ -197,12 +198,9 @@ def apply_tchc(link, ctx):
 
     # link speed (use coded speed, or FC default)
     speed_miles_per_hour = link.speed
-    if speed_miles_per_hour < 1 or speed_miles_per_hour > 75:
-        speed_miles_per_hour = (
-            DEFAULT_SPEED_BY_FUNCTIONAL_CLASS[link.functional_class - 1]
-            if 1 <= link.functional_class <= len(DEFAULT_SPEED_BY_FUNCTIONAL_CLASS)
-            else 35
-        )
+    if link.alt_speed > 0 and link.alt_speed < 75:
+        speed_miles_per_hour = link.alt_speed
+        
     travel_time_minutes = distance_miles * 60.0 / float(speed_miles_per_hour)
 
     # ---- station resolution ----
@@ -909,10 +907,6 @@ def build_link(row, cross_tables):
     from_node = integer(row.AN)
     to_node = integer(row.BN)
 
-    speed = integer(row.SPD)
-    if not 1 <= speed <= 75:
-        speed = integer(row.ASPD, speed)
-
 
     return TCHCLink(
         link_identifier=integer(row.HWYCOV0_ID),
@@ -926,7 +920,8 @@ def build_link(row, cross_tables):
         project_identifier=integer(row.PROJ),
         from_node_identifier=from_node,
         to_node_identifier=to_node,
-        speed=speed,
+        speed=integer(row.SPD),
+        alt_speed=integer(row.ASPD),
         lane_count_by_period_and_direction=[
             [integer(row.ABLNA), integer(row.BALNA)],
             [integer(row.ABLNMD), integer(row.BALNMD)],
