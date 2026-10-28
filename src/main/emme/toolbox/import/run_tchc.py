@@ -655,14 +655,15 @@ REQUIRED_TABLE_COLUMNS = (
     "ABCNT", "BACNT", "ABTL", "BATL", "ABRL", "BARL", "ABLL", "BALL", "ABGC", "BAGC",
 )
 
-REQUIRED_INPUT_COLUMNS = (
-    set(
+REQUIRED_AB_COLUMNS = (
+    {
         "HWYCOV0_ID", "FC", "HOV", "SPD", "MED", 
-        "ABCNT", "BACNT", "ABTL", "BATL", "ABRL", "BARL", "ABLL", "BALL", "ABGC", "BAGC"
-    ) 
-    | set(f"ABLN{tod}" for tod in ("A", "MD", "P")) 
-    | set(f"BALN{tod}" for tod in ("A", "MD", "P"))
+        "ABCNT",  "ABTL", "ABRL", "ABLL", "ABGC",
+    }
+    | {f"ABLN{tod}" for tod in ("A", "MD", "P")} 
+
 )
+REQUIRED_BA_COLUMNS = {"BACNT",  "BATL", "BARL", "BALL", "BAGC"} | {f"BALN{tod}" for tod in ("A", "MD", "P")}
 
 # TNED codes WAY 0 the same as 2; import_network makes both two-way
 TWO_WAY_CODES = (0, 2)
@@ -1291,13 +1292,23 @@ class RunTCHC(_m.Tool()):
 
         # check all entries have non-null values for REQUIRED_INPUT_COLUMNS
         incomplete_inputs = list()
-        for col in REQUIRED_INPUT_COLUMNS:
+        for col in REQUIRED_AB_COLUMNS:
             if links[col].isna().any():
                 self._log.append({
                     "type": "text",
                     "content": "Column %s contains missing values at HWYCOV0_ID(s) %s" % (
                         col, 
                         ", ".join(map(str, links.loc[links[col].isna(), "HWYCOV0_ID"]))
+                    )
+                })
+                incomplete_inputs.append(col)
+        for col in REQUIRED_BA_COLUMNS:
+            if (links[col].isna() & two_way_mask(links)).any():
+                self._log.append({
+                    "type": "text",
+                    "content": "Column %s contains missing values at HWYCOV0_ID(s) %s" % (
+                        col, 
+                        ", ".join(map(str, links.loc[links[col].isna() & two_way_mask(links), "HWYCOV0_ID"]))
                     )
                 })
                 incomplete_inputs.append(col)
@@ -1308,7 +1319,7 @@ class RunTCHC(_m.Tool()):
             })
             raise ValueError("Incomplete input columns detected")
 
-        assert links["HWYCOV0_ID"].is_unique, "HWYCOV0_ID column must have unique values"
+        assert links.loc[links["FC"] !=99,"HWYCOV0_ID"].is_unique, "HWYCOV0_ID column must have unique values"
 
         selected = select_links(
             links, load_link_ids(self.link_id_file), self.recompute_all, self.treat_zero_as_missing)
