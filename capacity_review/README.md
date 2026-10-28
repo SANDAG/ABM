@@ -413,7 +413,6 @@ limitations, not working rural defaults.
 | `control_type_by_direction` | `ABCNT` / `BACNT` | |
 | `through`/`right`/`left_turn_lane_count` | `ABTL`/`BATL`, `ABRL`/`BARL`, `ABLL`/`BALL` | |
 | `green_cycle_value_by_direction` | `ABGC` / `BAGC` | Already coded as G/C × 100 |
-| `toll_cost_by_period` | `TOLLA`, `TOLLMD`, `TOLLP` | Per-mile rates in cents |
 | `cross_street_functional_class_by_direction` | *derived from topology* | |
 
 ### What gets written back
@@ -449,17 +448,6 @@ capacity is `lanes × 1800 − 300`, with a further 200 reduction when `MED < 2`
 PLC is also used for the toll/border roadway-capacity override, whose minimum
 is 950 on rural links, 1200 on urban FC 8/9, and 1800 on other urban links
 (subject to the rural-input limitation above).
-
-**Deliberately not written back:**
-
-| Output | Why |
-|---|---|
-| `TOLLA`, `TOLLMD`, `TOLLP` | The engine converts these from a per-mile rate to an absolute cost *in place*. Writing them back would corrupt the input on the next run |
-
-> **After the run:** `import_network.py` derives `@cost_auto_*`, `@cost_hov2_*`,
-> `@cost_med_truck_*` and friends from `@toll_*` and `@cost_operating` using
-> `vehicle_class_toll_factors.csv`. Running the network import after this tool
-> keeps those consistent.
 
 ---
 
@@ -554,12 +542,6 @@ promoted to through, and the signal approach count is reset to 3.
 In this table GC means a fraction (stored percentage divided by 100). In AM,
 controls 4/5 retain roadway CH but still finalize CX to the same period capacity.
 
-### Tolls and costs
-
-| Field | Shape | Description |
-|---|---|---|
-| `toll_cost_by_period` | [3] | Per-mile toll rate in cents, converted in place to the total link toll (rounded to the nearest cent, minimum 1¢ if nonzero). Fractional remainders carry to the next link via `remaining_toll` |
-
 ---
 
 ## Reference: scenario data (`TCHCContext`)
@@ -621,7 +603,6 @@ One-way links skip direction index 1 entirely.
 ```
 for each link:
 │
-├─ Convert per-mile tolls to absolute cents (carry remainder to next link)
 ├─ Resolve speed (coded value or FC default)
 ├─ Resolve station ID (HOV and non-freeways use station 1)
 │
@@ -660,9 +641,6 @@ After these control branches, finalization derives `period_capacity` from the
 final `hourly_capacity` and the station factor. Controlled CX uses that same
 hourly rate except for the separate toll-booth rate. Both period outputs are
 rounded to three decimals; unconstrained CX remains 999999.
-
-The toll carry-forward only matters when links are processed in route order. The
-tool evaluates links independently, since the TNED table is not ordered by route.
 
 ---
 
