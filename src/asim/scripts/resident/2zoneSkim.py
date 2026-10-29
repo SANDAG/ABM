@@ -529,8 +529,7 @@ def main(path: str):
         abm3_settings = yaml.safe_load(f)
     walk = abm3_settings['mode']['nonmotorized']['walk']
     auto = abm3_settings['mode']['auto']
-    microtransit_max_dist = abm3_settings['mode']['transit']['flexFleets']['microtransit']['maxDistance']  # miles; walk-to-transit search extended for microtransit
-
+    microtransit_max_dist = abm3_settings['mode']['ridehail']['flexFleets']['microtransit']['maxDistance'] # miles
     params = SkimParameters(
         max_maz_maz_walk_dist_feet=int(walk['maxDistance'] * 5280),
         max_maz_local_bus_stop_walk_dist_feet=int(microtransit_max_dist * 5280),
