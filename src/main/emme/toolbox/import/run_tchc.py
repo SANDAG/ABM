@@ -1316,6 +1316,9 @@ class RunTCHC(_m.Tool()):
 
         assert links.loc[links["FC"] !=99,"HWYCOV0_ID"].is_unique, "HWYCOV0_ID column must have unique values"
 
+        # populate travel times for links with FC 10, 12, or 99
+        self.extra_link_travel_times(links)
+
         selected = select_links(
             links, load_link_ids(self.link_id_file), self.recompute_all, self.treat_zero_as_missing)
         self._log.append({
@@ -1339,6 +1342,38 @@ class RunTCHC(_m.Tool()):
             return 0
         results.set_index("HWYCOV0_ID").to_file(self.source)
         return 0 # FIXME get actual num changed records
+
+    def extra_link_travel_times(self, links):
+        extra_links = links['FC'].isin([10,12,99])
+        links.loc[
+            extra_links,
+            [f"ABTM{tod}" for tod in ["EA","A","MD","P","EV"]]
+        ] = links.loc[
+                    extra_links,
+                    "length_feet"
+        ] / FEET_PER_MILE / links.loc[
+                    extra_links,
+                    "SPD"
+        ] * 60
+        self._log.append({
+            "type": "text", 
+            "content": f"Calculated {len(links.loc[extra_links])} extra link travel times for ABTM"
+            })
+
+        links.loc[
+            extra_links & two_way_mask(links),
+            [f"BATM{tod}" for tod in ["EA","A","MD","P","EV"]]
+        ] = links.loc[
+                    extra_links & two_way_mask(links),
+                    "length_feet"
+        ] / FEET_PER_MILE / links.loc[
+                    extra_links & two_way_mask(links),
+                    "SPD"
+        ] * 60
+        self._log.append({
+            "type": "text", 
+            "content": f"Calculated {len(links.loc[extra_links & two_way_mask(links)])} extra link travel times for BATM"
+            })
 
     def log_report(self):
         report = _m.PageBuilder(title="Run TCHC report")
