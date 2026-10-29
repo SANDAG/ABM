@@ -11,24 +11,12 @@ import logging
 
 @dataclass
 class SkimParameters:
-    """Configuration parameters for skim generation read from YAML file"""
+    """Configuration parameters for skim generation read from conf/abm3_settings.yaml"""
     max_maz_maz_walk_dist_feet: int
     max_maz_local_bus_stop_walk_dist_feet: int
     max_maz_premium_transit_stop_walk_dist_feet: int
     walk_speed_mph: float
-    drive_speed_mph: float
-    
-    @classmethod
-    def from_yaml(cls, yaml_data: dict) -> 'SkimParameters':
-        """Create parameters from YAML configuration"""
-        mmms = yaml_data['mmms']
-        return cls(
-            max_maz_maz_walk_dist_feet=int(mmms['max_maz_maz_walk_dist_feet']),
-            max_maz_local_bus_stop_walk_dist_feet=int(mmms['max_maz_local_bus_stop_walk_dist_feet']),
-            max_maz_premium_transit_stop_walk_dist_feet=int(mmms['max_maz_premium_transit_stop_walk_dist_feet']),
-            walk_speed_mph=float(mmms['walk_speed_mph']),
-            drive_speed_mph=float(mmms['drive_speed_mph'])
-        )
+    drive_speed_mph: float 
 
 class NetworkBuilder:
     """
@@ -534,8 +522,23 @@ def main(path: str):
     # Load configuration
     with open(os.path.join(path, "src/asim/scripts/resident/2zoneSkim_params.yaml"), 'r') as f:
         config = yaml.safe_load(f)
-    
-    params = SkimParameters.from_yaml(config)
+     
+    # Load ABM Settings
+    abm3_settings_file = os.path.join(path, 'conf', 'abm3_settings.yaml')
+    with open(abm3_settings_file, 'r') as f:
+        abm3_settings = yaml.safe_load(f)
+    walk = abm3_settings['mode']['nonmotorized']['walk']
+    auto = abm3_settings['mode']['auto']
+    microtransit_max_dist = abm3_settings['mode']['transit']['flexFleets']['microtransit']['maxDistance']  # miles; walk-to-transit search extended for microtransit
+
+    params = SkimParameters(
+        max_maz_maz_walk_dist_feet=int(walk['maxDistance'] * 5280),
+        max_maz_local_bus_stop_walk_dist_feet=int(microtransit_max_dist * 5280),
+        max_maz_premium_transit_stop_walk_dist_feet=int(microtransit_max_dist * 5280),
+        walk_speed_mph=float(walk['speed']),  # mph
+        drive_speed_mph=float(auto['speed']),  # mph
+    )
+
     model_inputs = os.path.join(path, "input")
     output_path = os.path.join(path, "output/skims")
     

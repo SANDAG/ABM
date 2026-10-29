@@ -79,9 +79,9 @@ CONSTANTS:
   parkLocation1WaitTime: {airport-san-accessOptions-park-loc1-waitTime:}
   parkLocation2AccessCost: {airport-san-accessOptions-park-loc2-accessCost:}
   parkLocation2CostDay: {airport-san-accessOptions-park-loc2-dailyCost:}
-  parkLocation2InVehicleTime: {airport-san-accessOptions-park-loc3-inVehicleTime:}
-  parkLocation2WalkTime: {airport-san-accessOptions-park-loc3-walkTime:}
-  parkLocation2WaitTime: {airport-san-accessOptions-park-loc3-waitTime:}
+  parkLocation2InVehicleTime: {airport-san-accessOptions-park-loc2-inVehicleTime:}
+  parkLocation2WalkTime: {airport-san-accessOptions-park-loc2-walkTime:}
+  parkLocation2WaitTime: {airport-san-accessOptions-park-loc2-waitTime:}
   parkLocation3AccessCost: {airport-san-accessOptions-park-loc3-accessCost:}
   parkLocation3CostDay: {airport-san-accessOptions-park-loc3-dailyCost:}
   parkLocation3InVehicleTime: {airport-san-accessOptions-park-loc3-inVehicleTime:}
