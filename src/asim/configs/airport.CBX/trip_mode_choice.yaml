@@ -101,9 +101,9 @@ CONSTANTS:
   parkLocation1WaitTime: {airport-cbx-accessOptions-park-loc1-waitTime:}
   parkLocation2AccessCost: {airport-cbx-accessOptions-park-loc2-accessCost:}
   parkLocation2CostDay: {airport-cbx-accessOptions-park-loc2-dailyCost:}
-  parkLocation2InVehicleTime: {airport-cbx-accessOptions-park-loc3-inVehicleTime:}
-  parkLocation2WalkTime: {airport-cbx-accessOptions-park-loc3-walkTime:}
-  parkLocation2WaitTime: {airport-cbx-accessOptions-park-loc3-waitTime:}
+  parkLocation2InVehicleTime: {airport-cbx-accessOptions-park-loc2-inVehicleTime:}
+  parkLocation2WalkTime: {airport-cbx-accessOptions-park-loc2-walkTime:}
+  parkLocation2WaitTime: {airport-cbx-accessOptions-park-loc2-waitTime:}
   parkLocation3AccessCost: {airport-cbx-accessOptions-park-loc3-accessCost:}
   parkLocation3CostDay: {airport-cbx-accessOptions-park-loc3-dailyCost:}
   parkLocation3InVehicleTime: {airport-cbx-accessOptions-park-loc3-inVehicleTime:}
