@@ -656,12 +656,12 @@ REQUIRED_TABLE_COLUMNS = (
 REQUIRED_AB_COLUMNS = (
     {
         "HWYCOV0_ID", "FC", "HOV", "SPD", "MED", 
-        "ABCNT",  "ABTL", "ABRL", "ABLL", "ABGC",
+        "ABCNT",  "ABTL", "ABRL", "ABLL",
     }
     | {f"ABLN{tod}" for tod in ("A", "MD", "P")} 
 
 )
-REQUIRED_BA_COLUMNS = {"BACNT",  "BATL", "BARL", "BALL", "BAGC"} | {f"BALN{tod}" for tod in ("A", "MD", "P")}
+REQUIRED_BA_COLUMNS = {"BACNT",  "BATL", "BARL", "BALL"} | {f"BALN{tod}" for tod in ("A", "MD", "P")}
 
 # TNED codes WAY 0 the same as 2; import_network makes both two-way
 TWO_WAY_CODES = (0, 2)
@@ -1288,22 +1288,28 @@ class RunTCHC(_m.Tool()):
         # check all entries have non-null values for REQUIRED_INPUT_COLUMNS
         incomplete_inputs = list()
         for col in REQUIRED_AB_COLUMNS:
-            if links[col].isna().any():
+            if links.loc[links['FC'] != 99, col].isna().any():
                 self._log.append({
                     "type": "text",
                     "content": "Column %s contains missing values at HWYCOV0_ID(s) %s" % (
                         col, 
-                        ", ".join(map(str, links.loc[links[col].isna(), "HWYCOV0_ID"]))
+                        ", ".join(map(str, links.loc[(links['FC'] != 99) & links[col].isna(), "HWYCOV0_ID"]))
                     )
                 })
                 incomplete_inputs.append(col)
         for col in REQUIRED_BA_COLUMNS:
-            if (links[col].isna() & two_way_mask(links)).any():
+            if (links.loc[col].isna() & two_way_mask(links) & (links['FC'] != 99)).any():
                 self._log.append({
                     "type": "text",
                     "content": "Column %s contains missing values at HWYCOV0_ID(s) %s" % (
                         col, 
-                        ", ".join(map(str, links.loc[links[col].isna() & two_way_mask(links), "HWYCOV0_ID"]))
+                        ", ".join(map(str, 
+                                      links.loc[
+                                          links[col].isna() 
+                                          & two_way_mask(links) 
+                                          & (links['FC'] != 99), "HWYCOV0_ID"]
+                                    )
+                                )
                     )
                 })
                 incomplete_inputs.append(col)
@@ -1378,5 +1384,5 @@ class RunTCHC(_m.Tool()):
     def log_report(self):
         report = _m.PageBuilder(title="Run TCHC report")
         for item in self._log:
-            report.add_html("<div style='margin-left:20px'>%s</div>" % item["content"])
+            report.add_html("<div style='margin-left:20px'>%s</div><br><br>" % item["content"])
         _m.logbook_write("Run TCHC report", report.render())
