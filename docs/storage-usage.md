@@ -31,6 +31,8 @@ The following table summarizes the completed **2050 scenario (ID 585)** used for
 
 The report measures **logical file sizes** in the completed scenario. It does not measure peak temporary storage during model execution or physical disk allocation.
 
+Because OMX skim files are compressed, this page also compares their on-disk sizes with their uncompressed matrix sizes. This helps explain the difference between storage requirements and the amount of data represented by these files.
+
 ## Skim File Sizes
 
 Skim files are stored in OMX (Open Matrix/HDF5) format within the `output\skims` folder. The model produces highway and transit skim files for **five time periods**: Early AM (EA), AM Peak (AM), Midday (MD), PM Peak (PM), and Evening (EV). The scenario also includes two smaller destination-related OMX files.
@@ -69,7 +71,7 @@ Matrices available vary by mode:
 | HOV distance (HOVDIST) | — | ✓ | — |
 | Reliability (REL) | ✓ | ✓ | — |
 
-**`traffic_skims_PM.omx` contains 75 matrices** (SOV: 30, HOV2/3: 36, TRK: 9). The MD file contains one additional matrix; its name is not identified by this summary.
+**`traffic_skims_PM.omx` contains 75 matrices** (SOV: 30, HOV2/3: 36, TRK: 9). The MD file contains one additional matrix, **`TRK_TIME__MD`**, bringing its total to 76. The purpose of this MD-only matrix has not yet been confirmed; it can be inspected using the OMX utility (see [Reproducing the Results](#reproducing-the-results)).
 
 ---
 
@@ -104,15 +106,13 @@ Matrices available vary by transit sub-mode:
 
 ---
 
-## Disk vs. Memory Footprint
+## Understanding OMX Compression and Uncompressed Size
 
-### Why They Differ
+OMX files use HDF5 compression to reduce disk storage. The **on-disk size** includes compressed matrix datasets and other file contents; the **raw matrix data size** is calculated from each matrix's dimensions and data type (`number of elements × bytes per value`), without loading the values.
 
-OMX files are HDF5 containers that can store compressed matrix data. The **disk size** is the size of each OMX file, including its compressed datasets and other HDF5 contents. The **raw matrix size** is calculated from each matrix's shape and data type (`number of elements × bytes per element`), without loading the values.
+For scenario 585, the 12 OMX files occupy **45.72 GiB on disk**, while their matrices represent approximately **232.84 GiB of uncompressed data** (about **5.09×** the on-disk size). For scale, a 4,947 × 4,947 `float64` matrix represents approximately 186.7 MiB of raw data, compared with 93.4 MiB for `float32`.
 
-For example, a dense **4,947 × 4,947 `float64` matrix** occupies about **186.7 MiB** of array data (8 bytes per value). A `float32` matrix of the same dimensions would occupy approximately **93.4 MiB** (4 bytes per value).
-
-> **Important:** Raw matrix size is **not measured peak RAM usage**. It indicates how much memory would be needed to represent those matrices as dense arrays, but a model may load only some matrices at a time. Actual peak memory also depends on cached and temporary arrays, copying, sharing or memory mapping, and multiprocessing worker behavior.
+> **Note:** The raw matrix total is an estimate of dense, uncompressed data—not measured peak RAM usage during model execution. Actual memory use depends on which matrices are loaded, as well as caching, temporary arrays, and multiprocessing behavior.
 
 ### PM Period Example
 
@@ -159,5 +159,13 @@ To inspect individual PM-period matrices:
 ```powershell
 python scripts/utilities/report_omx_sizes.py "C:\path\to\scenario_585\output\skims" --pattern "*_PM.omx" --details
 ```
+
+To list the matrices in the midday highway skim—including the additional `TRK_TIME__MD`—use the following command if `uv` is installed:
+
+```powershell
+uv run --with openmatrix python scripts/utilities/report_omx_sizes.py "T:\path\to\scenario_585\output\skims" --pattern "traffic_skims_MD.omx" --details
+```
+
+This lists all matrices in `traffic_skims_MD.omx`; it does not determine whether the extra matrix is needed by the model.
 
 The folder-size utility uses Python's standard library. Matrix inspection in the OMX utility requires `openmatrix` (`python -m pip install openmatrix`). Consult the [utilities README](https://github.com/SANDAG/ABM/blob/main/scripts/utilities/README.md) for further options, including CSV export and running OMX file-size analysis without matrix inspection.
