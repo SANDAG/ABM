@@ -31,15 +31,15 @@ The following table summarizes the completed **2050 scenario (ID 585)** used for
 
 The report measures **logical file sizes** in the completed scenario. It does not measure peak temporary storage during model execution or physical disk allocation.
 
-Because OMX skim files are compressed, this page also compares their on-disk sizes with their uncompressed matrix sizes. This helps explain the difference between storage requirements and the amount of data represented by these files.
+Because skim files are compressed, this page also compares their on-disk sizes with the uncompressed size of their matrix data. The OMX measurements below describe the original skim files; ABM3 also creates optimized OMXZ copies for ActivitySim.
 
 ## Skim File Sizes
 
-Skim files are stored in OMX (Open Matrix/HDF5) format within the `output\skims` folder. The model produces highway and transit skim files for **five time periods**: Early AM (EA), AM Peak (AM), Midday (MD), PM Peak (PM), and Evening (EV). The scenario also includes two smaller destination-related OMX files.
+Highway and transit skims are generated as OMX (Open Matrix/HDF5) files in `output\skims`. The [skim conversion script](https://github.com/SANDAG/ABM/blob/main/src/main/resources/convertSkimsToOMXZ.cmd) then creates optimized `.omxz` copies, which [ActivitySim reads](https://github.com/SANDAG/ABM/blob/main/src/asim/configs/common/network_los.yaml). The original OMX files are retained for other uses, including the [Travel Time Reporter](https://github.com/SANDAG/ABM/blob/main/src/main/python/TravelTimeReporter.py). The files cover **five time periods**: Early AM (EA), AM Peak (AM), Midday (MD), PM Peak (PM), and Evening (EV). The scenario also includes two smaller destination-related OMX files, which ActivitySim reads in OMX format.
 
 ### OMX File Summary
 
-The table summarizes highway and transit skim sizes across the five time periods for **2050 scenario 585**. The on-disk sizes reflect HDF5 compression; *raw matrix data* estimates the size of the dense, uncompressed values.
+The table summarizes the **original `.omx` files only** across the five time periods for **2050 scenario 585**; it does not include their `.omxz` copies. The on-disk sizes reflect HDF5 compression; *raw matrix data* estimates the size of the dense, uncompressed values.
 
 | File type | On disk per file | Matrices per file | Raw matrix data per file |
 |-----------|-----------------:|------------------:|-------------------------:|
@@ -106,39 +106,17 @@ Matrices available vary by transit sub-mode:
 
 ---
 
-## Understanding OMX Compression and Uncompressed Size
+## Understanding OMX and OMXZ Compression
 
 OMX files use HDF5 compression to reduce disk storage. The **on-disk size** includes compressed matrix datasets and other file contents; the **raw matrix data size** is calculated from each matrix's dimensions and data type (`number of elements × bytes per value`), without loading the values.
 
-For scenario 585, the 12 OMX files occupy **45.72 GiB on disk**, while their matrices represent approximately **232.84 GiB of uncompressed data** (about **5.09×** the on-disk size). For scale, a 4,947 × 4,947 `float64` matrix represents approximately 186.7 MiB of raw data, compared with 93.4 MiB for `float32`.
+For scenario 585, the 12 **original OMX files** occupy **45.72 GiB on disk**, while their matrices represent approximately **232.84 GiB of uncompressed data** (about **5.09×** the on-disk size). For scale, a 4,947 × 4,947 `float64` matrix represents approximately 186.7 MiB of raw data, compared with 93.4 MiB for `float32`.
 
-> **Note:** The raw matrix total is an estimate of dense, uncompressed data—not measured peak RAM usage during model execution. Actual memory use depends on which matrices are loaded, as well as caching, temporary arrays, and multiprocessing behavior.
+ABM3 uses [`wring omx`](https://pypi.org/project/wring/) to create the `.omxz` copies. By default, this conversion downcasts `float64` matrices to `float32` and uses different compression. For the **traffic and transit skims**, this reduces the theoretical dense-array payload from approximately **232.7 GiB in the original OMX files** to approximately **116.3 GiB in the OMXZ copies**, assuming all corresponding matrices are converted to `float32`. The actual compressed OMXZ file sizes have not been measured in this report.
 
-### PM Period Example
+> **Note:** These raw matrix totals are estimates of dense, uncompressed data—not measured peak ActivitySim RAM usage. Actual memory use depends on which matrices are loaded, as well as caching, temporary arrays, and multiprocessing behavior. The estimates for the original OMX files should not be interpreted as the amount of RAM ActivitySim uses to read OMXZ skims.
 
-| File | Matrices | On disk | Raw matrix data | Raw/disk |
-|------|---------:|--------:|----------------:|---------:|
-| `traffic_skims_PM.omx` | 75 | 3.72 GiB | 13.68 GiB | 3.68× |
-| `transit_skims_PM.omx` | 180 | 5.42 GiB | 32.82 GiB | 6.05× |
-| **PM total** | **255** | **9.14 GiB** | **46.50 GiB** | |
-
-Transit skims tend to compress well because many origin–destination combinations contain zero or repeated values.
-
-### Across All Five Time Periods
-
-| Type | Matrices | On disk (approx.) | Raw matrix data (approx.) |
-|------|---------:|------------------:|--------------------------:|
-| Traffic skims | 376 | 18.4 GiB | 68.6 GiB |
-| Transit skims | 900 | 27.4 GiB | 164.1 GiB |
-| **Traffic + transit** | **1,276** | **45.7 GiB** | **232.7 GiB** |
-
-These are **hypothetical dense-array totals**, not evidence that all 1,276 traffic and transit matrices are simultaneously resident in memory. Including the two destination-related OMX files yields the **1,278 matrices and 232.84 GiB** reported in the complete OMX summary.
-
-### Practical Implications
-
-- **Data type matters.** For the same matrix dimensions, a `float32` array uses half the raw space of a `float64` array. Any conversion would require accuracy and compatibility testing; a smaller payload does not guarantee a proportional reduction in peak model memory.
-- **Reducing loaded or duplicated matrices may reduce memory demands.** The benefit depends on which matrices are used concurrently and how the model manages its arrays, particularly during multiprocessing.
-- **Disk size alone is not a reliable RAM predictor.** Compressed OMX files can expand several-fold when read into dense arrays, but observed peak RAM must be measured separately.
+Because the original OMX files are retained alongside the OMXZ copies, **both can contribute to scenario disk usage**. The folder-size total above includes whichever files are present in the completed scenario. Lower OMXZ file sizes therefore do not, by themselves, imply lower *total* scenario storage.
 
 ## Reproducing the Results
 
@@ -154,7 +132,13 @@ python scripts/utilities/report_folder_sizes.py "C:\path\to\scenario_585"
 python scripts/utilities/report_omx_sizes.py "C:\path\to\scenario_585\output\skims"
 ```
 
-To inspect individual PM-period matrices:
+To report OMXZ **file sizes only** (without inspecting their matrices), use `--no-matrices`; this requires no additional Python packages:
+
+```powershell
+python scripts/utilities/report_omx_sizes.py "C:\path\to\scenario_585\output\skims" --pattern "*.omxz" --no-matrices
+```
+
+To inspect individual PM-period OMX matrices:
 
 ```powershell
 python scripts/utilities/report_omx_sizes.py "C:\path\to\scenario_585\output\skims" --pattern "*_PM.omx" --details
