@@ -363,17 +363,17 @@ airport:
         loc2:
           mgra: -999
           accessCost: 0.00
-          dailyCost: 14.00
-          inVehicleTime: 7.00
-          walkTime: 2.00
-          waitTime: 5.00
+          dailyCost: 0.00
+          inVehicleTime: -999
+          walkTime: -999
+          waitTime: -999
         loc3:
           mgra: -999
           accessCost: 0.00
-          dailyCost: 12.00
-          inVehicleTime: 10.00
-          walkTime: 2.00
-          waitTime: 5.00
+          dailyCost: 0.00
+          inVehicleTime: -999
+          walkTime: -999
+          waitTime: -999
         loc4:
           mgra: -999
           accessCost: 0.00
