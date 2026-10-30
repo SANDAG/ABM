@@ -29,7 +29,7 @@ The following table summarizes the completed **2050 scenario (ID 585)** used for
 | **git_info.yaml** | File | 62.00 B | Source/version metadata |
 | **TOTAL (11 entries)** | | **286.52 GiB** | |
 
-The report measures **logical file sizes** in the completed scenario. It does not measure peak temporary storage during model execution or physical disk allocation.
+The report measures **logical file sizes** in the completed scenario. Under default ABM3 settings, the temporary `.omxz` skim files used by ActivitySim are deleted before the run finishes, so they are **not included** in these completed-run totals. The measurement does not capture peak disk usage during execution or physical disk allocation.
 
 Because skim files are compressed, this page also compares their on-disk sizes with the uncompressed size of their matrix data. The OMX measurements below describe the original skim files; ABM3 also creates optimized OMXZ copies for ActivitySim.
 
@@ -39,7 +39,7 @@ Highway and transit skims are generated as OMX (Open Matrix/HDF5) files in `outp
 
 ### OMX File Summary
 
-The table summarizes the **original `.omx` files only** across the five time periods for **2050 scenario 585**; it does not include their `.omxz` copies. The on-disk sizes reflect HDF5 compression; *raw matrix data* estimates the size of the dense, uncompressed values.
+The table summarizes the **original `.omx` files only** across the five time periods for **2050 scenario 585**; it does not describe the `.omxz` copies used by ActivitySim, whose matrix contents can differ after preprocessing. The on-disk sizes reflect HDF5 compression; *raw matrix data* estimates the size of the dense, uncompressed values.
 
 | File type | On disk per file | Matrices per file | Raw matrix data per file |
 |-----------|-----------------:|------------------:|-------------------------:|
@@ -71,7 +71,9 @@ Matrices available vary by mode:
 | HOV distance (HOVDIST) | — | ✓ | — |
 | Reliability (REL) | ✓ | ✓ | — |
 
-**`traffic_skims_PM.omx` contains 75 matrices** (SOV: 30, HOV2/3: 36, TRK: 9). The MD file contains one additional matrix, **`TRK_TIME__MD`**, bringing its total to 76. The purpose of this MD-only matrix has not yet been confirmed; it can be inspected using the OMX utility (see [Reproducing the Results](#reproducing-the-results)).
+**`traffic_skims_PM.omx` contains 75 matrices** (SOV: 30, HOV2/3: 36, TRK: 9). The original MD OMX file contains one additional matrix, **`TRK_TIME__MD`**, bringing its total to 76.
+
+**ActivitySim OMXZ difference:** After conversion, `resident_preprocessing.py` adds four matrices to `traffic_skims_AM.omxz`: `DIST` (a copy of `SOV_TR_H_DIST__AM`), `walkTime`, `BIKE_LOGSUM`, and `BIKE_TIME`. As a result, the **AM OMXZ file contains 79 matrices**, compared with 75 in the original `traffic_skims_AM.omx`. The OMX counts in the table above are unchanged by these additions.
 
 ---
 
@@ -112,11 +114,11 @@ OMX files use HDF5 compression to reduce disk storage. The **on-disk size** incl
 
 For scenario 585, the 12 **original OMX files** occupy **45.72 GiB on disk**, while their matrices represent approximately **232.84 GiB of uncompressed data** (about **5.09×** the on-disk size). For scale, a 4,947 × 4,947 `float64` matrix represents approximately 186.7 MiB of raw data, compared with 93.4 MiB for `float32`.
 
-ABM3 uses [`wring omx`](https://pypi.org/project/wring/) to create the `.omxz` copies. By default, this conversion downcasts `float64` matrices to `float32` and uses different compression. For the **traffic and transit skims**, this reduces the theoretical dense-array payload from approximately **232.7 GiB in the original OMX files** to approximately **116.3 GiB in the OMXZ copies**, assuming all corresponding matrices are converted to `float32`. The actual compressed OMXZ file sizes have not been measured in this report.
+ABM3 uses [`wring omx`](https://pypi.org/project/wring/) to create the `.omxz` copies. By default, this conversion downcasts `float64` matrices to `float32` and uses different compression. For the **traffic and transit skims**, converting the original matrices to `float32` reduces their *baseline* theoretical dense-array payload from approximately **232.7 GiB** to **116.3 GiB**, assuming all corresponding matrices are converted. This estimate **excludes the four additional AM OMXZ matrices created during resident preprocessing**, and is not a measured ActivitySim memory requirement. The actual compressed OMXZ file sizes have not been measured in this report.
 
 > **Note:** These raw matrix totals are estimates of dense, uncompressed data—not measured peak ActivitySim RAM usage. Actual memory use depends on which matrices are loaded, as well as caching, temporary arrays, and multiprocessing behavior. The estimates for the original OMX files should not be interpreted as the amount of RAM ActivitySim uses to read OMXZ skims.
 
-Because the original OMX files are retained alongside the OMXZ copies, **both can contribute to scenario disk usage**. The folder-size total above includes whichever files are present in the completed scenario. Lower OMXZ file sizes therefore do not, by themselves, imply lower *total* scenario storage.
+During model execution, the original `.omx` files and temporary `.omxz` copies can coexist and **both contribute to disk usage**. However, under default settings the `.omxz` copies are deleted before completion. Therefore, the **286.52 GiB completed-run total excludes OMXZ** and cannot be used to determine peak temporary disk requirements.
 
 ## Reproducing the Results
 
@@ -132,11 +134,13 @@ python scripts/utilities/report_folder_sizes.py "C:\path\to\scenario_585"
 python scripts/utilities/report_omx_sizes.py "C:\path\to\scenario_585\output\skims"
 ```
 
-To report OMXZ **file sizes only** (without inspecting their matrices), use `--no-matrices`; this requires no additional Python packages:
+If `.omxz` files are still present during a run (or retained by a non-default workflow), their **on-disk sizes** can be reported with `--no-matrices`:
 
 ```powershell
 python scripts/utilities/report_omx_sizes.py "C:\path\to\scenario_585\output\skims" --pattern "*.omxz" --no-matrices
 ```
+
+This command will not find OMXZ files in a completed **default** run because they have already been removed.
 
 To inspect individual PM-period OMX matrices:
 
