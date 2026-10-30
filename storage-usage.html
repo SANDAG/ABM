@@ -1179,9 +1179,9 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#size-by-time-period" class="md-nav__link">
+  <a href="#omx-file-summary" class="md-nav__link">
     <span class="md-ellipsis">
-      Size by Time Period
+      OMX File Summary
     </span>
   </a>
   
@@ -1211,53 +1211,20 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#disk-vs-memory-footprint" class="md-nav__link">
+  <a href="#understanding-omx-and-omxz-compression" class="md-nav__link">
     <span class="md-ellipsis">
-      Disk vs. Memory Footprint
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Disk vs. Memory Footprint">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#why-they-differ" class="md-nav__link">
-    <span class="md-ellipsis">
-      Why they differ
+      Understanding OMX and OMXZ Compression
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#pm-period-disk-vs-memory" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#reproducing-the-results" class="md-nav__link">
     <span class="md-ellipsis">
-      PM period: disk vs. memory
+      Reproducing the Results
     </span>
   </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#all-5-time-periods-loaded-simultaneously" class="md-nav__link">
-    <span class="md-ellipsis">
-      All 5 time periods loaded simultaneously
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#practical-implications" class="md-nav__link">
-    <span class="md-ellipsis">
-      Practical implications
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -2063,9 +2030,9 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#size-by-time-period" class="md-nav__link">
+  <a href="#omx-file-summary" class="md-nav__link">
     <span class="md-ellipsis">
-      Size by Time Period
+      OMX File Summary
     </span>
   </a>
   
@@ -2095,53 +2062,20 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#disk-vs-memory-footprint" class="md-nav__link">
+  <a href="#understanding-omx-and-omxz-compression" class="md-nav__link">
     <span class="md-ellipsis">
-      Disk vs. Memory Footprint
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Disk vs. Memory Footprint">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#why-they-differ" class="md-nav__link">
-    <span class="md-ellipsis">
-      Why they differ
+      Understanding OMX and OMXZ Compression
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#pm-period-disk-vs-memory" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#reproducing-the-results" class="md-nav__link">
     <span class="md-ellipsis">
-      PM period: disk vs. memory
+      Reproducing the Results
     </span>
   </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#all-5-time-periods-loaded-simultaneously" class="md-nav__link">
-    <span class="md-ellipsis">
-      All 5 time periods loaded simultaneously
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#practical-implications" class="md-nav__link">
-    <span class="md-ellipsis">
-      Practical implications
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -2165,128 +2099,138 @@
 
 <h1 id="storage-usage">Storage Usage<a class="headerlink" href="#storage-usage" title="Permanent link"> ¶</a></h1>
 <h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link"> ¶</a></h2>
-<p>A complete ABM model run requires <strong>450 GB of available disk space</strong> as a minimum. A typical scenario run will generate approximately <strong>280 GB</strong> of data across various output directories, with additional space needed for temporary files during processing.</p>
-<p>All model outputs are written to subdirectories within <code>output</code> folder of the scenario directory. For detailed information about specific output files and their contents, see the <a href="outputs.html">Outputs documentation</a>.</p>
+<p>The measurements on this page are from the <strong>2027 Regional Transportation Improvement Program (RTIP), forecast year 2050, scenario ID 585</strong>. This is the latest scenario analyzed for this documentation update (October 2026). Actual disk usage will vary by scenario, model version, and run configuration.</p>
+<p>The completed scenario occupies <strong>286.52 GiB</strong> of storage. For planning purposes, existing guidance recommends allowing at least <strong>450 GB of available disk space</strong> for a full ABM run, including space for temporary files created during processing. This 450 GB figure is a planning guideline, <strong>not a measured peak disk requirement</strong> from scenario 585.</p>
+<p>Model files are stored across several directories in the scenario folder, including <code>emme_project</code>, <code>output</code>, and <code>report</code>. For detailed information about specific output files and their contents, see the <a href="outputs.html">Outputs documentation</a>.</p>
+<blockquote>
+<p><strong>Units:</strong> Sizes in the tables below use binary units: 1 KiB = 1,024 bytes; 1 MiB = 1,024 KiB; 1 GiB = 1,024 MiB. Thus, 286.52 GiB is approximately 307.65 GB in decimal units. Figures are rounded and may not sum exactly.</p>
+</blockquote>
 <h2 id="folder-size-breakdown">Folder Size Breakdown<a class="headerlink" href="#folder-size-breakdown" title="Permanent link"> ¶</a></h2>
-<p>The following table shows typical storage usage from a recent 2035 scenario run (2035_v15_4_1):</p>
+<p>The following table summarizes the completed <strong>2050 scenario (ID 585)</strong> used for the 2027 RTIP, measured at the scenario directory root:</p>
 <table>
 <thead>
 <tr>
-<th>Folder</th>
-<th>Size</th>
+<th>Folder / File</th>
+<th>Type</th>
+<th style="text-align: right;">Size</th>
 <th>Purpose</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><strong>emme_project</strong></td>
-<td>199.40 GB</td>
-<td>Emme network databases, matrices, and transit assignments - largest component</td>
+<td>Directory</td>
+<td style="text-align: right;">199.39 GiB</td>
+<td>Emme network databases, matrices, and assignment results; largest component</td>
 </tr>
 <tr>
 <td><strong>output</strong></td>
-<td>69.02 GB</td>
-<td>Primary model outputs including trip tables, person/household files, and results</td>
+<td>Directory</td>
+<td style="text-align: right;">75.49 GiB</td>
+<td>Model outputs, including skim files, trip tables, and other results</td>
 </tr>
 <tr>
 <td><strong>report</strong></td>
-<td>9.61 GB</td>
-<td>Generated reports, summaries, and visualization outputs</td>
+<td>Directory</td>
+<td style="text-align: right;">9.92 GiB</td>
+<td>Generated reports and summaries</td>
 </tr>
 <tr>
 <td><strong>input</strong></td>
-<td>1.86 GB</td>
+<td>Directory</td>
+<td style="text-align: right;">1.51 GiB</td>
 <td>Scenario-specific input data</td>
 </tr>
 <tr>
+<td><strong>logFiles</strong></td>
+<td>Directory</td>
+<td style="text-align: right;">111.77 MiB</td>
+<td>Run logs and diagnostic information</td>
+</tr>
+<tr>
 <td><strong>src</strong></td>
-<td>101.21 MB</td>
+<td>Directory</td>
+<td style="text-align: right;">105.17 MiB</td>
 <td>Model source code</td>
 </tr>
 <tr>
-<td><strong>application</strong></td>
-<td>97.12 MB</td>
-<td>Application binaries and dependencies</td>
-</tr>
-<tr>
-<td><strong>logFiles</strong></td>
-<td>10.89 MB</td>
-<td>Run logs and debugging information</td>
-</tr>
-<tr>
 <td><strong>python</strong></td>
-<td>954.88 KB</td>
-<td>Python scripts and utilities</td>
-</tr>
-<tr>
-<td><strong>uec</strong></td>
-<td>216.36 KB</td>
-<td>Utility expression calculator files</td>
-</tr>
-<tr>
-<td><strong>conf</strong></td>
-<td>238.06 KB</td>
-<td>Configuration files</td>
+<td>Directory</td>
+<td style="text-align: right;">959.88 KiB</td>
+<td>Python scripts included with the scenario</td>
 </tr>
 <tr>
 <td><strong>analysis</strong></td>
-<td>95.20 KB</td>
-<td>Analysis scripts and results</td>
+<td>Directory</td>
+<td style="text-align: right;">95.20 KiB</td>
+<td>Analysis-related files</td>
 </tr>
 <tr>
 <td><strong>bin</strong></td>
-<td>99.86 KB</td>
-<td>Executable binaries</td>
+<td>Directory</td>
+<td style="text-align: right;">68.60 KiB</td>
+<td>Executable or supporting files</td>
 </tr>
 <tr>
-<td><strong>sql</strong></td>
-<td>0.00 B</td>
-<td>SQL scripts (if used)</td>
+<td><strong>conf</strong></td>
+<td>Directory</td>
+<td style="text-align: right;">34.66 KiB</td>
+<td>Configuration files</td>
 </tr>
 <tr>
-<td><strong>TOTAL</strong></td>
-<td><strong>280.10 GB</strong></td>
+<td><strong>git_info.yaml</strong></td>
+<td>File</td>
+<td style="text-align: right;">62.00 B</td>
+<td>Source/version metadata</td>
+</tr>
+<tr>
+<td><strong>TOTAL (11 entries)</strong></td>
+<td></td>
+<td style="text-align: right;"><strong>286.52 GiB</strong></td>
 <td></td>
 </tr>
 </tbody>
 </table>
+<p>The report measures <strong>logical file sizes</strong> in the completed scenario. Under default ABM3 settings, the temporary <code>.omxz</code> skim files used by ActivitySim are deleted before the run finishes, so they are <strong>not included</strong> in these completed-run totals. The measurement does not capture peak disk usage during execution or physical disk allocation.</p>
+<p>Because skim files are compressed, this page also compares their on-disk sizes with the uncompressed size of their matrix data. The OMX measurements below describe the original skim files; ABM3 also creates optimized OMXZ copies for ActivitySim.</p>
 <h2 id="skim-file-sizes">Skim File Sizes<a class="headerlink" href="#skim-file-sizes" title="Permanent link"> ¶</a></h2>
-<p>Skim files are stored in OMX (Open Matrix) format within the <code>output\skims</code> folder and represent a significant portion of storage usage. The model produces skim files for <strong>5 time periods</strong>: Early AM (EA), AM Peak (AM), Midday (MD), PM Peak (PM), and Evening (EV).</p>
-<h3 id="size-by-time-period">Size by Time Period<a class="headerlink" href="#size-by-time-period" title="Permanent link"> ¶</a></h3>
-<p>Each time period generates approximately <strong>9.2 GB</strong> of skim files:</p>
+<p>Highway and transit skims are generated as OMX (Open Matrix/HDF5) files in <code>output\skims</code>. The <a href="https://github.com/SANDAG/ABM/blob/main/src/main/resources/convertSkimsToOMXZ.cmd">skim conversion script</a> then creates optimized <code>.omxz</code> copies, which <a href="https://github.com/SANDAG/ABM/blob/main/src/asim/configs/common/network_los.yaml">ActivitySim reads</a>. The original OMX files are retained for other uses, including the <a href="https://github.com/SANDAG/ABM/blob/main/src/main/python/TravelTimeReporter.py">Travel Time Reporter</a>. The files cover <strong>five time periods</strong>: Early AM (EA), AM Peak (AM), Midday (MD), PM Peak (PM), and Evening (EV). The scenario also includes two smaller destination-related OMX files, which ActivitySim reads in OMX format.</p>
+<h3 id="omx-file-summary">OMX File Summary<a class="headerlink" href="#omx-file-summary" title="Permanent link"> ¶</a></h3>
+<p>The table summarizes the <strong>original <code>.omx</code> files only</strong> across the five time periods for <strong>2050 scenario 585</strong>; it does not describe the <code>.omxz</code> copies used by ActivitySim, whose matrix contents can differ after preprocessing. The on-disk sizes reflect HDF5 compression; <em>raw matrix data</em> estimates the size of the dense, uncompressed values.</p>
 <table>
 <thead>
 <tr>
-<th>File Type</th>
-<th>Size per Time Period</th>
-<th>Description</th>
+<th>File type</th>
+<th style="text-align: right;">On disk per file</th>
+<th style="text-align: right;">Matrices per file</th>
+<th style="text-align: right;">Raw matrix data per file</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>traffic_skims_[period].omx</code></td>
-<td>3.7 GB</td>
-<td>Highway skims for SOV, HOV2, HOV3, and truck travel</td>
+<td style="text-align: right;">3.57–3.76 GiB</td>
+<td style="text-align: right;">75 (76 for MD)</td>
+<td style="text-align: right;">13.68–13.86 GiB</td>
 </tr>
 <tr>
 <td><code>transit_skims_[period].omx</code></td>
-<td>5.5 GB</td>
-<td>Transit skims for walk, PNR, and KNR access modes</td>
+<td style="text-align: right;">5.30–5.62 GiB</td>
+<td style="text-align: right;">180</td>
+<td style="text-align: right;">32.82 GiB</td>
 </tr>
 <tr>
-<td><strong>Total per period</strong></td>
-<td><strong>9.2 GB</strong></td>
-<td></td>
+<td><strong>Total per time period</strong></td>
+<td style="text-align: right;"><strong>9.04–9.19 GiB</strong></td>
+<td style="text-align: right;"><strong>255 (256 for MD)</strong></td>
+<td style="text-align: right;"><strong>46.50–46.68 GiB</strong></td>
 </tr>
 </tbody>
 </table>
-<blockquote>
-<p><strong>Note:</strong> On-disk sizes reflect HDF5 compression. Uncompressed, each individual matrix occupies ~187 MB (4,947 × 4,947 zones × 8 bytes for float64).</p>
-</blockquote>
-<p><strong>Total skim storage (all 5 periods): ~46 GB</strong></p>
-<hr />
+<p>The scenario also includes <code>dest_pmsa.omx</code> (4.03 MiB on disk) and <code>dest_poi.omx</code> (1.40 MiB on disk), each containing one matrix with an estimated raw size of 93.36 MiB.</p>
+<p><strong>Across all 12 OMX files</strong>, the total is <strong>45.72 GiB on disk</strong>, <strong>1,278 matrices</strong>, and <strong>232.84 GiB of estimated raw matrix data</strong>—approximately <strong>5.09×</strong> the on-disk size. Of these, 1,276 matrices are highway and transit skims; two are destination-related.</p>
 <h3 id="traffic-skim-contents">Traffic Skim Contents<a class="headerlink" href="#traffic-skim-contents" title="Permanent link"> ¶</a></h3>
-<p>Traffic skim files (3.7 GB each) contain highway impedance matrices for a <strong>4,947 × 4,947 zone system</strong>. Each file includes:</p>
+<p>Traffic skim files contain highway impedance matrices for a <strong>4,947 × 4,947 zone system</strong>. They include:</p>
 <ul>
 <li><strong>Single Occupancy Vehicle (SOV)</strong>: Transponder (TR) and non-transponder (NT) routes × Low (L), Medium (M), High (H) income groups</li>
 <li><strong>High Occupancy Vehicle 2+ (HOV2)</strong>: Low (L), Medium (M), and High (H) income groups</li>
@@ -2342,10 +2286,11 @@
 </tr>
 </tbody>
 </table>
-<p><strong><code>traffic_skims_PM.omx</code> contains 75 matrices</strong> (SOV: 30, HOV&#8532;: 36, TRK: 9)</p>
+<p><strong><code>traffic_skims_PM.omx</code> contains 75 matrices</strong> (SOV: 30, HOV&#8532;: 36, TRK: 9). The original MD OMX file contains one additional matrix, <strong><code>TRK_TIME__MD</code></strong>, bringing its total to 76.</p>
+<p><strong>ActivitySim OMXZ difference:</strong> After conversion, <code>resident_preprocessing.py</code> adds four matrices to <code>traffic_skims_AM.omxz</code>: <code>DIST</code> (a copy of <code>SOV_TR_H_DIST__AM</code>), <code>walkTime</code>, <code>BIKE_LOGSUM</code>, and <code>BIKE_TIME</code>. As a result, the <strong>AM OMXZ file contains 79 matrices</strong>, compared with 75 in the original <code>traffic_skims_AM.omx</code>. The OMX counts in the table above are unchanged by these additions.</p>
 <hr />
 <h3 id="transit-skim-contents">Transit Skim Contents<a class="headerlink" href="#transit-skim-contents" title="Permanent link"> ¶</a></h3>
-<p>Transit skim files (5.5 GB each) contain transit level-of-service matrices for the same <strong>4,947 × 4,947 zone system</strong>. Each file includes skims for:</p>
+<p>Transit skim files contain transit level-of-service matrices for the same <strong>4,947 × 4,947 zone system</strong>. They include skims for:</p>
 <ul>
 <li><strong>Walk access (WALK)</strong>: Local (LOC), Premium (PRM), and Mixed (MIX) transit sub-modes</li>
 <li><strong>Park &amp; Ride (PNR)</strong>: Inbound (PNRIN) and Outbound (PNROUT) × LOC / PRM / MIX</li>
@@ -2448,86 +2393,38 @@
 </tr>
 </tbody>
 </table>
-<p><strong><code>transit_skims_PM.omx</code> contains 180 matrices</strong> (5 access groups × (9 LOC + 13 PRM + 14 MIX) = 180)</p>
+<p><strong><code>transit_skims_PM.omx</code> contains 180 matrices</strong> (5 access groups × (9 LOC + 13 PRM + 14 MIX) = 180).</p>
 <hr />
-<h2 id="disk-vs-memory-footprint">Disk vs. Memory Footprint<a class="headerlink" href="#disk-vs-memory-footprint" title="Permanent link"> ¶</a></h2>
-<h3 id="why-they-differ">Why they differ<a class="headerlink" href="#why-they-differ" title="Permanent link"> ¶</a></h3>
-<p>Skim files on disk are stored with <strong>HDF5 compression</strong>, so the file sizes reported in the folder are significantly smaller than what the data actually occupies when loaded. When a Python program (e.g. ActivitySim) reads a matrix, HDF5 decompresses it fully into a <strong>numpy array in RAM</strong> — the uncompressed size, not the on-disk size, is what consumes memory.</p>
+<h2 id="understanding-omx-and-omxz-compression">Understanding OMX and OMXZ Compression<a class="headerlink" href="#understanding-omx-and-omxz-compression" title="Permanent link"> ¶</a></h2>
+<p>OMX files use HDF5 compression to reduce disk storage. The <strong>on-disk size</strong> includes compressed matrix datasets and other file contents; the <strong>raw matrix data size</strong> is calculated from each matrix&rsquo;s dimensions and data type (<code>number of elements × bytes per value</code>), without loading the values.</p>
+<p>For scenario 585, the 12 <strong>original OMX files</strong> occupy <strong>45.72 GiB on disk</strong>, while their matrices represent approximately <strong>232.84 GiB of uncompressed data</strong> (about <strong>5.09×</strong> the on-disk size). For scale, a 4,947 × 4,947 <code>float64</code> matrix represents approximately 186.7 MiB of raw data, compared with 93.4 MiB for <code>float32</code>.</p>
+<p>ABM3 uses <a href="https://pypi.org/project/wring/"><code>wring omx</code></a> to create the <code>.omxz</code> copies. By default, this conversion downcasts <code>float64</code> matrices to <code>float32</code> and uses different compression. For the <strong>traffic and transit skims</strong>, converting the original matrices to <code>float32</code> reduces their <em>baseline</em> theoretical dense-array payload from approximately <strong>232.7 GiB</strong> to <strong>116.3 GiB</strong>, assuming all corresponding matrices are converted. This estimate <strong>excludes the four additional AM OMXZ matrices created during resident preprocessing</strong>, and is not a measured ActivitySim memory requirement. The actual compressed OMXZ file sizes have not been measured in this report.</p>
 <blockquote>
-<p><strong>Rule of thumb:</strong> disk size = compressed; memory size = always uncompressed (4,947 × 4,947 × bytes per dtype).</p>
+<p><strong>Note:</strong> These raw matrix totals are estimates of dense, uncompressed data—not measured peak ActivitySim RAM usage. Actual memory use depends on which matrices are loaded, as well as caching, temporary arrays, and multiprocessing behavior. The estimates for the original OMX files should not be interpreted as the amount of RAM ActivitySim uses to read OMXZ skims.</p>
 </blockquote>
-<h3 id="pm-period-disk-vs-memory">PM period: disk vs. memory<a class="headerlink" href="#pm-period-disk-vs-memory" title="Permanent link"> ¶</a></h3>
-<table>
-<thead>
-<tr>
-<th>File</th>
-<th style="text-align: center;">Matrices</th>
-<th style="text-align: right;">On-disk (compressed)</th>
-<th style="text-align: right;">In memory (uncompressed)</th>
-<th style="text-align: center;">Compression ratio</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>traffic_skims_PM.omx</code></td>
-<td style="text-align: center;">75</td>
-<td style="text-align: right;">3.7 GB</td>
-<td style="text-align: right;">13.7 GB</td>
-<td style="text-align: center;">~3.7×</td>
-</tr>
-<tr>
-<td><code>transit_skims_PM.omx</code></td>
-<td style="text-align: center;">180</td>
-<td style="text-align: right;">5.5 GB</td>
-<td style="text-align: right;">32.9 GB</td>
-<td style="text-align: center;">~6.0×</td>
-</tr>
-<tr>
-<td><strong>Total (PM only)</strong></td>
-<td style="text-align: center;"><strong>255</strong></td>
-<td style="text-align: right;"><strong>9.2 GB</strong></td>
-<td style="text-align: right;"><strong>~46.7 GB</strong></td>
-<td style="text-align: center;"></td>
-</tr>
-</tbody>
-</table>
-<p>Transit compresses much better than traffic because many transit OD pairs are zero (sparse matrices), which HDF5 handles very efficiently.</p>
-<h3 id="all-5-time-periods-loaded-simultaneously">All 5 time periods loaded simultaneously<a class="headerlink" href="#all-5-time-periods-loaded-simultaneously" title="Permanent link"> ¶</a></h3>
-<table>
-<thead>
-<tr>
-<th></th>
-<th style="text-align: center;">Matrices</th>
-<th style="text-align: right;">Disk (compressed)</th>
-<th style="text-align: right;">Memory (uncompressed)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Traffic (5 periods)</td>
-<td style="text-align: center;">375</td>
-<td style="text-align: right;">~18.5 GB</td>
-<td style="text-align: right;">~68.5 GB</td>
-</tr>
-<tr>
-<td>Transit (5 periods)</td>
-<td style="text-align: center;">900</td>
-<td style="text-align: right;">~27.5 GB</td>
-<td style="text-align: right;">~164.5 GB</td>
-</tr>
-<tr>
-<td><strong>Grand total</strong></td>
-<td style="text-align: center;"><strong>1,275</strong></td>
-<td style="text-align: right;"><strong>~46 GB</strong></td>
-<td style="text-align: right;"><strong>~233 GB</strong></td>
-</tr>
-</tbody>
-</table>
-<h3 id="practical-implications">Practical implications<a class="headerlink" href="#practical-implications" title="Permanent link"> ¶</a></h3>
+<p>During model execution, the original <code>.omx</code> files and temporary <code>.omxz</code> copies can coexist and <strong>both contribute to disk usage</strong>. However, under default settings the <code>.omxz</code> copies are deleted before completion. Therefore, the <strong>286.52 GiB completed-run total excludes OMXZ</strong> and cannot be used to determine peak temporary disk requirements.</p>
+<h2 id="reproducing-the-results">Reproducing the Results<a class="headerlink" href="#reproducing-the-results" title="Permanent link"> ¶</a></h2>
+<p>The measurements above were generated with standalone tools in the ABM repository&rsquo;s <a href="https://github.com/SANDAG/ABM/tree/main/scripts/utilities"><code>scripts/utilities/</code></a> directory:</p>
 <ul>
-<li><strong>dtype matters.</strong> All matrices are currently <code>float64</code> (8 bytes/cell). Casting to <code>float32</code> (4 bytes/cell) would halve memory usage to ~116 GB across all periods. Many attributes such as XFERS, TOLLCOST, and FARE do not require float64 precision.</li>
-<li><strong>Removing matrices saves more memory than disk space.</strong> For example, the 15 SOV_NT matrices occupy only ~740 MB on disk but consume ~2.7 GB in RAM when loaded.</li>
+<li><a href="https://github.com/SANDAG/ABM/blob/main/scripts/utilities/report_folder_sizes.py"><code>report_folder_sizes.py</code></a> — scans a scenario root and summarizes immediate files and subdirectories, including the nested contents of each directory.</li>
+<li><a href="https://github.com/SANDAG/ABM/blob/main/scripts/utilities/report_omx_sizes.py"><code>report_omx_sizes.py</code></a> — scans OMX files within a directory and reports disk size, matrix counts, and theoretical dense-array sizes.</li>
 </ul>
+<p>From the ABM repository root, run the following commands, replacing the example path with the local location of scenario 585:</p>
+<div class="highlight"><pre><span></span><code><span class="n">python</span> <span class="n">scripts</span><span class="p">/</span><span class="n">utilities</span><span class="p">/</span><span class="n">report_folder_sizes</span><span class="p">.</span><span class="n">py</span> <span class="s2">&quot;C:\path\to\scenario_585&quot;</span>
+<span class="n">python</span> <span class="n">scripts</span><span class="p">/</span><span class="n">utilities</span><span class="p">/</span><span class="n">report_omx_sizes</span><span class="p">.</span><span class="n">py</span> <span class="s2">&quot;C:\path\to\scenario_585\output\skims&quot;</span>
+</code></pre></div>
+<p>If <code>.omxz</code> files are still present during a run (or retained by a non-default workflow), their <strong>on-disk sizes</strong> can be reported with <code>--no-matrices</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="n">python</span> <span class="n">scripts</span><span class="p">/</span><span class="n">utilities</span><span class="p">/</span><span class="n">report_omx_sizes</span><span class="p">.</span><span class="n">py</span> <span class="s2">&quot;C:\path\to\scenario_585\output\skims&quot;</span> <span class="p">-</span><span class="n">-pattern</span> <span class="s2">&quot;*.omxz&quot;</span> <span class="p">-</span><span class="n">-no-matrices</span>
+</code></pre></div>
+<p>This command will not find OMXZ files in a completed <strong>default</strong> run because they have already been removed.</p>
+<p>To inspect individual PM-period OMX matrices:</p>
+<div class="highlight"><pre><span></span><code><span class="n">python</span> <span class="n">scripts</span><span class="p">/</span><span class="n">utilities</span><span class="p">/</span><span class="n">report_omx_sizes</span><span class="p">.</span><span class="n">py</span> <span class="s2">&quot;C:\path\to\scenario_585\output\skims&quot;</span> <span class="p">-</span><span class="n">-pattern</span> <span class="s2">&quot;*_PM.omx&quot;</span> <span class="p">-</span><span class="n">-details</span>
+</code></pre></div>
+<p>To list the matrices in the midday highway skim—including the additional <code>TRK_TIME__MD</code>—use the following command if <code>uv</code> is installed:</p>
+<div class="highlight"><pre><span></span><code><span class="n">uv</span> <span class="n">run</span> <span class="p">-</span><span class="n">-with</span> <span class="n">openmatrix</span> <span class="n">python</span> <span class="n">scripts</span><span class="p">/</span><span class="n">utilities</span><span class="p">/</span><span class="n">report_omx_sizes</span><span class="p">.</span><span class="n">py</span> <span class="s2">&quot;T:\path\to\scenario_585\output\skims&quot;</span> <span class="p">-</span><span class="n">-pattern</span> <span class="s2">&quot;traffic_skims_MD.omx&quot;</span> <span class="p">-</span><span class="n">-details</span>
+</code></pre></div>
+<p>This lists all matrices in <code>traffic_skims_MD.omx</code>; it does not determine whether the extra matrix is needed by the model.</p>
+<p>The folder-size utility uses Python&rsquo;s standard library. Matrix inspection in the OMX utility requires <code>openmatrix</code> (<code>python -m pip install openmatrix</code>). Consult the <a href="https://github.com/SANDAG/ABM/blob/main/scripts/utilities/README.md">utilities README</a> for further options, including CSV export and running OMX file-size analysis without matrix inspection.</p>
 
 
 
