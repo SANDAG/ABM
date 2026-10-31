@@ -2,9 +2,9 @@
 
 ## Runtime Summary
 
-The table below summarizes runtime for the **2040 forecast-year scenario (scenario ID 584)**. Timings are taken from `output/runtime_summary.csv` for this run. Runtime can vary with scenario configuration, model version, hardware, and execution conditions.
+The table below summarizes runtime for the **2040 forecast-year scenario (scenario ID 584)**. Timings are taken from `output/runtime_summary.csv` for this run. Runtime can vary with scenario configuration, model version, hardware, and execution conditions. The totals below exclude the post-run copy of project data to the remote drive (2:22:51), since model execution is complete before that step.
 
-**Total Run Time: 26:32:12**
+**Total Model Run Time (excluding post-run copy): 24:09:21**
 
 ### Pre-Processing
 
@@ -71,7 +71,7 @@ The table below summarizes runtime for the **2040 forecast-year scenario (scenar
 | Commercial vehicle model | 0:31:31 |
 | Create TOD auto trip tables | 0:03:42 |
 
-### Iteration 4 (Final) — 5:18:05
+### Iteration 4 (Final) — 2:55:14
 
 | Step | Runtime |
 |------|---------|
@@ -84,4 +84,3 @@ The table below summarizes runtime for the **2040 forecast-year scenario (scenar
 | Exporting MGRA-level travel times | 0:38:00 |
 | Deleting OMXZ skims | 0:00:06 |
 | Writing model output to datalake | 0:18:41 |
-| Copy project data to remote drive | 2:22:51 |
