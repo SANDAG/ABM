@@ -1,28 +1,39 @@
 # 🚦 SANDAG ABM Roadmap
-**Last Updated:** Jul 2026 (Q3 Update)
-**Next Scheduled Review:** October 2026
+**Last Updated:** November 2026 
+**Next Scheduled Review:** January 2027
 
-## 🟢 Now (3-6 months)
-*Target: Remove all Java/CT-Ramp code and prepare for base year update to 2025*
-- [x] **Taxi/TNC Routing Model Update:** Convert from Java to Python and make behavioral improvements.
-- [x] **HH AV Allocation Update:** Convert from Java to Python and make behavioral improvements.
-- [x] **ActivitySim Version Upgrade:** Upgrade to latest ActivitySim version (v1.5.1).
-- [x] **Population Sim Upgrade:** Upgrade to latest populationsim version and make process improvements.
-- [ ] **Remove all Java code:** Make the codebase purely Python.
-- [ ] **Improve CVM performance:** Implement multiprocessing and improve runtime.
-- [ ] **Resident Model Performance Improvement:** Improve runtime and memory requirements for the resident model by enabling Sharrow mode.
+SANDAG is transitioning from ABM3 modernization to ABM4 development, with an emphasis on updating the model base year, improving performance, and preparing for the 2029 Regional Plan.
 
-## 🟡 Next (6-12 months)
-*Target: Initial improvements for 2029 Regional Plan Modeling*
-- [ ] **Highway Assignment Updates:** Explore updates to highway assignment processes.
-- [ ] **Bike Model Sensitivity:** Perform extensive sensitivity testing and develop assignment procedure in Python.
-- [ ] **Commercial Vehicle Model Update:** Improve behavioral aspects.
-- [ ] **AV Testing:** Further testing of AV features following conversion to Python.
+## ✅ Recently Completed (2026)
 
-## 🔵 Later (12+ months)
-*Target: Long-term Innovation*
-- [ ] **AV Enhancement:** Improve treatment of AVs.
-- [ ] **Micro-Transit Enhancement:** Improve treatment of Micro-Transit modes.
-- [ ] **Transit Assignment Updates:** Explore updates to transit assignment procedures.
-- [ ] **Azure VM Setup:** Seamlessly run the model on cloud.
+- [x] **Airport Model Update:** Updated San Diego International Airport ground access models using the 2024 airport survey.
+- [x] **Java Modernization:** Converted remaining Java-based model programs to Python and removed legacy Java code.
+- [x] **ActivitySim Upgrade:** Upgraded to ActivitySim v1.5.1.
+- [x] **PopulationSim Improvements:** Upgraded PopulationSim and improved population synthesis processes.
+- [x] **CVM Multiprocessing:** Enabled multiprocessing to significantly reduce Commercial Vehicle Model runtime.
+
+## 🟢 Now (Q4 2026 – Spring 2027)
+*Target: Initial ABM4 release and preparation for the 2025 base-year update.*
+- [ ] **ABM4 (v16.0.0):** Prepare the next major model release, targeting Spring 2027.
+- [ ] **2025 Base Year:** Update model inputs and assemble observed data for calibration and validation.
+- [ ] **Resident Model Performance:** Evaluate Sharrow to reduce ActivitySim runtime and memory requirements.
+- [ ] **AV Scenario Readiness:** Test automated vehicle features and review assumptions for future-year scenarios.
+- [ ] **Open-Source Highway Assignment:** Conduct a proof of concept to evaluate alternatives to the existing assignment platform.
+- [ ] **Commercial Vehicle Model:** Evaluate improvements to behavioral components.
+
+## 🟡 Next (Mid–Late 2027)
+*Target: Advance calibration, validation, and capabilities for the 2029 Regional Plan.*
+- [ ] **2025 Base-Year Calibration:** Calibrate and validate model outputs using updated observed data.
+- [ ] **Bike Model Enhancements:** Conduct sensitivity testing and develop a Python-based assignment procedure.
+- [ ] **AV Scenario Testing:** Assess travel behavior and system impacts under alternative AV assumptions.
+
+## 🔵 Later (2028+ / Exploratory)
+*Target: Longer-term model enhancements, subject to priorities and resources.*
+- [ ] **AV Enhancements:** Refine representation of automated vehicle behavior and adoption.
+- [ ] **Microtransit Enhancements:** Improve treatment of flexible and on-demand transit services.
+- [ ] **Transit Assignment:** Explore enhancements to transit assignment procedures.
+- [ ] **Cloud Execution:** Evaluate running the model on Azure virtual machines.
       
+---
+
+*This roadmap is reviewed quarterly. Priorities and timelines are subject to change based on Regional Plan requirements, project needs, and available resources.*
