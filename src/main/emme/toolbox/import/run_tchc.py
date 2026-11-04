@@ -101,6 +101,7 @@ class TCHCLink:
     to_node_identifier: int
 
     # speed (coded or default from mspd[fc])
+    is_rural: bool = False             # rural area indicator
     speed: int = 35
     alt_speed: int = 35
 
@@ -918,6 +919,7 @@ def build_link(row, cross_tables):
         directionality=2 if row.WAY in TWO_WAY_CODES else 1,
         station_identifier=integer(row.COSTAT),
         project_identifier=integer(row.PROJ),
+        is_rural=bool(row.is_rural),
         from_node_identifier=from_node,
         to_node_identifier=to_node,
         speed=integer(row.SPD),
@@ -1298,7 +1300,7 @@ class RunTCHC(_m.Tool()):
                 })
                 incomplete_inputs.append(col)
         for col in REQUIRED_BA_COLUMNS:
-            if (links.loc[col].isna() & two_way_mask(links) & (links['FC'] != 99)).any():
+            if (links[col].isna() & two_way_mask(links) & (links['FC'] != 99)).any():
                 self._log.append({
                     "type": "text",
                     "content": "Column %s contains missing values at HWYCOV0_ID(s) %s" % (
