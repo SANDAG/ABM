@@ -13,4 +13,4 @@ uv run python run_cvm.py <path to data folder> <path to configs folder> <path to
 ```
 
 # Run CVM as part of ABM3
-ABM3 runs CVM through `src/main/resources/cvm.bat`. For details, refer to the model user guide.
+ABM3 runs CVM through `src/main/resources/cvm.bat`. Refer to this file for more details.
