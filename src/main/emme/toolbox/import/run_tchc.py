@@ -127,6 +127,7 @@ class TCHCLink:
     intersection_delay_minutes_by_period_and_direction: List[List[float]] = field(default_factory=lambda: [[0, 0], [0, 0], [0, 0]])
     hourly_capacity_by_period_and_direction: List[List[float]] = field(default_factory=lambda: [[0, 0], [0, 0], [0, 0]])
     period_capacity_by_period_and_direction: List[List[float]] = field(default_factory=lambda: [[999999, 999999], [999999, 999999], [999999, 999999]])
+    intersection_hourly_capacity_by_period_and_direction: List[List[float]] = field(default_factory=lambda: [[999999, 999999], [999999, 999999], [999999, 999999]])
     intersection_capacity_by_period_and_direction: List[List[float]] = field(default_factory=lambda: [[999999, 999999], [999999, 999999], [999999, 999999]])
 
     # resolved from the lookup tables and written back; None where nothing was resolved
@@ -310,7 +311,7 @@ def apply_tchc(link, ctx):
 
             else:
                 # arterials (fc 2-7): check plc==950 override
-                if link.planned_lane_capacity_by_direction[direction_index] == 950 and lane_count < 2:
+                if link.planned_lane_capacity_by_direction[direction_index] == 950 and lane_count < 2 and link.is_rural:
                     directional_capacity = 950.0
                 else:
                     directional_capacity = lane_count * 1800.0 - 300.0
@@ -374,7 +375,7 @@ def apply_tchc(link, ctx):
                 )
                 if directional_capacity < 1000.0:
                     directional_capacity = 1000.0
-                link.hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
+                link.intersection_hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
 
             elif control_type == 2:  # 4-way stop (FORTRAN 620)
                 link.intersection_delay_minutes_by_period_and_direction[period_index][direction_index] = 0.20
@@ -394,7 +395,7 @@ def apply_tchc(link, ctx):
                 )
                 if directional_capacity < 500.0:
                     directional_capacity = 500.0
-                link.hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
+                link.intersection_hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
 
             elif control_type == 3:  # 2-way stop (FORTRAN 630)
                 link.intersection_delay_minutes_by_period_and_direction[period_index][direction_index] = 0.20
@@ -414,7 +415,7 @@ def apply_tchc(link, ctx):
                 )
                 if directional_capacity < 500.0:
                     directional_capacity = 500.0
-                link.hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
+                link.intersection_hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
 
             elif control_type == 4 and period_index > 0:  # ramp meter off-peak (FORTRAN 640)
                 link.intersection_delay_minutes_by_period_and_direction[period_index][direction_index] = 0.50
@@ -422,7 +423,7 @@ def apply_tchc(link, ctx):
                 if link.green_cycle_value_by_direction[direction_index] >= 1:
                     green_cycle_through_factor = link.green_cycle_value_by_direction[direction_index] / 100.0
                     directional_capacity *= green_cycle_through_factor
-                link.hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
+                link.intersection_hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
 
             elif control_type == 5 and period_index > 0:  # ramp meter on-peak (FORTRAN 650)
                 link.intersection_delay_minutes_by_period_and_direction[period_index][direction_index] = 0.50
@@ -430,7 +431,7 @@ def apply_tchc(link, ctx):
                 if link.green_cycle_value_by_direction[direction_index] >= 1:
                     green_cycle_through_factor = link.green_cycle_value_by_direction[direction_index] / 100.0
                     directional_capacity *= green_cycle_through_factor
-                link.hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
+                link.intersection_hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
 
             elif control_type == 6:  # rail crossing (FORTRAN 660)
                 link.intersection_delay_minutes_by_period_and_direction[period_index][direction_index] = 0.02
@@ -446,7 +447,7 @@ def apply_tchc(link, ctx):
                     + link.auxiliary_lane_count_by_direction[direction_index] * 1200.0
                 )
                 
-                link.hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
+                link.intersection_hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
                 link.intersection_delay_minutes_by_period_and_direction[period_index][direction_index] = 1.0
 
             # FME final outputs use the final HCAP, not the pre-control base.
@@ -1341,7 +1342,24 @@ class RunTCHC(_m.Tool()):
 
         if self.dry_run:
             self._log.append({"type": "text", "content": "Dry run: the geodatabase was not modified"})
-            output_columns = ["HWYCOV0_ID"] + list(dict.fromkeys(
+            output_columns = ["HWYCOV0_ID", 
+                              "FC", 
+                              "NM", 
+                              "ABCNT", 
+                              "BACNT", 
+                              "DIR", 
+                              "HOV", 
+                              "MED", 
+                              "COSTAT", 
+                              "ABLNEA", 
+                              "ABLNA", 
+                              "ABLNMD", 
+                              "ABLNDP", 
+                              "ABLNEV",
+                              "ABTL",
+                              "ABRL",
+                              "ABLL"
+] + list(dict.fromkeys(
                 [name for _, _, _, name in OUTPUT_FIELDS]
                 + [name for _, _, name in DIRECTIONAL_OUTPUT_FIELDS]
             ))
