@@ -479,7 +479,7 @@ The report files are produced by the SANDAG travel model.
 </table>
 
 
-### Loaded Highway Network by ABM Five Time of Day (hwyload_<<TOD>>.csv) (.\hwyload.csv)
+### Loaded Highway Network by ABM Five Time of Day (hwyload_&lt;TOD&gt;.csv) (.\hwyload.csv)
 
 <table>
   <tr>
