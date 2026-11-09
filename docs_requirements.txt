@@ -1,16 +1,3 @@
-fontawesome_markdown
-json5
-jsonschema
-Markdown
-markdown-it-py
-mike
-mkdocs
-mkdocs-autorefs
-mkdocs-awesome-pages-plugin
-mkdocs-jupyter
-mkdocs-material
-mkdocs-material-extensions
-mkdocstrings==0.27.0
-mkdocstrings-python
-mkdocs-table-reader-plugin
-mkdocs-mermaid2-plugin
+# Docs toolchain: Zensical builds the site from mkdocs.yml.
+# Pinned so every build is reproducible; bump it on purpose.
+zensical==0.1.0

@@ -2394,4 +2394,4 @@ The table below contains brief descriptions of the input files required to execu
     </tr>
 </table>
 
-<a href="#top">Go To Top</a>
+<a href="#">Go To Top</a>
