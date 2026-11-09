@@ -50,6 +50,8 @@ src/main/resources/pskill.exe
 
 # Docs build output (zensical build / serve)
 /site/
+# Local docs environment (see docs/README.md)
+/.venv/
 
 src/asim-cvm/data/
 src/asim-cvm/output/

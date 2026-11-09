@@ -28,3 +28,4 @@ For detailed information on how the model works, including setup instructions an
 
 [SANDAG ABM Documentation](https://sandag.github.io/ABM/)
 
+To edit the documentation or build it locally, see [docs/README.md](docs/README.md).
