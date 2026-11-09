@@ -7,6 +7,7 @@ use_directory_urls: false
 theme:
   name: material
   variant: classic
+  custom_dir: overrides
   features:
     - navigation.tabs
     - navigation.indexes
@@ -94,6 +95,7 @@ extra:
   version:
     provider: mike
     default: latest
+    alias: true
 
 extra_css:
   - stylesheets/extra.css

@@ -6,6 +6,7 @@ The ABM documentation site, https://sandag.github.io/ABM/, is built from the Mar
 |---|---|
 | `docs/` | The pages (Markdown), images, and `stylesheets/extra.css` |
 | `mkdocs.yml` | Site settings and the navigation menu (`nav:`) |
+| `overrides/main.html` | The banner shown on every version except the latest release |
 | `docs_requirements.txt` | The build tools, with pinned versions |
 | `.github/workflows/docs.yml` | The GitHub Actions workflow that builds and publishes the site |
 
