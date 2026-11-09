@@ -1,3 +1,6 @@
 # Docs toolchain: Zensical builds the site from mkdocs.yml.
 # Pinned so every build is reproducible; bump it on purpose.
 zensical==0.1.0
+# Versioned docs: the Zensical team's fork of mike, pinned to a commit.
+# It is not on PyPI, and it is a stopgap until Zensical ships native versioning.
+mike @ git+https://github.com/squidfunk/mike.git@2d4ad799442f4592db8ad53b179bfb33db8c69ac
