@@ -38,6 +38,16 @@ uv run --python .venv zensical build --strict
 
 A clean build ends with "No issues found". Otherwise, each problem (a broken link, for example) is listed with its file and line, and the build stops with "Aborted because --strict flag is set". The built site goes into `site/`, which git ignores.
 
+## How the site is published
+
+The Docs workflow (`.github/workflows/docs.yml`) publishes the site with [mike](https://github.com/squidfunk/mike), which keeps a separate copy of the docs for each version on the `gh-pages` branch:
+
+- Every push to `main` updates **dev**, the docs for unreleased work.
+- Every release tag `vX.Y.Z` adds version **X.Y.Z**. If it is the highest release so far, **latest** moves to it. Pre-release tags such as `v16.0.0-rc1` are published, but never become latest.
+- The site's front page redirects to **latest**. Readers can switch versions from the menu next to the site title, or go straight to one, for example https://sandag.github.io/ABM/dev/.
+
+Pull requests that change the docs get the strict build check automatically. Nothing is published until the change reaches `main`.
+
 ## Tips
 
 - A new page appears in the menu only after you add it under `nav:` in `mkdocs.yml`.
