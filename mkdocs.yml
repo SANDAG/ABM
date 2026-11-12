@@ -1,5 +1,5 @@
 site_name: "SANDAG ABM3"
-site_url: https://sandag.github.io/abm
+site_url: https://sandag.github.io/ABM/
 repo_url: https://github.com/SANDAG/ABM
 
 use_directory_urls: false
