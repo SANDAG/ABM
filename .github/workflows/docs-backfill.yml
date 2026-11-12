@@ -1,0 +1,128 @@
+name: Docs backfill
+
+# One-time setup for the versioned docs site. Run it from the Actions tab
+# ("Run workflow") once the Docs workflow is on main. It:
+#   1. publishes the listed older releases from their tags, built with the
+#      MkDocs tools they were written for, plus the version banner and the
+#      "latest" label the current docs have;
+#   2. points "latest" at the highest release, and the front page at latest;
+#   3. replaces the old single-version pages with forwarding pages, so
+#      existing links open the same page in the latest release, and uses
+#      latest's "page not found" page for addresses that don't exist.
+# It is safe to run again, for example with one more old release tag.
+
+on:
+  workflow_dispatch:
+    inputs:
+      releases:
+        description: Release tags to publish, separated by spaces
+        required: true
+        default: v15.0.2 v15.1.0 v15.2.2 v15.3.1 v15.4.2 v15.5.1
+
+jobs:
+  backfill:
+    name: Publish older releases and switch the site over
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # pushes to the gh-pages branch
+    concurrency:
+      group: gh-pages # never at the same time as a Docs publish
+      cancel-in-progress: false
+    env:
+      RELEASES: ${{ inputs.releases }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install the MkDocs tools the older releases were written for
+        run: >-
+          pip install
+          mkdocs==1.6.1
+          mkdocs-material==9.8.1
+          mkdocs-autorefs==1.4.5
+          mkdocs-jupyter==0.27.0
+          mkdocs-mermaid2-plugin==1.2.3
+          mkdocs-table-reader-plugin==4.0.2
+          mkdocstrings==0.27.0
+          mkdocstrings-python==1.13.0
+          mike==2.2.0
+      - name: Get the published site and the release tags
+        run: |
+          git fetch origin gh-pages --depth=1
+          for tag in $RELEASES; do
+            if ! [[ "$tag" =~ ^v[0-9]+(\.[0-9]+)*$ ]]; then
+              echo "::error::'$tag' is not a release tag like v15.3.1"
+              exit 1
+            fi
+            git fetch --depth=1 origin "refs/tags/$tag:refs/tags/$tag"
+          done
+      - name: Set the author of the commits
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Publish the older releases
+        run: |
+          for tag in $RELEASES; do
+            src="$RUNNER_TEMP/$tag"
+            mkdir -p "$src"
+            git archive "$tag" mkdocs.yml docs | tar -x -C "$src"
+            # Add the version banner, the "latest" label and the site's correct
+            # address (GitHub Pages addresses are case-sensitive), without editing the tag
+            cp -r overrides "$src/"
+            printf '%s\n' 'INHERIT: mkdocs.yml' 'site_url: https://sandag.github.io/ABM/' \
+              'theme:' '  custom_dir: overrides' \
+              'extra:' '  version:' '    alias: true' > "$src/mkdocs.backfill.yml"
+            mike deploy --config-file "$src/mkdocs.backfill.yml" \
+              --message "Deployed $tag to ${tag#v} (backfill)" "${tag#v}"
+          done
+      - name: Point latest at the highest release, and the front page at latest
+        run: |
+          highest=$(mike list --json | jq -r '.[].version' \
+            | grep -E '^[0-9]+(\.[0-9]+)*$' | sort -V | tail -n 1)
+          current=$(mike list --json | jq -r '.[] | select(.aliases | index("latest")) | .version')
+          if [ "$current" != "$highest" ]; then
+            mike alias --update-aliases "$highest" latest
+          fi
+          mike set-default latest
+      - name: Forward the old page addresses to latest
+        run: |
+          git worktree add "$RUNNER_TEMP/site" gh-pages
+          cd "$RUNNER_TEMP/site"
+          python - <<'PY'
+          import html, json, pathlib
+
+          site = pathlib.Path(".")
+          versions = json.loads((site / "versions.json").read_text())
+          published = {v["version"] for v in versions} | {a for v in versions for a in v["aliases"]}
+          stub = """<!doctype html>
+          <html lang="en">
+          <head>
+          <meta charset="utf-8">
+          <title>Moved to the latest release</title>
+          <link rel="canonical" href="{href}">
+          <meta http-equiv="refresh" content="0; url={href}">
+          <script>location.replace({js} + location.search + location.hash)</script>
+          </head>
+          <body>This page moved to the <a href="{href}">latest release of the docs</a>.</body>
+          </html>
+          """
+          count = 0
+          for page in sorted(site.rglob("*.html")):
+              rel = page.relative_to(site)
+              # Leave the versions, the front page and the 404 page alone
+              if rel.parts[0] in published or rel.as_posix() in ("index.html", "404.html"):
+                  continue
+              up = "../" * (len(rel.parts) - 1)
+              # Same page in latest if it still exists there, else latest's home page
+              target = up + ("latest/" + rel.as_posix() if (site / "latest" / rel).exists() else "latest/")
+              page.write_text(stub.format(href=html.escape(target), js=json.dumps(target)), encoding="utf-8")
+              count += 1
+          print(f"Forwarding {count} old pages to the latest release")
+          PY
+          # GitHub shows the root 404.html for every missing address; use latest's
+          cp latest/404.html 404.html
+          git add -A
+          git diff --cached --quiet || git commit -m "Forward old page addresses to the latest release"
+      - name: Publish
+        run: git push origin gh-pages
