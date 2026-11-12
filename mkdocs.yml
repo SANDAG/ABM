@@ -6,6 +6,8 @@ use_directory_urls: false
 
 theme:
   name: material
+  variant: classic
+  custom_dir: overrides
   features:
     - navigation.tabs
     - navigation.indexes
@@ -32,20 +34,7 @@ theme:
 plugins:
   - autorefs
   - mike
-  - mkdocs-jupyter:
-      include_source: True
-  - mkdocstrings:
-      default_handler: python
-      enable_inventory: true
-      handlers:
-          rendering:
-            show_root_heading: false
-            show_source: true
-            heading_level: 3
-     # custom_templates: templates
   - search
-  - table-reader
-  - mermaid2
 
 nav:
   - Home: index.md
@@ -106,6 +95,7 @@ extra:
   version:
     provider: mike
     default: latest
+    alias: true
 
 extra_css:
   - stylesheets/extra.css
@@ -137,7 +127,7 @@ markdown_extensions:
       custom_fences:
         - name: mermaid
           class: mermaid
-          format: !!python/name:mermaid2.fence_mermaid_custom
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.arithmatex:
       generic: true
   

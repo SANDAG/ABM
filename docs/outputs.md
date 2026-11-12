@@ -1298,21 +1298,21 @@ There are two subdirectories containing outputs for each of the two airport mode
    </td>
   </tr>
   <tr>
-   <td>SR2_&lt;<time period>>
+   <td>SR2_&lt;time period&gt;
    </td>
-   <td>Shared Ride 2 for &lt;<time period>>
-   </td>
-  </tr>
-  <tr>
-   <td>SR3_&lt;<time period>>
-   </td>
-   <td>Shared Ride 3 for &lt;<time period>>
+   <td>Shared Ride 2 for &lt;time period&gt;
    </td>
   </tr>
   <tr>
-   <td>SOV_&lt;<time period>>
+   <td>SR3_&lt;time period&gt;
    </td>
-   <td>Drive Alone for &lt;<time period>>
+   <td>Shared Ride 3 for &lt;time period&gt;
+   </td>
+  </tr>
+  <tr>
+   <td>SOV_&lt;time period&gt;
+   </td>
+   <td>Drive Alone for &lt;time period&gt;
    </td>
   </tr>
   <tr>
@@ -1332,73 +1332,73 @@ There are two subdirectories containing outputs for each of the two airport mode
    </td>
   </tr>
   <tr>
-   <td>WLK_SET_set1_&lt;<time period>>
+   <td>WLK_SET_set1_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>PNR_SET_set1_&lt;<time period>>
+   <td>PNR_SET_set1_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>KNR_SET_set1_&lt;<time period>>
+   <td>KNR_SET_set1_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>TNC_SET_set1_&lt;<time period>>
+   <td>TNC_SET_set1_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>WLK_SET_set2_&lt;<time period>>
+   <td>WLK_SET_set2_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>PNR_SET_set2_&lt;<time period>>
+   <td>PNR_SET_set2_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>KNR_SET_set2_&lt;<time period>>
+   <td>KNR_SET_set2_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>TNC_SET_set2_&lt;<time period>>
+   <td>TNC_SET_set2_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>WLK_SET_set3_&lt;<time period>>
+   <td>WLK_SET_set3_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>PNR_SET_set3_&lt;<time period>>
+   <td>PNR_SET_set3_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>KNR_SET_set3_&lt;<time period>>
+   <td>KNR_SET_set3_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>TNC_SET_set3_&lt;<time period>>
+   <td>TNC_SET_set3_&lt;time period&gt;
    </td>
    <td>
    </td>
@@ -1420,15 +1420,15 @@ There are two subdirectories containing outputs for each of the two airport mode
    </td>
   </tr>
   <tr>
-   <td>WALK_&lt;<time period>>
+   <td>WALK_&lt;time period&gt;
    </td>
-   <td>Walk for &lt;<time period>>
+   <td>Walk for &lt;time period&gt;
    </td>
   </tr>
   <tr>
-   <td>BIKE_&lt;<time period>>
+   <td>BIKE_&lt;time period&gt;
    </td>
-   <td>Bike for &lt;<time period>>
+   <td>Bike for &lt;time period&gt;
    </td>
   </tr>
   <tr>
@@ -2284,27 +2284,27 @@ This directory contains trip tables from auto and transit assignments.
    </td>
   </tr>
   <tr>
-   <td>TNC_&lt;<time period>>_0
+   <td>TNC_&lt;time period&gt;_0
    </td>
-   <td>TNC trips for &lt;<time period>> with 0 passenger
-   </td>
-  </tr>
-  <tr>
-   <td>TNC_&lt;<time period>>_1
-   </td>
-   <td>TNC trips for &lt;<time period>> with 1 passenger
+   <td>TNC trips for &lt;time period&gt; with 0 passenger
    </td>
   </tr>
   <tr>
-   <td>TNC_&lt;<time period>>_2
+   <td>TNC_&lt;time period&gt;_1
    </td>
-   <td>TNC trips for &lt;<time period>> with 2 passengers
+   <td>TNC trips for &lt;time period&gt; with 1 passenger
    </td>
   </tr>
   <tr>
-   <td>TNC_&lt;<time period>>_3
+   <td>TNC_&lt;time period&gt;_2
    </td>
-   <td>TNC trips for &lt;<time period>> with 3 or more passengers
+   <td>TNC trips for &lt;time period&gt; with 2 passengers
+   </td>
+  </tr>
+  <tr>
+   <td>TNC_&lt;time period&gt;_3
+   </td>
+   <td>TNC trips for &lt;time period&gt; with 3 or more passengers
    </td>
   </tr>
 </table>
@@ -3128,21 +3128,21 @@ This directory contains outputs from the Crossborder model, which represents all
    </td>
   </tr>
   <tr>
-   <td>SR2_&lt;<time period>>
+   <td>SR2_&lt;time period&gt;
    </td>
-   <td>Shared Ride 2 for &lt;<time period>>
-   </td>
-  </tr>
-  <tr>
-   <td>SR3_&lt;<time period>>
-   </td>
-   <td>Shared Ride 3 for &lt;<time period>>
+   <td>Shared Ride 2 for &lt;time period&gt;
    </td>
   </tr>
   <tr>
-   <td>SOV_&lt;<time period>>
+   <td>SR3_&lt;time period&gt;
    </td>
-   <td>Drive Alone for &lt;<time period>>
+   <td>Shared Ride 3 for &lt;time period&gt;
+   </td>
+  </tr>
+  <tr>
+   <td>SOV_&lt;time period&gt;
+   </td>
+   <td>Drive Alone for &lt;time period&gt;
    </td>
   </tr>
   <tr>
@@ -3162,73 +3162,73 @@ This directory contains outputs from the Crossborder model, which represents all
    </td>
   </tr>
   <tr>
-   <td>WLK_SET_set1_&lt;<time period>>
+   <td>WLK_SET_set1_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>PNR_SET_set1_&lt;<time period>>
+   <td>PNR_SET_set1_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>KNR_SET_set1_&lt;<time period>>
+   <td>KNR_SET_set1_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>TNC_SET_set1_&lt;<time period>>
+   <td>TNC_SET_set1_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>WLK_SET_set2_&lt;<time period>>
+   <td>WLK_SET_set2_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>PNR_SET_set2_&lt;<time period>>
+   <td>PNR_SET_set2_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>KNR_SET_set2_&lt;<time period>>
+   <td>KNR_SET_set2_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>TNC_SET_set2_&lt;<time period>>
+   <td>TNC_SET_set2_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>WLK_SET_set3_&lt;<time period>>
+   <td>WLK_SET_set3_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>PNR_SET_set3_&lt;<time period>>
+   <td>PNR_SET_set3_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>KNR_SET_set3_&lt;<time period>>
+   <td>KNR_SET_set3_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>TNC_SET_set3_&lt;<time period>>
+   <td>TNC_SET_set3_&lt;time period&gt;
    </td>
    <td>
    </td>
@@ -3250,15 +3250,15 @@ This directory contains outputs from the Crossborder model, which represents all
    </td>
   </tr>
   <tr>
-   <td>WALK_&lt;<time period>>
+   <td>WALK_&lt;time period&gt;
    </td>
-   <td>Walk for &lt;<time period>>
+   <td>Walk for &lt;time period&gt;
    </td>
   </tr>
   <tr>
-   <td>BIKE_&lt;<time period>>
+   <td>BIKE_&lt;time period&gt;
    </td>
-   <td>Bike for &lt;<time period>>
+   <td>Bike for &lt;time period&gt;
    </td>
   </tr>
   <tr>
@@ -6648,39 +6648,39 @@ This directory contains San Diego resident travel model outputs.
    </td>
   </tr>
   <tr>
-   <td>SOVNOTRPDR_&lt;<time period>>
+   <td>SOVNOTRPDR_&lt;time period&gt;
    </td>
-   <td>Drive Alone Non-Transponder for &lt;<time period>>
-   </td>
-  </tr>
-  <tr>
-   <td>SOVTRPDR_&lt;<time period>>
-   </td>
-   <td>Drive Alone Transponder for &lt;<time period>>
+   <td>Drive Alone Non-Transponder for &lt;time period&gt;
    </td>
   </tr>
   <tr>
-   <td>SR2NOTRPDR_&lt;<time period>>
+   <td>SOVTRPDR_&lt;time period&gt;
    </td>
-   <td>Shared Ride 2 Non-Transponder for &lt;<time period>>
-   </td>
-  </tr>
-  <tr>
-   <td>SR2TRPDR_&lt;<time period>>
-   </td>
-   <td>Shared Ride 2 Transponder for &lt;<time period>>
+   <td>Drive Alone Transponder for &lt;time period&gt;
    </td>
   </tr>
   <tr>
-   <td>SR3NOTRPDR_&lt;<time period>>
+   <td>SR2NOTRPDR_&lt;time period&gt;
    </td>
-   <td>Shared Ride 3 Non-Transponder for &lt;<time period>>
+   <td>Shared Ride 2 Non-Transponder for &lt;time period&gt;
    </td>
   </tr>
   <tr>
-   <td>SR3TRPDR_&lt;<time period>>
+   <td>SR2TRPDR_&lt;time period&gt;
    </td>
-   <td>Shared Ride 3 Transponder for &lt;<time period>>
+   <td>Shared Ride 2 Transponder for &lt;time period&gt;
+   </td>
+  </tr>
+  <tr>
+   <td>SR3NOTRPDR_&lt;time period&gt;
+   </td>
+   <td>Shared Ride 3 Non-Transponder for &lt;time period&gt;
+   </td>
+  </tr>
+  <tr>
+   <td>SR3TRPDR_&lt;time period&gt;
+   </td>
+   <td>Shared Ride 3 Transponder for &lt;time period&gt;
    </td>
   </tr>
 </table>
@@ -6698,103 +6698,103 @@ This directory contains San Diego resident travel model outputs.
    </td>
   </tr>
   <tr>
-   <td>&lt;transit_class>_GENCOST__&lt;<time period>>
+   <td>&lt;transit_class>_GENCOST__&lt;time period&gt;
    </td>
    <td>Total generalized cost which includes perception factors from assignment
    </td>
   </tr>
   <tr>
-   <td>&lt;transit_class>_FIRSTWAIT__&lt;<time period>>
+   <td>&lt;transit_class>_FIRSTWAIT__&lt;time period&gt;
    </td>
    <td>actual wait time at initial boarding point
    </td>
   </tr>
   <tr>
-   <td>&lt;transit_class>_XFERWAIT__&lt;<time period>>
+   <td>&lt;transit_class>_XFERWAIT__&lt;time period&gt;
    </td>
    <td>actual wait time at all transfer boarding points
    </td>
   </tr>
   <tr>
-   <td>&lt;transit_class>_TOTALWAIT__&lt;<time period>>
+   <td>&lt;transit_class>_TOTALWAIT__&lt;time period&gt;
    </td>
    <td>total actual wait time
    </td>
   </tr>
   <tr>
-   <td>&lt;transit_class>_FARE__&lt;<time period>>
+   <td>&lt;transit_class>_FARE__&lt;time period&gt;
    </td>
    <td>fare paid
    </td>
   </tr>
   <tr>
-   <td>&lt;transit_class>_XFERS__&lt;<time period>>
+   <td>&lt;transit_class>_XFERS__&lt;time period&gt;
    </td>
    <td>number of transfers
    </td>
   </tr>
   <tr>
-   <td>&lt;transit_class>_ACCWALK__&lt;<time period>>
+   <td>&lt;transit_class>_ACCWALK__&lt;time period&gt;
    </td>
    <td>access actual walk time prior to initial boarding
    </td>
   </tr>
   <tr>
-   <td>&lt;transit_class>_EGRWALK__&lt;<time period>>
+   <td>&lt;transit_class>_EGRWALK__&lt;time period&gt;
    </td>
    <td>egress actual walk time after final alighting
    </td>
   </tr>
   <tr>
-   <td>&lt;transit_class>_TOTALWALK__&lt;<time period>>
+   <td>&lt;transit_class>_TOTALWALK__&lt;time period&gt;
    </td>
    <td>total actual walk time
    </td>
   </tr>
   <tr>
-   <td>&lt;transit_class>_TOTALIVTT__&lt;<time period>>
+   <td>&lt;transit_class>_TOTALIVTT__&lt;time period&gt;
    </td>
    <td>Total actual in-vehicle travel time
    </td>
   </tr>
   <tr>
-   <td>&lt;transit_class>_DWELLTIME__&lt;<time period>>
+   <td>&lt;transit_class>_DWELLTIME__&lt;time period&gt;
    </td>
    <td>Total dwell time at stops
    </td>
   </tr>
   <tr>
-   <td>&lt;transit_class>_BUSIVTT__&lt;<time period>>
+   <td>&lt;transit_class>_BUSIVTT__&lt;time period&gt;
    </td>
    <td>actual in-vehicle travel time on local bus mode
    </td>
   </tr>
   <tr>
-   <td>&lt;transit_class>_LRTIVTT__&lt;<time period>>
+   <td>&lt;transit_class>_LRTIVTT__&lt;time period&gt;
    </td>
    <td>actual in-vehicle travel time on LRT mode
    </td>
   </tr>
   <tr>
-   <td>&lt;transit_class> _CMRIVTT__&lt;<time period>>
+   <td>&lt;transit_class> _CMRIVTT__&lt;time period&gt;
    </td>
    <td>actual in-vehicle travel time on commuter rail mode
    </td>
   </tr>
   <tr>
-   <td>&lt;transit_class> _EXPIVTT__&lt;<time period>>
+   <td>&lt;transit_class> _EXPIVTT__&lt;time period&gt;
    </td>
    <td>actual in-vehicle travel time on express bus mode
    </td>
   </tr>
   <tr>
-   <td>&lt;transit_class>_LTDEXPIVTT__&lt;<time period>>
+   <td>&lt;transit_class>_LTDEXPIVTT__&lt;time period&gt;
    </td>
    <td>actual in-vehicle travel time on premium bus mode
    </td>
   </tr>
   <tr>
-   <td>&lt;transit_class>_BRTIVTT__&lt;<time period>>
+   <td>&lt;transit_class>_BRTIVTT__&lt;time period&gt;
    </td>
    <td>actual in-vehicle travel time on  BRT mode
    </td>
@@ -6822,15 +6822,15 @@ This directory contains San Diego resident travel model outputs.
    </td>
   </tr>
   <tr>
-   <td>WALK_&lt;<time period>>
+   <td>WALK_&lt;time period&gt;
    </td>
-   <td>Walk for &lt;<time period>>
+   <td>Walk for &lt;time period&gt;
    </td>
   </tr>
   <tr>
-   <td>BIKE_&lt;<time period>>
+   <td>BIKE_&lt;time period&gt;
    </td>
-   <td>Bike for &lt;<time period>>
+   <td>Bike for &lt;time period&gt;
    </td>
   </tr>
 </table>
@@ -7789,21 +7789,21 @@ This directory contains outputs from the overnight visitor model.
    </td>
   </tr>
   <tr>
-   <td>SR2_&lt;<time period>>
+   <td>SR2_&lt;time period&gt;
    </td>
-   <td>Shared Ride 2 for &lt;<time period>>
-   </td>
-  </tr>
-  <tr>
-   <td>SR3_&lt;<time period>>
-   </td>
-   <td>Shared Ride 3 for &lt;<time period>>
+   <td>Shared Ride 2 for &lt;time period&gt;
    </td>
   </tr>
   <tr>
-   <td>SOV_&lt;<time period>>
+   <td>SR3_&lt;time period&gt;
    </td>
-   <td>Drive Alone for &lt;<time period>>
+   <td>Shared Ride 3 for &lt;time period&gt;
+   </td>
+  </tr>
+  <tr>
+   <td>SOV_&lt;time period&gt;
+   </td>
+   <td>Drive Alone for &lt;time period&gt;
    </td>
   </tr>
   <tr>
@@ -7823,73 +7823,73 @@ This directory contains outputs from the overnight visitor model.
    </td>
   </tr>
   <tr>
-   <td>WLK_SET_set1_&lt;<time period>>
+   <td>WLK_SET_set1_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>PNR_SET_set1_&lt;<time period>>
+   <td>PNR_SET_set1_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>KNR_SET_set1_&lt;<time period>>
+   <td>KNR_SET_set1_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>TNC_SET_set1_&lt;<time period>>
+   <td>TNC_SET_set1_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>WLK_SET_set2_&lt;<time period>>
+   <td>WLK_SET_set2_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>PNR_SET_set2_&lt;<time period>>
+   <td>PNR_SET_set2_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>KNR_SET_set2_&lt;<time period>>
+   <td>KNR_SET_set2_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>TNC_SET_set2_&lt;<time period>>
+   <td>TNC_SET_set2_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>WLK_SET_set3_&lt;<time period>>
+   <td>WLK_SET_set3_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>PNR_SET_set3_&lt;<time period>>
+   <td>PNR_SET_set3_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>KNR_SET_set3_&lt;<time period>>
+   <td>KNR_SET_set3_&lt;time period&gt;
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td>TNC_SET_set3_&lt;<time period>>
+   <td>TNC_SET_set3_&lt;time period&gt;
    </td>
    <td>
    </td>
@@ -7912,15 +7912,15 @@ This directory contains outputs from the overnight visitor model.
    </td>
   </tr>
   <tr>
-   <td>WALK_&lt;<time period>>
+   <td>WALK_&lt;time period&gt;
    </td>
-   <td>Walk for &lt;<time period>>
+   <td>Walk for &lt;time period&gt;
    </td>
   </tr>
   <tr>
-   <td>BIKE_&lt;<time period>>
+   <td>BIKE_&lt;time period&gt;
    </td>
-   <td>Bike for &lt;<time period>>
+   <td>Bike for &lt;time period&gt;
    </td>
   </tr>
   <tr>

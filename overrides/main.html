@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{#- Banner on every version except the latest release (see extra.version in mkdocs.yml) -#}
+{% block outdated %}
+  You're viewing the docs for a version other than the latest release.
+  <a href="{{ '../' ~ base_url }}">
+    <strong>Go to the latest release.</strong>
+  </a>
+{% endblock %}

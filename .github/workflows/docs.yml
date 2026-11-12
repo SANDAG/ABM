@@ -1,24 +1,75 @@
-name: Publish documents
+name: Docs
+
+# Builds the documentation with Zensical and publishes it to GitHub Pages
+# (the gh-pages branch) as versioned docs, using mike.
+#   Pull request          -> strict build check only; nothing is published
+#   Push to main          -> publish the "dev" version
+#   Push a tag vX.Y.Z     -> publish version X.Y.Z, and point "latest" at it
+#                            if it is the highest release so far
+# To build the docs on your own machine, see docs/README.md.
+
 on:
+  pull_request:
+    paths:
+      - "docs/**"
+      - "mkdocs.yml"
+      - "docs_requirements.txt"
+      - ".github/workflows/docs.yml"
   push:
-    branches:
-      - main
+    branches: [main]
+    tags: ["v*"]
   workflow_dispatch:
+
 jobs:
-  build:
-    name: Deploy docs to GitHub Pages
+  check:
+    name: Build check
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout 
-        uses: actions/checkout@v2
-      - name: Build
-        uses: Tiryoh/actions-mkdocs@v0
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
-          mkdocs_version: 'latest' 
-          requirements: 'docs_requirements.txt'
-          configfile: 'mkdocs.yml'
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
+          python-version: "3.12"
+      - name: Install the build tools
+        run: pip install -r docs_requirements.txt
+      - name: Build, failing on any warning
+        run: zensical build --strict
+
+  publish:
+    name: Publish to GitHub Pages
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # mike pushes commits to the gh-pages branch
+    concurrency:
+      group: gh-pages # one publish at a time; later runs wait their turn
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./site
+          python-version: "3.12"
+      - name: Install the build tools
+        run: pip install -r docs_requirements.txt
+      - name: Get the published site, so mike adds to it
+        run: git fetch origin gh-pages --depth=1
+      - name: Set the author of mike's commits
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Publish dev
+        if: github.ref == 'refs/heads/main'
+        run: mike deploy --push --title "dev (unreleased)" dev
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          # Highest plain X.Y.Z among the published versions and this one.
+          # Pre-releases such as 16.0.0-rc1 never count, so never become latest.
+          highest=$( { mike list --json | jq -r '.[].version'; echo "$version"; } \
+            | grep -E '^[0-9]+(\.[0-9]+)*$' | sort -V | tail -n 1 )
+          if [ "$version" = "$highest" ]; then
+            mike deploy --push --update-aliases "$version" latest
+          else
+            mike deploy --push "$version"
+          fi

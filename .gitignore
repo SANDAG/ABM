@@ -48,6 +48,11 @@ src/main/resources/pskill.exe
 # VS Code
 .vscode
 
+# Docs build output (zensical build / serve)
+/site/
+# Local docs environment (see docs/README.md)
+/.venv/
+
 src/asim-cvm/data/
 src/asim-cvm/output/
 src/asim-cvm/data/maz.csv
