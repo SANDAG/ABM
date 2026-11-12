@@ -1,0 +1,3948 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://sandag.github.io/ABM/15.4.2/release-notes.html">
+      
+      
+        <link rel="prev" href="calib_valid/sensitivity.html">
+      
+      
+        <link rel="next" href="faq.html">
+      
+      
+        
+      
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+    
+    
+      
+        <title>Release Notes - SANDAG ABM3</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css">
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="light-blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#release-notes" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+          <aside class="md-banner md-banner--warning">
+            <div class="md-banner__inner md-grid md-typeset">
+              
+  You're viewing the docs for a version other than the latest release.
+  <a href="../.">
+    <strong>Go to the latest release.</strong>
+  </a>
+
+            </div>
+            <script>var el=document.querySelector("[data-md-component=outdated]"),base=new URL("."),outdated=__md_get("__outdated",sessionStorage,base);!0===outdated&&el&&(el.hidden=!1)</script>
+          </aside>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="index.html" title="SANDAG ABM3" class="md-header__button md-logo" aria-label="SANDAG ABM3" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            SANDAG ABM3
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Release Notes
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="light-blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6m0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4M7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="light-blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/SANDAG/ABM" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="index.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="design/design.html" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Model Design
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="installation.html" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="inputs.html" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Model Inputs and Outputs
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="application/applying.html" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Applying ABM3
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="calib_valid/calib_overview.html" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Calibration and Validation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="release-notes.html" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="index.html" title="SANDAG ABM3" class="md-nav__button md-logo" aria-label="SANDAG ABM3" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    SANDAG ABM3
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/SANDAG/ABM" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Model Design
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Model Design
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design/design.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overall Design
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design/init/initialization.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Initialization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="design/demand/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Demand
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Demand
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design/demand/resident.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resident Model
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design/demand/crossborder.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Crossborder Model
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design/demand/airport.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Airport Ground Access Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design/demand/visitor.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overnight Visitor Model
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design/demand/cvm.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Commercial Vehicle Model
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design/demand/external.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    External Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="design/supply/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Supply
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Supply
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design/supply/bike-logsums.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bike Logsums
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design/supply/walk-skims.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Walk Skims
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design/supply/network-import-tned.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Network Import from TNED
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design/supply/highway-skims-assign.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Highway Skimming and Assignment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design/supply/transit-skims-assign.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transit Skimming and Assignment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design/report/report.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Report
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="installation.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="running.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running the Model
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="performance.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Performance and Runtime
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="storage-usage.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Storage Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Model Inputs and Outputs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Model Inputs and Outputs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inputs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Inputs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="inputs.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="networks.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Networks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="outputs.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="reports.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Applying ABM3
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Applying ABM3
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="application/applying.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Model Application
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="application/population-synthesis.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Population Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="application/landuse-prep.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Land Use Data Preparation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="application/settings-manager.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Settings Manager
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="application/scenario-manager.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scenario Manager
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="application/ev-rebates.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    EV Rebates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="application/flexible-fleets.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Flexible Fleets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="application/micromobility.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Micromobility
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="application/network-coding.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Network Coding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Calibration and Validation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Calibration and Validation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="calib_valid/calib_overview.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="calib_valid/calibration.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Calibration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="calib_valid/convergence.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Convergence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="calib_valid/validation.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="calib_valid/sensitivity.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sensitivity Testing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release Notes
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="release-notes.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#version-1542-june-26-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 15.4.2 (June 26, 2026)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Version 15.4.2 (June 26, 2026)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#software-versions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Software Versions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Features
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bug-fixes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bug Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1541-march-05-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 15.4.1 (March 05, 2026)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Version 15.4.1 (March 05, 2026)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#software-versions_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Software Versions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#features_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Features
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bug-fixes_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bug Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1540-february-16-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 15.4.0 (February 16, 2026)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Version 15.4.0 (February 16, 2026)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#software-versions_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Software Versions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#features_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Features
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bug-fixes_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bug Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1531-september-4-2025" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 15.3.1 (September 4, 2025)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Version 15.3.1 (September 4, 2025)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#software-versions_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Software Versions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#features_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Features
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bug-fixes_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bug Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1530-august-6-2025" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 15.3.0 (August 6, 2025)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Version 15.3.0 (August 6, 2025)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#activitysim-version" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ActivitySim Version
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#features_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Features
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bug-fixes_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bug Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1522-may-2-2025" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 15.2.2 (May 2, 2025)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Version 15.2.2 (May 2, 2025)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#activitysim-version_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ActivitySim Version
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#features_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Features
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bug-fixes_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bug Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1521-december-20-2024" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 15.2.1 (December 20, 2024)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Version 15.2.1 (December 20, 2024)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#activitysim-version_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ActivitySim Version
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#features_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Features
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bug-fixes_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bug Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1520-november-14-2024" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 15.2.0 (November 14, 2024)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Version 15.2.0 (November 14, 2024)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#activitysim-version_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ActivitySim Version
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#features_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Features
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bug-fixes_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bug Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1510-september-4-2024" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 15.1.0 (September 4, 2024)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Version 15.1.0 (September 4, 2024)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#activitysim-version_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ActivitySim Version
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#features_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Features
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bug-fixes_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bug Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1502-july-3-2024" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 15.0.2 (July 3, 2024)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Version 15.0.2 (July 3, 2024)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#activitysim-version_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ActivitySim Version
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#features_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Features
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bug-fixes_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bug Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1501-june-12-2024" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 15.0.1 (June 12, 2024)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Version 15.0.1 (June 12, 2024)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#activitysim-version_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ActivitySim Version
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#features_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Features
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bug-fixes_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bug Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1500-may-23-2024" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 15.0.0 (May 23, 2024)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Version 15.0.0 (May 23, 2024)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#activitysim-version_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ActivitySim Version
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#features_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Features
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="faq.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="technical-reports.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Technical Reports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#version-1542-june-26-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 15.4.2 (June 26, 2026)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Version 15.4.2 (June 26, 2026)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#software-versions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Software Versions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Features
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bug-fixes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bug Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1541-march-05-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 15.4.1 (March 05, 2026)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Version 15.4.1 (March 05, 2026)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#software-versions_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Software Versions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#features_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Features
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bug-fixes_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bug Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1540-february-16-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 15.4.0 (February 16, 2026)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Version 15.4.0 (February 16, 2026)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#software-versions_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Software Versions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#features_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Features
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bug-fixes_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bug Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1531-september-4-2025" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 15.3.1 (September 4, 2025)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Version 15.3.1 (September 4, 2025)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#software-versions_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Software Versions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#features_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Features
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bug-fixes_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bug Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1530-august-6-2025" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 15.3.0 (August 6, 2025)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Version 15.3.0 (August 6, 2025)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#activitysim-version" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ActivitySim Version
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#features_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Features
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bug-fixes_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bug Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1522-may-2-2025" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 15.2.2 (May 2, 2025)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Version 15.2.2 (May 2, 2025)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#activitysim-version_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ActivitySim Version
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#features_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Features
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bug-fixes_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bug Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1521-december-20-2024" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 15.2.1 (December 20, 2024)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Version 15.2.1 (December 20, 2024)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#activitysim-version_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ActivitySim Version
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#features_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Features
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bug-fixes_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bug Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1520-november-14-2024" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 15.2.0 (November 14, 2024)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Version 15.2.0 (November 14, 2024)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#activitysim-version_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ActivitySim Version
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#features_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Features
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bug-fixes_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bug Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1510-september-4-2024" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 15.1.0 (September 4, 2024)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Version 15.1.0 (September 4, 2024)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#activitysim-version_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ActivitySim Version
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#features_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Features
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bug-fixes_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bug Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1502-july-3-2024" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 15.0.2 (July 3, 2024)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Version 15.0.2 (July 3, 2024)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#activitysim-version_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ActivitySim Version
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#features_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Features
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bug-fixes_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bug Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1501-june-12-2024" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 15.0.1 (June 12, 2024)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Version 15.0.1 (June 12, 2024)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#activitysim-version_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ActivitySim Version
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#features_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Features
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bug-fixes_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bug Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1500-may-23-2024" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 15.0.0 (May 23, 2024)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Version 15.0.0 (May 23, 2024)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#activitysim-version_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ActivitySim Version
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#features_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Features
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="release-notes">Release Notes<a class="headerlink" href="#release-notes" title="Permanent link"> ¶</a></h1>
+<p>SANDAG ABM release notes can also be found on the <a href="https://github.com/SANDAG/ABM/releases">GitHub repo</a>.</p>
+<h2 id="version-1542-june-26-2026">Version 15.4.2 (June 26, 2026)<a class="headerlink" href="#version-1542-june-26-2026" title="Permanent link"> ¶</a></h2>
+<p>This release centers on a comprehensive update to the San Diego International Airport (SDIA) ground access model in support of the Airport Transit Connection (ATC) project, using data from the Fall 2024 airport survey. The update introduces a new rental car model, recalibrates the airport destination choice and trip mode choice models. In addition, this adds location-specific employment multipliers by year and free parking modeling for SDIA airport zones, and incorporates new observed counts and boardings for ATC validation. The release also includes supporting infrastructure updates - a process queue manifest, improved run report logging, and fixes to local-drive file handling when resuming runs along with several other bug fixes.</p>
+<h3 id="software-versions">Software Versions<a class="headerlink" href="#software-versions" title="Permanent link"> ¶</a></h3>
+<ul>
+<li>ActivitySim 1.4.0</li>
+<li>EMME OpenPaths 25</li>
+</ul>
+<h3 id="features">Features<a class="headerlink" href="#features" title="Permanent link"> ¶</a></h3>
+<ul>
+<li><a href="https://github.com/SANDAG/ABM/pull/395">PR 395</a>: Update to the SDIA ground access model using Fall 2024 airport survey data, including a new rental car, destination choice, and trip mode choice models</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/400">PR 400</a>, <a href="https://github.com/SANDAG/ABM/pull/401">PR 401</a>: Calibration of the SAN airport non-mandatory tour destination choice model</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/402">PR 402</a>, <a href="https://github.com/SANDAG/ABM/pull/406">PR 406</a>: Calibration of the SAN airport trip mode choice model</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/410">PR 410</a>: Re-introduced transit IVTT multipliers by sub-mode (LRT, BRT, CMR, etc.) in SAN transit utilities</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/412">PR 412</a>, <a href="https://github.com/SANDAG/ABM/pull/416">PR 416</a>, <a href="https://github.com/SANDAG/ABM/pull/417">PR 417</a>, <a href="https://github.com/SANDAG/ABM/pull/423">PR 423</a>: Added configurable, location-specific employment multipliers for SDIA zones applied during resident preprocessing</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/417">PR 417</a>, <a href="https://github.com/SANDAG/ABM/pull/419">PR 419</a>: Added airport zone-specific free parking modeling (~89% free parking share at airport employment zones) and removed the park-and-escort access option</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/397">PR 397</a>: Removed employee tour processing (employee_park) from the SAN and CBX airport models</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/418">PR 418</a>: Reverted destination choice coefficients for Mission Valley for validation purposes</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/414">PR 414</a>: Added observed counts and boardings for ATC validation</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/420">PR 420</a>: Added a manifest file to the datalake export step to trigger the new process queue</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/428">PR 428</a>: Write process run report logs to the logFiles directory (read into the Emme logbook) and moved CVM and HTM logs to their respective output directories</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/424">PR 424</a>: Removed unused bike skim generation from 2zoneSkim.py</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/399">PR 399</a>, <a href="https://github.com/SANDAG/ABM/pull/404">PR 404</a>, <a href="https://github.com/SANDAG/ABM/pull/405">PR 405</a>: Documentation updates including ABM3 v15.3.1 installation instructions</li>
+</ul>
+<h3 id="bug-fixes">Bug Fixes<a class="headerlink" href="#bug-fixes" title="Permanent link"> ¶</a></h3>
+<ul>
+<li><a href="https://github.com/SANDAG/ABM/pull/396">PR 396</a>: Sort toll factor facilities by longest name first so I-805 links match to I-805 before I-8</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/408">PR 408</a>, <a href="https://github.com/SANDAG/ABM/pull/409">PR 409</a>: Corrected transit access time expressions and KNR/TNC transit availability direction handling in the SAN</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/427">PR 427</a>, <a href="https://github.com/SANDAG/ABM/pull/429">PR 429</a>: Corrected handling of non-mandatory trips to SAN and CBX airport terminal zones across the resident, visitor, and cross-border models, preventing unrealistic direct trip-making</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/411">PR 411</a>, <a href="https://github.com/SANDAG/ABM/pull/421">PR 421</a>: Fixes to local-drive file copying and overwriting when resuming a run, preserving updated files and avoiding overwrites when re-running early steps</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/413">PR 413</a>: Convert employment to integer in the CVM estimation script</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/415">PR 415</a>: Correctly populate git_info.yaml when git is not installed</li>
+</ul>
+<h2 id="version-1541-march-05-2026">Version 15.4.1 (March 05, 2026)<a class="headerlink" href="#version-1541-march-05-2026" title="Permanent link"> ¶</a></h2>
+<p>This release converts the Bike Logsum Java program into Python and updates the route choice model. Another significant update is the comprehensive recalibration of transit trips across all models using the 2023 Transit On-Board Survey (OBS).</p>
+<h3 id="software-versions_1">Software Versions<a class="headerlink" href="#software-versions_1" title="Permanent link"> ¶</a></h3>
+<ul>
+<li>ActivitySim 1.4.0</li>
+<li>EMME OpenPaths 25</li>
+</ul>
+<h3 id="features_1">Features<a class="headerlink" href="#features_1" title="Permanent link"> ¶</a></h3>
+<ul>
+<li><a href="https://github.com/SANDAG/ABM/pull/384">PR 384</a>: Mode choice recalibration to match 2023 OBS</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/389">PR 389</a>: Python Bike Logsum and route choice model update</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/381">PR 381</a>: Improved copy process of model files from C: to network drive</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/393">PR 393</a>: Convergence reporting notebook</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/390">PR 390</a>, <a href="https://github.com/SANDAG/ABM/pull/391">PR 391</a>, <a href="https://github.com/SANDAG/ABM/pull/392">PR 392</a>: Documentation updates</li>
+</ul>
+<h3 id="bug-fixes_1">Bug Fixes<a class="headerlink" href="#bug-fixes_1" title="Permanent link"> ¶</a></h3>
+<ul>
+<li>None</li>
+</ul>
+<h2 id="version-1540-february-16-2026">Version 15.4.0 (February 16, 2026)<a class="headerlink" href="#version-1540-february-16-2026" title="Permanent link"> ¶</a></h2>
+<p>This significant release upgrades EMME to OpenPaths 25 in addition to switching to UV as the Python package manager. With the EMME upgrade, a Python 27 environment is no longer needed.</p>
+<h3 id="software-versions_2">Software Versions<a class="headerlink" href="#software-versions_2" title="Permanent link"> ¶</a></h3>
+<ul>
+<li>ActivitySim 1.4.0</li>
+<li>EMME OpenPaths 25</li>
+</ul>
+<h3 id="features_2">Features<a class="headerlink" href="#features_2" title="Permanent link"> ¶</a></h3>
+<ul>
+<li><a href="https://github.com/SANDAG/ABM/pull/272">PR 272</a>: EMME OpenPaths 25 upgrade</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/376">PR 376</a>: Packager manager changed from Anaconda to UV</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/377">PR 377</a>: Dropped unnecessary Python environment for EMME</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/378">PR 378</a>: Documentation updates</li>
+</ul>
+<h3 id="bug-fixes_2">Bug Fixes<a class="headerlink" href="#bug-fixes_2" title="Permanent link"> ¶</a></h3>
+<ul>
+<li><a href="https://github.com/SANDAG/ABM/pull/387">PR 387</a>: Fixes tolled SOV volume issues on managed lanes</li>
+</ul>
+<h2 id="version-1531-september-4-2025">Version 15.3.1 (September 4, 2025)<a class="headerlink" href="#version-1531-september-4-2025" title="Permanent link"> ¶</a></h2>
+<p>A few bugs were identified while testing with version 15.3.0, so they were fixed to ensure that the results for the 2025 Regional Plan will be the best estimates possible.</p>
+<h3 id="software-versions_3">Software Versions<a class="headerlink" href="#software-versions_3" title="Permanent link"> ¶</a></h3>
+<ul>
+<li>ActivitySim 1.4.0</li>
+<li>EMME 4.3.7</li>
+</ul>
+<h3 id="features_3">Features<a class="headerlink" href="#features_3" title="Permanent link"> ¶</a></h3>
+<ul>
+<li><a href="https://github.com/SANDAG/ABM/pull/360">PR 360</a>: The settings manager can now be run from Anaconda prompt as opposed to only within Emme</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/340">PR 340</a>, <a href="https://github.com/SANDAG/ABM/pull/346">PR 346</a>, &amp; <a href="https://github.com/SANDAG/ABM/pull/353">PR 353</a>: Documentation updates</li>
+</ul>
+<h3 id="bug-fixes_3">Bug Fixes<a class="headerlink" href="#bug-fixes_3" title="Permanent link"> ¶</a></h3>
+<ul>
+<li><a href="https://github.com/SANDAG/ABM/pull/349">PR 349</a>, <a href="https://github.com/SANDAG/ABM/pull/356">PR 356</a>, <a href="https://github.com/SANDAG/ABM/pull/359">PR 359</a>, &amp; <a href="https://github.com/SANDAG/ABM/pull/362">PR 362</a>: Fixes and adjustments to e-bike and transit utility calculations</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/337">PR 337</a>, <a href="https://github.com/SANDAG/ABM/pull/339">PR 339</a>, <a href="https://github.com/SANDAG/ABM/pull/354">PR 354</a>, &amp; <a href="https://github.com/SANDAG/ABM/pull/357">PR 357</a>: Configuration file cleanup</li>
+</ul>
+<h2 id="version-1530-august-6-2025">Version 15.3.0 (August 6, 2025)<a class="headerlink" href="#version-1530-august-6-2025" title="Permanent link"> ¶</a></h2>
+<p>Multiple key updates and bug fixes were included for Version 15.3.0, including upgrading to use ActivitySim 1.4.0, migration of the processing of model results to Azure Unity Catalog, and the addition of a centralized settings manager, among other fixes. Version 15.3.0 will be used for the final 2025 Regional Plan Modeling.</p>
+<h3 id="activitysim-version">ActivitySim Version<a class="headerlink" href="#activitysim-version" title="Permanent link"> ¶</a></h3>
+<p>ABM3 version 15.3.0 now uses <a href="https://github.com/ActivitySim/activitysim/releases/tag/v1.4.0">ActivitySim version 1.4.0</a> (Released June 2, 2025).</p>
+<h3 id="features_4">Features<a class="headerlink" href="#features_4" title="Permanent link"> ¶</a></h3>
+<ul>
+<li><a href="https://github.com/SANDAG/ABM/pull/279">PR 279</a>, <a href="https://github.com/SANDAG/ABM/pull/316">PR 316</a>, <a href="https://github.com/SANDAG/ABM/pull/320">PR 320</a>, <a href="https://github.com/SANDAG/ABM/pull/328">PR 328</a>, &amp; <a href="https://github.com/SANDAG/ABM/pull/337">PR 337</a>: Upgrade to use ActivitySim version 1.4.0</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/313">PR 313</a>: Impelement centralized settings manager</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/314">PR 314</a>, <a href="https://github.com/SANDAG/ABM/pull/315">PR 315</a>, <a href="https://github.com/SANDAG/ABM/pull/327">PR 327</a>, &amp; <a href="https://github.com/SANDAG/ABM/pull/331">PR 331</a>: Include validation files in repository and datalake</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/317">PR 317</a>: Processing of model results moved to Azure Unity Catalog</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/324">PR 324</a>: Add HOV type as a key for toll factors</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/326">PR 326</a>: Link availability set only during network import</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/340">PR 340</a>: Documentation update clarifying definition of density fields in MGRA file</li>
+</ul>
+<h3 id="bug-fixes_4">Bug Fixes<a class="headerlink" href="#bug-fixes_4" title="Permanent link"> ¶</a></h3>
+<ul>
+<li><a href="https://github.com/SANDAG/ABM/pull/319">PR 319</a>: Edit the reading of toll factors directly from input files instead of network geodatabase</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/321">PR 321</a>: Correct San Diego International Airport MGRA IDs</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/325">PR 325</a>: Correct 2022 enplanement values at San Diego International Airport</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/339">PR 339</a>: File cleanup and setting crossborder tour scheduling to use correct specification file</li>
+</ul>
+<h2 id="version-1522-may-2-2025">Version 15.2.2 (May 2, 2025)<a class="headerlink" href="#version-1522-may-2-2025" title="Permanent link"> ¶</a></h2>
+<p>A few new features were added and minor bugs were fixed. Version 15.2.2 was used for the draft EIR.</p>
+<h3 id="activitysim-version_1">ActivitySim Version<a class="headerlink" href="#activitysim-version_1" title="Permanent link"> ¶</a></h3>
+<p>No changes made to ActivitySim version.</p>
+<h3 id="features_5">Features<a class="headerlink" href="#features_5" title="Permanent link"> ¶</a></h3>
+<ul>
+<li><a href="https://github.com/SANDAG/ABM/pull/291">PR 291</a> &amp; <a href="https://github.com/SANDAG/ABM/pull/293">PR 293</a>: Adding work from home calibration coefficient to parametersByYears.csv</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/287">PR 287</a>: Refactoring of <a href="https://github.com/SANDAG/ABM/blob/ABM3_develop/src/asim/scripts/resident/2zoneSkim.py">2zoneSkim.py</a> script</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/286">PR 286</a>, <a href="https://github.com/SANDAG/ABM/pull/288">PR 288</a>, <a href="https://github.com/SANDAG/ABM/pull/290">PR 290</a>, <a href="https://github.com/SANDAG/ABM/pull/292">PR 292</a>, <a href="https://github.com/SANDAG/ABM/pull/295">PR 295</a>, <a href="https://github.com/SANDAG/ABM/pull/296">PR 296</a>, <a href="https://github.com/SANDAG/ABM/pull/299">PR 299</a>, <a href="https://github.com/SANDAG/ABM/pull/302">PR 302</a>, <a href="https://github.com/SANDAG/ABM/pull/303">PR 303</a>, <a href="https://github.com/SANDAG/ABM/pull/304">PR 304</a>, <a href="https://github.com/SANDAG/ABM/pull/306">PR 306</a>, <a href="https://github.com/SANDAG/ABM/pull/308">PR 308</a>, <a href="https://github.com/SANDAG/ABM/pull/309">PR 309</a>, &amp; <a href="https://github.com/SANDAG/ABM/pull/311">PR 311</a>: Documentation updates</li>
+</ul>
+<h3 id="bug-fixes_5">Bug Fixes<a class="headerlink" href="#bug-fixes_5" title="Permanent link"> ¶</a></h3>
+<ul>
+<li><a href="https://github.com/SANDAG/ABM/pull/289">PR 289</a> &amp; <a href="https://github.com/SANDAG/ABM/pull/297">PR 297</a>: Removed unused files and settings</li>
+</ul>
+<h2 id="version-1521-december-20-2024">Version 15.2.1 (December 20, 2024)<a class="headerlink" href="#version-1521-december-20-2024" title="Permanent link"> ¶</a></h2>
+<p>Multiple bugs were fixed and some recalibration was done since the release of version 15.2.0. Version 15.2.1 was used for the draft 2025 RP modeling.</p>
+<h3 id="activitysim-version_2">ActivitySim Version<a class="headerlink" href="#activitysim-version_2" title="Permanent link"> ¶</a></h3>
+<p>No changes made to ActivitySim version.</p>
+<h3 id="features_6">Features<a class="headerlink" href="#features_6" title="Permanent link"> ¶</a></h3>
+<ul>
+<li><a href="https://github.com/SANDAG/ABM/pull/249">PR 249</a>: Addition of calibration scripts</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/251">PR 251</a>, <a href="https://github.com/SANDAG/ABM/pull/258">PR 258</a>, <a href="https://github.com/SANDAG/ABM/pull/259">PR 259</a>, &amp; <a href="https://github.com/SANDAG/ABM/pull/262">PR 262</a>: Calibration updates (atwork stop location, work from home, bike shares, work location) including additional mode choice coefficients for ebike owners</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/256">PR 256</a>: Increase travel time reporter threshold from 30 to 45 minutes</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/257">PR 257</a>: Adds option to skip travel time reporter (was previously included in data exporter)</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/266">PR 266</a>: 2032 and 2040 added as options when selecting a scenario year in the scenario creation GUI</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/268">PR 268</a>: Assume owned ebike in travel time reporter</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/271">PR 271</a>: Recalibrate bike mode share in response to AT network updates </li>
+<li><a href="https://github.com/SANDAG/ABM/pull/252">PR 252</a>, <a href="https://github.com/SANDAG/ABM/pull/254">PR 254</a>, <a href="https://github.com/SANDAG/ABM/pull/260">PR 260</a>, <a href="https://github.com/SANDAG/ABM/pull/265">PR 265</a>, <a href="https://github.com/SANDAG/ABM/pull/280">PR 280</a>, &amp; <a href="https://github.com/SANDAG/ABM/pull/284">PR 284</a>: Documentation updates</li>
+</ul>
+<h3 id="bug-fixes_6">Bug Fixes<a class="headerlink" href="#bug-fixes_6" title="Permanent link"> ¶</a></h3>
+<ul>
+<li><a href="https://github.com/SANDAG/ABM/pull/253">PR 253</a>: Removal of bike logsum copy from Emme GUI</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/255">PR 255</a>: Removal of input checker step</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/263">PR 263</a>: Update bike lane AT network field</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/274">PR 274</a>, <a href="https://github.com/SANDAG/ABM/pull/276">PR 276</a>, &amp; <a href="https://github.com/SANDAG/ABM/pull/278">PR 278</a>: MAAS model fixes including crash on failure and force escort participants column to be read in as string</li>
+</ul>
+<h2 id="version-1520-november-14-2024">Version 15.2.0 (November 14, 2024)<a class="headerlink" href="#version-1520-november-14-2024" title="Permanent link"> ¶</a></h2>
+<p>Since release 15.1.0, several bug fixes and new features were added. Results of ABM3 using Version 15.2 are anticipated to be presented to the SANDAG Board of Directors in Spring 2025.</p>
+<h3 id="activitysim-version_3">ActivitySim Version<a class="headerlink" href="#activitysim-version_3" title="Permanent link"> ¶</a></h3>
+<p>No changes made to ActivitySim version.</p>
+<h3 id="features_7">Features<a class="headerlink" href="#features_7" title="Permanent link"> ¶</a></h3>
+<ul>
+<li><a href="https://github.com/SANDAG/ABM/pull/169">PR 169</a>: Set TNC to transit modes to use KNR to transit skims and removed TNC to transit skims</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/203">PR 203</a>: Added tracking of disk space usage</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/204">PR 204</a>, <a href="https://github.com/SANDAG/ABM/pull/219">PR 219</a>, &amp; <a href="https://github.com/SANDAG/ABM/pull/232">PR 232</a>: Flexible fleets improvement and calibration</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/206">PR 206</a>: Reduced sensitivity of electric vehicle ownership to number of chargers</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/210">PR 210</a>: Added input network and land use paths to scenario table in Datalake</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/222">PR 222</a>: Updated version number in the property file</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/223">PR 223</a>: Updated validation to work with networks created from TNED</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/226">PR 226</a>: Included FFC attribute in Emme network for reporting</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/239">PR 239</a>: Added option to skip validation in master run</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/240">PR 240</a>, <a href="https://github.com/SANDAG/ABM/pull/242">PR 242</a>, &amp; <a href="https://github.com/SANDAG/ABM/pull/243">PR 243</a>: Fixes to MAZ to transit stop distances and walk times</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/241">PR 241</a>: Fixes to bike logsums and micromobility mode choice</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/215">PR 215</a>, <a href="https://github.com/SANDAG/ABM/pull/235">PR 235</a>,  <a href="https://github.com/SANDAG/ABM/pull/237">PR 237</a>, <a href="https://github.com/SANDAG/ABM/pull/238">PR 238</a>, <a href="https://github.com/SANDAG/ABM/pull/244">PR 244</a>, &amp; <a href="https://github.com/SANDAG/ABM/pull/246">PR 246</a>: Documentation updates</li>
+</ul>
+<h3 id="bug-fixes_7">Bug Fixes<a class="headerlink" href="#bug-fixes_7" title="Permanent link"> ¶</a></h3>
+<ul>
+<li><a href="https://github.com/SANDAG/ABM/pull/212">PR 212</a>, <a href="https://github.com/SANDAG/ABM/pull/213">PR 213</a>, <a href="https://github.com/SANDAG/ABM/pull/217">PR 217</a>, &amp; <a href="https://github.com/SANDAG/ABM/pull/245">PR 245</a>: File and configuration cleanup</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/214">PR 214</a>, <a href="https://github.com/SANDAG/ABM/pull/216">PR 216</a>, <a href="https://github.com/SANDAG/ABM/pull/220">PR 220</a>, <a href="https://github.com/SANDAG/ABM/pull/221">PR 221</a>, <a href="https://github.com/SANDAG/ABM/pull/225">PR 225</a>, <a href="https://github.com/SANDAG/ABM/pull/228">PR 228</a>, <a href="https://github.com/SANDAG/ABM/pull/230">PR 230</a>, <a href="https://github.com/SANDAG/ABM/pull/231">PR 231</a>, &amp; <a href="https://github.com/SANDAG/ABM/pull/233">PR 233</a>: Various fixes to Travel Time Reporter</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/218">PR 218</a>: Allowed for traffic assignment to work without any tolled links</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/224">PR 224</a>: Removed Java-based walk logsum step</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/227">PR 227</a>: Fixed issue with link transit travel times</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/229">PR 229</a>: Fixed Java unicode error with filepaths containing folders starting with the letter U</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/234">PR 234</a>: Corrected mixed party type to correct value</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/242">PR 242</a> &amp; <a href="https://github.com/SANDAG/ABM/pull/243">PR 243</a>: Fix issues with MAZ to stop distances</li>
+</ul>
+<h2 id="version-1510-september-4-2024">Version 15.1.0 (September 4, 2024)<a class="headerlink" href="#version-1510-september-4-2024" title="Permanent link"> ¶</a></h2>
+<p>As mentioned in the notes for Version 15.0.2, several improvements to the Commercial Vehicle Model (CVM) were made, largely due to SANDAG staff realizing that the survey used to estimate the CVM had likely overestimated the amount of commercial vehicle travel that was made on a given day in the region. New weights were estimated, and then the CVM was recalibrated to match these new weights. After doing this, it was found that modeled highway volumes were lower than observed counts, so some further adjustments were made to get them back up. Some components of the resident model were recalibrated to better match the survey, a new database started being used, a bug in the transit network was fixed, and other miscelaneous improvements were made.</p>
+<h3 id="activitysim-version_4">ActivitySim Version<a class="headerlink" href="#activitysim-version_4" title="Permanent link"> ¶</a></h3>
+<p>No changes made to ActivitySim version.</p>
+<h3 id="features_8">Features<a class="headerlink" href="#features_8" title="Permanent link"> ¶</a></h3>
+<ul>
+<li><a href="https://github.com/SANDAG/ABM/pull/167">PR 167</a>, <a href="https://github.com/SANDAG/ABM/pull/172">PR 172</a>, &amp; <a href="https://github.com/SANDAG/ABM/pull/173">PR 173</a>: Recalibration of the Commercial Vehicle Model to reflect newly-calculated Commercial Vehicle Survey weights.</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/182">PR 182</a>, <a href="https://github.com/SANDAG/ABM/pull/186">PR 186</a>, <a href="https://github.com/SANDAG/ABM/pull/194">PR 194</a>, &amp; <a href="https://github.com/SANDAG/ABM/pull/195">PR 195</a>: Miscellaneous calibration, particularly to counter the decrease in freeway travel caused by the CVM update.</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/176">PR 176</a> &amp; <a href="https://github.com/SANDAG/ABM/pull/177">PR 177</a>: A new database was created for Version 15.1.0 and necessary scripts were modified to point to the new database. Go <a href="https://dev.azure.com/SANDAG-ADS/ORTAD/_wiki/wikis/ORTAD.wiki/3/Comparison-abm_15_1_0-and-abm_15_0_0">here</a> to see detailed changes in the database and <a href="https://dev.azure.com/SANDAG-ADS/ORTAD/_wiki/wikis/ORTAD.wiki/2/Release-Notes-for-abm_15_1_0-and-abm_15_1_0_reporting">here</a> for changes in the reporting tool.</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/184">PR 184</a>, <a href="https://github.com/SANDAG/ABM/pull/186">PR 186</a>, &amp; <a href="https://github.com/SANDAG/ABM/pull/193">PR 193</a>: The number of EV chargers each year were updated using numbers given by planning, and recalibration was done to ensure that the EV ownership rates for no build scenarios matched the targets.</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/178">PR 178</a>, <a href="https://github.com/SANDAG/ABM/pull/188">PR 188</a>, &amp; <a href="https://github.com/SANDAG/ABM/pull/189">PR 189</a>: In previous releases the crossborder model had its own constants.yaml file, which contained a lot of the same values in the common constants.yaml file, meaning that both files would need to be edited. The crossborder model now instead reads from the common constants.yaml file.</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/179">PR 179</a>, <a href="https://github.com/SANDAG/ABM/pull/181">PR 181</a>, <a href="https://github.com/SANDAG/ABM/pull/190">PR 190</a>, <a href="https://github.com/SANDAG/ABM/pull/191">PR 191</a>, &amp; <a href="https://github.com/SANDAG/ABM/pull/192">PR 192</a>: Miscellaneous updates to the scenario creation GUI and scenario build process.</li>
+</ul>
+<h3 id="bug-fixes_8">Bug Fixes<a class="headerlink" href="#bug-fixes_8" title="Permanent link"> ¶</a></h3>
+<ul>
+<li><a href="https://github.com/SANDAG/ABM/pull/168">PR 168</a>, <a href="https://github.com/SANDAG/ABM/pull/170">PR 170</a>, <a href="https://github.com/SANDAG/ABM/pull/171">PR 171</a>, <a href="https://github.com/SANDAG/ABM/pull/175">PR 175</a>, &amp; <a href="https://github.com/SANDAG/ABM/pull/185">PR 185</a>: A bug in the transit network where connectors were being encoded with the wrong units was fixed. This resulted in a sharp increase in the number of transit boardings so some additional calibration was needed to get them back down to observed levels.</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/174">PR 174</a> &amp; <a href="https://github.com/SANDAG/ABM/pull/180">PR 180</a>: Miscellaneous file cleanup and restoration.</li>
+</ul>
+<h2 id="version-1502-july-3-2024">Version 15.0.2 (July 3, 2024)<a class="headerlink" href="#version-1502-july-3-2024" title="Permanent link"> ¶</a></h2>
+<p>Since the release of version 15.0.1 more updates were made, particularly regarding the new commercial vehicle model. More updates to the CVM will be forthcoming due to ongoing revision based on new data sources.</p>
+<h3 id="activitysim-version_5">ActivitySim Version<a class="headerlink" href="#activitysim-version_5" title="Permanent link"> ¶</a></h3>
+<p>No changes made to ActivitySim version.</p>
+<h3 id="features_9">Features<a class="headerlink" href="#features_9" title="Permanent link"> ¶</a></h3>
+<ul>
+<li><a href="https://github.com/SANDAG/ABM/pull/155">PR 155</a> &amp; <a href="https://github.com/SANDAG/ABM/pull/159">PR 159</a>: Updated the Wiki to reflect changes made for ABM3.</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/156">PR 156</a>: Made changes to distribution of commercial vehicle type mapping to the categories used in assignment.</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/157">PR 157</a>: Added calibration factors for determining the probability of a tour made by a single- or multi-unit truck terminating at a given stop.</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/158">PR 158</a>: Changed firm synthesis to be done at the TAZ level instead of the MGRA level.</li>
+</ul>
+<h3 id="bug-fixes_9">Bug Fixes<a class="headerlink" href="#bug-fixes_9" title="Permanent link"> ¶</a></h3>
+<ul>
+<li><a href="https://github.com/SANDAG/ABM/pull/160">PR 160</a>: Removed an input file no longer used by the updated heavy truck model.</li>
+</ul>
+<h2 id="version-1501-june-12-2024">Version 15.0.1 (June 12, 2024)<a class="headerlink" href="#version-1501-june-12-2024" title="Permanent link"> ¶</a></h2>
+<p>During the initial testing of the 2025 Regional Plan initial concept, some critical model issues were identified and fixed.</p>
+<h3 id="activitysim-version_6">ActivitySim Version<a class="headerlink" href="#activitysim-version_6" title="Permanent link"> ¶</a></h3>
+<p>No changes made to ActivitySim version.</p>
+<h3 id="features_10">Features<a class="headerlink" href="#features_10" title="Permanent link"> ¶</a></h3>
+<ul>
+<li><a href="https://github.com/SANDAG/ABM/pull/152">PR 152</a>: TNC_SHARED was not being properly disabled in 2022 due to misplaced parentheses.</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/148">PR 148</a>: Fixed TNC_SHARED mode choice to restrict to ride hail tours and help shares on joint tours.</li>
+<li><a href="https://github.com/SANDAG/ABM/issues/143">Issue 143</a>: Added parameter to discount wait times for rapid bus.</li>
+</ul>
+<h3 id="bug-fixes_10">Bug Fixes<a class="headerlink" href="#bug-fixes_10" title="Permanent link"> ¶</a></h3>
+<ul>
+<li><a href="https://github.com/SANDAG/ABM/pull/150">PR 150</a>: Updated EI inputs at interstate cordons to reflect 2022 counts.</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/149">PR 149</a>: Updated MAZ ID for Otay Mesa East Point of Entry from Series 13 to Series 15.</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/147">PR 147</a>: Updated MGRA references for external cordons in airport models from Series 13 to Series 15.</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/146">PR 146</a>: Removed suffix from labels in runtime summary.</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/145">PR 145</a>: Added parking location placeholder datasets needed to open calibration visualizer.</li>
+<li><a href="https://github.com/SANDAG/ABM/commit/a825ae36e81f60c99ca36aad382bdc78388029c9">Commit a825ae3</a>: Updated CBX inputs to use number of enplanements.</li>
+<li><a href="https://github.com/SANDAG/ABM/commit/305cdcf8db2c22926fd93a0f933a9a05b32b759d">Commit 305cdcf</a>: Updated reporting of airport transit costs to be in dollars instead of cents.</li>
+<li><a href="https://github.com/SANDAG/ABM/commit/363d05a66f652c757e7ce423a4d7b221f81c21f9">Commit 363d05a</a>: Removed addition of &ldquo;poverty&rdquo; field when writing output tables as that had been added to reading of input table.</li>
+<li><a href="https://github.com/SANDAG/ABM/commit/34e4a1dff48b69eb474db7cb75c1f971f3afa9dd">Commit 34e4a1d</a>: Set year after which vehicles must have transponders from 2035 to 2029.</li>
+<li><a href="https://github.com/SANDAG/ABM/commit/dc07cc957c6e10776cca4cea53c5a45d7e2cf9cd">Commit dc07cc9</a>: Increased default flexible fleet diversion constants.</li>
+<li><a href="https://github.com/SANDAG/ABM/commit/726f98a4872dce8a79cd6eee8b079f63f78ed797">Commit 726f98a</a>: Updated some future year signal factors and truck toll factors on SR-11.</li>
+</ul>
+<h2 id="version-1500-may-23-2024">Version 15.0.0 (May 23, 2024)<a class="headerlink" href="#version-1500-may-23-2024" title="Permanent link"> ¶</a></h2>
+<p>For use in the 2025 Region Plan (RP), SANDAG has developed a new activity-based travel model, known as ABM3. The biggest change from SANDAG’s previous ABM, ABM2+, is the transition from the Java-based CT-RAMP modeling platform to the open-source Python-based <a href="https://research.ampo.org/activitysim/">ActivitySim</a> platform that has been developed by a consortium of public agencies (of which SANDAG is a founding member) for the past decade. ABM3 will be the first ActivitySim model to be used in production for planning purposes. While most of the model components from ABM3 were translated from ABM2+, there were several notable enhancements that were made, which are described below. Further, several models were either re-estimated and/or recalibrated to match 2022 data.</p>
+<h3 id="activitysim-version_7">ActivitySim Version<a class="headerlink" href="#activitysim-version_7" title="Permanent link"> ¶</a></h3>
+<ul>
+<li><a href="https://github.com/SANDAG/activitysim/releases/tag/v15.0.0">SANDAG/activitysim v15.0.0</a>: This is based on a fork of the ActivitySim consortium repo and customized code in <a href="https://github.com/SANDAG/activitysim/tree/BayDAG_estimation">BayDAG_estimation</a> branch.</li>
+<li><a href="https://github.com/SANDAG/activitysim-cvm/releases/tag/v15.0.0">SANDAG/activitysim-cvm v15.0.0</a>: This specific version of ActivitySim is required to run the new Commercial Vehicle Model (CVM) in ABM3. It is based on a fork of the ActivitySim repo under <a href="https://github.com/camsys/activitysim">CamSys</a> and customized code in <a href="https://github.com/SANDAG/activitysim-cvm/tree/time-settings">time-settings</a> branch.</li>
+</ul>
+<h3 id="features_11">Features<a class="headerlink" href="#features_11" title="Permanent link"> ¶</a></h3>
+<ul>
+<li><a href="https://github.com/SANDAG/ABM/pull/68">ABM PR 68</a>: The base year was updated from 2016 to 2022, allowing the behavioral models to reflect changes in travel behavior derived from the onset of the COVID-19 pandemic.</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/65">ABM PR 65</a>: The zone system was transitioned from a 3-zone system (TAZ, MAZ, TAP) to a 2-zone system (TAZ, MAZ).</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/66">ABM PR 66</a>: E-bike and E-scooter were added as travel modes.</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/64">ABM PR 64</a>: A new commercial vehicle model (CVM) was implemented using ActivitySim, that includes firm synthesis, commercial vehicle tours, and TNC services such as food delivery.</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/133">ABM PR 133</a>: Network editing was changed from the ArcInfo-based TCOVED to TNED, a new network editing system.</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/104">ABM PR 104</a>: Flexible fleet services were added for full trips along with first-mile access to and last-mile egress from fixed-route transit.</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/9">ABM PR 9</a>: The airport model has been updated with new access options, including the proposed automated people-mover.</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/53">ABM PR 53</a>: The cross-border model was updated, including a new wait time model.</li>
+<li><a href="https://github.com/ActivitySim/activitysim/pull/635">Asim PR 635</a>: A new disaggregate accessibility calculation step was introduced to improve the precision of accessibilities used by modeling components.</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/82">ABM PR 82</a>: Transit assignment for different time periods is now run in parallel.</li>
+<li><a href="https://github.com/SANDAG/ABM/blob/ABM3_develop/src/asim/configs/resident/settings_mp.yaml#L32">ABM Configs</a>: The auto ownership model has been moved before work and school location.</li>
+<li><a href="https://github.com/ActivitySim/activitysim/pull/613">Asim PR 613</a>: The shadow pricing algorithm was updated to constrain mandatory tour locations to availability instead of traditional shadow pricing.</li>
+<li><a href="https://github.com/SANDAG/ABM/pull/86">ABM PR 86</a>: Model results are automatically written to a database stored in the cloud via Microsoft Azure Services.</li>
+</ul>
+<h4 id="new-resident-model-components">New Resident Model Components<a class="headerlink" href="#new-resident-model-components" title="Permanent link"> ¶</a></h4>
+<ul>
+<li>Autonomous Vehicle Ownership</li>
+<li>External Worker Identification</li>
+<li>External Workplace Location</li>
+<li>Transit Pass Subsidy</li>
+<li>Transit Pass Ownership</li>
+<li>Vehicle Type Choice</li>
+<li>Telecommute Frequency</li>
+<li>External Joint Tour Identification</li>
+<li>External Joint Tour Location</li>
+<li>External Nonmandatory Tour Identification</li>
+<li>External Nonmandatory Tour Destination</li>
+<li>Vehicle Allocation</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["navigation.tabs", "navigation.indexes", "navigation.top", "navigation.expand", "content.code.annotate", "content.tabs.link"], "search": "assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"alias": true, "default": "latest", "provider": "mike"}}</script>
+    
+    
+      <script src="assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+        <script src="javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  <script data-mkdocs-jupyter-mathjax="{&quot;url&quot;: &quot;https://cdn.jsdelivr.net/npm/mathjax@4.1.3/tex-mml-chtml.js&quot;, &quot;version&quot;: 4}">
+/* Shared by full pages and Material's instant navigation. */
+(() => {
+  const config = JSON.parse(document.currentScript.dataset.mkdocsJupyterMathjax);
+  if (window.mkdocsJupyterMathJax) return;
+
+  let loading;
+  let queue = Promise.resolve();
+  let previous = [];
+
+  const ready = async () => {
+    if (!loading) {
+      loading = (async () => {
+        let math = window.MathJax;
+        if (!math?.typesetPromise) {
+          const url = new URL(config.url, document.baseURI).href;
+          const existing = Array.from(document.scripts).find(script =>
+            script.src && (script.src === url || script.id === 'MathJax-script' ||
+              (/mathjax/i.test(script.src) &&
+               /\/(?:MathJax|latest|(?:tex|mml)(?:-mml)?-(?:chtml|svg))\.js(?:[?#]|$)/i.test(script.src))));
+          if (existing) {
+            if (!math?.startup?.promise) {
+              await new Promise((resolve, reject) => {
+                existing.addEventListener('load', resolve, { once: true });
+                existing.addEventListener('error', reject, { once: true });
+              });
+            }
+          } else {
+            // Keep site macros, delimiters and startup hooks when supplied.
+            const options = math || {};
+            window.MathJax = {
+              ...options,
+              loader: {
+                ...options.loader,
+                load: Array.from(new Set(['ui/safe', ...(options.loader?.load || [])]))
+              },
+              startup: { typeset: false, ...options.startup },
+              tex: {
+                tags: 'ams',
+                useLabelIds: true,
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                ...options.tex
+              }
+            };
+            await new Promise((resolve, reject) => {
+              const script = document.createElement('script');
+              script.src = config.url;
+              script.id = 'MathJax-script';
+              script.async = true;
+              script.onload = resolve;
+              script.onerror = reject;
+              document.head.appendChild(script);
+            });
+          }
+        }
+        math = window.MathJax;
+        await math.startup.promise;
+        return math;
+      })();
+    }
+    const math = await loading;
+    // A site owner can extend the v3 queue again on each navigation.
+    await math.startup.promise;
+    return math;
+  };
+
+  const unrendered = node => {
+    if (node.matches('mjx-container')) return [];
+    if (!node.querySelector('mjx-container')) return [node];
+    // In v3, scanning generated assistive MathML again produces nested output.
+    return Array.from(node.children).flatMap(unrendered);
+  };
+
+  const refresh = () => {
+    // A separate chain also serializes v3, without changing v4's startup promise.
+    queue = queue.then(async () => {
+      const notebooks = Array.from(document.querySelectorAll('.jupyter-wrapper'));
+      if (!notebooks.length && !previous.length) return;
+      if (notebooks.length === previous.length &&
+          notebooks.every((node, index) => node === previous[index])) return;
+      const math = await ready();
+      if (previous.length) {
+        math.typesetClear(previous);
+        math.texReset();
+      }
+      previous = notebooks.filter(node => node.isConnected);
+      const pending = previous.flatMap(unrendered);
+      if (pending.length) await math.typesetPromise(pending);
+    }).catch(error => console.error('mkdocs-jupyter: MathJax rendering failed', error));
+    return queue;
+  };
+
+  window.mkdocsJupyterMathJax = { refresh };
+  const start = () => {
+    if (typeof document$ !== 'undefined') document$.subscribe(refresh);
+    else refresh();
+  };
+  // Theme bundles and user-provided MathJax scripts can follow notebook content.
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start, { once: true });
+  } else start();
+})();
+
+</script>
+</body>
+</html>
