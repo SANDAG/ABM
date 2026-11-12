@@ -298,7 +298,8 @@ def apply_tchc(link, ctx):
                 # fwy-fwy connector: check for ACCESS special case
                 if "ACCESS" in link.link_name:
                     link.hourly_capacity_by_period_and_direction[period_index][direction_index] = 9999.0
-                    _set_period_capacities(link, period_index, direction_index, peak_period_factor)
+                    link.period_capacity_by_period_and_direction[period_index][direction_index] = 999999.0
+                    link.intersection_capacity_by_period_and_direction[period_index][direction_index] = 999999.0
                     continue
                 directional_capacity = lane_count * 1800.0
                 if link.high_occupancy_vehicle_class > 1:
@@ -1321,7 +1322,7 @@ class RunTCHC(_m.Tool()):
                 "type": "text",
                 "content": "Columns with incomplete inputs: %s" % ", ".join(set(incomplete_inputs))
             })
-            raise ValueError("Incomplete input columns detected")
+            raise ValueError("Incomplete input columns detected. Check TCHC Report in Modeller Logbook for additional details.")
 
         assert links.loc[links["FC"] !=99,"HWYCOV0_ID"].is_unique, "HWYCOV0_ID column must have unique values"
 
