@@ -30,6 +30,6 @@ This process generates the output\bikeMgraLogsum.csv and output\bikeTazLogsum.cs
 
 [Bike Route Choice README](https://github.com/SANDAG/ABM/blob/main/src/asim/scripts/bike_route_choice/README.md)
 
-[ABM3 Bike Model Report (2025)](../../pdf_reports/SANDAG_ABM3_Bike_Model_Report.pdf)
+[ABM3 Bike Model Report (2025)](https://github.com/SANDAG/ABM/wiki/files/SANDAG_ABM3_Bike_Model_Report.pdf)
 
 [Active Transportation Improvements Report (2015)](https://github.com/SANDAG/ABM/wiki/files/at.pdf) (Prior bike logsum implementation in Java)

@@ -52,4 +52,5 @@ Pull requests that change the docs get the strict build check automatically. Not
 ## Tips
 
 - A new page appears in the menu only after you add it under `nav:` in `mkdocs.yml`.
+- Report PDFs live in the `files/` folder of the [ABM wiki](https://github.com/SANDAG/ABM/wiki/Reports-and-Documents), not in `docs/`, so they aren't copied into every version. The wiki is its own repository (`https://github.com/SANDAG/ABM.wiki.git`). Add a revised report under a new file name rather than replacing the old one, since older versions of the docs link to it. Link reports by full address: `https://github.com/SANDAG/ABM/wiki/files/<name>.pdf`.
 - Text in angle brackets, like `<time period>`, is read as an HTML tag and disappears from the page. Put it in backticks, or write it as `&lt;time period&gt;`. Inside HTML tables, only the `&lt;` `&gt;` form works.
