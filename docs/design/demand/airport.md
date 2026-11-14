@@ -137,4 +137,4 @@ These restrictions ensure that trips to airport terminals are only generated thr
 
 This coordination between the airport models and general travel models maintains internal consistency in trip generation and avoids overestimating travel to airport terminal zones.
 
-For more information on the Air Ground Access Travel Model see [technical documentation](https://sandag.github.io/ABM/pdf_reports/202402_ABM3_Model_Development_Report_Final.pdf).
+For more information on the Air Ground Access Travel Model see [technical documentation](https://github.com/SANDAG/ABM/wiki/files/202402_ABM3_Model_Development_Report_Final.pdf).
