@@ -315,7 +315,10 @@ def apply_tchc(link, ctx):
                 if link.planned_lane_capacity_by_direction[direction_index] == 950 and lane_count < 2 and link.is_rural:
                     directional_capacity = 950.0
                 else:
-                    directional_capacity = lane_count * 1800.0 - 300.0
+                    if link.planned_lane_capacity_by_direction[direction_index] == 1150 and lane_count >= 2 and link.is_rural:
+                        directional_capacity = lane_count * 1150 - 300.0
+                    else:
+                        directional_capacity = lane_count * 1800.0 - 300.0
                     if link.median_type < 2:
                         directional_capacity -= 200.0
 
