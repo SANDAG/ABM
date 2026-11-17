@@ -24,12 +24,12 @@ def connect_to_Azure(env):
     if env == "dev":
         token_vars = [
             "AZURE_STORAGE_SAS_TOKEN_DEV",
-            "AZURE_STORAGE_SAS_TOKEN_SHARED_DEV",
+            "AZURE_STORAGE_SAS_TOKEN_DS_DEV_SHARED",
         ]
     else:
         token_vars = [
             "AZURE_STORAGE_SAS_TOKEN_PROD",
-            "AZURE_STORAGE_SAS_TOKEN_SHARED_PROD",
+            "AZURE_STORAGE_SAS_TOKEN_DS_PROD_SHARED",
         ]
 
     containers = []
