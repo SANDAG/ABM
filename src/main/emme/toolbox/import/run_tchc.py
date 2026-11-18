@@ -198,6 +198,8 @@ def _set_period_capacities(link, period_index, direction_index, peak_period_fact
         999999 if intersection_hourly_capacity is None
         else round(intersection_hourly_capacity * peak_period_factor, 3)
     )
+    if intersection_hourly_capacity is not None:
+        link.hourly_capacity_by_period_and_direction[period_index][direction_index] = intersection_hourly_capacity
 
 
 def apply_tchc(link, ctx):
