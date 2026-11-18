@@ -1278,7 +1278,9 @@ class RunTCHC(_m.Tool()):
                 "content": "%s node IDs referenced by %s are absent from %s" % (
                     len(unknown), LINK_LAYER, NODE_LAYER)})
 
-        links["is_rural"] = links.covered_by(rural.union_all())
+        rural_geom = rural.union_all()
+        midpoints = links.geometry.interpolate(0.5, normalized=True)
+        links["is_rural"] = midpoints.within(rural_geom)
         links["length_feet"] = length_feet(links)
         if "ASPD" not in links.columns:
             links["ASPD"] = 0
