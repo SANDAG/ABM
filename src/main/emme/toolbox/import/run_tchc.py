@@ -83,6 +83,22 @@ DEFAULT_SPEED_BY_FUNCTIONAL_CLASS = [65, 45, 40, 35, 30, 40, 35, 65, 30, 30, 50,
 # Turn-lane capacity per lane (veh/hr) by functional class, 0-indexed: FC 1..10
 TURN_CAPACITY_BY_FUNCTIONAL_CLASS = [250, 250, 150, 100, 100, 100, 100, 100, 100, 0]
 
+# Fallback left-turn lanes
+# FORTRAN mlf(fc, control) defaults used when ABLL/BALL is invalid (<1 or >9).
+LEFT_TURN_DEFAULT_BY_FUNCTIONAL_CLASS_AND_CONTROL = {
+    (2, 1): 2,
+    (2, 2): 1,
+    (2, 3): 1,
+    (3, 1): 1,
+    (3, 2): 1,
+    (3, 3): 1,
+    (4, 1): 1,
+    (4, 2): 1,
+    (9, 1): 1,
+    (9, 2): 1,
+    (9, 3): 1,
+}
+
 @dataclass
 class TCHCLink:
     # identifiers
@@ -221,8 +237,9 @@ def apply_tchc(link, ctx):
         if link.directionality == 1 and direction_index == 1:
             continue
 
-        # encode default planned lane capacity (ABPLC)
-        if link.planned_lane_capacity_by_direction[direction_index] is None:
+        # encode default planned lane capacity (AB/BA PLC)
+        plc = link.planned_lane_capacity_by_direction[direction_index]
+        if plc is None or plc <= 0:
             if link.functional_class == 1:
                 link.planned_lane_capacity_by_direction[direction_index] = 2000.0
             elif link.functional_class in [2,3,4,5,7,8]:
@@ -332,6 +349,16 @@ def apply_tchc(link, ctx):
             through_lane_count = link.through_lane_count_by_direction[direction_index]
             right_turn_lane_count = link.right_turn_lane_count_by_direction[direction_index]
             left_turn_lane_count = link.left_turn_lane_count_by_direction[direction_index]
+            control_type = link.control_type_by_direction[direction_index]
+
+            # FORTRAN parity: when ABLL/BALL is invalid (<1 or >9), fall back to
+            # mlf(functional_class, control_type) where that table is defined.
+            if left_turn_lane_count < 1 or left_turn_lane_count > 9:
+                fallback_left_turn_lane_count = LEFT_TURN_DEFAULT_BY_FUNCTIONAL_CLASS_AND_CONTROL.get(
+                    (link.functional_class, control_type)
+                )
+                if fallback_left_turn_lane_count is not None:
+                    left_turn_lane_count = fallback_left_turn_lane_count
 
             if through_lane_count > 7:
                 through_lane_count = 0
@@ -357,7 +384,6 @@ def apply_tchc(link, ctx):
                     left_turn_lane_count = 0
 
             # ---- intersection capacity by control type ----
-            control_type = link.control_type_by_direction[direction_index]
             cross_street_functional_class = link.cross_street_functional_class_by_direction[direction_index]
             # clamp cross_fc to valid index (1-based in FORTRAN, 0-based here)
             cross_street_functional_class_index = max(0, min(cross_street_functional_class - 1, 8))
