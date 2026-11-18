@@ -311,11 +311,13 @@ def apply_tchc(link, ctx):
                 directional_capacity = lane_count * 1200.0
 
             else:
-                # arterials (fc 2-7): check plc==950 override
+                # arterials (fc 2-7)
+                # check for rural links
                 if link.planned_lane_capacity_by_direction[direction_index] == 950 and lane_count < 2 and link.is_rural:
                     directional_capacity = 950.0
                 else:
-                    if link.planned_lane_capacity_by_direction[direction_index] == 1150 and lane_count >= 2 and link.is_rural:
+                    # to accommodate existing (plc 950) and new (plc 1150) rural links with 2+ lanes
+                    if link.planned_lane_capacity_by_direction[direction_index] in (950,1150) and lane_count >= 2 and link.is_rural:
                         directional_capacity = lane_count * 1150 - 300.0
                     else:
                         directional_capacity = lane_count * 1800.0 - 300.0
