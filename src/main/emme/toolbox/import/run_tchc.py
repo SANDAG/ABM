@@ -879,37 +879,53 @@ def build_approach_counts(links):
     return dict((int(node), int(count)) for node, count in counts.items())
 
 
+def normalize_nm(value):
+    if value is None or pd.isna(value):
+        return ""
+    return " ".join(str(value).upper().split())
+
+
 def build_cross_street_classes(links):
-    """Per node, the two highest class cross streets, so a link can exclude itself.
+    """Per node, ranked cross-street candidates used to exclude self/same-name links.
 
     Highest class is the lowest functional class number in 2-7.
     """
-    eligible = links[(links["FC"] >= 2) & (links["FC"] <= 7)]
+    eligible = links[(links["FC"] >= 2) & (links["FC"] <= 7)].copy()
+    eligible["nm_norm"] = eligible["NM"].map(normalize_nm)
     incidence = pd.concat([
-        pd.DataFrame({"node": eligible["AN"], "link": eligible["HWYCOV0_ID"], "fc": eligible["FC"]}),
-        pd.DataFrame({"node": eligible["BN"], "link": eligible["HWYCOV0_ID"], "fc": eligible["FC"]}),
-    ], ignore_index=True)
-    incidence = incidence.drop_duplicates(["node", "link"]).sort_values(["node", "fc"])
-    incidence["rank"] = incidence.groupby("node").cumcount()
+        pd.DataFrame({
+            "node": eligible["AN"],
+            "link": eligible["HWYCOV0_ID"],
+            "fc": eligible["FC"],
+            "nm_norm": eligible["nm_norm"],
+        }),
+        pd.DataFrame({
+            "node": eligible["BN"],
+            "link": eligible["HWYCOV0_ID"],
+            "fc": eligible["FC"],
+            "nm_norm": eligible["nm_norm"],
+        }),
+    ], ignore_index=True).drop_duplicates(["node", "link"])
 
-    best = incidence[incidence["rank"] == 0].set_index("node")
-    runner = incidence[incidence["rank"] == 1].set_index("node")
-    return {
-        "best_class": dict((int(k), int(v)) for k, v in best["fc"].items()),
-        "best_link": dict((int(k), int(v)) for k, v in best["link"].items()),
-        "runner_class": dict((int(k), int(v)) for k, v in runner["fc"].items()),
-    }
+    candidates_by_node = {}
+    for node, group in incidence.groupby("node"):
+        ordered = group.sort_values(["fc", "link"])[["link", "fc", "nm_norm"]]
+        candidates_by_node[int(node)] = [
+            (int(row.link), int(row.fc), str(row.nm_norm))
+            for row in ordered.itertuples(index=False)
+        ]
+    return {"candidates_by_node": candidates_by_node}
 
 
-def cross_street_class(tables, node_id, link_id, default=7):
-    functional_class = tables["best_class"].get(node_id)
-    if functional_class is None:
-        return default
-    if tables["best_link"].get(node_id) == link_id:
-        functional_class = tables["runner_class"].get(node_id)
-        if functional_class is None:
-            return default
-    return functional_class
+def cross_street_class(tables, node_id, link_id, link_name, default=7):
+    current_name = normalize_nm(link_name)
+    for candidate_link, candidate_fc, candidate_name in tables["candidates_by_node"].get(int(node_id), []):
+        if candidate_link == int(link_id):
+            continue
+        if candidate_name == current_name:
+            continue
+        return candidate_fc
+    return default
 
 
 # ------------------------------------------------------------------
@@ -967,8 +983,8 @@ def build_link(row, cross_tables):
         auxiliary_lane_count_by_direction=[integer(row.ABAU), integer(row.BAAU)],
         planned_lane_capacity_by_direction=[integer(row.ABPLC), integer(row.BAPLC)],
         cross_street_functional_class_by_direction=[
-            cross_street_class(cross_tables, to_node, integer(row.HWYCOV0_ID)),
-            cross_street_class(cross_tables, from_node, integer(row.HWYCOV0_ID)),
+            cross_street_class(cross_tables, to_node, integer(row.HWYCOV0_ID), row.NM),
+            cross_street_class(cross_tables, from_node, integer(row.HWYCOV0_ID), row.NM),
         ],
         control_type_by_direction=[integer(row.ABCNT), integer(row.BACNT)],
         through_lane_count_by_direction=[integer(row.ABTL), integer(row.BATL)],
