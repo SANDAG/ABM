@@ -91,6 +91,7 @@ nav:
     - Flexible Fleets: application/flexible-fleets.md
     - Micromobility: application/micromobility.md
     - Network Coding: application/network-coding.md
+    - Recalculating Roadway Capacity: application/roadway-capacity.md
   - Calibration and Validation:
     - Overview: calib_valid/calib_overview.md
     - Calibration: calib_valid/calibration.md

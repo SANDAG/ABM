@@ -51,7 +51,7 @@
 """
 
 
-TOOLBOX_ORDER = 12
+TOOLBOX_ORDER = 13
 
 
 import inro.modeller as _m
