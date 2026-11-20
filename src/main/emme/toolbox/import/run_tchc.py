@@ -389,6 +389,7 @@ def apply_tchc(link, ctx):
             cross_street_functional_class = link.cross_street_functional_class_by_direction[direction_index]
             # clamp cross_fc to valid index (1-based in FORTRAN, 0-based here)
             cross_street_functional_class_index = max(0, min(cross_street_functional_class - 1, 8))
+            intersection_hourly_capacity = None
 
             if control_type == 1:  # signal (FORTRAN 610)
                 link.intersection_delay_minutes_by_period_and_direction[period_index][direction_index] = 0.17
@@ -410,6 +411,7 @@ def apply_tchc(link, ctx):
                 if directional_capacity < 1000.0:
                     directional_capacity = 1000.0
                 link.intersection_hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
+                intersection_hourly_capacity = directional_capacity
 
             elif control_type == 2:  # 4-way stop (FORTRAN 620)
                 link.intersection_delay_minutes_by_period_and_direction[period_index][direction_index] = 0.20
@@ -430,6 +432,7 @@ def apply_tchc(link, ctx):
                 if directional_capacity < 500.0:
                     directional_capacity = 500.0
                 link.intersection_hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
+                intersection_hourly_capacity = directional_capacity
 
             elif control_type == 3:  # 2-way stop (FORTRAN 630)
                 link.intersection_delay_minutes_by_period_and_direction[period_index][direction_index] = 0.20
@@ -450,25 +453,29 @@ def apply_tchc(link, ctx):
                 if directional_capacity < 500.0:
                     directional_capacity = 500.0
                 link.intersection_hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
+                intersection_hourly_capacity = directional_capacity
 
-            elif control_type == 4 and period_index > 0:  # ramp meter off-peak (FORTRAN 640)
+            elif control_type == 4 and period_index != 1:  # ramp meter off-peak (FORTRAN 640)
                 link.intersection_delay_minutes_by_period_and_direction[period_index][direction_index] = 0.50
                 directional_capacity = 1000.0
                 if link.green_cycle_value_by_direction[direction_index] >= 1:
                     green_cycle_through_factor = link.green_cycle_value_by_direction[direction_index] / 100.0
                     directional_capacity *= green_cycle_through_factor
                 link.intersection_hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
+                intersection_hourly_capacity = directional_capacity
 
-            elif control_type == 5 and period_index > 0:  # ramp meter on-peak (FORTRAN 650)
+            elif control_type == 5 and period_index != 1:  # ramp meter off-peak (FORTRAN 650)
                 link.intersection_delay_minutes_by_period_and_direction[period_index][direction_index] = 0.50
                 directional_capacity = 1000.0
                 if link.green_cycle_value_by_direction[direction_index] >= 1:
                     green_cycle_through_factor = link.green_cycle_value_by_direction[direction_index] / 100.0
                     directional_capacity *= green_cycle_through_factor
                 link.intersection_hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
+                intersection_hourly_capacity = directional_capacity
 
             elif control_type == 6:  # rail crossing (FORTRAN 660)
                 link.intersection_delay_minutes_by_period_and_direction[period_index][direction_index] = 0.02
+                intersection_hourly_capacity = directional_capacity
 
             elif control_type == 7:  # toll / border (FORTRAN 670)
                 # FME distinguishes roadway HCAP from booth XCAP. Keep HCAP
@@ -483,13 +490,11 @@ def apply_tchc(link, ctx):
                 
                 link.intersection_hourly_capacity_by_period_and_direction[period_index][direction_index] = directional_capacity
                 link.intersection_delay_minutes_by_period_and_direction[period_index][direction_index] = 1.0
+                intersection_hourly_capacity = directional_capacity
 
             # FME final outputs use the final HCAP, not the pre-control base.
-            # Controls 1-6 share that rate; toll booths have their own rate.
-            intersection_hourly_capacity = None
-            if control_type in (1, 2, 3, 4, 5, 6):
-                intersection_hourly_capacity = directional_capacity
-            elif control_type == 7:
+            # Controls 1-6 already set in their respective branches; toll booths (control_type 7) have their own rate.
+            if control_type == 7:
                 intersection_hourly_capacity = lane_count * 500.0
             _set_period_capacities(
                 link, period_index, direction_index, peak_period_factor,
